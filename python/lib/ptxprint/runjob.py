@@ -452,7 +452,7 @@ class RunJob:
                 elif sys.platform == "linux":
                     subprocess.call(('xdg-open', startname))
 
-            fname = os.path.join(self.tmpdir, os.path.basename(pdfname).replace(".pdf", ".log"))
+            fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".pdf", ".log"))
             if os.path.exists(fname):
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                     log = logfile.read()

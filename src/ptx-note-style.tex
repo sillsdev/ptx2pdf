@@ -186,7 +186,7 @@
         \everypar={\ifRTL\beginR\fi}\cancelcutouts % begin a note insertion in the given style
         \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
           \trace{n}{note main caller}%
-          \let\f@ntextend\@@par@f@ntextend
+          \ifversion{2}{\let\f@ntextend\@@par@f@ntextend}{}%
           \setbox0=\hbox{\x@\cstyle\x@{\c@llerstyle}{\them@rk}}\ht0=0pt\dp0=0pt
           \trace{n}{note caller is \the\wd0 \space wide}%
         \fi
@@ -196,10 +196,10 @@
           \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%
           \x@\x@\x@\write-1\x@{\n@tetxt}%
         \fi
-      }{
+      }{%
         \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
           \trace{n}{note caller}%
-          \let\f@ntextend\notef@ntextend
+          \ifversion{2}{\let\f@ntextend\notef@ntextend}{}%
           \setbox0=\hbox{\hss\x@\cstyle\x@{\n@tec@llerstyle}{\them@rk}\hss}\ht0=0pt\dp0=0pt
         \fi
         \getp@ram{notecallerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax
