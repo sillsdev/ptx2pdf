@@ -452,7 +452,8 @@ class RunJob:
                 elif sys.platform == "linux":
                     subprocess.call(('xdg-open', startname))
 
-            fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".pdf", ".log"))
+            fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
+            logger.debug(f"Testing log file {fname}")
             if os.path.exists(fname):
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                     log = logfile.read()
@@ -471,7 +472,7 @@ class RunJob:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
                             sl.set_text(msgs)
                             sl.set_tooltip_text(msgs)
-                            chkmsg = _("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ..." if len(msgs) > 30 else msgs
+                            chkmsg = _("Check pages:") + (msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 30 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
                             self.printer.set("l_statusLine", chkmsg)
