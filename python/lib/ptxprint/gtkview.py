@@ -2340,6 +2340,8 @@ class GtkViewModel(ViewModel):
         # self.builder.get_object("btn_removeZeros").set_visible(False)
         self.noUpdate = True
         prjid = self.get("fcb_project")
+        if prjid is None:
+            return          # at least we don't crash if there is no project
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         bk = self.get("ecb_examineBook")
