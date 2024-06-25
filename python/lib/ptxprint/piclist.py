@@ -398,7 +398,16 @@ class PicInfo(dict):
             res = ("p", "", "{:03d}".format(i+1))
         return res
 
-    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent, parcount=0):
+    def _syncpic(self, pic, key):
+        pic['sync'] = True
+        for k, p in list(self.items()):
+            if not p.get('sync', False) and p['srcref'] == pic['srcref']:
+                self[k] = pic
+                break
+        else:
+            self[key] = pic
+
+    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent, parcount=0, fn=None):
         # logger.debug(f"Reading pics for {bk} + {suffix}")
         for s in re.split(r"\\(?:m[st][e]?|i(?:mt[e]?|ex|[bemopqs])|s[dpr]|c[ld]|[pqrs])\d?", txt):
             parcount += 1
@@ -412,11 +421,15 @@ class PicInfo(dict):
                         else:
                             a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                         r = "{}{} {}{}{}{}".format(bk, suffix, *a, ("="+str(parcount)) if parcount > 1 else "")
-                        pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip()}
+                        pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip(),
+                               'srcref': r}
                         if bk == 'GLO':
                             pic.update(pgpos="p", scale="0.7")
                         key = self.newkey(suffix)
-                        self[key] = pic
+                        if fn is None:
+                            self[key] = pic
+                        else:
+                            fn(pic, key)
                         if b[1]:    # usfm 3
                             labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
                             for l in labelParams:
@@ -686,7 +699,7 @@ class PicInfo(dict):
         logger.debug(f"getAnchor({src}, {bk}) -> {res}")
         return res
 
-def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
+def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False, sync=False):
     newpics = PicInfo(model)
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
                                       'ptxprint', "{}.piclist".format(model.prjid)))

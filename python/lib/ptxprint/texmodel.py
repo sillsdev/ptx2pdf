@@ -725,10 +725,11 @@ class TexModel:
         return "\n".join(res).replace("\\OneChapBookfalse\n\\OneChapBooktrue\n","")
 
     def _doperiph(self, k):
-        if self.frontperiphs is None:
+        if self.frontperiphs is None or not len(self.frontperiphs):
             self.frontperiphs = {}
             for a in ('FRT', 'INT'):
                 frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename(a))
+                logger.debug(f"Trying periphs file {frtfile}")
                 if not os.path.exists(frtfile):
                     continue
                 with open(frtfile, encoding="utf-8") as inf:
@@ -736,8 +737,9 @@ class TexModel:
                     currperiphs = []
                     currk = None
                     for l in inf.readlines():
-                        l = runChanges(self.changes, "FRT", l)
-                        ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))?', l)
+                        l = runChanges(self.changes, a, l)
+                        logger.log(5, f"{mode}: {l}")
+                        ma = re.match(r'\\periph\s*([^|]*)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))?', l)
                         if ma:
                             if mode == 1:    # already collecting so save
                                 self.frontperiphs[currk] = "\n".join(currperiphs)
@@ -756,7 +758,7 @@ class TexModel:
                         self.frontperiphs[currk] = "\n".join(currperiphs)
                         # print(f"{currk=}\n{self.frontperiphs[currk]=}")
             logger.debug(f"Contains periphs: {sorted(self.frontperiphs.keys())}")
-        return self.frontperiphs.get(k, "")
+        return self.frontperiphs.get(k, f"\\rem zgetperiph|{k}\\*")
 
     def createFrontMatter(self, outfname):
         self.dict['project/frontfile'] = os.path.basename(outfname)
@@ -770,14 +772,14 @@ class TexModel:
             with open(infpath, encoding="utf-8") as inf:
                 for l in inf.readlines():
                     l = runChanges(self.changes, "FRT", l)
+                    if re.match(r"^\s*\\rem\s", l.lower()):
+                        continue
                     l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \
                                      + '.jpg" copy="None" ' + m.group(2)+ r'\fig*', l)
                     l = re.sub(r'(\\fig .*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
-                    if re.match(r"^\s*\\rem\s", l.lower()):
-                        continue
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))

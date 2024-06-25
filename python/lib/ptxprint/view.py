@@ -1231,7 +1231,7 @@ class ViewModel:
     def updatePicList(self, bks=None, priority="Both", output=False):
         return
 
-    def generatePicList(self, procbks=None, doclear=True):
+    def generatePicList(self, procbks=None, doclear=True, sync=False):
         ab = self.getAllBooks()
         if procbks is None:
             procbks = ab.keys()
@@ -1239,14 +1239,14 @@ class ViewModel:
         cols = 2 if self.get("c_doublecolumn") else 1
         mrgCptn = self.get("c_diglot2captions", False)
         if self.diglotView is None:
-            PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
+            PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True, sync=sync)
         else:
             mode = self.get("fcb_diglotPicListSources")
             PicInfoUpdateProject(self, procbks, ab, self.picinfos,
-                                 suffix="L", random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
+                                 suffix="L", random=rnd, cols=cols, doclear=doclear, clearsuffix=True, sync=sync)
             diallbooks = self.diglotView.getAllBooks()
             PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
-                                 self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
+                                 self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False, sync=sync)
             if mode == "pri":
                 self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
             elif mode == "sec":

@@ -28,7 +28,7 @@ from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
-from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
+from ptxprint.piclist import PicInfo
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.styleditor import aliases
 from ptxprint.runjob import isLocked, unlockme
@@ -2178,7 +2178,7 @@ class GtkViewModel(ViewModel):
             else:
                 procbks = bks
                 doclear = False
-            self.generatePicList(procbks=procbks, doclear=doclear)
+            self.generatePicList(procbks=procbks, doclear=doclear, sync=False)
             self.savePics()
             if self.get('r_generate') == 'all':
                 self.set("c_filterPicList", False)
