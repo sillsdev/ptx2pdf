@@ -121,12 +121,28 @@
 %
 %+cnote_notestyle
 \def\n@testyle#1{\trace{n}{n@testyle:#1 \c@rrdstat}%
+ \let\@@par@f@ntextend\f@ntextend
+ \let\notef@ntextend\empty 
  \def\newn@testyle{#1}%
  \catcode32=12\relax % look ahead to see if space or * follows (like char styles)
  \futurelet\n@xt\don@testyle}
 \def\don@testyle{\catcode32=10\relax 
- \if\n@xt*\let\n@xt\endn@testyle\else\let\n@xt\startn@testyle\fi
+ \trace{f}{don@testyle: n@xt='\meaning\n@xt'}%
+ \if\n@xt*\let\n@xt\endn@testyle\else
+  \if\n@xt^\relax
+    \let\n@xt\@@startn@testyle
+  \else
+   \let\n@xt\startn@testyle\fi\fi
  \n@xt}
+
+{\catcode`\^=12 
+ \gdef\@@startn@testyle^#1 #2 {%
+  \trace{f}{@@startn@testyle: ^#1 #2}%
+  %\tracingmacros=1
+   \xdef\notef@ntextend{\p@rcent #1xx\E}%
+   \@@@startn@testyle{#2}%
+}}
+\lowercase{\gdef\@@@startn@testyle#1{\startn@testyle~#1 }}%
 %-cnote_notestyle
 
 %+cnote_startnote_start
@@ -159,12 +175,18 @@
     \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
     \resetp@rstyle                                                              %(1)
+    \getp@ram{callerstyle}{\newn@testyle}{\newn@testyle}% see if a caller style was defined
+    \ifx\p@ram\relax\edef\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
+    \getp@ram{notecallerstyle}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax 
+      \let\n@tec@llerstyle\c@llerstyle
+    \else
+      \let\n@tec@llerstyle\p@ram
+    \fi
     \m@kenote{\n@tebase}{\newn@testyle}{%
         \everypar={\ifRTL\beginR\fi}\cancelcutouts % begin a note insertion in the given style
-        \getp@ram{callerstyle}{\newn@testyle}{\newn@testyle}% see if a caller style was defined
-        \ifx\p@ram\relax\edef\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
         \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
           \trace{n}{note main caller}%
+          \let\f@ntextend\@@par@f@ntextend
           \setbox0=\hbox{\x@\cstyle\x@{\c@llerstyle}{\them@rk}}\ht0=0pt\dp0=0pt
           \trace{n}{note caller is \the\wd0 \space wide}%
         \fi
@@ -174,14 +196,16 @@
           \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%
           \x@\x@\x@\write-1\x@{\n@tetxt}%
         \fi
-      }{\getp@ram{notecallerstyle}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\else
-          \edef\c@llerstyle{\p@ram}%
-          \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
-            \trace{n}{note caller}%
-            \setbox0=\hbox{\hss\x@\cstyle\x@{\c@llerstyle}{\them@rk}\hss}\ht0=0pt\dp0=0pt
-          \fi
-          \getp@ram{notecallerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
-        \fi}\bgroup
+      }{
+        \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
+          \trace{n}{note caller}%
+          \let\f@ntextend\notef@ntextend
+          \setbox0=\hbox{\hss\x@\cstyle\x@{\n@tec@llerstyle}{\them@rk}\hss}\ht0=0pt\dp0=0pt
+        \fi
+        \getp@ram{notecallerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax
+          \getp@ram{callerraise}{\newn@testyle}{\newn@testyle}\fi
+        \ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
+      }\bgroup \ifversion{2}{\let\f@ntextend\notef@ntextend}{}%
     \global\n@tenesting=1\relax
     \trace{b}{BALANCE note: style=\newn@testyle}%
     \csname start-\newn@testyle\endcsname % execute the <start> hook, if defined
@@ -274,7 +298,7 @@
     \fi
   \fi%
   % @sf preserves the space factor (e.g. extra space after a period), restore it now
-  \@sf \@wrap\vm@kenote{#1}{#2}{\getp@ram{notecallerstyle}{#2}{#2}\ifx\p@ram\relax #3\else #4\fi}}
+  \@sf \@wrap\vm@kenote{#1}{#2}{#4}}
 %-c_makenote
 
 %+c_vmakenote
