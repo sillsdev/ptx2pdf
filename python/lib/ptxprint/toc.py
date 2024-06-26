@@ -74,7 +74,7 @@ class TOC:
                     return int(txt) if txt.isdigit() else get_sortkey(txt, variable=SHIFTTRIM, ducet=ducet)
                 def naturalkey(txt):
                     return [makekey(c) for c in reversed(re.split(r'(\d+)', txt))]
-                for a in (("sort", tocentries), ("bib", res["bible"])):
+                for a in (("sort", tocentries), ("bib", res["bible"+s])):
                     ttoc = []
                     k = a[0]+chr(97+i)+s
                     res[k] = ttoc
