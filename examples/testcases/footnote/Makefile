@@ -9,6 +9,8 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm table.usfm $(DIR)/*.tex *.sty 
 longtest.pdf: longtest.tex usfmTex-ext.tex usfmTex-settings.tex longtest.usfm $(DIR)/*.tex *.sty
 
+subtests:
+	for A in ck-* ; do make -C $$A all ; done
 auto:
 	echo Source code in $(DIR)
 	while inotifywait -e close_write . $(DIR) ; do make all ; done < /dev/null
@@ -21,7 +23,8 @@ autolong:
 
 
 bisect:
-	mkdir ../bisect || rm -f ../bisect/*
+	mkdir ../bisect || rm -rf ../bisect/*
 	cp *.tex *.usfm *.sty Makefile ../bisect
+	for A in ck-* ; do mkdir ../bisect/$$A ; cp $$A/extra.tex $$A/Makefile ../bisect/$$A ; done
 
 
