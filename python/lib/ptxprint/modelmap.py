@@ -32,7 +32,8 @@ _map = {
     "config/filterpics":        ("c_filterPicList", "meta", None),
     "config/autosave":          ("c_autoSave", "uiprefs", None),
     "config/displayfontsize":   ("s_viewEditFontSize", "uiprefs", None),
-    "config/locklayoutmode":    ("c_lockLayoutMode", "meta", None),
+    "config/lockxetexlayout":   ("c_lockXeTeXLayout", "meta", None),
+    "config/lockui4layout":     ("c_lockUI4Layout", "meta", None),
     "config/texperthacks":      ("c_showTeXpertHacks", "uiprefs", None),
     "config/printcount":        ("_printcount", "meta", None),
 

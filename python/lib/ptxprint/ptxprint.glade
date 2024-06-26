@@ -21754,7 +21754,7 @@ font and direction for that script.</property>
                                 <property name="valign">start</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <!-- n-columns=1 n-rows=5 -->
+                                  <!-- n-columns=1 n-rows=6 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -21771,7 +21771,7 @@ font and direction for that script.</property>
                                         <property name="tooltip-text" translatable="yes">In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-top">4</property>
+                                        <property name="margin-top">3</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -21791,7 +21791,6 @@ troubleshooting use only.</property>
                                         <property name="opacity">0.80</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -21810,7 +21809,6 @@ troubleshooting use only.</property>
 Font metrics gives more consistent results.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -21830,42 +21828,58 @@ those who are familiar with TeX and need to
 change the code or various other parameters.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onExpertModeClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">5</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_lockLayoutMode">
-                                        <property name="label" translatable="yes">Lock Layout Mode</property>
-                                        <property name="name">Lock Layout Settings</property>
+                                      <object class="GtkCheckButton" id="c_lockXeTeXLayout">
+                                        <property name="label" translatable="yes">Lock XeTeX Layout Level</property>
+                                        <property name="name">Lock XeTeX Layout Settings</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Enabling this feature does 2 things to enable
-final typesetting to proceed with minimal risk
-of change to the final layout:
-  a) Disables various controls on the layout tab
-      so that settings can't be accidentally changed
-      while doing final page layout.
-  b) Locks the TeX macros to use the current layout
-       logic, which will prevent newer functionality
-       from taking effect in the future. This is done
-       by setting the "Layout Mode" value in the
-       TeXpert Hacks section.</property>
+                                        <property name="tooltip-text" translatable="yes">This feature enables final typesetting to proceed 
+with minimal risk of change to the final layout by
+locking the TeX macros to use the current layout
+logic, which will prevent newer functionality
+from taking effect in the future. This sets the
+"Maximum Layout Version" value in the 
+TeXpert Hacks section.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onlockLayoutModeClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onlockXeTeXLayoutClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
                                         <property name="top-attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_lockUI4Layout">
+                                        <property name="label" translatable="yes">Lock UI Layout Settings</property>
+                                        <property name="name">Lock UI Layout Settings</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">This feature enables final typesetting to proceed 
+with minimal risk of change to the final layout by
+disabling various controls (on the layout, fonts and
+styles tabs) so that settings can't be accidentally 
+changed while doing final page layout.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onlockUI4LayoutClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">4</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -31697,6 +31711,35 @@ You can change the location of pictures later if needed.</property>
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkCheckButton" id="c_protectPicList">
+                        <property name="label" translatable="yes">Protect existing PicList settings (coming soon!)</property>
+                        <property name="name">Generate PicList: Protect existing PicList settings</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">When synchronizing the pictures from the
+Paratext files with PTXprint's PicList, don't
+change any of the (layout and size) settings
+and don't delete any pictures no longer found
+in the Paratext USFM text.
+
+This option will highlight which pictures are
+new, and which have been deleted, but will
+not remove them from the PicList for you.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">4</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -31728,29 +31771,6 @@ If in doubt, click Cancel.</property>
                       <packing>
                         <property name="left-attach">1</property>
                         <property name="top-attach">6</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_removeMissingPTpics">
-                        <property name="label" translatable="yes">Remove pictures no longer in Paratext</property>
-                        <property name="name">Generate PicList: Remove pictures no longer in Paratext</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">When synchronizing the pictures from the
-Paratext files with PTXprint's PicList, remove
-any pictures no longer present in Paratext.</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="margin-top">12</property>
-                        <property name="margin-bottom">6</property>
-                        <property name="active">True</property>
-                        <property name="draw-indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">4</property>
-                        <property name="width">2</property>
                       </packing>
                     </child>
                     <child>

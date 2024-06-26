@@ -383,10 +383,10 @@ _nonsensitivities = {
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "c_styTextProperties":     ["scr_styleSettings"],
     "c_inclSpine":             ["c_coverCropMarks"],
-    # "c_lockLayoutMode":        ["ecb_pagesize", "c_mirrorpages", "s_indentUnit", "s_fontsize", 
-                                # "c_lockFontSize2Baseline", "c_pagegutter", "s_pagegutter", "s_linespacing", 
-                                # "btn_adjust_spacing", "c_outerGutter", "c_doublecolumn", "s_colgutterfactor", 
-                                # "fr_margins", "tb_Font", "tb_StyleEditor"],
+    "c_lockUI4Layout":         ["ecb_pagesize", "c_mirrorpages", "s_indentUnit", "s_fontsize", "btn_adjust_spacing",
+                                "c_lockFontSize2Baseline", "c_pagegutter", "s_pagegutter", "s_linespacing", 
+                                "btn_adjust_spacing", "c_outerGutter", "c_doublecolumn", "s_colgutterfactor", 
+                                "fr_margins", "tb_Font", "tb_StyleEditor"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
@@ -480,7 +480,8 @@ _signals = {
 }
 
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
-         "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
+         "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", 
+         "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_Expert"]  # "tb_Help"
 
 _dlgtriggers = {
     "dlg_multiBookSelect":  "onChooseBooksClicked",
@@ -1859,6 +1860,7 @@ class GtkViewModel(ViewModel):
                     self.builder.get_object(w).set_sensitive(state)
         self.colorTabs()
         self.updateMarginGraphics()
+        self.sensiVisible('c_lockUI4Layout') # Why does this do nothing? Is it in the wrong place?
         self.onExtListSourceChanges(None)
         # self.onExpertModeClicked(None)
         x = self.get("btn_selectDiffPDF")
@@ -5856,9 +5858,11 @@ Thank you,
     def bdrPaddingUniformClicked(self, btn):
         self.styleEditor.bdrPaddingUniformClicked()
 
-    def onlockLayoutModeClicked(self, wid):
-        status = self.sensiVisible('c_lockLayoutMode')
-        if status:
+    def onlockXeTeXLayoutClicked(self, wid):
+        if self.get("c_lockXeTeXLayout"):
             self.set("s_ptxversion", str(TexModel._ptxversion))
         else:
             self.set("s_ptxversion", "0")
+
+    def onlockUI4LayoutClicked(self, wid):
+        self.sensiVisible('c_lockUI4Layout')
