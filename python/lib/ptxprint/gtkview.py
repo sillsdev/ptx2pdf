@@ -24,7 +24,7 @@ from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatStri
 from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
-            bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
+            bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
@@ -3411,7 +3411,7 @@ class GtkViewModel(ViewModel):
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
-            self.set("lb_ptxprintdir", '<a href="{}">{}</a>'.format(pycodedir(), pycodedir()))
+            self.set("lb_ptxprintdir", '<a href="{}">{}</a>'.format(pt_bindir(), pt_bindir()))
 
             projdir = os.path.join(self.settings_dir, self.prjid)
             self.set("lb_prjdir", '<a href="{}">{}</a>'.format(projdir, projdir))
@@ -4252,6 +4252,8 @@ class GtkViewModel(ViewModel):
         path = os.path.realpath(fldrpath)
         if sys.platform.startswith("win") and os.path.exists(fldrpath):
             os.startfile(fldrpath)
+        elif sys.platform == "linux":
+            subprocess.call(('xdg-open', fldrpath))
 
     def finished(self):
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
