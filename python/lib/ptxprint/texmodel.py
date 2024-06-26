@@ -865,7 +865,11 @@ class TexModel:
             doc = self._makeUSFM(data.splitlines(True), bk)
         return (None if doc else data, doc)
         
-    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True):
+    def _changeError(self, txt):
+        self.printer.doError(txt, title="Error in changes.txt")
+        logger.warn(txt)
+
+    def convertBook(self, bk, chaprange, outdir, prjdir, bkindex=0, isbk=True):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
         except ValueError:
@@ -892,9 +896,9 @@ class TexModel:
             infpath = self.flattenModule(infpath, outdir)
             if isinstance(infpath, tuple) and infpath[0] is None:
                 self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
-                secondary=str(infpath[1]), 
-                title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
-                show=not self.printer.get("c_quickRun"))
+                        secondary=str(infpath[1]), 
+                        title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
+                        show=not self.printer.get("c_quickRun"))
                 return None
         else:
             infpath = os.path.join(prjdir, fname)
@@ -949,7 +953,7 @@ class TexModel:
 
         if self.changes is not None and len(self.changes):
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
-            dat = runChanges(self.changes, bk, dat)
+            dat = runChanges(self.changes, bk, dat, errorfn=self._changeError if bkindex == 0 else None)
             #self.analyzeImageCopyrights(dat)
 
         if self.dict['project/canonicalise']:

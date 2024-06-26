@@ -480,7 +480,7 @@ def ustr(x):
     res = re.sub(r"\\U([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), res)
     return res
 
-def runChanges(changes, bk, dat):
+def runChanges(changes, bk, dat, errorfn=None):
     def wrap(t, l):
         def proc(m):
             res = m.expand(t) if isinstance(t, str) else t(m)
@@ -503,7 +503,8 @@ def runChanges(changes, bk, dat):
         except TypeError as e:
             raise TypeError(str(e) + "\n at "+c[3])
         except regex._regex_core.error as e:
-            raise regex._regex_core.error(str(e) + "\n at " + c[3])
+            if errorfn is not None:
+                errorfn(str(e) + "\n at " + c[3])
     return dat
 
 _htmlentities = {

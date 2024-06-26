@@ -612,7 +612,7 @@ class RunJob:
             b = j[0][0].first.book if j[1] else j[0]
             logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:
-                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
+                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], bkindex=i)
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
