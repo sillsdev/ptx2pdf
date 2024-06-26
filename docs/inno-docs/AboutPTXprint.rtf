@@ -1,0 +1,339 @@
+{\rtf1\ansi\deff3\adeflang1025
+{\fonttbl{\f0\froman\fprq2\fcharset0 Times New Roman;}{\f1\froman\fprq2\fcharset2 Symbol;}{\f2\fswiss\fprq2\fcharset0 Arial;}{\f3\froman\fprq2\fcharset0 Liberation Serif{\*\falt Times New Roman};}{\f4\froman\fprq2\fcharset128 Times New Roman;}{\f5\fmodern\fprq1\fcharset128 Courier New;}{\f6\fmodern\fprq1\fcharset0 Liberation Mono{\*\falt Courier New};}{\f7\fswiss\fprq2\fcharset0 Liberation Sans{\*\falt Arial};}{\f8\fmodern\fprq1\fcharset0 NSimSun;}{\f9\fnil\fprq2\fcharset0 Microsoft YaHei;}{\f10\fnil\fprq0\fcharset128 Mangal;}{\f11\fnil\fprq2\fcharset0 Mangal;}}
+{\colortbl;\red0\green0\blue0;\red0\green0\blue255;\red0\green255\blue255;\red0\green255\blue0;\red255\green0\blue255;\red255\green0\blue0;\red255\green255\blue0;\red255\green255\blue255;\red0\green0\blue128;\red0\green128\blue128;\red0\green128\blue0;\red128\green0\blue128;\red128\green0\blue0;\red128\green128\blue0;\red128\green128\blue128;\red192\green192\blue192;\red30\green106\blue57;\red201\green33\blue30;\red42\green96\blue153;}
+{\stylesheet{\s0\snext0\rtlch\af11\afs24\alang1081 \ltrch\lang5129\langfe2052\hich\af3\loch\nowidctlpar\hyphpar0\ltrpar\cf0\f3\fs24\lang5129\dbch\af12\langfe2052 Normal;}
+{\*\cs15\snext15\loch\cf9\ul\ulc0 Hyperlink;}
+{\s16\sbasedon0\snext17\rtlch\af11\afs28 \ltrch\hich\af7\loch\sb240\sa120\keepn\f7\fs28\dbch\af9 Heading;}
+{\s17\sbasedon0\snext17\loch\sl276\slmult1\sb0\sa140 Body Text;}
+{\s18\sbasedon17\snext18\rtlch\af10 \ltrch\loch\sl276\slmult1\sb0\sa140 List;}
+{\s19\sbasedon0\snext19\rtlch\af10\afs24\ai \ltrch\loch\sb120\sa120\noline\fs24\i Caption;}
+{\s20\sbasedon0\snext20\rtlch\af10 \ltrch\loch\noline Index;}
+{\s21\sbasedon0\snext21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8 Preformatted Text;}
+}{\*\generator LibreOffice/7.6.2.1$Windows_X86_64 LibreOffice_project/56f7684011345957bbf33a7ee678afaf4d2ba333}{\info{\creatim\yr0\mo0\dy0\hr0\min0}{\revtim\yr2024\mo6\dy27\hr5\min15}{\printim\yr0\mo0\dy0\hr0\min0}}{\*\userprops}\deftab709
+\hyphauto1\viewscale160
+{\*\pgdsctbl
+{\pgdsc0\pgdscuse451\pgwsxn11906\pghsxn16838\marglsxn1134\margrsxn1134\margtsxn1134\margbsxn1134\pgdscnxt0 Default Page Style;}}
+\formshade\nobrkwrptbl\paperh16838\paperw11906\margl1134\margr1134\margt1134\margb1134\sectd\sbknone\pgndec\sftnnar\saftnnrlc\sectunlocked1\pgwsxn11906\pghsxn16838\marglsxn1134\margrsxn1134\margtsxn1134\margbsxn1134\ftnbj\ftnstart1\ftnrstcont\ftnnar\aenddoc\aftnrstcont\aftnstart1\aftnnrlc
+{\*\ftnsep\chftnsep}\pgndec\pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+About PTXprint }{\hich\af4\loch\f4\loch
+ver 2.5 (June 2024)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\qc\ltrpar{\rtlch\afs28\ab \ltrch\hich\af4\loch\cf6\fs28\b\f4\loch
+PLEASE READ THIS ESPECIALLY IF YOU ARE \line CURRENTLY PART WAY THROUGH TYPESETTING A JOB}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\ab \ltrch\hich\af4\loch\cf19\b\f4\loch
+There are 2 significant changes}{\hich\af4\loch\cf19\f4\loch
+ in this version of PTXprint which you need to be aware of:}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf17\f4\loch
+(1) In order to keep up with underlying software changes (Python 3.11+) }{\rtlch\ab \ltrch\hich\af4\loch\cf17\b\f4\loch
+Regular Expressions are now stricter}{\hich\af4\loch\cf17\f4\loch
+. You must \uc2 \u8216\'81\'65escape\u8217\'81\'66 any \\ backslash codes with an additional \\ in your changes.txt rules. So for example, a rule like:\uc1 }
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf17\f4
+    }{\hich\af5\loch\cf17\f5\loch
+"\\p" > "\\m"}{\hich\af4\loch\cf17\f4\loch
+ will need to be \uc2 \u8216\'81\'65fixed\u8217\'81\'66:  \uc1 }{\hich\af5\loch\cf17\f5\loch
+"\\\\p" > "\\\\m"}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf17\f4\loch
+But notice that you only need to add the \\ to escape }{\rtlch\ab \ltrch\hich\af4\loch\cf17\b\f4\loch
+USFM codes}{\hich\af4\loch\cf17\f4\loch
+, not all the other valid codes like }{\hich\af5\loch\cf17\f5\loch
+\\r \\n \\1 \\2 }{\hich\af4\loch\cf17\f4\loch
+and so on:}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf17\f4
+    }{\hich\af5\loch\cf17\f5\loch
+"(}{\rtlch\ab \ltrch\hich\af5\loch\cf17\b\f5\loch
+\\\\id}{\hich\af5\loch\cf17\f5\loch
+ (...).*\\n)" > "\\1}{\rtlch\ab \ltrch\hich\af5\loch\cf17\b\f5\loch
+\\\\h1}{\hich\af5\loch\cf17\f5\loch
+ \\2\\r\\n"}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf12\f4\loch
+(2) There have been some significant changes made to the underlying XeTeX macros which will improve the layout of the text, especially footnotes. However, these }{\rtlch\ab \ltrch\hich\af4\loch\cf12\b\f4\loch
+minor changes could cause the text to flow differently}{\hich\af4\loch\cf12\f4\loch
+, which is not a good if you are part way through a typesetting project. To help maintain backward compatibility, a system has been introduced which enables you to Lock the XeTeX Layout to a previous level. If you need to revert to the previous XeTeX layout then take the following steps:}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf12\f4\loch
+\tab (a) Enable the option (on the Advanced tab) \uc2 \u8220\'81\'67Lock XeTeX Layout Level\u8221\'81\'68\uc1 }
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf12\f4
+      }{\hich\af4\loch\cf12\f4\loch
+(b) Enable the option \uc2 \u8220\'81\'67Show TeXpert Hacks\u8221\'81\'68\uc1 }
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf12\f4
+      }{\hich\af4\loch\cf12\f4\loch
+(c) Switch to the \uc2 \u8220\'81\'67TeXpert Hacks\u8221\'81\'68 tab\uc1 }
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf12\f4
+      }{\hich\af4\loch\cf12\f4\loch
+(d) Change the option (at top of the list) \uc2 \u8220\'81\'67Maximum Layout Version\u8221\'81\'68 from 0 (default) to \uc1 }{\rtlch\ab \ltrch\hich\af4\loch\cf12\b\f4\loch
+1}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\cf12\f4\loch
+Doing this should cause the text to flow exactly as it was in previous versions.}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\ab \ltrch\hich\af4\loch\b\f4\loch
+"Bible Layout For Everyone"}{\hich\af4\loch\f4\loch
+ - Easily create scripture PDFs for trial publications}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+PTXprint is an easy-to-use program which harnesses the power of extended macros from PTX2PDF which is a XeTeX based macro package for typesetting USFM formatted (Paratext) scripture files.}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\sb0\sa0\ltrpar{\hich\af4\loch\f4\loch
+PTXprint is available for both Linux and Windows from the main home page: }{{\field{\*\fldinst HYPERLINK "https://software.sil.org/ptxprint/download" }{\fldrslt {\hich\af4\loch\loch\cf9\ul\ulc0\f4\loch
+https://software.sil.org/ptxprint/download}{}}}\hich\af4\loch\f4\loch
+ }
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+It is 64-bit software and will NOT run on 32-bit versions of Windows. It is recommended to be used with Paratext }{\hich\af4\loch\f4\loch
+9.x}{\hich\af4\loch\f4\loch
+ (or later), but can also work even if Paratext is NOT installed. It is not part of the Paratext updates ecosystem, so does not get automatically updated. Please check the PTXprint home page regularly for updated versions.}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\sb0\sa0\ltrpar{\hich\af4\loch\f4\loch
+There is a category dedicated to PTXprint issues on (}{{\field{\*\fldinst HYPERLINK "https://support.bible/PTXprint" }{\fldrslt {\hich\af4\loch\loch\cf9\ul\ulc0\f4\loch
+https://support.bible/PTXprint}{}}}\hich\af4\loch\f4\loch
+) where you can get assistance from other PTXprint users.}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\sb0\sa0\ltrpar{\hich\af4\loch\f4\loch
+Please use "New Issue" button in the GitHub Issue Tracking System (}{{\field{\*\fldinst HYPERLINK "https://github.com/sillsdev/ptx2pdf/issues" }{\fldrslt {\hich\af4\loch\loch\cf9\ul\ulc0\f4\loch
+https://github.com/sillsdev/ptx2pdf/issues}{}}}\hich\af4\loch\f4\loch
+) to report any bugs, or document suggestions for improvement. }
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\sb0\sa0\ltrpar{\hich\af4\loch\f4\loch
+If you serve in a sensitive location, you can report issues directly by e-mail <}{{\field{\*\fldinst HYPERLINK "mailto:ptxprint_support@sil.org" }{\fldrslt {\hich\af4\loch\loch\cf9\ul\ulc0\f4\loch
+ptxprint_support@sil.org}{}}}\hich\af4\loch\f4\loch
+> rather than via the publicly accessible websites listed above.}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs22\ab \ltrch\hich\af4\loch\fs22\b\f4\loch
+Examples of running PTXprint from the command-line (in Windows):}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af5\loch\f5\loch
+"C:\\Program Files\\PTXprint\\PTXprint.exe" -c Diglot XYZ}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+will OPEN PTXprint with XYZ project active and the saved configuration called "Diglot" (but won't print anything)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af5\loch\f5\loch
+"C:\\Program Files\\PTXprint\\PTXprint.exe" -c NTandPsalms -P XYZ}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+will directly create a PDF from the XYZ project using the saved configuration called "NTandPsalms" (no GUI will appear)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af5\loch\f5\loch
+"C:\\Program Files\\PTXprint\\PTXprint.exe" -b ROM -c SideXrefs -P XYZ}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+will directly create a PDF of ROMANS from the XYZ project using the saved configuration called "SideXrefs" (no GUI will appear)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af5\loch\f5\loch
+"C:\\Program Files\\PTXprint\\PTXprint.exe" -b "MAT MRK LUK JHN ACT GLO" -P XYZ}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+will directly create a PDF of 4 gospels, Acts and Glossary from the XYZ project using the Default configuration (no GUI will appear)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af5\loch\f5\loch
+"C:\\Program Files\\PTXprint\\PTXprint.exe" -p C:\\Data\\VariousUSFMprojects}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+with -p (lowercase) and a folder name will run PTXprint pointing to that folder instead of the usual Paratext folder. Note that}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+it expects one or more subfolders which contain the actual USFM files. The names of any subfolders containing valid .SFM files}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+will appear in the Project drop-down menu once PTXprint has opened.}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af5\loch\f5\loch
+"C:\\Program Files\\PTXprint\\PTXprint.exe" -d "C:\\Temp"}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+runs PTXprint, and output PDF files will be created in C:\\Temp folder instead of C:\\My Paratext 9 Projects\\<XYZ>\\local\\ptxprint}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\hich\af4\loch\f4\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af5\loch\f5\loch
+"C:\\Program Files\\PTXprint\\PTXprint.exe" -h}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4\loch
+will show the command-line usage parameters (as seen below)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\hich\af4\loch\f4
+ }
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+usage: PTXprint.exe [-h] [-c CONFIG] [-M MODULE] [-p PARATEXT] [-d DIRECTORY]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                    }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+[-P] [-b BOOKS] [-Z ZIP] [-R RUNS] [-q] [-L LANG]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                    }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+[-n PORT] [-m MACROS] [-N] [-l LOGGING]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                    }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+[--logfile LOGFILE] [--timeout TIMEOUT] [-T] [-f FONTPATH]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                    }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+[--nofontcache] [--testsuite] [-A ACTION] [-F DIFFFILE]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                    }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+[--diffpages DIFFPAGES] [-D DEFINE] [--debug] [-C CAPTURE]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                    }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+[-z EXTRAS] [-V PDFVERSION] [-I] [-E EXPERIMENTAL]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                    }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+[pid]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+positional arguments:}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+pid                   Project id or full path to a ptxprint.cfg file}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+options:}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-h, --help            show this help message and exit}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-c CONFIG, --config CONFIG}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Configuration path to load}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-M MODULE, --module MODULE}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Module to print}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-p PARATEXT, --paratext PARATEXT}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Path to Paratext Projects directory}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-d DIRECTORY, --directory DIRECTORY}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Directory to store temporary files in}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-P, --print           Hits print}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-b BOOKS, --books BOOKS}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Reference list to print (as in Choose Books)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-Z ZIP, --zip ZIP     Unzip into project directory and delete at end}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-R RUNS, --runs RUNS  limit xetex runs}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-q, --quiet           No splash screen. Limit output}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-L LANG, --lang LANG  Set UI language code}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-n PORT, --port PORT  Listen on given port}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-m MACROS, --macros MACROS}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Directory containing TeX macros (paratext2.tex)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-N, --nointernet      Disable all internet access}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-l LOGGING, --logging LOGGING}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Logging level [DEBUG, *INFO*, WARN, ERROR, number]}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+--logfile LOGFILE     Set logging file [ptxprint.log] or "none"}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+--timeout TIMEOUT     xetex runtime timeout}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-T, --testing         Run in testing, output xdv}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-f FONTPATH, --fontpath FONTPATH}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Directory of fonts to include (repeatable)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+--nofontcache         Don't update list of system fonts}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+--testsuite           Only use fonts from project and testsuite}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-A ACTION, --action ACTION}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Run view method instead of print}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-F DIFFFILE, --difffile DIFFFILE}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Create difference PDF against PDF file}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+--diffpages DIFFPAGES}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Maximum number of pages to insert in diff file}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-D DEFINE, --define DEFINE}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+set UI component=value. Repeatable}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+--debug               Give debug output}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-C CAPTURE, --capture CAPTURE}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Capture interaction events to file. Not to be used yet}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-z EXTRAS, --extras EXTRAS}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Special bit flags: 0-3 - verbosity of xdvipdfmx}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-V PDFVERSION, --pdfversion PDFVERSION}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+PDF Version to read and write * 10 (default=14)}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-I, --identify        add widget names to tooltips}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+  }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+-E EXPERIMENTAL, --experimental EXPERIMENTAL}
+\par \pard\plain \s21\rtlch\af6\afs20 \ltrch\hich\af6\loch\sb0\sa0\f6\fs20\dbch\af8\ql\ltrpar{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5
+                        }{\rtlch\afs18 \ltrch\hich\af5\loch\fs18\f5\loch
+Enable experimental bits: 0 = UI extensions}
+\par }
