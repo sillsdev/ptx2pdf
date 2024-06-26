@@ -22474,25 +22474,57 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox" id="box_codelets">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="valign">start</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-top">20</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Use the buttons below to insert
+various code snippets as required.</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="margin-top">10</property>
+                                <property name="label" translatable="yes">Code Snippets</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
+                              <object class="GtkBox" id="box_codelets">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-top">20</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>

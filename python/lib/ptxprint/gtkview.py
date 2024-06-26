@@ -3649,11 +3649,10 @@ class GtkViewModel(ViewModel):
         self.onRefreshViewerTextClicked(None)
         
     def onEditModule(self, btn):
-        # print(f"{self.moduleFile=} {self.builder.get_object('lb_bibleModule').get_label()=} ")
         if self.moduleFile is not None:
-        
             self._editProcFile(str(self.moduleFile), "prj")
             self.onRefreshViewerTextClicked(None)
+            self.builder.get_object('l_Settings').set_label(os.path.basename(self.moduleFile))
         
     def onEditModsTeX(self, btn):
         cfgname = self.configName()

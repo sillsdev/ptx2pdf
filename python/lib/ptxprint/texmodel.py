@@ -869,7 +869,7 @@ class TexModel:
         self.printer.doError(txt, title="Error in changes.txt")
         logger.warn(txt)
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, bkindex=0, isbk=True):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
         except ValueError:

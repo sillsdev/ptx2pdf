@@ -33,8 +33,11 @@ Significant New features:
     ** Allow letter-spaced text to be hyphenated
     ** Added option to force hyphens (in text) to be non-breaking
 
-  * Added Lock Layout Mode (stop accidental changes to layout settings
-    while doing final pageup, and locks TeX macros to a particular version)
+  * Added Lock XeTeX Layout (retains backward compatibility to a particular
+    Maximum Layout Version to ensure stability from layout-altering changes)
+
+  * Added Lock UI Layout (stop accidental changes to layout settings
+    fonts, and styles while doing final page layout)
 
 User Interface improvements:
   * Make sure correct View Level (Mini, Basic, Full) shows at startup
@@ -216,13 +219,14 @@ Issues Fixed:
   * Various python 3.12 cleanups (mostly affecting Regex)
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.5 (20 Jun 2024)
+Bug fixes and Improvements in 2.5 (28 Jun 2024)
 
-  * Added Lock Layout Mode (stop accidental changes to layout settings
-    while doing final page layout, and locks TeX macros to a particular
+  * Added Lock XeTeX Layout (retains backward compatibility to a particular
     Maximum Layout Version to ensure stability from layout-altering changes)
+    ** Layout Version changed (2) to reduce space above note rules to regain control
 
-  * Add version layout change (2) to reduce space above note rules to regain control
+  * Added Lock UI Layout (stop accidental changes to layout settings
+    fonts, and styles while doing final page layout)
 
   * Fixed ToC leader bugs, and TOC with no leaders
 
@@ -263,9 +267,56 @@ Bug fixes and Improvements in 2.5 (20 Jun 2024)
   * Better error handling in changes.txt
   
   * Add headers example snippet. Fix auto hyphenation
-  
+  ---
   * Added UI elements to make setting dynamic text borders easier
-
+  
+  * Prevent illegal note movement, get adjust list to apply to 2nd par of a non-paragraphed note
+  
+  * Better first line indent behaviour for notes
+  
+  * Gain control over 1st and 2nd footnote adjustments
+  
+  * Correct linespacing of final note when it's adjusted
+  
+  * Fix internotespace if not using newnotepar
+  
+  * Fix oldstyle parnotes
+  
+  * Sort out the ornaments and borders confusion
+  
+  * Fix buggy output templates in changes testing
+  
+  * Only correct prevdepth if there is a box there
+  
+  * Fix stray intranotespace if there is only one note
+  
+  * Improve UI for Creating Configs (Save As...) and Deleting Configs (Confirm first)
+  
+  * Do not warn about standalone markers in the stylesheet, as the definition is not getting changed
+  
+  * Better handling of zgetperiphs and periphs (watch for possible regression as we now process 
+    zgetperiph in ptxprint rather than the macros now)
+  
+  * Reenable default noteparagraphnum
+  
+  * No indent before a single note
+  
+  * Up to a limit, caclulted note heights as though raising does not happen
+  
+  * Minor improvements to AboutPTXprint.txt documentation
+  
+  * Don't crash if view&edit with no project selected
+  
+  * Add biba..bibc to list of sort lists
+  
+  * Enable fontextension on footnotes
+  
+  * Fix up footnote callers for layout v2
+  
+  * Get log checking working when finalize changes the pdf name
+  
+  * Minor underfilled page report improvement
+  
 Bug fixes and Improvements in 2.4.22 (4 Jun 2024)
 
   * Re-work import/unpack configuration settings to be more powerful
