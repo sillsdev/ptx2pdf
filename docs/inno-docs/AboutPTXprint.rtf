@@ -1,5 +1,5 @@
 {\rtf1\ansi\ansicpg1252\deff0\nouicompat\deftab709{\fonttbl{\f0\fnil\fcharset0 Arial;}{\f1\fswiss\fprq2\fcharset128 Arial;}}
-{\colortbl ;\red255\green0\blue0;\red42\green96\blue153;\red128\green0\blue128;\red30\green106\blue57;\red0\green0\blue255;\red0\green0\blue128;}
+{\colortbl ;\red255\green0\blue0;\red42\green96\blue153;\red128\green0\blue128;\red30\green106\blue57;\red0\green0\blue255;\red0\green128\blue192;\red0\green0\blue128;}
 {\*\generator Riched20 10.0.22621}\viewkind4\uc1 
 \pard\nowidctlpar\hyphpar0\qc\fs20\lang5129 About PTXprint ver 2.5 (27 June 2024)\par
 \par
@@ -12,14 +12,14 @@
 \cf3       (a) Enable the option (on the Advanced tab) \f1\ldblquote\f0 Lock XeTeX Layout Level\f1\rdblquote\cf0\f0\par
 \cf3       (b) Enable the option \f1\ldblquote\f0 Show TeXpert Hacks\f1\rdblquote\cf0\f0\par
 \cf3       (c) Switch to the \f1\ldblquote\f0 TeXpert Hacks\f1\rdblquote\f0  tab\cf0\par
-\cf3       (d) Set the \f1\ldblquote\b\f0 Maximum Layout Version\b0\f1\rdblquote\f0  to \b 1\b0  (from 0=default) at top of list\cf0\par
-\cf3 Doing this should cause the text to flow exactly as it was in previous versions.\cf0\par
+\cf3       (d) Set the \f1\ldblquote\b\f0 Maximum Layout Version\b0\f1\rdblquote\f0  to \b 1\b0  (down from 2) at top of list (0=latest)\cf0\par
+\cf3 Doing this should cause the text to flow exactly as it was in previous versions (pre 2.5).\cf0\par
 \par
 \cf4 (2) In order to keep up with underlying software changes (Python 3.11+) \b Regular Expressions are now stricter\b0 . You must \f1\lquote\f0 escape\f1\rquote\f0  any \\ backslash codes with an additional \\ in your changes.txt rules. So for example, a rule like:\cf0\par
-\cf4     \cf2 "\\p" > "\\m"\cf4  will need to be \f1\lquote\f0 fixed\f1\rquote\f0 :  \cf2 "{{\field{\*\fldinst{HYPERLINK "\\\\\\\\p"}}{\fldrslt{\\\\p\ul0\cf0}}}}\f0\fs20 " > "{{\field{\*\fldinst{HYPERLINK "\\\\\\\\m"}}{\fldrslt{\\\\m\ul0\cf0}}}}\f0\fs20 "\cf0\par
+\cf4     \cf2 "\\p" > "\\m"\cf4  will need to be \f1\lquote\f0 fixed\f1\rquote\f0 :  \cf2 "{\cf0{\field{\*\fldinst{HYPERLINK "\\\\\\\\p"}}{\fldrslt{\\\\p\ul0\cf0}}}}\f0\fs20 " > "{\cf0{\field{\*\fldinst{HYPERLINK "\\\\\\\\m"}}{\fldrslt{\\\\m\ul0\cf0}}}}\f0\fs20 "\cf0\par
 \cf4 But notice that you only need to add the \\ to escape \b USFM codes\b0 , not all the other valid codes like \\r \\n \\1 \\2 and so on:\cf0\par
-\cf4     \cf2 "({\b{\field{\*\fldinst{HYPERLINK "\\\\\\\\id"}}{\fldrslt{\\\\id\ul0\cf0}}}}\f0\fs20  (...).*\\n)" > "\\1{\b{\field{\*\fldinst{HYPERLINK "\\\\\\\\h1 \\\\2\\\\r\\\\n"}}{\fldrslt{\\\\h1\b0  \\2\\r\\n\ul0\cf0}}}}\f0\fs20 "\cf0\par
-\par
+\cf4     \cf6 "({\cf0\b{\field{\*\fldinst{HYPERLINK "\\\\\\\\id"}}{\fldrslt{\\\\id\ul0\cf0}}}}\f0\fs20  (...).*\\n)" > "\\1{\b{\field{\*\fldinst{HYPERLINK "\\\\\\\\h1 \\\\2\\\\r\\\\n"}}{\fldrslt{\\\\h1\b0  \\2\\r\\n\ul0\cf0}}}}\f0\fs20 "\par
+\cf0\par
 \b "Bible Layout For Everyone"\b0  - Easily create scripture PDFs for trial publications\par
 \par
 PTXprint is an easy-to-use program which harnesses the power of extended macros from PTX2PDF which is a XeTeX based macro package for typesetting USFM formatted (Paratext) scripture files.\par
@@ -31,7 +31,7 @@ There is a category dedicated to PTXprint issues on ({{\field{\*\fldinst{HYPERLI
 \par
 Please use "New Issue" button in the GitHub Issue Tracking System ({{\field{\*\fldinst{HYPERLINK https://github.com/sillsdev/ptx2pdf/issues }}{\fldrslt{https://github.com/sillsdev/ptx2pdf/issues\ul0\cf0}}}}\f0\fs20 ) to report any bugs, or document suggestions for improvement. \par
 \par
-If you serve in a sensitive location, you can report issues directly by e-mail <{{\field{\*\fldinst{HYPERLINK "mailto:ptxprint_support@sil.org" }}{\fldrslt{\ul\cf5\cf6\ul ptxprint_support@sil.org}}}}\f0\fs20 > rather than via the publicly accessible websites listed above.\par
+If you serve in a sensitive location, you can report issues directly by e-mail <{{\field{\*\fldinst{HYPERLINK "mailto:ptxprint_support@sil.org" }}{\fldrslt{\ul\cf5\cf7\ul ptxprint_support@sil.org}}}}\f0\fs20 > rather than via the publicly accessible websites listed above.\par
 \par
 \par
 \b\fs22 Examples of running PTXprint from the command-line (in Windows):\b0\fs20\par

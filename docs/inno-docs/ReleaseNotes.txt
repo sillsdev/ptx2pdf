@@ -1,10 +1,25 @@
 PTXprint 2.4.22 Release Notes
-20 Jun 2024
+27 Jun 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
 Version 2.5 release summary: (changes since last major version 2.4)
+
+There are 2 significant changes in this version of PTXprint which you need to be aware of:
+
+(1) Changes have been made to the underlying XeTeX macros which will improve the layout of the text, particularly footnotes. However, these minor changes could cause the text to flow differently, which is not ideal if you are part way through a typesetting project. To help maintain backward compatibility, a system has been introduced which enables you to Lock the XeTeX Layout engine to a previous level. So if you need to revert to the previous XeTeX layout then take the following steps:
+      (a) Enable the option (on the Advanced tab) “Lock XeTeX Layout Level”
+      (b) Enable the option “Show TeXpert Hacks”
+      (c) Switch to the “TeXpert Hacks” tab
+      (d) Set the “Maximum Layout Version” to 1 (down from 2) at top of list (0=latest)
+Doing this should cause the text to flow exactly as it was in previous versions.
+
+(2) In order to keep up with underlying software changes (Python 3.11+) Regular Expressions are now stricter. You must ‘escape’ any \ backslash codes with an additional \ in your changes.txt rules. So for example, a rule like:
+    "\p" > "\m" will need to be ‘fixed’:  "\\p" > "\\m"
+But notice that you only need to add the \ to escape USFM codes, not all the other valid codes like \r \n \1 \2 and so on:
+    "(\\id (...).*\n)" > "\1\\h1 \2\r\n"
+_______________________________________________________________
 
 Significant New features:
   * Text Borders (dynamically generated) can be set up with a few clicks (Tabs+Borders)
@@ -51,6 +66,8 @@ User Interface improvements:
   * Download program update button now works more consistently
   * Remove image from preview when deleting pictures, and changing configs
   * Internationalize URIs on Help tab via Google Translate
+  * Improved error handling for issues in changes.txt
+  * Get help directories working on Linux and Windows
   * Improvements for working with AdjLists
     ** New format of generated AdjLists now makes lines easier to edit
     ** Add AdjList syntax highlighting (helps highlight/fix errors quicker)
@@ -114,6 +131,8 @@ General enhancements:
   * Implement 'H' figure position (cHaracter-like HERE)
     ** To go with 'H', there are 2 new sizes, 'font' and 'line', 
     ** related to the font size and \baselineskip.
+  * Minor underfilled page report improvement
+  * Fix toc missing L and R side for 'bible' sort
 
 Documentation:
   * Added various help files to technical documentation
@@ -122,10 +141,12 @@ Documentation:
   * Add headers example snippet
   * Document new paragraphed notes controls
   * Document diacritic colouring in snippets.md
+  * Updated and recoloured ornaments catalogue
   * Document and illustrate most of the new footnote options
   * Direct all More Info... Style links to appropriate documentation sites:
     ** Use recently created official docs site for all USFM markers
     ** And github-docs-help-zfoo.md pages for milestones (zbl, zlabel, zpage, zpmkr, zrule)
+  * Add RTF version of AboutPTXprint with warnings and advice about 2.5 upgrade
 
 Technical improvements:
   * Add after book hook as last thing in processing a book before released the id
@@ -214,6 +235,12 @@ Issues Fixed:
   * Fix reference tests after changes to b64codes
   * Fix @ issues with hyphenation and default texpert hacks values
   * Fix CenterColXrefs
+  * Fix internotespace if not using newnotepar
+  * Fix oldstyle parnotes
+  * Fix buggy output templates in changes testing
+  * Fix stray intranotespace if there is only one note
+  * Fix up footnote callers for layout v2
+  * Fix toc missing L and R side for 'bible' sort
   * Avoid lost last partial-page of SFM input
   * Page end textborder kern should only happen when page border in effect
   * Various python 3.12 cleanups (mostly affecting Regex)
@@ -267,7 +294,7 @@ Bug fixes and Improvements in 2.5 (28 Jun 2024)
   * Better error handling in changes.txt
   
   * Add headers example snippet. Fix auto hyphenation
-  ---
+  
   * Added UI elements to make setting dynamic text borders easier
   
   * Prevent illegal note movement, get adjust list to apply to 2nd par of a non-paragraphed note
@@ -316,6 +343,16 @@ Bug fixes and Improvements in 2.5 (28 Jun 2024)
   * Get log checking working when finalize changes the pdf name
   
   * Minor underfilled page report improvement
+  
+  * Improved error handling for issues in changes.txt
+  
+  * Get help directories working on Linux and Windows
+  
+  * Add RTF version of AboutPTXprint with warnings and advice about 2.5 upgrade
+  
+  * Fix toc missing L and R side for 'bible' sort
+  
+  * Updated and recoloured ornaments catalogue
   
 Bug fixes and Improvements in 2.4.22 (4 Jun 2024)
 
