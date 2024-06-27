@@ -316,7 +316,7 @@
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \setn@tewidth{#1}%
+  \setn@tewidth{#1}{0}%
   \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 1 \fi 
     \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
   \fi
@@ -554,12 +554,24 @@
 \newif\ifst@dynotes
 \newif\ifnotst@dynotes
 \newif\ifonlyst@dynotes
-\def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
-  \checkp@ranotes{#1}\setn@tewidth{#1}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
+\def\ins@rtn@tecl@ssc@l#1{% insert the given note class, either paragraphed or separately
+ \message{colcolcheck on #1}%
+ \ifcsname notecol-#1\endcsname
+  \checkp@ranotes{#1}\setn@tewidth{#1}{1}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
     \ifonlyst@dynotes\let\n@xt=\n@ffin\else
       \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \fi\fi
-  \n@xt{#1}}
+ \else\let\n@xt=\n@ffin
+ \fi
+ \n@xt{#1}}
+\def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
+ \message{colcheck on #1}%
+ \ifcsname notecol-#1\endcsname \let\n@xt=\n@ffin \else
+  \checkp@ranotes{#1}\setn@tewidth{#1}{0}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
+    \ifonlyst@dynotes\let\n@xt=\n@ffin\else
+      \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
+ \fi\fi\fi
+ \n@xt{#1}}
 
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
@@ -738,7 +750,7 @@
 % Notewidth for diglots depends on settings and column. 
 %+c_setnotewidth
 \newdimen\n@tewidth
-\def\setn@tewidth#1{%
+\def\setn@tewidth#1#2{%
   \x@\let\x@\th@sins\csname note-no-insert-#1\endcsname
   \ifx\th@sins\relax % Normal footnote
    \ifdiglot
@@ -756,7 +768,8 @@
        \dimen9=\StudyGutterFactor\FontSizeUnit
        \advance\n@tewidth by -0.5\dimen9
      \else
-       \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
+       \if#11\relax\ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
+          \else\n@tewidth=\textwidth\fi
        \else\n@tewidth=\textwidth\fi
      \fi
    \fi
@@ -806,7 +819,7 @@
 
 \def\maken@tepara#1#2{%
   % set appropriate hsize width for diglot or not.
-  \setn@tewidth{#2}%
+  %\setn@tewidth{#2}{0}%
   \edef\tmp{#2}\ifx\tmp\l@stnoteclass\lastn@tetrue
   \else
     \lastn@tefalse

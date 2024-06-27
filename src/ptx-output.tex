@@ -508,7 +508,7 @@
         \global\ht\partial=\dimen1
       \fi
     \fi
-    \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
+    \ifColNotes\notst@dynotestrue\clearn@tescol\notst@dynotesfalse\fi
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}%
@@ -702,6 +702,15 @@
   \else\cle@rn@t@cl@ss{#1}\fi
 }
 
+\def\cle@rn@tecl@sscol#1{%
+  \ifcsname notecol-#1\endcsname
+    \ifnum \ifnotst@dynotes\x@\ifx\csname studynotes-#1\endcsname\relax 1\else 0\fi\else 1\fi =1
+      \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+    \fi
+    \trace{n}{cle@rn@t@cl@sscol{#1}->\the\th@cl@ss}%
+    \global\setbox\th@cl@ss=\box\voidb@x
+  \fi
+}
 \def\cle@rn@t@cl@ss#1{%
   \ifnum \ifnotst@dynotes\x@\ifx\csname studynotes-#1\endcsname\relax 1\else 0\fi\else 1\fi =1
     \x@\let\x@\th@cl@ss\csname note-#1\endcsname
@@ -710,6 +719,7 @@
   \global\setbox\th@cl@ss=\box\voidb@x
 }
 \def\clearn@tes{\trace{o}{clearn@tes}\let\\=\cle@rn@tecl@ss \the\n@tecl@sses}
+\def\clearn@tescol{\trace{o}{clearn@tescol}\let\\=\cle@rn@tecl@sscol \the\n@tecl@sses}
 
 \def\s@venotes#1#2{\trace{nS}{Saving footnotes #2}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
 \def\s@veallnotes#1{%
@@ -1219,7 +1229,7 @@
       \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt \ifdim\t@xttrialheight<#1 \t@xttrialheight\else #1\fi\else #1\fi}{\XrefNotesWidth}{\XrefNotes}\tmp}%
       %\setbox\xr@fbox\vbox{\unvbox\xr@fbox\setbox0=\lastbox\dimen0=\dp0\box0\vskip\dimen0}%
     \fi
-    \keepn@testrue\notst@dynotestrue\m@kenotebox\notst@dynotesfalse\keepn@tesfalse
+    \keepn@testrue\notst@dynotestrue\m@kenoteboxcol\notst@dynotesfalse\keepn@tesfalse
     \setbox\coln@tebox=\vbox{%
       \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
       \ifdim\ht2>0pt
@@ -1379,7 +1389,7 @@
     \ifdim\availht<2\baselineskip \twocolp@geout \clearn@tes
       \global\output={\savepartialpagedbounce}% In situation where there's a fast-reset, need to come back here.
     \else
-      \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
+      \ifColNotes\notst@dynotestrue\clearn@tescol\notst@dynotesfalse\fi
     \fi
     \trace{o}{spdd: s@ved=\the\ht\s@vedpage+\the\dp\s@vedpage, op=\the\outputpenalty \the\output}%
     \unsavem@rks
@@ -1413,12 +1423,14 @@
 
 %+c_makenotebox
 % Make a box of all the notes
-\def\m@kenotebox{%
+\def\m@kenotebox{\m@kenoteb@x{ins@rtn@tecl@ss}}
+\def\m@kenoteboxcol{\m@kenoteb@x{ins@rtn@tecl@ssc@l}}
+\def\m@kenoteb@x#1{%
   \global\setbox2=\vbox{
     \edef\lastn@tewid{0pt}%
     \global\let\l@stnoteclass\empty\let\\=\setl@stnoteclass \the\n@tecl@sses % identify the last note
     \f@rstnotetrue
-    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
+    \x@\let\x@\\\csname #1\endcsname \the\n@tecl@sses % output all note classes
     \iff@rstnote % no notes actually occurred!
       \trace{i}{No notes}%
       \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
