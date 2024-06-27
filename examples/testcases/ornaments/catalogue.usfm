@@ -182,8 +182,16 @@ include half- and quarter-values.
 \s1 Full Sized Test
 \p
 This page is mainly to demonstrate the border at full scale. At the time of writing it used 
-pattern Vectorian1 (which has a BorderWidth of 15) adjusted to use  BorderPadding of -30
-and a light green BorderColour and dark green BorderFillColour.
+pattern Vectorian1 adjusted to use:\endgraf
+\\BorderPadding -50\endgraf
+\\BoxPadding 60\endgraf
+\\BorderWidth 30\endgraf
+\\BorderFillColour x1f6f00\endgraf
+\\BorderColour x2fcf00\endgraf
+\\BgColour xf5eede\endgraf
+
+
+This giving a light green and dark green .
 
 \esbe
 

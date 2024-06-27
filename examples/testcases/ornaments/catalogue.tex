@@ -217,12 +217,13 @@
 \bigorn{52}{pgfhan}
 \bigorn{53}{pgfhan}
 \bigorn{54}{pgfhan}
-\SetupOrnament{0.1}{0.0 0.5 0.0}{0.9 0.8 0.0}
+%Green and yellow
+\SetupOrnament{0.3}{0.0 0.5 0.2}{0.8 0.7 0.2}
 \def\typeout#1{}
 \def\SwitchToHan{\message{switchtohan}\SwitchOrnamentsFamily{pgfhan}}
 \def\testornamentsh{
   \xdef\ornamentheight{20pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.8\hsize\relax}
-  \SetupOrnament{0.1}{1.0 0.0 0.0}{0.9 0.8 0.0}
+  \SetupOrnament{0.3}{0.8 0.2 0.2}{0.8 0.7 0.0}
   \SwitchOrnamentsFamily{pgfhan}
   \catcode`\#=6 \catcode`\%=14
   %\includeifpresent{\pgfOrnamentsObject}
