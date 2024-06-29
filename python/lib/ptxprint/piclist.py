@@ -391,11 +391,11 @@ class PicInfo(dict):
         f = regex.match(r"\\fig.*?$", txt, regex.R|regex.S, endpos=m.start(0))
         if t:
             if f is None or t.start(0) > f.start(0):
-                res = ("k." + t.group(1).replace(" ", ""), "", "")
+                res = ("k." + t.group(1).replace(" ", ""), "", "", "")
             else:
-                res = ("k." + t.group(1).replace(" ", ""), "", "{:03d}".format(i+1))
+                res = ("k." + t.group(1).replace(" ", ""), "", "{:03d}".format(i+1), "")
         else:
-            res = ("p", "", "{:03d}".format(i+1))
+            res = ("p", "", "{:03d}".format(i+1), "")
         return res
 
     def _syncpic(self, pic, key):
@@ -419,8 +419,8 @@ class PicInfo(dict):
                         if bk == "GLO":
                             a = self._getanchor(f, txt, i)
                         else:
-                            a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
-                        r = "{}{} {}{}{}{}".format(bk, suffix, *a, ("="+str(parcount)) if parcount > 1 else "")
+                            a = ("p", "", "{:03d}".format(i+1), ("="+str(parcount)) if parcount > 1 else "") if isperiph else (c, ".", lastv, "")
+                        r = "{}{} {}{}{}{}".format(bk, suffix, *a)
                         pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip(),
                                'srcref': r}
                         if bk == 'GLO':
