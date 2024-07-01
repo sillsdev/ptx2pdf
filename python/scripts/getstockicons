@@ -126,9 +126,13 @@ with open(args.outfile, "w") as outf:
     elif args.format == "inno":
         outf.write("[Files]\n")
         for i in sorted(icons):
+            foundit = False
             for p in findall(args.source, i):
+                foundit = True
                 p = p[p.find(args.source)+len(args.source)+1:].replace("/","\\")
                 d = args.destination + "\\" + p if args.destination else p
                 s = args.source.replace("/", "\\") + "\\" + p + "\\" + i if args.source != "." else p + "\\" + i
                 outf.write('Source: "{}"; DestDir: "{}"\n'.format(s, d))
+            if not foundit:
+                print(f"Failed to find source for {i}")
 
