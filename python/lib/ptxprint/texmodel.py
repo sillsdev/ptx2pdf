@@ -86,7 +86,7 @@ class TexModel:
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
-                    ("MAT-REV", "intnt"), ("MAT-JHN", "intgospel"), ("ROM-PHM", "intepistles"), ("HEB-REV", "intletters"))
+                    ("MAT-REV", "intnt"), ("MAT-JHN", "intgospels"), ("ROM-PHM", "intepistles"), ("HEB-REV", "intletters"))
     _fonts = {
         "fontregular":              ("bl_fontR", None, None, None, None),
         "fontbold":                 ("bl_fontB", None, "c_fakebold", "fontbold/embolden", "fontbold/slant"),

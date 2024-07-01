@@ -162,6 +162,8 @@
   \fi
 }
 
+\def\g@tperiphid#1#2{periphcontents#1=#2}
+
 \x@\def\csname MS:zgetperiph\endcsname{%
   \ifhe@dings\endhe@dings\fi
   \get@ttribute{side}%
@@ -171,7 +173,7 @@
     \let\t@mpside\attr@b
   \fi
   \get@ttribute{id}%
-  \ifcsname periphcontents\t@mpside=\attr@b\endcsname
+  \ifcsname\g@tperiphid{\t@mpside}{\attr@b}\endcsname
     \let\periph@@@\attr@b
     \@chk@pull{\periph@@@}%
     \let\p@llpages=\tmp
@@ -184,10 +186,10 @@
     \keeptriggerfalse
     \advance\periphdepth by 1
     \ifcsname keepperiph-\periph@@@\endcsname\keeptriggertrue\fi
-    \csname periphcontents\t@mpside=\periph@@@\endcsname
+    \csname\g@tperiphid{\t@mpside}{\periph@@@}\endcsname
     \advance\periphdepth by -1
     \ifkeeptrigger\else
-      \x@\global\x@\let\csname periphcontents\t@mpside=\periph@@@\endcsname\undefined
+      \x@\global\x@\let\csname\g@tperiphid{\t@mpside}{\periph@@@}\endcsname\undefined
     \fi
     \ifx\p@llpages\tr@e\ifnum\periphdepth=0
       \m@rkpdftag{}%
