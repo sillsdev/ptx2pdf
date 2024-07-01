@@ -17,6 +17,7 @@ REM xcopy /s /i /y /q C:\msys64\mingw64\share\gtksourceview-1.0 dist\ptxprint\sh
 xcopy /s /i /y /q C:\msys64\mingw64\share\icons dist\ptxprint\share\icons
 xcopy /s /i /y /q C:\msys64\mingw64\share\themes dist\ptxprint\share\themes
 xcopy /s /i /y /q python\lib\ptxprint\mo dist\ptxprint\mo
+xcopy /s /i /y /q python\graphics\icons dist\ptxprint\share\icons
 REM Then use a python script to build the #include list of only the needed icons from the Adwaita folders
 python python\scripts\getstockicons -f inno -s dist\ptxprint -d "{app}" -i list-remove-symbolic.symbolic -i list-add-symbolic.symbolic -i pan-end-symbolic.symbolic -i pan-up-symbolic.symbolic -i pan-down-symbolic.symbolic -i object-select-symbolic.symbolic -i edit-clear -i edit-clear-rtl -i edit-clear-symbolic.symbolic -i edit-clear-symbolic-rtl.symbolic -i system-run-symbolic.symbolic -i view-grid-symbolic.symbolic -i software-update-available-symbolic.symbolic -i changes-prevent-symbolic.symbolic -i changes-allow-symbolic.symbolic -i folder-open-symbolic.symbolic -i help-about-symbolic.symbolic -i emblem-documents-symbolic.symbolic -i document-revert-symbolic.symbolic -i open-menu-symbolic.symbolic -i preferences-system-sharing-symbolic.symbolic -i view-dual-symbolic.symbolic -i go-bottom-symbolic.symbolic -i go-top-symbolic.symbolic -i format-justify-fill-symbolic.symbolic python\lib\ptxprint\ptxprint.glade AdwaitaIcons.txt
 
