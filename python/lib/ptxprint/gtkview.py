@@ -3101,6 +3101,16 @@ class GtkViewModel(ViewModel):
                 obj.set_adjustment(adj)
                 v = str(x[0])
                 tiptext = "{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+            elif wname.startswith("fcb_"):
+                obj = Gtk.ComboBoxText()
+                for i, (a, b) in enumerate(opt[1].items()):
+                    obj.append(a, b)
+                    if i == 0:
+                        v = a
+                obj.set_entry_text_column(0)
+                obj.set_id_column(1)
+                obj.set_active_id(v)
+                tiptext = "{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
             l.set_tooltip_text(tiptext)
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)

@@ -11,6 +11,7 @@ texpertOptions = {
     # "AdvCompatLineSpacing": ["linespacebase", False, "*** Help *** Need a lambda fn here ***", _("Legacy 1/14 LineSpacing"), _("In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.")],
     # "AdvCompatGlyphMetrics":  ["useglyphmetrics", False, "*** Help *** Need a lambda fn here ***", _("Use glyph metrics"), _("PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths. Font metrics gives more consistent results.")],
     "bookresetcallers":   ["bookresetcallers", True, "", _("Reset Callers at Each Book"), _("Re-start the footnote and cross-reference callers at the start of each book")],
+    "BookStartPage": ["bookstartpage", {"page": _("Next page"), "mult": _("Same page"), "odd": _("Odd page")}, r"\def{0}{{{1}}}", _("Where to start a new book"), _("Does a scripture book start on a new page, the same page as the previous book, or an odd page")],
     "notesEachBook":      ["neachbook", True, "", _("Endnotes at Each Book"), _("Output endnotes at the end of each book")],
     "FinalNotesDown":     ["fnotesdown", False, "", _("Final Page Notes Down"), _("Push notes on the final page to the bottom of the page")],
     "MarkTriggerPoints":  ["mktrigpts", False, "", _("Mark Trigger Points"), _("Display trigger points in output")],
@@ -60,7 +61,7 @@ texpertOptions = {
     "FootnoteMulS":  ["footnotemuls", (100, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Single column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")],
     "FootnoteMulT":  ["footnotemult", (100, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Two column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")],
     "FootnoteMulD":  ["footnotemuld", (500, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")],
-    "FootnoteMulC":  ["footnotemulc", (0, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")]
+    "FootnoteMulC":  ["footnotemulc", (0, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")],
 }
 
 def widgetName(opt):
@@ -69,6 +70,8 @@ def widgetName(opt):
         pref = "c_"
     elif isinstance(t, tuple):
         pref = "s_"
+    elif isinstance(t, dict):
+        pref = "fcb_"
     return pref + opt[0]
 
 class TeXpert:
@@ -81,7 +84,15 @@ class TeXpert:
             v = view.get(n)
             if n.startswith("c_") and v is None:
                 v = False
-            if v != opt[1]:
+            if n.startswith("c_"):
+                incl = v != opt[1]
+            elif n.startswith("s_"):
+                incl = v != opt[1][0]
+            elif n.startswith("fcb_"):
+                incl = v != list(opt[1].keys())[0]
+            else:
+                incl = False
+            if incl:
                 view._configset(config, "{}/{}".format(self.section, opt[0]), v)
 
     @classmethod
@@ -97,6 +108,8 @@ class TeXpert:
                 v = strtobool(config.get(self.section, opt[0], fallback=default))
             elif n.startswith("s_"):
                 v = asfloat(config.get(self.section, opt[0], fallback=default), default)
+            elif n.startswith("fcb_"):
+                v = config.get(self.section, opt[0], fallback=default)
             else:
                 v = None
             if v is not None:
@@ -119,6 +132,9 @@ class TeXpert:
                         res.append(f'\\{k}{"true" if v else "false"}')
             elif n.startswith("s_"):
                 if v is not None and float(v) != opt[1][0]:
+                    res.append(opt[2].format("\\"+k, v))
+            elif n.startswith("fcb_"):
+                if v is not None and v != list(opt[1].keys())[0]:
                     res.append(opt[2].format("\\"+k, v))
         return "\n".join(res)
 
