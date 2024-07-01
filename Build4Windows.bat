@@ -14,7 +14,7 @@ xcopy /s /i /y /q C:\msys64\mingw64\share\locale dist\ptxprint\share\locale
 xcopy /s /i /y /q C:\msys64\mingw64\share\fontconfig dist\ptxprint\share\fontconfig
 xcopy /s /i /y /q C:\msys64\mingw64\share\glib-2.0 dist\ptxprint\share\glib-2.0
 REM xcopy /s /i /y /q C:\msys64\mingw64\share\gtksourceview-1.0 dist\ptxprint\share\gtksourceview-4
-xcopy /s /i /y /q C:\msys64\mingw64\share\icons dist\ptxprint\share\icons
+REM xcopy /s /i /y /q C:\msys64\mingw64\share\icons dist\ptxprint\share\icons
 xcopy /s /i /y /q C:\msys64\mingw64\share\themes dist\ptxprint\share\themes
 xcopy /s /i /y /q python\lib\ptxprint\mo dist\ptxprint\mo
 xcopy /s /i /y /q python\graphics\icons dist\ptxprint\share\icons
