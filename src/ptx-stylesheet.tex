@@ -1215,10 +1215,10 @@
   \else
     \ifSeparateVerseAdornments
       \adorningrangefalse
-      \AdornVerseNumber{\v@rsefrom}\endash\AdornVerseNumber{\v@rseto}%
+      \AdornVerseNumber{\v@rsefrom}\RangeChar\AdornVerseNumber{\v@rseto}%
     \else
       \adorningrangetrue
-      \AdornVerseNumber{\v@rsefrom \endash \v@rseto}%
+      \AdornVerseNumber{\v@rsefrom \RangeChar \v@rseto}%
     \fi
   \fi
 }
@@ -1234,7 +1234,7 @@
     %\getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
     \dimen0=\ssf\baselineskip \advance\dimen0 by -\baselineskip
     \setbox1=\hbox{\cstyle{v}{\adornv{\v@rseto}}}%
-    \global\setbox#1=\vbox to \ht1{\s@tbaseline{v}{v}\vtop{\rightskip=0pt\leftskip=0pt\hbox{\llap{\cstyle{v}{\endash}}%
+    \global\setbox#1=\vbox to \ht1{\s@tbaseline{v}{v}\vtop{\rightskip=0pt\leftskip=0pt\hbox{\llap{\cstyle{v}{\RangeChar}}%
                                  \vbox{\hbox to \wd1{\hskip\leftskip\cstyle{v}{\adornv{\v@rsefrom}}\hskip\rightskip}%
                                        %\kern\dimen0
                                         \box1}}}}%
