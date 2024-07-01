@@ -1646,7 +1646,8 @@ class ViewModel:
             digview.setPrjid(prjid)
             if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
-            digview.picinfos = self.picinfos
+            else:
+                digview.picinfos = self.picinfos
         if digview is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))
         else:
