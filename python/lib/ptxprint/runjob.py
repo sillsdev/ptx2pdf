@@ -795,7 +795,9 @@ class RunJob:
         if self.inArchive:
             return genfiles
         os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
+        # os.putenv("extra_mem_bot", "5000000")    # extra main memory on top of 5M
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
+        # os.putenv("save_size", "1000000")    # extra increase save stack from 80000
         os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
         os.putenv("max_print_line", "32767")    # Allow long error messages
         ptxmacrospath = os.path.abspath(self.macrosdir)

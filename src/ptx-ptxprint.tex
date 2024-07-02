@@ -35,8 +35,9 @@
 \sethook{end}{wh}{\endR}
 \sethook{start}{wg}{\beginL}
 \sethook{end}{wg}{\endL}
+\catcode`\@=11
 \begingroup\obeylines
-\catcode`\@=11\catcode`\^=7
+\catcode`\^=7
 \gdef\zpdf{\bgroup\obeylines\unc@tcodespecials\@zdpf}
 \gdef\@zdpf#1#2^^M{\egroup\includepdf{#2}}
 %\gdef\rem{\bgroup\obeylines\unc@tcodespecials\catcode`\\=12\@rem}
@@ -49,10 +50,16 @@
 \gdef\dopagenums{\global\let\pagenumberL=\folio\global\let\pagenumberR=\folio\global\let\pagenumber=\folio}
 \gdef\resetpagenums{\bgroup\m@kedigitsother\obeylines\r@setpagenums}
 \gdef\r@setpagenums #1^^M{\global\pageno=#1\egroup}
-\sethook{start}{xts}{\proc@strong{xts}}
-\gdef\intropages#1{\ifversion{2}{\ifcsname\g@tperiphid{}{#1}\endcsname\pb\zNeedOddPage\prepusfm\zgetperiph|#1\*\unprepusfm\pb\zNeedOddPage\fi}{\pb\zNeedOddPage\prepusfm\zgetperiph|#1\*\unprepusfm\pb\zNeedOddPage}}
 \endgroup
+\sethook{start}{xts}{\proc@strong{xts}}
+\def\intropages#1{\ifversion{2}{\ifcsname\g@tperiphid{}{#1}\endcsname
+    \ifx\IntroPageAlign\val@MULTI\else\pb\fi
+    \ifx\IntroPageAlign\val@dd \zNeedOddPage \else\ifx\IntroPageAlign\val@GROUP \ifin@ntro\else\zNeedOddPage \fi\fi\fi
+    \prepusfm\zgetperiph|#1\*\unprepusfm\in@ntrotrue
+    \ifx\IntroPageAlign\val@MULTI \else\pb\fi
+  \fi}{\pb\zNeedOddPage\prepusfm\zgetperiph|#1\*\unprepusfm\pb\zNeedOddPage}}
+\newif\ifin@ntro \in@ntrofalse
 \catcode`\@=12
 \def\onebody{\global\BodyColumns=1}
 \def\twobody{\global\BodyColumns=2}
-
+\def\IntroPageAlign{page}

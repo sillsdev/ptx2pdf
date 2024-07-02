@@ -1797,7 +1797,7 @@
         \iflastptxfile
           \lastbookendrule
         \else
-          \ifendbooknoeject
+          \ifnum 1=\ifendbooknoeject 1\else\ifx\PageAlign\val@MULTI 1 \else 0\fi\fi
             \trace{o}{bookendrule}%
             \bookendrule
           \fi

@@ -1825,11 +1825,13 @@
   \global\let\ifOmitChapterNumberRH=\@@@ifOmitChapterNumberRH
 }
 
+\def\PageAlign{page}
 \def\preptxfile{
  \outputpenalty=0
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
+ \ifx\PageAlign\val@odd\zNeedOddPage\fi
  \xdef\ptxst@rtp@ge{\the\pageno}%
  \ifOneChapBook\startOneChapBook\fi
  \ifdiglot
@@ -1912,7 +1914,7 @@
  \global\let\pagenumberL=\folio\global\let\pagenumberR=\folio\global\let\pagenumber=\folio
  \initp@rastyles
  \initn@testyles
- \ifendbooknoeject\else\p@geonetrue\fi
+ \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else\p@geonetrue\fi\fi
  \endbookfalse
 }
 %-csty_ptxfile_intro
@@ -1978,20 +1980,20 @@
  \bookendpagebreak
  \global\output={\onecol}
  \trace{o}{end of book eject with \the\ht\partial \space used}
- \ifendbooknoeject\iflastptxfile
-    \iflastbooknoeject\else
+ \ifnum 1=\ifendbooknoeject 1 \else\ifx\PageAlign\val@MULTI 1\else 0\fi\fi
+    \iflastptxfile\iflastbooknoeject\else
       \trace{o}{forcing pagebreak as this is the last file}%
       \noindent\eject
-    \fi
- \fi\fi
- \ifendbooknoeject\else
+    \fi\fi
+ \fi
+ \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else
   \ifdim\ht\partial>0pt
     % If box255 is empty then partial box keeps its contents but has ht=0 !
     {\everypar={}\ZWSP\baselineskip=0pt\noindent}\eject\fi%\noindent\eject\fi
   \iflastptxfile\closepiclist\fi
   \closeadjlist
   \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse
- \fi
+ \fi\fi
  \trace{oh}{hook for bookafter-\id@@@ \ifcsname bookafter-\id@@@\endcsname exists \x@\meaning\csname bookafter-\id@@@\endcsname\else missing\fi}%
  \ifx\book\relax\else\csname bookafter-\id@@@\endcsname\relax\fi
  \trace{oh}{hook for bookafter-all \ifcsname bookafter-all\endcsname exists \x@\meaning\csname bookafter-all\endcsname\else missing\fi}%
