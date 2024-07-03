@@ -11,19 +11,33 @@
     <style id="highlightR" _name="HighlightR" map-to="def:highlight"/>
     <style id="error" name="Bad" map-to="def:error"/>
     <style id="default" name="Default"/>
+    <style id="secondary-active" name="Secondary-Active"/>
+    <style id="secondary" name="Secondary"/>
   </styles>
 
   <definitions>
     <context id="adjlist">
       <include>
+        <context id="active-secondary" style-ref="secondary-active">
+          <match>^[A-Z0-9]{3}R\s+\d+\.\d+(-\d+|[a-z])?\s+((\+?\-\s*[1-9]\d*(\s*\[\d+\])?)|\+?\s*[1-9]\d*(\s*\[\d+\])?)?\s*(%.*)?$</match>
+          <include>
+            <context id="shrinkable" style-ref="shrink" sub-pattern="3"/>
+          </include>
+        </context>
         <context id="active" style-ref="identifier">
-          <match>^[A-Z0-9]{3}[LR]?\s+\d+\.\d+(-\d+|[a-z])?\s+((\+?\-\s*[1-9]\d*(\s*\[\d+\])?)|\+?\s*[1-9]\d*(\s*\[\d+\])?)?\s*(%.*)?$</match>
+          <match>^[A-Z0-9]{3}L?\s+\d+\.\d+(-\d+|[a-z])?\s+((\+?\-\s*[1-9]\d*(\s*\[\d+\])?)|\+?\s*[1-9]\d*(\s*\[\d+\])?)?\s*(%.*)?$</match>
+          <include>
+            <context id="shrinkable" style-ref="shrink" sub-pattern="3"/>
+          </include>
+        </context>
+        <context id="adj-secondary" style-ref="secondary">
+          <match>^[A-Z0-9]{3}R\s+\d+\.\d+(-\d+|[a-z])?\s+((\+?\-\s*0+(\s*\[\d+\])?)|\+?\s*0+(\s*\[\d+\])?)?\s*(%.*)?$</match>
           <include>
             <context id="shrinkable" style-ref="shrink" sub-pattern="3"/>
           </include>
         </context>
         <context id="adj" style-ref="default">
-          <match>^[A-Z0-9]{3}[LR]?\s+\d+\.\d+(-\d+|[a-z])?\s+((\+?\-\s*0+(\s*\[\d+\])?)|\+?\s*0+(\s*\[\d+\])?)?\s*(%.*)?$</match>
+          <match>^[A-Z0-9]{3}L?\s+\d+\.\d+(-\d+|[a-z])?\s+((\+?\-\s*0+(\s*\[\d+\])?)|\+?\s*0+(\s*\[\d+\])?)?\s*(%.*)?$</match>
           <include>
             <context id="shrinkable" style-ref="shrink" sub-pattern="3"/>
           </include>

@@ -38,7 +38,7 @@
 %Code to read periph sections line by line.
 \gdef\@periph{%
   \trace{per}{periph: \sh@wstuff}%
-  \ifinperiph\endp@riph\inperiphfalse\else%
+  \ifinperiph\endp@riph\else%
     \ifsk@pping\egroup\fi%
   \fi%
   \endlastp@rstyle{periph}\ifhe@dings\endhe@dings\fi%
@@ -52,10 +52,10 @@
   \trace{per}{Starting periph group: \sh@wstuff}%
   \bgroup\catcode13=12 \@@periph}%
 \gdef\@@periph #1^^M{\x@\@@@periph #1||\E}%
-\gdef\g@tp@riphline#1^^M{\gdef\p@riphtst{#1}\trace{T}{Got line '\p@riphtst'}\ifx\p@riphtst\endofperiph\let\getp@riphline\endp@riph\else\ifx\p@riphtst\empty\else\testp@riph{#1}\fi\fi\getp@riphline}%
+\gdef\g@tp@riphline#1^^M{\gdef\p@riphtst{#1}\trace{T}{Got line '\p@riphtst'}\ifx\p@riphtst\endofperiph\trace{per}{relax found}\let\getp@riphline\endp@riph\else\ifx\p@riphtst\empty\else\testp@riph{#1}\fi\fi\getp@riphline}%
 %% DO NOT COMMENT END OF FOLLOWING LINE:
 \gdef\getp@riphlines{\bgroup\inperiphtrue\codesforperiphgr@b\let\p@riphlines\empty\let\getp@riphline\g@tp@riphline\everyeof{\relax
-\noexpand} \getp@riphline}%
+\trace{per}{EOF2 \sh@wstuff}\ifinperiph\endp@riph\fi\noexpand} \getp@riphline}%
 \gdef\n@wline{
 }%
 }
@@ -65,8 +65,6 @@
 \catcode`\~=0 \catcode`\\=12 
   ~gdef~@@testendperiph{\zendperiph}%
   ~gdef~testp@riph #1{~edef~t@mp{#1}~ifx~t@mp~@@testendperiph~inperiphfalse~fi
-    ~expandafter~def~expandafter~p@riphtst~expandafter{#1}%
-    ~ifx~p@riphtst~relax~inperiphfalse~fi%
     ~ifinperiph~expandafter~@testp@riph#1\periph~E~else~let~getp@riphline~endp@riph~E~fi}%
 {~catcode13=12 %
   ~gdef~@testp@riph #1\periph#2~E{% NOTE that line feeds are not spaces any more! Comment them!
@@ -114,7 +112,7 @@
     \egroup\egroup
     \let\tmp\p@riphlines
     \x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{%
-      \x@\kill@PossParamCache\x@\p@sheof\x@\scantokens\x@{\tmp}\p@peof\endlastp@rstyle{endperiph}%
+      \x@\kill@PossParamCache\x@\p@sheof\x@\scantokens\x@{\tmp}\endlastp@rstyle{endperiph}\p@peof
       \ifhe@dings\endhe@dings\fi
       }\everyeof{}%
     \trace{per}{Saved periph \periphattr@b as \meaning\tmp}%
@@ -130,9 +128,10 @@
       \ifPagebreakAfterPeriph\pagebreak\fi
     \fi
   \fi}%\let\periph@@@\empty}
+
 \def\zendperiph{\endlastp@rstyle{zendperiph}%
   \ifhe@dings\endhe@dings\fi
-  \ifinperiph\endp@riph\inperiphfalse\fi}
+  \ifinperiph\endp@riph\fi}
 
 \newif\ifStorePeriph\StorePeriphtrue % are *any* periphs stored?
 \newif\ifStoreAllPeriphs \StoreAllPeriphsfalse
@@ -276,7 +275,7 @@
     \catcode13=10
     \everyeof{%
       \ifhe@dings\endhe@dings\fi
-      \trace{per}{end of file}\endp@riph}%
+      \trace{per}{EOF1 \sh@wstuff}\ifinperiph\endp@riph\fi}%
     \aftergroup\@ndofperiphgroup%
     \let\n@xt\relax
   \fi
