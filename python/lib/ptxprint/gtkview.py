@@ -900,8 +900,10 @@ class GtkViewModel(ViewModel):
         logger.debug("Creating source views")
         lm = GtkSource.LanguageManager()
         langpath = os.path.join(os.path.dirname(__file__), "syntax")
+        sm = GtkSource.StyleSchemeManager()
         logger.debug(f"Setting syntax files path to {langpath}")
         lm.set_search_path([langpath])
+        sm.set_search_path([langpath])
         for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
             self.buf.append(GtkSource.Buffer())
             self.cursors.append((0,0))
@@ -925,6 +927,8 @@ class GtkViewModel(ViewModel):
                     view.connect(evnt, self.onViewEdited)
             view.connect("key-press-event", onTextEditKeypress, tuple([i]+list(self.fileViews[i])+[self]))
             if k == "AdjList":
+                s = sm.get_scheme("ptxprint")
+                self.buf[i].set_style_scheme(s)
                 l = lm.get_language("adjlist")
                 logger.debug(f"Loaded language adjlist {l}")
                 self.buf[i].set_language(l)
