@@ -6,7 +6,7 @@ _______________________________________________________________
 
 Bug fixes and Improvements in 2.5.1 (3 Jul 2024)
 
-  * Fix PicList generation for GLO book (not to use para numbers)
+  * Refactor PicList generation for GLO book (not to use para numbers)
   
   * Get Adwaita icons working on new TC Win 10 build agent (manage our own icons)
   
@@ -26,8 +26,9 @@ Bug fixes and Improvements in 2.5.1 (3 Jul 2024)
   
   * Extra macros for ranges (#955)
   
-  * Add more adjlist syntax highlighting
-
+  * Add background gray for diglot secondary in adjlist
+  
+  * Solve periph group not closing (fix for out of memory issue)
 _______________________________________________________________
 
 Version 2.5 release summary: (changes since last major version 2.4)
