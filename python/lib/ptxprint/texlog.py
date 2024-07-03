@@ -165,11 +165,9 @@ def summarizeTexLog(logText):
                 messageSummary.append(msg)
                 if i < 1 or len(category) < 2 or 'S' not in category:
                     for j, r in enumerate(response, start=1):
-                        if j == 1:
-                            messageSummary.append(f"  To fix it, try:")
-                        messageSummary.append(f"  {j}. {responses[r]}")
+                        messageSummary.append(f"  Try {j}. {responses[r]}")
 
-    # Look for Unbalanced or Unfilled pages (only show up if \tracing{b} is enabled in ptxprint-mods.tex)
+    # Look for Unbalanced or Unfilled pages
     uf_matches = re.findall(r'Underfill\[(A|B)\]: \[(\d+)\]', logText)
     if len(uf_matches):
         # Extract unique page numbers and sort them in ascending order
