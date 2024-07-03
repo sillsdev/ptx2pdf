@@ -386,14 +386,19 @@ class PicInfo(dict):
             inf.close()
         self.rmdups()
 
-    def _getanchor(self, m, txt, i):
-        t = regex.match(r"\\k\s(.*?)\\k\*.*?$", txt, regex.R|regex.S, endpos=m.start(0))
-        f = regex.match(r"\\fig.*?$", txt, regex.R|regex.S, endpos=m.start(0))
+    def _getanchor(self, m, txt, i, currentk):
+        """ returns (anchor, """
+        if m is None:
+            rextras = {}
+            fend = len(txt)
+        else:
+            rextras = {"endpos": m.start(0)}
+            fend = m.start(0)
+        t = regex.match(r"\\k\s(.*?)\\k\*.*?$", txt, regex.R|regex.S, **rextras)
         if t:
-            if f is None or t.start(0) > f.start(0):
-                res = ("k." + t.group(1).replace(" ", ""), "", "", "")
-            else:
-                res = ("k." + t.group(1).replace(" ", ""), "", "{:03d}".format(i+1), "")
+            res = ("k." + t.group(1).replace(" ", ""), "", "", "")
+        elif currentk is not None:
+            res = (currentk, "", "", "="+str(i) if i > 0 else "")
         else:
             res = ("p", "", "{:03d}".format(i+1), "")
         return res
@@ -409,6 +414,8 @@ class PicInfo(dict):
 
     def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent, parcount=0, fn=None):
         # logger.debug(f"Reading pics for {bk} + {suffix}")
+        koffset = 0
+        currentk = None
         for s in re.split(r"\\(?:m[st][e]?|i(?:mt[e]?|ex|[bemopqs])|s[dpr]|c[ld]|[pqrs])\d?", txt):
             parcount += 1
             for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
@@ -417,9 +424,12 @@ class PicInfo(dict):
                 if len(m):
                     for i, f in enumerate(m):     # usfm 2
                         if bk == "GLO":
-                            a = self._getanchor(f, txt, i)
+                            a = self._getanchor(f, s, parcount - koffset, currentk)
+                            if a[0].startswith("k") and a[3] != "":
+                                koffset = parcount
+                                currentk = a[0]
                         else:
-                            a = ("p", "", "{:03d}".format(i+1), ("="+str(parcount)) if parcount > 1 else "") if isperiph else (c, ".", lastv, "")
+                            a = ("p", "", "{:03d}".format(i+1), ("="+str(parcount)) if parcount - koffset > 1 else "") if isperiph else (c, ".", lastv, "")
                         r = "{}{} {}{}{}{}".format(bk, suffix, *a)
                         pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip(),
                                'srcref': r}
@@ -443,6 +453,12 @@ class PicInfo(dict):
                                 pic[posparms[j]] = v
                             self._fixPicinfo(pic)
                     break
+            else:
+                if bk == "GLO":
+                    a = self._getanchor(None, s, parcount - koffset, None)
+                    if a[0].startswith("k"):
+                        koffset = parcount
+                        currentk = a[0]
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in nonScriptureBooks
