@@ -7219,28 +7219,6 @@ Includes markers: \io1 ... \io4 \ior \iot</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_startOnHalfPage">
-                                    <property name="label" translatable="yes">Begin Next Book on Last Page of Previous Book</property>
-                                    <property name="name">Flow one book into the next book</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">If the last page of a book uses less than
-two-thirds of the page (65%), then the 
-next book will start on the same page.
-
-Note that you can modify this percentage
-on the Advanced tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_filterGlossary">
                                     <property name="label" translatable="yes">Filter Glossary to Only Include Entries Used in the Text</property>
                                     <property name="name">Filter glossary</property>
@@ -7317,6 +7295,9 @@ to be printed and given to a different person.</property>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>

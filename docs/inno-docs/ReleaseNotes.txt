@@ -1,7 +1,33 @@
 PTXprint 2.5 Release Notes
-27 Jun 2024
+3 Jul 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_______________________________________________________________
+
+Bug fixes and Improvements in 2.5.1 (3 Jul 2024)
+
+  * Fix PicList generation for GLO book (not to use para numbers)
+  
+  * Get Adwaita icons working on new TC Win 10 build agent (manage our own icons)
+  
+  * Fix left margin in tc1 for example and update some test configs
+  
+  * Update WinDevEnvSetupGuide.md added mingw-w64-x86_64-adwaita-icon-theme
+  
+  * Guard v2 on no forced page break if intro missing
+  
+  * Add bookstartpage to TeXpert hacks
+  
+  * Add IntroPageAlign and PageAlign defs and texhacks
+  
+  * Fix post intropages page insertions
+  
+  * Don't crash if the diglot project doesn't have the config
+  
+  * Extra macros for ranges (#955)
+  
+  * Add more adjlist syntax highlighting
+
 _______________________________________________________________
 
 Version 2.5 release summary: (changes since last major version 2.4)
@@ -9,14 +35,14 @@ Version 2.5 release summary: (changes since last major version 2.4)
 There are 2 significant changes in this version of PTXprint which you need to be aware of:
 
 (1) Changes have been made to the underlying XeTeX macros which will improve the layout of the text, particularly footnotes. However, these minor changes could cause the text to flow differently, which is not ideal if you are part way through a typesetting project. To help maintain backward compatibility, a system has been introduced which enables you to Lock the XeTeX Layout engine to a previous level. So if you need to revert to the previous XeTeX layout then take the following steps:
-      (a) Enable the option (on the Advanced tab) “Lock XeTeX Layout Level”
-      (b) Enable the option “Show TeXpert Hacks”
-      (c) Switch to the “TeXpert Hacks” tab
-      (d) Set the “Maximum Layout Version” to 1 (down from 2) at top of list (0=latest)
+      (a) Enable the option (on the Advanced tab) "Lock XeTeX Layout Level"
+      (b) Enable the option "Show TeXpert Hacks"
+      (c) Switch to the "TeXpert Hacks" tab
+      (d) Set the "Maximum Layout Version" to 1 (down from 2) at top of list (0=latest)
 Doing this should cause the text to flow exactly as it was in previous versions.
 
 (2) In order to keep up with underlying software changes (Python 3.11+) Regular Expressions are now stricter. You must ‘escape’ any \ backslash codes with an additional \ in your changes.txt rules. So for example, a rule like:
-    "\p" > "\m" will need to be ‘fixed’:  "\\p" > "\\m"
+    "\p" > "\m" will need to be 'fixed':  "\\p" > "\\m"
 But notice that you only need to add the \ to escape USFM codes, not all the other valid codes like \r \n \1 \2 and so on:
     "(\\id (...).*\n)" > "\1\\h1 \2\r\n"
 _______________________________________________________________

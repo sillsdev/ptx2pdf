@@ -61,7 +61,6 @@ _map = {
     "project/ifusepremodstex":  ("c_usePreModsTex", "advanced", lambda w,v: "" if v else "%"),
     "project/ifusecustomsty":   ("c_useCustomSty", "advanced", lambda w,v: "" if v else "%"),
     "project/ifusemodssty":     ("c_useModsSty", "advanced", lambda w,v: "" if v else "%"),
-    "project/ifstarthalfpage":  ("c_startOnHalfPage", "layout", lambda w,v :"true" if v else "false"),
     "project/randompicposn":    ("c_randomPicPosn", "uiprefs", None),
     "project/canonicalise":     ("c_canonicalise", "advanced", None),
     "project/autotaghebgrk":    ("c_autoTagHebGrk", "advanced", None),

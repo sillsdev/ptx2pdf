@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.5"
 GitVersionStr = "2.5"
-ConfigVersion = "2.17"
+ConfigVersion = "2.18"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1049,6 +1049,10 @@ class ViewModel:
             if config.getboolean("fancy", "enableborders", fallback=False):
                 self._configset(config, "fancy/enableornaments", True)
 
+        if v < 2.18: # transfer this value from body tab to texpert tab
+            if config.getboolean("project", "ifstarthalfpage", fallback=False):
+                self._configset(config, "texpert/bookstartpage", "multi")
+                
         # ensure that the colophon text uses lowercase \zcodes (regardless of which version it comes from)
         colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
                         .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")

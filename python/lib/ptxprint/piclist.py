@@ -418,10 +418,13 @@ class PicInfo(dict):
         currentk = None
         for s in re.split(r"\\(?:m[st][e]?|i(?:mt[e]?|ex|[bemopqs])|s[dpr]|c[ld]|[pqrs])\d?", txt):
             parcount += 1
+            if bk == "GLO":
+                print(f"GLO {parcount=} Len s={len(s)}")
             for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
                       (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
                 m = list(regex.finditer(b[0], s))
                 if len(m):
+                    print(f"Len(m)={len(m)}")
                     for i, f in enumerate(m):     # usfm 2
                         if bk == "GLO":
                             a = self._getanchor(f, s, parcount - koffset, currentk)
