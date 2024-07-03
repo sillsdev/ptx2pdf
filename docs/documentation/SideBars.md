@@ -36,7 +36,10 @@ If it is desired to specify styling for e.g. a block that starts with an `\s2` d
 
 `\Position` option
 
-* Options: `t`, `tl`, `tr`, `ti`, `to`,  `b`, `bl`, `br`, `bi`, `bo`, `h`, `p`, `F`, `P`  or `B`
+* Options: `t`, `tl` (etc),  `b`, `bl` (etc),`h` *, `p`, `c`  `F`, `P`  or `B`
+  * Whole page: t, b, B, P, F
+  * Column top or bottom: tl (etc), bl (etc)
+  * Inline: [vertical: h,p or c][horizontal: l/r/i/o][extra]  e.g. cr2.3 (cutout, right, 2.3 lines below anchor, subject to slop)
 
 Default: b
 The position for this class of side-bars.  Any image position may be specified. For detail of the meaning, see the [Figures documentation](figures.md) 
