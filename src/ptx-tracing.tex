@@ -123,4 +123,9 @@
 \def\traceifset#1{\trace{I}{Ifset: #1=\the\currentiflevel}\x@\xdef\csname checkif@#1\endcsname{\the\currentiflevel}}
 \def\traceifcheck#1{\xdef\tr@ceiflevel{\the\currentiflevel}\trace{I}{Ifcheck: #1 \tr@ceiflevel==\csname checkif@#1\endcsname}\x@\ifnum\csname checkif@#1\endcsname=\tr@ceiflevel\else
     \message{IF CHECK #1 Failed. Entered at \csname checkif@#1\endcsname \space != exit at \tr@ceiflevel}\fi}
+% verbose tracing on/off macros to help with fault isolation
+\def\ztmon{\tracingassigns=1 \tracingmacros=1}
+\def\ztmoff{\tracingassigns=0 \tracingmacros=0}
+\def\ztvalon{\tracinggroups=1 \tracingassigns=1 \tracingrestores=1}
+\def\ztvaloff{\tracinggroups=0 \tracingassigns=0 \tracingrestores=0}
 %-tracing-support

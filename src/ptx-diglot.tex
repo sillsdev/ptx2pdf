@@ -1021,8 +1021,6 @@
   \after@this
 }
 
-\def\ztmon{\tracingassigns=1 \tracingmacros=1}
-\def\ztmoff{\tracingassigns=0 \tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
@@ -1157,6 +1155,9 @@
 
 \def\polyglotendcols{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
+  \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
+  \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
+  \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
   \pr@sideswitch{endcols}{\empty}%
   \diglot@run@trials
   \global\allNeedEmptyingfalse
