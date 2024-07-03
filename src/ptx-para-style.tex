@@ -888,11 +888,12 @@
 \let\b@okDiglot\empty
 
 %Build a \Alternative separated list of book names 
-\def\buildb@@k#1{\edef\bbtmp{#1}\x@\let\x@\t@st\csname b@ok\if L\bbtmp\else\bbtmp\fi\endcsname
+\def\buildb@@k#1{\edef\bbtmp{#1}\x@\let\x@\t@st\csname book\if L\bbtmp\else\bbtmp\fi\endcsname
   \ifx\t@st\relax\let\t@st\id@@@\fi
   \ifx\b@okDiglot\t@st\else 
     \ifx\b@okDiglot\empty\xdef\b@okDiglot{\t@st}\else\xdef\b@okDiglot{\b@okDiglot\Alternative\t@st}\fi
   \fi
+  \trace{d}{b@okDiglot(#1) is \b@okDiglot (\bbtmp / \t@st)}%
 }
 
 \def\pdfb@@km@rkD{\ifDropActions\else

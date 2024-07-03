@@ -1826,6 +1826,8 @@
 }
 
 \def\PageAlign{page}
+\def\IntroPageAlign{page}
+\newif\ifin@ntro \in@ntrofalse
 \def\preptxfile{
  \outputpenalty=0
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
@@ -1893,7 +1895,6 @@
    \fi
    \egroup
  \fi
- \in@ntrofalse
  % Check supplied line thicknesses (user might change them, e.g. after FRT):
  \let\thinlinest@ndard\tls@black\let\thinlin@type\tlt@R % Plain boring black lines
  \thinlinecheck{\EndNoteRuleThickness}{}{End Notes}{}%
