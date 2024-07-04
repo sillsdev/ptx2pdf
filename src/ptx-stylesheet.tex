@@ -958,12 +958,13 @@
 \newif\ifNoHangVerseNumberOne\NoHangVerseNumberOnetrue
 \newif\ifHangVA\HangVAfalse
 
+\newif\iffilehasverses % Usercode (e.g. book end marks) might want to know this
 \newif\ifrotateVerse \rotateVersefalse
 \def\@ddcvhooks{
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
- \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
+ \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
  % If the next token IS vp, then call relevant code to interpret before dropping 
  \def\@V@{%
   \let\nxt\@@V@@
@@ -1830,6 +1831,7 @@
 \newif\ifin@ntro \in@ntrofalse
 \def\preptxfile{
  \outputpenalty=0
+ \filehasversesfalse\gdef\fileh@sverses{\global\filehasversestrue\global\let\fileh@sverses\relax}% Set filehasverses once then done, no need to repeat it every single verse.
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse

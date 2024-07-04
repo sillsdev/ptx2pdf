@@ -261,8 +261,9 @@ class FancyBorders(Snippet):
 
 {fancy/endofbook}\newbox\decorationbox
 {fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
-{fancy/endofbook}\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
-{fancy/endofbook}\addtoendptxhooks{{\z}}
+{fancy/endofbook}\def\zBookEndDecoration{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
+{fancy/endofbook}\def\zautoBookEndDecoration{{\iffilehasverses \zBookEndDecoration\fi}}
+
 
 """
         if texmodel.dict.get("_isDiglot", False):
