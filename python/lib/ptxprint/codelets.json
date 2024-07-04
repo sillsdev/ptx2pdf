@@ -659,6 +659,12 @@
           "CodeSnippet": "\\sethook{bookend}{final}{\\layoutstylebreak\\pagebreak}\n\\sethook{final}{afterincludes}{\\layoutstylebreak\\singlecolumn\\zcolophon}"
         },
         {
+          "Type": "comment%",
+          "Label": "Apply end-of-book decoration to ALL books",
+          "Description": "The end-of-book decoration is only applied to scripture books (containing \\v verses). But this snippet applies the decoration (specified elsewhere) to all books.",
+          "CodeSnippet": "\\def\\zautoBookEndDecoration{\\zBookEndDecoration}"
+        },
+        {
           "Type": "insert",
           "Label": "Technique: Setting style parameters in ptxprint-mods.tex",
           "Description": "This snippet is less a snippet as a technique. It shows two ways of setting style parameters from TeX.",
