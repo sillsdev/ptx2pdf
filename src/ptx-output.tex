@@ -356,6 +356,7 @@
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \let\\=\bslash
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
+    \b@dyfalse\beenb@dyfalse
   \fi\traceifcheck{doublecolumns}}
 %-c_doublecolumns
 
@@ -1756,6 +1757,7 @@
     %\temptrue
     \layoutstylebreak % save any partially-full page into \partial
     %LOTS happens before this line is reached!
+    \b@dyfalse\beenb@dyfalse
     %\tempfalse
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?\iflastpage (ignored as this is last page)\fi}%
     \ifnum\ifdim\ht\partial>\PageFullFactor\textheight 1\else\iftob@dy\ifPBOnBody 1\else 0\fi\else 0\fi\fi =1 
@@ -1774,6 +1776,7 @@
     \global\output={\savepartialpage}%
     \eject
     \global\holdinginserts=1
+    \b@dyfalse\beenb@dyfalse
   \fi\fi
   \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial, b@dy\ifb@dy true\else false\fi, tob@dy\iftob@dy true\else false\fi, d@nesw@p\ifd@nesw@p true\else false\fi \space endbooknoeject\ifendbooknoeject true\else false\fi}%
   \def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}}%

@@ -157,7 +157,7 @@
 \endbc@l}%
 }
 
-\def\ch@ckiftextborderadj{\trace{eb}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \pretextb@rderskip, \posttextb@rderskip}%
+\def\ch@ckiftextborderadj{\trace{eb}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \ifb@dy body\fi,\pretextb@rderskip, \posttextb@rderskip}%
   \tempfalse\ifm@rksonpage
   \ifdim 0pt < \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax
     \temptrue
@@ -215,6 +215,7 @@
         \trace{et}{Botmark:\t@st, \the\BodyColumns/\the\IntroColumns, m@rksonpage\ifm@rksonpage true\else false\fi}%
         \ifx\t@st\intr@ \tempfalse\fi
         \ifx\t@st\t@tle\ifnum\BodyColumns=\IntroColumns \else \tempfalse\fi\fi
+        \ifbeenb@dy\else \tempfalse\fi
         \ifm@rksonpage\else\tempfalse\fi
         \ifx\t@st\empty\tempfalse\fi
         \iftemp
