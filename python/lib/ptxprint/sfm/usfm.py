@@ -456,7 +456,7 @@ class parser(sfm.parser):
                         parent)
             parent.args = ['\uFFFD']
         else:
-            parent.args = [str(tok[caller.start(1):caller.end(1)])]
+            parent.args = [str(tok[caller.start(1):caller.end(1)]),str(" ")]
             tok = tok[caller.end():]
 
         if not self.sep_re.match(str(tok)):

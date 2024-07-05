@@ -18,7 +18,7 @@ after.  But this is about footnotes\fe + \ft and endnotes \fe*, not hooks.
 \v 2 Endnotes should\x + \xo 1:2 \xt Exod 20:1\x*\fe + \ft normally\fe*  appear
 after the text in the page\fe + \ft Unless they are
 manually inserted. In either case they might be a different dimension to the body text\fe* with a centred line above them.
-The grid spacing relative to other line items ought to be preserved.
+The grid spacing relative to other line items ought to be preserved.\f + \f*
 Thereforewe need some lorem ispum. There's a nice perl package for generating
 that. 
 \p
