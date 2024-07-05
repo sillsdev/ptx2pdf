@@ -761,7 +761,7 @@ class GtkViewModel(ViewModel):
                 
         self.fileViews = []
         self.buf = []
-        self.uneditedText = {}
+        self.uneditedText = [""] * 7
         self.cursors = []
             
         if self.get("c_colophon") and self.get("txbf_colophon") == "":
@@ -2326,6 +2326,10 @@ class GtkViewModel(ViewModel):
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
         self.onViewerChangePage(None, None, pg, forced=True)
+        
+    def clearEditableBuffers(self):
+        for pgnum in (0, 1):
+            self.fileViews[pgnum][0].set_text("")
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum, forced=False):
         if nbk_Viewer is None:
@@ -2370,11 +2374,20 @@ class GtkViewModel(ViewModel):
             ibtn.set_sensitive(True)
             ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
-            if not os.path.exists(fpath):
-                logger.debug(f"Front matter from {fpath} does not exist")
-                self.uneditedText[pgnum] = _("\\rem Click the Generate button (above) to start the process of creating Front Matter...")
-                self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
-                fpath = None
+            buf = self.fileViews[pgnum][0]
+            if buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True) == "":
+                if not os.path.exists(fpath):
+                    logger.debug(f"Front matter from {fpath} does not exist")
+                    self.uneditedText[pgnum] = _("\\rem Click the Generate button (above) to start the process of creating Front Matter...")
+                    buf.set_text(self.uneditedText[pgnum])
+                else:
+                    with open(fpath, "r", encoding="utf-8") as inf:
+                        txt = inf.read()
+                        buf.set_text(txt)
+            self.enableCodelets(pgnum, fpath)
+            # self.noUpdate = False
+            self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text(fpath)
+            fpath = None
             if self.get("t_invisiblePassword") == "":
                 genBtn.set_sensitive(True)
                 self.builder.get_object("btn_editZvars").set_visible(True)
@@ -2382,7 +2395,7 @@ class GtkViewModel(ViewModel):
                 logger.debug(f"Front matter from {fpath} exists")
                 self.builder.get_object("c_autoSave").set_sensitive(False)
                 self.set("c_autoSave", False)
-
+            return
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):
             fname = self.getBookFilename(bk, prjid)
             if pgid == "scroll_FinalSFM":
@@ -3475,6 +3488,7 @@ class GtkViewModel(ViewModel):
         self.enableTXLoption()
         self.onBodyHeightChanged(None)
         self.checkFontsMissing()
+        self.clearEditableBuffers()
         logger.debug(f"Changed project to {prjid} {configName=}")
         self.builder.get_object("nbk_Main").set_current_page(0)
 
