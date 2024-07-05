@@ -29,10 +29,22 @@ def getCurrentLineIters(buffer):
 
 def processLine(buffer, reg, replace):
     line_start_iter, line_end_iter = getCurrentLineIters(buffer)
+
+    # Create marks at the start and end of the current line
+    start_mark = buffer.create_mark(None, line_start_iter, True)
+    end_mark = buffer.create_mark(None, line_end_iter, False)
+
     line_text = buffer.get_text(line_start_iter, line_end_iter, True)
     new_line_text = re.sub(reg, replace, line_text)
     buffer.delete(line_start_iter, line_end_iter)
     buffer.insert(line_start_iter, new_line_text)
+
+    # Get iterators from marks after the modification
+    line_start_iter = buffer.get_iter_at_mark(start_mark)
+    buffer.place_cursor(line_start_iter)
+    # Remove the marks
+    buffer.delete_mark(start_mark)
+    buffer.delete_mark(end_mark)
 
 def removeLine(buffer, view, model, *a): # ^l
     line_start_iter, line_end_iter = getCurrentLineIters(buffer)
@@ -41,19 +53,32 @@ def removeLine(buffer, view, model, *a): # ^l
 def commentOut(buffer, view, model, *a): # ^/
     cmt = a[0][0]
     line_start_iter, line_end_iter = getCurrentLineIters(buffer)
+    
+    # Create marks at the start and end of the current line
+    start_mark = buffer.create_mark(None, line_start_iter, True)
+    end_mark = buffer.create_mark(None, line_end_iter, False)
+    
     line_text = buffer.get_text(line_start_iter, line_end_iter, True)
     if line_text.startswith(cmt):
         new_line_text = line_text[len(cmt):].lstrip()
     else:
         new_line_text = cmt + " " + line_text
-    buffer.delete(line_start_iter, line_end_iter)
-    buffer.insert(line_start_iter, new_line_text)
 
+    buffer.delete(line_start_iter, line_end_iter)
+    buffer.insert(buffer.get_iter_at_mark(start_mark), new_line_text)
+    
+    # Get iterators from marks after the modification
+    line_start_iter = buffer.get_iter_at_mark(start_mark)
+    buffer.place_cursor(line_start_iter)
+    # Remove the marks
+    buffer.delete_mark(start_mark)
+    buffer.delete_mark(end_mark)
+    
 def justPlusOne(buffer, view, model, *a): # ^1
     processLine(buffer, r"\+(\d)", lambda m:"+" + ("1" if m.group(1) == "0" else "0"))
 
 def shrinkLine(buffer, view, model, *a): # ^i
-    processLine(buffer, r"\+.*?(-\d)", r"+-1")
+    processLine(buffer, r"\+.*?(-\d)", lambda m:"+-" + ("1" if m.group(1) == "-0" else "0"))
 
 def removeUntilNum(buffer, view, model, *a): # ^1 ^2 ... ^8 ^9
     num = str(a[0][0])
@@ -68,7 +93,6 @@ def shrinkText(buffer, view, model, *a): # ^minus
     model.set("s_viewEditFontSize", str(float(model.get("s_viewEditFontSize")) - 1))
     model.setEntryBoxFont()
 
-    
 def growText(buffer, view, model, *a): # ^plus (actually ^equal as shift isn't held)
     model.set("s_viewEditFontSize", str(float(model.get("s_viewEditFontSize")) + 1))
     model.setEntryBoxFont()
