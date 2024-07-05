@@ -147,6 +147,7 @@
       \dimen9=\ht\partial
       \ifvoid\partial\else \vbox{%      
           \ifpartialfr@med\else
+            %\trace{et}{Apply border from onecoltrial }%
             %\doTextB@rder{\partial}%2HERE
           \fi
           \hbox to \dimen1{\box\partial}} \fi
@@ -165,6 +166,7 @@
         \ifb@dy\iftob@dy\else\lshiftc@lumn{\the\pageno}\fi\fi
         \vbox to\dimen3{%
           \ifdim\ht\colA>1\onel@neunit
+            \trace{et}{Apply border from onecoltrial (shipout)}%
             \doTextB@rder{\colA}%3
           \fi
           \box\colA\kern0pt \vfil}%
@@ -525,6 +527,7 @@
     \ifnum\outputpenalty<-10000 \temptrue\fi
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
       \def\pagecontents{%
+        \trace{et}{Apply border and shipout from savepartialpage}%
         \doTextB@rder{\partial}%
         \box\partial\vfil
         \p@geendcontent
@@ -536,7 +539,8 @@
       \ifm@rksonpage
         \edef\mktmp{\botmark}%
         \ifx\mktmp\t@tle\else
-            \trace{o}{Placing border on partial page}%
+            \trace{et}{Apply border from savepartialpage - update partial}%
+            \global\partialfr@medtrue
             \doTextB@rder{\partial}%
         \fi
       \fi
@@ -1139,6 +1143,7 @@
 \def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout. Diglots have an equivalent.
   \trace{i}{s@tpage: Saving inserts}%
   \s@veinserts{chunk}%
+  \global\partialfr@medfalse
   \s@veallnotes{1}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
   %\tracingassigns=1
@@ -1362,11 +1367,12 @@
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
             \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
         \kern\lastd@pth}%
+      \trace{et}{Apply border from savepartialpaged (writing partial)}%
       \doTextB@rder{\colA}%
+      \global\partialfr@medtrue
       \dimen4=\dimexpr \dimen2 - \dimen3 \dp\colA=\dimen4\box\colA
       \ifdefined\border@bpadding\kern\dimexpr\fb@bpadding + \border@bpadding + \lastd@pth \ifx\b@drbottom\tr@e + \b@drwidth pt\fi\fi\relax
       }%
-    %\global\partialfr@medfalse
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
     \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}%
@@ -1527,6 +1533,7 @@
         \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
           \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+      \trace{et}{Apply border from twocoltrial (shipout)}%
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 
       \trace{o}{textbox height=\the\ht\colA, depth=\the\dp\colA, newdepth=\the\dimen4}\dp\colA=\dimen4
@@ -1713,7 +1720,8 @@
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins  : topskip=\the\topskip , \the\splittopskip}%
     \setbox0\vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
-      \doTextB@rder{\partial}%1
+      \trace{et}{Apply border from twocolp@geout (shipout)}%
+      \ifpartialfr@med\else\doTextB@rder{\partial}\fi%1
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\box\partial}} \fi
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
