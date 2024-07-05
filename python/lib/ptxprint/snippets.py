@@ -261,7 +261,7 @@ class FancyBorders(Snippet):
 
 {fancy/endofbook}\newbox\decorationbox
 {fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
-{fancy/endofbook}\def\zBookEndDecoration{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
+{fancy/endofbook}\def\zBookEndDecoration{{\par\nobreak\vbox{{\kern \BookEndDecorationSkip\centerline{{\copy\decorationbox}}}}}}
 {fancy/endofbook}\def\zautoBookEndDecoration{{\iffilehasverses \zBookEndDecoration\fi}}
 
 

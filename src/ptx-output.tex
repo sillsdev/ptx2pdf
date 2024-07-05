@@ -1658,20 +1658,33 @@
 
 %+c_savepartialpagedbounce
 \xdef\p@gefirstmark{}
-\def\savepartialpagedbounce{
-  % This output routine gets the partial galley (input text) before a 2->1 column transition
+\def\@prepbounce{
+  % These output routines gets the partial galley (input text) before a column transition or final page 
   % so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}%
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \s@ttrialheight
   \keepn@testrue\c@lcavailht\keepn@tesfalse
+  \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}%
+  \global\holdinginserts=0
+}
+
+\def\savepartialpagebounce{
+  \@prepbounce
+  \vsize=\availht
+  \advance\vsize by \baselineskip
+  \global\output={\savepartialpage}%
+  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op:\the\outputpenalty}%
+  \unvbox255\eject
+}
+
+\def\savepartialpagedbounce{
+  \@prepbounce
   \vsize=2\availht
   \advance\vsize by \baselineskip
   \global\output={\savepartialpaged}%
-  \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}%
-  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op:\the\outputpenalty}%
-  \global\holdinginserts=0
+  \trace{o}{sppdb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op:\the\outputpenalty}%
   \unvbox255\eject
 }
 %-c_savepartialpagedbounce
@@ -1754,22 +1767,34 @@
   \trace{o}{LAYOUTSTYLE break (single col)}%
   \ifhe@dings\endhe@dings\fi
   \par
-  \ifrerunsavepartialpaged\trace{o}{rerunsavepartialpaged}\eject\rerunsavepartialpagedfalse\fi}
+  \output{\savepartialpagebounce}\eject
+  \ifrerunsavepartialpaged\trace{o}{rerunsavepartialpaged}\eject\rerunsavepartialpagedfalse\fi
+}
 \let\layoutstylebreak\layoutstylebreak@singlecolumn
 
 \newif\ifd@nesw@p % set to false to allow singlecolumn to draw a book-end rule 
 \def\singlecolumn{%
   %\tracingmacros=0\tracingassigns=0
   \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial \space \iflastpage LASTPAGE\fi}%\tracingmacros=1
-  \ifnum\c@rrentcols>1
-    %\temptrue
+  \ifnum 1=\ifnum \c@rrentcols>1 1\else \ifendbook 1 \else 0 \fi\fi
     \layoutstylebreak % save any partially-full page into \partial
     %LOTS happens before this line is reached!
+    \iflastpage
+      \iftextborder\ifpartialfr@med
+        \ifdim\posttextb@rderskip=0pt \else\ifdim\ht\partial>10pt \setbox\partial\vbox{\unvbox\partial}% Let the box have its natural size.
+        \fi\fi
+      \else
+        \trace{et}{Apply border from single column transtion}%
+        \doTextB@rder{\partial}%
+        \global\partialfr@medtrue
+      \fi\fi
+    \fi
     \b@dyfalse\beenb@dyfalse
     %\tempfalse
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?\iflastpage (ignored as this is last page)\fi}%
     \ifnum\ifdim\ht\partial>\PageFullFactor\textheight 1\else\iftob@dy\ifPBOnBody 1\else 0\fi\else 0\fi\fi =1 
-      \iflastpage\else %Don't force a break before a colophon
+      \iflastpage
+      \else %Don't force a break before a colophon
         \setbox14=\makefootbox
         \twocolp@geout %Set up pagecontents and call \plainoutput
         \clearn@tes
