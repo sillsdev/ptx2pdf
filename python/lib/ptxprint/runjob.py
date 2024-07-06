@@ -10,7 +10,7 @@ from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
-from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm
+from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm, pycodedir
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
@@ -801,8 +801,8 @@ class RunJob:
         os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
         os.putenv("max_print_line", "32767")    # Allow long error messages
         ptxmacrospath = os.path.abspath(self.macrosdir)
-        if not os.path.exists(ptxmacrospath):
-            ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
+        if not os.path.exists(ptxmacrospath) or not os.path.exists(os.path.join(ptxpmacrospath), "paratext2.tex"):
+            ptxmacrospath = os.path.abspath(os.path.join(pycodedir(), "..", "..", "..", "src"))
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:

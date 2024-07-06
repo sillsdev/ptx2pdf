@@ -866,7 +866,7 @@ class TexModel:
         return (None if doc else data, doc)
         
     def _changeError(self, txt):
-        self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
+        self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \\ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
         logger.warn(txt)
 
     def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0):
