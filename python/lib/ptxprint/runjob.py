@@ -801,7 +801,7 @@ class RunJob:
         os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
         os.putenv("max_print_line", "32767")    # Allow long error messages
         ptxmacrospath = os.path.abspath(self.macrosdir)
-        if not os.path.exists(ptxmacrospath) or not os.path.exists(os.path.join(ptxpmacrospath), "paratext2.tex"):
+        if not os.path.exists(ptxmacrospath) or not os.path.exists(os.path.join(ptxmacrospath, "paratext2.tex")):
             ptxmacrospath = os.path.abspath(os.path.join(pycodedir(), "..", "..", "..", "src"))
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
