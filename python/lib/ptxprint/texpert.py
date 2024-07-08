@@ -63,7 +63,7 @@ texpertOptions = {
     "FootnoteMulT":  ["footnotemult", (100, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Two column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")],
     "FootnoteMulD":  ["footnotemuld", (500, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")],
     "FootnoteMulC":  ["footnotemulc", (0, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")],
-    "BookEndDecorationSkip":   ["bedskip", (16, -100, 100, .1,1), "\\def{0}{{{1}pt}}", _("End decoration skip"), _("The gap between the end of the book and the book-end decoration")],
+    "BookEndDecorationSkip":   ["bedskip", (16, -100, 100, 1,1), "\\def{0}{{{1}pt}}", _("End decoration skip"), _("The gap between the end of the book and the book-end decoration")],
 }
 
 def widgetName(opt):

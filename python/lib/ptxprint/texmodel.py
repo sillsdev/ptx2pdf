@@ -866,7 +866,7 @@ class TexModel:
         return (None if doc else data, doc)
         
     def _changeError(self, txt):
-        self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
+        self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \\ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
         logger.warn(txt)
 
     def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0):
@@ -1183,6 +1183,10 @@ class TexModel:
 
         # Throw out the known "nonpublishable" markers and their text (if any)
         self.localChanges.append(makeChange(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", ""))
+
+        # Throw out any empty footnotes or cross-references (if any) even if they have an xo or fr but no content
+        # e.g.  \f + \f*     \x +\x*    \f + \fr 27:12 \ft \f*    \x - \xo 27:13-15 \xt \x*    \x - \xo 27:12 \xo*\xt \xt*\x*
+        self.localChanges.append(makeChange(r"\\(f|fe|ef|x)\s+\S+?\s*(\\(xo|fr)[^\\]+|\\\S+\s*)*?\\\1\*", ""))
 
         ############ Temporary (to be removed later) ########%%%%
         # Throw out \esb ... \esbe blocks if Study Bible Sidebars are not wanted
