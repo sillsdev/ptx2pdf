@@ -134,7 +134,7 @@
   \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
-  \trace{h}{ht=\the\ht\he@dingbox dp=\the\dp\he@dingbox}%
+  \trace{h}{ht=\the\ht\he@dingbox, dp=\the\dp\he@dingbox, useglyph=\the\XeTeXuseglyphmetrics}%
   \ift@plevel@utobox
     \ifdim\dimexpr \ht\he@dingbox+ \dp\he@dingbox\relax>0pt 
       \box\he@dingbox
@@ -209,8 +209,8 @@
 %-cpar_gridbox1
 
 %+cpar_gridbox2
-% returns in \dimen0 how much to advance \dimen1 to be an integral multiple of \dimen0
-% \dimen1 ends up rounded down to an integral number of input \dimen0
+% returns in \dimen0 how much to advance \dimen1 (y) to be an integral multiple of \dimen0 (x)
+% \dimen1 := y % x, \dimen3 := y - y % x, \dimen0 := x - y + y % x
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 \newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
@@ -230,10 +230,10 @@
       \ift@tle\lastdepth=0pt \fi
       \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth; upwardsHackDiff=\the\upwardsHackDiff}%
       \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
-      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
-      \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
-      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
-      \advance\dimen2 by \headingtopspace                                           %(1)
+      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space, y and x. z = x - y + y % x
+      \dimen1=\ht0 \advance\dimen1 by -\headingtopspace % a = y - b
+      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0 % z = x - y + y % x - x + y - b - (y-b) % x; w = x - y + b + (y-b) % x
+      \advance\dimen2 by \headingtopspace   % (1), z = y % x - (y-b) % x
       \ifgridp@c\else\ifdiglot\else
         \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
       \fi\fi

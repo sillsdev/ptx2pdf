@@ -13,6 +13,7 @@ texpertOptions = {
     "bookresetcallers":   ["bookresetcallers", True, "", _("Reset Callers at Each Book"), _("Re-start the footnote and cross-reference callers at the start of each book")],
     "PageAlign":          ["bookstartpage", {"page": _("Next page"), "multi": _("Same page"), "odd": _("Odd page")}, r"\def{0}{{{1}}}", _("Where to start a new book"), _("Does a scripture book start on a new page, the same page as the previous book (if <65% of page has been used), or an odd page")],
     "IntroPageAlign":     ["intropagealign", {"page": _("Next page"), "multi": _("No page breaks"), "odd": _("On an odd page"), "group": _("Grouped")}, r"\def{0}{{{1}}}", _("Where to start a new intro page"), _("Does an intro page start on a new page, the same page as the previous book, an odd page, or group all adjacent intro pages into an odd paged group")],
+    "usesysfonts":        ["usesysfonts", True, "", _("Use system fonts"), _("Use fonts from your system as well as your project")],
     "notesEachBook":      ["neachbook", True, "", _("Endnotes at Each Book"), _("Output endnotes at the end of each book")],
     "FinalNotesDown":     ["fnotesdown", False, "", _("Final Page Notes Down"), _("Push notes on the final page to the bottom of the page")],
     "MarkTriggerPoints":  ["mktrigpts", False, "", _("Mark Trigger Points"), _("Display trigger points in output")],

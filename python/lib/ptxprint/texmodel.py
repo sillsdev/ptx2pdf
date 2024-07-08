@@ -332,6 +332,8 @@ class TexModel:
                         self.dict[k] = v.process(self.printer, val, self)
                 except Exception as e:
                     raise type(e)("In TeXModel with key {}, ".format(k) + str(e))
+        for k, opt, wname in TeXpert.opts():
+            self.dict["texpert/"+opt[0]] = self.printer.get(wname)
 
     def calcRuleParameters(self):
         notemap = {'fn': 'note', 'xr': 'xref', 'sn': 'study'}

@@ -762,6 +762,7 @@ class RunJob:
         return texfiles
 
     def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra="", digtexmodel=None):
+        nosysfonts = not info['texpert/usesysfonts'] or self.args.nofontcache
         genfiles = []
         if prjid is None:
             prjid = self.prjid
@@ -818,15 +819,36 @@ class RunJob:
             if a not in texinputs:
                 texinputs.append(a+"//")
         miscfonts = getfontcache().fontpaths[:]
-        if sys.platform != "win32":
+        if sys.platform != "win32" and not nosysfonts:
             a = "/usr/share/ptx2pdf/texmacros"
             if a not in texinputs:
                 texinputs.append(a)
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
-        miscfonts.append(ptxmacrospath)
+        miscfonts.append(os.path.join(ptxmacrospath, '..', 'fonts'))
         miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
-            os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
+            if nosysfonts:
+                fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
+                with open(os.path.join(self.tmpdir, 'fonts.conf'), "w") as outf:
+                    outf.write(f"""<?xml version="1.0"?>
+<fontconfig>
+    {fcs}
+    <selectfont>
+        <rejectfont>
+            <glob>*.woff</glob>
+        </rejectfont>
+<!--        <rejectfont>
+            <pattern>
+                <patelt name="variable"/>
+            </pattern>
+        </rejectfont> -->
+    </selectfont>
+</fontconfig>
+""")
+                os.putenv("FONTCONFIG_FILE", os.path.join(self.tmpdir, "fonts.conf"))
+                logger.debug(f"FONTCONFIG_FILE={os.path.join(self.tmpdir, 'fonts.conf')}")
+            else:
+                os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
         logger.debug(f"MISCFONTS={pathjoiner.join(miscfonts)}")
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
