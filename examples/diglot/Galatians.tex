@@ -1,7 +1,7 @@
 \input paratext2.tex
 %\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
 %\VisTracetrue% Every chunk joined, mark with the current trace number
-\diglotDbgJoinboxes=6876 % And if that's not enough, assuming trace entry 1246
+%\diglotDbgJoinboxes=6876 % And if that's not enough, assuming trace entry 1246
 %\nonstopmode
 %\scrollmode
 %is from joinboxes (which pastes 2 left or 2 right columns together) show the
@@ -19,6 +19,11 @@
 \JoinGutterRuletrue
 \NoteGutterRuletrue
 %\diglotDebugFollowContentstrue %create 500k debug lines...
+\makeatletter
+\def\bg@L@col{0.9 0.9 1.0}
+\def\bg@L@alpha{0.5}
+\def\bg@R@col{0.9 1.0 0.9}
+\def\bg@R@alpha{0.5}
 
 \input Galatians-setup.tex
 \iftrue
@@ -34,7 +39,7 @@
 % \tracing{sC}
  \VisTracetrue
  %\VisTraceExtratrue
- %\tracing{D}
+ \tracing{D}
 \fi
 
 \XeTeXuseglyphmetrics=0

@@ -1677,8 +1677,24 @@
 
 
 \def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
-    \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname\hss}\xdef\l@stcol{#1}}
+    \trace{D}{@@simplecols #1}%
+    \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
+      \hss}\xdef\l@stcol{#1}}
   %
+\def\ck@backgrounds#1{%
+  \ifcsname bg@#1@col\endcsname\temptrue\fi
+}
+\def\ins@backgrounds#1{%
+  \ifx\l@stcol\empty\else\hskip \gutter\fi
+  \ifcsname bg@#1@col\endcsname
+    \trace{D}{Colour for #1 is \csname bg@#1@col\endcsname}%
+    {\hbox to 0pt {\f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\vrule height \ht\partial depth \dp\partial width \csname column#1width\endcsname}\hss}}%
+  \else
+    \trace{D}{No colour for #1}%
+  \fi
+  \hskip \csname column#1width\endcsname
+  \xdef\l@stcol{#1}%
+}
 
 \def\@do@layout@simplecols{%
   \trace{d}{@do@layout@simplecols \l@gdims{\partial}}%
@@ -2206,8 +2222,24 @@
      \box\topchunk % Top left/right insert
      \lastd@pth=\dp\partial\relax%
      \doTextB@rder{\partial}%
+     \tempfalse\let\col@do\ck@backgrounds
+     \x@\each@col\diglot@list\E% 
+     \tracingassigns=1
+     \tracingcommands=3
+     \tracingifs=1
+     \iftemp
+       \trace{D}{Applying colour backgrounds}%
+       \let\col@do\ins@backgrounds
+       \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
+       \vbox to 0pt{\let\l@stcol\empty%
+         \hbox{\x@\each@col\tmplist\E}%
+         \vss}%
+     \fi
      \unvbox\partial%
       %
+     \tracingifs=0
+     \tracingcommands=0
+     \tracingassigns=0
      \box\botchunk
      \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
        \trace{i}{Using bottomins \the\ht\bottomins x\the\wd\bottomins}%
