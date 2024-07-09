@@ -4698,6 +4698,9 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK:
             if self.get("c_downloadImages"):
                 imgset = "ccsampleimages.zip" # this will eventually be a variable, or even a list of img sets to download.
+                self.doStatus(_("Downloading Image Set: '{}'   Please wait...".format(imgset)))
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
                 try:
                     urlfile = urllib.request.urlopen(r"https://software.sil.org/downloads/r/ptxprint/{}".format(imgset))
                     tzdir = extraDataDir("imagesets", "../zips", create=True)
@@ -4705,33 +4708,43 @@ class GtkViewModel(ViewModel):
                     with open(zfile, 'wb') as f:
                         f.write(urlfile.read())
                 except urllib.error.URLError:
-                    self.doError("Error Downloading Image Set", secondary="Check that you are online before trying again.")
+                    self.doStatus(_("ERROR: Downloading Image Set failed. Check internet connection and try again."))
+                    while Gtk.events_pending():
+                        Gtk.main_iteration()
                     return
+                self.onHideStatusMsgClicked(None)
             else:
                 zfile = self.get("btn_locateImageSet")
             imgsetname = unpackImageset(zfile, os.path.join(self.settings_dir, self.prjid))
-            if imgsetname is not None:
+            if imgsetname is not None and imgsetname != "":
                 uddir = extraDataDir("imagesets", imgsetname, create=False)
                 if not self.displayReadmeFile(imgsetname, uddir):
                     # remove the unpacked imageset!
                     try:
-                        if len(uudir):
+                        if len(uddir):
                             rmtree(uddir)
+                            self.doStatus(_("Image Set '{}' removed due to not agreeing to terms and conditions of use.".format(imgsetname)))
                         return
                     except OSError:
-                        self.doError(_("Cannot delete folder from disk!"), secondary=_("Image Set: ") + imgsetname)
+                        self.doStatus(_("Cannot delete folder from disk! Image Set: {}".format(imgsetname)))
                 else:
                     # add imgsetname to ecb_artPictureSet before selecting it.
                     lsp = self.builder.get_object("ecb_artPictureSet")
                     allimgsets = [x[0] for x in lsp.get_model()]
-                    for i, p in enumerate(allimgsets):
-                        if imgsetname.casefold() > p.casefold():
-                            lsp.insert_text(i, imgsetname)
-                            break
-                        else:
-                            lsp.append_text(imgsetname)
+                    # Check if imgsetname is already in the list (case insensitive)
+                    if imgsetname.casefold() not in [p.casefold() for p in allimgsets]:
+                        for i, p in enumerate(allimgsets):
+                            if imgsetname.casefold() > p.casefold():
+                                lsp.insert_text(i, imgsetname)
+                                break
+                            else:
+                                lsp.append_text(imgsetname)
                     self.set("ecb_artPictureSet", imgsetname)
+                    self.doStatus(_("Installed the downloaded Image Set: {}".format(imgsetname)))
+                    self.onGetPicturesClicked(None)
             elif imgsetname == "":
+                f = os.path.join(self.settings_dir, self.prjid, "local","figures")
+                self.doStatus(_("Unzipped images to {}".format(f)))
                 pass
             else:
                 if self.get("c_downloadImages"):
@@ -4744,9 +4757,9 @@ class GtkViewModel(ViewModel):
         try:
             with open(readme_path, 'r') as f:
                 readme_content = f.read()
-        except FileNotFoundError:
+        except FileNotFoundError: # ?Why don't we assume that if there is no readme.txt file, that the images are free to use?
             self.doError("Error: readme.txt not found.", secondary=f"The file containing the terms and conditions of use for these images could not be located. Therefore the '{imgsetname}' image set will be deleted.")
-            return False
+            return False # ?Should we invert this behaviour?
 
         dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL,
             Gtk.MessageType.INFO, Gtk.ButtonsType.YES_NO, "readme")
@@ -5831,7 +5844,7 @@ Thank you,
         else:
             return False
 
-    def onGetPicturesClicked(self, btn):
+    def onGetPicturesClicked(self, btn): # Catalogue...
         dialog = self.builder.get_object("dlg_imagePicker")
         gridbox = self.builder.get_object("box_images")
         self.thumbnails = ThumbnailDialog(dialog, self, gridbox, 5)
