@@ -1675,20 +1675,39 @@
 \def\@preswap@simplecols#1{}
 \def\@postswap@simplecols#1{}
 
-
+\def\SetDiglotBGColour#1#2#3{% #1= column, #2= R G B / xRRGGBB  #3 alpha
+  \edef\tmp{#3}\ifx\tmp\empty \x@\global\x@\let\csname bg@#1@alpha\endcsname\undefined\else\x@\global\x@\let\csname bg@#1@alpha\endcsname\tmp\fi
+  \edef\tmp{#2}\ifx\tmp\empty \x@\global\x@\let\csname bg@#1@col\endcsname\undefined\else
+    \x@\checkh@x #2\end\x@\xdef\csname bg@#1@col\endcsname{\rgb@out}\fi
+}
+  
 \def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
     \trace{D}{@@simplecols #1}%
     \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
       \hss}\xdef\l@stcol{#1}}
   %
 \def\ck@backgrounds#1{%
-  \ifcsname bg@#1@col\endcsname\temptrue\fi
+  \ifcsname bg@#1@col\endcsname\iftemp\else
+    \ifcsname bg@#1@alpha\endcsname
+      \x@\let\x@\tmp\csname bg@#1@alpha\endcsname
+      \ifdim \tmp pt =0pt \else
+        \temptrue
+      \fi
+    \else
+      \temptrue
+    \fi
+  \fi\fi
 }
+\def\DiglotColourPad{1pt} % How much padding to add for coloured background to diglot columns.
+
 \def\ins@backgrounds#1{%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifcsname bg@#1@col\endcsname
-    \trace{D}{Colour for #1 is \csname bg@#1@col\endcsname}%
-    {\hbox to 0pt {\f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\vrule height \ht\partial depth \dp\partial width \csname column#1width\endcsname}\hss}}%
+    {\dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
+      \ifdim\dimen1>\textheight \dimen1=\textheight\fi
+      \dimen2=\DiglotColourPad
+      \trace{D}{Colour for #1 is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
+      \hbox to 0pt {\f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height \dimen1 depth 0pt width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}}%
   \else
     \trace{D}{No colour for #1}%
   \fi
@@ -2224,9 +2243,9 @@
      \doTextB@rder{\partial}%
      \tempfalse\let\col@do\ck@backgrounds
      \x@\each@col\diglot@list\E% 
-     \tracingassigns=1
-     \tracingcommands=3
-     \tracingifs=1
+     %\tracingassigns=1
+     %\tracingcommands=3
+     %\tracingifs=1
      \iftemp
        \trace{D}{Applying colour backgrounds}%
        \let\col@do\ins@backgrounds
@@ -2237,9 +2256,9 @@
      \fi
      \unvbox\partial%
       %
-     \tracingifs=0
-     \tracingcommands=0
-     \tracingassigns=0
+     %\tracingifs=0
+     %\tracingcommands=0
+     %\tracingassigns=0
      \box\botchunk
      \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
        \trace{i}{Using bottomins \the\ht\bottomins x\the\wd\bottomins}%
