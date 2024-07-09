@@ -230,6 +230,7 @@ class Diglot(Snippet):
 \IndentUnit{s_}={diglot[indentunit]}in
 \newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[letterstretch]:.2f}em minus {diglot[lettershrink]:.2f}em
 \def\letterspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
+{diglot[ifdiglotcolour_]}\SetDiglotBGColour{{{s_}}}{{{diglot[diglotcolour]}}}
 {diglot[ifincludefootnotes_]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {diglot[ifincludexrefs_]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \makeatletter

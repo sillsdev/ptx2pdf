@@ -130,6 +130,8 @@ _diglot = {
 
 "diglot/intfile":           "project/intfile",
 # "diglot/colorfonts" :       "document/ifcolorfonts",
+"diglot/diglotcolour":      "document/diglotcolour",
+"diglot/ifdiglotcolour_":   "document/ifdiglotcolour",
 "diglot/ifrtl" :            "document/ifrtl",
 "diglot/ifshow1chbooknum":  "document/ifshow1chbooknum",
 "diglot/fontfactor" :       "paper/fontfactor",

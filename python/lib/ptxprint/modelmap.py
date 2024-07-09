@@ -254,6 +254,8 @@ _map = {
     "document/diglotheaders":   ("c_diglotHeaders", "diglot", None),
     "document/diglotnotesrule": ("c_diglotNotesRule", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotjoinvrule": ("c_diglotJoinVrule", "diglot", lambda w,v: "true" if v else "false"),
+    "document/diglotcolour":    ("col_dibackcol", "diglot", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "1.0 1.0 1.0"),
+    "document/ifdiglotcolour":  ("col_dibackcol", "diglot", lambda w,v : "%" if v is None or v == "rgb(255,255,255)" else ""),
 
     "document/hasnofront_":        ("c_frontmatter", "front", lambda w,v: "%" if v else ""),
     "document/noblankpage":        ("c_periphSuppressPage", "layout", None),
