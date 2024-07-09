@@ -7,7 +7,7 @@ from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
-from ptxprint.font import getfontcache
+from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm, pycodedir
@@ -269,6 +269,8 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
         logger.debug("Adding settings to the pdf")
         zio = cStringIO()
         z = info.printer.createSettingsZip(zio)
+        report = checkoutput(["xetex", "--version"], path='xetex')
+        z.writestr("_runinfo.txt", report)
         z.close()
         if outpdfobj is None:
             outpdfobj = PdfWriter(None, trailer=PdfReader(opath))
@@ -825,26 +827,12 @@ class RunJob:
                 texinputs.append(a)
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
         miscfonts.append(os.path.join(ptxmacrospath, '..', 'fonts'))
-        miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
+        miscfonts.append(os.path.join(self.tmpdir, "..", "..", "..", "shared", "fonts"))
         if len(miscfonts):
             if nosysfonts:
                 fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
                 with open(os.path.join(self.tmpdir, 'fonts.conf'), "w") as outf:
-                    outf.write(f"""<?xml version="1.0"?>
-<fontconfig>
-    {fcs}
-    <selectfont>
-        <rejectfont>
-            <glob>*.woff</glob>
-        </rejectfont>
-<!--        <rejectfont>
-            <pattern>
-                <patelt name="variable"/>
-            </pattern>
-        </rejectfont> -->
-    </selectfont>
-</fontconfig>
-""")
+                    outf.write(fontconfig_template_nofc.format(fontsdirs=fcs))
                 os.putenv("FONTCONFIG_FILE", os.path.join(self.tmpdir, "fonts.conf"))
                 logger.debug(f"FONTCONFIG_FILE={os.path.join(self.tmpdir, 'fonts.conf')}")
             else:

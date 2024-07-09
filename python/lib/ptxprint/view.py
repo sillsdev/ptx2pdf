@@ -1785,7 +1785,7 @@ set stack_size=32768""".format(self.configName())
             if not os.path.exists(ind):
                 continue
             for f in os.listdir(ind):
-                if "_override" in f:
+                if "_override" in f or f == "_runinfo.txt":
                     continue
                 fpath = os.path.realpath(os.path.join(ind, f))
                 if os.path.isfile(fpath):
