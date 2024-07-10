@@ -1120,9 +1120,10 @@
       %\kern 0pt
       \ifearlyeotpskip\kern -1sp\kern 1sp\fi
     }%
-  \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which at@ndofthispar macro?\emspace
+  \seteotpn@me
   \trace{g}{\eotpn@me\space defined}%
-  \x@\gdef\csname \eotpn@me\endcsname{%
+  \addtoeotp{%
+    \seteotpn@me
     \trace{s}{eotp: \eotpn@me. st@k:\styst@k, cref:\c@rref}%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
     \ifhmode\edef\eotpprevdepth{0pt}\else\edef\eotpprevdepth{\the\prevdepth}%
@@ -1130,7 +1131,7 @@
     \fi%
     \lastdepth=0pt  % prevdepth accounted for...
     \earlyeotpskipfalse % An early skip of -prevdepth doesn't look good with figures, but keeps gridding for sidebars.
-    \setbox0\vbox{\unvbox\picb@@x \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\global\earlyeotpskiptrue\fi}%
+    \setbox0\vbox{\unvbox\picb@@x \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\aftergroup\earlyeotpskiptrue\fi}%
     \trace{g}{Box flagged for early skip? \ifearlyeotpskip true\else false\fi}%
     \ifearlyeotpskip \vskip-\eotpprevdepth\relax\fi
     \penalty10 % Allow the page to break

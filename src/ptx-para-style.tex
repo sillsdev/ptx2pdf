@@ -290,6 +290,8 @@
        \trace{j}{[\styst@kfirst] hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
      \fi\fi
    \fi
+   \seteotpn@me
+   \csname pre\eotpn@me\endcsname\x@\let\csname pre\eotpn@me\endcsname\empty
    \endgraf
    \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else
      %\ifrotate
@@ -309,9 +311,20 @@
 %-cpar_par
 % No blank line here!
 %+cpar_doendofthispar
+\def\seteotpn@me{\edef\eotpn@me{at@ndofthispar\c@rrdstat}}% Which endofthispar macro?
+\def\addtopreeotp#1{\seteotpn@me\edef\peotpn@me{pre\eotpn@me}%
+  \trace{g}{\peotpn@me\space set}%
+  \ifcsname \peotpn@me\endcsname\else\x@\let\csname \peotpn@me\endcsname\empty\fi
+  \x@\x@\x@\x@\x@\x@\x@\gdef\x@\x@\x@\csname \x@\x@\x@\peotpn@me\x@\x@\x@\endcsname\x@\x@\x@{\csname \peotpn@me\endcsname%
+    #1}}
+\def\addtoeotp#1{\seteotpn@me
+  \trace{g}{\eotpn@me\space set}%
+  \ifcsname \eotpn@me\endcsname\else\x@\let\csname \eotpn@me\endcsname\empty\fi
+  \x@\x@\x@\x@\x@\x@\x@\gdef\x@\x@\x@\csname \x@\x@\x@\eotpn@me\x@\x@\x@\endcsname\x@\x@\x@{\csname \eotpn@me\endcsname%
+    #1}}
 \def\do@ndofthispar{%
+ \seteotpn@me
  %run code to insert picb@x / picb@xR at the right time.
- \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which endofthispar macro?
  \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
  \trace{g}{doendofthispar \ch@pter:\v@rse\c@rrdstat \space \the\pagetotal,
            \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
