@@ -829,7 +829,7 @@ class RunJob:
                 texinputs.append(a)
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
         miscfonts.append(os.path.join(ptxmacrospath, '..', 'fonts'))
-        miscfonts.append(os.path.join(self.tmpdir, "..", "..", "..", "shared", "fonts"))
+        miscfonts.append(os.path.join(self.tmpdir, "fonts"))
         if len(miscfonts):
             if nosysfonts:
                 fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
