@@ -87,7 +87,7 @@ class TeXpert:
             n = widgetName(opt)
             v = view.get(n)
             if n.startswith("c_") and v is None:
-                v = False
+                v = opt[1]
             if n.startswith("c_"):
                 incl = v != opt[1]
             elif n.startswith("s_"):

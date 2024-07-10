@@ -3766,7 +3766,8 @@ class GtkViewModel(ViewModel):
         zfname = self.prjid+("-"+cfname if cfname else "")+"PTXprintArchive.zip"
         archiveZipFile = self.fileChooser(_("Select the location and name for the Archive file"),
                 filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
-                multiple=False, folder=False, save=True, basedir=self.working_dir, defaultSaveName=zfname)
+                multiple=False, folder=False, save=True,
+                basedir=os.path.join(self.working_dir, '..'), defaultSaveName=zfname)
         if archiveZipFile is not None:
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
             try:

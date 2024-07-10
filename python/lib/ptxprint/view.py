@@ -7,7 +7,7 @@ from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontca
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
-                            zipopentext
+                            zipopentext, xdvigetfonts
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
@@ -1473,7 +1473,7 @@ class ViewModel:
         res.append(os.path.join(cpath, subdir, "ptxprint.sty"))
         return res
 
-    def _getArchiveFiles(self, books, prjid=None, cfgid=None):
+    def _getArchiveFiles(self, books, prjid=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
                   'c_usePrintDraftChanges': "PrintDraftChanges.txt",
@@ -1555,6 +1555,7 @@ class ViewModel:
                     # print(f"{f.as_posix()=}, {f.name=}")
 
         # fonts
+        allfonts = {}
         for k, v in TexModel._fonts.items():
             if v[1] is None or self.get(v[1]):
                 font_info = self.get(v[0])
@@ -1562,7 +1563,7 @@ class ViewModel:
                 f = font_info.getTtfont()
                 if f.filename is None: continue
                 fname = os.path.basename(f.filename)
-                res[f.filename] = "shared/fonts/"+fname
+                allfonts[fname] = f.filename
                 
         for k, v in self.styleEditor.sheet.items():
             font_info = v.get(' font', self.styleEditor.basesheet.get(k, {}).get(' font', None))
@@ -1570,7 +1571,16 @@ class ViewModel:
                 f = font_info.getTtfont()
                 if f.filename is None: continue
                 fname = os.path.basename(f.filename)
-                res[f.filename] = "shared/fonts/"+fname
+                allfonts[fname] = f.filename
+
+        if xdv is not None:
+            xdvfonts = xdvigetfonts(xdv)
+            for f in xdvfonts:
+                allfonts[os.path.basename(f)] = f
+            cfgchanges["c_usesysfonts"] = (False, None)
+
+        for k,v in allfonts.items():
+            res[v] = "local/ptxprint/"+self.configName()+"/fonts/"+k
 
         if prjid:
             mdir = os.path.join(self.settings_dir, prjid, "shared", "fonts", "mappings")
@@ -1670,27 +1680,30 @@ class ViewModel:
         except OSError:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
-        self._archiveAdd(zf, self.getBooks(files=True))
         temps = []
-        if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.prjid)
-            pf = "{}/local/ptxprint/{}/diglot.sty".format(self.prjid, self.configName())
-            ipf = os.path.join(self.settings_dir, pf)
-            if os.path.exists(ipf):
-                zf.write(ipf, pf)
         from ptxprint.runjob import RunJob
         runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
         runjob.doit(noview=True)
         res = runjob.wait()
         found = False
         # TODO: include burst pdfs
+        xdvfile = None
         for a in (".pdf", ):
             for d in ('', '..'):
                 for x in self.tempFiles:
-                    f = os.path.join(os.path.dirname(x), d, os.path.basename(x).replace(".xdv", a))
-                    if not found and os.path.exists(f):
-                        temps.append(f)
-                        break
+                    if x.endswith(".xdv"):
+                        xdvfile = x
+                        f = os.path.join(os.path.dirname(x), d, os.path.basename(x).replace(".xdv", a))
+                        if not found and os.path.exists(f):
+                            temps.append(f)
+                            break
+        self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
+        if self.diglotView is not None:
+            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.prjid)
+            pf = "{}/local/ptxprint/{}/diglot.sty".format(self.prjid, self.configName())
+            ipf = os.path.join(self.settings_dir, pf)
+            if os.path.exists(ipf):
+                zf.write(ipf, pf)
         for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
@@ -1709,10 +1722,10 @@ class ViewModel:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()
         
-    def _archiveAdd(self, zf, books, parent=None):
+    def _archiveAdd(self, zf, books, parent=None, xdv=None):
         prjid = self.prjid
         cfgid = self.configName()
-        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid)
+        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid, xdv=xdv)
         for k, v in entries.items():
             if os.path.exists(k):
                 if parent is not None and 'shared/fonts' in v:

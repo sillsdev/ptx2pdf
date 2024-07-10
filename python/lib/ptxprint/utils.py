@@ -590,6 +590,23 @@ def xdvigetpages(xdv):
         res = unpack(">I", dat[1:])[0]
     return res
 
+def xdvigetfonts(xdv):
+    res = set()
+    with open(xdv, "rb") as inf:
+        inf.seek(-12, 2)
+        dat = inf.read(12).rstrip(b"\xdf")
+        if len(dat) < 5:
+            return res
+        postpost = inf.tell() - 7 + len(dat)
+        postamble = unpack(">I", dat[-5:-1])[0]
+        inf.seek(postamble + 29, 0) # skip the postamble command itself
+        while inf.tell() < postpost:
+            dat = inf.read(14)
+            (a, l) = dat[12:14]
+            path = inf.read(a+l).decode(errors="ignore")
+            res.add(path)
+        return res
+
 varpaths = (
     ('prjdir', ('settings_dir', 'prjid')),
     ('settingsdir', ('settings_dir',)),
