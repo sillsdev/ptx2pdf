@@ -830,6 +830,8 @@ class RunJob:
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
         miscfonts.append(os.path.join(ptxmacrospath, '..', 'fonts'))
         miscfonts.append(os.path.join(self.tmpdir, "fonts"))
+        sfonts = os.path.join(self.prjdir, "shared", "fonts")
+        miscfonts.append(sfonts)
         if len(miscfonts):
             if nosysfonts:
                 fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
@@ -837,6 +839,8 @@ class RunJob:
                     outf.write(fontconfig_template_nofc.format(fontsdirs=fcs))
                 os.putenv("FONTCONFIG_FILE", os.path.join(self.tmpdir, "fonts.conf"))
                 logger.debug(f"FONTCONFIG_FILE={os.path.join(self.tmpdir, 'fonts.conf')}")
+                if sys.platform != "win32":
+                    os.putenv("MISCFONTS", pathjoiner.join((ptxmacrospath, sfonts)))
             else:
                 os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
         logger.debug(f"MISCFONTS={pathjoiner.join(miscfonts)}")
