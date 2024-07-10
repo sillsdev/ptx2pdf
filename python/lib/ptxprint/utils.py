@@ -616,7 +616,8 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
         return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:])
 
     def __init__(self, txt, *args):
-        super().__init__(txt)
+        if len(self.__class__.__mro__) > 1:
+            super().__init__(txt)
 
     def withvars(self, aView):
         varlib = self.create_varlib(aView)
