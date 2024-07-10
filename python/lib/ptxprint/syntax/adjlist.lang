@@ -8,7 +8,6 @@
     <style id="comment" _name="Comment" map-to="def:comment"/>
     <style id="identifier" _name="Comment" map-to="def:identifier"/>
     <style id="shrink" _name="Shrinkable" map-to="def:complex"/>
-    <style id="highlightR" _name="HighlightR" map-to="def:highlight"/>
     <style id="error" name="Bad" map-to="def:error"/>
     <style id="default" name="Default"/>
     <style id="secondary-active" name="Secondary-Active"/>
@@ -41,9 +40,6 @@
           <include>
             <context id="shrinkable" style-ref="shrink" sub-pattern="3"/>
           </include>
-        </context>
-        <context id="highlightR" style-ref="highlightR">
-          <match>^[A-Z0-9]{3}R\s+.*$</match>
         </context>
         <context id="comment" style-ref="comment" end-at-line-end="true">
           <start>^\s*%</start>

@@ -121,7 +121,7 @@ Sometimes it might help the reader to have a coloured background to guide them t
 ```tex
 \SetDiglotBGColour{L}{0.9 0.9 1.0}{}
 \SetDiglotBGColour{R}{xff00ff}{0.2}
-\def\DiglotColourPad{1.5pt} % Default is 1pt
+\def\DiglotColourPad{1.5pt} % Default is 3pt
 ```
 `\SetDiglotBGColour` needs three parameters. Column, Colour and Alpha. (Alpha of 0 is fully transparent, alpha of 1 totally hides whatever is behind it). If a Colour is given as empty,  then the no colour box will be produced for that column. (i.e. it will unset any previous value).
 The colour white `(1.0 1.0 1.0)` *does* have an effect on any background image, and so counts as a coloured box. However, if the alpha is 0, the box is not counted as coloured.

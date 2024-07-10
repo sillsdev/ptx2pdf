@@ -1041,20 +1041,6 @@ settings for a similar project.</property>
       <!-- column-name borderArt -->
       <column type="GdkPixbuf"/>
     </columns>
-    <data>
-      <row>
-        <col id="0">True</col>
-        <col id="1">Han1</col>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1">Han2</col>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1">Han3</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
