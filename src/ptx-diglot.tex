@@ -1918,7 +1918,11 @@
     \global\pagefulltrue%
     \trace{D}{Declaring page full}%
   \else%
-    \trace{D}{Page not full (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1)}%
+    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi}%
+    \ifpagefull\ifendbook
+      \trace{d}{some space and end of a book, cancelling pagefull}%
+      \global\pagefullfalse
+    \fi\fi
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
@@ -1936,7 +1940,7 @@
     \let\col@do\check@pen
     \x@\each@col\diglot@list\E% 
     \iftemp
-      \trace{d}{Not resetting pagefull}%
+      \trace{d}{pagebreak: not (normally) resetting pagefull. lastpage\iflastpage true\else false\fi, endbook\ifendbook true\else false\fi}%
       \global\pagefulltrue
     \else \global\pagefullfalse\fi
   \else
@@ -2105,6 +2109,7 @@
   \csname @start@writep@ge@\diglotlayout\endcsname
   \setdiglotN@rmal
   \pickn@xtpartial
+  \actually@writetrue
   \csname @prep@writep@ge@\diglotlayout\endcsname
   \csname @do@writep@ge@\diglotlayout\endcsname
   \csname @end@writep@ge@\diglotlayout\endcsname
@@ -2144,9 +2149,9 @@
   \fi%
 }
 
-
+\newif\ifactually@write
 \def\@do@writep@ge@simplecols{
-  \trace{d}{do@writep@ge@simplecols \the\pageno (\the\MaxPages)}%
+  \trace{d}{do@writep@ge@simplecols \the\pageno (\the\MaxPages) actually@write\ifactually@write true\else false\fi}%
   \IfTr@ce{gI}{%
     \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
   }%
@@ -2199,18 +2204,22 @@
   \trace{d}{Bottom Fig Gutter \the\dimen8 hight, \the\dimen9 deep}%
   \dimen7=\dimen9
   \advance\dimen7 by \dimen8\relax
-  \setbox\botchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
-    \hbox to\columnshift{}%
-    \ifdiglotN@rmal%Are the sides swapped?
-      \hbox to\columnLwidth{\box\bottomleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+  \ifnum 0> \numexpr  \ifvoid\bottomleftins 0 \else 1 \fi + \ifvoid\bottomrightins 0 \else 1 \fi\relax
+    \setbox\botchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
       \hbox to\columnshift{}%
-      \hbox to\columnRwidth{\box\bottomrightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-    \else%
-      \hbox to\columnRwidth{\box\bottomrightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
-      \hbox to\columnshift{}%
-      \hbox to\columnLwidth{\box\bottomleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-    \fi%
-  }%
+      \ifdiglotN@rmal%Are the sides swapped?
+        \hbox to\columnLwidth{\box\bottomleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+        \hbox to\columnshift{}%
+        \hbox to\columnRwidth{\box\bottomrightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+      \else%
+        \hbox to\columnRwidth{\box\bottomrightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+        \hbox to\columnshift{}%
+        \hbox to\columnLwidth{\box\bottomleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+      \fi%
+    }%
+  \else
+    \setbox\botchunk\box\voidb@x
+  \fi
   \ifdiglotSepNotes%
   \else%
      % RTLness will have been asserted (or not) when the note was defined.
@@ -2283,21 +2292,26 @@
          \hbox{\x@\each@col\tmplist\E}%
          \vss}%
      \fi
+     \trace{et}{Apply border from writesimplecolumns}%
      \doTextB@rder{\partial}%
+     \global\partialfr@medtrue
      \unvbox\partial%
-      %
      %\tracingifs=0
      %\tracingcommands=0
      %\tracingassigns=0
-     \box\botchunk
+     \ifvoid\botchunk\else\box\botchunk\fi
      \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
        \trace{i}{Using bottomins \the\ht\bottomins x\the\wd\bottomins}%
        \vskip\skip\bottomins \unvbox\bottomins \fi%
      \ifdiglotSepNotes%
      \else%
        % RTLness will have been asserted (or not) when the note was defined.
-       \vfill
-       \box\notechunk%
+       \ifactually@write\else \vfill\fi
+       \iftrue
+        \box\notechunk
+       \else
+         \ifvoid\notechunk\else\box\notechunk\fi
+       \fi
      \fi%
      \ifvoid\verybottomins\else % \kern-\dimen0
        \trace{i}{Using verybottomins \the\ht\verybottomins x\the\wd\verybottomins}%
@@ -2306,7 +2320,7 @@
    \holdinginserts=1
    \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
    \global\adjustp@ge=0pt
-   \plainoutput%
+   \ifactually@write \plainoutput\fi%
   \fi
 }
 
@@ -3021,31 +3035,58 @@
 
 \def\enddigl@t{%
   \endgraf
-  \ifdiglot
+  \trace{d}{enddigl@t \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
+  \ifdiglot\ifx\digl@tc@ntentlist\empty\else
     \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
     \sk@ppingfalse
     \ifhe@dings\endhe@dings\fi%
-    \trace{d}{enddigl@t \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
     \eject
     \global\allNeedEmptyingtrue
     \diglot@run@trials
     \penalty\dgl@tPenColSwap
     \global\allNeedEmptyingtrue
+    \trace{d}{enddigl@t 2nd run \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
     \diglot@run@trials
     \ifnum\interactionmode=2
       \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
     \fi
     \@add@n@xtpartial
     \trace{d}{After that; \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
-    \ifvoid\partial\else
-      \@writep@ge
-      \let\col@do=\reset@n@xt
-      \x@\each@col\diglot@list\E% 
+    \ifdim \dimexpr \ht\partial+\dp\partial\relax=0pt\else
+      \ifversion{2}{%
+        \iftextborder\temptrue
+        \else 
+          \tempfalse\let\col@do\ck@backgrounds
+          \x@\each@col\diglot@list\E% 
+        \fi
+        \iftemp\setbox\partial\vbox{\dimen1=\dp\partial\unvbox\partial\kern\dp\partial}\fi%avoid clashes with textborder and 
+        %\iftextborder
+          %\ifpartialfr@med\else
+            %\doTextB@rder{\partial}%
+            %\global\partialfr@medtrue
+          %\fi
+        %\fi
+        \setbox\partial\vbox{%\unvbox\partial
+          \csname @start@writep@ge@\diglotlayout\endcsname
+          \setdiglotN@rmal
+          \pickn@xtpartial
+          \csname @prep@writep@ge@\diglotlayout\endcsname
+          \actually@writefalse
+          \csname @do@writep@ge@\diglotlayout\endcsname
+          \pagecontents
+        }%
+        \trace{d}{Book end: partial \the\ht\partial+\the\dp\partial}%
+      }{\@writep@ge
+        \let\col@do=\reset@n@xt
+        \x@\each@col\diglot@list\E% 
+      }%
     \fi
-    \pr@sideswitch{end}{L}%
-  \fi
+    \trace{d}{Book end: Not writing page}%
+    %\pr@sideswitch{end}{L}%
+    \let\digl@tc@ntentlist\empty
+  \fi\fi
   %FIXME! If \ifendbooknoeject  happens to be true, then what? 
-  %Set the 2 columns, put the footnotes up in the air and carry on??
+  %Set the 2 columns, put the footnotes up in the air (or not?) and carry on??
 }
 
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss

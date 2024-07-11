@@ -613,6 +613,10 @@
     \repeat
   \fi
 }}
+\def\runmilestone#1#2{% Macro for when a stand-alone milestone is wanted from a hook/TeX or other code
+  \def\attrib@rgs{#2}\def\thismil@stone{#1}\parse@ttribs{#2}%
+  \get@ttribute{\thisdefault@ttrkey}%
+  \st@ndalonemilestone}
 
 \x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
 \x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}

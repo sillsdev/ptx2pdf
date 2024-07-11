@@ -39,6 +39,7 @@
   \fi\fi
 }
 \newif\ifinendbook
+\newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
 \def\onecol{%
   \global\setbox\galley=\copy255                                        %(1)
   \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight\space with ht=\the\ht255 \space and partial=\the\ht\partial}%
@@ -540,8 +541,10 @@
         \edef\mktmp{\botmark}%
         \ifx\mktmp\t@tle\else
             \trace{et}{Apply border from savepartialpage - update partial}%
-            \global\partialfr@medtrue
-            \doTextB@rder{\partial}%
+            \ifpartialfr@med\else
+              \doTextB@rder{\partial}%
+              \global\partialfr@medtrue
+            \fi
         \fi
       \fi
     \fi
@@ -1541,7 +1544,6 @@
       \p@geendcontent
       \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
     }%
-    \global\partialfr@medfalse
     \global\setbox255=\box\voidb@x                                          %(+)
     \plainoutput\trace{p}{plainoutput twocoltrial}%
     \notst@dynotesfalse\clearn@tes
@@ -1779,14 +1781,15 @@
   \ifnum 1=\ifnum \c@rrentcols>1 1\else \ifendbook 1 \else 0 \fi\fi
     \layoutstylebreak % save any partially-full page into \partial
     %LOTS happens before this line is reached!
-    \iflastpage
+    \ifendbook
       \iftextborder\ifpartialfr@med
-        \ifdim\posttextb@rderskip=0pt \else\ifdim\ht\partial>10pt \setbox\partial\vbox{\unvbox\partial}% Let the box have its natural size.
-        \fi\fi
-      \else
-        \trace{et}{Apply border from single column transtion}%
-        \doTextB@rder{\partial}%
-        \global\partialfr@medtrue
+          \ifdim\posttextb@rderskip=0pt \else\ifdim\ht\partial>10pt \setbox\partial\vbox{\unvbox\partial}% Let the box have its natural size.
+          \fi\fi
+        \else
+          \trace{et}{Apply border from single column transtion}%
+          \doTextB@rder{\partial}%
+          \ifdiglot \setbox\partial\vbox{\unvbox\partial}\fi% Undo the "ignore the border" shrink. Why does only diglot need this? Or is that a wrong assumption? 
+          \global\partialfr@medtrue
       \fi\fi
     \fi
     \ifversion{2}{\b@dyfalse\beenb@dyfalse}{}%
@@ -1828,18 +1831,21 @@
   \let\\=\bslash
   \ifd@nesw@p\else
     \d@nesw@ptrue % signal to caller that this has been run
-    \iftob@dy\else\ifdim\ht\partial>\baselineskip% \vbox{\unvbox\partial}%
+    \relax
+    \iftob@dy\else\ifdim\baselineskip>0pt \ifdim \ht\partial >\baselineskip % \vbox{\unvbox\partial}%
       %\ifx\p@gefirstmark\t@tle\else
+        \trace{o}{ht partial=\the\ht\partial, bls=\the\baselineskip}%
         \iflastptxfile
-          \lastbookendrule
+          \trace{o}{lastbookendrule}%
+          \setbox\partial\vbox{\unvbox\partial \lastbookendrule}%
         \else
           \ifnum 1=\ifendbooknoeject 1\else\ifx\PageAlign\val@MULTI 1 \else 0\fi\fi
             \trace{o}{bookendrule}%
-            \bookendrule
+            \setbox\partial\vbox{\unvbox\partial \bookendrule}%
           \fi
       %\fi
       \fi
-    \fi\fi
+    \fi\fi\fi
   \fi
   %\ifnum\pageno>10\tracingmacros=1\tracingassigns=1\fi
 }%

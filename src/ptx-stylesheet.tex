@@ -1842,6 +1842,7 @@
  \ifdiglot
     \trace{d}{New ptxfile}%
     \gdef\c@rrdstat{L}%
+    \ifvoid\partial\else\insert\topins{\box\partial}\fi
     \setLRspecific% \@netimesetup needs actual values, in a diglot there might not be any use of generic FontSizeUnit, etc.
  \fi
  \ifcsname KeepMyBrokenAdjList\endcsname
@@ -1927,8 +1928,11 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi \ifdoingt@ble doingtable??\fi \c@tegory,\c@tprefix}%
+ \ifhmode\endgraf\fi
+ \ifdim\pagetotal>20pt \message{Pagetotal = \the\pagetotal, Trigggring pagebreak \the\output}\pagebreak\fi
  \seriesdiglotfalse % Set this so we know it's always valid
- \ifdigl@tinuse\ifdiglot\else
+ \ifdigl@tinuse\ifdiglot
+ \else
    \seriesdiglottrue
  \fi\fi
  \preptxfile
@@ -1966,9 +1970,9 @@
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
  \endt@ble
- \ifdiglot\enddigl@t\fi
  \iflastptxfile \global\lastpagetrue\fi\endbooktrue
- \d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
+ \ifdiglot\enddigl@t\fi
+ \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \singlecolumn
  \ifOneChapBook\endOneChapBook\fi
