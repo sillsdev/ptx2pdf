@@ -1703,8 +1703,15 @@
 \def\ins@backgrounds#1{%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifcsname bg@#1@col\endcsname
-    {\dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
-      \ifdim\dimen1>\textheight \dimen1=\textheight\fi
+    {\if P\bg@fillht\dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
+        \ifdim\dimen1>\textheight \dimen1=\textheight\fi
+      \else
+        \if A\bg@fillht
+          \dimen1=\availht
+        \else
+          \dimen1=\textheight
+        \fi
+      \fi
       \dimen2=\DiglotColourPad
       \trace{D}{Colour for #1 is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
       \hbox to 0pt {\f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height \dimen1 depth 0pt width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}}%
@@ -2234,13 +2241,25 @@
     \def\pagecontents{%
      \setdiglotN@rmal
      \pickn@xtpartial
+     \availht=\textheight
      \ifvoid\topins\else
          \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
+        \advance\availht-\ht\topins \advance\availht-\skip\topins
          \unvbox\topins \vskip\skip\topins \fi%
     %
+     \advance\availht-\ht\topchunk\advance\availht-\ht\botchunk
+     \ifvoid\bottomins\else % \kern-\dimen0
+        \advance\availht-\ht\bottomins \advance\availht-\skip\bottomins
+     \fi
+     \ifvoid\verybottomins\else % \kern-\dimen0
+        \advance\availht-\ht\verybottomins \advance\availht-\skip\verybottomins
+     \fi
+     %\advance\availht\dp\topchunk\advance\availht\dp\botchunk
+     \ifdim\dp\partial<\baselineskip
+        \advance\availht\dp\partial
+     \fi
      \box\topchunk % Top left/right insert
      \lastd@pth=\dp\partial\relax%
-     \doTextB@rder{\partial}%
      \tempfalse\let\col@do\ck@backgrounds
      \x@\each@col\diglot@list\E% 
      %\tracingassigns=1
@@ -2248,12 +2267,23 @@
      %\tracingifs=1
      \iftemp
        \trace{D}{Applying colour backgrounds}%
+       \ifdiglotSepNotes
+         \iftextborder
+           \def\bg@fillht{P}% Fill to textheight
+         \else
+           \def\bg@fillht{A}% Fill to availht
+         \fi
+       \else
+         \def\bg@fillht{P}%
+       \fi
        \let\col@do\ins@backgrounds
        \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
        \vbox to 0pt{\let\l@stcol\empty%
+         \iftextborder\ifdefined\textb@dr@top@pad\vskip\textb@dr@top@pad\fi\fi
          \hbox{\x@\each@col\tmplist\E}%
          \vss}%
      \fi
+     \doTextB@rder{\partial}%
      \unvbox\partial%
       %
      %\tracingifs=0

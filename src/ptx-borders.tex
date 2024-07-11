@@ -187,6 +187,7 @@
         \getsbp@ram{spaceafter}%
         \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}%
         \global\let\textb@dr@bot@pad\b@dr@bot@pad
+        \global\let\textb@dr@top@pad\b@dr@top@pad
       \else
         \xdef\pretextb@rderskip{0pt}%
         \xdef\posttextb@rderskip{0pt}%

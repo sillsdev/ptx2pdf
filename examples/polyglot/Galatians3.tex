@@ -38,6 +38,16 @@
 \pageno=-1
 %\tracing{s}\tracing{S}
 %\uselanguage{british}
+\catcode"FDEE=1 \catcode"FDEF=2
+\prepusfm
+\def\zcolophon﷮
+\esb\cat colophon\cat*
+\bigskip
+\pc This is the colophon that might go at the end of the book
+\esbe 
+﷯
+
+\unprepusfm
 \diglotfalse
 \singlecolumn
 \ptxfile{intro.usfm}
@@ -51,11 +61,20 @@
 %\addToRightHooks{\RTLtrue}
 \diglotSepNotestrue
 \diglotBalNotestrue
+\SetDiglotBGColour{A}{0.9 0.9 1.0}{1}
 \stylesheet{standardborders.sty}
 \stylesheet{Galatians3.sty}
 \ptxfile{mergedGal.usfm}
 \diglotcolumns
 \diglotSepNotesfalse
+
+
+\expandafter\def\csname bookend-final\endcsname{
+\layoutstylebreak
+\singlecolumn
+\zcolophon\csname beenb@dyfalse\endcsname}
+
+\lastptxfiletrue
 \ptxfile{mergedGalV.usfm}
 
 %\shipout\vbox{\hbox{partial}\unvbox\partial}
