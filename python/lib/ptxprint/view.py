@@ -1052,7 +1052,13 @@ class ViewModel:
         if v < 2.18: # transfer this value from body tab to texpert tab
             if config.getboolean("project", "ifstarthalfpage", fallback=False):
                 self._configset(config, "texpert/bookstartpage", "multi")
-                
+
+        # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
+        if config.get("header", "chvseparator", fallback="None") == "False":
+            self._configset(config, "header/chvseparator", "period")
+        if config.get("header", "chvseparator", fallback="None") == "True":
+            self._configset(config, "header/chvseparator", "colon")
+
         # ensure that the colophon text uses lowercase \zcodes (regardless of which version it comes from)
         colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
                         .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")
