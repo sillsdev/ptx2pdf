@@ -10,7 +10,7 @@ from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
-from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm, pycodedir
+from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
@@ -84,9 +84,6 @@ _pdfmodes = {
     'rgb': ("Screen", "Digital"),
     'cmyk': ("CMYK", "Transparency")
 }
-
-_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent",
-                   "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
 
 _unitpts = {
     'mm': 2.845275591,

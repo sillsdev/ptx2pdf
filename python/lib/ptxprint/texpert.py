@@ -1,8 +1,18 @@
 
 from ptxprint.utils import _, strtobool, asfloat
+from dataclasses import dataclass
+from typing import NotRequired, Callable
 import logging
 
 logger = logging.getLogger(__name__)
+
+@dataclass
+class O:
+    ident: str
+    val: tuple[int, int, int, int, int] | bool | None
+    name: str
+    descr: str
+    fn: NotRequired[Callable[['ViewModel', (int | bool | None)], None]]
 
 # for s_, (value, min, max, step increment, page increment)
 texpertOptions = {
@@ -102,10 +112,6 @@ class TeXpert:
     @classmethod
     def loadConfig(self, config, view):
         for opt in texpertOptions.values():
-            if not config.has_option(self.section, opt[0]):
-                if opt[0] == "usesysfonts":
-                    view.set(widgetName(opt), True, skipmissing=True)
-                continue
             n = widgetName(opt)
             default = opt[1]
             if isinstance(default, (tuple, list)):
