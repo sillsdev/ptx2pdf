@@ -102,7 +102,6 @@ class TeXpert:
     @classmethod
     def loadConfig(self, config, view):
         for opt in texpertOptions.values():
-            logging.debug(f"opt: {opt}")
             if not config.has_option(self.section, opt[0]):
                 if opt[0] == "usesysfonts":
                     view.set(widgetName(opt), True, skipmissing=True)
