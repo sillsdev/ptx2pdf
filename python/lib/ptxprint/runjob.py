@@ -766,6 +766,7 @@ class RunJob:
         return texfiles
 
     def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra="", digtexmodel=None):
+        logger.debug(f"in runjob sharedjob usesysfonts: {info['texpert/usesysfonts']}")
         nosysfonts = not info['texpert/usesysfonts'] or self.args.nofontcache
         genfiles = []
         if prjid is None:
