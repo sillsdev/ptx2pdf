@@ -46,6 +46,7 @@ import webbrowser
 from threading import Thread
 from base64 import b64encode, b64decode
 from io import BytesIO
+from dataclasses import asdict
 # import zipfile
 from zipfile import ZipFile, BadZipFile, ZIP_DEFLATED
 from ptxprint.reference import RefSeparators, Reference
@@ -3101,33 +3102,33 @@ class GtkViewModel(ViewModel):
         for i, (k, opt, wname) in enumerate(TeXpert.opts()):
             lasti = i
             texopts.insert_row(i)
-            l = Gtk.Label(label=opt[3]+":")
+            l = Gtk.Label(label=opt.name+":")
             l.set_halign(Gtk.Align.END)
             texopts.attach(l, 0, i, 1, 1)
             l.show()
             if wname.startswith("c_"):
                 obj = Gtk.CheckButton()
                 self.btnControls.add(wname)
-                v = opt[1]
-                tiptext = "\\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+                v = opt.val
+                tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
             elif wname.startswith("s_"):
-                x = opt[1]
+                x = opt.val
                 # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
                 adj = Gtk.Adjustment(upper=x[2], lower=x[1], step_increment=x[3], page_increment=x[4])
                 obj = Gtk.SpinButton()
                 obj.set_adjustment(adj)
                 v = str(x[0])
-                tiptext = "{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+                tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
             elif wname.startswith("fcb_"):
                 obj = Gtk.ComboBoxText()
-                for i, (a, b) in enumerate(opt[1].items()):
+                for i, (a, b) in enumerate(opt.val.items()):
                     obj.append(a, b)
                     if i == 0:
                         v = a
                 obj.set_entry_text_column(0)
                 obj.set_id_column(1)
                 obj.set_active_id(v)
-                tiptext = "{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+                tiptext = "{k}:\t[{v}]\n\n{descr}".format(k=k, v=v, **asdict(opt))
             l.set_tooltip_text(tiptext)
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)
