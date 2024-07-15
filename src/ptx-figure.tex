@@ -989,7 +989,7 @@
       \ifx\pdf@lpha\relax\def\pdf@lpha{1}\fi
       \setbox\newpicb@x\vbox{\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\newpicb@x}}%
     \else
-      \ifdim\dp\newpicb@x < \fb@bpadding \dp\newpicb@x=\fb@bpadding\fi
+      \ifhasb@rder \ifdim\dp\newpicb@x < \fb@bpadding \dp\newpicb@x=\fb@bpadding\fi\fi
     \fi
     \ifhasb@rder
       \prepb@rderbox\newpicb@x 
