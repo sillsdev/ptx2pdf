@@ -1,9 +1,69 @@
-PTXprint 2.5.1 Release Notes
-3 Jul 2024
+PTXprint 2.5.2 Release Notes
+13 Jul 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.5.2 (13 Jul 2024)
+
+  * Update SideBars.md
+  
+  * Solve diglot bookmarks
+  
+  * Make book end decoration behave better
+  
+  * Added codelet for end-of-book decoration to apply to all books
+  
+  * Suppress textborder if no bodytext since last switch to single/double column
+  
+  * Maybe solve occasional double-textborder on last page
+  
+  * Correct marginnotes to be resistant to multi-loading
+  
+  * Fix parser to output conforming footnote strings
+  
+  * Improve shorkcut key behaviour to allow toggles
+  
+  * Remove empty f|ef|fe|x
+  
+  * Clear buffers when switching views so that FRTmatter doesn't get clobbered
+  
+  * Process single->single transitions better for textborder
+  
+  * Fixes for python 3.12
+  
+  * Add texpert/usesysfonts to allow disable use of system fonts
+  
+  * Improve interaction surrounding installation of Image Sets and other .zipped image files. 
+  
+  * Make Cover page call more robust, especially for Diglot
+  
+  * Add column background colours for diglots
+  
+  * Fix known problems with coloured diglot backgrounds
+  
+  * Tidy up non system fonts.conf
+  
+  * stick a plaster over Path again
+  
+  * document RangeChar et al
+  
+  * Work around buggy pathlib in v3.12 of python
+  
+  * Add bypass alpha for diglot shading
+  
+  * Tweak DiglotColourPad default and add control to TeXhacks
+  
+  * Include all fonts in archive and clear usesysfonts
+  
+  * chapter line footnotes (#962)
+  
+  * Fix pesky 3.12 breaking backward compat with pathlib and get test working
+  
+  * Fix mappings directory and tests
+  
+  * Ensure chvseparator=true > colon and false > period in versionFwdConfig
+  
 Bug fixes and Improvements in 2.5.1 (3 Jul 2024)
 
   * Refactor PicList generation for GLO book (not to use para numbers)

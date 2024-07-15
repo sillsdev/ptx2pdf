@@ -128,6 +128,9 @@ def getlang():
     global lang
     return lang.replace('-','_').split('_')
 
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent",
+                   "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
+
 def f_(s):
     frame = currentframe().f_back
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
@@ -433,6 +436,8 @@ def asfloat(v, d):
         return d
 
 def strtobool(s):
+    if isinstance(s, bool):
+        return s
     return s.lower() in ('true', '1', 't')
 
 def pluralstr(s, l):
@@ -605,7 +610,7 @@ def xdvigetfonts(xdv):
             (a, l) = dat[12:14]
             path = inf.read(a+l).decode(errors="ignore")
             res.add(path)
-        return res
+    return res
 
 varpaths = (
     ('prjdir', ('settings_dir', 'prjid')),

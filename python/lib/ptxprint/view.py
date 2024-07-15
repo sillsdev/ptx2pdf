@@ -32,8 +32,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.5.1"
-GitVersionStr = "2.5.1"
+VersionStr = "2.5.2"
+GitVersionStr = "2.5.2"
 ConfigVersion = "2.18"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -240,6 +240,12 @@ class ViewModel:
             return [fname, fname+"_diff"]
         else:
             return [fname]
+
+    def getPDFname(self, bks=None):
+        base = self.bsaeTeXPDFnames(bks=bks)[0]
+        pdfext = _outputPDFtypes.get(self.get("fcb_outputFormat", "")) or ""
+        res = base + ("_"+pdfext if pdfext != "" else "") + ".pdf"
+        return res
         
     def _bookrefsBooks(self, bl, local):
         res = RefList()
@@ -1479,6 +1485,28 @@ class ViewModel:
         res.append(os.path.join(cpath, subdir, "ptxprint.sty"))
         return res
 
+    def getallfonts(self, xdv=None):
+        allfonts = set()
+        for k, v in TexModel._fonts.items():
+            if v[1] is None or self.get(v[1]):
+                font_info = self.get(v[0])
+                if font_info is None: continue
+                f = font_info.getTtfont()
+                if f.filename is None: continue
+                allfonts.add(f.filename)
+                
+        for k, v in self.styleEditor.sheet.items():
+            font_info = v.get(' font', self.styleEditor.basesheet.get(k, {}).get(' font', None))
+            if font_info is not None:
+                f = font_info.getTtfont()
+                if f.filename is None: continue
+                allfonts.add(f.filename)
+
+        if xdv is not None:
+            allfonts.update(xdvigetfonts(xdv))
+
+        return allfonts
+
     def _getArchiveFiles(self, books, prjid=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
@@ -1561,31 +1589,12 @@ class ViewModel:
                     # print(f"{f.as_posix()=}, {f.name=}")
 
         # fonts
-        allfonts = {}
-        for k, v in TexModel._fonts.items():
-            if v[1] is None or self.get(v[1]):
-                font_info = self.get(v[0])
-                if font_info is None: continue
-                f = font_info.getTtfont()
-                if f.filename is None: continue
-                fname = os.path.basename(f.filename)
-                allfonts[fname] = f.filename
-                
-        for k, v in self.styleEditor.sheet.items():
-            font_info = v.get(' font', self.styleEditor.basesheet.get(k, {}).get(' font', None))
-            if font_info is not None:
-                f = font_info.getTtfont()
-                if f.filename is None: continue
-                fname = os.path.basename(f.filename)
-                allfonts[fname] = f.filename
-
+        allfonts = self.getallfonts(xdv=xdv)
         if xdv is not None:
-            xdvfonts = xdvigetfonts(xdv)
-            for f in xdvfonts:
-                allfonts[os.path.basename(f)] = f
             cfgchanges["c_usesysfonts"] = (False, None)
 
-        for k,v in allfonts.items():
+        for v in allfonts():
+            k = os.path.basename(v)
             res[v] = "local/ptxprint/"+self.configName()+"/fonts/"+k
 
         if prjid:
