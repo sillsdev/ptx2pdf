@@ -94,14 +94,14 @@
 \iftrue
   \def\paperY{21cm}
   \def\paperX{29.69cm}
-  \dimen1=10cm % Sample height
-  \dimen2=29.69cm % orig height
+  \dimen1=9.5cm % Sample height
+  \dimen2=29.69cm % orig A4 height
   \edef\SampleY{\the\dimen1}
   \edef\SampleX{\the\dimexpr 0.707\dimen1\relax}
 \else
   \def\paperX{21cm}
   \def\paperY{29.69cm}
-  \dimen1=10cm % Sample height
+  \dimen1=9cm % Sample height
   \dimen2=29.69cm % orig height
   \edef\SampleY{\the\dimen1}
   \edef\SampleX{\the\dimexpr 0.707\dimen1\relax}
@@ -129,21 +129,23 @@
     \fi\fi}\x@\cstackdown\b@rderparameters,\E
 }
 \edef\bksl{\char"5C}
+
 \def\demoborder #1|#2 #3\E{%
   \boxornfalse
-  \leavevmode
-  \traceifset{demob}%
+  \noindent\leavevmode\traceifset{demob}%
   \bgroup\PaperHeight=\SampleY \PaperWidth=\SampleX 
     \widowpenalty=10
     \clubpenalty=10
     \modcat #1|#2 
     \esb\cat testpage\cat* 
     \vfill \pc #1 on #2 \pc #3 \vfill 
-    \esbe\leavevmode 
-    \hbox{\box\wholepagepic} %
+    \esbe
+    %\global\setbox\demopages\hbox{\unhbox\demopages \hskip 10pt plus 1fil \box\wholepagepic} 
+    \box\wholepagepic \hskip 5pt plus 10em 
   \egroup 
+    \lineskip=15pt
   \traceifcheck{demob}
-  \lineskip=10pt
+  \penalty0
 }
 
 \tracingstats=1
@@ -266,6 +268,6 @@
 
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
+\lastptxfiletrue
 \ptxfile{catalogue.usfm}
-
 \bye

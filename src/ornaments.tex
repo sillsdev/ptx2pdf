@@ -38,7 +38,6 @@
 \newif\ifXformOrnaments\XformOrnamentsfalse % Use XForm objects 
 \newif\ifpdf@ornament@stretch
 \newif\ifpdf@ornament@repeat
-\newif\iflocalornament
 \newif\ifstringornament
 \newif\ifornscale % Should the ornament be scaled to the relevant dimension(s)
 \newif\ifornamentfill
@@ -675,7 +674,6 @@
 }
 \def\ornament@parse#1|#2|#3|#4|#5|#6\E{%#6 is scrap
   \trace{orn}{ornament@parse:#1:#2:#3:#4}%
-  \localornamentfalse
   \stringornamentfalse
   \string@check#1""\E
   \def\@djYalign{#5}%
@@ -685,10 +683,6 @@
     \x@\@@ornsetnum #1\empty\E
     \get@ornamentDim{\pdf@ornamentNum}%
   \fi
-  %\ifx\dimen1=0pt
-  %  \localornamenttrue
-  %  \not@pgfornamentdim{#2}%
-  %\fi
   \trace{orn}{Dimensions: \@pgfornamentX, \@pgfornamentY}%
   \setgeomtransform{#2}%
   \pdf@ornament@stretchfalse
@@ -1142,17 +1136,17 @@
       \edef\ornamentheight{\the\dimexpr \c@rrfontsize\dimexpr 0.7\FontSizeUnit\relax\relax}%
     \else
       \m@kenumberns{\attr@b}%
-      \edef\ornamentheight{\@@@result}%
+      \edef\ornamentheight{\@@result}%
     \fi
     \get@ttribute{pattern}%
     \ifx\attr@b\relax
       \message{! zornament milestone must have a valid pattern="..." set}%
     \else
       \m@kenumberns{\attr@b}%
-      \hbox{\beginL\doOrnament{\@@@result}\endL}%prevent reordering of specials in RTL mode!
+      \hbox{\beginL\doOrnament{\@@result}\endL}%prevent reordering of specials in RTL mode!
       \relax
     \fi
-    \trace{orn}{end of zornament (\@@@result)}%
+    \trace{orn}{end of zornament (\@@result)}%
   \egroup
   %\aftergroup{\showlists}%
 } 
@@ -1427,13 +1421,15 @@
       \x@\gdef\csname localornament@#1@code\endcsname{%
         %\def\@@x{\ifdim\dimen0 < 0pt \the\dimexpr-\dimen0\relax \else \the\dimen0\fi}%
         %\def\@@y{\ifdim\dimen1 < 0pt \the\dimexpr-\dimen1\relax \else \the\dimen1\fi}%
-	\edef\@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
-	\edef\@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
+	\edef\@@x{\the\dimexpr \@pgfornamentX\pdf@xunit\relax}%
+	\edef\@@y{\the\dimexpr \@pgfornamentY\pdf@yunit\relax}%
+        \trace{g}{Graphic "#2" width \@@x, height \@@y}%
         \hbox{\XeTeXpicfile "#2" width \@@x height \@@y}}%
     \else
       \x@\gdef\csname localornament@#1@code\endcsname{%
-	\edef\@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
-	\edef\@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
+	\edef\@@x{\the\dimexpr \@pgfornamentX\pdf@xunit\relax}%
+	\edef\@@y{\the\dimexpr \@pgfornamentY\pdf@yunit\relax}%
+        \trace{g}{PDF "#2" width \@@x, height \@@y}%
 	\hbox{\XeTeXpdffile "#2" width \@@x height \@@y }}%
     \fi
   \egroup

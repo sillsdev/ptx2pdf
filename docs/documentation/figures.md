@@ -660,7 +660,7 @@ For multi-line captions, the line spacing may be controlled by modification of `
 If the (non-standard) `cat` attribute (e.g. `cat="myborder"`)  is specified in the piclist (or USFM3 attribute list), then sidebar-like borders and background colours may be speicified for the image.
 The border or frame is positioned relative to the image itself (i.e. exlcuding the caption).
 For example:
-![](imgs/20240715-183107.png)
+![](imgs/rose_border.png)
 
 
 was selected with `cat="dblborder"` and used these style settings:
@@ -690,7 +690,7 @@ Font-related style options (fontname, size, bold, italic, etc) and also justific
 ### Complex example
 This example shows the transparency in the  classic 'Ghostscript tiger' image, an inset caption and and  an ornamental (`Vectorian2`) frame set fully inside the background box.
 
-![](imgs/20240715-191943.png)
+![](imgs/tiger_border.png)
 ```
 \Marker cat:ornborder|fig
 \BorderStyle Vectorian2
