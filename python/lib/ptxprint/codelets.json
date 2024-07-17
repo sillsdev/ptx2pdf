@@ -346,7 +346,7 @@
           "Type": "comment#",
           "Label": "Insert an ornamental rule before any chapter starts",
           "Description": "Insert an ornamental rule before a chapter begins (for all books)",
-          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"VectorianRule88\" width=\".5\" align=\"c\" thick=\"5pt\"\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
@@ -503,7 +503,7 @@
           "Type": "insert",
           "Label": "Insert an ornamental rule",
           "Description": "Insert an ornamental rule",
-          "CodeSnippet": "\\pc \\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\*"
+          "CodeSnippet": "\\pc \\zrule|cat=\"VectorianRule1\" width=\".5\" align=\"c\" thick=\"5pt\"\\*"
         }
       ]
     },
