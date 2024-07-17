@@ -1,7 +1,17 @@
 \def\pluginlist{ornaments,cover}
 \input "paratext2.tex"
+\LogFontstrue
 \catcode`\@=11
+\def\hSEQ{\noexpand\horizSeq}
+\def\SEQ{\noexpand\vertSeq}
+\def\horizSeq{\the\orn@seq@num}
+\def\vertSeq{\the\orn@seq@num}
 \tracing{m}
+\tracing{Fe}
+\tracing{F}
+\tracing{sC}
+\tracing{s}
+\def\MapBorderTlabels{^^^^03b1,β,γ,δ,ε,ζ}
 \pluginjustwarntrue
 %\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
 %\input "ptx-extended.tex"
@@ -186,13 +196,13 @@
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
 \CacheOrnamentsfalse
-\XformOrnamentstrue
+\XformOrnamentsfalse
 \holdXobjectsfalse
 \tracingoutput=1
 \newbox\myorn
 \setbookhook{start}{all}{\setbox\myorn\hbox{\zornament|pattern="1|||" \*}}%showbox\myorn}
 \sethook{start}{p}{\leavevmode \copy\myorn}% 
-
+\hfuzz=500pt
 \ptxfile{test.usfm}
 \zNeedEvenPage
 \makeatletter

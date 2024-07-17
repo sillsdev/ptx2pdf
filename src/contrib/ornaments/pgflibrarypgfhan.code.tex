@@ -24,6 +24,7 @@
 %---------%---------%---------%---------%---------%---------%---------%---------
 \makeatletter
 \def\@pgfornamentDim#1{% dim in bp
+\let\@pgfornamentX\relax
 \ifcase#1\relax%
 \or\def\@pgfornamentX{200}\def\@pgfornamentY{200}%  1
 \or\def\@pgfornamentX{200}\def\@pgfornamentY{200}%  2
@@ -104,6 +105,17 @@
 \or\def\@pgfornamentX{120}\def\@pgfornamentY{123}%  77
 \or\def\@pgfornamentX{123}\def\@pgfornamentY{69}%  78
 \fi%
+\ifx\@pgfornamentX\relax
+  \ifcase\numexpr #1-100\relax%
+    \def\@pgfornamentX{40}\def\@pgfornamentY{40}%  100
+  \or\def\@pgfornamentX{50}\def\@pgfornamentY{50}%  101
+  \or\def\@pgfornamentX{50}\def\@pgfornamentY{50}%  102
+  \or\def\@pgfornamentX{50}\def\@pgfornamentY{50}%  103
+  \else
+    \message{Unknown ornament #1}%
+    \def\@pgfornamentX{100}\def\@pgfornamentY{100}%  Just something so there are less crashes
+  \fi
+\fi
 }%
 \makeatother
 \endinput

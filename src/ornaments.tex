@@ -49,6 +49,8 @@
 \def\MSG#1{\immediate\write -1{#1}}
 \newdimen\pdf@xunit
 \newdimen\pdf@yunit
+\let\orn@label\relax
+\let\orn@labelstyle\empty
 
 \def\strip@pt#1{\x@\x@\x@\@strip@pt\x@\the\x@ #1\@pt\E}
 {\catcode`P=12 \catcode`T=12 \lowercase{\gdef\@strip@pt#1PT#2\E{#1} \xdef\@pt{PT}}} 
@@ -450,7 +452,7 @@
     \else
       %\x@\s@tornamenttransform\geom@xform
       \ifXformOrnaments
-        \edef\ornXFid{orn\pdf@ornamentNum-\the\ornXFids}%
+        \edef\ornXFid{orn\pdf@ornamentNum-\ifx\orn@label\relax\else\orn@label\fi-\orn@labelstyle-\the\ornXFids}%
         \global\advance\ornXFids by 1
         \x@\global\x@\let\csname \ornUUID\endcsname\ornXFid
         \trace{orn}{Defining \ornXFid}%
@@ -587,6 +589,24 @@
       \dimen8=0pt
       %\showbox0
     \fi
+    \ifx\orn@label\relax\else
+      \toks0{\p@sheof\everyeof{}\makeatletter\r@storbkslsh\x@\scantokens\x@{\orn@label}\p@peof}%
+      \ifx\orn@labelstyle\empty
+        \setbox1\hbox to \wd0{\hss\hbox{\the\toks0}\hss}%
+      \else
+        \trace{orn}{Requested label '\orn@label' to use style '\orn@labelstyle'}%
+        \mcpush{c}{\orn@labelstyle}%
+        \ch@ckb@xedstyle
+        \setbox1\hbox{\s@tfont{\orn@labelstyle}{\styst@k}\the\toks0}%
+        \ifb@xedstyle
+          \set@endb@xedstyle
+          \apply@endb@xedstyle{1}%
+        \fi
+        \setbox1\hbox to \wd0{\hss\box1\hss}%
+        \mcpop
+      \fi
+      \setbox0\hbox to \wd0{\dimen0=\ht0\box0\kern-\wd1\raise\dimexpr 0.5\dimen0 - 0.5\ht1\relax\box1}%
+    \fi
     \advance\dimen8 by \dimexpr\ornXalign\dimen0\relax
     \advance\dimen7 by \dimexpr\ornYalign\dimen1\relax
     \trace{eb}{\pdf@aa, \ornYalign *\the\dimen0 -> (\the\dimen8,\the\dimen7) }%
@@ -611,6 +631,7 @@
     \fi%
     \ifdim\dimen8=0pt \else\kern \dimen8\egroup\dimen8=0pt\fi
     }%
+    %\tracingmacros=1
     \ifpdf@ornament@repeat\else
       \trace{orn}{Not holding ornament \ornUUID \ifXformOrnaments (\ornXFid)\fi}%
       \box\theornament
@@ -646,7 +667,24 @@
 \def\StringOrnamentFont{AGA Arabesque Desktop}
 \newcount\orn@strings
 \orn@strings=20000
+
 \def\chk@cplx#1#2\E{\edef\tmpa{#1}\edef\tmpb{#2}\uppercase{\edef\tmpu{#2}}}
+
+\def\@orn@label@set #1|#2|#3\E{\edef\tmp{#2}\ifx\tmp\empty
+  \else
+    \def\orn@label{#1}\def\orn@labelstyle{#2}%
+  \fi
+}
+\def\orn@label@set #1^#2^#3\E{\edef\tmp{#2}\ifx\tmp\relaxval
+    \message{!Malformed ornament label. Closing mark (^) missing in ornament string "^#1"}%
+    \@ornament@parse #1\E
+  \else
+    \def\orn@label{#1}%
+    \@orn@label@set #1||\E
+    \@ornament@parse #2\E
+  \fi
+}
+
 \def\string@check #1"#2"#3\E{%
   \edef\tmp{#1}\ifx\tmp\empty
     \edef\tmp{#2}\ifx\tmp\empty\else
@@ -661,7 +699,7 @@
     \fi
   \fi
 }
-%#1 ornament
+%#1 ornament  Ornament number or string. May be prefixed with ^label^style^ which will be centred and set in an hbox.
 %#2 orientation
 %#3 Stretch/mult
 %#4 Size {=|[a-z]|N.NN}  If a number (1.0 is valid, 2. is not) then the item's size will be this much times the normal calulated size.
@@ -669,10 +707,22 @@
 % number in formal N.N, then a pre-set scale [which must have been set by setornscale] will be applied 
 % #5 offset (-)0.NN  Ajdusts ornYalign. ornYalign takes values: 0.5=align to centre, 1=align to top, 0=align to bottom. Units are size of object.
 \def\@@ornsetnum #1#2\E{%
- %\trace{eb}{Ornament number is "#1#2"}%
+ \trace{eb}{Ornament number is "#1#2"}%
  \edef\pdf@ornamentNum{#1#2}%
 }
-\def\ornament@parse#1|#2|#3|#4|#5|#6\E{%#6 is scrap
+\def\ornament@parse#1#2\E{%
+  \edef\tmp{#1}%
+  \trace{orn}{Prefix is \meaning#1 (=\meaning^)?}%
+  \let\orn@label\relax
+  \let\orn@labelstyle\empty
+  \ifx#1^\trace{orn}{Found prefix}%
+    \orn@label@set #2^\relax^\E
+    \trace{orn}{Label:\orn@label, style: \orn@labelstyle}%
+  \else
+    \@ornament@parse #1#2\E
+  \fi
+}
+\def\@ornament@parse#1|#2|#3|#4|#5|#6\E{%#6 is scrap
   \trace{orn}{ornament@parse:#1:#2:#3:#4}%
   \stringornamentfalse
   \string@check#1""\E
@@ -683,7 +733,7 @@
     \x@\@@ornsetnum #1\empty\E
     \get@ornamentDim{\pdf@ornamentNum}%
   \fi
-  \trace{orn}{Dimensions: \@pgfornamentX, \@pgfornamentY}%
+  \trace{orn}{Dimensions for \pdf@ornamentNum:  \@pgfornamentX, \@pgfornamentY}%
   \setgeomtransform{#2}%
   \pdf@ornament@stretchfalse
   \pdf@ornament@repeatfalse
@@ -769,10 +819,12 @@
 }
 
 \def\orn@an@ornament#1,#2\E{%Possibly without changing the scale, output several ornaments
+  \advance\orn@seq@num by 1
   \x@\ornament@parse#1|||||\E%
   \ifornscale
     \setorn@scale
   \fi
+  %\x@\let\csname orn@label@\the\orn@seq@num\endcsname\orn@label
   \ifpdf@ornament@repeat
     \orn@do@ornament
     \ifXformOrnaments
@@ -811,11 +863,13 @@
 \def\Ornaments#1{%
   \begingroup
     \def\orn@rpt@c@missing{0}%
+    \orn@seq@num=0
     \orn@setup
     \x@\orn@an@ornament#1,\E%
   \endgroup
 }% 
 \newdimen\fill@target % Target dimension
+\newcount\orn@seq@num
 \newcount\mult@count
 \newdimen\fill@fixed % length of rigid elements
 \newdimen\fill@stretch % length of flexible elements
@@ -922,6 +976,7 @@
     \ifx\tmp\ptn@eq\else
       \clear@vars%
     \fi
+    \orn@seq@num=0
     \x@\orn@meas@ornament#4,\E%Measure the (horizontal) dimensions
     \dimen1=\dimexpr \fill@target - \fill@fixed - \fill@stretch \relax
     \trace{orn}{Remaining:\the\dimen1 (\the\fill@target - \the\fill@mult - \the\fill@stretch - \the\fill@fixed)}% 
@@ -979,6 +1034,7 @@
 \def\add@mult@class#1{\x@\mult@classes\x@{\the\mult@classes\D@{#1}}}
 \newif\iftemp
 \def\orn@meas@ornament#1,#2\E{%
+  \advance\orn@seq@num by 1
   \x@\ornament@parse#1|||||\E %Set relevant transform matrix and various bools
   \ifornscale
     \setorn@scale
@@ -988,7 +1044,7 @@
   \ifdim\dimen\@@orndim<0pt
     \dimen\@@orndim=-\dimen\@@orndim
   \fi
-  \trace{orn}{Ornament #1 is \the\dimen0 by \the\dimen1 \ifpdf@ornament@stretch Stretchy\fi\ifpdf@ornament@repeat Repeat\fi}%
+  \trace{orn}{Ornament #1 (\the\orn@seq@num) is \the\dimen0 by \the\dimen1 \ifpdf@ornament@stretch Stretchy\fi\ifpdf@ornament@repeat Repeat\fi}%
   \ifpdf@ornament@repeat
     \advance\mult@count by 1
     \ifdim\fill@mult@min=0pt
@@ -1193,18 +1249,18 @@
   \def\ornamentwidth{}%
   \def\ornYalign{1}%
   \def\ornXalign{0}%
-  \orn@SetStretch{#1}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to #1{\Ornaments{\patternT}}%
+  \def\orn@Side{T}\orn@SetStretch{#1}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to #1{\Ornaments{\patternT}}%
   \def\ornYalign{0}%
-  \orn@SetStretch{#1}{x}{=}{\patternB}\setbox\orn@bdr@bot\hbox to #1{\Ornaments{\patternB}}%
+  \def\orn@Side{B}\orn@SetStretch{#1}{x}{=}{\patternB}\setbox\orn@bdr@bot\hbox to #1{\Ornaments{\patternB}}%
   \trace{orn}{#2 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
   \dimen1=\dimexpr #2 - \ht\orn@bdr@top -\dp\orn@bdr@top -\ht\orn@bdr@bot -\dp\orn@bdr@bot\relax
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
   \trace{orn}{Box side is \the\dimen1}%
-  \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
+  \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
   %\showbox\orn@bdr@left
   \def\ornXalign{1}%
-  \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
+  \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
   %\showboxdepth=9
   %\showboxdepth=10
   %\showbox\orn@bdr@right
@@ -1217,13 +1273,13 @@
   \def\ornXalign{0}%
   \def\ornYalign{1}%
   \ifx\b@drtop\tr@e
-    \orn@SetStretch{\b@rderbox@width}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to \b@rderbox@width{\Ornaments{\patternT}}%
+    \def\orn@Side{T}\orn@SetStretch{\b@rderbox@width}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to \b@rderbox@width{\Ornaments{\patternT}}%
   \else
     \setbox\orn@bdr@top\hbox{}%
   \fi
   \def\ornYalign{0}%
   \ifx\b@drbottom\tr@e
-    \orn@SetStretch{\b@rderbox@width}{x}{=}{\patternB}\setbox\orn@bdr@bot\hbox to \b@rderbox@width{\Ornaments{\patternB}}%
+    \def\orn@Side{B}\orn@SetStretch{\b@rderbox@width}{x}{=}{\patternB}\setbox\orn@bdr@bot\hbox to \b@rderbox@width{\Ornaments{\patternB}}%
   \else
     \setbox\orn@bdr@bot\hbox{}%
   \fi
@@ -1238,7 +1294,7 @@
   \def\border@l@pad{0pt}\def\border@r@pad{0pt}%
   \setbox\orn@bdr@right\box\voidb@x
   \ifx\b@drleft\tr@e
-    \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternL}}%
+    \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternL}}%
     \def\border@l@pad{\border@lpadding}%
     \ifx\patternL\patternR
       \ifx\b@drright\tr@e
@@ -1253,7 +1309,7 @@
   \ifx\b@drright\tr@e
     \ifvoid\orn@bdr@right
       \def\ornXalign{1}%
-      \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
+      \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
       \def\border@r@pad{\border@rpadding}%
     \fi
   \fi
@@ -1278,11 +1334,14 @@
 }
 
 %Stylesheet Options
-\def\BorderPatternTop #1\relax{\initc@t\setsbp@ram{borderpatterntop}{#1}}
-\def\BorderPatternBot #1\relax{\initc@t\setsbp@ram{borderpatternbot}{#1}}
-\def\BorderPatternLeft #1\relax{\initc@t\setsbp@ram{borderpatternleft}{#1}}
-\def\BorderPatternRight #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
-\def\OrnamentScaleRef #1\relax{\initc@t\setsbp@ram{ornamentscaleref}{#1}}
+\def\t@xtbkslsh{\catcode`\\=12}
+\def\sb@setcode#1#2\relax{\p@sheof\everyeof={\noexpand}\x@\edef\x@\tmp\x@{\scantokens{#2}}\r@storbkslsh\p@peof\initc@t\setsbp@ram{#1}{\tmp}}
+
+\def\BorderPatternTop{\initc@t\t@xtbkslsh\sb@setcode{borderpatterntop}}
+\def\BorderPatternBot{\initc@t\t@xtbkslsh\sb@setcode{borderpatternbot}}
+\def\BorderPatternLeft{\initc@t\t@xtbkslsh\sb@setcode{borderpatternleft}}
+\def\BorderPatternRight{\initc@t\t@xtbkslsh\sb@setcode{borderpatternright}}
+\def\OrnamentScaleRef #1\relax{\initc@t\setsbp@ram{ornamentscaleref}{\detokenize{#1}}}
 
 
 
@@ -1435,6 +1494,39 @@
   \egroup
 }
 
+\def\MapBorderHlabels{A,B,C,D,E,F,G,H,I,J,K}
+\def\MapBorderVlabels{1,2,3,4,5,6,7,8}
+\def\m@b@fallbackL{V}
+\def\m@b@fallbackR{V}
+\def\m@b@fallbackT{H}
+\def\m@b@fallbackB{H}
+\def\orn@Side{}
+\def\zSEQ{%
+  \trace{orn}{zSEQ \orn@Side, \the\orn@seq@num}%
+  \ifx\orn@Side\undefined\error{!zSEQ called without a defined side}\fi
+  \ifx\orn@Side\relax\error{!zSEQ called without a valid side}\fi
+  \ifcsname MapBorder\orn@Side labels\endcsname\x@\let\x@\@list\csname MapBorder\orn@Side labels\endcsname \let\tmp\orn@Side\else
+    \x@\let\x@\tmp\csname m@b@fallback\orn@Side\endcsname
+    \x@\let\x@\@list\csname MapBorder\tmp labels\endcsname
+  \fi
+  \ifx\@list\relax\message{!zSEQ did not find a valid list (\orn@Side -> \tmp)}\else
+    \ifx\@list\empty\else
+      \let\c@llers\@list
+      \count255=\orn@seq@num
+      \x@\if\csname m@b@fallback\orn@Side\endcsname H% Horizontal borders have a corner piece.
+        \advance\count255 by -1
+      \fi
+      \loop\ifnum\count255>1
+        \advance\count255 by -1
+        \expandafter\dropfirstc@ller\c@llers,\end
+        \ifx\c@llers\cstackempty\let\c@llers\@list\fi
+        \repeat
+      \trace{orn}{zSEQ =>\c@llers}%
+      \expandafter\getfirstc@ller\c@llers,\end
+    \fi
+  \fi
+}
+  
 \def\pgfsetmiterlimit#1{}
 \edef\borderstylelist{\borderstylelist, ornaments}
 \let\pgfsetroundjoin\relax

@@ -1000,7 +1000,7 @@
             \def\xtra@depth{-\border@bpadding - \b@drwidth pt }%
       \fi \fi \fi 
       \setbox\newpicb@x\vbox to \dimexpr \ht\b@rderbox+\dp\b@rderbox \xtra@depth\relax{\lineskiplimit=0pt \lineskip=0pt \baselineskip=0pt
-          \vskip\headingtopspace\vbox to 0pt{\box\b@rderbox\vss}\penalty10000\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\newpicb@x\hskip\b@dr@right@pad}\vss}}%
+          \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\newpicb@x\hskip\b@dr@right@pad}\vss}\penalty10000\vskip\headingtopspace\vbox to 0pt{\box\b@rderbox\vss}}%
     \fi
     %Align image left/right or centre
     \ifx\picl@c\loc@InText % InTextBoxes get their natural width + spacebeside 

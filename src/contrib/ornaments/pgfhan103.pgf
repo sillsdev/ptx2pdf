@@ -1,0 +1,8 @@
+% empty bar
+\m 0 0
+\l 50 0
+\l 50 50
+\l 0 50
+\l 0 0 
+\k
+\endinput

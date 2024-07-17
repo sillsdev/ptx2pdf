@@ -228,7 +228,9 @@
     \getmcp@ram{raise}%
     \ifx\p@ram\relax\else \b@xedstyletrue\fi
     \ch@ckb@xedstyle
-    \ifb@xedstyle\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
+    \ifb@xedstyle\setbox0=\hbox\bgroup\fi\xtr@ 
+    %WIP \ifversion{3}{\setbox0=\vbox\bgroup\hsize=\maxdimen\everypar={}\let\par\endgraf}{}
+    %fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
   \fi
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
@@ -326,7 +328,7 @@
   \ifdim \@@outlinw pt>0pt \special{pdf:code Q q \@@outlinw\space w 2 Tr \@@outcol\space RG}\fi
   \ifx\@@fgcol\empty\else \special{pdf:code \@@fgcol\space rg}\fi%
   \copy#1
-  \ifdim \@@outlinw pt >0pt \special{pdf:code Q q \ifx\@@fgcol \@@fgcol\empty 0 0 0\else \@@fgcol\fi\space rg}\kern-\wd#1\box#1\fi
+  \ifdim \@@outlinw pt >0pt \special{pdf:code Q q \ifx \@@fgcol\empty 0 0 0\else \@@fgcol\fi\space rg}\kern-\wd#1\box#1\fi
   \special{pdf:code Q}}%
 }
 \def\@do@shadow{\let\@@@do\@do@shadow\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox0}\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\@@do@shadow{0}\ifvoid\ulb@x\else { }\unhbox\ulb@x\fi}\fi\@@@do}%
@@ -613,7 +615,7 @@
 }
 
 \def\definef@nt#1#2{%Assumes \f@ntstyle is the pre-determined name, and that the font actually needs defining.
-  \trace{F}{definef@nt font for #1 as \f@ntstyle \space at \c@rrfontsize}%
+  \trace{F}{definef@nt font for #1 (#2) as \f@ntstyle \space at \c@rrfontsize}%
   \trace{S}{Normal font for \sid@\space is \regular}%
   \let\regul@r=\regular
   \let\b@ld=\bold
@@ -622,7 +624,7 @@
   \let\typef@ce=\regul@r
   \getp@ram{fontname}{#1}{#2}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getp@ram{bold}{#1}{#2}%
+	  \getp@ram{bold}{#1}{#2}
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
 		\getp@ram{italic}{#1}{#2}%
