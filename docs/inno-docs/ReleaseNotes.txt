@@ -1,9 +1,25 @@
 PTXprint 2.5.2 Release Notes
-13 Jul 2024
+18 Jul 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.5.3 (18 Jul 2024)
+
+  * Fix texpert config loading to set defaults
+  
+  * Implement figure borders and SpaceBetween control for caption placement
+  
+  * Fix non paragraphed notes in tables
+  
+  * Fix unwarranted movement of figures
+  
+  * Tidy up some bits of ornament code
+  
+  * Fix bottom margin display value when placing footer above bottom margin
+  
+  * Add w and zglm shortcuts to Glossary area
+  
 Bug fixes and Improvements in 2.5.2 (13 Jul 2024)
 
   * Update SideBars.md
