@@ -20,6 +20,8 @@ Bug fixes and Improvements in 2.5.3 (18 Jul 2024)
   
   * Add w and zglm shortcuts to Glossary area
   
+  * Improve FRTtemplateAdvanced to make it easier to use
+  
 Bug fixes and Improvements in 2.5.2 (13 Jul 2024)
 
   * Update SideBars.md
