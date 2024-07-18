@@ -42,6 +42,7 @@
 \newif\ifornscale % Should the ornament be scaled to the relevant dimension(s)
 \newif\ifornamentfill
 \def\x@bjpadding{5pt} %How much extra space around xobjects to avoid clipping?
+\newdimen\OrnamentUnit\OrnamentUnit=0pt % 0pt triggers a version-dependent value
 \plugin@startif{ornaments}
 %\plugins@needed{} % Just in case it becomes separate.
 
@@ -131,17 +132,17 @@
 \def\sc@letype@XY{%
   \ift@mp\else\trace{orn}{Warning: Using xy or XY as part of a 2 part \escapechar OrnamentScaleRef makes no sense (given: \sc@ledbg)}%
   \fi
-  \x@\edef\csname \sc@lename x\endcsname{\the\dimexpr \b@drwidth\FontSizeUnit/ \@pgfornamentX\relax}%
-  \x@\edef\csname \sc@lename y\endcsname{\the\dimexpr \b@drwidth\FontSizeUnit/ \@pgfornamentY\relax}%
+  \x@\edef\csname \sc@lename x\endcsname{\the\dimexpr \b@drwidth\OrnamentUnit/ \@pgfornamentX\relax}%
+  \x@\edef\csname \sc@lename y\endcsname{\the\dimexpr \b@drwidth\OrnamentUnit/ \@pgfornamentY\relax}%
 }
 \def\sc@letype@X{%
-  \x@\edef\csname \sc@lename x\endcsname{\the\dimexpr \b@drwidth\FontSizeUnit/ \@pgfornamentX\relax}%
+  \x@\edef\csname \sc@lename x\endcsname{\the\dimexpr \b@drwidth\OrnamentUnit/ \@pgfornamentX\relax}%
   \ift@mp
     \x@\let\csname \sc@lename y\x@\endcsname\csname \sc@lename x\endcsname
   \fi
 }
 \def\sc@letype@Y{%
-  \x@\edef\csname \sc@lename y\endcsname{\the\dimexpr \b@drwidth\FontSizeUnit/ \@pgfornamentY\relax}%
+  \x@\edef\csname \sc@lename y\endcsname{\the\dimexpr \b@drwidth\OrnamentUnit/ \@pgfornamentY\relax}%
   \ift@mp
     \x@\let\csname \sc@lename x\x@\endcsname\csname \sc@lename y\endcsname
   \fi
@@ -149,6 +150,7 @@
   
 \def\sc@letype #1|#2|#3\E{%
   \trace{eb}{sc@letype  #1|#2|#3}%
+  \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
   \edef\tmp{#2}%
   \edef\t@mptyp{#1}%
   \uppercase{\edef\t@mptypU{#1}}%
@@ -640,6 +642,7 @@
     \traceifcheck{orn@do@ornament}%
 \egroup}
 \def\doOrnament#1{%
+  \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
   \begingroup
     \orn@setup
     \x@\ornament@parse#1|||||\E
@@ -1267,6 +1270,7 @@
   \vbox to #2{\baselineskip=0pt \lineskip=0pt \hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
 }
 \def\OrnamentBorder#1{%
+  \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
   \trace{orn}{OrnamentBorder \b@rderbox@width * \b@rderbox@height}%
   \def\ornamentheight{#1}%
   \def\ornamentwidth{}%
@@ -1320,7 +1324,7 @@
   \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
   \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
   \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
-    \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right\kern-\b@drwidth\FontSizeUnit}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
+    \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right\kern-\b@drwidth\OrnamentUnit}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
   %\showbox#1%
   %\x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
 }
@@ -1370,6 +1374,7 @@
 \def\DefaultOrnament{-1}
 \def\mkb@rder@ornaments{% Plugin for sidebars
   \trace{eb}{mkb@rder@ornaments}%
+  \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
   \bc@lsetup
   \def\ornamentheight{\b@drwidth}%
   \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol{\fill@none}\else\let\ornamentfillcol\cp@ram\fi
@@ -1387,19 +1392,20 @@
   %\tracingassigns=1
   \getsbp@ram{ornamentscaleref}\ifx\cp@ram\relax\else\x@\p@rsescaleref \cp@ram,\E\fi\relax
   %\tracingassigns=0
-  \edef\ornamentlinewidth{\strip@pt{\dimexpr\b@drlinewidth\FontSizeUnit\relax}}%
+  \edef\ornamentlinewidth{\strip@pt{\dimexpr\b@drlinewidth\OrnamentUnit\relax}}%
   \let\thinlin@type\tlt@C
   \trace{orn}{Checking line width}%
   \thinlinecheck{\ornamentlinewidth}{pt}{border line width for ornamental border (\c@tprefix\sb@rmarker)}{Stylesheet value \b@drlinewidth, scaled like fonts}%
   \trace{orn}{Checked line width, now \ornamentlinewidth}%
-  \OrnamentBorder{\b@drwidth\FontSizeUnit}%
-  %\setbox\b@rderbox\vbox{\trybox{\b@rderbox@width}{\b@rderbox@height}{\b@drwidth\FontSizeUnit}}%
+  \OrnamentBorder{\b@drwidth\OrnamentUnit}%
+  %\setbox\b@rderbox\vbox{\trybox{\b@rderbox@width}{\b@rderbox@height}{\b@drwidth\OrnamentUnit}}%
   \trace{orn}{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
   %\showbox#1\copy #1 
 }
 \edef\b@rderparameters{\b@rderparameters,borderstyleextra,borderpatterntop,borderpatternleft,borderpatternright,borderpatternbot,ornamentscaleref}
 
 \x@\def\csname drawzrule-ornaments\endcsname{%
+  \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
   \getp@ram{borderpatterntop}{zrule}{\styst@k}%
   \ifx\p@ram\relax
     \def\p@ttern{88||-}%
@@ -1495,7 +1501,7 @@
 }
 
 \def\MapBorderHlabels{A,B,C,D,E,F,G,H,I,J,K}
-\def\MapBorderVlabels{1,2,3,4,5,6,7,8}
+\def\MapBorderVlabels{1,2,3,4,5,6,7,8,9}
 \def\m@b@fallbackL{V}
 \def\m@b@fallbackR{V}
 \def\m@b@fallbackT{H}
@@ -1511,18 +1517,19 @@
   \fi
   \ifx\@list\relax\message{!zSEQ did not find a valid list (\orn@Side -> \tmp)}\else
     \ifx\@list\empty\else
-      \let\c@llers\@list
+      \edef\c@llers{\@list,}
       \count255=\orn@seq@num
       \x@\if\csname m@b@fallback\orn@Side\endcsname H% Horizontal borders have a corner piece.
         \advance\count255 by -1
       \fi
       \loop\ifnum\count255>1
         \advance\count255 by -1
-        \expandafter\dropfirstc@ller\c@llers,\end
-        \ifx\c@llers\cstackempty\let\c@llers\@list\fi
+        \expandafter\dropfirstc@ller\c@llers\end
+        \ifx\c@llers\empty\edef\c@llers{\@list,}\fi
+        \trace{orn}{Autolist: \c@llers}%
         \repeat
       \trace{orn}{zSEQ =>\c@llers}%
-      \expandafter\getfirstc@ller\c@llers,\end
+      \expandafter\getfirstc@ller\c@llers\end
     \fi
   \fi
 }

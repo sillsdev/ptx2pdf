@@ -11,8 +11,9 @@
 \tracing{F}
 \tracing{sC}
 \tracing{s}
-\def\MapBorderTlabels{^^^^03b1,β,γ,δ,ε,ζ}
+%\def\MapBorderTlabels{^^^^03b1,β,γ,δ,ε,ζ}
 \pluginjustwarntrue
+\def\ptxversion{0}
 %\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
 %\input "ptx-extended.tex"
 %\input "ptxplus-marginalverses.tex"
@@ -213,6 +214,7 @@
 \BookOpenLeftfalse
 \showboxdepth=999
 \showboxbreadth=99
+\message{OrnamentUnit \the\OrnamentUnit}%
 \tracing{cov}
 \eject
 %\BookOpenLefttrue
@@ -221,5 +223,4 @@
 \boxornfalse
 \unprepusfm
 \m@kecover
-
 \bye

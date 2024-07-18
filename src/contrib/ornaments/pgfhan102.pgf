@@ -1,10 +1,9 @@
-% solid/empty bar
-\m 0 0
-\l 0 25
-\l 50 25
-\l 50 0
-\l 0 0
+% corner joint for solid colour
 \m 0 50
+\l 0 0
 \l 50 50
 \s
-\endinput
+\m 0 0
+\l 50 0
+\k
+

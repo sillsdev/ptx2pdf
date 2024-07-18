@@ -624,7 +624,7 @@
   \let\typef@ce=\regul@r
   \getp@ram{fontname}{#1}{#2}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getp@ram{bold}{#1}{#2}
+	  \getp@ram{bold}{#1}{#2}%
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
 		\getp@ram{italic}{#1}{#2}%
