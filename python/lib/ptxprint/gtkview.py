@@ -2396,6 +2396,7 @@ class GtkViewModel(ViewModel):
                 logger.debug(f"Front matter from {fpath} exists")
                 self.builder.get_object("c_autoSave").set_sensitive(False)
                 self.set("c_autoSave", False)
+                self.noUpdate = False
             return
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):
             fname = self.getBookFilename(bk, prjid)
