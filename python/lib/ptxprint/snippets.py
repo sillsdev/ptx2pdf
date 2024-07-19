@@ -209,8 +209,8 @@ class Diglot(Snippet):
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \let\language{s_}=\langund
-\should@xist{{f{s_}}}
-\should@xist{{x{s_}}}
+\should@xist{{}}{{f{s_}}}
+\should@xist{{}}{{x{s_}}}
 \catcode `@=12
 
 """
@@ -234,8 +234,8 @@ class Diglot(Snippet):
 {diglot[ifincludefootnotes_]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {diglot[ifincludexrefs_]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \makeatletter
-\should@xist{{f{s_}}}
-\should@xist{{x{s_}}}
+\should@xist{{}}{{f{s_}}}
+\should@xist{{}}{{x{s_}}}
 \newlanguage\language{s_} \language\language{s_}
 {diglot[ifhavehyphenate_]}{diglot[ifhyphenate_]}\bgroup\liter@lspecials\input "{diglot[cfgrpath]}/hyphen-{diglot[prjid_]}.tex" \egroup
 \makeatother

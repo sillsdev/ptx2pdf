@@ -207,8 +207,8 @@
 \let\tocf@@t=\empty
 \let\tocaft@r=\empty
 \let\tocb@fore=\empty
-\def\d@ftoc#1#2{\should@xist{cat:toc|#1}\expandafter\xdef\csname cat:toc|#1\endcsname{#2}}
-\def\d@fiftoc#1#2{\should@xist{cat:toc|#1}\ifcsname cat:toc|#1\endcsname\else\expandafter\xdef\csname cat:toc|#1\endcsname{#2}\fi}
+\def\d@ftoc#1#2{\should@xist{cat:toc|}{#1}\expandafter\xdef\csname cat:toc|#1\endcsname{#2}}
+\def\d@fiftoc#1#2{\should@xist{cat:toc|}{#1}\ifcsname cat:toc|#1\endcsname\else\expandafter\xdef\csname cat:toc|#1\endcsname{#2}\fi}
 \def\defTOC#1#2{%
   \ifRTL\x@\def\csname ms:ztoc=#1\endcsname{\TOCRTLtrue\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}%
   \else\x@\def\csname ms:ztoc=#1\endcsname{\TOCRTLfalse\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}%

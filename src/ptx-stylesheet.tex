@@ -63,11 +63,20 @@
   \fi
 }
 \def\testm@rkerexists#1{\tempfalse\ifcsname m@rkerexists-#1\endcsname\temptrue\else\ifcsname m@rkerexists-#1\ds@ffix\endcsname\temptrue\fi\fi}
-\def\should@xist#1{\ifcsname m@rkerexists-#1\endcsname\else
-  \trace{sC}{Remembering that #1 exists as a marker}%
-  \remember@xists{#1}%
-  \s@tpp@name{#1}\x@\global\x@\let\csname \pp@name\endcsname\relax%Invalidate old cache
-\fi
+\def\should@xist#1#2{\ifcsname m@rkerexists-#1#2\endcsname\else
+    \trace{sC}{Remembering that #1#2 exists as a marker}%
+    \remember@xists{#1#2}%
+  \fi
+  \edef\s@etmp{#1}\ifx\s@etmp\empty\else
+    \ifcsname m@rkerexists-#2\endcsname
+    \else
+      \remember@xists{#2}% Unprefixed version should also exist
+    \fi
+    \trace{sC}{Resetting cache  for  #1#2}%
+    \setpp@name{#1#2}\x@\global\x@\let\csname \pp@name\endcsname\undefined%Invalidate old cache for prefixed version
+  \fi
+  \trace{sC}{Resetting cache  for  #2}%
+  \setpp@name{#2}\x@\global\x@\let\csname \pp@name\endcsname\undefined%Invalidate old cache for simple version
 }
 
 
@@ -203,10 +212,9 @@
 %} % expand now, not later 
 
 \def\setp@ram#1#2#3{\ifx\ds@ffix\empty\edef\@mkr{#2}\empty\else\x@\@set@mkr#2++\E\fi
-  \trace{sC}{Setting parameter for #1/#2/#3}%
+  \trace{sC}{Setting parameter for #1/\c@tprefix#2/#3}%
   \x@\xdef\csname\c@tprefix\@mkr:#1\endcsname{#3}\trace{sa}{set \c@tprefix\@mkr:#1 -> #3}%
-  \should@xist{\@mkr}%Ensure that the marker is in the exists list
-  \ifx\c@tprefix\empty\else\should@xist{\c@tprefix\@mkr}\fi
+  \ifx\c@tprefix\empty\else\should@xist{\c@tprefix}{\@mkr}\fi%Ensure that the marker is in the exists list
 }
  % expand now, not later 
 %-csty_defparam
@@ -464,8 +472,8 @@
     \global\let\p@ssParams\g@tp@tmp
     \x@\let\x@\g@th@tmp\csname \ph@name\endcsname
     \global\let\p@ssHooks\g@th@tmp
-    \trace{s}{\pp@name\space exists: '\p@ssParams'}%
-    \trace{s}{\ph@name\space exists: '\p@ssHooks'}%
+    \trace{sC}{\pp@name\space exists: '\p@ssParams'}%
+    \trace{sh}{\ph@name\space exists: '\p@ssHooks'}%
   \fi
 }
 
@@ -1107,10 +1115,10 @@
 \newbox\pstr@t
 \newif\ifCalcChapSize \CalcChapSizetrue
 \def\calcdr@psize{%
-  \should@xist{c}%
+  \should@xist{}{c}%
   \ifdiglot 
     \trace{d}{Calculating drop: \c@rrdstat}%
-    \should@xist{c\c@rrdstat}%
+    \should@xist{}{c\c@rrdstat}%
     \s@tbaseline@{p}{\c@rrdstat}%
   \else
     \s@tbaseline{p}{p}%

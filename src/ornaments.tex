@@ -605,6 +605,7 @@
           \apply@endb@xedstyle{1}%
         \fi
         \setbox1\hbox to \wd0{\hss\box1\hss}%
+        %\showbox1
         \mcpop
       \fi
       \setbox0\hbox to \wd0{\dimen0=\ht0\box0\kern-\wd1\raise\dimexpr 0.5\dimen0 - 0.5\ht1\relax\box1}%
@@ -1517,7 +1518,7 @@
   \fi
   \ifx\@list\relax\message{!zSEQ did not find a valid list (\orn@Side -> \tmp)}\else
     \ifx\@list\empty\else
-      \edef\c@llers{\@list,}
+      \edef\c@llers{\@list,}%
       \count255=\orn@seq@num
       \x@\if\csname m@b@fallback\orn@Side\endcsname H% Horizontal borders have a corner piece.
         \advance\count255 by -1

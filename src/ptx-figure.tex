@@ -724,6 +724,7 @@
     \fi
   \fi
   \let\origc@t\c@tegory
+  \let\orig@sbm\sb@rmarker
   \ifcsname figparam-cat\endcsname
     % Relying on the fact that \fig is always in a box, pretend to be in a sidebar called 'fig', and get the border parameters.
     \x@\S@tCat\x@{\csname figparam-cat\endcsname}%
@@ -1040,6 +1041,8 @@
   \iftemp
     \pl@cefigure
   \fi
+  \let\sb@rmarker\orig@sbm
+  \S@tCat{\origc@t}%
  \fi% end \ifIncludeFigures
 }
 

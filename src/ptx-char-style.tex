@@ -323,9 +323,11 @@
 }
 
 \def\@@do@shadow#1{\trace{Fe}{Chunk is \the\wd#1 wide, so far \the\wd\ulb@x}\hbox{%
-  \special{pdf:code q}\ifx\@@shadcol\empty\else\special{pdf:code \@@shadcol\space rg}\fi%
+  \special{pdf:code q}%
+  \ifx\@@shadcol\empty\else\special{pdf:code \@@shadcol\space rg}\fi%
   \ifx\@@shdw@x\relax\else\kern\@@shdw@x \relax\raise\@@shdw@y\copy#1 \kern-\dimexpr \wd#1+\@@shdw@x\relax\fi
-  \ifdim \@@outlinw pt>0pt \special{pdf:code Q q \@@outlinw\space w 2 Tr \@@outcol\space RG}\fi
+  \ifx\@@shadcol\empty\else\special{pdf:code Q q}\fi
+  \ifdim \@@outlinw pt>0pt \special{pdf:code \@@outlinw\space w 2 Tr \@@outcol\space RG}\fi
   \ifx\@@fgcol\empty\else \special{pdf:code \@@fgcol\space rg}\fi%
   \copy#1
   \ifdim \@@outlinw pt >0pt \special{pdf:code Q q \ifx \@@fgcol\empty 0 0 0\else \@@fgcol\fi\space rg}\kern-\wd#1\box#1\fi
@@ -389,10 +391,8 @@
   \iftemp
     \ifx\p@rsedcol\z@ros\let\p@rsedcol\relax\fi
     \ifx\p@rsedcol\relax\else
-       %\tracingmacros=1 \tracingassigns=1
        \x@\h@xsixtotripple\x@ x\p@rsedcol\end \let\p@rsedcol\rgb@out% Convert hexadecimal to R G B spec
-       %\tracingmacros=0 \tracingassigns=0
-     \fi
+    \fi
     \d@shadow{#1}{\shdwp@ram}{\shdwcolp@ram}{\outlnp@ram}{\outlncolp@ram}{\ifx\p@rsedcol\relax\else\p@rsedcol\fi}%
   \fi
   \ifx\ulp@ram\tru@ \let\@do@underline\@do@Sunderline\d@underline{#1}\else
