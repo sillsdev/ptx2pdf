@@ -14,6 +14,7 @@ class Hyphenation:
         outfname = os.path.join(prjdir, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
         hyphenatedWords = []
         if not os.path.exists(infname):
+            self = cls()
             self.m1 = _("Failed to Generate Hyphenation List")
             self.m2 = _("{} Paratext Project's Hyphenation file not found:\n{}").format(prjid, infname)
             return self

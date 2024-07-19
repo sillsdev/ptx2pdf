@@ -607,6 +607,8 @@ def xdvigetfonts(xdv):
         inf.seek(postamble + 29, 0) # skip the postamble command itself
         while inf.tell() < postpost:
             dat = inf.read(14)
+            if len(dat) < 14:
+                break
             (a, l) = dat[12:14]
             path = inf.read(a+l).decode(errors="ignore")
             res.add(path)
