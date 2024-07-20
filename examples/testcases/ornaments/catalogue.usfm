@@ -17,14 +17,17 @@ scripture where images of plants and animals are not permitted...
 \p
 \testornamentsv
 \hfill\endgraf
+\p
+\p
 
+\vfill
 \s1 \zrule|cat="hanoverline" width="0.6"\*
 \s1 Pgfhan Ornaments
 \zrule|cat="hanunderline" width="0.6"\*
 \p
-\p The 'han'-style ornaments now include some PTXprint specific elements (numbers 100 onward) that are suitable for map borders. They are shown after the sample page borders.
+\p The 'han'-style ornaments now include some PTXprint-specific elements (numbers 100 onward) that are suitable for map borders. They are shown after the sample page borders. 100 is intended for use with a border of 31 and 32; 101 with 105, and 102 with 103 and 104 (next to the corner) and  106 and 107 (in the main fill area).
+
 \p \testornamentsh
-\pb
 \s Predefined zrules at 0.5 width and 0.7
 \p Notice how some of the rules contain optional elements, and other distort.  
 \p
@@ -90,7 +93,6 @@ HanRule35
 \zrule|cat="HanRule35" width="0.5" \* 
 HanRule47
 \zrule|cat="HanRule47" width="0.5" \* 
-\pb
 \singlecolumnvert
 
 \p
@@ -170,12 +172,18 @@ are at fractional heights.
 
 \fig MapEdge4 (1, 2, 3, 4 and 5 have the same pattern, but are 5x5,5x7, 7x7, 7x9 and 9x9 respectively) | src="pseudomap.pdf" pgpos="hc" size="col" scale="0.5" cat="MapEdge4"  \fig*
 
-\fig MapEdge7 (6, 7, 8, 9 and 10 have the same pattern, but are 5x5,5x7, 7x7, 7x9 and 9x9 respectively) | src="pseudomap.pdf" pgpos="hc" size="col" scale="0.5" cat="MapEdge7"  \fig*
-8
+\fig MapEdge7 (6, 7, 8, 9 and 10 have the same pattern, but are 5x5,5x7, 7x7, 7x9 and 9x9 respectively)  The labels are styled  with style zbn2. Both zbn1 and zbn2 have the new 'Outline' style set. | src="pseudomap.pdf" pgpos="hc" size="col" scale="0.5" cat="MapEdge7"  \fig*
 
-\fig MapEdge14 (11, 12, 13, 14 and 15 have the same pattern, but are 5x5,5x7, 7x7, 7x9 and 9x9 respectively) | src="pseudomap.pdf" pgpos="hc" size="col" scale="0.5" cat="MapEdge14"  \fig*
-8
+\fig MapEdge14 (11, 12, 13, 14 and 15 have the same pattern, but are 5x5,5x7, 7x7, 7x9 and 9x9 respectively).| src="pseudomap.pdf" pgpos="hc" size="col" scale="0.5" cat="MapEdge14"  \fig*
 \p
+\fig MapEdge14 - modified. The standard maps edges all include a background box reaching to the outer edge of the border (BoxPadding 10, BorderPadding -10, BorderWidth 10) thus making applying an alternative colour to white (here pale green) as simple as supplying an alternative BgColour attribute. BorderFillColour controls the normally-black border blocks. | src="pseudomap.pdf" pgpos="hc" size="col" scale="0.5" cat="MapEdge14c"  \fig*
+
+\m Definition of the modified style:\endgraf
+\p \\Marker cat:MapEdge14c|fig\endgraf
+\p \\BorderRef MapEdge14\endgraf
+\p \\BorderFillColour 0.1 0.5 0.1\endgraf
+\p \\BgColour 0.7 0.9 0.7\endgraf
+
 \singlecolumnvert
 
 \esb\cat fullpage\cat*
