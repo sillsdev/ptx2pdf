@@ -227,7 +227,7 @@
     \ifx\@ttriblist\empty\else\b@xedstyletrue\fi 
     \getmcp@ram{raise}%
     \ifx\p@ram\relax\else \b@xedstyletrue\fi
-    \ch@ckb@xedstyle
+    \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
     \ifb@xedstyle\setbox0=\hbox\bgroup\fi\xtr@ 
     %WIP \ifversion{3}{\setbox0=\vbox\bgroup\hsize=\maxdimen\everypar={}\let\par\endgraf}{}
     %fi                     %(3)
@@ -237,16 +237,16 @@
   \trace{s}{Actual start of \styst@k (b@xedstyle\ifb@xedstyle true\else false\fi)}%
 }
 %-cchar_startcharstyle
-\def\ch@ckb@xedstyle{%Check parameters that need a style to be boxed and reprocessed
-    \getmcp@ram{background}%
+\def\ch@ckb@xedstyle#1#2{%Check parameters that need a style to be boxed and reprocessed
+    \getp@ram{background}{#1}{#2}%
     \def\xtr@{}% Any extra code to run at the start of the group
     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
-    \getmcp@ram{underline}%
+    \getp@ram{underline}{#1}{#2}%
     \ifx\p@ram\tru@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
     \ifx\p@ram\tw@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
-    \getmcp@ram{outline}%
+    \getp@ram{outline}{#1}{#2}%
     \ifx\p@ram\relax\else\b@xedstyletrue\fi
-    \getmcp@ram{shadow}%
+    \getp@ram{shadow}{#1}{#2}%
     \ifx\p@ram\relax\else\b@xedstyletrue\fi
 }
 \newbox\ulb@x
@@ -355,15 +355,15 @@
 \newif\ifAlwaysCheckAttributes \AlwaysCheckAttributesfalse
 %+cchar_endcharstyle
 %\lccode`\|=`\\ % for printing backslash in error message
-\def\set@endb@xedstyle{%
+\def\set@endb@xedstyle#1#2{%
   \b@xedstylefalse
-  \getmcp@ramR{raise}%
+  \getp@ram{raise}{#1}{#2}%
   \global\let\char@raise\p@ram
   \ifx\p@ram\relax\else\ifdim\char@raise=0pt \else \b@xedstyletrue\fi\fi
-     \getmcp@ramR{background}%
+     \getp@ram{background}{#1}{#2}%
      \global\let\char@background\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
-     \getmcp@ramR{underline}%
+     \getp@ram{underline}{#1}{#2}%
      \ifx\p@ram\tru@\b@xedstyletrue\global\let\ulp@ram\p@ram
      \else
        \ifx\p@ram\tw@\b@xedstyletrue\global\let\ulp@ram\p@ram
@@ -372,15 +372,15 @@
        \fi
      \fi
      \global\let\outlncolp@ram\empty\global\let\shdwcolp@ram\empty
-     \getmcp@ram{p@rsedcol}\global\let\p@rsedcol\p@ram
-     \getmcp@ram{shadow}\global\let\shdwp@ram\p@ram
+     \getp@ram{p@rsedcol}{#1}{#2}\global\let\p@rsedcol\p@ram
+     \getp@ram{shadow}{#1}{#2}\global\let\shdwp@ram\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\global\let\shdwp@ram\relax\else
-       \getmcp@ram{shadowcol}\ifx\p@ram\relax\xdef\shdwcolp@ram{0 0 0}\else\global\let\shdwcolp@ram\p@ram\fi
+       \getp@ram{shadowcol}{#1}{#2}\ifx\p@ram\relax\xdef\shdwcolp@ram{0 0 0}\else\global\let\shdwcolp@ram\p@ram\fi
        \b@xedstyletrue
      \fi\fi
-     \getmcp@ram{outline}\global\let\outlnp@ram\p@ram
+     \getp@ram{outline}{#1}{#2}\global\let\outlnp@ram\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\global\let\outlnp@ram\relax\else\b@xedstyletrue
-       \getmcp@ram{outlinecol}\ifx\p@ram\relax\xdef\outlncolp@ram{0 0 0}\else\global\let\outlncolp@ram\p@ram\fi
+       \getp@ram{outlinecol}{#1}{#2}\ifx\p@ram\relax\xdef\outlncolp@ram{0 0 0}\else\global\let\outlncolp@ram\p@ram\fi
      \fi\fi
 }
 
@@ -420,7 +420,7 @@
    \else
     \ifskipch@rstyle\egroup\else%
      \cl@singhooks{end}{\oldch@rstyle}{\h@@kstyst@k}% discover and execute any <end> hook
-     \set@endb@xedstyle
+     \set@endb@xedstyle{\styst@kfirst}{\styst@k}%
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
      \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else\b@xedstyletrue\trace{A}{Attributes: \@ttriblist}\fi

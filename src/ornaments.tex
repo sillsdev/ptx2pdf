@@ -598,10 +598,10 @@
       \else
         \trace{orn}{Requested label '\orn@label' to use style '\orn@labelstyle'}%
         \mcpush{c}{\orn@labelstyle}%
-        \ch@ckb@xedstyle
+        \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
         \setbox1\hbox{\s@tfont{\orn@labelstyle}{\styst@k}\the\toks0}%
         \ifb@xedstyle
-          \set@endb@xedstyle
+          \set@endb@xedstyle{\styst@kfirst}{\styst@k}%
           \apply@endb@xedstyle{1}%
         \fi
         \setbox1\hbox to \wd0{\hss\box1\hss}%

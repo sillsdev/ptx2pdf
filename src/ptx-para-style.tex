@@ -268,7 +268,7 @@
 \def\par{%
   \ifhmode
    \ifb@xedparstyle \trace{s}{b@xedstyle met in par! \styst@k}%
-    \set@endb@xedstyle\egroup\apply@endb@xedstyle{\tmpctsb@x}%
+    \set@endb@xedstyle{\styst@kfirst}{\styst@k}\egroup\apply@endb@xedstyle{\tmpctsb@x}%
     \unhbox\tmpctsb@x
     \b@xedparstylefalse
    \fi
@@ -430,7 +430,7 @@
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
  \ifb@xedparstyle \trace{s}{b@xedstyle met in endlastp@rstyle! \styst@k}%
-  \unskip\set@endb@xedstyle\egroup%\showbox\tmpctsb@x
+  \unskip\set@endb@xedstyle{\styst@kfirst}{\styst@k}\egroup%\showbox\tmpctsb@x
   \apply@endb@xedstyle{\tmpctsb@x}%
   %\showbox\tmpctsb@x
   \unhbox\tmpctsb@x
@@ -700,7 +700,7 @@
   \resetp@rstyle
 %-cpar_parstyle_transition
   \b@xedstylefalse
-  \ch@ckb@xedstyle
+  \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
   \trace{s}{parstyle: \styst@k, (b@xedstyle\ifb@xedstyle true\else false\fi)}%
   \ifb@xedstyle
     \global\b@xedparstyletrue\else\global\b@xedparstylefalse\fi

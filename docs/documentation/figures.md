@@ -688,7 +688,10 @@ This makes it possible to apply a caption to a full-page map, for instance.
 Font-related style options (fontname, size, bold, italic, etc) and also justification and margin settings also take effect, but this would normally be avoided for the sake of consistent appearance.
 
 ### Complex example
-This example shows the transparency in the  classic 'Ghostscript tiger' image, an inset caption and and  an ornamental (`Vectorian2`) frame set fully inside the background box.
+This example shows the transparency in the  classic 'Ghostscript tiger' image,
+an inset caption and and  an ornamental (`Vectorian2`) frame set fully inside
+the background box. The category also applies to the credit box, allowing it to
+be moved so that there is no clash with the border.
 
 ![](imgs/tiger_border.png)
 ```
@@ -708,7 +711,11 @@ This example shows the transparency in the  classic 'Ghostscript tiger' image, a
 \RightMargin 0.5
 \FontScale 0.7
 \Alpha 0.5
-```
+
+\Marker cat:ornborder|x-credit|fig
+\Outline 1
+\OutlineColour xffff00
+\SpaceBeside 8```
 
 The piclist entry is:
 ```
