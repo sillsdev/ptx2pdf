@@ -1,7 +1,7 @@
 
 from ptxprint.utils import _, strtobool, asfloat
 from dataclasses import dataclass
-from typing import Optional, Callable
+from typing import Optional, Callable, Tuple, Union
 import logging
 
 logger = logging.getLogger(__name__)
@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)     # frozen not required
 class O:
     ident: str
-    val: tuple[int, int, int, int, int] | bool | None
-    output: str | Callable[[str, int | bool | None], None]
+    val: Union[Tuple[int, int, int, int, int], bool, None]
+    output: Union[str, Callable[[str, Union[int, bool, None]], None]]
     name: str
     descr: str
-    fn: Optional[Callable[['ViewModel', (int | bool | None)], None]] = None
+    fn: Optional[Callable[['ViewModel', Union[int, bool, None]], None]] = None
 
 # for s_, (value, min, max, step increment, page increment)
 texpertOptions = {
