@@ -157,10 +157,12 @@
       \gridb@x\he@dingbox
       \ifinextended\sb@rsavegriddims\fi
     \fi%
-    \unvbox\he@dingnotes
   \fi
   \let\lastp@rclass\tmppcl@ss%
-  \unvbox\he@dingnotes
+  \ifvoid\he@dingnotes\else
+    \unvbox\he@dingnotes
+    \penalty10000
+  \fi
   \global\he@dingsfalse
   \global\first@fterheadingtrue
   \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
