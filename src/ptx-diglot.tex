@@ -2097,7 +2097,8 @@
     \fi%
   }%
   \trace{f}{Adjusting footnotebox}%
-  \trace{D}{Raising footnotebox by \the\dimen3\space \l@gdims{\notechunk}}%
+  \advance\dimen3 by \dimen9
+  \trace{D}{Raising footnotebox by \the\dimen3 \space note:\l@gdims{\notechunk}, partial:\l@gdims{\partial}}%
   \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\notechunk}%
 }%
 
@@ -3059,7 +3060,7 @@
           \tempfalse\let\col@do\ck@backgrounds
           \x@\each@col\diglot@list\E% 
         \fi
-        \iftemp\setbox\partial\vbox{\dimen1=\dp\partial\unvbox\partial\kern\dp\partial}\fi%avoid clashes with textborder and 
+        \iftemp\setbox\partial\vbox{\dimen1=\dp\partial\unvbox\partial\kern\dimen1}\fi%avoid clashes with textborder and backgrounds
         %\iftextborder
           %\ifpartialfr@med\else
             %\doTextB@rder{\partial}%
