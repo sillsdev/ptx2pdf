@@ -1596,7 +1596,7 @@ class ViewModel:
         if xdv is not None:
             cfgchanges["c_usesysfonts"] = (False, None)
 
-        for v in allfonts():
+        for v in allfonts:
             k = os.path.basename(v)
             res[v] = "local/ptxprint/"+self.configName()+"/fonts/"+k
 
