@@ -1,8 +1,34 @@
 PTXprint 2.5.3 Release Notes
-18 Jul 2024
+23 Jul 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.5.4 (23 Jul 2024)
+
+  * Add option of annotated borders (for maps)
+  
+  * Fix noUpdate looping
+  
+  * Add default GLO styling for \p 
+  
+  * Add a codelet for emdash after \k* in GLO
+  
+  * Minor crash fixes
+  
+  * Improved standard borders
+  
+  * Fix some errors in map borders
+  
+  * Update ornament catalogue
+  
+  * Enable hboxed character styles in figure captions and image credits (#976)
+  
+  * Fix headings detaching when theres a note on them
+  
+  * Backport typing in texpert to 3.8
+  
+  * Fix minor typo bugs preventing Create Archive from working
 
 Bug fixes and Improvements in 2.5.3 (18 Jul 2024)
 
