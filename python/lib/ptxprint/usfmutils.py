@@ -264,14 +264,7 @@ class Usfm:
         return words
 
     def hyphenate(self, hyph, nbhyphens):
-        hyph.calcChars()
-        splitre = re.compile(r"(?i)([^{}]+)".format("".join(sorted(hyph.chars))))
-        if nbhyphens:
-            hyphenchar = "\u2011"
-        elif hyph.has2010:
-            hyphenchar = "\u2010"
-        else:
-            hyphenchar = "-"
+        hyphenchar = "\u2011" if nbhyphens else hyph.get_hyphen_char()
         def isincluded(e):
            return "nonvernacular" not in getattr(e.parent, "meta", {}).get('TextProperties', "") \
                     and getattr(e.parent, "meta", {}).get("TextType", "") == "VerseText"
@@ -280,24 +273,7 @@ class Usfm:
                 for c in e:
                     proc(c)
             elif isincluded(e):
-                t = str(e).replace("-", hyphenchar)
-                bits = splitre.split(t)
-                for i in range(0, len(bits), 2):
-                    s = bits[i].replace("-", hyphenchar)
-                    if s.lower() in hyph:
-                        h = hyph.get(s.lower()).lower()
-                        if s.lower() != s:
-                            hbits = h.split("-")
-                            hpos = list(accumulate([len(x) for x in hbits]))
-                            r = [s[x:y] for x, y in zip([0] + hpos, hpos)]
-                            bits[i] = "\u00AD".join(r)
-                            logger.log(6,f"hyphenating {s} at {hpos} giving {'-'.join(r)}")
-                        else:
-                            logger.log(6,f"hyphenating {s} giving {h}")
-                            bits[i] = h.replace("-", "\u00AD")
-                    else:
-                        bits[i] = s
-                e.data = "".join(bits)
+                e.data = hyph.hyphenate(str(e), hyphenchar)
         proc(self.doc[0])
         
     def getmarkers(self):

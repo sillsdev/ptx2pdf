@@ -201,7 +201,7 @@
       \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
       \trace{F}{baseline [\f@ntstyle] (#1,#2) = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
       \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0
-      \should@xist{\f@ntstyle}%
+      \should@xist{}{\f@ntstyle}%
     \fi
   \else
     \def\s@urce{store:\f@ntstyle}%

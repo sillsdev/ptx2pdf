@@ -285,7 +285,7 @@
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
   \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
-    \ifdoingt@ble #3\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes}\else%
+    \ifdoingt@ble #3\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes\hsize=\t@blehsize}\else%
       \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
       \else\edef\@wrap{}%
         \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax #3
@@ -327,7 +327,7 @@
   \global\advance\currn@tenum by 1
   \global\currn@tetparnum=1
   \xdef\currn@tetype{#1}%
-  \trace{n}{Footnote (\n@tetype) [\ch@pter:\v@rse] will be \the\n@tewidth \space wide (page is \the\hsize)}%
+  \trace{n}{Footnote (\n@tetype) [\ch@pter:\v@rse] will \ifp@ranotes\else not \fi be paragraphed and \the\n@tewidth \space wide (page is \the\hsize)}%
   \global\floatingpenalty\@MM % make sure note does not float away from caller to another page
   \the\d@note\bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
     \ifFootNoteGlyphMetrics

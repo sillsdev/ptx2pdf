@@ -1,0 +1,16 @@
+% corner joint for solid/empty bars
+\m 0 0
+\l 25 25
+\l 0 25
+\l 0 0
+\m 25 25
+\l 50 50 
+\l 50 0
+\l 25 0
+\l 25 25
+\s
+\m 0 50
+\l 50 50
+%\m 25 0
+%\l 0 0
+\k

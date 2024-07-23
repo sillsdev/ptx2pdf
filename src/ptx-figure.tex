@@ -98,12 +98,30 @@
       \fi
     \fi
   \else
-    \x@\let\x@#1\csname figparam-x-#2\endcsname
-    \ifx#1\empty
-      \edef#1{#4}%
-    \fi
+    \let#1\tmpp@ram
   \fi
+  \trace{F}{\string#1 is #1}%
 }
+\def\setf@gNval#1#2#3#4{\edef#1{#4}% As above, but allowing for Normal fig values too
+  \x@\let\x@\tmpp@ram\csname figparam-x-#2\endcsname
+  \trace{F}{figparam-x-#2 (lo:\loc@ption, \picl@c, \l@cspec@a\l@cspec@b) is \meaning\tmpp@ram }%
+  \ifx\tmpp@ram\relax\let\tmpp@ram\empty\fi
+  \ifx\tmpp@ram\empty
+    \getp@ram{#2}{fig}{fig}%
+    \ifx\p@ram\relax\else
+      \ifx\p@ram\empty
+        \edef#1{#4}%
+      \else
+        \edef#1{\p@ram #3}%
+      \fi
+    \fi
+  \else
+    \let#1\tmpp@ram
+  \fi
+  \trace{F}{\string#1 is #1}%
+}
+
+
 % Generate the insert save-boxes for each class at start-up
 \addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\ins@rts\E}
 
@@ -124,11 +142,11 @@
   \ifnum \p@ramnumber<0
     \edef\p@ramid{NEG\the\p@ramnumber}%
   \else
-    \ifnum \p@ramnumber>19 \global\morep@ramsfalse\fi
+    \ifnum \p@ramnumber>21 \global\morep@ramsfalse\fi % The number on this line should be 1 below the count of valid parameters.
     %WARNING: There must not be a space after the text(before \or / \else / \fi) or (re)-initialisation will break
-    \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or
-        scale\or media\or pgpos\or x-credit\or x-creditpos\or
-        x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\or x-edgeadjust\else UNK-\the\p@ramnumber\fi}%
+    \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or  %0-9
+         scale\or media\or pgpos\or x-credit\or x-creditpos\or x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\or %10-19
+         x-edgeadjust\or cat\or x-spacebetween\else UNK-\the\p@ramnumber\fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -426,6 +444,7 @@
 }
 
 \def\t@xtfragment#1#2{\bgroup\everypar={}\let\par\endgraf
+    \trace{F}{t@xtfragment{#1}}%
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
     \getp@ram{justification}{#1}{#1}%
     \ifx\p@ram\r@ght\rightskip=0pt\fi
@@ -438,7 +457,18 @@
     \ifRTL\beginR\fi
     \linepenalty=1000
     \s@tbaseline{#1}{#1}%
-    \noindent\leavevmode #2\par
+    \trace{F}{Checking boxed style for #1 /  \c@tprefix:\m@rker (\tmpstyst@k)}%
+    \let\styst@k\tmpstyst@k
+    \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
+    \ifb@xedstyle
+      \trace{F}{t@xtfragment applying boxed style}%
+      \setbox1\hbox{#2}%
+      \set@endb@xedstyle{\styst@kfirst}{\styst@k}%
+      \apply@endb@xedstyle{1}%
+      \noindent\leavevmode\unhbox1\par
+    \else
+      \noindent\leavevmode #2\par
+    \fi
     \ifRTL\endR\fi
     \egroup
 }
@@ -510,7 +540,8 @@
   \fi
   \edef\cr@ditr@tn{\the\count255}%credit rotation as a positive number (0-180)
   %pad credit
-  \setbox0=\hbox{\XeTeXuseglyphmetrics=3 \s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
+  \s@tfont{\cr@ditlist}{\cr@ditlist}
+  \setbox0=\hbox{\XeTeXuseglyphmetrics=3 % We subvert s@tfont's mechanism and provide a pre-formed list
     \ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
@@ -539,6 +570,12 @@
      \fi
      % Now cram the text into a box that ought to be just wide enough
      \setbox0=\vbox{\hsize=\dimen1\relax\t@xtfragment{\cr@ditstyle}{\vrule width 0pt height\ht0 \unhbox0\vrule depth\FigCreditPadding width 0pt}}%
+  \else
+    \ch@ckb@xedstyle{\cr@ditlist}{\cr@ditlist}%
+    \ifb@xedstyle
+      \set@endb@xedstyle{\cr@ditlist}{\cr@ditlist}%
+      \apply@endb@xedstyle{0}%
+    \fi
   \fi
   \setbox0=\hbox{\hskip \FigCreditPadding\box0\hskip \FigCreditPadding}%
   \ifx\cr@ditbox\empty\else
@@ -619,7 +656,6 @@
    \x@\strip@pt\x@{\x@\dimexpr "#1#2 pt / 255}
    \x@\strip@pt\x@{\x@\dimexpr "#3#4 pt / 255}
    \x@\strip@pt\x@{\x@\dimexpr "#5#6 pt / 255}}}}
- 
 \setp@ram{fontsize}{x-credit|fig}{7}
 %-cfig_hex
 
@@ -704,6 +740,23 @@
         \x@\xdef\csname figparam-loc\endcsname{}%
       \fi
     \fi
+  \fi
+  \let\origc@t\c@tegory
+  \let\orig@sbm\sb@rmarker
+  \ifcsname figparam-cat\endcsname
+    % Relying on the fact that \fig is always in a box, pretend to be in a sidebar called 'fig', and get the border parameters.
+    \x@\S@tCat\x@{\csname figparam-cat\endcsname}%
+    \def\sb@rmarker{fig}%
+    \get@border@style@params
+    \prepb@rderdims
+    \getsbp@ram{hascol}\let\h@scol\cp@ram%
+    \ifx\h@scol\tr@e
+      \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
+      \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
+    \fi
+  \else
+    \hasb@rderfalse
+    \let\h@scol\false
   \fi
   % get location
   \edef\loc@ption{\csname figparam-pgpos\endcsname}%%
@@ -841,6 +894,7 @@
   \setf@gval{\sp@cebeside}{spacebeside}{pt}{\DefaultSpaceBeside}% absolute value
   \setf@gval{\sp@cebefore}{spacebefore}{}{0}%  in \onel@neunit
   \setf@gval{\sp@ceafter}{spaceafter}{}{0}% in \onel@neunit
+  \setf@gNval{\sp@cebetween}{spacebetween}{}{0}%  in \onel@neunit
   \setf@gval{\tmp}{edgeadjust}{}{0}% in same units as margins - \IndentUnit
   \p@chshift=\tmp\IndentUnit
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
@@ -853,19 +907,29 @@
       \hsize=\p@cinswid
     \fi
     \ifdim\sp@cebefore pt =0pt \else\vskip \sp@cebefore\onel@neunit\fi
-    \ifCaptionFirst\d@caption
-      \ifdim\FigCaptionAdjust=0pt\else
-        \vskip \FigCaptionAdjust\relax
+    \tempfalse
+    %\ifpicUsesIns\temptrue\fi
+    \ifx\picl@c\loc@Inl\temptrue\fi
+    \ifx\picl@c\loc@Par\temptrue\fi
+    \ifx\picl@c\loc@Cut\temptrue\fi
+    \ifCaptionFirst
+      \setbox0\vbox{\d@caption
+      \ifdim\dimexpr \FigCaptionAdjust+ \sp@cebetween\onel@neunit\relax =0pt\else
+        \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
+      \fi}%
+      \dimen0=\ht0
+      \ifdim\ht0<0pt
+    %      \vskip0.3\baselineskip
+        \kern -\ht0
       \fi
+      \unvbox0
     \else
-      \tempfalse
-      %\ifpicUsesIns\temptrue\fi
-      \ifx\picl@c\loc@Inl\temptrue\fi
-      \ifx\picl@c\loc@Par\temptrue\fi
-      \ifx\picl@c\loc@Cut\temptrue\fi
       \iftemp
         \vskip0.3\baselineskip
       \fi
+    \fi
+    \ifdim \border@tpadding < -\b@drwidth pt  
+      \kern\the\dimexpr -\border@tpadding - \b@drwidth pt\relax%
     \fi
     % insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
@@ -882,37 +946,39 @@
     \else
       \def\picdim@n{width}\def\picaltdim@n{height}%Normal
     \fi
+    \edef\r@qdim{\sizem@ltiple\space\the\p@cwidth}%
+    \p@cwidth=\sizem@ltiple\p@cwidth%
+    \ifhasb@rder
+      \dimen1=\p@cwidth
+      \@@sb@width@calcs
+      \trace{g}{Reducing image size to \the\dimen1 \space  from \the\p@cwidth, due to border}%
+      \p@cwidth=\dimen1
+    \fi
     % First, try to set it at the requested dimension:
     \tempfalse
     \x@\ch@ckpath\x@{\f@lename}
-    \iftemp
-      \setbox\newpicb@x=\hbox{%
-        \ins@rtpic{"\csname figparam-src\endcsname"}%
-                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
-    \else
-      \setbox\newpicb@x=\hbox{%
-        \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
-    \fi
+    \iftemp\else\edef\f@lename{\the\PicPath\f@lename}\fi
+    \setbox\newpicb@x=\hbox{%
+      \ins@rtpic{"\f@lename"}%
+       {\picdim@n}{\the\p@cwidth}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
     \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
-      \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\space\the\p@cwidth}%
+      \trace{g}{Picture too big set with \picdim@n=\r@qdim, switching to \picaltdim@n=\p@cheight}%\sizem@ltiple\space\the\p@cwidth}%
       \setbox\newpicb@x=\hbox{%
-        \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
+        \ins@rtpic{"\f@lename"}%
+         {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
     \fi
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
     \fi
-    \trace{g}{Object going into hbox \sizem@ltiple x \the\p@cwidth}%
+    \trace{g}{Object going into hbox \the\p@cwidth}%
     \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
     \ifpicTall %Tall boxes don't get centred.
       \setbox\newpicb@x=\hbox{\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x}%
     \else
-      \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x\hss}%
+      \setbox\newpicb@x=\hbox to \p@cwidth{\hss\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x\hss}%
     \fi
 %-cfig_dofigure_3
-    % FIXME: Something like this?
 %+cfig_dofigure_4
     \tempfalse
     \def\pr@pic{}\def\p@stpic{}%
@@ -938,6 +1004,23 @@
         \x@\let\x@\cr@ditbox\x@=\csname figparam-x-creditbox\endcsname
         \add@credit%
     \fi
+    \ifx\h@scol\tr@e
+      \ifx\pdf@lpha\relax\def\pdf@lpha{1}\fi
+      \setbox\newpicb@x\vbox{\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\newpicb@x}}%
+    \else
+      \ifhasb@rder \ifdim\dp\newpicb@x < \fb@bpadding \dp\newpicb@x=\fb@bpadding\fi\fi
+    \fi
+    \ifhasb@rder
+      \prepb@rderbox\newpicb@x 
+      \headingtopspace=0pt
+      \dob@rder % Actually generate the border
+      \let\xtra@depth\empty
+      \ifx\h@scol\tr@e \ifx\b@drbottom\tr@e \ifdim \border@bpadding < -\b@drwidth pt  
+            \def\xtra@depth{-\border@bpadding - \b@drwidth pt }%
+      \fi \fi \fi 
+      \setbox\newpicb@x\vbox to \dimexpr \ht\b@rderbox+\dp\b@rderbox \xtra@depth\relax{\lineskiplimit=0pt \lineskip=0pt \baselineskip=0pt
+          \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\newpicb@x\hskip\b@dr@right@pad}\vss}\penalty10000\vskip\headingtopspace\vbox to 0pt{\box\b@rderbox\vss}}%
+    \fi
     %Align image left/right or centre
     \ifx\picl@c\loc@InText % InTextBoxes get their natural width + spacebeside 
       \p@cinswid=\wd\newpicb@x
@@ -951,10 +1034,18 @@
       \else\hbox to \p@cinswid{\hss\box\newpicb@x\hss}\fi
     \fi
     \ifCaptionFirst\vskip 0.5\onel@neunit\else
-      \ifdim\FigCaptionAdjust=0pt\else
-        \vskip \FigCaptionAdjust\relax
+      \setbox0\vbox{\ifdim\dimexpr \FigCaptionAdjust+ \sp@cebetween\onel@neunit\relax =0pt\else
+        \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
       \fi
-      \d@caption
+      \d@caption}\trace{g}{caption box is \the\ht0 high}%
+      \dimen0=0pt
+      \ifdim\ht0<0pt
+        \dimen0=-\ht0
+      \fi
+      \unvbox0
+      \ifdim\dimen0=0pt\else
+        \kern\dimen0
+      \fi
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
@@ -968,6 +1059,8 @@
   \iftemp
     \pl@cefigure
   \fi
+  \let\sb@rmarker\orig@sbm
+  \S@tCat{\origc@t}%
  \fi% end \ifIncludeFigures
 }
 

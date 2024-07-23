@@ -121,6 +121,7 @@ elif args.logging:
             print("Exception", e)
     log = logging.getLogger('ptxprint')
     log.info("git sha: $Id$")
+    log.debug(args)
 
 if log is not None and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stdio = StreamLogger(log, logging.INFO)

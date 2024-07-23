@@ -227,24 +227,26 @@
     \ifx\@ttriblist\empty\else\b@xedstyletrue\fi 
     \getmcp@ram{raise}%
     \ifx\p@ram\relax\else \b@xedstyletrue\fi
-    \ch@ckb@xedstyle
-    \ifb@xedstyle\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
+    \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
+    \ifb@xedstyle\setbox0=\hbox\bgroup\fi\xtr@ 
+    %WIP \ifversion{3}{\setbox0=\vbox\bgroup\hsize=\maxdimen\everypar={}\let\par\endgraf}{}
+    %fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
   \fi
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
   \trace{s}{Actual start of \styst@k (b@xedstyle\ifb@xedstyle true\else false\fi)}%
 }
 %-cchar_startcharstyle
-\def\ch@ckb@xedstyle{%Check parameters that need a style to be boxed and reprocessed
-    \getmcp@ram{background}%
+\def\ch@ckb@xedstyle#1#2{%Check parameters that need a style to be boxed and reprocessed
+    \getp@ram{background}{#1}{#2}%
     \def\xtr@{}% Any extra code to run at the start of the group
     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
-    \getmcp@ram{underline}%
+    \getp@ram{underline}{#1}{#2}%
     \ifx\p@ram\tru@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
     \ifx\p@ram\tw@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
-    \getmcp@ram{outline}%
+    \getp@ram{outline}{#1}{#2}%
     \ifx\p@ram\relax\else\b@xedstyletrue\fi
-    \getmcp@ram{shadow}%
+    \getp@ram{shadow}{#1}{#2}%
     \ifx\p@ram\relax\else\b@xedstyletrue\fi
 }
 \newbox\ulb@x
@@ -321,12 +323,14 @@
 }
 
 \def\@@do@shadow#1{\trace{Fe}{Chunk is \the\wd#1 wide, so far \the\wd\ulb@x}\hbox{%
-  \special{pdf:code q}\ifx\@@shadcol\empty\else\special{pdf:code \@@shadcol\space rg}\fi%
+  \special{pdf:code q}%
+  \ifx\@@shadcol\empty\else\special{pdf:code \@@shadcol\space rg}\fi%
   \ifx\@@shdw@x\relax\else\kern\@@shdw@x \relax\raise\@@shdw@y\copy#1 \kern-\dimexpr \wd#1+\@@shdw@x\relax\fi
-  \ifdim \@@outlinw pt>0pt \special{pdf:code Q q \@@outlinw\space w 2 Tr \@@outcol\space RG}\fi
+  \ifx\@@shadcol\empty\else\special{pdf:code Q q}\fi
+  \ifdim \@@outlinw pt>0pt \special{pdf:code \@@outlinw\space w 2 Tr \@@outcol\space RG}\fi
   \ifx\@@fgcol\empty\else \special{pdf:code \@@fgcol\space rg}\fi%
   \copy#1
-  \ifdim \@@outlinw pt >0pt \special{pdf:code Q q \ifx\@@fgcol \@@fgcol\empty 0 0 0\else \@@fgcol\fi\space rg}\kern-\wd#1\box#1\fi
+  \ifdim \@@outlinw pt >0pt \special{pdf:code Q q \ifx \@@fgcol\empty 0 0 0\else \@@fgcol\fi\space rg}\kern-\wd#1\box#1\fi
   \special{pdf:code Q}}%
 }
 \def\@do@shadow{\let\@@@do\@do@shadow\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox0}\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\@@do@shadow{0}\ifvoid\ulb@x\else { }\unhbox\ulb@x\fi}\fi\@@@do}%
@@ -351,15 +355,15 @@
 \newif\ifAlwaysCheckAttributes \AlwaysCheckAttributesfalse
 %+cchar_endcharstyle
 %\lccode`\|=`\\ % for printing backslash in error message
-\def\set@endb@xedstyle{%
+\def\set@endb@xedstyle#1#2{%
   \b@xedstylefalse
-  \getmcp@ramR{raise}%
+  \getp@ram{raise}{#1}{#2}%
   \global\let\char@raise\p@ram
   \ifx\p@ram\relax\else\ifdim\char@raise=0pt \else \b@xedstyletrue\fi\fi
-     \getmcp@ramR{background}%
+     \getp@ram{background}{#1}{#2}%
      \global\let\char@background\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
-     \getmcp@ramR{underline}%
+     \getp@ram{underline}{#1}{#2}%
      \ifx\p@ram\tru@\b@xedstyletrue\global\let\ulp@ram\p@ram
      \else
        \ifx\p@ram\tw@\b@xedstyletrue\global\let\ulp@ram\p@ram
@@ -368,15 +372,15 @@
        \fi
      \fi
      \global\let\outlncolp@ram\empty\global\let\shdwcolp@ram\empty
-     \getmcp@ram{p@rsedcol}\global\let\p@rsedcol\p@ram
-     \getmcp@ram{shadow}\global\let\shdwp@ram\p@ram
+     \getp@ram{p@rsedcol}{#1}{#2}\global\let\p@rsedcol\p@ram
+     \getp@ram{shadow}{#1}{#2}\global\let\shdwp@ram\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\global\let\shdwp@ram\relax\else
-       \getmcp@ram{shadowcol}\ifx\p@ram\relax\xdef\shdwcolp@ram{0 0 0}\else\global\let\shdwcolp@ram\p@ram\fi
+       \getp@ram{shadowcol}{#1}{#2}\ifx\p@ram\relax\xdef\shdwcolp@ram{0 0 0}\else\global\let\shdwcolp@ram\p@ram\fi
        \b@xedstyletrue
      \fi\fi
-     \getmcp@ram{outline}\global\let\outlnp@ram\p@ram
+     \getp@ram{outline}{#1}{#2}\global\let\outlnp@ram\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\global\let\outlnp@ram\relax\else\b@xedstyletrue
-       \getmcp@ram{outlinecol}\ifx\p@ram\relax\xdef\outlncolp@ram{0 0 0}\else\global\let\outlncolp@ram\p@ram\fi
+       \getp@ram{outlinecol}{#1}{#2}\ifx\p@ram\relax\xdef\outlncolp@ram{0 0 0}\else\global\let\outlncolp@ram\p@ram\fi
      \fi\fi
 }
 
@@ -387,10 +391,8 @@
   \iftemp
     \ifx\p@rsedcol\z@ros\let\p@rsedcol\relax\fi
     \ifx\p@rsedcol\relax\else
-       %\tracingmacros=1 \tracingassigns=1
        \x@\h@xsixtotripple\x@ x\p@rsedcol\end \let\p@rsedcol\rgb@out% Convert hexadecimal to R G B spec
-       %\tracingmacros=0 \tracingassigns=0
-     \fi
+    \fi
     \d@shadow{#1}{\shdwp@ram}{\shdwcolp@ram}{\outlnp@ram}{\outlncolp@ram}{\ifx\p@rsedcol\relax\else\p@rsedcol\fi}%
   \fi
   \ifx\ulp@ram\tru@ \let\@do@underline\@do@Sunderline\d@underline{#1}\else
@@ -418,7 +420,7 @@
    \else
     \ifskipch@rstyle\egroup\else%
      \cl@singhooks{end}{\oldch@rstyle}{\h@@kstyst@k}% discover and execute any <end> hook
-     \set@endb@xedstyle
+     \set@endb@xedstyle{\styst@kfirst}{\styst@k}%
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
      \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else\b@xedstyletrue\trace{A}{Attributes: \@ttriblist}\fi
@@ -613,7 +615,7 @@
 }
 
 \def\definef@nt#1#2{%Assumes \f@ntstyle is the pre-determined name, and that the font actually needs defining.
-  \trace{F}{definef@nt font for #1 as \f@ntstyle \space at \c@rrfontsize}%
+  \trace{F}{definef@nt font for #1 (#2) as \f@ntstyle \space at \c@rrfontsize}%
   \trace{S}{Normal font for \sid@\space is \regular}%
   \let\regul@r=\regular
   \let\b@ld=\bold

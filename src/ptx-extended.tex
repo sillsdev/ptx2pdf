@@ -430,15 +430,7 @@
         \fi
       \fi
     \fi
-    \advance\dimen1 by -\dimexpr \fb@lpadding + \fb@rpadding\relax
-    \ifx\b@drleft\tr@e\ifdim \border@lpadding>-\b@drwidth pt
-        \advance\dimen1 by -\b@drwidth pt 
-        \advance\dimen1 by -\border@lpadding
-    \fi\fi
-    \ifx\b@drright\tr@e\ifdim \border@rpadding>-\b@drwidth pt   
-        \advance\dimen1 by -\b@drwidth pt 
-        \advance\dimen1 by -\border@rpadding
-    \fi\fi
+    \@@sb@width@calcs
     \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
       \if p\tempc\relax\else
         \if c\tempc\relax\else
@@ -466,7 +458,17 @@
   \trace{e}{text box width is \the\sb@rwidth}%
   \hsize=\sb@rwidth
 }
-
+\def\@@sb@width@calcs{%
+    \advance\dimen1 by -\dimexpr \fb@lpadding + \fb@rpadding\relax
+    \ifx\b@drleft\tr@e\ifdim \border@lpadding>-\b@drwidth pt
+        \advance\dimen1 by -\b@drwidth pt 
+        \advance\dimen1 by -\border@lpadding
+    \fi\fi
+    \ifx\b@drright\tr@e\ifdim \border@rpadding>-\b@drwidth pt   
+        \advance\dimen1 by -\b@drwidth pt 
+        \advance\dimen1 by -\border@rpadding
+    \fi\fi
+}
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
   \@@sbar{esb}%

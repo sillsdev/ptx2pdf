@@ -892,7 +892,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.5.1</property>
+    <property name="version">Version 2.5.3</property>
     <property name="copyright">© 2020-2024, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -5652,6 +5652,7 @@ enable this option.</property>
                                     <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onNoInkInMarginClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
@@ -8132,11 +8133,14 @@ be set in single-column layout.</property>
                                   <object class="GtkLabel" id="l_showChaptersIn">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="label" translatable="yes">Show Chapter Numbers in:</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin-start">11</property>
+                                    <property name="label" translatable="yes">Show Chapter
+Numbers in:</property>
+                                    <property name="justify">right</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">0</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -8155,20 +8159,18 @@ styling to \w then select the \w ...\w*
 character style option.</property>
                                     <property name="halign">end</property>
                                     <property name="hexpand">True</property>
-                                    <property name="label" translatable="yes">Glossary Word
-Appearance:</property>
+                                    <property name="label" translatable="yes">Glossary Word Appearance:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="fcb_glossaryMarkupStyle">
                                     <property name="name">Markup for glossary words in text</property>
-                                    <property name="width-request">180</property>
+                                    <property name="width-request">150</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Glossary words are marked up with
@@ -8187,7 +8189,7 @@ such as Strong's numbers.</property>
                                     <property name="active-id">1</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
+                                    <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -8242,7 +8244,60 @@ numbers then check this option.</property>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">1</property>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <child>
+                                      <object class="GtkLinkButton" id="lb_style_w">
+                                        <property name="label">\w</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="focus-on-click">False</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Click to edit the marker's properties on the Styles tab.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to view the Styles tab</property>
+                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLinkButton" id="lb_style_zglm">
+                                        <property name="label">\zglm</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="focus-on-click">False</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">The \zglm style is used to format the
+floor brackets used in glossary markup.
+
+Click to edit the marker's properties on the Styles tab.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to view the Styles tab</property>
+                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>

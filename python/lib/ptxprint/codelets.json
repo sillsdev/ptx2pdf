@@ -346,7 +346,7 @@
           "Type": "comment#",
           "Label": "Insert an ornamental rule before any chapter starts",
           "Description": "Insert an ornamental rule before a chapter begins (for all books)",
-          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"VectorianRule88\" width=\".5\" align=\"c\" thick=\"5pt\"\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
@@ -382,8 +382,14 @@
         },
         {
           "Type": "comment#",
+          "Label": "Add \\emdash after glossary keyword",
+          "Description": "Only within the Glossary, replace the space after the \\k* marker with an \\emdash to help separate the keyword from the definition that follows.",
+          "CodeSnippet": "at GLO '(\\\\k\\*) ' > '\\1\\\\emdash '"
+        },
+        {
+          "Type": "comment#",
           "Label": "Make glossary entries list items",
-          "Description": "Only within the Glossary, changes a normal paragraph \\p marker to be a list item \\li for paragraphs with a \\k (keyword/entry), and to \\pi for subsequent paragraphs.\n\nNote that as an alternative you can use book-specific styling instead (the style 'id:GLO|p' could be added to change how \\p gets styled within the Glossary).",
+          "Description": "Only within the Glossary, changes a normal paragraph \\p marker to be a list item \\li for paragraphs with a \\k (keyword/entry), and to \\pi for subsequent paragraphs.\n\nNote: By default, book-specific styling 'id:GLO|p' changes how \\p gets styled so that it uses a hanging indent. This works well for simple single-paragraph glossary entries, but more complex multi-paragraph entried work better using \\li and \\pi as done here.",
           "CodeSnippet": "at GLO '\\\\p \\\\k ' > '\\\\li \\\\k '\nat GLO '\\\\p ' > '\\\\pi '"
         },
         {
@@ -503,7 +509,7 @@
           "Type": "insert",
           "Label": "Insert an ornamental rule",
           "Description": "Insert an ornamental rule",
-          "CodeSnippet": "\\pc \\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\*"
+          "CodeSnippet": "\\pc \\zrule|cat=\"VectorianRule1\" width=\".5\" align=\"c\" thick=\"5pt\"\\*"
         }
       ]
     },
