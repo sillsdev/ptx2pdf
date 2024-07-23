@@ -175,5 +175,6 @@ Broken \jmp barcodes |link-id="broken" link-href="#ISBNs" link-title="broken ISB
 \p \jmp goggle https |link-href="https://google.com"\jmp*
 
 \p \k Testing\k* This seems to work just like \xt normal|TST 1:1\xt*.
+\p \k Flying Fox|bats\k* This is a test of \\k with an attribute.
 \pb
 \zfillsignature|pages="8" pagenos="do"\*

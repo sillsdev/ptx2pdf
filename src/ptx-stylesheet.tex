@@ -1265,6 +1265,27 @@
 \newdimen\dropnumbersize
 \newdimen\dropnumberraise
 
+% recognise and process reference id if supplied in \k
+\def\@s@tkref#1|#2\E{%\tracingassigns=1 
+  \def\tmp{#2}%
+  \edef\kr@f{\detokenize{#1}}%
+  \let\kr@ftext\kr@f
+  \ifx\tmp\empty
+    \x@\setkr@f\x@{\kr@f}%
+  \else
+    \@@s@tkref#2\E
+  \fi
+  %\tracingassigns=0
+}
+\def\@@s@tkref#1|\E{%
+  \def\thiswh@tstyle{k}\@@init@ttribs
+  \def\@ttributes{#1}% Without the added trailing | now.
+  \x@\let\x@\@ttriblist\csname @ttriblist-k\endcsname
+  \parse@ttribs{\@ttributes}% Parse
+  \x@\let\x@\kr@f\csname attr:\thisdefault@ttrkey\endcsname
+  \trace{A}{Keyword with explicit key '\kr@f'}%
+}
+
 %+csty_define-hooks
 % other modules can use \addtoversehooks to insert macros that will be executed at each verse
 \def\addtoversehooks#1{\x@\global\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
@@ -1411,14 +1432,13 @@
  %\catcode`\~=12 \lccode`\~=32\lowercase{
  \def\@@k##1\k*{%\k processing 2nd half. NO CRs!
     \let\v@rse=\empty % Normally verses and keywords don't co-occur
-    \edef\kr@f{\detokenize{##1}}%
+    \x@\@s@tkref##1|\E%
     \let\thiskmark\kr@f%
-    \x@\setkr@f\x@{\kr@f}%
     \tr@ceT{keyword: \kr@f}%
     \runtrigg@rsother{k.\kr@f}%
     \activ@tecustomch@rs%   
     \p@sheof\r@gurgitatedtrue%
-    \x@\@k\scantokens{ ##1\ignorespaces}\endch@rstylen*%
+    \x@\x@\x@\@k\x@\scantokens\x@{\kr@ftext\ignorespaces}\endch@rstylen*%
     \ifcsname m@rknumk\ifdiglot\c@rrdstat\fi\endcsname\else\addnewm@rk{k\ifdiglot\c@rrdstat\fi}\fi%
     \getm@rknum{k\ifdiglot\c@rrdstat\fi}\x@\x@\x@\marks\x@\m@rknum\x@{\thiskmark}%Set (side-dependent) mark for k.
     \r@gurgitatedfalse\p@peof%
@@ -1426,8 +1446,10 @@
   }%}
  \def\k{%\k processing
    \deactiv@tecustomch@rs% no CR here
+   \catcode`\|=12 %
    \@@k}
 }%
+
 
 \endgroup
 \catcode`0=11\def\z@ro{0}\catcode`0=12

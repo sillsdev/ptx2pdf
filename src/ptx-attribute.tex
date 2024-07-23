@@ -103,9 +103,23 @@
   \relax\relax
   \trace{A}{attributes list reset}%
 }
-\def\init@ttribs{%Attribute pre-setupcode 
+\def\init@ttribs{%Attribute pre-setupcode, defines grabber, etc. 
   %\tracingassigns=1
   \edef\thiswh@tstyle{\ifmst@nestyle\thismil@stone\else\thisch@rstyle\fi}%
+  \@@init@ttribs % Processing config. Might be used without this wrapper when attributes are have been grabbed already.
+  \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
+  \catcode`\|=\active
+  \ifmst@nestyle
+    \use@ttrSlash
+  \else
+    \use@ttrSpecific % based on style
+    %\use@ttrGrab % char-by-char 
+  \fi
+  \in@ttribfalse
+  \xdef\@ttributes{}%
+}
+
+\def\@@init@ttribs{%Most generic-case attribute initialisiation. 
   \trace{A}{InitAttribs \thiswh@tstyle (\csname thisch@rstyle\endcsname,\csname thismil@stone\endcsname)}%
   \ifx\attribsus@d\empty\else
     \unset@ttribs% Clear any old attributes.
@@ -123,16 +137,6 @@
     \let\thisdefault@ttrkey=\attrkey
     \trace{A}{Attributes with no keyname will be \attrkey}%
   \fi
-  \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
-  \catcode`\|=\active
-  \ifmst@nestyle
-    \use@ttrSlash
-  \else
-    \use@ttrSpecific % based on style
-    %\use@ttrGrab % char-by-char 
-  \fi
-  \in@ttribfalse
-  \xdef\@ttributes{}%
 }
 \def\GOTOLinkBorderstyle{/S/U/W 1} % Underline
 \def\URLLinkBorderstyle{/S/U/W 1} % Underline
