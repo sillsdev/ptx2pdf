@@ -1291,7 +1291,7 @@
 \def\savepartialpaged{%Double columnn version of save partial page
   \trace{o}{savepartialpaged. hIns=\the\holdinginserts, iflevel=\the\currentiflevel}%
   \traceifset{savepartialpaged}%
-  \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
+  \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost! (\the\ht255+\the\dp255)}\fi
   \s@ttrialheight
   \setbox14=\makefootbox\ifvoid14\else
     \ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
@@ -1386,8 +1386,9 @@
     \keepn@testrue\c@lcavailht\keepn@tesfalse
     \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}%
     \if\XrefNotes\relax\else\trace{o}{IAFFM}\global\setbox\th@cl@ss=\box\voidb@x\global\setbox\xr@fbox=\box\voidb@x\fi
-    \ifdim\availht<2\baselineskip \twocolp@geout \clearn@tes
-      \global\output={\savepartialpagedbounce}% In situation where there's a fast-reset, need to come back here.
+    \global\output={\savepartialpagedbounce}% In situation where there's a fast-reset, need to come back here, (with things not held)
+    \ifdim\availht<2\baselineskip 
+      \twocolp@geout \clearn@tes
     \else
       \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \fi
@@ -1417,7 +1418,7 @@
     \fi%
   \fi%
   \traceifcheck{savepartialpaged}%
-  \trace{o}{endof savepartialpaged: iflevel=\the\currentiflevel}%
+  \trace{o}{endof savepartialpaged: iflevel=\the\currentiflevel, output=\the\output}%
 }
 %-c_savepartialpaged
 
