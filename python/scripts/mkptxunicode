@@ -3,18 +3,56 @@
 import argparse
 from ptxprint.sfm.ucd import find_ucd
 
+class Or:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def get(self):
+        a = self.a.get()
+        b = self.b.get()
+        return a | b
+
+class And:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def get(self):
+        a = self.a.get()
+        b = self.b.get()
+        return a & b
+
+class T:
+    def __init__(self, group, vals):
+        self.group = group
+        self.vals = vals
+
+    def __or__(self, o):
+        return Or(self, o)
+
+    def __and__(self, o):
+        return And(self, o)
+
+    def get(self):
+        tmp = set()
+        for val in self.vals:
+            tmp.update(find_ucd(self.group, val))
+        return tmp
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("outfile",nargs="?",default="ptx-unicode.tex",help="Output TeX file")
 args = parser.parse_args()
 
 classes = {
-    "Vir":      [("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"])],
-    "CM":       [("gc", ["Mc", "Mn"]), ("InSC", ["Top"])],
-    "Num":      [("bc", ["ES", "EN", "ET", "AN", "CS", "BN"])],
-    "ArabL":    [("jt", ["L"])],
-    "ArabR":    [("jt", ["R"])],
-    "ArabD":    [("jt", ["D", "C"])],
-    "ArabU":    [("jt", ["U"]), ("^bc", ["AL", "AN"])],
+    "Vir":      [T("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"])],
+    "CM":       [T("gc", ["Mc", "Mn"]) | T("InSC", ["Top"])],
+    "Num":      [T("bc", ["ES", "EN", "ET", "AN", "CS", "BN"])],
+    "ArabL":    [T("jt", ["L"])],
+    "ArabR":    [T("jt", ["R"])],
+    "ArabD":    [T("jt", ["D", "C"])],
+    "ArabU":    [T("jt", ["U"]) & (T("bc", ["AL", "AN"]) | T("sc", ["Mong"]))],
 }
 
 pairs = [   (0, 0), ("CM", 0), ("Num", 0), (0, "Num"), ("CM", "Num"), ("CM", "ArabL"),
@@ -31,19 +69,7 @@ classdat = {}
 for k, b in classes.items():
     dat = set()
     for v in b:
-        tmp = set()
-        if v[0].startswith("^"):
-            isand = True
-            av = v[0][1:]
-        else:
-            isand = False
-            av = v[0]
-        for val in v[1]:
-            tmp.update(find_ucd(av, val))
-        if isand:
-            dat = dat & tmp
-        else:
-            dat = dat | tmp
+        dat.update(v.get())
     if "Vir" in classdat:
         dat -= classdat["Vir"]
     classdat[k] = dat
