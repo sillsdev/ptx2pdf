@@ -8,13 +8,20 @@ parser.add_argument("outfile",nargs="?",default="ptx-unicode.tex",help="Output T
 args = parser.parse_args()
 
 classes = {
-    "Vir":  [("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"])],
-    "CM":   [("gc", ["Mc", "Mn"]), ("InSC", ["Top"])],
-    "Num":  [("bc", ["ES", "EN", "ET", "AN", "CS", "BN"])],
+    "Vir":      [("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"])],
+    "CM":       [("gc", ["Mc", "Mn"]), ("InSC", ["Top"])],
+    "Num":      [("bc", ["ES", "EN", "ET", "AN", "CS", "BN"])],
+    "ArabL":    [("jt", ["L"])],
+    "ArabR":    [("jt", ["R"])],
+    "ArabD":    [("jt", ["D", "C"])],
+    "ArabU":    [("jt", ["U"]), ("^bc", ["AL", "AN"])],
 }
 
-pairs = [ (0, 0), ("\\KclassCM", 0), ("\\KclassNum", 0), (0, "\\KclassNum"),
-          ("\\KclassCM", "\\KclassNum") ]
+pairs = [   (0, 0), ("CM", 0), ("Num", 0), (0, "Num"), ("CM", "Num"), ("CM", "ArabL"),
+            ("ArabD", "ArabL"), ("ArabL", "ArabL"), ("ArabR", "ArabL"), ("ArabR", "ArabD"),
+            ("ArabR", "ArabR"), ("CM", "ArabU"), ("ArabU", "ArabL"), ("ArabU", "ArabR"),
+            ("ArabU", "ArabD"), ("ArabU", "ArabU"), ("Num", "ArabL"), ("Num", "ArabR"),
+            ("Num", "ArabD"), ("Num", "ArabU") ]
 
 extras = {
     0x0E33: 'CM'
@@ -24,8 +31,19 @@ classdat = {}
 for k, b in classes.items():
     dat = set()
     for v in b:
+        tmp = set()
+        if v[0].startswith("^"):
+            isand = True
+            av = v[0][1:]
+        else:
+            isand = False
+            av = v[0]
         for val in v[1]:
-            dat.update(find_ucd(v[0], val))
+            tmp.update(find_ucd(av, val))
+        if isand:
+            dat = dat & tmp
+        else:
+            dat = dat | tmp
     if "Vir" in classdat:
         dat -= classdat["Vir"]
     classdat[k] = dat
@@ -44,5 +62,6 @@ with open(args.outfile, "w", encoding="utf-8") as outf:
                 outf.write('\\XeTeXcharclass"{:04X}=\\Kclass{}\n'.format(c, k))
     outf.write("\n% Interclass rules\n")
     for p in pairs:
-        outf.write("\\XeTeXinterchartoks {} {}{{\\intercharspace}}\n".format(*p))
+        kp = ("\\Kclass"+x if x != 0 else "0" for x in p)
+        outf.write("\\XeTeXinterchartoks {} {}{{\\intercharspace}}\n".format(*kp))
     outf.write("\\XeTeXinterchartokenstate=0\n")
