@@ -830,6 +830,7 @@ class RunJob:
         miscfonts.append(os.path.join(self.tmpdir, "fonts"))
         sfonts = os.path.join(self.prjdir, "shared", "fonts")
         miscfonts.append(sfonts)
+        miscfonts.append(ptxmacrospath)     # for mappings/ which must be in the fonts path
         if len(miscfonts):
             if nosysfonts:
                 fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
