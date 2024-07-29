@@ -657,7 +657,7 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
         for k, v in varlib.items():
             try:
                 rpath = self.relative_to(v)
-            except ValueError:
+            except (ValueError, TypeError):
                 continue
             if len(str(rpath)) < bestl:
                 bestk = k

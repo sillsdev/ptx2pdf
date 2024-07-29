@@ -732,12 +732,13 @@ def read_module(inf, sheets):
         lines.insert(0, "\\id MOD Module\n")
     return Usfm(lines, sheets)
 
+#    e: ([mkrs], modelmap entry, invert_test)
 exclusionmap = {
-    'v': (['v'], "document/ifshowversenums"),
-    'x': (['x'], None),
-    'f': (['f'], "notes/includefootnotes"),
-    's': (['s', 's1', 's2'], "document/sectionheads"),
-    'p': (['fig'], None)
+    'v': (['v'], "document/ifshowversenums", False),
+    'x': (['x'], None, False),
+    'f': (['f'], "notes/includefootnotes", True),
+    's': (['s', 's1', 's2'], "document/sectionheads", False),
+    'p': (['fig'], None, False)
 }
 
 class Module:
@@ -845,10 +846,10 @@ class Module:
         elif e.name == 'inc':
             s = "".join(map(str, e)).strip()
             for c in s:
-                einfo = exclusionmap.get(c, ([], None))
+                einfo = exclusionmap.get(c, ([], None, False))
                 if c == "-":
                     self.removes = set(sum((e[0] for e in exclusionmap.values()), []))
-                elif einfo[1] is None or (self.model is not None and not self.model[einfo[1]]):
+                elif einfo[1] is None or (self.model is not None and (self.model[einfo[1]] not in (None, "")) ^ (not einfo[2])):
                     self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
             dirname = os.path.dirname(self.fname)

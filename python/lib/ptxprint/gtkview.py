@@ -1534,26 +1534,27 @@ class GtkViewModel(ViewModel):
         for basename in pdfnames:
             pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
             exists = os.path.exists(pdfname)
-            fileLocked = True
-            while fileLocked:
-                try:
-                    with open(pdfname, "ab+") as outf:
-                        outf.close()
-                except PermissionError:
-                    question = _("                   >>> PLEASE CLOSE the PDF <<<\
-                     \n\n{}\n\n Or use a different PDF viewer which will \
-                             \n allow updates even while the PDF is open. \
-                             \n See 'Links' on Viewer tab for more details. \
-                           \n\n                        Do you want to try again?").format(pdfname)
-                    if self.msgQuestion(_("The old PDF file is open!"), question):
-                        continue
-                    else:
-                        self.doStatus(_("Close the old PDF file before you try again."))
-                        self.finished()
-                        return
-                fileLocked = False
-            if not exists:
-                os.remove(pdfname)
+            if exists:
+                fileLocked = True
+                while fileLocked:
+                    try:
+                        with open(pdfname, "ab+") as outf:
+                            outf.close()
+                    except PermissionError:
+                        question = _("                   >>> PLEASE CLOSE the PDF <<<\
+                         \n\n{}\n\n Or use a different PDF viewer which will \
+                                 \n allow updates even while the PDF is open. \
+                                 \n See 'Links' on Viewer tab for more details. \
+                               \n\n                        Do you want to try again?").format(pdfname)
+                        if self.msgQuestion(_("The old PDF file is open!"), question):
+                            continue
+                        else:
+                            self.doStatus(_("Close the old PDF file before you try again."))
+                            self.finished()
+                            return
+                    fileLocked = False
+                if os.path.exists(pdfname):
+                    os.remove(pdfname)
         self.onSaveConfig(None)
         self.checkUpdates()
 
