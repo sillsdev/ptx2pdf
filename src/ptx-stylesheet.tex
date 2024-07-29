@@ -1996,17 +1996,23 @@
 \gdef\atn@xtptxfile{}
 %-csty_ptxfile_start
 %+csty_ptxfile_end
+\newsp@cialpen{book@ndpenalty}
+\newsp@cialpen{sect@ndpenalty}
 \def\postptxfile{%
  \inptxfilefalse  
- \trace{o}{postptxfile \iflastptxfile LAST ptx file\fi}%
+ \trace{o}{postptxfile \iflastptxfile LAST ptx file\fi pg=\the\pagegoal, pt=\the\pagetotal}%
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
  \endt@ble
- \iflastptxfile \global\lastpagetrue\fi\endbooktrue
- \ifdiglot\enddigl@t\fi
- \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
+ \iflastptxfile \global\lastpagetrue\fi
+ \ifdiglot
+  \enddigl@t
+ \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
+ \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
+ \let\layoutpen@lty\book@ndpenalty
+ \layoutstylebreak
  \singlecolumn
  \ifOneChapBook\endOneChapBook\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
@@ -2041,6 +2047,7 @@
  \trace{oh}{hook for bookafter-all \ifcsname bookafter-all\endcsname exists \x@\meaning\csname bookafter-all\endcsname\else missing\fi}%
  \csname bookafter-all\endcsname
  \gdef\id@@@{UNK}%
+ \let\layoutpen@lty\sect@ndpenalty % reset to normal
 }
 %-csty_ptxfile_end
 \newread\t@stread

@@ -307,7 +307,9 @@
 
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
-\gdef\layoutstylebreak@doublecolumn{\trace{o}{LAYOUTSTYLE break (double col)}\global\output={\savepartialpagedbounce}\par\eject\eject}
+\gdef\layoutstylebreak@doublecolumn{\par\trace{o}{LAYOUTSTYLE break (double col) pg=\the\pagegoal, pt=\the\pagetotal, pen=\layoutpen@lty}\global\output={\savepartialpagedbounce}%
+  \ifcsname layoutpen@lty\endcsname \penalty\layoutpen@lty\else\penalty\sect@ndpenalty\fi
+}
 
 
 \def\doublecolumns{
@@ -318,7 +320,7 @@
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
     \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
     \holdinginserts=0
-    \global\output={\savepartialpage}\eject
+    \global\output={\savepartialpage}\@@eject
     \holdinginserts=1
     \layoutstylebreak
     \global\let\layoutstylebreak\layoutstylebreak@doublecolumn
@@ -329,11 +331,11 @@
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
       \box\partial
-      \ifdim\dimen0>\PageFullFactor\textheight \vfill\eject
-      \else \holdinginserts=0 \global\output={\savepartialpage}\eject %Might there be a small risk that there's extra inserts, etc. on the page? Or is this wasted code?
+      \ifdim\dimen0>\PageFullFactor\textheight \vfill\@@eject
+      \else \holdinginserts=0 \global\output={\savepartialpage}\@@eject %Might there be a small risk that there's extra inserts, etc. on the page? Or is this wasted code?
         \holdinginserts=1
       \fi
-      \vfill\eject% This should do nothing if the page is already empty
+      \vfill\@@eject% This should do nothing if the page is already empty
     \fi
     % reset parameters for 2-column formatting
     \global\hsize=\colwidth\trace{o}{doublecolumn vsize doubles}%
@@ -373,6 +375,8 @@
 %+c_savepartialpage
 \newif\ifMidPageFootnotes % Should footnotes go before a single-double column transition
 \MidPageFootnotesfalse
+
+\def\@@eject{\trace{o}{@@eject with op=\the\outputpenalty, @p=\@utputpenalty}\ifnum\@utputpenalty<-10000 \penalty\@utputpenalty\else\penalty-11220\fi}
 
 \def\reheightcolnotess#1{%
   \trace{i}{height=\the\dimen3, xr@fbox=\the\ht\xr@fbox, baselineskip=\the\baselineskip}%\tracingassigns=1\tracingmacros=1\tracingifs=1
@@ -469,6 +473,7 @@
   \iffitonpage
     \locs@startstop{\colA}{\colA}{A}%
     \inendbookfalse
+    \ifnum\@utputpenalty=\book@ndpenalty\global\endbooktrue\inendbooktrue\fi
     \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \global\setbox\partial=\vbox{%
       \ifvoid\partial\else \vbox{\hbox to \dimen1{%
@@ -522,19 +527,21 @@
     \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
     \iftob@dy
       \trace{o}{savepartial partial=\the\ht\partial, bottom=\the\ht\verybottomins, page \the\textheight, diff\the\dimexpr \textheight - \ht\partial\relax }%
-      \ifdim\dimexpr \textheight - \ht\partial\relax > 3\baselineskip \tempfalse
-    \fi\fi
-    \trace{o}{outputpenalty = \the\outputpenalty}%
-    \ifnum\outputpenalty<-10000 \temptrue\fi
+      \ifdim\dimexpr \textheight - \ht\partial \relax > 3\baselineskip \tempfalse\fi
+    \fi
+    %\ifnum\outputpenalty < -10000 \relax\temptrue\fi
+    \ifnum\book@ndpenalty =\outputpenalty \ifendbooknoeject\else \temptrue \fi\fi
+    \trace{o}{outputpenalty = \the\outputpenalty \space temp\iftemp true\else false\fi}%
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
       \def\pagecontents{%
         \trace{et}{Apply border and shipout from savepartialpage}%
         \doTextB@rder{\partial}%
         \box\partial\vfil
         \p@geendcontent
-        \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
+        \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14 \fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\notst@dynotesfalse\clearn@tes\s@tpage 
     \else
+      \trace{o}{savepartial noeject}% partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
       \unsavem@rks
       \trace{o}{savepartial noeject partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
       \ifm@rksonpage
@@ -575,7 +582,7 @@
 
 %+c_twocols
 \def\twocols{% primary output routine in 2-col mode
-  \trace{i}{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}%
+  \trace{i}{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts, op=\the\outputpenalty/\csname @utputpenalty\endcsname}%
   % save copy of current page so we can retry with different heights
   \trace{b}{BALANCE pagebuild: cols=2: textheight=\the\textheight}%
   \global\setbox\galley=\copy255
@@ -1301,7 +1308,7 @@
   \fi
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \setbox\s@vedpage=\vbox{\unvcopy255}%
-  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize, av=\the\availht, op:\the\outputpenalty}%
+  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize, av=\the\availht, op=\the\outputpenalty/\csname @utputpenalty\endcsname}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@inderfalse\balanced
   \ifdim\availht<\baselineskip \fitonpagefalse \fi
@@ -1472,7 +1479,7 @@
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\s@vedpage=\copy255
-  \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark, rerunsavepartialpaged\ifrerunsavepartialpaged true\else false\fi}%
+  \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark, rerunsavepartialpaged\ifrerunsavepartialpaged true\else false\fi op=\the\outputpenalty}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
   \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi, ip=\the\insertpenalties, vsz=\the\vsize}
@@ -1500,7 +1507,7 @@
     %\ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
-    \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\ht\colA, \the\ht\colB, \the\ht\xr@fbox))}
+    \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\ht\colA, \the\ht\colB, \the\ht\xr@fbox))}%
     \if\XrefNotes\relax\else
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
       \c@lcboxheights
@@ -1552,8 +1559,18 @@
     \resetvsize % reset size of next page since it will not have any 1 column material
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
-      \global\output={\savepartialpagedbounce}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
-    \else\global\output={\twocols}\unvbox\s@vedpage\fi
+      \ifvoid\s@vedpage
+        \trace{o}{Not rerunning void box}%
+        \showlists
+        \global\output={\twocols}%
+      \else
+        \trace{o}{Rerunning \the\ht\s@vedpage+\the\dp\s@vedpage \space through savepartialpaged}%
+        \global\output={\savepartialpagedbounce}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
+      \fi
+    \else
+      \global\output={\twocols}%
+    \fi
+    \unvbox\s@vedpage
     \inendbookfalse
     %\ifnum\interactionmode=1
       %\showlists
@@ -1664,6 +1681,8 @@
 \def\@prepbounce{
   % These output routines gets the partial galley (input text) before a column transition or final page 
   % so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
+  \edef\@utputpenalty{\ifnum\outputpenalty<-10000\the\outputpenalty\else 0\fi}%
+  \trace{o}{@utputpenalty set to \@utputpenalty}%
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}%
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
@@ -1673,13 +1692,13 @@
   \global\holdinginserts=0
 }
 
-\def\savepartialpagebounce{
+\def\savepartialpagebounce{%
   \@prepbounce
   \vsize=\availht
   \advance\vsize by \baselineskip
   \global\output={\savepartialpage}%
-  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op:\the\outputpenalty}%
-  \unvbox255\eject
+  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op=\the\outputpenalty/\@utputpenalty \csname d@c@\@utputpenalty\endcsname}%
+  \unvbox255\@@eject
 }
 
 \def\savepartialpagedbounce{
@@ -1687,8 +1706,9 @@
   \vsize=2\availht
   \advance\vsize by \baselineskip
   \global\output={\savepartialpaged}%
-  \trace{o}{sppdb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op:\the\outputpenalty}%
-  \unvbox255\eject
+  \trace{o}{sppdb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op=\the\outputpenalty/\@utputpenalty}%
+  %\unvbox255\ifnum\the\outputpenalty<10000\@@eject\fi
+  \unvbox255\@@eject
 }
 %-c_savepartialpagedbounce
 
@@ -1767,20 +1787,23 @@
 %+c_singlecolumn
 % to switch back to single column, we reset the page size parameters
 \def\layoutstylebreak@singlecolumn{
-  \trace{o}{LAYOUTSTYLE break (single col)}%
+  \trace{o}{LAYOUTSTYLE break (single col) pen=\layoutpen@lty}%
   \ifhe@dings\endhe@dings\fi
   \par
-  \output{\savepartialpagebounce}\eject
+  \relax
+  \output{\savepartialpagebounce}\ifcsname layoutpen@lty\endcsname \penalty\layoutpen@lty\else\penalty\sect@ndpenalty\fi
   \ifrerunsavepartialpaged\trace{o}{rerunsavepartialpaged}\eject\rerunsavepartialpagedfalse\fi
 }
+\let\layoutpen@lty=\sect@ndpenalty
 \let\layoutstylebreak\layoutstylebreak@singlecolumn
-
+\def\@utputpenalty{0}
 \newif\ifd@nesw@p % set to false to allow singlecolumn to draw a book-end rule 
 \def\singlecolumn{%
   %\tracingmacros=0\tracingassigns=0
   \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial \space \iflastpage LASTPAGE\fi}%\tracingmacros=1
   \ifnum 1=\ifnum \c@rrentcols>1 1\else \ifendbook 1 \else 0 \fi\fi
     \layoutstylebreak % save any partially-full page into \partial
+    \global\let\layoutpen@lty=\sect@ndpenalty % Back to normal
     %LOTS happens before this line is reached!
     \ifendbook
       \iftextborder\ifpartialfr@med
@@ -1811,7 +1834,7 @@
   \else\ifdim\ht\partial<\baselineskip
     \global\holdinginserts=0
     \global\output={\savepartialpage}%
-    \eject
+    \vfill\penalty\sect@ndpenalty
     \global\holdinginserts=1
     \ifversion{2}{\b@dyfalse\beenb@dyfalse}{}%
   \fi\fi

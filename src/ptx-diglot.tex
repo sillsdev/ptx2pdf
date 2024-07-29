@@ -74,13 +74,6 @@
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
 
 %Defined penalties
-\xdef\sp@cialpen{-10001}
-\def\newsp@cialpen#1{%define a new special penalty {#1}  which gets set as the next special penalty number (assuming all special penalties are registered with this function.
-  {\count255=\numexpr \sp@cialpen-1\relax
-  \x@\xdef\x@\sp@cialpen{\the\count255}%
-  \message{Special penalty #1 is \sp@cialpen}%
-  \x@\xdef\csname #1\endcsname{\sp@cialpen}}%
-}
 \newsp@cialpen{dgl@tPenColSwap}%
 \newsp@cialpen{dgl@tPenInternalRpt}
 \newsp@cialpen{dgl@tPenLtrialEnd}
