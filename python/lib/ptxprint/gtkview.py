@@ -176,7 +176,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-btn_menu_reset l_menu_reset
+btn_menu_reset l_menu_reset t_configName l_configNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
@@ -241,7 +241,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
-                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter", 
+                  "bx_statusMsgBar", "fr_plChecklistFilter", 
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
 _uiLevels = {
@@ -3265,11 +3265,6 @@ class GtkViewModel(ViewModel):
             if b.get_label() in allbooks[0:124]:
                 b.set_active(False)
 
-    def onCustomOrderClicked(self, btn):
-        if self.get("c_customOrder"):
-            # do something
-            return
-        
     def onTocClicked(self, btn):
         if not self.get("c_usetoc1") and not self.get("c_usetoc2") and not self.get("c_usetoc3"):
             self.set("c_usetoc1", True)

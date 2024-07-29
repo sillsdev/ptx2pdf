@@ -17733,7 +17733,6 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                             <property name="margin-start">12</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">4</property>
-                            <property name="row-spacing">4</property>
                             <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkFrame">
@@ -17902,7 +17901,7 @@ as vertical to make sure all headings fit.</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
-                                        <property name="row-spacing">4</property>
+                                        <property name="margin-bottom">2</property>
                                         <property name="column-spacing">4</property>
                                         <child>
                                           <object class="GtkButton" id="btn_selectPageBorderPDF">
@@ -18238,7 +18237,6 @@ with a special graphic.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="valign">start</property>
-                                <property name="margin-top">12</property>
                                 <property name="label-xalign">0.019999999552965164</property>
                                 <child>
                                   <object class="GtkAlignment">
@@ -18254,7 +18252,7 @@ with a special graphic.</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">10</property>
-                                        <property name="row-spacing">4</property>
+                                        <property name="row-spacing">2</property>
                                         <property name="column-spacing">6</property>
                                         <child>
                                           <object class="GtkRadioButton" id="r_decorator_ayah">
@@ -18504,7 +18502,7 @@ publications.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -35177,28 +35175,6 @@ set up front matter for this publication.</property>
                         <property name="position">8</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_customOrder">
-                        <property name="label" translatable="yes">Build List of Books
-in Order of Selection</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="no-show-all">True</property>
-                        <property name="tooltip-text" translatable="yes">These books will be placed at the
-start of the publication in this oder:
-   FRT (ToC) INT
-</property>
-                        <property name="valign">end</property>
-                        <property name="vexpand">True</property>
-                        <property name="active">True</property>
-                        <property name="draw-indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">9</property>
-                      </packing>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -35275,45 +35251,6 @@ start of the publication in this oder:
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="can-focus">False</property>
-                    <property name="margin-start">6</property>
-                    <property name="label" translatable="yes">Books:</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="t_mbsBookList">
-                    <property name="can-focus">True</property>
-                    <property name="margin-start">4</property>
-                    <property name="margin-end">6</property>
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="hexpand">True</property>
-                    <property name="editable">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
               </packing>
             </child>
           </object>
