@@ -21812,13 +21812,13 @@ font and direction for that script.</property>
                                 <property name="valign">start</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <!-- n-columns=1 n-rows=6 -->
+                                  <!-- n-columns=1 n-rows=5 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
-                                    <property name="row-spacing">6</property>
+                                    <property name="row-spacing">12</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_AdvCompatLineSpacing">
                                         <property name="label" translatable="yes">Legacy 1/14 LineSpacing</property>
@@ -21835,25 +21835,6 @@ font and direction for that script.</property>
                                       <packing>
                                         <property name="left-attach">0</property>
                                         <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_tracing">
-                                        <property name="label" translatable="yes">Debug Tracing</property>
-                                        <property name="name">Enable debug tracing</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">This advanced feature is for
-troubleshooting use only.</property>
-                                        <property name="opacity">0.80</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw-indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -21891,7 +21872,7 @@ change the code or various other parameters.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -21915,7 +21896,7 @@ TeXpert Hacks section.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -21937,7 +21918,7 @@ changed while doing final page layout.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                   </object>
