@@ -2349,10 +2349,10 @@ class GtkViewModel(ViewModel):
         genBtn.set_sensitive(False)
         self.builder.get_object("btn_editZvars").set_visible(False)
         # self.builder.get_object("btn_removeZeros").set_visible(False)
-        self.noUpdate = True
         prjid = self.get("fcb_project")
         if prjid is None:
             return          # at least we don't crash if there is no project
+        self.noUpdate = True
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         bk = self.get("ecb_examineBook")
@@ -2386,7 +2386,7 @@ class GtkViewModel(ViewModel):
                         txt = inf.read()
                         buf.set_text(txt)
             self.enableCodelets(pgnum, fpath)
-            # self.noUpdate = False
+            self.noUpdate = False
             self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text(fpath)
             fpath = None
             if self.get("t_invisiblePassword") == "":
@@ -2396,7 +2396,6 @@ class GtkViewModel(ViewModel):
                 logger.debug(f"Front matter from {fpath} exists")
                 self.builder.get_object("c_autoSave").set_sensitive(False)
                 self.set("c_autoSave", False)
-                self.noUpdate = False
             return
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):
             fname = self.getBookFilename(bk, prjid)
