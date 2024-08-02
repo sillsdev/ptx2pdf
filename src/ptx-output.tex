@@ -378,7 +378,7 @@
 \newif\ifMidPageFootnotes % Should footnotes go before a single-double column transition
 \MidPageFootnotesfalse
 
-\def\@@eject{\trace{o}{@@eject with op=\the\outputpenalty, @p=\@utputpenalty}\ifnum\@utputpenalty<-10000 \penalty\@utputpenalty\else\penalty-11220\fi}
+\def\@@eject{\trace{o}{@@eject with op=\the\outputpenalty, @p=\@utputpenalty}\par\ifnum\@utputpenalty<-10000 \penalty\@utputpenalty\else\penalty-11220\fi}
 
 \def\reheightcolnotess#1{%
   \trace{i}{height=\the\dimen3, xr@fbox=\the\ht\xr@fbox, baselineskip=\the\baselineskip}%\tracingassigns=1\tracingmacros=1\tracingifs=1
@@ -1850,7 +1850,7 @@
   \else\ifdim\ht\partial<\baselineskip
     \global\holdinginserts=0
     \global\output={\savepartialpage}%
-    \vfill\penalty\sect@ndpenalty
+    \penalty\sect@ndpenalty
     \global\holdinginserts=1
     \ifversion{2}{\b@dyfalse\beenb@dyfalse}{}%
   \fi\fi
