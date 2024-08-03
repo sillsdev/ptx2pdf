@@ -1180,7 +1180,7 @@
 \def\c@lcavailht{%
   \traceifset{c@lcavailht}%
   \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\savem@rks\trace{H}{Loading firstmark \p@gefirstmark}\fi% remember first, if not already set
+  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\savem@rks\trace{H}{Loading firstmark \p@gefirstmark}\else\trace{H}{pfm is already \p@gefirstmark}\fi% remember first, if not already set
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi
   %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -1690,7 +1690,7 @@
   \trace{o}{@prepbounce: op=\the\outputpenalty. @utputpenalty set to \@utputpenalty}%
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}%
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark (\topmark,\firstmark,\botmark)}\fi
   \s@ttrialheight
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}%

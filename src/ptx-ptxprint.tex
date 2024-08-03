@@ -55,6 +55,7 @@
 \def\intropages#1{\ifversion{2}{\ifcsname\g@tperiphid{}{#1}\endcsname
     \ifx\IntroPageAlign\val@MULTI\else\pb\fi
     \ifx\IntroPageAlign\val@dd \zNeedOddPage \else\ifx\IntroPageAlign\val@GROUP \ifin@ntro\else\zNeedOddPage \fi\fi\fi
+    \def\p@gefirstmark{}\p@geonetrue%
     \prepusfm\zgetperiph|#1\*\unprepusfm\in@ntrotrue
     \ifx\IntroPageAlign\val@MULTI \else\pb\fi
   \fi}{\pb\zNeedOddPage\prepusfm\zgetperiph|#1\*\unprepusfm\pb\zNeedOddPage}}
