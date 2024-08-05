@@ -158,7 +158,7 @@ class Hyphenation:
         bits = self.splitre.split(t)
         for i in range(0, len(bits), 2):
             s = bits[i].replace("-", hyphenchar)
-            if s.lower() in hyph:
+            if s.lower() in self:
                 h = self.get(s.lower()).lower()
                 if s.lower() != s:
                     hbits = h.split("-")

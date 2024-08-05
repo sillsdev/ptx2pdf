@@ -176,7 +176,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-btn_menu_reset l_menu_reset
+btn_menu_reset l_menu_reset t_configName l_configNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
@@ -241,7 +241,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
-                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter", 
+                  "bx_statusMsgBar", "fr_plChecklistFilter", 
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
 _uiLevels = {
@@ -1534,26 +1534,27 @@ class GtkViewModel(ViewModel):
         for basename in pdfnames:
             pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
             exists = os.path.exists(pdfname)
-            fileLocked = True
-            while fileLocked:
-                try:
-                    with open(pdfname, "ab+") as outf:
-                        outf.close()
-                except PermissionError:
-                    question = _("                   >>> PLEASE CLOSE the PDF <<<\
-                     \n\n{}\n\n Or use a different PDF viewer which will \
-                             \n allow updates even while the PDF is open. \
-                             \n See 'Links' on Viewer tab for more details. \
-                           \n\n                        Do you want to try again?").format(pdfname)
-                    if self.msgQuestion(_("The old PDF file is open!"), question):
-                        continue
-                    else:
-                        self.doStatus(_("Close the old PDF file before you try again."))
-                        self.finished()
-                        return
-                fileLocked = False
-            if not exists:
-                os.remove(pdfname)
+            if exists:
+                fileLocked = True
+                while fileLocked:
+                    try:
+                        with open(pdfname, "ab+") as outf:
+                            outf.close()
+                    except PermissionError:
+                        question = _("                   >>> PLEASE CLOSE the PDF <<<\
+                         \n\n{}\n\n Or use a different PDF viewer which will \
+                                 \n allow updates even while the PDF is open. \
+                                 \n See 'Links' on Viewer tab for more details. \
+                               \n\n                        Do you want to try again?").format(pdfname)
+                        if self.msgQuestion(_("The old PDF file is open!"), question):
+                            continue
+                        else:
+                            self.doStatus(_("Close the old PDF file before you try again."))
+                            self.finished()
+                            return
+                    fileLocked = False
+                if os.path.exists(pdfname):
+                    os.remove(pdfname)
         self.onSaveConfig(None)
         self.checkUpdates()
 
@@ -2349,10 +2350,10 @@ class GtkViewModel(ViewModel):
         genBtn.set_sensitive(False)
         self.builder.get_object("btn_editZvars").set_visible(False)
         # self.builder.get_object("btn_removeZeros").set_visible(False)
-        self.noUpdate = True
         prjid = self.get("fcb_project")
         if prjid is None:
             return          # at least we don't crash if there is no project
+        self.noUpdate = True
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         bk = self.get("ecb_examineBook")
@@ -2386,7 +2387,7 @@ class GtkViewModel(ViewModel):
                         txt = inf.read()
                         buf.set_text(txt)
             self.enableCodelets(pgnum, fpath)
-            # self.noUpdate = False
+            self.noUpdate = False
             self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text(fpath)
             fpath = None
             if self.get("t_invisiblePassword") == "":
@@ -2396,7 +2397,6 @@ class GtkViewModel(ViewModel):
                 logger.debug(f"Front matter from {fpath} exists")
                 self.builder.get_object("c_autoSave").set_sensitive(False)
                 self.set("c_autoSave", False)
-                self.noUpdate = False
             return
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):
             fname = self.getBookFilename(bk, prjid)
@@ -2621,6 +2621,8 @@ class GtkViewModel(ViewModel):
         titer = buf.get_iter_at_mark(buf.get_insert())
         self.cursors[pg] = (titer.get_line(), titer.get_line_offset())
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+        if text2save is None or text2save == "":
+            return
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
         openfile.close()
@@ -3263,11 +3265,6 @@ class GtkViewModel(ViewModel):
             if b.get_label() in allbooks[0:124]:
                 b.set_active(False)
 
-    def onCustomOrderClicked(self, btn):
-        if self.get("c_customOrder"):
-            # do something
-            return
-        
     def onTocClicked(self, btn):
         if not self.get("c_usetoc1") and not self.get("c_usetoc2") and not self.get("c_usetoc3"):
             self.set("c_usetoc1", True)

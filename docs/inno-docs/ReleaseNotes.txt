@@ -1,9 +1,29 @@
-PTXprint 2.5.4 Release Notes
-23 Jul 2024
+PTXprint 2.5.5 Release Notes
+29 Jul 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.5.5 (29 Jul 2024)
+
+  * Improve diglot note positioning
+  
+  * Enable processing of \k with attributes (#958)
+  
+  * First steps to resolve double-bounce "INTERNAL ERROR" state
+  
+  * First steps to support interchar spacing for Arabic
+  
+  * Include Mongolian as an arabic script even if it is LTR
+  
+  * Update Crowdin localizations
+  
+  * Add macros path to fonts (for mappings) when using system fonts
+  
+  * Don't save empty editing panes (prevent Front Matter from being wiped)
+  
+  * Fix \inc in modules (enabling footnotes and xrefs to show up again)
+  
 Bug fixes and Improvements in 2.5.4 (23 Jul 2024)
 
   * Add option of annotated borders (for maps)

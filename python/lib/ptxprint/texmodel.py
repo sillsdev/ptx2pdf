@@ -1146,16 +1146,16 @@ class TexModel:
 
     def makelocalChanges(self, printer, bk, chaprange=None):
         #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
-        if self.printer is not None and self.printer.get("c_tracing"):
-            print("List of changes.txt:-------------------------------------------------------------")
-            report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
-            if getattr(self.printer, "logger", None) is not None:
-                self.printer.logger.insert_at_cursor(v)
-            else:
-                try:
-                    print(report)
-                except UnicodeEncodeError:
-                    print("Unable to print details of changes.txt")
+        # if self.printer is not None and self.printer.get("c_tracing"):
+            # print("List of changes.txt:-------------------------------------------------------------")
+            # report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
+            # if getattr(self.printer, "logger", None) is not None:
+                # self.printer.logger.insert_at_cursor(v)
+            # else:
+                # try:
+                    # print(report)
+                # except UnicodeEncodeError:
+                    # print("Unable to print details of changes.txt")
         self.localChanges = []
         script = self.dict["document/script"]
         if len(script):
@@ -1370,13 +1370,13 @@ class TexModel:
         #self.localChanges.append((None, regex.compile(r"(?<=\n\r?)\r+"), ""))
         self.localChanges.append(makeChange(r"^\s*(?=\\id)", ""))
 
-        if self.printer is not None and self.printer.get("c_tracing"):
-            print("List of Local Changes:----------------------------------------------------------")
-            report = "\n".join("{}: {} -> {}".format(p[3], p[1].pattern, p[2]) for p in self.localChanges)
-            if getattr(printer, "logger", None) is not None:
-                printer.logger.insert_at_cursor(v)
-            else:
-                print(report)
+        # if self.printer is not None and self.printer.get("c_tracing"):
+            # print("List of Local Changes:----------------------------------------------------------")
+            # report = "\n".join("{}: {} -> {}".format(p[3], p[1].pattern, p[2]) for p in self.localChanges)
+            # if getattr(printer, "logger", None) is not None:
+                # printer.logger.insert_at_cursor(v)
+            # else:
+                # print(report)
         return self.localChanges
 
     def base(self, fpath):

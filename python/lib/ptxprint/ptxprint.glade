@@ -892,7 +892,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.5.4</property>
+    <property name="version">Version 2.5.5</property>
     <property name="copyright">© 2020-2024, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -17733,7 +17733,6 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                             <property name="margin-start">12</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">4</property>
-                            <property name="row-spacing">4</property>
                             <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkFrame">
@@ -17902,7 +17901,7 @@ as vertical to make sure all headings fit.</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
-                                        <property name="row-spacing">4</property>
+                                        <property name="margin-bottom">2</property>
                                         <property name="column-spacing">4</property>
                                         <child>
                                           <object class="GtkButton" id="btn_selectPageBorderPDF">
@@ -18238,7 +18237,6 @@ with a special graphic.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="valign">start</property>
-                                <property name="margin-top">12</property>
                                 <property name="label-xalign">0.019999999552965164</property>
                                 <child>
                                   <object class="GtkAlignment">
@@ -18254,7 +18252,7 @@ with a special graphic.</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">10</property>
-                                        <property name="row-spacing">4</property>
+                                        <property name="row-spacing">2</property>
                                         <property name="column-spacing">6</property>
                                         <child>
                                           <object class="GtkRadioButton" id="r_decorator_ayah">
@@ -18504,7 +18502,7 @@ publications.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -21812,13 +21810,13 @@ font and direction for that script.</property>
                                 <property name="valign">start</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <!-- n-columns=1 n-rows=6 -->
+                                  <!-- n-columns=1 n-rows=5 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
-                                    <property name="row-spacing">6</property>
+                                    <property name="row-spacing">12</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_AdvCompatLineSpacing">
                                         <property name="label" translatable="yes">Legacy 1/14 LineSpacing</property>
@@ -21835,25 +21833,6 @@ font and direction for that script.</property>
                                       <packing>
                                         <property name="left-attach">0</property>
                                         <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_tracing">
-                                        <property name="label" translatable="yes">Debug Tracing</property>
-                                        <property name="name">Enable debug tracing</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">This advanced feature is for
-troubleshooting use only.</property>
-                                        <property name="opacity">0.80</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw-indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -21891,7 +21870,7 @@ change the code or various other parameters.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -21915,7 +21894,7 @@ TeXpert Hacks section.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -21937,7 +21916,7 @@ changed while doing final page layout.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -35196,28 +35175,6 @@ set up front matter for this publication.</property>
                         <property name="position">8</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_customOrder">
-                        <property name="label" translatable="yes">Build List of Books
-in Order of Selection</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="no-show-all">True</property>
-                        <property name="tooltip-text" translatable="yes">These books will be placed at the
-start of the publication in this oder:
-   FRT (ToC) INT
-</property>
-                        <property name="valign">end</property>
-                        <property name="vexpand">True</property>
-                        <property name="active">True</property>
-                        <property name="draw-indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">9</property>
-                      </packing>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -35294,45 +35251,6 @@ start of the publication in this oder:
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="can-focus">False</property>
-                    <property name="margin-start">6</property>
-                    <property name="label" translatable="yes">Books:</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="t_mbsBookList">
-                    <property name="can-focus">True</property>
-                    <property name="margin-start">4</property>
-                    <property name="margin-end">6</property>
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="hexpand">True</property>
-                    <property name="editable">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
               </packing>
             </child>
           </object>
