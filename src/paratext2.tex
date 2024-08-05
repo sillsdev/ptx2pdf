@@ -260,7 +260,9 @@
 \totalp@ges=0
 \newif\ifendbooknoeject \endbooknoejectfalse
 \newif\iflastbooknoeject \lastbooknoejectfalse
-\def\pagebreak{\leavevmode\message{pagebreak}\ifhmode\par\fi
+\def\pagebreak{\leavevmode\message{pagebreak}\endp@ge} %A pagebreak that forces a blank page to be output if there's nothing on the page yet.
+\def\endpage{\message{endpage}\endp@ge} %A pagebreak that doesn't force a blank page to be output
+\def\endp@ge{\ifhmode\par\fi
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
   \ifdiglot \vbox to 0pt{}\fi%

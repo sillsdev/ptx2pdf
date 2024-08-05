@@ -42,7 +42,8 @@
 \newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
 \def\onecol{%
   \global\setbox\galley=\copy255                                        %(1)
-  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight\space with ht=\the\ht255 \space and partial=\the\ht\partial}%
+  \setbox255\vbox{\unvbox255}%\showbox255%
+  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight\space with ht=\the\ht255 \space and partial=\the\ht\partial. op=\the\outputpenalty}%
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup        %(+)
   \edef\t@mp{\splitbotmark}%
@@ -1157,6 +1158,7 @@
   \s@veinserts{chunk}%
   \global\partialfr@medfalse
   \s@veallnotes{1}%
+  \xdef\oldb@tmark{\botmark}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
   %\tracingassigns=1
   \nextshipout
@@ -1177,10 +1179,16 @@
  \advance\colwidth by \XrefNotesMargin}
 
 \newdimen\bestavailht \bestavailht=0pt
+\let\oldb@tmark\empty
 \def\c@lcavailht{%
   \traceifset{c@lcavailht}%
+  \trace{o}{c@lcavailht op=\the\outputpenalty, m@rksonpage \ifm@rksonpage true\else false\fi, pfm/fm/obm: \p@gefirstmark/\firstmark/\oldb@tmark/}%
   \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\savem@rks\trace{H}{Loading firstmark \p@gefirstmark}\else\trace{H}{pfm is already \p@gefirstmark}\fi% remember first, if not already set
+  \ifx\t@st\empty
+    \edef\t@stb{\firstmark}\ifx\oldb@tmark\t@stb\else\m@rksonpagetrue\fi%Other places can set it too
+      \ifm@rksonpage
+      \xdef\p@gefirstmark{\firstmark}\savem@rks\trace{H}{Loading firstmark \p@gefirstmark}\fi
+  \else\trace{H}{pfm is already \p@gefirstmark}\fi% remember first, if not already set
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi
   %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
