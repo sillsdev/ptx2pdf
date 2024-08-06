@@ -1,5 +1,6 @@
 import re, os, regex
 from ptxprint.utils import universalopen, runChanges, _
+from itertools import accumulate
 import logging
 
 logger = logging.getLogger(__name__)

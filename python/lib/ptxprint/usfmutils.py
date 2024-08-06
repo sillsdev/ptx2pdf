@@ -3,7 +3,7 @@ from ptxprint import sfm
 from ptxprint.reference import RefList, RefRange, Reference, BookNames
 import re, os, traceback, warnings
 from collections import namedtuple
-from itertools import groupby, accumulate
+from itertools import groupby
 from functools import reduce
 from copy import deepcopy
 import regex, time, logging
