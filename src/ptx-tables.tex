@@ -117,6 +117,7 @@
 \addtoparstylehooks{\if@tablerow\else\endt@ble\fi}
 \newif\if@tablerow
 \newif\if@row
+\newif\ifsp@ncols
 \newbox\t@bleinserts
 
 \def\@ndrow{%
@@ -140,15 +141,33 @@
     \xdef\mytmp{#2}%
     \getp@ram{justification}{#1\ifdiglot \c@rrdstat\fi}{#1+tr}%
     \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
+    \s@ttc@lign
+    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = \mytmp\space in style #1}%
+    \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
+    \ch@rstyle{#1}~\ignorespaces}%
+
+  \def\sp@ncell#1#2#3#4{%#1-format, #2=justification, #3=start cell #4=end cell
+    \@ndcell
+    \let\@ndcell\@@ndspan
+    \sp@ncolstrue
+    \st@rtcell%\st@rtsp@n{#3}{#4}%
+    \xdef\mytmp{#2}%default justification
+    \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
+    \getp@ram{justification}{#1-#4}{#1-#4+#1+tr}%
+    \s@ttc@lign
+    \trace{t}{Define spanning cell [\the\tabler@ws, \the\tablec@l - #4] = \mytmp\space in style #1}%
+    \m@kenumber{#4}\x@\xdef\csname span-\the\tabler@ws-\the\tablec@l\endcsname{\@@result}%
+    \ifnum\@@result>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
+    \ch@rstyle{#1}~\ignorespaces}%
+    
+}
+\def\s@ttc@lign{%
     \ifx\p@ram\c@nter \edef\mytmp{c}\else
     \ifx\p@ram\l@ftb@l \edef\mytmp{l}\else
     \ifx\p@ram\l@ft \edef\mytmp{l}\else
     \ifx\p@ram\r@ght \edef\mytmp{r}%
     \fi\fi\fi\fi
     \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{\mytmp}%
-    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = \mytmp\space in style #1}%
-    \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
-    \ch@rstyle{#1}~\ignorespaces}%
 }
 
 \newtoks\s@vedm@rks
@@ -187,8 +206,7 @@
   \the\s@vedm@rks\relax\s@vedm@rks{}%
 }
 
-\def\@ndcell{%
-  \if@cell
+\def\@@@ndcell{%
     \unskip
     \getp@ram{rightmargin}{tc\the\tablec@l}{\styst@k}%
     \global\let\p@r@m\p@ram %preserve against endgroups
@@ -200,6 +218,8 @@
     \setbox0=\vbox{\parfillskip=0pt\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
     \global\setbox\cellb@x=\hbox{\unhbox\cellb@x \unskip\unskip\unpenalty}%
     \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
+}
+\def\@@@ddcell{
     \ifvoid\c@rrentcolbox % adding a column, may need to add empty cells above
       \count255=1
       \loop \ifnum\count255<\tabler@ws \advance\count255 by 1
@@ -209,7 +229,24 @@
     \trace{t}{Add cell width \the\wd\cellb@x, to row \the\tabler@ws}%
     \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\box\cellb@x\unvbox\c@rrentcolbox}%
       % note that this stacks the cells upwards! they'll be reversed later
+}
+\def\@@ndcell{%
+  \if@cell
+    \@@@ndcell
+    \@@@ddcell
   \fi}
+
+\def\@@ndspan{%
+  \if@cell
+    \@@@ndcell
+    \wd\cellb@x=0pt
+    \@@@ddcell
+  \fi
+  \global\let\@ndcell\@@ndcell
+}
+
+\let\@ndcell\@@ndcell
+\def\spanningcell#1#2#3#4{\x@\def\csname #1#2#3-#4\endcsname{\sp@ncell{#1#2#3}{#2}{#3}{#4}}}
 
 \newif\if@cell
 \newbox\cellb@x
@@ -225,6 +262,7 @@
     \mcpush{\stylet@pe}{tr}%
     \s@tstyst@k
     \bgroup
+    \sp@ncolsfalse % (so far) no column-spanning cells
     \tabler@ws=0
     \tablec@l=0
     \global\maxtablec@l=0
@@ -264,7 +302,7 @@
   \trace{t}{thr@shold=\the\thr@shold, hsize=\the\hsize, textwidth=\the\textwidth, max:\the\maxtablec@l}%
   \f@reachcol{%
     \edef\tc@l{tc\the\@col}%
-    \getp@ram{spacebefore}{\tc@l}{\tc@l+\styst@k}%
+    \getp@ram{spacebefore}{\tc@l}{\tc@l+\styst@k}% abuse spacebefore as fixed column width
     \ifx\p@ram\relax\c@rrentcolwidth=-1sp \else\ifdim\p@ram\textwidth=0pt \c@rrentcolwidth=-1sp \else\c@rrentcolwidth=\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi\fi
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
@@ -309,7 +347,7 @@
   \ifx\p@ram\r@ght
     \ifRTL\RTLfalse\else\RTLtrue\fi
   \fi
-  \f@reachcol{\wr@pcolumn}%
+  \f@reachcol{\wr@pcolumn}%Wrap the cells in each columns.
   \dimen0=0pt \dimen1=0pt
   \getp@ram{leftmargin}{tr}{\styst@k}%
   \ifx\p@ram\relax\else\advance\ifRTL\dimen1\else\dimen0\fi by \p@ram\IndentUnit\fi
@@ -355,11 +393,24 @@
  \else \global\let\@@@NEXT\relax \fi \@@@NEXT}
 \let\@@@REPEAT\fi
 
+\def\s@tspansize{%
+  \trace{t}{Spanning cell, orig hsize  \the\hsize}%
+  \lct@mp=\csname span-\the\@row-\the\@col\endcsname
+  \let\@@@nxt\@s@tspansize\@@@nxt
+  \trace{t}{Spanning cell, hsize now \the\hsize}}%
+\def\@s@tspansize{\ifnum \@col<\lct@mp 
+    \advance\hsize by \csname colwidth-\the\lct@mp\endcsname
+    \advance\lct@mp by -1
+  \else\let\@@@nxt\relax\fi
+  \@@@nxt}
+  
+  
 \def\wr@pcolumn{\@row=1\setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\unvbox\c@rrentcolbox \wr@pboxes}}
 \def\wr@pboxes{% line-wrap a list of \hboxes
   \setbox0=\lastbox 
   \ifhbox0 {\advance\@row by 1 \wr@pboxes}\fi
-  \setbox0=\vbox{\parfillskip=0pt\hsize=\c@rrentcolwidth
+  \setbox0=\vbox{\hsize=\c@rrentcolwidth
+    \ifcsname span-\the\@row-\the\@col\endcsname \s@tspansize\fi
     \everypar={}\resetp@rstyle\noindent
     \leftskip=0pt\rightskip=0pt
     \ifRTL\beginR\fi
@@ -373,11 +424,13 @@
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \trace{t}{Pre(\tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \ifx\the@lign\cell@r
+      \parfillskip=0pt
       \ifRTL \let\n@xt=\rightskip \else
         \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
       \fi
     \else\ifx\the@lign\cell@c
+      \parfillskip=0pt
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
       \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
@@ -426,7 +479,7 @@
         \divide\count255 by 2
       \fi
     \fi
-    \trace{t}{column \@col. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
+    \trace{t}{column \the\@col. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
     \advance \nth@line by -\count255
     \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
       \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell
@@ -436,7 +489,8 @@
         \global\setbox1=\lastbox}%
     \fi
   \egroup
-  \trace{t}{bls:\the\baselineskip}%
+  \trace{t}{bls:\the\baselineskip,  width=\the\wd1}%
+  \ifsp@ncols\wd1=\csname colwidth-\the\@col\endcsname \fi
   \ifh@lfrow\lower 0.5\baselineskip\fi
   \box1%
 }
