@@ -412,7 +412,7 @@ class PicInfo(dict):
         else:
             self[key] = pic
 
-    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent, parcount=0, fn=None):
+    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent, parcount=0, fn=None, sync=False):
         # logger.debug(f"Reading pics for {bk} + {suffix}")
         koffset = 0
         currentk = None
@@ -437,7 +437,10 @@ class PicInfo(dict):
                             pic.update(pgpos="p", scale="0.7")
                         key = self.newkey(suffix)
                         if fn is None:
-                            self[key] = pic
+                            if sync:
+                                self._syncpic(pic, key)
+                            else:
+                                self[key] = pic
                         else:
                             fn(pic, key)
                         if b[1]:    # usfm 3
@@ -460,25 +463,25 @@ class PicInfo(dict):
                         koffset = parcount
                         currentk = a[0]
 
-    def read_sfm(self, bk, fname, parent, suffix="", media=None):
+    def read_sfm(self, bk, fname, parent, suffix="", media=None, sync=False):
         isperiph = bk in nonScriptureBooks
         with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
                             if self.model is not None else 65001) as inf:
             dat = inf.read()
             if isperiph:
-                self._readpics(dat, bk, suffix, 0, None, isperiph, parent)
+                self._readpics(dat, bk, suffix, 0, None, isperiph, parent, sync=sync)
             else:
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
                     m = re.match("(.*?)\\v ", t, re.S)
                     if m is not None:
                         s = m.group(1)
-                        self._readpics(s, bk, suffix, c, 0, isperiph, parent)
+                        self._readpics(s, bk, suffix, c, 0, isperiph, parent, sync=sync)
                     for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
                         lastv = v[0]
                         s = v[1]
                         key = None
-                        self._readpics(s, bk, suffix, c, lastv, isperiph, parent)
+                        self._readpics(s, bk, suffix, c, lastv, isperiph, parent, sync=sync)
 
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None):
         ''' Generate a picinfo file, with given date.
@@ -730,7 +733,7 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
             del newpics[k]
         for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
             del picinfos[k]
-        newpics.read_sfm(bk, bkf, model, suffix=suffix)
+        newpics.read_sfm(bk, bkf, model, suffix=suffix, sync=sync)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols, isBoth=not clearsuffix)
         for k, v in newpics.items():
             if v['anchor'][:3] == bk:

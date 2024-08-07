@@ -1250,13 +1250,14 @@ class ViewModel:
     def updatePicList(self, bks=None, priority="Both", output=False):
         return
 
-    def generatePicList(self, procbks=None, doclear=True, sync=False):
+    def generatePicList(self, procbks=None, doclear=True):
         ab = self.getAllBooks()
         if procbks is None:
             procbks = ab.keys()
         rnd = self.get("c_randomPicPosn")
         cols = 2 if self.get("c_doublecolumn") else 1
         mrgCptn = self.get("c_diglot2captions", False)
+        sync = self.get("c_protectPicList", False)
         if self.diglotView is None:
             PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True, sync=sync)
         else:

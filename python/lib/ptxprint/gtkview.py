@@ -2186,7 +2186,7 @@ class GtkViewModel(ViewModel):
             else:
                 procbks = bks
                 doclear = False
-            self.generatePicList(procbks=procbks, doclear=doclear, sync=False)
+            self.generatePicList(procbks=procbks, doclear=doclear)
             self.savePics()
             if self.get('r_generate') == 'all':
                 self.set("c_filterPicList", False)
