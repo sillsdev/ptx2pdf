@@ -1501,6 +1501,8 @@ class ViewModel:
                 
         for k, v in self.styleEditor.sheet.items():
             font_info = v.get(' font', self.styleEditor.basesheet.get(k, {}).get(' font', None))
+            if font_info is None and 'FontName' in v:
+                font_info = FontRef.fromTeXStyle(v)
             if font_info is not None:
                 f = font_info.getTtfont()
                 if f.filename is None: continue

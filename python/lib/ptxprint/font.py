@@ -1090,7 +1090,12 @@ class FontRef:
         return res
 
     def getTtfont(self):
-        return TTFont(self.name, self.style)
+        styles = [self.style or ""]
+        if self.isBold:
+            styles.append("Bold")
+        if self.isItalic:
+            styles.append("Italic")
+        return TTFont(self.name, " ".join(styles).lstrip())
 
     def getFake(self, name):
         return self.feats.get(name, None)
