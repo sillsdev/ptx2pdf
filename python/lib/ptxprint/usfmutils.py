@@ -363,7 +363,7 @@ class Usfm:
             res.append(c)
         subres = self.subdoc(refrange, removes=removes, keepchap=True)
         for i, e in enumerate(subres):
-            if isinstance(e, sfm.Element) and e.meta.get('styletype', '').lower() == 'paragraph':
+            if isinstance(e, sfm.Element) and str(e.meta.get('styletype', '')).lower() == 'paragraph':
                 if i > 0:
                     n = sfm.Element('p', subres[0].pos, parent=subres[0].parent, meta=self.sheets['p'])
                     for c in subres[:i]:
@@ -451,7 +451,7 @@ class Usfm:
             if not isinstance(e, sfm.Element):
                 continue
             etype = e.meta.get('texttype', '').lower()
-            style = e.meta.get('styletype', '').lower()
+            style = str(e.meta.get('styletype', '')).lower()
             if style == 'paragraph' and etype == 'versetext':
                 # if e.parent is not None and e.parent.name == 'p':
                     # print(e)
@@ -574,7 +574,7 @@ class Usfm:
             attrs = e.meta.get('Attributes', None)
             if attrs is None:
                 return None
-            styletype = e.meta['StyleType']
+            styletype = str(e.meta['StyleType'])
             if styletype.lower() == "character":
                 s = str(e[0])
                 bits = s.split("|")
@@ -661,7 +661,7 @@ class Usfm:
                     except (AttributeError, ValueError):
                         pass
                 predels = [ell] if ell is not None else []
-                st = el.meta.get("styletype", "") 
+                st = el.meta.get("styletype", "")
                 if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
                     # el.parent.remove(el)
                     return True if st is None else False  # To handle empty markers like \pagebreak 

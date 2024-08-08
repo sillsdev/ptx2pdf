@@ -171,6 +171,7 @@ class TexModel:
         self.xrefs = None
         self.inserts = {}
         self.usedfiles = {}
+        self.tablespans = set()
         libpath = pycodedir()
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
@@ -683,6 +684,8 @@ class TexModel:
                                 res.append((r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000"
                                             + r"\widowpenalty=10000}}").format(bk))
                 elif l.startswith(r"%\snippets"):
+                    for t in self.tablespans:
+                        res.append(r"\spanningcols{{{}}}{{{}}}{{{}}}{{{}}}".format(*t))
                     for k, c in sorted(self._snippets.items(), key=lambda x: x[1][2].order):
                         if c[1] is None:
                             v = self.asBool(k)
@@ -1318,6 +1321,11 @@ class TexModel:
             # self.localChanges.append(makeChange(r"(?<!\\(?:f|x|ef|fe)\s)((?<=\s)-|-(?=\s))", r"\u2010", flags=regex.M))
             
 
+        # Capture \tc2-3 type spans
+        def getspan(m):
+            self.tablespans.add((m.group(1), m.group(2), m.group(3), m.group(4)))
+            return m.group(0)
+        self.localChanges.append(makeChange(r"\\t([hc])([cr]?)(\d+)-(\d+)", getspan))
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):
             if self.dict["document/script"][8:].lower() != "hebr":
