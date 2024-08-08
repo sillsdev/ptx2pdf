@@ -241,7 +241,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
-                  "bx_statusMsgBar", "fr_plChecklistFilter", 
+                  "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
 _uiLevels = {
@@ -2180,9 +2180,10 @@ class GtkViewModel(ViewModel):
         else:
             response = dialog.run()
         if response == Gtk.ResponseType.OK:
+            self.savePics()
             if self.get("r_generate") == "all":
                 procbks = ab.keys()
-                doclear = True
+                doclear = True and not self.get("c_protectPicList", True)
             else:
                 procbks = bks
                 doclear = False
@@ -5908,3 +5909,12 @@ Thank you,
 
     def onlockUI4LayoutClicked(self, wid):
         self.sensiVisible('c_lockUI4Layout')
+
+    def onProtectPicListClicked(self, wid):
+        status = self.get("c_protectPicList")
+        self.builder.get_object('l_picListWarn1').set_visible(not status)
+        self.builder.get_object('l_picListWarn2').set_visible(not status)
+
+    def onMoveEndOfAyahClicked(self, wid):
+        self.set('c_verseNumbers', not self.get("c_decorator_endayah"))
+        
