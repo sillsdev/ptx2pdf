@@ -732,6 +732,11 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
         bkf = allbooks.get(bk, None)
         if bkf is None or not os.path.exists(bkf):
             continue
+        if not model.get("c_protectPicList", True):
+            for k in [k for k,v in newpics.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
+                del newpics[k]
+            for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
+                del picinfos[k]
         newpics.read_sfm(bk, bkf, model, suffix=suffix, sync=sync)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols, isBoth=not clearsuffix)
         for k, v in newpics.items():
