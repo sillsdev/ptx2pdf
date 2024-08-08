@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media", 
-             "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "captionR", "refR"]
+             "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "captionR", "refR", "srcref"]
 
 _defaults = {
     'scale':    "1.000"
@@ -406,8 +406,10 @@ class PicInfo(dict):
     def _syncpic(self, pic, key):
         pic['sync'] = True
         for k, p in list(self.items()):
-            if not p.get('sync', False) and p['srcref'] == pic['srcref']:
-                self[k] = pic
+            if not p.get('sync', False) and p.get('srcref', p.get('anchor', '')) == pic['srcref']:
+                for a, b in pic.items():
+                    if a not in ['size', 'loc']:
+                        self[k][a] = b
                 break
         else:
             self[key] = pic
@@ -720,8 +722,9 @@ class PicInfo(dict):
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False, sync=False):
     newpics = PicInfo(model)
+    cfg = model.configName()
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
-                                      'ptxprint', "{}.piclist".format(model.prjid)))
+                                      'ptxprint', cfg, "{}-{}.piclist".format(model.prjid, cfg)))
     delpics = set()
     if doclear:
         picinfos.clear()
@@ -729,10 +732,6 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
         bkf = allbooks.get(bk, None)
         if bkf is None or not os.path.exists(bkf):
             continue
-        for k in [k for k,v in newpics.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
-            del newpics[k]
-        for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
-            del picinfos[k]
         newpics.read_sfm(bk, bkf, model, suffix=suffix, sync=sync)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols, isBoth=not clearsuffix)
         for k, v in newpics.items():
