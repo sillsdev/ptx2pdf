@@ -1,9 +1,29 @@
 PTXprint 2.5.5 Release Notes
-29 Jul 2024
+8 Aug 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.5.6 (8 Aug 2024)
+
+  * Add option to protect existing PicList settings when (re-)generating 
+  
+  * Enable table entries to span multiple columns
+  
+  * Disable (initial) verse nums (on Body tab) if Move (end of) Ayah is enabled
+  
+  * Removed Tracing from Advanced Tab (available through TeX Code Snippets instead)
+  
+  * Solve end-of-2cols multi-run issue
+  
+  * Don't force blank pages when we just want to end partially full ones
+  
+  * Fix accumulate missing from hyphen.py (#970)
+  
+  * Fix getting al the right fonts into the ZIP archive
+  
+  * Fix styletype of missing markers being None causing problems
+  
 Bug fixes and Improvements in 2.5.5 (29 Jul 2024)
 
   * Improve diglot note positioning
