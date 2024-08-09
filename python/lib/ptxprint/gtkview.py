@@ -422,6 +422,7 @@ _object_classes = {
 _pgpos = {
     "Top": "t", 
     "Bottom": "b", 
+    "Below Notes": "B", 
     "Before Verse": "h",
     "After Paragraph": "p",
     "Cutout": "c"
@@ -4428,16 +4429,17 @@ class GtkViewModel(ViewModel):
         fcb = self.builder.get_object("fcb_plPgPos")
         lsp.clear()
         if size in ["page", "full"]:
-            for posn in ["Top", "Center", "Bottom"]:
+            for posn in ["Top", "Center", "Bottom"]: # for esb: "Fill", 
                 lsp.append([posn, "{}{}".format(size[:1].upper(), posn[:1].lower())])
             fcb.set_active(1)
         elif size == "span":
-            for posn in ["Top", "Bottom"]:
+            for posn in ["Top", "Bottom", "Below Notes"]:
                 lsp.append([posn, _pgpos[posn]])
             fcb.set_active(0)
         else: # size == "col"
             for posn in _pgpos.keys():
-                lsp.append([posn, _pgpos[posn]])
+                if posn != "Below Notes":
+                    lsp.append([posn, _pgpos[posn]])
             fcb.set_active(0)
         self._updateHorizOptions(size, self.get("fcb_plPgPos"))
  
@@ -5442,10 +5444,8 @@ class GtkViewModel(ViewModel):
                 pixbuf = None
             return pixbuf
 
-        # Removed .png from file types as this image format is not supported directly
-        # We would need to convert the .png to .jpg on the fly to do so.
         picfiles = self.fileChooser(_("Choose Image"),
-                                  filters={"Images": {"patterns": ['*.jpg', '*.pdf'], "mime": "application/image"}},
+                                  filters={"Images": {"patterns": ['*.jpg', '*.png', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
         self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
 

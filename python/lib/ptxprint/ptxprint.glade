@@ -2078,6 +2078,10 @@ settings for a similar project.</property>
         <col id="1">b</col>
       </row>
       <row>
+        <col id="0" translatable="yes">Below Notes</col>
+        <col id="1">B</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">Before Verse</col>
         <col id="1">h</col>
       </row>
@@ -2124,6 +2128,377 @@ settings for a similar project.</property>
         <col id="1">full</col>
       </row>
     </data>
+  </object>
+  <object class="GtkDialog" id="dlg_esbPosition">
+    <property name="can-focus">False</property>
+    <property name="type">popup</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="type-hint">dialog</property>
+    <property name="gravity">center</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label" translatable="yes">OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button2">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <!-- n-columns=6 n-rows=3 -->
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="row-spacing">3</property>
+            <property name="column-spacing">3</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Several options here are extensions to the normal USFM
+markup standard for illustrations and are not expected
+to work in other software. But PTXprint allows a greater
+level of control in placing pictures.
+
+Top: Above everything except the header line
+Bottom: Below all verse text (and footnotes in diglot)
+Before Verse: 'Here' where defined or before its Anchor Ref
+After Paragraph: After this paragraph
+Cutout: A notch/corner cut out of the text, starting at current line
+
+The above options may have other positioning parameters such
+as: Left, Right, Center, no. of lines (up or down).</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Vertical
+Position:</property>
+                <property name="justify">right</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">The frame size determines how large the picture
+will appear on the page.
+
+Span Width only allows a Top or Bottom vertical placement.
+Column Width allows several other more precise placement 
+options: Before Verse, After Paragraph, or Cutout; and these
+can have Left/Inner or Right/Outer Horizontal positioning set. 
+ 
+When using single column layout, there is no
+difference between Column Width and Span Width.</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Frame Size:</property>
+                <property name="justify">right</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_esbHoriz">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">The options available here change based
+on the Frame Size and Vertical Position
+settings. So if you can't find an option 
+you are looking for, then check those
+settings first.</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Horizontal
+Position:</property>
+                <property name="justify">right</property>
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_esbOffsetNum">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Some vertical position options allow a picture
+to be moved up or down by a number of lines
+or paragraphs.
+
+-Negative (minus) values specify to move UP.
++Positive (plus) values specify to move DOWN.
+
+Negative counts for cutouts raise the image,
+but the cutout will not affect earlier paragraphs. 
+Note that negative and fractional paragraph 
+counts are invalid.</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Number of
+Lines:</property>
+                <property name="justify">right</property>
+              </object>
+              <packing>
+                <property name="left-attach">4</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_esbScale">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Scale:</property>
+                <property name="justify">right</property>
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="fcb_esbSize">
+                <property name="name">Picture: Frame size</property>
+                <property name="width-request">144</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="can-default">True</property>
+                <property name="tooltip-text" translatable="yes">The frame size determines the boundaries of where the
+picture will appear on the page.
+
+Span Width only allows a Top or Bottom vertical placement.
+
+Column Width allows several other more precise placement 
+options: Before Verse, After Paragraph, or Cutout; and these
+can have Left/Inner or Right/Outer Horizontal positioning set. 
+ 
+Page (in Margins) is intended for pictures that will cover an
+entire page (i.e. preventing any scripture text from being on
+that page), but will still show the header.
+
+Page (to Edge) is intended for pictures (or more commonly
+for maps) to fill the entire page, with no margins at all. 
+Captions should not be used with 'Page (to Edge)' images.</property>
+                <property name="halign">start</property>
+                <property name="model">ls_plSize</property>
+                <property name="wrap-width">1</property>
+                <property name="has-entry">True</property>
+                <property name="entry-text-column">0</property>
+                <property name="id-column">1</property>
+                <property name="active-id">col</property>
+                <child internal-child="entry">
+                  <object class="GtkEntry">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="width-chars">15</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="fcb_esbPgPos">
+                <property name="name">Picture: Vertical position</property>
+                <property name="width-request">144</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="can-default">True</property>
+                <property name="tooltip-text" translatable="yes">Several options here are extensions to the normal USFM
+markup standard for illustrations and are not expected
+to work in other software. But PTXprint allows a greater
+level of control in placing pictures.
+
+Top: Above everything except the header line
+Bottom: Below all verse text (and footnotes in diglot)
+Before Verse: 'Here' where defined or before its Anchor Ref
+After Paragraph: After this paragraph
+Cutout: A notch/corner cut out of the text, starting at current line
+
+The above options may have other positioning parameters such
+as: Left, Right, Center, no. of lines (up or down).</property>
+                <property name="halign">start</property>
+                <property name="model">ls_plPgPos</property>
+                <property name="wrap-width">1</property>
+                <property name="has-entry">True</property>
+                <property name="entry-text-column">0</property>
+                <property name="id-column">1</property>
+                <property name="active-id">t</property>
+                <child internal-child="entry">
+                  <object class="GtkEntry">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="width-chars">15</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="s_esbScale">
+                <property name="name">Picture: Scale</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="tooltip-text" translatable="yes">An image (illustration) can be scaled to the
+given size. This is particularly useful for
+cutout images, and can prevent them from
+taking up too much space within the text.</property>
+                <property name="halign">start</property>
+                <property name="text">100</property>
+                <property name="progress-pulse-step">0</property>
+                <property name="adjustment">a_plScale</property>
+                <property name="climb-rate">5</property>
+                <property name="value">100</property>
+              </object>
+              <packing>
+                <property name="left-attach">3</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="fcb_esbHoriz">
+                <property name="name">Picture: Horizontal position</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="can-default">True</property>
+                <property name="tooltip-text" translatable="yes">The options available here change based
+on the Frame Size and Vertical Position
+settings. So if you can't find an option 
+you are looking for, then check those
+settings first.</property>
+                <property name="halign">start</property>
+                <property name="model">ls_plHoriz</property>
+                <property name="wrap-width">1</property>
+                <property name="has-entry">True</property>
+                <property name="entry-text-column">0</property>
+                <property name="id-column">1</property>
+                <property name="active-id">l</property>
+                <child internal-child="entry">
+                  <object class="GtkEntry">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="width-chars">11</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">3</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="s_esbLines">
+                <property name="name">Picture: Lines to adjust vertically</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="tooltip-text" translatable="yes">Some vertical position options allow a picture
+to be moved up or down by a number of lines
+or paragraphs.
+
+-Negative (minus) values specify to move UP.
++Positive (plus) values specify to move DOWN.
+
+Negative counts for cutouts raise the image,
+but the cutout will not affect earlier paragraphs. 
+Note that negative and fractional paragraph 
+counts are invalid.</property>
+                <property name="halign">start</property>
+                <property name="max-length">4</property>
+                <property name="width-chars">4</property>
+                <property name="text">0.0</property>
+                <property name="xalign">1</property>
+                <property name="progress-pulse-step">0</property>
+                <property name="input-purpose">number</property>
+                <property name="adjustment">a_plLines</property>
+                <property name="climb-rate">0.5</property>
+                <property name="digits">1</property>
+              </object>
+              <packing>
+                <property name="left-attach">5</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">button1</action-widget>
+      <action-widget response="-6">button2</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_projects">
     <columns>
