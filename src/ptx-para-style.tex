@@ -37,6 +37,7 @@
 \newif\ifstartpara
 \newif\ifintr@done\intr@donefalse % If true, then if@ntro can only be set between the start of a book and the first chapter number
 \newif\ifReenterIntroOK\ReenterIntroOKtrue % If true, then a chapter number does not set intr@done
+\newif\ifinextended \inextendedfalse % Test for sidebars (ptx extended)
 
 %+cpar_init
 \def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{p}\hsize=\textwidth}
@@ -336,7 +337,7 @@
  \ifdiglot
    \ifp@gestart\tempfalse\fi
  \else 
-   \ifdim\pagetotal=0pt \tempfalse\fi
+   \ifinextended\else\ifdim\pagetotal=0pt \tempfalse\fi\fi
  \fi
  \ifx\pn@xt\empty\else
    \iftemp
