@@ -2378,7 +2378,7 @@ class GtkViewModel(ViewModel):
             ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
             buf = self.fileViews[pgnum][0]
-            if buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True) == "":
+            if forced or buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True) == "":
                 if not os.path.exists(fpath):
                     logger.debug(f"Front matter from {fpath} does not exist")
                     self.uneditedText[pgnum] = _("\\rem Click the Generate button (above) to start the process of creating Front Matter...")
@@ -5201,6 +5201,7 @@ class GtkViewModel(ViewModel):
 \vfill
 \endgraf'''.format(**kw)
         self.updateFrontMatter()
+        self.onLocalFRTclicked(None)
 
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):

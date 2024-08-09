@@ -9,6 +9,7 @@ import re, logging
 
 logger = logging.getLogger(__name__)
 
+# .sty marker:  control id, label id, default, fn -> sty marker, None
 stylemap = {
     'Marker':       ('l_styleTag',          None,               None, None, None),
     'Description':  ('l_styDescription',    None,               None, None, None),
@@ -39,6 +40,7 @@ stylemap = {
     'Scale':        ('s_sbWidth',           'l_sbWidth',        1, None, None),
     'Alpha':        ('s_sbAlpha',           'l_sbAlpha',        0.5, None, None),
     'BgColor':      ('col_sb_backColor',    'l_sb_backColor', '0.8 0.8 0.8', None, None),
+    'VerticalAlign': ('fcb_stytcVpos',      None,               None, None, None),
     '_fontsize':    ('c_styFontScale',           'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
     '_linespacing': ('c_styAbsoluteLineSpacing', 'c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing', None),
     '_publishable': ('c_styTextProperties',      'c_styTextProperties', False, None, None)

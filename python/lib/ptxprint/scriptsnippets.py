@@ -54,7 +54,8 @@ class ScriptSnippet:
         res += [makeChange(cls.hyphenChar + r"(?=[\u0d23\u0d28\u0d30\u0d32\u0d33\u0d15]\u0d4d\u200d)", '', context=onlybody)] # Remove break before MAL old-style chillu 
         return res
 
-nonbodymarkers = ("id", "h", "h1", "toc1", "toc2", "toc3", "mt1", "mt2")
+#nonbodymarkers = ("id", "h", "h1", "toc1", "toc2", "toc3", "mt1", "mt2")
+nonbodymarkers = ("id", "h", "h1", "mt1", "mt2")    # keep in toc to allow wrapping
 
 def onlybody(fn, bj, dat):
     res = []

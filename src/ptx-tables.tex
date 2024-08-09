@@ -479,7 +479,7 @@
         \divide\count255 by 2
       \fi
     \fi
-    \trace{t}{column \the\@col. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
+    \trace{t}{column \the\@col[\p@ram]. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
     \advance \nth@line by -\count255
     \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
       \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell
