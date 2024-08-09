@@ -16,3 +16,22 @@
 \v 6 With slash-b's a going
 \b
 \q2 Wherever they might want to go
+
+\s Table test
+
+
+\p The following is a test of table behaviour
+\p \v 12-83 They presented their offerings in the following order:
+\tr \thc1 Day \thc2 Tribe \thc3 Leader
+\tr \tcr1 1st \tc2 Judah \tc3 Nahshon son of Amminadab
+\tr \tcr1 2nd \tc2 Issachar \tc3 Nethanel son of Zuar
+\tr \tcr1 3rd \tc2 Zebulun \tc3 Eliab son of Helon
+\tr \tcr1 4th \tc2 Reuben \tc3 Elizur son of Shedeur
+\tr \tcr1 5th \tc2 Simeon \tc3 Shelumiel son of Zurishaddai
+\p
+
+\tr \th1 Tribe \th2 Leader \thr3 Number
+\tr \tc1 Judah \tc2 Nahshon son of Amminadab \tcr3 74,600
+\tr \tc1 Issachar \tc2 Nethanel son of Zuar \tcr3 54,400
+\tr \tc1 Zebulun \tc2 Eliab son of Helon \tcr3 57,400
+\tr \tcr1-2 Total of all the tribes: \tcr3 186,400

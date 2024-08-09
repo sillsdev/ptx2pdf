@@ -1325,7 +1325,7 @@ class TexModel:
         def getspan(m):
             self.tablespans.add((m.group(1), m.group(2), m.group(3), m.group(4)))
             return m.group(0)
-        self.localChanges.append(makeChange(r"\\t([hc])([cr]?)(\d+)-(\d+)", getspan))
+        self.localChanges.append(makeChange(r"\\(t[hc])([cr]?)(\d+)-(\d+)", getspan))
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):
             if self.dict["document/script"][8:].lower() != "hebr":

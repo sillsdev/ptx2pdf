@@ -153,13 +153,12 @@
     \st@rtcell%\st@rtsp@n{#3}{#4}%
     \xdef\mytmp{#2}%default justification
     \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
-    \getp@ram{justification}{#1-#4}{#1-#4+#1+tr}%
+    \getp@ram{justification}{#1}{#1+#1+tr}%
     \s@ttc@lign
     \trace{t}{Define spanning cell [\the\tabler@ws, \the\tablec@l - #4] = \mytmp\space in style #1}%
     \m@kenumber{#4}\x@\xdef\csname span-\the\tabler@ws-\the\tablec@l\endcsname{\@@result}%
     \ifnum\@@result>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
     \ch@rstyle{#1}~\ignorespaces}%
-    
 }
 \def\s@ttc@lign{%
     \ifx\p@ram\c@nter \edef\mytmp{c}\else
@@ -242,11 +241,17 @@
     \wd\cellb@x=0pt
     \@@@ddcell
   \fi
+  \x@\let\x@\sp@nend\csname span-\the\tabler@ws-\the\tablec@l\endcsname
+  \loop
+    \advance\tablec@l by 1
+    \ifnum\tablec@l>\allocatedtablec@ls \@llocnewc@l \fi
+    \ifnum\tablec@l<\sp@nend\repeat
   \global\let\@ndcell\@@ndcell
 }
 
 \let\@ndcell\@@ndcell
-\def\spanningcell#1#2#3#4{\x@\def\csname #1#2#3-#4\endcsname{\sp@ncell{#1#2#3}{#2}{#3}{#4}}}
+\def\spanningcell#1#2#3#4{\x@\def\csname #1#2#3-#4\endcsname{\sp@ncell{#1#2#3-#4}{#2}{#3}{#4}}}
+\let\spanningcols\spanningcell
 
 \newif\if@cell
 \newbox\cellb@x
@@ -288,7 +293,7 @@
   \fi}
 
 \def\endt@blewrap{%
-  \trace{t}{endt@blewrap \the\maxtablec@l, rows=\the\tabler@ws, hsize=\the\hsize}%
+  \trace{t}{endt@blewrap cols=\the\maxtablec@l, rows=\the\tabler@ws, hsize=\the\hsize, tw=\the\t@talwidth}%
   % calculate column widths as:
   % (a) any column whose max is < \hsize / numcols gets its natural width
   % (b) calculate exc@ss width of the remaining columns
@@ -305,6 +310,7 @@
     \getp@ram{spacebefore}{\tc@l}{\tc@l+\styst@k}% abuse spacebefore as fixed column width
     \ifx\p@ram\relax\c@rrentcolwidth=-1sp \else\ifdim\p@ram\textwidth=0pt \c@rrentcolwidth=-1sp \else\c@rrentcolwidth=\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi\fi
     \ifdim\wd\c@rrentcolbox>\thr@shold
+      \trace{t}{Adding \the\wd\c@rrentcolbox \space to excess (\the\exc@ss)}%
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
     \else
       \ifdim \c@rrentcolwidth=-1sp\relax
@@ -317,7 +323,7 @@
       \else
         \bgroup\count255=\c@rrentcolwidth \trace{t}{c@rrentcolwidth is \the\count255 sp}\egroup%
       \fi
-      \trace{t}{Adding \the\thr@shold - \the\wd\c@rrentcolbox (\the\c@rrentcolwidth) \space to spare (\the\sp@re)}%
+      \trace{t}{Adding \the\thr@shold - \the\c@rrentcolwidth (\the\wd\c@rrentcolbox) \space to spare (\the\sp@re)}%
       \advance\sp@re by \thr@shold \advance\sp@re by -\c@rrentcolwidth
     \fi
   }%
