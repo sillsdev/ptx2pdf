@@ -308,8 +308,8 @@
      \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}{\m@rker}{\the\curr@djpar}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
    \cutoutcarryover 
+   \do@ndofthispar
  \fi
- \do@ndofthispar
 }
 %-cpar_par
 % No blank line here!
@@ -330,42 +330,44 @@
  %run code to insert picb@x / picb@xR at the right time.
  \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
  \trace{g}{doendofthispar \ch@pter:\v@rse\c@rrdstat \space \the\pagetotal,
-           \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
- \temptrue %If iftemp stays true, then it's a valid insertion point.
- \ifx\pn@xt\empty\tempfalse\fi
- \ifinn@te\tempfalse\fi %No pictures in notes!
- \ifdiglot
-   \ifp@gestart\tempfalse\fi
- \else 
-   \ifinextended\else\ifdim\pagetotal=0pt \tempfalse\fi\fi
- \fi
- \ifx\pn@xt\empty\else
-   \iftemp
-     %Potential inclusion location. Check delay.
-     \edef\temp{\csname\eotpn@me Delay\endcsname}%
-     \ifx\temp\empty\else
-       \let\pn@xt=\empty
-       \trace{g}{\ch@pter:\v@rse. Delayed by specification (\temp)}%
-       \x@\shrinkdel@y \temp\EDLY\relax
-       \trace{g}{Delay for \eotpn@me set to \temp}%
-       \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
-       \edef\eotpn@me{empty}%
-     \fi
-   \else
-     \edef\eotpn@me{empty}%
-     \let\pn@xt=\empty
-     \trace{g}{\ch@pter:\v@rse. Not here}%
+           \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi. \csname \eotpn@me Delay\endcsname}%
+ \ifnum \holdinginserts=1 
+   \temptrue %If iftemp stays true, then it's a valid insertion point.
+   \ifx\pn@xt\empty\tempfalse\fi
+   \ifinn@te\tempfalse\fi %No pictures in notes!
+   \ifdiglot
+     \ifp@gestart\tempfalse\fi
+   \else 
+     \ifinextended\else\ifdim\pagetotal=0pt \tempfalse\fi\fi
    \fi
- \fi
- \ifx\pn@xt\empty\else
-   % Time to acually include the picture
-   \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x / \the\ht\picb@xR}%
-   %\nonstopmode
-   %\show\pn@xt
-   %\edef\pn@xt{\hbox{x}}% test code
-   \x@\global\x@\let\csname\eotpn@me\endcsname=\empty
-   \pn@xt\relax 
- \fi
+   \ifx\pn@xt\empty\else
+     \iftemp
+       %Potential inclusion location. Check delay.
+       \edef\temp{\csname\eotpn@me Delay\endcsname}%
+       \ifx\temp\empty\else
+         \let\pn@xt=\empty
+         \trace{g}{\ch@pter:\v@rse. Delayed by specification (\temp)}%
+         \x@\shrinkdel@y \temp\EDLY\relax
+         \trace{g}{Delay for \eotpn@me set to \temp}%
+         \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
+         \edef\eotpn@me{empty}%
+       \fi
+     \else
+       \edef\eotpn@me{empty}%
+       \let\pn@xt=\empty
+       \trace{g}{\ch@pter:\v@rse. Not here (\ifx\pn@xt\empty nothing \fi \ifinn@te innote \fi) }%
+     \fi
+   \fi
+   \ifx\pn@xt\empty\else
+     % Time to acually include the picture
+     \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x / \the\ht\picb@xR}%
+     %\nonstopmode
+     %\show\pn@xt
+     %\edef\pn@xt{\hbox{x}}% test code
+     \x@\global\x@\let\csname\eotpn@me\endcsname=\empty
+     \pn@xt\relax 
+   \fi
+  \fi
 }
 
 \def\shrinkdel@y#1|#2\EDLY{\trace{g}{shrink {#1}{#2}}\xdef\temp{#2}}
