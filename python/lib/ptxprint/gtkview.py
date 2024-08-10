@@ -27,7 +27,7 @@ from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
 from ptxprint.ptsettings import ParatextSettings
-from ptxprint.gtkpiclist import PicList
+from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import PicInfo
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.styleditor import aliases
@@ -497,6 +497,7 @@ _dlgtriggers = {
     "dlg_gridsGuides":      "adjustGuideGrid",
     "dlg_DBLbundle":        "onDBLbundleClicked",
     "dlg_overlayCredit":    "onOverlayCreditClicked",
+    "dlg_sbPosition":       "onSBpositionClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
     "dlg_generateCover":    "onGenerateCoverClicked",
     "dlg_borders":          "onSBborderClicked"
@@ -4957,6 +4958,45 @@ class GtkViewModel(ViewModel):
         else:
             return
         dialog.hide()
+
+    def onSBpositionClicked(self, btn):
+        dialog = self.builder.get_object("dlg_sbPosition")
+        sbParams = self.get("t_sbPgPos")
+        sbParams = "t" if not len(sbParams) else sbParams
+        m = re.match(r"^([tbcPF]?)([lrcio]?)([\d\.\-]*)", sbParams)
+        if m:
+            self.set("fcb_sbPgPos", m[1])
+            self.set("fcb_sbHoriz", m[2])
+            self.set("s_sbLines", m[3])
+        # self.set("t_sbPgPos", self.get("l_piccredit") if len(self.get("l_piccredit")) else "")
+        self.updatePosnPreview()
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            pgpos = self.get("fcb_sbPgPos")
+            hpos = self.get("fcb_sbHoriz")
+            lines = self.get("s_sbLines")
+            sbParams = "{}{}{}".format(pgpos, hpos, lines if float(lines) != 0.0 else "")
+            self.set("t_sbPgPos", sbParams)
+        elif response == Gtk.ResponseType.CANCEL:
+            pass
+        else:
+            return
+        dialog.hide()
+
+    def updatePosnPreview(self):
+        if self.get("c_doublecolumn"):
+            cols = 2
+        else:
+            cols = 1
+        frSize = "col"
+        pgposLocn = "br"
+        locKey = getLocnKey(cols, frSize, pgposLocn)
+        pixbuf = dispLocPreview(locKey)
+        pic = self.builder.get_object("img_sbPreview")
+        if pixbuf is None:
+            pic.clear()
+        else:
+            pic.set_from_pixbuf(pixbuf)
 
     def onDiglotAutoAdjust(self, btn):
         if self.isDiglotMeasuring:

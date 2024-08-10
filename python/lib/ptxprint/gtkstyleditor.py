@@ -36,11 +36,12 @@ stylemap = {
     'NoteBlendInto': ('t_NoteBlendInto',    'l_NoteBlendInto',  '', None, None),
     'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', 0, None, None),
     'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', 0, None, None),
-    'Position':     ('fcb_sbPgPos',         'l_sbPgPos', 'Top', lambda v: "" if v == "Top" else v, None),
+    'Position':     ('t_sbPgPos',           None, 't', None, None),
     'Scale':        ('s_sbWidth',           'l_sbWidth',        1, None, None),
     'Alpha':        ('s_sbAlpha',           'l_sbAlpha',        0.5, None, None),
     'BgColor':      ('col_sb_backColor',    'l_sb_backColor', '0.8 0.8 0.8', None, None),
     'VerticalAlign': ('fcb_stytcVpos',      None,               None, None, None),
+
     '_fontsize':    ('c_styFontScale',           'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
     '_linespacing': ('c_styAbsoluteLineSpacing', 'c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing', None),
     '_publishable': ('c_styTextProperties',      'c_styTextProperties', False, None, None)
