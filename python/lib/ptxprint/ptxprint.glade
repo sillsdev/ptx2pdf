@@ -15090,6 +15090,7 @@ as: Left, Right, Center, no. of lines (up or down).</property>
                                                       <object class="GtkEntry">
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
+                                                        <property name="editable">False</property>
                                                         <property name="width-chars">15</property>
                                                       </object>
                                                     </child>
@@ -15134,6 +15135,7 @@ Captions should not be used with 'Page (to Edge)' images.</property>
                                                       <object class="GtkEntry">
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
+                                                        <property name="editable">False</property>
                                                         <property name="width-chars">15</property>
                                                       </object>
                                                     </child>
@@ -15184,6 +15186,7 @@ settings first.</property>
                                                       <object class="GtkEntry">
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
+                                                        <property name="editable">False</property>
                                                         <property name="width-chars">11</property>
                                                       </object>
                                                     </child>
@@ -15250,6 +15253,7 @@ on the Checklist tab.</property>
                                                       <object class="GtkEntry">
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
+                                                        <property name="editable">False</property>
                                                         <property name="width-chars">10</property>
                                                       </object>
                                                     </child>
@@ -15303,7 +15307,7 @@ but the cutout will not affect earlier paragraphs.
 Note that negative and fractional paragraph 
 counts are invalid.</property>
                                                     <property name="halign">start</property>
-                                                    <property name="max-length">4</property>
+                                                    <property name="max-length">6</property>
                                                     <property name="width-chars">4</property>
                                                     <property name="text">0</property>
                                                     <property name="xalign">1</property>
@@ -36317,7 +36321,7 @@ difference between Column Width and Span Width.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="l_esbHoriz">
+              <object class="GtkLabel" id="l_sbHoriz">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">The options available here change based
@@ -36336,7 +36340,8 @@ Position:</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="l_esbOffsetNum">
+              <object class="GtkLabel" id="l_sbOffsetNum">
+                <property name="width-request">80</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">Some vertical position options allow a picture
@@ -36354,6 +36359,7 @@ counts are invalid.</property>
                 <property name="label" translatable="yes">Number of
 Lines:</property>
                 <property name="justify">right</property>
+                <property name="xalign">1</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -36390,10 +36396,13 @@ Captions should not be used with 'Page (to Edge)' images.</property>
                 <property name="entry-text-column">0</property>
                 <property name="id-column">1</property>
                 <property name="active-id">col</property>
+                <signal name="changed" handler="onSBsizeChanged" swapped="no"/>
+                <signal name="changed" handler="updatePosnPreview" swapped="no"/>
                 <child internal-child="entry">
                   <object class="GtkEntry">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="editable">False</property>
                     <property name="width-chars">15</property>
                   </object>
                 </child>
@@ -36430,10 +36439,13 @@ as: Left, Right, Center, no. of lines (up or down).</property>
                 <property name="entry-text-column">0</property>
                 <property name="id-column">1</property>
                 <property name="active-id">t</property>
+                <signal name="changed" handler="onSBpgPosChanged" swapped="no"/>
+                <signal name="changed" handler="updatePosnPreview" swapped="no"/>
                 <child internal-child="entry">
                   <object class="GtkEntry">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="editable">False</property>
                     <property name="width-chars">15</property>
                   </object>
                 </child>
@@ -36462,10 +36474,12 @@ settings first.</property>
                 <property name="entry-text-column">0</property>
                 <property name="id-column">1</property>
                 <property name="active-id">l</property>
+                <signal name="changed" handler="updatePosnPreview" swapped="no"/>
                 <child internal-child="entry">
                   <object class="GtkEntry">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="editable">False</property>
                     <property name="width-chars">11</property>
                   </object>
                 </child>
@@ -36493,8 +36507,8 @@ but the cutout will not affect earlier paragraphs.
 Note that negative and fractional paragraph 
 counts are invalid.</property>
                 <property name="halign">start</property>
-                <property name="max-length">4</property>
-                <property name="width-chars">4</property>
+                <property name="max-length">6</property>
+                <property name="width-chars">6</property>
                 <property name="text">0.0</property>
                 <property name="xalign">1</property>
                 <property name="progress-pulse-step">0</property>
@@ -36502,6 +36516,7 @@ counts are invalid.</property>
                 <property name="adjustment">a_plLines</property>
                 <property name="climb-rate">0.5</property>
                 <property name="digits">1</property>
+                <signal name="changed" handler="updatePosnPreview" swapped="no"/>
               </object>
               <packing>
                 <property name="left-attach">1</property>

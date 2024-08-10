@@ -65,7 +65,9 @@ def getLocnKey(cols, frSize, pgposLocn):
     locnKey = re.sub(r'^2\-col\-h$', '2-col-hc', locnKey)
     locnKey = re.sub(r'^2\-col\-c$', '2-col-cl', locnKey)
     locnKey = re.sub(r'^1\-c$', '1-cl', locnKey)
-    locnKey = re.sub(r'\d$', '', locnKey)
+    locnKey = re.sub(r'\-?\d*\.?\d$', '', locnKey)
+    locnKey = re.sub(r'B', 'b', locnKey)  # Until we get some updated graphics
+    print(f"{cols=} {frSize=} {pgposLocn=} ==> {locnKey=}")
     return locnKey
 
 class PicList:

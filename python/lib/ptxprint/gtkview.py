@@ -4396,41 +4396,59 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_thumbVerticalR").set_angle(_vertical_thumb[orientation][1])
 
     def onPLsizeChanged(self, *a):
-        size = self.get("fcb_plSize")
-        wids = ["l_plHoriz", "fcb_plHoriz"]
+        self.onSizeChanged("pl")
+        
+    def onSBsizeChanged(self, *a):
+        self.onSizeChanged("sb")
+        
+    def onSizeChanged(self, plsb):
+        size = self.get("fcb_{}Size".format(plsb))
+        wids = ["l_{}Horiz".format(plsb), "fcb_{}Horiz".format(plsb)]
         # if size in ["col", "span"]:
-        self._updatePgPosOptions(size)
+        self._updatePgPosOptions(size, plsb)
         if size == "span":
             for w in wids:
-                self.builder.get_object("fcb_plHoriz").set_active_id("-")
+                self.builder.get_object("fcb_{}Horiz".format(plsb)).set_active_id("-")
                 self.builder.get_object(w).set_sensitive(False)
         else:
             for w in wids:
+                if size == "col":
+                    self.builder.get_object("fcb_{}Horiz".format(plsb)).set_active_id("l")
                 self.builder.get_object(w).set_sensitive(True)
 
     def onPLpgPosChanged(self, *a):
-        pgpos = self.get("fcb_plPgPos")
-        wids = ["l_plOffsetNum", "s_plLines"]
+        self.onPgPosChanged("pl")
+        
+    def onSBpgPosChanged(self, *a):
+        self.onPgPosChanged("sb")
+        
+    def onPgPosChanged(self, plsb):
+        pgpos = self.get("fcb_{}PgPos".format(plsb))
+        wids = ["l_{}OffsetNum".format(plsb), "s_{}Lines".format(plsb)]
         if pgpos in ["p", "c"]:
             for w in wids:
                 self.builder.get_object(w).set_sensitive(True)
             if pgpos == "p":
-                self.builder.get_object("l_plOffsetNum").set_label("Number of\nparagraphs:")
-                self.builder.get_object("s_plLines").set_digits(0)
+                self.builder.get_object("l_{}OffsetNum".format(plsb)).set_label("Number of\nparagraphs:")
+                self.set("s_{}Lines".format(plsb), int(float(self.get("s_{}Lines".format(plsb)))))
+                self.builder.get_object("s_{}Lines".format(plsb)).set_digits(0)
+                self.builder.get_object("s_{}Lines".format(plsb)).set_increments(1, 10)  # Climb rate 1, step increment 10
             else:
-                self.builder.get_object("l_plOffsetNum").set_label("Number of\nlines:")
-                self.builder.get_object("s_plLines").set_digits(1)
+                self.builder.get_object("l_{}OffsetNum".format(plsb)).set_label("Number of\nlines:")
+                self.builder.get_object("s_{}Lines".format(plsb)).set_digits(1)
+                self.builder.get_object("s_{}Lines".format(plsb)).set_increments(0.5, 1)  # Climb rate 0.5, step increment 1
         else:
             for w in wids:
                 self.builder.get_object(w).set_sensitive(False)
-        self._updateHorizOptions(self.get("fcb_plSize"), self.get("fcb_plPgPos"))
+        self._updateHorizOptions(self.get("fcb_{}Size".format(plsb)), self.get("fcb_{}PgPos".format(plsb)), plsb)
 
-    def _updatePgPosOptions(self, size):
-        lsp = self.builder.get_object("ls_plPgPos")
-        fcb = self.builder.get_object("fcb_plPgPos")
+    def _updatePgPosOptions(self, size, plsb):
+        lsp = self.builder.get_object("ls_{}PgPos".format(plsb))
+        fcb = self.builder.get_object("fcb_{}PgPos".format(plsb))
         lsp.clear()
         if size in ["page", "full"]:
-            for posn in ["Top", "Center", "Bottom"]: # for esb: "Fill", 
+            options = ["Top", "Center", "Bottom"] if plsb == 'pl' else ["Top", "Center", "Fill", "Bottom"]
+            for posn in options:
                 lsp.append([posn, "{}{}".format(size[:1].upper(), posn[:1].lower())])
             fcb.set_active(1)
         elif size == "span":
@@ -4442,12 +4460,12 @@ class GtkViewModel(ViewModel):
                 if posn != "Below Notes":
                     lsp.append([posn, _pgpos[posn]])
             fcb.set_active(0)
-        self._updateHorizOptions(size, self.get("fcb_plPgPos"))
+        self._updateHorizOptions(size, self.get("fcb_{}PgPos".format(plsb)), plsb)
  
-    def _updateHorizOptions(self, size, pgpos):
-        lsp = self.builder.get_object("ls_plHoriz")
-        fcb = self.builder.get_object("fcb_plHoriz")
-        initVal = self.get("fcb_plHoriz")
+    def _updateHorizOptions(self, size, pgpos, plsb):
+        lsp = self.builder.get_object("ls_{}Horiz".format(plsb))
+        fcb = self.builder.get_object("fcb_{}Horiz".format(plsb))
+        initVal = self.get("fcb_{}Horiz".format(plsb))
         valid = ""
         lsp.clear()
         for horiz in ["Left", "Center", "Right", "Inner", "Outer", "-"]:
@@ -4462,7 +4480,7 @@ class GtkViewModel(ViewModel):
                 lsp.append([horiz, _horiz[horiz]])
         if initVal is not None:
             if initVal in valid:
-                self.set("fcb_plHoriz", initVal)
+                self.set("fcb_{}Horiz".format(plsb), initVal)
             else:
                 fcb.set_active(0)
  
@@ -4973,9 +4991,9 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             pgpos = self.get("fcb_sbPgPos")
-            hpos = self.get("fcb_sbHoriz")
-            lines = self.get("s_sbLines")
-            sbParams = "{}{}{}".format(pgpos, hpos, lines if float(lines) != 0.0 else "")
+            hpos = self.get("fcb_sbHoriz", "c")
+            hpos = "" if hpos == "-" else hpos
+            sbParams = "{}{}{}".format(pgpos, hpos, self._getLines())
             self.set("t_sbPgPos", sbParams)
         elif response == Gtk.ResponseType.CANCEL:
             pass
@@ -4983,13 +5001,21 @@ class GtkViewModel(ViewModel):
             return
         dialog.hide()
 
-    def updatePosnPreview(self):
-        if self.get("c_doublecolumn"):
-            cols = 2
-        else:
-            cols = 1
-        frSize = "col"
-        pgposLocn = "br"
+    def _getLines(self):
+        w = "s_sbLines"
+        lines = ""
+        v = self.get(w, "0.0") 
+        if self.builder.get_object(w).get_sensitive():
+            lines = v if float(v) != 0.0 else ""
+        return lines
+                
+    def updatePosnPreview(self, *a):
+        cols = 2 if self.get("c_doublecolumn") else 1
+        frSize = self.get("fcb_sbSize")
+        hpos = self.get("fcb_sbHoriz", "c")
+        hpos = "" if hpos == "-" else hpos        
+        pgposLocn = self.get("fcb_sbPgPos", "t") + hpos + self._getLines()
+        self.set("l_sbPosition", pgposLocn)
         locKey = getLocnKey(cols, frSize, pgposLocn)
         pixbuf = dispLocPreview(locKey)
         pic = self.builder.get_object("img_sbPreview")
