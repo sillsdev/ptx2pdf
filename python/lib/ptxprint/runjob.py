@@ -263,6 +263,7 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
                                  sigsheets, foldmargin, info['paper/cropmarks'], info['document/ifrtl'] == 'true',
                                  info['finishing/foldfirst'])
         except OverflowError as e:
+            print(e)
             info.printer.doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                  title=_("Paper Size Error"), secondary=str(e), threaded=True)
             return False
