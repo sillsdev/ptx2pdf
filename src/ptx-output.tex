@@ -258,7 +258,7 @@
   \vbox to 0pt{\t@gstartfull{Pagination}{h}{type="Header"}%
    \hsize=\textwidth\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
-    \setbox0=\vbox{\hbox to \textwidth{\the\headline}}%
+    \setbox0=\vbox{\hbox to \textwidth{\special{color push rgb 0 0 0}\the\headline\special{color pop}}}%
     \ht0=0.7\fontdimen6\csname font<\f@ntstyle>\endcsname \dp0=0pt \box0
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
       \kern\RHruleposition\leftskip=0pt\rightskip=0pt
@@ -278,7 +278,7 @@
     \dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit
-     \hbox to \textwidth{\the\footline}\vss\t@gend{Pagination}}%
+     \hbox to \textwidth{\special{color push rgb 0 0 0}\the\footline\special{color pop}}\vss\t@gend{Pagination}}%
 }}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue
@@ -287,7 +287,7 @@
     \mcpush{P}{h}%
     \let\c@tprefix\empty\let\c@tegory\empty\let\f@ntextend\empty\let\mspr@fix\empty
     \s@tfont{zfooter}{zfooter+h}%
-    \setbox8=\hbox{\the\footline}%
+    \setbox8=\hbox{\special{color push rgb 0 0 0}\the\footline\special{color pop}}%
     \ifdim\ht8>0pt
       \dimen0=\textwidth\advance\dimen0 by -\columnshift
       %\dimen1=\bottomm@rgin\advance\dimen1 by -\FooterPosition\MarginUnit
@@ -1624,7 +1624,7 @@
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 \newif\ifColNotesRule \ColNotesRulefalse
 \newdimen\RuleThickness \RuleThickness=0.4pt
-
+\def\ColumnGutterRuleColour{0 0 0}
 \def\makecolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\else\ifnum#5=0\hfil\fi\fi\fi
   \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
             ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
@@ -1633,7 +1633,7 @@
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
     \vskip\ColumnGutterRuleSkip
-    \hbox to 1pt{\hfil\vrule width \RuleThickness height \the\dimen4 \hfil}%\dp5=#3 \box5
+    \hbox to 1pt{\special{color push rgb \ColumnGutterRuleColour}\hfil\vrule width \RuleThickness height \the\dimen4 \hfil\special{color pop}}%\dp5=#3 \box5
     \vfil}\else\box\voidb@x\fi
   \ifx\XrefNotes\empty
     \ifColumnGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
@@ -1667,7 +1667,7 @@
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
     \vskip\StudyColumnGutterRuleSkip
-    \hbox to 1pt{\hfil\vrule width \RuleThickness height \the\dimen4 \hfil}%\dp5=#3 \box5
+    \hbox to 1pt{\hfil\special{color push rgb \ColumnGutterRuleColour}\vrule width \RuleThickness height \the\dimen4 \special{color pop}\hfil}%\dp5=#3 \box5
     \vfil}\else\box\voidb@x\fi
   \ifStudyGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
   \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
