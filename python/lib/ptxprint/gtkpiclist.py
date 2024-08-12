@@ -37,7 +37,38 @@ _comblist = ['pgpos', 'hpos', 'nlines']
 _comblistcr = ['crVpos', 'crHpos']
 
 newrowcounter = 1
+previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
 
+_locGrid = {
+"1"   :    (0,0),"1-b":     (1,0),"1-cl":    (2,0),"1-cr":   (3,0),"1-hc":    (4,0),"1-hl":    (5,0),"1-hr":    (6,0),"1-p":     (7,0),
+"1-pa":    (0,1),"1-pb":    (1,1),"1-t":     (2,1),"2":      (3,1),"2-col-bl":(4,1),"2-col-br":(5,1),"2-col-cl":(6,1),"2-col-cr":(7,1),
+"2-col-hc":(0,2),"2-col-hl":(1,2),"2-col-hr":(2,2),"2-col-p":(3,2),"2-col-pa":(4,2),"2-col-pb":(5,2),"2-col-tl":(6,2),"2-col-tr":(7,2),
+"2-span-b":(0,3),"2-span-t":(1,3),"full":    (2,3),"page":   (3,3)
+}
+    
+def dispLocPreview(key):
+    x,y = _locGrid.get(key, (7,3))
+    x = x * 212 + 14
+    y = y * 201 + 10
+    pic = previewBuf.new_subpixbuf(x,y,130,180)
+    return pic
+
+def getLocnKey(cols, frSize, pgposLocn):
+    locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
+    locnKey = re.sub(r'^\d\-(page|full)\-.+', r'\1', locnKey)
+    locnKey = re.sub(r'^1\-(col|span)\-', '1-', locnKey)
+    locnKey = re.sub(r'^(.+)i(\d?)$', r'\1l\2', locnKey)
+    locnKey = re.sub(r'^(.+)o(\d?)$', r'\1r\2', locnKey)
+    locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
+    locnKey = re.sub(r'^1\-p[lcrio]', '1-p', locnKey)
+    locnKey = re.sub(r'^2\-col\-p[lcrio]', '2-col-p', locnKey)
+    locnKey = re.sub(r'^2\-col\-h$', '2-col-hc', locnKey)
+    locnKey = re.sub(r'^2\-col\-c$', '2-col-cl', locnKey)
+    locnKey = re.sub(r'^1\-c$', '1-cl', locnKey)
+    locnKey = re.sub(r'\-?\d*\.?\d$', '', locnKey)
+    locnKey = re.sub(r'B', 'b', locnKey)  # Until we get some updated graphics
+    print(f"{cols=} {frSize=} {pgposLocn=} ==> {locnKey=}")
+    return locnKey
 
 class PicList:
     def __init__(self, view, builder, parent):
@@ -69,7 +100,7 @@ class PicList:
             elif v.startswith("c_"):
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
-        self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
+        # self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
         self.clear()
         self.loading = False
 
@@ -225,7 +256,7 @@ class PicList:
             self.currows.append(self.model[cit][:])    # copy it so that any edits don't mess with the model if the iterator moves
             self.currows[-1].append(cit)
         currow = self.currows[0]
-        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
+        pgpos = re.sub(r'^([PF])([lcrio])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
@@ -271,45 +302,6 @@ class PicList:
         self.mask_media(currow)
         self.parent.unpause_logging()
         self.loading = False
-
-    _locGrid = {
-"1"   :    (0,0),"1-b":     (1,0),"1-cl":    (2,0),"1-cr":   (3,0),"1-hc":    (4,0),"1-hl":    (5,0),"1-hr":    (6,0),"1-p":     (7,0),
-"1-pa":    (0,1),"1-pb":    (1,1),"1-t":     (2,1),"2":      (3,1),"2-col-bl":(4,1),"2-col-br":(5,1),"2-col-cl":(6,1),"2-col-cr":(7,1),
-"2-col-hc":(0,2),"2-col-hl":(1,2),"2-col-hr":(2,2),"2-col-p":(3,2),"2-col-pa":(4,2),"2-col-pb":(5,2),"2-col-tl":(6,2),"2-col-tr":(7,2),
-"2-span-b":(0,3),"2-span-t":(1,3),"full":    (2,3),"page":   (3,3)
-}
-    
-    def dispLocPreview(self, key):
-        x,y = self._locGrid.get(key, (7,3))
-        x = x * 212 + 14
-        y = y * 201 + 10
-        pic = self.previewBuf.new_subpixbuf(x,y,130,180)
-        return pic
-
-    def getLocnKey(self):
-        if self.get("c_doublecolumn"):
-            cols = 2
-        else:
-            cols = 1
-        if not self.get("c_plMediaP"):
-            locnKey = "1" if cols == 1 else "2"
-        else:
-            frSize = self.currows[0][_pickeys['size']]
-            pgposLocn = self.currows[0][_pickeys['pgpos']]
-            locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
-            locnKey = re.sub(r'^\d\-(page|full)\-.+', r'\1', locnKey)
-            locnKey = re.sub(r'^1\-(col|span)\-', '1-', locnKey)
-            locnKey = re.sub(r'^(.+)i(\d?)$', r'\1l\2', locnKey)
-            locnKey = re.sub(r'^(.+)o(\d?)$', r'\1r\2', locnKey)
-            locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
-            locnKey = re.sub(r'^1\-p[lcrio]', '1-p', locnKey)
-            locnKey = re.sub(r'^2\-col\-p[lcrio]', '2-col-p', locnKey)
-            locnKey = re.sub(r'^2\-col\-h$', '2-col-hc', locnKey)
-            locnKey = re.sub(r'^2\-col\-c$', '2-col-cl', locnKey)
-            locnKey = re.sub(r'^1\-c$', '1-cl', locnKey)
-            locnKey = re.sub(r'\d$', '', locnKey)
-        return locnKey
-
     def select_row(self, i):
         if i >= len(self.model):
             i = len(self.model) - 1
@@ -343,7 +335,7 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblist[:-1]).replace("-", "")
         # if res.startswith("c"):
             # res += str(self.get(_comblist[-1]))
-        res = re.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res)
+        res = re.sub(r'([PF])([tcb])([lcrio])', r'\1\3\2', res)
         if len(res) and res[0] in "PF":
             res = res.strip("c")
         lines = self.get("nlines", 0)
@@ -375,8 +367,17 @@ class PicList:
             currow[fieldi] = val
             r_image = self.parent.get("r_image", default="preview")
             if i == 0 and r_image == "location":
-                locKey = self.getLocnKey()
-                pic = self.dispLocPreview(locKey)
+                if self.get("c_doublecolumn"):
+                    cols = 2
+                else:
+                    cols = 1
+                if not self.get("c_plMediaP"): # What is this doing? MP!?
+                    locKey = "1" if cols == 1 else "2"
+                else:
+                    frSize = self.currows[0][_pickeys['size']]
+                    pgposLocn = self.currows[0][_pickeys['pgpos']]
+                    locKey = getLocnKey(cols, frSize, pgposLocn)
+                pic = dispLocPreview(locKey)
                 self.setPreview(pic)
             if key == "src":
                 if r_image == "preview":

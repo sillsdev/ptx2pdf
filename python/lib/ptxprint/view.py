@@ -16,6 +16,7 @@ from ptxprint.xrefs import StrongsXrefs
 from ptxprint.reference import RefList, RefRange, Reference
 from ptxprint.texpert import TeXpert
 from ptxprint.hyphen import Hyphenation
+from ptxprint.xdv.getfiles import procxdv
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -32,8 +33,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.5.6"
-GitVersionStr = "2.5.6"
+VersionStr = "2.5.7"
+GitVersionStr = "2.5.7"
 ConfigVersion = "2.18"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -1489,7 +1490,7 @@ class ViewModel:
         res.append(os.path.join(cpath, subdir, "ptxprint.sty"))
         return res
 
-    def getallfonts(self, xdv=None):
+    def getallfonts(self):
         allfonts = set()
         for k, v in TexModel._fonts.items():
             if v[1] is None or self.get(v[1]):
@@ -1498,7 +1499,6 @@ class ViewModel:
                 f = font_info.getTtfont()
                 if f.filename is None: continue
                 allfonts.add(f.filename)
-                
         for k, v in self.styleEditor.sheet.items():
             font_info = v.get(' font', self.styleEditor.basesheet.get(k, {}).get(' font', None))
             if font_info is None and 'FontName' in v:
@@ -1507,10 +1507,6 @@ class ViewModel:
                 f = font_info.getTtfont()
                 if f.filename is None: continue
                 allfonts.add(f.filename)
-
-        if xdv is not None:
-            allfonts.update(xdvigetfonts(xdv))
-
         return allfonts
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None, xdv=None):
@@ -1579,6 +1575,14 @@ class ViewModel:
             if os.path.exists(jobpiclist):
                 res[jobpiclist] = cfpath+jobpiclistf
 
+        if os.path.exists(xdv):
+            allfonts, extrapics = procxdv(xdv)
+            for p in extrapics:
+                b = os.path.basename(p)
+                if p not in res:
+                    res[p] = "local/figures/" + b
+        else:
+            allfonts = set()
         # borders
         for k, v in Borders.items():
             if self.get(k):
@@ -1595,7 +1599,7 @@ class ViewModel:
                     # print(f"{f.as_posix()=}, {f.name=}")
 
         # fonts
-        allfonts = self.getallfonts(xdv=xdv)
+        allfonts.update(self.getallfonts())
         if xdv is not None:
             cfgchanges["c_usesysfonts"] = (False, None)
 
@@ -1747,6 +1751,7 @@ class ViewModel:
         prjid = self.prjid
         cfgid = self.configName()
         entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid, xdv=xdv)
+        logger.debug(f"{entries=}, {cfgchanges=}, {tmpfiles=}")
         for k, v in entries.items():
             if os.path.exists(k):
                 if parent is not None and 'shared/fonts' in v:

@@ -39,13 +39,15 @@ _errmsghelp = {
                                            "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab)."),
 "! Missing control sequence inserted.":  _("Fallback font probably being applied to text in a footnote (not permitted!)"),
 "\\colorhex #1->\\count 1=#1":           _("Expecting a number for \\Color definition, not a color name. (e.g. \\Color xff7f7f)"),
-"! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
+"! Missing number, treated as zero.":    _("Possibly a missing +/- value in the Adjust List (see View+Edit tab).\n" +
+                                           "  OR\nMaybe related to USFM3 illustration markup"),
 "! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
                                            "Try running 'Basic Checks' in Paratext to validate markers.\n" +\
                                            "It could also be related to an unrecognized setting in ptxprint_mods.tex"),
 "! Illegal unit of measure (pt inserted).":    _("One of the settings in the Stylesheet may be missing the units.\n" +\
                                            "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                            "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."),
+"! File ended while scanning use of \\parse@djline.":  ("Check for errors in the Adjust List (see View+Edit tab)."),
 "! File ended while scanning use of":    _("Try turning off various settings on the Advanced tab."),
 "! Output loop---25 consecutive dead cycles.":  _("Sorry! XeTeX was unable to complete the typesetting.\n" +\
                                            "* If creating a Diglot, ensure both texts can print successfully\n" +\
@@ -261,6 +263,7 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
                                  sigsheets, foldmargin, info['paper/cropmarks'], info['document/ifrtl'] == 'true',
                                  info['finishing/foldfirst'])
         except OverflowError as e:
+            print(e)
             info.printer.doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                  title=_("Paper Size Error"), secondary=str(e), threaded=True)
             return False

@@ -364,11 +364,12 @@
     \x@\c@tskipparse\c@tskip...\E %split c@tskip into whole and fractional parts.
   \fi
   \ifx\l@cspec@a\loc@Par
-    \global\let\picl@c=\loc@Par\p@cinswid=\hsize\trace{g}{Experimental after-paragraph \w@tsit}%
+    \global\let\picl@c=\loc@Par\p@cinswid=\hsize
     \xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse
     \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
     \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
     \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%Borrow cutskip for parskip
+    \trace{g}{Experimental after-paragraph \w@tsit, delay: \c@tskip}%
   \fi
   % full-page options
   \tempfalse
@@ -1240,7 +1241,7 @@
        \edef\temp{D|\temp}\advance\count255 by -1
      \repeat
    \fi
-   \trace{g}{Delay for \eotpn@me set to '\temp'}%
+   \trace{g}{\eotpn@me Delay  set to '\temp'}%
    \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
    \relax\relax
 }

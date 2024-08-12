@@ -1,9 +1,25 @@
-PTXprint 2.5.6 Release Notes
-8 Aug 2024
+PTXprint 2.5.7 Release Notes
+10 Aug 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.5.7 (10 Aug 2024)
+
+  * Fix TOC wrapping and layout for doublecolumns
+  
+  * Fix RTL tables
+  
+  * Make paragraph-based positioning work in top-of-page sidebars
+  
+  * Improve error msgs around failed AdjList
+  
+  * Add missing Pic position options. start UI for esb positioning
+  
+  * Fix paragraph counting for pgpos="pcN"
+  
+  * Protect pic position changes with version check
+  
 Bug fixes and Improvements in 2.5.6 (8 Aug 2024)
 
   * Add option to protect existing PicList settings when (re-)generating 

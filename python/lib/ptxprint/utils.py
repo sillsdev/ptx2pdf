@@ -607,11 +607,23 @@ def xdvigetfonts(xdv):
             postamble = unpack(">I", dat[-5:-1])[0]
             inf.seek(postamble + 29, 0) # skip the postamble command itself
             while inf.tell() < postpost:
-                dat = inf.read(14)
-                if len(dat) < 14:
+                dat = inf.read(12)
+                if len(dat) < 12:
                     break
-                (a, l) = dat[12:14]
-                path = inf.read(a+l).decode(errors="ignore")
+                flags = unpack(">H", dat[9:11])[0]
+                a = dat[11]
+                path = inf.read(a).decode(errors="ignore")
+                ext = 4
+                if flags & 0x200:
+                    ext += 4
+                if flags & 0x800:
+                    ndat = inf.read(ext+2)
+                    nvars = unpack(">H", ndat[-2:])
+                    ext = 4 * nvars
+                for a in (0x1000, 0x2000, 0x4000):
+                    if flags & a:
+                        ext += 4
+                ndat = inf.read(ext)
                 res.add(path)
     except OSError:
         pass
