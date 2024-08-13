@@ -1575,7 +1575,7 @@ class ViewModel:
             if os.path.exists(jobpiclist):
                 res[jobpiclist] = cfpath+jobpiclistf
 
-        if os.path.exists(xdv):
+        if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
             for p in extrapics:
                 b = os.path.basename(p)
