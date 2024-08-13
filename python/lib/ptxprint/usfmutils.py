@@ -316,7 +316,7 @@ class Usfm:
                 last = (last[0], r.last.chap)
         def pred(e, rlist):
             if isinstance(e.pos, _Reference) and any(e.pos.ref in refranges[i] for i in rlist) \
-                    and (e.pos.ref.first.verse != 0 or refranges[i].first.verse == 0):
+                    and (e.pos.ref.first.verse != 0 or refranges[i].first.verse == 0 or isinstance(e, sfm.Element) and e.name == "c"):
                 if strippara and isinstance(e, sfm.Element) and ispara(e):
                     return False
                 return True
