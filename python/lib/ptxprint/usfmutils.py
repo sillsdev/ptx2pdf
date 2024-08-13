@@ -315,7 +315,8 @@ class Usfm:
                 chaps[-1][1].append(i)
                 last = (last[0], r.last.chap)
         def pred(e, rlist):
-            if isinstance(e.pos, _Reference) and any(e.pos.ref in refranges[i] for i in rlist):
+            if isinstance(e.pos, _Reference) and any(e.pos.ref in refranges[i] for i in rlist) \
+                    and (e.pos.ref.first.verse != 0 or refranges[i].first.verse == 0):
                 if strippara and isinstance(e, sfm.Element) and ispara(e):
                     return False
                 return True
@@ -833,9 +834,9 @@ class Module:
                 while len(b) and isinstance(b[-1], sfm.Element) and (not len(b[-1]) or 
                         (len(b[-1]) == 1 and isinstance(b[-1][-1], sfm.Text) and not len(str(b[-1][-1]).strip()))):
                     b.pop()
-                if e.name == "ref" and len(p):
+                if e.name == "ref" and len(p) > 1:
                     # Ensure we start with a paragraph
-                    t = p[0]
+                    t = p[1]
                     if isinstance(t, sfm.Element) and t.meta.get('StyleType', '').lower() != 'paragraph':
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
