@@ -824,20 +824,19 @@ class Module:
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
                 if not len(p):
                     continue
+                # what is the end of the passage given \c contains so much
                 if isinstance(p[-1], sfm.Element) and p[-1].name == "c":
                     b = p[-1]
                 else:
                     b = p
+                # strip trailing whitespace
                 while len(b) and isinstance(b[-1], sfm.Element) and (not len(b[-1]) or 
                         (len(b[-1]) == 1 and isinstance(b[-1][-1], sfm.Text) and not len(str(b[-1][-1]).strip()))):
                     b.pop()
-                if e.name == "ref":
-                    for i, t in enumerate(p):
-                        if isinstance(t, sfm.Element) and t.meta.get('StyleType', '').lower() == 'paragraph':
-                            if i:
-                                p[0:i] = [self.new_element(e, "p1" if isidparent else "p", p[0:i])]
-                            break
-                    else:
+                if e.name == "ref" and len(p):
+                    # Ensure we start with a paragraph
+                    t = p[0]
+                    if isinstance(t, sfm.Element) and t.meta.get('StyleType', '').lower() != 'paragraph':
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
             if len(reps):
