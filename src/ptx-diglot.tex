@@ -334,7 +334,7 @@
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\dglt@calc@vailht{%
-   \trace{D}{dglt@calc@vailht \ifloc@lht loc@lht \else page \fi \c@rrdstat (\number\partial), \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax}%
+   \trace{D}{dglt@calc@vailht \ifloc@lht loc@lht \else page \fi \c@rrdstat (\number\partial), \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax \space th=\the\textheight, trh=\the\trialheight}%
    \global\availht=\textheight %
    \global\advance\availht by -\ht\partial\relax %
    \global\advance\availht by -\dp\partial\relax %
@@ -1911,11 +1911,11 @@
     \global\pagefulltrue%
     \trace{D}{Declaring page full}%
   \else%
-    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi}%
-    \ifpagefull\ifendbook
+    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true\else false\fi}%
+    \ifpagefull\ifendbook\ifendbooknoeject
       \trace{d}{some space and end of a book, cancelling pagefull}%
       \global\pagefullfalse
-    \fi\fi
+    \fi\fi\fi
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
@@ -3031,14 +3031,15 @@
   \endgraf
   \trace{d}{enddigl@t \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
   \ifdiglot\ifx\digl@tc@ntentlist\empty\else
-    \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
-    \sk@ppingfalse
-    \ifhe@dings\endhe@dings\fi%
-    \eject
-    \global\allNeedEmptyingtrue
-    \diglot@run@trials
-    \penalty\dgl@tPenColSwap
-    \global\allNeedEmptyingtrue
+      \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
+      \sk@ppingfalse
+      \ifhe@dings\endhe@dings\fi%
+      \eject
+      \global\allNeedEmptyingtrue
+      \diglot@run@trials
+      \penalty\dgl@tPenColSwap
+      \global\allNeedEmptyingtrue
+    \fi
     \trace{d}{enddigl@t 2nd run \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
     \diglot@run@trials
     \ifnum\interactionmode=2
@@ -3078,7 +3079,7 @@
     \trace{d}{Book end: Not writing page}%
     %\pr@sideswitch{end}{L}%
     \let\digl@tc@ntentlist\empty
-  \fi\fi
+  \fi
   %FIXME! If \ifendbooknoeject  happens to be true, then what? 
   %Set the 2 columns, put the footnotes up in the air (or not?) and carry on??
 }
