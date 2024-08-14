@@ -89,7 +89,12 @@ def make_paths(projectsdir, project, config, logging):
         bks = [x for x in cfg.get("project", "booklist").split() \
             if os.path.exists(os.path.join(projectsdir, project, ptsettings.getBookFilename(x)))]
     else:
-        bks = [cfg.get("project", "book")]
+        prjmode = cfg.get("project", "bookscope")
+        if prjmode == "module":
+            mod = os.path.basename(cfg.get("project", "modulefile"))
+            bks = [os.path.splitext(mod)[0]]
+        else:
+            bks = [cfg.get("project", "book")]
     if len(bks) > 1:
         filename = "{}{}_{}-{}_ptxp".format(project, cfgname, bks[0], bks[-1])
     else:

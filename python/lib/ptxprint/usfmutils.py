@@ -835,7 +835,7 @@ class Module:
                         (len(b[-1]) == 1 and isinstance(b[-1][-1], sfm.Text) and not len(str(b[-1][-1]).strip()))):
                     b.pop()
                 if e.name == "ref" and len(p) > 1:
-                    # Ensure we start with a paragraph
+                    # Ensure we start with a paragraph (skipping the initial \zsetref)
                     t = p[1]
                     if isinstance(t, sfm.Element) and t.meta.get('StyleType', '').lower() != 'paragraph':
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
