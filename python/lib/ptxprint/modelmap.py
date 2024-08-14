@@ -212,6 +212,7 @@ _map = {
     "document/imagetypepref":   ("t_imageTypeOrder", "pictures", None),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", "body", None),
     "document/filterglossary":  ("c_filterGlossary", "body", None),
+    "document/glossarydepth":  (None, "body", None),
     "document/hangpoetry":      ("c_hangpoetry", "body", lambda w,v: "" if v else "%"),
     "document/preventorphans":  ("c_preventorphans", "body", None),
     "document/preventwidows":   ("c_preventwidows", "body", None),

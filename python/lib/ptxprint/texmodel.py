@@ -1425,6 +1425,9 @@ class TexModel:
     def filterGlossary(self, printer):
         # Only keep entries that have appeared in this collection of books
         glossentries = []
+        glosstext={}
+        # Note for future debugging... the re.findall below works on the input, the localChanges rule below works after any changes.txt things have taken effect. Allow for random spaces.
+        glopattern=r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)"
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.dict["/ptxpath"], prjid)
         for bk in printer.getBooks():
@@ -1441,10 +1444,43 @@ class TexModel:
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
                 ge = re.findall(r"\\k ([^\\]+?)\\k\*", dat) # Finds all glossary entries in GLO book
-        # Note for future debugging... the re.findall above works on the input, the localChanges rule below works after any changes.txt things have taken effect. Allow for random spaces.
+                for thisGE in list(set(ge)):
+                    pattern=glopattern.format(thisGE)
+                    #logger.debug(f"pattern: {pattern}, dat:{dat}")
+                    geText=re.findall(pattern,dat,regex.M) # Find the glossary entry
+                    logger.debug(f"Finding {thisGE}, got {geText}")
+                    if(len(geText)>0):
+                        glosstext[thisGE]=geText
+                    else:
+                        glosstext[thisGE]=None
+        logger.debug(f"{glossentries=}")
+        if (self.dict["document/glossarydepth"]):
+            count=self.dict["document/glossarydepth"]# How deep do we follow the chain of A includes B includes C?
+        else:
+            count=0 # Default is not to go deeper
+        while count>0:
+            count = count -1
+            xtraglossentries = []
+            for gte in list(set(glossentries)): #entries from te glossary text.
+                if (gte in glosstext):
+                    gt=glosstext[gte][0]
+                    if gt is None:
+                        logger.debug(f"{gte} has no gloss text")
+                    else:
+                        logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
+                        xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*",gt)
+                        xtraglossentries.extend(x for x in xgl if x not in list(set(glossentries+xtraglossentries)))
+                else: 
+                    logger.warn(f"Glossary entry for '{gte}' is wanted, but not found in glossary.")
+            logger.debug(f"Adding {len(xtraglossentries)} extra gloss entries: {xtraglossentries}")
+            if (len(xtraglossentries) == 0): # No more new entries
+                break
+            glossentries+=xtraglossentries
+        logger.debug(f"{glossentries=}")
+        logger.debug(f"{ge=}")
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
             logger.debug(f"Building regex for {delGloEntry=}")
-            self.localChanges.append(makeChange(r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), "", flags=regex.M))
+            self.localChanges.append(makeChange(glopattern.format(delGloEntry), "", flags=regex.M))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":
