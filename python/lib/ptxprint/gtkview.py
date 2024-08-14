@@ -3136,6 +3136,9 @@ class GtkViewModel(ViewModel):
                 obj.set_active_id(v)
                 tiptext = "{k}:\t[{v}]\n\n{descr}".format(k=k, v=v, **asdict(opt))
             l.set_tooltip_text(tiptext)
+            self.finddata[tiptext.lower()] = (wname, 1)
+            self.finddata[opt.name.lower()] = (wname, 4)
+            self.widgetnames[wname] = opt.name
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)
             texopts.attach(obj, 1, i, 1, 1)
