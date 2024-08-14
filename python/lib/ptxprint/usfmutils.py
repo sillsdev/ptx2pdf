@@ -816,7 +816,6 @@ class Module:
                             re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),
                             m.group(2)))
                 del e.parent[curr+1]
-            breakpoint()
             for r in RefList.fromStr(str(e[0]), context=self.usfms.booknames):
                 if r.first.verse == 1:
                     if not isinstance(r, RefRange):
