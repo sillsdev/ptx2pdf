@@ -328,11 +328,11 @@ class Usfm:
                 if pred(e, rlist):
                     a.append(sfm.Text(e, e.pos, a))
                 return a
-            if e is None or e.name in removes:
+            if e is None or (e.name in removes and not e.name.startswith('s')):
                 return a
             e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
             reduce(_g, [(x, rlist) for x in e], e_)
-            if pred(e, rlist) or (keepchap and e.name == "cl"):
+            if e.name not in removes and (pred(e, rlist) or (keepchap and e.name == "cl") or (len(a) == 0 and len(e_))):
                 a.append(e_)
             elif len(e_):
                 a.extend(e_[:])
@@ -816,6 +816,7 @@ class Module:
                             re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),
                             m.group(2)))
                 del e.parent[curr+1]
+            breakpoint()
             for r in RefList.fromStr(str(e[0]), context=self.usfms.booknames):
                 if r.first.verse == 1:
                     if not isinstance(r, RefRange):
@@ -837,7 +838,7 @@ class Module:
                 if e.name == "ref" and len(p) > 1:
                     # Ensure we start with a paragraph (skipping the initial \zsetref)
                     t = p[1]
-                    if isinstance(t, sfm.Element) and t.meta.get('StyleType', '').lower() != 'paragraph':
+                    if not isinstance(t, sfm.Element) or t.meta.get('StyleType', '').lower() != 'paragraph':
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
             if len(reps):
