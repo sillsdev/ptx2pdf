@@ -1523,29 +1523,30 @@ class ViewModel:
             prjid = self.prjid
         if cfgid is None:
             cfgid = self.configName()
-        cfpath = "shared/ptxprint/"
+        cfpath = prjid + "/shared/ptxprint/"
         if cfgid is not None:
             cfpath += cfgid+"/"
-        basecfpath = self.configPath(cfgname=cfgid, prjid=prjid)
+        baseprjid = self.prjid
+        basecfpath = baseprjid + "/shared/ptxprint/" + self.configName()
         interlang = self.get("t_interlinearLang") if self.get("c_interlinear") else None
 
         # pictures and texts
-        fpath = os.path.join(self.settings_dir, prjid)
+        fpath = os.path.join(self.settings_dir, baseprjid)
         scope = self.get("r_book")
         if scope == "module":
             bk = books[0]
-            res[os.path.join(fpath, bk)] = os.path.basename(bk)
+            res[os.path.join(fpath, bk)] = baseprjid + "/" + os.path.basename(bk)
             cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+os.path.basename(bk)), "moduleFile")
             cfgchanges['lb_bibleModule'] = os.path.basename(bk)
             usfms = self.get_usfms()
             mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
         for bk in books + ['INT']:
-            fname = self.getBookFilename(bk, prjid)
+            fname = self.getBookFilename(bk, baseprjid)
             if fname is not None:
-                res[os.path.join(fpath, fname)] = os.path.basename(fname)
+                res[os.path.join(fpath, fname)] = baseprjid + "/" + os.path.basename(fname)
             if interlang is not None:
-                intpath = "Interlinear_{}".format(interlang)
+                intpath = "{}/Interlinear_{}".format(baseprjid, interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
@@ -1556,10 +1557,10 @@ class ViewModel:
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'src path'
         for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p and p['anchor'][:3] in books):
-                res[f] = "figures/"+os.path.basename(f)
+                res[f] = prjid + "/local/figures/"+os.path.basename(f)
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
-            res[xrfile] = os.path.basename(xrfile)
+            res[xrfile] = baseprjid + "/" + os.path.basename(xrfile)
             cfgchanges["btn_selectXrFile"] = res[xrfile]
 
         # piclists
@@ -1569,18 +1570,18 @@ class ViewModel:
             for pic in os.listdir(piclstpath):
                 if pic.endswith(".piclist") and pic in picbks:
                     res[os.path.join(piclstpath, pic)] = cfpath+"PicLists/"+pic
-        jobpiclistfs = ["{}-{}.piclist".format(prjid, cfgid), "picChecks.txt"]
+        jobpiclistfs = ["{}-{}.piclist".format(baseprjid, cfgid), "picChecks.txt"]
         for jobpiclistf in jobpiclistfs:
             jobpiclist = os.path.join(basecfpath, jobpiclistf)
             if os.path.exists(jobpiclist):
-                res[jobpiclist] = cfpath+jobpiclistf
+                res[jobpiclist] = cfpath + jobpiclistf
 
         if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
             for p in extrapics:
                 b = os.path.basename(p)
                 if p not in res:
-                    res[p] = "local/figures/" + b
+                    res[p] = prjid + "/local/figures/" + b
         else:
             allfonts = set()
         # borders
@@ -1595,7 +1596,7 @@ class ViewModel:
                 if not isinstance(fname, (list, tuple)):
                     fname = [fname]
                 for f in fname:
-                    res[f.as_posix()] = "shared/ptxprint/"+f.name
+                    res[f.as_posix()] = baseprjid + "/shared/ptxprint/"+f.name
                     # print(f"{f.as_posix()=}, {f.name=}")
 
         # fonts
@@ -1605,15 +1606,15 @@ class ViewModel:
 
         for v in allfonts:
             k = os.path.basename(v)
-            res[v] = "local/ptxprint/"+self.configName()+"/fonts/"+k
+            res[v] = prjid + "/local/ptxprint/"+cfgid+"/fonts/"+k
 
-        if prjid:
-            mdir = os.path.join(self.settings_dir, prjid, "shared", "fonts", "mappings")
+        if baseprjid:
+            mdir = os.path.join(self.settings_dir, baseprjid, "shared", "fonts", "mappings")
             if os.path.exists(mdir):
                 for f in os.listdir(mdir):
                     if f == ".uuid":
                         continue
-                    res[os.path.join(mdir, f)] = "shared/fonts/mappings/"+f
+                    res[os.path.join(mdir, f)] = prjid + "shared/fonts/mappings/"+f
 
         # sidebar images
         mystyles = self.styleEditor.copy()
@@ -1622,7 +1623,7 @@ class ViewModel:
                 val = v.get(a, mystyles.basesheet.get(k, {}).get(a, None))
                 if val is not None:
                     fname = os.path.basename(val)
-                    res[val] = "figures/"+fname
+                    res[val] = baseprjid + "/figures/"+fname
                     mystyles.setval(k, a, "../../../figures/"+fname)
 
 
@@ -1634,36 +1635,37 @@ class ViewModel:
 
         # config files - take the whole tree even if not needed
         for dp, dn, fn in os.walk(basecfpath):
-            op = os.path.join(cfpath, saferelpath(dp, basecfpath))
+            op = os.path.join(basecfpath, saferelpath(dp, basecfpath))
             for f in fn:
                 if f not in ('ptxprint.sty', 'ptxprint.cfg') or dp != basecfpath:
                     res[os.path.join(dp, f)] = os.path.join(op, f)
-        sp = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint')
+        sp = os.path.join(self.settings_dir, baseprjid, 'shared', 'ptxprint')
         for f in os.listdir(sp):
             fp = os.path.join(sp, f)
             if os.path.isfile(fp):
-                res[fp] = os.path.join('shared', 'ptxprint', f)
+                res[fp] = os.path.join(baseprjid, 'shared', 'ptxprint', f)
 
         # special config files not in config tree
         for t, b in sfiles.items():
             if isinstance(t, str) and not self.get(t): continue
             c = [b] if isinstance(b, str) else b
             for a  in c:
-                s = os.path.join(self.settings_dir, prjid, a)
+                s = os.path.join(self.settings_dir, baseprjid, a)
                 if os.path.exists(s):
-                    res[s] = a
+                    res[s] = baseprjid + "/" + a
 
         if interlang is not None:
-            res[os.path.join(fpath, 'Lexicon.xml')] = 'Lexicon.xml' 
+            res[os.path.join(fpath, 'Lexicon.xml')] = baseprjid + '/Lexicon.xml' 
 
         script = self.customScript
         if script: # is not None and len(script):
-            res[script] = os.path.basename(script)
-            cfgchanges["btn_selectScript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
+            res[script] = baseprjid + "/" + os.path.basename(script)
+            cfgchanges["btn_selectScript"] = os.path.join(self.settings_dir, baseprjid, os.path.basename(script))
 
-        pts = self._getPtSettings(prjid=prjid)
+        pts = self._getPtSettings(prjid=baseprjid)
         ptres = pts.getArchiveFiles()
-        res.update(ptres)
+        for k, v in ptres.items():
+            res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
     def createView(self, prjid, cfgid):
@@ -1724,39 +1726,41 @@ class ViewModel:
                             break
         self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
         if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.prjid)
+            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.prjid, parentcfg=self.configName())
             pf = "{}/local/ptxprint/{}/diglot.sty".format(self.prjid, self.configName())
             ipf = os.path.join(self.settings_dir, pf)
             if os.path.exists(ipf):
-                zf.write(ipf, pf)
+                self._writearchive(zf, ipf, pf)
         for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.settings_dir)
-                zf.write(pf, outfname)
+                self._writearchive(zf, pf, outfname)
             else:
                 print(pf)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
             for f in fs:
                 if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    zf.write(os.path.join(dp, f), self.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
+                    self._writearchive(zf, os.path.join(dp, f), self.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
         self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
         zf.close()
         if res:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()
-        
-    def _archiveAdd(self, zf, books, parent=None, xdv=None):
+
+    def _writearchive(self, zf, ifile, fname):
+        if fname not in zf.NameToInfo:      # do what zipfile should do
+            zf.write(ifile, fname)
+
+    def _archiveAdd(self, zf, books, parent=None, parentcfg=None, xdv=None):
         prjid = self.prjid
         cfgid = self.configName()
-        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid, xdv=xdv)
+        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, prjid=parent, cfgid=parentcfg, xdv=xdv)
         logger.debug(f"{entries=}, {cfgchanges=}, {tmpfiles=}")
         for k, v in entries.items():
             if os.path.exists(k):
-                if parent is not None and 'shared/fonts' in v:
-                    zf.write(k, arcname=parent + "/" + v)
-                zf.write(k, arcname=prjid + "/" + v)
+                self._writearchive(zf, k, v)
         tmpcfg = {}
         for k,v in cfgchanges.items():
             if len(v) == 2 and v[1] is not None:
@@ -1785,7 +1789,7 @@ class ViewModel:
             fpath = getfontcache().get('Source Code Pro')
             if fpath is None:
                 continue
-            zf.write(fpath, arcname="{}/shared/fonts/{}".format(self.prjid, os.path.basename(fpath)))
+            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.prjid, os.path.basename(fpath)))
 
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(None, archivedir=True))
