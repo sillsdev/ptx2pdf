@@ -176,7 +176,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-btn_menu_reset l_menu_reset t_configName l_configNameMsg btn_cfg_ok btn_cfg_cancel
+btn_menu_reset l_menu_reset t_configName l_configNameMsg l_projectNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
@@ -233,6 +233,8 @@ _ui_experimental = """
 # c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 # c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 # btn_editFrontMatter
+
+_fullpage = {"F": "full", "P": "page"}
 
 _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition" : "toppurple", "rhruleposition" : "topgreen",
         "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
@@ -3551,10 +3553,41 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("btn_cfg_ok").set_sensitive(True) 
         self.builder.get_object("l_configNameMsg").set_text(msg) 
-        
+
     def onCfgFocusOutEvent(self, btn, *a):
         self.configKeypressed = False
-        # self.doConfigNameChange(None)
+
+    def onProjectNameChanged(self, btn, *a):
+        if self.projectKeypressed:
+            self.projectKeypressed = False
+            return
+
+    def onProjectKeyPressed(self, btn, *a):
+        self.projectKeypressed = True
+        self.builder.get_object("btn_dbl_ok").set_sensitive(False) 
+        msg = ""
+        prj = self.get("t_DBLprojName")
+        cleanPrj = re.sub('[^-a-zA-Z0-9_()]+', '', prj)
+        prjpath = os.path.join(self.settings_dir, cleanPrj)
+        if prj != cleanPrj:
+            msg = _("Do not use spaces or special characters")
+        elif not len(prj):
+            pass
+        elif prjpath is not None and os.path.exists(prjpath):
+            msg = _("That Project already exists.\nUse another name.")
+        else:
+            self.builder.get_object("btn_dbl_ok").set_sensitive(True) 
+        self.builder.get_object("l_projectNameMsg").set_text(msg) 
+
+    def onPrjFocusOutEvent(self, btn, *a):
+        self.projectKeypressed = False
+
+    # def onDBLprojNameChanged(self, widget):
+        # text = self.get("t_DBLprojName")
+        # btn = self.builder.get_object("btn_locateDBLbundle") #should have been btn_dbl_ok
+        # lsp = self.builder.get_object("ls_projects")
+        # allprojects = [x[0] for x in lsp]
+        # btn.set_sensitive(not text in allprojects)
 
     def updateFonts(self):
         if self.ptsettings is None:
@@ -4830,13 +4863,6 @@ class GtkViewModel(ViewModel):
             self.imgsetfile = None
             self.builder.get_object("btn_locateImageSet").set_tooltip_text("")
     
-    def onDBLprojNameChanged(self, widget):
-        text = self.get("t_DBLprojName")
-        btn = self.builder.get_object("btn_locateDBLbundle")
-        lsp = self.builder.get_object("ls_projects")
-        allprojects = [x[0] for x in lsp]
-        btn.set_sensitive(not text in allprojects)
-
     def onParagraphednotesClicked(self, btn):
         status = not (self.get("c_fneachnewline") and self.get("c_xreachnewline"))
         for w in ["l_paragraphedNotes", "s_notespacingmin", "s_notespacingmax", "l_min", "l_max"]:
@@ -4954,7 +4980,7 @@ class GtkViewModel(ViewModel):
         dialog = self.builder.get_object("dlg_overlayCredit")
         crParams = self.get("t_piccreditbox")
         crParams = "bl,0,None" if not len(crParams) else crParams
-        m = re.match(r"^([tcb]?)([lrcio]?),(-?9?0?|None),(\w*)", crParams)
+        m = re.match(r"^([tcb]?)([lrc]?),(-?9?0?|None),(\w*)", crParams)
         if m:
             self.set("fcb_plCreditVpos", m[1])
             self.set("fcb_plCreditHpos", m[2])
@@ -4984,20 +5010,21 @@ class GtkViewModel(ViewModel):
         dialog = self.builder.get_object("dlg_sbPosition")
         sbParams = self.get("t_sbPgPos")
         sbParams = "t" if not len(sbParams) else sbParams
-        m = re.match(r"^([tbcPF]?)([lrcio]?)([\d\.\-]*)", sbParams)
+        sbParams = re.sub(r'^([PF])([lcrio])([tcbf])', r'\1\3\2', sbParams)
+        m = re.match(r"^([PF]?)([tcbf])([lrcio]?)([\d\.\-]*)", sbParams)
         if m:
-            self.set("fcb_sbPgPos", m[1])
-            self.set("fcb_sbHoriz", m[2])
-            self.set("s_sbLines", m[3])
-        # self.set("t_sbPgPos", self.get("l_piccredit") if len(self.get("l_piccredit")) else "")
+            try:
+                self.set("fcb_sbSize", _fullpage[m[1]])
+            except KeyError:
+                self.set("fcb_sbSize", m[1])
+            frSize = self.get("fcb_sbSize")
+            self.set("fcb_sbPgPos", m[2])
+            self.set("fcb_sbHoriz", m[3])
+            self.set("s_sbLines", m[4])
         self.updatePosnPreview()
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            pgpos = self.get("fcb_sbPgPos")
-            hpos = self.get("fcb_sbHoriz", "c")
-            hpos = "" if hpos == "-" else hpos
-            sbParams = "{}{}{}".format(pgpos, hpos, self._getLines())
-            self.set("t_sbPgPos", sbParams)
+            self.set("t_sbPgPos", self.get("l_sbPosition"))
         elif response == Gtk.ResponseType.CANCEL:
             pass
         else:
@@ -5015,9 +5042,12 @@ class GtkViewModel(ViewModel):
     def updatePosnPreview(self, *a):
         cols = 2 if self.get("c_doublecolumn") else 1
         frSize = self.get("fcb_sbSize")
-        hpos = self.get("fcb_sbHoriz", "c")
-        hpos = "" if hpos == "-" else hpos        
-        pgposLocn = self.get("fcb_sbPgPos", "t") + hpos + self._getLines()
+        hpos = self.get("fcb_sbHoriz")
+        if hpos is None:
+            return
+        hpos = "" if hpos == "-" else hpos
+        pgposLocn = self.get("fcb_sbPgPos", "c") + hpos + self._getLines()
+        pgposLocn = re.sub(r'([PF])([tcbf])([lcrio])', r'\1\3\2', pgposLocn)
         self.set("l_sbPosition", pgposLocn)
         locKey = getLocnKey(cols, frSize, pgposLocn)
         pixbuf = dispLocPreview(locKey)
