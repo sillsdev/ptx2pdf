@@ -407,6 +407,9 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
+    "backsettings1": ("scroll_Settings1", ),
+    "backsettings2": ("scroll_Settings2", ),
+    "backsettings3": ("scroll_Settings3", ),
     "scale-slider":("s_diglotPriFraction", "s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
@@ -439,7 +442,7 @@ _horiz = {
     "-":        "-"
 }
 _allpgids = ["scroll_FrontMatter", "scroll_AdjList", "scroll_FinalSFM", 
-             "scroll_TeXfile", "scroll_XeTeXlog", "scroll_Settings", "scroll_SettingsOld"]
+             "scroll_TeXfile", "scroll_XeTeXlog", "scroll_Settings1", "scroll_Settings2", "scroll_Settings3"]
 
 _allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media", ]
 
@@ -766,7 +769,7 @@ class GtkViewModel(ViewModel):
                 
         self.fileViews = []
         self.buf = []
-        self.uneditedText = [""] * 7
+        self.uneditedText = [""] * 8
         self.cursors = []
             
         if self.get("c_colophon") and self.get("txbf_colophon") == "":
@@ -879,6 +882,9 @@ class GtkViewModel(ViewModel):
             .changed {font-weight: bold}
             .blue-label {color: blue; font-weight: bold}
             .red-label {color: red}
+            .backsettings1 {background-color: peachpuff;}
+            .backsettings2 {background-color: lightpink;}
+            .backsettings3 {background-color: lightsteelblue;}
             .highlighted {background-color: peachpuff; background: peachpuff}
             .yellowlighted {background-color: rgb(255,255,102); background: rgb(255,255,102)}
             .attention {background-color: lightblue; background: lightblue}
@@ -909,7 +915,8 @@ class GtkViewModel(ViewModel):
         logger.debug(f"Setting syntax files path to {langpath}")
         lm.set_search_path([langpath])
         sm.set_search_path([langpath])
-        for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
+        for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", \
+                              "Settings1", "Settings2", "Settings3"]):
             self.buf.append(GtkSource.Buffer())
             self.cursors.append((0,0))
             view = GtkSource.View.new_with_buffer(self.buf[i])
@@ -923,6 +930,7 @@ class GtkViewModel(ViewModel):
             view.set_editable(False if i in [2,3,4] else True)
             view.set_wrap_mode(Gtk.WrapMode.CHAR)
             view.pageid = "scroll_"+k
+
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
             if not i in [2,3,4]: # Ignore the uneditable views
@@ -937,6 +945,10 @@ class GtkViewModel(ViewModel):
                 l = lm.get_language("adjlist")
                 logger.debug(f"Loaded language adjlist {l}")
                 self.buf[i].set_language(l)
+                
+            # Apply CSS classes to provide background colour shading for the 3 settings tabs (not working yet!)
+            if k.startswith("Settings"):
+                view.connect("realize", lambda view: view.get_style_context().add_class(f"backsettings{k[-1]}"))
 
         logger.debug("Setting project")
         if self.pendingPid is not None:
@@ -1524,7 +1536,7 @@ class GtkViewModel(ViewModel):
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
             pgnum = self.get("nbk_Viewer")
-            if self.notebooks["Viewer"][pgnum] in ("scroll_FrontMatter", "scroll_AdjList", "scroll_Settings", "scroll_SettingsOld"):
+            if self.notebooks["Viewer"][pgnum] in ("scroll_FrontMatter", "scroll_AdjList", "scroll_Settings1", "scroll_Settings2", "scroll_Settings3"):
                 self.onSaveEdits(None)
         cfgname = self.configName()
         if cfgname is None:
@@ -2374,8 +2386,8 @@ class GtkViewModel(ViewModel):
 
         fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"),
                   "scroll_FinalSFM" : ("", ""), "scroll_TeXfile" : ("", ".tex"),
-                  "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""),
-                  "scroll_SettingsOld": ("", "")}
+                  "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings1": ("", ""),
+                  "scroll_Settings2": ("", ""), "scroll_Settings3": ("", "")}
 
         if pgid == "scroll_FrontMatter":
             ibtn.set_sensitive(True)
@@ -2441,9 +2453,10 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
             self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
-        elif pgid in ("scroll_Settings", "scroll_SettingsOld"): # View/Edit one of the 4 Settings files or scripts
+        elif pgid in ("scroll_Settings1", "scroll_Settings2", "scroll_Settings3"): # mulit-purpose View/Edit tabs
             lname = "l_{1}".format(*pgid.split('_'))
             fpath = self.builder.get_object(lname).get_tooltip_text()
+            # print(f"{pgid=} | {fpath=}")
             if fpath == None:
                 self.uneditedText[pgnum] = _("Use the 'Advanced' tab to select which settings you want to view or edit.")
                 self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
@@ -2486,7 +2499,7 @@ class GtkViewModel(ViewModel):
     def enableCodelets(self, pgnum, fpath):
         if self.loadingConfig:
             return
-        pgcats = ['Front', 'Adjust', None, None, None, 'File', 'File']
+        pgcats = ['Front', 'Adjust', None, None, None, 'File', 'File', 'File']
         cat = pgcats[pgnum]
         if self.currCodeletVbox is not None:
             self.currCodeletVbox.hide()
@@ -2695,7 +2708,8 @@ class GtkViewModel(ViewModel):
         p = Pango.FontDescription(pangostr)
         logger.debug(f"{pangostr=}, {p}")
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", \
-                  "scroll_FinalSFM", "scroll_AdjList", "scroll_FrontMatter", "scroll_Settings", "scroll_SettingsOld", \
+                  "scroll_FinalSFM", "scroll_AdjList", "scroll_FrontMatter", \
+                  "scroll_Settings1", "scroll_Settings2", "scroll_Settings3", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
@@ -3614,13 +3628,17 @@ class GtkViewModel(ViewModel):
             fpath = os.path.join(self.configPath(cfgname), file2edit)
             if fallback and not os.path.exists(fpath):
                 fpath = os.path.join(self.configPath(""), file2edit)
+        elif loc == "dig":
+            digprj = self.get("fcb_diglotSecProject")
+            currdigcfg = self.get("ecb_diglotSecConfig")
+            fpath = os.path.join(self.settings_dir, digprj, "shared", "ptxprint", currdigcfg, file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
         return fpath
 
-    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings", switch=None): # keep param order
+    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings1", switch=None): # keep param order
         if switch is None:
-            switch = pgid == "scroll_Settings"
+            switch = pgid == "scroll_Settings1"
         pgnum = self.notebooks["Viewer"].index(pgid)
         mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
         if switch:
@@ -3630,15 +3648,68 @@ class GtkViewModel(ViewModel):
         if fpath is None:
             return
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
-        if pgid == "scroll_Settings":
+        
+        # Get paths for all three scroll positions
+        currpath = label.get_tooltip_text()
+        oldlabel = self.builder.get_object("l_Settings2")
+        oldpath = oldlabel.get_tooltip_text()
+        oldestlabel = self.builder.get_object("l_Settings3")
+        oldestpath = oldestlabel.get_tooltip_text()
+        
+        if fpath == oldpath:
+            label = oldlabel
+            pgnum += 1
+        elif fpath == oldestpath:
+            label = oldestlabel
+            pgnum += 2
+        elif fpath != currpath:
+            # Save edits from the "old" to "oldest"
+            self.onSaveEdits(None, pgid="scroll_Settings3")
+            oldestlabel.set_tooltip_text(oldlabel.get_tooltip_text())
+            oldestlabel.set_text(oldlabel.get_text())
+            
+            # Save edits from "current" to "old"
+            self.onSaveEdits(None, pgid="scroll_Settings2")
+            oldlabel.set_tooltip_text(label.get_tooltip_text())
+            oldlabel.set_text(label.get_text())
+            
+            # Update current label
+            self.builder.get_object("gr_editableButtons").set_sensitive(True)
+            label.set_text(file2edit)
+            buf = self.fileViews[pgnum][0]
+            text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+            self.fileViews[pgnum+2][0].set_text(text2save)  # Adjust for the third position
+
+        label.set_tooltip_text(fpath)
+        if os.path.exists(fpath):
+            with open(fpath, "r", encoding="utf-8") as inf:
+                txt = inf.read()
+            self.fileViews[pgnum][0].set_text(txt)
+            self.onViewerFocus(self.fileViews[pgnum][1], None)
+        else:
+            self.fileViews[pgnum][0].set_text(_("# This file doesn't exist yet!\n# Edit here and Click 'Save' to create it."))
+
+    def editFileOLDdoNotUse(self, file2edit, loc="wrk", pgid="scroll_Settings1", switch=None): # keep param order
+        if switch is None:
+            switch = pgid == "scroll_Settings1"
+        pgnum = self.notebooks["Viewer"].index(pgid)
+        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        if switch:
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        fpath = self._locFile(file2edit, loc)
+        if fpath is None:
+            return
+        label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
+        if pgid == "scroll_Settings1":
             currpath = label.get_tooltip_text()
-            oldlabel = self.builder.get_object("l_SettingsOld")
+            oldlabel = self.builder.get_object("l_Settings2")
             oldpath = oldlabel.get_tooltip_text()
             if fpath == oldpath:
                 label = oldlabel
                 pgnum += 1
             elif fpath != currpath:
-                self.onSaveEdits(None, pgid="scroll_SettingsOld")
+                self.onSaveEdits(None, pgid="scroll_Settings2")
                 oldlabel.set_tooltip_text(label.get_tooltip_text())
                 oldlabel.set_text(label.get_text())
                 self.builder.get_object("gr_editableButtons").set_sensitive(True)
@@ -3710,15 +3781,20 @@ class GtkViewModel(ViewModel):
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        self._editProcFile("PrintDraftChanges.txt", "prj")
-        self._editProcFile("changes.txt", "cfg")
+        if self.get("c_diglot"):
+            self._editProcFile("PrintDraftChanges.txt", "prj")
+            self._editProcFile("changes.txt", "dig", intro="# Changes.txt file for the Secondary Project of the Diglot")
+            self._editProcFile("changes.txt", "cfg", intro="# Changes.txt file for the Primary Project of the Diglot")
+        else:
+            self._editProcFile("PrintDraftChanges.txt", "prj")
+            self._editProcFile("changes.txt", "cfg")
         self.onRefreshViewerTextClicked(None)
         
     def onEditModule(self, btn):
         if self.moduleFile is not None:
             self._editProcFile(str(self.moduleFile), "prj")
             self.onRefreshViewerTextClicked(None)
-            self.builder.get_object('l_Settings').set_label(os.path.basename(self.moduleFile))
+            self.builder.get_object('l_Settings1').set_label(os.path.basename(self.moduleFile))
         
     def onEditModsTeX(self, btn):
         cfgname = self.configName()

@@ -22475,7 +22475,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_Settings">
+                              <object class="GtkScrolledWindow" id="scroll_Settings1">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -22490,7 +22490,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child type="tab">
-                              <object class="GtkLabel" id="l_Settings">
+                              <object class="GtkLabel" id="l_Settings1">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes">Settings</property>
@@ -22501,7 +22501,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_SettingsOld">
+                              <object class="GtkScrolledWindow" id="scroll_Settings2">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -22516,13 +22516,37 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child type="tab">
-                              <object class="GtkLabel" id="l_SettingsOld">
+                              <object class="GtkLabel" id="l_Settings2">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes">Settings</property>
                               </object>
                               <packing>
                                 <property name="position">6</property>
+                                <property name="tab-fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow" id="scroll_Settings3">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="shadow-type">in</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="position">7</property>
+                              </packing>
+                            </child>
+                            <child type="tab">
+                              <object class="GtkLabel" id="l_Settings3">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">Settings</property>
+                              </object>
+                              <packing>
+                                <property name="position">7</property>
                                 <property name="tab-fill">False</property>
                               </packing>
                             </child>
