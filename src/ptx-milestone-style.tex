@@ -34,11 +34,18 @@
 \def\IsTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\undefined} 
 
 \NotTriggerPoint{xts} %Strongs numbers like 'ms:xtx=5447' not trigger points by default.
+\NotTriggerPoint{zcustombotmark}
+\NotTriggerPoint{zcustomtopmark}
+\NotTriggerPoint{zcustomfirstmark}
+\notlocation{zcustombotmark}
+\notlocation{zcustomtopmark}
+\notlocation{zcustomfirstmark}
+
 \newif\ifsuppresstr@gger
 \def\ch@ckislocation#1{\keeptriggerfalse\suppresstr@ggerfalse\ifcsname n@tLocn@#1\endcsname\keeptriggertrue\fi\ifcsname n@tTrig@#1\endcsname\suppresstr@ggertrue\fi}
 
 \def\mst@nestyle#1{\trace{m}{mst@nestyle:#1 (\milestoneOp)}%
- \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
+ \xdef\thismil@stone{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  %\tracingassigns=1
@@ -331,12 +338,16 @@
   \ifcsname MS:\thismil@stone\endcsname \csname MS:\thismil@stone\endcsname\fi 
   \ifx\attr@b\relax
     \ch@ckislocation{\thismil@stone}% 
-    \ifsuppresstr@gger\else
+    \ifsuppresstr@gger
+      \trace{m}{No trigger for \thismil@stone}%
+    \else
       \runtrigg@rs{ms:\thismil@stone}%
     \fi
   \else
     \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
-    \ifsuppresstr@gger\else
+    \ifsuppresstr@gger
+      \trace{m}{No trigger for \thismil@stone}%
+    \else
       \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
       \ifdiglot
 	\runtrigg@rs{\mkp@cref{\id@@@\c@rrdstat}{\x@\detokenize\x@{\attr@b}}}%
