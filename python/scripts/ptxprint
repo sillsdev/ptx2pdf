@@ -55,7 +55,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('pid',nargs="?",help="Project id or full path to a ptxprint.cfg file")
 parser.add_argument('-c','--config',help='Configuration path to load')
 parser.add_argument("-M",'--module',help="Module to print")
-parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
+parser.add_argument('-p','--projects',action='append',default=[],help="Path to a projects directory")
 parser.add_argument('-d','--directory',help="Directory to store temporary files in")
 parser.add_argument('-P','--print',action='store_true',help="Hits print")
 parser.add_argument('-b','--books',help='Reference list to print (as in Choose Books)')
@@ -139,12 +139,14 @@ if not args.print and not args.action:
 
 from ptxprint.view import ViewModel, VersionStr, doError
 from ptxprint.runjob import RunJob, isLocked
+from ptxprint.project import ProjectList
 
 # necessary for the side effect of setting pt_bindir :(
-if args.paratext is None:
-    args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
-    if args.paratext is None:
-        args.paratext = get_ptsettings()
+if not len(args.projects):
+    pdir = os.getenv("PTXPRINT_PROJECTSDIR", None)
+    if pdir is None:
+        pdir = get_ptsettings()
+    args.projects.append(pdir)
 
 conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
 config = configparser.ConfigParser(interpolation=None)
@@ -158,10 +160,15 @@ if os.path.exists(conffile):
     else: # pid was specified
         if args.config is None and config.has_option("projects", args.pid):
             args.config = config.get("projects", args.pid)
-    if not args.paratext and config.has_option("init", "paratext"):
-        args.paratext = config.get("init", "paratext")
-        if not os.path.exists(args.paratext):
-            args.paratext = None
+    if not len(args.projects) and config.has_option("init", "paratext"):
+        pdir = config.get("init", "paratext")
+        if os.path.exists(pdir):
+            args.projects.append(pdir)
+    if config.has_section("projectdirs"):
+        pdirs = config.options("projectdirs")
+        for p in pdirs:
+            if p not in args.projects and os.path.exists(p):
+                args.projects.append(p)
 else:
     if not os.path.exists(os.path.dirname(conffile)):
         os.makedirs(os.path.dirname(conffile))
@@ -172,21 +179,26 @@ logging.debug("Loaded config")
 if args.lang is None:
     args.lang = getnsetlang(config)
 
-if not args.paratext or str(args.paratext).lower() == "none":
+if not len(args.projects):
     # print("No Paratext Settings directory found - sys.exit(1)")
     if not args.print:
-        args.paratext = getPTDir()
-        if args.paratext is None:
+        pdir = getPTDir()
+        if pdir is None:
             sys.exit(1)
+        else:
+            args.projects = [pdir]
     else:
         sys.exit(1)
 else:
-    args.paratext = os.path.abspath(args.paratext.replace("\\", "/"))
-    if args.paratext.endswith("/"):
-        args.paratext = args.paratext[:-1]
+    args.projects = [os.path.abspath(p.replace("\\", "/")) for p in args.projects]
+    args.projects = [p[:-1] if p.endswith("/") else p for p in args.projects]
 
-config.set("init", "paratext", str(args.paratext))
+config.remove_section("projectdirs")
+config.add_section("projectdirs")
+for p in args.projects:
+    config.set("projectdirs", p, "")
 
+# handle being passed a .zip
 if args.pid is not None and args.pid.lower().endswith(".zip"):
     fname = os.path.basename(args.pid)[:-4]
     m = re.match(r"^(.+?)-(.+?)PTXprintArchive", fname)
@@ -196,20 +208,20 @@ if args.pid is not None and args.pid.lower().endswith(".zip"):
         args.config = m.group(2)
     else:
         print("Sorry - no match")
-        
+# handle being passed the path to a ptxprint.cfg
 elif args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
-    pidpath = saferelpath(args.pid, args.paratext).replace("\\", "/")
+    pidpath = saferelpath(args.pid, args.projects[0]).replace("\\", "/")
     if pidpath.startswith("..") or pidpath.startswith("/"):
         pidpath = os.path.abspath(args.pid).replace("\\", "/")
     pidbits = pidpath.split("/")
     if len(pidbits) > 4 and "ptxprint" in [x.lower() for x in pidbits[-3:-1]]:
         if pidbits[-2].lower() == "ptxprint":
             if len(pidbits) > 4:
-                args.paratext = "/".join(pidbits[:-4])
+                args.projects[0] = "/".join(pidbits[:-4])
             pidbits = pidbits[-4:]
         elif pidbits[-3].lower() == "ptxprint":
             if len(pidbits) > 5:
-                args.paratext = "/".join(pidbits[:-5])
+                args.projects[0] = "/".join(pidbits[:-5])
             pidbits = pidbits[-5:]
     if len(pidbits) == 5:
         args.config = pidbits[3]
@@ -260,30 +272,34 @@ if args.fontpath is not None:
 if args.zip:
     # Unzip to args.paratext+args.pid
     # import pdb; pdb.set_trace()
-    print(f"{args.paratext=} {args.pid=} {args.config=}")
-    if len(args.paratext) and len(args.pid):
-        rmtree(os.path.join(args.paratext,args.pid), ignore_errors = True)
+    print(f"{args.projects=} {args.pid=} {args.config=}")
+    if len(args.projects[0]) and len(args.pid):
+        rmtree(os.path.join(args.projects[0], args.pid), ignore_errors = True)
     zf = ZipFile(args.zip)
-    zf.extractall(args.paratext)
+    zf.extractall(args.projects[0])
     zf.close()
 
+prjTree = ProjectList()
+for p in args.projects:
+    prjTree.addTreedir(p)
+
 if args.pid:
-    pdir = os.path.join(args.paratext, args.pid)
-    if not os.path.exists(pdir):
-        args.pid = None
-    elif args.config:
-        pdir = os.path.join(pdir, "shared", "ptxprint", args.config, "ptxprint.cfg")
-        if not os.path.exists(pdir):
+    project = prjTree.findProject(args.pid)
+    if project is None:
+        print(f"Can't find project {args.pid} in {prjTree.treedirs}")
+        sys.exit(1)
+    if args.config:
+        if project is None or project.srcPath(args.config) is None:
             args.config = None
 
 if args.print or args.action is not None:
-    mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
+    mainw = ViewModel(prjTree, config, macrosdir, args)
     mainw.setup_ini()
     if args.pid:
-        mainw.setPrjid(args.pid, loadConfig=False)
+        mainw.setPrjid(args.pid, project.guid, loadConfig=False)
         mainw.setConfigId(args.config or "Default")
     res = 0
-    logging.debug(f"Created viewmodel for {args.paratext}")
+    logging.debug(f"Created viewmodel for {project} in {args.projects}")
     initFontCache(nofclist=args.nofontcache).wait()
     logging.debug("Loaded fonts")
     if args.print:
@@ -323,7 +339,7 @@ else:
         setup_i18n(args.lang)
         reset_gtk_direction()
         goround = False
-        mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
+        mainw = GtkViewModel(prjTree, config, macrosdir, args)
         if not loops and args.port:
             (server, is_server) = make_server(mainw, "127.0.0.1", args.port)
             if not is_server:
@@ -341,12 +357,12 @@ else:
             mainw.set('c_noInternet', True)
             mainw.noInt = True
         if args.pid:
-            mainw.setPrjid(args.pid)
+            mainw.setPrjid(args.pid, project.guid)
             mainw.setConfigId(args.config or "Default")
         if args.define is not None:
             for k, v in args.define.items():
                 mainw.set(k, v)
-        logging.debug(f"Created gtkview for {args.paratext}")
+        logging.debug(f"Created gtkview for {args.projects}")
         mainw.run(doit)
         if mainw.lang != args.lang:
             if not sys.platform.startswith("win"):

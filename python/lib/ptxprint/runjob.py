@@ -338,15 +338,15 @@ class RunJob:
             return
         self.printer.loadHyphenation()
         self.printer.incrementProgress(True, stage="pr")
-        info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
+        info = TexModel(self.printer, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = info.dict["project/id"]
         configid = info.dict["config/name"]
-        self.prjdir = os.path.join(self.args.paratext, self.prjid)
+        self.prjdir = self.printer.project.path
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
-        self.tmpdir = os.path.join(self.prjdir, 'local', 'ptxprint', configid)
+        self.tmpdir = self.printer.project.printPath(configid)
         os.makedirs(self.tmpdir, exist_ok=True)
         bks = self.printer.getBooks(files=True)
         jobs = []       # [(bkid, False) or (RefList, True)] 
@@ -758,7 +758,7 @@ class RunJob:
             info[k]=diginfo[v]
         for k,v in _diglotprinter.items():
             info.printer.set(k, diginfo.printer.get(v))
-        info["diglot/cfgrpath"] = saferelpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
+        info["diglot/cfgrpath"] = saferelpath(diginfo.printer.project.srcPath((diginfo.printer.cfgid), docdir).replace("\\","/"))
         info["diglot/prjid_"] = digprjid
         info["_isDiglot"] = True
         res = self.sharedjob(jobs, info, extra="-diglot", digtexmodel=diginfo)
@@ -1058,7 +1058,7 @@ class RunJob:
         logger.debug(f"Gathering illustrations: {self.printer.picinfos}")
         picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
-        tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
+        tmpPicpath = os.path.join(self.printer.project.printPath(self.printer.cfgid), "tmpPics")
         if not os.path.exists(tmpPicpath):
             os.makedirs(tmpPicpath)
         folderList = ["tmpPics", "tmpPicLists"] 
@@ -1205,7 +1205,7 @@ class RunJob:
         return (c - dk, m - dk, y - dk, k)
 
     def carefulCopy(self, ratio, srcpath, tgtfile, cropme):
-        tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
+        tmpPicPath = os.path.join(self.printer.project.printPath(self.printer.cfgid), "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         if os.path.splitext(srcpath)[1].lower().startswith(".pdf"):
             copyfile(srcpath, tgtpath)

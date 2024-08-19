@@ -1,4 +1,4 @@
-import os, re
+import os, re, uuid
 import xml.etree.ElementTree as et
 import regex, logging
 from ptxprint.utils import allbooks, books, bookcodes, chaps
@@ -15,21 +15,19 @@ ptrefsepvals = {
 }
 
 class ParatextSettings:
-    def __init__(self, basedir, prjid):
+    def __init__(self, prjdir):
         self.dict = {}
         self.ldml = None
-        self.basedir = basedir
-        self.prjid = prjid
+        self.prjdir = prjdir
         self.langid = None
         self.dir = "left"
         self.collation = None
+        self.saveme = False
         self.parse()
 
     def parse(self):
-        path = os.path.join(self.basedir, self.prjid, "Settings.xml")
-        pathmeta = os.path.join(self.basedir, self.prjid, "metadata.xml")
         for a in ("Settings.xml", "ptxSettings.xml"):
-            path = os.path.join(self.basedir, self.prjid, a)
+            path = os.path.join(self.prjdir, a)
             if os.path.exists(path):
                 doc = et.parse(path)
                 for c in doc.getroot():
@@ -40,7 +38,7 @@ class ParatextSettings:
         self.inferValues()
         if 'FileNamePrePart' in self.dict:
             logger.debug("{FileNamePrePart} {FileNameBookNameForm} {FileNamePostPart}".format(**self.dict))
-        path = os.path.join(self.basedir, self.prjid, "BookNames.xml")
+        path = os.path.join(self.prjdir, "BookNames.xml")
         if os.path.exists(path):
             self.read_bookNames(path)
             self.hasLocalBookNames = True
@@ -53,7 +51,7 @@ class ParatextSettings:
 
     def read_ldml(self):
         self.langid = re.sub('-(?=-|$)', '', self.get('LanguageIsoCode', "unk").replace(":", "-"))
-        fname = os.path.join(self.basedir, self.prjid, self.langid+".ldml")
+        fname = os.path.join(self.prjdir, self.langid+".ldml")
         silns = "{urn://www.sil.org/ldml/0.1}"
         if os.path.exists(fname):
             self.ldml = et.parse(fname)
@@ -117,8 +115,7 @@ class ParatextSettings:
 
     def inferValues(self, forced=False):
         if forced or 'FileNameBookNameForm' not in self.dict:
-            path = os.path.join(self.basedir, self.prjid)
-            sfmfiles = [x for x in os.listdir(path) if x.lower().endswith("sfm")]
+            sfmfiles = [x for x in os.listdir(self.prjdir) if x.lower().endswith("sfm")]
             for f in sfmfiles:
                 m = re.search(r"(\d{2})", f)
                 if not m:
@@ -157,12 +154,19 @@ class ParatextSettings:
             self.dict['Encoding'] = 65001
         if 'BooksPresent' not in self.dict:
             self.calcbookspresent(inferred=forced)
+        if 'Guid' not in self.dict:
+            self.createGuid()
+
+    def createGuid(self):
+        res = "{:X}".format(uuid.uuid1().int)
+        self.dict['Guid'] = res
+        self.saveme = True
+        return res
 
     def calcbookspresent(self, inferred=False, forced=False):
         self.bookmap = {}
         booksfound = set()
         bookspresent = [0] * len(allbooks)
-        path = os.path.join(self.basedir, self.prjid)
         if not inferred and 'FileNameBookNameForm' in self.dict:
             fbkfm = self.dict['FileNameBookNameForm']
             bknamefmt = self.get('FileNamePrePart', "") + \
@@ -170,7 +174,7 @@ class ParatextSettings:
                         self.get('FileNamePostPart', "")
             for k, v in books.items():
                 fname = bknamefmt.format(bkid=k, bkcode=v+1)
-                if os.path.exists(os.path.join(path, fname)):
+                if os.path.exists(os.path.join(self.prjdir, fname)):
                     bookspresent[v-1] = 1
                     self.bookmap[k] = fname
                     booksfound.add(fname)
@@ -178,10 +182,10 @@ class ParatextSettings:
                 self.inferValues(forced=True)
                 self.calcbookspresent(forced=True)
         else:
-            for f in os.listdir(path):
+            for f in os.listdir(self.prjdir):
                 if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
                     continue
-                with open(os.path.join(path, f), encoding="utf-8", errors="ignore") as inf:
+                with open(os.path.join(self.prjdir, f), encoding="utf-8", errors="ignore") as inf:
                     l = inf.readline()
                     m = re.match(r"^\uFEFF?\\id\s+(\S{3})\s*", l)
                     if m:
@@ -209,12 +213,12 @@ class ParatextSettings:
     def getArchiveFiles(self):
         res = {}
         for a in ("Settings.xml", "BookNames.xml", "ptxSettings.xml"):
-            path = os.path.join(self.basedir, self.prjid, a)
+            path = os.path.join(self.prjdir, a)
             if os.path.exists(path):
                 res[path] = a
         if self.langid is None:
             return res
-        fname = os.path.join(self.basedir, self.prjid, self.langid+".ldml")
+        fname = os.path.join(self.prjdir, self.langid+".ldml")
         if os.path.exists(fname):
             res[fname] = self.langid+".ldml"
         return res
@@ -247,3 +251,16 @@ class ParatextSettings:
                 vals['bkc'] = ''
             self.refsep = RefSeparators(**vals)
         return self.refsep
+
+    def saveAs(self, fname):
+        import xml.etree.ElementTree as et
+        settings = et.Element("ScriptureText")
+        settings.text = "\n    "
+        settings.tail = "\n"
+        for k, v in sorted(self.dict.items()):
+            n = et.SubElement(settings, k)
+            n.text = str(v)
+            n.tail = "\n    "
+        n.tail = "\n"
+        with open(fname, "wb") as outf:
+            outf.write(et.tostring(settings, encoding="utf-8"))
