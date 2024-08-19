@@ -892,7 +892,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.5.7</property>
+    <property name="version">Version 2.5.8</property>
     <property name="copyright">© 2020-2024, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -2093,14 +2093,6 @@ settings for a similar project.</property>
         <col id="0" translatable="yes">Cutout</col>
         <col id="1">c</col>
       </row>
-      <row>
-        <col id="0" translatable="yes">Page (in Margins)</col>
-        <col id="1">P</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Page (to Edge)</col>
-        <col id="1">F</col>
-      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_plSize">
@@ -2317,82 +2309,8 @@ settings for a similar project.</property>
         <col id="1">c</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Page (in Margins)</col>
-        <col id="1">P</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Page (to Edge)</col>
-        <col id="1">F</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_sbPgPos1">
-    <columns>
-      <!-- column-name Position -->
-      <column type="gchararray"/>
-      <!-- column-name pgpos -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Top</col>
-        <col id="1">t</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Top-Left</col>
-        <col id="1">tl</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Top-Inner</col>
-        <col id="1">ti</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Top-Right</col>
-        <col id="1">tr</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Top-Outer</col>
-        <col id="1">to</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bottom</col>
-        <col id="1">b</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bottom-Left</col>
-        <col id="1">bl</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bottom-Inner</col>
-        <col id="1">bi</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bottom-Right</col>
-        <col id="1">br</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bottom-Outer</col>
-        <col id="1">bo</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Before Verse</col>
-        <col id="1">h</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">After Paragraph</col>
-        <col id="1">p</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Page (in Margins)</col>
-        <col id="1">P</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Page (to Edge)</col>
-        <col id="1">F</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Below Notes</col>
-        <col id="1">B</col>
+        <col id="0" translatable="yes">Fill</col>
+        <col id="1" translatable="yes">f</col>
       </row>
     </data>
   </object>
@@ -22557,7 +22475,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_Settings">
+                              <object class="GtkScrolledWindow" id="scroll_Settings1">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -22572,7 +22490,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child type="tab">
-                              <object class="GtkLabel" id="l_Settings">
+                              <object class="GtkLabel" id="l_Settings1">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes">Settings</property>
@@ -22583,7 +22501,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_SettingsOld">
+                              <object class="GtkScrolledWindow" id="scroll_Settings2">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -22598,13 +22516,37 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child type="tab">
-                              <object class="GtkLabel" id="l_SettingsOld">
+                              <object class="GtkLabel" id="l_Settings2">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="label" translatable="yes">Settings</property>
                               </object>
                               <packing>
                                 <property name="position">6</property>
+                                <property name="tab-fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow" id="scroll_Settings3">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="shadow-type">in</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="position">7</property>
+                              </packing>
+                            </child>
+                            <child type="tab">
+                              <object class="GtkLabel" id="l_Settings3">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">Settings</property>
+                              </object>
+                              <packing>
+                                <property name="position">7</property>
                                 <property name="tab-fill">False</property>
                               </packing>
                             </child>
@@ -27301,7 +27243,7 @@ can access the required files.</property>
               </packing>
             </child>
             <child>
-              <!-- n-columns=2 n-rows=6 -->
+              <!-- n-columns=2 n-rows=7 -->
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -27374,6 +27316,7 @@ for the Project:</property>
                 <child>
                   <object class="GtkEntry" id="t_DBLprojName">
                     <property name="name">Assign a name to a DBL bundle</property>
+                    <property name="width-request">230</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">PTXprint will create a NEW Paratext project
@@ -27382,7 +27325,8 @@ the name of an existing Project.</property>
                     <property name="margin-top">12</property>
                     <property name="margin-bottom">6</property>
                     <property name="max-length">20</property>
-                    <signal name="changed" handler="onDBLprojNameChanged" swapped="no"/>
+                    <signal name="focus-out-event" handler="onPrjFocusOutEvent" swapped="no"/>
+                    <signal name="key-release-event" handler="onProjectKeyPressed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -27520,6 +27464,29 @@ and select the USX download option.</property>
                     <property name="left-attach">1</property>
                     <property name="top-attach">1</property>
                   </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="l_projectNameMsg">
+                    <property name="height-request">34</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="valign">start</property>
+                    <property name="margin-right">10</property>
+                    <property name="margin-end">10</property>
+                    <property name="label" translatable="yes">Do not use spaces or special characters</property>
+                    <property name="yalign">0</property>
+                    <attributes>
+                      <attribute name="foreground" value="#bfbf1c1c2828"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -36220,6 +36187,10 @@ saved configuration.</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
@@ -36274,12 +36245,7 @@ saved configuration.</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Several options here are extensions to the normal USFM
-markup standard for illustrations and are not expected
-to work in other software. But PTXprint allows a greater
-level of control in placing pictures.
-
-Top: Above everything except the header line
+                <property name="tooltip-text" translatable="yes">Top: Above everything except the header line
 Bottom: Below all verse text (and footnotes in diglot)
 Before Verse: 'Here' where defined or before its Anchor Ref
 After Paragraph: After this paragraph
@@ -36301,7 +36267,7 @@ Position:</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">The frame size determines how large the picture
+                <property name="tooltip-text" translatable="yes">The frame size determines how large the sidebar
 will appear on the page.
 
 Span Width only allows a Top or Bottom vertical placement.
@@ -36344,14 +36310,14 @@ Position:</property>
                 <property name="width-request">80</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Some vertical position options allow a picture
+                <property name="tooltip-text" translatable="yes">Some vertical position options allow a sidebar
 to be moved up or down by a number of lines
 or paragraphs.
 
 -Negative (minus) values specify to move UP.
 +Positive (plus) values specify to move DOWN.
 
-Negative counts for cutouts raise the image,
+Negative counts for cutouts raise the sidebar,
 but the cutout will not affect earlier paragraphs. 
 Note that negative and fractional paragraph 
 counts are invalid.</property>
@@ -36368,13 +36334,13 @@ Lines:</property>
             </child>
             <child>
               <object class="GtkComboBox" id="fcb_sbSize">
-                <property name="name">Picture: Frame size</property>
+                <property name="name">Sidebar: Frame size</property>
                 <property name="width-request">144</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="can-default">True</property>
                 <property name="tooltip-text" translatable="yes">The frame size determines the boundaries of where the
-picture will appear on the page.
+sidebar will appear on the page.
 
 Span Width only allows a Top or Bottom vertical placement.
 
@@ -36382,13 +36348,12 @@ Column Width allows several other more precise placement
 options: Before Verse, After Paragraph, or Cutout; and these
 can have Left/Inner or Right/Outer Horizontal positioning set. 
  
-Page (in Margins) is intended for pictures that will cover an
+Page (in Margins) is intended for sidebars that will cover an
 entire page (i.e. preventing any scripture text from being on
 that page), but will still show the header.
 
-Page (to Edge) is intended for pictures (or more commonly
-for maps) to fill the entire page, with no margins at all. 
-Captions should not be used with 'Page (to Edge)' images.</property>
+Page (to Edge) is intended for sidebars to fill the entire page,
+with no margins at all.</property>
                 <property name="halign">start</property>
                 <property name="model">ls_sbSize</property>
                 <property name="wrap-width">1</property>
@@ -36414,17 +36379,12 @@ Captions should not be used with 'Page (to Edge)' images.</property>
             </child>
             <child>
               <object class="GtkComboBox" id="fcb_sbPgPos">
-                <property name="name">Picture: Vertical position</property>
+                <property name="name">Sidebar: Vertical position</property>
                 <property name="width-request">144</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="can-default">True</property>
-                <property name="tooltip-text" translatable="yes">Several options here are extensions to the normal USFM
-markup standard for illustrations and are not expected
-to work in other software. But PTXprint allows a greater
-level of control in placing pictures.
-
-Top: Above everything except the header line
+                <property name="tooltip-text" translatable="yes">Top: Above everything except the header line
 Bottom: Below all verse text (and footnotes in diglot)
 Before Verse: 'Here' where defined or before its Anchor Ref
 After Paragraph: After this paragraph
@@ -36457,7 +36417,7 @@ as: Left, Right, Center, no. of lines (up or down).</property>
             </child>
             <child>
               <object class="GtkComboBox" id="fcb_sbHoriz">
-                <property name="name">Picture: Horizontal position</property>
+                <property name="name">Sidebar: Horizontal position</property>
                 <property name="width-request">144</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -36495,14 +36455,14 @@ settings first.</property>
                 <property name="width-request">144</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="tooltip-text" translatable="yes">Some vertical position options allow a picture
+                <property name="tooltip-text" translatable="yes">Some vertical position options allow a sidebar
 to be moved up or down by a number of lines
 or paragraphs.
 
 -Negative (minus) values specify to move UP.
 +Positive (plus) values specify to move DOWN.
 
-Negative counts for cutouts raise the image,
+Negative counts for cutouts raise the sidebar,
 but the cutout will not affect earlier paragraphs. 
 Note that negative and fractional paragraph 
 counts are invalid.</property>
@@ -36567,6 +36527,7 @@ counts are invalid.</property>
                         <property name="right-padding">3</property>
                         <child>
                           <object class="GtkImage" id="img_sbPreview">
+                            <property name="width-request">130</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="hexpand">True</property>

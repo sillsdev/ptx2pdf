@@ -1,9 +1,41 @@
-PTXprint 2.5.7 Release Notes
-10 Aug 2024
+PTXprint 2.5.8 Release Notes
+16 Aug 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.5.8 (16 Aug 2024)
+
+  * Fix reading fonts from xdv file
+  
+  * Fix fonts and images into archive
+  
+  * Get Sidebar Size and Position dialog with preview working
+  
+  * Fix style editing if there is no main font
+  
+  * Solve colour leakages
+  
+  * Downgrade version number for figure layout to 2.
+  
+  * Fix ref for paragraphs in modules
+  
+  * Fix archiving crash
+  
+  * Fix archive generation for diglots
+  
+  * Fix module generation & Put \c back in module output
+  
+  * Add (and fix) a module test. Update standards
+  
+  * Include TeXhacks in widget search
+  
+  * Non-UI portion of chained glossary items (#633)
+  
+  * Work around USFM 3.0 data model to get modules mostly working
+  
+  * Diglot book-end code needs to actually be reached
+  
 Bug fixes and Improvements in 2.5.7 (10 Aug 2024)
 
   * Fix TOC wrapping and layout for doublecolumns
