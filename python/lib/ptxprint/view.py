@@ -1744,7 +1744,7 @@ class ViewModel:
             zf.write(ifile, fname)
 
     def _archiveAdd(self, zf, books, parent=None, parentcfg=None, xdv=None):
-        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, prjid=parent, cfgid=parentcfg, xdv=xdv)
+        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, project=parent, cfgid=parentcfg, xdv=xdv)
         logger.debug(f"{entries=}, {cfgchanges=}, {tmpfiles=}")
         for k, v in entries.items():
             if os.path.exists(k):
