@@ -672,7 +672,7 @@ class RunJob:
         diginfo["fancy/pageborder"] = "%"
         diginfo["document/diffcolayout"] = False
         diginfo["snippets/diglot"] = False
-        docdir = os.path.join(info["/ptxpath"], info["project/id"], "local", "ptxprint", info["config/name"])
+        docdir = info["/ptxdocpath"]
         for k in _digSecSettings:
             diginfo[k]=info[k]
         syntaxErrors = []

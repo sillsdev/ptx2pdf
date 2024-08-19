@@ -240,8 +240,7 @@ class TexModel:
         self.dict["paper/pagegutter"] = "{:.2f}mm".format(Dimension(self.dict["paper/width"]).asunits("mm") \
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
         if self.dict["project/interlinear"] != "%":
-            self.interlinear = Interlinear(self.dict["project/interlang"],
-                                            os.path.join(self.dict["/ptxpath"], self.dict["project/id"]))
+            self.interlinear = Interlinear(self.dict["project/interlang"], self.dict["/ptxpath"])
         regfont = self.printer.get("bl_fontR")
         if regfont is not None:
             self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
@@ -1428,7 +1427,7 @@ class TexModel:
         # Note for future debugging... the re.findall below works on the input, the localChanges rule below works after any changes.txt things have taken effect. Allow for random spaces.
         glopattern=r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)"
         prjid = self.dict['project/id']
-        prjdir = os.path.join(self.dict["/ptxpath"], prjid)
+        prjdir = self.dict["/ptxpath"]
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
                 fname = printer.getBookFilename(bk, prjid)
