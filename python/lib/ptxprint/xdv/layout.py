@@ -65,7 +65,7 @@ class Reader( XDViPositionedReader):
 
     def remove_tag(self, btype, **parms):
         for i, b in enumerate(self.tagstack):
-            if b.type == btype
+            if b.type == btype:
                 b.close(self, **parms)
                 self.tagstack = self.tagstack[:i] + self.tagstack[i+1:]
                 break
