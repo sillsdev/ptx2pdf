@@ -141,12 +141,16 @@ from ptxprint.view import ViewModel, VersionStr, doError
 from ptxprint.runjob import RunJob, isLocked
 from ptxprint.project import ProjectList
 
+savetreedirs = False
+ptxdir = None
 # necessary for the side effect of setting pt_bindir :(
 if not len(args.projects):
     pdir = os.getenv("PTXPRINT_PROJECTSDIR", None)
     if pdir is None:
         pdir = get_ptsettings()
+        ptxdir = pdir
     args.projects.append(pdir)
+    savetreedirs = True
 
 conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
 config = configparser.ConfigParser(interpolation=None)
@@ -281,7 +285,7 @@ if args.zip:
 
 prjTree = ProjectList()
 for p in args.projects:
-    prjTree.addTreedir(p)
+    prjTree.addTreedir(p, p == ptxdir)
 
 if args.pid:
     project = prjTree.findProject(args.pid)
@@ -348,6 +352,8 @@ else:
                 break
             else:
                 mainw.server = server
+        #if not prjTree.findProject("BSB"):
+        #    mainw._expandDBLBundle("BSB", "path/to/BSBDBL.zip")
         if not mainw.setup_ini():
             if mainw.splash is not None:
                 mainw.splash.terminate()
@@ -376,5 +382,7 @@ else:
                 goround = True
         loops += 1
     if loops >= 0:
+        if savetreedirs:
+            prjTree.addToConfig(config)
         with open(conffile, "w", encoding="utf-8") as outf:
             config.write(outf)

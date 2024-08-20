@@ -4649,6 +4649,29 @@ class GtkViewModel(ViewModel):
             else:
                 self.builder.get_object("col_{}".format(w)).set_visible(False)
 
+    def _expandDBLBundle(self, prj, dblfile):
+        tdir = self.prjTree.findWriteable()
+        if UnpackDBL(dblfile, prj, tdir):
+            pjct = self.prjTree.addProject(prj, tdir, None)
+            v = [getattr(pjct, a) for a in ['prjid', 'guid']]
+            # add prj to ls_project before selecting it.
+            for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
+                lsp = self.builder.get_object(a)
+                allprojects = [x[0] for x in lsp]
+                for i, p in enumerate(allprojects):
+                    if prj.casefold() > p.casefold():
+                        lsp.insert(i, v)
+                        break
+                else:
+                    lsp.append(v)
+            ui = self.uilevel
+            self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
+            self.set("fcb_project", prj)
+            self.set_uiChangeLevel(ui)
+        else:
+            self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
+                                              "Or contact the DBL bundle provider.")
+
     def onDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")
         response = dialog.run()
@@ -4656,25 +4679,7 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK and self.builder.get_object("btn_locateDBLbundle").get_sensitive:
             prj = self.get("t_DBLprojName")
             if prj != "":
-                # What to do here? where should we unpack stuff?
-                if UnpackDBL(self.DBLfile, prj, self.prjTree.treedirs[0]):
-                    # add prj to ls_project before selecting it.
-                    for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
-                        lsp = self.builder.get_object(a)
-                        allprojects = [x[0] for x in lsp]
-                        for i, p in enumerate(allprojects):
-                            if prj.casefold() > p.casefold():
-                                lsp.insert(i, [prj])
-                                break
-                        else:
-                            lsp.append([prj])
-                    ui = self.uilevel
-                    self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
-                    self.set("fcb_project", prj)
-                    self.set_uiChangeLevel(ui)
-                else:
-                    self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
-                                                      "Or contact the DBL bundle provider.")
+                self._expandDBLBundle(prj, self.DBLfile)
 
     def onImageSetClicked(self, btn):
         dialog = self.builder.get_object("dlg_getImageSet")

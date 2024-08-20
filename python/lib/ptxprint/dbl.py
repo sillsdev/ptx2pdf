@@ -117,6 +117,8 @@ def usx2usfm(fname, outf):
                 emit("\\{}".format(s))
                 append_attribs(el, emit)
                 emit("\\*")
+            elif el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
+                emit("\\ref")
             elif el.tag in ("usx", "annot", "table", "usfm", "text", "ref"):
                 pass
             else:
@@ -146,6 +148,9 @@ def usx2usfm(fname, outf):
                 emit.addws()
                 if el.get("closed", "true") == "true":
                     emit("\\{}e ".format(s))
+            elif el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
+                append_attribs(el, emit, nows=True)
+                emit("\\ref*")
             lastel = el
 
 
