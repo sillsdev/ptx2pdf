@@ -591,9 +591,9 @@ def getsign(b, v, a):
 
 class GtkViewModel(ViewModel):
 
-    def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
+    def __init__(self, prjtree, userconfig, scriptsdir, args=None):
         # logger.debug("Starting init in gtkview")
-        super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
+        super(GtkViewModel, self).__init__(prjtree, userconfig, scriptsdir, args)
         self.lang = args.lang if args.lang is not None else 'en'
         self.args = args
         self.initialised = False
@@ -799,37 +799,14 @@ class GtkViewModel(ViewModel):
         projects.clear()
         digprojects.clear()
         strngsfbprojects.clear()
-        allprojects = []
-        try:
-            sdir = os.listdir(self.settings_dir)
-        except FileNotFoundError:
-            return False
-        for d in sdir:
-            p = os.path.join(self.settings_dir, d)
-            if not os.path.isdir(p):
-                continue
-            try:
-                if os.path.exists(os.path.join(p, 'Settings.xml')):
-                    with open(os.path.join(p, 'Settings.xml'), encoding="utf-8") as inf:
-                        for l in inf.readlines():
-                            if '<TranslationInfo>' in l:
-                                if 'ConsultantNotes:' not in l and 'StudyBibleAdditions:' not in l:
-                                    allprojects.append(d)
-                                break
-                        else:
-                            allprojects.append(d)
-                elif os.path.exists(os.path.join(p, 'ptxSettings.xml')) \
-                        or any(x.lower().endswith("sfm") for x in os.listdir(p)):
-                    allprojects.append(d)
-            except OSError:
-                pass
-        strngsfbprojects.append(["None"])
-        for p in sorted(allprojects, key = lambda s: s.casefold()):
-            projects.append([p])
-            digprojects.append([p])
-            if os.path.exists(os.path.join(self.settings_dir, p, 'TermRenderings.xml')):
-                strngsfbprojects.append([p])
-        wide = int(len(allprojects)/16)+1 if len(allprojects) > 14 else 1
+        # strngsfbprojects.append(["None", "0000"])
+        for p in self.prjTree.projectList():
+            v = [getattr(p, a) for a in ['prjid', 'guid']]
+            projects.append(v)
+            digprojects.append(v)
+            if os.path.exists(os.path.join(p.path, 'TermRenderings.xml')):
+                strngsfbprojects.append(v)
+        wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         # self.builder.get_object("fcb_project").set_wrap_width(1)
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
@@ -850,9 +827,9 @@ class GtkViewModel(ViewModel):
         for d in _alldigits: # .items():
             v = currdigits.get(d, d.lower())
             digits.append([d, v])
-        if self.prjid is None:
+        if self.project is None or self.project.prjid is None:
             return
-        cfgpath = os.path.join(self.settings_dir, self.prjid, 'shared', 'fonts', 'mappings')
+        cfgpath = os.path.join(self.project.path, 'shared', 'fonts', 'mappings')
         if os.path.exists(cfgpath):
             added = set()
             for f in os.listdir(cfgpath):
@@ -1354,7 +1331,11 @@ class GtkViewModel(ViewModel):
         m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
         return [m.group(1), int(m.group(2))] if m else [font, 0]
 
-    def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
+    def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):
+        if "[" in wid:
+            subi = wid.index("[")
+            sub = int(wid[subi+1:-1])
+            wid = wid[:subi]
         w = self.builder.get_object(wid)
         if w is None:
             if wid.startswith("+"):
@@ -1372,7 +1353,11 @@ class GtkViewModel(ViewModel):
             return super().get(wid, default=default)
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
-    def set(self, wid, value, skipmissing=False, useMarkup=False):
+    def set(self, wid, value, skipmissing=False, useMarkup=False, sub=-1):
+        if "[" in wid:
+            subi = wid.index("[")
+            sub = int(wid[subi+1:-1])
+            wid = wid[:subi]
         if wid == "l_statusLine":
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
         w = self.builder.get_object(wid)
@@ -1400,7 +1385,7 @@ class GtkViewModel(ViewModel):
                 print(_("Can't set {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
-        setWidgetVal(wid, w, value, useMarkup=useMarkup)
+        setWidgetVal(wid, w, value, useMarkup=useMarkup, sub=sub)
 
     def getvar(self, k, default="", dest=None):
         if dest is None:
@@ -1538,17 +1523,17 @@ class GtkViewModel(ViewModel):
             pgnum = self.get("nbk_Viewer")
             if self.notebooks["Viewer"][pgnum] in ("scroll_FrontMatter", "scroll_AdjList", "scroll_Settings1", "scroll_Settings2", "scroll_Settings3"):
                 self.onSaveEdits(None)
-        cfgname = self.configName()
+        cfgname = self.cfgid
         if cfgname is None:
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        if not os.path.exists(self.working_dir):
-            os.makedirs(self.working_dir)
+        if not os.path.exists(self.project.printPath(self.cfgid)):
+            os.makedirs(self.project.printPath(self.cfgid))
         self.docreatediff = self.get("c_createDiff")
         pdfnames = self.baseTeXPDFnames(diff=self.docreatediff)
         for basename in pdfnames:
-            pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
+            pdfname = os.path.join(self.project.printPath(self.cfgid), "..", basename) + ".pdf"
             exists = os.path.exists(pdfname)
             if exists:
                 fileLocked = True
@@ -1672,18 +1657,17 @@ class GtkViewModel(ViewModel):
         self.userconfig.set('init', 'mruBooks', "\n".join(self.mruBookList))
         
     def onSaveConfig(self, btn, force=False):
-        if self.prjid is None or (not force and self.configLocked()):
+        if self.project.prjid is None or (not force and self.configLocked()):
             return
-        newconfigId = self.configName()
-        if newconfigId != self.configId: # only for new configs
+        newconfigId = self.getConfigName()
+        if newconfigId != self.cfgid: # only for new configs
             # self.applyConfig(self.configId, newconfigId, nobase=True)
-            self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
-            self.configId = newconfigId
+            self.updateProjectSettings(self.project.prjid, self.project.guid, configName=newconfigId, readConfig=True)
             self.updateSavedConfigList()
-            stngdir = self.configPath(cfgname=self.configName())
+            stngdir = self.project.srcPath(self.cfgid)
             self.set("lb_settings_dir", '<a href="{}">{}</a>'.format(stngdir, stngdir))
             self.updateDialogTitle()
-        self.userconfig.set("init", "project", self.prjid)
+        self.userconfig.set("init", "project", self.project.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.userconfig.set("init", "quickrun",   "true" if self.get("c_quickRun")   else "false")
         self.noInt = self.get("c_noInternet")
@@ -1694,8 +1678,8 @@ class GtkViewModel(ViewModel):
         self.onSaveEdits(None)
 
     def writeConfig(self, cfgname=None, force=False):
-        if self.prjid is not None:
-            self.picChecksView.writeCfg(os.path.join(self.settings_dir, self.prjid), self.configId)
+        if self.project.prjid is not None:
+            self.picChecksView.writeCfg(self.project.srcPath(self.cfgid), self.cfgid)
         super().writeConfig(cfgname=cfgname, force=force)
 
     def fillCopyrightDetails(self):
@@ -1722,7 +1706,7 @@ class GtkViewModel(ViewModel):
 
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
-        delCfgPath = self.configPath(cfgname=cfg)
+        delCfgPath = self.project.srcPath(cfg)
         sec = ""
         if cfg == 'Default':
             ui = self.get_uiChangeLevel() # Why not just use: ui = self.uilevel  ???
@@ -1756,14 +1740,12 @@ class GtkViewModel(ViewModel):
             except OSError:
                 msg = _("Cannot delete folder from disk!") + _("Folder: ") + delCfgPath
 
-            if not self.working_dir.startswith(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint")):
-                self.doError(_("Non-standard output folder needs to be deleted manually"), secondary=_("Folder: ")+self.working_dir)
             try: # Delete the entire output folder
-                rmtree(self.working_dir)
+                rmtree(self.project.printPath(None))
             except FileNotFoundError:
                 pass
             except OSError:
-                msg = _("Cannot delete folder from disk!") + _("Folder: ") + self.working_dir
+                msg = _("Cannot delete folder from disk!") + _("Folder: ") + self.project.printPath(self.cfgid)
 
             self.updateSavedConfigList()
             self.set("t_savedConfig", "Default")
@@ -1790,26 +1772,13 @@ class GtkViewModel(ViewModel):
         cbbook.set_model(lsbooks)
         self.noUpdate = False
 
-    def getConfigList(self, prjid):
-        res = []
-        if self.prjid is None:
-            return res
-        root = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
-        if os.path.exists(root):
-            for s in os.scandir(root):
-                if s.is_dir() and os.path.exists(os.path.join(root, s.name, "ptxprint.cfg")):
-                    res.append(s.name)
-        if 'Default' not in res:
-            res.append('Default')   # it's only going to get sorted
-        return res
-
     def updateSavedConfigList(self):
         self.configNoUpdate = True
-        currConf = self.userconfig.get("projects", self.prjid, fallback=self.get("ecb_savedConfig"))
+        currConf = self.userconfig.get("projects", self.project.prjid, fallback=self.get("ecb_savedConfig"))
         self.cb_savedConfig.remove_all()
-        savedConfigs = self.getConfigList(self.prjid)
+        savedConfigs = sorted(self.project.configs.keys())
         if len(savedConfigs):
-            for cfgName in sorted(savedConfigs):
+            for cfgName in savedConfigs:
                 self.cb_savedConfig.append_text(cfgName)
             if currConf in savedConfigs:
                 self.set("ecb_savedConfig", currConf)
@@ -1824,35 +1793,32 @@ class GtkViewModel(ViewModel):
     def updateDiglotConfigList(self):
         currdigcfg = self.get("ecb_diglotSecConfig")
         self.ecb_diglotSecConfig.remove_all()
-        digprj = self.get("fcb_diglotSecProject")
+        digprj = self._getProject("fcb_diglotSecProject")
         if digprj is None:
             return
-        diglotConfigs = self.getConfigList(digprj)
+        diglotConfigs = sorted(digprj.configs.keys())
         if len(diglotConfigs):
             for cfgName in sorted(diglotConfigs):
                 self.ecb_diglotSecConfig.append_text(cfgName)
             self.set("ecb_diglotSecConfig", currdigcfg if currdigcfg in diglotConfigs else "Default")
 
-    def updateimpProjectConfigList(self):
-        self.ecb_impConfig.remove_all()
-        imprj = self.get("fcb_impProject")
-        if imprj is None:
-            return
-        impConfigs = self.getConfigList(imprj)
+    def _fillConfigList(self, prjwname, configlist):
+        impprj = self._getProject(prjwname)
+        if impprj is None:
+            return 0
+        impConfigs = sorted(impprj.configs.keys())
+        configlist.remove_all()
         if len(impConfigs):
-            for cfgName in sorted(impConfigs):
-                self.ecb_impConfig.append_text(cfgName)
+            for cfgName in impConfigs:
+                configlist.append_text(cfgName)
+        return len(impConfigs)
+
+    def updateimpProjectConfigList(self):
+        if self._fillConfigList("fcb_impProject", self.ecb_impConfig) > 0:
             self.set("ecb_impConfig", "Default")
 
     def updatetgtProjectConfigList(self):
-        self.ecb_targetConfig.remove_all()
-        tgtprj = self.get("ecb_targetProject")
-        if tgtprj is None:
-            return
-        tgtConfigs = self.getConfigList(tgtprj)
-        if len(tgtConfigs):
-            for cfgName in sorted(tgtConfigs):
-                self.ecb_targetConfig.append_text(cfgName)
+        if self._fillConfigList("ecb_targetProject", self.ecb_targetConfig) > 0:
             self.set("ecb_targetConfig", "Default")
             
     def updateAllConfigLists(self):
@@ -2084,7 +2050,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w2).set_active(status)
 
     def onLockUnlockSavedConfig(self, btn):
-        if self.configName() == "Default":
+        if self.cfgid == "Default":
             self.builder.get_object("btn_lockunlock").set_sensitive(False)
             return
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -2134,7 +2100,7 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg, forced=True)
 
     def onBookSelectorChange(self, btn):
-        if self.get("ecb_booklist") == "" and self.prjid is not None:
+        if self.get("ecb_booklist") == "" and self.project.prjid is not None:
             self.updateDialogTitle()
         else:
             self.updateDialogTitle()
@@ -2189,7 +2155,7 @@ class GtkViewModel(ViewModel):
         dialog = self.builder.get_object("dlg_generatePL")
         self.set("l_generate_booklist", " ".join(bks))
         # If there is no PicList file for this config, then don't even ask - just generate it
-        plpath = os.path.join(self.configPath(self.configName()),"{}-{}.piclist".format(self.prjid, self.configName()))
+        plpath = os.path.join(self.project.srcPath(self.cfgid),"{}-{}.piclist".format(self.project.prjid, self.cfgid))
         if not os.path.exists(plpath):
             response = Gtk.ResponseType.OK
             self.set("r_generate", "all")
@@ -2221,7 +2187,7 @@ class GtkViewModel(ViewModel):
             return
         bk = self.get("ecb_examineBook")
         if pgid == "scroll_FrontMatter":
-            ptFRT = os.path.exists(os.path.join(self.settings_dir, self.prjid, self.getBookFilename("FRT", self.prjid)))
+            ptFRT = os.path.exists(os.path.join(self.project.path, self.getBookFilename("FRT", self.project.prjid)))
             self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT)
             dialog = self.builder.get_object("dlg_generateFRT")
             response = dialog.run()
@@ -2240,33 +2206,24 @@ class GtkViewModel(ViewModel):
 
         elif pgid == "scroll_FinalSFM" and bk is not None:
             bk = bk if bk in bks2gen else None
-            tmodel = TexModel(self, self.settings_dir, self._getPtSettings(self.prjid), self.prjid)
-            out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
+            tmodel = TexModel(self, self._getPtSettings(self.project.prjid), self.project.prjid)
+            out = tmodel.convertBook(bk, None, self.project.printPath(self.cfgid), self.project.path)
             self.editFile(out, loc="wrk", pgid=pgid)
         self.onViewerChangePage(None, None, pg, forced=True)
 
     def generateAdjList(self, books=None, dynamic=True):
         existingFilelist = []
         booklist = self.getBooks() if books is None else books
-        diglot  = self.get("c_diglot")
-        prjid = self.get("fcb_project")
-        secprjid = ""
-        if diglot:
-            secprjid = self.get("fcb_diglotSecProject")
-            if secprjid is not None:
-                secprjdir = os.path.join(self.settings_dir, secprjid)
-            else:
-                self.doError(_("No Secondary Project Set"), secondary=_("In order to generate an AdjList for a diglot, the \n"+
-                                                                        "Secondary project must be set on the Diglot tab."))
-                return
-        prjdir = os.path.join(self.settings_dir, self.prjid)
+        diglot = self.get("c_diglot")
+        prjid = self.project.prjid
+        prjdir = self.project.path
         usfms = self.get_usfms()
         if diglot:
             dusfms = self.diglotView.get_usfms()
         skipbooks = []
         for bk in booklist:
             fname = self.getAdjListFilename(bk, ext=".adj")
-            outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
+            outfname = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", fname)
             if os.path.exists(outfname):
                 if os.path.getsize(outfname) > 0:
                     skipbooks.append(bk)
@@ -2281,7 +2238,7 @@ class GtkViewModel(ViewModel):
         booklist = [x for x in booklist if x not in skipbooks]
         if not len(booklist):
             return
-        parlocs = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".parlocs")
+        parlocs = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".parlocs")
         adjs = {}
         for i, loose in enumerate(("-1", "0", "+1")):
             runjob = self.callback(self, maxruns=1, forcedlooseness=loose, noview=True)
@@ -2298,11 +2255,11 @@ class GtkViewModel(ViewModel):
                     if not m:
                         continue
                     adjs.setdefault(m[0], {}).setdefault(int(m[1]), [0]*3)[i] = int(m[2])
-        adjpath = os.path.join(self.configPath(self.configName()), "AdjLists")
+        adjpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists")
         os.makedirs(adjpath, exist_ok=True)
         for bk in booklist:
             fname = self.getAdjListFilename(bk, ext=".adj")
-            outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
+            outfname = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", fname)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("% syntax bk c.v +num[paragraph]. E.g. JHN 3.18 +1[2] for para after 3.18\n")
                 outf.write("% autogenerated hints for paragraph possible changes: +0 for increases, -0 for decreases\n")
@@ -2371,7 +2328,7 @@ class GtkViewModel(ViewModel):
         if prjid is None:
             return          # at least we don't crash if there is no project
         self.noUpdate = True
-        prjdir = os.path.join(self.settings_dir, prjid)
+        prjdir = self.project.path
         bks = self.getBooks()
         bk = self.get("ecb_examineBook")
         if bk == None or bk == "" and len(bks):
@@ -2393,6 +2350,8 @@ class GtkViewModel(ViewModel):
             ibtn.set_sensitive(True)
             ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
+            if fpath is None:
+                return
             buf = self.fileViews[pgnum][0]
             if forced or buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True) == "":
                 if not os.path.exists(fpath):
@@ -2418,21 +2377,21 @@ class GtkViewModel(ViewModel):
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):
             fname = self.getBookFilename(bk, prjid)
             if pgid == "scroll_FinalSFM":
-                fpath = os.path.join(self.working_dir, fndict[pgid][0], fname)
+                fpath = os.path.join(self.project.printPath(self.cfgid), fndict[pgid][0], fname)
                 genBtn.set_sensitive(True)
             else:
-                fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgid][0], fname)
+                fpath = os.path.join(self.project.srcPath(self.configId), fndict[pgid][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
                 if self.get("c_diglot"):
-                    fpath = fpath[:doti] + "-" + (self.configName() or "Default") + "-diglot" + fpath[doti:] + fndict[pgid][1]
+                    fpath = fpath[:doti] + "-" + (self.cfgid or "Default") + "-diglot" + fpath[doti:] + fndict[pgid][1]
                 else:
                     if self.get("r_book") == "module":
                         modname = os.path.basename(self.moduleFile)
                         doti = modname.rfind(".")
-                        fpath = os.path.join(self.working_dir, modname[:doti] + "-flat" + modname[doti:])
+                        fpath = os.path.join(self.project.printPath(self.cfgid), modname[:doti] + "-flat" + modname[doti:])
                     else:
-                        fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
+                        fpath = fpath[:doti] + "-" + (self.cfgid or "Default") + fpath[doti:] + fndict[pgid][1]
             if pgid == "scroll_AdjList":
                 ibtn.set_tooltip_text(self.adjListTooltip)
                 ibtn.set_sensitive(True)
@@ -2448,7 +2407,7 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
-            fpath = os.path.join(self.working_dir, self.baseTeXPDFnames()[0])+fndict[pgid][1]
+            fpath = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0])+fndict[pgid][1]
             self.builder.get_object("c_autoSave").set_sensitive(False)
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
             self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
@@ -2628,7 +2587,7 @@ class GtkViewModel(ViewModel):
         if pgid == "scroll_AdjList":
             bk = self.get("ecb_examineBook")
             fname = self.getAdjListFilename(bk, ext=".adj")
-            fdir= os.path.join(self.configPath(self.configName()), "AdjLists")
+            fdir= os.path.join(self.project.srcPath(self.cfgid), "AdjLists")
             os.makedirs(fdir, exist_ok=True)
             fpath = os.path.join(fdir, fname)
         elif pgid == "scroll_FrontMatter":
@@ -3214,23 +3173,23 @@ class GtkViewModel(ViewModel):
         prjCtr = len(prjs)
         cols = int(prjCtr**0.6) if prjCtr <= 70 else 5
         for i, b in enumerate(prjs):
-            if self.prjid == b[0]:
+            if self.prorject.guid == b[1]:
                 tbox = Gtk.Label()
                 tbox.set_text('<span background="black" foreground="white" font-weight="bold">  {} </span>'.format(b[0]))
                 tbox.set_use_markup(True)
             else:
                 tbox = Gtk.ToggleButton(b[0])
             tbox.show()
-            self.alltoggles.append(tbox)
+            self.alltoggles.append((tbox, b[1]))
             mps_grid.attach(tbox, i % cols, i // cols, 1, 1)
         response = dialog.run()
         projlist = []
         if response == Gtk.ResponseType.OK:
-            cfg = self.configName()
-            for b in self.alltoggles:
+            cfg = self.cfgid
+            for b, g in self.alltoggles:
                 try:
                     if b.get_active():
-                        projlist.append(b.get_label())
+                        projlist.append(self.prjTree.getProject(g))
                 except AttributeError:
                     pass
             for p in projlist:
@@ -3241,7 +3200,7 @@ class GtkViewModel(ViewModel):
                         self.applyConfig(cfg, cfg, action=1, newprj=p)
                     elif self.get("r_copyConfig") == "overwrite":
                         self.applyConfig(cfg, cfg, action=0, newprj=p)
-                    with open(os.path.join(self.settings_dir, p, "unique.id"), "w") as outf:
+                    with open(os.path.join(p.path, "unique.id"), "w") as outf:
                         outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
                 except FileNotFoundError as e:
                     self.doError(_("File not found"), str(e))
@@ -3391,14 +3350,14 @@ class GtkViewModel(ViewModel):
             self.set("c_colorfonts", True)
             self.doStatus(_("'Enable Colored Text' has now been turned on. (See Fonts+Script tab for details.)"))
 
-    def configName(self):
+    def getConfigName(self):
         cfg = self.pendingConfig or self.get("ecb_savedConfig") or ""
         cfgName = re.sub('[^-a-zA-Z0-9_()]+', '', cfg)
         if self.pendingConfig is None:
             self.set("ecb_savedConfig", cfgName)
         else:
             self.pendingConfig = cfgName
-        return cfgName or super().configName()
+        return cfgName or self.cfgid
 
     def onSaveAsNewConfig(self, w):
         self.set("t_configName", "")
@@ -3437,9 +3396,13 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         # lockBtn.set_label("Lock")
         lockBtn.set_sensitive(False)
-        prjid = self.get("fcb_project")
+        w = self.builder.get_object("fcb_project")
+        m = w.get_model()
+        aid = w.get_active_iter()
+        prjid = m.get_value(aid, 0)
+        guid = m.get_value(aid, 1)
         cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
-        self.updateProjectSettings(prjid, saveCurrConfig=True, configName=cfgname)
+        self.updateProjectSettings(prjid, guid, saveCurrConfig=True, configName=cfgname)
         self.updateSavedConfigList()
         for o in _olst:
             self.builder.get_object(o).set_sensitive(True)
@@ -3458,35 +3421,36 @@ class GtkViewModel(ViewModel):
         self.checkFontsMissing()
 
     def updatePrjLinks(self):
-        if self.settings_dir != None and self.prjid != None:
+        if self.project is not None:
             self.set("lb_ptxprintdir", '<a href="{}">{}</a>'.format(pt_bindir(), pt_bindir()))
 
-            projdir = os.path.join(self.settings_dir, self.prjid)
+            projdir = self.project.path
             self.set("lb_prjdir", '<a href="{}">{}</a>'.format(projdir, projdir))
 
-            stngdir = self.configPath(cfgname=self.configName()) or ""
+            stngdir = self.project.srcPath(self.cfgid) or ""
             self.set("lb_settings_dir", '<a href="{}">{}</a>'.format(stngdir, stngdir))
 
-            outdir =  self.working_dir.rstrip(self.configName()) or "" if self.working_dir is not None else ""
+            tmp = self.project.printPath(self.cfgid)
+            outdir = tmp.rstrip(self.cfgid) or "" if tmp is not None else ""
             self.set("lb_working_dir", '<a href="{}">{}</a>'.format(outdir, outdir))
             
-    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=None):
-        if prjid == self.prjid and configName == self.configId:
+    def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, readConfig=None):
+        if prjid == getattr(self.project, 'prjid', None) and configName == self.cfgid:
             return True
         self.picListView.clear()
         if self.picinfos is not None:
             self.picinfos.clear()
-        if not super(GtkViewModel, self).updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig, configName=configName, readConfig=readConfig):
+        if not super(GtkViewModel, self).updateProjectSettings(prjid, guid, saveCurrConfig=saveCurrConfig, configName=configName, readConfig=readConfig):
             for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR']:
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
-        if self.prjid:
+        if self.project.prjid:
             self.updatePrjLinks()
-            self.userconfig.set("init", "project", self.prjid)
+            self.userconfig.set("init", "project", self.project.prjid)
             if getattr(self, 'configId', None) is not None:
                 self.userconfig.set("init", "config", self.configId)
                 if not self.userconfig.has_section("projects"):
                     self.userconfig.add_section("projects")
-                self.userconfig.set('projects', self.prjid, self.configId)
+                self.userconfig.set('projects', self.project.prjid, self.cfgid)
         books = self.getBooks()
         if self.get("r_book") in ("single", "multiple") and (books is None or not len(books)):
             books = self.getAllBooks()
@@ -3514,8 +3478,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(0)
 
     def enableTXLoption(self):
-        txlpath = os.path.join(self.settings_dir, self.prjid, 
-                               "pluginData", "Transcelerator", "Transcelerator")
+        txlpath = os.path.join(self.project.path, "pluginData", "Transcelerator", "Transcelerator")
         w = "c_txlQuestionsInclude"
         if os.path.exists(txlpath):
             self.builder.get_object(w).set_sensitive(True)
@@ -3525,7 +3488,7 @@ class GtkViewModel(ViewModel):
 
     def doConfigNameChange(self, w):
         lockBtn = self.builder.get_object("btn_lockunlock")
-        isDefault = self.configName() == "Default"
+        isDefault = self.cfgid == "Default"
         lockBtn.set_sensitive(not isDefault)
         self.builder.get_object("btn_deleteConfig").set_visible(not isDefault)
         self.builder.get_object("btn_resetDefaults").set_visible(isDefault)
@@ -3534,15 +3497,16 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)
+        configName = self.getConfigName()
         if len(self.get("ecb_savedConfig")):
-            if self.configName() != "Default":
+            if configName != "Default":
                 lockBtn.set_sensitive(True)
         else:
             # self.builder.get_object("t_configNotes").set_text("") # Why are we doing this? (it often wipes it out!)
             lockBtn.set_sensitive(False)
-        cpath = self.configPath(cfgname=self.configName(), makePath=False)
+        cpath = self.project.srcPath(configName) if self.project is not None else None
         if cpath is not None and os.path.exists(cpath):
-            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName(), readConfig=True) # False means DON'T Save!
+            self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=False, configName=configName, readConfig=True) # False means DON'T Save!
             self.updateDialogTitle()
 
     def onConfigNameChanged(self, btn, *a):
@@ -3557,7 +3521,7 @@ class GtkViewModel(ViewModel):
         msg = ""
         cfg = self.get("t_configName")
         cleanCfg = re.sub('[^-a-zA-Z0-9_()]+', '', cfg)
-        cpath = self.configPath(cfgname=cleanCfg, makePath=False)
+        cpath = self.project.srcPath(cleanCfg)
         if cfg != cleanCfg:
             msg = _("Do not use spaces or special characters")
         elif not len(cfg):
@@ -3618,20 +3582,17 @@ class GtkViewModel(ViewModel):
 
     def _locFile(self, file2edit, loc, fallback=False):
         fpath = None
-        self.prjdir = os.path.join(self.settings_dir, self.prjid)
         if loc == "wrk":
-            fpath = os.path.join(self.working_dir, file2edit)
+            fpath = os.path.join(self.project.printPath(self.cfgid), file2edit)
         elif loc == "prj":
-            fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
+            fpath = os.path.join(self.project.path, file2edit)
         elif loc == "cfg":
-            cfgname = self.configName()
-            fpath = os.path.join(self.configPath(cfgname), file2edit)
-            if fallback and not os.path.exists(fpath):
-                fpath = os.path.join(self.configPath(""), file2edit)
+            cfgname = self.cfgid
+            fpath = os.path.join(self.project.srcPath(cfgname), file2edit)
         elif loc == "dig":
-            digprj = self.get("fcb_diglotSecProject")
+            digprj = self._getProject("fcb_diglotSecProject")
             currdigcfg = self.get("ecb_diglotSecConfig")
-            fpath = os.path.join(self.settings_dir, digprj, "shared", "ptxprint", currdigcfg, file2edit)
+            fpath = os.path.join(digprj.srcPath(currdigcfg), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
         return fpath
@@ -3797,19 +3758,19 @@ class GtkViewModel(ViewModel):
             self.builder.get_object('l_Settings1').set_label(os.path.basename(self.moduleFile))
         
     def onEditModsTeX(self, btn):
-        cfgname = self.configName()
+        cfgname = self.cfgid
         self._editProcFile("ptxprint-mods.tex", "cfg",
             intro=_(_("""% This is the .tex file specific for the {} project used by PTXprint.
 % Saved Configuration name: {}
-""").format(self.prjid, cfgname)))
+""").format(self.project.prjid, cfgname)))
         self.onRefreshViewerTextClicked(None)
 
     def onEditPreModsTeX(self, btn):
-        cfgname = self.configName()
+        cfgname = self.cfgid
         self._editProcFile("ptxprint-premods.tex", "cfg",
             intro=_(_("""% This is the preprocessing .tex file specific for the {} project used by PTXprint.
 % Saved Configuration name: {}
-""").format(self.prjid, cfgname)))
+""").format(self.project.prjid, cfgname)))
         self.onRefreshViewerTextClicked(None)
 
     def onEditCustomSty(self, btn):
@@ -3829,7 +3790,7 @@ class GtkViewModel(ViewModel):
 
     def onChangesFileClicked(self, btn):
         self.onExtraFileClicked(btn)
-        cfile = os.path.join(self.configPath(self.configName()), "changes.txt")
+        cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
         if not os.path.exists(cfile):
             with open(cfile, "w", encoding="utf-8") as outf:
                 outf.write(chgsHeader)
@@ -3844,7 +3805,7 @@ class GtkViewModel(ViewModel):
                            "All Files": {"pattern": "*"}},
                            # "TECkit Mappings": {"pattern": ["*.map", "*.tec"]},
                            # "CC Tables": {"pattern": "*.cct"},
-                multiple = False, basedir=self.working_dir)
+                multiple = False, basedir=self.project.printPath(self.cfgid))
         if customScript is not None:
             self.customScript = customScript[0]
             self.builder.get_object("c_processScript").set_active(True)
@@ -3859,7 +3820,7 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(c).set_sensitive(False)
 
     def onSelectXrFileClicked(self, btn_selectXrFile):
-        prjdir = os.path.join(self.settings_dir, self.prjid)
+        prjdir = self.project.path
         customXRfile = self.fileChooser("Select a Custom Cross-Reference file", 
                 filters = {"Paratext XRF Files": {"patterns": "*.xrf" , "mime": "text/plain", "default": True},
                            "Extended XRF files": {"pattern": "*.xre"},
@@ -3876,12 +3837,12 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("r_xrSource_custom").set_active(False)
 
     def onCreateZipArchiveClicked(self, btn_createZipArchive):
-        cfname = self.configName()
-        zfname = self.prjid+("-"+cfname if cfname else "")+"PTXprintArchive.zip"
+        cfname = self.cfgid
+        zfname = self.project.prjid+("-"+cfname if cfname else "")+"PTXprintArchive.zip"
         archiveZipFile = self.fileChooser(_("Select the location and name for the Archive file"),
                 filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
                 multiple=False, folder=False, save=True,
-                basedir=os.path.join(self.working_dir, '..'), defaultSaveName=zfname)
+                basedir=os.path.join(self.project.printPath(self.cfgid), '..'), defaultSaveName=zfname)
         if archiveZipFile is not None:
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
             try:
@@ -3895,10 +3856,10 @@ class GtkViewModel(ViewModel):
             btn_createZipArchive.set_tooltip_text("No Archive File Created")
 
     def onSelectModuleClicked(self, btn):
-        prjdir = os.path.join(self.settings_dir, self.prjid)
+        prjdir = self.project.path
         tgtfldr = os.path.join(prjdir, "Modules")
         if not os.path.exists(tgtfldr):
-            tgtfldr = os.path.join(self.settings_dir, "_Modules")
+            tgtfldr = os.path.join(prjdir, "_Modules")
         moduleFile = self.fileChooser("Select a Paratext Module", 
                 filters = {"Modules": {"patterns": ["*.sfm"] , "mime": "text/plain", "default": True},
                            "All Files": {"pattern": "*"}},
@@ -4042,8 +4003,8 @@ class GtkViewModel(ViewModel):
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
         self.setImportButtonOKsensitivity(None)
-        self.set("ecb_targetProject", self.prjid)
-        self.set("ecb_targetConfig", self.configName())
+        self.set("ecb_targetProject", self.project.prjid)
+        self.set("ecb_targetConfig", self.cfgid)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             zipinf = None
@@ -4061,7 +4022,8 @@ class GtkViewModel(ViewModel):
                 else:
                     zipdata = None
             elif self.get("fcb_impProject"):
-                dpath = os.path.join(self.settings_dir, self.get("fcb_impProject"), "shared", "ptxprint", self.get("ecb_impConfig", "Default"))
+                impprj = self._getProject("fcb_impProject")
+                dpath = os.path.join(impprj.srcPath(self.get("ecb_impConfig", "Default")))
                 zipdata = UnzipDir(dpath)
             else:
                 zipdata = None
@@ -4079,7 +4041,7 @@ class GtkViewModel(ViewModel):
                     tp = self.get('ecb_targetProject', None)
                     tc = self.get('ecb_targetConfig',  None)
                     self.importConfig(zipdata, prefix=prefix, tgtPrj=tp, tgtCfg=tc)
-                    if tp == self.prjid:
+                    if tp == self.project.prjid:
                         self.updateAllConfigLists()
                     statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
                 zipdata.close()
@@ -4098,7 +4060,7 @@ class GtkViewModel(ViewModel):
     def onSelectPDForZIPfileToImport(self, btn_importPDF):
         pdfORzipFile = self.fileChooser(_("Select a PDF (or ZIP archive) to import the settings from"),
                 filters = {"PDF/ZIP files": {"patterns": ["*.pdf", "*.zip"], "mime": "application/pdf", "default": True}},
-                multiple = False, basedir=os.path.join(self.working_dir, ".."))
+                multiple = False, basedir=os.path.join(self.project.printPath(self.cfgid), ".."))
 
         if pdfORzipFile == None or not len(pdfORzipFile) or str(pdfORzipFile[0]) == "None":
             self.set("r_impSource", "config")
@@ -4124,13 +4086,11 @@ class GtkViewModel(ViewModel):
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
-                os.path.join(self.settings_dir, self.prjid), 
-                "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs)
+                os.path.join(self.project.path, "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs))
 
     def onBackPDFsClicked(self, btn_selectBackPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for BACK matter"), False, 
-                os.path.join(self.settings_dir, self.prjid), 
-                "inclBackMatter", "BackPDFs", btn_selectBackPDFs)
+                os.path.join(self.project.path, "inclBackMatter", "BackPDFs", btn_selectBackPDFs))
 
     def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
         self._onPDFClicked(_("Select Watermark PDF file"), True,
@@ -4159,8 +4119,7 @@ class GtkViewModel(ViewModel):
 
     def onSelectDiffPDFclicked(self, btn_selectDiffPDF):
         self._onPDFClicked(_("Select a PDF file to compare with"), True,
-                os.path.join(self.working_dir),
-                "diffPDF", "diffPDF", btn_selectDiffPDF, False)
+                os.path.join(self.project.printPath(None), "diffPDF", "diffPDF", btn_selectDiffPDF, False))
         if self.get("lb_diffPDF") == "":
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
             self.makeLabelBold("l_selectDiffPDF", False)
@@ -4286,7 +4245,7 @@ class GtkViewModel(ViewModel):
             oprjid = self.get("fcb_diglotSecProject")
             oconfig = self.get("ecb_diglotSecConfig")
             if oprjid is not None and oconfig is not None:
-                self.otherDiglot = (self.prjid, self.configName())
+                self.otherDiglot = (self.project.prjid, self.cfgid)
                 btn.set_label(_("Save & Return to\nDiglot Project"))
             self.builder.get_object("b_print2ndDiglotText").set_visible(True)
             self.changeLabel("b_print", _("Return to Primary"))
@@ -4353,8 +4312,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_addSyllableBasedHyphens").set_sensitive(sylbrk)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            prjdir = os.path.join(self.settings_dir, self.prjid)
-            self.hyphenation = Hyphenation.fromPTXFile(self, self.prjid, prjdir,
+            prjdir = self.project.path
+            self.hyphenation = Hyphenation.fromPTXFile(self, self.project.prjid, prjdir,
                                             inbooks=self.get("c_hyphenLimitBooks"),
                                             addsyls=self.get("c_addSyllableBasedHyphens"),
                                             strict=self.get("c_hyphenApprovedWords"),
@@ -4689,7 +4648,7 @@ class GtkViewModel(ViewModel):
         self.styleEditor.refreshKey()
 
     def onPlAddClicked(self, btn):
-        picroot = os.path.join(self.settings_dir, self.prjid)
+        picroot = self.project.path
         for a in ("figures", "Figures", "FIGURES"):
             picdir = os.path.join(picroot, a)
             if os.path.exists(picdir):
@@ -4799,6 +4758,29 @@ class GtkViewModel(ViewModel):
             else:
                 self.builder.get_object("col_{}".format(w)).set_visible(False)
 
+    def _expandDBLBundle(self, prj, dblfile):
+        tdir = self.prjTree.findWriteable()
+        if UnpackDBL(dblfile, prj, tdir):
+            pjct = self.prjTree.addProject(prj, tdir, None)
+            v = [getattr(pjct, a) for a in ['prjid', 'guid']]
+            # add prj to ls_project before selecting it.
+            for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
+                lsp = self.builder.get_object(a)
+                allprojects = [x[0] for x in lsp]
+                for i, p in enumerate(allprojects):
+                    if prj.casefold() > p.casefold():
+                        lsp.insert(i, v)
+                        break
+                else:
+                    lsp.append(v)
+            ui = self.uilevel
+            self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
+            self.set("fcb_project", prj)
+            self.set_uiChangeLevel(ui)
+        else:
+            self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
+                                              "Or contact the DBL bundle provider.")
+
     def onDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")
         response = dialog.run()
@@ -4806,24 +4788,7 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK and self.builder.get_object("btn_locateDBLbundle").get_sensitive:
             prj = self.get("t_DBLprojName")
             if prj != "":
-                if UnpackDBL(self.DBLfile, prj, self.settings_dir):
-                    # add prj to ls_project before selecting it.
-                    for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
-                        lsp = self.builder.get_object(a)
-                        allprojects = [x[0] for x in lsp]
-                        for i, p in enumerate(allprojects):
-                            if prj.casefold() > p.casefold():
-                                lsp.insert(i, [prj])
-                                break
-                        else:
-                            lsp.append([prj])
-                    ui = self.uilevel
-                    self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
-                    self.set("fcb_project", prj)
-                    self.set_uiChangeLevel(ui)
-                else:
-                    self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
-                                                      "Or contact the DBL bundle provider.")
+                self._expandDBLBundle(prj, self.DBLfile)
 
     def onImageSetClicked(self, btn):
         dialog = self.builder.get_object("dlg_getImageSet")
@@ -4849,7 +4814,7 @@ class GtkViewModel(ViewModel):
                 self.onHideStatusMsgClicked(None)
             else:
                 zfile = self.get("btn_locateImageSet")
-            imgsetname = unpackImageset(zfile, os.path.join(self.settings_dir, self.prjid))
+            imgsetname = unpackImageset(zfile, self.project.path)
             if imgsetname is not None and imgsetname != "":
                 uddir = extraDataDir("imagesets", imgsetname, create=False)
                 if not self.displayReadmeFile(imgsetname, uddir):
@@ -4877,7 +4842,7 @@ class GtkViewModel(ViewModel):
                     self.doStatus(_("Installed the downloaded Image Set: {}".format(imgsetname)))
                     self.onGetPicturesClicked(None)
             elif imgsetname == "":
-                f = os.path.join(self.settings_dir, self.prjid, "local","figures")
+                f = os.path.join(self.project.path, "local","figures")
                 self.doStatus(_("Unzipped images to {}".format(f)))
                 pass
             else:
@@ -4911,7 +4876,7 @@ class GtkViewModel(ViewModel):
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
                 filters = {"DBL Bundles": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
                            "All Files": {"pattern": "*"}},
-                multiple = False, basedir=os.path.join(self.settings_dir, "Bundles"))
+                multiple = False, basedir=os.path.join(self.project.path, "Bundles"))
         if DBLfile is not None:
             # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
             self.DBLfile = DBLfile[0]
@@ -4928,7 +4893,7 @@ class GtkViewModel(ViewModel):
         imgsetfile = self.fileChooser("Select an Image Set file", 
                 filters = {"Image Sets": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
                            "All Files": {"pattern": "*"}},
-                multiple = False, basedir=os.path.join(self.settings_dir, "Bundles"))
+                multiple = False, basedir=os.path.join(self.project.path, "Bundles"))
         if imgsetfile is not None:
             # imgsetfile = [x.relative_to(prjdir) for x in imgsetfile]
             self.imgsetfile = imgsetfile[0]
@@ -5144,7 +5109,7 @@ class GtkViewModel(ViewModel):
             return
         self.isDiglotMeasuring = True
         btn.set_active(True)
-        xdvname = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".xdv")
+        xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         def score(x):
             self.set("s_diglotPriFraction", x*100)
             runjob = self.callback(self, maxruns=1, noview=True)
@@ -5192,7 +5157,7 @@ class GtkViewModel(ViewModel):
                 self.set('ecb_booklist', bls)
             self.doStatus(_("Strong's Index generated in: {}").format(bkid))
             if self.get("c_strongsOpenIndex"):
-                fpath = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
+                fpath = os.path.join(self.project.path, self.getBookFilename(bkid))
                 if os.path.exists(fpath):
                     if sys.platform == "win32":
                         os.startfile(fpath)
@@ -5610,7 +5575,7 @@ class GtkViewModel(ViewModel):
         self.styleEditor.sidebarImageDialog(isbg)
         
     def onSBimageFileChooser(self, btn):
-        picpath = os.path.join(self.settings_dir, self.prjid)
+        picpath = self.project.path
         def update_preview(dialog):
             picpath = dialog.get_preview_filename()
             try:
@@ -5625,7 +5590,7 @@ class GtkViewModel(ViewModel):
         self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
 
     def onCoverSelectImageClicked(self, btn):
-        picpath = os.path.join(self.settings_dir, self.prjid)
+        picpath = oself.project.path
         def update_preview(dialog):
             picpath = dialog.get_preview_filename()
             try:
@@ -5641,8 +5606,8 @@ class GtkViewModel(ViewModel):
 
     def onDeleteTempFolders(self, btn):
         notDeleted = []
-        for p in self.getConfigList(self.prjid):
-            path2del = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", p)
+        for p in self.project.configs.keys():
+            path2del = os.path.join(self.project.path.printPath(p))
             if os.path.exists(path2del):
                 try:
                     rmtree(path2del)
@@ -5862,7 +5827,7 @@ class GtkViewModel(ViewModel):
         self.openURL(url)
         
     def getUserName(self):
-        unfpath = os.path.join(self.settings_dir, "localUsers.txt")
+        unfpath = self.prjTree.findFile("localUsers.txt")
         ptregname = ""
         if os.path.exists(unfpath):
             with open(unfpath, 'r') as file:
@@ -5988,7 +5953,7 @@ Thank you,
     def getPageCount(self):
         if self.getBooks() == []:
             return
-        xdvname = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".xdv")
+        xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         if os.path.exists(xdvname):
             return xdvigetpages(xdvname)
         else:

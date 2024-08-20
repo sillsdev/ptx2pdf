@@ -64,12 +64,12 @@ class PicChecks:
                 if n.startswith(prefix):
                     cfg['DEFAULT'][n] = v
 
-    def init(self, basepath, configid):
-        if basepath is None or configid is None:
+    def init(self, basepath):
+        if basepath is None:
             return
         self.cfgShared.read(os.path.join(basepath, self.sharedfname), encoding="utf-8")
         self._init_default(self.cfgShared, "pic")
-        self.cfgProject.read(os.path.join(basepath, configid, self.pubfname), encoding="utf-8")
+        self.cfgProject.read(os.path.join(basepath, self.parent.cfgid, self.pubfname), encoding="utf-8")
         self._init_default(self.cfgProject, "pub")
 
     def writeCfg(self, basepath, configid):
@@ -217,12 +217,10 @@ class PicInfo(dict):
         super().clear()
         if model is not None:
             self.model = model
-            self.prj = model.prjid
-            if self.model.prjid is None:
-                self.basedir = self.model.settings_dir
-            else:
-                self.basedir = os.path.join(self.model.settings_dir, model.prjid)
-            self.config = model.configName()
+            if model.project is not None:
+                self.prj = model.project.prjid
+                self.basedir = self.model.project.path
+                self.config = model.cfgid
         self.loaded = False
         self.srchlist = []
 
@@ -722,9 +720,8 @@ class PicInfo(dict):
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False, sync=False):
     newpics = PicInfo(model)
-    cfg = model.configName()
-    newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
-                                      'ptxprint', cfg, "{}-{}.piclist".format(model.prjid, cfg)))
+    cfg = model.cfgid
+    newpics.read_piclist(os.path.join(model.project.srcPath(cfg), "{}-{}.piclist".format(model.project.prjid, cfg)))
     delpics = set()
     if doclear:
         picinfos.clear()
