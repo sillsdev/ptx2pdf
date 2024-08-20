@@ -254,15 +254,53 @@
 
 \def\Dulsp@ce{\leaders\vtop{\hbox to \DoubleUnderlineSpaceQuantum{\hss}\kern\dimen1\hrule height\UnderlineThickness\kern\DoubleUnderlineSep\hrule height\UnderlineThickness}\hskip \fontdimen2\font plus \fontdimen3\font minus\fontdimen4\font}
 \def\ulsp@ce{\leaders\hrule depth\dimen0 height-\dimen1\hskip \fontdimen2\font plus \fontdimen3\font minus\fontdimen4\font}
+\def\Culsp@ce{\cleaders\vtop{\lineskip=0pt\lineskiplimit=100pt\hbox to \wd9{\hss}\kern\dimen1\copy 9}\hskip \fontdimen2\font plus \fontdimen3\font minus\fontdimen4\font}
 \def\@do@Sunderline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
-\def\@do@Dunderline{\let\@@@do\@do@Dunderline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness\kern\DoubleUnderlineSep\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
+\def\@do@Cunderline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox0}\dimen2=\dp0\dimen5=\wd0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x\hbox{\vtop{\lineskip=0pt\lineskiplimit=100pt\box0\kern-\dimen2\kern\dimen1\hbox to \dimen5{\Cle@dertype\copy9\hskip 0pt plus 1fil}}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
+\def\@do@Dunderline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness\kern\DoubleUnderlineSep\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
 \let\@do@underline\@do@Sunderline
+\def\@s@tstringunderline#1"#2\E{%
+    \setbox9\hbox{\XeTeXuseglyphmetrics=1 \s@tfont{underline}{underline+\styst@k}#1}%
+}
+\def\s@tcharunderline#1#2\E{%
+  \if "#1\relax\@s@tstringunderline #2"\E
+  \else
+    \edef\@gid{\the\XeTeXcharglyph`#1}%
+    \setbox9\hbox{\XeTeXuseglyphmetrics=1 \s@tfont{underline}{underline+\styst@k}%
+      \getp@ram{spacebeside}{underline}{underline+\styst@k}%
+      \ifx\p@ram\relax
+        \dimen1=0pt
+      \else     
+        \dimen1=\fontcharwd\font `#1 
+        \dimen1=\p@ram\dimen1
+        \global\let\Cle@dertype\cleaders
+      \fi
+      \dimen2=\dimen1
+      \advance\dimen1 -\XeTeXglyphbounds1 \@gid
+      \advance\dimen2 -\XeTeXglyphbounds3 \@gid
+      \trace{sa}{Glyph \@gid \space has bounds \XeTeXglyphbounds1 \@gid , \XeTeXglyphbounds3 \@gid}%
+      \kern \dimen1 #1\kern \dimen2}%
+  \fi
+}
 \def\d@underline#1{\showboxbreadth=99
+  \ifx\@do@underline\@do@Cunderline
+    \tracingassigns=1
+    \global\let\Cle@dertype\xleaders
+    \x@\s@tcharunderline\ulcp@ram\E
+    \getp@ram{raise}{underline}{underline+\styst@k}\ifx\p@ram\relax\else\ifx\p@ram\empty\else
+      \setbox9\hbox{\vbox{\kern-\p@ram\box9\kern\p@ram}}%
+    \fi\fi
+    \tracingassigns=0
+  \fi
   \ifUnderlineSpaces
     \ifx\@do@underline\@do@Dunderline
       \let\@ulsp@ce\Dulsp@ce
     \else
-      \let\@ulsp@ce\ulsp@ce
+      \ifx\@do@underline\@do@Cunderline
+        \let\@ulsp@ce\Culsp@ce
+      \else
+        \let\@ulsp@ce\ulsp@ce
+      \fi
     \fi
   \else
     \let\@ulsp@ce\space
@@ -365,6 +403,10 @@
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
      \getp@ram{underline}{#1}{#2}%
      \ifx\p@ram\tru@\b@xedstyletrue\global\let\ulp@ram\p@ram
+       \global\let\ulcp@ram\relax
+       \getp@ram{underchar}{#1}{#2}\ifx\p@ram\relax\else\ifx\p@ram\empty\else
+         \global\let\ulcp@ram\p@ram
+       \fi\fi
      \else
        \ifx\p@ram\tw@\b@xedstyletrue\global\let\ulp@ram\p@ram
        \else
@@ -395,9 +437,17 @@
     \fi
     \d@shadow{#1}{\shdwp@ram}{\shdwcolp@ram}{\outlnp@ram}{\outlncolp@ram}{\ifx\p@rsedcol\relax\else\p@rsedcol\fi}%
   \fi
-  \ifx\ulp@ram\tru@ \let\@do@underline\@do@Sunderline\d@underline{#1}\else
+  \ifx\ulp@ram\tru@ 
+    \ifx\ulcp@ram\relax
+      \let\@do@underline\@do@Sunderline\d@underline{#1}%
+      \message{Single underline for \newch@rstyle}%
+    \else
+      \message{Character underline for \newch@rstyle}%
+      \let\@do@underline\@do@Cunderline\d@underline{#1}%
+    \fi
+  \else
     \ifx\ulp@ram\tw@ \let\@do@underline\@do@Dunderline\d@underline{#1}%
-    \message{Double underline  for \newch@rstyle}%
+      \message{Double underline for \newch@rstyle}%
   \fi\fi
   \ifx\char@background\relax\else\d@background{\char@background}{#1}\fi
 }

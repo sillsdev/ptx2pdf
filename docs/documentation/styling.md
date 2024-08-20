@@ -142,6 +142,53 @@ line-fragments. These may look ugly on PDF viewers, but hopefully print OK.
 \UnderlineSpacetrie % or false 
 ```
 
+## Underlining with a character
+In very odd circumstances, it might be necessary to 'underline' with a
+character, or perhaps strike through a piece of text with Xes, etc. to highlight errors.
+
+```
+\Marker ul
+\Endmarker ul*
+\Underline 
+\UnderChar ∿
+\StyleType Character
+
+\Marker ul2
+\Endmarker ul*
+\Underline 
+\UnderChar "∿-"
+\StyleType Character
+
+\Marker underline+ul
+\FontSize 3
+\FontName DejaVu Sans
+\SpaceBeside -.125
+\Color xff0000
+%Strike through text with e.g.: \Raise 1ex
+```
+
+In the above example, the marker ul 'underlines' with the character U+223F Sine
+Wave, and ul2 'underlines' with the string of U+223F and a normal hypen/minus character.
+The relevant font for the characters are set by the underline+ul complex parmeter (or
+underline+ul2, respectively), which sets the font and colour parameters. 
+`\UnderlineLower` position applies, however if, for example, the intention is
+to put Xes through the 'underlined' word, the `\Raise` parameter can be used
+(on the underline+... styling) to accomplish this.
+
+The unquoted form is only applicable to single characters, and the code has been written to perform two 
+special features for such characters: firsly, the font is queried about the bounds of
+the inked portion of the glyph (difference between the ink and the normal space
+around the letter), and horizontal spacing is removed. Secondly, words are
+underlined with the rigid positioning `\cleaders` (centred leaders) command, rather
+than the `\xleaders` option (expanded leaders).  `\cleaders` fills any unused space
+at the end, whereas `\xleaders` spreads the segments out.  Assuming the font information is 
+correct, this means that ink of the underlining characters will touch one another. If some overlap is 
+required, such as to make the 'sine wave' join up, this can be accomplished with `\SpaceBeside`  parameter.
+Unlike normal use (where scaling is to the indentation unit, the base unit for this is the width of the character).
+
+The quoted form currently ignores `\SpaceBeside`, as the relative positioning
+of the characters should be expected to  change from word to word anyway.
+
 ## Styling of ranged milestones with and without attributes
 Milestones such as `\qt-s \* ... \qt-e \*` define a range of text that cuts
 across normal boundaries of paragraphs or character styles. Attributes of milestones

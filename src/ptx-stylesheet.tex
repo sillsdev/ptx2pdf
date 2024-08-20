@@ -144,6 +144,7 @@
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
 \def \Underline      #1\relax{\deftrip@ram{underline}{#1}}
 \let \underline\Underline
+\def \UnderChar      #1\relax{\edefp@ram{underchar}{\detokenize{#1}}}
 \def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
