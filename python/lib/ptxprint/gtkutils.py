@@ -4,19 +4,25 @@ from gi.repository import Gtk, Gdk
 from ptxprint.utils import _, f2s
 from PIL import Image
 
-def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
+def _getcomboval(w, sub):
+    model = w.get_model()
+    i = w.get_active()
+    if i < 0:
+        e = w.get_child()
+        if e is not None and isinstance(e, Gtk.Entry):
+            return e.get_text()
+    elif model is not None:
+        return model[i][w.get_entry_text_column() if sub < 0 else sub]
+
+def getWidgetVal(wid, w, default=None, asstr=False, sub=-1):
     v = None
     if wid.startswith("ecb_"):
-        model = w.get_model()
-        i = w.get_active()
-        if i < 0:
-            e = w.get_child()
-            if e is not None and isinstance(e, Gtk.Entry):
-                v = e.get_text()
-        elif model is not None:
-            v = model[i][sub]
+        v = _getcomboval(w, sub)
     elif wid.startswith("fcb_"):
-        v = w.get_active_id()
+        if sub < 0:
+            v = w.get_active_id()
+        else:
+            v = _getcomboval(w, sub)
     elif wid.startswith("t_"):
         v = w.get_text()
     elif wid.startswith("txbf_"):
@@ -43,20 +49,26 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         return default
     return v
 
-def setWidgetVal(wid, w, value, noui=False, useMarkup=False):
+def _setcomboval(w, value, sub):
+        model = w.get_model()
+        e = w.get_child()
+        for i, v in enumerate(model):
+            if v[w.get_entry_text_column() if sub < 0 else sub] == value:
+                w.set_active(i)
+                break
+        else:
+            if e is not None and isinstance(e, Gtk.Entry):
+                e.set_text(value)
+
+def setWidgetVal(wid, w, value, noui=False, useMarkup=False, sub=-1):
     try:
         if wid.startswith("ecb_"):
-            model = w.get_model()
-            e = w.get_child()
-            for i, v in enumerate(model):
-                if v[w.get_entry_text_column()] == value:
-                    w.set_active(i)
-                    break
-            else:
-                if e is not None and isinstance(e, Gtk.Entry):
-                    e.set_text(value)
+            _setcomboval(w, value, sub)
         elif wid.startswith("fcb_"):
-            w.set_active_id(value)
+            if sub < 0:
+                w.set_active_id(value)
+            else:
+                _setcomboval(w, value, sub)
         elif wid.startswith("t_"):
             w.set_text(value or "")
         elif wid.startswith("txbf_"):

@@ -1435,10 +1435,13 @@ settings for a similar project.</property>
     <columns>
       <!-- column-name digprojid -->
       <column type="gchararray"/>
+      <!-- column-name guid -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
-        <col id="0">Unknown</col>
+        <col id="0">unknown</col>
+        <col id="1" translatable="yes">00000</col>
       </row>
     </data>
   </object>
@@ -2125,10 +2128,13 @@ settings for a similar project.</property>
     <columns>
       <!-- column-name projid -->
       <column type="gchararray"/>
+      <!-- column-name guid -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0">Unknown</col>
+        <col id="1" translatable="yes">0000</col>
       </row>
     </data>
   </object>
@@ -2689,6 +2695,8 @@ settings for a similar project.</property>
   <object class="GtkListStore" id="ls_strongsfallbackprojects">
     <columns>
       <!-- column-name digprojid -->
+      <column type="gchararray"/>
+      <!-- column-name guid -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -3483,8 +3491,6 @@ Multiple Books:</property>
                                 <property name="halign">start</property>
                                 <property name="model">ls_projects</property>
                                 <property name="wrap-width">1</property>
-                                <property name="row-span-column">12</property>
-                                <property name="column-span-column">1</property>
                                 <property name="entry-text-column">0</property>
                                 <property name="id-column">0</property>
                                 <signal name="changed" handler="onProjectChange" swapped="no"/>

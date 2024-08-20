@@ -155,7 +155,7 @@ class TexModel:
     }
         # '|': 'pipe'
 
-    def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
+    def __init__(self, printer, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
@@ -173,10 +173,13 @@ class TexModel:
         self.usedfiles = {}
         self.tablespans = set()
         libpath = pycodedir()
+        path = printer.project.path
+        printpath = printer.project.printPath(printer.cfgid)
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "default_cmyk.icc").replace("\\","/"),
-                     "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/")}
+                     "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/"),
+                     "/ptxdocpath": printpath.replace("\\", "/")}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
@@ -186,8 +189,10 @@ class TexModel:
             self.update()
 
     def docdir(self):
-        base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
-        docdir = os.path.join(base, 'local', 'ptxprint', self.printer.configName())
+        #base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
+        base = self.dict["/ptxpath"]
+        docdir = self.dict["/ptxdocpath"]
+        logger.debug(f"TeX model basepaths: {base=}, {docdir=}")
         return docdir, base
 
     def update(self):
@@ -195,16 +200,15 @@ class TexModel:
         j = os.path.join
         rel = lambda x, y:saferelpath(x, y).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now
-        cpath = self.printer.configPath(self.printer.configName())
-        rcpath = self.printer.configPath("")
+        cpath = self.printer.project.srcPath(self.printer.cfgid)
         self.updatefields(ModelMap.keys())
-        self.dict['project/id'] = self.printer.prjid
+        self.dict['project/id'] = self.printer.project.prjid
         docdir, base = self.docdir()
         self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = rel(j(cpath, "AdjLists"), docdir).replace("\\","/") + "/"
         self.dict['project/triggers'] = rel(j(cpath, "triggers"), docdir).replace("\\","/") + "/"
-        self.dict['project/piclists'] = rel(j(self.printer.working_dir, "tmpPicLists"), docdir).replace("\\","/") + "/"
-        self.dict['config/name'] = self.printer.configId
+        self.dict['project/piclists'] = rel(j(self.printer.project.printPath(self.printer.cfgid), "tmpPicLists"), docdir).replace("\\","/") + "/"
+        self.dict['config/name'] = self.printer.cfgid
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.dict['/cfgrpath'] = rel(cpath, docdir)
         self.dict['/ptxprint_version'] = self.VersionStr
@@ -218,18 +222,14 @@ class TexModel:
         self.dict["project/picdir"] = rel(picdir, docdir).replace("\\","/")
         # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found
         fpath = j(cpath, "ptxprint-mods.tex")
-        if not os.path.exists(fpath):
-            fpath = j(rcpath, "ptxprint-mods.tex")
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
         fpath = j(cpath, "ptxprint-premods.tex")
-        if not os.path.exists(fpath):
-            fpath = j(rcpath, "ptxprint-premods.tex")
         self.dict['/premodspath'] = rel(fpath, docdir).replace("\\","/")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
         self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
                     / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']), dp=8)
-        self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
+        self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
         if self.dict["project/ifusemodssty"] == "":
@@ -241,8 +241,7 @@ class TexModel:
         self.dict["paper/pagegutter"] = "{:.2f}mm".format(Dimension(self.dict["paper/width"]).asunits("mm") \
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
         if self.dict["project/interlinear"] != "%":
-            self.interlinear = Interlinear(self.dict["project/interlang"],
-                                            os.path.join(self.dict["/ptxpath"], self.dict["project/id"]))
+            self.interlinear = Interlinear(self.dict["project/interlang"], self.dict["/ptxpath"])
         regfont = self.printer.get("bl_fontR")
         if regfont is not None:
             self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
@@ -733,7 +732,7 @@ class TexModel:
         if self.frontperiphs is None or not len(self.frontperiphs):
             self.frontperiphs = {}
             for a in ('FRT', 'INT'):
-                frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename(a))
+                frtfile = os.path.join(self.printer.project.path, self.printer.getBookFilename(a))
                 logger.debug(f"Trying periphs file {frtfile}")
                 if not os.path.exists(frtfile):
                     continue
@@ -793,7 +792,7 @@ class TexModel:
         intfname = self.printer.getBookFilename('INT')
         if intfname is None or not len(intfname):
             return
-        intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
+        intfile = os.path.join(self.printer.project.path, intfname)
         def addperiphid(m):
             if m.group(2).lower() in _periphids:
                 return m.group(1) + f'|id="{_periphids[m.group(2).lower()]}"\n'
@@ -885,10 +884,10 @@ class TexModel:
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
                 #cpath = self.printer.configPath(self.printer.configName())
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
-                self.changes = self.readChanges(os.path.join(printer.configPath(printer.configName()), 'changes.txt'), bk)
+                self.changes = self.readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk)
             else:
                 self.changes = []
-        draft = "-" + (printer.configName() or "draft")
+        draft = "-" + (printer.cfgid or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -1407,9 +1406,9 @@ class TexModel:
 
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes
-        prjid = self.dict['project/id']
-        prjdir = os.path.join(self.ptsettings.basedir, prjid)
-        fname = printer.getBookFilename("GLO", prjdir)
+        prjid = printer.project.prjid
+        prjdir = printer.project.path
+        fname = printer.getBookFilename("GLO", prjid)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
@@ -1429,7 +1428,8 @@ class TexModel:
         # Note for future debugging... the re.findall below works on the input, the localChanges rule below works after any changes.txt things have taken effect. Allow for random spaces.
         glopattern=r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)"
         prjid = self.dict['project/id']
-        prjdir = os.path.join(self.dict["/ptxpath"], prjid)
+        prjdir = self.dict["/ptxpath"]
+        logger.debug(f"Filter Glossary for {prjid=} {prjdir=}")
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
                 fname = printer.getBookFilename(bk, prjid)
@@ -1438,7 +1438,7 @@ class TexModel:
                     with universalopen(fpath) as inf:
                         sfmtxt = inf.read()
                     glossentries += re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", sfmtxt)
-        fname = printer.getBookFilename("GLO", prjdir)
+        fname = printer.getBookFilename("GLO", prjid)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
@@ -1638,7 +1638,7 @@ class TexModel:
             localfile = None
             xrsrc = self.dict['notes/xrlistsource']
             if xrsrc == "strongs_proj":
-                localfile = os.path.join(self.printer.settings_dir, self.printer.prjid, "TermRenderings.xml")
+                localfile = os.path.join(self.printer.project.path, "TermRenderings.xml")
                 if not os.path.exists(localfile):
                     localfile = None
             if xrsrc[-1] in "0123456789":
