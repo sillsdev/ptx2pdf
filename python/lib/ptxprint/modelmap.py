@@ -12,6 +12,8 @@ class ModelInfo:
 
 def get(k): return k
 
+#   config/template val:        widget, category, val expression
+# widget: [x] says sub value of widget
 _map = {
     "L_":                       ("c_diglot", "diglot", lambda w,v: "L" if v else ""),
     "R_":                       ("c_diglot", "diglot", lambda w,v: "R" if v else ""),
@@ -245,6 +247,7 @@ _map = {
     "document/diglotprifraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
     "document/diglotsecfraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":        ("fcb_diglotSecProject", "diglot", None),
+    "document/diglotsecprjguid":    ("fcb_diglotSecProject[1]", "diglot", None),
     "document/diglotpicsources":    ("fcb_diglotPicListSources", "diglot", None),
     "document/diglot2captions": ("c_diglot2captions", "diglot", None),
     "document/diglotswapside":  ("c_diglotSwapSide", "diglot", lambda w,v: "true" if v else "false"),

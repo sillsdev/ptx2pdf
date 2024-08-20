@@ -192,6 +192,7 @@ class TexModel:
         #base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
         base = self.dict["/ptxpath"]
         docdir = self.dict["/ptxdocpath"]
+        logger.debug(f"TeX model basepaths: {base=}, {docdir=}")
         return docdir, base
 
     def update(self):
@@ -883,7 +884,7 @@ class TexModel:
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
                 #cpath = self.printer.configPath(self.printer.configName())
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
-                self.changes = self.readChanges(os.path.join(printer.srcPath(printer.cfgid), 'changes.txt'), bk)
+                self.changes = self.readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk)
             else:
                 self.changes = []
         draft = "-" + (printer.cfgid or "draft")
@@ -1405,9 +1406,9 @@ class TexModel:
 
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes
-        prjid = self.dict['project/id']
-        prjdir = os.path.join(self.ptsettings.basedir, prjid)
-        fname = printer.getBookFilename("GLO", prjdir)
+        prjid = printer.project.prjid
+        prjdir = printer.project.path
+        fname = printer.getBookFilename("GLO", prjid)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
@@ -1428,6 +1429,7 @@ class TexModel:
         glopattern=r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)"
         prjid = self.dict['project/id']
         prjdir = self.dict["/ptxpath"]
+        logger.debug(f"Filter Glossary for {prjid=} {prjdir=}")
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
                 fname = printer.getBookFilename(bk, prjid)
@@ -1436,7 +1438,7 @@ class TexModel:
                     with universalopen(fpath) as inf:
                         sfmtxt = inf.read()
                     glossentries += re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", sfmtxt)
-        fname = printer.getBookFilename("GLO", prjdir)
+        fname = printer.getBookFilename("GLO", prjid)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:

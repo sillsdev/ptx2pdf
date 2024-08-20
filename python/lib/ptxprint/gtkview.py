@@ -1317,7 +1317,11 @@ class GtkViewModel(ViewModel):
         m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
         return [m.group(1), int(m.group(2))] if m else [font, 0]
 
-    def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
+    def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):
+        if "[" in wid:
+            subi = wid.index("[")
+            sub = int(wid[subi+1:-1])
+            wid = wid[:subi]
         w = self.builder.get_object(wid)
         if w is None:
             if wid.startswith("+"):
@@ -1335,7 +1339,11 @@ class GtkViewModel(ViewModel):
             return super().get(wid, default=default)
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
-    def set(self, wid, value, skipmissing=False, useMarkup=False):
+    def set(self, wid, value, skipmissing=False, useMarkup=False, sub=-1):
+        if "[" in wid:
+            subi = wid.index("[")
+            sub = int(wid[subi+1:-1])
+            wid = wid[:subi]
         if wid == "l_statusLine":
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
         w = self.builder.get_object(wid)
@@ -1363,7 +1371,7 @@ class GtkViewModel(ViewModel):
                 print(_("Can't set {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
-        setWidgetVal(wid, w, value, useMarkup=useMarkup)
+        setWidgetVal(wid, w, value, useMarkup=useMarkup, sub=sub)
 
     def getvar(self, k, default="", dest=None):
         if dest is None:
@@ -1771,23 +1779,14 @@ class GtkViewModel(ViewModel):
     def updateDiglotConfigList(self):
         currdigcfg = self.get("ecb_diglotSecConfig")
         self.ecb_diglotSecConfig.remove_all()
-        digprj = self.get("fcb_diglotSecProject")
+        digprj = self._getProject("fcb_diglotSecProject")
         if digprj is None:
             return
-        diglotConfigs = self.getConfigList(digprj)
+        diglotConfigs = sorted(digprj.configs.keys())
         if len(diglotConfigs):
             for cfgName in sorted(diglotConfigs):
                 self.ecb_diglotSecConfig.append_text(cfgName)
             self.set("ecb_diglotSecConfig", currdigcfg if currdigcfg in diglotConfigs else "Default")
-
-    def _getProject(self, prjwname):
-        impw = self.builder.get_object(prjwname)
-        impai = impw.get_active_iter()
-        if impai is None:
-            return None
-        impgui = impw.get_model().get_value(impai, 1)
-        impprj = self.prjTree.getProject(impgui)
-        return impprj
 
     def _fillConfigList(self, prjwname, configlist):
         impprj = self._getProject(prjwname)

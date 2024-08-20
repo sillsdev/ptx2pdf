@@ -388,9 +388,9 @@ class RunJob:
             digfraction = info.dict["document/diglotprifraction"]
             digprjid = info.dict["document/diglotsecprj"]
             digcfg = info.dict["document/diglotsecconfig"]
-            digprjdir = os.path.join(self.args.paratext, digprjid)
-            digptsettings = ParatextSettings(self.args.paratext, digprjid)
-            diginfo = TexModel(self.printer.diglotView, self.args.paratext, digptsettings, digprjid, inArchive=self.inArchive)
+            digprjdir = self.printer.diglotView.project.path
+            digptsettings = ParatextSettings(digprjdir)
+            diginfo = TexModel(self.printer.diglotView, digptsettings, digprjid, inArchive=self.inArchive)
             reasons = diginfo.prePrintChecks()
             if len(reasons):
                 self.fail(", ".join(reasons) + " in diglot secondary")
@@ -758,7 +758,7 @@ class RunJob:
             info[k]=diginfo[v]
         for k,v in _diglotprinter.items():
             info.printer.set(k, diginfo.printer.get(v))
-        info["diglot/cfgrpath"] = saferelpath(diginfo.printer.project.srcPath((diginfo.printer.cfgid), docdir).replace("\\","/"))
+        info["diglot/cfgrpath"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
         info["diglot/prjid_"] = digprjid
         info["_isDiglot"] = True
         res = self.sharedjob(jobs, info, extra="-diglot", digtexmodel=diginfo)
@@ -791,7 +791,7 @@ class RunJob:
         if info.asBool("document/ifinclfigs"):
             print("Gathering pictures...")
             self.printer.incrementProgress(stage="gp")
-            self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext, digtexmodel=digtexmodel)
+            self.picfiles = self.gatherIllustrations(info, jobs, prjdir, digtexmodel=digtexmodel)
             print("Finished gathering pictures...")
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)

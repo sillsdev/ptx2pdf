@@ -22,12 +22,12 @@
 
 %%%%% Stylesheets %%%%%
 \stylesheet{{usfm_sb.sty}}
-%{document/ifdiglot}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/usfm.sty}}
-%\stylesheet{L_}{{{/ptxrpath}/{project/id}/usfm.sty}}
+%{document/ifdiglot}\stylesheet{R_}{{{/ptxrpath}/usfm.sty}}
+%\stylesheet{L_}{{{/ptxrpath}/usfm.sty}}
 \stylesheet{{ptx2pdf.sty}}
 
-{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/{project/id}/custom.sty}}
-%\diglot {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{s_}{{{/ptxrpath}/{document/diglotsecprj}/custom.sty}}
+{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/custom.sty}}
+%\diglot {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{s_}{{{/ptxrpath}/custom.sty}}
 
 \stylesheet{L_}{{{/cfgrpath}/ptxprint.sty}}
 %\diglot {document/ifdiglot}\stylesheet{s_}{{{diglot[cfgrpath]}/ptxprint.sty}} % Right side (secondary) styles
@@ -274,7 +274,7 @@
 %%%%% Hyphenation %%%%%
 \newlanguage\langund \language\langund
 \catcode`\@=11
-{paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\bgroup\liter@lspecials\input "{/ptxrpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex" \egroup
+{paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\bgroup\liter@lspecials\input "{/ptxrpath}/shared/ptxprint/hyphen-{project/id}.tex" \egroup
 {paragraph/ifomithyphen}\defaulthyphenchar=8203 % \u200B
 {paragraph/ifnothyphenate}\hyphenpenalty=10000 \exhyphenpenalty=10000
 \catcode`\@=12

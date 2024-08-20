@@ -185,10 +185,14 @@ class ViewModel:
         else:
             return [font, 0]
 
-    def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
+    def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):
+        if sub >= 0:
+            wid += "[" + str(sub) + "]"
         return self.dict.get(wid, default)
 
-    def set(self, wid, value, skipmissing=False):
+    def set(self, wid, value, sub=-1, skipmissing=False):
+        if sub >= 0:
+            wid += "[" + str(sub) + "]"
         if wid.startswith("s_"):
             self.dict[wid] = f2s(float(value))
         else:
@@ -340,6 +344,7 @@ class ViewModel:
         if prjid is None:
             prjid = self.project.prjid
         if prjid != self.project.prjid:
+            # should be guid based
             prjdir = self.prjTree.findProject(prjid)
             if prjdir is not None:
                 ptsettings = ParatextSettings(prjdir)
@@ -1659,6 +1664,15 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
+    def _getProject(self, prjwname):
+        impgui = self.get(prjwname, sub=1)
+        if impgui is None:
+            impname = self.get(prjwname)
+            impprj = self.prjTree.findProject(impname)
+        else:
+            impprj = self.prjTree.getProject(impgui)
+        return impprj
+
     def createView(self, prjid, cfgid):
         res = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
         res.setPrjid(prjid)
@@ -1667,14 +1681,14 @@ class ViewModel:
 
     def createDiglotView(self, suffix="R"):
         self.setPrintBtnStatus(2)
-        prjid = self.get("fcb_diglotSecProject")
+        prj = self._getProject("fcb_diglotSecProject")
         cfgid = self.get("ecb_diglotSecConfig")
-        if prjid is None or cfgid is None:
+        if prj is None or cfgid is None:
             digview = None
         else:
             digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
             digview.isDiglot = True
-            digview.setPrjid(prjid)
+            digview.setPrjid(prj.prjid, prj.guid)
             if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
             else:

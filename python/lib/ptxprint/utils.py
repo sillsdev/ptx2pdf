@@ -630,9 +630,9 @@ def xdvigetfonts(xdv):
     return res
 
 varpaths = (
-    ('prjdir', ('settings_dir', 'prjid')),
-    ('settingsdir', ('settings_dir',)),
-    ('workingdir', ('working_dir',)),
+    ('prjdir', lambda p,v: p.path),
+    ('settingsdir', lambda p,v: os.path.join(p.path, '..')),
+    ('workingdir', lambda p,v: p.printPath(v.cfgid)),
 )
 
 class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath):
@@ -641,7 +641,7 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
     def create_varlib(aView):
         res = {}
         for k, v in varpaths:
-            res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
+            res[k] = pathlib.Path(v(aView.project, aView))
         res['pdfassets'] = pathlib.Path(pycodedir(), 'PDFassets')
         return res
 
