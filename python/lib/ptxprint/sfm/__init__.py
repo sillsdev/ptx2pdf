@@ -574,10 +574,10 @@ class parser(collections.abc.Iterable):
         # Compute end marker stylesheet definitions
         em_def = {'TextType': None, 'Endmarker': None}
         self._sty = stylesheet.copy()
-        self._sty.update(
-            (m['Endmarker'], type(m)(em_def, OccursUnder={k}))
-            for k, m in stylesheet.items() 
-            if m['Endmarker'])
+        for k, m in stylesheet.items():
+            if m['Endmarker']:
+                v = type(m)(em_def, OccursUnder=[k])
+                self._sty[m['Endmarker']] = v
 
     def _error(self, severity, msg, ev, *args, **kwds):
         """
