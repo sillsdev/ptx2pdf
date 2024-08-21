@@ -262,35 +262,51 @@
 \def\@s@tstringunderline#1"#2\E{%
     \setbox9\hbox{\XeTeXuseglyphmetrics=1 \s@tfont{underline}{underline+\styst@k}#1}%
 }
+\def\@s@tcodeunderline#1]#2\E{%
+    \setbox9\hbox{\XeTeXuseglyphmetrics=1 \s@tfont{underline}{underline+\styst@k}\setbox0\hbox{#1}%
+      \getp@ram{spacebeside}{underline}{underline+\styst@k}%
+      \ifx\p@ram\relax
+        \box0
+      \else
+        \dimen1=\p@ram\wd0
+        \kern \dimen1\box0\kern\dimen1
+      \fi
+      \global\let\Cle@dertype\cleaders
+    }%
+}
 \def\s@tcharunderline#1#2\E{%
   \if "#1\relax\@s@tstringunderline #2"\E
   \else
-    \edef\@gid{\the\XeTeXcharglyph`#1}%
-    \setbox9\hbox{\XeTeXuseglyphmetrics=1 \s@tfont{underline}{underline+\styst@k}%
-      \getp@ram{spacebeside}{underline}{underline+\styst@k}%
-      \ifx\p@ram\relax
-        \dimen1=0pt
-      \else     
-        \dimen1=\fontcharwd\font `#1 
-        \dimen1=\p@ram\dimen1
-        \global\let\Cle@dertype\cleaders
-      \fi
-      \dimen2=\dimen1
-      \advance\dimen1 -\XeTeXglyphbounds1 \@gid
-      \advance\dimen2 -\XeTeXglyphbounds3 \@gid
-      \trace{sa}{Glyph \@gid \space has bounds \XeTeXglyphbounds1 \@gid , \XeTeXglyphbounds3 \@gid}%
-      \kern \dimen1 #1\kern \dimen2}%
+    \if [#1\relax\@s@tcodeunderline #2]\E
+    \else
+      \trace{s}{Setting underline glyph to #1}%
+      \edef\@gid{\the\XeTeXcharglyph`#1}%
+      \setbox9\hbox{\XeTeXuseglyphmetrics=1 \s@tfont{underline}{underline+\styst@k}%
+        \getp@ram{spacebeside}{underline}{underline+\styst@k}%
+        \ifx\p@ram\relax
+          \dimen1=0pt
+        \else     
+          \dimen1=\fontcharwd\font `#1 
+          \dimen1=\p@ram\dimen1
+          \global\let\Cle@dertype\cleaders
+        \fi
+        \dimen2=\dimen1
+        \advance\dimen1 -\XeTeXglyphbounds1 \@gid
+        \advance\dimen2 -\XeTeXglyphbounds3 \@gid
+        \trace{sa}{Glyph \@gid \space has bounds \XeTeXglyphbounds1 \@gid , \XeTeXglyphbounds3 \@gid}%
+        \kern \dimen1 #1\kern \dimen2}%
+    \fi
   \fi
 }
 \def\d@underline#1{\showboxbreadth=99
   \ifx\@do@underline\@do@Cunderline
-    \tracingassigns=1
+    %\tracingassigns=1
     \global\let\Cle@dertype\xleaders
     \x@\s@tcharunderline\ulcp@ram\E
     \getp@ram{raise}{underline}{underline+\styst@k}\ifx\p@ram\relax\else\ifx\p@ram\empty\else
       \setbox9\hbox{\vbox{\kern-\p@ram\box9\kern\p@ram}}%
     \fi\fi
-    \tracingassigns=0
+    %\tracingassigns=0
   \fi
   \ifUnderlineSpaces
     \ifx\@do@underline\@do@Dunderline
