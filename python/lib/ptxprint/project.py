@@ -127,11 +127,11 @@ class ProjectList:
         self.addTreedir(t)
         return t
 
-    def addToConfig(self, config, section):
+    def addToConfig(self, config, section="projectdirs"):
         config.remove_section(section)
         config.add_section(section)
         for d in self.treedirs:
-            config.set("projectdirs", d, "")
+            config.set(section, d, "")
             
 
 class Project:

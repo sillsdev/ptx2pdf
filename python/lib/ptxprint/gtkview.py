@@ -407,9 +407,6 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
-    "backsettings1": ("scroll_Settings1", ),
-    "backsettings2": ("scroll_Settings2", ),
-    "backsettings3": ("scroll_Settings3", ),
     "scale-slider":("s_diglotPriFraction", "s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
@@ -859,9 +856,9 @@ class GtkViewModel(ViewModel):
             .changed {font-weight: bold}
             .blue-label {color: blue; font-weight: bold}
             .red-label {color: red}
-            .backsettings1 {background-color: peachpuff;}
-            .backsettings2 {background-color: lightpink;}
-            .backsettings3 {background-color: lightsteelblue;}
+            .backsettings1 text {background-color: #e9f4fd;}
+            .backsettings2 text {background-color: #fff0f3;}
+            .backsettings3 text {background-color: #f6fff8;}
             .highlighted {background-color: peachpuff; background: peachpuff}
             .yellowlighted {background-color: rgb(255,255,102); background: rgb(255,255,102)}
             .attention {background-color: lightblue; background: lightblue}
@@ -925,7 +922,7 @@ class GtkViewModel(ViewModel):
                 
             # Apply CSS classes to provide background colour shading for the 3 settings tabs (not working yet!)
             if k.startswith("Settings"):
-                view.connect("realize", lambda view: view.get_style_context().add_class(f"backsettings{k[-1]}"))
+                view.get_style_context().add_class(f"backsettings{k[-1]}")
 
         logger.debug("Setting project")
         if self.pendingPid is not None:
@@ -1661,7 +1658,7 @@ class GtkViewModel(ViewModel):
             return
         newconfigId = self.getConfigName()
         if newconfigId != self.cfgid: # only for new configs
-            # self.applyConfig(self.configId, newconfigId, nobase=True)
+            # self.applyConfig(self.cfgid, newconfigId, nobase=True)
             self.updateProjectSettings(self.project.prjid, self.project.guid, configName=newconfigId, readConfig=True)
             self.updateSavedConfigList()
             stngdir = self.project.srcPath(self.cfgid)
@@ -1673,7 +1670,7 @@ class GtkViewModel(ViewModel):
         self.noInt = self.get("c_noInternet")
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
-            self.userconfig.set("init", "config", self.configId)
+            self.userconfig.set("init", "config", self.cfgid)
         self.saveConfig(force=force)
         self.onSaveEdits(None)
 
@@ -2380,7 +2377,7 @@ class GtkViewModel(ViewModel):
                 fpath = os.path.join(self.project.printPath(self.cfgid), fndict[pgid][0], fname)
                 genBtn.set_sensitive(True)
             else:
-                fpath = os.path.join(self.project.srcPath(self.configId), fndict[pgid][0], fname)
+                fpath = os.path.join(self.project.srcPath(self.cfgid), fndict[pgid][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
                 if self.get("c_diglot"):
@@ -3447,7 +3444,7 @@ class GtkViewModel(ViewModel):
             self.updatePrjLinks()
             self.userconfig.set("init", "project", self.project.prjid)
             if getattr(self, 'configId', None) is not None:
-                self.userconfig.set("init", "config", self.configId)
+                self.userconfig.set("init", "config", self.cfgid)
                 if not self.userconfig.has_section("projects"):
                     self.userconfig.add_section("projects")
                 self.userconfig.set('projects', self.project.prjid, self.cfgid)
