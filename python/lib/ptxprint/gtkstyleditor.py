@@ -513,7 +513,7 @@ class StyleEditorView(StyleEditor):
                     site = f'https://github.com/sillsdev/ptx2pdf/blob/master/docs/help/{m}.md'
                     w.set_label(_('Complex style'))
                 else:
-                    site = f'https://docs.usfm.bible/usfm-usx-docs/latest/{path}/{m}.html'
+                    site = f'https://docs.usfm.bible/usfm/latest/{path}/{m}.html'
 
                 partA, partB = self.splitURL(site)
                 partA = re.sub(r"\.", r"-", partA)
