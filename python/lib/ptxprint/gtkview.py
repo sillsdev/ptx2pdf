@@ -1669,7 +1669,7 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "quickrun",   "true" if self.get("c_quickRun")   else "false")
         self.noInt = self.get("c_noInternet")
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
-        if getattr(self, 'configId', None) is not None:
+        if self.cfgid is not None:
             self.userconfig.set("init", "config", self.cfgid)
         self.saveConfig(force=force)
         self.onSaveEdits(None)
@@ -3443,7 +3443,7 @@ class GtkViewModel(ViewModel):
         if self.project.prjid:
             self.updatePrjLinks()
             self.userconfig.set("init", "project", self.project.prjid)
-            if getattr(self, 'configId', None) is not None:
+            if self.cfgid is not None:
                 self.userconfig.set("init", "config", self.cfgid)
                 if not self.userconfig.has_section("projects"):
                     self.userconfig.add_section("projects")

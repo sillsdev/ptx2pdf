@@ -1067,7 +1067,7 @@ class TexModel:
             if currfn is not None:
                 def compfn(fn, b, s):
                     def domatch(m):
-                        return currfn(lambda x:fn(x.group(0)), m.group(0))
+                        return currfn(lambda x:fn(m.group(0)), b, m.group(0))
                     return reg.sub(domatch, s) if bk is None or b == bk else s
             else:
                 def compfn(fn, b, s):

@@ -466,12 +466,12 @@ class ViewModel:
     def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None, nobase=False):
         oldp = self.project.srcPath(oldcfg) if oldcfg is not None else None
         if newprj is not None:
-            newp = newprj.createConfigDir(newcfg)
+            (newp, created) = newprj.createConfigDir(newcfg, test=True)
         else:
-            newp = self.project.createConfigDir(newcfg)
+            (newp, created) = self.project.createConfigDir(newcfg, test=True)
         logger.debug(f"Apply Config {oldcfg=} {newcfg=} {newp=}")
         if action is None:
-            if os.path.exists(newp):
+            if not created:
                 return False
             action = 0
         self.triggervcs = True
@@ -1940,7 +1940,7 @@ set stack_size=32768""".format(self.cfgid)
                 addNewPics = impAll or self.get("c_impPicsAddNew")
                 delOldPics = impAll or self.get("c_impPicsDelOld")
                 view.picinfos.merge_fields(otherpics, fields, extend=addNewPics, removeOld=delOldPics)
-            view.picinfos.out(os.path.join(view.configPath(view.configName()), "{}-{}.piclist".format(view.prjid, view.configName())))
+            view.picinfos.out(os.path.join(view.project.srcPath(view.cfgid), "{}-{}.piclist".format(view.project.prjid, view.cfgid)))
 
         # merge ptxprint.sty adding missing
         if impAll or self.get("c_impStyles") or self.get("c_oth_Cover"):
@@ -1956,7 +1956,7 @@ set stack_size=32768""".format(self.cfgid)
         if impAll or self.get("c_oth_Advanced"):
             # merge ptxprint-mods.sty
             if config.getboolean("project", "ifusemodssty", fallback=False):
-                localmodsty = os.path.join(view.configPath(view.configName()), "ptxprint-mods.sty")
+                localmodsty = os.path.join(view.project.srcPath(view.cfgid), "ptxprint-mods.sty")
                 try:
                     zipsty = zipopentext(fzip, "ptxprint-mods.sty", prefix=prefix)
                 except (KeyError, FileNotFoundError):
@@ -1987,7 +1987,7 @@ set stack_size=32768""".format(self.cfgid)
                 except (KeyError, FileNotFoundError):
                     print(f"Maybe KeyError; more likely just ignoring missing file: {a[1]}")
                     continue
-                localmod = os.path.join(view.configPath(view.configName()), a[1])
+                localmod = os.path.join(view.project.srcPath(view.cfgid), a[1])
                 mode = "a" if view.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
                 with open(localmod, mode, encoding="utf-8") as outf:
                     if fzip.filename is not None:

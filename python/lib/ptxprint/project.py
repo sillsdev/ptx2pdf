@@ -189,12 +189,14 @@ class Project:
         self.configs[cfgid] = ConfigDir(cfgid, ddir)
         return True
 
-    def createConfigDir(self, cfgid, shared=True):
-        if cfgid in self.configs:
-            return self.configs[cfgid].path
-        ddir = os.path.join(self.path, self.shareddir if shared else self.localdir, cfgid)
-        os.makedirs(ddir, exist_ok=True)
-        self.configs[cfgid] = ConfigDir(cfgid, ddir)
-        return self.configs[cfgid].path
+    def createConfigDir(self, cfgid, shared=True, test=False):
+        testres = False
+        if cfgid not in self.configs:
+            ddir = os.path.join(self.path, self.shareddir if shared else self.localdir, cfgid)
+            testres = not os.path.exists(ddir)
+            os.makedirs(ddir, exist_ok=True)
+            self.configs[cfgid] = ConfigDir(cfgid, ddir)
+        res = self.configs[cfgid].path
+        return (res, testres) if test else res 
 
 

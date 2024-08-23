@@ -121,8 +121,8 @@
 %+cpar_endheadings
 \newif\ift@plevel@utobox
 \newif\ifhe@dings
-\newdimen\headingtopspace
-\newdimen\headingmidspace
+\newskip\headingtopspace
+\newskip\headingmidspace
 \newbox\he@dingbox
 \def\endhe@dings{\ifhe@dings\trace{h}{+endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi}%
   \makecutouts \endgraf
@@ -462,6 +462,7 @@
       \ifhe@dings\nobreak\fi
       \vskip\spaceafterp@ram\verticalsp@ceunit                                              %(1)
     \fi
+    \vskip \ColAdjskip
     %\edef\spc@ut{pdf:code EMC}\x@\special\x@{\spc@ut}%
   \fi
   %\ifx\mcstack\mcstack@mpty\else
@@ -560,6 +561,8 @@
   \ifcsname #1^#2\endcsname\x@\@p@rstyle\x@{#1^#2}\else
   \x@\@p@rstyle\x@{#1}\fi
 }
+
+\def\ColAdjskip{0pt}
 \catcode`\^=7
 \catcode`\_=11
 \def\thisp@rclass{}%
@@ -654,6 +657,7 @@
   \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\global\headingmidspace=0pt \else
     \global\headingmidspace=\p@ram\verticalsp@ceunit
   \fi
+  \global\advance\headingmidspace by \ColAdjskip
   \headingtopspace=\headingmidspace
   \ifhe@dingstyle\trace{sa}{headingstyle true}%
     \ifhe@dings\s@tbaseline{\m@rker}{\styst@k}%In a heading again, may be different so set a new baseline
