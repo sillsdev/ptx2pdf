@@ -275,10 +275,11 @@
     \unhbox\tmpctsb@x
     \b@xedparstylefalse
    \fi
+   \trace{sP}{par inn@te\ifinn@te true\else false\fi, skipn@testyle\ifskipn@testyle true\else false\fi}%
    \makecutouts
    \cl@singhooks{end}{\m@rker}{\styst@k}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
-   \trace{j}{Ending marker: \m@rker (\styst@kfirst)}%
+   \trace{j}{Ending marker: \m@rker (\styst@kfirst // \mcstack)}%
    \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
    \def\@@@st@t{}%
    \ifhmode\def\@@@st@t{hmode}\fi
@@ -727,7 +728,7 @@
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar}%
   \everypar={%
-   \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
+   \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi cutouts:\the\@numcuts}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
