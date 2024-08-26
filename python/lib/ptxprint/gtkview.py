@@ -3605,44 +3605,30 @@ class GtkViewModel(ViewModel):
             switch = pgid == "scroll_Settings1"
         pgnum = self.notebooks["Viewer"].index(pgid)
         mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
-        if switch:
-            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         fpath = self._locFile(file2edit, loc)
         if fpath is None:
             return
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
         
-        # Get paths for all three scroll positions
-        currpath = label.get_tooltip_text()
-        oldlabel = self.builder.get_object("l_Settings2")
-        oldpath = oldlabel.get_tooltip_text()
-        oldestlabel = self.builder.get_object("l_Settings3")
-        oldestpath = oldestlabel.get_tooltip_text()
-        
-        if fpath == oldpath:
-            label = oldlabel
-            pgnum += 1
-        elif fpath == oldestpath:
-            label = oldestlabel
-            pgnum += 2
-        elif fpath != currpath:
-            # Save edits from the "old" to "oldest"
-            self.onSaveEdits(None, pgid="scroll_Settings3")
-            oldestlabel.set_tooltip_text(oldlabel.get_tooltip_text())
-            oldestlabel.set_text(oldlabel.get_text())
-            
-            # Save edits from "current" to "old"
-            self.onSaveEdits(None, pgid="scroll_Settings2")
-            oldlabel.set_tooltip_text(label.get_tooltip_text())
-            oldlabel.set_text(label.get_text())
-            
-            # Update current label
-            self.builder.get_object("gr_editableButtons").set_sensitive(True)
+        if switch:
+            labels = [self.builder.get_object("l_Settings{}".format(i)) for i in range(1,4)]
+            paths = [l.get_tooltip_text() for l in labels]
+            for i, p in enumerate(paths):
+                if fpath == p:
+                    start = i
+                    break
+            else:
+                # only shift if we are inserting a file not replacing
+                for i in range(2, 0, -1):     # shift from right hand end
+                    buf = self.fileViews[pgnum+i-1][0]
+                    txt = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+                    self.fileViews[pgnum+i][0].set_text(txt)
+                    labels[i].set_text(labels[i-1].get_text())
+                    labels[i].set_tooltip_text(paths[i-1])
+                start = 0
+            pgnum += start
+            label = labels[start]
             label.set_text(file2edit)
-            buf = self.fileViews[pgnum][0]
-            text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-            self.fileViews[pgnum+2][0].set_text(text2save)  # Adjust for the third position
 
         label.set_tooltip_text(fpath)
         if os.path.exists(fpath):
@@ -3652,6 +3638,9 @@ class GtkViewModel(ViewModel):
             self.onViewerFocus(self.fileViews[pgnum][1], None)
         else:
             self.fileViews[pgnum][0].set_text(_("# This file doesn't exist yet!\n# Edit here and Click 'Save' to create it."))
+        if switch:
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
 
     def editFileOLDdoNotUse(self, file2edit, loc="wrk", pgid="scroll_Settings1", switch=None): # keep param order
         if switch is None:
