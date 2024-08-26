@@ -1,8 +1,44 @@
 PTXprint 2.5.8 Release Notes
-16 Aug 2024
+26 Aug 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.5.9 (26 Aug 2024)
+
+  * Allow for 3 Settings tabs in View+Edit for 2x changes.txt files when creating Diglots
+
+  * Add blue=left; red=right and green shading to 3 settings tabs when diglot in use
+
+  * Refactor to enable multiple project folders and duplicate IDs using guid-based projects
+
+  * Switch texmode /ptxpath to include prjid, add /ptxdocpath
+
+  * Fix writing projectdirs to config
+
+  * Fix handling of new configs
+  
+  * Fix guid reading from settings.xml
+
+  * Fix bug with zcustommarks
+
+  * Refactor DBL expansion, and add \ref support
+
+  * Enable Underline with characters
+
+  * Improve docs, handle character underline better.
+
+  * Fix usfm parser for standalone z markers
+
+  * Update path to USFM documentation online
+
+  * Refactor glossary calculations
+
+  * Fix ColAdjskip for diglots
+
+  * 
+
+  * 
 
 Bug fixes and Improvements in 2.5.8 (16 Aug 2024)
 

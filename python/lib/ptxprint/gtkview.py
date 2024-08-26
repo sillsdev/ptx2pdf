@@ -856,9 +856,12 @@ class GtkViewModel(ViewModel):
             .changed {font-weight: bold}
             .blue-label {color: blue; font-weight: bold}
             .red-label {color: red}
-            .backsettings1 text {background-color: #e9f4fd;}
-            .backsettings2 text {background-color: #fff0f3;}
-            .backsettings3 text {background-color: #f6fff8;}
+            .backsettingsfrt text {background-color: #fffff0;}
+            .backsettingsadj text {background-color: #fff0ff;}
+            .backsettings1 text {background-color: #f0f0ff;}
+            .backsettings2 text {background-color: #fff0f0;}
+            .backsettings3 text {background-color: #f0fff0;}
+            
             .highlighted {background-color: peachpuff; background: peachpuff}
             .yellowlighted {background-color: rgb(255,255,102); background: rgb(255,255,102)}
             .attention {background-color: lightblue; background: lightblue}
@@ -919,8 +922,10 @@ class GtkViewModel(ViewModel):
                 l = lm.get_language("adjlist")
                 logger.debug(f"Loaded language adjlist {l}")
                 self.buf[i].set_language(l)
-                
-            # Apply CSS classes to provide background colour shading for the 3 settings tabs (not working yet!)
+                # Apply CSS classes to provide background colour shading for various tabs
+                view.get_style_context().add_class(f"backsettingsadj")
+            if k == "FrontMatter":
+                view.get_style_context().add_class(f"backsettingsfrt")
             if k.startswith("Settings"):
                 view.get_style_context().add_class(f"backsettings{k[-1]}")
 
