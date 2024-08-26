@@ -462,7 +462,6 @@
       \ifhe@dings\nobreak\fi
       \vskip\spaceafterp@ram\verticalsp@ceunit                                              %(1)
     \fi
-    \vskip \ColAdjskip
     %\edef\spc@ut{pdf:code EMC}\x@\special\x@{\spc@ut}%
   \fi
   %\ifx\mcstack\mcstack@mpty\else
@@ -706,6 +705,7 @@
     \ifhe@dings\nobreak\fi
     \vskip\headingmidspace
   \fi
+  \ifdiglot\else\vskip \ColAdjskip\fi
   \global\startparatrue
   \resetp@rstyle
 %-cpar_parstyle_transition
