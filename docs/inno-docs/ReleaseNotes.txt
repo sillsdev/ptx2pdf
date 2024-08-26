@@ -9,6 +9,8 @@ Bug fixes and Improvements in 2.5.9 (26 Aug 2024)
   * Allow for 3 Settings tabs in View+Edit for 2x changes.txt files when creating Diglots
 
   * Add blue=left; red=right and green shading to 3 settings tabs when diglot in use
+  
+  * Adjust background colors and add background shading for FRT=yellow and AdjList=purple
 
   * Refactor to enable multiple project folders and duplicate IDs using guid-based projects
 
@@ -35,10 +37,6 @@ Bug fixes and Improvements in 2.5.9 (26 Aug 2024)
   * Refactor glossary calculations
 
   * Fix ColAdjskip for diglots
-
-  * 
-
-  * 
 
 Bug fixes and Improvements in 2.5.8 (16 Aug 2024)
 
