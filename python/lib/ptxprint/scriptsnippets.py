@@ -55,7 +55,7 @@ class ScriptSnippet:
         return res
 
 #nonbodymarkers = ("id", "h", "h1", "toc1", "toc2", "toc3", "mt1", "mt2")
-nonbodymarkers = ("id", "h", "h1", "mt1", "mt2")    # keep in toc to allow wrapping
+nonbodymarkers = ("id", "h", "h1")    # keep in toc to allow wrapping
 
 def onlybody(fn, bj, dat):
     res = []

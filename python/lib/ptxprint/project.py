@@ -2,6 +2,9 @@
 import os
 from dataclasses import dataclass
 from ptxprint.ptsettings import ParatextSettings
+import logging
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class ProjectDir:
@@ -55,7 +58,7 @@ class ProjectList:
                                 if 'ConsultantNotes:'  in l or 'StudyBibleAdditions:' in l:
                                     addme = False
                             if '<Guid>' in l:
-                                guid = l[6:l.rfind("<")]
+                                guid = l[l.find("<Guid>")+6:l.rfind("<")]
             if guid is None:
                 if any(x.lower().endswith("sfm") for x in os.listdir(p)):
                     addme = True
@@ -88,11 +91,13 @@ class ProjectList:
             else:
                 return None
         p = ProjectDir(prjid, guid, path)
+        logger.debug(f"Adding project {p}")
         self.projects[guid] = p
         return p
 
     def getProject(self, guid):
         p = self.projects.get(guid, None)
+        logger.debug(f"Seeking project {guid} found {p}")
         if p is None:
             return None
         return Project(p)
