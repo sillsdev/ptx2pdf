@@ -671,11 +671,11 @@ class ViewModel:
 
     def getDialogTitle(self):
         # print(f"  > > > In view.py Start of getDialogTitle")
-        prjid = self.get("fcb_project")
-        if prjid is None:
+        if self.project is None or self.project.prjid is None:
             # print(f"<< Returning from getDialogTitle because prjid is None")
             return _("PTXprint {} - Bible Layout for Everyone!").format(VersionStr)
         else:
+            prjid = self.project.prjid
             bks = self.getBooks(files=True)
             if len(bks) == 2:
                 bks = bks[0] + "," + bks[1]
@@ -688,13 +688,13 @@ class ViewModel:
                     bks = bks[0]
                 except IndexError:
                     bks = _("No book selected!")
-            cfg = ":" + self.get("ecb_savedConfig", "")
+            cfg = ":" + self.cfgid
             cfg = ":" + cfg if (not self.get("c_diglot") and self.get("c_doublecolumn", False)) else cfg
             prjcfg = "{}{}".format(prjid, cfg) 
             # print(f"view.py - in getDialogTitle; {prjid=}, {cfg=}")
-            if self.get("c_diglot"):
-                cfg2 = ":" + self.get("ecb_diglotSecConfig", "")
-                prjcfg2 = "{}{}".format(self.get("fcb_diglotSecProject", "!NoSecPrj!"), cfg2) 
+            if self.get("c_diglot") and self.diglotView is not None:
+                cfg2 = ":" + self.diglotView.cfgid
+                prjcfg2 = "{}{}".format(self.diglotView.project.prjid, cfg2) 
                 prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
             return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
@@ -1731,10 +1731,10 @@ class ViewModel:
         self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
         working_dir = self.project.printPath(self.cfgid)
         if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.project.prjid, parentcfg=self.cfgid)
+            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.diglotView.project, parentcfg=self.cfgid)
             ipf = os.path.join(working_dir, "diglot.sty")
             if os.path.exists(ipf):
-                self._writearchive(zf, ipf, pf)
+                self._writearchive(zf, ipf, os.path.join(self.project.prjid, "diglot.sty"))
         for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):

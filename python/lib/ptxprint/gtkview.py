@@ -1384,7 +1384,8 @@ class GtkViewModel(ViewModel):
             elif wid.startswith("c_") or wid.startswith("s_") and TeXpert.hasopt(wid[2:]):
                 pass
             elif not skipmissing:
-                print(_("Can't set {} in the model").format(wid))
+                if not wid.startswith('_'):
+                    print(_("Can't set {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
         setWidgetVal(wid, w, value, useMarkup=useMarkup, sub=sub)
@@ -4257,6 +4258,7 @@ class GtkViewModel(ViewModel):
             self.set("ecb_savedConfig", oconfig)
         mpgnum = self.notebooks['Main'].index("tb_Diglot")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.updateDialogTitle()
 
     def changeLabel(self, w, lbl):
         b = self.builder.get_object(w)

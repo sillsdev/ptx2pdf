@@ -4,6 +4,10 @@ PTXprint 2.5.9 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.5.10 (26 Aug 2024)
+
+  * Fix issue with Create Archive and update title
+
 Bug fixes and Improvements in 2.5.9 (26 Aug 2024)
 
   * Allow for 3 Settings tabs in View+Edit for 2x changes.txt files when creating Diglots
