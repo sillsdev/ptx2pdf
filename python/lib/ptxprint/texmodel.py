@@ -1190,7 +1190,7 @@ class TexModel:
 
         # Throw out any empty footnotes or cross-references (if any) even if they have an xo or fr but no content
         # e.g.  \f + \f*     \x +\x*    \f + \fr 27:12 \ft \f*    \x - \xo 27:13-15 \xt \x*    \x - \xo 27:12 \xo*\xt \xt*\x*
-        self.localChanges.append(makeChange(r"\\(f|fe|ef|x)\s+\S+?\s*(\\(xo|fr)[^\\]+|\\\S+\s*)*?\\\1\*", ""))
+        self.localChanges.append(makeChange(r"\\(f|fe|ef|x)\s+\S+?\s*(\\(xo|fr)\s+[^\\]+|\\\S+\s*)*?\\\1\*", ""))
 
         ############ Temporary (to be removed later) ########%%%%
         # Throw out \esb ... \esbe blocks if Study Bible Sidebars are not wanted

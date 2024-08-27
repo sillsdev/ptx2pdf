@@ -4030,7 +4030,7 @@ class GtkViewModel(ViewModel):
                     else:
                         statMsg = _("Undefined target folder. Could not export settings!")
                 else:
-                    tp = self.get('ecb_targetProject', None)
+                    tp = self._getProject('ecb_targetProject')
                     tc = self.get('ecb_targetConfig',  None)
                     self.importConfig(zipdata, prefix=prefix, tgtPrj=tp, tgtCfg=tc)
                     if tp == self.project.prjid:

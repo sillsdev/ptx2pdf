@@ -1673,9 +1673,9 @@ class ViewModel:
             impprj = self.prjTree.getProject(impgui)
         return impprj
 
-    def createView(self, prjid, cfgid):
+    def createView(self, prj, cfgid):
         res = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
-        res.setPrjid(prjid)
+        res.setPrjid(prj.prjid, prj.guid)
         res.setConfigId(cfgid)
         return res
 
@@ -1882,7 +1882,7 @@ set stack_size=32768""".format(self.cfgid)
             prefix = ""
         elif not prefix.endswith("/"):
             prefix += "/"
-        if tgtPrj != self.project.prjid or tgtCfg != self.cfgid:
+        if tgtPrj.guid != self.project.guid or tgtCfg != self.cfgid:
             view = self.createView(tgtPrj, tgtCfg)
         else:
             view = self
