@@ -4078,11 +4078,11 @@ class GtkViewModel(ViewModel):
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
-                os.path.join(self.project.path, "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs))
+                self.project.path, "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs))
 
     def onBackPDFsClicked(self, btn_selectBackPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for BACK matter"), False, 
-                os.path.join(self.project.path, "inclBackMatter", "BackPDFs", btn_selectBackPDFs))
+                self.project.path, "inclBackMatter", "BackPDFs", btn_selectBackPDFs))
 
     def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
         self._onPDFClicked(_("Select Watermark PDF file"), True,
