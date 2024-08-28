@@ -573,7 +573,7 @@
   \ifx\thisp@rcl@ss\undefined\else
     \let\lastp@rclass\thisp@rcl@ss
   \fi
-  \op@ninghooks{between-\m@rker}{#1}{\styst@k}% Run any between old par an current
+  \op@ninghooks{between-\m@rker}{#1}{\styst@k}% OR: #1\ifx\styst@k\empty\else+\styst@k\fi}??% Run any between old par an current
   \traceifset{p@rstyle}%
   \gdef\m@rker{#1}% remember the new style name
 %-cpar_parstyle_after

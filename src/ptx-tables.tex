@@ -263,6 +263,8 @@
   \ifdoingt@ble \else
     \ifhe@dings\endhe@dings\fi
     \endlastp@rstyle{tr}%
+    \trace{t}{starting table from \m@rker}%
+    \op@ninghooks{between-\m@rker}{tr}{tr\ifx\styst@k\empty\else+\styst@k\fi}% Run any between old par an current
     \let\stylet@pe\ss@Tbl
     \mcpush{\stylet@pe}{tr}%
     \s@tstyst@k
