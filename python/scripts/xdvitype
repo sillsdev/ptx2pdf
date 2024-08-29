@@ -183,7 +183,7 @@ class XDviType:
             data = [parm]
         val = data[0]
         if val in self.fonts:
-            self.out("font({}) [{:04x}]".format(opcode, self.fonts[data[0]][0]))
+            self.out("font[{}]({}) [{:04x}]".format(opcode-171, opcode, self.fonts[data[0]][0]))
         self.currfont = val
 
     def xxx(self, opcode, parm, data):
@@ -223,8 +223,8 @@ class XDviType:
         slant = self.readval(4) if flags & 0x2000 else 0
         embolden = self.readval(4) if flags & 0x4000 else 0
         self.fonts[k]=(ident, font_name)
-        self.out('xfontdef[{}]->{} "{}", size={}, flags={:04X}, color={:08X}, vars={}, ext={}, slant={}, embolden={}'.format(
-                k, ident, font_name, points, flags, color, variations, ext, slant, embolden))
+        self.out('xfontdef[{}]->{} "{}", size={:.2f}pt, flags={:04X}, color={:08X}, vars={}, ext={:.2f}%, slant={}, embolden={}'.format(
+                k, ident, font_name, points / 65536., flags, color, variations, ext / 65536. * 100., slant, embolden))
 
     def _getfont(self, k):
         if k not in self.fonts:
