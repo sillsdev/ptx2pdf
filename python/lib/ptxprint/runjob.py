@@ -141,6 +141,7 @@ _diglot = {
 "diglot/linebreaklocale" :  "document/linebreaklocale",
 
 "diglot/ifletter":          "document/ifletter",
+"diglot/letterspace":       "document/letterspace",
 "diglot/letterstretch":     "document/letterstretch",
 "diglot/lettershrink":      "document/lettershrink",
 
