@@ -1455,20 +1455,30 @@ class TexModel:
             count = self.dict["document/glossarydepth"]# How deep do we follow the chain of A includes B includes C?
         else:
             count = 0 # Default is not to go deeper
+        logger.debug(f"glossarydepth={count}")
+        glossdone=[]
         while count > 0:
             count = count - 1
             xtraglossentries = set()
-            for gte, gts in glosstext.items(): #entries from te glossary text.
-                for gt in gts:
-                    logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
-                    xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", gt)
-                    xtraglossentries.update((x for x in xgl if x not in glossentries))
+            for gte in (x for x in glossentries if x not in glossdone): #entries from te glossary text.
+                logger.debug(f"Checking entry for {gte}")
+                glossdone.append(gte)
+                if gte in glosstext: # Not every glossentry actually occurs
+                    gts = glosstext[gte] # Might there be more than one glossary entry?? Assume that's a possibility
+                    for gt in gts: 
+                        logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
+                        xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", gt)
+                        xtraglossentries.update((x for x in xgl if x not in glossentries))
             logger.debug(f"Adding {len(xtraglossentries)} extra gloss entries: {xtraglossentries}")
             if (len(xtraglossentries) == 0): # No more new entries
                 break
             glossentries.update(xtraglossentries)
+            logger.debug(f"glossarydepth={count}")
         missings = [ge for ge in glossentries if ge not in glosstext]
-        logger.warn(f"Glossary entries for {','.join(missings)} wanted, but not found in glossary.")
+        if len(missings)>0:
+            logger.warn(f"Glossary entries for {','.join(missings)} wanted, but not found in glossary.")
+        else:
+            logger.debug(f"All wanted glossary entries found.")
         logger.debug(f"{glossentries=}, {ge=}")
         for delGloEntry in [x for x in ge if x not in glossentries]:
             # logger.debug(f"Building regex for {delGloEntry=}")
