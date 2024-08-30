@@ -144,8 +144,8 @@
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
 \def \Underline      #1\relax{\deftrip@ram{underline}{#1}}
 \let \underline\Underline
-\def \underch@r      #1\relax{\edefp@ram{underchar}{\scantokens{#1\noexpand}}\m@kedigitsletters\catcode`\~=13 }
-\def \UnderChar      {\m@kedigitsother\catcode`\~=11 \underch@r}
+\def \underch@r      #1\relax{\edefp@ram{underchar}{\scantokens{#1\noexpand}}\catcode`\~=13 }
+\def \UnderChar      {\catcode`\~=11 \underch@r}
 \def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
@@ -173,6 +173,7 @@
 \def \LineSpacing    #1\relax{\defp@ram{baseline}{#1\onel@neunit}}
 \def \ztexFontFeatures  #1\relax{\defp@ram{fontfeatures}{#1}}
 \def \ztexFontGrSpace   #1\relax{\defp@ram{fontgrspace}{#1}}
+\def \ztexFontICSpace   #1\relax{\defp@ram{fonticspace}{#1}} % eventually... font inter-char space
 \def \VerticalAlign     #1\relax{\defp@ram{verticalalign}{#1}} % for table cells
 
 % Make a TeX macro based on the StyleType
