@@ -1455,11 +1455,13 @@ class TexModel:
             count = self.dict["document/glossarydepth"]# How deep do we follow the chain of A includes B includes C?
         else:
             count = 0 # Default is not to go deeper
+        logger.debug(f"glossarydepth={count}")
         while count > 0:
             count = count - 1
             xtraglossentries = set()
-            for gte, gts in glosstext.items(): #entries from te glossary text.
-                for gt in gts:
+            for gte in glossentries: #entries from te glossary text.
+                gts = glosstext[gte] # Might there be more than one glossary entry?? Assume that's a possibility
+                for gt in gts: 
                     logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
                     xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", gt)
                     xtraglossentries.update((x for x in xgl if x not in glossentries))
@@ -1467,6 +1469,7 @@ class TexModel:
             if (len(xtraglossentries) == 0): # No more new entries
                 break
             glossentries.update(xtraglossentries)
+            logger.debug(f"glossarydepth={count}")
         missings = [ge for ge in glossentries if ge not in glosstext]
         logger.warn(f"Glossary entries for {','.join(missings)} wanted, but not found in glossary.")
         logger.debug(f"{glossentries=}, {ge=}")
