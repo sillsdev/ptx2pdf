@@ -141,6 +141,7 @@ _diglot = {
 "diglot/linebreaklocale" :  "document/linebreaklocale",
 
 "diglot/ifletter":          "document/ifletter",
+"diglot/letterspace":       "document/letterspace",
 "diglot/letterstretch":     "document/letterstretch",
 "diglot/lettershrink":      "document/lettershrink",
 
@@ -849,7 +850,7 @@ class RunJob:
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
         os.chdir(self.tmpdir)
-        outpath = os.path.join(self.tmpdir, outfname[:-4])
+        outpath = os.path.join(self.tmpdir, '..', outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
         if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):

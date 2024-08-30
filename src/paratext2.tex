@@ -288,7 +288,6 @@
 \frenchspacing
 
 \XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
-\def\currintercharstate{0}
 
 %% various Unicode characters that we handle in TeX... and protect in TOC and PDF bookmarks
 \def\intercharspace{\hskip0pt}
@@ -311,9 +310,6 @@
 \def\GOODBREAK{\penalty-\OptionalBreakPenalty}
 \def\BADBREAK{\penalty\the\badspacepenalty}
 \def\emdash{\char"2014\relax}
-\def\LRE{\xdef\currintercharstate{\XeTeXinterchartokenstate}\char"202A}
-\def\RLE{\xdef\currintercharstate{\XeTeXinterchartokenstate}\char"202B}
-\def\PDF{\char"202C\XeTeXinterchartokenstate=\currintercharstate}
 \chardef\|"7C
 \chardef\bslash"5C%
 \chardef\tilde"7E%
@@ -340,9 +336,6 @@
   \let\LINESEP=\relax
   \let\GOODBREAK=\relax
   \let\BADBREAK=\relax
-  \let\LRE=\relax
-  \let\RLE=\relax
-  \let\PDF=\relax
 }
 
 \catcode"A0=12
@@ -385,9 +378,6 @@
   \def\LINESEP{^^^^2028}%
   \def\GOODBREAK{^^^^2063}%
   \def\BADBREAK{^^^^2064}%
-  \def\LRE{^^^^202a}%
-  \def\RLE{^^^^202b}%
-  \def\PDF{^^^^202c}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -411,9 +401,6 @@
 \lccode"2010="2010
 \lccode"2011="2011
 \catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
-\catcode"202A=\active \def^^^^202a{\pr@tect\LRE}
-\catcode"202B=\active \def^^^^202b{\pr@tect\RLE}
-\catcode"202C=\active \def^^^^202c{\pr@tect\PDF}
 \catcode`\@=12
 
 \def\asterisk{*}

@@ -231,6 +231,7 @@ _map = {
     "document/spacestretch":    ("s_maxSpace", "fontscript", lambda w,v : str((int(float(v or 150)) - 100) / 100.)),
     "document/spaceshrink":     ("s_minSpace", "fontscript", lambda w,v : str((100 - int(float(v or 66))) / 100.)),
     "document/ifletter":        ("c_letterSpacing", "fontscript", lambda w,v: "" if v else "%"),
+    "document/letterspace":     ("c_letterSpacing", "fontscript", lambda w,v: "1" if v else "0"),
     "document/letterstretch":   ("s_letterStretch", "fontscript", lambda w,v: float(v or "5.0") / 100.),
     "document/lettershrink":    ("s_letterShrink", "fontscript", lambda w,v: float(v or "1.0") / 100.),
     "document/ifcolorfonts":    ("c_colorfonts", "fontscript", lambda w,v: "%" if v else ""),
