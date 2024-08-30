@@ -315,6 +315,8 @@ class Usfm:
                 chaps[-1][1].append(i)
                 last = (last[0], r.last.chap)
         def pred(e, rlist):
+            if isinstance(e, sfm.Text) and e.parent.name in removes:
+                return False
             if isinstance(e.pos, _Reference) and any(e.pos.ref in refranges[i] for i in rlist) \
                     and (e.pos.ref.first.verse != 0 or refranges[i].first.verse == 0 or isinstance(e, sfm.Element) and e.name == "c"):
                 if strippara and isinstance(e, sfm.Element) and ispara(e):
@@ -327,8 +329,6 @@ class Usfm:
             if isinstance(e, sfm.Text):
                 if pred(e, rlist):
                     a.append(sfm.Text(e, e.pos, a))
-                return a
-            if e is None or (e.name in removes and not e.name.startswith('s')):
                 return a
             e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
             reduce(_g, [(x, rlist) for x in e], e_)
@@ -738,7 +738,8 @@ exclusionmap = {
     'v': (['v'], "document/ifshowversenums", False),
     'x': (['x'], None, False),
     'f': (['f'], "notes/includefootnotes", True),
-    's': (['s', 's1', 's2'], "document/sectionheads", False),
+    's': (['s', 's1', 's2', 'r'], "document/sectionheads", False),
+    'c': (['c'], 'document/ifshowchapternums', True),
     'p': (['fig'], None, False)
 }
 
@@ -784,7 +785,7 @@ class Module:
         if self.doc.doc is None:
             return []
         #self.removes = set()
-        self.removes = set((sum((e[0] for e in exclusionmap.values() if e[1] is None or model[e[1]]), [])))
+        self.removes = set((sum((e[0] for e in exclusionmap.values() if self.testexclude(e)), [])))
         final = sum(map(self.parse_element, self.doc.doc), [])
         return final
 
@@ -793,6 +794,9 @@ class Module:
         loctype = m.group(1) or "a"
         tocindex = self.localcodes.get(loctype.lower(), 0)
         return rl.str(context=self.usfms.booknames, level=tocindex)
+
+    def testexclude(self, einfo):
+        return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))
 
     def parse_element(self, e):
         if isinstance(e, sfm.Text):
@@ -849,7 +853,7 @@ class Module:
                 einfo = exclusionmap.get(c, ([], None, False))
                 if c == "-":
                     self.removes = set(sum((e[0] for e in exclusionmap.values()), []))
-                elif einfo[1] is None or (self.model is not None and (self.model[einfo[1]] not in (None, "")) ^ (not einfo[2])):
+                elif not self.testexclude(einfo):
                     self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
             dirname = os.path.dirname(self.fname)
