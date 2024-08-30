@@ -99,6 +99,7 @@
   \iftemp\else\tmpwrite{pageend}\fi
   \traceifcheck{p@geendcontent}%
 }
+
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \traceifset{onecoltrial}%
   \vfuzz=\PaperHeight
@@ -122,7 +123,7 @@
   % Marginal verses (and other things with 0 height vadjusts) need us to split to avail+lastdepth
   \setbox\colA=\vsplit255 to \dimexpr \availht + \lastdepth\relax
   \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
-  \setbox\colA\vbox{\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
+  \setbox\colA\vbox \ifNoGrid to \availht\fi {\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
   \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
   \und@rfill=\availht \decr{\und@rfill}{\colA}
 %-c_onecoltrial_intro
@@ -131,7 +132,8 @@
     \inendbookfalse
     \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \dimen3=\ht\colA \advance\dimen3\lastd@pth
-    \if\XrefNotes\relax\else
+    \if\XrefNotes\relax
+    \else
       \trace{o}{enter reheightcolnotes, colA=\the\ht\colA, for colnotes \the\ht13}%
       \reheightcolnotess{13}%
       \trace{o}{exit reheightcolnotes, colA=\the\ht\colA, xr@fbox=\the\ht\xr@fbox}%
@@ -157,7 +159,7 @@
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{1}{A}%
-      \trace{o}{colwidth=\the\wd\colA}%
+      \trace{o}{colwidth=\the\wd\colA, height=\the\ht\colA, lastpage\iflastpage true\else false\fi}%
       %\trace{o}{onecoltrial: dimen=\the\dimen3, lastd@pth=\the\lastd@pth}%
       \ifColNotes\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi\fi
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1

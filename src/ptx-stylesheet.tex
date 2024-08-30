@@ -1865,6 +1865,7 @@
 \def\PageAlign{page}
 \def\IntroPageAlign{page}
 \newif\ifin@ntro \in@ntrofalse
+\newif\ifNoGrid \NoGridfalse
 \def\preptxfile{
  \outputpenalty=0
  \filehasversesfalse\gdef\fileh@sverses{\global\filehasversestrue\global\let\fileh@sverses\relax}% Set filehasverses once then done, no need to repeat it every single verse.
@@ -1946,6 +1947,7 @@
    \global\let\gridb@x\diglotgr@db@x
  \else
    \ifsquashgridbox\global\let\gridb@x\gr@db@@x\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
+   \ifNoGrid\global\let\gridb@x\ungr@db@x\fi
  \fi
  \@netimesetuplater
  \gdef\ch@plabel{}

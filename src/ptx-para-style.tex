@@ -250,6 +250,7 @@
   \fi
 }
 
+\def\ungr@db@x#1{\vskip0pt \unvbox#1\nobreak}
 \newif\ifsquashgridbox\squashgridboxtrue                                        %(2)
 \let\gridb@x\gr@db@@x % overridden during \ptxfile setup, depending on \ifdiglot and \ifsquashgridbox 
 %-cpar_gridbox2
@@ -976,7 +977,7 @@
   %\showboxbreadth=99
   \let\old@ep=\everypar
   \everypar{}%
-  \setbox#1\vbox{%
+  \setbox#1\vbox to \ht#1{%
     %\hsize=\wd#1%
     \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
     \pdfsavepos
