@@ -4111,7 +4111,7 @@ class GtkViewModel(ViewModel):
 
     def onSelectDiffPDFclicked(self, btn_selectDiffPDF):
         self._onPDFClicked(_("Select a PDF file to compare with"), True,
-                os.path.join(self.project.printPath(None), "diffPDF", "diffPDF", btn_selectDiffPDF, False))
+                os.path.join(self.project.printPath(None)), "diffPDF", "diffPDF", btn_selectDiffPDF, False)
         if self.get("lb_diffPDF") == "":
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
             self.makeLabelBold("l_selectDiffPDF", False)
