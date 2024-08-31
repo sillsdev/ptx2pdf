@@ -1911,7 +1911,8 @@
        \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
          \global\baselineDelta=\csname baselineDelta##1\endcsname
        \fi
-       \ifdim\baselineskip<\@minb@seline
+       \dimen0=\baselineskip
+       \ifdim\dimen0<\@minb@seline
          \xdef\@minb@seline{\the\baselineskip}%
        \fi
        \saveLRspecificSide{##1}%
@@ -2296,7 +2297,8 @@
     \global\csname verticalsp@ceunit#1\endcsname=\verticalsp@ceunit
  \fi
  \trace{F}{le@dingunit(\the\le@dingunit)=\LineSpacingFactor * \the\FontSizeUnit, onel@neunit(\the\onel@neunit)=\LineSpaceBase * \the\le@dingunit}
- \ifdim\baselineskip < 1pt \baselineskip=\onel@neunit\fi % If the baselineskip has been specifically
+ \dimen0 = \baselineskip
+ \ifdim\dimen0 < 1pt \baselineskip=\onel@neunit\fi % If the baselineskip has been specifically
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
