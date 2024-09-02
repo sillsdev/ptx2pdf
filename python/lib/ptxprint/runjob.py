@@ -853,10 +853,7 @@ class RunJob:
         outpath = os.path.join(self.tmpdir, '..', outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
-        if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
-            pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+"{}.pdf".format(pdfext)) 
-        else:
-            pdffile = outpath + "{}.pdf".format(pdfext)
+        pdffile = outpath + "{}.pdf".format(pdfext)
         logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:

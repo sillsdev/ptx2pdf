@@ -1557,8 +1557,6 @@ class GtkViewModel(ViewModel):
                             self.finished()
                             return
                     fileLocked = False
-                if os.path.exists(pdfname):
-                    os.remove(pdfname)
         self.onSaveConfig(None)
         self.checkUpdates()
 
