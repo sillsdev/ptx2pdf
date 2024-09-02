@@ -1,9 +1,37 @@
 PTXprint 2.5.11 Release Notes
-27 Aug 2024
+2 Sep 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.5.12 (2 Sep 2024)
+
+  * Add off-grid setting for single column
+  
+  * Add double-column support for NoGridtrue
+  
+  * Between hooks for transition to table
+  
+  * Make letterspace on the secondary project come from secondary settings
+
+  * Stop UnderChar from breaking things
+  
+  * Put back vertical justification for single column
+  
+  * Remove interchartokenstate stack for Bidi controls since Arabic is supported now
+  
+  * DEB info file generator needs to handle 3 Ubuntu versions now
+  
+  * Fix modules to only include what is asked for. Add c to the \inc list
+  
+  * Fix rounding .2f down to 0 for inter char spacing
+  
+  * Fix glossarydepth control and minitests example
+  
+  * Don't squeal during typing a reflist in the book list
+  
+  * Don't delete the output file before we have an opportunity to copy it away to _1
+  
 Bug fixes and Improvements in 2.5.11 (27 Aug 2024)
 
   * Fix editor pages and files to at least not corrupt

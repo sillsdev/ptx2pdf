@@ -7,6 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)     # frozen not required
+    # group: str
 class O:
     ident: str
     val: Union[Tuple[int, int, int, int, int], bool, None]
