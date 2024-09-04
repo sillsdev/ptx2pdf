@@ -282,6 +282,7 @@ _sensitivities = {
     "r_pictureRes": {
         "r_pictureRes_High" :  ["btn_requestIllustrations"]}, 
         
+    "noGrid" :                 ["c_variableLineSpacing"],
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
@@ -3080,13 +3081,117 @@ class GtkViewModel(ViewModel):
 #          \ifnotesEachBookfalse   (and should only be set if option is set different to the default value)
 
     def setupTeXOptions(self):
+        groupCats = {
+            'CVS': 'Chapter/Verse',
+            'LAY': 'Layout/Spacing',
+            'BDY': 'Body Text',
+            'RUL': 'Rule/Line',
+            'FNT': 'Font',
+            'NTS': 'Notes',
+            'DIG': 'Diglot',
+            'PIC': 'Pictures/Images', 
+            'PDF': 'PDF',
+            'OTH': 'Other/Miscellaneous' 
+        }
+
+        texopts = self.builder.get_object("box_texoptions")
+
+        # Dictionary to hold expanders for each group
+        expanders = {}
+
+        row_index = 0  # Track the overall row index for the main grid
+        for k, opt, wname in TeXpert.opts():
+            # Check if the group already has an expander, if not create one
+            if opt.group not in expanders:
+                expander = Gtk.Expander(label=groupCats[opt.group])
+                expander.set_halign(Gtk.Align.FILL)
+                expander.set_hexpand(True)
+                expander.set_vexpand(False)
+                texopts.insert_row(row_index)
+                texopts.attach(expander, 0, row_index, 3, 1)
+                row_index += 1
+                expanders[opt.group] = expander
+
+                # Create a new grid for each expander
+                grid = Gtk.Grid()
+                grid.set_column_spacing(10)
+                grid.set_row_spacing(5)
+                grid.set_margin_start(10)  # Optional: Add some left margin for indented content
+                expander.add(grid)
+            else:
+                grid = expanders[opt.group].get_child()
+
+            # Add the widgets to the grid within the appropriate expander
+            row = len(grid.get_children()) // 2  # Calculate current row based on number of children
+            label = Gtk.Label(label=opt.name + ":")
+            label.set_halign(Gtk.Align.END)
+            grid.attach(label, 0, row, 1, 1)
+            label.show()
+
+            if wname.startswith("c_"):
+                obj = Gtk.CheckButton()
+                self.btnControls.add(wname)
+                v = opt.val
+                tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
+            elif wname.startswith("s_"):
+                x = opt.val
+                adj = Gtk.Adjustment(value=x[0], lower=x[1], upper=x[2], step_increment=x[3], page_increment=x[4])
+                obj = Gtk.SpinButton()
+                obj.set_adjustment(adj)
+                obj.set_digits(x[5])  # Set the number of decimal places
+                v = str(x[0])
+                tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
+            elif wname.startswith("fcb_"):
+                obj = Gtk.ComboBoxText()
+                for i, (a, b) in enumerate(opt.val.items()):
+                    obj.append(a, b)
+                    if i == 0:
+                        v = a
+                obj.set_entry_text_column(0)
+                obj.set_id_column(1)
+                obj.set_active_id(v)
+                tiptext = "{k}:\t[{v}]\n\n{descr}".format(k=k, v=v, **asdict(opt))
+
+            label.set_tooltip_text(tiptext)
+            self.finddata[tiptext.lower()] = (wname, 1)
+            self.finddata[opt.name.lower()] = (wname, 4)
+            self.widgetnames[wname] = opt.name
+            obj.set_tooltip_text(tiptext)
+            obj.set_halign(Gtk.Align.START)
+            grid.attach(obj, 1, row, 1, 1)
+            self.builder.expose_object(wname, obj)
+            if wname in self.dict:
+                v = self.dict[wname]
+            self.set(wname, v)
+            self.allControls.append(wname)
+            obj.show()
+            expanders[opt.group].show_all()  # Ensure that the expander and its content are shown
+
+    def setupTeXOptionsOLDnotusedanymore(self):
+
+        groupCats = {'CVS': 'Chapter/Verse',
+                     'LAY': 'Layout/Spacing',
+                     'RUL': 'Rule/Line',
+                     'FNT': 'Font',
+                     'NTS': 'Notes',
+                     'DIG': 'Diglot',
+                     'PIC': 'Pictures/Images', 
+                     'PDF': 'PDF',
+                     'PNT': 'Penalty',
+                     'OTH': 'Other/Miscellaneous', 
+                     'TRC': 'Tracing'}
+
         texopts = self.builder.get_object("box_texoptions")
         for i, (k, opt, wname) in enumerate(TeXpert.opts()):
             lasti = i
             texopts.insert_row(i)
+            grp = Gtk.Label(label=groupCats[opt.group]+":")
+            grp.set_halign(Gtk.Align.START)
+            texopts.attach(grp, 0, i, 1, 1)
+            grp.show()
             l = Gtk.Label(label=opt.name+":")
             l.set_halign(Gtk.Align.END)
-            texopts.attach(l, 0, i, 1, 1)
+            texopts.attach(l, 1, i, 1, 1)
             l.show()
             if wname.startswith("c_"):
                 obj = Gtk.CheckButton()
@@ -3095,10 +3200,11 @@ class GtkViewModel(ViewModel):
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
             elif wname.startswith("s_"):
                 x = opt.val
-                # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
+                # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr, decPlaces)
                 adj = Gtk.Adjustment(upper=x[2], lower=x[1], step_increment=x[3], page_increment=x[4])
                 obj = Gtk.SpinButton()
                 obj.set_adjustment(adj)
+                obj.set_digits(x[5])  # Set the number of decimal places
                 v = str(x[0])
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
             elif wname.startswith("fcb_"):
@@ -3117,7 +3223,7 @@ class GtkViewModel(ViewModel):
             self.widgetnames[wname] = opt.name
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)
-            texopts.attach(obj, 1, i, 1, 1)
+            texopts.attach(obj, 2, i, 1, 1)
             self.builder.expose_object(wname, obj)
             if wname in self.dict:
                 v = self.dict[wname]

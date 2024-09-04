@@ -10,22 +10,18 @@ logger = logging.getLogger(__name__)
 class O:
     ident: str
     group: str
-    val: Union[Tuple[int, int, int, int, int], bool, None]
+    val: Union[Tuple[int, int, int, int, int, int], bool, None]
     output: Union[str, Callable[[str, Union[int, bool, None]], None]]
     name: str
     descr: str
     fn: Optional[Callable[['ViewModel', Union[int, bool, None]], None]] = None
 
-_group_IDs = {'CVS': 'Chapter/Verse', 'DIG': 'Diglot',              'FNT': 'Font',    'LAY': 'Layout/Spacing',
-              'NTS': 'Notes',         'OTH': 'Other/Miscellaneous', 'PDF': 'PDF',     'PIC': 'Pictures/Images', 
-              'PNT': 'Penalty',       'RUL': 'Rule/Line',           'TRC': 'Tracing'}
-              
 # Key to val: (value, min, max, step increment, page increment)
 texpertOptions = {
 #    "versehyphen":        O("vhyphen", "CVS", True, "", _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
-    "ptxversion":         O("ptxversion", "LAY", (0, 0, 10, 1, 1), "\\def{0}{{{1}}}", _("Maximum layout version"), _("Maximum layout version to use or 0 for any. Used to maintain backward compatibility when the TeX macros have been changed in newer versions of PTXprint.")),
-    # "AdvCompatLineSpacing": O("linespacebase", "LAY", False, "*** Help *** Need a lambda fn here ***", _("Legacy 1/14 LineSpacing"), _("In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.")),
-    # "AdvCompatGlyphMetrics":  O("useglyphmetrics", "FNT", False, "*** Help *** Need a lambda fn here ***", _("Use glyph metrics"), _("PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths. Font metrics gives more consistent results.")),
+    "ptxversion":         O("ptxversion", "LAY", (0, 0, 10, 1, 1, 0), "\\def{0}{{{1}}}", _("Maximum layout version"), _("Maximum layout version to use or 0 for any. Used to maintain backward compatibility when the TeX macros have been changed in newer versions of PTXprint.")),
+    # "AdvCompatLineSpacing":  O("linespacebase", "LAY", False, "*** Help *** Need a lambda fn here ***", _("Legacy 1/14 LineSpacing"), _("In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.")),
+    # "AdvCompatGlyphMetrics": O("useglyphmetrics", "FNT", False, "*** Help *** Need a lambda fn here ***", _("Use glyph metrics"), _("PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths. Font metrics gives more consistent results.")),
     "bookresetcallers":   O("bookresetcallers", "NTS", True, "", _("Reset Callers at Each Book"), _("Re-start the footnote and cross-reference callers at the start of each book")),
     "PageAlign":          O("bookstartpage", "LAY", {"page": _("Next page"), "multi": _("Same page"), "odd": _("Odd page")}, r"\def{0}{{{1}}}", _("Where to start a new book"), _("Does a scripture book start on a new page, the same page as the previous book (if <65% of page has been used), or an odd page")),
     "IntroPageAlign":     O("intropagealign", "LAY", {"page": _("Next page"), "multi": _("No page breaks"), "odd": _("On an odd page"), "group": _("Grouped")}, r"\def{0}{{{1}}}", _("Where to start a new intro page"), _("Does an intro page start on a new page, the same page as the previous book, an odd page, or group all adjacent intro pages into an odd paged group")),
@@ -60,28 +56,36 @@ texpertOptions = {
     "CalcChapSize":       O("calcchapsize", "CVS", True, "", _("Auto Calc Optimum Chapter Size"), _("Attempt to automatically calculate drop chapter number size")),
     "tildenbsp":          O("tildenbsp", "OTH", True, "", _("Tilde is No Break Space"), _("Treat ~ as non breaking space")),
     "lastbooknoeject":          O("lastnoeject", "LAY", False, "", _("Suppress pagebreak after bookend-final"), _("Revert to old behaviour of not ensuring that the whole of the last book is output before back-matter PDFs")),
-    # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
-    "pretolerance":       O("pretolerance", "PNT", (100, -1, 10000, 10, 100), "{0}={1}", _("Hyphenation threshold"), _("Paragraph badness threshold before trying hyphenation. Set to -1 to always hyphenate")),
-    "hyphenpenalty":      O("hyphenpenalty", "PNT", (50, -9999, 10000, 10, 100), "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")),
-    "doublehyphendemerits":      O("doublehyphendemerits", "PNT", (10000, 0, 1000000, 1000, 10000), "{0}={1}", _("Double hyphenation penalty"), _("Penalty for consecutive hyphenation across two lines")),
-    "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2., -10, 50, 1,5), "\\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"), _("Shift thumbtab text")),
-    "FigCaptionAdjust":   O("captionadj", "PIC", (0., -10, 20, 1, 5), "\\def{0}{{{1}pt}}", _("Space between picture & caption"), _("Increase/Reduce the gap between figures and their captions")),
-    "DefaultSpaceBeside": O("spbeside", "PIC", (10., 0, 100, 1, 5), "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")),
-    "OptionalBreakPenalty": O("optbkpen", "PNT", (300, 0, 10000, 10, 100), "\\def{0}{{{1}}}", _("Optional break penalty"), _("Penalty for the optional break")),
-    "badspacepenalty":    O("badsppen", "PNT", (100, -10000, 10000, 10, 100), "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")),
-    "lastnoteinterlinepenalty":  O("lastnoteinterlinep", "PNT", (10000, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: interlinepenalty"), _("Penalty for breaking between lines of the last footnote.")),
-    "lastnotewidowpenalty":  O("lastnotewidowp", "PNT", (10000, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: widowpenalty"), _("Extra penalty for breaking at the last line of the last footnote.")),
-    "lastnoteclubpenalty":  O("lastnoteclubp", "PNT", (10000, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: clubpenalty"), _("Extra penalty for breaking at the first line of the last footnote.")),
-    "lastnoteparpenalty":  O("lastnoteparp", "PNT", (100, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: penalty at par"), _("Penalty for breaking at an explicit footnote-paragraph in the last footnote.")),
-    "NoteShaveShortest":  O("nshaveshort", "NTS", (2, 0, 100, 1, 1), r"\def{0}{{{1}}}", _("Split notes: Shortest note to shave"), _("If footnotes might be shaved, how many lines must it be?")),
-    "NoteShaveMin":  O("nshavemin", "NTS", (1, 0, 100, 1, 1), r"\def{0}{{{1}}}", _("Split notes: min lines to move."), _("If a footnote is being shaved (split onto next page), what is the minimum number of lines to move?")),
-    "NoteShaveStay":  O("nshavestay", "NTS", (1, 0, 100, 1, 1), r"\def{0}{{{1}}}", _("Split notes: note lines to stay"), _("If a footnote is being shaved (split onto next page), how many lines of (all) notes must remain on the page?")),
-    "FootnoteMulS":  O("footnotemuls", "NTS", (100, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Single column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")),
-    "FootnoteMulT":  O("footnotemult", "NTS", (100, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Two column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")),
-    "FootnoteMulD":  O("footnotemuld", "NTS", (500, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")),
-    "FootnoteMulC":  O("footnotemulc", "NTS", (0, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
-    "BookEndDecorationSkip":   O("bedskip", "OTH", (16, -100, 100, 1,1), "\\def{0}{{{1}pt}}", _("End decoration skip"), _("The gap between the end of the book and the book-end decoration")),
-    "DiglotColourPad":   O("diglotcolourpad", "DIG", (3, -20, 20, 1,1), "\\def{0}{{{1}pt}}", _("Diglot Shading Padding"), _("The amount of side padding (pt) on the shaded background of a diglot")),
+    # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr, decPlaces)
+    # "shortName":       O("ident", "GRP", (default, lower, upper, stepIncr, pageIncr, decPlaces), "{0}={1}", _("Label"), _("Tooltip")),
+    "pageFullFactor":        O("ident", "LAY", (0.65,  0.30, 0.9, 0.05, 0.05, 2), "{0}={1}", _("Page full factor"), _("This setting is related to how full a page needs to be to force the next book to start on a new page.")),
+    "afterChapterSpace":     O("ident", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), "{0}={1}", _("After chapter space factor"), _("This sets the gap between the chapter number and the text following. The setting here is a multiple of the main body text size as specified in layout.")),
+    "afterVerseSpace":       O("ident", "CVS", (0.15, -0.20, 1.0, 0.01, 0.10, 2), "{0}={1}", _("After verse space factor"), _("This sets the gap between the verse number and the text following. The setting here is a multiple of the main body text size as specified in layout.")),
+    "cutouterpadding":       O("ident", "PIC", (10.0,  0.0, 50.0, 1.0,  5.0,  0), "{0}={1}", _("Space (pt) beside cutout/sidebar"), _("This sets the default gap (pt) between the body text and the side of a figure/sidebar in a cutout.")),
+    "underlineThickness":    O("ident", "FNT", (0.05,  0.01, 0.5, 0.01, 0.01, 2), "{0}={1}", _("Underline thickness (em)"), _("This sets the thickness of the text underline, (measured in ems).")),
+    "underlinePosition":     O("ident", "FNT", (0.10, -1.0 , 1.0, 0.01, 0.01, 2), "{0}={1}", _("Underline vertical position (em)"), _("This sets how far (in ems) the underline is below the text and what it is relative to. If negative, it is the distance below the baseline. If positive (or zero), it is the distance below the bottom of any descenders.")),
+    
+    "pretolerance":       O("pretolerance", "BDY", (100, -1, 10000, 10, 100, 0), "{0}={1}", _("Hyphenation threshold"), _("Paragraph badness threshold before trying hyphenation. Set to -1 to always hyphenate")),
+    "hyphenpenalty":      O("hyphenpenalty", "BDY", (50, -9999, 10000, 10, 100, 0), "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")),
+    "doublehyphendemerits":      O("doublehyphendemerits", "BDY", (10000, 0, 1000000, 1000, 10000, 0), "{0}={1}", _("Double hyphenation penalty"), _("Penalty for consecutive hyphenation across two lines")),
+    "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2., -10, 50, 1, 5, 0), "\\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"), _("Shift thumbtab text")),
+    "FigCaptionAdjust":   O("captionadj", "PIC", (0., -10, 20, 1, 5, 0), "\\def{0}{{{1}pt}}", _("Space between picture & caption"), _("Increase/Reduce the gap between figures and their captions")),
+    "DefaultSpaceBeside": O("spbeside", "PIC", (10., 0, 100, 1, 5, 0), "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")),
+    "OptionalBreakPenalty": O("optbkpen", "BDY", (300, 0, 10000, 10, 100, 0), "\\def{0}{{{1}}}", _("Optional break penalty"), _("Penalty for the optional break")),
+    "badspacepenalty":    O("badsppen", "BDY", (100, -10000, 10000, 10, 100, 0), "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")),
+    "lastnoteinterlinepenalty":  O("lastnoteinterlinep", "BDY", (10000, -9999, 10000, 10, 100, 0), "{0}={1}", _("Last Note: interlinepenalty"), _("Penalty for breaking between lines of the last footnote.")),
+    "lastnotewidowpenalty":  O("lastnotewidowp", "NTS", (10000, -9999, 10000, 10, 100, 0), "{0}={1}", _("Last Note: widowpenalty"), _("Extra penalty for breaking at the last line of the last footnote.")),
+    "lastnoteclubpenalty":  O("lastnoteclubp", "NTS", (10000, -9999, 10000, 10, 100, 0), "{0}={1}", _("Last Note: clubpenalty"), _("Extra penalty for breaking at the first line of the last footnote.")),
+    "lastnoteparpenalty":  O("lastnoteparp", "NTS", (100, -9999, 10000, 10, 100, 0), "{0}={1}", _("Last Note: penalty at par"), _("Penalty for breaking at an explicit footnote-paragraph in the last footnote.")),
+    "NoteShaveShortest":  O("nshaveshort", "NTS", (2, 0, 100, 1, 1, 0), r"\def{0}{{{1}}}", _("Split notes: Shortest note to shave"), _("If footnotes might be shaved, how many lines must it be?")),
+    "NoteShaveMin":  O("nshavemin", "NTS", (1, 0, 100, 1, 1, 0), r"\def{0}{{{1}}}", _("Split notes: min lines to move."), _("If a footnote is being shaved (split onto next page), what is the minimum number of lines to move?")),
+    "NoteShaveStay":  O("nshavestay", "NTS", (1, 0, 100, 1, 1, 0), r"\def{0}{{{1}}}", _("Split notes: note lines to stay"), _("If a footnote is being shaved (split onto next page), how many lines of (all) notes must remain on the page?")),
+    "FootnoteMulS":  O("footnotemuls", "NTS", (100, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Single column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")),
+    "FootnoteMulT":  O("footnotemult", "NTS", (100, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Two column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")),
+    "FootnoteMulD":  O("footnotemuld", "NTS", (500, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")),
+    "FootnoteMulC":  O("footnotemulc", "NTS", (0, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
+    "BookEndDecorationSkip":   O("bedskip", "OTH", (16, -100, 100, 1, 1, 0), "\\def{0}{{{1}pt}}", _("End decoration skip"), _("The gap between the end of the book and the book-end decoration")),
+    "DiglotColourPad":   O("diglotcolourpad", "DIG", (3, -20, 20, 1, 1, 0), "\\def{0}{{{1}pt}}", _("Diglot Shading Padding"), _("The amount of side padding (pt) on the shaded background of a diglot")),
 }
 
 def widgetName(opt):
