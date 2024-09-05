@@ -149,8 +149,8 @@ _map = {
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", "decorate", lambda w,v: int(float(v or "1.0")*1000)),
     "fancy/endayah":            ("c_decorator_endayah", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
-    "document/nogrid":          ("c_noGrid", "body", None),
-    "document/varlinespacing":  ("c_variableLineSpacing", "body", None),
+    "document/nogrid":          ("c_noGrid", "body", lambda w,v: "" if v else "%"),
+    "document/varlinespacing":  ("c_variableLineSpacing", "body", lambda w,v: "" if v else "%"),
     
     "paragraph/linespacing":       ("s_linespacing", "layout", lambda w,v: f2s(float(v), dp=8) if v else "15"),
 #    "paragraph/linespacebase":     ("c_AdvCompatLineSpacing", "layout", lambda w,v: 14 if v else 12),

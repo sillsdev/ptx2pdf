@@ -3092,7 +3092,7 @@ class GtkViewModel(ViewModel):
             'PDF': 'PDF Options',
             'OTH': 'Other Miscellaneous Settings' }
 
-        texopts = self.builder.get_object("box_texoptions")
+        texopts = self.builder.get_object("bx_texoptions")
         expanders = {} # Dictionary to hold expanders for each group
         row_index = 0  # Track the overall row index for the main grid
         for k, opt, wname in TeXpert.opts():

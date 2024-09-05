@@ -21664,7 +21664,7 @@ other settings are applied. This file is rarely used.</property>
                                             <property name="margin-end">5</property>
                                             <property name="label-xalign">0.019999999552965164</property>
                                             <child>
-                                              <!-- n-columns=2 n-rows=5 -->
+                                              <!-- n-columns=3 n-rows=5 -->
                                               <object class="GtkGrid">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
@@ -21674,7 +21674,6 @@ other settings are applied. This file is rarely used.</property>
                                                 <property name="margin-bottom">6</property>
                                                 <property name="row-spacing">4</property>
                                                 <property name="column-spacing">16</property>
-                                                <property name="column-homogeneous">True</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_sensitive">
                                                     <property name="label" translatable="yes">Sensitive Project</property>
@@ -21859,7 +21858,7 @@ glosses for interlinear/ruby text.</property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">3</property>
-                                                    <property name="width">2</property>
+                                                    <property name="width">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -21979,17 +21978,20 @@ interlinearized punctuation.</property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">4</property>
-                                                    <property name="width">2</property>
+                                                    <property name="width">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_autoTagHebGrk">
-                                                    <property name="label" translatable="yes">Auto-tag Hebrew words with \wh ... \wh* and Greek words with  \wg ... \wg*</property>
+                                                    <property name="label" translatable="yes">Auto-tag Hebrew and Greek words</property>
                                                     <property name="name">Auto-tag Hebrew and Greek words</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">PTXprint can automatically tag all
+                                                    <property name="tooltip-text" translatable="yes">Auto-tag Hebrew words \wh ... \wh*
+and Greek words with  \wg ... \wg*
+
+PTXprint can automatically tag all
 source language words (Hebrew and
 Greek) with the appropriate markup
 to ensure they display with the right
@@ -22003,7 +22005,53 @@ font and direction for that script.</property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">2</property>
-                                                    <property name="width">2</property>
+                                                    <property name="width">3</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_lockXeTeXLayout">
+                                                    <property name="label" translatable="yes">Lock XeTeX Layout Level</property>
+                                                    <property name="name">Lock XeTeX Layout Settings</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">This feature enables final typesetting to proceed 
+with minimal risk of change to the final layout by
+locking the TeX macros to use the current layout
+logic, which will prevent newer functionality
+from taking effect in the future. This sets the
+"Maximum Layout Version" value in the 
+TeXpert Hacks section.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <signal name="clicked" handler="onlockXeTeXLayoutClicked" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">2</property>
+                                                    <property name="top-attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_lockUI4Layout">
+                                                    <property name="label" translatable="yes">Lock UI Layout Settings</property>
+                                                    <property name="name">Lock UI Layout Settings</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">This feature enables final typesetting to proceed 
+with minimal risk of change to the final layout by
+disabling various controls (on the layout, fonts and
+styles tabs) so that settings can't be accidentally 
+changed while doing final page layout.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <signal name="clicked" handler="onlockUI4LayoutClicked" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">2</property>
+                                                    <property name="top-attach">1</property>
                                                   </packing>
                                                 </child>
                                               </object>
@@ -22012,7 +22060,7 @@ font and direction for that script.</property>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">Other</property>
+                                                <property name="label" translatable="yes">General</property>
                                               </object>
                                             </child>
                                           </object>
@@ -22023,127 +22071,7 @@ font and direction for that script.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkFrame" id="fr_AdvCompat">
-                                            <property name="width-request">190</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin-start">5</property>
-                                            <property name="vexpand">True</property>
-                                            <property name="label-xalign">0.05000000074505806</property>
-                                            <child>
-                                              <object class="GtkAlignment">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="valign">start</property>
-                                                <property name="left-padding">12</property>
-                                                <child>
-                                                  <!-- n-columns=1 n-rows=4 -->
-                                                  <object class="GtkGrid">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="margin-top">6</property>
-                                                    <property name="margin-bottom">6</property>
-                                                    <property name="row-spacing">5</property>
-                                                    <child>
-                                                      <object class="GtkCheckButton" id="c_AdvCompatLineSpacing">
-                                                        <property name="label" translatable="yes">Legacy 1/14 LineSpacing</property>
-                                                        <property name="name">Enable legacy 1/14 line spacing</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="valign">center</property>
-                                                        <property name="margin-top">3</property>
-                                                        <property name="draw-indicator">True</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">0</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkCheckButton" id="c_AdvCompatGlyphMetrics">
-                                                        <property name="label" translatable="yes">Use glyph metrics</property>
-                                                        <property name="name">Use glyph metrics</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.
-Font metrics gives more consistent results.</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="valign">center</property>
-                                                        <property name="draw-indicator">True</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkCheckButton" id="c_lockXeTeXLayout">
-                                                        <property name="label" translatable="yes">Lock XeTeX Layout Level</property>
-                                                        <property name="name">Lock XeTeX Layout Settings</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">This feature enables final typesetting to proceed 
-with minimal risk of change to the final layout by
-locking the TeX macros to use the current layout
-logic, which will prevent newer functionality
-from taking effect in the future. This sets the
-"Maximum Layout Version" value in the 
-TeXpert Hacks section.</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="valign">center</property>
-                                                        <property name="draw-indicator">True</property>
-                                                        <signal name="clicked" handler="onlockXeTeXLayoutClicked" swapped="no"/>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">2</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkCheckButton" id="c_lockUI4Layout">
-                                                        <property name="label" translatable="yes">Lock UI Layout Settings</property>
-                                                        <property name="name">Lock UI Layout Settings</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">This feature enables final typesetting to proceed 
-with minimal risk of change to the final layout by
-disabling various controls (on the layout, fonts and
-styles tabs) so that settings can't be accidentally 
-changed while doing final page layout.</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="valign">center</property>
-                                                        <property name="draw-indicator">True</property>
-                                                        <signal name="clicked" handler="onlockUI4LayoutClicked" swapped="no"/>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">3</property>
-                                                      </packing>
-                                                    </child>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                            </child>
-                                            <child type="label">
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">Compatibility</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                       <packing>
@@ -22180,107 +22108,117 @@ changed while doing final page layout.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <child>
-                                  <!-- n-columns=3 n-rows=10 -->
-                                  <object class="GtkGrid" id="box_texoptions">
+                                  <object class="GtkBox" id="tb_AdvancedOther">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="margin-left">6</property>
-                                    <property name="margin-right">6</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="margin-end">6</property>
-                                    <property name="margin-top">12</property>
-                                    <property name="margin-bottom">12</property>
-                                    <property name="row-spacing">6</property>
-                                    <property name="column-spacing">6</property>
+                                    <property name="orientation">vertical</property>
                                     <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
+                                      <!-- n-columns=3 n-rows=10 -->
+                                      <object class="GtkGrid" id="bx_texoptions">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">6</property>
+                                        <property name="margin-top">12</property>
+                                        <property name="margin-bottom">12</property>
+                                        <property name="row-spacing">6</property>
+                                        <property name="column-spacing">6</property>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
                                     </child>
                                   </object>
                                 </child>
