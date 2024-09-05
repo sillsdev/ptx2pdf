@@ -52,7 +52,7 @@
 \BindingGutter{paper/ifaddgutter}
 \BindingGutter={paper/gutter}mm
 \OuterGutter{paper/ifoutergutter}
-\def\DefaultSpaceBeside{{{document/cutouterpadding} pt}}
+\def\DefaultSpaceBeside{{{texpert/cutouterpadding} pt}}
 \noinkinmargin{footer/noinkinmargin}
 
 %% Columns
@@ -71,14 +71,14 @@
 {document/marginalverses}\VerseBoxWidth={document/columnshift}pt
 {document/marginalverses}\def\colshiftmode{{{document/marginalposn}}}
 %{document/marginalverses}\def\AfterVerseSpaceFactor{{0}}
-\def\PageFullFactor{{{document/pagefullfactor}}}
+\def\PageFullFactor{{{texpert/pagefullfactor}}}
 \def\BalanceThreshold{{{paper/bottomrag}}}
 
 %%%%% Text Spacing %%%%%
-\def\LineSpaceBase{{{paragraph/linespacebase}}}
+\def\LineSpaceBase{{{texpert/linespacebase}}}
 \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 \def\VerticalSpaceFactor{{1.0}}
-{paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
+{texpert/useglyphmetrics}\XeTeXuseglyphmetrics=0
 
 {cover/makecoverpage}\NoTransparencyfalse
 %% Cross-space contextualization
@@ -95,8 +95,8 @@
 {document/ifspacing}\def\SpaceShrinkFactor{{{document/spaceshrink}}}
 {document/ifcolorfonts}\ColorFontsfalse
 
-\def\UnderlineThickness{{{document/underlinethickness}em}}
-\def\UnderlineLower{{{document/underlineposition}em}}
+\def\UnderlineThickness{{{texpert/underlinethickness}em}}
+\def\UnderlineLower{{{texpert/underlineposition}em}}
 \RuleThickness={document/rulethickness}pt
 
 %% Specify the fallback font to be used for special/missing characters
@@ -128,8 +128,8 @@
 %%% Chapters & Verses %%%
 \OmitVerseNumberOne{document/ifomitverseone}
 {document/ifshowchapternums}\OmitChapterNumbertrue
-\def\AfterChapterSpaceFactor{{{document/afterchapterspace}}}
-{document/ifshowversenums}\def\AfterVerseSpaceFactor{{{document/afterversespace}}}
+\def\AfterChapterSpaceFactor{{{texpert/afterchapterspace}}}
+{document/ifshowversenums}\def\AfterVerseSpaceFactor{{{texpert/afterversespace}}}
 
 %%% Poetry - Hang Verse Numbers
 {document/hangpoetry}\catcode`\@=11

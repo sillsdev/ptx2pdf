@@ -228,7 +228,7 @@ class TexModel:
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
         self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
-                    / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']), dp=8)
+                    / float(self.dict["texpert/linespacebase"]) / float(self.dict['paper/fontfactor']), dp=8)
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
@@ -333,7 +333,8 @@ class TexModel:
                 except Exception as e:
                     raise type(e)("In TeXModel with key {}, ".format(k) + str(e))
         for k, opt, wname in TeXpert.opts():
-            self.dict["texpert/"+opt.ident] = self.printer.get(wname)
+            v = self.printer.get(wname)
+            self.dict["texpert/"+opt.ident] = v if opt.valfn is None else opt.valfn(v) 
 
     def calcRuleParameters(self):
         notemap = {'fn': 'note', 'xr': 'xref', 'sn': 'study'}

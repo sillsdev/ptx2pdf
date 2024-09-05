@@ -153,8 +153,8 @@ _map = {
     "document/varlinespacing":  ("c_variableLineSpacing", "body", None),
     
     "paragraph/linespacing":       ("s_linespacing", "layout", lambda w,v: f2s(float(v), dp=8) if v else "15"),
-    "paragraph/linespacebase":     ("c_AdvCompatLineSpacing", "layout", lambda w,v: 14 if v else 12),
-    "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", "layout", lambda w,v: "%" if v else ""),
+#    "paragraph/linespacebase":     ("c_AdvCompatLineSpacing", "layout", lambda w,v: 14 if v else 12),
+#    "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", "layout", lambda w,v: "%" if v else ""),
     "paragraph/ifjustify":      ("c_justify", "body", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", "body", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", "body", lambda w,v: "" if v else "%"),

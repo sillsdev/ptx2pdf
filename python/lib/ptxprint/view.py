@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.5.12"
 GitVersionStr = "2.5.12"
-ConfigVersion = "2.18"
+ConfigVersion = "2.19"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1060,6 +1060,13 @@ class ViewModel:
         if v < 2.18: # transfer this value from body tab to texpert tab
             if config.getboolean("project", "ifstarthalfpage", fallback=False):
                 self._configset(config, "texpert/bookstartpage", "multi")
+
+        if v < 2.19: # transfer some settings to texpert
+            for a in ('pagefullfactor', 'afterchapterspace', 'afterversespace', 'cutouterpadding',
+                        'underlinethickness', ' underlineposition', 'paragraph/linespacebase',
+                        'paragraph/useglyphmetrics'):
+                p = "document" + a if "/" not in a else a[:a.index("/")]
+                self._configset(config, p + "/" + a, config.get(p, a, fallback=""))
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
