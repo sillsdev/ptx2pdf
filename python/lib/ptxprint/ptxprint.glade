@@ -47,6 +47,8 @@ THE SOFTWARE.
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
@@ -357,7 +359,7 @@ Baseline Grid</property>
             </child>
             <child>
               <object class="GtkRadioButton" id="rbox7">
-                <property name="label" translatable="yes">Keep texts aligned to the baseline grid</property>
+                <property name="label" translatable="yes">Let text ignore the baseline grid</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
@@ -5157,7 +5159,17 @@ Spacing (pt):</property>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Ideally the text should </property>
+                                            <property name="tooltip-text" translatable="yes">For high quality typesetting it is
+good practice for the text to be
+aligned to the baseline grid. This
+ensures consistent line spacing
+and back-to-back registration.
+
+However, for quick draft printouts
+or typesetting for thicker paper,
+the option can be disabled which
+also allows the line spacing to vary
+as needed to fill columns with text.</property>
                                             <property name="label" translatable="yes">Align text to Grid:</property>
                                           </object>
                                           <packing>
@@ -5200,6 +5212,7 @@ as needed to fill columns with text.</property>
                                             <property name="halign">center</property>
                                             <property name="margin-start">6</property>
                                             <property name="margin-end">6</property>
+                                            <signal name="state-set" handler="onGridSettingChanged" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -5243,7 +5256,6 @@ as back-to-back registration is not
 guaranteed with variable line spacing.</property>
                                             <property name="halign">end</property>
                                             <property name="margin-start">6</property>
-                                            <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>

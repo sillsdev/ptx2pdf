@@ -3082,28 +3082,30 @@ class GtkViewModel(ViewModel):
 
     def setupTeXOptions(self):
         groupCats = {
-            'CVS': 'Chapter/Verse',
-            'LAY': 'Layout/Spacing',
+            'LAY': 'Layout and Spacing',
+            'CVS': 'Chapter and Verse',
             'BDY': 'Body Text',
-            'RUL': 'Rule/Line',
-            'FNT': 'Font',
-            'NTS': 'Notes',
+            'FNT': 'Font and Underline',
+            'NTS': 'Footnotes, Cross-references, Study Notes',
             'DIG': 'Diglot',
-            'PIC': 'Pictures/Images', 
-            'PDF': 'PDF',
-            'OTH': 'Other/Miscellaneous' 
-        }
+            'PIC': 'Pictures, Figures, Images, Sidebars', 
+            'PDF': 'PDF Options',
+            'OTH': 'Other Miscellaneous Settings' }
 
         texopts = self.builder.get_object("box_texoptions")
-
-        # Dictionary to hold expanders for each group
-        expanders = {}
-
+        expanders = {} # Dictionary to hold expanders for each group
         row_index = 0  # Track the overall row index for the main grid
         for k, opt, wname in TeXpert.opts():
             # Check if the group already has an expander, if not create one
             if opt.group not in expanders:
-                expander = Gtk.Expander(label=groupCats[opt.group])
+                expander_label = Gtk.Label()
+                expander_label.set_markup(f"<span weight='bold' foreground='cornflowerblue'>{groupCats[opt.group]}</span>")
+                expander_label.set_halign(Gtk.Align.START)
+                expander_label.set_margin_top(9)  # Add some top margin for padding
+                expander_label.set_margin_bottom(9)  # Add bottom margin for padding
+
+                expander = Gtk.Expander()
+                expander.set_label_widget(expander_label)  # Use the custom label widget for the expander
                 expander.set_halign(Gtk.Align.FILL)
                 expander.set_hexpand(True)
                 expander.set_vexpand(False)
@@ -3114,9 +3116,14 @@ class GtkViewModel(ViewModel):
 
                 # Create a new grid for each expander
                 grid = Gtk.Grid()
-                grid.set_column_spacing(10)
-                grid.set_row_spacing(5)
-                grid.set_margin_start(10)  # Optional: Add some left margin for indented content
+                grid.set_column_spacing(6)
+                grid.set_row_spacing(6)
+                
+                # Set the width of the first column to a fixed value (e.g., 200)
+                grid.get_column_homogeneous()
+                grid.get_style_context().add_class("grid")
+                grid.set_column_homogeneous(True)  # Ensures uniform column width distribution               
+
                 expander.add(grid)
             else:
                 grid = expanders[opt.group].get_child()
@@ -3166,70 +3173,6 @@ class GtkViewModel(ViewModel):
             self.allControls.append(wname)
             obj.show()
             expanders[opt.group].show_all()  # Ensure that the expander and its content are shown
-
-    def setupTeXOptionsOLDnotusedanymore(self):
-
-        groupCats = {'CVS': 'Chapter/Verse',
-                     'LAY': 'Layout/Spacing',
-                     'RUL': 'Rule/Line',
-                     'FNT': 'Font',
-                     'NTS': 'Notes',
-                     'DIG': 'Diglot',
-                     'PIC': 'Pictures/Images', 
-                     'PDF': 'PDF',
-                     'PNT': 'Penalty',
-                     'OTH': 'Other/Miscellaneous', 
-                     'TRC': 'Tracing'}
-
-        texopts = self.builder.get_object("box_texoptions")
-        for i, (k, opt, wname) in enumerate(TeXpert.opts()):
-            lasti = i
-            texopts.insert_row(i)
-            grp = Gtk.Label(label=groupCats[opt.group]+":")
-            grp.set_halign(Gtk.Align.START)
-            texopts.attach(grp, 0, i, 1, 1)
-            grp.show()
-            l = Gtk.Label(label=opt.name+":")
-            l.set_halign(Gtk.Align.END)
-            texopts.attach(l, 1, i, 1, 1)
-            l.show()
-            if wname.startswith("c_"):
-                obj = Gtk.CheckButton()
-                self.btnControls.add(wname)
-                v = opt.val
-                tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
-            elif wname.startswith("s_"):
-                x = opt.val
-                # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr, decPlaces)
-                adj = Gtk.Adjustment(upper=x[2], lower=x[1], step_increment=x[3], page_increment=x[4])
-                obj = Gtk.SpinButton()
-                obj.set_adjustment(adj)
-                obj.set_digits(x[5])  # Set the number of decimal places
-                v = str(x[0])
-                tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
-            elif wname.startswith("fcb_"):
-                obj = Gtk.ComboBoxText()
-                for i, (a, b) in enumerate(opt.val.items()):
-                    obj.append(a, b)
-                    if i == 0:
-                        v = a
-                obj.set_entry_text_column(0)
-                obj.set_id_column(1)
-                obj.set_active_id(v)
-                tiptext = "{k}:\t[{v}]\n\n{descr}".format(k=k, v=v, **asdict(opt))
-            l.set_tooltip_text(tiptext)
-            self.finddata[tiptext.lower()] = (wname, 1)
-            self.finddata[opt.name.lower()] = (wname, 4)
-            self.widgetnames[wname] = opt.name
-            obj.set_tooltip_text(tiptext)
-            obj.set_halign(Gtk.Align.START)
-            texopts.attach(obj, 2, i, 1, 1)
-            self.builder.expose_object(wname, obj)
-            if wname in self.dict:
-                v = self.dict[wname]
-            self.set(wname, v)
-            self.allControls.append(wname)
-            obj.show()
 
     def btnUnpackClicked(self, btn):
         file2unpack = self.builder.get_object("btn_pdfZip2unpack")
@@ -6159,3 +6102,8 @@ Thank you,
     def onMoveEndOfAyahClicked(self, wid):
         self.set('c_verseNumbers', not self.get("c_decorator_endayah"))
         
+    def onGridSettingChanged(self, wid, x):
+        status = self.get("c_noGrid")
+        self.builder.get_object('c_variableLineSpacing').set_sensitive(status)
+        if not status:
+            self.set("c_variableLineSpacing", False) 
