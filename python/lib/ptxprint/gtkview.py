@@ -3100,10 +3100,10 @@ class GtkViewModel(ViewModel):
 
     def setupTeXOptions(self):
         groupCats = {
-            'LAY': 'Layout and Spacing',
+            'LAY': 'Page Layout and Spacing',
             'CVS': 'Chapter and Verse',
             'BDY': 'Body Text',
-            'FNT': 'Font and Underline',
+            'FNT': 'Fonts and Underline',
             'NTS': 'Footnotes, Cross-references, Study Notes',
             'DIG': 'Diglot',
             'PIC': 'Pictures, Figures, Images, Sidebars', 
@@ -4107,9 +4107,9 @@ class GtkViewModel(ViewModel):
                     tp = self._getProject('ecb_targetProject')
                     tc = self.get('ecb_targetConfig',  None)
                     self.importConfig(zipdata, prefix=prefix, tgtPrj=tp, tgtCfg=tc)
-                    if tp == self.project.prjid:
+                    if tp.prjid == self.project.prjid:
                         self.updateAllConfigLists()
-                    statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
+                    statMsg = _("Imported Settings into: {}::{}").format(tp.prjid, tc)
                 zipdata.close()
             if zipinf is not None:
                 zipinf.close()
@@ -6122,5 +6122,12 @@ Thank you,
     def onGridSettingChanged(self, wid, x):
         status = self.get("c_noGrid")
         self.builder.get_object('c_variableLineSpacing').set_sensitive(status)
-        if not status:
-            self.set("c_variableLineSpacing", False) 
+        self.set("c_variableLineSpacing", status)
+        if status and self.get("c_doublecolumn") and float(self.get("s_bottomRag")) == 0:
+            self.highlightwidget("s_bottomRag")
+
+    def updateUnbalancedLinesHighlighting(self, wid, *a):
+        if self.get("c_variableLineSpacing") and self.get("c_doublecolumn") and float(self.get("s_bottomRag")) == 0:
+            self.highlightwidget("s_bottomRag")
+        else: # float(self.get("s_bottomRag")) > 0:
+            self.highlightwidget("s_bottomRag", highlight=False)

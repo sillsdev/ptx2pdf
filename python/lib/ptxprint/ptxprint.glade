@@ -5160,17 +5160,18 @@ Spacing (pt):</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">For high quality typesetting it is
-good practice for the text to be
+best practice for the text to be
 aligned to the baseline grid. This
 ensures consistent line spacing
-and back-to-back registration.
+and front-to-back registration.
 
 However, for quick draft printouts
 or typesetting for thicker paper,
-the option can be disabled which
-also allows the line spacing to vary
-as needed to fill columns with text.</property>
-                                            <property name="label" translatable="yes">Align text to Grid:</property>
+this can be turned OFF which
+then allows line spacing to vary as
+needed to fill each column of text
+(known as vertical justification).</property>
+                                            <property name="label" translatable="yes">Align Text to Grid:</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -5182,6 +5183,14 @@ as needed to fill columns with text.</property>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Turning 'Align Text to Grid' ON will
+automatically turn off 'Increase Line 
+Spacing to Fill Columns' and disable it.
+
+The default setting is ON. This
+is best practice for high quality
+typesetting and especially if
+printing on thin Bible paper.</property>
                                             <property name="margin-start">12</property>
                                             <property name="label" translatable="yes">ON</property>
                                             <attributes>
@@ -5196,23 +5205,27 @@ as needed to fill columns with text.</property>
                                         </child>
                                         <child>
                                           <object class="GtkSwitch" id="c_noGrid">
+                                            <property name="name">Align Text to Baseline Grid (On-Grid/Off-Grid)</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="tooltip-text" translatable="yes">For high quality typesetting it is
-good practice for the text to be
+best practice for the text to be
 aligned to the baseline grid. This
 ensures consistent line spacing
-and back-to-back registration.
+and front-to-back registration.
 
 However, for quick draft printouts
 or typesetting for thicker paper,
-the option can be disabled which
-also allows the line spacing to vary
-as needed to fill columns with text.</property>
+this can be turned OFF which
+then allows line spacing to vary as
+needed to fill each column of text
+(known as vertical justification).</property>
                                             <property name="halign">center</property>
+                                            <property name="valign">center</property>
                                             <property name="margin-start">6</property>
                                             <property name="margin-end">6</property>
                                             <signal name="state-set" handler="onGridSettingChanged" swapped="no"/>
+                                            <signal name="state-set" handler="updateUnbalancedLinesHighlighting" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -5224,6 +5237,20 @@ as needed to fill columns with text.</property>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Warning: This will cause major changes to
+the layout of the entire document. It will 
+also place headings exactly rather than 
+rounding to the nearest number of lines.
+
+Turning 'Align Text to Grid' OFF will automatically
+enable 'Increase Line Spacing to Fill Columns'.
+You can turn that off to see how much extra
+space there is at the end of each column.
+
+Do NOT turn this setting to OFF if doing
+final typesetting for thin Bible paper
+as front-to-back registration cannot
+be enforced with variable line spacing.</property>
                                             <property name="label" translatable="yes">OFF</property>
                                             <attributes>
                                               <attribute name="foreground" value="#a5a51d1d2d2d"/>
@@ -5238,25 +5265,31 @@ as needed to fill columns with text.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_variableLineSpacing">
                                             <property name="label" translatable="yes">Increase Line Spacing to Fill Columns</property>
+                                            <property name="name">Variable/Increased Line Spacing</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">A small increase in the (vertical)
-line spacing allows the same
-text to fill the entire column.
+                                            <property name="tooltip-text" translatable="yes">'Align Text to Grid' must be 
+turned OFF to use this option.
 
-This is useful for Draft Printouts
-where the page needs to be filled
-without manually filling any gaps
-at the end of columns of text.
+A small increase in the (vertical)
+line spacing allows the text to
+stretch to fill the entire column.
 
-Do not enable this setting if doing
-final typesetting for thin Bible paper
-as back-to-back registration is not
-guaranteed with variable line spacing.</property>
+This is called vertical justification
+and is useful for Draft Printouts
+where the page can be filled
+without manual intervention to 
+eliminate unwanted gaps at the 
+end of columns. It is recommended 
+that you also set the 'Unbalanced 
+Lines (max)' to a value greater than 
+0 to get the maximum benefit from 
+enabling this option.</property>
                                             <property name="halign">end</property>
                                             <property name="margin-start">6</property>
                                             <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="updateUnbalancedLinesHighlighting" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -5411,12 +5444,19 @@ range 1-4) will allow up to that many
 unbalanced lines on the page. Note that
 you can still stretch/shrink paragraphs
 using AdjLists to refine the output by
-manually balancing pages.</property>
+manually balancing pages.
+
+If the background changes to orange it
+is alerting you to the fact that you have 
+enabled vertical justification (in order to
+fill columns) without allowing unbalanced
+lines. Increase the value to 1 or more.</property>
                                     <property name="halign">start</property>
                                     <property name="width-chars">4</property>
                                     <property name="xalign">1</property>
                                     <property name="adjustment">a_bottomRag</property>
                                     <signal name="value-changed" handler="labelledChanged" swapped="no"/>
+                                    <signal name="value-changed" handler="updateUnbalancedLinesHighlighting" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -5516,7 +5556,7 @@ in the document. This includes the
 horizontal rule between the header
 and the text, the vertical column gutter
 rule and the study notes inter-column rule.</property>
-                                    <property name="halign">start</property>
+                                    <property name="halign">end</property>
                                     <property name="label" translatable="yes">Thickness
 of Rule (pt):</property>
                                     <property name="justify">right</property>
@@ -5579,6 +5619,7 @@ the Full View mode.</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="on2colClicked" swapped="no"/>
+                                <signal name="clicked" handler="updateUnbalancedLinesHighlighting" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -26150,11 +26191,17 @@ output with a previous PDF.</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
                         <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
@@ -26201,14 +26248,76 @@ output with a previous PDF.</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
+                          <object class="GtkNotebook">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <child>
+                              <object class="GtkTextView">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                              </object>
+                            </child>
+                            <child type="tab">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">1. Specify Job</property>
+                              </object>
+                              <packing>
+                                <property name="tab-fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkTextView">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="vexpand">True</property>
+                              </object>
+                              <packing>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child type="tab">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">2. Obtain Quote</property>
+                              </object>
+                              <packing>
+                                <property name="position">1</property>
+                                <property name="tab-fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkTextView">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                              </object>
+                              <packing>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child type="tab">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">3. Submit Order</property>
+                              </object>
+                              <packing>
+                                <property name="position">2</property>
+                                <property name="tab-fill">False</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
@@ -26794,16 +26903,17 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_Logging">
+                  <object class="GtkLabel" id="lb_Help">
+                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="no-show-all">True</property>
-                    <property name="tooltip-text" translatable="yes">Display the output log 
-from XeTeX processing.</property>
+                    <property name="tooltip-text" translatable="yes">Links to useful folders and
+online resources. Where to
+obtain help from others.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Log</property>
+                    <property name="label" translatable="yes">Help</property>
                   </object>
                   <packing>
-                    <property name="position">17</property>
+                    <property name="position">16</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
@@ -26849,14 +26959,13 @@ from XeTeX processing.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_Help">
-                    <property name="visible">True</property>
+                  <object class="GtkLabel" id="lb_Logging">
                     <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Links to useful folders and
-online resources. Where to
-obtain help from others.</property>
+                    <property name="no-show-all">True</property>
+                    <property name="tooltip-text" translatable="yes">Display the output log 
+from XeTeX processing.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Help</property>
+                    <property name="label" translatable="yes">Log</property>
                   </object>
                   <packing>
                     <property name="position">17</property>

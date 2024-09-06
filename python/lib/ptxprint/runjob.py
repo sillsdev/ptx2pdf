@@ -135,8 +135,8 @@ _diglot = {
 "diglot/ifshow1chbooknum":  "document/ifshow1chbooknum",
 "diglot/fontfactor" :       "paper/fontfactor",
 "diglot/linespacingfactor": "paragraph/linespacingfactor",
-"diglot/afterchapterspace": "document/afterchapterspace",
-"diglot/afterversespace":   "document/afterversespace",
+"diglot/afterchapterspace": "texpert/afterchapterspace",
+"diglot/afterversespace":   "texpert/afterversespace",
 "diglot/iflinebreakon" :    "document/iflinebreakon",
 "diglot/linebreaklocale" :  "document/linebreaklocale",
 
