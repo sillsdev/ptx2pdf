@@ -21183,23 +21183,23 @@ edit the USFM stylesheet files.</property>
                     <property name="can-focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkNotebook" id="nbk_Expert">
+                      <object class="GtkNotebook" id="nbk_Advanced">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="hexpand">False</property>
                         <property name="vexpand">True</property>
                         <child>
-                          <object class="GtkScrolledWindow" id="scroll_advMain">
+                          <object class="GtkScrolledWindow" id="tb_AdvMain">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="shadow-type">in</property>
                             <child>
-                              <object class="GtkViewport">
+                              <object class="GtkViewport" id="v_advMain">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <child>
-                                  <object class="GtkBox" id="tb_AdvancedMain">
+                                  <object class="GtkBox" id="bx_AdvancedMain">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
@@ -22097,24 +22097,24 @@ changed while doing final page layout.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScrolledWindow" id="scroll_advOther">
+                          <object class="GtkScrolledWindow" id="tb_advOther">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
                             <property name="shadow-type">in</property>
                             <child>
-                              <object class="GtkViewport">
+                              <object class="GtkViewport" id="v_advOther">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <child>
-                                  <object class="GtkBox" id="tb_AdvancedOther">
+                                  <object class="GtkBox" id="bx_AdvancedOther">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <!-- n-columns=3 n-rows=10 -->
-                                      <object class="GtkGrid" id="bx_texoptions">
+                                      <object class="GtkGrid" id="gr_texoptions">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">6</property>
@@ -26137,7 +26137,7 @@ output with a previous PDF.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_Expert">
+                  <object class="GtkBox" id="tb_PoD">
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
                     <property name="halign">start</property>
@@ -26147,7 +26147,71 @@ output with a previous PDF.</property>
                     <property name="margin-bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <placeholder/>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">Select Printing Firm:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="has-entry">True</property>
+                                <items>
+                                  <item translatable="yes">Pretore B.V., Netherlands</item>
+                                  <item translatable="yes">Snowfall Press, USA</item>
+                                  <item translatable="yes">Pothi.com, India</item>
+                                </items>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry">
+                                    <property name="can-focus">False</property>
+                                    <property name="text" translatable="yes">Pretore B.V., Netherlands</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -26155,12 +26219,12 @@ output with a previous PDF.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_Expert">
+                  <object class="GtkLabel" id="lb_PoD">
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
                     <property name="tooltip-text" translatable="yes">Adjust expert-level settings.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">TeXpert Hacks</property>
+                    <property name="label" translatable="yes">Print on Demand</property>
                   </object>
                   <packing>
                     <property name="position">15</property>

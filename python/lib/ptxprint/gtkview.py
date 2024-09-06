@@ -242,7 +242,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
+_ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
                   "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
@@ -464,7 +464,7 @@ _defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
 \pc \zimagecopyrights
 """
 
-_notebooks = ("Main", "Viewer", "PicList", "fnxr", "Import")
+_notebooks = ("Main", "Viewer", "PicList", "fnxr", "Import", "Advanced")
 
 # Vertical Thumb Tab Orientation options L+R
 _vertical_thumb = {
@@ -486,7 +486,7 @@ _signals = {
 
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", 
-         "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_Expert"]  # "tb_Help"
+         "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_PoD"]  # "tb_Help"
 
 _dlgtriggers = {
     "dlg_multiBookSelect":  "onChooseBooksClicked",
@@ -1111,6 +1111,11 @@ class GtkViewModel(ViewModel):
             name = Gtk.Buildable.get_name(parent)
             if name.startswith("tb_"):
                 if highlight:
+                    if isinstance(parent, Gtk.ScrolledWindow):
+                        vadj = parent.get_vadjustment()
+                        alloc = w.get_allocation()
+                        vadj.set_value(alloc.y)
+                        vadj.value_changed()
                     w.get_style_context().add_class("highlighted")
                     keepgoing = True
                     for k, v in self.notebooks.items():
@@ -3092,7 +3097,7 @@ class GtkViewModel(ViewModel):
             'PDF': 'PDF Options',
             'OTH': 'Other Miscellaneous Settings' }
 
-        texopts = self.builder.get_object("bx_texoptions")
+        texopts = self.builder.get_object("gr_texoptions")
         expanders = {} # Dictionary to hold expanders for each group
         row_index = 0  # Track the overall row index for the main grid
         for k, opt, wname in TeXpert.opts():
@@ -3113,6 +3118,7 @@ class GtkViewModel(ViewModel):
                 texopts.attach(expander, 0, row_index, 3, 1)
                 row_index += 1
                 expanders[opt.group] = expander
+                self.builder.expose_object("ex_texpert"+opt.group, expander)
 
                 # Create a new grid for each expander
                 grid = Gtk.Grid()
@@ -3123,6 +3129,7 @@ class GtkViewModel(ViewModel):
                 grid.get_column_homogeneous()
                 grid.get_style_context().add_class("grid")
                 grid.set_column_homogeneous(True)  # Ensures uniform column width distribution               
+                self.builder.expose_object("gr_texpert"+opt.group, grid)
 
                 expander.add(grid)
             else:
@@ -3133,13 +3140,17 @@ class GtkViewModel(ViewModel):
             label = Gtk.Label(label=opt.name + ":")
             label.set_halign(Gtk.Align.END)
             grid.attach(label, 0, row, 1, 1)
+            lname = "l_texpert"+wname[wname.index("_"):]
+            self.builder.expose_object(lname, label)
             label.show()
 
+            findname = wname
             if wname.startswith("c_"):
                 obj = Gtk.CheckButton()
                 self.btnControls.add(wname)
                 v = opt.val
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
+                findname = lname
             elif wname.startswith("s_"):
                 x = opt.val
                 adj = Gtk.Adjustment(value=x[0], lower=x[1], upper=x[2], step_increment=x[3], page_increment=x[4])
@@ -3160,9 +3171,9 @@ class GtkViewModel(ViewModel):
                 tiptext = "{k}:\t[{v}]\n\n{descr}".format(k=k, v=v, **asdict(opt))
 
             label.set_tooltip_text(tiptext)
-            self.finddata[tiptext.lower()] = (wname, 1)
-            self.finddata[opt.name.lower()] = (wname, 4)
-            self.widgetnames[wname] = opt.name
+            self.finddata[tiptext.lower()] = (findname, 1)
+            self.finddata[opt.name.lower()] = (findname, 4)
+            self.widgetnames[findname] = opt.name
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)
             grid.attach(obj, 1, row, 1, 1)
@@ -5746,13 +5757,6 @@ class GtkViewModel(ViewModel):
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
 
-    def onExpertModeClicked(self, btn):
-        status = self.sensiVisible("c_showTeXpertHacks")
-        # status = False
-        self.builder.get_object("tb_Expert").set_visible(status)
-        self.builder.get_object("lb_Expert").set_visible(status)
-        self.builder.get_object("btn_getPictures").set_visible(status)
-        
     def onTxlOptionsChanged(self, btn):
         o = _("What did Mary say that God had done?")
         # ov = "<b>"+o+"</b>" if self.get("c_txlBoldOverview") else o
