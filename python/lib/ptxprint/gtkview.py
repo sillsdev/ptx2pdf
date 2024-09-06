@@ -1107,15 +1107,13 @@ class GtkViewModel(ViewModel):
             if setLevel > 0:
                 self.set_uiChangeLevel(setLevel)
         parent = w.get_parent()
+        atfinish = None
+        curry = 0 # w.get_allocation().y
         while parent is not None:
+            curry += parent.get_allocation().y
             name = Gtk.Buildable.get_name(parent)
             if name.startswith("tb_"):
                 if highlight:
-                    if isinstance(parent, Gtk.ScrolledWindow):
-                        vadj = parent.get_vadjustment()
-                        alloc = w.get_allocation()
-                        vadj.set_value(alloc.y)
-                        vadj.value_changed()
                     w.get_style_context().add_class("highlighted")
                     keepgoing = True
                     for k, v in self.notebooks.items():
@@ -1123,6 +1121,19 @@ class GtkViewModel(ViewModel):
                             pgnum = v.index(name)
                             t = self.builder.get_object('nbk_{}'.format(k)).set_current_page(pgnum)
                             keepgoing = k != 'Main'
+                            pw = w.get_parent()
+                            if isinstance(parent, Gtk.ScrolledWindow):
+                                def make_sw():
+                                    sw = parent
+                                    cv = curry
+                                    tw = w
+                                    def swidg():
+                                        wy = tw.get_allocation().y
+                                        vadj = sw.get_vadjustment()
+                                        vadj.set_value(cv + wy)
+                                        vadj.value_changed()
+                                    return swidg
+                                Gdk.threads_add_idle(0, make_sw())
                             break
                     if not keepgoing:
                         break
@@ -1139,6 +1150,8 @@ class GtkViewModel(ViewModel):
                     w.get_style_context().remove_class("highlighted")
                 break
             parent = parent.get_parent()
+        if atfinish is not None:
+            Gdk.threads_add_idle(0, atfinish)
 
     def onMainConfigure(self, w, ev, *a):
         if self.picListView is not None:

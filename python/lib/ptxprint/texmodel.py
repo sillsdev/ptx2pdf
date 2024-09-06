@@ -1290,7 +1290,7 @@ class TexModel:
             self.localChanges.append(makeChange(r"(\s.) ", r"\1\u2000", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")))) # Ensure no floating single chars in note text
         
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
-        self.localChanges.append(makeChange(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) ", r"\1\u00A0"))
+        self.localChanges.append(makeChange(r"(\\(xo|fr) ((?:\d+[:.])?\d+([-,]\d+)?)) ", r"\1\u00A0"))
 
         for c in ("fn", "xr"):
             # Force all footnotes/x-refs to be either '+ ' or '- ' rather than '*/#'

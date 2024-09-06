@@ -14,7 +14,7 @@ class O:
     output: Union[str, Callable[[str, Union[int, bool, None]], None]]
     name: str
     descr: str
-    _: KW_ONLY      # Everything after this is keyword only
+#    _: KW_ONLY      # Everything after this is keyword only
     fn: Optional[Callable[['ViewModel', Union[int, bool, None]], None]] = None
     valfn: Optional[Callable[[str], str]] = None
 
