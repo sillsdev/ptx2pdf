@@ -754,6 +754,7 @@
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
    \getp@ram{firstindent}{\styst@kfirst}{\styst@k}\let\f@rstindent=\p@ram
+   \dimen3=\ifx\p@ram\relax 0\else\f@rstindent\fi \IndentUnit
 %-cpar_parstyle_start
    %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
@@ -825,6 +826,8 @@
            %\Flag{\MSG{FLAG!}M\Flag{}}%
          \fi
        \else % the indent is already big enough, so just use it as is
+        \ifversion{3}{\dimen5=0pt \ifcsname cut@width\the\@numcuts\endcsname \x@\dimen5 \csname cut@width\the\@numcuts\endcsname\fi
+            \ifdim\dimen4 > -1pt \advance\dimen3 by -\dimen5\fi}{}%
        \fi
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
      \fi
@@ -838,15 +841,15 @@
 %-cpar_parstyle_drop
 %+cpar_parstyle_final
    \ifx\f@rstindent\relax \else
-    \x@\ifdim\f@rstindent pt<0pt
+    \ifdim\dimen3 < 0pt
      \allowp@rindenttrue % redundant
     \else
      \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
     \fi
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
-     \trace{Ds}{\m@rker\ifdiglot\c@rrdstat\fi\space  First indent \f@rstindent * \the\IndentUnit}%
-     \kern\f@rstindent \IndentUnit                                              %(1)
+     \trace{Ds}{\m@rker\ifdiglot\c@rrdstat\fi\space  First indent \f@rstindent * \the\IndentUnit, kern by \the\dimen3}%
+     \kern\dimen3                                              %(1)
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
