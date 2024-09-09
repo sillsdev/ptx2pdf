@@ -228,7 +228,7 @@ class TexModel:
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
         self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
-                    / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']), dp=8)
+                    / float(self.dict["texpert/linespacebase"]) / float(self.dict['paper/fontfactor']), dp=8)
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
@@ -333,7 +333,8 @@ class TexModel:
                 except Exception as e:
                     raise type(e)("In TeXModel with key {}, ".format(k) + str(e))
         for k, opt, wname in TeXpert.opts():
-            self.dict["texpert/"+opt.ident] = self.printer.get(wname)
+            v = self.printer.get(wname)
+            self.dict["texpert/"+opt.ident] = v if opt.valfn is None else opt.valfn(v) 
 
     def calcRuleParameters(self):
         notemap = {'fn': 'note', 'xr': 'xref', 'sn': 'study'}
@@ -1289,7 +1290,7 @@ class TexModel:
             self.localChanges.append(makeChange(r"(\s.) ", r"\1\u2000", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")))) # Ensure no floating single chars in note text
         
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
-        self.localChanges.append(makeChange(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) ", r"\1\u00A0"))
+        self.localChanges.append(makeChange(r"(\\(xo|fr) ((?:\d+[:.])?\d+([-,]\d+)?)) ", r"\1\u00A0"))
 
         for c in ("fn", "xr"):
             # Force all footnotes/x-refs to be either '+ ' or '- ' rather than '*/#'
@@ -1456,22 +1457,29 @@ class TexModel:
         else:
             count = 0 # Default is not to go deeper
         logger.debug(f"glossarydepth={count}")
+        glossdone=[]
         while count > 0:
             count = count - 1
             xtraglossentries = set()
-            for gte in glossentries: #entries from te glossary text.
-                gts = glosstext[gte] # Might there be more than one glossary entry?? Assume that's a possibility
-                for gt in gts: 
-                    logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
-                    xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", gt)
-                    xtraglossentries.update((x for x in xgl if x not in glossentries))
+            for gte in (x for x in glossentries if x not in glossdone): #entries from te glossary text.
+                logger.debug(f"Checking entry for {gte}")
+                glossdone.append(gte)
+                if gte in glosstext: # Not every glossentry actually occurs
+                    gts = glosstext[gte] # Might there be more than one glossary entry?? Assume that's a possibility
+                    for gt in gts: 
+                        logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
+                        xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", gt)
+                        xtraglossentries.update((x for x in xgl if x not in glossentries))
             logger.debug(f"Adding {len(xtraglossentries)} extra gloss entries: {xtraglossentries}")
             if (len(xtraglossentries) == 0): # No more new entries
                 break
             glossentries.update(xtraglossentries)
             logger.debug(f"glossarydepth={count}")
         missings = [ge for ge in glossentries if ge not in glosstext]
-        logger.warn(f"Glossary entries for {','.join(missings)} wanted, but not found in glossary.")
+        if len(missings)>0:
+            logger.warn(f"Glossary entries for {','.join(missings)} wanted, but not found in glossary.")
+        else:
+            logger.debug(f"All wanted glossary entries found.")
         logger.debug(f"{glossentries=}, {ge=}")
         for delGloEntry in [x for x in ge if x not in glossentries]:
             # logger.debug(f"Building regex for {delGloEntry=}")

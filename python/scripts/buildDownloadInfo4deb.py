@@ -44,7 +44,7 @@ def process_recent_files():
     deb_files = glob(os.path.join(download_folder, file_pattern))
     deb_files.sort(key=os.path.getmtime, reverse=True)
 
-    for deb_file in deb_files[:2]:  # Process the two most recent files
+    for deb_file in deb_files[:3]:  # Process the three most recent files
         try:
             create_download_info(deb_file)
             print(f"Download info file created: {os.path.basename(deb_file)}.download_info")

@@ -73,7 +73,7 @@ constraints = {
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
                 'FontSize', 'FirstLineIndent', 'LeftMargin', 'RightMargin',
                 'SpaceBefore', 'SpaceAfter', 'CallerStyle', 'CallerRaise',
-                'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
+                'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing', 'UnderChar',
                 'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures', 'ztexFontGrSpace',
                 'FgImage', 'FgImagePos', 'FgImageScale', 'FgImageScaleTo', 
                 'BgImage', 'BgImagePos', 'BgImageScale', 'BgImageScaleTo', 'BgImageLow',

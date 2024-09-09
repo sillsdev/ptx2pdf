@@ -217,7 +217,7 @@
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 \newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
-  \ifdim\baselineskip < 0.5pt \unvbox#1
+  \ifdim 0.5pt>\baselineskip \unvbox#1
   \else
       \ifhmode\endgraf\lastdepth=\prevdepth
         \trace{h}{gr@db@@x needed to end paragraph. Why?}%
@@ -250,6 +250,7 @@
   \fi
 }
 
+\def\ungr@db@x#1{\vskip0pt \unvbox#1\nobreak}
 \newif\ifsquashgridbox\squashgridboxtrue                                        %(2)
 \let\gridb@x\gr@db@@x % overridden during \ptxfile setup, depending on \ifdiglot and \ifsquashgridbox 
 %-cpar_gridbox2
@@ -308,9 +309,9 @@
      \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}{\m@rker}{\the\curr@djpar}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
    \cutoutcarryover 
-   \ifversion{2}{\do@ndofthispar}{}%
+   \ifversion{3}{\do@ndofthispar}{}%
  \fi
- \ifversion{2}{}{\do@ndofthispar}%
+ \ifversion{3}{}{\do@ndofthispar}%
 }
 %-cpar_par
 % No blank line here!
@@ -698,6 +699,7 @@
     \ifhe@dings\endhe@dings\fi
     \let\thisp@rclass\P@ra
     \s@tbaseline{\m@rker}{\styst@k}%
+    \global\advance\baselineskip by \ColAdjskip
   \fi
  \op@ninghooks{before}{\m@rker}{\styst@k}%
  \let\stylet@pe\ss@Para % Thus must come this late, or grouping gives odd results sometimes..
@@ -752,6 +754,7 @@
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
    \getp@ram{firstindent}{\styst@kfirst}{\styst@k}\let\f@rstindent=\p@ram
+   \dimen3=\ifx\p@ram\relax 0\else\f@rstindent\fi \IndentUnit
 %-cpar_parstyle_start
    %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
@@ -823,6 +826,8 @@
            %\Flag{\MSG{FLAG!}M\Flag{}}%
          \fi
        \else % the indent is already big enough, so just use it as is
+        \ifversion{3}{\dimen5=0pt \ifcsname cut@width\the\@numcuts\endcsname \x@\dimen5 \csname cut@width\the\@numcuts\endcsname\fi
+            \ifdim\dimen4 > -1pt \advance\dimen3 by -\dimen5\fi}{}%
        \fi
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
      \fi
@@ -836,15 +841,15 @@
 %-cpar_parstyle_drop
 %+cpar_parstyle_final
    \ifx\f@rstindent\relax \else
-    \x@\ifdim\f@rstindent pt<0pt
+    \ifdim\dimen3 < 0pt
      \allowp@rindenttrue % redundant
     \else
      \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
     \fi
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
-     \trace{Ds}{\m@rker\ifdiglot\c@rrdstat\fi\space  First indent \f@rstindent * \the\IndentUnit}%
-     \kern\f@rstindent \IndentUnit                                              %(1)
+     \trace{Ds}{\m@rker\ifdiglot\c@rrdstat\fi\space  First indent \f@rstindent * \the\IndentUnit, kern by \the\dimen3}%
+     \kern\dimen3                                              %(1)
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
@@ -976,7 +981,7 @@
   %\showboxbreadth=99
   \let\old@ep=\everypar
   \everypar{}%
-  \setbox#1\vbox{%
+  \setbox#1\vbox to \ht#2{%
     %\hsize=\wd#1%
     \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
     \pdfsavepos
@@ -1031,7 +1036,7 @@
     \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
     \relax % Must end look-ahead from setting baselineskip
   \fi
-  \ifdim\the\baselineskip<100sp \trace{C}{baselineskip too low}%
+  \ifdim 100sp>\baselineskip \trace{C}{baselineskip too low}%
   \else
     \trace{C}{#2: \the\p@rlinesgone \space += #1 / \the\baselineskip}%
     \ifdim #1 > 1pt
@@ -1052,7 +1057,7 @@
 \def\@parend#1#2{%
   \this@y=#2\relax
   \ifnum\this@y=\prev@y 
-    \x@\ifdim \csname baselineskip@\c@rrdstat\endcsname=0pt
+    \x@\ifdim\x@ 0pt\x@=\csname baselineskip@\c@rrdstat\endcsname
       \advance\p@rlinesgone by 1
     \fi
   \else

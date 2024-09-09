@@ -242,7 +242,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
+_ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
                   "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
@@ -282,6 +282,7 @@ _sensitivities = {
     "r_pictureRes": {
         "r_pictureRes_High" :  ["btn_requestIllustrations"]}, 
         
+    "noGrid" :                 ["c_variableLineSpacing"],
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
@@ -463,7 +464,7 @@ _defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
 \pc \zimagecopyrights
 """
 
-_notebooks = ("Main", "Viewer", "PicList", "fnxr", "Import")
+_notebooks = ("Main", "Viewer", "PicList", "fnxr", "Import", "Advanced")
 
 # Vertical Thumb Tab Orientation options L+R
 _vertical_thumb = {
@@ -485,7 +486,7 @@ _signals = {
 
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", 
-         "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_Expert"]  # "tb_Help"
+         "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_PoD"]  # "tb_Help"
 
 _dlgtriggers = {
     "dlg_multiBookSelect":  "onChooseBooksClicked",
@@ -1106,7 +1107,10 @@ class GtkViewModel(ViewModel):
             if setLevel > 0:
                 self.set_uiChangeLevel(setLevel)
         parent = w.get_parent()
+        atfinish = None
+        curry = 0 # w.get_allocation().y
         while parent is not None:
+            curry += parent.get_allocation().y
             name = Gtk.Buildable.get_name(parent)
             if name.startswith("tb_"):
                 if highlight:
@@ -1117,6 +1121,19 @@ class GtkViewModel(ViewModel):
                             pgnum = v.index(name)
                             t = self.builder.get_object('nbk_{}'.format(k)).set_current_page(pgnum)
                             keepgoing = k != 'Main'
+                            pw = w.get_parent()
+                            if isinstance(parent, Gtk.ScrolledWindow):
+                                def make_sw():
+                                    sw = parent
+                                    cv = curry
+                                    tw = w
+                                    def swidg():
+                                        wy = tw.get_allocation().y
+                                        vadj = sw.get_vadjustment()
+                                        vadj.set_value(cv + wy)
+                                        vadj.value_changed()
+                                    return swidg
+                                Gdk.threads_add_idle(0, make_sw())
                             break
                     if not keepgoing:
                         break
@@ -1133,6 +1150,8 @@ class GtkViewModel(ViewModel):
                     w.get_style_context().remove_class("highlighted")
                 break
             parent = parent.get_parent()
+        if atfinish is not None:
+            Gdk.threads_add_idle(0, atfinish)
 
     def onMainConfigure(self, w, ev, *a):
         if self.picListView is not None:
@@ -1557,8 +1576,6 @@ class GtkViewModel(ViewModel):
                             self.finished()
                             return
                     fileLocked = False
-                if os.path.exists(pdfname):
-                    os.remove(pdfname)
         self.onSaveConfig(None)
         self.checkUpdates()
 
@@ -3082,25 +3099,77 @@ class GtkViewModel(ViewModel):
 #          \ifnotesEachBookfalse   (and should only be set if option is set different to the default value)
 
     def setupTeXOptions(self):
-        texopts = self.builder.get_object("box_texoptions")
-        for i, (k, opt, wname) in enumerate(TeXpert.opts()):
-            lasti = i
-            texopts.insert_row(i)
-            l = Gtk.Label(label=opt.name+":")
-            l.set_halign(Gtk.Align.END)
-            texopts.attach(l, 0, i, 1, 1)
-            l.show()
+        groupCats = {
+            'LAY': 'Page Layout and Spacing',
+            'CVS': 'Chapter and Verse',
+            'BDY': 'Body Text',
+            'FNT': 'Fonts and Underline',
+            'NTS': 'Footnotes, Cross-references, Study Notes',
+            'DIG': 'Diglot',
+            'PIC': 'Pictures, Figures, Images, Sidebars', 
+            'PDF': 'PDF Options',
+            'OTH': 'Other Miscellaneous Settings' }
+
+        texopts = self.builder.get_object("gr_texoptions")
+        expanders = {} # Dictionary to hold expanders for each group
+        row_index = 0  # Track the overall row index for the main grid
+        for k, opt, wname in TeXpert.opts():
+            # Check if the group already has an expander, if not create one
+            if opt.group not in expanders:
+                expander_label = Gtk.Label()
+                expander_label.set_markup(f"<span weight='bold' foreground='cornflowerblue'>{groupCats[opt.group]}</span>")
+                expander_label.set_halign(Gtk.Align.START)
+                expander_label.set_margin_top(9)  # Add some top margin for padding
+                expander_label.set_margin_bottom(9)  # Add bottom margin for padding
+
+                expander = Gtk.Expander()
+                expander.set_label_widget(expander_label)  # Use the custom label widget for the expander
+                expander.set_halign(Gtk.Align.FILL)
+                expander.set_hexpand(True)
+                expander.set_vexpand(False)
+                texopts.insert_row(row_index)
+                texopts.attach(expander, 0, row_index, 3, 1)
+                row_index += 1
+                expanders[opt.group] = expander
+                self.builder.expose_object("ex_texpert"+opt.group, expander)
+
+                # Create a new grid for each expander
+                grid = Gtk.Grid()
+                grid.set_column_spacing(6)
+                grid.set_row_spacing(6)
+                
+                # Set the width of the first column to a fixed value (e.g., 200)
+                grid.get_column_homogeneous()
+                grid.get_style_context().add_class("grid")
+                grid.set_column_homogeneous(True)  # Ensures uniform column width distribution               
+                self.builder.expose_object("gr_texpert"+opt.group, grid)
+
+                expander.add(grid)
+            else:
+                grid = expanders[opt.group].get_child()
+
+            # Add the widgets to the grid within the appropriate expander
+            row = len(grid.get_children()) // 2  # Calculate current row based on number of children
+            label = Gtk.Label(label=opt.name + ":")
+            label.set_halign(Gtk.Align.END)
+            grid.attach(label, 0, row, 1, 1)
+            lname = "l_texpert"+wname[wname.index("_"):]
+            self.builder.expose_object(lname, label)
+            label.show()
+
+            findname = wname
             if wname.startswith("c_"):
                 obj = Gtk.CheckButton()
                 self.btnControls.add(wname)
                 v = opt.val
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
+                findname = lname
             elif wname.startswith("s_"):
                 x = opt.val
-                # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
-                adj = Gtk.Adjustment(upper=x[2], lower=x[1], step_increment=x[3], page_increment=x[4])
+                adj = Gtk.Adjustment(value=x[0], lower=x[1], upper=x[2], step_increment=x[3], page_increment=x[4])
                 obj = Gtk.SpinButton()
                 obj.set_adjustment(adj)
+                obj.set_digits(x[5])  # Set the number of decimal places
                 v = str(x[0])
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
             elif wname.startswith("fcb_"):
@@ -3113,19 +3182,21 @@ class GtkViewModel(ViewModel):
                 obj.set_id_column(1)
                 obj.set_active_id(v)
                 tiptext = "{k}:\t[{v}]\n\n{descr}".format(k=k, v=v, **asdict(opt))
-            l.set_tooltip_text(tiptext)
-            self.finddata[tiptext.lower()] = (wname, 1)
-            self.finddata[opt.name.lower()] = (wname, 4)
-            self.widgetnames[wname] = opt.name
+
+            label.set_tooltip_text(tiptext)
+            self.finddata[tiptext.lower()] = (findname, 1)
+            self.finddata[opt.name.lower()] = (findname, 4)
+            self.widgetnames[findname] = opt.name
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)
-            texopts.attach(obj, 1, i, 1, 1)
+            grid.attach(obj, 1, row, 1, 1)
             self.builder.expose_object(wname, obj)
             if wname in self.dict:
                 v = self.dict[wname]
             self.set(wname, v)
             self.allControls.append(wname)
             obj.show()
+            expanders[opt.group].show_all()  # Ensure that the expander and its content are shown
 
     def btnUnpackClicked(self, btn):
         file2unpack = self.builder.get_object("btn_pdfZip2unpack")
@@ -3210,7 +3281,10 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def updateExamineBook(self):
-        bks = self.getBooks()
+        try:
+            bks = self.getBooks()
+        except SyntaxError:     # mid typing the reflist may be bad
+            return
         if len(bks):
             self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
 
@@ -4033,9 +4107,9 @@ class GtkViewModel(ViewModel):
                     tp = self._getProject('ecb_targetProject')
                     tc = self.get('ecb_targetConfig',  None)
                     self.importConfig(zipdata, prefix=prefix, tgtPrj=tp, tgtCfg=tc)
-                    if tp == self.project.prjid:
+                    if tp.prjid == self.project.prjid:
                         self.updateAllConfigLists()
-                    statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
+                    statMsg = _("Imported Settings into: {}::{}").format(tp.prjid, tc)
                 zipdata.close()
             if zipinf is not None:
                 zipinf.close()
@@ -4111,7 +4185,7 @@ class GtkViewModel(ViewModel):
 
     def onSelectDiffPDFclicked(self, btn_selectDiffPDF):
         self._onPDFClicked(_("Select a PDF file to compare with"), True,
-                os.path.join(self.project.printPath(None), "diffPDF", "diffPDF", btn_selectDiffPDF, False))
+                os.path.join(self.project.printPath(None)), "diffPDF", "diffPDF", btn_selectDiffPDF, False)
         if self.get("lb_diffPDF") == "":
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
             self.makeLabelBold("l_selectDiffPDF", False)
@@ -5696,13 +5770,6 @@ class GtkViewModel(ViewModel):
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
 
-    def onExpertModeClicked(self, btn):
-        status = self.sensiVisible("c_showTeXpertHacks")
-        # status = False
-        self.builder.get_object("tb_Expert").set_visible(status)
-        self.builder.get_object("lb_Expert").set_visible(status)
-        self.builder.get_object("btn_getPictures").set_visible(status)
-        
     def onTxlOptionsChanged(self, btn):
         o = _("What did Mary say that God had done?")
         # ov = "<b>"+o+"</b>" if self.get("c_txlBoldOverview") else o
@@ -6052,3 +6119,15 @@ Thank you,
     def onMoveEndOfAyahClicked(self, wid):
         self.set('c_verseNumbers', not self.get("c_decorator_endayah"))
         
+    def onGridSettingChanged(self, wid, x):
+        status = self.get("c_noGrid")
+        self.builder.get_object('c_variableLineSpacing').set_sensitive(status)
+        self.set("c_variableLineSpacing", status)
+        if status and self.get("c_doublecolumn") and float(self.get("s_bottomRag")) == 0:
+            self.highlightwidget("s_bottomRag")
+
+    def updateUnbalancedLinesHighlighting(self, wid, *a):
+        if self.get("c_variableLineSpacing") and self.get("c_doublecolumn") and float(self.get("s_bottomRag")) == 0:
+            self.highlightwidget("s_bottomRag")
+        else: # float(self.get("s_bottomRag")) > 0:
+            self.highlightwidget("s_bottomRag", highlight=False)

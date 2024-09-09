@@ -274,8 +274,6 @@ if args.fontpath is not None:
             cachepath(p, nofclist=args.nofontcache)
 
 if args.zip:
-    # Unzip to args.paratext+args.pid
-    # import pdb; pdb.set_trace()
     print(f"{args.projects=} {args.pid=} {args.config=}")
     if len(args.projects[0]) and len(args.pid):
         rmtree(os.path.join(args.projects[0], args.pid), ignore_errors = True)
@@ -291,7 +289,7 @@ if args.pid:
     project = prjTree.findProject(args.pid)
     if project is None:
         print(f"Can't find project {args.pid} in {prjTree.treedirs}")
-        sys.exit(1)
+        args.pid = None     # keep going anyway, just with no pid specified.
     if args.config:
         if project is None or project.srcPath(args.config) is None:
             args.config = None

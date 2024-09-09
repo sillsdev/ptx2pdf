@@ -99,6 +99,7 @@
   \iftemp\else\tmpwrite{pageend}\fi
   \traceifcheck{p@geendcontent}%
 }
+
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \traceifset{onecoltrial}%
   \vfuzz=\PaperHeight
@@ -122,7 +123,7 @@
   % Marginal verses (and other things with 0 height vadjusts) need us to split to avail+lastdepth
   \setbox\colA=\vsplit255 to \dimexpr \availht + \lastdepth\relax
   \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
-  \setbox\colA\vbox{\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
+  \setbox\colA\vbox \ifNoGrid to \availht\fi {\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
   \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
   \und@rfill=\availht \decr{\und@rfill}{\colA}
 %-c_onecoltrial_intro
@@ -131,7 +132,8 @@
     \inendbookfalse
     \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \dimen3=\ht\colA \advance\dimen3\lastd@pth
-    \if\XrefNotes\relax\else
+    \if\XrefNotes\relax
+    \else
       \trace{o}{enter reheightcolnotes, colA=\the\ht\colA, for colnotes \the\ht13}%
       \reheightcolnotess{13}%
       \trace{o}{exit reheightcolnotes, colA=\the\ht\colA, xr@fbox=\the\ht\xr@fbox}%
@@ -152,12 +154,12 @@
           \fi
           \hbox to \dimen1{\box\partial}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
-      \setbox1=\vbox{\unvcopy\colA\unskip}%
+      \setbox1=\vbox \ifNoGrid to \ht\colA\fi {\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{1}{A}%
-      \trace{o}{colwidth=\the\wd\colA}%
+      \trace{o}{colwidth=\the\wd\colA, height=\the\ht\colA, lastpage\iflastpage true\else false\fi}%
       %\trace{o}{onecoltrial: dimen=\the\dimen3, lastd@pth=\the\lastd@pth}%
       \ifColNotes\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi\fi
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
@@ -1057,6 +1059,7 @@
     \fi
     %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi     %(9)
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage\g@tcolhts
+    \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage, hascolnotes\ifhascolnotes true\else false\fi}%
     \xdef\c@lp@gebotmark{\splitbotmarks\m@rknumc@l}%
     \setbox\colA=\vbox{\unvbox\colA\unskip}%
     \setbox\colB=\vbox{\unvbox\colB\unskip}%
@@ -1065,8 +1068,7 @@
     \fi\fi
     %\ifdim\ht\colA<\dimexpr\availht - \baselineskip\relax\trace{B}{Balance[A]: [\the\pageno] short \the\ht\colA\space \the\availht}\fi
     %\ifdim\ht\colB<\dimexpr\availht - \baselineskip\relax\trace{B}{Balance[B]: [\the\pageno] short \the\ht\colB\space \the\availht}\fi
-    \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage, hascolnotes\ifhascolnotes true\else false\fi}%
-    \colhtA=\ht\colA \colhtB=\ht\colB
+    \ifNoGrid\else \colhtA=\ht\colA \colhtB=\ht\colB\fi
   %\traceifcheck{balanced@loop}
 }
 
@@ -1229,7 +1231,7 @@
   %\advance\availht \dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \ifdim\bestavailht>0pt \ifdim\bestavailht<\availht \availht=\bestavailht\fi\fi
-  \ifdim\baselineskip<\ht\pstr@t \advance\availht-\baselineskip \advance\availht\ht\pstr@t\fi % Adjust to one \p baseline
+  \ifdim\ht\pstr@t>\baselineskip\relax \advance\availht-\baselineskip \advance\availht\ht\pstr@t\fi % Adjust to one \p baseline
   \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \doColNotes{\availht}%
   \splittopskip=\topskip
@@ -1509,10 +1511,13 @@
     \inendbookfalse
     \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \c@lcboxheights
-    \setbox1=\vbox{\unvcopy\colA\unskip}%
-    \setbox2=\vbox{\unvcopy\colB\unskip}%
+    \ifNoGrid\s@tcolhts\availht\fi
+    \trace{o}{NoGrid\ifNoGrid true\else false\fi , A=\the\ht\colA, B=\the\ht\colB, colhtA=\the\colhtA, colhtB=\the\colhtB}%
+    \setbox1=\vbox \ifNoGrid to \colhtA\fi {\unvcopy\colA\unskip}%
+    \setbox2=\vbox \ifNoGrid to \colhtB\fi {\unvcopy\colB\unskip}%
     \locs@startstop{\colA}{1}{A}%
     \locs@startstop{\colB}{2}{B}%
+    \trace{o}{NoGrid\ifNoGrid true\else false\fi , A=\the\ht\colA, B=\the\ht\colB, colhtA=\the\colhtA, colhtB=\the\colhtB}%
     \ifdim\ht\colB<1pt \setbox\colB\vbox to 0pt{\hbox to \hsize{}}\fi
     %\ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
@@ -1879,7 +1884,7 @@
   \ifd@nesw@p\else
     \d@nesw@ptrue % signal to caller that this has been run
     \relax
-    \iftob@dy\else\ifdim\baselineskip>0pt \ifdim \ht\partial >\baselineskip % \vbox{\unvbox\partial}%
+    \iftob@dy\else\ifdim0pt<\baselineskip \ifdim \ht\partial >\baselineskip % \vbox{\unvbox\partial}%
       %\ifx\p@gefirstmark\t@tle\else
         \trace{o}{ht partial=\the\ht\partial, bls=\the\baselineskip}%
         \iflastptxfile

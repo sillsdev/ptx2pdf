@@ -149,9 +149,12 @@ _map = {
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", "decorate", lambda w,v: int(float(v or "1.0")*1000)),
     "fancy/endayah":            ("c_decorator_endayah", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
+    "document/nogrid":          ("c_noGrid", "body", lambda w,v: "" if v else "%"),
+    "document/varlinespacing":  ("c_variableLineSpacing", "body", lambda w,v: "" if v else "%"),
+    
     "paragraph/linespacing":       ("s_linespacing", "layout", lambda w,v: f2s(float(v), dp=8) if v else "15"),
-    "paragraph/linespacebase":     ("c_AdvCompatLineSpacing", "layout", lambda w,v: 14 if v else 12),
-    "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", "layout", lambda w,v: "%" if v else ""),
+#    "paragraph/linespacebase":     ("c_AdvCompatLineSpacing", "layout", lambda w,v: 14 if v else 12),
+#    "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", "layout", lambda w,v: "%" if v else ""),
     "paragraph/ifjustify":      ("c_justify", "body", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", "body", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", "body", lambda w,v: "" if v else "%"),
@@ -194,8 +197,8 @@ _map = {
     "document/ifshow1chbooknum": ("c_show1chBookNum", "body", None),
     "document/ifomitverseone":  ("c_omitverseone", "body", lambda w,v: "true" if v else "false"),
     "document/ifshowversenums": ("c_verseNumbers", "body", lambda w,v: "" if v else "%"),
-    "document/afterchapterspace": ("s_afterChapterSpace", "body", lambda w,v: f2s(asfloat(v, 0.25) * 12)),
-    "document/afterversespace": ("s_afterVerseSpace", "body", lambda w,v: f2s(asfloat(v, 0.15) * 12)),
+    ##"document/afterchapterspace": ("s_afterChapterSpace", "body", lambda w,v: f2s(asfloat(v, 0.25) * 12)),
+    ##"document/afterversespace": ("s_afterVerseSpace", "body", lambda w,v: f2s(asfloat(v, 0.15) * 12)),
     "document/ifmainbodytext":  ("c_mainBodyText", "body", None),
     "document/glueredupwords":  ("c_glueredupwords", "body", None),
     "document/ifinclfigs":      ("c_includeillustrations", "pictures", lambda w,v: "true" if v else "false"),
@@ -264,11 +267,11 @@ _map = {
 
     "document/hasnofront_":        ("c_frontmatter", "front", lambda w,v: "%" if v else ""),
     "document/noblankpage":        ("c_periphSuppressPage", "layout", None),
-    "document/cutouterpadding":    ("s_cutouterpadding", "layout", None),
-    "document/underlinethickness": ("s_underlineThickness", "body", lambda w,v: float(v or "0.05")),
+    ##"document/cutouterpadding":    ("s_cutouterpadding", "layout", None),
+    ##"document/underlinethickness": ("s_underlineThickness", "body", lambda w,v: float(v or "0.05")),
     "document/rulethickness":      ("s_ruleThickness", "body", lambda w,v: float(v or "0.40")),
-    "document/underlineposition":  ("s_underlinePosition", "body", lambda w,v: float(v or "-0.1")),
-    "document/pagefullfactor":     ("s_pageFullFactor", "layout", lambda w,v: float(v or "0.65")),
+    ##"document/underlineposition":  ("s_underlinePosition", "body", lambda w,v: float(v or "-0.1")),
+    ##"document/pagefullfactor":     ("s_pageFullFactor", "layout", lambda w,v: float(v or "0.65")),
     
     "document/onlyshowdiffs":   ("c_onlyDiffs", "finish", None),
     "document/ndiffcolor":      ("col_ndiffColor", "finish", None),

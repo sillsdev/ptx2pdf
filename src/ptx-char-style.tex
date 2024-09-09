@@ -675,6 +675,9 @@
  % switch to the appropriate font
  \trace{F}{Font set to font<\f@ntstyle>}%
  \csname font<\f@ntstyle>\endcsname                                     %(+)
+ \getFp@ram{fonticspace}{#1}{#2}\ifx\p@ram\relax
+   \ifdiglot \fi
+ \else\XeTeXinterchartoks=\p@ram\fi
  \getFp@ram{fontname}{#1}{#2}\ifx\p@ram\relax
    \getFp@ram{fontgrspace}{#1}{#2}\ifx\p@ram\relax\else\XeTeXinterwordspaceshaping=\p@ram\fi
  \fi
