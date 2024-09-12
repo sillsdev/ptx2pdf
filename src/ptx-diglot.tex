@@ -3030,7 +3030,9 @@
 \def\enddigl@t{%
   \endgraf
   \trace{d}{enddigl@t \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
-  \ifdiglot\ifx\digl@tc@ntentlist\empty\else
+  \ifdiglot\ifx\digl@tc@ntentlist\empty
+    \trace{d}{digl@tc@ntentlist empty}%
+    \else
       \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
       \sk@ppingfalse
       \ifhe@dings\endhe@dings\fi%

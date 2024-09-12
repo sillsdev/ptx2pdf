@@ -1884,7 +1884,7 @@
   \ifd@nesw@p\else
     \d@nesw@ptrue % signal to caller that this has been run
     \relax
-    \iftob@dy\else\ifdim0pt<\baselineskip \ifdim \ht\partial >\baselineskip % \vbox{\unvbox\partial}%
+    \iftob@dy\else\ifdim0pt<\baselineskip \ifdim \dimexpr \ht\partial+\dp\partial\relax >0.5\baselineskip % \vbox{\unvbox\partial}%
       %\ifx\p@gefirstmark\t@tle\else
         \trace{o}{ht partial=\the\ht\partial, bls=\the\baselineskip}%
         \iflastptxfile
