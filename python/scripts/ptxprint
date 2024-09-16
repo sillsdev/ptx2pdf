@@ -375,8 +375,9 @@ else:
             if args.lang is not None:
                 args.lang = mainw.lang
                 print(f"{args.lang}")
-                args.pid = mainw.prjid
-                args.config = mainw.configId
+                project = main.project
+                args.pid = project.prjid
+                args.config = mainw.cfgid
                 goround = True
         loops += 1
     if loops >= 0:
