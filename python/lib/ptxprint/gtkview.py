@@ -6122,6 +6122,8 @@ Thank you,
         self.set('c_verseNumbers', not self.get("c_decorator_endayah"))
         
     def onGridSettingChanged(self, wid, x):
+        if self.loadingConfig:
+            return
         status = self.get("c_noGrid")
         self.builder.get_object('c_variableLineSpacing').set_sensitive(status)
         self.set("c_variableLineSpacing", status)
@@ -6130,6 +6132,8 @@ Thank you,
             self.highlightwidget("c_allowUnbalanced")
 
     def onAllowUnbalancedClicked(self, wid):
+        if self.loadingConfig:
+            return
         if self.get("c_doublecolumn") \
            and self.get("c_allowUnbalanced") and float(self.get("s_bottomrag")) == 0:
             self.highlightwidget("c_allowUnbalanced")

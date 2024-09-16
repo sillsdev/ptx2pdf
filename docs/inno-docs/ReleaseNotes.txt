@@ -1,9 +1,34 @@
 PTXprint 2.5.12 Release Notes
-2 Sep 2024
+16 Sep 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.6 (16 Sep 2024)
+
+  * NEW FEATURE
+      Introduce Variable Line Spacing option and Fill Columns (on Layout Tab)
+  
+  * Improve Tooltips and fix UI interaction surrounding Unbalanced Columns
+  
+  * Move all TeXpert hacks to 'Other' tab of Advanced page
+  
+  * Ensure highlight of texpert labels works when searching
+  
+  * Don't exit if we can't open the selected project on startup
+  
+  * Dataclasses backported for python 3.8
+  
+  * Revert adjusted sidebar and figure positionings to layout v3
+  
+  * Fix poetry and drop chaps in layout v3
+  
+  * Diglot-related book-end fix for ht=0, dp>0 boxes
+  
+  * Fixup custom.sty path for secondary in .tex
+  
+  * Fix go round data gathering in ptxprint (#978 configId error)
+  
 Bug fixes and Improvements in 2.5.12 (2 Sep 2024)
 
   * Add off-grid setting for single column
