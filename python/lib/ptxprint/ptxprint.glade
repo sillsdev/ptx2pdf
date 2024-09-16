@@ -40,399 +40,6 @@ THE SOFTWARE.
     <property name="can-focus">False</property>
     <property name="limit">10</property>
   </object>
-  <object class="GtkDialog">
-    <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Line Spacing Mode</property>
-    <property name="type-hint">dialog</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="margin-top">10</property>
-        <property name="margin-bottom">10</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <!-- n-columns=4 n-rows=14 -->
-          <object class="GtkGrid">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="margin-start">12</property>
-            <property name="margin-end">12</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
-            <property name="row-spacing">3</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">Line Spacing Mode:</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">Line Spacing Mode:</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">6</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">3</property>
-                <property name="width">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">5</property>
-                <property name="width">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">8</property>
-                <property name="width">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRadioButton" id="rbox2">
-                <property name="label" translatable="yes">Allow vertical justification (fill columns)</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="draw-indicator">True</property>
-                <property name="group">rbox1</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">2</property>
-                <property name="width">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRadioButton" id="rbox1">
-                <property name="label" translatable="yes">Keep texts aligned to the baseline grid</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
-                <property name="group">rbox2</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">0</property>
-                <property name="width">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRadioButton" id="rbox4">
-                <property name="label" translatable="yes">Locked (Final Typesetting)</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
-                <property name="group">rbox3</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">7</property>
-                <property name="width">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRadioButton" id="rbox3">
-                <property name="label" translatable="yes">Stretchable (Draft Printouts)</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="draw-indicator">True</property>
-                <property name="group">rbox4</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">6</property>
-                <property name="width">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">Line Spacing:   Free</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">Locked</property>
-              </object>
-              <packing>
-                <property name="left-attach">2</property>
-                <property name="top-attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSwitch">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="halign">center</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="active">True</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="hexpand">True</property>
-              </object>
-              <packing>
-                <property name="left-attach">3</property>
-                <property name="top-attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">Line Spacing Mode:</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">9</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRadioButton" id="rbox5">
-                <property name="label" translatable="yes">Allow Vertical Stretch (Draft Printouts)</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
-                <property name="group">rbox6</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">9</property>
-                <property name="width">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRadioButton" id="rbox6">
-                <property name="label" translatable="yes">Locked onto Grid (Final Typesetting)</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="draw-indicator">True</property>
-                <property name="group">rbox5</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">10</property>
-                <property name="width">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSwitch">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="margin-left">6</property>
-                <property name="margin-right">6</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="active">True</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">13</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="valign">end</property>
-                <property name="margin-top">12</property>
-                <property name="label" translatable="yes">Line Spacing</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">12</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">11</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">Stretch to
-Fill Columns</property>
-              </object>
-              <packing>
-                <property name="left-attach">2</property>
-                <property name="top-attach">13</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">Align to the
-Baseline Grid</property>
-                <property name="justify">right</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">13</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRadioButton" id="rbox7">
-                <property name="label" translatable="yes">Let text ignore the baseline grid</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="draw-indicator">True</property>
-                <property name="group">rbox2</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">1</property>
-                <property name="width">3</property>
-              </packing>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkAdjustment" id="a_PriColWidth">
     <property name="lower">20</property>
     <property name="upper">300</property>
@@ -5153,25 +4760,25 @@ Spacing (pt):</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="margin-start">22</property>
+                                        <property name="margin-start">24</property>
+                                        <property name="margin-end">6</property>
                                         <property name="hexpand">True</property>
+                                        <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">For high quality typesetting it is
-best practice for the text to be
-aligned to the baseline grid. This
+best practice to Align the Text
+to the (baseline) Grid. This
 ensures consistent line spacing
 and front-to-back registration.
 
-However, for quick draft printouts
-or typesetting for thicker paper,
-this can be turned OFF which
-then allows line spacing to vary as
-needed to fill each column of text
-(known as vertical justification).</property>
-                                            <property name="label" translatable="yes">Align Text to Grid:</property>
+Note that this may leave larger
+empty spaces at the end of pages
+which will need to be manually
+adjusted using the Adjust List.</property>
+                                            <property name="label" translatable="yes">Align Text to Grid</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -5180,22 +4787,31 @@ needed to fill each column of text
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel">
+                                          <object class="GtkSwitch" id="c_noGrid">
+                                            <property name="name">Align Text to Baseline Grid (On-Grid/Off-Grid)</property>
                                             <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Turning 'Align Text to Grid' ON will
-automatically turn off 'Increase Line 
-Spacing to Fill Columns' and disable it.
+                                            <property name="can-focus">True</property>
+                                            <property name="tooltip-text" translatable="yes">For high quality typesetting it is
+best practice to Align the Text
+to the (baseline) Grid. This
+ensures consistent line spacing
+and front-to-back registration.
 
-The default setting is ON. This
-is best practice for high quality
-typesetting and especially if
-printing on thin Bible paper.</property>
-                                            <property name="margin-start">12</property>
-                                            <property name="label" translatable="yes">ON</property>
-                                            <attributes>
-                                              <attribute name="foreground" value="#328d8f5b2f4e"/>
-                                            </attributes>
+However, for quick draft printouts
+or typesetting for thicker paper,
+Variable Line Spacing mode enables
+vertical justification which fills 
+each column of text as needed to
+use up the entire page.
+
+Warning: This is a major 'mode' change.
+Everything will shift as a result. Consider
+carefully before changing this setting.</property>
+                                            <property name="halign">center</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="margin-end">6</property>
+                                            <signal name="state-set" handler="onGridSettingChanged" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -5204,28 +4820,27 @@ printing on thin Bible paper.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkSwitch" id="c_noGrid">
-                                            <property name="name">Align Text to Baseline Grid (On-Grid/Off-Grid)</property>
+                                          <object class="GtkLabel">
                                             <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">For high quality typesetting it is
-best practice for the text to be
-aligned to the baseline grid. This
-ensures consistent line spacing
-and front-to-back registration.
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Allowing a small increase in the (vertical)
+line spacing allows the text to stretch 
+vertically to fill the entire column.
 
-However, for quick draft printouts
-or typesetting for thicker paper,
-this can be turned OFF which
-then allows line spacing to vary as
-needed to fill each column of text
-(known as vertical justification).</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-start">6</property>
-                                            <property name="margin-end">6</property>
-                                            <signal name="state-set" handler="onGridSettingChanged" swapped="no"/>
-                                            <signal name="state-set" handler="updateUnbalancedLinesHighlighting" swapped="no"/>
+This will also enable 'Fill Columns', but you 
+can turn that off to see how much extra
+space there is at the end of each column.
+
+Warning: This will cause major changes to
+the layout of the entire document. It will 
+also place headings exactly rather than 
+rounding to the nearest number of lines.
+
+Do NOT use this setting if doing final
+typesetting for thin Bible paper as 
+front-to-back registration is not
+enforced with Variable Line Spacing.</property>
+                                            <property name="label" translatable="yes">Variable Line Spacing</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -5237,24 +4852,6 @@ needed to fill each column of text
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Warning: This will cause major changes to
-the layout of the entire document. It will 
-also place headings exactly rather than 
-rounding to the nearest number of lines.
-
-Turning 'Align Text to Grid' OFF will automatically
-enable 'Increase Line Spacing to Fill Columns'.
-You can turn that off to see how much extra
-space there is at the end of each column.
-
-Do NOT turn this setting to OFF if doing
-final typesetting for thin Bible paper
-as front-to-back registration cannot
-be enforced with variable line spacing.</property>
-                                            <property name="label" translatable="yes">OFF</property>
-                                            <attributes>
-                                              <attribute name="foreground" value="#a5a51d1d2d2d"/>
-                                            </attributes>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -5264,15 +4861,12 @@ be enforced with variable line spacing.</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_variableLineSpacing">
-                                            <property name="label" translatable="yes">Increase Line Spacing to Fill Columns</property>
+                                            <property name="label" translatable="yes">Fill Columns</property>
                                             <property name="name">Variable/Increased Line Spacing</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">'Align Text to Grid' must be 
-turned OFF to use this option.
-
-A small increase in the (vertical)
+                                            <property name="tooltip-text" translatable="yes">A small increase in the (vertical)
 line spacing allows the text to
 stretch to fill the entire column.
 
@@ -5281,15 +4875,14 @@ and is useful for Draft Printouts
 where the page can be filled
 without manual intervention to 
 eliminate unwanted gaps at the 
-end of columns. It is recommended 
-that you also set the 'Unbalanced 
-Lines (max)' to a value greater than 
-0 to get the maximum benefit from 
-enabling this option.</property>
+end of columns. The setting 
+'Allow Unbalanced Columns' 
+automatically gets enabled when
+you choose this setting.</property>
                                             <property name="halign">end</property>
                                             <property name="margin-start">6</property>
                                             <property name="draw-indicator">True</property>
-                                            <signal name="clicked" handler="updateUnbalancedLinesHighlighting" swapped="no"/>
+                                            <signal name="clicked" handler="onAllowUnbalancedClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -5377,30 +4970,6 @@ the text of the two columns
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_verticalrule">
-                                    <property name="label" translatable="yes">Vertical Rule in Gutter</property>
-                                    <property name="name">Vertical Rule in Gutter</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Check this option to include a center
-line between the two columns.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">3</property>
-                                    <property name="margin-top">5</property>
-                                    <property name="margin-bottom">1</property>
-                                    <property name="active">True</property>
-                                    <property name="draw-indicator">True</property>
-                                    <signal name="clicked" handler="onVertRuleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">2</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkSpinButton" id="s_colgutteroffset">
                                     <property name="name">Adjust top of vertical rule</property>
                                     <property name="visible">True</property>
@@ -5425,42 +4994,7 @@ point of the vertical rule between columns.
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_bottomRag">
-                                    <property name="name">Allow unbalanced lines (bottom rag)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
-PTXprint will balance the number of
-lines used in each column. Sometimes
-this results in large empty spaces at the
-end of a page.
-
-Increasing this number (recommended
-range 1-4) will allow up to that many
-unbalanced lines on the page. Note that
-you can still stretch/shrink paragraphs
-using AdjLists to refine the output by
-manually balancing pages.
-
-If the background changes to orange it
-is alerting you to the fact that you have 
-enabled vertical justification (in order to
-fill columns) without allowing unbalanced
-lines. Increase the value to 1 or more.</property>
-                                    <property name="halign">start</property>
-                                    <property name="width-chars">4</property>
-                                    <property name="xalign">1</property>
-                                    <property name="adjustment">a_bottomRag</property>
-                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
-                                    <signal name="value-changed" handler="updateUnbalancedLinesHighlighting" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5494,40 +5028,6 @@ Width (mm):</property>
                                     <property name="can-focus">False</property>
                                     <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                     <child>
-                                      <object class="GtkLabel" id="l_bottomRag">
-                                        <property name="name">Maximum unbalanced lines</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
-PTXprint will balance the number of
-lines used in each column. Sometimes
-this results in large empty spaces at the
-end of a page.
-
-Increasing this number (recommended
-range 1-4) will allow up to that many
-unbalanced lines on the page. Note that
-you can still stretch/shrink paragraphs
-using AdjLists to refine the output by
-manually balancing pages.</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Unbalanced
-Lines (max):</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEventBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
-                                    <child>
                                       <object class="GtkLabel" id="l_colgutteroffset">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -5544,26 +5044,7 @@ Top (pt):</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_ruleThickness">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the thickness (pt) of rules (lines)
-in the document. This includes the
-horizontal rule between the header
-and the text, the vertical column gutter
-rule and the study notes inter-column rule.</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Thickness
-of Rule (pt):</property>
-                                    <property name="justify">right</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">4</property>
+                                    <property name="top-attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5591,7 +5072,94 @@ rule and the study notes inter-column rule.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_verticalrule">
+                                    <property name="label" translatable="yes">Vertical Rule in Gutter</property>
+                                    <property name="name">Vertical Rule in Gutter</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Check this option to include a center
+line between the two columns.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">3</property>
+                                    <property name="margin-top">5</property>
+                                    <property name="margin-bottom">1</property>
+                                    <property name="active">True</property>
+                                    <property name="draw-indicator">True</property>
+                                    <signal name="clicked" handler="onVertRuleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_allowUnbalanced">
+                                    <property name="label" translatable="yes">Allow Unbalanced Columns</property>
+                                    <property name="name">Allow Unbalanced Columns</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Check this option to allow a different
+number of lines in each column. This
+is especially important when using
+Variable Line Spacing mode and
+you are trying to Fill Columns.
+
+To alter the maximum number of
+Unbalanced Lines at the end of a
+page, visit the Advanced page,
+select the Other tab, and expand
+the Page Layout and Spacing section.
+
+If this setting is highlighted in orange
+it means that the abovementioned
+setting is set to 0 (rendering this
+setting inactive). Increase the value
+on the Advanced tab to 1 or more.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">3</property>
+                                    <property name="margin-top">15</property>
+                                    <property name="active">True</property>
+                                    <property name="draw-indicator">True</property>
+                                    <signal name="clicked" handler="onAllowUnbalancedClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
                                     <property name="top-attach">4</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <child>
+                                      <object class="GtkLabel" id="l_ruleThickness">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This sets the thickness (pt) of rules (lines)
+in the document. This includes the
+horizontal rule between the header
+and the text, the vertical column gutter
+rule and the study notes inter-column rule.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Thickness
+of Rule (pt):</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                               </object>
@@ -5619,7 +5187,7 @@ the Full View mode.</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="on2colClicked" swapped="no"/>
-                                <signal name="clicked" handler="updateUnbalancedLinesHighlighting" swapped="no"/>
+                                <signal name="clicked" handler="onAllowUnbalancedClicked" swapped="no"/>
                               </object>
                             </child>
                           </object>

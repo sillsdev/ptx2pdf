@@ -104,7 +104,8 @@ _map = {
     "paper/gutter":             ("s_pagegutter", "layout", lambda w,v: round(float(v)) if v else "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", "layout", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", "layout", lambda w,v: "2" if v else "1"),
-    "paper/bottomrag":          ("s_bottomRag", "layout", None),
+    "paper/allowunbalanced":    ("c_allowUnbalanced", "layout", lambda w,v :"" if v else "%"),
+    # "paper/bottomrag":          ("s_bottomRag", "layout", None),
     "paper/fontfactor":         ("s_fontsize", "fontscript", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
     "paper/lockfont2baseline":  ("c_lockFontSize2Baseline", "fontscript", None),
 

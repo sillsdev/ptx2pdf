@@ -183,6 +183,7 @@ lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_mirrorpages c_pagegutter s_pagegutter
 l_colgutterfactor s_colgutterfactor l_bottomRag s_bottomRag
+c_noGrid c_variableLineSpacing c_allowUnbalanced
 fr_margins l_margins s_margins l_topmargin s_topmargin l_bottommargin s_bottommargin
 c_rhrule l_rhruleposition s_rhruleposition
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
@@ -506,7 +507,7 @@ _dlgtriggers = {
     "dlg_borders":          "onSBborderClicked"
 }
 
-def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@<your.org's.address>", **kw):
+def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", **kw):
     logger.error(text)
     if secondary:
         logger.error(secondary)
@@ -971,6 +972,7 @@ class GtkViewModel(ViewModel):
         lsfonts.clear()
         tvfonts.set_model(lsfonts)
         self.setupTeXOptions()
+        self.builder.get_object('c_variableLineSpacing').set_sensitive(self.get("c_noGrid"))
 
         if self.splash is not None:
             self.splash.terminate()
@@ -6123,11 +6125,13 @@ Thank you,
         status = self.get("c_noGrid")
         self.builder.get_object('c_variableLineSpacing').set_sensitive(status)
         self.set("c_variableLineSpacing", status)
-        if status and self.get("c_doublecolumn") and float(self.get("s_bottomRag")) == 0:
-            self.highlightwidget("s_bottomRag")
+        self.set("c_allowUnbalanced", status)
+        if status and self.get("c_doublecolumn") and float(self.get("s_bottomrag")) == 0:
+            self.highlightwidget("c_allowUnbalanced")
 
-    def updateUnbalancedLinesHighlighting(self, wid, *a):
-        if self.get("c_variableLineSpacing") and self.get("c_doublecolumn") and float(self.get("s_bottomRag")) == 0:
-            self.highlightwidget("s_bottomRag")
-        else: # float(self.get("s_bottomRag")) > 0:
-            self.highlightwidget("s_bottomRag", highlight=False)
+    def onAllowUnbalancedClicked(self, wid):
+        if self.get("c_doublecolumn") \
+           and self.get("c_allowUnbalanced") and float(self.get("s_bottomrag")) == 0:
+            self.highlightwidget("c_allowUnbalanced")
+        else: # float(self.get("s_bottomrag")) > 0:
+            self.highlightwidget("c_allowUnbalanced", highlight=False)

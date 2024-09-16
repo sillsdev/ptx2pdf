@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.5.12"
 GitVersionStr = "2.5.12"
-ConfigVersion = "2.19"
+ConfigVersion = "2.20"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -959,7 +959,7 @@ class ViewModel:
             self._configset(config, "header/ifshowverse", config.getboolean("header", "ifverses", fallback=False))
             self._configset(config, "header/ifshowbook", True)
         if v < 1.95:
-            self._configset(config, "paper/bottomrag", "0")
+            self._configset(config, "texpert/bottomrag", "0")
         if v < 1.96:
             self._configset(config, "notes/r_fnpos", "normal")
             self._configset(config, "project/uilevel", "4" if config.getboolean("project", "hideadvsettings", fallback=True) else "6")
@@ -1067,6 +1067,11 @@ class ViewModel:
                         'paragraph/useglyphmetrics'):
                 p = "document" + a if "/" not in a else a[:a.index("/")]
                 self._configset(config, p + "/" + a, config.get(p, a, fallback=""))
+
+        if v < 2.20: # transfer Max Unbalanced Lines (s_bottomRag) to texpert
+            rag = config.get("paper", "bottomrag", fallback="3")
+            self._configset(config, "texpert/bottomrag", rag)
+            self._configset(config, "paper/allowunbalanced", True if rag != "0" else False)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
