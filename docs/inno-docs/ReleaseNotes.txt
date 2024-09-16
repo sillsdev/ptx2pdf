@@ -1,8 +1,12 @@
 PTXprint 2.6 Release Notes
-16 Sep 2024
+17 Sep 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.6.1 (17 Sep 2024)
+
+  * Fix unhandled exception when switching UI level
 
 Bug fixes and Improvements in 2.6 (16 Sep 2024)
 
