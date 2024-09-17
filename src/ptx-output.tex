@@ -541,7 +541,7 @@
       \def\pagecontents{%
         \trace{et}{Apply border and shipout from savepartialpage}%
         \doTextB@rder{\partial}%
-        \box\partial\vfil
+        \box\partial\ifFinalNotesDown\vfil\fi
         \p@geendcontent
         \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14 \fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\notst@dynotesfalse\clearn@tes\s@tpage 
