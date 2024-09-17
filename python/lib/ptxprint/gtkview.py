@@ -3154,12 +3154,11 @@ class GtkViewModel(ViewModel):
             row = len(grid.get_children()) // 2  # Calculate current row based on number of children
             label = Gtk.Label(label=opt.name + ":")
             label.set_halign(Gtk.Align.END)
-            grid.attach(label, 0, row, 1, 1)
-            lname = "l_texpert"+wname[wname.index("_"):]
+            lname = "l_"+wname[wname.index("_")+1:]
             self.builder.expose_object(lname, label)
-            label.show()
 
             findname = wname
+            changeMethod = None
             if wname.startswith("c_"):
                 obj = Gtk.CheckButton()
                 self.btnControls.add(wname)
@@ -3172,7 +3171,15 @@ class GtkViewModel(ViewModel):
                 obj = Gtk.SpinButton()
                 obj.set_adjustment(adj)
                 obj.set_digits(x[5])  # Set the number of decimal places
+                changeMethod = "labelledChanged"
+                # put the label in an EventBox and then add button-release-event on the eventbox
+                obj.connect("value-changed", getattr(self, changeMethod))
+                eb = Gtk.EventBox()
+                eb.add(label)
+                eb.connect("button-release-event", getattr(self, "resetLabel"))
+                label = eb
                 v = str(x[0])
+                self.initValues[wname] = v
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
             elif wname.startswith("fcb_"):
                 obj = Gtk.ComboBoxText()
@@ -3185,6 +3192,8 @@ class GtkViewModel(ViewModel):
                 obj.set_active_id(v)
                 tiptext = "{k}:\t[{v}]\n\n{descr}".format(k=k, v=v, **asdict(opt))
 
+            grid.attach(label, 0, row, 1, 1)
+            label.show()
             label.set_tooltip_text(tiptext)
             self.finddata[tiptext.lower()] = (findname, 1)
             self.finddata[opt.name.lower()] = (findname, 4)
