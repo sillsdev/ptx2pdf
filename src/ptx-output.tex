@@ -83,17 +83,17 @@
   \fi
   \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
   \trace{b}{botomins=\the\ht\bottomins + \the\dp\bottomins, +\the\skip\bottomins}%
-  \ifdim\ht\bottomins>0pt \vfil \temptrue\tmpwrite{bottomins}\kern-\lastd@pth
+  \ifdim\ht\bottomins>0pt \inp@gegap \temptrue\tmpwrite{bottomins}\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
   \trace{b}{BALANCE pageouttxt: border=\csname b@dr@bot@pad\endcsname notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255, temp\iftemp true\else false\fi}%
   \trace{b}{notes=\the\ht\n@tesbox + \the\dp\n@tesbox}%
-  \ifdim\ht\n@tesbox > 0pt \ifnum \ifinendbook\ifFinalNotesDown\iftemp 0\else 1\fi\else 0\fi\else 1\fi =1\relax\trace{o}{notes fill \ifnoinkinmargin not\space \fi into margin}\vfil \ifnoinkinmargin\kern-\lastd@pth\fi\relax \temptrue\fi
+  \ifdim\ht\n@tesbox > 0pt \ifnum \ifinendbook\ifFinalNotesDown\iftemp 0\else 1\fi\else 0\fi\else 1\fi =1\relax\trace{o}{notes fill \ifnoinkinmargin not\space \fi into margin}\inp@gegap \ifnoinkinmargin\kern-\lastd@pth\fi\relax \temptrue\fi
     \tmpwrite{notes}%
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \fi
   \noteseenfalse
   \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins, wd=\the\wd\verybottomins, availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}%
-  \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\vfil\tmpwrite{verybottomins}\fi % \kern-\dimen0
+  \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\inp@gegap\tmpwrite{verybottomins}\fi % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\lshiftc@lumn{\the\pageno}\vbox{\unvbox\verybottomins}}%
   \fi\fi
   \iftemp\else\tmpwrite{pageend}\fi
@@ -178,8 +178,9 @@
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
+      \m@keinp@gegap
       \p@geendcontent
-      \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
+      \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14\fi\fi
       \inendbookfalse
     }%
 %-c_onecoltrial_pagecontents
@@ -429,6 +430,10 @@
   \fi%\tracingassigns=0\tracingmacros=0\tracingifs=0
   \traceifcheck{reheightcolnotes}%
 }
+
+\def\m@keinp@gegap{\ifNoGrid\gdef\inp@gegap{}\else
+  \gdef\inp@gegap{\vfil\gdef\inp@gegap{}}\fi}
+
 \newdimen\t@xttrialheight
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
   \xdef\p@gebotmark{\botmark}%
@@ -538,12 +543,13 @@
     \ifnum\book@ndpenalty =\outputpenalty \ifendbooknoeject\else \temptrue \fi\fi
     \trace{o}{outputpenalty = \the\outputpenalty \space temp\iftemp true\else false\fi}%
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
+      \m@keinp@gegap
       \def\pagecontents{%
         \trace{et}{Apply border and shipout from savepartialpage}%
         \doTextB@rder{\partial}%
-        \box\partial\ifFinalNotesDown\vfil\fi
+        \box\partial\ifFinalNotesDown\inp@gegap\fi
         \p@geendcontent
-        \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14 \fi\fi
+        \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14 \fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\notst@dynotesfalse\clearn@tes\s@tpage 
     \else
       \trace{o}{savepartial noeject}% partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
@@ -1564,8 +1570,9 @@
       \dimen4=\dimexpr \dimen2 - \dimen3 
       \trace{o}{textbox height=\the\ht\colA, depth=\the\dp\colA, newdepth=\the\dimen4}\dp\colA=\dimen4
       \box\colA
+      \m@keinp@gegap
       \p@geendcontent
-      \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
+      \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14\fi\fi
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
     \plainoutput\trace{p}{plainoutput twocoltrial}%
@@ -1789,6 +1796,7 @@
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
+      \m@keinp@gegap
       \p@geendcontent
     }\ifFinalNotesDown\unvbox0\else\box0\fi}\plainoutput\trace{p}{plainoutput for twocolp@geout}%
     \s@tpage
