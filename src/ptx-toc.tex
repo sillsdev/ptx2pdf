@@ -195,6 +195,7 @@
     %\tracingassigns=1
     \d@ftoc{leaders-tc\ifTOCRTL\else r\fi\the\t@ccount}{}
     \d@ftoc{leaders-tc\ifTOCRTL r\fi\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
+    \trace{t}{Set leaders-tc\ifTOCRTL r\fi\the\t@ccount \space to leaders styled by ldrs+tc\ifRTL r\fi\the\t@ccount}%
     %\tracingassigns=0
     \ifRTL\d@ftoc{tc\the\t@ccount :leftmargin}{0}
     \else\d@ftoc{tc\the\t@ccount :rightmargin}{0}\fi
@@ -265,12 +266,14 @@
     \fi
     \d@ftoc{tc\the\t@ccount :rightmargin}{\rm@}
     \ifnum\t@ccount>1 \d@ftoc{tc\the\t@ccount :leftmargin}{\rm@}\fi
-    \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
+    \getp@ram{justification}{cat:toc|tc\the@lign\the\t@ccount\ifdiglot \c@rrdstat\fi}{cat:toc|tc\the\t@ccount+cat:toc|tr}%
+    \trace{t}{Processing leaders for \the\t@ccount, cat:toc|tc\the@lign\the\t@ccount \space with alignment \p@ram}%
+    \ifnum \ifx\p@ram\r@ght 1\else\ifx\p@ram\c@nter 1\else 0\fi\fi =1
       %\d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\global\setbox\l@drsbox\hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount}\l@drscts}\rightskip=0pt \leftskip=0pt \relax\l@drs}
       \trace{t}{Setting leaders-tc\ifRTL r\fi\the\t@ccount, with RTL\ifRTL true\else false\fi\space and align: '\the@lign'}%
       \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
     \fi
-    \ifx\the@lign\cell@r \else
+    \ifx\p@ram\r@ght \else
       \trace{t}{Setting leaders-tc\ifRTL\else r\fi\the\t@ccount, with RTL\ifRTL true\else false\fi\space and align: '\the@lign'}%
       %\d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\rightskip=0pt \leftskip=0pt %\global\setbox\l@drsbox\hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL\else r\fi\the\t@ccount}\l@drscts}\l@drs}
       %\tracingassigns=1
