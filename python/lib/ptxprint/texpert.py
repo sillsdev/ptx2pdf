@@ -30,7 +30,7 @@ texpertOptions = {
     "PageAlign":          O("bookstartpage", "LAY", 
                             {"page": _("Next page"), "multi": _("Same page"), "odd": _("Odd page")}, r"\def{0}{{{1}}}", 
                             _("Where to start a new book"), _("Does a scripture book start on a new page, the same page as the previous book (if <65% of page has been used), or an odd page")),
-    "pageFullFactor":     O("pagefullfactor", "LAY", (0.65,  0.30, 0.9, 0.05, 0.05, 2), "{0}={1}", _("Page full factor"), 
+    "PageFullFactor":     O("pagefullfactor", "LAY", (0.65,  0.30, 0.9, 0.05, 0.05, 2), "\def\{0}{{1}}", _("Page full factor"), 
                             _("This setting is related to how full a page needs to be to force the next book to start on a new page."),
                             valfn=lambda v: f2s(float(v or "0.65"))),
     "IntroPageAlign":     O("intropagealign", "LAY",
