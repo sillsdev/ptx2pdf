@@ -261,7 +261,8 @@ class PicInfo(dict):
         return True
 
     def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False, captionpre=None, nonMergedBooks=None):
-        ''' Used for merging piclists from diglots into the main piclist'''
+        ''' Used for merging piclists from diglots into the main piclist
+            Anything with the same anchor and same image file is merged. '''
         if indat is None:
             indat = self
         if captionpre is None:
@@ -402,6 +403,7 @@ class PicInfo(dict):
         return res
 
     def _syncpic(self, pic, key):
+        # merge into existing record based on srcref only since assume this is the same source file
         pic['sync'] = True
         for k, p in list(self.items()):
             if not p.get('sync', False) and p.get('srcref', p.get('anchor', '')) == pic['srcref']:
@@ -430,8 +432,8 @@ class PicInfo(dict):
                                 currentk = a[0]
                         else:
                             a = ("p", "", "{:03d}".format(i+1), ("="+str(parcount)) if parcount - koffset > 1 else "") if isperiph else (c, ".", lastv, "")
-                        r = "{}{} {}{}{}{}".format(bk, suffix, *a)
-                        sref = "{} {}{}{}{}".format(bk, *a)
+                        r = "{}{} {}{}{}{}".format(bk, suffix, *a)          # includes suffix
+                        sref = "{} {}{}{}{}".format(bk, *a)                 # srcref doesn't include suffix since location assumed
                         pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip(),
                                'srcref': sref}
                         if bk == 'GLO':
