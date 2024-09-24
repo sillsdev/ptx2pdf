@@ -3165,6 +3165,9 @@ class GtkViewModel(ViewModel):
                 v = opt.val
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
                 findname = lname
+                self.initValues[wname] = v
+                changeMethod = "buttonChanged"
+                obj.connect("clicked", getattr(self, changeMethod))
             elif wname.startswith("s_"):
                 x = opt.val
                 adj = Gtk.Adjustment(value=x[0], lower=x[1], upper=x[2], step_increment=x[3], page_increment=x[4])
@@ -4782,11 +4785,10 @@ class GtkViewModel(ViewModel):
         if ctrl in self.initValues:
             self.set(ctrl, self.initValues[ctrl])
 
-    def labelledChanged(self, widg, *a):
-        ctrl = Gtk.Buildable.get_name(widg)
-        logger.debug(f"{ctrl} changed")
-        (pref, name) = ctrl.split("_")
-        lb = self.builder.get_object("l_"+name)
+    def changeLabel(self, ctrl, lbl):
+        if lbl is None:
+            (pref, name) = ctrl.split("_")
+            lb = self.builder.get_object("l_"+name)
         if lb is None or ctrl not in self.initValues:
             return
         v = self.get(ctrl)
@@ -4796,6 +4798,16 @@ class GtkViewModel(ViewModel):
             ctxt.remove_class("changed")
         else:
             ctxt.add_class("changed")
+
+    def labelledChanged(self, widg, *a):
+        ctrl = Gtk.Buildable.get_name(widg)
+        logger.debug(f"{ctrl} changed")
+        self.changeLabel(ctrl, None)
+
+    def buttonChanged(self, widg, *a):
+        ctrl = Gtk.Buildable.get_name(widg)
+        lbl = widg.get_child()
+        self.changeLabel(ctrl, lbl)
 
     def adjustGuideGrid(self, btn):
         # if self.get('c_grid'):
