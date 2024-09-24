@@ -4,6 +4,24 @@ PTXprint 2.6.1 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.6.2 (24 Sep 2024)
+
+  * 
+
+  * 
+
+  * Introduce a inp@gegap which puts only one vfil on a page
+
+  * Obey ifFinalNotesDown in single column output
+
+  * Fix TOC alignment for RTL (again!)
+
+  * TeXpert hacks can now autoreset (at least all spinners)
+
+  * Fix PageFullFactor setting
+
+  * Crowdin localization sync
+
 Bug fixes and Improvements in 2.6.1 (17 Sep 2024)
 
   * Fix unhandled exception when switching UI level
