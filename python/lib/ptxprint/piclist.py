@@ -431,8 +431,9 @@ class PicInfo(dict):
                         else:
                             a = ("p", "", "{:03d}".format(i+1), ("="+str(parcount)) if parcount - koffset > 1 else "") if isperiph else (c, ".", lastv, "")
                         r = "{}{} {}{}{}{}".format(bk, suffix, *a)
+                        sref = "{} {}{}{}{}".format(bk, *a)
                         pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip(),
-                               'srcref': r}
+                               'srcref': sref}
                         if bk == 'GLO':
                             pic.update(pgpos="p", scale="0.7")
                         key = self.newkey(suffix)
@@ -721,7 +722,7 @@ class PicInfo(dict):
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False, sync=False):
     newpics = PicInfo(model)
     cfg = model.cfgid
-    newpics.read_piclist(os.path.join(model.project.srcPath(cfg), "{}-{}.piclist".format(model.project.prjid, cfg)))
+    newpics.read_piclist(os.path.join(model.project.srcPath(cfg), "{}-{}.piclist".format(model.project.prjid, cfg)), suffix=suffix)
     delpics = set()
     if doclear:
         picinfos.clear()

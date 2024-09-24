@@ -1303,9 +1303,9 @@ class ViewModel:
         if not self.get("c_includeillustrations"):
             return
         if self.diglotView is None:
-            res = self.picinfos.load_files(self, force=force)
+            res = self.picinfos.load_files(self, force=force, suffix="R" if self.isDiglot else "")
         else:
-            res = self.picinfos.load_files(self, suffix="B", force=force)
+            res = self.picinfos.load_files(self, suffix="L", force=force)
             self.diglotView.picinfos = self.picinfos
 #            digpicinfos = PicInfo(self.diglotView)
 #            if digpicinfos.load_files(self.diglotView, suffix="R"):
