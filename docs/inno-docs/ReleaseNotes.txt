@@ -1,14 +1,10 @@
 PTXprint 2.6.1 Release Notes
-17 Sep 2024
+24 Sep 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
 Bug fixes and Improvements in 2.6.2 (24 Sep 2024)
-
-  * 
-
-  * 
 
   * Introduce a inp@gegap which puts only one vfil on a page
 
@@ -16,11 +12,19 @@ Bug fixes and Improvements in 2.6.2 (24 Sep 2024)
 
   * Fix TOC alignment for RTL (again!)
 
-  * TeXpert hacks can now autoreset (at least all spinners)
+  * Have texpert hacks bold check buttons if changed
+
+  * TeXpert hacks can now autoreset (spinners and checkboxes)
+
+  * Fix TeXpert Adv-Other options to work, and to reset
+
+  * Fixup some TeXpert hacks to fit with the macros
 
   * Fix PageFullFactor setting
 
   * Crowdin localization sync
+
+  * Fix picture import for diglots
 
 Bug fixes and Improvements in 2.6.1 (17 Sep 2024)
 

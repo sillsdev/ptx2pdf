@@ -3261,7 +3261,7 @@ class GtkViewModel(ViewModel):
         prjCtr = len(prjs)
         cols = int(prjCtr**0.6) if prjCtr <= 70 else 5
         for i, b in enumerate(prjs):
-            if self.prorject.guid == b[1]:
+            if self.project.guid == b[1]:
                 tbox = Gtk.Label()
                 tbox.set_text('<span background="black" foreground="white" font-weight="bold">  {} </span>'.format(b[0]))
                 tbox.set_use_markup(True)
