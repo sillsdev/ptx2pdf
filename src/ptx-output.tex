@@ -154,7 +154,7 @@
           \fi
           \hbox to \dimen1{\box\partial}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
-      \setbox1=\vbox \ifNoGrid to \ht\colA\fi {\unvcopy\colA\unskip}%
+      \setbox1=\vbox \ifNoGrid to \availht\fi {\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
