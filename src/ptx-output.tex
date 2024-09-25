@@ -1230,13 +1230,15 @@
   %\let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
   \trace{i}{after inserts: \the\availht}%
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
-  \bmg@p=\availht
-  \dimen0=8 \baselineskip
-  \ifdim\dimen0>0.5pt
-      \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
-      \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
+  \ifNoGrid\else
+    \bmg@p=\availht
+    \dimen0=8 \baselineskip
+    \ifdim\dimen0>0.5pt
+        \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
+        \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
+    \fi
+    \advance\bmg@p by -\availht
   \fi
-  \advance\bmg@p by -\availht
   %\advance\availht \dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \ifdim\bestavailht>0pt \ifdim\bestavailht<\availht \availht=\bestavailht\fi\fi
@@ -1538,12 +1540,13 @@
       \keepn@tesfalse
       \setbox\colA=\vbox{\unvbox\colA\unskip}\ifdim\ht\colB>0pt\setbox\colB=\vbox{\unvbox\colB\unskip}\fi
     \fi
-    \dimen3=\ht\colA
-    \ifdim\ht\colB>\dimen3
-      \setbox1=\copy\colB
-      \setbox2=\vsplit1 to \dimen3
-      \ifvoid1 \ht\colB=\dimen3\else \dimen3=\ht\colB\fi
-    \fi
+    \ifNoGrid\dimen3=\availht\else
+      \dimen3=\ht\colA
+      \ifdim\ht\colB>\dimen3
+        \setbox1=\copy\colB
+        \setbox2=\vsplit1 to \dimen3
+        \ifvoid1 \ht\colB=\dimen3\else \dimen3=\ht\colB\fi
+    \fi\fi
     \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
     \underf@ll{\ht\colA}{\availht}{A}%
     \underf@ll{\ht\colB}{\availht}{B}%
