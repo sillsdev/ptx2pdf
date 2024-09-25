@@ -431,8 +431,8 @@
   \traceifcheck{reheightcolnotes}%
 }
 
-\def\m@keinp@gegap{\ifNoGrid\gdef\inp@gegap{}\else
-  \gdef\inp@gegap{\vfil\gdef\inp@gegap{}}\fi}
+\def\m@keinp@gegap{%\ifNoGrid\gdef\inp@gegap{}\else
+  \gdef\inp@gegap{\vfil\gdef\inp@gegap{}}}%\fi}
 
 \newdimen\t@xttrialheight
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
@@ -1207,6 +1207,9 @@
   \decr{\availht}{\verybottomins}%
   \trace{i}{availht before textborderadj = \the\availht}%
   \ch@ckiftextborderadj
+  \iftextborder
+    \ifdefined\textb@dr@bot@pad \advance\availht -\textb@dr@bot@pad\fi 
+  \fi
   \iftemp
     \advance\availht -\pretextb@rderskip  % Space reserved for text border.
     \advance\availht -\posttextb@rderskip 

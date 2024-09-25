@@ -386,7 +386,7 @@ class PicInfo(dict):
         self.rmdups()
 
     def _getanchor(self, m, txt, i, currentk):
-        """ returns (anchor, """
+        # returns anchor components. For k: ("k.<val>", "", "="+paranum); p: ("p", "", paranum)
         if m is None:
             rextras = {}
             fend = len(txt)
@@ -743,3 +743,443 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
             if v['anchor'][:3] == bk:
                 picinfos[k+suffix] = v
     picinfos.loaded = True
+
+
+class Picture:
+    picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t", "b")},
+                 "R": {"col":  ("tr", "br"),             "span": ("b", "t")},
+                 "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")},
+                 "B": {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
+    stripsp_re = re.compile(r"^(\S+\s+\S+)\s+.*$")
+
+    def __init__(self, **kw):
+        self.fields = kw.copy()
+
+    def __getitem__(self, k):
+        return self.fields[k]
+
+    def __setitem__(self, k, v):
+        self.fields[k] = v
+
+    def __delitem__(self, k):
+        del self.fields[k]
+
+    def __contains__(self, k):
+        return k in self.fields
+
+    def __iter__(self):
+        return self.fields.__iter__()
+
+    def copy(self):
+        return Picture(**self.fields)
+
+    def sync(self, other, suffix):
+        ''' are they the same picture, if so update caption and return True '''
+        if self['srcref'] == other['srcref'] and self['src'] == other['src']:
+            caption = other.get('caption'+suffix, other.get('caption', None))
+            if caption is not None:
+                self['caption'+suffix] = caption
+            return True
+        return False
+
+    def outstr(self, bks=[], skipkey=None, usedest=False, media=None, checks=None, picMedia=None, hiderefs=False):
+        line = []
+        if (len(bks) and self.anchor[:3] not in bks) or (skipkey is not None and self.get(skipkey, False)):
+            return line
+        if usedest:
+            p3p = ["dest file"] + pos3parms[1:]
+        else:
+            p3p = pos3parms
+        mediaval = self.get('media', None)
+        if mediaval is None or val == '' and picMedia is not None:
+            mediaval = picMedia(self['src'])[0]
+        if media is not None and mediaval is not None and media not in val:
+            return line
+        if picMedia is not None and mediaval == picMedia(self['src'])[0]:
+            mediaval = None
+        outk = self.stripsp_re.sub(r"\1", self.anchor)
+        credittxt, creditbox = checks.getCreditInfo(newBase(self['src'])) if checks is not None else (None, None)
+        line = []
+        for i, x in enumerate(p3p):
+            val = self.get(x, None)
+            if x in _defaults and _defaults[x] == val:
+                continue
+            elif usedest and hiderefs and x == "ref":
+                continue
+            elif x == "scale" and float(self.get(x, 1.0)) == 1.0:
+                continue
+            elif x == "media":
+                val = mediaval
+            elif x == "x-credit":
+                val = credittxt
+            elif x in _creditcomps:
+                if creditbox is None:
+                    continue
+                val = creditbox[_creditcomps[x]]
+            if not val:
+                continue
+            line.append('{}="{}"'.format(pos3parms[i], val))
+        return ("{} {}|".format(outk, geattr(self, 'caption', ''))+ " ".join(line))
+
+    def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False, srcfkey="srcpath"):
+        if self.get('crop', False) == cropme and 'destfile' in self:
+            return
+        if keys is not None and self['anchor'][:3] not in keys:
+            return
+        if (fpath := self.get(srcfkey, None)) is None:
+            return
+        # print(fpath)
+        origExt = os.path.splitext(fpath)[1]
+        nB = newBase(self['src'])
+        self.destfile = fn(self, self[srckey], nB+origExt.lower())
+        self.crop = cropme
+        v = self.get('media', "")
+        if len(v) and 'p' not in v:
+            self.disabled = True
+
+    def anchor_matches(self, src, bk=None):
+        if self.get('src', None) != src:
+            return None
+        if bk is not None and not self['anchor'].startswith(bk):
+            return None
+        return self['anchor']
+
+    def clear_src_paths(self):
+        for a in ('srcpath', 'destpath'):
+            try:
+                del self[a]
+            except AttributeError:
+                continue
+
+    def set_positions(self, cols=1, randomize=False, suffix=""):
+        if cols == 1: # Single Column layout so change all tl+tr > t and bl+br > b
+            if self.get('pgpos', None) is not None:
+                self['pgpos'] = re.sub(r"([tb])[lr]", r"\1", self['pgpos'])
+            elif randomize:
+                self['pgpos'] = random.choice(self.picposns[suffix]['span'])
+            else:
+                self['pgpos'] = "t"
+        elif getattr(self, 'pgpos', None) is None:
+            posns = self.picposns[suffix].get(self.get('size', 'col'), self.picposns[suffix]["col"])
+            if randomize:
+                self['gpos'] = random.choice(posns)
+            else:
+                self['gpos'] = posns[0]
+
+    def _fixPicinfo(self): # USFM2 to USFM3 converter
+        if (p := self.get('pgpos', None)) is not None:
+            if all(x in "apw" for x in p):
+                self['media'] = p
+                del self['pgpos']
+            elif re.match(r"^[tbhpc][lrc]?[0-9]?$", p):
+                self['media'] = 'p'
+            else:
+                self['loc'] = p
+                del self['pgpos']
+        if (p := self.get('size', None)) is not None:
+            m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
+            if m:
+                self['size'] = m[1]
+                if m[2] is not None and len(m[2]):
+                    self['scale'] = m[2]
+
+
+class Piclist:
+
+    srcfkey = 'src path'
+    stripsp_re = re.compile(r"^(\S+\s+\S+)\s+.*$")
+
+    def __init__(self, model=None):
+        self.clear(model)
+        self.inthread = False
+        self.keycounter = 0
+        self.mode = None
+
+    def copy(self):
+        res = Piclist(self.model)
+        for p in res.pics:
+            self.pics.add(p.copy())
+        return res
+        
+    def clear(self, model=None):
+        self.pics = set()
+        if model is not None:
+            self.model = model
+            if model.project is not None:
+                self.prj = model.project.prjid
+                self.basedir = self.model.project.path
+                self.config = model.cfgid
+        self.loaded = False
+        self.srchlist = []
+
+    def add_picture(self, pic, suffix="", sync=False):
+        if not sync:
+            self.pics.add(pic)
+            return
+        for p in self.pics:
+            if p.sync(pic, suffix):
+                return
+
+    def load_files(self, parent, suffix="", force=False):
+        """ Read pictures from a project either from a piclist file or the SFM files """
+        if self.loaded and not force:
+            return True
+        if self.inthread or self.basedir is None or self.prj is None or self.config is None:
+            return False
+        self.thread = None
+        preferred = os.path.join(self.basedir, "shared/ptxprint/{1}/{0}-{1}.piclist".format(self.prj, self.config))
+        if os.path.exists(preferred):
+            self.read_piclist(preferred, suffix=suffix)
+            self.loaded = True
+            return True
+        places = ["shared/ptxprint/{}.piclist".format(self.prj)]
+        plistsdir = os.path.join(self.basedir, "shared", "ptxprint", self.config, "PicLists")
+        if os.path.exists(plistsdir):
+            places += ["shared/ptxprint/{0}/PicLists/{1}".format(self.config, x) \
+                        for x in os.listdir(plistsdir) if x.lower().endswith(".piclist")]
+        havepiclists = False
+        for f in places:
+            p = os.path.join(self.basedir, f)
+            if os.path.exists(p):
+                self.read_piclist(p, suffix=suffix)
+                havepiclists = True
+        self.loaded = True
+        if not havepiclists:
+            self.inthread = True
+            self.threadUsfms(parent, suffix)
+            # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
+            return False        # why false if not threaded?
+        return True
+
+    def read_piclist(self, fname, suffix=""):
+        """ Read piclist file """
+        if isinstance(fname, str):
+            if not os.path.exists(fname):
+                return
+            inf = universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
+                                                        if self.model is not None else 65001)
+        else:
+            inf = fname
+        logger.debug(f"{fname=} {suffix=} {self.loaded=}")
+        # logger.debug("".join(traceback.format_stack()))
+        for l in (x.strip() for x in inf.readlines()):
+            if not len(l) or l.startswith("%"):
+                continue
+            m = l.split("|")
+            r = m[0].split(maxsplit=2)
+            if not len(r):  # no id, what to do? Ignore entry? Create an id?
+                continue    # skip the entry. Pretty radical.
+            if suffix.startswith("B"):
+                s = r[0][3:4] or suffix[1:]
+            else:
+                s = suffix
+            if len(r) > 1:
+                k = "{}{} {}".format(r[0][:3], s, r[1])
+            else:
+                k = "{}{}".format(r[0], s)
+            pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
+            if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
+                for i, f in enumerate(m[1:]):
+                    if i < len(posparms)-1:
+                        pic[posparms[i+1]] = f
+                picture = Picture(**pic)
+                picture._fixPicinfo()
+            else: # otherwise USFM3, so find all the named params
+                for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
+                    pic[d[0]] = d[1]
+                picture = Picture(**pic)
+            self.add_picture(picture, suffix)
+        if isinstance(fname, str):
+            inf.close()
+        self.rmdups()
+
+    def threadUsfms(self, parent, suffix, nosave=False):
+        bks = self.model.getAllBooks()
+        for bk, bkp in bks.items():
+            if os.path.exists(bkp):
+                self.read_sfm(bk, bkp, parent, suffix=suffix)
+        self.set_positions(cols=2, randomize=True, suffix=suffix)
+        if not nosave:
+            self.model.savePics()
+        self.inthread = False
+
+    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent, parcount=0, fn=None, sync=False):
+        # logger.debug(f"Reading pics for {bk} + {suffix}")
+        koffset = 0
+        currentk = None
+        for s in re.split(r"\\(?:m[st][e]?|i(?:mt[e]?|ex|[bemopqs])|s[dpr]|c[ld]|[pqrs])\d?", txt):
+            parcount += 1
+            for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
+                      (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
+                m = list(regex.finditer(b[0], s))
+                if len(m):
+                    for i, f in enumerate(m):
+                        if bk == "GLO":
+                            a = self._getanchor(f, s, parcount - koffset, currentk)
+                            if a[0].startswith("k") and a[3] != "":
+                                koffset = parcount
+                                currentk = a[0]
+                        else:
+                            a = ("p", "", "{:03d}".format(i+1), ("="+str(parcount)) if parcount - koffset > 1 else "") if isperiph else (c, ".", lastv, "")
+                        r = "{}{} {}{}{}{}".format(bk, suffix, *a)          # includes suffix
+                        sref = "{} {}{}{}{}".format(bk, *a)                 # srcref doesn't include suffix since location assumed
+                        pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip(), 'srcref': sref}
+                        if bk == 'GLO':
+                            pic.update(pgpos="p", scale="0.7")
+                        if b[1]:    # usfm 3
+                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
+                            for l in labelParams:
+                                k,v = l.split("=")
+                                pic[k.strip()] = v.strip('"')
+                            if 'media' not in pic:
+                                default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
+                                pic['media'] = 'paw' if default is None else default
+                            picture = Picture(**pic)
+                        else:       # usfm 2
+                            for j, v in enumerate(f.groups()):
+                                pic[posparms[j]] = v
+                            picture = Picture(**pic)
+                            picture._fixPicinfo(pic)
+                        if fn is not None:
+                            fn(picture)
+                        else:
+                            self.add_picture(picture, suffix, sync=sync)
+                    break
+            else:
+                if bk == "GLO":
+                    a = self._getanchor(None, s, parcount - koffset, None)
+                    if a[0].startswith("k"):
+                        koffset = parcount
+                        currentk = a[0]
+
+    def read_sfm(self, bk, fname, parent, suffix="", media=None, sync=False):
+        isperiph = bk in nonScriptureBooks
+        with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
+                            if self.model is not None else 65001) as inf:
+            dat = inf.read()
+            if isperiph:
+                self._readpics(dat, bk, suffix, 0, None, isperiph, parent, sync=sync)
+            else:
+                blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
+                for c, t in zip(blocks[0::2], blocks[1::2]):
+                    m = re.match("(.*?)\\v ", t, re.S)
+                    if m is not None:
+                        s = m.group(1)
+                        self._readpics(s, bk, suffix, c, 0, isperiph, parent, sync=sync)
+                    for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
+                        lastv = v[0]
+                        s = v[1]
+                        key = None
+                        self._readpics(s, bk, suffix, c, lastv, isperiph, parent, sync=sync)
+
+    def rmdups(self): # MH {checking I understand this right} Does this assume we can't have 2 pics with the same anchor?
+        ''' Makes sure there are not two entries with the same anchor and same image source'''
+        anchormap = {}
+        for p in self.pics:
+            anchormap.setdefaul(p['anchor'], []).append(p)
+        for v in [a for a in anchormap.values() if len(a) > 1]:
+            dups = {}
+            for p in v:
+                dups.setdefault(p['src'], []).append(p)
+            for d in [v for v in dups.values() if len(v) > 1]:
+                for p in d[1:]:
+                    self.pics.remove(p)
+
+    def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True):
+        self.srchlist = [figFolder] if figFolder is not None else []
+        if not exclusive:
+            chkpaths = []
+            for d in ("local", ""):
+                if sys.platform.startswith("win"):
+                    chkpaths += [os.path.join(self.basedir, d, "figures")]
+                else:
+                    chkpaths += [os.path.join(self.basedir, x, y+"igures") for x in (d, d.title()) for y in "fF"]
+            for p in chkpaths:
+                if os.path.exists(p) and len(os.listdir(p)) > 0:
+                    for dp, _, fn in os.walk(p): 
+                        if len(fn): 
+                            self.srchlist.append(dp)
+            uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
+            if os.path.isdir(uddir):
+                self.srchlist.append(uddir)
+        self.extensions = []
+        extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
+        extuser = re.sub("[ ,;/><]"," ",imgorder).split()
+        self.extensions = {x:i for i, x in enumerate(extuser) if x in extdflt}
+        if not len(self.extensions):   # If the user hasn't defined any extensions 
+            if lowres:
+                self.extensions = extdflt
+            else:
+                self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
+        logger.debug(f"{self.srchlist=} {self.extensions=}")
+
+    def getFigureSources(self, filt=newBase, key='srcpath', keys=None, exclusive=False, data=None, mode=None, figFolder=None, imgorder="", lowres=False):
+        ''' Add source filename information to each figinfo, stored with the key '''
+        if data is None:
+            data = self.pics
+        # if self.srchlist is None: # or not len(self.srchlist):
+        self.build_searchlist(figFolder=figFolder, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
+        res = {}
+        newfigs = {}
+        for f in data:
+            if 'src' not in f:
+                continue
+            if keys is not None and f['anchor'][:3] not in keys:
+                continue
+            newk = filt(f['src']) if filt is not None else f['src']
+            newfigs.setdefault(newk, []).append(f)
+        logger.debug(f"{newfigs=}")
+        for srchdir in self.srchlist:
+            if srchdir is None or not os.path.exists(srchdir):
+                continue
+            if exclusive:
+                search = [(srchdir, [], os.listdir(srchdir))]
+            else:
+                search = os.walk(srchdir, followlinks=True, topdown=True)
+            for subdir, dirs, files in search:
+                for f in files:
+                    doti = f.rfind(".")
+                    origExt = f[doti:].lower()
+                    if origExt[1:] not in self.extensions:
+                        continue
+                    filepath = os.path.join(subdir, f)
+                    nB = filt(f) if filt is not None else f
+                    # logger.debug(f"{nB=} {nB in newfigs} {f=}")
+                    if nB not in newfigs:
+                        continue
+                    for p in newfigs[nB]:
+                        if 'destfile' in p:
+                            if mode == self.mode:
+                                continue
+                            else:
+                                del p['destfile']
+                        if key in p:
+                            old = self.extensions.get(os.path.splitext(p[key])[1].lower()[1:], 10000)
+                            new = self.extensions.get(os.path.splitext(filepath)[1].lower()[1:], 10000)
+                            if new < old:
+                                p[key] = filepath
+                            elif old == new and lowres != bool(os.path.getsize(p[key]) < os.path.getsize(filepath)):
+                                p[key] = filepath
+                        else:
+                            p[key] = filepath
+        self.mode = mode
+        return data
+
+    def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None, hiderefs=False):
+        ''' Generate a picinfo file, with given date.
+                bks is a list of 3 letter bkids only to include. If empty, include all.
+                skipkey if set will skip a record if there is a non False value associated with skipkey
+                usedest says to use destfile rather than src as the file source in the output'''
+        if not len(self.pics):
+            return
+        self.rmdups()
+        lines = []
+        for p in sorted(self.pics, key=lambda x:refKey(x['anchor'], info=['anchor'][3:4])):
+            lines.append(p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media, checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs))
+        if len(lines):
+            dat = "\n".join(lines)+"\n"
+            with open(fpath, "w", encoding="utf-8") as outf:
+                outf.write(dat)
+        elif os.path.exists(fpath):
+            os.unlink(fpath)
+

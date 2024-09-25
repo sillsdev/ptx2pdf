@@ -1,6 +1,6 @@
 
 from ptxprint.utils import _, strtobool, asfloat, f2s
-from dataclasses import dataclass, KW_ONLY
+from dataclasses import dataclass
 from typing import Optional, Callable, Tuple, Union
 import logging
 
