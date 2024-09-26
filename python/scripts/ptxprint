@@ -149,7 +149,8 @@ if not len(args.projects):
     if pdir is None:
         pdir = get_ptsettings()
         ptxdir = pdir
-    args.projects.append(pdir)
+    if pdir is not None:
+        args.projects.append(pdir)
     savetreedirs = True
 
 conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
@@ -194,7 +195,7 @@ if not len(args.projects):
     else:
         sys.exit(1)
 else:
-    args.projects = [os.path.abspath(p.replace("\\", "/")) for p in args.projects]
+    args.projects = [os.path.abspath(p.replace("\\", "/")) for p in args.projects if p is not None]
     args.projects = [p[:-1] if p.endswith("/") else p for p in args.projects]
 
 config.remove_section("projectdirs")
