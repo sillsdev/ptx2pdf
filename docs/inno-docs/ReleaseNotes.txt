@@ -1,8 +1,22 @@
 PTXprint 2.6.2 Release Notes
-24 Sep 2024
+27 Sep 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
-_______________________________________________________________
+_____________________________________________________________
+
+Bug fixes and Improvements in 2.6.3 (27 Sep 2024)
+
+  * Fix texborder space calculations. 
+
+  * Add piclist refactor (unstitched code)
+
+  * If no grid then stretch text to fully fill the space above the notes
+
+  * One col fill page if no grid
+
+  * Don't crash with poor setup (if missing Projects folder arg)
+
+  * Suppress bookend-hooks if no \id line, not no \h line
 
 Bug fixes and Improvements in 2.6.2 (24 Sep 2024)
 
