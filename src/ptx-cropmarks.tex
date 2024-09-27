@@ -550,7 +550,7 @@
 \newif\ifGraphPaper
 \def\GraphPaperX{2mm}
 \def\GraphPaperY{2mm}
-\def\GraphPaperXoffset{0.0cm}
+\def\GraphPaperXoffset{0.0cm} % GraphPaperXoffset is a user setting. GridPaper equivalent gets redefined.
 \def\GraphPaperYoffset{0.0cm}
 \def\GraphPaperMajorDiv{5} % How many minor divisions are there between major ones?
 \def\GraphPaperLineMajor{0.4pt}
@@ -561,6 +561,13 @@
 \def\GridPaperLineMinor{0.3pt}
 \def\GridPaperColMajor{0.8 0.6 0.6} % Colour (R G B)
 \def\GridPaperColMinor{0.85 0.85 1.0} % Colour (R G B)
+\def\NoteLineXoffset{10pt} % Gap at edge of page
+\def\NoteLineXmargin{10pt} % Gap at edge of page
+\def\NoteLineY{\onel@neunit} % line repeat frequency
+\def\NoteLineLineMajor{0.5pt}
+\def\NoteLineLineMinor{0.5pt}
+\def\NoteLineColMajor{0.2 0.2 1.0} % Colour (R G B)
+\def\NoteLineColMinor{0.5 0.5 1.0} % Colour (R G B)
 \def\l@stgprule{}
 \def\gpc@l{
   \ifx\th@sgprule\l@stgprule\trace{G}{Color test \th@sgprule==\l@stgprule}\else
@@ -576,7 +583,7 @@
   \gpc@l %change colour/width if necessary
   \bgroup\parindent=0pt
     \dimen0=\gprulew@d
-    \hbox to 0pt{\kern\GraphPaperXoffset\vrule height 0.5\dimen0 depth 0.5\dimen0 width\dimen3 \hss}%
+    \hbox to 0pt{\kern\csname \gp@type Xoffset\endcsname\vrule height 0.5\dimen0 depth 0.5\dimen0 width\dimen3 \hss}%
     \vskip -\dimen0\relax
   \egroup
 }
@@ -584,7 +591,7 @@
   \gpc@l %change colour/width if necessary
   \bgroup\parindent=0pt
     \dimen5=\gprulew@d\hsize=\dimen5
-    \hbox{\kern-0.5\dimen5\vbox to 0pt{\kern\GraphPaperYoffset\vrule height \dimen3 width \gprulew@d\vss}%
+    \hbox{\kern-0.5\dimen5\vbox to 0pt{\kern\csname \gp@type Yoffset\endcsname\vrule height \dimen3 width \gprulew@d\vss}%
     \kern-0.5\dimen5}%
   \egroup
 }
@@ -660,6 +667,32 @@
   \egroup
 }
 
+\def\doNoteLines{%
+  \trace{G}{doNoteLines}%
+  \bgroup\topskip=0pt\baselineskip=0pt\parindent=0pt\everypar{}\relax
+    \edef\NoteLineLength{\the\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit-\NoteLineXoffset-\NoteLineXmargin\relax} % length of lines
+    \def\gp@type{NoteLine}%
+    \def\th@sgprule{Minor}%
+    \dimen3=\NoteLineLength
+    \dimen2=\textheight
+    \trace{G}{Notearea \the\dimen3 x \the\dimen2}%
+    \dimen1=\NoteLineY
+    \dimen0=\topm@rgin
+    %\advance\dimen3-
+    \ifBindingGutter\if\g@tterside L
+      \def\pr@line{}\def\p@stline{\hss}
+    \else
+      \def\pr@line{\hss}\def\p@stline{\kern\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit\relax}
+    \fi\fi
+    \setbox0\vbox{\kern\dimen1}%
+    \gp@hrules
+    \trace{G}{doNoteLines d4=\the\dimen4, \the\ht0 x \the\wd0}%
+    \setbox0=\hbox to \pdfpagewidth{\pr@line\box0\p@stline}
+    %\showbox0
+    \vbox to 0pt{\kern\dimexpr \topm@rgin-\dimen1\relax\box0\vss}
+    \cp@p\global\let\l@stgprule\empty
+  \egroup
+}
 \def\doGridLines{%
   \bgroup\topskip=0pt\parindent=0pt\everypar{}\relax
     \ifrotate\hsize=\pdfpageheight\vsize=\pdfpagewidth\else
@@ -678,13 +711,12 @@
     \dimen1=\onel@neunit
     \baselineskip=0pt
     \dimen0=\HeaderPosition\MarginUnit
-    \dimen6=\GraphPaperXoffset
-    \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
-    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2
+    \edef\GridPaperXoffset{\SideMarginFactor\MarginUnit}
+    \dimen3=\GridPaperXoffset \multiply\dimen3 by -2
     \advance\dimen3 by \ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \setbox0=\vbox{\kern\dimen0\gp@hrule}
     \setbox0=\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}
-    \edef\GraphPaperXoffset{0pt}
+    \edef\GridPaperXoffset{0pt}
     \dimen3=\ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \advance\dimen0 by \ht\str@tbox
     \advance\dimen0 by -\topm@rgin
@@ -699,16 +731,14 @@
     \dimen2=\bottomm@rgin
     \advance\dimen2 by -\FooterPosition\MarginUnit
     \def\th@sgprule{Minor}
-    \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
-    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2
+    \edef\GridPaperXoffset{\SideMarginFactor\MarginUnit}
+    \dimen3=\GridPaperXoffset \multiply\dimen3 by -2
     \advance\dimen3 by \ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \setbox0=\vbox{\unvbox0\vskip\dimen2\gp@hrule}
     \vbox to 0pt{\unvbox0\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}\vss}
-    \edef\GraphPaperXoffset{\the\dimen6}
     %
     % vertical rules
-    \dimen6=\GraphPaperYoffset
-    \edef\GraphPaperYoffset{0pt}
+    \edef\GridPaperYoffset{0pt}
     \def\th@sgprule{Major}
     \dimen3=\pdfpageheight
     \dimen4=\SideMarginFactor\MarginUnit
@@ -760,7 +790,6 @@
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
     \cp@p\global\let\l@stgprule\empty
-    \edef\GraphPaperYoffset{\the\dimen6}
   \egroup
 }
 
