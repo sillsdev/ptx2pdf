@@ -1783,7 +1783,7 @@
  \fi
  \origb@selineskip=\baselineskip
  \s@tupsizes
- \gdef\id@@@{UNK}%
+ \global\let\id@@@\n@ID
  \defineheads
  \ifnum 1=\ifVisTrace 1 \else \ifVisTraceExtra 1 \else 0\fi\fi 
    \font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
@@ -2023,7 +2023,7 @@
  \singlecolumn
  \ifOneChapBook\endOneChapBook\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
- \ifx\book\relax\else\csname bookend-\id@@@\endcsname\relax\fi
+ \ifx\id@@@\n@ID\relax\else\csname bookend-\id@@@\endcsname\relax\fi
  \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookend-all\endcsname\else missing\fi}%
  \csname bookend-all\endcsname
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly\else \ifEndNotesSingleCol \singlecolumn\fi \zplaceallnotes\fi\fi
@@ -2050,10 +2050,10 @@
   \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse
  \fi\fi
  \trace{oh}{hook for bookafter-\id@@@ \ifcsname bookafter-\id@@@\endcsname exists \x@\meaning\csname bookafter-\id@@@\endcsname\else missing\fi}%
- \ifx\book\relax\else\csname bookafter-\id@@@\endcsname\relax\fi
+ \ifx\id@@@\n@ID\else\csname bookafter-\id@@@\endcsname\relax\fi
  \trace{oh}{hook for bookafter-all \ifcsname bookafter-all\endcsname exists \x@\meaning\csname bookafter-all\endcsname\else missing\fi}%
  \csname bookafter-all\endcsname
- \gdef\id@@@{UNK}%
+ \global\let\id@@@\n@ID
  \let\layoutpen@lty\sect@ndpenalty % reset to normal
 }
 %-csty_ptxfile_end
