@@ -79,7 +79,7 @@ THE SOFTWARE.
                     <property name="valign">center</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">6</property>
-                    <property name="label">PTXprint (2.6.2)
+                    <property name="label">PTXprint (2.6.3)
 
 Loading...</property>
                     <attributes>
