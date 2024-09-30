@@ -26,6 +26,6 @@ def procxdv(inxdv):
     try:
         for a in reader.parse():
             pass
-    except struct.error
-        return ([], [])
+    except struct.error:
+        return (set(), set())
     return (reader.allfonts, reader.pics)
