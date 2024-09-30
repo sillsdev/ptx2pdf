@@ -427,7 +427,7 @@ class PicInfo(dict):
                     for i, f in enumerate(m):     # usfm 2
                         if bk == "GLO":
                             a = self._getanchor(f, s, parcount - koffset, currentk)
-                            if a[0].startswith("k") and a[3] != "":
+                            if a[0].startswith("k") and a[0] != currentk and a[3] != "":
                                 koffset = parcount
                                 currentk = a[0]
                         else:
