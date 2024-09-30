@@ -397,7 +397,7 @@ class PicInfo(dict):
         if t:
             res = ("k." + t.group(1).replace(" ", ""), "", "", "")
         elif currentk is not None:
-            res = (currentk, "", "", "="+str(i) if i > 0 else "")
+            res = (currentk, "", "", "="+str(i-1) if i > 1 else "")
         else:
             res = ("p", "", "{:03d}".format(i+1), "")
         return res
