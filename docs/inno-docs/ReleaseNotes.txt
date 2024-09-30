@@ -1,8 +1,28 @@
 PTXprint 2.6.3 Release Notes
-27 Sep 2024
+30 Sep 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.6.4 (30 Sep 2024)
+
+  * First stab at rules for note-taking
+  
+  * Improve NoteLine processing
+
+  * Fix archive generation and changeLabel
+
+  * Improve k para counts in piclists
+
+  * Fix pic numbering preventing duplicates
+
+  * Piclist to load BOTH L and R
+
+  * Make xdv reading in archive creation resiliant
+
+  * Handle missing .xdv file when making archive
+
+  * Fix path and unf issue
 
 Bug fixes and Improvements in 2.6.3 (27 Sep 2024)
 

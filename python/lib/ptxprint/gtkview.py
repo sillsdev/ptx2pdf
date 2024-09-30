@@ -4320,7 +4320,7 @@ class GtkViewModel(ViewModel):
             self.otherDiglot = None
             btn.set_label(_("Switch to Other\nDiglot Project"))
             self.builder.get_object("b_print2ndDiglotText").set_visible(False)
-            self.changeLabel("b_print", _("Print (Make PDF)"))
+            self.changeBtnLabel("b_print", _("Print (Make PDF)"))
         elif self.get("c_diglot"):
             oprjid = self.get("fcb_diglotSecProject")
             oconfig = self.get("ecb_diglotSecConfig")
@@ -4328,7 +4328,7 @@ class GtkViewModel(ViewModel):
                 self.otherDiglot = (self.project.prjid, self.cfgid)
                 btn.set_label(_("Save & Return to\nDiglot Project"))
             self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-            self.changeLabel("b_print", _("Return to Primary"))
+            self.changeBtnLabel("b_print", _("Return to Primary"))
         self.onSaveConfig(None)
         if oprjid is not None and oconfig is not None:
             self.set("fcb_project", oprjid)
@@ -4337,7 +4337,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.updateDialogTitle()
 
-    def changeLabel(self, w, lbl):
+    def changeBtnLabel(self, w, lbl):
         b = self.builder.get_object(w)
         b.set_visible(False)
         b.set_label(lbl)
