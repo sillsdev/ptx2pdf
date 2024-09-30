@@ -1,6 +1,6 @@
 
 from ptxprint.xdv.xdv import XDViReader
-import re
+import re, struct
 
 class XDVFileReader(XDViReader):
 
@@ -23,6 +23,9 @@ class XDVFileReader(XDViReader):
 
 def procxdv(inxdv):
     reader = XDVFileReader(inxdv)
-    for a in reader.parse():
-        pass
+    try:
+        for a in reader.parse():
+            pass
+    except struct.error
+        return ([], [])
     return (reader.allfonts, reader.pics)
