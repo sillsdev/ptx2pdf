@@ -5697,7 +5697,7 @@ class GtkViewModel(ViewModel):
     def onDeleteTempFolders(self, btn):
         notDeleted = []
         for p in self.project.configs.keys():
-            path2del = os.path.join(self.project.path.printPath(p))
+            path2del = os.path.join(self.project.printPath(p))
             if os.path.exists(path2del):
                 try:
                     rmtree(path2del)
@@ -5912,7 +5912,7 @@ class GtkViewModel(ViewModel):
     def getUserName(self):
         unfpath = self.prjTree.findFile("localUsers.txt")
         ptregname = ""
-        if os.path.exists(unfpath):
+        if unfpath is not None and os.path.exists(unfpath):
             with open(unfpath, 'r') as file:
                 ptregname = file.readline().strip()  # Read the first line and strip any extra whitespace
         return ptregname
