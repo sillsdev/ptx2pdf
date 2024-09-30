@@ -121,7 +121,6 @@
 \newif\ifTabRotationNormal \TabRotationNormaltrue % TabRotationNormalfalse==rotate text (if auto-rotate off). (If auto-rotate on: invert autorotate logic, i.e. assume the \toc3 are narrower than they are tall).
 
 
-
 \NumTabs=2
 \tabheight=50pt
 \tabwidth=15pt
@@ -557,17 +556,21 @@
 \def\GraphPaperLineMinor{0.25pt}
 \def\GraphPaperColMajor{0.8 1.0 0.8} % Colour (R G B)
 \def\GraphPaperColMinor{0.9 1.0 1.0} % Colour (R G B)
+\def\GraphPaperRuleType{rule}
 \def\GridPaperLineMajor{0.6pt}
 \def\GridPaperLineMinor{0.3pt}
 \def\GridPaperColMajor{0.8 0.6 0.6} % Colour (R G B)
 \def\GridPaperColMinor{0.85 0.85 1.0} % Colour (R G B)
+\def\GridPaperRuleType{rule}
 \def\NoteLineXoffset{10pt} % Gap at edge of page
 \def\NoteLineXmargin{10pt} % Gap at edge of page
 \def\NoteLineY{\onel@neunit} % line repeat frequency
 \def\NoteLineLineMajor{0.5pt}
 \def\NoteLineLineMinor{0.5pt}
-\def\NoteLineColMajor{0.2 0.2 1.0} % Colour (R G B)
-\def\NoteLineColMinor{0.5 0.5 1.0} % Colour (R G B)
+\def\NoteLineRuleType{rule}
+\def\NoteLineColMajor{0.3 0.0 0.5} % Colour (R G B)
+\def\NoteLineMajorDiv{2} % How many minor divisions are there between major ones?
+\def\NoteLineColMinor{0.5 0.5 0.0} % Colour (R G B)
 \def\l@stgprule{}
 \def\gpc@l{
   \ifx\th@sgprule\l@stgprule\trace{G}{Color test \th@sgprule==\l@stgprule}\else
@@ -579,11 +582,16 @@
     \global\x@\let\x@\gprulew@d\csname \gp@type Line\th@sgprule\endcsname
   \fi
 }
+\def\gp@@hmarkrule{\vrule height 0.5\dimen0 depth 0.5\dimen0 width\dimen3}
+\def\gp@@hmarkdots{\lower 0.5\dimen0\hbox{\cleaders\gp@@hm@rkdot\hskip \dimen3}}
+\def\DotRuleMark{0.5pt}
+\def\DotRuleSpace{0.7pt}
+\def\gp@@hm@rkdot{\hbox{\vrule height \dimen0 width \DotRuleMark depth 0pt\kern \DotRuleSpace}}
 \def\gp@hrule{% Horizontal rule across the page
   \gpc@l %change colour/width if necessary
   \bgroup\parindent=0pt
     \dimen0=\gprulew@d
-    \hbox to 0pt{\kern\csname \gp@type Xoffset\endcsname\vrule height 0.5\dimen0 depth 0.5\dimen0 width\dimen3 \hss}%
+    \hbox to 0pt{\kern\csname \gp@type Xoffset\endcsname\csname gp@@hmark\csname \gp@type RuleType\endcsname\endcsname \hss}%
     \vskip -\dimen0\relax
   \egroup
 }
@@ -620,10 +628,10 @@
 \def\gp@step{%
   \advance\count255 by -1
   \ifnum\count255<1
-    \count255=\GraphPaperMajorDiv
-    \def\th@sgprule{Major}%
+    \count255=\csname \gp@type MajorDiv\endcsname
+    \let\th@sgprule\m@jor
   \else
-    \def\th@sgprule{Minor}%
+    \let\th@sgprule\m@nor
   \fi
 }
 
@@ -634,7 +642,7 @@
   \bgroup\topskip=0pt\baselineskip=0pt\parindent=0pt\everypar{}\relax
     %vertical rules
     %
-    \def\th@sgprule{Major}%
+    \let\th@sgprule\m@jor
     \def\gp@type{GraphPaper}%
     \count255=\GraphPaperMajorDiv
     \dimen1=\GraphPaperX
@@ -650,7 +658,7 @@
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\gp@vrule\hss}\vss}%
     % Horizontal rules
     %
-    \def\th@sgprule{Major}%
+    \let\th@sgprule\m@jor
     \count255=\GraphPaperMajorDiv
     \dimen1=\GraphPaperY
     \dimen2=\pdfpageheight
@@ -672,7 +680,8 @@
   \bgroup\topskip=0pt\baselineskip=0pt\parindent=0pt\everypar{}\relax
     \edef\NoteLineLength{\the\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit-\NoteLineXoffset-\NoteLineXmargin\relax} % length of lines
     \def\gp@type{NoteLine}%
-    \def\th@sgprule{Minor}%
+    \count255=\NoteLineMajorDiv
+    \let\th@sgprule\m@jor
     \dimen3=\NoteLineLength
     \dimen2=\textheight
     \trace{G}{Notearea \the\dimen3 x \the\dimen2}%
@@ -703,7 +712,7 @@
     %
     % horizontal rules
     \def\gp@type{GridPaper}%
-    \def\th@sgprule{Minor}%
+    \let\th@sgprule\m@nor
     \count255=500
     \dimen3=\ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \dimen2=\ifrotate\pdfpagewidth\else\pdfpageheight\fi
@@ -721,16 +730,16 @@
     \advance\dimen0 by \ht\str@tbox
     \advance\dimen0 by -\topm@rgin
     \dimen0=-\dimen0
-    \def\th@sgprule{Major}
+    \let\th@sgprule\m@jor
     \setbox0=\vbox{\unvbox0\vskip\dimen0\gp@hrule}
     \gp@step
     \gp@hrules
     \advance\dimen2 by -\ht0
-    \def\th@sgprule{Major}
+    \let\th@sgprule\m@jor
     \setbox0=\vbox{\unvbox0\vskip\dimen2\gp@hrule}
     \dimen2=\bottomm@rgin
     \advance\dimen2 by -\FooterPosition\MarginUnit
-    \def\th@sgprule{Minor}
+    \let\th@sgprule\m@nor
     \edef\GridPaperXoffset{\SideMarginFactor\MarginUnit}
     \dimen3=\GridPaperXoffset \multiply\dimen3 by -2
     \advance\dimen3 by \ifrotate\pdfpageheight\else\pdfpagewidth\fi
@@ -739,12 +748,12 @@
     %
     % vertical rules
     \edef\GridPaperYoffset{0pt}
-    \def\th@sgprule{Major}
+    \let\th@sgprule\m@jor
     \dimen3=\pdfpageheight
     \dimen4=\SideMarginFactor\MarginUnit
     \ifBindingGutter\if L\g@tterside\advance\dimen4 by \BindingGutter\fi\fi
     \setbox0=\hbox{\kern\dimen4\gp@vrule}
-    \def\th@sgprule{Minor}
+    \let\th@sgprule\m@nor
     %\dimen4=\IndentUnit
     \ifdim\columnshift>0pt
         \setbox0=\hbox{\unhbox0\hskip\columnshift\gp@vrule}
@@ -766,23 +775,23 @@
     \advance\dimen4 by -\dimen2
     \ifdim\columnshift>0pt \advance\dimen4 by -\columnshift\fi % compensate for earlier added columnshift
     \ifnum\mainBodyColumns=2
-      \def\th@sgprule{Minor}
+      \let\th@sgprule\m@nor
       \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
-      \def\th@sgprule{Major}
+      \let\th@sgprule\m@jor
       \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
-      \def\th@sgprule{Minor}
+      \let\th@sgprule\m@nor
       \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
     \else
-      \def\th@sgprule{Major}
+      \let\th@sgprule\m@jor
       \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \fi
     \ifdim\columnshift>0pt
       \dimen0=\columnshift
-      \def\th@sgprule{Minor}
+      \let\th@sgprule\m@nor
       \setbox0=\hbox{\unhbox0\hskip\dimen0\gp@vrule}
       \advance\dimen2\columnshift
     \fi
-    \def\th@sgprule{Major}
+    \let\th@sgprule\m@jor
     \ifdiglot
       \dimen4=\csname column\btmp width\endcsname
     \else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
