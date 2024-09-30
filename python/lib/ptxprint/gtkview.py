@@ -4785,8 +4785,8 @@ class GtkViewModel(ViewModel):
         if ctrl in self.initValues:
             self.set(ctrl, self.initValues[ctrl])
 
-    def changeLabel(self, ctrl, lbl):
-        if lbl is None:
+    def changeLabel(self, ctrl, lb):
+        if lb is None:
             (pref, name) = ctrl.split("_")
             lb = self.builder.get_object("l_"+name)
         if lb is None or ctrl not in self.initValues:

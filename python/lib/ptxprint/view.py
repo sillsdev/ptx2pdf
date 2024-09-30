@@ -1642,10 +1642,11 @@ class ViewModel:
         tmpfiles.append(tempfile.name)
 
         # config files - take the whole tree even if not needed
-        for dp, dn, fn in os.walk(basecfpath):
-            op = os.path.join(basecfpath, saferelpath(dp, basecfpath))
+        ppath = self.project.srcPath(cfgid)
+        for dp, dn, fn in os.walk(ppath):
+            op = os.path.join(basecfpath, saferelpath(dp, ppath))
             for f in fn:
-                if f not in ('ptxprint.sty', 'ptxprint.cfg') or dp != basecfpath:
+                if f not in ('ptxprint.sty', 'ptxprint.cfg') or dp != ppath:
                     res[os.path.join(dp, f)] = os.path.join(op, f)
         sp = os.path.join(self.project.path, 'shared', 'ptxprint')
         for f in os.listdir(sp):
