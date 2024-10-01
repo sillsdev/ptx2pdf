@@ -860,7 +860,7 @@ class Picture:
             except AttributeError:
                 continue
 
-    def set_positions(self, cols=1, randomize=False, suffix=""):
+    def set_position(self, cols=1, randomize=False, suffix=""):
         if cols == 1: # Single Column layout so change all tl+tr > t and bl+br > b
             if self.get('pgpos', None) is not None:
                 self['pgpos'] = re.sub(r"([tb])[lr]", r"\1", self['pgpos'])
@@ -1031,6 +1031,23 @@ class Piclist:
             self.model.savePics()
         self.inthread = False
 
+    def _getanchor(self, m, txt, i, currentk):
+        # returns anchor components. For k: ("k.<val>", "", "="+paranum); p: ("p", "", paranum)
+        if m is None:
+            rextras = {}
+            fend = len(txt)
+        else:
+            rextras = {"endpos": m.start(0)}
+            fend = m.start(0)
+        t = regex.match(r"\\k\s(.*?)\\k\*.*?$", txt, regex.R|regex.S, **rextras)
+        if t:
+            res = ("k." + t.group(1).replace(" ", ""), "", "", "")
+        elif currentk is not None:
+            res = (currentk, "", "", "="+str(i-1) if i > 1 else "")
+        else:
+            res = ("p", "", "{:03d}".format(i+1), "")
+        return res
+
     def _readpics(self, txt, bk, c, lastv, isperiph, parent, parcount=0, fn=None, sync=False):
         # logger.debug(f"Reading pics for {bk}")
         koffset = 0
@@ -1086,7 +1103,7 @@ class Piclist:
                             if self.model is not None else 65001) as inf:
             dat = inf.read()
             if isperiph:
-                self._readpics(dat, bk, suffix, 0, None, isperiph, parent, sync=sync)
+                self._readpics(dat, bk, 0, None, isperiph, parent, sync=sync)
             else:
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
@@ -1279,6 +1296,10 @@ class Piclist:
             if bkf is None or not os.path.exists(bkf):
                 continue
             self.read_sfm(bk, bkf, self.model, sync=sync, fn=addpic)
+
+    def set_positions(self, cols=1, randomize=False, suffix=""):
+        for v in self.pics.values():
+            v.set_position(cols=cols, randomize=randomize, suffix=suffix)
 
     def set_destinations(self, fn=lambda x,y,z:z, keys=None, cropme=False):
         for v in self.pics.values():
