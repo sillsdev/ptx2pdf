@@ -722,7 +722,7 @@ class PicInfo(dict):
         return res
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False, sync=False):
-    newpics = PicInfo(model)
+    newpics = Piclist(model)
     cfg = model.cfgid
     newpics.read_piclist(os.path.join(model.project.srcPath(cfg), "{}-{}.piclist".format(model.project.prjid, cfg)), suffix=suffix)
     delpics = set()
@@ -733,10 +733,10 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
         if bkf is None or not os.path.exists(bkf):
             continue
         if not sync:
-            for k in [k for k,v in newpics.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
-                del newpics[k]
-            for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
-                del picinfos[k]
+            for p in [v for v in newpics.get_pics() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
+                newpics.remove(p)
+            for p in [v for v in picinfos.get_pics() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
+                picinfos.remove(p)
         newpics.read_sfm(bk, bkf, model, suffix=suffix, sync=sync)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols, isBoth=not clearsuffix)
         for k, v in newpics.items():
@@ -746,6 +746,8 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
 
 
 class Picture:
+
+    keycount = 1
     picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t", "b")},
                  "R": {"col":  ("tr", "br"),             "span": ("b", "t")},
                  "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")},
@@ -754,6 +756,8 @@ class Picture:
 
     def __init__(self, **kw):
         self.fields = kw.copy()
+        self.key = "p{:03d}".format(self.keycount)
+        self.__class__.keycount += 1
 
     def __getitem__(self, k):
         return self.fields[k]
@@ -773,12 +777,17 @@ class Picture:
     def copy(self):
         return Picture(**self.fields)
 
-    def sync(self, other, suffix):
+    def get(self, k, default):
+        return self.fields.get(k, default)
+
+    def sync(self, other, suffix=None):
         ''' are they the same picture, if so update caption and return True '''
-        if self['srcref'] == other['srcref'] and self['src'] == other['src']:
-            caption = other.get('caption'+suffix, other.get('caption', None))
-            if caption is not None:
-                self['caption'+suffix] = caption
+        if self.get('srcref', self['anchor']) == other.get('srcref', other['anchor']) \
+                    and newBase(self['src']) == newBase(other['src']):
+            if suffix:
+                caption = other.get('caption'+suffix, other.get('caption', None))
+                if caption is not None:
+                    self['caption'+suffix] = caption
             return True
         return False
 
@@ -791,13 +800,13 @@ class Picture:
         else:
             p3p = pos3parms
         mediaval = self.get('media', None)
-        if mediaval is None or val == '' and picMedia is not None:
+        if mediaval is None or mediaval == '' and picMedia is not None:
             mediaval = picMedia(self['src'])[0]
         if media is not None and mediaval is not None and media not in val:
             return line
         if picMedia is not None and mediaval == picMedia(self['src'])[0]:
             mediaval = None
-        outk = self.stripsp_re.sub(r"\1", self.anchor)
+        outk = self.stripsp_re.sub(r"\1", self['anchor'])
         credittxt, creditbox = checks.getCreditInfo(newBase(self['src'])) if checks is not None else (None, None)
         line = []
         for i, x in enumerate(p3p):
@@ -819,7 +828,7 @@ class Picture:
             if not val:
                 continue
             line.append('{}="{}"'.format(pos3parms[i], val))
-        return (outk, geattr(self, 'caption', ''), " ".join(line))
+        return (outk, self.get('caption', ''), " ".join(line))
 
     def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False, srcfkey="srcpath"):
         if self.get('crop', False) == cropme and 'destfile' in self:
@@ -866,6 +875,22 @@ class Picture:
             else:
                 self['gpos'] = posns[0]
 
+    def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False):
+        if self.get(' crop', False) == cropme and 'destfile' in self:
+            return
+        if keys is not None and self['anchor'][:3] not in keys:
+            return
+        nB = newBase(self['src'])
+        if 'srcpath' not in self:
+            return
+        fpath = self['srcpath']
+        # print(fpath)
+        origExt = os.path.splitext(fpath)[1]
+        self['destfile'] = fn(self, self['srcpath'], nB+origExt.lower())
+        self[' crop'] = cropme
+        if 'media' in self and len(self['media']) and 'p' not in self['media']:
+            self['disabled'] = True
+
     def _fixPicinfo(self): # USFM2 to USFM3 converter
         if (p := self.get('pgpos', None)) is not None:
             if all(x in "apw" for x in p):
@@ -886,26 +911,29 @@ class Picture:
 
 class Piclist:
 
-    srcfkey = 'src path'
+    srcfkey = 'srcpath'
     stripsp_re = re.compile(r"^(\S+\s+\S+)\s+.*$")
 
-    def __init__(self, model=None):
+    def __init__(self, model=None, diglot=False):
+        self.pics = {}
+        self.model = model
         self.clear(model)
         self.inthread = False
         self.keycounter = 0
         self.mode = None
         self.suffix = ""
+        self.isdiglot = diglot
 
     def copy(self):
         res = Piclist(self.model)
         for p in res.pics:
-            self.pics.add(p.copy())
+            c = p.copy()
+            self.pics[c.key] = c
         return res
         
     def clear(self, model=None):
-        self.pics = set()
+        self.model = model
         if model is not None:
-            self.model = model
             if model.project is not None:
                 self.prj = model.project.prjid
                 self.basedir = self.model.project.path
@@ -913,46 +941,55 @@ class Piclist:
         self.loaded = False
         self.srchlist = []
 
-    def add_picture(self, pic, suffix="", sync=False):
-        if not sync:
-            self.pics.add(pic)
-            return
-        for p in self.pics:
-            if p.sync(pic, suffix):
-                return
+    def remove(self, p):
+        self.pics.remove(p)
 
-    def load_files(self, parent, suffix="", force=False):
+    def get_pics(self):
+        return self.pics.values()
+
+    def items(self):
+        return self.pics.items()
+
+    def clear_bks(self, bks):
+        for p in list(self.pics):
+            if p['anchor'][:3] in bks:
+                self.pics.remove(p)
+
+    def add_picture(self, pic, suffix=None, sync=False):
+        if not sync:
+            for p in self.pics.values():
+                if p.sync(pic, suffix=suffix):
+                    return
+        self.pics[pic.key] = pic
+
+    def get(self, k, default):
+        return self.pics.get(k, default)
+
+    def load_files(self, parent, force=False, base=None, suffix="L"):
         """ Read pictures from a project either from a piclist file or the SFM files """
         if self.loaded and not force:
             return True
         if self.inthread or self.basedir is None or self.prj is None or self.config is None:
             return False
         self.thread = None
-        preferred = os.path.join(self.basedir, "shared/ptxprint/{1}/{0}-{1}.piclist".format(self.prj, self.config))
+        preferred = os.path.join(self.basedir, "shared/ptxprint/{1}/{0}-{1}{2}.piclist".format(self.prj,
+                    self.config, "-diglot" if self.isdiglot else ""))
         if os.path.exists(preferred):
-            self.read_piclist(preferred, suffix=suffix)
+            self.read_piclist(preferred)
             self.loaded = True
             return True
-        places = ["shared/ptxprint/{}.piclist".format(self.prj)]
-        plistsdir = os.path.join(self.basedir, "shared", "ptxprint", self.config, "PicLists")
-        if os.path.exists(plistsdir):
-            places += ["shared/ptxprint/{0}/PicLists/{1}".format(self.config, x) \
-                        for x in os.listdir(plistsdir) if x.lower().endswith(".piclist")]
-        havepiclists = False
-        for f in places:
-            p = os.path.join(self.basedir, f)
-            if os.path.exists(p):
-                self.read_piclist(p, suffix=suffix)
-                havepiclists = True
-        self.loaded = True
-        if not havepiclists:
+        if self.isdiglot and base is not None:
+            self.merge(base, suffix)
+            self.loaded = True
+            return True
+        if not self.isdiglot:
             self.inthread = True
-            self.threadUsfms(parent, suffix)
+            self.threadUsfms(parent)
             # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
-            return False        # why false if not threaded?
+            return True
         return True
 
-    def read_piclist(self, fname, suffix=""):
+    def read_piclist(self, fname):
         """ Read piclist file """
         if isinstance(fname, str):
             if not os.path.exists(fname):
@@ -961,24 +998,14 @@ class Piclist:
                                                         if self.model is not None else 65001)
         else:
             inf = fname
-        logger.debug(f"{fname=} {suffix=} {self.loaded=}")
+        logger.debug(f"{fname=} {self.loaded=}")
         # logger.debug("".join(traceback.format_stack()))
         for l in (x.strip() for x in inf.readlines()):
             if not len(l) or l.startswith("%"):
                 continue
             m = l.split("|")
-            r = m[0].split(maxsplit=2)
-            if not len(r):  # no id, what to do? Ignore entry? Create an id?
-                continue    # skip the entry. Pretty radical.
-            if suffix.startswith("B"):
-                s = r[0][3:4] or suffix[1:]
-            else:
-                s = suffix
-            if len(r) > 1:
-                k = "{}{} {}".format(r[0][:3], s, r[1])
-            else:
-                k = "{}{}".format(r[0], s)
-            pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
+            r = m[0].split(" ", 2)
+            pic = {'anchor': m[0], 'caption': r[2] if len(r) > 2 else ""}
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
                 for i, f in enumerate(m[1:]):
                     if i < len(posparms)-1:
@@ -989,23 +1016,23 @@ class Piclist:
                 for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
                     pic[d[0]] = d[1]
                 picture = Picture(**pic)
-            self.add_picture(picture, suffix)
+            self.add_picture(picture)
         if isinstance(fname, str):
             inf.close()
         self.rmdups()
 
-    def threadUsfms(self, parent, suffix, nosave=False):
+    def threadUsfms(self, parent, nosave=False):
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
             if os.path.exists(bkp):
-                self.read_sfm(bk, bkp, parent, suffix=suffix)
-        self.set_positions(cols=2, randomize=True, suffix=suffix)
+                self.read_sfm(bk, bkp, parent)
+        self.set_positions(cols=2, randomize=True)
         if not nosave:
             self.model.savePics()
         self.inthread = False
 
-    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent, parcount=0, fn=None, sync=False):
-        # logger.debug(f"Reading pics for {bk} + {suffix}")
+    def _readpics(self, txt, bk, c, lastv, isperiph, parent, parcount=0, fn=None, sync=False):
+        # logger.debug(f"Reading pics for {bk}")
         koffset = 0
         currentk = None
         for s in re.split(r"\\(?:m[st][e]?|i(?:mt[e]?|ex|[bemopqs])|s[dpr]|c[ld]|[pqrs])\d?", txt):
@@ -1022,9 +1049,9 @@ class Piclist:
                                 currentk = a[0]
                         else:
                             a = ("p", "", "{:03d}".format(i+1), ("="+str(parcount)) if parcount - koffset > 1 else "") if isperiph else (c, ".", lastv, "")
-                        r = "{}{} {}{}{}{}".format(bk, suffix, *a)          # includes suffix
-                        sref = "{} {}{}{}{}".format(bk, *a)                 # srcref doesn't include suffix since location assumed
-                        pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip(), 'srcref': sref}
+                        r = "{} {}{}{}{}".format(bk, *a)
+                        # anchor is editable. srcref is the original location in the file to synchronise between glots, etc.
+                        pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip(), 'srcref': r}
                         if bk == 'GLO':
                             pic.update(pgpos="p", scale="0.7")
                         if b[1]:    # usfm 3
@@ -1044,7 +1071,7 @@ class Piclist:
                         if fn is not None:
                             fn(picture)
                         else:
-                            self.add_picture(picture, suffix, sync=sync)
+                            self.add_picture(picture, sync=sync)
                     break
             else:
                 if bk == "GLO":
@@ -1053,7 +1080,7 @@ class Piclist:
                         koffset = parcount
                         currentk = a[0]
 
-    def read_sfm(self, bk, fname, parent, suffix="", media=None, sync=False):
+    def read_sfm(self, bk, fname, parent, media=None, sync=False, fn=None):
         isperiph = bk in nonScriptureBooks
         with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
                             if self.model is not None else 65001) as inf:
@@ -1066,25 +1093,25 @@ class Piclist:
                     m = re.match("(.*?)\\v ", t, re.S)
                     if m is not None:
                         s = m.group(1)
-                        self._readpics(s, bk, suffix, c, 0, isperiph, parent, sync=sync)
+                        self._readpics(s, bk, c, 0, isperiph, parent, sync=sync)
                     for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
                         lastv = v[0]
                         s = v[1]
                         key = None
-                        self._readpics(s, bk, suffix, c, lastv, isperiph, parent, sync=sync)
+                        self._readpics(s, bk, c, lastv, isperiph, parent, sync=sync, fn=fn)
 
     def rmdups(self): # MH {checking I understand this right} Does this assume we can't have 2 pics with the same anchor?
         ''' Makes sure there are not two entries with the same anchor and same image source'''
         anchormap = {}
-        for p in self.pics:
-            anchormap.setdefaul(p['anchor'], []).append(p)
+        for p in self.pics.values():
+            anchormap.setdefault(p['anchor'], []).append(p)
         for v in [a for a in anchormap.values() if len(a) > 1]:
             dups = {}
             for p in v:
                 dups.setdefault(p['src'], []).append(p)
             for d in [v for v in dups.values() if len(v) > 1]:
                 for p in d[1:]:
-                    self.pics.remove(p)
+                    del self.pics[p.key]
 
     def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True):
         self.srchlist = [figFolder] if figFolder is not None else []
@@ -1114,10 +1141,11 @@ class Piclist:
                 self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
         logger.debug(f"{self.srchlist=} {self.extensions=}")
 
-    def getFigureSources(self, filt=newBase, key='srcpath', keys=None, exclusive=False, data=None, mode=None, figFolder=None, imgorder="", lowres=False):
+    def getFigureSources(self, filt=newBase, key='srcpath', keys=None, exclusive=False,
+                               data=None, mode=None, figFolder=None, imgorder="", lowres=False):
         ''' Add source filename information to each figinfo, stored with the key '''
         if data is None:
-            data = self.pics
+            data = self.pics.values()
         # if self.srchlist is None: # or not len(self.srchlist):
         self.build_searchlist(figFolder=figFolder, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
         res = {}
@@ -1175,8 +1203,9 @@ class Piclist:
             return
         self.rmdups()
         lines = []
-        for p in sorted(self.pics, key=lambda x:refKey(x['anchor'], info=['anchor'][3:4])):
-            (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media, checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs)
+        for p in sorted(self.pics.values(), key=lambda x:refKey(x['anchor'], info=['anchor'][3:4])):
+            (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media,
+                                          checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs)
             if k:
                 lines.append("{} {}|{}".format(k, caption, vals))
 
@@ -1186,6 +1215,74 @@ class Piclist:
                 outf.write(dat)
         elif os.path.exists(fpath):
             os.unlink(fpath)
+
+    def updateView(self, view, bks=None, filtered=True):
+        # if self.inthread:
+            #GObject.timeout_add_seconds(1, self.updateView, view, bks=bks, filtered=filtered)
+            # print_traceback()
+        view.load(self, bks=bks if filtered else None)
+
+    def clearSrcPaths(self):
+        self.build_searchlist()
+        for v in self.pics.values():
+            for a in ('srcpath', 'destfile'):
+                if a in v:
+                    del v[a]
+
+    def merge(self, pics, suffix, mergeCaptions=True, bkanchors=False, nonMergedBooks=None):
+        ''' Used for merging piclists from monoglot into diglot (self) based on srcref and src image '''
+        def stripsuffix(a):
+            m = a.split(" ", 1)
+            return m[0][:3] + ("" if bkanchors else (" " + m[1]))
+        tgts = {}
+        for v in self.get_pics():
+            tgts.setdefault(stripsuffix(v['anchor']), []).append(v)
+        merged = set()
+        for v in list(pics):
+            removeme = False
+            m = v['anchor'].split(" ", 1)
+            if nonMergedBooks is not None and m[0][:3] in nonMergedBooks:
+                continue
+            if m[0][3:] == suffix:
+                for s in tgts.get(stripsuffix(v['anchor']), []):
+                    if newBase(s.get('src', '')) == newBase(v.get('src', '')) and s.get('srcref', '') == v.get('srcref', ''):
+                        if mergeCaptions:
+                            if v.get('caption', '') != '':
+                                s['caption'+suffix] = v['caption']
+                            if v.get('ref', '') != '':
+                                s['ref'+suffix] = v['ref']
+                        merged.add(s)
+                        break
+        for v in list(self.get_pics()):
+            m = v['anchor'].split(" ")
+            if m[0][3:] == suffix and v not in merged:
+                self.remove(v)
+
+    def read_books(self, bks, allbooks, random=False, cols=2, sync=False):
+        def posn(pic):
+            pic.set_position(cols=cols, random=random)
+            return pic
+
+        if not sync:
+            self.clear_bks(bks)
+            def addpic(pic):
+                self.pics[pic.key] = posn(pic)
+        else:
+            def addpic(pic):
+                for p in self.pics:
+                    if p.sync(pic):
+                        return
+                self.pics[pic.key] = posn(pic)
+
+        for bk in bks:
+            bkf = allbooks.get(bk, None)
+            if bkf is None or not os.path.exists(bkf):
+                continue
+            self.read_sfm(bk, bkf, self.model, sync=sync, fn=addpic)
+
+    def set_destinations(self, fn=lambda x,y,z:z, keys=None, cropme=False):
+        for v in self.pics.values():
+            v.set_destination(fn=fn, keys=keys, cropme=cropme)
 
 
 class DigPiclist(Piclist):
