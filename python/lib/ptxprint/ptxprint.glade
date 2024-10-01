@@ -4244,7 +4244,7 @@ Configuration settings.</property>
                                 <property name="left-padding">6</property>
                                 <property name="right-padding">6</property>
                                 <child>
-                                  <!-- n-columns=7 n-rows=5 -->
+                                  <!-- n-columns=7 n-rows=6 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -4893,6 +4893,20 @@ you choose this setting.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
+                                        <property name="top-attach">5</property>
+                                        <property name="width">7</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSeparator">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-start">12</property>
+                                        <property name="margin-end">12</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
                                         <property name="top-attach">4</property>
                                         <property name="width">7</property>
                                       </packing>
@@ -4931,7 +4945,7 @@ you choose this setting.</property>
                             <property name="hexpand">False</property>
                             <property name="label-xalign">0.15000000596046448</property>
                             <child>
-                              <!-- n-columns=2 n-rows=5 -->
+                              <!-- n-columns=2 n-rows=6 -->
                               <object class="GtkGrid" id="gr_doubleColumn">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -5126,13 +5140,13 @@ on the Advanced tab to 1 or more.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">3</property>
-                                    <property name="margin-top">15</property>
+                                    <property name="margin-top">4</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onAllowUnbalancedClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">4</property>
+                                    <property name="top-attach">5</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -5159,6 +5173,21 @@ of Rule (pt):</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSeparator">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">13</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -8209,10 +8238,8 @@ numerals). For example, "Chapter" or "Psalm".
 
 If you want the chapter number to appear centered
 and above the Section Header WITHOUT any preceding
-text, then just put the code \ZWNBSP in here. This will
-insert a Zero Width Non-Break Space.
-
-Keywords: \c drop cap chapter number</property>
+text, then just put the code \\ZWNBSP in here. This will
+insert a Zero Width Non-Break Space.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                   </object>
