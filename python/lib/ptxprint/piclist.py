@@ -785,7 +785,7 @@ class Picture:
     def outstr(self, bks=[], skipkey=None, usedest=False, media=None, checks=None, picMedia=None, hiderefs=False):
         line = []
         if (len(bks) and self.anchor[:3] not in bks) or (skipkey is not None and self.get(skipkey, False)):
-            return line
+            return ("") * 3
         if usedest:
             p3p = ["dest file"] + pos3parms[1:]
         else:
@@ -819,7 +819,7 @@ class Picture:
             if not val:
                 continue
             line.append('{}="{}"'.format(pos3parms[i], val))
-        return ("{} {}|".format(outk, geattr(self, 'caption', ''))+ " ".join(line))
+        return (outk, geattr(self, 'caption', ''), " ".join(line))
 
     def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False, srcfkey="srcpath"):
         if self.get('crop', False) == cropme and 'destfile' in self:
@@ -894,6 +894,7 @@ class Piclist:
         self.inthread = False
         self.keycounter = 0
         self.mode = None
+        self.suffix = ""
 
     def copy(self):
         res = Piclist(self.model)
@@ -1175,7 +1176,10 @@ class Piclist:
         self.rmdups()
         lines = []
         for p in sorted(self.pics, key=lambda x:refKey(x['anchor'], info=['anchor'][3:4])):
-            lines.append(p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media, checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs))
+            (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media, checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs)
+            if k:
+                lines.append("{} {}|{}".format(k, caption, vals))
+
         if len(lines):
             dat = "\n".join(lines)+"\n"
             with open(fpath, "w", encoding="utf-8") as outf:
@@ -1183,3 +1187,33 @@ class Piclist:
         elif os.path.exists(fpath):
             os.unlink(fpath)
 
+
+class DigPiclist(Piclist):
+
+    def __init__(self, model=None):
+        super().__init__(model=model)
+        self.piclists = {}
+
+    def addPiclist(self, suffix, piclist):
+        self.piclists[suffix] = piclist
+
+    def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None, hiderefs=False):
+        ''' Generate a picinfo file, with given date.
+                bks is a list of 3 letter bkids only to include. If empty, include all.
+                skipkey if set will skip a record if there is a non False value associated with skipkey
+                usedest says to use destfile rather than src as the file source in the output'''
+        if not len(self.pics):
+            return
+        self.rmdups()
+        lines = []
+        for p in sorted(self.pics, key=lambda x:refKey(x['anchor'], info=['anchor'][3:4])):
+            (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media, checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs)
+            if k:
+                lines.append("{}{} {}|{}".format(k, p.suffix, caption, vals))
+
+        if len(lines):
+            dat = "\n".join(lines)+"\n"
+            with open(fpath, "w", encoding="utf-8") as outf:
+                outf.write(dat)
+        elif os.path.exists(fpath):
+            os.unlink(fpath)
