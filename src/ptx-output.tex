@@ -534,14 +534,18 @@
       \setbox0=\box255\deadcycles=0
     \fi % dump empty pages (typically at end)
     \tempfalse%
-    \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
-    \iftob@dy
-      \trace{o}{savepartial partial=\the\ht\partial, bottom=\the\ht\verybottomins, page \the\textheight, diff\the\dimexpr \textheight - \ht\partial\relax }%
-      \ifdim\dimexpr \textheight - \ht\partial \relax > 3\baselineskip \tempfalse\fi
+    \iflastptxfile
+      \ifdim\availht<2\baselineskip \temptrue\fi
+    \else
+      \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
+      \iftob@dy
+        \trace{o}{savepartial partial=\the\ht\partial, bottom=\the\ht\verybottomins, page \the\textheight, diff\the\dimexpr \textheight - \ht\partial\relax }%
+        \ifdim\dimexpr \textheight - \ht\partial \relax > 3\baselineskip \tempfalse\fi
+      \fi
+      %\ifnum\outputpenalty < -10000 \relax\temptrue\fi
+      \ifnum\book@ndpenalty =\outputpenalty \ifendbooknoeject\else \temptrue \fi\fi
+      \trace{o}{outputpenalty = \the\outputpenalty \space temp\iftemp true\else false\fi}%
     \fi
-    %\ifnum\outputpenalty < -10000 \relax\temptrue\fi
-    \ifnum\book@ndpenalty =\outputpenalty \ifendbooknoeject\else \temptrue \fi\fi
-    \trace{o}{outputpenalty = \the\outputpenalty \space temp\iftemp true\else false\fi}%
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
       \m@keinp@gegap
       \def\pagecontents{%
