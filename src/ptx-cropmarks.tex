@@ -569,7 +569,7 @@
 \def\NoteLineLineMinor{0.5pt}
 \def\NoteLineRuleType{rule}
 \def\NoteLineColMajor{0.3 0.0 0.5} % Colour (R G B)
-\def\NoteLineMajorDiv{2} % How many minor divisions are there between major ones?
+\def\NoteLineMajorDiv{0} % How many minor divisions are there between major ones?
 \def\NoteLineColMinor{0.5 0.5 0.0} % Colour (R G B)
 \def\l@stgprule{}
 \def\gpc@l{
@@ -689,9 +689,9 @@
     \dimen0=\topm@rgin
     %\advance\dimen3-
     \ifBindingGutter\if\g@tterside L
-      \def\pr@line{}\def\p@stline{\hss}
+      \def\pr@line{\kern\dimexpr \NoteLineXmargin-\NoteLineXoffset\relax}\def\p@stline{\hss}
     \else
-      \def\pr@line{\hss}\def\p@stline{\kern\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit\relax}
+      \def\pr@line{\kern\dimexpr \textwidth + \SideMarginFactor\MarginUnit\relax}\def\p@stline{\hss}%\kern\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit+\NoteLineXoffset-\NoteLineXmargin\relax}
     \fi\fi
     \setbox0\vbox{\kern\dimen1}%
     \gp@hrules
