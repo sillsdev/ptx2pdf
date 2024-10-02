@@ -143,7 +143,7 @@ class PicList:
         self.clearPreview()
         self.bookfilters = bks
         if picinfo is not None:
-            for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
+            for v in sorted(picinfo.get_pics(), key=lambda x:refKey(x['anchor'])):
                 if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
                 row = []
@@ -152,7 +152,7 @@ class PicList:
                     { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
                 for e in _piclistfields:
                     if e == 'key':
-                        val = k
+                        val = v.key
                     elif e == "scale":
                         try:
                             val = float(v.get(e, 1)) * 100
@@ -194,7 +194,7 @@ class PicList:
             k = row[_pickeys['key']]
             # if k.startswith("row"):
                 # print(f"{k} added")
-            p = picinfos.setdefault(k, {})
+            p = picinfos.get(k, {})
             for i, e in enumerate(_piclistfields):
                 if e == 'key':
                     allkeys.add(row[i])
@@ -208,11 +208,12 @@ class PicList:
                 else:
                     val = row[i]
                 p[e] = val
-        for k,v in list(picinfos.items()):
-            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
-                if k.startswith("row"):
-                    print(f"{k} removed")
-                del picinfos[k]
+#        breakpoint()
+#        for k,v in list(picinfos.items()):
+#            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
+#                if k.startswith("row"):
+#                    print(f"{k} removed")
+#                picinfos.remove(v)
         return picinfos
 
     def clearPicSources(self, picinfos):

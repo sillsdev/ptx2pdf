@@ -11,7 +11,7 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
                             zipopentext, xdvigetfonts
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
-from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
+from ptxprint.piclist import Piclist, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
 from ptxprint.reference import RefList, RefRange, Reference
@@ -132,6 +132,7 @@ class ViewModel:
         self.spine = 0
         self.periphs = {}
         self.digSuffix = None
+        self.digbasepics = None
         self.hyphenation = None
 
         # private to this implementation
@@ -1270,51 +1271,45 @@ class ViewModel:
         mrgCptn = self.get("c_diglot2captions", False)
         sync = self.get("c_protectPicList", False)
         if self.diglotView is None:
-            PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True, sync=sync)
+            self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
         else:
-            mode = self.get("fcb_diglotPicListSources")
-            PicInfoUpdateProject(self, procbks, ab, self.picinfos,
-                                 suffix="L", random=rnd, cols=cols, doclear=doclear, clearsuffix=True, sync=sync)
-            diallbooks = self.diglotView.getAllBooks()
-            PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
-                                 self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False, sync=sync)
-            if mode == "pri":
-                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
-            elif mode == "sec":
-                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+            self.digbasepics.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
+            self.diglotView.picinfos.read_books(procbks, self.diglotView.getAllBooks(), cols=cols, random=rnd, sync=sync)
+            self.picinfos.merge(self.digbasepics, "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+            self.picinfos.merge(self.diglotView.picinfos, "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
         if not force and self.configLocked():
             return
-        if self.picinfos is not None and self.picinfos.loaded:
-            self.picinfos.out(os.path.join(self.project.srcPath(self.cfgid),
+        pinfo = self.digbasepics if self.diglotView else self.picinfos
+        if pinfo is not None and pinfo.loaded:
+            pinfo.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}.piclist".format(self.project.prjid, self.cfgid)))
+        if self.diglotView:
+            self.picinfos.out(os.path.join(self.project.srcPath(self.cfgid),
+                                    "{}-{}-diglot.piclist".format(self.project.prjid, self.cfgid)))
         self.picChecksView.writeCfg(self.project.srcPath(self.cfgid), self.cfgid)
 
     def loadPics(self, mustLoad=True, fromdata=True, force=False):
         if self.loadingConfig:
             return
         if self.picinfos is None:
-            self.picinfos = PicInfo(self)
+            self.picinfos = Piclist(self, diglot=self.diglotView is not None)
         elif force:
 #            self.savePics(fromdata=fromdata)
             self.picinfos.clear(self)
         if not self.get("c_includeillustrations"):
             return
-        if self.diglotView is None:
-            res = self.picinfos.load_files(self, force=force, suffix="R" if self.isDiglot else "")
-        else:
-            res = self.picinfos.load_files(self, suffix="B", force=force)
-            self.diglotView.picinfos = self.picinfos
-#            digpicinfos = PicInfo(self.diglotView)
-#            if digpicinfos.load_files(self.diglotView, suffix="R"):
-#                mrgCptn = self.get("c_diglot2captions", False)
-#                mode = self.get("fcb_diglotPicListSources")
-#                if mode == "pri":
-#                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
-#                elif mode == "sec":
-#                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+        if self.diglotView is not None:
+            self.digbasepics = Piclist(self)
+            self.digbasepics.load_files(self)
+            if self.diglotView.picinfos is None:
+                self.diglotView.picinfos = Piclist(self.diglotView)
+                self.diglotView.picinfos.load_files(self.diglotView)
+        res = self.picinfos.load_files(self, base=self.digbasepics, suffix=self.digSuffix)
+        if not res and self.diglotView and len(self.picinfos.get_pics()):
+            self.picinfos.merge(self.diglotView.picinfos, self.diglotView.digSuffix)
         if res:
             pass
 #            self.savePics(fromdata=fromdata)
@@ -1704,8 +1699,6 @@ class ViewModel:
             digview.setPrjid(prj.prjid, prj.guid)
             if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
-            else:
-                digview.picinfos = self.picinfos
         if digview is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))
         else:
@@ -1935,7 +1928,7 @@ set stack_size=32768""".format(self.cfgid)
 
         # import pictures according to import settings
         if impAll or self.get("c_impPictures"):
-            otherpics = PicInfo(view.picinfos.model)        # will this work for a new view?
+            otherpics = Piclist(view.picinfos.model)        # will this work for a new view?
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile, prefix=prefix) as inf:
