@@ -28,7 +28,7 @@ from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
-from ptxprint.piclist import PicInfo
+# from ptxprint.piclist import PicInfo
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.styleditor import aliases
 from ptxprint.runjob import isLocked, unlockme

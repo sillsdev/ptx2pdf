@@ -246,18 +246,18 @@ class Picture:
 
     def outstr(self, bks=[], skipkey=None, usedest=False, media=None, checks=None, picMedia=None, hiderefs=False):
         line = []
-        if (len(bks) and self.anchor[:3] not in bks) or (skipkey is not None and self.get(skipkey, False)):
-            return ("") * 3
+        if (len(bks) and self['anchor'][:3] not in bks) or (skipkey is not None and self.get(skipkey, False)):
+            return ("", "", "")
         if usedest:
-            p3p = ["dest file"] + pos3parms[1:]
+            p3p = ["destfile"] + pos3parms[1:]
         else:
             p3p = pos3parms
         mediaval = self.get('media', None)
         if mediaval is None or mediaval == '' and picMedia is not None:
-            mediaval = picMedia(self['src'])[0]
-        if media is not None and mediaval is not None and media not in val:
-            return line
-        if picMedia is not None and mediaval == picMedia(self['src'])[0]:
+            mediaval = picMedia(self.get('src', ""))[0]
+        if media is not None and mediaval is not None and media not in mediaval:
+            return ("", "", "")
+        if picMedia is not None and mediaval == picMedia(self.get('src', ""))[0]:
             mediaval = None
         outk = self.stripsp_re.sub(r"\1", self['anchor'])
         credittxt, creditbox = checks.getCreditInfo(newBase(self['src'])) if checks is not None else (None, None)
@@ -379,9 +379,9 @@ class Piclist:
 
     def copy(self):
         res = Piclist(self.model)
-        for p in res.pics:
+        for p in self.pics.values():
             c = p.copy()
-            self.pics[c.key] = c
+            res.pics[c.key] = c
         return res
         
     def clear(self, model=None):
@@ -394,8 +394,12 @@ class Piclist:
         self.loaded = False
         self.srchlist = []
 
+    def __delitem__(self, k):
+        del self.pics[k]
+
     def remove(self, p):
-        del self.pics[p.key]
+        if p.key in self.pics:
+            del self.pics[p.key]
 
     def get_pics(self):
         return self.pics.values()
@@ -404,7 +408,7 @@ class Piclist:
         return self.pics.items()
 
     def clear_bks(self, bks):
-        for p in list(self.pics):
+        for p in list(self.pics.values()):
             if p['anchor'][:3] in bks:
                 self.pics.remove(p)
 
@@ -458,7 +462,7 @@ class Piclist:
                 continue
             m = l.split("|")
             r = m[0].split(" ", 2)
-            pic = {'anchor': "{} {}".format(*r), 'caption': r[2] if len(r) > 2 else ""}
+            pic = {'anchor': "{} {}".format(r[0] if self.isdiglot else r[0][:3], r[1]), 'caption': r[2] if len(r) > 2 else ""}
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
                 for i, f in enumerate(m[1:]):
                     if i < len(posparms)-1:
@@ -736,7 +740,7 @@ class Piclist:
 
     def read_books(self, bks, allbooks, random=False, cols=2, sync=False):
         def posn(pic):
-            pic.set_position(cols=cols, random=random)
+            pic.set_position(cols=cols, randomize=random)
             return pic
 
         if not sync:
@@ -745,7 +749,7 @@ class Piclist:
                 self.pics[pic.key] = posn(pic)
         else:
             def addpic(pic):
-                for p in self.pics:
+                for p in self.pics.values():
                     if p.sync(pic):
                         return
                 self.pics[pic.key] = posn(pic)
@@ -764,4 +768,14 @@ class Piclist:
         for v in self.pics.values():
             v.set_destination(fn=fn, keys=keys, cropme=cropme)
 
-
+    def getAnchor(self, src, bk):
+        for p in self.pics.values():
+            if p.get('src', None) != src:
+                continue
+            if bk is not None and not p['anchor'].startswith(bk):
+                continue
+            res = p['anchor']
+            break
+        else:
+            res = None
+        return res

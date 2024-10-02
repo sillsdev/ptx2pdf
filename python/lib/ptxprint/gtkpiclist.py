@@ -202,8 +202,8 @@ class PicList:
                 elif e == 'scale':
                     val = f2s(row[i] / 100.)
                 elif e == "cleardest":
-                    if row[i] and 'dest file' in p:
-                        del p['dest file']
+                    if row[i] and 'destfile' in p:
+                        del p['destfile']
                     continue
                 else:
                     val = row[i]
@@ -226,8 +226,8 @@ class PicList:
                     allkeys.add(row[i])
                     continue
                 elif e == "cleardest":
-                    if row[i] and 'dest file' in p:
-                        del p['dest file']
+                    if row[i] and 'destfile' in p:
+                        del p['destfile']
                     continue
 
     def row_select(self, selection): # Populate the form from the model
@@ -384,10 +384,11 @@ class PicList:
                 if r_image == "preview":
                     fpath = None
                     if self.picinfo is not None:
-                        dat = self.picinfo.getFigureSources(data={'1': {'src': val}},
+                        dat = self.picinfo.getFigureSources(data=[{'src': val}],
                                     key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"),
                                     mode=self.picinfo.mode)
-                        fpath = dat['1'].get('path', None)
+                        fpath = dat[0].get('path', None)
+                        logger.debug(f"Figure Path={fpath}, {dat[0]}")
                     if fpath is not None and os.path.exists(fpath):
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")

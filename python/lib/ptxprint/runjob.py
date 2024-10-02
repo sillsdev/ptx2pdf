@@ -1074,10 +1074,12 @@ class RunJob:
         for j in books:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
-        missingPics = [v['src'] for v in picinfos.get_pics() if v['anchor'][:3] in books and 'dest file' not in v and 'src' in v]
-        res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.get_pics() if 'dest file' in v]
+        logger.debug(f"{books=}, {[x.fields for x in picinfos.pics.values()]}")
+        missingPics = [v['src'] for v in picinfos.get_pics() if v['anchor'][:3] in books and 'destfile' not in v and 'src' in v]
+        res = [os.path.join("tmpPics", v['destfile']) for v in picinfos.get_pics() if 'destfile' in v]
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".piclist"
         localPicInfos = picinfos.copy()
+        logger.debug(f"{outfname=}, localPicInfos= {[x.fields for x in localPicInfos.pics.values()]}")
         for k, v in list(localPicInfos.items()):
             m = v.get('media', '')
             key = v.get('anchor', '')[:3]
