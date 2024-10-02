@@ -2,6 +2,8 @@
 import os
 from PIL import Image, ImageChops, ImageEnhance, ImageOps
 from ptxprint.utils import _
+import logging
+logger = logging.getLogger(__name__)
 
 def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, maxdiff=False, oldcolor=None, limit=0, **kw):
     if color is None:
@@ -22,7 +24,9 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         if oimg is None:
             break
         dmask = ImageChops.difference(oimg, iimg).convert("L")
-        if not dmask.getbbox():
+        dval = sum([i * x / 256. for i, x in enumerate(dmask.histogram()) if i > 12])
+        logger.debug(f"Difference val = {dval} size({dmask.getbbox()})")
+        if not dmask.getbbox() or dval < 2.:
             if onlydiffs:
                 continue
         elif dmask.size != iimg.size:

@@ -11,7 +11,7 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
                             zipopentext, xdvigetfonts
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
-from ptxprint.piclist import Piclist, PicChecks, PicInfoUpdateProject
+from ptxprint.piclist import Piclist, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
 from ptxprint.reference import RefList, RefRange, Reference
