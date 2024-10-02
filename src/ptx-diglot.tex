@@ -1972,7 +1972,9 @@
     \advance\dimen0 by \ht\s@mebox\relax
     \advance\dimen0 by \dp\s@mebox\relax
     \ifx\pagecontents\empty
-      \def\pagecontents{\setdiglotN@rmal\pickn@xtpartial\the\tmpt@ks}%
+      \def\pagecontents{\ifdiglot
+        \setdiglotN@rmal\pickn@xtpartial
+        \fi\the\tmpt@ks}%
     \fi
     \x@\tmpt@ks\x@{\the\tmpt@ks\box\csname#1\endcsname}%
     \relax
@@ -2228,18 +2230,7 @@
   \fi%
 %
   \ifunprintable 
-    \edef\b@xseq{topins,topchunk,partial,botchunk,bottomins,notechunk,verybottomins,}%
-    \dimen0=0pt
-    \tmpt@ks{}%
-    \let\pagecontents\empty
-    \let\d@=\try@print@unprintable
-    \x@\cstackdown\b@xseq\E
-    \ifx\pagecontents\empty\else
-      \trace{u}{Printing final part of page}%
-      \plainoutput%
-    \fi
-    \let\pagecontents\empty
-    \global\unprintablefalse
+    \abortpage
   \else
     \def\pagecontents{%
      \setdiglotN@rmal
@@ -2317,7 +2308,20 @@
    \ifactually@write \plainoutput\fi%
   \fi
 }
-
+\def\abortpage{
+    \edef\b@xseq{topins,topchunk,partial,botchunk,bottomins,notechunk,verybottomins,}%
+    \dimen0=0pt
+    \tmpt@ks{}%
+    \let\pagecontents\empty
+    \let\d@=\try@print@unprintable
+    \x@\cstackdown\b@xseq\E
+    \ifx\pagecontents\empty\else
+      \trace{u}{Printing final part of page}%
+      \plainoutput%
+    \fi
+    \let\pagecontents\empty
+    \global\unprintablefalse
+} 
 \def\@end@writep@ge@simplecols{%
   \trace{d}{end@writep@ge: resetting things for next page}%
   \resetvsize%
