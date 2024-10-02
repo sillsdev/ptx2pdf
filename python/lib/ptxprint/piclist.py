@@ -378,7 +378,7 @@ class Piclist:
         self.isdiglot = diglot
 
     def copy(self):
-        res = Piclist(self.model)
+        res = Piclist(self.model, diglot=self.isdiglot)
         for p in self.pics.values():
             c = p.copy()
             res.pics[c.key] = c

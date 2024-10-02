@@ -1519,6 +1519,11 @@
     \fi
   \else\ifdim\vsize <\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
   \fi
+  \ifdim\ht\colA=0pt\ifdim\ht\colB=0pt\ifdim\ht\s@vedpage>\availht
+    \message{THIS IS BAD, dumping the page!}%
+    \setbox\s@vedpage\box\voidb@x \rerunsavepartialpagedfalse
+    \fitonpagetrue
+  \fi\fi\fi
   \trace{o}{twocoltrial: recalculate fitonpage\iffitonpage true\else false\fi}%
 %-c_twocoltrial_intro
 %+c_twocoltrial

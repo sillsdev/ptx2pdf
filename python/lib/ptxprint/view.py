@@ -1275,8 +1275,8 @@ class ViewModel:
         else:
             self.digbasepics.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
             self.diglotView.picinfos.read_books(procbks, self.diglotView.getAllBooks(), cols=cols, random=rnd, sync=sync)
-            self.picinfos.merge(self.digbasepics, "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
-            self.picinfos.merge(self.diglotView.picinfos, "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+            self.picinfos.merge(self.digbasepics, self.digSuffix, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+            self.picinfos.merge(self.diglotView.picinfos, self.diglotView.digSuffix, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):

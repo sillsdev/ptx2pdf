@@ -703,7 +703,7 @@
   \fi
  \op@ninghooks{before}{\m@rker}{\styst@k}%
  \let\stylet@pe\ss@Para % Thus must come this late, or grouping gives odd results sometimes..
-  \ifdim\headingmidspace=0pt \ifdiglot\else\vskip \ColAdjskip\fi\else
+  \ifdim\headingmidspace=0pt \else %\ifdiglot\else\vskip \ColAdjskip\fi\else
     \ifhe@dings\nobreak\fi
     \vskip\headingmidspace
   \fi
