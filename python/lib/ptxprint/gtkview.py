@@ -6160,3 +6160,12 @@ Thank you,
             self.highlightwidget("c_allowUnbalanced")
         else: # float(self.get("s_bottomrag")) > 0:
             self.highlightwidget("c_allowUnbalanced", highlight=False)
+
+    def onNoteLinesClicked(self, wid):
+        if self.loadingConfig:
+            return
+        if self.get("c_noteLines"):
+            self.set("c_pagegutter", True)
+            self.set("c_outerGutter", True)
+            if float(self.get("s_pagegutter",0)) < 30:
+                self.set("s_pagegutter", 40)

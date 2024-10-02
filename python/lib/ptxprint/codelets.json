@@ -641,16 +641,10 @@
       ],
       "Other": [
         {
-          "Type": "insert",
-          "Label": "Lined wide margins for journaling (explained)",
-          "Description": "Bibles with ruled margins for journaling are typically called 'Journaling Bibles' or 'Wide-Margin Bibles.' These Bibles feature wider margins, often lined, to provide space for personal notes, reflections, and artwork.",
-          "CodeSnippet": "% - - - - - - - - - - - - START of Lined wide margins for journaling - - - - - - - - - - - -\n% The first 3 parameters override settings on the Layout tab, but can be\n% deleted from here if you wish to use the Layout tab values instead. \n\\BindingGuttertrue % Enable the Binding Gutter where the lines will be\n\\BindingGutter=45mm % Set the width of the gutter for the lines\n\\OuterGuttertrue % If true, the lines will be on the outer edge of each page\n\n% Adjust values as needed to style the lines.\n\\def\\doLines{\\doNoteLines} % Turn on the note lines\n% \\def\\NoteLineY{0.6cm} % Use default linespacing or uncomment and set value\n\\def\\NoteLineXoffset{6pt} % Gap between text and note lines\n\\def\\NoteLineXmargin{10mm} % Margin at edge of page\n\n% \\def\\NoteLineRuleType{dots} % or rule (which is default)\n% \\def\\DotRuleMark{0.4pt}\\def\\DotRuleSpace{0.7pt} % If using dotted rule\n\n\\def\\NoteLineLineMajor{0.3pt} % Thickness of major note lines\n\\def\\NoteLineColMajor{0.0 0.0 0.0} % Colour (R G B) default is black\n\n\\def\\NoteLineMajorDiv{0} % Number of minor lines between major lines\n% \\def\\NoteLineLineMinor{0.3pt} % Thickness of minor note lines (if any)\n% \\def\\NoteLineColMinor{0.5 0.5 0.0} % Colour (R G B)\n% - - - - - - - - - - - - END of Lined wide margins for journaling - - - - - - - - - - - -\n"
-        },
-        {
           "Type": "comment%",
-          "Label": "Lined wide margins for journaling (minimalistic)",
-          "Description": "Bibles with ruled margins for journaling are typically called 'Journaling Bibles' or 'Wide-Margin Bibles.' These Bibles feature wider margins, often lined, to provide space for personal notes, reflections, and artwork.",
-          "CodeSnippet": "\\def\\doLines{\\doNoteLines} % Turn on the note lines\n\\def\\NoteLineXoffset{6pt} % Gap between text and note lines\n\\def\\NoteLineXmargin{10mm} % Margin at edge of page\n\\def\\NoteLineLineMajor{0.3pt} % Thickness of major note lines\n\\def\\NoteLineColMajor{0.0 0.0 0.0} % Colour (R G B) default is black\n\\def\\NoteLineMajorDiv{0} % Number of minor lines between major lines"
+          "Label": "Color the Notelines",
+          "Description": "Although Notelines (ruled margins for journaling) are enabled on the Layout tab, and controlled by the settings on the Advanced > Other tab (under the Page Layout and Spacing section) there is no way to change the color via those settings. Use this codelet to adjust the color of the lines as required using appropriate R G B values.",
+          "CodeSnippet": "\\def\\NoteLineColMajor{0.3 0.0 0.5} % Major lines color (R G B) default was black\n\\def\\NoteLineColMinor{0.5 0.5 0.0} % Minor lines color (R G B)"
         },
         {
           "Type": "comment%",

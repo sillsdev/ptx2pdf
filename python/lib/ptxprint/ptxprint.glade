@@ -4547,61 +4547,6 @@ button to adjust either the Top or Bottom Margin.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_mirrorpages">
-                                        <property name="label" translatable="yes">Mirror Pages</property>
-                                        <property name="name">Mirror page layout</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Mirror Pages makes use of an Inner+Outer layout.
-This will make the left page header the inner header and
-the right page header will be shown on the outer edge
-(i.e. headers on odd and even pages are mirrored).
-
-Behaviour for Diglots:
-Note that when creating a Diglot, this will place the
-primary text as the Inner text (closest to the spine),
-and the secondary text as the Outer text (closest to
-the edge of the page).
-
-If you always want the Primary text on the left and
-Secondary text on the right regardless of whether
-it is an odd or even page, then turn off this option.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">24</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">5</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_grid">
-                                        <property name="label" translatable="yes">Marks &amp; Guides</property>
-                                        <property name="name">Marks &amp; Guides</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Enable Guides or a Grid to sit behind the
-text to assist with final adjustments; 
-or enable a Watermark to show behind the text;
-or turn on USFM codes temporarily.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">2</property>
-                                        <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">3</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkCheckButton" id="c_outerGutter">
                                         <property name="label" translatable="yes">Outer Gutter</property>
                                         <property name="name">Place gutter on outer edge of page</property>
@@ -4643,36 +4588,6 @@ changes when the spacing changes.</property>
                                       <packing>
                                         <property name="left-attach">6</property>
                                         <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_adjustGrid">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Show dialog to choose Guides (margins, 
-baselines, etc.) and/or a graph-paper-like 
-Grid for precise measuring. Grid settings 
-can be customized.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="image">icon_adjust_grid</property>
-                                        <signal name="clicked" handler="adjustGuideGrid" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">start</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">6</property>
-                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -4909,6 +4824,105 @@ you choose this setting.</property>
                                         <property name="left-attach">0</property>
                                         <property name="top-attach">4</property>
                                         <property name="width">7</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_mirrorpages">
+                                        <property name="label" translatable="yes">Mirror Pages</property>
+                                        <property name="name">Mirror page layout</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Mirror Pages makes use of an Inner+Outer layout.
+This will make the left page header the inner header and
+the right page header will be shown on the outer edge
+(i.e. headers on odd and even pages are mirrored).
+
+Behaviour for Diglots:
+Note that when creating a Diglot, this will place the
+primary text as the Inner text (closest to the spine),
+and the secondary text as the Outer text (closest to
+the edge of the page).
+
+If you always want the Primary text on the left and
+Secondary text on the right regardless of whether
+it is an odd or even page, then turn off this option.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="active">True</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">3</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_adjustGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Show dialog to choose Guides (margins, 
+baselines, etc.) and/or a graph-paper-like 
+Grid for precise measuring. Grid settings 
+can be customized.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="image">icon_adjust_grid</property>
+                                        <signal name="clicked" handler="adjustGuideGrid" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">6</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_grid">
+                                        <property name="label" translatable="yes">Marks &amp; Guides</property>
+                                        <property name="name">Marks &amp; Guides</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Enable Guides or a Grid to sit behind the
+text to assist with final adjustments; 
+or enable a Watermark to show behind the text;
+or turn on USFM codes temporarily.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">2</property>
+                                        <property name="margin-start">2</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">5</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_noteLines">
+                                        <property name="label" translatable="yes">Notelines</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Include ruled margins to provide space
+for personal notes, reflections, and artwork.
+Typically called 'Journaling Bibles' or 'Wide-
+Margin Bibles'.
+
+Hint: Set the Binding Gutter to a larger value
+(&gt;40mm) and enable Outer Gutter. Other
+settings to control the appearance and spacing
+of the Notelines are in the 'Page Layout and
+Spacing' section of the Advanced &gt; Other tab.</property>
+                                        <property name="margin-start">12</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onNoteLinesClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -5182,7 +5196,7 @@ of Rule (pt):</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-end">6</property>
-                                    <property name="margin-top">13</property>
+                                    <property name="margin-top">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
