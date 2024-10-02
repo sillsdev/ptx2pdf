@@ -208,11 +208,12 @@ class PicList:
                 else:
                     val = row[i]
                 p[e] = val
-        for k,v in list(picinfos.items()):
-            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
-                if k.startswith("row"):
-                    print(f"{k} removed")
-                del picinfos[k]
+#        breakpoint()
+#        for k,v in list(picinfos.items()):
+#            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
+#                if k.startswith("row"):
+#                    print(f"{k} removed")
+#                picinfos.remove(v)
         return picinfos
 
     def clearPicSources(self, picinfos):

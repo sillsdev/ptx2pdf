@@ -942,7 +942,7 @@ class Piclist:
         self.srchlist = []
 
     def remove(self, p):
-        self.pics.remove(p)
+        del self.pics[p.key]
 
     def get_pics(self):
         return self.pics.values()
@@ -981,7 +981,7 @@ class Piclist:
         if self.isdiglot and base is not None:
             self.merge(base, suffix)
             self.loaded = True
-            return True
+            return False    # Tell the parent there is more to do
         if not self.isdiglot:
             self.inthread = True
             self.threadUsfms(parent)
@@ -1005,7 +1005,7 @@ class Piclist:
                 continue
             m = l.split("|")
             r = m[0].split(" ", 2)
-            pic = {'anchor': m[0], 'caption': r[2] if len(r) > 2 else ""}
+            pic = {'anchor': "{} {}".format(*r), 'caption': r[2] if len(r) > 2 else ""}
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
                 for i, f in enumerate(m[1:]):
                     if i < len(posparms)-1:
@@ -1255,21 +1255,27 @@ class Piclist:
         for v in self.get_pics():
             tgts.setdefault(stripsuffix(v['anchor']), []).append(v)
         merged = set()
-        for v in list(pics):
+        for v in pics.get_pics():
             removeme = False
             m = v['anchor'].split(" ", 1)
             if nonMergedBooks is not None and m[0][:3] in nonMergedBooks:
                 continue
-            if m[0][3:] == suffix:
-                for s in tgts.get(stripsuffix(v['anchor']), []):
-                    if newBase(s.get('src', '')) == newBase(v.get('src', '')) and s.get('srcref', '') == v.get('srcref', ''):
-                        if mergeCaptions:
-                            if v.get('caption', '') != '':
-                                s['caption'+suffix] = v['caption']
-                            if v.get('ref', '') != '':
-                                s['ref'+suffix] = v['ref']
-                        merged.add(s)
-                        break
+            for s in tgts.get(stripsuffix(v['anchor']), []):
+                sra = s.get('srcref', '')
+                srb = v.get('srcref', '')
+                if newBase(s.get('src', '')) == newBase(v.get('src', '')) \
+                            and (sra == '' or srb == '' or sra == srb):
+                    if mergeCaptions:
+                        if v.get('caption', '') != '':
+                            s['caption'+suffix] = v['caption']
+                        if v.get('ref', '') != '':
+                            s['ref'+suffix] = v['ref']
+                    break
+            else:
+                sn = v.copy()
+                sn['anchor'] = m[0] + suffix + " " + m[1]
+                self.pics[v.key] = sn
+                merged.add(sn)
         for v in list(self.get_pics()):
             m = v['anchor'].split(" ")
             if m[0][3:] == suffix and v not in merged:
