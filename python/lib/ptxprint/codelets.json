@@ -642,9 +642,9 @@
       "Other": [
         {
           "Type": "comment%",
-          "Label": "Color the Notelines",
-          "Description": "Although Notelines (ruled margins for journaling) are enabled on the Layout tab, and controlled by the settings on the Advanced > Other tab (under the Page Layout and Spacing section) there is no way to change the color via those settings. Use this codelet to adjust the color of the lines as required using appropriate R G B values.",
-          "CodeSnippet": "\\def\\NoteLineColMajor{0.3 0.0 0.5} % Major lines color (R G B) default was black\n\\def\\NoteLineColMinor{0.5 0.5 0.0} % Minor lines color (R G B)"
+          "Label": "Stylize the Notelines (color and dots)",
+          "Description": "Although Notelines (ruled margins for journaling) are enabled on the Layout tab, and controlled by the settings on the Advanced > Other tab (under the Page Layout and Spacing section) there is no way to change the color via those settings. Use this codelet to adjust the color of the lines as required using appropriate R G B values. And if using dotted lines, you can change the settings here too.",
+          "CodeSnippet": "\\def\\NoteLineColMajor{0.3 0.0 0.5} % Major lines color (R G B) default was black\n\\def\\NoteLineColMinor{0.5 0.5 0.0} % Minor lines color (R G B)\n% \\def\\DotRuleMark{0.4pt}\\def\\DotRuleSpace{0.7pt} % Size and spacing of dots\n"
         },
         {
           "Type": "comment%",

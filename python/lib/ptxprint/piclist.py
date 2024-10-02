@@ -235,6 +235,10 @@ class Picture:
 
     def sync(self, other, suffix=None):
         ''' are they the same picture, if so update caption and return True '''
+        if 'src' not in self:
+            logger.warn(f"{self.fields}")
+        if 'src' not in other:
+            logger.warn(f"{other.fields}")
         if self.get('srcref', self['anchor']) == other.get('srcref', other['anchor']) \
                     and newBase(self['src']) == newBase(other['src']):
             if suffix:
@@ -260,7 +264,7 @@ class Picture:
         if picMedia is not None and mediaval == picMedia(self.get('src', ""))[0]:
             mediaval = None
         outk = self.stripsp_re.sub(r"\1", self['anchor'])
-        credittxt, creditbox = checks.getCreditInfo(newBase(self['src'])) if checks is not None else (None, None)
+        credittxt, creditbox = checks.getCreditInfo(newBase(self.get('src', ""))) if checks is not None else (None, None)
         line = []
         for i, x in enumerate(p3p):
             val = self.get(x, None)
@@ -292,7 +296,9 @@ class Picture:
             return
         # print(fpath)
         origExt = os.path.splitext(fpath)[1]
-        nB = newBase(self['src'])
+        nB = newBase(self.get('src', ""))
+        if not nB:
+            logger.warn(f"src missing: {self.fields}")
         self.destfile = fn(self, self[srckey], nB+origExt.lower())
         self.crop = cropme
         v = self.get('media', "")
@@ -333,7 +339,9 @@ class Picture:
             return
         if keys is not None and self['anchor'][:3] not in keys:
             return
-        nB = newBase(self['src'])
+        nB = newBase(self.get('src', ""))
+        if not nB:
+            logger.warn(f"src missing: {self.fields}")
         if 'srcpath' not in self:
             return
         fpath = self['srcpath']
