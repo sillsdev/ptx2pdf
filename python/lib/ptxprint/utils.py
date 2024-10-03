@@ -664,17 +664,18 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
 
     def withvars(self, aView):
         varlib = self.create_varlib(aView)
-        bestl = len(str(self))
+        bestr = self.as_posix()
         bestk = None
         for k, v in varlib.items():
             try:
-                rpath = self.relative_to(v)
+                rpath = os.path.relpath(self.as_posix(), start=v.as_posix())
             except (ValueError, TypeError):
                 continue
-            if len(str(rpath)) < bestl:
+            if len(str(rpath)) < len(bestr):
                 bestk = k
+                bestr = str(rpath)
         if bestk is not None:
-            return "${"+bestk+"}/"+rpath.as_posix()
+            return "${"+bestk+"}/"+bestr
         else:
             return self.as_posix()
 
