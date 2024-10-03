@@ -1560,7 +1560,7 @@ class ViewModel:
             cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'src path'
-        for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p and p['anchor'][:3] in books):
+        for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
                 res[f] = prjid + "/local/figures/"+os.path.basename(f)
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
