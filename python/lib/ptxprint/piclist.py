@@ -517,7 +517,7 @@ class Piclist:
         # logger.debug(f"Reading pics for {bk}")
         koffset = 0
         currentk = None
-        for s in re.split(r"\\(?:m[st][e]?|i(?:mt[e]?|ex|[bemopqs])|s[dpr]|c[ld]|[pqrs])\d?", txt):
+        for s in re.split(r"\\(?:m[st][e]?|i(?:mt[e]?|ex|[bemopqs])|s[dpr]|c[ld]|[pqrs])\d?\s", txt):
             parcount += 1
             for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
                       (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
@@ -526,9 +526,6 @@ class Piclist:
                     for i, f in enumerate(m):
                         if bk == "GLO":
                             a = self._getanchor(f, s, parcount - koffset, currentk)
-                            if a[0].startswith("k") and a[3] != "":
-                                koffset = parcount
-                                currentk = a[0]
                         else:
                             a = ("p", "", "{:03d}".format(i+1), ("="+str(parcount)) if parcount - koffset > 1 else "") if isperiph else (c, ".", lastv, "")
                         r = "{} {}{}{}{}".format(bk, *a)
@@ -593,7 +590,7 @@ class Piclist:
                 dups.setdefault(p['src'], []).append(p)
             for d in [v for v in dups.values() if len(v) > 1]:
                 for p in d[1:]:
-                    del self.pics[p.key]
+                    self.remove(p)
 
     def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True):
         self.srchlist = [figFolder] if figFolder is not None else []
@@ -723,28 +720,32 @@ class Piclist:
         for v in pics.get_pics():
             removeme = False
             m = v['anchor'].split(" ", 1)
-            if nonMergedBooks is not None and m[0][:3] in nonMergedBooks:
-                continue
+            addme = True
             for s in tgts.get(stripsuffix(v['anchor']), []):
                 sra = s.get('srcref', '')
                 srb = v.get('srcref', '')
                 if newBase(s.get('src', '')) == newBase(v.get('src', '')) \
                             and (sra == '' or srb == '' or sra == srb):
+                    if nonMergedBooks is None or m[0][:3] in nonMergedBooks:
+                        if v['anchor'] != s['anchor'] + suffix:
+                            continue
                     if mergeCaptions:
                         if v.get('caption', '') != '':
                             s['caption'+suffix] = v['caption']
                         if v.get('ref', '') != '':
                             s['ref'+suffix] = v['ref']
+                    addme = False
                     break
-            else:
+            if addme:
                 sn = v.copy()
                 sn['anchor'] = m[0] + suffix + " " + m[1]
-                self.pics[v.key] = sn
-                merged.add(sn)
+                self.pics[sn.key] = sn
+                merged.add(sn.key)
         for v in list(self.get_pics()):
             m = v['anchor'].split(" ")
-            if m[0][3:] == suffix and v not in merged:
+            if m[0][3:] == suffix and v.key not in merged:
                 self.remove(v)
+        self.rmdups()
 
     def read_books(self, bks, allbooks, random=False, cols=2, sync=False):
         def posn(pic):

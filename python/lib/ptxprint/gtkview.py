@@ -2177,7 +2177,8 @@ class GtkViewModel(ViewModel):
         dialog = self.builder.get_object("dlg_generatePL")
         self.set("l_generate_booklist", " ".join(bks))
         # If there is no PicList file for this config, then don't even ask - just generate it
-        plpath = os.path.join(self.project.srcPath(self.cfgid),"{}-{}.piclist".format(self.project.prjid, self.cfgid))
+        plpath = os.path.join(self.project.srcPath(self.cfgid),"{}-{}{}.piclist".format(
+                        self.project.prjid, self.cfgid, "-diglot" if self.diglotView is not None else ""))
         if not os.path.exists(plpath):
             response = Gtk.ResponseType.OK
             self.set("r_generate", "all")
