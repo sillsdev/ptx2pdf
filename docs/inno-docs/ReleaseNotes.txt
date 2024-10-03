@@ -1,10 +1,10 @@
 PTXprint 2.6.4 Release Notes
-02 Oct 2024
+03 Oct 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.6.5 (2 Oct 2024)
+Bug fixes and Improvements in 2.6.5 (3 Oct 2024)
 
   * Fix colophon for single columns
 
@@ -16,7 +16,27 @@ Bug fixes and Improvements in 2.6.5 (2 Oct 2024)
 
   * More work on notelines (texpert tab)
 
-  * Finish adding Notelines UI items and set sensible defaults
+  * Finish adding Notelines UI items, set sensible defaults and units
+
+  * Fix diglot picture loading
+
+  * Fix picinfo bugs
+
+  * Fixing diglot generate pictures
+
+  * Catch looping for overfull page
+
+  * More tweaks and fixes to get pictures working
+
+  * Handle page abort conditions
+
+  * Improved piclist generation and no zfiga for k
+
+  * Fix strongs fallback project
+
+  * Fix withvars and code around crazy path.relative_to
+
+  * Merge branch 'refactor' (and Remove old code)
 
 Bug fixes and Improvements in 2.6.4 (30 Sep 2024)
 

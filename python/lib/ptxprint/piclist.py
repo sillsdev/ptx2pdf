@@ -418,7 +418,7 @@ class Piclist:
     def clear_bks(self, bks):
         for p in list(self.pics.values()):
             if p['anchor'][:3] in bks:
-                self.pics.remove(p)
+                self.remove(p)
 
     def add_picture(self, pic, suffix=None, sync=False):
         if not sync:

@@ -1,26 +1,24 @@
-{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deftab709{\fonttbl{\f0\fnil\fcharset0 Arial;}{\f1\fswiss\fprq2\fcharset128 Arial;}}
-{\colortbl ;\red255\green0\blue0;\red42\green96\blue153;\red128\green0\blue128;\red30\green106\blue57;\red0\green0\blue255;\red0\green128\blue192;\red0\green0\blue128;}
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deftab709{\fonttbl{\f0\fnil\fcharset0 Arial;}}
+{\colortbl ;\red42\green96\blue153;\red128\green0\blue128;\red30\green106\blue57;\red192\green80\blue77;\red0\green0\blue255;\red0\green0\blue128;}
 {\*\generator Riched20 10.0.22621}\viewkind4\uc1 
-\pard\nowidctlpar\hyphpar0\qc\fs20\lang5129 About PTXprint ver 2.5 (27 June 2024)\par
+\pard\nowidctlpar\hyphpar0\qc\fs20\lang5129 About PTXprint ver 2.6.5 (3 Oct 2024)\par
 \par
-\cf1\b\fs28 PLEASE READ THIS ESPECIALLY IF YOU ARE \line PART WAY THROUGH TYPESETTING SCRIPTURE\cf0\b0\fs20\par
 
-\pard\nowidctlpar\hyphpar0\par
-\cf2\b There are 2 significant changes\b0  in this version of PTXprint which you need to be aware of:\cf0\par
+\pard\nowidctlpar\hyphpar0\cf1\b Significant changes\b0  in this version of PTXprint which you might want to be aware of:\cf0\par
 \par
-\cf3 (1) Changes have been made to the underlying XeTeX macros which will improve the layout of the text, particularly footnotes. However, these \b minor changes could cause the text to flow differently\b0 , which is not ideal if you are part way through a typesetting project. To help maintain backward compatibility, a system has been introduced which enables you to Lock the XeTeX Layout engine to a previous level. So if you need to revert to the previous XeTeX layout then take the following steps:\cf0\par
-\cf3       (a) Enable the option (on the Advanced tab) \f1\ldblquote\f0 Lock XeTeX Layout Level\f1\rdblquote\cf0\f0\par
-\cf3       (b) Enable the option \f1\ldblquote\f0 Show TeXpert Hacks\f1\rdblquote\cf0\f0\par
-\cf3       (c) Switch to the \f1\ldblquote\f0 TeXpert Hacks\f1\rdblquote\f0  tab\cf0\par
-\cf3       (d) Set the \f1\ldblquote\b\f0 Maximum Layout Version\b0\f1\rdblquote\f0  to \b 1\b0  (down from 2) at top of list (0=latest)\cf0\par
-\cf3 Doing this should cause the text to flow exactly as it was in previous versions (pre 2.5).\cf0\par
-\par
-\cf4 (2) In order to keep up with underlying software changes (Python 3.11+) \b Regular Expressions are now stricter\b0 . You must \f1\lquote\f0 escape\f1\rquote\f0  any \\ backslash codes with an additional \\ in your changes.txt rules. So for example, a rule like:\cf0\par
-\cf4     \cf2 "\\p" > "\\m"\cf4  will need to be \f1\lquote\f0 fixed\f1\rquote\f0 :  \cf2 "{\cf0{\field{\*\fldinst{HYPERLINK "\\\\\\\\p"}}{\fldrslt{\\\\p\ul0\cf0}}}}\f0\fs20 " > "{\cf0{\field{\*\fldinst{HYPERLINK "\\\\\\\\m"}}{\fldrslt{\\\\m\ul0\cf0}}}}\f0\fs20 "\cf0\par
-\cf4 But notice that you only need to add the \\ to escape \b USFM codes\b0 , not all the other valid codes like \\r \\n \\1 \\2 and so on:\cf0\par
-\cf4     \cf6 "({\cf0\b{\field{\*\fldinst{HYPERLINK "\\\\\\\\id"}}{\fldrslt{\\\\id\ul0\cf0}}}}\f0\fs20  (...).*\\n)" > "\\1{\b{\field{\*\fldinst{HYPERLINK "\\\\\\\\h1 \\\\2\\\\r\\\\n"}}{\fldrslt{\\\\h1\b0  \\2\\r\\n\ul0\cf0}}}}\f0\fs20 "\par
+\cf2 (1) On the \b Layout\b0  tab:\par
+* \b Variable Line Spacing \b0 is a new option which works with \b Fill Columns \b0 to help fill the page\par
+* \b Notelines \b0 allows you to create ruled or dotted lines in the wide gutter area (Journaling Bible)\par
 \cf0\par
-\b "Bible Layout For Everyone"\b0  - Easily create scripture PDFs for trial publications\par
+\cf3 (2) On the \b Advanced \b0 tab:\par
+* All the TeXpert hacks have been moved to the 'Other' tab (at the top)\par
+* These settings can now also be found when searching\par
+* Options that are not set to the default value appear in bold\par
+\par
+\cf4 (3) On the \b Pictures \b0 tab:\par
+* Much of the underlying code has been re-written to be more reliable, but with only limited testing, expect to encounter minor issues (and please report them).\par
+\cf0\b\par
+"Bible Layout For Everyone"\b0  - Easily create scripture PDFs for trial publications\par
 \par
 PTXprint is an easy-to-use program which harnesses the power of extended macros from PTX2PDF which is a XeTeX based macro package for typesetting USFM formatted (Paratext) scripture files.\par
 \par
@@ -31,93 +29,93 @@ There is a category dedicated to PTXprint issues on ({{\field{\*\fldinst{HYPERLI
 \par
 Please use "New Issue" button in the GitHub Issue Tracking System ({{\field{\*\fldinst{HYPERLINK https://github.com/sillsdev/ptx2pdf/issues }}{\fldrslt{https://github.com/sillsdev/ptx2pdf/issues\ul0\cf0}}}}\f0\fs20 ) to report any bugs, or document suggestions for improvement. \par
 \par
-If you serve in a sensitive location, you can report issues directly by e-mail <{{\field{\*\fldinst{HYPERLINK "mailto:ptxprint_support@sil.org" }}{\fldrslt{\ul\cf5\cf7\ul ptxprint_support@sil.org}}}}\f0\fs20 > rather than via the publicly accessible websites listed above.\par
+If you serve in a sensitive location, you can report issues directly by e-mail <{{\field{\*\fldinst{HYPERLINK "mailto:ptxprint_support@sil.org" }}{\fldrslt{\ul\cf5\cf6\ul ptxprint_support@sil.org}}}}\f0\fs20 > rather than via the publicly accessible websites listed above.\par
 \par
 \par
 \b\fs22 Examples of running PTXprint from the command-line (in Windows):\b0\fs20\par
 \par
-\cf2 "C:\\Program Files\\PTXprint\\PTXprint.exe" -c Diglot XYZ\cf0\par
+\cf1 "C:\\Program Files\\PTXprint\\PTXprint.exe" -c Diglot XYZ\cf0\par
 will OPEN PTXprint with XYZ project active and the saved configuration called "Diglot" (but won't print anything)\par
 \par
-\cf2 "C:\\Program Files\\PTXprint\\PTXprint.exe" -c NTandPsalms -P XYZ\cf0\par
+\cf1 "C:\\Program Files\\PTXprint\\PTXprint.exe" -c NTandPsalms -P XYZ\cf0\par
 will directly create a PDF from the XYZ project using the saved configuration called "NTandPsalms" (no GUI will appear)\par
 \par
-\cf2 "C:\\Program Files\\PTXprint\\PTXprint.exe" -b ROM -c SideXrefs -P XYZ\cf0\par
+\cf1 "C:\\Program Files\\PTXprint\\PTXprint.exe" -b ROM -c SideXrefs -P XYZ\cf0\par
 will directly create a PDF of ROMANS from the XYZ project using the saved configuration called "SideXrefs" (no GUI will appear)\par
 \par
-\cf2 "C:\\Program Files\\PTXprint\\PTXprint.exe" -b "MAT MRK LUK JHN ACT GLO" -P XYZ\cf0\par
+\cf1 "C:\\Program Files\\PTXprint\\PTXprint.exe" -b "MAT MRK LUK JHN ACT GLO" -P XYZ\cf0\par
 will directly create a PDF of 4 gospels, Acts and Glossary from the XYZ project using the Default configuration (no GUI will appear)\par
 \par
-\cf2 "C:\\Program Files\\PTXprint\\PTXprint.exe" -p C:\\Data\\VariousUSFMprojects\cf0\par
+\cf1 "C:\\Program Files\\PTXprint\\PTXprint.exe" -p C:\\Data\\VariousUSFMprojects\cf0\par
 with -p (lowercase) and a folder name will run PTXprint pointing to that folder instead of the usual Paratext folder. Note that\par
 it expects one or more subfolders which contain the actual USFM files. The names of any subfolders containing valid .SFM files\par
 will appear in the Project drop-down menu once PTXprint has opened.\par
 \par
-\cf2 "C:\\Program Files\\PTXprint\\PTXprint.exe" -d "C:\\Temp"\cf0\par
+\cf1 "C:\\Program Files\\PTXprint\\PTXprint.exe" -d "C:\\Temp"\cf0\par
 runs PTXprint, and output PDF files will be created in C:\\Temp folder instead of C:\\My Paratext 9 Projects\\<XYZ>\\local\\ptxprint\par
 \par
-\cf2 "C:\\Program Files\\PTXprint\\PTXprint.exe" -h\cf0\par
+\cf1 "C:\\Program Files\\PTXprint\\PTXprint.exe" -h\cf0\par
 will show the command-line usage parameters (as seen below)\par
  \par
-\fs18 usage: \cf2 PTXprint.exe [-h] [-c CONFIG] [-M MODULE] [-p PARATEXT] [-d DIRECTORY]\cf0\fs20\par
-\cf2\fs18                     [-P] [-b BOOKS] [-Z ZIP] [-R RUNS] [-q] [-L LANG]\cf0\fs20\par
-\cf2\fs18                     [-n PORT] [-m MACROS] [-N] [-l LOGGING]\cf0\fs20\par
-\cf2\fs18                     [--logfile LOGFILE] [--timeout TIMEOUT] [-T] [-f FONTPATH]\cf0\fs20\par
-\cf2\fs18                     [--nofontcache] [--testsuite] [-A ACTION] [-F DIFFFILE]\cf0\fs20\par
-\cf2\fs18                     [--diffpages DIFFPAGES] [-D DEFINE] [--debug] [-C CAPTURE]\cf0\fs20\par
-\cf2\fs18                     [-z EXTRAS] [-V PDFVERSION] [-I] [-E EXPERIMENTAL]\cf0\fs20\par
-\cf2\fs18                     [pid]\cf0\fs20\par
+\fs18 usage: \cf1 PTXprint.exe [-h] [-c CONFIG] [-M MODULE] [-p PARATEXT] [-d DIRECTORY]\cf0\fs20\par
+\cf1\fs18                     [-P] [-b BOOKS] [-Z ZIP] [-R RUNS] [-q] [-L LANG]\cf0\fs20\par
+\cf1\fs18                     [-n PORT] [-m MACROS] [-N] [-l LOGGING]\cf0\fs20\par
+\cf1\fs18                     [--logfile LOGFILE] [--timeout TIMEOUT] [-T] [-f FONTPATH]\cf0\fs20\par
+\cf1\fs18                     [--nofontcache] [--testsuite] [-A ACTION] [-F DIFFFILE]\cf0\fs20\par
+\cf1\fs18                     [--diffpages DIFFPAGES] [-D DEFINE] [--debug] [-C CAPTURE]\cf0\fs20\par
+\cf1\fs18                     [-z EXTRAS] [-V PDFVERSION] [-I] [-E EXPERIMENTAL]\cf0\fs20\par
+\cf1\fs18                     [pid]\cf0\fs20\par
 \fs18\par
 positional arguments:\fs20\par
-\cf2\fs18   pid                   Project id or full path to a ptxprint.cfg file\cf0\fs20\par
+\cf1\fs18   pid                   Project id or full path to a ptxprint.cfg file\cf0\fs20\par
 \fs18\par
 options:\fs20\par
-\cf2\fs18   -h, --help            show this help message and exit\cf0\fs20\par
-\cf2\fs18   -c CONFIG, --config CONFIG\cf0\fs20\par
-\cf2\fs18                         Configuration path to load\cf0\fs20\par
-\cf2\fs18   -M MODULE, --module MODULE\cf0\fs20\par
-\cf2\fs18                         Module to print\cf0\fs20\par
-\cf2\fs18   -p PARATEXT, --paratext PARATEXT\cf0\fs20\par
-\cf2\fs18                         Path to Paratext Projects directory\cf0\fs20\par
-\cf2\fs18   -d DIRECTORY, --directory DIRECTORY\cf0\fs20\par
-\cf2\fs18                         Directory to store temporary files in\cf0\fs20\par
-\cf2\fs18   -P, --print           Hits print\cf0\fs20\par
-\cf2\fs18   -b BOOKS, --books BOOKS\cf0\fs20\par
-\cf2\fs18                         Reference list to print (as in Choose Books)\cf0\fs20\par
-\cf2\fs18   -Z ZIP, --zip ZIP     Unzip into project directory and delete at end\cf0\fs20\par
-\cf2\fs18   -R RUNS, --runs RUNS  limit xetex runs\cf0\fs20\par
-\cf2\fs18   -q, --quiet           No splash screen. Limit output\cf0\fs20\par
-\cf2\fs18   -L LANG, --lang LANG  Set UI language code\cf0\fs20\par
-\cf2\fs18   -n PORT, --port PORT  Listen on given port\cf0\fs20\par
-\cf2\fs18   -m MACROS, --macros MACROS\cf0\fs20\par
-\cf2\fs18                         Directory containing TeX macros (paratext2.tex)\cf0\fs20\par
-\cf2\fs18   -N, --nointernet      Disable all internet access\cf0\fs20\par
-\cf2\fs18   -l LOGGING, --logging LOGGING\cf0\fs20\par
-\cf2\fs18                         Logging level [DEBUG, *INFO*, WARN, ERROR, number]\cf0\fs20\par
-\cf2\fs18   --logfile LOGFILE     Set logging file [ptxprint.log] or "none"\cf0\fs20\par
-\cf2\fs18   --timeout TIMEOUT     xetex runtime timeout\cf0\fs20\par
-\cf2\fs18   -T, --testing         Run in testing, output xdv\cf0\fs20\par
-\cf2\fs18   -f FONTPATH, --fontpath FONTPATH\cf0\fs20\par
-\cf2\fs18                         Directory of fonts to include (repeatable)\cf0\fs20\par
-\cf2\fs18   --nofontcache         Don't update list of system fonts\cf0\fs20\par
-\cf2\fs18   --testsuite           Only use fonts from project and testsuite\cf0\fs20\par
-\cf2\fs18   -A ACTION, --action ACTION\cf0\fs20\par
-\cf2\fs18                         Run view method instead of print\cf0\fs20\par
-\cf2\fs18   -F DIFFFILE, --difffile DIFFFILE\cf0\fs20\par
-\cf2\fs18                         Create difference PDF against PDF file\cf0\fs20\par
-\cf2\fs18   --diffpages DIFFPAGES\cf0\fs20\par
-\cf2\fs18                         Maximum number of pages to insert in diff file\cf0\fs20\par
-\cf2\fs18   -D DEFINE, --define DEFINE\cf0\fs20\par
-\cf2\fs18                         set UI component=value. Repeatable\cf0\fs20\par
-\cf2\fs18   --debug               Give debug output\cf0\fs20\par
-\cf2\fs18   -C CAPTURE, --capture CAPTURE\cf0\fs20\par
-\cf2\fs18                         Capture interaction events to file. Not to be used yet\cf0\fs20\par
-\cf2\fs18   -z EXTRAS, --extras EXTRAS\cf0\fs20\par
-\cf2\fs18                         Special bit flags: 0-3 - verbosity of xdvipdfmx\cf0\fs20\par
-\cf2\fs18   -V PDFVERSION, --pdfversion PDFVERSION\cf0\fs20\par
-\cf2\fs18                         PDF Version to read and write * 10 (default=14)\cf0\fs20\par
-\cf2\fs18   -I, --identify        add widget names to tooltips\cf0\fs20\par
-\cf2\fs18   -E EXPERIMENTAL, --experimental EXPERIMENTAL\cf0\fs20\par
-\cf2\fs18                         Enable experimental bits: 0 = UI extensions\cf0\fs20\par
+\cf1\fs18   -h, --help            show this help message and exit\cf0\fs20\par
+\cf1\fs18   -c CONFIG, --config CONFIG\cf0\fs20\par
+\cf1\fs18                         Configuration path to load\cf0\fs20\par
+\cf1\fs18   -M MODULE, --module MODULE\cf0\fs20\par
+\cf1\fs18                         Module to print\cf0\fs20\par
+\cf1\fs18   -p PARATEXT, --paratext PARATEXT\cf0\fs20\par
+\cf1\fs18                         Path to Paratext Projects directory\cf0\fs20\par
+\cf1\fs18   -d DIRECTORY, --directory DIRECTORY\cf0\fs20\par
+\cf1\fs18                         Directory to store temporary files in\cf0\fs20\par
+\cf1\fs18   -P, --print           Hits print\cf0\fs20\par
+\cf1\fs18   -b BOOKS, --books BOOKS\cf0\fs20\par
+\cf1\fs18                         Reference list to print (as in Choose Books)\cf0\fs20\par
+\cf1\fs18   -Z ZIP, --zip ZIP     Unzip into project directory and delete at end\cf0\fs20\par
+\cf1\fs18   -R RUNS, --runs RUNS  limit xetex runs\cf0\fs20\par
+\cf1\fs18   -q, --quiet           No splash screen. Limit output\cf0\fs20\par
+\cf1\fs18   -L LANG, --lang LANG  Set UI language code\cf0\fs20\par
+\cf1\fs18   -n PORT, --port PORT  Listen on given port\cf0\fs20\par
+\cf1\fs18   -m MACROS, --macros MACROS\cf0\fs20\par
+\cf1\fs18                         Directory containing TeX macros (paratext2.tex)\cf0\fs20\par
+\cf1\fs18   -N, --nointernet      Disable all internet access\cf0\fs20\par
+\cf1\fs18   -l LOGGING, --logging LOGGING\cf0\fs20\par
+\cf1\fs18                         Logging level [DEBUG, *INFO*, WARN, ERROR, number]\cf0\fs20\par
+\cf1\fs18   --logfile LOGFILE     Set logging file [ptxprint.log] or "none"\cf0\fs20\par
+\cf1\fs18   --timeout TIMEOUT     xetex runtime timeout\cf0\fs20\par
+\cf1\fs18   -T, --testing         Run in testing, output xdv\cf0\fs20\par
+\cf1\fs18   -f FONTPATH, --fontpath FONTPATH\cf0\fs20\par
+\cf1\fs18                         Directory of fonts to include (repeatable)\cf0\fs20\par
+\cf1\fs18   --nofontcache         Don't update list of system fonts\cf0\fs20\par
+\cf1\fs18   --testsuite           Only use fonts from project and testsuite\cf0\fs20\par
+\cf1\fs18   -A ACTION, --action ACTION\cf0\fs20\par
+\cf1\fs18                         Run view method instead of print\cf0\fs20\par
+\cf1\fs18   -F DIFFFILE, --difffile DIFFFILE\cf0\fs20\par
+\cf1\fs18                         Create difference PDF against PDF file\cf0\fs20\par
+\cf1\fs18   --diffpages DIFFPAGES\cf0\fs20\par
+\cf1\fs18                         Maximum number of pages to insert in diff file\cf0\fs20\par
+\cf1\fs18   -D DEFINE, --define DEFINE\cf0\fs20\par
+\cf1\fs18                         set UI component=value. Repeatable\cf0\fs20\par
+\cf1\fs18   --debug               Give debug output\cf0\fs20\par
+\cf1\fs18   -C CAPTURE, --capture CAPTURE\cf0\fs20\par
+\cf1\fs18                         Capture interaction events to file. Not to be used yet\cf0\fs20\par
+\cf1\fs18   -z EXTRAS, --extras EXTRAS\cf0\fs20\par
+\cf1\fs18                         Special bit flags: 0-3 - verbosity of xdvipdfmx\cf0\fs20\par
+\cf1\fs18   -V PDFVERSION, --pdfversion PDFVERSION\cf0\fs20\par
+\cf1\fs18                         PDF Version to read and write * 10 (default=14)\cf0\fs20\par
+\cf1\fs18   -I, --identify        add widget names to tooltips\cf0\fs20\par
+\cf1\fs18   -E EXPERIMENTAL, --experimental EXPERIMENTAL\cf0\fs20\par
+\cf1\fs18                         Enable experimental bits: 0 = UI extensions\cf0\fs20\par
 }
  
