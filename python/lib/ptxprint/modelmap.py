@@ -249,6 +249,7 @@ _map = {
     "document/diglotsecfraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":        ("fcb_diglotSecProject", "diglot", None),
     "document/diglotsecprjguid":    ("fcb_diglotSecProject[1]", "diglot", None),
+    "document/diglotserialbooks":   ("t_diglotSerialBooks", "diglot", None),
     "document/diglotpicsources":    ("fcb_diglotPicListSources", "diglot", None),
     "document/diglot2captions": ("c_diglot2captions", "diglot", None),
     "document/diglotswapside":  ("c_diglotSwapSide", "diglot", lambda w,v: "true" if v else "false"),

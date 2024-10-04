@@ -892,7 +892,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.6.6</property>
+    <property name="version">Version 2.6.5</property>
     <property name="copyright">© 2020-2024, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -16719,7 +16719,7 @@ to copyrights.</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=5 n-rows=7 -->
+                          <!-- n-columns=5 n-rows=8 -->
                           <object class="GtkGrid" id="gr_diglot">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -16873,7 +16873,7 @@ and Page Number in (or near) the middle.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">5</property>
+                                <property name="top-attach">6</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -16900,7 +16900,7 @@ This is quite likely required for RTL languages.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">4</property>
+                                <property name="top-attach">5</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -16922,7 +16922,7 @@ different columns).</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">6</property>
+                                <property name="top-attach">7</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -16944,7 +16944,7 @@ a Diglot use Pictures from:</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">4</property>
                               </packing>
                             </child>
                             <child>
@@ -17079,7 +17079,7 @@ leave this option checked ON.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">3</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">4</property>
                                 <property name="width">2</property>
                                 <property name="height">3</property>
                               </packing>
@@ -17150,7 +17150,7 @@ option does not apply at all.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">4</property>
                               </packing>
                             </child>
                             <child>
@@ -17162,7 +17162,7 @@ option does not apply at all.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">2</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">4</property>
                                 <property name="height">4</property>
                               </packing>
                             </child>
@@ -17202,7 +17202,7 @@ algorithms which may be used to obtain the best overall result:
                               </object>
                               <packing>
                                 <property name="left-attach">3</property>
-                                <property name="top-attach">6</property>
+                                <property name="top-attach">7</property>
                               </packing>
                             </child>
                             <child>
@@ -17237,8 +17237,54 @@ algorithms which may be used to obtain the best overall result:
                               </object>
                               <packing>
                                 <property name="left-attach">4</property>
-                                <property name="top-attach">6</property>
+                                <property name="top-attach">7</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="t_diglotSerialBooks">
+                                <property name="name">List of diglot books not to be merged, to come one after the other</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
+in a diglot publication should not be merged to appear
+side-by-side, but instead need to occur one after the other.
+
+Add the 3-letter book codes for any books that should 
+not be merged. These will appear one after the other.</property>
+                                <property name="text" translatable="yes">FRT BAK GLO XXA XXB</property>
+                                <property name="caps-lock-warning">False</property>
+                                <property name="placeholder-text" translatable="yes">e.g. FRT BAK GLO XXA XXB</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">3</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
+in a diglot publication should not be merged to appear
+side-by-side, but instead need to occur one after the other.
+
+Add the 3-letter book codes for any books that should 
+not be merged. These will appear one after the other.</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Use Serial Layout
+for These Books:</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
