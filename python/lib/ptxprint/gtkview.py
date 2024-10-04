@@ -28,7 +28,7 @@ from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
-# from ptxprint.piclist import PicInfo
+from ptxprint.piclist import Piclist
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.styleditor import aliases
 from ptxprint.runjob import isLocked, unlockme
@@ -2157,14 +2157,16 @@ class GtkViewModel(ViewModel):
     def onUpdatePicCaptionsClicked(self, btn):
         if self.diglotView is not None:
             pref = "L"
-            digpics = PicInfo(self.diglotView)
+            self.picinfos = Piclist(self, diglot=True)
+            digpics = Piclist(self.diglotView)
             digpics.threadUsfms(self.diglotView, nosave=True)
-            self.picinfos.merge(digpics, "R", mergeCaptions=True, bkanchors=True)
         else:
             pref = ""
-        newpics = PicInfo(self)
+        newpics = Piclist(self)
         newpics.threadUsfms(self, nosave=True)
-        self.picinfos.merge(newpics, pref, mergeCaptions=True, bkanchors=True, captionpre="")
+        self.picinfos.merge(newpics, pref, mergeCaptions=True, bkanchors=True)
+        if self.diglotView is not None:
+            self.picinfos.merge(digpics, "R", mergeCaptions=True, bkanchors=True)
         self.updatePicList()
         self.doStatus(_("Done! Picture Captions have been updated."))
 
