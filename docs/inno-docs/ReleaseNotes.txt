@@ -1,8 +1,20 @@
 PTXprint 2.6.5 Release Notes
-03 Oct 2024
+04 Oct 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.6.6 (4 Oct 2024)
+
+  * Figure inclusion / triggers: obey paragraph numbering for start-of-paragraph figures
+
+  * More picture cleanups + fixups for Piclist refreshing
+
+  * Add sethook{after}{final}
+
+  * Add model pausing GtkPiclist (to speed up refreshing list)
+
+  * Switch the Piclist when Diglot is (un)selected
 
 Bug fixes and Improvements in 2.6.5 (3 Oct 2024)
 
