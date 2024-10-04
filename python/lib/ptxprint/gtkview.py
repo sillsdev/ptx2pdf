@@ -4316,6 +4316,8 @@ class GtkViewModel(ViewModel):
             self.diglotView = None
         self.updateDialogTitle()
         self.loadPics(mustLoad=False, force=True)
+        if self.get("c_includeillustrations"):
+            self.onUpdatePicCaptionsClicked(None)
 
     def onDiglotSwitchClicked(self, btn):
         oprjid = None
