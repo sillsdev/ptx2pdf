@@ -79,7 +79,7 @@ class PicList:
         self.coremodel = view.get_model()
         self.model = self.coremodel.filter_new()
         self.model.set_visible_func(self.checkfilter)
-        self.view. set_model(self.model)
+        self.view.set_model(self.model)
         self.builder = builder
         self.parent = parent
         self.picinfo = None
@@ -135,6 +135,13 @@ class PicList:
     def clear(self):
         self.coremodel.clear()
         self.clearPreview()
+
+    def pause(self):
+        self.view.set_model(None)
+
+    def unpause(self):
+        self.view.set_model(self.model)
+        self.model.refilter()
 
     def load(self, picinfo, bks=None):
         self.picinfo = picinfo
@@ -303,6 +310,7 @@ class PicList:
         self.mask_media(currow)
         self.parent.unpause_logging()
         self.loading = False
+
     def select_row(self, i):
         if i >= len(self.model):
             i = len(self.model) - 1

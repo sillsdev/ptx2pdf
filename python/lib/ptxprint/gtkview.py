@@ -2155,6 +2155,7 @@ class GtkViewModel(ViewModel):
         self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
     def onUpdatePicCaptionsClicked(self, btn):
+        self.picListView.pause()
         if self.diglotView is not None:
             pref = "L"
             self.picinfos = Piclist(self, diglot=True)
@@ -2168,6 +2169,7 @@ class GtkViewModel(ViewModel):
         if self.diglotView is not None:
             self.picinfos.merge(digpics, "R", mergeCaptions=True, bkanchors=True)
         self.updatePicList()
+        self.picListView.unpause()
         self.doStatus(_("Done! Picture Captions have been updated."))
 
     def onGeneratePicListClicked(self, btn):
