@@ -385,6 +385,9 @@ class Piclist:
         self.suffix = ""
         self.isdiglot = diglot
 
+    def __str__(self):
+        return "\n".join("{}: {}".format(k, v.fields) for k, v in self.pics.items())
+
     def copy(self):
         res = Piclist(self.model, diglot=self.isdiglot)
         for p in self.pics.values():
@@ -426,6 +429,12 @@ class Piclist:
                 if p.sync(pic, suffix=suffix):
                     return
         self.pics[pic.key] = pic
+
+    def addpic(self, suffix="", **kw):
+        m = kw['anchor'].split(' ', 1)
+        kw['anchor'] = m[0] + suffix + " " + m[1]
+        p = Picture(**kw)
+        self.add_picture(p)
 
     def get(self, k, default):
         return self.pics.get(k, default)
@@ -746,6 +755,31 @@ class Piclist:
             if m[0][3:] == suffix and v.key not in merged:
                 self.remove(v)
         self.rmdups()
+
+    def merge_fields(self, other, fields, extend=False, removeOld=False):
+        anchored = {}
+        for k, v in self.items():
+            anchored.setdefault(v['anchor'], []).append(k)
+        for k, v in other.items():
+            best = None
+            for lk in anchored.get(v['anchor'], []):
+                lv = self.pics[lk]
+                if lv.get('src', '') == v.get('src', '') and lv.get('srcref', '') == v.get('srcref', ''):
+                    best = lk
+                elif best is None:
+                    best = lk
+            if best is not None:
+                anchored[v['anchor']].remove(best)
+                self.pics[best].update({f: v[f] for f in fields if f in v})
+                for a in ("scale", "mirror", "x-xetex"):
+                    if a in fields and a not in v and a in self.pics[best]:
+                        del self.pics[best][a]
+            elif extend:
+                self.add_picture(v.copy())
+        if removeOld:
+            for l in anchored.values():
+                for k in l:
+                    del self.pics[k]
 
     def read_books(self, bks, allbooks, random=False, cols=2, sync=False):
         def posn(pic):

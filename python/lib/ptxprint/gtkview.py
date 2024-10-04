@@ -2158,13 +2158,13 @@ class GtkViewModel(ViewModel):
         if self.diglotView is not None:
             pref = "L"
             digpics = PicInfo(self.diglotView)
-            digpics.threadUsfms(self.diglotView, "R", nosave=True)
-            self.picinfos.merge("L", "R", indat=digpics, mergeCaptions=True, bkanchors=True)
+            digpics.threadUsfms(self.diglotView, nosave=True)
+            self.picinfos.merge(digpics, "R", mergeCaptions=True, bkanchors=True)
         else:
             pref = ""
         newpics = PicInfo(self)
-        newpics.threadUsfms(self, pref, nosave=True)
-        self.picinfos.merge(pref, pref, indat=newpics, mergeCaptions=True, bkanchors=True, captionpre="")
+        newpics.threadUsfms(self, nosave=True)
+        self.picinfos.merge(newpics, pref, mergeCaptions=True, bkanchors=True, captionpre="")
         self.updatePicList()
         self.doStatus(_("Done! Picture Captions have been updated."))
 
@@ -5130,7 +5130,7 @@ class GtkViewModel(ViewModel):
             self.set("t_piccreditbox", crParams)
             self.set("l_piccredit", text)
             if self.get("c_plCreditApply2all"):
-                srcs = set(v.get('src', None) for v in self.picinfos.values())
+                srcs = set(v.get('src', None) for v in self.picinfos.get_pics())
                 self.picChecksView.setMultiCreditOverlays(srcs, text, crParams, self.get("t_plFilename"))
         elif response == Gtk.ResponseType.CANCEL:
             pass
@@ -5919,7 +5919,7 @@ class GtkViewModel(ViewModel):
         return ptregname
 
     def getPicsInConfig(self, booklist):
-        pics = [x["src"][:-5].lower() for x in self.picinfos.values() if x["anchor"][:3] in booklist]
+        pics = [x["src"][:-5].lower() for x in self.picinfos.get_pics() if x["anchor"][:3] in booklist]
         if len(pics) == 0:
             _errText = _("No illustrations were detected for this configuration.")
             self.doError("Request Error", secondary=_errText, \
