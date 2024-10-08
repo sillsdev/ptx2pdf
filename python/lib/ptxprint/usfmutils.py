@@ -330,7 +330,7 @@ class Usfm:
                 if pred(e, rlist):
                     a.append(sfm.Text(e, e.pos, a))
                 return a
-            e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
+            e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta, annotations=e.annotations)
             reduce(_g, [(x, rlist) for x in e], e_)
             if e.name not in removes and (pred(e, rlist) or (keepchap and e.name == "cl") or (len(a) == 0 and len(e_))):
                 a.append(e_)
@@ -357,7 +357,7 @@ class Usfm:
     def getsubbook(self, refrange, removes={}):
         # refrange.reify()
         d = self.doc[0]
-        res = sfm.Element(d.name, d.pos, d.args, None, meta=d.meta)
+        res = sfm.Element(d.name, d.pos, d.args, None, meta=d.meta, annotations=d.annotations)
         for c in d:
             if isinstance(c, sfm.Element) and c.name == "c":
                 break
@@ -883,5 +883,5 @@ class Module:
 
     def new_element(self, e, name, content):
         return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos, e)] \
-                                                        + content, meta=self.sheets[name])
+                                                        + content, meta=self.sheets[name], annotations=e.annotations)
 

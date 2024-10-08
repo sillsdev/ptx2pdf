@@ -20,6 +20,7 @@ parser.add_argument('-e','--error',default=sfm.ErrorLevel.Unrecoverable,action='
 parser.add_argument('-o','--outfile',help='Store output in a file')
 parser.add_argument('-l','--literal',action="store_true",help="pretty print the python data structure")
 parser.add_argument('-S','--string',action='store_true',help="output as str() not generate")
+parser.add_argument('-F','--footnotes',action='store_true',help="Don't canonicalise footnotes")
 args = parser.parse_args()
 
 sheet = usfm.default_stylesheet
@@ -34,7 +35,7 @@ else:
     outf = sys.stdout
 
 def makedoc(inf, sheets):
-    return list(usfm.parser(inf, stylesheet=sheets, canonicalise_footnotes=True, debug=True))
+    return list(usfm.parser(inf, stylesheet=sheets, canonicalise_footnotes=not args.footnotes, debug=True))
 
 def outdoc(doc):
     if args.literal:

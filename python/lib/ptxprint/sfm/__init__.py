@@ -101,7 +101,8 @@ class Element(list):
                  args=[],
                  parent=None,
                  meta={},
-                 content=[]):
+                 content=[],
+                 annotations=None):
         """
         The `name` of the marker, and optionally any marker argments in
         `args`. If this element is a child of another it `parent` should point
@@ -115,10 +116,10 @@ class Element(list):
         self.args = args
         self.parent = parent
         self.meta = meta
-        self.annotations = {}
+        self.annotations = annotations or {}
 
     def __repr__(self):
-        args = [repr(self.name)] \
+        args = [("+" if 'nested' in self.annotations else "") + repr(self.name)] \
             + (self.args and [f'args={self.args!r}']) \
             + (self and [f'content={super().__repr__()}'])
         return f"Element({', '.join(args)!s})"
