@@ -96,6 +96,7 @@ def setup_i18n(i18nlang):
     else:
         lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
     enc = "UTF-8"
+    logger.debug(f"Loading locale for {lang}.{enc}")
     if sys.platform.startswith('win'):
         from ctypes import cdll, windll
         from ctypes.util import find_msvcrt
