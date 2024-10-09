@@ -192,9 +192,10 @@
     \dimen255=0pt
     \edef\tc@ll{tc\the\tablec@l}%
     \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
+    \ifx\p@ram\relax \else \trace{t}{leftmargin of \tc@ll is \p@ram *\the\IndentUnit}\advance\dimen255 \p@ram\IndentUnit \fi
     \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
+    \trace{t}{Kern for start of \the\tablec@l, \the\dimen255, firstindent=\p@ram}% 
     \kern\dimen255
     \s@tfont{tc\the\tablec@l}{\tc@ll+\styst@k}%
     \global\advance\p@ranesting by 1
