@@ -438,16 +438,17 @@
       \parfillskip=0pt
       \ifRTL \let\n@xt=\rightskip \edef\l@drsl{r}\else
         \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
-        \let\n@xt=\leftskip \edef\l@drsr{r}%
+        \let\n@xt=\leftskip \edef\l@drsl{r}%
       \fi
     \else\ifx\the@lign\cell@c
       \parfillskip=0pt
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
-    \else
+     \else
       \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
-        \let\n@xt=\leftskip \parfillskip=0pt \edef\l@drsl{r}%
-      \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\ifTOCRTL\def\l@drsl{r}\else\def\l@drsr{r}\fi\fi
+        \let\n@xt=\leftskip \parfillskip=0pt \edef\l@drsr{r}%
+      \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\def\l@drsr{r}\fi
     \fi\fi
+    \trace{t}{r=\l@drsr, l=\l@drsl, \c@tprefix =\c@ttoc}%
     \advance\n@xt by 0pt plus 1fil
     \edef\mytmp{\c@tprefix leaders-tc\ifx\c@tprefix\c@ttoc \ifTOCRTL \l@drsr\else\l@drsl\fi\else\l@drsl\fi \the\@col}%
     %\skip1=\leftskip \leftskip=0pt
@@ -455,11 +456,12 @@
     \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders:\mytmp . leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     %\hskip\skip1
     \unhbox0
-    \edef\mytmp{\c@tprefix leaders-tc\ifx\c@tprefx\c@ttoc \ifTOCRTL\l@drsl\else \l@drsr\fi\else \l@drsr\fi \the\@col}%
+    \edef\mytmp{\c@tprefix leaders-tc\ifx\c@tprefix\c@ttoc \ifTOCRTL \l@drsl\else\l@drsr\fi\else\l@drsr\fi \the\@col}%
     \x@\ifcsname \mytmp\endcsname
       \trace{t}{Remove space for leaders}%
       \unskip\unkern \parfillskip=0pt \hskip\rightskip \rightskip=0pt
       \nobreak\csname \mytmp\endcsname\hfil\fi
+    \trace{t}{Final... \mytmp}%
     \ifRTL\endR\fi\par}%
   \wd0=\c@rrentcolwidth
   \box0}
