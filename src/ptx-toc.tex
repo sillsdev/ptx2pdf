@@ -193,9 +193,9 @@
     \d@ftoc{tc\the\t@ccount :fill}{}
     \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
     %\tracingassigns=1
-    \d@ftoc{leaders-tc\ifTOCRTL\else r\fi\the\t@ccount}{}
-    \d@ftoc{leaders-tc\ifTOCRTL r\fi\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
-    \trace{t}{Set leaders-tc\ifTOCRTL r\fi\the\t@ccount \space to leaders styled by ldrs+tc\ifRTL r\fi\the\t@ccount}%
+    %\d@ftoc{leaders-tc\ifTOCRTL\else r\fi\the\t@ccount}{}
+    %\d@ftoc{leaders-tc\ifTOCRTL r\fi\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
+    %\trace{t}{Set leaders-tc\ifTOCRTL r\fi\the\t@ccount \space to leaders styled by ldrs+tc\ifRTL r\fi\the\t@ccount}%
     %\tracingassigns=0
     \ifRTL\d@ftoc{tc\the\t@ccount :leftmargin}{0}
     \else\d@ftoc{tc\the\t@ccount :rightmargin}{0}\fi

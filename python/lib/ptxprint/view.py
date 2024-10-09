@@ -227,7 +227,9 @@ class ViewModel:
         components = {}
         if bks is None:
             bks = self.getBooks(files=True)
-        if len(bks) > 1:
+        if not len(bks):
+            return ""
+        elif len(bks) > 1:
             components['bks'] = "{}-{}".format(bks[0], bks[-1])
         elif '.' in bks[0]:
             components['bks'] = os.path.splitext(os.path.basename(bks[0]))[0]
