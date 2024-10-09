@@ -446,7 +446,7 @@
     \else
       \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip \parfillskip=0pt \edef\l@drsl{r}%
-      \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\def\l@drsl{r}\fi
+      \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\ifTOCRTL\def\l@drsl{r}\else\def\l@drsr{r}\fi\fi
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
     \edef\mytmp{\c@tprefix leaders-tc\ifx\c@tprefix\c@ttoc \ifTOCRTL \l@drsr\else\l@drsl\fi\else\l@drsl\fi \the\@col}%

@@ -632,14 +632,15 @@ class StyleEditorView(StyleEditor):
             controlk = v[3](False)
             newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
             oldval = self.getval(self.marker, otherkey)
-            newval = self._convertabs(newkey, oldval)
-            logger.debug(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
-            self.setval(self.marker, newkey, newval)
-            newlabel = self.stylediverts[controlk][2 if val else 1]
-            controlw = stylemap[controlk][1]
-            self.set(controlw, newlabel)
-            if otherkey in data:
-                super(self.__class__, self).setval(self.marker, otherkey, None)
+            if oldval is not None:
+                newval = self._convertabs(newkey, oldval)
+                logger.debug(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
+                self.setval(self.marker, newkey, newval)
+                newlabel = self.stylediverts[controlk][2 if val else 1]
+                controlw = stylemap[controlk][1]
+                self.set(controlw, newlabel)
+                if otherkey in data:
+                    super(self.__class__, self).setval(self.marker, otherkey, None)
             value = val
             # value = val if newv[3] is None else newv[3](val)
         elif v[3] is not None:
