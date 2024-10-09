@@ -26285,20 +26285,17 @@ file or the Changes.txt file as appropriate.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Create a ZIPped archive of all the files
+                                    <property name="tooltip-markup" translatable="yes">Create a ZIPped archive of all the files
 required to replicate this configuration.
 Useful for long-term archiving; but also
-used to access technical support.
+helpful when availing technical support.
 
-In order to keep the size of the file to a 
-minimum you are encouraged to turn 
+Keep the size to a minimum by turning
 off features (pictures?) that don't affect
 the issue being reported.
 
-Examine the contents of the ZIPped 
-archive file before e-mailing it to your
-organization's technical support team:
-ptxprint_support@&lt;your.org's.address&gt;</property>
+Email the ZIPped archive file to:
+&lt;a href="mailto:ptxprint_support@sil.org"&gt;ptxprint_support@sil.org&lt;/a&gt;</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">16</property>
@@ -26522,13 +26519,23 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel" id="l_reportBugs1">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-markup" translatable="yes">Before contacting support, make sure that
+it is possible to replicate the issue. Then use
+the "Create Archive..." button to make a ZIP
+file which needs to be emailed to:
+&lt;a href="mailto:ptxprint_support@sil.org"&gt;ptxprint_support@sil.org&lt;/a&gt;</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes"> Technical Support:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">11</property>
+                                    <property name="width">3</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>

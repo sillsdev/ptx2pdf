@@ -3938,7 +3938,7 @@ class GtkViewModel(ViewModel):
                 s += "\n{}: {}".format(type(e), str(e))
                 self.doError(s, copy2clip=True)
         else:
-            btn_createZipArchive.set_tooltip_text("No Archive File Created")
+            self.doStatus(_("No Archive File Created"))
 
     def onSelectModuleClicked(self, btn):
         prjdir = self.project.path
