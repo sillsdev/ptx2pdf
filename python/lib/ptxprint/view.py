@@ -669,6 +669,7 @@ class ViewModel:
             res = self.usfms.get(bk)
         except SyntaxError as e:
             self.doError(_("Syntax Error Warning"), secondary=str(e), show=not self.get("c_quickRun"))
+            logger.debug(f"Syntax Error in the context of stylesheets: {self.usfms.sheets.files}")
             return None
         return res
 

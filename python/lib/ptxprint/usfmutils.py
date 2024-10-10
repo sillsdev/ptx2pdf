@@ -44,6 +44,7 @@ class Sheets(dict):
     def __init__(self, init=[], base=None):
         if base != "":
             self.update(deepcopy(base) if base is not None else deepcopy(self.default))
+        self.files = []
         if init is None or not len(init):
             return
         for s in init:
@@ -55,6 +56,7 @@ class Sheets(dict):
         if os.path.exists(sf):
             with open(sf, encoding="utf-8", errors="ignore") as s:
                 self.appendfh(s, nodefaults=nodefaults)
+            self.files.append(sf)
 
     def appendfh(self, s, nodefaults=False):
         sp = style.parse(s, fields = style.Marker({})) if not nodefaults else style.parse(s)

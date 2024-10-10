@@ -136,6 +136,7 @@
   \ifx\toc@C\empty \else \let\n@xt\maket@cline \fi
   \n@xt}
 
+\def\tcb@se#1{cat:toc|tc#1\ifdiglot\c@rrdstat\fi}%
 \newif\ifTOCRTL
 \def\fnname{doTOCline}
 \newcount\t@ccount %unique count, as there are \globals around.
@@ -155,8 +156,8 @@
     \fi
     \trace{t}{A: \t@mpd \space \t@mpa}%
     \csname \t@mpd\endcsname \t@mpa
-    \ifcsname cat:toc|tc\the\t@ccount :fill\endcsname\else\d@ftoc{tc\the\t@ccount :fill}{\hfill}\fi
-    \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
+    \ifcsname \tcb@se{\the\t@ccount}:fill\endcsname\else\d@ftoc{\the\t@ccount}{fill}{\hfill}\fi
+    \ifcsname \tcb@se{\the\t@ccount}:verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
     \global\advance\t@ccount by 1
   \fi
   \ifx\t@mpb\empty\else
@@ -168,8 +169,8 @@
     \fi
     \trace{t}{B: \t@mpd \space \t@mpb}%
     \csname \t@mpd\endcsname \t@mpb
-    \ifcsname cat:toc|tc\the\t@ccount :fill\endcsname\else\d@ftoc{tc\the\t@ccount :fill}{\hfill}\fi
-    \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
+    \ifcsname \tcb@se{\the\t@ccount}:fill\endcsname\else\d@ftoc{\the\t@ccount}{fill}{\hfill}\fi
+    \ifcsname \tcb@se{\the\t@ccount}:verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
     \global\advance\t@ccount by 1
   \fi
   \ifx\t@mpc\empty\else
@@ -180,27 +181,20 @@
     \fi
     \trace{t}{C: \t@mpd \space \t@mpc}
     \csname \t@mpd\endcsname \t@mpc
-    \ifcsname cat:toc|tc\the\t@ccount :fill\endcsname\else\d@ftoc{tc\the\t@ccount :fill}{\hfill}\fi
-    \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
+    \ifcsname \tcb@se{\the\t@ccount}:fill\endcsname\else\d@ftoc{\the\t@ccount}{fill}{\hfill}\fi
+    \ifcsname \tcb@se{\the\t@ccount}:verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
     \global\advance\t@ccount by 1
   \fi
-  \edef\t@mpd{tc\ifRTL\else r\fi\the\t@ccount}
+  \edef\t@mpd{tcr\the\t@ccount}
   \trace{t}{D: \t@mpd \space #5}%
   \ifcsname l@drs\endcsname
-    \trace{t}{Refactor for last column \the\t@ccount}%
+    \trace{t}{Refactor for last column \the\t@ccount, \tcb@se{\the\t@ccount}}%
     \deftocalign{\the\t@ccount}{r}
-    \d@ftoc{tc\the\t@ccount :fill}{}
-    \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
-    %\tracingassigns=1
-    %\d@ftoc{leaders-tc\ifTOCRTL\else r\fi\the\t@ccount}{}
-    %\d@ftoc{leaders-tc\ifTOCRTL r\fi\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
-    %\trace{t}{Set leaders-tc\ifTOCRTL r\fi\the\t@ccount \space to leaders styled by ldrs+tc\ifRTL r\fi\the\t@ccount}%
-    %\tracingassigns=0
-    \ifRTL\d@ftoc{tc\the\t@ccount :leftmargin}{0}
-    \else\d@ftoc{tc\the\t@ccount :rightmargin}{0}\fi
+    \x@\gdef\csname cat:toc|tc\the\t@ccount :fill\endcsname{}
+    \ifcsname \tcb@se{tc\the\t@ccount} :verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
   \fi
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
-  \trace{t}{\noexpand\tc\ifRTL\else r\fi\the\t@ccount \space \t@mpd}%
+  \trace{t}{\noexpand\tcr\the\t@ccount \space \t@mpd}%
   \gdef\tablecategory{}
 }
 
@@ -209,8 +203,8 @@
 \let\tocf@@t=\empty
 \let\tocaft@r=\empty
 \let\tocb@fore=\empty
-\def\d@ftoc#1#2{\should@xist{cat:toc|}{#1}\expandafter\xdef\csname cat:toc|#1\endcsname{#2}}
-\def\d@fiftoc#1#2{\should@xist{cat:toc|}{#1}\ifcsname cat:toc|#1\endcsname\else\expandafter\xdef\csname cat:toc|#1\endcsname{#2}\fi}
+\def\d@ftoc#1#2#3{\should@xist{cat:toc|}{#1\ifdiglot\c@rrdstat\fi}\expandafter\xdef\csname \tcb@se{#1}:#2\endcsname{#3}}
+\def\d@ftocx#1#2{\should@xist{cat:toc|}{#1\ifdiglot\c@rrdstat\fi}\expandafter\xdef\csname cat:toc|#1\ifdiglot\c@rrdstat\fi\endcsname{#2}}
 \def\defTOC#1#2{%
   \ifRTL\x@\def\csname ms:ztoc=#1\endcsname{\TOCRTLtrue\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}%
   \else\x@\def\csname ms:ztoc=#1\endcsname{\TOCRTLfalse\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}%
@@ -258,31 +252,17 @@
   \ifdim\dimen0>1sp \dimen1=1pt \divide\dimen1 by \dimen0\else\dimen0=0pt \fi
   \edef\rm@{\strip@pt{\dimen1}}%
   \global\setbox\l@drsbox\hbox{\s@tfont{ldrs}{ldrs}\l@drscts}%
-  \t@ccount=1
+  \t@ccount=0
   \loop
-    \ifcsname tocalign\the\t@ccount\endcsname
-      \x@\let\x@\the@lign\csname tocalign\the\t@ccount\endcsname
-    \else
-      \def\the@lign{}
-    \fi
-    \d@ftoc{tc\the\t@ccount :rightmargin}{\rm@}
-    \ifnum\t@ccount>1 \d@ftoc{tc\the\t@ccount :leftmargin}{\rm@}\fi
-    \getp@ram{justification}{cat:toc|tc\the@lign\the\t@ccount\ifdiglot \c@rrdstat\fi}{cat:toc|tc\the\t@ccount+cat:toc|tr}%
-    \trace{t}{Processing leaders for \the\t@ccount, cat:toc|tc\the@lign\the\t@ccount \space with alignment \p@ram}%
-    \ifnum \ifx\p@ram\r@ght 1\else\ifx\p@ram\c@nter 1\else 0\fi\fi =1
-      %\d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\global\setbox\l@drsbox\hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount}\l@drscts}\rightskip=0pt \leftskip=0pt \relax\l@drs}
-      \trace{t}{Setting leaders-tc\ifRTL r\fi\the\t@ccount, with RTL\ifRTL true\else false\fi\space and align: '\the@lign'}%
-      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
-    \fi
-    \ifx\p@ram\r@ght \else
-      \trace{t}{Setting leaders-tc\ifRTL\else r\fi\the\t@ccount, with RTL\ifRTL true\else false\fi\space and align: '\the@lign'}%
-      %\d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\rightskip=0pt \leftskip=0pt %\global\setbox\l@drsbox\hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL\else r\fi\the\t@ccount}\l@drscts}\l@drs}
-      %\tracingassigns=1
-      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
-      %\tracingassigns=0
-    \fi
-    \d@ftoc{tc\the\t@ccount :fill}{\ifx\l@drscts\relax\l@drs\else\xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfil\fi}
     \advance\t@ccount by 1
+    \d@ftoc{\the\t@ccount}{rightmargin}{\rm@}
+    \ifnum\t@ccount>1 \d@ftoc{\the\t@ccount}{leftmargin}{\rm@}\fi
+    \trace{t}{Setting leaders-tc\the\t@ccount}%
+%    \d@ftocx{leaders-tcr\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tcr\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
+    \d@ftocx{leaders-tc\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
+%    \d@ftocx{leaders-tcc\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tcc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
+    \trace{t}{Filling \tcb@se{\the\t@ccount} with leaders}%
+    \d@ftoc{\the\t@ccount}{fill}{\ifx\l@drscts\relax\l@drs\else\xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfil\fi}
   \ifnum\t@ccount<5\repeat
 }
 \def\deftocalign#1#2{\x@\def\csname tocalign#1\endcsname{#2}}

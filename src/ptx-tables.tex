@@ -433,7 +433,7 @@
     \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
-    \trace{t}{Pre(\c@tprefix |\tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    \trace{t}{Pre(\c@tprefix \tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \edef\l@drsl{}\edef\l@drsr{}%
     \ifx\the@lign\cell@r
       \parfillskip=0pt
@@ -451,13 +451,13 @@
     \fi\fi
     \trace{t}{r=\l@drsr, l=\l@drsl, \c@tprefix =\c@ttoc}%
     \advance\n@xt by 0pt plus 1fil
-    \edef\mytmp{\c@tprefix leaders-tc\ifx\c@tprefix\c@ttoc \ifTOCRTL \l@drsr\else\l@drsl\fi\else\l@drsl\fi \the\@col}%
+    \edef\mytmp{\c@tprefix leaders-tc\l@drsr\the\@col}%
     %\skip1=\leftskip \leftskip=0pt
     \ifcsname \mytmp\endcsname \nobreak\csname \mytmp\endcsname\hfil\fi%
     \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders:\mytmp . leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     %\hskip\skip1
     \unhbox0
-    \edef\mytmp{\c@tprefix leaders-tc\ifx\c@tprefix\c@ttoc \ifTOCRTL \l@drsl\else\l@drsr\fi\else\l@drsr\fi \the\@col}%
+    \edef\mytmp{\c@tprefix leaders-tc\l@drsl\the\@col}%
     \x@\ifcsname \mytmp\endcsname
       \trace{t}{Remove space for leaders}%
       \unskip\unkern \parfillskip=0pt \hskip\rightskip \rightskip=0pt
