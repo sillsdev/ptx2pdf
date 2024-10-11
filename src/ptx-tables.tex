@@ -452,15 +452,15 @@
     \trace{t}{r=\l@drsr, l=\l@drsl, \c@tprefix =\c@ttoc}%
     \advance\n@xt by 0pt plus 1fil
     \edef\mytmp{\c@tprefix leaders-tc\l@drsr\the\@col}%
-    %\skip1=\leftskip \leftskip=0pt
+    \skip1=\leftskip \leftskip=0pt      % leftskip to come after leaders
     \ifcsname \mytmp\endcsname \nobreak\csname \mytmp\endcsname\hfil\fi%
     \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders:\mytmp . leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
-    %\hskip\skip1
+    %\hskip\skip1   % we already added that to the contents of the cell
     \unhbox0
     \edef\mytmp{\c@tprefix leaders-tc\l@drsl\the\@col}%
     \x@\ifcsname \mytmp\endcsname
       \trace{t}{Remove space for leaders}%
-      \unskip\unkern \parfillskip=0pt \hskip\rightskip \rightskip=0pt
+      \unskip\unkern\unskip \parfillskip=0pt \hskip\rightskip \rightskip=0pt
       \nobreak\csname \mytmp\endcsname\hfil\fi
     \trace{t}{Final... \mytmp}%
     \ifRTL\endR\fi\par}%

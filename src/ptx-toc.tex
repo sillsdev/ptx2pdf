@@ -177,25 +177,25 @@
     \ifcsname tocalign\the\t@ccount\endcsname
       \edef\t@mpd{tc\csname tocalign\the\t@ccount\endcsname\the\t@ccount}%
     \else
-      \edef\t@mpd{tc\the\t@ccount}
+      \edef\t@mpd{tc\the\t@ccount}%
     \fi
-    \trace{t}{C: \t@mpd \space \t@mpc}
+    \trace{t}{C: \t@mpd \space \t@mpc}%
     \csname \t@mpd\endcsname \t@mpc
     \ifcsname \tcb@se{\the\t@ccount}:fill\endcsname\else\d@ftoc{\the\t@ccount}{fill}{\hfill}\fi
     \ifcsname \tcb@se{\the\t@ccount}:verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
     \global\advance\t@ccount by 1
   \fi
-  \edef\t@mpd{tcr\the\t@ccount}
+  \edef\t@mpd{tcr\the\t@ccount}%
   \trace{t}{D: \t@mpd \space #5}%
   \ifcsname l@drs\endcsname
     \trace{t}{Refactor for last column \the\t@ccount, \tcb@se{\the\t@ccount}}%
-    \deftocalign{\the\t@ccount}{r}
-    \x@\gdef\csname cat:toc|tc\the\t@ccount :fill\endcsname{}
+    \deftocalign{\the\t@ccount}{r}%
+    \x@\gdef\csname cat:toc|tc\the\t@ccount :fill\endcsname{\hskip 0pt}%
     \ifcsname \tcb@se{tc\the\t@ccount} :verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
   \fi
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
   \trace{t}{\noexpand\tcr\the\t@ccount \space \t@mpd}%
-  \gdef\tablecategory{}
+  \gdef\tablecategory{}%
 }
 
 \addtoeveryparhooks{\checkfort@c}
