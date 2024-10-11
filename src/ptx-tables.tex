@@ -465,7 +465,7 @@
     \edef\mytmp{\c@tprefix leaders-tc\l@drsl\the\@col}%
     \x@\ifcsname \mytmp\endcsname
       \trace{t}{Remove space for leaders}%
-      \unskip\unkern\unskip \parfillskip=0pt% \hskip\rightskip \rightskip=0pt
+      \parfillskip=0pt% \hskip\rightskip \rightskip=0pt
       \nobreak\csname \mytmp\endcsname\hfil\fi
     \trace{t}{Final... \mytmp}%
     \ifRTL\endR\fi\par\unskip\unskip}% remove parfillskip and rightskip
