@@ -426,7 +426,7 @@
     \ifcsname span-\the\@row-\the\@col\endcsname \s@tspansize\fi
     \everypar={}\resetp@rstyle\noindent
     \leftskip=0pt\rightskip=0pt
-    %\ifRTL\dimen2=0pt \beginR\fi
+    \ifRTL\dimen2=0pt \beginR\fi
     %\edef\tc@ll{tc\the\@col}%
     %\getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     %\ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi

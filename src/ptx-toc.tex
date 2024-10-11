@@ -262,7 +262,7 @@
     \d@ftocx{leaders-tc\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
 %    \d@ftocx{leaders-tcc\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tcc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
     \trace{t}{Filling \tcb@se{\the\t@ccount} with leaders}%
-    \d@ftoc{\the\t@ccount}{fill}{\ifx\l@drscts\relax\l@drs\else\xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfil\fi}
+    \d@ftoc{\the\t@ccount}{fill}{\ifx\l@drscts\relax\l@drs\else\xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
   \ifnum\t@ccount<5\repeat
 }
 \def\deftocalign#1#2{\x@\def\csname tocalign#1\endcsname{#2}}
