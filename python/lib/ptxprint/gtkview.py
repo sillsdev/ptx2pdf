@@ -40,6 +40,7 @@ from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
 from ptxprint.hyphen import Hyphenation
 from ptxprint.accelerate import onTextEditKeypress
+from ptxprint.pdf_viewer import PDFViewer
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -813,6 +814,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
         self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
+        self.builder.get_object("scr_previewPDF").set_visible(False)
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
@@ -947,7 +949,8 @@ class GtkViewModel(ViewModel):
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
 
-        self.mw.resize(830, 594)
+        # self.mw.resize(830, 594)
+        self.mw.resize(1005, 665)
         self.mw.show_all()
         self.set_uiChangeLevel(self.uilevel)
         GObject.timeout_add(1000, self.monitor)
@@ -6176,3 +6179,21 @@ Thank you,
             self.set("c_outerGutter", True)
             if float(self.get("s_pagegutter",0)) < 30:
                 self.set("s_pagegutter", 40)
+
+    def onPreviewPDFclicked(self, widget):
+        previewON = self.builder.get_object("c_previewPDF").get_active()
+        w = self.builder.get_object("scr_previewPDF")
+        w.set_visible(previewON)
+        window = self.builder.get_object("ptxprint")
+        if previewON:
+            window.resize(1500, 800) # Resize window to a larger size when preview is enabled
+            
+            # Check if pdf_viewer exists, otherwise create it
+            if not hasattr(self, 'pdf_viewer'):
+                self.pdf_viewer = PDFViewer(self.builder)
+            # FIXME! - we need to get the name of the file from runjob (or better still, call this from there)
+            pdf_path = "C:\My Paratext 9 Projects\WSGlatin\local\ptxprint\WSGlatin_Diglot_HEB_ptxp.pdf"
+            # Load the PDF in the viewer
+            self.pdf_viewer.load_pdf(pdf_path)
+        else:
+            window.resize(940, 650)  # Resize window smaller when preview is disabled
