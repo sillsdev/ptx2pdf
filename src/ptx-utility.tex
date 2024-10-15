@@ -170,3 +170,25 @@
 \x@\xdef\csname d@code:-10000\endcsname{eject}
 \x@\xdef\csname d@code:-20000\endcsname{supereject}
 \x@\xdef\csname d@code:0\endcsname{ - }
+
+% Custom marks
+\xdef\m@rksm@x{0}
+\newtoks\usedm@rks
+\def\newm@rknum#1{%define a new m@rknum#1 which gets set as the next unused marks  register (assuming all marksN are registered with this function.
+  {\count255=\numexpr \m@rksm@x+1\relax%
+  \x@\xdef\x@\m@rksm@x{\the\count255}%
+  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}% Don't change this witout a lot of search and replace!
+  \trace{ma}{newm@rknum #1 -> \m@rksm@x}%
+}
+\def\addnewm@rk#1{\x@\usedm@rks\x@{\the\usedm@rks \\{#1}}\trace{ma}{addnewm@rk #1}}
+\def\getm@rknum#1{%retrieve or get a new m@rknum#1
+  \x@\let\x@\m@rknum\csname m@rknum#1\endcsname%
+  \ifx\m@rknum\relax%
+    \newm@rknum{#1}\let\m@rknum\m@rksm@x%
+  \fi%
+  \trace{ma}{getm@rknum #1 -> \m@rknum}%
+}
+\def\savem@rks{\trace{ma}{Saving marks: \the\usedm@rks}\let\\=\save@m@rk \the\usedm@rks}
+\def\save@m@rk#1{\getm@rknum{#1}\x@\xdef\csname customtopmark-#1\endcsname{\firstmarks\m@rknum}\x@\xdef\csname custombotmark-#1\endcsname{\botmarks\m@rknum}\trace{ma}{top=\csname customtopmark-#1\endcsname, bot=\csname custombotmark-#1\endcsname}}
+\def\unsavem@rks{\trace{ma}{Unsaving marks: \the\usedm@rks}\let\\=\unsave@m@rk \the\usedm@rks}
+\def\unsave@m@rk#1{\getm@rknum{#1}\ifcsname customtopmark-#1\endcsname\marks\m@rknum{\csname customtopmark-#1\endcsname}\else\trace{ma}{-skipping customtopmark-#1 (undefined)-}\fi\ifcsname custombotmark-#1\endcsname\marks\m@rknum{\csname custombotmark-#1\endcsname}\fi}

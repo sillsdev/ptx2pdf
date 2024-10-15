@@ -32,6 +32,7 @@
 
 \newwrite\f@ntl@g
 \newif\ifLogFonts
+\newif\ifb@ckgroundelsewhere \b@ckgroundelsewherefalse
 \newtoks\end@box@run
 \newtoks\start@box@run
 \newdimen\minfontsize \minfontsize=4pt
@@ -224,11 +225,15 @@
     \b@xedstylefalse % do we box the text?
     \ifAlwaysCheckAttributes\b@xedstyletrue\fi % Linking attributes are possibly universally applicable.
     \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-    \ifx\@ttriblist\empty\else\b@xedstyletrue\fi 
+    \ifx\@ttriblist\empty\else
+      %TODO: Check *which* attributes are expected (and if any of them box)
+      \b@xedstyletrue\fi 
     \getmcp@ram{raise}%
     \ifx\p@ram\relax\else \b@xedstyletrue\fi
     \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
-    \ifb@xedstyle\setbox0=\hbox\bgroup\fi\xtr@ 
+    \ifb@xedstyle
+      \trace{sa}{Starting box for boxed style \newch@rstyle}%
+      \setbox0=\hbox\bgroup\fi\xtr@ 
     %WIP \ifversion{3}{\setbox0=\vbox\bgroup\hsize=\maxdimen\everypar={}\let\par\endgraf}{}
     %fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
@@ -238,16 +243,23 @@
 }
 %-cchar_startcharstyle
 \def\ch@ckb@xedstyle#1#2{%Check parameters that need a style to be boxed and reprocessed
-    \getp@ram{background}{#1}{#2}%
-    \def\xtr@{}% Any extra code to run at the start of the group
-    \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
+    \def\@@w##1{\trace{sa}{b@xing #1(##1)}}%
+    \ifb@ckgroundelsewhere
+      \b@ckgroundelsewherefalse
+    \else
+      \getp@ram{background}{#1}{#2}%
+      \def\xtr@{}% Any extra code to run at the start of the group
+      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\@@w{backgroud}\fi\fi
+    \fi
     \getp@ram{underline}{#1}{#2}%
-    \ifx\p@ram\tru@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
-    \ifx\p@ram\tw@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \ifx\p@ram\tru@\b@xedstyletrue\@@w{underline}\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \ifx\p@ram\tw@\b@xedstyletrue\@@w{underline}\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
     \getp@ram{outline}{#1}{#2}%
-    \ifx\p@ram\relax\else\b@xedstyletrue\fi
+    \ifx\p@ram\relax\else\b@xedstyletrue\@@w{outline}\fi
     \getp@ram{shadow}{#1}{#2}%
-    \ifx\p@ram\relax\else\b@xedstyletrue\fi
+    \ifx\p@ram\relax\else\b@xedstyletrue\@@w{shadow}\fi
+    \getmcp@ram{b@xattr}%
+    \ifx\p@ram\relax\else\b@xedstyletrue\@@w{b@xattr}\fi
 }
 \newbox\ulb@x
 \newif\ifUnderlineSpaces\UnderlineSpacestrue
@@ -414,9 +426,13 @@
   \getp@ram{raise}{#1}{#2}%
   \global\let\char@raise\p@ram
   \ifx\p@ram\relax\else\ifdim\char@raise=0pt \else \b@xedstyletrue\fi\fi
-     \getp@ram{background}{#1}{#2}%
-     \global\let\char@background\p@ram
-     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
+     \ifb@ckgroundelsewhere\global\let\char@background\relax
+      \b@ckgroundelsewherefalse
+     \else
+       \getp@ram{background}{#1}{#2}%
+       \global\let\char@background\p@ram
+       \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
+     \fi
      \getp@ram{underline}{#1}{#2}%
      \ifx\p@ram\tru@\b@xedstyletrue\global\let\ulp@ram\p@ram
        \global\let\ulcp@ram\relax
@@ -550,7 +566,7 @@
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
     \t@gend{Span}%
-    \trace{sa}{ending charstyle \newch@rstyle}%
+    \trace{sa}{ending charstyle \newch@rstyle\space(\mcstack)}%
     \mcpop
     \trace{sa}{end char style, stack now: \mcstack (\styst@kfirst)}%
     \ifp@pping\else\setwh@tvrstyle\fi
