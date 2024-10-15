@@ -782,6 +782,7 @@ class GtkViewModel(ViewModel):
         logger.debug("Create PicList")
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
+        self.pdf_viewer = PDFViewer(self, self.builder.get_object("bx_previewPDF"))
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
@@ -6187,13 +6188,8 @@ Thank you,
         window = self.builder.get_object("ptxprint")
         if previewON:
             window.resize(1500, 800) # Resize window to a larger size when preview is enabled
-            
             # Check if pdf_viewer exists, otherwise create it
             if not hasattr(self, 'pdf_viewer'):
                 self.pdf_viewer = PDFViewer(self.builder)
-            # FIXME! - we need to get the name of the file from runjob (or better still, call this from there)
-            pdf_path = "C:\My Paratext 9 Projects\WSGlatin\local\ptxprint\WSGlatin_Diglot_HEB_ptxp.pdf"
-            # Load the PDF in the viewer
-            self.pdf_viewer.load_pdf(pdf_path)
         else:
             window.resize(940, 650)  # Resize window smaller when preview is disabled

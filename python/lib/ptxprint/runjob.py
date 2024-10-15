@@ -452,10 +452,14 @@ class RunJob:
                     startname = self.coverfile or pdfname
                 else:
                     startname = pdfname
-                if sys.platform == "win32":
-                    os.startfile(startname)
-                elif sys.platform == "linux":
-                    subprocess.call(('xdg-open', startname))
+                if not self.noview and self.printer.get("c_previewPDF"):
+                    # load PDF
+                    self.printer.pdf_viewer.load_pdf(pdfname)
+                else:
+                    if sys.platform == "win32":
+                        os.startfile(startname)
+                    elif sys.platform == "linux":
+                        subprocess.call(('xdg-open', startname))
 
             fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
             logger.debug(f"Testing log file {fname}")

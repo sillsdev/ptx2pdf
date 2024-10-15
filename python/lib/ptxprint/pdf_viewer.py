@@ -7,20 +7,17 @@ from cairo import ImageSurface, Context
 from pathlib import Path
 
 class PDFViewer:
-    def __init__(self, builder):
+    def __init__(self, model, widget):
         # Get the scrolled window from the builder
-        self.scrolled_window = builder.get_object("scr_previewPDF")
-
-        # Check if vbox already exists, if not create it
-        if not hasattr(self, 'vbox'):
-            self.vbox = Gtk.VBox(spacing=10)
-            self.scrolled_window.add_with_viewport(self.vbox)
+        self.vbox = widget
+        self.model = model
 
     def load_pdf(self, pdf_path):
         # Clear any existing children from vbox
         for child in self.vbox.get_children():
             self.vbox.remove(child)
-
+        self.vbox.hide()
+        
         # Convert the Windows path to a valid URI using pathlib
         file_uri = Path(pdf_path).as_uri()
 
@@ -38,7 +35,7 @@ class PDFViewer:
             self.vbox.pack_start(page_widget, False, False, 5)
 
         # Show all widgets in the scrolled window
-        self.scrolled_window.show_all()
+        self.vbox.show_all()
 
     def render_page(self, page):
         # Get page size
