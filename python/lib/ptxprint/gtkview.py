@@ -6183,37 +6183,31 @@ Thank you,
 
     def onPreviewPDFclicked(self, widget):
         previewON = self.get("c_previewPDF", False)
-        wids = ["scr_previewPDF", "bx_pdfControls", ]
-        for wid in wids:
-            self.builder.get_object(wid).set_visible(previewON)
-            # w.set_visible(previewON)
-        window = self.builder.get_object("ptxprint")
-        if previewON:
-            window.resize(1500, 685) # Resize window to a larger size when preview is enabled
-        else:
-            window.resize(940, 650)  # Resize window smaller when preview is disabled
-            
+        self._set_widget_visibility(["scr_previewPDF", "bx_pdfControls"], previewON)
+        self._resize_window(previewON, large_size=(1500, 685), small_size=(940, 650))
+        self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(1)
+
     def onBookViewClicked(self, widget):
         bkviewON = self.get("c_showSpread", True)
-        window = self.builder.get_object("ptxprint")
-        if bkviewON:
-            window.resize(1900, 685) # Resize window to a larger size when preview is enabled
-            s = self.builder.get_object("s_pgNum")
-            s.get_adjustment().set_step_increment(2)
-        else:
-            window.resize(1450, 685)  # Resize window smaller when preview is disabled
-            s = self.builder.get_object("s_pgNum")
-            s.get_adjustment().set_step_increment(1)
+        self._resize_window(bkviewON, large_size=(1900, 685), small_size=(1450, 685))
+        step_increment = 2 if bkviewON else 1
+        self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
         self.onPgNumChanged(None)
-        
+
+    # Helper function to set visibility of multiple widgets
+    def _set_widget_visibility(self, widget_ids, visible):
+        for wid in widget_ids:
+            self.builder.get_object(wid).set_visible(visible)
+
+    # Helper function to resize the window
+    def _resize_window(self, condition, large_size, small_size):
+        window = self.builder.get_object("ptxprint")
+        window.resize(*large_size if condition else small_size)
+
     def onPgNumChanged(self, widget):
-        if self.pdf_viewer.pages == 0:
-            return
-        pg = int(self.get("s_pgNum", 1))
-        bkview = self.get("c_showSpread", True)
-        rtl = self.get("c_RTLbookBinding", False)
         pages = self.pdf_viewer.pages
-        if pg > pages:
-            pg = pages
+        if not pages:
+            return
+        pg = min(int(self.get("s_pgNum", 1)), pages)
         self.set("s_pgNum", pg)
-        self.pdf_viewer.show_pdf(pg, bkview, rtl)
+        self.pdf_viewer.show_pdf(pg, self.get("c_showSpread", True), self.get("c_RTLbookBinding", False))
