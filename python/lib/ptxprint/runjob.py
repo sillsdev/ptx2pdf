@@ -455,6 +455,9 @@ class RunJob:
                 if not self.noview and self.printer.get("c_previewPDF"):
                     # load PDF
                     self.printer.pdf_viewer.load_pdf(pdfname)
+                    self.printer.pdf_viewer.show_pdf(int(self.printer.get("s_pgNum", 1)), 
+                                                    bkview = self.printer.get("c_showSpread", True),
+                                                    rtl    = self.printer.get("c_RTLbookBinding", False))
                 else:
                     if sys.platform == "win32":
                         os.startfile(startname)

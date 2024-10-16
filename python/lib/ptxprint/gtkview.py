@@ -6182,14 +6182,38 @@ Thank you,
                 self.set("s_pagegutter", 40)
 
     def onPreviewPDFclicked(self, widget):
-        previewON = self.builder.get_object("c_previewPDF").get_active()
-        w = self.builder.get_object("scr_previewPDF")
-        w.set_visible(previewON)
+        previewON = self.get("c_previewPDF", False)
+        wids = ["scr_previewPDF", "bx_pdfControls", ]
+        for wid in wids:
+            self.builder.get_object(wid).set_visible(previewON)
+            # w.set_visible(previewON)
         window = self.builder.get_object("ptxprint")
         if previewON:
-            window.resize(1500, 800) # Resize window to a larger size when preview is enabled
-            # Check if pdf_viewer exists, otherwise create it
-            if not hasattr(self, 'pdf_viewer'):
-                self.pdf_viewer = PDFViewer(self.builder)
+            window.resize(1500, 685) # Resize window to a larger size when preview is enabled
         else:
             window.resize(940, 650)  # Resize window smaller when preview is disabled
+            
+    def onBookViewClicked(self, widget):
+        bkviewON = self.get("c_showSpread", True)
+        window = self.builder.get_object("ptxprint")
+        if bkviewON:
+            window.resize(1900, 685) # Resize window to a larger size when preview is enabled
+            s = self.builder.get_object("s_pgNum")
+            s.get_adjustment().set_step_increment(2)
+        else:
+            window.resize(1450, 685)  # Resize window smaller when preview is disabled
+            s = self.builder.get_object("s_pgNum")
+            s.get_adjustment().set_step_increment(1)
+        self.onPgNumChanged(None)
+        
+    def onPgNumChanged(self, widget):
+        if self.pdf_viewer.pages == 0:
+            return
+        pg = int(self.get("s_pgNum", 1))
+        bkview = self.get("c_showSpread", True)
+        rtl = self.get("c_RTLbookBinding", False)
+        pages = self.pdf_viewer.pages
+        if pg > pages:
+            pg = pages
+        self.set("s_pgNum", pg)
+        self.pdf_viewer.show_pdf(pg, bkview, rtl)
