@@ -459,7 +459,7 @@
   \ifVisTraceExtra\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi
   \traceNum{D}{removed penalty \the\count255, replacing with \the\galleypenalty. lnt:\the\tmpcount (\decod@lastnode{\tmpcount})}%
   \ifvoid\galleyexc@ss\else
-    \ifnum\galleypenalty=0\else\penalty\galleypenalty\fi
+    \penalty\galleypenalty
     \unvbox\galleyexc@ss
   \fi
   \global\setbox\galleyexc@ss=\box\voidb@x\global\setbox\galley=\box\voidb@x
@@ -857,12 +857,13 @@
       \fi
     \fi
   \fi
-  \setbox255\vbox{\unvbox255}%
-  \ifdim\@ftergalleyskip=0pt \else \ifdim\dimexpr \trialheight-\ht255-\dp255 - \@ftergalleyskip\relax >0pt
-    \trace{D}{reinserting @ftergalleyskip (\the\@ftergalleyskip) after trial}%
-    \setbox255{\unvbox255\vskip\@ftergalleyskip}%
-  \else
-    \trace{D}{Not reinserting @ftergalleyskip (\the\@ftergalleyskip), as there's no space for it}%
+  \ifdim\@ftergalleyskip=0pt \else 
+    \setbox255\vbox{\unvbox255}%
+    \ifdim\dimexpr \trialheight-\ht255-\dp255 - \@ftergalleyskip\relax >0pt
+      \trace{D}{reinserting @ftergalleyskip (\the\@ftergalleyskip) after trial}%
+      \setbox255{\unvbox255\vskip\@ftergalleyskip}%
+    \else
+      \trace{D}{Not reinserting @ftergalleyskip (\the\@ftergalleyskip), as there's no space for it}%
   \fi\fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount\relax
     %{\setbox0\vbox{\pagediscards}\showbox0}%
@@ -879,7 +880,6 @@
     \ifx\empty\tmp\else
       \ifx\tmp\t@tle\else
         \aftergroup\temptrue% Pass out true value
-        \global\temptrue
       \fi
     \fi
     }\iftemp
