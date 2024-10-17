@@ -1521,10 +1521,10 @@
   \else\ifdim\vsize <\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
   \fi
   \ifdim\ht\colA=0pt\ifdim\ht\colB=0pt\ifdim\ht\s@vedpage>\availht
-    \message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near \c@rref}%
+    \message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near \c@rref. Height \the\ht\s@vedpage \space vs \the\availht}%
     \abortpage
     \shipout\box\s@vedpage%
-    \errmessage{!!! THIS IS BAD, cannot bail, cannot print \the\ht\availht+\the\dp\availht \space box. page-parts and contents have been dumped to output!}%
+    %\errmessage{!!! THIS IS BAD, cannot bail, cannot print \the\ht\availht+\the\dp\availht \space box. page-parts and contents have been dumped to output!}%
     \setbox\s@vedpage\box\voidb@x \rerunsavepartialpagedfalse
     \fitonpagetrue
   \fi\fi\fi
