@@ -861,7 +861,7 @@
     \setbox255\vbox{\unvbox255}%
     \ifdim\dimexpr \trialheight-\ht255-\dp255 - \@ftergalleyskip\relax >0pt
       \trace{D}{reinserting @ftergalleyskip (\the\@ftergalleyskip) after trial}%
-      \setbox255{\unvbox255\vskip\@ftergalleyskip}%
+      \setbox255\vbox{\unvbox255\vskip\@ftergalleyskip}%
     \else
       \trace{D}{Not reinserting @ftergalleyskip (\the\@ftergalleyskip), as there's no space for it}%
   \fi\fi
