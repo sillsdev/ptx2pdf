@@ -264,7 +264,10 @@ class PicList:
             self.currows.append(self.model[cit][:])    # copy it so that any edits don't mess with the model if the iterator moves
             self.currows[-1].append(cit)
         currow = self.currows[0]
-        pgpos = re.sub(r'^([PF])([lcrio])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
+        if not currow[_pickeys['pgpos']]:
+            pgpos = ""
+        else:
+            pgpos = re.sub(r'^([PF])([lcrio])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
