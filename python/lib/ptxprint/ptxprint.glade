@@ -17243,8 +17243,8 @@ algorithms which may be used to obtain the best overall result:
                             <child>
                               <object class="GtkEntry" id="t_diglotSerialBooks">
                                 <property name="name">List of diglot books not to be merged, to come one after the other</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="no-show-all">True</property>
                                 <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
 in a diglot publication should not be merged to appear
 side-by-side, but instead need to occur one after the other.
@@ -17262,9 +17262,9 @@ not be merged. These will appear one after the other.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
+                              <object class="GtkLabel" id="l_diglotSerialBooks">
                                 <property name="can-focus">False</property>
+                                <property name="no-show-all">True</property>
                                 <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
 in a diglot publication should not be merged to appear
 side-by-side, but instead need to occur one after the other.
