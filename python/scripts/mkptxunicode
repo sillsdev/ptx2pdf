@@ -77,6 +77,8 @@ for k, b in classes.items():
 for k, v in extras.items():
     classdat[v].add(k)
 
+used = {}
+duplicates = {}
 with open(args.outfile, "w", encoding="utf-8") as outf:
     outf.write("\\XeTeXinterchartokenstate=1\n")
     for k in classes.keys():
@@ -85,9 +87,16 @@ with open(args.outfile, "w", encoding="utf-8") as outf:
         outf.write("\n")
         for c in sorted(v):
             if 0x20 <= c < 0xE0000:
-                outf.write('\\XeTeXcharclass"{:04X}=\\Kclass{}\n'.format(c, k))
+                if c in used:
+                    duplicates[c] = duplicates.get(c, ["*"+used[c]]) + [k]
+                else:
+                    outf.write('\\XeTeXcharclass"{:04X}=\\Kclass{}\n'.format(c, k))
+                    used[c] = k
     outf.write("\n% Interclass rules\n")
     for p in pairs:
         kp = ("\\Kclass"+x if x != 0 else "0" for x in p)
         outf.write("\\XeTeXinterchartoks {} {}{{\\intercharspace}}\n".format(*kp))
     outf.write("\\XeTeXinterchartokenstate=0\n")
+
+if len(duplicates):
+    print("Duplicates: " + ", ".join("{:04X}: {}".format(c, " ".join(v)) for c,v in sorted(duplicates.items())))
