@@ -1261,8 +1261,8 @@ class TexModel:
             self.localChanges.append(makeChange(r"\\r .+", "", flags=regex.M))
 
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph (TO DO: make len of short word a parameter in TeXhacks)
-            self.localChanges.append(makeChange(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{1,6})) ([\S]{1,9}\s*\n)", r"\1\u2000\5", flags=regex.M))
-            self.localChanges.append(makeChange(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{1,6}) ([^ 0-9\\\n\u2000\u00A0]{1,8}\n(?:\\[pmqsc]|$))", r"\1\u2000\2", flags=regex.S))
+            self.localChanges.append(makeChange(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{{1,6}})) ([\S]{{1,{}}}\s*\n)", r"\1\u2000\5".format(self.dict['texpert/maxorphanlength']), flags=regex.M))
+            self.localChanges.append(makeChange(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{{1,6}}) ((?:\p{{L}}\p{{M}}*|[^ 0-9\\\n\u2000]){{1,{}}}\n(?:\\[pmqsc]|$))".format(self.dict['texpert/maxorphanlength']), r"\1\u2000\2", flags=regex.S))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
