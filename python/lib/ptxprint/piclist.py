@@ -553,7 +553,8 @@ class Piclist:
                             picture = Picture(**pic)
                         else:       # usfm 2
                             for j, v in enumerate(f.groups()):
-                                pic[posparms[j]] = v
+                                if v is not None:
+                                    pic[posparms[j]] = v
                             picture = Picture(**pic)
                             picture._fixPicinfo()
                         if fn is not None:
