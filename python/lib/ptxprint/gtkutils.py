@@ -153,3 +153,47 @@ class HelpTextViewWindow(Gtk.Window):
         self.tb.set_text(message, -1)
         self.show_all()
         Gtk.main()
+
+def doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", **kw):
+    logger.error(text)
+    if secondary:
+        logger.error(secondary)
+    if copy2clip:
+        if who2email.startswith("ptxp"):
+            if secondary is not None:
+                secondary += _("\nPTXprint Version {}").format(GitVersionStr)
+            lines = [title or ""]
+        else:
+            lines = [""]
+        if text is not None and len(text):
+            lines.append(text)
+        if secondary is not None and len(secondary):
+            lines.append(secondary)
+        s = _(f"Mailto: <{who2email}>") + "\n{}".format("\n".join(lines))
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(s, -1)
+        clipboard.store() # keep after app crashed
+        if secondary is not None:
+            if who2email.startswith("ptxp"):
+                secondary += "\n\n" + " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
+            else:
+                secondary += "\n" + _("The letter above has been copied to the clipboard.")
+                secondary += "\n" + _("Send it by e-mail to: {}").format(who2email)
+        else:
+            secondary = " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
+    if show:
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
+                 buttons=Gtk.ButtonsType.OK, text=text)
+        if title is None and who2email.startswith("ptxp"):
+            title = "PTXprint Version " + VersionStr
+        dialog.set_title(title)
+        if secondary is not None:
+            dialog.format_secondary_text(secondary)
+        dialog.run()
+        dialog.destroy()
+    else:
+        print(text)
+        if secondary is not None:
+            print(secondary)
+
+
