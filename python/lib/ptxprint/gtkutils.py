@@ -3,6 +3,10 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
 from ptxprint.utils import _, f2s
 from PIL import Image
+import logging
+from ptxprint.view import GitVersionStr
+
+logger = logging.getLogger(__name__)
 
 def _getcomboval(w, sub):
     model = w.get_model()
