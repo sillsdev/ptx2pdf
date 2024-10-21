@@ -712,6 +712,7 @@ class GtkViewModel(ViewModel):
             if self.lang.startswith(r[1]):
                 self.set("l_menu_uilang", _("Language\n({})").format(r[0]))
                 break
+        logger.debug(f"UI Language list: {llang}")
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
