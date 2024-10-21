@@ -125,11 +125,11 @@ exe1 = EXE(pyz1,
 # one has to do an analysis and exe for every application (what a pain)
 colls = [[exe1, a1.binaries, a1.zipfiles, a1.datas]]
 jobs = {
-    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", datas = [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
-    "pdfinish":  {"py": "python/scripts/pdfinish.py", datas = [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
+    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 for k, v in jobs.items():
-    s = v.pop['py']
+    s = v.pop('py')
     a = Analysis([s],
              pathex = ['python/lib'],
              binaries = binaries,
@@ -142,6 +142,7 @@ for k, v in jobs.items():
              **v)
     pz = PYZ(a.pure, a.zipped_data)
     e = EXE(pz, a.scripts, [],
+          exclude_binaries=True,
           name = k,
           debug = False,
           bootloader_ignore_signals = False,

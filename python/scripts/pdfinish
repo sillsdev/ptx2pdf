@@ -42,9 +42,12 @@ class Finisher(Gtk.Application):
     def __init__(self):
         super().__init__()
         self.builder = Gtk.Builder()
-        gladefile = os.path.join(pycodedir(), "ptxprint.glade")
+        gladefile = os.path.join(pycodedir(), "pdfinish.glade")
         self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
+        self.mw = self.builder.get_object("pdfinish")
+        self.mw.show_all()
+        Gtk.main()
 
     def onProcessClicked(self, btn):
         print("GoForIt")
@@ -52,17 +55,23 @@ class Finisher(Gtk.Application):
 
     def onCloseClicked(self, btn):
         Gtk.main_quit()
-        
-parser = argparse.ArgumentParser()
-parser.add_argument("infile",nargs="?",help="Input PDF file")
 
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    from ptxprint.gtkutils import HelpTextViewWindow
-    tv = HelpTextViewWindow()
-    def print_message(message, file=None):
-        tv.print_message(message)
-    parser._print_message = print_message
+    def onDestroy(self, btn):
+        Gtk.main_quit()
 
-args = parser.parse_args()
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("infile",nargs="?",help="Input PDF file")
 
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        from ptxprint.gtkutils import HelpTextViewWindow
+        tv = HelpTextViewWindow()
+        def print_message(message, file=None):
+            tv.print_message(message)
+        parser._print_message = print_message
 
+    args = parser.parse_args()
+
+    finisher = Finisher()
+
+if __name__=="__main__": main()
