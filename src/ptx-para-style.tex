@@ -38,6 +38,7 @@
 \newif\ifintr@done\intr@donefalse % If true, then if@ntro can only be set between the start of a book and the first chapter number
 \newif\ifReenterIntroOK\ReenterIntroOKtrue % If true, then a chapter number does not set intr@done
 \newif\ifinextended \inextendedfalse % Test for sidebars (ptx extended)
+\newcount\l@stparbadness
 
 %+cpar_init
 \def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{p}\hsize=\textwidth}
@@ -126,6 +127,7 @@
 \newbox\he@dingbox
 \def\endhe@dings{\ifhe@dings\trace{h}{+endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi}%
   \makecutouts \endgraf
+  \global\l@stparbadness=\badness
   \ifx\thisp@rclass\undefined
     \global\let\tmppcl@ss\empty %pass out the heading group class
   \else
@@ -220,6 +222,7 @@
   \ifdim 0.5pt>\baselineskip \unvbox#1
   \else
       \ifhmode\endgraf\lastdepth=\prevdepth
+        \global\l@stparbadness=\badness
         \trace{h}{gr@db@@x needed to end paragraph. Why?}%
       \fi % Not sure why, but sometiems we get here in hmode
       \edef\oldprevdepth{\the\prevdepth}%
@@ -296,7 +299,10 @@
    \fi
    \seteotpn@me
    \csname pre\eotpn@me\endcsname\x@\let\csname pre\eotpn@me\endcsname\empty
-   \endgraf
+   \ifhmode 
+     \endgraf
+     \global\l@stparbadness=\badness
+   \fi
    \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else
      %\ifrotate
      %  \setbox9=\lastbox \lastdepth=\ht9 \box9\trace{h}{lastdepth in upwards = \the\lastdepth}%
@@ -310,6 +316,8 @@
    \fi\fi
    \cutoutcarryover 
    \ifversion{3}{\do@ndofthispar}{}%
+ \else
+  \global\l@stparbadness=\badness
  \fi
  \ifversion{3}{}{\do@ndofthispar}%
 }
@@ -391,7 +399,8 @@
  \let\p@r=\par % end the paragraph
  \ifhmode\unskip % remove any trailing space
    \beginL\pdfsavepos\t@gendfull{P}{id="\adjc@rref[\the\curr@djpar]"}%
-   \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL       %(1)
+   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parend\x@{\the\l@stparbadness}{\the\pdflastxpos}{\the\pdflastypos}}\endL       %(1)
+   \global\l@stparbadness=-1
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
    \p@r
@@ -1054,8 +1063,8 @@
   \csname inp@r-\c@rrdstat true\endcsname
   \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#3}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
 
-\def\@parend#1#2{%
-  \this@y=#2\relax
+\def\@parend#1#2#3{%
+  \this@y=#3\relax
   \ifnum\this@y=\prev@y 
     \x@\ifdim\x@ 0pt\x@=\csname baselineskip@\c@rrdstat\endcsname
       \advance\p@rlinesgone by 1
