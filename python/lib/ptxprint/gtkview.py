@@ -6189,7 +6189,7 @@ Thank you,
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(1)
 
     def onBookViewClicked(self, widget):
-        bkviewON = self.get("c_showSpread", True)
+        bkviewON = self.get("c_bkView", True)
         self._resize_window(bkviewON, large_size=(1900, 685), small_size=(1450, 685))
         step_increment = 2 if bkviewON else 1
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
@@ -6211,4 +6211,4 @@ Thank you,
             return
         pg = min(int(self.get("s_pgNum", 1)), pages)
         self.set("s_pgNum", pg)
-        self.pdf_viewer.show_pdf(pg, self.get("c_showSpread", True), self.get("c_RTLbookBinding", False))
+        self.pdf_viewer.show_pdf(pg, self.get("c_RTLbookBinding", False))

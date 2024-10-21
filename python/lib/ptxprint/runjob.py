@@ -456,7 +456,6 @@ class RunJob:
                     # load PDF
                     self.printer.pdf_viewer.load_pdf(pdfname)
                     self.printer.pdf_viewer.show_pdf(int(self.printer.get("s_pgNum", 1)), 
-                                                    bkview = self.printer.get("c_showSpread", True),
                                                     rtl    = self.printer.get("c_RTLbookBinding", False))
                 else:
                     if sys.platform == "win32":

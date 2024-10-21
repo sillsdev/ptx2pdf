@@ -13,7 +13,7 @@ class PDFViewer:
         self.pages = 0
         self.current_page = None  # Keep track of the current page
         self.zoom_level = 1.0  # Initial zoom level is 100%
-        self.spread_mode = False  # Track if spread view is on
+        self.spread_mode = self.model.get("c_bkView", False)
 
         # Connect keyboard events
         self.hbox.connect("key-press-event", self.on_key_press_event)
@@ -29,14 +29,14 @@ class PDFViewer:
             print(f"Error opening PDF: {e}")
             return
 
-    def show_pdf(self, page, bkview=True, rtl=False):
+    def show_pdf(self, page, rtl=False):
         self.hbox.hide()
-        self.spread_mode = bkview  # Update spread mode
+        self.spread_mode = self.model.get("c_bkView", False)
 
         for child in self.hbox.get_children():
             self.hbox.remove(child)
 
-        if bkview:
+        if self.spread_mode:
             spread = self.get_spread(page, rtl)
             for i in spread:
                 if i in range(self.pages+1):
@@ -64,18 +64,25 @@ class PDFViewer:
         ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
 
         if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
+            self.model.set("s_pgNum", 1)
             self.show_pdf(1)
             return True
         elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
-            self.show_pdf(self.pages)
+            p = self.pages
+            self.model.set("s_pgNum", p)
+            self.show_pdf(p)
             return True
         elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
             next_page = self.current_page + (2 if self.spread_mode else 1)
-            self.show_pdf(min(next_page, self.pages))
+            p = min(next_page, self.pages)
+            self.model.set("s_pgNum", p)
+            self.show_pdf(p)
             return True
         elif keyval == Gdk.KEY_Page_Up:  # Page Up (Previous page/spread)
             prev_page = self.current_page - (2 if self.spread_mode else 1)
-            self.show_pdf(max(prev_page, 1))
+            p = max(prev_page, 1)
+            self.model.set("s_pgNum", p)
+            self.show_pdf(p)
             return True
         elif ctrl and keyval == Gdk.KEY_equal:  # Ctrl+Plus (Zoom In)
             self.on_zoom_in(widget)
@@ -140,17 +147,19 @@ class PDFViewer:
         return event_box
 
     def on_mouse_click(self, widget, event, page_number):
+        zl = self.zoom_level
         if event.button == 1:  # Left-click
             x, y = event.x, event.y
             # print(f"Left-click at x: {x}, y: {y}, on page {page_number}")
-            self.handle_left_click(x, y, widget, page_number)
+            self.handle_left_click(x / zl, y / zl, widget, page_number)
 
         if event.button == 3:  # Right-click (for context menu)
             self.show_context_menu(widget, event)
 
     def handle_left_click(self, x, y, widget, page_number):
+        zl = self.zoom_level
         # Print page number as well as coordinates
-        print(f"Coordinates on page {page_number}: x={x}, y={y}")
+        print(f"Coordinates on page {page_number}: x={x / zl}, y={y / zl}")
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()

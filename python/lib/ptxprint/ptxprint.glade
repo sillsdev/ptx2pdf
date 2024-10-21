@@ -482,7 +482,6 @@ THE SOFTWARE.
     <property name="value">2</property>
     <property name="step-increment">2</property>
     <property name="page-increment">10</property>
-    <property name="page-size">10</property>
   </object>
   <object class="GtkAdjustment" id="a_picListadjustment1">
     <property name="upper">100</property>
@@ -27041,7 +27040,7 @@ Shortcut: Ctrl-W</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="c_showSpread">
+                  <object class="GtkCheckButton" id="c_bkView">
                     <property name="label" translatable="yes">Book View</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
