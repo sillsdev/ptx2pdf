@@ -728,4 +728,9 @@ The piclist entry is:
 TST 2.5 The Ghostscript tiger in a PDF file [Fcb]|pgpos="tr" src="tiger.pdf" ref="" size="col" scale="1" x-credit="Ghostscript" cat="ornborder"
 ```
 
+## Figures in footnotes
+In general, footnote processing is not compatible with figures. However, the following observations have been made:
+
+ * A footnote with `pgpos="H"` (i.e. in-text) may occur in paragraphed and non-paragraphed notes.
+ * A footnote with `pgpos="h"` can occur in non-paragraphed footnotes.
 

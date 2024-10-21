@@ -1173,9 +1173,9 @@
   \ifhmode \temptrue\fi
   \ifx\w@tsit\gr@phic \temptrue \fi
   \def\picc@ntents{%
-    \penalty\pr@penalty % Allow the page to break
+    \penalty\ifinn@te 10000\else\pr@penalty\fi\relax% Allow the page to break except in footnotes.
     \gridp@cfalse% Not true! It's not a floating fig.
-    \trace{g}{Before gridbox \the\ht#1+\the\dp#1}%
+    \trace{g}{Before gridbox \the\ht#1+\the\dp#1 (inn@te\ifinn@te true\else false\fi)}%
     %\lastdepth=0pt
     %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
     \gridb@x#1%
@@ -1183,7 +1183,8 @@
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
     \fi
-  \penalty\p@stpenalty}%
+  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
+  }%
   \ifvmode \picc@ntents
   \else 
     \ifInlBelow

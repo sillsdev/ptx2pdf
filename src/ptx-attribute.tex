@@ -170,7 +170,7 @@
 \SetSpeciallAttribs{outline-entry}{\noexpand\m@keoutlinefromattr{\attr@b}}{}
 \SetSpeciallAttribs{link-title}{\noexpand\maybem@keoutlinefromattr{\attr@b}}{}
 \def\maybem@keoutlinefromattr#1{\testt@ttrn@me{link-href}\if@ttrexists\else\m@keoutlinefromattr{#1}}
-\def\maybePDFp@sfromattr#1{\testt@ttrn@me{outline-entry}\if@ttrexists\else\PDFposfromattr{#1}\fi}
+\def\maybePDFp@sfromattr#1{\testt@ttrn@me{outline-entry}\if@ttrexists\else\PDFposfromattr\fi}
 
 \def\m@keoutlinefromattr#1{\get@ttribute{link-id}\ifx\attr@b\relax
     \message{Unable to make outline entry for #1, no link-id field specified}
