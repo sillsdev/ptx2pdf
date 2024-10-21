@@ -72,6 +72,7 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall 
+Filename: "{app}\pdfinish.exe"; Description: "{cm:LaunchProgram, 'pdfinish.exe'}"; Flags: nowait postinstall 
 ;skipifsilent - removed this flag/param so it can automatically (re)start the app after a silent install
 
 [InstallDelete]
