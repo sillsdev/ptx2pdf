@@ -8,7 +8,7 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 	dvipdfmx -C16 $(subst .tex,.xdv,$<)
 	
 
-test.pdf: test.tex test.usfm test.sty $(DIR)/*.tex 
+test.pdf: test.tex breaking.usfm test.usfm test.sty $(DIR)/*.tex 
 diglot.pdf: diglot.tex diglot.usfm diglot.sty $(DIR)/*.tex 
 all: test.pdf diglot.pdf
 
