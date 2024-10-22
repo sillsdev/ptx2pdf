@@ -15442,14 +15442,14 @@ Note that negative and fractional paragraph
 counts are invalid.</property>
                                                     <property name="halign">start</property>
                                                     <property name="max-length">6</property>
-                                                    <property name="width-chars">4</property>
+                                                    <property name="width-chars">5</property>
                                                     <property name="text">0</property>
                                                     <property name="xalign">1</property>
                                                     <property name="progress-pulse-step">0</property>
                                                     <property name="input-purpose">number</property>
                                                     <property name="adjustment">a_plLines</property>
-                                                    <property name="climb-rate">0.5</property>
-                                                    <property name="digits">1</property>
+                                                    <property name="climb-rate">0.10</property>
+                                                    <property name="digits">2</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left-attach">6</property>
