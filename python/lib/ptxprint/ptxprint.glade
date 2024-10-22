@@ -17188,18 +17188,39 @@ not be merged. These will appear one after the other.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
+                                  <object class="GtkEntry" id="t_diglotSerialBooks1">
+                                    <property name="name">List of diglot books not to be merged, to come one after the other</property>
                                     <property name="can-focus">False</property>
+                                    <property name="no-show-all">True</property>
                                     <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
-in a diglot publication should not be merged to appear
-side-by-side, but instead need to occur one after the other.
+    in a diglot publication should not be merged to appear
+    side-by-side, but instead need to occur one after the other.
 
-Add the 3-letter book codes for any books that should 
-not be merged. These will appear one after the other.</property>
+    Add the 3-letter book codes for any books that should 
+    not be merged. These will appear one after the other.</property>
+                                    <property name="text" translatable="yes">FRT BAK GLO XXA XXB</property>
+                                    <property name="caps-lock-warning">False</property>
+                                    <property name="placeholder-text" translatable="yes">e.g. FRT BAK GLO XXA XXB</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">3</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_diglotSerialBooks">
+                                    <property name="can-focus">False</property>
+                                    <property name="no-show-all">True</property>
+                                    <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
+    in a diglot publication should not be merged to appear
+    side-by-side, but instead need to occur one after the other.
+
+    Add the 3-letter book codes for any books that should 
+    not be merged. These will appear one after the other.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Use Serial Layout
-for These Books:</property>
+    for These Books:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -17220,70 +17241,16 @@ for These Books:</property>
                                 </child>
                               </object>
                             </child>
-                            <child>
-                              <object class="GtkEntry" id="t_diglotSerialBooks">
-                                <property name="name">List of diglot books not to be merged, to come one after the other</property>
-                                <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
-                                <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
-in a diglot publication should not be merged to appear
-side-by-side, but instead need to occur one after the other.
-
-Add the 3-letter book codes for any books that should 
-not be merged. These will appear one after the other.</property>
-                                <property name="text" translatable="yes">FRT BAK GLO XXA XXB</property>
-                                <property name="caps-lock-warning">False</property>
-                                <property name="placeholder-text" translatable="yes">e.g. FRT BAK GLO XXA XXB</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">3</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_diglotSerialBooks">
-                                <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
-                                <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
-in a diglot publication should not be merged to appear
-side-by-side, but instead need to occur one after the other.
-
-Add the 3-letter book codes for any books that should 
-not be merged. These will appear one after the other.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Use Serial Layout
-for These Books:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkCheckButton" id="c_diglot">
-                            <property name="label" translatable="yes">Diglot or Discript</property>
-                            <property name="name">Enable diglot or discript publication</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">A Diglot publication contains more than
-one language, or script, or text. Set the
-options here to create a Diglot or Didoc.</property>
+                            <child type="label">
+                              <object class="GtkCheckButton" id="c_diglot">
+                                <property name="label" translatable="yes">Diglot or Discript</property>
+                                <property name="name">Enable diglot or discript publication</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">A Diglot publication contains more than
+    one language, or script, or text. Set the
+    options here to create a Diglot or Didoc.</property>
                                 <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="onDiglotClicked" swapped="no"/>
