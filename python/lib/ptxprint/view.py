@@ -34,8 +34,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.6.7"
-GitVersionStr = "2.6.7"
+VersionStr = "2.6.8"
+GitVersionStr = "2.6.8"
 ConfigVersion = "2.20"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -1251,6 +1251,7 @@ class ViewModel:
         pass
 
     def saveConfig(self, force=False):
+        logger.debug("Saving config")
         self.writeConfig(force=force)
         self.savePics(force=force)
         self.saveStyles(force=force)
@@ -1292,7 +1293,7 @@ class ViewModel:
         if self.diglotView:
             self.picinfos.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}-diglot.piclist".format(self.project.prjid, self.cfgid)))
-        self.picChecksView.writeCfg(self.project.srcPath(self.cfgid), self.cfgid)
+        self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
     def loadPics(self, mustLoad=True, fromdata=True, force=False):
         if self.loadingConfig:

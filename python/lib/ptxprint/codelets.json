@@ -400,6 +400,12 @@
         },
         {
           "Type": "comment#",
+          "Label": "1-col for Poetry in 2-col layout",
+          "Description": "Use single column layout for blocks of poetry and return to 2-column layout for main body text. It may also help to use the next codelet 'Auto lengthen poetry' if you choose to display poetry in this way.",
+          "CodeSnippet": "'(?s)(\\\\q\\d.*?)(\\\\[cmps])' > '\\\\goone\\n\\1\\\\gotwo\\n\\2'"
+        },
+        {
+          "Type": "comment#",
           "Label": "Auto lengthen poetry",
           "Description": "Short \\q1 and \\q2 lines work great for 2-col layouts. But for a single column layout, we can merge all \\q2 into the previous \\q1, and then turn every other \\q1 into a \\q2 to make it look like poetry.",
           "CodeSnippet": "'\\\\q2 ' > ''\n'(\\\\q1(?:[^\\\\]|(\\\\[fx]).*?\\2\\*|\\\\v)+?)\\\\q1' > '\\1\\\\q2'"

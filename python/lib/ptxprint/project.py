@@ -166,7 +166,7 @@ class Project:
                 if d not in self.configs:
                     self.configs[d] = ConfigDir(d, p)
 
-    def srcPath(self, cfgid, makepath=False):
+    def srcPath(self, cfgid=None, makepath=False):
         if cfgid is None:
             return os.path.join(self.path, self.shareddir)
         res = self.configs.get(cfgid, NullConfigDir).path

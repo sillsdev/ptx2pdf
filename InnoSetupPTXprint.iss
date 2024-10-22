@@ -1,6 +1,6 @@
 ; Inno Setup Script
 #define MyAppName "PTXprint"
-#define MyAppVersion "2.6.7"
+#define MyAppVersion "2.6.8"
 #define MyAppPublisher "SIL International"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -69,10 +69,12 @@ Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\i
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+; Add an item for PDFinish in the Start menu
+; Name: "{autoprograms}\{#MyAppName}\PDFinish"; Filename: "{app}\pdfinish.exe"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall 
-Filename: "{app}\pdfinish.exe"; Description: "{cm:LaunchProgram, 'pdfinish.exe'}"; Flags: nowait postinstall 
+;Filename: "{app}\pdfinish.exe"; Description: "{cm:LaunchProgram, 'PDFinish'}"; Flags: nowait postinstall 
 ;skipifsilent - removed this flag/param so it can automatically (re)start the app after a silent install
 
 [InstallDelete]

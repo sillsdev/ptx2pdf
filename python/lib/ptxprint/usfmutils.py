@@ -306,6 +306,7 @@ class Usfm:
         ispara = sfm.text_properties('paragraph')
         last = (0, -1)
         chaps = []
+        #breakpoint()
         for i, r in enumerate(refranges):
             if r.first.chap > last[1] or r.first.chap < last[0]:
                 chaps.append((self.chapters[r.first.chap:r.last.chap+1], [i]))

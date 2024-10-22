@@ -89,6 +89,7 @@ messages = [
     ("E","U", r"Malformed input near .+?: periph called while there was a pending chapter number \(.+?\)"),
     ("E","PU", r"No space for text on page!"),
     ("E","P", r"Not a PDF file, page=\.\.\. only supported on PDFs"),
+    ("W","P", r"Fractional part (\S*) of paragraph skip"),
     ("W","SU", r"Ornamental border: unrecognised control char '.+?'"),
     ("I","S", r"Paragraph font for .+? including a verse number claims it is taller \(.+?\) than baseline \(.+?\)"),
     ("I","", r"Polyglot: layout across .+? pages"),

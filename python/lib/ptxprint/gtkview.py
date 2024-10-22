@@ -1665,7 +1665,7 @@ class GtkViewModel(ViewModel):
 
     def writeConfig(self, cfgname=None, force=False):
         if self.project.prjid is not None:
-            self.picChecksView.writeCfg(self.project.srcPath(self.cfgid), self.cfgid)
+            self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
         super().writeConfig(cfgname=cfgname, force=force)
 
     def fillCopyrightDetails(self):
@@ -4555,11 +4555,11 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("l_{}OffsetNum".format(plsb)).set_label("Number of\nparagraphs:")
                 self.set("s_{}Lines".format(plsb), int(float(self.get("s_{}Lines".format(plsb)))))
                 self.builder.get_object("s_{}Lines".format(plsb)).set_digits(0)
-                self.builder.get_object("s_{}Lines".format(plsb)).set_increments(1, 10)  # Climb rate 1, step increment 10
+                self.builder.get_object("s_{}Lines".format(plsb)).set_increments(1.00, 2)  # Climb rate 1.00, step increment 2
             else:
                 self.builder.get_object("l_{}OffsetNum".format(plsb)).set_label("Number of\nlines:")
-                self.builder.get_object("s_{}Lines".format(plsb)).set_digits(1)
-                self.builder.get_object("s_{}Lines".format(plsb)).set_increments(0.5, 1)  # Climb rate 0.5, step increment 1
+                self.builder.get_object("s_{}Lines".format(plsb)).set_digits(2)
+                self.builder.get_object("s_{}Lines".format(plsb)).set_increments(0.10, 1)  # Climb rate 0.10, step increment 1
         else:
             for w in wids:
                 self.builder.get_object(w).set_sensitive(False)

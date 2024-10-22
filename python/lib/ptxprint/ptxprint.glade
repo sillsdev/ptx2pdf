@@ -1085,7 +1085,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.6.7</property>
+    <property name="version">Version 2.6.8</property>
     <property name="copyright">© 2020-2024, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -15586,9 +15586,29 @@ counts are invalid.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">Can be used in Print/PDF publications. </property>
                                                     <property name="valign">center</property>
                                                     <property name="draw-indicator">True</property>
+                                                    <property name="tooltip-text" translatable="yes">Some vertical position options allow a picture
+to be moved up or down by a number of lines
+or paragraphs.
+
+-Negative (minus) values specify to move UP.
++Positive (plus) values specify to move DOWN.
+
+Negative counts for cutouts raise the image,
+but the cutout will not affect earlier paragraphs. 
+Note that negative and fractional paragraph 
+counts are invalid.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="max-length">6</property>
+                                                    <property name="width-chars">5</property>
+                                                    <property name="text">0</property>
+                                                    <property name="xalign">1</property>
+                                                    <property name="progress-pulse-step">0</property>
+                                                    <property name="input-purpose">number</property>
+                                                    <property name="adjustment">a_plLines</property>
+                                                    <property name="climb-rate">0.10</property>
+                                                    <property name="digits">2</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
