@@ -1293,7 +1293,7 @@ class ViewModel:
         if self.diglotView:
             self.picinfos.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}-diglot.piclist".format(self.project.prjid, self.cfgid)))
-        self.picChecksView.writeCfg(self.project.srcPath(self.cfgid), self.cfgid)
+        self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
     def loadPics(self, mustLoad=True, fromdata=True, force=False):
         if self.loadingConfig:

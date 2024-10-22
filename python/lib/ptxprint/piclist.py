@@ -76,10 +76,8 @@ class PicChecks:
         if len(self.cfgShared) < 2 or configid is None:     # always a default
             return
         self.savepic()
-        basep = os.path.join(basepath, "shared", "ptxprint")
         for a in ((None, self.sharedfname, self.cfgShared), (configid, self.pubfname, self.cfgProject)):
-            p = os.path.join(basep, a[0]) if a[0] else basep
-            os.makedirs(p, exist_ok=True)
+            p = os.path.join(basepath, a[0]) if a[0] else basepath
             for s in a[2].sections():
                 hasdata = False
                 for n,o in a[2].items(section=s):

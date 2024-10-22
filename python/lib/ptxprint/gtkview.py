@@ -1661,7 +1661,7 @@ class GtkViewModel(ViewModel):
 
     def writeConfig(self, cfgname=None, force=False):
         if self.project.prjid is not None:
-            self.picChecksView.writeCfg(self.project.srcPath(self.cfgid), self.cfgid)
+            self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
         super().writeConfig(cfgname=cfgname, force=force)
 
     def fillCopyrightDetails(self):
