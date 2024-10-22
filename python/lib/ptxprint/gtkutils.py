@@ -4,7 +4,7 @@ from gi.repository import Gtk, Gdk
 from ptxprint.utils import _, f2s
 from PIL import Image
 import logging
-from ptxprint.view import GitVersionStr
+from ptxprint.view import GitVersionStr, VersionStr
 
 logger = logging.getLogger(__name__)
 

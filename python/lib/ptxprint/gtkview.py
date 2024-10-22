@@ -247,8 +247,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
                   "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2",
-                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR",
-                  "bx_pdfControls", "scr_previewPDF"]  # "bx_imageMsgBar", 
+                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -6144,10 +6143,23 @@ Thank you,
 
     def onPreviewPDFclicked(self, widget):
         previewON = self.get("c_previewPDF", False)
-        self._set_widget_visibility(["scr_previewPDF", "bx_pdfControls"], previewON)
-        self._resize_window(previewON, large_size=(1500, 685), small_size=(940, 650))
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(1)
+        dlg_preview = self.builder.get_object("dlg_preview")
+        if previewON:
+            dlg_preview.show_all()
+        else:
+            dlg_preview.hide()
 
+    def onClosePreview(self, widget):
+        dlg_preview = self.builder.get_object("dlg_preview")
+        self.set("c_previewPDF", False)
+        dlg_preview.hide()
+    
+    def onPrintItClicked(self, widget):
+        dlg_preview = self.builder.get_object("dlg_preview")
+        self.set("c_previewPDF", False)
+        dlg_preview.hide()
+    
     def onBookViewClicked(self, widget):
         bkviewON = self.get("c_bkView", True)
         self._resize_window(bkviewON, large_size=(1900, 685), small_size=(1450, 685))
