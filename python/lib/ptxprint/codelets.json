@@ -521,6 +521,12 @@
           "Label": "Set custom page numbers (Header/Footer)",
           "Description": "PTXprint makes it easy to set the Running Header (RH) and Running Footer (RF) for most common uses. However there are many more options that can be used if needed. Modify the inserted snippet as needed by choosing (one|options) in each segment. The resulting line(s) of code should look something like this:\n  \\def\\RFevenleft{\\pagenumber}\n  \\def\\RFoddright{\\pagenumber}\n\n- RH means running header, RF running footer,\n- noV means pages with no scripture verses, title means the title page, and nothing in that slot means normal pages,\n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header/footer.\n\n",
           "CodeSnippet": "% \\def\\R(H|F)(|noV|title)(odd|even)(left|center|right){(\\empty|\\pagenumber|\\(first|last|range)ref|\\(us|uk|iso)date|\\hrsmins)}\n\\def\\RFevenleft{\\pagenumber}\n\\def\\RFoddright{\\pagenumber}\n"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Page numbers on title page of a book (Header/Footer)",
+          "Description": "It is intentional that book title pages do not have page numbers showing in the header. However if needed, these can be inserted on the outer edge header.",
+          "CodeSnippet": "\\def\\RHtitleevenleft{\\pagenumber}\n\\let\\RHtitleoddright=\\RHtitleevenleft\n"
         }
       ],
       "Verses": [
@@ -736,6 +742,12 @@
           "Label": "T - triggers",
           "Description": "\\tracing{T}",
           "CodeSnippet": "\\tracing{T}"
+        },
+        {
+          "Type": "insert",
+          "Label": "Debug tracing",
+          "Description": "Enable tracing output",
+          "CodeSnippet": "\\showboxdepth=300\n\\showboxbreadth=300\n\\tracingoutput=1"
         }
       ]
     },

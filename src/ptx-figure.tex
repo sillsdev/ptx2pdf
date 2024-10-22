@@ -524,7 +524,7 @@
       \edef\cr@ditlist{x-credit:box=\cr@ditbox|fig,\cr@ditbox|x-credit,x-credit|fig,\cr@ditstyle}%
     \fi
   \fi
-  \trace{g}{cr@ditlist is \cr@ditlist}%
+  \trace{g}{cr@ditlist is \cr@ditlist.}%
   % Determine if the credit (as a full line) is wider or taller, and whether it should be treated as a paragraph or a
   % small piece of text.
   \count255=\cr@ditrot % adjust to -180 to 180 range.
@@ -541,9 +541,10 @@
   \fi
   \edef\cr@ditr@tn{\the\count255}%credit rotation as a positive number (0-180)
   %pad credit
-  \s@tfont{\cr@ditlist}{\cr@ditlist}
+  \s@tfont{\cr@ditlist}{\cr@ditlist}% Use the fact that s@tfont checks for #1=#2 
   \setbox0=\hbox{\XeTeXuseglyphmetrics=3 % We subvert s@tfont's mechanism and provide a pre-formed list
     \ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
+  \trace{g}{credit natural size is \the\ht0+\the\dp0 x\the\wd0}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
@@ -570,15 +571,21 @@
        \dimen1=\dimen0
      \fi
      % Now cram the text into a box that ought to be just wide enough
-     \setbox0=\vbox{\hsize=\dimen1\relax\t@xtfragment{\cr@ditstyle}{\vrule width 0pt height\ht0 \unhbox0\vrule depth\FigCreditPadding width 0pt}}%
+     \setbox0=\vbox{\topskip=0pt\hsize=\dimen1\relax\t@xtfragment{\cr@ditstyle}{\vrule width 0pt height\ht0 \unhbox0\vrule depth\FigCreditPadding width 0pt}}%
+    \ifnum\im@gecount=5 \showbox0\fi
   \else
+    \b@ckgroundelsewheretrue
     \ch@ckb@xedstyle{\cr@ditlist}{\cr@ditlist}%
     \ifb@xedstyle
+      \trace{g}{before applyingb@xedstyle \space credit boxed size is \the\ht0+\the\dp0 x\the\wd0}%
       \set@endb@xedstyle{\cr@ditlist}{\cr@ditlist}%
+      \b@ckgroundelsewheretrue
       \apply@endb@xedstyle{0}%
+      %\ifnum\im@gecount=5 \showbox0\fi
     \fi
   \fi
   \setbox0=\hbox{\hskip \FigCreditPadding\box0\hskip \FigCreditPadding}%
+  \trace{g}{image\the\im@gecount \space credit boxed size is \the\ht0+\the\dp0 x\the\wd0}%
   \ifx\cr@ditbox\empty\else
     \ifx\cr@dit@col\empty
       \getp@ram{background}{\cr@ditlist}{\cr@ditlist}%
@@ -1166,9 +1173,9 @@
   \ifhmode \temptrue\fi
   \ifx\w@tsit\gr@phic \temptrue \fi
   \def\picc@ntents{%
-    \penalty\pr@penalty % Allow the page to break
+    \penalty\ifinn@te 10000\else\pr@penalty\fi\relax% Allow the page to break except in footnotes.
     \gridp@cfalse% Not true! It's not a floating fig.
-    \trace{g}{Before gridbox \the\ht#1+\the\dp#1}%
+    \trace{g}{Before gridbox \the\ht#1+\the\dp#1 (inn@te\ifinn@te true\else false\fi)}%
     %\lastdepth=0pt
     %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
     \gridb@x#1%
@@ -1176,7 +1183,8 @@
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
     \fi
-  \penalty\p@stpenalty}%
+  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
+  }%
   \ifvmode \picc@ntents
   \else 
     \ifInlBelow

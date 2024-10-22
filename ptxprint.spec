@@ -123,22 +123,27 @@ exe1 = EXE(pyz1,
           icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
 
 # one has to do an analysis and exe for every application (what a pain)
-a2 = Analysis(['python/lib/ptxprint/runsplash.py'],
+colls = [[exe1, a1.binaries, a1.zipfiles, a1.datas]]
+jobs = {
+    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
+    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+}
+for k, v in jobs.items():
+    s = v.pop('py')
+    a = Analysis([s],
              pathex = ['python/lib'],
              binaries = binaries,
-             datas = [('python/lib/ptxprint/splash.glade', 'ptxprint')],
              hookspath = [],
              runtime_hooks = [],
              excludes = ['tkinter', 'scipy'],
              win_no_prefer_redirects = False,
              win_private_assemblies = False,
-             noarchive = False)
-pyz2 = PYZ(a2.pure, a2.zipped_data)
-exe2 = EXE(pyz2,
-          a2.scripts,
-          [],
+             noarchive = False,
+             **v)
+    pz = PYZ(a.pure, a.zipped_data)
+    e = EXE(pz, a.scripts, [],
           exclude_binaries=True,
-          name='runsplash',
+          name = k,
           debug = False,
           bootloader_ignore_signals = False,
           strip = False,
@@ -149,16 +154,11 @@ exe2 = EXE(pyz2,
           contents_directory = '.',
           windowed=True,
           console = False)
+    colls.append([e, a.binaries, a.zipfiles, a.datas])
+allcolls = sum(colls, [])
 
 # Then bring all the bits together here for the final build
-coll = COLLECT(exe1,
-               a1.binaries,
-               a1.zipfiles,
-               a1.datas,
-               exe2,
-               a2.binaries,
-               a2.zipfiles,
-               a2.datas,
+coll = COLLECT(*allcolls,
                strip=False,
                upx=True,
                upx_exclude=['tcl'],

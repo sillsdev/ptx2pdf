@@ -1426,7 +1426,7 @@
     \else
       \vskip\p@ram
     \fi\egroup} 
- \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
+ \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
@@ -1771,6 +1771,7 @@
 } 
 
 %+csty_onetime
+\newif\ifmarginalVerseIsMargin \marginalVerseIsMarginfalse
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but (just) before processing the first USFM file
  \inheritb@rders % Process border-parameter inheritance
@@ -1782,6 +1783,14 @@
 %   \fi
  \fi
  \origb@selineskip=\baselineskip
+ \ifmarginalVerseIsMargin
+   \ifx\colshiftmode\l@ft
+     \ruleshift=-\columnshift
+   \else \ifx\colshiftmode\r@ght
+      \ruleshift=\columnshift
+   \fi\fi
+   \columnshift=0pt
+ \fi
  \s@tupsizes
  \global\let\id@@@\n@ID
  \defineheads

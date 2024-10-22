@@ -1,8 +1,34 @@
-PTXprint 2.6.6 Release Notes
-04 Oct 2024
+PTXprint 2.6.7 Release Notes
+19 Oct 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.6.7 (19 Oct 2024)
+
+  * Fix empty usfm2 fig fields
+
+  * Fix blowing up if partial page filled; layout versioning of orphans
+
+  * Allow control over the end of paragraph orphoan protection word length
+
+  * Refine mkptxunicode
+
+  * Fix bidi digit processing
+
+  * Solve the immediate problem of galleys ending in skips which cause EEKs
+
+  * Fix table row margins
+
+  * Get consistant output with or without leaders
+
+  * Minor UI improvements
+
+  * Fix shaving notes with gluey baselineskip
+
+  * Keep element annotations (nested, etc.) when copying elements when processing usfm docs
+
+  * Fix LTR tocs for RTL diglot
 
 Bug fixes and Improvements in 2.6.6 (4 Oct 2024)
 

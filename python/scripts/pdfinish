@@ -1,0 +1,77 @@
+#!/usr/bin/python3
+
+import argparse, sys, os, re, configparser
+import appdirs
+import site, logging
+from shutil import rmtree
+from zipfile import ZipFile
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
+    if not hasattr(site, 'getuserbase'):
+        site.getuserbase = lambda : site.USER_BASE
+    os.putenv("PATH", sys._MEIPASS)
+
+try:
+    import ptxprint
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+    import ptxprint
+from ptxprint.utils import saferelpath
+
+from pathlib import Path
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '3.0')
+gi.require_version('Poppler', '0.18')
+from gi.repository import Gtk
+from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton, doError
+from ptxprint.utils import pycodedir
+
+def getnsetlang(config):
+    envlang = os.getenv("LANG", None)
+    oldlang = config.get("init", "syslang", fallback=None)
+    newlang = config.get("init", "lang", fallback=None)
+    if envlang is None or oldlang == envlang:
+        return newlang
+    config.set("init", "lang", envlang or "")
+    config.set("init", "syslang", envlang or "")
+    return envlang
+
+class Finisher(Gtk.Application):
+    def __init__(self):
+        super().__init__()
+        self.builder = Gtk.Builder()
+        gladefile = os.path.join(pycodedir(), "pdfinish.glade")
+        self.builder.add_from_file(gladefile)
+        self.builder.connect_signals(self)
+        self.mw = self.builder.get_object("pdfinish")
+        self.mw.show_all()
+        Gtk.main()
+
+    def onProcessClicked(self, btn):
+        print("GoForIt")
+        pass
+
+    def onCloseClicked(self, btn):
+        Gtk.main_quit()
+
+    def onDestroy(self, btn):
+        Gtk.main_quit()
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("infile",nargs="?",help="Input PDF file")
+
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        from ptxprint.gtkutils import HelpTextViewWindow
+        tv = HelpTextViewWindow()
+        def print_message(message, file=None):
+            tv.print_message(message)
+        parser._print_message = print_message
+
+    args = parser.parse_args()
+
+    finisher = Finisher()
+
+if __name__=="__main__": main()

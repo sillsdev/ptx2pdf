@@ -163,7 +163,7 @@ class arab(ScriptSnippet):
         MiniCheckButton("c_scrarabrefs", _("First verse on left"))
     ]
     refseparators = (RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "),
-                     RefSeparators(range="\u200F-", cv="\u200E:", verses="\u060C ", chaps="\u061B "))
+                     RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "))
 
     @classmethod
     def getrefseps(cls, view):

@@ -10,7 +10,7 @@
 \def\getnum#1#2{\setbox0=\hbox{\global #1=0#2}}
 \def\mymarginpverse{%
   \ifdim\VerseBoxWidth=0pt \getverseboxwidth\fi
-  \trace{v}{position is \colshiftmode}%
+  \trace{v}{position is \colshiftmode, VerseBoxWidth=\the\VerseBoxWidth}%
   \ifnum\c@rrentcols=1 \edef\t@mpa{page}\else\edef\t@mpa{col}\fi
   \ifx\v@rsefrom\v@rseto\edef\t@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\t@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
   \ifcsname marginnote-\t@mp @v:\t@mpa no\endcsname \count10=\csname marginnote-\t@mp @v:\t@mpa no\endcsname
@@ -41,14 +41,20 @@
 \def\mysimpleprintv@rse{\cstyle{v}{\plainv@rse}}
 \let\defaultprintverse=\mymarginpverse
 \let\printverse\defaultprintverse
-\newif\ifversehyphen \versehyphenfalse
+\newif\ifversehyphen \versehyphentrue
+\newif\ifversehyphenup \versehyphenupfalse
 \def\myh@ngprintv@rse#1{%
     \p@sheof
     \setbox1=\hbox{\p@sheof\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}
         \global\c@untA=0\tmp \xdef\tmp{\x@\scantokens\x@{\v@rseto\noexpand}} \global\c@untB=0\tmp \p@peof}%\advance\c@untA by 1
-    \setbox1=\hbox{\cstyle{v}{\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi\adornv{\v@rseto}}}%
-    \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\cstyle{v}{\adornv{\v@rsefrom}}}%
-        \box1}%
+    \ifversehyphenup
+      \setbox1=\hbox{\cstyle{v}{\adornv{\v@rsefrom}\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi}}%
+      \dimen0=\wd1
+      \setbox#1=\vtop{\box1\s@tbaseline{v}{v}\hbox to \dimen0{\cstyle{v}{\adornv{\v@rseto}}\hfil}}%
+    \else
+      \setbox1=\hbox{\cstyle{v}{\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi\adornv{\v@rseto}}}%
+      \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\cstyle{v}{\adornv{\v@rsefrom}}}\box1}%
+    \fi
     \p@peof}
 
 %-cmargin_verse

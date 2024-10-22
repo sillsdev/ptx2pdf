@@ -557,6 +557,47 @@ case, the TeX macros magically capture the contents of the \\k entry into a mark
 called `k`. We can then ask for the first mark and last mark on the page in the
 header.
 
+## Glossary keyword headers
+
+In the glossary book it can be helpful to have the first and last keywords on a
+page in the running headers. This snippet implements that.
+
+The macro consists of a macro to define the running headers at the start of the
+book with another macro to undefine them again at the end.
+
+```tex
+\def\zGLOHeaders{%
+    \gdef\RHnoVevenleft{\pagenumber\quad\|\quad \it
+        \zcustomfirstmark|type="k"\*\space\emdash\space\zcustombotmark|type="k"\*\it*}%
+    \gdef\RHnoVoddright{\it\zcustomfirstmark|type="k"\*\space\emdash\space
+        \zcustombotmark|type="k"\*\it*\quad\|\quad \pagenumber}%
+}
+\def\zNoGLOHeaders{\gdef\RHnoVevenleft{}\gdef\RHnoVoddright{}}
+
+% Turn on Glossary headers at start of GLO and turn them off at the very end of the book
+\setbookhook{start}{GLO}{\zGLOHeaders}
+\setbookhook{after}{GLO}{\zNoGLOHeaders}
+```
+
+### Implementation
+
+TeX has a system of marks which can be inserted anywhere on a page. Then one can
+query for the value of the first or last mark on a page. We query the `k` mark
+using `\\zcustomfirstmark|type="k"\\*` for the first mark and
+`\\zcustombotmark|type="k"\\*` for the last mark. The PTX TeX macros kindly
+insert the mark for us for every occurrence of `\\k`.
+
+Notice that the macro uses the `\\it` style for the keyword. This may be adapted
+to taste. Likewise the pagenumber may be put into a different header location,
+etc.
+
+To hook the running header definitions into the typesetting, we define a hook to
+be run at the start of the GLO file which defines the headers which will be used
+in the book. Notice that we use the `noV` type headers since there is no verse
+text in a GLO file. Likewise, after the GLO book finishes, we run a macro to
+undefine the header macros.
+
+
 ## Coloured diacritics
 
 PTXprint includes code to process the generated xdv file between its creation by

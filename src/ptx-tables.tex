@@ -300,7 +300,7 @@
 
 \let\zendtable\endt@ble
 
-\newdimen\trmargin \dimen\trmargin=0pt
+\newdimen\trmargin \trmargin=0pt
 \def\endt@blewrap{%
   \trace{t}{endt@blewrap cols=\the\maxtablec@l, rows=\the\tabler@ws, hsize=\the\hsize, tw=\the\t@talwidth}%
   % calculate column widths as:
@@ -363,12 +363,12 @@
     \ifRTL\RTLfalse\else\RTLtrue\fi
   \fi
   \f@reachcol{\wr@pcolumn}%Wrap the cells in each columns.
-  \dimen0=0pt \dimen\trmargin=0pt
+  \dimen0=0pt \trmargin=0pt
   \getp@ram{leftmargin}{tr}{\styst@k}%
-  \ifx\p@ram\relax\else\advance\ifRTL\dimen\trmargin\else\dimen0\fi by \p@ram\IndentUnit\fi
+  \ifx\p@ram\relax\else\advance\ifRTL\trmargin\else\dimen0\fi by \p@ram\IndentUnit\fi
   \getp@ram{rightmargin}{tr}{\styst@k}%
-  \ifx\p@ram\relax\else\advance\ifRTL\dimen0\else\dimen\trmargin\fi by \p@ram\IndentUnit\fi
-  \trace{t}{Row margins: left=\the\dimen0, right=\the\dimen\trmargin}%
+  \ifx\p@ram\relax\else\advance\ifRTL\dimen0\else\trmargin\fi by \p@ram\IndentUnit\fi
+  \trace{t}{Row margins: left=\the\dimen0, right=\the\trmargin}%
   \f@reachrow{%
     \ifnum\@row=2 \nobreak \fi
     \ifnum\@row=\tabler@ws \nobreak \fi
@@ -384,7 +384,7 @@
         \else
           \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil
         \fi
-        \hskip\dimen\trmargin}%
+        \hskip\trmargin}%
       \ifnum\nth@line<\linec@unt \nobreak \fi
     \@@REPEAT
     \setbox\t@bleinserts=\vbox{\parfillskip=0pt\unvbox\t@bleinserts \global\setbox0=\lastbox}%

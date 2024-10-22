@@ -22,7 +22,7 @@ import cairo
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
-from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
+from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton, doError
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
@@ -241,7 +241,8 @@ _fullpage = {"F": "full", "P": "page"}
 _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition" : "toppurple", "rhruleposition" : "topgreen",
         "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
 
-_ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
+_ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist", 
+                       "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
@@ -509,48 +510,6 @@ _dlgtriggers = {
     "dlg_borders":          "onSBborderClicked"
 }
 
-def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", **kw):
-    logger.error(text)
-    if secondary:
-        logger.error(secondary)
-    if copy2clip:
-        if who2email.startswith("ptxp"):
-            if secondary is not None:
-                secondary += _("\nPTXprint Version {}").format(GitVersionStr)
-            lines = [title or ""]
-        else:
-            lines = [""]
-        if text is not None and len(text):
-            lines.append(text)
-        if secondary is not None and len(secondary):
-            lines.append(secondary)
-        s = _(f"Mailto: <{who2email}>") + "\n{}".format("\n".join(lines))
-        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-        clipboard.set_text(s, -1)
-        clipboard.store() # keep after app crashed
-        if secondary is not None:
-            if who2email.startswith("ptxp"):
-                secondary += "\n\n" + " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
-            else:
-                secondary += "\n" + _("The letter above has been copied to the clipboard.")
-                secondary += "\n" + _("Send it by e-mail to: {}").format(who2email)
-        else:
-            secondary = " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
-    if show:
-        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
-                 buttons=Gtk.ButtonsType.OK, text=text)
-        if title is None and who2email.startswith("ptxp"):
-            title = "PTXprint Version " + VersionStr
-        dialog.set_title(title)
-        if secondary is not None:
-            dialog.format_secondary_text(secondary)
-        dialog.run()
-        dialog.destroy()
-    else:
-        print(text)
-        if secondary is not None:
-            print(secondary)
-
 def getPTDir():
     txt = _("Paratext is not installed on this system.\n" + \
             "Please locate the directory where your USFM projects\n" +\
@@ -713,6 +672,7 @@ class GtkViewModel(ViewModel):
             if self.lang.startswith(r[1]):
                 self.set("l_menu_uilang", _("Language\n({})").format(r[0]))
                 break
+        logger.debug(f"UI Language list: {llang}")
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
@@ -1013,7 +973,7 @@ class GtkViewModel(ViewModel):
 
     def monitor(self):
         if self.pendingerror is not None:
-            _doError(*self.pendingerror[:-1], **self.pendingerror[-1])
+            doError(*self.pendingerror[:-1], **self.pendingerror[-1])
             self.pendingerror = None
         return True
 
@@ -1483,7 +1443,7 @@ class GtkViewModel(ViewModel):
         if threaded:
             self.pendingerror=(txt, kw)
         else:
-            _doError(txt, **kw)
+            doError(txt, **kw)
 
     def doStatus(self, txt=""):
         sl = self.builder.get_object("l_statusLine")

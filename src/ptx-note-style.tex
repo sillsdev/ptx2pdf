@@ -654,7 +654,8 @@
 \def\FootNoteRuleLeftIndent{\hskip 0.00 mm}
 \def\FootNoteRuleRightIndent{\hss}
 \def\AboveStudyNoteSpace{\AboveNoteSpace}
-\def\BelowStudyNoteSpace{0.5\AboveNoteSpace}
+\def\BelowStudyNoteRuleSpace{0.5\AboveStudyNoteSpace}
+
 \def\StudyNoteRuleThickness{0.4pt}
 \def\StudyNoteRuleWidth{1}
 \def\StudyNoteRuleLeftIndent{\hskip 0.00 mm}
@@ -736,6 +737,7 @@
 
 % Notewidth for diglots depends on settings and column. 
 %+c_setnotewidth
+\def\StudyGutterFactor{1} %A default,
 \newdimen\n@tewidth
 \def\setn@tewidth#1{%
   \x@\let\x@\th@sins\csname note-no-insert-#1\endcsname

@@ -29,7 +29,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcount\diglotDbgJoinboxes%
-\diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
+\diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join. Also works at other number-showing messages
 \def\diglotDbgeachcol{-1}% Define to begin tracingmacros and tracing assigns at each@col with TRACEcount
 \def\diglotDbgupdtPtl{-1}% Define to begin tracingmacros and tracing assigns at n@xtpartial  with TRACEcount
 
@@ -319,9 +319,11 @@
 % saved by the first output routine. Unless void, it always ends with the appropriate
 % end-of-trial penalty
 \newbox\galleyexc@ss %This is the bit of the galley that didn't make it onto the current page
+\newbox\wholeL  % input Galley contents on the left side
 \newbox\partialL  % last Galley contents on the left side
 \newbox\excessL  % Excess left material, aligning with the next right chunk.
 \newbox\excessR  % Excess right material, once we know we're on the next page 
+\newbox\wholeR  % input Galley contents on the right side
 \newbox\partialR  % last Galley contents on the right side
 \newbox\trialbox  % result of current trial, filled by  diglot@any@trial
 
@@ -629,8 +631,8 @@
       \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
     \fi
     \global\galleypenalty=0
-    \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
-    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
+    \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\global\@ftergalleyskip=\lastskip\unskip\penalty\endtri@lpen@lty}%
+    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip}%
     \ifdim\ht\galley=0pt \ifdim\dp\galley=0pt
       \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
       \ifnum\interactionmode=2
@@ -655,26 +657,6 @@
   \after@run@a@trial
 }
 
-\xdef\m@rksm@x{0}
-\newtoks\usedm@rks
-\def\newm@rknum#1{%define a new m@rknum#1 which gets set as the next unused marks  register (assuming all marksN are registered with this function.
-  {\count255=\numexpr \m@rksm@x+1\relax%
-  \x@\xdef\x@\m@rksm@x{\the\count255}%
-  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}% Don't change this witout a lot of search and replace!
-  \trace{ma}{newm@rknum #1 -> \m@rksm@x}%
-}
-\def\addnewm@rk#1{\x@\usedm@rks\x@{\the\usedm@rks \\{#1}}\trace{ma}{addnewm@rk #1}}
-\def\getm@rknum#1{%retrieve or get a new m@rknum#1
-  \x@\let\x@\m@rknum\csname m@rknum#1\endcsname%
-  \ifx\m@rknum\relax%
-    \newm@rknum{#1}\let\m@rknum\m@rksm@x%
-  \fi%
-  \trace{ma}{getm@rknum #1 -> \m@rknum}%
-}
-\def\savem@rks{\trace{ma}{Saving marks: \the\usedm@rks}\let\\=\save@m@rk \the\usedm@rks}
-\def\save@m@rk#1{\getm@rknum{#1}\x@\xdef\csname customtopmark-#1\endcsname{\firstmarks\m@rknum}\x@\xdef\csname custombotmark-#1\endcsname{\botmarks\m@rknum}\trace{ma}{top=\csname customtopmark-#1\endcsname, bot=\csname custombotmark-#1\endcsname}}
-\def\unsavem@rks{\trace{ma}{Unsaving marks: \the\usedm@rks}\let\\=\unsave@m@rk \the\usedm@rks}
-\def\unsave@m@rk#1{\getm@rknum{#1}\ifcsname customtopmark-#1\endcsname\marks\m@rknum{\csname customtopmark-#1\endcsname}\else\trace{ma}{-skipping customtopmark-#1 (undefined)-}\fi\ifcsname custombotmark-#1\endcsname\marks\m@rknum{\csname custombotmark-#1\endcsname}\fi}
 
 \newm@rknum{L}% registers m@rknumL
 \newm@rknum{R}% registers m@rknumR
@@ -875,6 +857,14 @@
       \fi
     \fi
   \fi
+  \ifdim\@ftergalleyskip=0pt \else 
+    \setbox255\vbox{\unvbox255}%
+    \ifdim\dimexpr \trialheight-\ht255-\dp255 - \@ftergalleyskip\relax >0pt
+      \trace{D}{reinserting @ftergalleyskip (\the\@ftergalleyskip) after trial}%
+      \setbox255\vbox{\unvbox255\vskip\@ftergalleyskip}%
+    \else
+      \trace{D}{Not reinserting @ftergalleyskip (\the\@ftergalleyskip), as there's no space for it}%
+  \fi\fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount\relax
     %{\setbox0\vbox{\pagediscards}\showbox0}%
     \showbox255
@@ -889,10 +879,11 @@
     \setbox1=\vsplit 0 to \maxdimen \edef\tmp{\splitbotmark}%
     \ifx\empty\tmp\else
       \ifx\tmp\t@tle\else
-        \global\temptrue
+        \aftergroup\temptrue% Pass out true value
       \fi
     \fi
     }\iftemp
+      \trace{D}{m@rks on trial chunk}%
       \m@rksonpagetrue %here are marks in this trial column. Don't set it globally as it might not stick.
     \fi
   \fi
@@ -1222,6 +1213,7 @@
 \cumulativeDeltaR=0
 \newcount\cumulativeDelta % Sum of \chunkDelta values, in points
 \newdimen\adjustp@ge %emergency stretch to page
+\newdimen\@ftergalleyskip % if there's a skip at the end of the galley, it gets stored here.
 \adjustp@ge=0pt
 \def\m@rkerL{}
 \def\m@rkerR{}
@@ -1384,8 +1376,8 @@
 \newdimen\Lht
 \newdimen\Rht %
 \newdimen\TempDim %
-\newbox\Lbox % The part of partialL which fits on the page
-\newbox\Rbox % The part of partialR which fits on the page
+\newbox\Lbox % The processed version of partialL (inserts released)
+\newbox\Rbox % The processed version of partialR (inserts released)
 %\newbox\Ldiscards %what did tex discard at the top of this chunk?
 %\newbox\Rdiscards %what did tex discard at the top of this chunk?
 
@@ -2367,7 +2359,7 @@
 \def\diglotCollect{%
   %This gets called to collect material into the appropriate input queue.
   % assumes: \availht is correct, 
-  % Fills: \excessX
+  % Fills: \excessX and \wholeX
   % Empties: \box255
   \traceNum{D}{diglotCollect \c@rrdstat O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize. \ifintrial IN trial\fi}%
   %\ifintrial\showlists\fi
@@ -2379,17 +2371,6 @@
   \ifnum\outputpenalty=-10000 %User-pagebreak
     \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\outputpenalty}%
   \fi
-%  \ifvoid\destb@x
-%    \ifnum\savedpenalty>9999
-%      \trace{D}{Saving discards}%
-%      \x@\setbox\csname \c@rrdstat discards\endcsname\vbox{\pagediscards}%
-%      \ifdiglotDebugFollowContents
-%        \x@\showbox\csname\c@rrdstat discards\endcsname
-%      \fi
-%    \else 
-%      \x@\setbox\csname \c@rrdstat discards\endcsname\box\voidb@x
-%    \fi
-%  \fi
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
     \trace{D}{Why are we in diglotCollect after a trial?}%
@@ -2422,6 +2403,7 @@
     \setbox255=\vbox{\x@\vskip\csname baselineDelta\c@rrdstat\endcsname\penalty10000\unvbox255}%
     \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
+  \global\setbox\csname whole\c@rrdstat\endcsname\copy\destb@x % Save the current input box to avoid need to re-attach things to excessX
   \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi\ifintrial IN trial??\fi}%
@@ -3156,6 +3138,7 @@
 %    \x@\newb@x\csname #1discards\endcsname
     \x@\newb@x\csname #1box\endcsname
     \x@\newb@x\csname partial#1\endcsname
+    \x@\newb@x\csname whole#1\endcsname
     \x@\newb@x\csname excess#1\endcsname
     \x@\newb@x\csname picb@x#1\endcsname
     \x@\newt@ks\csname diglot#1ho@ks\endcsname
