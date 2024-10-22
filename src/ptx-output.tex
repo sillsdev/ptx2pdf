@@ -1635,7 +1635,9 @@
 
 %+c_makecolumngutter
 \newdimen\columnshift \columnshift=0pt
+\newdimen\ruleshift \ruleshift=0pt
 \edef\colshiftmode{\l@ft}
+\def\z@ropt{0pt}
 \def\rshiftc@lumn#1{%
  \ifdim\columnshift>0pt \count255=#1 \ifnum
     \ifx\colshiftmode\r@ght 1
@@ -1643,7 +1645,6 @@
       \else\ifRTL\ifx\colshiftmode\@uter 1\else 0\fi\else\ifx\colshiftmode\@nner 1\else 0\fi\fi\fi
      \fi =1 \hbox to \columnshift {}\fi\fi
 }
-\def\z@ropt{0pt}
 \def\lshiftc@lumn#1{%
  \ifdim\columnshift>0pt \count255=#1 \ifnum
     \ifx\colshiftmode\l@ft 1
@@ -1652,20 +1653,43 @@
   \fi =1 \trace{M}{lshifting}\hbox to \columnshift{}\else\trace{M}{Not lshifting}\fi\fi
   \trace{M}{for \colshiftmode \ifx\colshiftmode\@nner ==\else !=\fi \@nner \space at #1 is \ifodd\count255 odd\else even\fi}%
 }
+\def\rshiftc@l@mn#1{%
+ \dimen0=\columnshift
+ \ifdim\dimen0>0pt \else\dimen0=\ruleshift\fi
+ \ifdim\dimen0>0pt \count255=#1 \ifnum
+    \ifx\colshiftmode\r@ght 1
+    \else\ifodd\count255 \ifRTL\ifx\colshiftmode\@nner 1\else 0\fi\else\ifx\colshiftmode\@uter 1\else 0\fi\fi
+      \else\ifRTL\ifx\colshiftmode\@uter 1\else 0\fi\else\ifx\colshiftmode\@nner 1\else 0\fi\fi\fi
+     \fi =1 \hbox to \dimen0 {}\fi\fi
+}
+\def\lshiftc@l@mn#1{%
+ \dimen0=\columnshift
+ \ifdim\dimen0>0pt \else\dimen0=-\ruleshift\fi
+ \ifdim\dimen0>0pt \count255=#1 \ifnum
+    \ifx\colshiftmode\l@ft 1
+    \else\ifodd\count255 \ifRTL\ifx\colshiftmode\@uter 1\else 0\fi\else \ifx\colshiftmode\@nner 1\else 0\fi\fi
+         \else           \ifRTL\ifx\colshiftmode\@nner 1\else 0\fi\else \ifx\colshiftmode\@uter 1\else 0\fi\fi\fi
+  \fi =1 \trace{M}{lshifting}\hbox to \dimen0{}\else\trace{M}{Not lshifting}\fi\fi
+  \trace{M}{for \colshiftmode \ifx\colshiftmode\@nner ==\else !=\fi \@nner \space at #1 is \ifodd\count255 odd\else even\fi}%
+}
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 \newif\ifColNotesRule \ColNotesRulefalse
 \newdimen\RuleThickness \RuleThickness=0.4pt
 \def\ColumnGutterRuleColour{0 0 0}
 \def\makecolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\else\ifnum#5=0\hfil\fi\fi\fi
   \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
-            ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
+            ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip, baselineskip=\the\onel@neunit, columnshift=\the\columnshift, ruleshift=\the\ruleshift}%
 % #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
 % #5: line sides bit 0=left, 1=right (0=centre line, no XrefNotes)
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
     \vskip\ColumnGutterRuleSkip
-    \hbox to 1pt{\special{color push rgb \ColumnGutterRuleColour}\hfil\vrule width \RuleThickness height \the\dimen4 \hfil\special{color pop}}%\dp5=#3 \box5
+    \hbox{%
+      \ifdim\ruleshift>0pt \hskip\ruleshift\fi
+      \hbox to 1pt{\special{color push rgb \ColumnGutterRuleColour}\hfil\vrule width \RuleThickness height \the\dimen4 \hfil\special{color pop}}%\dp5=#3 \box5
+      \ifdim\ruleshift<0pt \hskip-\ruleshift\fi}%
     \vfil}\else\box\voidb@x\fi
+  \trace{o}{makecolumngutter rule box width=\the\wd4}%
   \ifx\XrefNotes\empty
     \ifColumnGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
   \else\ifnum#5>0
@@ -1679,7 +1703,7 @@
     \ifdim\ht\xr@fbox>0pt
       \vbox to #4{\vbox to #1{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
         \else\ifdim\ht\xr@fbox=0pt \message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}%
-          \else\trace{o}{underful xr@fbox=\the\ht\xr@fbox \space against \the\dimen0}\unvbox\xr@fbox\unpenalty\unskip\fi
+          \else\trace{o}{underfull xr@fbox=\the\ht\xr@fbox \space against \the\dimen0}\unvbox\xr@fbox\unpenalty\unskip\fi
           \ifXrefTopfill\else\vfil\fi
         \fi}\vfil}%
     \else \hbox to \XrefNotesWidth{}%
