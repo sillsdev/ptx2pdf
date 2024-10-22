@@ -124,9 +124,10 @@ exe1 = EXE(pyz1,
 
 # one has to do an analysis and exe for every application (what a pain)
 colls = [[exe1, a1.binaries, a1.zipfiles, a1.datas]]
+
+#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 jobs = {
-    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
-    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]}
 }
 for k, v in jobs.items():
     s = v.pop('py')
