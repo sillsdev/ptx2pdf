@@ -316,7 +316,7 @@
   \trace{o}{LAYOUTSTYLE break end (double col)}%
 }
 
-
+\newif\ifnotransitionskip \notransitionskipfalse
 \def\doublecolumns{%Called from parstyle
   \traceifset{doublecolumns}%
   \trace{o}{doublecolumns pg=\the\pagegoal, pt=\the\pagetotal, cols=\the\c@rrentcols}%
@@ -325,7 +325,7 @@
     % make switch from single to double column
     \vskip-\lastdepth
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
-    \penalty-101\vskip\baselineskip % ensure blank line between single and double column material
+    \penalty-101\ifnotransitionskip\else\vskip\baselineskip\fi % ensure blank line between single and double column material
     \layoutstylebreak
     \relax
     \trace{o}{BACK from layout}%
@@ -514,7 +514,7 @@
           \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
           \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins
         \fi\fi
-        \iff@rstnote\else \vskip\baselineskip \fi
+        \iff@rstnote\else \ifnotransitionskip\else\vskip\baselineskip\fi \fi
         \s@veallnotes{1}% save the state after notes are used.
       \fi
     }%
@@ -1408,7 +1408,7 @@
       \trace{et}{Apply border from savepartialpaged (writing partial)}%
       \doTextB@rder{\colA}%
       \global\partialfr@medtrue
-      \dimen4=\dimexpr \dimen2 - \dimen3 \dp\colA=\dimen4\box\colA
+      \dimen4=\dimexpr \dimen2 - \dimen3 \dp\colA=\dimen4 \box\colA
       \ifdefined\border@bpadding\kern\dimexpr\fb@bpadding + \border@bpadding + \lastd@pth \ifx\b@drbottom\tr@e + \b@drwidth pt\fi\fi\relax
       }%
 %-c_savepartialpaged_intro
