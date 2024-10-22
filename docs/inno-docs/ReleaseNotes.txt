@@ -1,8 +1,34 @@
 PTXprint 2.6.7 Release Notes
-19 Oct 2024
+22 Oct 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.6.8 (22 Oct 2024)
+
+  * Add in margin marginal verse controls
+
+  * TeX process sholdn't crash if given a fractional paragraph offset, just moan.
+
+  * First steps to better 1-2 column transitions (\goone and \gotwo)
+
+  * Add codelet for 1-column poetry toggle
+
+  * Add a couple of codelets: page num on title page; debug tracing
+
+  * Fix writing picchecks and picinfos to the right directories
+
+  * Allow cutouts in piclists to have smaller increments 2 dec places 
+
+  * Prevent notes breaking from images
+
+  * Add paragraph badness to parlocs (parend)
+
+  * Add an example tex snippet for GLO headers (work in progress)
+
+  * Start working on pdfinish app (work in progress)
+
+  * Refactor for separate finishing; 
 
 Bug fixes and Improvements in 2.6.7 (19 Oct 2024)
 
