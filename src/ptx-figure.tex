@@ -359,16 +359,19 @@
   \ifx\l@cspec@a\loc@Cut
     \global\let\picl@c\loc@Cut\global\picUsesInsfalse\global\picNarrowtrue\p@cinswid=\hsize
     \xdef\l@cspec{\l@cspec@b}%
-    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
+    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else
+      \x@\c@tskipparse\l@cspec@c...\E %split c@tskip into whole and fractional parts.
+    \fi
     \trace{g}{Experimental \w@tsit in cutout, after \c@tskip lines}%
-    \x@\c@tskipparse\c@tskip...\E %split c@tskip into whole and fractional parts.
   \fi
   \ifx\l@cspec@a\loc@Par
     \global\let\picl@c=\loc@Par\p@cinswid=\hsize
     \xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse
     \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
     \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
-    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%Borrow cutskip for parskip
+    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else
+      \x@\p@rskipparse\l@cspec@c...\E
+    \fi%We Borrow cutskip for parskip
     \trace{g}{Experimental after-paragraph \w@tsit, delay: \c@tskip}%
   \fi
   % full-page options
@@ -1311,6 +1314,13 @@
     \fi
   \fi
   \trace{g}{cut skip is \c@tskip (\c@tskipfrac)}%
+}
+\def\p@rskipparse#1.#2.#3\E{%
+  \trace{g}{paragraph skip is #1}%
+  \xdef\c@tskip{#1}\edef\t@mp{#2}\ifx\t@mp\empty
+  \else
+    \MSG{Fractional part (.#2) of paragraph skip meaningless and ignored for \ifx\w@tsit\gr@phic\csname figparam-src\endcsname\fi (\w@tsit\space\the\im@gecount), at \c@rref}%
+  \fi
 }
 \newif\ifimmediatefigure \immediatefigurefalse
 \def\d@figureCut#1{% Expects: count255=number of lines gap, \c@tskip=delay
