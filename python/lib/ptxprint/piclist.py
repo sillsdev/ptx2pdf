@@ -459,6 +459,7 @@ class Piclist:
         if not self.isdiglot:
             self.inthread = True
             self.threadUsfms(parent)
+            self.loaded = True
             # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
             return True
         return True
@@ -699,6 +700,7 @@ class Piclist:
                 lines.append("{} {}|{}".format(k, caption, vals))
 
         if len(lines):
+            logger.debug(f"Saving pics to {fpath} with {len(lines)} lines")
             dat = "\n".join(lines)+"\n"
             with open(fpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)

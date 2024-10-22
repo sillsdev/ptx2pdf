@@ -1251,6 +1251,7 @@ class ViewModel:
         pass
 
     def saveConfig(self, force=False):
+        logger.debug("Saving config")
         self.writeConfig(force=force)
         self.savePics(force=force)
         self.saveStyles(force=force)
