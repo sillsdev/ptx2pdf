@@ -919,7 +919,16 @@
 % e.g. `\sethook{start}{s1}{-}` put a hyphen at the start of every section heading
 \def\sethook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{#1}{#2}\else\rememberhook@xists{#1}{#2}\fi \x@\gdef\csname #1-#2\endcsname{#3}}
 \def\setbookhook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{book#1}{#2}\else\rememberhook@xists{book#1}{#2}\fi \x@\gdef\csname book#1-#2\endcsname{#3}}
+# A betweek hook triggers at the mid-point in the transition between the specified paragraph types. 
 \def\setbetweenhook#1#2#3{\sethook{between-#1}{#2}{#3}}
+% A CV hook is executed only for a particular CV when the verse milestone occurs.
+\def\setcvhook#1#2{\x@\gdef\csname cv-#1\endcsname{#2}}
+% Allow the above to be extended. This is risky for complex hooks
+\def\addtohook#1#2#3{\x@\gdef\csname #1-#2\x@\x@\x@\endcsname\x@\x@\x@{\csname #1-#2\endcsname#3}}
+\def\addtobetweenhook#1#2#3{\x@\gdef\csname between-#1-#2\x@\x@\x@\endcsname\x@\x@\x@{\csname between-#1-#2\endcsname#3}}
+\def\addtobookhook#1#2#3{\x@\gdef\csname book#1-#2\x@\x@\x@\endcsname\x@\x@\x@{\csname book#1-#2\endcsname#3}}
+\def\addtocvhook#1#2{\x@\gdef\csname cv-#1\x@\x@\x@\endcsname\x@\x@\x@{\csname cv-#1\endcsname#2}}
+
 %-csty_sethook
 
 %+csty_testpublishability
@@ -1296,8 +1305,6 @@
 \newtoks\v@rsehooks
 \newtoks\prev@rsehooks
 \def\lastc@rref{}\def\lastc@rradj{1}
-% A CV hook is executed only for a particular CV when the verse milestone occurs.
-\def\setcvhook#1#2{\x@\gdef\csname cv-#1\endcsname{#2}}
 {\catcode`\1=11\xdef\@neletter{1}}
 \def\docvhook{\edef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.\v@rse}\csname cv-\c@rref\endcsname
   %\trace{v}{verse: \v@rse, catcodes:\x@\getcatcodes\v@rse\E, and of one:\x@\getcatcodes\@neletter\E}%
