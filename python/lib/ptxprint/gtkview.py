@@ -2221,13 +2221,13 @@ class GtkViewModel(ViewModel):
             if os.path.exists(outfname):
                 if os.path.getsize(outfname) > 0:
                     existingFilelist.append(re.split(r"\\|/",outfname)[-1])
-        mergeAdjs = False
+        forceAdjs = False
         if len(existingFilelist):
             if len(existingFilelist) > 13:
                 existingFilelist = existingFilelist[:6] + ["..."] + existingFilelist[-6:]
             q1 = _("One or more Paragraph Adjust file(s) already exist!")
             q2 = "\n".join(existingFilelist)+_("\n\nDo you want to OVERWRITE the above-listed file(s)?")
-            mergeAdjs = self.msgQuestion(q1, q2, default=False)
+            forceAdjs = self.msgQuestion(q1, q2, default=False)
         if not len(booklist):
             return
         parlocs = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".parlocs")
@@ -2253,7 +2253,7 @@ class GtkViewModel(ViewModel):
         os.makedirs(adjpath, exist_ok=True)
         for bk in booklist:
             adj = self.get_adjlist(bk, save=False)
-            if not mergeAdjs:
+            if forceAdjs:
                 adj.clear()
             for k, v in sorted(adjs.items(), key=lambda x:refKey(x[0][0])):
                 r = refKey(k[0])
@@ -2263,7 +2263,7 @@ class GtkViewModel(ViewModel):
                 vals = []
                 first = True
                 s = getsign(*v) + "0"
-                adj.setval(bk + r[4], "{}.{}{}".format(r[1], r[2], r[5]), int(k[1]), s, v[3], force=not mergeAdjs)
+                adj.setval(bk + r[4], "{}.{}{}".format(r[1], r[2], r[5]), int(k[1]), s, v[3], force=forceAdjs)
             if not adj.adjfile:
                 adj.adjfile = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", self.getAdjListFilename(bk))
 
