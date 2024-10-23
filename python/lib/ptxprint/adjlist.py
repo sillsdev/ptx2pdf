@@ -3,7 +3,8 @@ from gi.repository import Gtk
 from ptxprint.utils import refKey
 import re
 
-adjre = re.compile("^(\S+)\s+(\d+[.:]\d+(?:[+-]*\d+)?)\s+([+-]?\d+)(?:\[(\d+)\])?")
+adjre = re.compile(r"^(\S+)\s+(\d+[.:]\d+(?:[+-]*\d+)?)\s+([+-]?\d+)(?:\[(\d+)\])?")
+restre = re.compile(r"^\s*\\(\S+)\s*(\d+)")
 
 class AdjList:
     def __init__(self, centre, lowdiff, highdiff, diglotorder=[]):
@@ -56,7 +57,9 @@ class AdjList:
         self.liststore.clear()
         with open(fname, "r") as inf:
             for l in inf.readlines():
+                c = ""
                 if '%' in l:
+                    c = l[l.find("%")+1:]
                     l = l[:l.find("%")]
                 m = adjre.match(l)
                 if m:
@@ -65,6 +68,10 @@ class AdjList:
                     except ValueError:
                         val = None
                     if val is not None:
+                        n = restre.match(c)
+                        if n:
+                            val[4] = n.group(1)
+                            val[5] = int(n.group(2))
                         allvals.append(val)
         for a in sorted(allvals, key=self.calckey):
             self.liststore.append(a)
@@ -93,7 +100,7 @@ class AdjList:
             if len(r[0]) > 3 and r[0][4] != diglot:
                 continue
             c, v = re.split(r"[:.]", r[1], 1)
-            firstv, _ = v.split("-", 1)
+            firstv = v.split("-", 1)
             v = int(v) - 1
             if v < 0:
                 c = int(c) - 1
