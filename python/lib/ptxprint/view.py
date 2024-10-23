@@ -18,6 +18,7 @@ from ptxprint.reference import RefList, RefRange, Reference
 from ptxprint.texpert import TeXpert
 from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
+from ptxprint.adjlist import AdjList
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -121,6 +122,7 @@ class ViewModel:
         self.picChecksView = PicChecks(self)
         self.loadingConfig = False
         self.styleEditor = StyleEditor(self)
+        self.adjlists = {}
         self.triggervcs = False
         self.copyrightInfo = {}
         self.pubvars = {}
@@ -648,6 +650,7 @@ class ViewModel:
             self.picinfos = None
             self.loadPics(mustLoad=False, force=True)
             self.hyphenation = None
+            self.adjlists = {}
             pts = self._getPtSettings()
             if pts is not None:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
@@ -1347,6 +1350,21 @@ class ViewModel:
         doti = fname.rfind(".")
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
+
+    def get_adjlist(self, bk, save=True):
+        if bk in self.adjlists:
+            return self.adjlists[bk]
+        fname = self.getAdjListFilename(bk)
+        if fname is None:
+            return None
+        fpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", fname)
+        # get expansion of regular font
+        centre = 100
+        adj = AdjList(centre, centre * 0.95, centre * 1.05)
+        if os.path.exists(fpath):
+            adj.readAdjlist(fpath)
+        self.adjlists[bk] = adj
+        return adj
 
     def generateFrontMatter(self, frtype="basic", inclcover=False):
         destp = self.configFRT()

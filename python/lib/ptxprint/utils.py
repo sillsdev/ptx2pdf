@@ -143,7 +143,8 @@ def getcaller(count=0):
     return f"{frame.f_code.co_name}({frame.f_code.co_filename}:{frame.f_lineno})"
 
 def refKey(r, info=""):
-    m = re.match(r"^(\d?\D+)?\s*(\d*)\.?(\d*)(\S*?)(\s+.*)?$", r)
+    """ Returns (bknum, chap, versenum, book, info, verseextra, extras) """
+    m = re.match(r"^(\d?\D+)?\s*(\d*)[.:]?(\d*)(\S*?)(\s+.*)?$", r)
     if m:
         bkid = m.group(1) or ""
         return (books.get(bkid[:3], 99)+1, int(m.group(2) or 0), int(m.group(3) or 0), bkid[3:], info, m.group(4), m.group(5) or "")
