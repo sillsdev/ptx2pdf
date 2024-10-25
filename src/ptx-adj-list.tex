@@ -36,12 +36,20 @@
 % where BBB is the book code (GEN, EXO, MAT, etc), C.V is the chapter.verse reference
 %       ADJ is the paragraph-length adjustment to be applied here (+1, +2, -1, etc)
 %       [n] is an optional index of paragraph within the verse, default is 1
+%       [n T.N.P] can specify a paragraph within a footnote, where:
+%               T is the note type
+%               N is is the note number within the chapter/verse/paragraph
+%               P (optional) is the paragraph within the note, defaults to 1
+%               If T.N.P form is used, then n may be ommitted.
 %
 % The reference of the adjustment to be applied is stored in \@djref, and the actual adjustment in \@djustment.
 %
+\newif\ifadjslurp \adjslurptrue %If true, this uses some extra memory (remembering the entire adjlist) for the benefit of the adjlist no longer needing to be sorted. 
+
 \def\warnspace #1 #2\E{\edef\tmp{\zap@space #2 \empty}\ifx\tmp\empty\let\tmp\@djustment\fi}
 \def\ver@djlinesub #1.#2\E{\edef\tst{#2}\ifx\tst\empty
  \global\@djparindex=0#1 \else\parse@djlinesub 0 #1.#2.\E\fi}
+
 \def\parse@djlinesub #1 #2.#3.#4.#5\E{\trace{j}{Subspec: par #1, typ '#2', num '#3', par '#4'}%
   \xdef\@djnotetyp{#2}\xdef\@djnotenum{#3}\xdef\@djnotepar{#4}%
   \ifx\@djnotenum\empty\else \ifx\@djnotepar\empty\xdef\@djnotepar{1}\fi\fi
@@ -51,20 +59,48 @@
 \def\@djnotetyp{}
 \def\@djnotenum{0}
 \def\@djnotepar{0}
+\def\currn@tetype{}%
 \def\parse@djline #1 #2 #3[#4]#5\end{%
- \uppercase{\xdef\@djref{\detokenize{#1}}}\xdef\@djref{\@djref\detokenize{#2}}\gdef\@djustment{#3}%
-  \warnspace #3 \E\ifx\@djustment\tmp\else\MSG{** WARNING: adjustlist entries should not contain spaces at #1 #2. Value given: (#3)}\fi
- \x@\parse@djlinesub #4 ...\E
-  \ifnum\@djparindex=0 \global\@djparindex=1 \fi}
+ \uppercase{\xdef\@djref{\detokenize{#1}}}\xdef\@djref{\@djref\detokenize{#2}}%
+ \gdef\@djustment{#3}%
+  \warnspace #1 \E\ifx\@djustment\tmp\else\MSG{** WARNING: adjustlist entries should not contain spaces at #1 #2. Value given: (#3)}\fi
+ \x@\parse@djlinesub #4 ...\E %Check for extended format.
+  \ifnum\@djparindex=0 \global\@djparindex=1 \fi
+  \ifadjslurp
+    \ifnum \@djustment=0 \else
+      \ifx\@djnotetyp\empty  % Normal type
+        \edef\@djname{adj-\@djref-\the\@djparindex}%
+      \else % Note type
+        \edef\@djname{adj-\@djref-\the\@djparindex-\@djnotetyp-\@djnotenum-\@djnotepar}%
+      \fi
+      \x@\xdef\csname \@djname\endcsname{\@djustment}%
+      \trace{j}{Saved \@djname =\@djustment}%
+    \fi
+  \fi
+}
 \newcount\@djparindex
 
 % Perform the current adjustment, and read the next line, if any
 \def\do@dj{\looseness=\@djustment \readnext@dj
  \trace{j}{do@adj: Looseness \the\looseness}%
- \@dvance@djfalse \ch@ckadjustments}
+ \ifadjslurp\else
+   \@dvance@djfalse \ch@ckadjustments
+ \fi
+}
+
+% Footnote version
+\def\n@tedo@dj{%
+ \ifnewparnotes\ifp@ranotes
+     \kern \the\dimexpr 10sp+\@djustment sp\relax \edef\@djnotenum{-1}%Ensure we only trigger once
+     \readnext@dj
+   \else
+     \do@dj 
+ \fi\fi
+}
 
 % read the next line from the adjustment list, or set \@djref to empty if no more
 \def\readnext@dj{%
+ \let\r@peat\relax
  \ifeof\@djlist
   \global\let\@djref\empty \global\@djparindex=-1
  \else
@@ -78,12 +114,16 @@
    %\immediate\write16{(Read adjustment: \@djline)}
    \ifx\@djline\P@R\readnext@dj\else % skip blank lines (or comments)
     \ifx\@djline\empty\readnext@dj\else
-     \expandafter\parse@djline\@djline []\end % store the reference and adjustment to be done
+      \expandafter\parse@djline\@djline []\end % store the reference and adjustment to be done
     \fi
    \fi
   \endgroup
+  \ifadjslurp
+    \let\r@peat\readnext@dj
+  \fi
   \trace{j}{readadjustments: @djparindex=\the\@djparindex , @djref=\@djref , @djustment=\@djustment}%
  \fi
+ \r@peat
 }
 \def\P@R{\par}
 
@@ -124,7 +164,7 @@
  \else \global\curr@djpar=\ifhmode 1 \else 0 \fi\fi
  \ifMarkAdjustPoints\trigg@rmark{AP}\fi %This makes the page hard to read
  \trace{b}{BALANCE paradj: ref=\adjc@rref: para=\the\curr@djpar: baselineskip=\the\baselineskip}%
- \trace{j}{checkadjustments: curref=\meaning\adjc@rref , prevref=\meaning\pr@vref , adjref=\meaning\@djref , curradjpar=\the\curr@djpar , adjparindex=\the\@djparindex \ifx\adjc@rref\@djref MATCH FOUND\fi}%
+ \trace{j}{checkadjustments: curref=\meaning\adjc@rref , prevref=\meaning\pr@vref,  curradjpar=\the\curr@djpar , \ifadjslurp\else adjref=\meaning\@djref , adjparindex=\the\@djparindex \else\ifx\adjc@rref\@djref MATCH FOUND\fi\fi}%
  \ifdiglot
    \x@\global\x@\let\csname\prevrefn@me\endcsname=\adjc@rref
  \else
@@ -133,21 +173,51 @@
  \@ch@ckadjustments
 }
 \def\@ch@ckadjustments{%
- \trace{j}{(Testing \adjc@rref\space against \@djref,  par \the\curr@djpar\space against \the\@djparindex.  \ifinn@te in note: \else not note\fi= \ifx\@djnotetyp\empty not in note \else in note '\@djnotetyp'\fi }%
+ \ifadjslurp
+   \SL@ch@ckadjustments
+ \else
+   \NoSL@ch@ckadjustments
+ \fi
+}
+\def\SL@ch@ckadjustments{%
+  \let\@djname\relax
+  \ifinn@te
+    \ifcsname currn@tenum\endcsname
+      \ifx\currn@tetype\relax\else
+        \edef\@djname{adj-\adjc@rref-\the\curr@djpar-\currn@tetype-\the\currn@tenum-\the\currn@tetparnum}%
+      \fi
+    \fi
+  \else
+    \edef\@djname{adj-\adjc@rref-\the\curr@djpar}%
+  \fi
+  \ifx\@djname\relax
+    \trace{j}{Something missing: \adjc@rref-\the\curr@djpar \ifinn@te (note) -\currn@tetype-\the\currn@tenum-\the\currn@tetparnum\fi}%
+  \else
+    \trace{j}{Checking for \@djname}%
+    \ifcsname \@djname\endcsname
+      \x@\let\x@\@djustment\csname \@djname\endcsname
+      \trace{j}{Adjustment found for \@djname: \@djustment}%
+      \ifinn@te
+        \n@tedo@dj
+      \else
+        \do@dj 
+      \fi
+      \x@\global\x@\let\csname \@djname\endcsname\undefined % Save memory
+    \fi
+  \fi
+}
+
+\def\NoSL@ch@ckadjustments{%
+ \trace{j}{(Testing \adjc@rref\space against \@djref,  par \the\curr@djpar\space against \the\@djparindex.  \ifinn@te in note:\else not note\fi \ifx\@djnotetyp\empty not in note \else in note '\@djnotetyp'\fi }%
  \ifx\adjc@rref\@djref%
    \ifnum\@djparindex=\curr@djpar 
-     \ifinn@te 
+     \ifinn@te
        \trace{j}{(\@djnotetyp=\currn@tetype)? and (\@djnotenum=\the\currn@tenum)? and (\@djnotepar=\the\currn@tetparnum)}%
        \ifx\@djnotetyp\currn@tetype \ifnum\@djnotenum=\the\currn@tenum \ifnum\@djnotepar=\the\currn@tetparnum \relax
-         \ifnewparnotes\ifp@ranotes
-             \kern \the\dimexpr 10sp+\@djustment sp\relax \edef\@djnotenum{-1}%Ensure we only trigger once
-             \readnext@dj
-           \else
-             \do@dj 
-         \fi\fi
+         \n@tedo@dj
        \fi\fi\fi
      \else
-       \ifx\@djnotetyp\empty
+       \ifx\@djnotetyp\empty%Not a note adjustment
          \do@dj
        \fi
      \fi

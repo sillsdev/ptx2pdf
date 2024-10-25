@@ -306,7 +306,7 @@
 \newif\ifFootNoteGlyphMetrics %Relationship between the margin and the last footnote: does the note use the descender or the actual bottom of the glyph. If the former, then the bottom of notes have a common baseline. If the latter, then the glyphs sit as close to the bottom margin as they can, which may permit an extra line of text. 
 \FootNoteGlyphMetricsfalse
   
-\newcount\currn@tetparnum
+\newcount\currn@tetparnum % Note type paragraph number
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \global\advance\n@teid by 1 %
