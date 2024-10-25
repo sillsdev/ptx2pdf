@@ -159,7 +159,7 @@ class PDFViewer:
     def handle_left_click(self, x, y, widget, page_number):
         zl = self.zoom_level
         # Print page number as well as coordinates
-        print(f"Coordinates on page {page_number}: x={x / zl}, y={y / zl}")
+        print(f"Coordinates on page {page_number}: x={x}, y={y}, zl={zl}")
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
