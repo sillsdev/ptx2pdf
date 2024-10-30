@@ -1324,6 +1324,8 @@ class ViewModel:
         pass
 
     def getPicRe(self):
+        if not self.copyrightInfo or not len(self.copyrightInfo):
+            self.readCopyrights()
         r = r"_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
                 + r")(\d+)([^.]*)"
         return r

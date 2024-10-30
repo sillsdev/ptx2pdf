@@ -3602,7 +3602,7 @@ class GtkViewModel(ViewModel):
         msg = ""
         prj = self.get("t_DBLprojName")
         cleanPrj = re.sub('[^-a-zA-Z0-9_()]+', '', prj)
-        prjpath = os.path.join(self.settings_dir, cleanPrj)
+        prjpath = os.path.join(self.prjTree.treedirs[0], cleanPrj)
         if prj != cleanPrj:
             msg = _("Do not use spaces or special characters")
         elif not len(prj):
@@ -4818,7 +4818,7 @@ class GtkViewModel(ViewModel):
     def _expandDBLBundle(self, prj, dblfile):
         tdir = self.prjTree.findWriteable()
         if UnpackDBL(dblfile, prj, tdir):
-            pjct = self.prjTree.addProject(prj, tdir, None)
+            pjct = self.prjTree.addProject(prj, os.path.join(tdir, prj), None)
             v = [getattr(pjct, a) for a in ['prjid', 'guid']]
             # add prj to ls_project before selecting it.
             for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
@@ -4933,7 +4933,7 @@ class GtkViewModel(ViewModel):
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
                 filters = {"DBL Bundles": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
                            "All Files": {"pattern": "*"}},
-                multiple = False, basedir=os.path.join(self.project.path, "Bundles"))
+                multiple = False, basedir=os.path.join(self.prjTree.treedirs[0], "Bundles"))
         if DBLfile is not None:
             # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
             self.DBLfile = DBLfile[0]
