@@ -2,9 +2,10 @@ import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk
-import cairo
+import cairo, re
 from cairo import ImageSurface, Context
 from pathlib import Path
+from dataclasses import dataclass, InitVar, field
 
 class PDFViewer:
     def __init__(self, model, widget):
@@ -14,11 +15,12 @@ class PDFViewer:
         self.current_page = None  # Keep track of the current page
         self.zoom_level = 1.0  # Initial zoom level is 100%
         self.spread_mode = self.model.get("c_bkView", False)
+        self.parlocs = None
+        self.psize = (0, 0)
 
         # Connect keyboard events
         self.hbox.connect("key-press-event", self.on_key_press_event)
         self.hbox.set_can_focus(True)  # Ensure the widget can receive keyboard focus
-
 
     def load_pdf(self, pdf_path):
         file_uri = Path(pdf_path).as_uri()
@@ -41,11 +43,13 @@ class PDFViewer:
             for i in spread:
                 if i in range(self.pages+1):
                     pg = self.document.get_page(i-1)
+                    self.psize = pg.get_size()
                     page_widget = self.render_page(pg, i)  # Pass the page number
                     self.hbox.pack_start(page_widget, False, False, 5)
         else:
             if page in range(self.pages+1):
                 pg = self.document.get_page(page-1)
+                self.psize = pg.get_size()
                 page_widget = self.render_page(pg, page)  # Pass the page number
                 self.hbox.pack_start(page_widget, False, False, 5)
 
@@ -54,6 +58,10 @@ class PDFViewer:
 
         # Grab focus so the widget receives keyboard events
         self.hbox.grab_focus()
+
+    def load_parlocs(self, fname):
+        self.parlocs = Paragraphs()
+        self.parlocs.readParlocs(fname)
 
     # Handle keyboard shortcuts for navigation
     def on_key_press_event(self, widget, event):
@@ -159,7 +167,14 @@ class PDFViewer:
     def handle_left_click(self, x, y, widget, page_number):
         zl = self.zoom_level
         # Print page number as well as coordinates
-        print(f"Coordinates on page {page_number}: x={x}, y={y}, zl={zl}")
+        print(f"Coordinates on page {page_number}: x={x}, y={self.psize[1]-y}, zl={zl}")
+        if self.parlocs is not None:
+            p = self.parlocs.findPos(page_number, x, self.psize[1] - y)
+            if p is not None:
+                if p.parnum == 1:
+                    print(f"Paragraph {p.ref} % \\{p.mrk}")
+                else:
+                    print(f"Paragraph {p.ref}[{p.parnum}] % \\{p.mrk}")
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
@@ -225,3 +240,100 @@ class PDFViewer:
             self.show_pdf(self.current_page)  # Redraw the current page
         # else:
             # print("Zoom level is already at the minimum. Cannot zoom out further.")
+
+def readpts(s):
+    if s.endswith("pt"):
+        return float(s[:-2])
+    else:
+        return float(s) / 65536.
+
+@dataclass
+class ParRect:
+    pagenum:    int
+    xstart:     float
+    ystart:     float
+    xend:       float = 0.
+    yend:       float = 0.
+
+@dataclass
+class ParInfo:
+    partype:    str
+    mrk:        str
+    baseline:   float
+    rects:      InitVar[None] = None
+
+class Paragraphs(list):
+    parlinere = re.compile(r"^\\@([a-zA-Z]+)\s*\{(.*?)\}\s*$")
+
+    def readParlocs(self, fname):
+        currp = None
+        currr = None
+        endpar = True
+        inpage = False
+        with open(fname, encoding="utf-8") as inf:
+            for l in inf.readlines():
+                m = self.parlinere.match(l)
+                if not m:
+                    continue
+                c = m.group(1)
+                p = m.group(2).split("}{")
+                if c == "pgstart":
+                    pnum = int(p[0])
+                    pheight = float(re.sub(r"[a-z]+", "", p[1]))
+                    inpage = True
+                elif c == "parpageend":
+                    pginfo = [readpts(x) for x in p[:2]] + [p[2]]
+                    inpage = False
+                elif c == "colstart":
+                    colinfo = [readpts(x) for x in p]
+                    if currp is not None:
+                        currr = ParRect(pnum, colinfo[3], colinfo[4])
+                        currp.rects.append(currr)
+                elif c == "colstop":
+                    if currr is not None:
+                        currr.xend = colinfo[3] + colinfo[2]
+                        currr.yend = readpts(p[1])
+                        if currr.pagenum == 2:
+                            print(currr)
+                        currr = None
+                elif c == "parstart":
+                    currp = ParInfo(p[0], p[1], readpts(p[2]))
+                    currp.rects = []
+                    currr = ParRect(pnum, colinfo[3], readpts(p[4]) + currp.baseline)
+                    currp.rects.append(currr)
+                    self.append(currp)
+                elif c == "parend":
+                    currp.lines = int(p[0])
+                    currr.xend = colinfo[3] + colinfo[2]    # p[1] is xpos of last char in par
+                    currr.yend = readpts(p[2])
+                    endpar = True
+                elif c == "parlen":
+                    if not endpar:
+                        continue
+                    endpar = False
+                    if currp is None:
+                        continue
+                    currp.ref = p[0]
+                    currp.parnum = int(p[1])
+                    currp.badness = int(p[2])
+                    currp.nextmk = p[3]
+                    currp = None
+                    if currr.pagenum == 2:
+                        print(currr)
+                    currr = None
+
+    def findPos(self, pnum, x, y):
+        done = False
+        #breakpoint()
+        for p in self:
+            for r in p.rects:
+                if r.pagenum > pnum:
+                    done = True
+                    break
+                elif r.pagenum < pnum:
+                    continue
+                if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
+                    return p
+            if done:
+                break
+        return None

@@ -346,6 +346,8 @@ class RunJob:
                     self.printer.pdf_viewer.load_pdf(pdfname)
                     self.printer.pdf_viewer.show_pdf(int(self.printer.get("s_pgNum", 1)), 
                                                     rtl    = self.printer.get("c_RTLbookBinding", False))
+                    fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".parlocs"))
+                    self.printer.pdf_viewer.load_parlocs(fname)
                 else:
                     if sys.platform == "win32":
                         os.startfile(startname)
