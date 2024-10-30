@@ -112,6 +112,8 @@
   \setbox14=\makefootbox
   \ifvoid14\else\ifnoinkinmargin \advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
   \trace{i}{1c TRIAL with ht=\the\trialheight, depth=\the\dp255, vsize=\the\vsize, hIns=\the\holdinginserts, vfuzz=\the\vfuzz}%
+  \r@membermarks %TODO: Check this 
+  \trace{o}{c@lcavailht1}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
   \setbox\s@vedpage=\copy255
@@ -399,6 +401,7 @@
       \trace{o}{reheighting \the\ht\th@cl@ss, diff=\the\dimen5, will reheight=\iftemp true\else false\fi}%
       \iftemp
         \trace{o}{Retrying colnotes \the\ht\th@cl@ss, at \the\bestavailht, versus \the\availht, from=\the\dimen3, diff=\the\dimen5, baselineskip=\the\baselineskip}%
+        \trace{o}{c@lcavailht2}%
         \c@lcavailht
         \setbox255=\copy\s@vedpage
         \global\setbox\colA=\vsplit255 to \availht
@@ -411,6 +414,7 @@
         \else\tempfalse \fi
         \iftemp\else
           \setbox\th@cl@ss=\copy#1
+          \trace{o}{c@lcavailht3}%
           \bestavailht=\dimen3 \c@lcavailht
           \setbox255=\copy\s@vedpage
           \global\setbox\colA=\vsplit255 to \availht
@@ -449,6 +453,8 @@
   \trace{o}{savepartialpage: b@dy\ifb@dy true\else false\fi\space for trialheight \the\trialheight}%
   \setbox0=\vbox{\unvcopy255}%
   %\global\t@xttrialheight=\ht0
+  \r@membermarks %TODO: Check this 
+  \trace{o}{c@lcavailht4}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \s@veallnotes{1}%
   \setbox\s@vedpage=\copy255
@@ -462,6 +468,7 @@
       \global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}%
       \ifdim\dimexpr\pretextb@rderskip + \posttextb@rderskip\relax=0pt \else
         \trace{eb}{Bother. Need to remeasure and resplit the page because of the new-found border}%
+        \trace{o}{c@lcavailht5}%
         \keepn@testrue\c@lcavailht\keepn@tesfalse
         \setbox255\copy\s@vedpage
         \setbox\colA=\vsplit255 to \availht
@@ -1192,17 +1199,21 @@
 
 \newdimen\bestavailht \bestavailht=0pt
 \let\oldb@tmark\empty
-\def\c@lcavailht{%
-  \traceifset{c@lcavailht}%
-  \trace{o}{c@lcavailht op=\the\outputpenalty, m@rksonpage \ifm@rksonpage true\else false\fi, pfm/fm/obm: \p@gefirstmark/\firstmark/\oldb@tmark/}%
+\def\r@membermarks{%
+  \trace{o}{r@membermarks op=\the\outputpenalty, m@rksonpage \ifm@rksonpage true\else false\fi, pfm/fm/obm: \p@gefirstmark/\firstmark/\oldb@tmark/}%
   \edef\t@st{\p@gefirstmark}%
+  \savem@rks
   \ifx\t@st\empty
     \edef\t@stb{\firstmark}\ifx\oldb@tmark\t@stb\else\m@rksonpagetrue\fi%Other places can set it too
       \ifm@rksonpage
-      \xdef\p@gefirstmark{\firstmark}\savem@rks\trace{H}{Loading firstmark \p@gefirstmark}\fi
+      \xdef\p@gefirstmark{\firstmark}\trace{H}{Loading firstmark \p@gefirstmark}\fi
   \else\trace{H}{pfm is already \p@gefirstmark}\fi% remember first, if not already set
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi
+}
+\def\c@lcavailht{%
+  %\r@membermarks %TODO: FIX THIS 
+  \traceifset{c@lcavailht}%
   %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \availht=\trialheight % amount of space we think is available
   \trace{i}{C@lcavailht partial:\the\ht\partial \space available:\the\availht}%
@@ -1299,6 +1310,7 @@
       \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip\tempfalse\fi\fi
       \iftemp
         \trace{o}{Retrying colnotes(2) at \the\bestavailht, versus \the\availht, diff=\the\dimen5, baselineskip=\the\baselineskip. iflevel=\the\currentiflevel}%
+        \trace{o}{c@lcavailht6}%
         \c@lcavailht
         %\trace{o}{after c@lc iflevel=\the\currentiflevel}%
         \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
@@ -1311,6 +1323,7 @@
         \else\tempfalse\fi
         \iftemp\else
           \bestavailht=\dimen3
+          \trace{o}{c@lcavailht7}%
           \c@lcavailht \global\setbox\s@vedpage=\vbox{\unvcopy255}\balanced
         \fi
         \trace{o}{New availht(2)=\the\availht, measured height=\the\dimen3, olddiff=\the\dimen5, newdiff=\the\dimen6, limit=\the\dimen4. iflevel=\the\currentiflevel}%
@@ -1334,6 +1347,8 @@
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
   \fi
+  \r@membermarks %TODO: Check this 
+  \trace{o}{c@lcavailht8}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \setbox\s@vedpage=\vbox{\unvcopy255}%
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize, av=\the\availht, op=\the\outputpenalty/\csname @utputpenalty\endcsname}%
@@ -1418,6 +1433,8 @@
     \global\holdinginserts=1
     \global\setbox255=\box\voidb@x
     \s@ttrialheight
+    \trace{o}{c@lcavailht9}%
+    \r@membermarks
     \keepn@testrue\c@lcavailht\keepn@tesfalse
     \trace{o}{sppd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}%
     \if\XrefNotes\relax\else\trace{o}{IAFFM}\global\setbox\th@cl@ss=\box\voidb@x\global\setbox\xr@fbox=\box\voidb@x\fi
@@ -1502,6 +1519,8 @@
   \s@ttrialheight
   \setbox14=\makefootbox
   \ifvoid14\else\ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
+  \r@membermarks %TODO: Check this 
+  \trace{o}{c@lcavailht10}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
@@ -1754,6 +1773,8 @@
    \edef\t@mp{\splitbotmark}%
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark (\topmark,\firstmark,\botmark)}\fi
   \s@ttrialheight
+  \r@membermarks %TODO: Check this 
+  \trace{o}{c@lcavailht11}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}%
   \global\galleypenalty=\outputpenalty

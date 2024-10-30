@@ -1327,6 +1327,8 @@ class ViewModel:
         pass
 
     def getPicRe(self):
+        if not self.copyrightInfo or not len(self.copyrightInfo):
+            self.readCopyrights()
         r = r"_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
                 + r")(\d+)([^.]*)"
         return r
@@ -1548,9 +1550,6 @@ class ViewModel:
         prjid = project.prjid
         if cfgid is None:
             cfgid = self.cfgid
-        cfpath = prjid + "/shared/ptxprint/"
-        if cfgid is not None:
-            cfpath += cfgid+"/"
         baseprj = self.project
         baseprjid = baseprj.prjid
         basecfpath = baseprjid + "/shared/ptxprint/" + self.cfgid
@@ -1595,12 +1594,12 @@ class ViewModel:
         if os.path.exists(piclstpath):
             for pic in os.listdir(piclstpath):
                 if pic.endswith(".piclist") and pic in picbks:
-                    res[os.path.join(piclstpath, pic)] = cfpath + "PicLists/" + pic
+                    res[os.path.join(piclstpath, pic)] = basecfpath + "PicLists/" + pic
         jobpiclistfs = ["{}-{}.piclist".format(baseprjid, self.cfgid), "picChecks.txt"]
         for jobpiclistf in jobpiclistfs:
             jobpiclist = os.path.join(basecfpath, jobpiclistf)
             if os.path.exists(jobpiclist):
-                res[jobpiclist] = cfpath + jobpiclistf
+                res[jobpiclist] = basecfpath + jobpiclistf
 
         if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
@@ -1631,7 +1630,7 @@ class ViewModel:
 
         for v in allfonts:
             k = os.path.basename(v)
-            res[v] = prjid + "/local/ptxprint/" + cfgid + "/fonts/" + k
+            res[v] = project + "/local/ptxprint/" + cfgid + "/fonts/" + k
 
         if baseprjid:
             mdir = os.path.join(self.project.path, "shared", "fonts", "mappings")
@@ -1655,11 +1654,11 @@ class ViewModel:
         tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
         mystyles.output_diffile(tempfile, inArchive=True)
         tempfile.close()
-        res[tempfile.name] = cfpath + "ptxprint.sty"
+        res[tempfile.name] = basecfpath + "ptxprint.sty"
         tmpfiles.append(tempfile.name)
 
         # config files - take the whole tree even if not needed
-        ppath = self.project.srcPath(cfgid)
+        ppath = self.project.srcPath(self.cfgid)
         for dp, dn, fn in os.walk(ppath):
             op = os.path.join(basecfpath, saferelpath(dp, ppath))
             for f in fn:

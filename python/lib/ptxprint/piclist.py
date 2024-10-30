@@ -603,21 +603,23 @@ class Piclist:
 
     def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True):
         self.srchlist = [figFolder] if figFolder is not None else []
-        if not exclusive:
-            chkpaths = []
-            for d in ("local", ""):
-                if sys.platform.startswith("win"):
-                    chkpaths += [os.path.join(self.basedir, d, "figures")]
+        chkpaths = []
+        for d in ("local", ""):
+            if sys.platform.startswith("win"):
+                chkpaths += [os.path.join(self.basedir, d, "figures")]
+            else:
+                chkpaths += [os.path.join(self.basedir, x, y+"igures") for x in (d, d.title()) for y in "fF"]
+        for p in chkpaths:
+            if os.path.exists(p) and len(os.listdir(p)) > 0:
+                if exclusive:
+                    self.srchlist.append(p)
                 else:
-                    chkpaths += [os.path.join(self.basedir, x, y+"igures") for x in (d, d.title()) for y in "fF"]
-            for p in chkpaths:
-                if os.path.exists(p) and len(os.listdir(p)) > 0:
                     for dp, _, fn in os.walk(p): 
                         if len(fn): 
                             self.srchlist.append(dp)
-            uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
-            if os.path.isdir(uddir):
-                self.srchlist.append(uddir)
+        uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
+        if os.path.isdir(uddir):
+            self.srchlist.append(uddir)
         self.extensions = []
         extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
         extuser = re.sub("[ ,;/><]"," ",imgorder).split()
