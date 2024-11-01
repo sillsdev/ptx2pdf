@@ -256,10 +256,13 @@ _fieldmap = {
 
 class StyleEditor:
 
-    def __init__(self, model):
+    def __init__(self, model, basepath=None):
         self.model = model
         self.sheet = {}
-        self.basesheet = {}
+        if basepath is None:
+            self.basesheet = {}
+        else:
+            self.basesheet = self._read_styfile(basepath)
         self.marker = None
         self.registers = {}
 
@@ -269,6 +272,32 @@ class StyleEditor:
         res.basesheet = Sheets(base=self.basesheet)
         res.marker = self.marker
         res.registers = dict(self.registers)
+        return res
+
+    def _read_styfh(self, fh):
+        fieldre = re.compile(r"^\s*\\(\S+)\s*(.*?)\s*$")
+        res = {}
+        curr = {}
+        for l in fh.readlines():
+            m = fieldre.match(l)
+            if m:
+                mk = m.group(1)
+                v = m.group(2)
+                if mk.lower() == "marker":
+                    curr = {}
+                    res[v] = curr
+                    mrk = v
+                    continue
+                elif mk.lower() in _fieldmap:
+                    v = _fieldmap[mk.lower()][0](self, v, mrk=mrk, model=self.model)
+                curr[mk.lower()] = v
+        return res
+
+    def _read_styfile(self, fname):
+        if not os.path.exists(fname):
+            return {}
+        with open(fname, encoding="utf-8") as inf:
+            res = self._read_styfh(inf)
         return res
 
     def allStyles(self):
@@ -285,43 +314,34 @@ class StyleEditor:
         if m is None:
             res = {}
             for m in self.allStyles():
-                res[m] = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
-                res[m].update({str(k):v for k, v in self.sheet.get(m, {}).items()})
+                res[m] = {k:v for k, v in self.basesheet.get(m, {}).items()}
+                res[m].update({k:v for k, v in self.sheet.get(m, {}).items()})
         else:
-            res = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
-            res.update({str(k):v for k, v in self.sheet.get(m, {}).items()})
+            res = {k:v for k, v in self.basesheet.get(m, {}).items()}
+            res.update({k:v for k, v in self.sheet.get(m, {}).items()})
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
-        if default is None:
-            default = _fieldmap.get(key.lower(), [None, None, None])[2]
         if mrk not in self.sheet:
-            self.sheet[mrk] = Marker()
+            return default
         res = self.sheet[mrk].get(key, None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
             res = self.basesheet[mrk].get(key, default) if mrk in self.basesheet else default
-        if key.lower() in _fieldmap and res is not None:
-            res = _fieldmap[key.lower()][0](self, res, mrk=mrk, model=self.model)
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None):
         if ifunchanged and (self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None) != \
                 (self.sheet[mrk].get(key, None) if mrk in self.sheet else None):
             return
-        if val is not None and key.lower() in _fieldmap:
-            newval = _fieldmap[key.lower()][1](self, val, mrk=mrk, model=self.model, parm=parm)
-            if newval is None and val is not None:
-                return      # Probably a font which has edited the object for us
-            else:
-                val = newval
         # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
         oldval = self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None
         if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
             del self.sheet[mrk][key]
         elif oldval != val and val is not None:
             if mrk not in self.sheet:
-                self.sheet[mrk] = Marker()
+                self.sheet[mrk] = {}
             self.sheet[mrk][key] = val
+        # do we really want to do this?
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
 
@@ -340,20 +360,27 @@ class StyleEditor:
         f = self.model.getFont(style if len(style) else "regular")
         return f
 
+    def _merge(self, sheet, styles):
+        for k, v in styles.items():
+            if k in sheet:
+                sheet[k].update(v)
+            else:
+                sheet[k] = v
+        return sheet
+
     def load(self, sheetfiles):
         if len(sheetfiles) == 0:
             return
         foundp = False
-        self.basesheet = Sheets(sheetfiles[:-1])
+        for s in sheetfiles[:-1]:
+            sheet = self._read_styfile(s)
+            self._merge(self.basesheet, sheet)
         self.test_constraints(self.basesheet)
-        self.sheet = Sheets(sheetfiles[-1:], base = "")
+        self.sheet = self._read_styfile(sheetfiles[-1])
         self.test_constraints(self.sheet)
 
-    def loadfh(self, fh, base=None):
-        self.basesheet = Sheets()
-        self.sheet = Sheets(base=base)
-        self.sheet.appendfh(fh)
-        self.test_constraints(self.sheet)
+    def loadfh(self, fh):
+        self.sheet = self._read_styfh(fh)
 
     def test_constraints(self, sheet):
         for m, s in sheet.items():
@@ -388,12 +415,11 @@ class StyleEditor:
                 b = b or ""
             return a == b
 
-    def _str_val(self, v, key=""):
+    def _str_val(self, v, key="", mrk=None):
+        if key in _fieldmap:
+            v = _fieldmap[key][1](self, v, mrk, model=self.model, parm=None)
         if isinstance(v, (set, list)):
-            if key.lower() == "textproperties":
-                res = " ".join(x.lower() if x else "" for x in sorted(v))
-            else:
-                res = " ".join(self._str_val(x, key) for x in sorted(v))
+            res = " ".join(self._str_val(x, key, mrk) for x in sorted(v))
         elif isinstance(v, float):
             res = f2s(v)
         else:
@@ -429,7 +455,7 @@ class StyleEditor:
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
-                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k)))
+                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k, m)))
 
     def merge(self, basese, newse):
         for m in newse.sheet.keys():

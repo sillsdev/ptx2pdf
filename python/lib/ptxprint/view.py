@@ -121,7 +121,7 @@ class ViewModel:
         self.tempFiles = []
         self.picChecksView = PicChecks(self)
         self.loadingConfig = False
-        self.styleEditor = StyleEditor(self)
+        self.styleEditor = StyleEditor(self, basepath=os.path.join(self.scriptsdir, "usfm_sb.sty"))
         self.adjlists = {}
         self.triggervcs = False
         self.copyrightInfo = {}
@@ -550,11 +550,12 @@ class ViewModel:
             this.write(outf)
 
     def _mergesty(self, srcp, destp, mergep, oldcfg="", newcfg="", newprj=None, **kw):
-        srcse = StyleEditor(self)
+        basepath = os.path.join(self.scriptsdir, "usfm_sb.sty")
+        srcse = StyleEditor(self, basepath=basepath)
         srcse.load(self.getStyleSheets(oldcfg))
-        destse = StyleEditor(self)
+        destse = StyleEditor(self, basepath=basepath)
         destse.load(self.getStyleSheets(newcfg, prj=newprj))
-        mergese = StyleEditor(self)
+        mergese = StyleEditor(self, basepath=basepath)
         mergese.load(self.getStyleSheets(newcfg, prj=newprj, subdir="base"))
         destse.merge(mergese, srcse)
         with open(destp, "w", encoding="utf-8") as outfh:
@@ -1971,10 +1972,10 @@ set stack_size=32768""".format(self.cfgid)
 
         # merge ptxprint.sty adding missing
         if impAll or self.get("c_impStyles") or self.get("c_oth_Cover"):
-            newse = StyleEditor(view)
+            newse = StyleEditor(view, os.path.join(self.scriptsdir, "usfm_sb.sty"))
             try:
                 with zipopentext(fzip, "ptxprint.sty", prefix=prefix) as inf:
-                    newse.loadfh(inf, base="")
+                    newse.loadfh(inf)
             except (KeyError, FileNotFoundError):
                 pass
             if impAll or self.get("c_impStyles"):

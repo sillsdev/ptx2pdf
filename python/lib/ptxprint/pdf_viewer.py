@@ -266,10 +266,12 @@ class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z]+)\s*\{(.*?)\}\s*$")
 
     def readParlocs(self, fname):
+        self.pindex = []
         currp = None
         currr = None
         endpar = True
         inpage = False
+        pnum = 0
         with open(fname, encoding="utf-8") as inf:
             for l in inf.readlines():
                 m = self.parlinere.match(l)
@@ -278,7 +280,9 @@ class Paragraphs(list):
                 c = m.group(1)
                 p = m.group(2).split("}{")
                 if c == "pgstart":
-                    pnum = int(p[0])
+                    #pnum = int(p[0])
+                    pnum += 1
+                    self.pindex.append(len(self))
                     pheight = float(re.sub(r"[a-z]+", "", p[1]))
                     inpage = True
                 elif c == "parpageend":
@@ -324,8 +328,12 @@ class Paragraphs(list):
 
     def findPos(self, pnum, x, y):
         done = False
-        #breakpoint()
-        for p in self:
+        # just iterate over paragraphs on this page
+        if pnum >= len(self.pindex):
+            return None
+        e = self.pindex[pnum+1] if pnum < len(self.pindex) - 1 else len(self)
+
+        for p in self[self.pindex[pnum]:e+1]:
             for r in p.rects:
                 if r.pagenum > pnum:
                     done = True
