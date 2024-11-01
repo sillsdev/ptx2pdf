@@ -1,8 +1,24 @@
 PTXprint 2.6.8 Release Notes
-22 Oct 2024
+1 Nov 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.6.9 (1 Nov 2024)
+
+  * Fix keyword headings (in glossary)
+
+  * Fix exclusive picture folders (#984)
+
+  * Improve diglot archives
+
+  * Tech: Define addtohook
+
+  * Tech: Add prefixhook macros
+
+  * Tech: Don't save marks EVERY call to calcavailht, but do save all of them
+
+  * Get from DBL to print path working
 
 Bug fixes and Improvements in 2.6.8 (22 Oct 2024)
 
