@@ -135,8 +135,8 @@ class ProjectList:
     def addToConfig(self, config, section="projectdirs"):
         config.remove_section(section)
         config.add_section(section)
-        for d in self.treedirs:
-            config.set(section, d, "")
+        for i, d in enumerate(self.treedirs, 1):
+            config.set(section, str(i), d)
             
 
 class Project:
