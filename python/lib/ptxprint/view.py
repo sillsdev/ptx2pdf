@@ -634,6 +634,7 @@ class ViewModel:
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
             if oldVersion < 0:
                 return False
+            self.styleEditor.reset(os.path.join(self.scriptsdir, "usfm_sb.sty"))
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
             if newconfig:
@@ -1264,6 +1265,7 @@ class ViewModel:
         if not force and self.configLocked():
             return
         fname = os.path.join(self.project.createConfigDir(self.cfgid), "ptxprint.sty")
+        logger.debug(f"Writing stylefile {fname}")
         with open(fname, "w", encoding="Utf-8") as outf:
             self.styleEditor.output_diffile(outf)
 
@@ -1354,7 +1356,7 @@ class ViewModel:
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
 
-    def get_adjlist(self, bk, save=True):
+    def get_adjlist(self, bk, save=True, gtk=None):
         if bk in self.adjlists:
             return self.adjlists[bk]
         fname = self.getAdjListFilename(bk)
@@ -1363,7 +1365,7 @@ class ViewModel:
         fpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", fname)
         # get expansion of regular font
         centre = 100
-        adj = AdjList(centre, centre * 0.95, centre * 1.05)
+        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj

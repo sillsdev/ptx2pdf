@@ -432,8 +432,8 @@ class StyleEditorView(StyleEditor):
                 if props is None:
                     val = oldval
                 else:
-                    if not isinstance(props, set):
-                        props = set(props.split())
+                    if not isinstance(props, dict):
+                        props = {k:v for v,k in enumerate(props.split())}
                     val = 'nonpublishable' in (x.lower() for x in props)
                 # oldval = 'nonpublishable' in old.get('TextProperties', '')
                 logger.debug(f"{self.marker} is {'not' if oldval else ''}publishable")
@@ -602,9 +602,9 @@ class StyleEditorView(StyleEditor):
                 add, rem = "non", ""
             else:
                 add, rem = "", "non"
-            props = self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', set())
+            props = self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', {})
             if props is None:
-                props = set()
+                props = {}
                 self.sheet[self.marker]['TextProperties'] = props
             try:
                 props.remove(rem+'publishable')
@@ -762,15 +762,15 @@ class StyleEditorView(StyleEditor):
                 val = self.model.get(v).replace("\\","")
                 # print(f"{k=} {v=} -> {val=}")
                 if k.lower() == 'occursunder':
-                    val = set(val.split())
+                    val = {k:v for v,k in enumerate(val.split())}
                 self.setval(key, k, val)
             st = self.getval(key, 'StyleType', '')
             if st == 'Character' or st == 'Note':
                 self.setval(key, 'EndMarker', key + "*")
                 if st == 'Character':
                     ou = self.getval(key, 'OccursUnder')
-                    if not isinstance(ou, set):
-                        ou = set(ou.split())
+                    if not isinstance(ou, dict):
+                        ou = {k:v for v,k in enumerate(ou.split())}
                     ou.add("NEST")
                     self.setval(key, 'OccursUnder', ou)
                 self.resolveEndMarker(key, None)

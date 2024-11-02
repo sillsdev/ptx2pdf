@@ -2084,7 +2084,7 @@ class GtkViewModel(ViewModel):
             return
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None, None, pg, forced=True)
-        adjl = self.get_adjlist(self.get("ecb_examineBook"))
+        adjl = self.get_adjlist(self.get("ecb_examineBook"), gtk=Gtk)
         if adjl is not None:
             self.adjView.set_model(adjl, save=True)
 
@@ -2252,7 +2252,7 @@ class GtkViewModel(ViewModel):
         adjpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists")
         os.makedirs(adjpath, exist_ok=True)
         for bk in booklist:
-            adj = self.get_adjlist(bk, save=False)
+            adj = self.get_adjlist(bk, save=False, gtk=Gtk)
             if forceAdjs:
                 adj.clear()
             for k, v in sorted(adjs.items(), key=lambda x:refKey(x[0][0])):
@@ -3498,7 +3498,7 @@ class GtkViewModel(ViewModel):
                 obj.set_tooltip_text(None)
         books = self.getBooks()
         if len(books):
-            self.adjView.set_model(self.get_adjlist(books[0]))
+            self.adjView.set_model(self.get_adjlist(books[0], gtk=Gtk))
         self.updatePrjLinks()
         self.setEntryBoxFont()
         self._setup_digits()

@@ -14,13 +14,16 @@ class _CEnum:
         self.vals = vals
 
     def __contains__(self, v):
-        return v in self.vals
+        return v.lower() in self.vals
 
     def __str__(self):
         return "in " + ", ".join(self.vals)
 
 class _CRange:
     def __init__(self, first, last=None):
+        if last is None:
+            last = first
+            first = 0.
         self.first = first
         self.last = last
 
@@ -35,7 +38,7 @@ class _CRange:
         return True
 
     def __str__(self):
-        return "in range({}, {}+1)".format(self.first, self.last)
+        return "in range({}, {})".format(self.first, self.last)
 
 class _CValue:
     def __init__(self, val):
@@ -61,13 +64,13 @@ class _CNot:
         return "not(" + str(self.constraint) + ")"
 
 constraints = {
-    'texttype': _CEnum('VerseText', 'NoteText', 'BodyText', 'Title', 'Section', 'Other', 'other',
-                        'ChapterNumber', 'VerseNumber', 'Unspecified', 'Standalone'),
-    'styletype': _CEnum('Paragraph', 'Character', 'Note', 'Milestone', 'Standalone', ''),
-    'fontsize': _CRange(1.),
-    'fontscale': _CRange(0.1),
+    'texttype': _CEnum('versetext', 'notetext', 'bodytext', 'title', 'section', 'other',
+                        'chapternumber', 'versenumber', 'unspecified', 'standalone'),
+    'styletype': _CEnum('paragraph', 'character', 'note', 'milestone', 'standalone', ''),
+    'fontsize': _CRange(2.),
+    'fontscale': _CRange(2.),
     'raise': _CNot(_CValue(0.)),
-    'linespacing': _CRange(0.05),
+    'linespacing': _CRange(2.5),
 }
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
@@ -159,16 +162,20 @@ def toBool(self, v, mrk=None, model=None, parm=None):
     return "" if v else "-"
 
 def fromSet(self, s, mrk=None, model=None):
-    if isinstance(s, set):
+    if isinstance(s, dict):
         return s
-    elif not len(s):
-        return set()
-    return set(s.split())
+    elif isinstance(s, str):
+        return {k:v for v,k in enumerate(s.split())}
+    else:
+        return {k:v for v,k in enumerate(s)}
 
 def toSet(self, s, mrk=None, model=None, parm=None):
-    if isinstance(s, set):
+    if isinstance(s, str):
+        return s
+    elif isinstance(s, dict):
+        return " ".join(k for k,v in sorted(s.items(), key=lambda x:x[1]))
+    else:
         return " ".join(s)
-    return s
 
 def fromFont(self, s, mrk=None, model=None):
     if mrk is None:
@@ -208,12 +215,10 @@ def toFont(self, v, mrk=None, model=None, parm=None):
 
 def fromOneMax(self, v, mrk=None, model=None):
     res = coltotex(textocol(v))
-    # print(f"FROM: {mrk=} {v=} {res=}")
     return res
 
 def toOneMax(self, v, mrk=None, model=None, parm=None):
     res = " ".join("{:.2f}".format(x) for x in coltoonemax(textocol(v)))
-    # print(f"TO: {mrk=} {v=} {res=}")
     return res
 
 def fromFileName(self, s, mrk=None, model=None):
@@ -259,12 +264,9 @@ class StyleEditor:
     def __init__(self, model, basepath=None):
         self.model = model
         self.sheet = {}
-        if basepath is None:
-            self.basesheet = {}
-        else:
-            self.basesheet = self._read_styfile(basepath)
         self.marker = None
         self.registers = {}
+        self.reset(basepath=basepath)
 
     def copy(self):
         res = self.__class__(self.model)
@@ -273,6 +275,12 @@ class StyleEditor:
         res.marker = self.marker
         res.registers = dict(self.registers)
         return res
+
+    def reset(self, basepath=None):
+        if basepath is None:
+            self.basesheet = {}
+        else:
+            self.basesheet = self._read_styfile(basepath)
 
     def _read_styfh(self, fh):
         fieldre = re.compile(r"^\s*\\(\S+)\s*(.*?)\s*$")
@@ -296,6 +304,7 @@ class StyleEditor:
     def _read_styfile(self, fname):
         if not os.path.exists(fname):
             return {}
+        logger.debug(f"Reading {fname}") 
         with open(fname, encoding="utf-8") as inf:
             res = self._read_styfh(inf)
         return res
@@ -403,6 +412,8 @@ class StyleEditor:
             fa = asFloatPts(self, str(a))
             fb = asFloatPts(self, str(b))
             return fa == fb
+        elif isinstance(a, dict) and isinstance(b, dict):
+            return set(a.keys()) == set(b.keys())
         else:
             try:
                 fa = float(a)
@@ -419,6 +430,7 @@ class StyleEditor:
         if key in _fieldmap:
             v = _fieldmap[key][1](self, v, mrk, model=self.model, parm=None)
         if isinstance(v, (set, list)):
+            logger.debug(f"StyleEditor:_str_val found {type(v)} for {mrk}/{key}")
             res = " ".join(self._str_val(x, key, mrk) for x in sorted(v))
         elif isinstance(v, float):
             res = f2s(v)

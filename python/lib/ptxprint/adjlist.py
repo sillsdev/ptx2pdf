@@ -1,5 +1,4 @@
 
-from gi.repository import Gtk
 from ptxprint.utils import refKey
 import re
 
@@ -7,13 +6,16 @@ adjre = re.compile(r"^(\S+)\s+(\d+[.:]\d+(?:[+-]*\d+)?)\s+([+-]?\d+)(?:\[(\d+)\]
 restre = re.compile(r"^\s*\\(\S+)\s*(\d+)")
 
 class AdjList:
-    def __init__(self, centre, lowdiff, highdiff, diglotorder=[]):
+    def __init__(self, centre, lowdiff, highdiff, diglotorder=[], gtk=None):
         self.lowdiff = lowdiff
         self.highdiff = highdiff
         self.centre = centre
 
         # book, c:v, para, stretch, mkr, expand%
-        self.liststore = Gtk.ListStore(str, str, int, str, str, int)
+        if gtk is None:
+            self.liststore = []
+        else:
+            self.liststore = gtk.ListStore(str, str, int, str, str, int)
         self.changed = False
         self.adjfile = None
 
