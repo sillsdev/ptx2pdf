@@ -1660,9 +1660,9 @@ class GtkViewModel(ViewModel):
         self.onSaveEdits(None)
 
     def writeConfig(self, cfgname=None, force=False):
+        super().writeConfig(cfgname=cfgname, force=force)
         if self.project.prjid is not None:
             self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
-        super().writeConfig(cfgname=cfgname, force=force)
 
     def fillCopyrightDetails(self):
         pts = self._getPtSettings()
