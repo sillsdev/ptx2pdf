@@ -603,14 +603,11 @@ class StyleEditorView(StyleEditor):
             else:
                 add, rem = "", "non"
             props = self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', {})
-            if props is None:
-                props = {}
-                self.sheet[self.marker]['TextProperties'] = props
             try:
-                props.remove(rem+'publishable')
+                del props[rem+'publishable']
             except KeyError:
                 pass
-            props.add(add+'publishable')
+            props[add+'publishable'] = -1
             (model, selecti) = self.treeview.get_selection().get_selected()
             model.set_value(selecti, 3, val)
             return
@@ -771,7 +768,7 @@ class StyleEditorView(StyleEditor):
                     ou = self.getval(key, 'OccursUnder')
                     if not isinstance(ou, dict):
                         ou = {k:v for v,k in enumerate(ou.split())}
-                    ou.add("NEST")
+                    ou["NEST"] = len(ou) + 1
                     self.setval(key, 'OccursUnder', ou)
                 self.resolveEndMarker(key, None)
             elif st == 'Milestone':
