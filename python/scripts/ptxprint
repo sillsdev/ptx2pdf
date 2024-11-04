@@ -169,7 +169,7 @@ if os.path.exists(conffile):
         pdir = config.get("init", "paratext")
         if os.path.exists(pdir):
             args.projects.append(pdir)
-    if config.has_section("projectdirs"):
+    if not len(args.projects) and config.has_section("projectdirs"):
         pdirs = config.options("projectdirs")
         if len(pdirs) and re.match(r"^\d{1,2}$", pdirs[0]):
             ps = [config.get("projectdirs", p) for p in sorted(pdirs, key=int)]

@@ -69,12 +69,11 @@ class ProjectList:
                         pt.saveAs(os.path.join(p, "ptxSettings.xml"))
             if addme:
                 self.addProject(name, p, guid)
-        if isptx:
-            for s in ("_projectById", "_PTXprint"):
-                p = os.path.join(path, s)
-                if os.path.exists(p):
-                    self.addTreedir(p)
-            self.ptxdir = path
+        for s in ("_projectById", "_PTXprint"):
+            p = os.path.join(path, s)
+            if os.path.exists(p):
+                self.addTreedir(p)
+                self.ptxdir = path
         return True
 
     def addProject(self, prjid, path, guid):
