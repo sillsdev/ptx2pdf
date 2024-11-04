@@ -175,7 +175,7 @@ if os.path.exists(conffile):
             ps = [config.get("projectdirs", p) for p in sorted(pdirs, key=int)]
         else:
             ps = pdirs
-        for p in pdirs:
+        for p in ps:
             if p not in args.projects and os.path.exists(p):
                 args.projects.append(p)
 else:
