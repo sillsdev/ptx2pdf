@@ -171,7 +171,11 @@ if os.path.exists(conffile):
             args.projects.append(pdir)
     if config.has_section("projectdirs"):
         pdirs = config.options("projectdirs")
-        for p in pdirs:
+        if len(pdirs) and re.match(r"^\d{1,2}$", pdirs[0]):
+            ps = [config.get("projectdirs", p) for p in sorted(pdirs, key=int)]
+        else:
+            ps = pdirs
+        for p in ps:
             if p not in args.projects and os.path.exists(p):
                 args.projects.append(p)
 else:
@@ -200,8 +204,8 @@ else:
 
 config.remove_section("projectdirs")
 config.add_section("projectdirs")
-for p in args.projects:
-    config.set("projectdirs", p, "")
+for i, p in enumerate(args.projects, 1):
+    config.set("projectdirs", str(i), p)
 
 # handle being passed a .zip
 if args.pid is not None and args.pid.lower().endswith(".zip"):

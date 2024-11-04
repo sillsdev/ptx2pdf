@@ -136,8 +136,8 @@ class ProjectList:
         config.remove_section(section)
         config.add_section(section)
         for i, d in enumerate(self.treedirs, 1):
-            config.set(section, d)
-            
+            config.set(section, str(i), d)
+
 
 class Project:
     shareddir = "shared/ptxprint"
