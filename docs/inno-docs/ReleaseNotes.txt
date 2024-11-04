@@ -1,10 +1,18 @@
 PTXprint 2.6.9 Release Notes
-1 Nov 2024
+4 Nov 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.6.9 (1 Nov 2024)
+Bug fixes and Improvements in 2.6.10 (4 Nov 2024)
+
+  * Handle C: type directories in projecdirs list in config
+
+  * Fix creating shared dir and VersionStr
+
+  * Fix messed up reading of 1= type projectdirs
+
+Bug fixes and Improvements in 2.6.9 [release withdrawn] (1 Nov 2024)
 
   * Fix keyword headings (in glossary)
 
