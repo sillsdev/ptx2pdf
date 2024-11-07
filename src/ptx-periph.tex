@@ -106,7 +106,7 @@
 \newm@rknum{pdftag}% registers and defines m@rknumpdftag
 
 \def\endp@riph{%
-  \trace{per}{endp@riph: \sh@wstuff}%
+  \trace{per}{endp@riph:\c@rrdstat:\sh@wstuff}%
   \global\let\periphattr@b\periph@@@
   \ifst@ringperiph
     \egroup\egroup
@@ -224,7 +224,7 @@
   \edef\periph@@@{anonymous\the\an@nymousperiphs}%
 }
 \def\@@@periph #1|#2|#3\E{%
-  \trace{per}{@@@periph #1|#2}%
+  \trace{per}{@@@periph #1|#2 (\c@rrdstat)}%
   \def\tmp{#2}%
   \unset@ttribs
   \def\thisdefault@ttrkey{id}%
@@ -250,21 +250,21 @@
   \the\@idhooks
   \trace{per}{idhooks run}%
   \tempfalse
-  \def\tmp{}%
+  \def\Tmp{}%
   \ifStoreAllPeriphs\temptrue\fi
   \ifStorePeriph
     \ifcsname storeperiph-\periph@@@\endcsname 
-      \def\tmp{(periph type)}\temptrue
+      \def\Tmp{(periph type)}\temptrue
     \fi
   \fi
   \kill@PossParamCache % By definition, all old cached values now invalid
   \t@stpublishability{periph}%
   \ifn@npublishable
-    \edef\tmp{\tmp (unpublishable)}\temptrue
+    \edef\Tmp{\Tmp (unpublishable)}\temptrue
   \fi
   \iftemp
     %\tracingassigns=1
-    \trace{per}{periph '\periph@@@' will be stored: \tmp}%
+    \trace{per}{periph '\periph@@@' (\c@rrdstat) will be stored: \Tmp}%
     \st@ringperiphtrue
     \let\n@xt\getp@riphlines
   \else 
