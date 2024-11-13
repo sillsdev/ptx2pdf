@@ -602,15 +602,15 @@ class StyleEditorView(StyleEditor):
                 add, rem = "non", ""
             else:
                 add, rem = "", "non"
-            props = self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', set())
+            props = set(self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', "").split())
             if props is None:
                 props = set()
-                self.sheet[self.marker]['TextProperties'] = props
             try:
                 props.remove(rem+'publishable')
             except KeyError:
                 pass
             props.add(add+'publishable')
+            self.sheet[self.marker]['TextProperties'] = " ".join(sorted(props))
             (model, selecti) = self.treeview.get_selection().get_selected()
             model.set_value(selecti, 3, val)
             return
