@@ -486,6 +486,8 @@ THE SOFTWARE.
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PDF Preview</property>
     <property name="window-position">center</property>
+    <property name="default-width">450</property>
+    <property name="default-height">750</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon-name">text-x-generic</property>
     <property name="type-hint">normal</property>

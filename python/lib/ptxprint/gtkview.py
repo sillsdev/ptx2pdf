@@ -6138,7 +6138,7 @@ Thank you,
     
     def onBookViewClicked(self, widget):
         bkviewON = self.get("c_bkView", True)
-        self._resize_window(bkviewON, large_size=(1900, 685), small_size=(1450, 685))
+        self._resize_window(bkviewON, large_size=(900, 750), small_size=(450, 750))
         step_increment = 2 if bkviewON else 1
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
         self.onPgNumChanged(None)
@@ -6150,7 +6150,7 @@ Thank you,
 
     # Helper function to resize the window
     def _resize_window(self, condition, large_size, small_size):
-        window = self.builder.get_object("ptxprint")
+        window = self.builder.get_object("dlg_preview")
         window.resize(*large_size if condition else small_size)
 
     def onPgNumChanged(self, widget):
