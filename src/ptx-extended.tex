@@ -212,6 +212,7 @@
 \def\@@setsbp@cinswid{% get the width of the insert (or column) that the figure will go into
   \def\fig@lskip{0pt}\def\fig@rskip{0pt}%
   \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
+  \trace{sc}{sb@rinswidth (\the\c@rrentcols) \the\dimen1}%
   %we need to distingiush between things like c,p,h which have sub-specifications and t, tl, tr, etc (which don't)
   \x@\let\csname sb@onlypure-t\endcsname\tr@e
   \x@\let\csname sb@onlypure-b\endcsname\tr@e
@@ -434,7 +435,7 @@
     \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
       \if p\tempc\relax\else
         \if c\tempc\relax\else
-          \setsbp@ram{w@dth}{\the\dimen1}%
+          \ifx\c@tprefix\empty\else\setsbp@ram{w@dth}{\the\dimen1}\fi%
         \fi
       \fi
     \fi

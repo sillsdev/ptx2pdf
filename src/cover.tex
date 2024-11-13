@@ -49,8 +49,11 @@
   \h@ldfigtrue % Don't shipout a full page!
   \ble@dtrue 
   \bgroup \prepusfm %we need those catcodes!
+    \ifx\c@tprefix\empty\else
+      \s@tc@tprefix{cover#1}% Ensure we're getting the right parameters, not pulling them in from coverwhole when nesting
+    \fi
     \bgroup
-      \s@tc@tprefix{cover#1}%
+      \s@tc@tprefix{cover#1}% 
       \getsbp@ram{posn}%
       \x@\minip@rs@two\cp@ram\end % Parse the location, ready to get the size of this sidebar's container
       \tempfalse
@@ -70,7 +73,9 @@
     \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-Y-#1\endcsname \relax\relax
     \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-X-#1\endcsname \relax\relax
     \trace{cov}{Cover part #1 ought to be \the\PaperWidth x \the\PaperHeight}%
-    \hsize=\PaperWidth
+    \textwidth=\PaperWidth\relax
+    \colwidth=\PaperWidth\relax
+    \hsize=\PaperWidth\relax
     \esb\cat cover#1\cat*#2
     \esbe%
     \bgroup
@@ -342,16 +347,18 @@
               \d@spine
               \@@rR
             }%
-            \hbox to \csname cover-X-back\endcsname{\rightble@d
+            \setbox0\hbox to \csname cover-X-back\endcsname{\leftble@d
               %\ble@dtrue
               \c@verbit{back}{%\hsize=\csname cover-X-back\endcsname%
                 \@@sR%
                 \csname periphcontents=coverback\endcsname
                 \@@rR}}%
+            \trace{cov}{back cover is \l@gdims0 , width \the\textwidth , hsize=\the\hsize}%
+            \box0
           }%
         \else
           \hbox {%
-              \setbox0\hbox to \csname cover-X-back\endcsname{\leftble@d
+            \setbox0\hbox to \csname cover-X-back\endcsname{\leftble@d
               \ble@dtrue
               \c@verbit{back}{%\hsize=\csname cover-X-back\endcsname%\ifRTL\beginR\fi
                 \@@sR%
