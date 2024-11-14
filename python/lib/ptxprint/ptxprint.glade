@@ -21897,7 +21897,7 @@ font and direction for that script.</property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">2</property>
-                                                    <property name="width">3</property>
+                                                    <property name="width">2</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -21944,6 +21944,20 @@ changed while doing final page layout.</property>
                                                   <packing>
                                                     <property name="left-attach">2</property>
                                                     <property name="top-attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_previewPDF">
+                                                    <property name="label" translatable="yes">Show PDF Preview Pane</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <signal name="clicked" handler="onPreviewPDFclicked" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">2</property>
+                                                    <property name="top-attach">2</property>
                                                   </packing>
                                                 </child>
                                               </object>
@@ -26964,9 +26978,8 @@ Click to visit download page on the website.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">The PDF file created is stored in this
-folder (but should automatically open
-in your system's PDF viewer anyway).</property>
+                <property name="tooltip-text" translatable="yes">Click to open the folder where
+the created PDF file is stored.</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
@@ -27017,7 +27030,13 @@ Shortcut: Ctrl-F</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Select the action to be taken
+after the PDF has been created.
+</property>
+                <property name="halign">end</property>
+                <property name="margin-end">4</property>
                 <property name="hexpand">True</property>
+                <property name="label" translatable="yes">Action:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -27026,18 +27045,29 @@ Shortcut: Ctrl-F</property>
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="c_previewPDF">
-                <property name="label" translatable="yes">Preview</property>
+              <object class="GtkComboBoxText" id="fcb_afterAction">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="draw-indicator">True</property>
-                <signal name="clicked" handler="onPreviewPDFclicked" swapped="no"/>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Select an action for after the PDF file
+has been created.
+If 'Show in Preview Pane' is selected, there
+are a limited number of adjustment options
+using the Right-Click context menu that
+may be applied for the next run.</property>
+                <property name="valign">center</property>
+                <property name="active">2</property>
+                <property name="active-id">sysviewer</property>
+                <items>
+                  <item id="noaction" translatable="yes">Do nothing</item>
+                  <item id="preview" translatable="yes">Show in Preview Pane</item>
+                  <item id="sysviewer" translatable="yes">Show in PDF Viewer</item>
+                  <item id="openfolder" translatable="yes">Open Folder with PDF</item>
+                </items>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">6</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>

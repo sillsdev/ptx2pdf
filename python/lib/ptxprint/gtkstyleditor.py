@@ -602,7 +602,9 @@ class StyleEditorView(StyleEditor):
                 add, rem = "non", ""
             else:
                 add, rem = "", "non"
-            props = self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', {})
+            props = set((self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', "") or "").split())
+            if props is None:
+                props = set()
             try:
                 del props[rem+'publishable']
             except KeyError:
