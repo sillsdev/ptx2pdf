@@ -50,7 +50,7 @@
   \trace{sh}{forgetting h@@kexists: '#2' entry '#1': '\t@mp'}%
   \ifx\t@mp\empty
   \else
-    %Need to (possibly)remove entries from the list 
+    %Need to (possibly)remove entries from the list
     \edef\tmp{#1}\let\@ut\empty
     \let\d@\csfilt@rout
     \x@\cstackdown \t@mp,\E
@@ -102,7 +102,7 @@
 % Make sure we list everything that can occur in a .sty file. If a .sty file contains a
 % missing sfm marker, then processing for that and all subsequent stylesheets will stop
 % at that point.
-% Ignore stylesheet markers that do not affect formatting 
+% Ignore stylesheet markers that do not affect formatting
 \def \Name           #1\relax{}
 \def \Description    #1\relax{}
 \def \OccursUnder    #1\relax{}
@@ -212,7 +212,7 @@
 %  \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{sa}{set \c@tprefix#2\ds@ffix:#1 -> #3}
 %  \should@xist{#2\ds@ffix}%Ensure that the marker is in the exists list
 %  \ifx\c@tprefix\empty\else\should@xist{\c@tprefix#2\ds@ffix}\fi
-%} % expand now, not later 
+%} % expand now, not later
 
 \def\setp@ram#1#2#3{\relax\edef\@mkr{\x@\cstackpeek #2,\E}% Potentialy we have a fake stack. Save as uppermost
   \ifx\ds@ffix\empty\x@\@set@mkr\@mkr++\E\fi
@@ -220,7 +220,7 @@
   \x@\xdef\csname\c@tprefix\@mkr:#1\endcsname{#3}\trace{sa}{set \c@tprefix\@mkr:#1 -> #3}%
   \ifx\c@tprefix\empty\else\should@xist{\c@tprefix}{\@mkr}\fi%Ensure that the marker is in the exists list
 }
- % expand now, not later 
+ % expand now, not later
 %-csty_defparam
 
 %+csty_getparam
@@ -232,10 +232,10 @@
 % --|------
 % Sets temporary macro \p@ram to the value
 % The macro was once just diglot aware, allowing all parameters to have L Left/Right variant or use
-% default. (e.g when asked for paramter for v, check for vL|vR, default to v). Now it (potentially) needs to 
+% default. (e.g when asked for paramter for v, check for vL|vR, default to v). Now it (potentially) needs to
 % take into account: diglot, categories and milestones.
 % Rather than attempt to code \ifs for all possible 8 (16? more?) options, it
-% now subcontracts s@tpossParams to build a comma-separated list of them, 
+% now subcontracts s@tpossParams to build a comma-separated list of them,
 % and then finds the first match. This results in cleaner code.
 
 \newif\ifnotracestacks \notracestacksfalse
@@ -247,7 +247,7 @@
 \def\stystack@pts#1+#2\E{%Given an style stack, recurse down it, turning it into an option stack, going a maximum of count255 levels deep
 % If \AttrMilestoneMatchesUnattrtrue, then the option list should be as follows:
 %   nd+Fred|qt-s+p -> (nd+Fred|qt-s+p, nd+qt-s+p, nd+Fred|qt-s, nd+qt-s, nd)
-% If 2 milestones are active, then only the inner-most will be affected by this flag, 
+% If 2 milestones are active, then only the inner-most will be affected by this flag,
 % outer ones must be fully specified.
   \trace{sk}{stystack@pts '#1' + '#2' (out:\@ut)}%
   \ifAttrMilestoneMatchesUnattr
@@ -275,8 +275,8 @@
 }
 \def\sh@wstuff{SHOWSTUFF: styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, periphdepth:\the\periphdepth}
 \def\SHOWSTUFF{\message{\sh@wstuff}}%
-                
-%returns \@@ut 
+
+%returns \@@ut
 \def\fullstack@xpand#1|#2|#3\E{%Parameters: complexity|depth|style stack
   \trace{sk}{fullstack@xpand (#2)}%
   \edef\exp@stystak{#3}%
@@ -286,7 +286,7 @@
        \edef\p@ssParams{\tmpstyst@kfirst\c@rrdstat,\tmpstyst@kfirst}%
     \else
        \edef\p@ssParams{\tmpstyst@kfirst}%
-    \fi 
+    \fi
     \trace{sko}{#1::(\p@ssParams)+\tmpstyst@kbody}%
     \ifx\styst@kfirst\empty
       \let\styst@kfirst\tmpstyst@kfirst
@@ -300,7 +300,7 @@
         \edef\@lso{\c@tprefix}%
         \trace{sko}{1.#2: \@lso / \@@ut: expanding list: \p@ssParams}%
         \let\@ut\empty
-        \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E 
+        \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E
         \trace{sko}{now: \@xtra}%
         \trace{sko}{type of \tmpstyst@kfirst\space is '\csname stylet@pe-\tmpstyst@kfirst\endcsname'}%
         \x@\ifx\csname stylet@pe-\tmpstyst@kfirst\endcsname\ss@Para
@@ -312,7 +312,7 @@
       \trace{sko}{no body...appending \@xtra (onto: \@@ut) }%
       %\let\@ut\empty
       %\let\d@\cs@ppend
-      %\x@\cstackdown \p@ssParams,\E 
+      %\x@\cstackdown \p@ssParams,\E
       %\trace{sk}{:\@ut ->(\@@ut)}%
       \ifx\@@ut\empty
         \global\let\@@ut\@xtra
@@ -336,11 +336,11 @@
         \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
         \trace{sko}{:\@ut (\@@ut) pp:\p@ssParams}%
         \let\d@\d@c\xdef\@@ut{\ifx\@@ut\empty\else\@@ut,\fi\@ut}}%
-      \x@\cstackdown \@in,\E 
+      \x@\cstackdown \@in,\E
       \ifx\c@tprefix\empty\else %prefix catetgories
         \edef\@lso{\c@tprefix}%
         \trace{sko}{1.#2: \@lso / \@@ut: expanding list: \p@ssParams}%
-        \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \@@ut,\p@ssParams,\E 
+        \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \@@ut,\p@ssParams,\E
         \edef\@@ut{\@ut,\@@ut}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
       \fi
       \xdef\@@ut{\@@ut,\p@ssParams}%
@@ -368,7 +368,7 @@
     \ifx\c@tprefix\empty\else
       \edef\@lso{\c@tprefix}%
       \trace{sko}{1.- \@lso / - :  expanding list: \p@ssParams}%
-      \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E 
+      \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E
       \x@\ifx\csname stylet@pe-\tmpstyst@kfirst\endcsname\ss@Para
         \edef\p@ssParams{\@ut,\c@tprefix*,\p@ssParams}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
       \else
@@ -392,13 +392,13 @@
     \edef\@lso{periph:\periph@@@|}%
     \trace{sk}{1c. Checking list (\@lso): \p@ssParams}%
     \let\@ut=\empty\let\d@=\cs@lsolist
-    \x@\cstackdown \p@ssParams,\E 
+    \x@\cstackdown \p@ssParams,\E
     \edef\p@ssParams{\@ut}%
   \fi
   \edef\@lso{id:\id@@@|}%
   \trace{sk}{1d. Checking list (\@lso): \p@ssParams}%
   \let\@ut=\empty\let\d@=\cs@lsolist
-  \x@\cstackdown \p@ssParams,\E 
+  \x@\cstackdown \p@ssParams,\E
   \edef\p@ssParams{\@ut}%
   \trace{sk}{2. Checking list: \p@ssParams}%
   \let\@ut\empty
@@ -421,7 +421,7 @@
 
 \def\kill@font#1\E{\x@\let\csname font<#1>\endcsname\relax}
 
-\def\ClearCachedFonts{%Force font redefinition. 
+\def\ClearCachedFonts{%Force font redefinition.
   \ifx\f@ntlist\empty\else
     \let\d@\kill@font
     \x@\cstackdown\f@ntlist,\E
@@ -631,7 +631,7 @@
           \let\d@\cstackrelax
         \else
           \ifx\p@ram\empty\else
-            % Param might be in stacking (issue #575) [foo,bar] format or older :foo:bar 
+            % Param might be in stacking (issue #575) [foo,bar] format or older :foo:bar
             % Reprocess to stacking format:
             %\x@\ch@ckfontfeatures\p@ram\E % Initial colon test
             \x@\ch@ckfontfeaturesbrk\p@ram[]\E % Lack of square brackets test.
@@ -734,7 +734,7 @@
         \fi
         \trace{sa}{Adding font features #2}%
       \fi
-    \fi 
+    \fi
     \x@\cstackdown #2,\E
   \fi
   \edef\t@st{#3}\ifx\t@st\empty
@@ -825,7 +825,7 @@
 %  \trace{sa}{getmcfonts@ze starting with \ps@ze}%
 %  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\ifx\tmp\empty\else
 %      \let\tmpstylen@me\tmp
-%      \dimen0=\c@rrfontsize pt 
+%      \dimen0=\c@rrfontsize pt
 %      \ifnum\if##1\ss@Para 1\else\if##1\ss@Note 1\else0\fi\fi =1
 %        \getp@ram{fontsize}{\tmpstylen@me}{\tmpstylen@me}\dimen0=\ifx\p@ram\relax 12\else\p@ram\fi pt%
 %      \else\getp@ram{fontscale}{\tmpstylen@me}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
@@ -875,12 +875,12 @@
 \def\m@kestyle{%
  \ch@cktypecs{\m@rker}%
  \ifx\ch@ck@result\oth@r\message{! Cannot redefine reserved marker \m@rker, it clashes with a TeX primitive}%
- \else 
+ \else
    \ifx\ch@ck@result\dt@marker\else
     \ifx\ch@ck@result\dt@undefined\else
       \ifx\styl@type\St@lone\else %We don't care that the stylesheet is listing something as a standalone, as that doesn't change the definition
         \MSG{* Warning: stylesheet redefines preexisting \ch@ck@result\space\m@rker}\fi\fi\fi
-   \x@\let\csname font<\m@rker>\endcsname=\relax 
+   \x@\let\csname font<\m@rker>\endcsname=\relax
    \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
    \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
    \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
@@ -911,7 +911,7 @@
       \x@\def\csname\p@ram\endcsname{\def\milestoneOp{e}\mst@nestyle{#1}}%
       \x@\def\csname#1\endcsname{\def\milestoneOp{s}\mst@nestyle{#1}}%
     \fi
-  \fi} 
+  \fi}
 %-csty_makestyle
 
 %+csty_sethook
@@ -919,7 +919,7 @@
 % e.g. `\sethook{start}{s1}{-}` put a hyphen at the start of every section heading
 \def\sethook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{#1}{#2}\else\rememberhook@xists{#1}{#2}\fi \x@\gdef\csname #1-#2\endcsname{#3}}
 \def\setbookhook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{book#1}{#2}\else\rememberhook@xists{book#1}{#2}\fi \x@\gdef\csname book#1-#2\endcsname{#3}}
-% A betweek hook triggers at the mid-point in the transition between the specified paragraph types. 
+% A betweek hook triggers at the mid-point in the transition between the specified paragraph types.
 \def\setbetweenhook#1#2#3{\sethook{between-#1}{#2}{#3}}
 % A CV hook is executed only for a particular CV when the verse milestone occurs.
 \def\setcvhook#1#2{\x@\gdef\csname cv-#1\endcsname{#2}}
@@ -1087,7 +1087,7 @@
    \global\let\print@bleverse=\v@rse
    \op@ninghooks{start}{c}{\styst@k}%
    \m@kedigitsletters
-    % If omitting chapter number, skip this. 
+    % If omitting chapter number, skip this.
     % We would have to set \OmitChapterNumbertrue on a book by book basis
     % in the configuration file in order to omit chapter numbers for single chapter books.
    \ifhmode\unskip\fi % since a chapter effectively starts a new paragraph, clear out paragraph final whitespace
@@ -1133,7 +1133,7 @@
 \newif\ifCalcChapSize \CalcChapSizetrue
 \def\calcdr@psize{%
   \should@xist{}{c}%
-  \ifdiglot 
+  \ifdiglot
     \trace{d}{Calculating drop: \c@rrdstat}%
     \should@xist{}{c\c@rrdstat}%
     \s@tbaseline@{p}{\c@rrdstat}%
@@ -1158,7 +1158,7 @@
         \dropnumbersize=\baselineskip
       \fi
 	  %clear font<c> so that it will get rebuilt on next setfont for \c (after we have figured out real size)
-      \x@\let\csname font<c>\endcsname=\relax 
+      \x@\let\csname font<c>\endcsname=\relax
 	  % Calculate drop cap height = base line height + (lower case) x height
       % get x height (appendix F) 5 is x-height of font X=x + baselineskip
       \s@tfont{p}{p}\dimen0=\fontdimen5\font\advance\dimen0\baselineskip           %(2)
@@ -1282,7 +1282,7 @@
 \newdimen\dropnumberraise
 
 % recognise and process reference id if supplied in \k
-\def\@s@tkref#1|#2\E{%\tracingassigns=1 
+\def\@s@tkref#1|#2\E{%\tracingassigns=1
   \def\tmp{#2}%
   \edef\kr@f{\detokenize{#1}}%
   \let\kr@ftext\kr@f
@@ -1361,7 +1361,7 @@
 \newif\ifgr@bbing
 \newtoks\gr@btoks
 \def\gr@bcodes{\obeyspaces\obeylines}
-\def\egr@bcodes{\catcode32=10 } 
+\def\egr@bcodes{\catcode32=10 }
 \long\def\gr@btomacro#1{%
   \def\tmp{#1}\ifgr@bbing\else\gr@bcodes\gr@bbingtrue\fi
   \ifx\tmp\@gr@bs\gr@bbedspacetrue\let\@nxxt=\gr@btomacro\else
@@ -1417,7 +1417,7 @@
  \def\@cl ##1^^M{\x@\gdef\csname ch@plabel\g@tdstat\endcsname{##1}\egroup}%
  %
  \let\@ID=\id%
- \def\id{\bgroup\obeylines%\unc@tcodespecials 
+ \def\id{\bgroup\obeylines%\unc@tcodespecials
    \m@kedigitsother
    %\tracingassigns=1
    \catcode32=10 \let\aftergr@b\@id\gr@btomacro}% \id gets stored, printed in the margin with cropmarks, and used in lots of places.
@@ -1436,7 +1436,7 @@
      \vskip\baselineskip
     \else
       \vskip\p@ram
-    \fi\egroup} 
+    \fi\egroup}
  \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
@@ -1450,7 +1450,7 @@
     \let\thiskmark\kr@ftext%
     \tr@ceT{keyword: \kr@f}%
     \runtrigg@rsother{k.\kr@f}%
-    \activ@tecustomch@rs%   
+    \activ@tecustomch@rs%
     \p@sheof\r@gurgitatedtrue%
     \x@\x@\x@\@k\x@\scantokens\x@{\kr@ftext\ignorespaces}\endch@rstylen*%
     \ifcsname m@rknumk\ifdiglot\c@rrdstat\fi\endcsname\else\addnewm@rk{k\ifdiglot\c@rrdstat\fi}\fi%
@@ -1529,7 +1529,7 @@
 \def\mcpop{\traceNum{s}{mcpop stack: '\mcstack'}\global\tempfalse\xdef\inst@ck{}\xdef\msst@ck{}% Pop the first non-milestone
     \let\d@b=\doB@pop@nonms
     \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi}
-    
+
 \def\mcpushunderms#1#2{\traceNum{s}{mcpushunder stack(#1+#2+...): \mcstack}\global\tempfalse\edef\msst@ck{}\xdef\inst@ck{#1+#2,}% push #1 above the first non-milestone
     \let\d@b=\doB@save@ms
     \x@\mcstackdown\mcstack\E\trace{sa}{->\msst@ck [\iftemp t\else f\fi], '\mcstack'}%
@@ -1541,7 +1541,7 @@
 \def\gett@psty{\ifx\mcstack\empty\let\tmpstyst@k\empty\else{\let\d@\s@ttmpsty\mctop}\fi}
 \def\d@code#1#2{\edef\tmp{#2}\ifx\tmp\empty\else\csname d@code-#1\endcsname\fi}
 % milestone stack (MScstack)
-%\gdef\MScstack{+,}  
+%\gdef\MScstack{+,}
 %\let\MScstack@mpty\MScstack
 %\def\MScup{\x@\cstackup\MScstack\E}
 %\def\MScdown{\x@\cstackdown\MScstack\E}
@@ -1629,9 +1629,9 @@
       \let\wip@do=\cstackrelax %stop here
       \if P\tmp\relax % ....but end it and pop first
         \ifcsname endit@#1\endcsname
-          \trace{sa}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
+          \trace{sa}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop
           \csname endit@#1\endcsname
-	    \else 
+	    \else
           \trace{sa}{Simple pop sufficient}%
           \mcpopsimple
         \fi
@@ -1639,7 +1639,7 @@
     \fi
   \fi
   \trace{sa}{whileitp@ps END:\mcch@cking:#1+#2+#3 (\mcstack) [\itp@psstore]}%
-  \global\p@ppingfalse 
+  \global\p@ppingfalse
   \let\d@=\wip@do
 }
 \def\end@llpoppedstyles#1{\trace{sa}{end@llpoppedstyles #1 \ifp@pping WHILE already popping??\fi}%
@@ -1777,7 +1777,7 @@
   \catcode"2064=12
   \catcode"A0=12
   \catcode"AD=12
-  \catcode"FEFF=12 
+  \catcode"FEFF=12
   \deactiv@tecustomch@rs
 } 
 
@@ -1853,11 +1853,11 @@
  \catcode`\%=12
  \let\\=\bslash
  \m@kedigitsletters
- \inptxfiletrue  
+ \inptxfiletrue
 }
 
 \def\unprepusfm{
- \inptxfilefalse  
+ \inptxfilefalse
  \m@kedigitsother
  \deactiv@tecustomch@rs
  \catcode13=5
@@ -1920,7 +1920,7 @@
    \fi
    %\gdef\atn@xtptxfile{}% This can't carry over.
    \diglots@tup
-   \global\topskip=2\baselineskip % try to Avoid problems from chars hitting the top. 
+   \global\topskip=2\baselineskip % try to Avoid problems from chars hitting the top.
    \global\splittopskip=0pt
    \message{Setting up column-specific values for columns: \diglot@list}%
    \global\baselineDelta=-\maxdimen
@@ -1938,7 +1938,7 @@
      \fi
      \trace{d}{##1: bl:\the\baselineskip, mb:\@minb@seline, bld##1:\the\csname baselineDelta##1\endcsname}%
      \saveLRspecificSide{##1}%
-     \bgroup 
+     \bgroup
        \let\mcstack\mcstack@mpty
        \s@tfont{p}{p}%
        \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0\hbox{\char32}\s@tfont{v}{v+p}\getp@r@m{raise}{v}\setbox0\hbox{\char32}
@@ -1953,7 +1953,7 @@
        \egroup
      }%
      \trace{d}{DiglotSides = \diglot@list}%
-     \x@\each@col\diglot@list\E 
+     \x@\each@col\diglot@list\E
    \egroup
  \fi
  % Check supplied line thicknesses (user might change them, e.g. after FRT):
@@ -2007,7 +2007,7 @@
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \opentriglist "#1.triggers"
- \edef\tmp{\the\TrigListPath}\ifx\tmp\empty % Avoid opening same file twice 
+ \edef\tmp{\the\TrigListPath}\ifx\tmp\empty % Avoid opening same file twice
  \else
    \opentriglist "\the\TrigListPath#1.triggers"
  \fi
@@ -2016,9 +2016,10 @@
  \ifcsname ifm@rginnotesopen\endcsname\openm@rginnotes "\j@bname.marginnotes"\fi
  \lastpagefalse\endbookfalse
  \the\st@rtptxhooks
+ \ifseriesdiglot\let\c@rrdstat\empty\fi % atn@xtptxfile will set things up if so desired, but cover periphs need loading with c@rrdstat unaffected by setup code.
  \prepusfm
  \edef\t@st{#1}%
- \ifx\t@st\empty\else %opening empty file causes problems with some paths. 
+ \ifx\t@st\empty\else %opening empty file causes problems with some paths.
    \trace{d}{\meaning\atn@xtptxfile}%
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
@@ -2350,7 +2351,7 @@
     \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
   \fi\fi\fi
   \global #1=\dimen9
-  %\trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+  \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
 
 

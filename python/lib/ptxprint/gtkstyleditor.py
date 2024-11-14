@@ -609,7 +609,8 @@ class StyleEditorView(StyleEditor):
                 del props[rem+'publishable']
             except KeyError:
                 pass
-            props[add+'publishable'] = -1
+            props.add(add+'publishable')
+            self.sheet[self.marker]['TextProperties'] = " ".join(sorted(props))
             (model, selecti) = self.treeview.get_selection().get_selected()
             model.set_value(selecti, 3, val)
             return

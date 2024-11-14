@@ -359,7 +359,7 @@
   \ifx\l@cspec@a\loc@Cut
     \global\let\picl@c\loc@Cut\global\picUsesInsfalse\global\picNarrowtrue\p@cinswid=\hsize
     \xdef\l@cspec{\l@cspec@b}%
-    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else
+    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\gdef\c@tskipfrac{0}\else
       \x@\c@tskipparse\l@cspec@c...\E %split c@tskip into whole and fractional parts.
     \fi
     \trace{g}{Experimental \w@tsit in cutout, after \c@tskip lines}%
@@ -1301,15 +1301,17 @@
 \def\c@tskipparse#1.#2.#3\E{%
   \def\t@mp{#2}\ifx\t@mp\empty
     \gdef\c@tskipfrac{#1}%
+    \xdef\c@tskip{#1}%
   \else
     \xdef\c@tskipfrac{#1.#2}%
+    \def\t@mp{#1}\ifx\t@mp\empty\def\t@mp{0}\else\ifx\t@mp\h@phen\def\t@mp{0}\fi\fi
     \ifnum #2 < 5
-      \xdef\c@tskip{#1}%
+      \xdef\c@tskip{\t@mp}%
     \else
-      \ifnum #1<0
-        \xdef\c@tskip{\the\numexpr #1  -1\relax}%
+      \ifnum \t@mp<0
+        \xdef\c@tskip{\the\numexpr \t@mp  -1\relax}%
       \else
-        \xdef\c@tskip{\the\numexpr #1  +1\relax}%
+        \xdef\c@tskip{\the\numexpr \t@mp  +1\relax}%
       \fi
     \fi
   \fi

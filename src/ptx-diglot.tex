@@ -1167,7 +1167,7 @@
 
 \def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}%
   \ifx\tmp\empty\diglotfalse
-    \ifinptxfile\else\gdef\atn@xtptxfile{}\fi
+    \ifinptxfile\else\gdef\atn@xtptxfile{\message{starting monglot file with no specific side (\c@rrdstat)}}\fi
     \global\let\c@rrdstat\empty
   \else\x@\monoglotcolumn\x@{\tmp}\fi}
 
