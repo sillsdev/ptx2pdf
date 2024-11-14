@@ -1612,7 +1612,7 @@ class ViewModel:
 
         for v in allfonts:
             k = os.path.basename(v)
-            res[v] = project + "/local/ptxprint/" + cfgid + "/fonts/" + k
+            res[v] = prjid + "/local/ptxprint/" + cfgid + "/fonts/" + k
 
         if baseprjid:
             mdir = os.path.join(self.project.path, "shared", "fonts", "mappings")

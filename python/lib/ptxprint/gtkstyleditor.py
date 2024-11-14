@@ -602,7 +602,7 @@ class StyleEditorView(StyleEditor):
                 add, rem = "non", ""
             else:
                 add, rem = "", "non"
-            props = set(self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', "").split())
+            props = set((self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', "") or "").split())
             if props is None:
                 props = set()
             try:
