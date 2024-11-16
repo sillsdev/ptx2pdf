@@ -23,12 +23,11 @@ class ProjectList:
     def __init__(self):
         self.treedirs = []
         self.projects = {}      # indexed by guid
-        self.ptxdir = None
 
     def __len__(self):
         return len(self.projects)
 
-    def addTreedir(self, path, isptx=False):
+    def addTreedir(self, path):
         path = os.path.abspath(path)
         if path in self.treedirs:
             return False
@@ -69,12 +68,10 @@ class ProjectList:
                         pt.saveAs(os.path.join(p, "ptxSettings.xml"))
             if addme:
                 self.addProject(name, p, guid)
-        if isptx:
-            for s in ("_projectById", "_PTXprint"):
-                p = os.path.join(path, s)
-                if os.path.exists(p):
-                    self.addTreedir(p)
-            self.ptxdir = path
+        for s in ("_projectById", "_PTXprint"):
+            p = os.path.join(path, s)
+            if os.path.exists(p):
+                self.addTreedir(p)
         return True
 
     def addProject(self, prjid, path, guid):
@@ -124,12 +121,16 @@ class ProjectList:
         for t in self.treedirs:
             if "_PTXprint" in t:
                 return t
-        if self.ptxdir is None:
-            t = os.path.join(self.treedirs[0], "_PTXprint")
+        for d in self.treedirs:
+            t = os.path.join(d, "_PTXprint")
+            try:
+                os.makedirs(t, exist_ok=True)
+            except OSError:
+                continue
+            self.addTreedir(t)
+            break
         else:
-            t = os.path.join(self.ptxdir, "_PTXprint")
-        os.makedirs(t, exist_ok=True)
-        self.addTreedir(t)
+            return None
         return t
 
     def addToConfig(self, config, section="projectdirs"):
