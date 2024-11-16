@@ -290,7 +290,7 @@ if args.zip:
 
 prjTree = ProjectList()
 for p in args.projects:
-    prjTree.addTreedir(p, p == ptxdir)
+    prjTree.addTreedir(p)
 
 if args.pid:
     project = prjTree.findProject(args.pid)
