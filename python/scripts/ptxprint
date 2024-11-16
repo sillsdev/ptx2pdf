@@ -146,9 +146,6 @@ ptxdir = None
 # necessary for the side effect of setting pt_bindir :(
 if not len(args.projects):
     pdir = os.getenv("PTXPRINT_PROJECTSDIR", None)
-    if pdir is None:
-        pdir = get_ptsettings()
-        ptxdir = pdir
     if pdir is not None:
         args.projects.append(pdir)
     savetreedirs = True
@@ -169,7 +166,7 @@ if os.path.exists(conffile):
         pdir = config.get("init", "paratext")
         if os.path.exists(pdir):
             args.projects.append(pdir)
-    if config.has_section("projectdirs"):
+    if not len(args.projects) and config.has_section("projectdirs"):
         pdirs = config.options("projectdirs")
         if len(pdirs) and re.match(r"^\d{1,2}$", pdirs[0]):
             ps = [config.get("projectdirs", p) for p in sorted(pdirs, key=int)]
@@ -184,6 +181,11 @@ else:
     config.add_section("init")
     config.add_section("projects")
 logging.debug("Loaded config")
+
+if not len(args.projects):
+    pdir = get_ptsettings()
+    if pdir is not None:
+        args.projects.append(pdir)
 
 if args.lang is None:
     args.lang = getnsetlang(config)
