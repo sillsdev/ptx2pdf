@@ -608,12 +608,6 @@
       "Tweaks": [
         {
           "Type": "comment%",
-          "Label": "Reset callers (for \\f and \\x) at start of each book",
-          "Description": "Reset the footnote and cross-reference callers at the start of every book.",
-          "CodeSnippet": "\\setbookhook{start}{all}{\\resetautonum{f}\\resetautonum{x}}"
-        },
-        {
-          "Type": "comment%",
           "Label": "Nudge chapter number down at specific \\nb chapters",
           "Description": "The Burmese digit 6 rises rather high and crashes into the previous line when an \\nb (no-break para) is used after a \\c chapter. This snippet demonstrates how to lower the \\nb chapter number by a smidgen for the given references (in this example: JHN 16, 2CO 6, HEB 6).",
           "CodeSnippet": "\\expandafter\\def\\csname raise-chapter.JHN16.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.2CO6.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.HEB6.0\\endcsname{-0.3}"
@@ -623,12 +617,6 @@
           "Label": "Forces better calculation of the number of lines",
           "Description": "Sometimes when your apply a +1 to a reference in an AdjList, it ends up doing a +2. To prevent this unwanted behaviour, you can force a more fine-grained adjustment at the specific verse location.",
           "CodeSnippet": "\\setcvhook{LUK7.48}{\\pretolerance=1}\n\\setcvhook{LUK8.1}{\\pretolerance=100}"
-        },
-        {
-          "Type": "comment%",
-          "Label": "Set a larger space before footnote caller in the text",
-          "Description": "If the space before a footnote caller (defined by style zcf) needs to be increased, then this can be done by adding the following line.",
-          "CodeSnippet": "\\sethook{start}{zcf}{\\hskip 0.1em}"
         },
         {
           "Type": "comment%",
@@ -651,13 +639,33 @@
           "CodeSnippet": "\\catcode`\\@=11\n\\def\\mystrong#1{\\get@ttribute{strong}\\ifx\\attr@b\\relax\\else\\cstyle{#1}{\\attr@b}\\fi}\n\\sethook{start}{xts}{\\ifinn@te\\proc@strong{xts}\\else\\mystrong{myxts}\\fi}\n\n% or use this sethook instead if you want ALL Strong's numbers to \n% be 4-in-a-line strings instead of a 4-digit cell (even in the xref column).\n%\\sethook{start}{xts}{\\mystrong{myxts}}"
         }
       ],
-      "Other": [
+      "Notes": [
+        {
+          "Type": "comment%",
+          "Label": "Adjust space after \\fr and \\xo references",
+          "Description": "If the default space after the \\fr and \\xo references is too big, it is possible to set a smaller fixed unbreaking space after the fr and xo references. Adjust the value of pts as needed.",
+          "CodeSnippet": "\\sethook{after}{fr}{\\unskip\\penalty10000 \\hskip 2pt\\ignorespaces}\n\\sethook{after}{xo}{\\unskip\\penalty10000 \\hskip 2pt\\ignorespaces}\n"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Reset callers (for \\f and \\x) at start of each book",
+          "Description": "Reset the footnote and cross-reference callers at the start of every book.",
+          "CodeSnippet": "\\setbookhook{start}{all}{\\resetautonum{f}\\resetautonum{x}}"
+        },
         {
           "Type": "comment%",
           "Label": "Stylize the Notelines (color and dots)",
           "Description": "Although Notelines (ruled margins for journaling) are enabled on the Layout tab, and controlled by the settings on the Advanced > Other tab (under the Page Layout and Spacing section) there is no way to change the color via those settings. Use this codelet to adjust the color of the lines as required using appropriate R G B values. And if using dotted lines, you can change the settings here too.",
           "CodeSnippet": "\\def\\NoteLineColMajor{0.3 0.0 0.5} % Major lines color (R G B) default was black\n\\def\\NoteLineColMinor{0.5 0.5 0.0} % Minor lines color (R G B)\n% \\def\\DotRuleMark{0.4pt}\\def\\DotRuleSpace{0.7pt} % Size and spacing of dots\n"
         },
+        {
+          "Type": "comment%",
+          "Label": "Set a larger space before footnote caller in the text",
+          "Description": "If the space before a footnote caller (defined by style zcf) needs to be increased, then this can be done by adding the following line.",
+          "CodeSnippet": "\\sethook{start}{zcf}{\\hskip 0.1em}"
+        }
+      ],
+      "Other": [
         {
           "Type": "comment%",
           "Label": "Special page numbering for a specific book",
@@ -693,6 +701,12 @@
           "Label": "Technique: Setting style parameters in ptxprint-mods.tex",
           "Description": "This snippet is less a snippet as a technique. It shows two ways of setting style parameters from TeX.",
           "CodeSnippet": "\\expandafter\\def\\csname v:position\\endcsname{inner}\n\n\\Marker v\\relax\n\\Position inner\\relax"
+        },
+        {
+          "Type": "insert",
+          "Label": "Set different background images for different pages",
+          "Description": "This snippet is less a snippet as a technique. It shows two ways of setting style parameters from TeX.",
+          "CodeSnippet": "% Set background image(s) Note: use / as path separator\n\\sethook{page}{20}{\\NewPageBorder{path/to/images/Background1.jpg}}\n\\sethook{page}{23}{\\NewPageBorder{path/to/images/Background2.jpg}}\n\\sethook{page}{26}{\\NewPageBorder{}}\n"
         }
       ],
       "Tracing": [
