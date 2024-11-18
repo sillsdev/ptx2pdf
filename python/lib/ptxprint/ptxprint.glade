@@ -610,6 +610,7 @@ THE SOFTWARE.
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
                     <property name="margin-end">12</property>
+                    <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onBookViewClicked" swapped="no"/>
                   </object>
@@ -27055,7 +27056,7 @@ are a limited number of adjustment options
 using the Right-Click context menu that
 may be applied for the next run.</property>
                 <property name="valign">center</property>
-                <property name="active">2</property>
+                <property name="active">1</property>
                 <property name="active-id">sysviewer</property>
                 <items>
                   <item id="noaction" translatable="yes">Do nothing</item>
@@ -27067,7 +27068,7 @@ may be applied for the next run.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">5</property>
+                <property name="position">6</property>
               </packing>
             </child>
             <child>

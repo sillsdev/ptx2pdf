@@ -341,18 +341,22 @@ class RunJob:
                     startname = self.coverfile or pdfname
                 else:
                     startname = pdfname
-                if not self.noview and self.printer.get("c_previewPDF"):
+                if self.printer.get("fcb_afterAction") == "preview":  #("c_previewPDF"):
                     # load PDF
-                    self.printer.pdf_viewer.load_pdf(pdfname)
+                    self.printer.pdf_viewer.load_pdf(startname)
                     self.printer.pdf_viewer.show_pdf(int(self.printer.get("s_pgNum", 1)), 
                                                     rtl    = self.printer.get("c_RTLbookBinding", False))
                     fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".parlocs"))
                     self.printer.pdf_viewer.load_parlocs(fname)
-                else:
+                elif self.printer.get("fcb_afterAction") == "sysviewer":
                     if sys.platform == "win32":
                         os.startfile(startname)
                     elif sys.platform == "linux":
                         subprocess.call(('xdg-open', startname))
+                elif self.printer.get("fcb_afterAction") == "openfolder":
+                    # open the folder
+                else: # do nothing
+                    pass
 
             fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
             logger.debug(f"Testing log file {fname}")
