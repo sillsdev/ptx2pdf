@@ -32,7 +32,7 @@
 \def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all milestones represent unique locations.
 \def\NotTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\@ne} %Not all milestones with attributes represent trigger locations.
 \def\IsTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\undefined} 
-
+\let\attr@b\relax
 \NotTriggerPoint{xts} %Strongs numbers like 'ms:xtx=5447' not trigger points by default.
 \NotTriggerPoint{zcustombotmark}
 \NotTriggerPoint{zcustomtopmark}
@@ -316,6 +316,7 @@
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   %\tracingmacros=1
   %\tracingassigns=1
+  \ifx\attr@b\undefined\let\attr@b\relax\fi
   \ifx\attr@b\relax\else
     \edef\@@tmp{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
     \trace{m}{Checking for  \@@tmp}%

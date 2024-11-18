@@ -146,9 +146,6 @@ ptxdir = None
 # necessary for the side effect of setting pt_bindir :(
 if not len(args.projects):
     pdir = os.getenv("PTXPRINT_PROJECTSDIR", None)
-    if pdir is None:
-        pdir = get_ptsettings()
-        ptxdir = pdir
     if pdir is not None:
         args.projects.append(pdir)
     savetreedirs = True
@@ -184,6 +181,11 @@ else:
     config.add_section("init")
     config.add_section("projects")
 logging.debug("Loaded config")
+
+if not len(args.projects):
+    pdir = get_ptsettings()
+    if pdir is not None:
+        args.projects.append(pdir)
 
 if args.lang is None:
     args.lang = getnsetlang(config)
@@ -288,7 +290,7 @@ if args.zip:
 
 prjTree = ProjectList()
 for p in args.projects:
-    prjTree.addTreedir(p, p == ptxdir)
+    prjTree.addTreedir(p)
 
 if args.pid:
     project = prjTree.findProject(args.pid)

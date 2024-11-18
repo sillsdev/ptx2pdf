@@ -260,7 +260,12 @@
 }
 
 \def\m@kecover{%
-  \trace{cov}{m@kecover \the\currentgrouplevel}%
+  \trace{cov}{m@kecover \the\currentgrouplevel, \the\ht\partial+\the\dp\partial, ifdiglot\ifdiglot true\else false\fi}%
+  \ifhmode\par\fi %Ensure the current paragraph / page is finished
+  \ifdim\pagetotal>0pt\pagebreak
+  \else\ifdim\dimexpr \ht\partial+\dp\partial \relax =0pt \else
+    \pagebreak
+  \fi\fi
   \temptrue
   \ifcsname periphcontents=coverfront\endcsname\trace{cov}{coverfront exists}%
     \x@\let\x@\c@verfront\csname periphcontents=coverfront\endcsname \ifx\c@verfront\empty
@@ -347,7 +352,7 @@
               \d@spine
               \@@rR
             }%
-            \setbox0\hbox to \csname cover-X-back\endcsname{\leftble@d
+            \setbox0\hbox to \csname cover-X-back\endcsname{\rightble@d
               %\ble@dtrue
               \c@verbit{back}{%\hsize=\csname cover-X-back\endcsname%
                 \@@sR%

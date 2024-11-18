@@ -1,8 +1,28 @@
-PTXprint 2.6.10 Release Notes
-4 Nov 2024
+PTXprint 2.6.11 Release Notes
+16 Nov 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.6.11 (16 Nov 2024)
+
+  * Look everywhere for _PTXprint and _projectsByGuid
+
+  * Refactor for saved projects
+
+  * Fix bleed on back cover of RTL book
+
+  * Ensure that page is printed before makecover starts
+
+  * Fixup minor bugs preventing archives from being created
+
+  * Fix cover behaviour
+
+  * Fix textproperties no longer being a set in gtkstyleditor
+
+  * Part-way fix for diglot covers
+
+  * Make cutout positions more robust
 
 Bug fixes and Improvements in 2.6.10 (4 Nov 2024)
 
