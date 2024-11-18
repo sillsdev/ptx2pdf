@@ -322,6 +322,7 @@ class PDFViewer:
             self.show_pdf(self.current_page)  # Redraw the current page
 
 def readpts(s):
+    s = re.sub(r"(?:\s*(?:plus|minus)\s+[-\d.]+\s*(?:pt|in|sp|em))+$", "", s)
     if s.endswith("pt"):
         return float(s[:-2])
     else:
