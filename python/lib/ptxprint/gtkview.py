@@ -6131,11 +6131,7 @@ Thank you,
         self.set("c_previewPDF", False)
         dlg_preview.hide()
     
-    def onPrintItClicked(self, widget):
-        dlg_preview = self.builder.get_object("dlg_preview")
-        self.set("c_previewPDF", False)
-        dlg_preview.hide()
-    
+
     def onBookViewClicked(self, widget):
         bkviewON = self.get("c_bkView", True)
         self._resize_window(bkviewON, large_size=(900, 750), small_size=(450, 750))

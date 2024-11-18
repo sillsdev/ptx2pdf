@@ -354,7 +354,11 @@ class RunJob:
                     elif sys.platform == "linux":
                         subprocess.call(('xdg-open', startname))
                 elif self.printer.get("fcb_afterAction") == "openfolder":
-                    # open the folder
+                    fldrpath = os.path.dirname(startname)
+                    if sys.platform.startswith("win") and os.path.exists(fldrpath):
+                        os.startfile(fldrpath)
+                    elif sys.platform == "linux":
+                        subprocess.call(('xdg-open', fldrpath))
                 else: # do nothing
                     pass
 

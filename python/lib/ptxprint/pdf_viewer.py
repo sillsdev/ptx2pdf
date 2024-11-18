@@ -202,11 +202,11 @@ class PDFViewer:
         event_box.connect("button-press-event", self.on_button_press)
         event_box.connect("motion-notify-event", self.on_mouse_motion)
         event_box.connect("button-release-event", self.on_button_release)        
-
-        # Pass the page number to the mouse click handler
-        # event_box.connect("button-press-event", self.on_mouse_click, page_number)
         
         return event_box
+
+    def onPrintItClicked(self, widget):
+        print("Printing is yet to be implemented!")
 
     def on_button_press(self, widget, event):
         # Left-click initiates dragging
@@ -236,28 +236,6 @@ class PDFViewer:
         if event.button == 1:
             self.is_dragging = False
         return True
-
-    # def on_mouse_click(self, widget, event, page_number):
-        # zl = self.zoom_level
-        # if event.button == 1:  # Left-click
-            # x, y = event.x, event.y
-            # print(f"Left-click at x: {x}, y: {y}, on page {page_number}")
-            # self.handle_left_click(x / zl, y / zl, widget, page_number)
-
-        # if event.button == 3:  # Right-click (for context menu)
-            # self.show_context_menu(widget, event)
-
-    # def handle_left_click(self, x, y, widget, page_number):
-        # zl = self.zoom_level
-        # Print page number as well as coordinates
-        # print(f"Coordinates on page {page_number}: x={x}, y={self.psize[1]-y}, zl={zl}")
-        # if self.parlocs is not None:
-            # p = self.parlocs.findPos(page_number, x, self.psize[1] - y)
-            # if p is not None:
-                # if p.parnum == 1:
-                    # print(f"Paragraph {p.ref} % \\{p.mrk}")
-                # else:
-                    # print(f"Paragraph {p.ref}[{p.parnum}] % \\{p.mrk}")
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
