@@ -341,8 +341,10 @@ class RunJob:
                     startname = self.coverfile or pdfname
                 else:
                     startname = pdfname
-                if self.printer.get("fcb_afterAction") == "preview":  #("c_previewPDF"):
-                    # load PDF
+                if self.printer.get("fcb_afterAction") == "preview":
+                    prvw = self.printer.builder.get_object("dlg_preview")
+                    prvw.set_title("PDF Preview: " + os.path.basename(startname))
+                    prvw.show_all()
                     self.printer.pdf_viewer.load_pdf(startname)
                     self.printer.pdf_viewer.show_pdf(int(self.printer.get("s_pgNum", 1)), 
                                                     rtl    = self.printer.get("c_RTLbookBinding", False))

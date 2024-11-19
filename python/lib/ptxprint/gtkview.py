@@ -6130,21 +6130,14 @@ Thank you,
         dlg_preview = self.builder.get_object("dlg_preview")
         self.set("c_previewPDF", False)
         dlg_preview.hide()
-    
 
     def onBookViewClicked(self, widget):
         bkviewON = self.get("c_bkView", True)
-        self._resize_window(bkviewON, large_size=(900, 750), small_size=(450, 750))
+        self._resize_window(bkviewON, large_size=(945, 775), small_size=(470, 760))
         step_increment = 2 if bkviewON else 1
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
         self.onPgNumChanged(None)
 
-    # Helper function to set visibility of multiple widgets
-    def _set_widget_visibility(self, widget_ids, visible):
-        for wid in widget_ids:
-            self.builder.get_object(wid).set_visible(visible)
-
-    # Helper function to resize the window
     def _resize_window(self, condition, large_size, small_size):
         window = self.builder.get_object("dlg_preview")
         window.resize(*large_size if condition else small_size)
@@ -6156,3 +6149,16 @@ Thank you,
         pg = min(int(self.get("s_pgNum", 1)), pages)
         self.set("s_pgNum", pg)
         self.pdf_viewer.show_pdf(pg, self.get("c_RTLbookBinding", False))
+        
+    def onPrintItClicked(self, widget):
+        pages = self.pdf_viewer.pages
+        if not pages:
+            return
+        self.pdf_viewer.print_document()
+
+    def on_dlg_preview_allocation_notify(self, widget, param):
+        allocation = widget.get_allocation()
+        print(f"Notified of allocation change: width={allocation.width}, height={allocation.height}")
+
+    def on_configure_event(self, widget, event):
+        print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")

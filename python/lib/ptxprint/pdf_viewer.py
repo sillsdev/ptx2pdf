@@ -13,7 +13,7 @@ class PDFViewer:
         self.model = model
         self.pages = 0
         self.current_page = None  # Keep track of the current page
-        self.zoom_level = 1.0  # Initial zoom level is 100%
+        self.zoomLevel = 1.0  # Initial zoom level is 100%
         self.spread_mode = self.model.get("c_bkView", False)
         self.parlocs = None
         self.psize = (0, 0)
@@ -73,6 +73,48 @@ class PDFViewer:
         # Grab focus so the widget receives keyboard events
         self.hbox.grab_focus()
 
+    def print_document(self):
+        if not hasattr(self, 'document') or self.document is None:
+            return
+
+        print_op = Gtk.PrintOperation()
+
+        # Set print job properties
+        print_op.set_n_pages(self.pages)
+        print_op.connect("draw_page", self.on_draw_page)
+
+        try:
+            result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
+            if result == Gtk.PrintOperationResult.APPLY:
+                print("Print job sent.")
+            else:
+                print("Print job canceled or failed.")
+        except Exception as e:
+            print(f"An error occurred while printing: {e}")
+
+    def on_draw_page(self, operation, context, page_number):
+        if not hasattr(self, 'document') or self.document is None:
+            return
+
+        # Retrieve the page from the Poppler document
+        pdf_page = self.document.get_page(page_number)
+
+        # Get Cairo context and render the page
+        cairo_context = context.get_cairo_context()
+        cairo_context.save()
+        cairo_context.set_source_rgb(1, 1, 1)  # Set background color to white
+        cairo_context.paint()
+
+        # Scale the PDF page to fit the print context
+        width, height = pdf_page.get_size()
+        scale_x = context.get_width() / width
+        scale_y = context.get_height() / height
+        cairo_context.scale(scale_x, scale_y)
+
+        # Render the PDF page onto the Cairo context
+        pdf_page.render(cairo_context)
+        cairo_context.restore()
+
     def load_parlocs(self, fname):
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname)
@@ -107,7 +149,6 @@ class PDFViewer:
     def on_key_press_event(self, widget, event):
         keyval = event.keyval
         state = event.state
-
         # Check if Control key is pressed
         ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
 
@@ -141,6 +182,16 @@ class PDFViewer:
         elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
             self.on_reset_zoom(widget)
             return True
+        elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
+            self.zoomLevel = 1.0  # Set zoom to actual size
+            print(f"Zoom reset to actual size: {self.zoomLevel=:.2f}")
+            self.show_pdf(self.current_page)  # Redraw the current page
+            return True
+        elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
+            self.set_zoom_fit_to_screen()
+            print(f"Zoom adjusted to fit screen: {self.zoomLevel=:.2f}")
+            self.show_pdf(self.current_page)  # Redraw the current page
+            return True
             
     def get_spread(self, page, rtl=False):
         if page == 1:
@@ -161,7 +212,7 @@ class PDFViewer:
     def render_page(self, page, page_number):
         # Get page size, applying zoom factor
         width, height = page.get_size()
-        width, height = width * self.zoom_level, height * self.zoom_level
+        width, height = width * self.zoomLevel, height * self.zoomLevel
 
         surface = ImageSurface(cairo.FORMAT_RGB24, int(width), int(height))
         context = Context(surface)
@@ -169,7 +220,7 @@ class PDFViewer:
         context.paint()
 
         # Apply zoom transformation to context
-        context.scale(self.zoom_level, self.zoom_level)
+        context.scale(self.zoomLevel, self.zoomLevel)
 
         # Render the page to the Cairo surface
         page.render(context)
@@ -205,9 +256,6 @@ class PDFViewer:
         
         return event_box
 
-    def onPrintItClicked(self, widget):
-        print("Printing is yet to be implemented!")
-
     def on_button_press(self, widget, event):
         # Left-click initiates dragging
         if event.button == 1:
@@ -215,6 +263,18 @@ class PDFViewer:
             self.drag_start_x = event.x
             self.drag_start_y = event.y
         return True
+
+    def handle_left_click(self, x, y, widget, page_number):
+        zl = self.zoom_level
+        # Print page number as well as coordinates
+        print(f"Coordinates on page {page_number}: x={x}, y={self.psize[1]-y}, zl={zl}")
+        if self.parlocs is not None:
+            p = self.parlocs.findPos(page_number, x, self.psize[1] - y)
+            if p is not None:
+                if p.parnum == 1:
+                    print(f"Paragraph {p.ref} % \\{p.mrk}")
+                else:
+                    print(f"Paragraph {p.ref}[{p.parnum}] % \\{p.mrk}")
 
     def on_mouse_motion(self, widget, event):
         if self.is_dragging:
@@ -235,27 +295,35 @@ class PDFViewer:
         # End dragging when mouse button is released
         if event.button == 1:
             self.is_dragging = False
+        # zl = self.zoomLevel
+        # if event.button == 1:  # Left-click
+            # x, y = event.x, event.y
+            # print(f"Left-click at x: {x}, y: {y}, on page {page_number}")
+            # self.handle_left_click(x / zl, y / zl, widget, page_number)
+        if event.button == 3:  # Right-click (for context menu)
+            self.show_context_menu(widget, event)
         return True
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
 
+#------------- (put these lines back in when we have shrink and grow working)
         # First section: Identify, Shrink, Grow
-        identify_ref = Gtk.MenuItem(label="Show Reference")
-        shrink_item = Gtk.MenuItem(label="Shrink Paragraph")
-        grow_item = Gtk.MenuItem(label="Grow Paragraph")
+        # identify_ref = Gtk.MenuItem(label="Show Reference")
+        # shrink_item = Gtk.MenuItem(label="Shrink Paragraph")
+        # grow_item = Gtk.MenuItem(label="Grow Paragraph")
 
-        identify_ref.connect("activate", self.on_identify_paragraph)
-        shrink_item.connect("activate", self.on_shrink_paragraph)
-        grow_item.connect("activate", self.on_grow_paragraph)
+        # identify_ref.connect("activate", self.on_identify_paragraph)
+        # shrink_item.connect("activate", self.on_shrink_paragraph)
+        # grow_item.connect("activate", self.on_grow_paragraph)
 
-        menu.append(identify_ref)
-        menu.append(shrink_item)
-        menu.append(grow_item)
+        # menu.append(identify_ref)
+        # menu.append(shrink_item)
+        # menu.append(grow_item)
 
         # Separator between the two sections
-        menu.append(Gtk.SeparatorMenuItem())
-
+        # menu.append(Gtk.SeparatorMenuItem())
+#-------------
         # Second section: Zoom In, Reset Zoom, Zoom Out
         zoom_in_item = Gtk.MenuItem(label="Zoom In      Ctrl +")
         reset_zoom_item = Gtk.MenuItem(label="Reset Zoom    Ctrl 0")
@@ -281,23 +349,63 @@ class PDFViewer:
 
     def on_grow_paragraph(self, widget):
         print("Grow paragraph option selected")
-
+        
     # Zoom functionality
     def on_zoom_in(self, widget):
-        self.zoom_level += (0.1 * self.zoom_level)  # Increase zoom by 10% of current level
-        print(f"{self.zoom_level=}")
+        if self.zoomLevel < 2.0:
+            self.zoomLevel += (0.2 * self.zoomLevel)  # Increase zoom by 20% of current level
+        elif self.zoomLevel < 5.0:
+            self.zoomLevel += (0.5 * self.zoomLevel)  # Increase zoom by 50% of current level
+        elif self.zoomLevel < 10.0:
+            self.zoomLevel = min(self.zoomLevel * 2, 10.0)  # Double zoom, cap at 10.0
+        else:
+            self.zoomLevel = 10.0  # Ensure max zoom is 10.0
         self.show_pdf(self.current_page)  # Redraw the current page
 
     def on_reset_zoom(self, widget):
-        self.zoom_level = 1.0  # Reset zoom to 100%
+        self.zoomLevel = 1.0  # Reset zoom to 100%
         self.show_pdf(self.current_page)  # Redraw the current page
 
     def on_zoom_out(self, widget):
-        min_zoom = 0.3  # Set a minimum zoom level of 10%
-        if self.zoom_level > min_zoom:
-            self.zoom_level -= (0.1 * self.zoom_level)  # Decrease zoom by 10% of current level
-            print(f"{self.zoom_level=}")
-            self.show_pdf(self.current_page)  # Redraw the current page
+        min_zoom = 0.3  # Set a minimum zoom level of 30%
+        if self.zoomLevel > 5.0:
+            self.zoomLevel = max(self.zoomLevel / 2, 5.0)  # Halve zoom, cap at 5.0
+        elif self.zoomLevel > 2.0:
+            self.zoomLevel -= (0.5 * self.zoomLevel)  # Decrease zoom by 50% of current level
+        elif self.zoomLevel > min_zoom:
+            self.zoomLevel -= (0.2 * self.zoomLevel)  # Decrease zoom by 20% of current level
+            if self.zoomLevel < min_zoom:
+                self.zoomLevel = min_zoom  # Prevent going below 0.3
+        else:
+            self.zoomLevel = min_zoom  # Ensure minimum zoom is 0.3
+        self.show_pdf(self.current_page)  # Redraw the current page
+
+    def on_window_size_allocate(self, widget, allocation):
+        if self.current_page is None:
+            return
+        self.set_zoom_fit_to_screen()
+
+    def set_zoom_fit_to_screen(self):
+        if not hasattr(self, "document") or self.document is None or self.current_page is None:
+            return
+
+        page = self.document.get_page(self.current_page - 1)
+        try:
+            page_width, page_height = page.get_size()
+        except AttributeError:
+            return
+
+        # Get the parent widget of self.hbox
+        parent_widget = self.hbox.get_parent().get_parent()
+
+        # Check if the parent widget exists to avoid AttributeError
+        if parent_widget is not None:
+            alloc = parent_widget.get_allocation()
+
+        # Calculate the zoom level to fit the page within the dialog ( borders and padding subtracted)
+        scale_x = (alloc.width - 32) / (page_width * (2 if self.spread_mode else 1))
+        scale_y = (alloc.height - 32) / page_height
+        self.zoomLevel = min(scale_x, scale_y)  # Use the smaller scale to fit both dimensions
 
 def readpts(s):
     s = re.sub(r"(?:\s*(?:plus|minus)\s+[-\d.]+\s*(?:pt|in|sp|em))+$", "", s)
