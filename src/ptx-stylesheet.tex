@@ -1934,7 +1934,7 @@
        \global\baselineDelta=\csname baselineDelta##1\endcsname
      \fi
      \ifdim\baselineskip<\@minb@seline
-       \xdef\@minb@seline{\the\baselineskip}%
+       {\dimen1=\baselineskip \xdef\@minb@seline{\the\dimen1}}% Remove glue
      \fi
      \trace{d}{##1: bl:\the\baselineskip, mb:\@minb@seline, bld##1:\the\csname baselineDelta##1\endcsname}%
      \saveLRspecificSide{##1}%

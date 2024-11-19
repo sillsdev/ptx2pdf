@@ -895,10 +895,10 @@
     \vbadness=10000
     \vfuzz=\maxdimen
     \setbox0=\copy\n@tesbox
-    \dimen0=\dimexpr  \l@stnotebls * \NoteShaveMin \relax 
-    \dimen1=\dimexpr \l@stnotebls * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
+    \dimen0=\dimexpr  \skip0 * \NoteShaveMin \relax 
+    \dimen1=\dimexpr \skip0 * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
     \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minumum shave amount
-    \trace{fp}{Initial note length \the\ht\n@tesbox, first shave: \the\sh@vedim, stay: \the\dimen1 (\l@stnotebls*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
+    \trace{fp}{Initial note length \the\ht\n@tesbox, first shave: \the\sh@vedim, stay: \the\dimen1 (\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
     \@LOOP\ifdim \sh@vedim>\dimen1 
       %\showbox\n@tesbox
       \setbox1=\vsplit0 to \sh@vedim
@@ -925,7 +925,7 @@
           %\sh@vedim=\the\ht0
         \fi
       %\fi
-      \advance\sh@vedim by -\l@stnotebls
+      \advance\sh@vedim by -\skip0
       %\trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
     \@REPEAT
   \fi
