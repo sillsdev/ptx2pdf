@@ -6161,4 +6161,6 @@ Thank you,
         print(f"Notified of allocation change: width={allocation.width}, height={allocation.height}")
 
     def on_configure_event(self, widget, event):
-        print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")
+        pass # We need to save this info so that when we re-open PTXprint it places the Preview window
+             # in the same place it was when we last closed.
+        # print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")
