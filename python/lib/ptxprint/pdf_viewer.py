@@ -17,9 +17,9 @@ class PDFViewer:
         self.spread_mode = self.model.get("c_bkView", False)
         self.parlocs = None
         self.psize = (0, 0)
-        self.drag_start_x = None
-        self.drag_start_y = None
-        self.is_dragging = False
+        # self.drag_start_x = None
+        # self.drag_start_y = None
+        # self.is_dragging = False
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -55,9 +55,9 @@ class PDFViewer:
                     self.psize = pg.get_size()
                     page_widget = self.render_page(pg, i)  # Pass the page number
                     if self.rtl_mode:
-                        self.hbox.pack_end(page_widget, False, False, 0)
+                        self.hbox.pack_end(page_widget, False, False, 1)
                     else:
-                        self.hbox.pack_start(page_widget, False, False, 0)
+                        self.hbox.pack_start(page_widget, False, False, 1)
         else:
             if page in range(self.pages+1):
                 pg = self.document.get_page(page-1)
@@ -157,7 +157,7 @@ class PDFViewer:
 
     def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
         old_zoom = self.zoomLevel
-        self.zoomLevel = (min(self.zoomLevel * 1.2, 10.0) if zoom_in else max(self.zoomLevel * 0.8, 0.3))
+        self.zoomLevel = (min(self.zoomLevel * 1.33, 10.0) if zoom_in else max(self.zoomLevel * 0.66, 0.3))
         scale_factor = self.zoomLevel / old_zoom
 
         # Get the parent scrolled window and its adjustments
@@ -306,23 +306,31 @@ class PDFViewer:
         # Connect scroll event
         event_box.connect("scroll-event", self.on_scroll_event)
 
-        # Connect mouse events for dragging
-        event_box.connect("button-press-event", self.on_button_press)
-        event_box.connect("motion-notify-event", self.on_mouse_motion)
+        # Connect normal/left click event
         event_box.connect("button-release-event", self.on_button_release)
+
+        # Connect mouse events for dragging
+        # event_box.connect("button-press-event", self.on_button_press)
+        # event_box.connect("motion-notify-event", self.on_mouse_motion)
         
         return event_box
 
-    def on_button_press(self, widget, event):
-        # Left-click initiates dragging
-        if event.button == 1:
-            self.is_dragging = True
-            self.drag_start_x = event.x
-            self.drag_start_y = event.y
+    def on_button_release(self, widget, event):
+        # End dragging when mouse button is released
+        # if event.button == 1:
+            # self.is_dragging = False
+        zl = self.zoomLevel
+        page_number = 999  # not sure where we were getting page_number from before. #fixMe!
+        if event.button == 1:  # Left-click
+            x, y = event.x, event.y
+            print(f"Left-click at x: {x}, y: {y}, on page {page_number}")
+            self.handle_left_click(x / zl, y / zl, widget, page_number)
+        if event.button == 3:  # Right-click (for context menu)
+            self.show_context_menu(widget, event)
         return True
 
     def handle_left_click(self, x, y, widget, page_number):
-        zl = self.zoom_level
+        zl = self.zoomLevel
         # Print page number as well as coordinates
         print(f"Coordinates on page {page_number}: x={x}, y={self.psize[1]-y}, zl={zl}")
         if self.parlocs is not None:
@@ -333,33 +341,28 @@ class PDFViewer:
                 else:
                     print(f"Paragraph {p.ref}[{p.parnum}] % \\{p.mrk}")
 
-    def on_mouse_motion(self, widget, event):
-        if self.is_dragging:
+    # def on_button_press(self, widget, event):
+        # Left-click initiates dragging
+        # if event.button == 1:
+            # self.is_dragging = True
+            # self.drag_start_x = event.x
+            # self.drag_start_y = event.y
+        # return True
+
+    # def on_mouse_motion(self, widget, event):
+        # if self.is_dragging:
             # Calculate movement offset
-            dx = event.x - self.drag_start_x
-            dy = event.y - self.drag_start_y
+            # dx = event.x - self.drag_start_x
+            # dy = event.y - self.drag_start_y
 
             # Update PDF position by shifting the content in hbox
-            self.hbox.set_margin_left(self.hbox.get_margin_left() + int(dx))
-            self.hbox.set_margin_top(self.hbox.get_margin_top() + int(dy))
+            # self.hbox.set_margin_left(self.hbox.get_margin_left() + int(dx))
+            # self.hbox.set_margin_top(self.hbox.get_margin_top() + int(dy))
 
             # Update start coordinates for smooth continuous dragging
-            self.drag_start_x = event.x
-            self.drag_start_y = event.y
-        return True
-
-    def on_button_release(self, widget, event):
-        # End dragging when mouse button is released
-        if event.button == 1:
-            self.is_dragging = False
-        # zl = self.zoomLevel
-        # if event.button == 1:  # Left-click
-            # x, y = event.x, event.y
-            # print(f"Left-click at x: {x}, y: {y}, on page {page_number}")
-            # self.handle_left_click(x / zl, y / zl, widget, page_number)
-        if event.button == 3:  # Right-click (for context menu)
-            self.show_context_menu(widget, event)
-        return True
+            # self.drag_start_x = event.x
+            # self.drag_start_y = event.y
+        # return True
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
