@@ -6158,7 +6158,7 @@ Thank you,
 
     def on_dlg_preview_allocation_notify(self, widget, param):
         allocation = widget.get_allocation()
-        print(f"Notified of allocation change: width={allocation.width}, height={allocation.height}")
+        # print(f"Notified of allocation change: width={allocation.width}, height={allocation.height}")
 
     def on_configure_event(self, widget, event):
         pass # We need to save this info so that when we re-open PTXprint it places the Preview window

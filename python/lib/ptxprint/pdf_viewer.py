@@ -8,7 +8,7 @@ from pathlib import Path
 from dataclasses import dataclass, InitVar, field
 
 class PDFViewer:
-    def __init__(self, model, widget):
+    def __init__(self, model, widget): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
         self.model = model
         self.pages = 0
@@ -54,18 +54,16 @@ class PDFViewer:
                     pg = self.document.get_page(i-1)
                     self.psize = pg.get_size()
                     page_widget = self.render_page(pg, i)  # Pass the page number
-                    self.hbox.pack_start(page_widget, False, False, 5)
+                    if self.rtl_mode:
+                        self.hbox.pack_end(page_widget, False, False, 0)
+                    else:
+                        self.hbox.pack_start(page_widget, False, False, 0)
         else:
             if page in range(self.pages+1):
                 pg = self.document.get_page(page-1)
                 self.psize = pg.get_size()
                 page_widget = self.render_page(pg, page)  # Pass the page number
-                if (self.rtl_mode and not page % 2 == 0) or \
-                   (not self.rtl_mode and page % 2 == 0): # This doesn't seem to help (yet).
-                    # print(f"{self.rtl_mode=} {page=}")
-                    self.hbox.pack_start(page_widget, False, False, 5)
-                else:
-                    self.hbox.pack_end(page_widget, False, False, 5)
+                self.hbox.pack_start(page_widget, False, False, 0)
 
         self.hbox.show_all()
         self.current_page = page
@@ -123,18 +121,77 @@ class PDFViewer:
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
 
         if ctrl_pressed:  # Zooming with Ctrl + Scroll
-            if event.direction == Gdk.ScrollDirection.UP:
-                self.on_zoom_in(widget)
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                self.on_zoom_out(widget)
-        else:  # Page navigation without Ctrl
-            if event.direction == Gdk.ScrollDirection.UP:
-                self.show_previous_page()
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                self.show_next_page()
+            zoom_in = event.direction == Gdk.ScrollDirection.UP
+            zoom_out = event.direction == Gdk.ScrollDirection.DOWN
 
-        return True  # Prevents further handling of the scroll event
+            # Get mouse position relative to the widget
+            mouse_x, mouse_y = event.x, event.y
+            posn = self.widgetPosition(widget) # 0=left page; 1=right page
+
+            # Perform zoom operation centered on mouse
+            if zoom_in:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
+            elif zoom_out:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=False)
+
+            return True  # Prevent further handling of the scroll event
+
+        # Default behavior: Scroll for navigation
+        if event.direction == Gdk.ScrollDirection.UP:
+            self.show_previous_page()
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            self.show_next_page()
+
+        return True
+
+    def widgetPosition(self, widget):
+        # Get all children of the hbox
+        children = self.hbox.get_children()
+
+        # Find the widget's index in the list of children
+        for index, child in enumerate(children):
+            if child == widget:
+                return index  # Return the position (index) of the widget
         
+        return -1  # If widget is not found, return -1
+
+    def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
+        old_zoom = self.zoomLevel
+        self.zoomLevel = (min(self.zoomLevel * 1.2, 10.0) if zoom_in else max(self.zoomLevel * 0.8, 0.3))
+        scale_factor = self.zoomLevel / old_zoom
+
+        # Get the parent scrolled window and its adjustments
+        scrolled_window = self.hbox.get_parent()
+        h_adjustment = scrolled_window.get_hadjustment()
+        v_adjustment = scrolled_window.get_vadjustment()
+
+        # Handle inactive scrollbars or default to zero
+        h_value = h_adjustment.get_value() if h_adjustment else 0
+        v_value = v_adjustment.get_value() if v_adjustment else 0
+        # print(f"Old adj values: {h_value:.2f} {v_value:.2f}\nMouse: ({mouse_x:.2f}, {mouse_y:.2f})")
+
+        # Page dimensions
+        hbox_width  = self.hbox.get_allocated_width()
+        hbox_height = self.hbox.get_allocated_height()
+        page_width  = hbox_width / 2 if self.spread_mode else hbox_width
+        # print(f"Width: hbox={hbox_width:.0f}  Page:{page_width:.0f}")
+
+        # Set page_offset if on right page (posn: 0=left, 1=right)
+        page_offset = (posn * page_width)
+        
+        # New scroll positions to keep focus on the cursor
+        new_h_value = (scale_factor - 1) * (mouse_x + page_offset) + h_value 
+        new_v_value = (scale_factor - 1) *  mouse_y                + v_value
+        # new_h_value = max(new_h_value, 0)
+        # new_v_value = max(new_v_value, 0)
+        h_adjustment.set_upper(h_adjustment.get_upper() * scale_factor)
+        v_adjustment.set_upper(v_adjustment.get_upper() * scale_factor)
+        h_adjustment.set_value(new_h_value)
+        v_adjustment.set_value(new_v_value)
+
+        # Redraw the canvas with the updated zoom level
+        self.show_pdf(self.current_page)
+
     def show_next_page(self):
         next_page = min(self.current_page + (2 if self.spread_mode else 1), self.pages)
         self.model.set("s_pgNum", next_page)
@@ -252,7 +309,7 @@ class PDFViewer:
         # Connect mouse events for dragging
         event_box.connect("button-press-event", self.on_button_press)
         event_box.connect("motion-notify-event", self.on_mouse_motion)
-        event_box.connect("button-release-event", self.on_button_release)        
+        event_box.connect("button-release-event", self.on_button_release)
         
         return event_box
 
