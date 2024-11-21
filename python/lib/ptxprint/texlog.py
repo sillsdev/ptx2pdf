@@ -35,6 +35,7 @@ messages = [
     ("W","UP", r'Unknown picture size \".+?\", expected \"col\", \"span\", \"width\", \"page\" or \"full\"'),
     ("E","UY", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
     ("E","U", r"zglot must be followed by a sensible argument\. '.+?' Hasn't been specified"),
+    ("E","U", r"Verse marker found in note style .+? End notes properly, notes including verse numbers must uses fv."),
     ("I","U", r"Table column overflow, reducing resolution"),
     ("W","S", r"\*\* .+? specification of .+? \(at \d+:\d+\) leaves .+? for text\. That's probably not enough\."),
     ("W","UP", r"Did not use all pictures in list\. Waiting for .+"),

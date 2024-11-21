@@ -991,7 +991,8 @@
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
- \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
+ \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
+  \ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
  % If the next token IS vp, then call relevant code to interpret before dropping 
  \def\@V@{%
   \let\nxt\@@V@@
@@ -1042,6 +1043,7 @@
       \hangingversefalse % Cancel
     \fi
   \global\let\prev@rsemode\empty\fi
+  \ifinn@te \MSG{Verse marker found in note style (\newn@testyle), after \c@rref. End notes properly, notes including verse numbers must uses fv.}\endn@testyle*\fi
   \leavevmode % ensure we are in horizontal mode to build paragraph
   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
   % and the user has requested omission of the first verse number in a chapter
