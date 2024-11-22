@@ -2,7 +2,7 @@
 from ptxprint.utils import refKey
 import re
 
-adjre = re.compile(r"^(\S+)\s+(\d+[.:]\d+(?:[+-]*\d+)?)\s+([+-]?\d+)(?:\[(\d+)\])?")
+adjre = re.compile(r"^(\S+)\s+(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
 restre = re.compile(r"^\s*\\(\S+)\s*(\d+)")
 
 class AdjList:
