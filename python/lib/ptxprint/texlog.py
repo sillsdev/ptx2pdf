@@ -36,6 +36,7 @@ messages = [
     ("E","UY", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
     ("E","U", r"zglot must be followed by a sensible argument\. '.+?' Hasn't been specified"),
     ("E","U", r"Verse marker found in note style .+? End notes properly, notes including verse numbers must uses fv."),
+    ("E","U", r"note marker \(.+?\) found while still in note style, after .+? end notes properly, notes may not nest."),
     ("W","U", r"Bad marker .+? \(end-of-note when not in a note\) near .+? Ignored."),
     ("I","U", r"Table column overflow, reducing resolution"),
     ("W","S", r"\*\* .+? specification of .+? \(at \d+:\d+\) leaves .+? for text\. That's probably not enough\."),
