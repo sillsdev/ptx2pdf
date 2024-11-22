@@ -128,7 +128,8 @@
  \futurelet\n@xt\don@testyle}
 \def\don@testyle{\catcode32=10\relax 
  \trace{f}{don@testyle: n@xt='\meaning\n@xt'}%
- \if\n@xt*\let\n@xt\endn@testyle\else
+ \if\n@xt*\ifinn@te\let\n@xt\endn@testyle\else\let\n@xt\badendn@testyle\fi
+  \else
   \if\n@xt^\relax
     \let\n@xt\@@startn@testyle
   \else
@@ -149,6 +150,7 @@
 \def\b@lance{BALANCE}
 \lowercase{
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
+  \ifinn@te \MSG{Note marker (\newn@testyle) found while still in note style, after \c@rref. End notes properly, notes may not nest.}\endn@testyle*\fi
   \trace{n}{startn@testyle \newn@testyle #1}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
@@ -216,6 +218,9 @@
 %-cnote_startnote
 
 %+cnote_endnote
+\def\badendn@testyle*{\trace{n}{badendn@testyle}%
+  \MSG{Bad marker \newn@testyle* (end-of-note when not in a note) near \c@rref. Ignored.}%
+}
 \def\endn@testyle*{\trace{n}{endn@testyle}%
  \end@llpoppedstyles{N*}%end any character styles within the note
  \ifskipn@testyle \else
