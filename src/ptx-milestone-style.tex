@@ -539,10 +539,16 @@
 
 \x@\def\csname MS:zsetref\endcsname{%
   \get@ttribute{book}\ifx\attr@b\relax\else
-    \x@\global\x@\let\csname book\g@tdstat\endcsname\attr@b
+    \x@\ifx\csname book\g@tdstat\endcsname\attr@b\else
+      {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+      \x@\global\x@\let\csname book\g@tdstat\endcsname\attr@b
+    \fi
   \fi
   \get@ttribute{bkid}\ifx\attr@b\relax\else
-    \global\let\id@@@\attr@b
+    \ifx\id@@@\attr@b\else
+      \global\let\id@@@\attr@b
+      {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+    \fi
   \fi
   \get@ttribute{chapter}\ifx\attr@b\relax\else
     \global\let\ch@pter\attr@b
