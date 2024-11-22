@@ -1427,6 +1427,8 @@ class GtkViewModel(ViewModel):
         if self.logfile != None:
             self.logfile.write("</actions>\n")
             self.logfile.close()
+        if self.pdf_viewer is not None:
+            self.pdf_viewer.exit()
         Gtk.main_quit()
 
     def onKeyPress(self, dlg, event):
@@ -6143,7 +6145,7 @@ Thank you,
         window.resize(*large_size if condition else small_size)
 
     def onPgNumChanged(self, widget):
-        pages = self.pdf_viewer.pages
+        pages = self.pdf_viewer.numpages
         if not pages:
             return
         pg = min(int(self.get("s_pgNum", 1)), pages)
@@ -6151,7 +6153,7 @@ Thank you,
         self.pdf_viewer.show_pdf(pg, self.get("c_RTLbookBinding", False))
         
     def onPrintItClicked(self, widget):
-        pages = self.pdf_viewer.pages
+        pages = self.pdf_viewer.numpages
         if not pages:
             return
         self.pdf_viewer.print_document()

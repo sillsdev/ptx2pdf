@@ -1,25 +1,59 @@
 import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
-from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk
-import cairo, re
+from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
+import cairo, re, time
 from cairo import ImageSurface, Context
 from pathlib import Path
+from threading import Thread, Event
 from dataclasses import dataclass, InitVar, field
+from multiprocessing import sharedctypes, Process
+
+def render_page_image(page, zoomlevel):
+    width, height = page.get_size()
+    width, height = int(width * zoomlevel), int(height * zoomlevel)
+    buf = bytearray(width * height * 4)
+    render_page(page, zoomlevel, buf)
+    return arrayImage(buf, width, height)
+
+def render_page(page, zoomlevel, imarray):
+    # Get page size, applying zoom factor
+    width, height = page.get_size()
+    width, height = width * zoomlevel, height * zoomlevel
+
+    surface = ImageSurface.create_for_data(memoryview(imarray), cairo.FORMAT_RGB24, int(width), int(height))
+    context = Context(surface)
+    context.set_source_rgb(1, 1, 1)
+    context.paint()
+    context.scale(zoomlevel, zoomlevel)
+    page.render(context)
+
+def arrayImage(imarray, width, height):
+    stride = cairo.Format.RGB24.stride_for_width(width)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_data(
+        bytes(imarray),
+        GdkPixbuf.Colorspace.RGB,
+        True,
+        8,
+        width, height, stride)
+    return Gtk.Image.new_from_pixbuf(pixbuf)
+
 
 class PDFViewer:
     def __init__(self, model, widget): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
         self.model = model
-        self.pages = 0
-        self.current_page = None  # Keep track of the current page
+        self.numpages = 0
+        self.current_page = None  # Keep track of the current page number
         self.zoomLevel = 1.0  # Initial zoom level is 100%
+        self.old_zoom = 1.0
         self.spread_mode = self.model.get("c_bkView", False)
         self.parlocs = None
         self.psize = (0, 0)
         # self.drag_start_x = None
         # self.drag_start_y = None
         # self.is_dragging = False
+        self.thread = None
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -30,55 +64,118 @@ class PDFViewer:
         self.hbox.connect("scroll-event", self.on_scroll_event)
         self.hbox.set_can_focus(True)  # Ensure the widget can receive keyboard focus
 
+    def exit(self):
+        if self.thread is not None:
+            self.thread.kill()
+
+    def create_boxes(self, num):
+        boxes = self.hbox.get_children()
+        if len(boxes) == num:
+            return
+        elif len(boxes) > num:
+            for c in boxes[num:]:
+                self.hbox.remove(c)
+        elif len(boxes) < num:
+            while len(boxes) < num: 
+                event_box = Gtk.EventBox()
+                event_box.set_events(Gdk.EventMask.SCROLL_MASK |
+                                     Gdk.EventMask.BUTTON_PRESS_MASK |
+                                     Gdk.EventMask.BUTTON_RELEASE_MASK |
+                                     Gdk.EventMask.POINTER_MOTION_MASK)
+                
+                event_box.connect("scroll-event", self.on_scroll_event)
+                # event_box.connect("button-press-event", self.on_button_press)
+                # event_box.connect("motion-notify-event", self.on_mouse_motion)
+                event_box.connect("button-release-event", self.on_button_release)
+                if self.rtl_mode:
+                    self.hbox.pack_end(event_box, False, False, 0)
+                else:
+                    self.hbox.pack_start(event_box, False, False, 0)
+                boxes.append(event_box)
+
+    def update_boxes(self, images):
+        self.hbox.hide()
+        children = self.hbox.get_children()
+        for i,c in enumerate(children):
+            if i >= len(images):
+                break
+            im = images[i]
+            for oldim in c.get_children():     # only 1 child (in theory)
+                oldim.destroy()                # removes from parent
+            c.add(im)
+            im.show()
+            c.show()
+        self.hbox.show()
+        self.hbox.grab_focus()
+
     def load_pdf(self, pdf_path):
         file_uri = Path(pdf_path).as_uri()
         try:
             self.document = Poppler.Document.new_from_file(file_uri, None)
-            self.pages = self.document.get_n_pages()
+            self.numpages = self.document.get_n_pages()
         except Exception as e:
             print(f"Error opening PDF: {e}")
             return
 
     def show_pdf(self, page, rtl=False):
-        self.hbox.hide()
         self.spread_mode = self.model.get("c_bkView", False)
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
 
-        for child in self.hbox.get_children():
-            self.hbox.remove(child)
-
+        self.pages = []
+        images = []
         if self.spread_mode:
             spread = self.get_spread(page, self.rtl_mode)
+            self.create_boxes(len(spread))
             for i in spread:
-                if i in range(self.pages+1):
+                if i in range(self.numpages+1):
                     pg = self.document.get_page(i-1)
+                    self.pages.append(pg)
                     self.psize = pg.get_size()
-                    page_widget = self.render_page(pg, i)  # Pass the page number
-                    if self.rtl_mode:
-                        self.hbox.pack_end(page_widget, False, False, 1)
-                    else:
-                        self.hbox.pack_start(page_widget, False, False, 1)
+                    images.append(render_page_image(pg, self.zoomLevel))
         else:
-            if page in range(self.pages+1):
+            if page in range(self.numpages+1):
+                self.create_boxes(1)
                 pg = self.document.get_page(page-1)
+                self.pages.append(pg)
                 self.psize = pg.get_size()
-                page_widget = self.render_page(pg, page)  # Pass the page number
-                self.hbox.pack_start(page_widget, False, False, 0)
+                images.append(render_page_image(pg, self.zoomLevel))
 
-        self.hbox.show_all()
         self.current_page = page
+        self.update_boxes(images)
 
-        # Grab focus so the widget receives keyboard events
-        self.hbox.grab_focus()
+    def resize_pdf(self):
+        width, height = self.psize
+        width, height = width * self.zoomLevel, height * self.zoomLevel
+        if self.zoomLevel == self.old_zoom:
+            return
 
+        children = self.hbox.get_children()
+        if not len(children):
+            return self.show_pdf(self.current_page)
+
+        images = []
+        for i,c in enumerate(children):
+            im = c.get_children()[0]
+            pbuf = im.get_pixbuf()
+            np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+            nim = Gtk.Image.new_from_pixbuf(np)
+            images.append(nim)
+        self.update_boxes(images)
+        if self.thread is None:
+            self.thread = ThreadRenderer(parent=self)
+        GLib.idle_add(self.thread.render_pages, self.pages, self.zoomLevel)
+#        self.thread.render_pages(self.pages, self.zoomLevel)
+
+    def set_zoom(self, zoomlevel):
+        self.old_zoom = self.zoomLevel
+        self.zoomLevel = zoomlevel
+        self.resize_pdf()
+    
     def print_document(self):
         if not hasattr(self, 'document') or self.document is None:
             return
-
         print_op = Gtk.PrintOperation()
-
-        # Set print job properties
-        print_op.set_n_pages(self.pages)
+        print_op.set_n_pages(self.numpages)
         print_op.connect("draw_page", self.on_draw_page)
 
         try:
@@ -94,22 +191,18 @@ class PDFViewer:
         if not hasattr(self, 'document') or self.document is None:
             return
 
-        # Retrieve the page from the Poppler document
         pdf_page = self.document.get_page(page_number)
 
-        # Get Cairo context and render the page
         cairo_context = context.get_cairo_context()
         cairo_context.save()
         cairo_context.set_source_rgb(1, 1, 1)  # Set background color to white
         cairo_context.paint()
 
-        # Scale the PDF page to fit the print context
         width, height = pdf_page.get_size()
         scale_x = context.get_width() / width
         scale_y = context.get_height() / height
         cairo_context.scale(scale_x, scale_y)
 
-        # Render the PDF page onto the Cairo context
         pdf_page.render(cairo_context)
         cairo_context.restore()
 
@@ -156,9 +249,9 @@ class PDFViewer:
         return -1  # If widget is not found, return -1
 
     def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
-        old_zoom = self.zoomLevel
+        self.old_zoom = self.zoomLevel
         self.zoomLevel = (min(self.zoomLevel * 1.33, 10.0) if zoom_in else max(self.zoomLevel * 0.66, 0.3))
-        scale_factor = self.zoomLevel / old_zoom
+        scale_factor = self.zoomLevel / self.old_zoom
 
         # Get the parent scrolled window and its adjustments
         scrolled_window = self.hbox.get_parent()
@@ -168,13 +261,10 @@ class PDFViewer:
         # Handle inactive scrollbars or default to zero
         h_value = h_adjustment.get_value() if h_adjustment else 0
         v_value = v_adjustment.get_value() if v_adjustment else 0
-        # print(f"Old adj values: {h_value:.2f} {v_value:.2f}\nMouse: ({mouse_x:.2f}, {mouse_y:.2f})")
 
         # Page dimensions
         hbox_width  = self.hbox.get_allocated_width()
-        hbox_height = self.hbox.get_allocated_height()
         page_width  = hbox_width / 2 if self.spread_mode else hbox_width
-        # print(f"Width: hbox={hbox_width:.0f}  Page:{page_width:.0f}")
 
         # Set page_offset if on right page (posn: 0=left, 1=right)
         page_offset = (posn * page_width)
@@ -190,10 +280,10 @@ class PDFViewer:
         v_adjustment.set_value(new_v_value)
 
         # Redraw the canvas with the updated zoom level
-        self.show_pdf(self.current_page)
+        self.resize_pdf()
 
     def show_next_page(self):
-        next_page = min(self.current_page + (2 if self.spread_mode else 1), self.pages)
+        next_page = min(self.current_page + (2 if self.spread_mode else 1), self.numpages)
         self.model.set("s_pgNum", next_page)
         self.show_pdf(next_page)
 
@@ -214,13 +304,13 @@ class PDFViewer:
             self.show_pdf(1)
             return True
         elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
-            p = self.pages
+            p = self.numpages
             self.model.set("s_pgNum", p)
             self.show_pdf(p)
             return True
         elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
             next_page = self.current_page + (2 if self.spread_mode else 1)
-            p = min(next_page, self.pages)
+            p = min(next_page, self.numpages)
             self.model.set("s_pgNum", p)
             self.show_pdf(p)
             return True
@@ -240,9 +330,8 @@ class PDFViewer:
             self.on_reset_zoom(widget)
             return True
         elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
-            self.zoomLevel = 1.0  # Set zoom to actual size
+            self.set_zoom(1.0)
             print(f"Zoom reset to actual size: {self.zoomLevel=:.2f}")
-            self.show_pdf(self.current_page)  # Redraw the current page
             return True
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
             self.set_zoom_fit_to_screen()
@@ -253,8 +342,8 @@ class PDFViewer:
     def get_spread(self, page, rtl=False):
         if page == 1:
             return (1,)
-        if page > int(self.pages):
-            page = int(self.pages)
+        if page > int(self.numpages):
+            page = int(self.numpages)
         if rtl:
             if page % 2 == 0:
                 return (page + 1, page)
@@ -265,55 +354,6 @@ class PDFViewer:
                 return (page, page + 1)
             else:
                 return (page - 1, page)
-
-    def render_page(self, page, page_number):
-        # Get page size, applying zoom factor
-        width, height = page.get_size()
-        width, height = width * self.zoomLevel, height * self.zoomLevel
-
-        surface = ImageSurface(cairo.FORMAT_RGB24, int(width), int(height))
-        context = Context(surface)
-        context.set_source_rgb(1, 1, 1)
-        context.paint()
-
-        # Apply zoom transformation to context
-        context.scale(self.zoomLevel, self.zoomLevel)
-
-        # Render the page to the Cairo surface
-        page.render(context)
-
-        data = surface.get_data()
-        pixbuf = GdkPixbuf.Pixbuf.new_from_data(
-            data,
-            GdkPixbuf.Colorspace.RGB,
-            True,
-            8,
-            surface.get_width(),
-            surface.get_height(),
-            surface.get_stride()
-        )
-
-        image = Gtk.Image.new_from_pixbuf(pixbuf)
-        event_box = Gtk.EventBox()
-        event_box.add(image)
-        
-        # Set event mask to enable scroll events and mouse drag events
-        event_box.set_events(Gdk.EventMask.SCROLL_MASK |
-                             Gdk.EventMask.BUTTON_PRESS_MASK |
-                             Gdk.EventMask.BUTTON_RELEASE_MASK |
-                             Gdk.EventMask.POINTER_MOTION_MASK)
-        
-        # Connect scroll event
-        event_box.connect("scroll-event", self.on_scroll_event)
-
-        # Connect normal/left click event
-        event_box.connect("button-release-event", self.on_button_release)
-
-        # Connect mouse events for dragging
-        # event_box.connect("button-press-event", self.on_button_press)
-        # event_box.connect("motion-notify-event", self.on_mouse_motion)
-        
-        return event_box
 
     def on_button_release(self, widget, event):
         # End dragging when mouse button is released
@@ -413,32 +453,31 @@ class PDFViewer:
     # Zoom functionality
     def on_zoom_in(self, widget):
         if self.zoomLevel < 2.0:
-            self.zoomLevel += (0.2 * self.zoomLevel)  # Increase zoom by 20% of current level
+            zoomLevel = (1.2 * self.zoomLevel)  # Increase zoom by 20% of current level
         elif self.zoomLevel < 5.0:
-            self.zoomLevel += (0.5 * self.zoomLevel)  # Increase zoom by 50% of current level
+            zoomLevel = (1.5 * self.zoomLevel)  # Increase zoom by 50% of current level
         elif self.zoomLevel < 10.0:
-            self.zoomLevel = min(self.zoomLevel * 2, 10.0)  # Double zoom, cap at 10.0
+            zoomLevel = min(self.zoomLevel * 2, 10.0)  # Double zoom, cap at 10.0
         else:
-            self.zoomLevel = 10.0  # Ensure max zoom is 10.0
-        self.show_pdf(self.current_page)  # Redraw the current page
+            zoomLevel = 10.0  # Ensure max zoom is 10.0
+        self.set_zoom(zoomLevel)
 
     def on_reset_zoom(self, widget):
-        self.zoomLevel = 1.0  # Reset zoom to 100%
-        self.show_pdf(self.current_page)  # Redraw the current page
+        self.set_zoom(1.0)
 
     def on_zoom_out(self, widget):
         min_zoom = 0.3  # Set a minimum zoom level of 30%
         if self.zoomLevel > 5.0:
-            self.zoomLevel = max(self.zoomLevel / 2, 5.0)  # Halve zoom, cap at 5.0
+            zoomLevel = max(self.zoomLevel / 2, 5.0)  # Halve zoom, cap at 5.0
         elif self.zoomLevel > 2.0:
-            self.zoomLevel -= (0.5 * self.zoomLevel)  # Decrease zoom by 50% of current level
+            zoomLevel = (0.5 * self.zoomLevel)  # Decrease zoom by 50% of current level
         elif self.zoomLevel > min_zoom:
-            self.zoomLevel -= (0.2 * self.zoomLevel)  # Decrease zoom by 20% of current level
+            zoomLevel = (0.8 * self.zoomLevel)  # Decrease zoom by 20% of current level
             if self.zoomLevel < min_zoom:
-                self.zoomLevel = min_zoom  # Prevent going below 0.3
+                zoomLevel = min_zoom  # Prevent going below 0.3
         else:
-            self.zoomLevel = min_zoom  # Ensure minimum zoom is 0.3
-        self.show_pdf(self.current_page)  # Redraw the current page
+            zoomLevel = min_zoom  # Ensure minimum zoom is 0.3
+        self.set_zoom(zoomLevel)
 
     def on_window_size_allocate(self, widget, allocation):
         if self.current_page is None:
@@ -465,7 +504,59 @@ class PDFViewer:
         # Calculate the zoom level to fit the page within the dialog ( borders and padding subtracted)
         scale_x = (alloc.width - 32) / (page_width * (2 if self.spread_mode else 1))
         scale_y = (alloc.height - 32) / page_height
-        self.zoomLevel = min(scale_x, scale_y)  # Use the smaller scale to fit both dimensions
+        self.set_zoom(min(scale_x, scale_y))
+
+
+class ThreadRenderer(Thread):
+
+    def __init__(self, *args, parent=None, **kw):
+        super().__init__(*args, **kw)
+        self.parent = parent
+        self.pending = None
+        self.startme = False
+        self.quit = False
+        self.lock = Event()
+        self.lock.clear()
+        self.start()
+
+    def render_pages(self, pages, zoomlevel):
+        self.pending = [zoomlevel] + list(pages)
+        self.stopme = False
+        self.lock.set()
+        if self.startme:
+            self.startme = False
+            self.start()
+
+    def stop(self):
+        self.stopme = True
+        self.pending = None
+
+    def kill(self):
+        self.quit = True
+        self.lock.set()
+
+    def run(self):
+        while True:
+            time.sleep(0.2)
+            self.lock.wait()
+            if self.quit:
+                break
+            pending = self.pending
+            self.lock.clear()
+            zoomlevel = pending[0]
+            images = []
+            for p in pending[1:]:
+                w, h = p.get_size()
+                w, h = int(w * zoomlevel), int(h * zoomlevel)
+                imarray = sharedctypes.RawArray('B', w * h * 4)
+                mp = Process(target=render_page, args=(p, zoomlevel, imarray))
+                mp.start()
+                mp.join()
+                images.append(arrayImage(imarray, w, h))
+            if not self.lock.is_set() and not self.stopme and len(images) and self.parent is not None:
+                GLib.idle_add(self.parent.update_boxes, images)
+        self.startme = True
+
 
 def readpts(s):
     s = re.sub(r"(?:\s*(?:plus|minus)\s+[-\d.]+\s*(?:pt|in|sp|em))+$", "", s)
