@@ -6178,4 +6178,4 @@ Thank you,
         print(f"{zl=}")
         adj_zl = max(30, min(self.extractDigits(zl), 1600))
         if self.pdf_viwer is not None:
-            self.pdf_viewer.set_zoom(adj_zl / 100)
+            self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)

@@ -159,14 +159,16 @@ class PDFViewer:
         if not len(children):
             return self.show_pdf(self.current_page)
 
-        images = []
-        for i,c in enumerate(children):
-            im = c.get_children()[0]
-            pbuf = im.get_pixbuf()
-            np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-            nim = Gtk.Image.new_from_pixbuf(np)
-            images.append(nim)
-        self.update_boxes(images)
+        if scrolled:
+            images = []
+            for i,c in enumerate(children):
+                im = c.get_children()[0]
+                pbuf = im.get_pixbuf()
+                np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+                nim = Gtk.Image.new_from_pixbuf(np)
+                images.append(nim)
+            self.update_boxes(images)
+
         def redraw():
             GLib.idle_add(self.show_pdf, self.current_page)
         if self.timer is not None:
