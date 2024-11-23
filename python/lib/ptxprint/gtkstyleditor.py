@@ -274,11 +274,11 @@ class StyleEditorView(StyleEditor):
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             # v = self.sheet.get(k, self.basesheet.get(k, {}))
             v = self.asStyle(k)
-            if v.get('StyleType', '') == 'Standalone':
+            if v.get('styletype', '') == 'Standalone':
                 continue
-            if 'zDerived' in v:
+            if 'zderived' in v:
                 # self.sheet[v['zDerived']][' endMilestone']=k
-                self.setval(v['zDerived'], ' endMilestone', k)
+                self.setval(v['zderived'], ' endMilestone', k)
                 continue
             if k not in self.basesheet:
                 # v[' deletable'] = True
@@ -286,17 +286,17 @@ class StyleEditorView(StyleEditor):
             if k == "p":
                 foundp = True
             cat = 'Other'
-            if 'Name' in v:
-                if not v['Name']:
-                    v['Name'] = "{} - Other".format(k)
-                m = name_reg.match(str(v['Name']))
+            if 'name' in v:
+                if not v['name']:
+                    v['name'] = "{} - Other".format(k)
+                m = name_reg.match(str(v['name']))
                 if m:
                     if not m.group(1) and " " in m.group(2):
                         cat = m.group(2)
                     else:
                         cat = m.group(1) or m.group(3)
                 else:
-                    cat = str(v['Name']).strip()
+                    cat = str(v['name']).strip()
                 cat, url = categorymapping.get(cat, (cat, None))
                 # v[' category'] = cat
                 self.setval(k, ' category', cat)
