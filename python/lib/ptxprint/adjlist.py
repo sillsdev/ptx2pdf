@@ -130,8 +130,8 @@ class AdjList:
 
     def changeval(self, parref, doit):
         if isinstance(parref, int):
-            r = self.liststore[i]
-            doit(r, i)
+            r = self.liststore[parref]
+            doit(r, parref)
             return
         m = refre.match(parref)
         if not m:
@@ -163,7 +163,7 @@ class AdjList:
             else:
                 f = str(v)
             if -2 < v < 3:
-                self.liststore.set_value(r.iter, 2, f)
+                self.liststore.set_value(r.iter, 3, f)
         self.changeval(parref, mydoit)
 
     def expand(self, parref, offset):
