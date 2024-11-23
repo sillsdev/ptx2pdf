@@ -55,6 +55,8 @@ class PDFViewer:
         # self.is_dragging = False
         self.thread = None
         self.timer = None
+        self.shrinkAmount = 3 #%
+        self.expandAmount = 5 #%
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -428,23 +430,28 @@ class PDFViewer:
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
 
-#------------- (put these lines back in when we have shrink and grow working)
         # First section: Identify, Shrink, Grow
-        # identify_ref = Gtk.MenuItem(label="Show Reference")
-        # shrink_item = Gtk.MenuItem(label="Shrink Paragraph")
-        # grow_item = Gtk.MenuItem(label="Grow Paragraph")
+        identify_ref = Gtk.MenuItem(label="Show Book Ch:Vs Ref")
+        shrink_para = Gtk.MenuItem(label="Shrink Paragraph -1 line")
+        expand_para = Gtk.MenuItem(label="Expand Paragraph +1 line")
+        shrink_text = Gtk.MenuItem(label=f"Shrink Text (-{self.shrinkAmount}%)") # default = 3%
+        expand_text = Gtk.MenuItem(label=f"Expand Text (+{self.expandAmount}%)") # default = 5%
 
-        # identify_ref.connect("activate", self.on_identify_paragraph)
-        # shrink_item.connect("activate", self.on_shrink_paragraph)
-        # grow_item.connect("activate", self.on_grow_paragraph)
+        identify_ref.connect("activate", self.on_identify_paragraph)
+        shrink_para.connect("activate", self.on_shrink_paragraph)
+        expand_para.connect("activate", self.on_expand_paragraph)
+        shrink_text.connect("activate", self.on_shrink_text)
+        expand_text.connect("activate", self.on_expand_text)
 
-        # menu.append(identify_ref)
-        # menu.append(shrink_item)
-        # menu.append(grow_item)
+        menu.append(identify_ref)
+        menu.append(Gtk.SeparatorMenuItem())
+        menu.append(shrink_para)
+        menu.append(expand_para)
+        menu.append(Gtk.SeparatorMenuItem())
+        menu.append(shrink_text)
+        menu.append(expand_text)
+        menu.append(Gtk.SeparatorMenuItem())
 
-        # Separator between the two sections
-        # menu.append(Gtk.SeparatorMenuItem())
-#-------------
         # Second section: Zoom In, Reset Zoom, Zoom Out
         zoom_in_item = Gtk.MenuItem(label="Zoom In      Ctrl +")
         reset_zoom_item = Gtk.MenuItem(label="Reset Zoom    Ctrl 0")
@@ -468,8 +475,14 @@ class PDFViewer:
     def on_shrink_paragraph(self, widget):
         print("Shrink paragraph option selected")
 
-    def on_grow_paragraph(self, widget):
-        print("Grow paragraph option selected")
+    def on_expand_paragraph(self, widget):
+        print("Expand paragraph option selected")
+        
+    def on_shrink_text(self, widget):
+        print("Shrink text option selected")
+
+    def on_expand_text(self, widget):
+        print("Expand text option selected")
         
     # Zoom functionality
     def on_zoom_in(self, widget):
@@ -477,10 +490,10 @@ class PDFViewer:
             zoomLevel = (1.2 * self.zoomLevel)  # Increase zoom by 20% of current level
         elif self.zoomLevel < 5.0:
             zoomLevel = (1.5 * self.zoomLevel)  # Increase zoom by 50% of current level
-        elif self.zoomLevel < 10.0:
-            zoomLevel = min(self.zoomLevel * 2, 10.0)  # Double zoom, cap at 10.0
+        elif self.zoomLevel < 8.0:
+            zoomLevel = min(self.zoomLevel * 2, 8.0)  # Double zoom, cap at 8.0
         else:
-            zoomLevel = 10.0  # Ensure max zoom is 10.0
+            zoomLevel = 8.0  # Ensure max zoom is 8.0
         self.set_zoom(zoomLevel)
 
     def on_reset_zoom(self, widget):

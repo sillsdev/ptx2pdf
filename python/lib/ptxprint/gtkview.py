@@ -6175,6 +6175,6 @@ Thank you,
     
     def onZoomLevelChanged(self, widget, x):
         zl = self.get("t_zoomLevel", 100)
-        adj_zl = max(30, min(self.extractDigits(zl), 1600))
+        adj_zl = max(30, min(self.extractDigits(zl), 800))
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)
