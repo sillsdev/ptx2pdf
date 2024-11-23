@@ -6170,14 +6170,11 @@ Thank you,
         # print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")
 
     def extractDigits(self, text):
-        # Use a regular expression to extract only digits
         digits = re.sub(r'\D', '', text)  # \D matches any non-digit character
-        print(f"{digits=}")
         return int(digits) if digits else 0
     
     def onZoomLevelChanged(self, widget, x):
         zl = self.get("t_zoomLevel", 100)
-        print(f"{zl=}")
         adj_zl = max(30, min(self.extractDigits(zl), 1600))
-        if self.pdf_viwer is not None:
+        if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)

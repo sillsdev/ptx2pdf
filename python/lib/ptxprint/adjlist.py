@@ -115,7 +115,7 @@ class AdjList:
                 v = "end"
             else:
                 c = int(c)
-            lines.append("at {0} {1}:{2} '\\\\{3}(\s)' > '\\{3}^{4}\1'".format(r[0][:3], c, v, r[4], r[5]))
+            lines.append("at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(r[0][:3], c, v, r[4], r[5]))
         if len(lines):
             with open(fname, "w") as outf:
                 outf.write("\n".join(lines))

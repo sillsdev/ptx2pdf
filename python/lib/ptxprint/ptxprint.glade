@@ -550,10 +550,10 @@ THE SOFTWARE.
                 <property name="can-focus">True</property>
                 <property name="tooltip-text" translatable="yes">Zoom Shortcuts:
 Ctrl + F - fit to screen
-Ctrl + Plus - zooms in
-Ctrl + Minus - zooms out
+Ctrl + Plus - zoom in
+Ctrl + Minus - zoom out
 Ctrl + 0 - resets zoom level
-Ctrl + Scroll - changes zoom level</property>
+Ctrl + Scrollwheel - change zoom level</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
                 <property name="max-length">5</property>
@@ -27085,7 +27085,7 @@ after the PDF has been created.
                 <property name="halign">end</property>
                 <property name="margin-end">4</property>
                 <property name="hexpand">True</property>
-                <property name="label" translatable="yes">Action:</property>
+                <property name="label" translatable="yes">Show in:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -27104,13 +27104,12 @@ are a limited number of adjustment options
 using the Right-Click context menu that
 may be applied for the next run.</property>
                 <property name="valign">center</property>
-                <property name="active">1</property>
+                <property name="active">0</property>
                 <property name="active-id">sysviewer</property>
                 <items>
-                  <item id="noaction" translatable="yes">Do nothing</item>
-                  <item id="preview" translatable="yes">Show in Preview Pane</item>
-                  <item id="sysviewer" translatable="yes">Show in PDF Viewer</item>
-                  <item id="openfolder" translatable="yes">Open Folder with PDF</item>
+                  <item id="preview" translatable="yes">Preview Pane</item>
+                  <item id="sysviewer" translatable="yes">PDF Viewer</item>
+                  <item id="openfolder" translatable="yes">Output Folder</item>
                 </items>
               </object>
               <packing>

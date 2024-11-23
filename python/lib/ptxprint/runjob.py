@@ -361,8 +361,6 @@ class RunJob:
                         os.startfile(fldrpath)
                     elif sys.platform == "linux":
                         subprocess.call(('xdg-open', fldrpath))
-                else: # do nothing
-                    pass
 
             fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
             logger.debug(f"Testing log file {fname}")

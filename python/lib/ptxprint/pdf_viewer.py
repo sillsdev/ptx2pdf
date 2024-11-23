@@ -89,9 +89,9 @@ class PDFViewer:
                 # event_box.connect("motion-notify-event", self.on_mouse_motion)
                 event_box.connect("button-release-event", self.on_button_release)
                 if self.rtl_mode:
-                    self.hbox.pack_end(event_box, False, False, 0)
+                    self.hbox.pack_end(event_box, False, False, 1)
                 else:
-                    self.hbox.pack_start(event_box, False, False, 0)
+                    self.hbox.pack_start(event_box, False, False, 1)
                 boxes.append(event_box)
 
     def update_boxes(self, images):
@@ -352,11 +352,11 @@ class PDFViewer:
             return True
         elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
             self.set_zoom(1.0)
-            print(f"Zoom reset to actual size: {self.zoomLevel=:.2f}")
+            # print(f"Zoom reset to actual size: {self.zoomLevel=:.2f}")
             return True
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
             self.set_zoom_fit_to_screen()
-            print(f"Zoom adjusted to fit screen: {self.zoomLevel=:.2f}")
+            # print(f"Zoom adjusted to fit screen: {self.zoomLevel=:.2f}")
             self.show_pdf(self.current_page)  # Redraw the current page
             return True
             
