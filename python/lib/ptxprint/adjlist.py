@@ -30,6 +30,12 @@ class AdjList:
                 return i
         return -1
 
+    def sort(self):
+        allvals = [r for r in self.liststore]
+        self.liststore.clear()
+        for a in sorted(allvals, key=self.calckey):
+            self.liststore.append(a)
+
     def setval(self, bk, cv, para, stretch, mkr, expand=None, append=False, force=False):
         row = [bk, cv, para, stretch, mkr, expand or self.centre]
         if append:

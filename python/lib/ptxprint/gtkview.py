@@ -2267,6 +2267,7 @@ class GtkViewModel(ViewModel):
                 adj.setval(bk + r[4], "{}.{}{}".format(r[1], r[2], r[5]), int(k[1]), s, v[3], force=forceAdjs)
             if not adj.adjfile:
                 adj.adjfile = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", self.getAdjListFilename(bk))
+            adj.sort()
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
@@ -6176,9 +6177,5 @@ Thank you,
         zl = self.get("t_zoomLevel", 100)
         print(f"{zl=}")
         adj_zl = max(30, min(self.extractDigits(zl), 1600))
-        self.pdf_viewer.zoomLevel = adj_zl / 100
-        self.set("t_zoomLevel", str(adj_zl)+"%")
-        pages = self.pdf_viewer.numpages
-        if not pages:
-            return
-        self.pdf_viewer.show_pdf(self.pdf_viewer.current_page)  # Redraw the current page
+        if self.pdf_viwer is not None:
+            self.pdf_viewer.set_zoom(adj_zl / 100)
