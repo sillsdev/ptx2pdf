@@ -536,12 +536,54 @@ THE SOFTWARE.
                 <property name="valign">center</property>
                 <property name="margin-right">6</property>
                 <property name="margin-end">6</property>
-                <property name="label" translatable="yes">Page:</property>
+                <property name="label" translatable="yes">Zoom:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="t_zoomLevel">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="tooltip-text" translatable="yes">Zoom Shortcuts:
+Ctrl + F - fit to screen
+Ctrl + Plus - zooms in
+Ctrl + Minus - zooms out
+Ctrl + 0 - resets zoom level
+Ctrl + Scroll - changes zoom level</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="max-length">5</property>
+                <property name="width-chars">7</property>
+                <property name="text" translatable="yes">100%</property>
+                <property name="xalign">0.5</property>
+                <property name="shadow-type">etched-in</property>
+                <property name="secondary-icon-tooltip-text" translatable="yes">Zoom Level</property>
+                <signal name="focus-out-event" handler="onZoomLevelChanged" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">center</property>
+                <property name="margin-right">6</property>
+                <property name="margin-end">6</property>
+                <property name="label" translatable="yes">Page:</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -549,6 +591,10 @@ THE SOFTWARE.
               <object class="GtkSpinButton" id="s_pgNum">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="tooltip-text" translatable="yes">Shortcuts:
+PgUp - previous page/spread
+PgDn - next page/spread
+Mouse Scroll also changes pages</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
                 <property name="margin-right">6</property>
@@ -565,12 +611,9 @@ THE SOFTWARE.
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">4</property>
                 <property name="non-homogeneous">True</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
             <child>
               <object class="GtkButton" id="btn_previewPrintIt">
@@ -585,7 +628,7 @@ THE SOFTWARE.
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>
@@ -600,7 +643,7 @@ THE SOFTWARE.
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">5</property>
+                <property name="position">6</property>
               </packing>
             </child>
           </object>

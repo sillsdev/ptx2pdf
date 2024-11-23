@@ -6165,3 +6165,20 @@ Thank you,
         pass # We need to save this info so that when we re-open PTXprint it places the Preview window
              # in the same place it was when we last closed.
         # print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")
+
+    def extractDigits(self, text):
+        # Use a regular expression to extract only digits
+        digits = re.sub(r'\D', '', text)  # \D matches any non-digit character
+        print(f"{digits=}")
+        return int(digits) if digits else 0
+    
+    def onZoomLevelChanged(self, widget, x):
+        zl = self.get("t_zoomLevel", 100)
+        print(f"{zl=}")
+        adj_zl = max(30, min(self.extractDigits(zl), 1600))
+        self.pdf_viewer.zoomLevel = adj_zl / 100
+        self.set("t_zoomLevel", str(adj_zl)+"%")
+        pages = self.pdf_viewer.numpages
+        if not pages:
+            return
+        self.pdf_viewer.show_pdf(self.pdf_viewer.current_page)  # Redraw the current page

@@ -172,10 +172,11 @@ class PDFViewer:
         if self.timer is not None:
             self.timer.cancel()
         if scrolled:
-            self.timer = Timer(0.5, redraw)
+            self.timer = Timer(0.3, redraw)
             self.timer.start()
         else:
             redraw()
+        self.model.set("t_zoomLevel", str(int(self.zoomLevel*100))+"%")
         #if self.thread is None:
         #    self.thread = ThreadRenderer(parent=self)
         #GLib.idle_add(self.thread.render_pages, list(range(len(self.pages))), self.zoomLevel, width, height)
@@ -184,6 +185,7 @@ class PDFViewer:
     def set_zoom(self, zoomlevel, scrolled=False):
         self.old_zoom = self.zoomLevel
         self.zoomLevel = zoomlevel
+        self.model.set("t_zoomLevel", str(int(self.zoomLevel*100))+"%")
         self.resize_pdf(scrolled=scrolled)
     
     def print_document(self):
