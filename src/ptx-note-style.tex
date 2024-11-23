@@ -128,7 +128,8 @@
  \futurelet\n@xt\don@testyle}
 \def\don@testyle{\catcode32=10\relax 
  \trace{f}{don@testyle: n@xt='\meaning\n@xt'}%
- \if\n@xt*\let\n@xt\endn@testyle\else
+ \if\n@xt*\ifinn@te\let\n@xt\endn@testyle\else\let\n@xt\badendn@testyle\fi
+  \else
   \if\n@xt^\relax
     \let\n@xt\@@startn@testyle
   \else
@@ -149,6 +150,7 @@
 \def\b@lance{BALANCE}
 \lowercase{
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
+  \ifinn@te \MSG{Note marker (\newn@testyle) found while still in note style, after \c@rref. End notes properly, notes may not nest.}\endn@testyle*\fi
   \trace{n}{startn@testyle \newn@testyle #1}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
@@ -216,6 +218,9 @@
 %-cnote_startnote
 
 %+cnote_endnote
+\def\badendn@testyle*{\trace{n}{badendn@testyle}%
+  \MSG{Bad marker \newn@testyle* (end-of-note when not in a note) near \c@rref. Ignored.}%
+}
 \def\endn@testyle*{\trace{n}{endn@testyle}%
  \end@llpoppedstyles{N*}%end any character styles within the note
  \ifskipn@testyle \else
@@ -249,21 +254,27 @@
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
   \advance\count255 by 96 \edef\them@rk{\char\count255}}
 \fi
-
-\def\resetautonum#1{\set@utonum{#1}\x@\xdef\csname \@utonum\endcsname{0}} % reset the current note counter (f)
+\newif\ifresetallcols\resetallcolstrue
+\def\resetautonum#1{\set@utonum{#1}\x@\xdef\csname \@utonum\endcsname{-1}} % reset the current note counter (f)
 \def\resetSpecAutonum#1{\x@\xdef\csname autonum#1\endcsname{0}} % reset the exact note counter f / fL / R
 \def\resetAllAutonum#1{\def\col@do##1{\ifcsname autonum#1##1\endcsname\resetSpecAutonum{#1##1}\fi}%
    \x@\each@col\diglot@list\E} %reset all note counters.
 \def\carefulResetAutonum#1{%Reset note counters if they're not page-reset
   \expandafter\ifx\csname page-caller #1\endcsname\relax 
+    \trace{n}{resetting callers (#1}%
     \ifdiglot
-      \resetAllAutonum{#1}\else\resetSpecAutonum{#1}%
+      \ifresetallcols
+        \resetAllAutonum{#1}%
+      \else
+        \resetSpecAutonum{#1\c@rrdstat}%
+      \fi
+    \else\resetSpecAutonum{#1}%
     \fi
   \fi
 }
 \newif\ifbookresetcallers 
 \bookresetcallerstrue
-\addtostartptxhooks{\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}
+\addtostartptxhooks{\resetallcolstrue\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}
 %-cnote_autonum
 
 %+c_makenote

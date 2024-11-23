@@ -4382,22 +4382,7 @@ Paratext project settings.</property>
                                 <property name="name">License details</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Select a standard License Text or type your own customized License.</property>
-                                <property name="active">0</property>
-                                <property name="has-entry">True</property>
-                                <property name="active-id">0</property>
-                                <items>
-                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND).</item>
-                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC).</item>
-                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY).</item>
-                                  <item translatable="yes">All Rights Reserved.</item>
-                                </items>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="name">License details</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">Select one of these licenses, or type a different license.
+                                <property name="tooltip-markup" translatable="yes">Select one of these licenses, or type a different license.
 
 Note: There are several shortcuts you can use:
    (c) --&gt; ©  the copyright sign
@@ -4407,7 +4392,41 @@ Note: There are several shortcuts you can use:
 Other special codes converted at print time:
 use ~ for places where a non-breaking space is needed
 use // where a line break needs to be forced
-but :// used in URLs will still be preserved</property>
+but :// used in URLs will still be preserved
+
+For more detailed information about the various
+Creative Commons licenses, refer to:
+&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
+                                <property name="active">0</property>
+                                <property name="has-entry">True</property>
+                                <property name="active-id">0</property>
+                                <items>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND).</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC).</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-Sharealike 4.0 International License (CC BY-SA).</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY).</item>
+                                  <item translatable="yes">All Rights Reserved.</item>
+                                </items>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry">
+                                    <property name="name">License details</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-markup" translatable="yes">Select one of these licenses, or type a different license.
+
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved
+
+For more detailed information about the various
+Creative Commons licenses, refer to:
+&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
                                     <property name="placeholder-text" translatable="yes">Select one of the licenses or type in your own license statement.</property>
                                   </object>
                                 </child>

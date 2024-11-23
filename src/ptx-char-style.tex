@@ -202,9 +202,9 @@
    \leavevmode % in case the paragraph hasn't started yet
    \iftemp\the\@veryparstarthooks\fi               %(2)
    \op@ninghooks{before}{\newch@rstyle}{\styst@k}\relax% execute any <before> hook
-   \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
-   \trace{A}{Attributes-\newch@rstyle: \@ttriblist}%
    \bgroup % start a group to encapsulate the style's formatting changes
+    \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
+    \trace{A}{Attributes-\newch@rstyle: \@ttriblist}%
     \skipch@rstylefalse
     \ifx\ch@rfontextend\empty\else
      \m@kenumber{\ch@rfontextend}%
@@ -223,16 +223,33 @@
     \else \global\advance\p@ranesting by 1 \fi
     \t@gstart{Span}{\newch@rstyle}%
     \b@xedstylefalse % do we box the text?
-    \ifAlwaysCheckAttributes\b@xedstyletrue\fi % Linking attributes are possibly universally applicable.
-    \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-    \ifx\@ttriblist\empty\else
-      %TODO: Check *which* attributes are expected (and if any of them box)
-      \b@xedstyletrue\fi 
-    \getmcp@ram{raise}%
-    \ifx\p@ram\relax\else \b@xedstyletrue\fi
-    \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
+    \ifAlwaysCheckAttributes\b@xedstyletrue
+      \trace{sb}{Boxed style required: possibly linking}%
+    \fi % Linking attributes are possibly universally applicable.
+    \ifcsname complex-\newch@rstyle\endcsname \b@xedstyletrue\fi % For rb and similar 
+    \x@\ifx\csname b@xed-\newch@rstyle\endcsname\tr@e \b@xedstyletrue
+      \trace{sb}{Boxed style required for \newch@rstyle}%
+    \fi
+    \ifb@xedstyle\else
+      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
+      \ifx\@ttriblist\empty\else
+        \ifversion{4}{%Check *which* attributes are expected (and if any of them need boxing)
+          \attrspecialfalse
+          \def\d@##1\E{\CheckSpecial{##1}}\x@\cstackdown\@ttriblist,\E
+          \ifattrspecial\b@xedstyletrue
+            \trace{sb}{Special attributes in use for \newch@rstyle}%
+          \fi
+        }{% Old: anything with an attribute
+          \trace{sb}{Attributes in use for \newch@rstyle}%
+          \b@xedstyletrue}%
+      \fi 
+      \getmcp@ram{raise}%
+      \ifx\p@ram\relax\else \b@xedstyletrue\fi
+      \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
+    \fi
     \ifb@xedstyle
-      \trace{sa}{Starting box for boxed style \newch@rstyle}%
+      \trace{sb}{Starting box for boxed style \newch@rstyle}%
+      \x@\let\csname b@xed-\newch@rstyle\endcsname\tr@e % NOT global, just in case this is from the style stack.
       \setbox0=\hbox\bgroup\fi\xtr@ 
     %WIP \ifversion{3}{\setbox0=\vbox\bgroup\hsize=\maxdimen\everypar={}\let\par\endgraf}{}
     %fi                     %(3)
@@ -243,17 +260,18 @@
 }
 %-cchar_startcharstyle
 \def\ch@ckb@xedstyle#1#2{%Check parameters that need a style to be boxed and reprocessed
-    \def\@@w##1{\trace{sa}{b@xing #1(##1)}}%
+    \trace{sb}{ch@ckb@xedstyle #1}%
+    \def\@@w##1{\trace{sb}{b@xing #1(##1)}}%
     \ifb@ckgroundelsewhere
       \b@ckgroundelsewherefalse
     \else
       \getp@ram{background}{#1}{#2}%
       \def\xtr@{}% Any extra code to run at the start of the group
-      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\@@w{backgroud}\fi\fi
+      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\@@w{background}\fi\fi
     \fi
     \getp@ram{underline}{#1}{#2}%
     \ifx\p@ram\tru@\b@xedstyletrue\@@w{underline}\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
-    \ifx\p@ram\tw@\b@xedstyletrue\@@w{underline}\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \ifx\p@ram\tw@\b@xedstyletrue\@@w{double-underline}\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
     \getp@ram{outline}{#1}{#2}%
     \ifx\p@ram\relax\else\b@xedstyletrue\@@w{outline}\fi
     \getp@ram{shadow}{#1}{#2}%
@@ -505,7 +523,9 @@
      \set@endb@xedstyle{\styst@kfirst}{\styst@k}%
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-     \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else\b@xedstyletrue\trace{A}{Attributes: \@ttriblist}\fi
+     \x@\ifx\csname b@xed-\newch@rstyle\endcsname\tr@e \b@xedstyletrue\fi
+     \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else
+        \trace{A}{Attributes: \@ttriblist}\fi
      \ifAlwaysCheckAttributes\b@xedstyletrue\fi % Linking attributes are possibly universally applicable.
      \global\tmpt@ks{}%
      \ifbox@run
