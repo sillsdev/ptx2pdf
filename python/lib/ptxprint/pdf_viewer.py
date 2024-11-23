@@ -2,7 +2,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
-import cairo, re, time
+import cairo, re, time, sys
 from cairo import ImageSurface, Context
 from pathlib import Path
 from threading import Thread, Event
@@ -154,18 +154,19 @@ class PDFViewer:
         width, height = self.psize
         width, height = int(width * self.zoomLevel), int(height * self.zoomLevel)
 
-        children = self.hbox.get_children()
-        if not len(children):
-            return self.show_pdf(self.current_page)
+        if sys.platform != "win32":
+            children = self.hbox.get_children()
+            if not len(children):
+                return self.show_pdf(self.current_page)
 
-        images = []
-        for i,c in enumerate(children):
-            im = c.get_children()[0]
-            pbuf = im.get_pixbuf()
-            np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-            nim = Gtk.Image.new_from_pixbuf(np)
-            images.append(nim)
-        self.update_boxes(images)
+            images = []
+            for i,c in enumerate(children):
+                im = c.get_children()[0]
+                pbuf = im.get_pixbuf()
+                np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+                nim = Gtk.Image.new_from_pixbuf(np)
+                images.append(nim)
+            self.update_boxes(images)
         if self.thread is None:
             self.thread = ThreadRenderer(parent=self)
         GLib.idle_add(self.thread.render_pages, list(range(len(self.pages))), self.zoomLevel, width, height)
@@ -553,9 +554,12 @@ class ThreadRenderer(Thread):
             images = []
             for p in pending[3:]:
                 imarray = sharedctypes.RawArray('B', w * h * 4)
-                mp = Process(target=self.parent.render_pi, args=(p, zoomlevel, imarray))
-                mp.start()
-                mp.join()
+                if sys.platform == "win32":
+                    self.parent.render_pi(p, zoomlevel, imarray)
+                else:
+                    mp = Process(target=self.parent.render_pi, args=(p, zoomlevel, imarray))
+                    mp.start()
+                    mp.join()
                 images.append(arrayImage(imarray, w, h))
             if not self.lock.is_set() and self.pending is None and not self.stopme and len(images) and self.parent is not None:
                 GLib.idle_add(self.parent.update_boxes, images)
