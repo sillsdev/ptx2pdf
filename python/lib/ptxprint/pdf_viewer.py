@@ -359,7 +359,7 @@ class PDFViewer:
             # print(f"Zoom reset to actual size: {self.zoomLevel=:.2f}")
             return True
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
-            self.set_zoom_fit_to_screen()
+            self.set_zoom_fit_to_screen(None)
             # print(f"Zoom adjusted to fit screen: {self.zoomLevel=:.2f}")
             self.show_pdf(self.current_page)  # Redraw the current page
             return True
@@ -381,46 +381,42 @@ class PDFViewer:
                 return (page - 1, page)
 
     def on_button_release(self, widget, event):
-        # End dragging when mouse button is released
-        # if event.button == 1:
-            # self.is_dragging = False
-        zl = self.zoomLevel
-        page_number = 999  # not sure where we were getting page_number from before. #fixMe!
-        if event.button == 1:  # Left-click
-            x, y = event.x, event.y
-            print(f"Left-click at x: {x}, y: {y}, on page {page_number}")
-            self.handle_left_click(x / zl, y / zl, widget, page_number)
+        # zl = self.zoomLevel
+        # page_number = 999  # not sure where we were getting page_number from before. #fixMe!
+        # if event.button == 1:  # Left-click
+            # x, y = event.x, event.y
+            # print(f"Left-click at x: {x}, y: {y}, on page {page_number}")
+            # self.handle_left_click(x / zl, y / zl, widget, page_number)
         if event.button == 3:  # Right-click (for context menu)
             self.show_context_menu(widget, event)
         return True
 
-    def get_parloc(self, event):
+    def get_parloc(self, widget, event):
         x = event.x / self.zoomLevel
         y = event.y / self.zoomLevel
-        inspread = False
-        if x > self.psize[0]:
-            x -= self.psize[0]
-            inspread = True
-        if inspread:
-            pnum = self.get_spread()[1]     # this all only works for LTR
+        if self.spread_mode:
+            side = self.widgetPosition(widget)
+            pnum = self.get_spread(self.current_page)[side]     # this all only works for LTR
         else:
             pnum = self.current_page
         p = None
+        a = self.hbox.get_allocation()
+        # print(f"{pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
         if self.parlocs is not None:
             p = self.parlocs.findPos(pnum, x, self.psize[1] - y)
         return p
 
-    def handle_left_click(self, x, y, widget, page_number):
-        zl = self.zoomLevel
+    # def handle_left_click(self, x, y, widget, page_number):
+        # zl = self.zoomLevel
         # Print page number as well as coordinates
-        print(f"Coordinates on page {page_number}: x={x}, y={self.psize[1]-y}, zl={zl}")
-        if self.parlocs is not None:
-            p = self.parlocs.findPos(page_number, x, self.psize[1] - y)
-            if p is not None:
-                if p.parnum == 1:
-                    print(f"Paragraph {p.ref} % \\{p.mrk}")
-                else:
-                    print(f"Paragraph {p.ref}[{p.parnum}] % \\{p.mrk}")
+        # print(f"Coordinates on page {page_number}: x={x}, y={self.psize[1]-y}, zl={zl}")
+        # if self.parlocs is not None:
+            # p = self.parlocs.findPos(page_number, x, self.psize[1] - y)
+            # if p is not None:
+                # if p.parnum == 1:
+                    # print(f"Paragraph {p.ref} % \\{p.mrk}")
+                # else:
+                    # print(f"Paragraph {p.ref}[{p.parnum}] % \\{p.mrk}")
 
     # def on_button_press(self, widget, event):
         # Left-click initiates dragging
@@ -448,13 +444,15 @@ class PDFViewer:
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
 
-        parref = self.get_parloc(event)
+        parref = self.get_parloc(widget, event)
+        if parref is None:
+            return
         pref = parref.ref + ("[{parref.parnum}]" if parref.parnum > 1 else "")
         if self.adjlist is not None:
             info = self.adjlist.getinfo(pref)
         else:
             info = ('', 100, None)
-        # First section: Identify, Shrink, Grow
+        # First section: Info, Shrink, Expand options
         identify_ref = Gtk.MenuItem(label=f"Show Book: {pref}")
         shrink_para = Gtk.MenuItem(label=f"Shrink Paragraph -1 line ({info[0]})")
         expand_para = Gtk.MenuItem(label=f"Expand Paragraph +1 line ({info[0]})")
@@ -477,17 +475,20 @@ class PDFViewer:
         menu.append(Gtk.SeparatorMenuItem())
 
         # Second section: Zoom In, Reset Zoom, Zoom Out
-        zoom_in_item = Gtk.MenuItem(label="Zoom In      Ctrl +")
-        reset_zoom_item = Gtk.MenuItem(label="Reset Zoom    Ctrl 0")
-        zoom_out_item = Gtk.MenuItem(label="Zoom Out      Ctrl -")
+        zoom_in_item = Gtk.MenuItem(label="Zoom In  Ctrl +")
+        zoom_out_item = Gtk.MenuItem(label="Zoom Out  Ctrl -")
+        fit_zoom_item = Gtk.MenuItem(label="Zoom to Fit  Ctrl + F")
+        reset_zoom_item = Gtk.MenuItem(label="Zoom to 100%  Ctrl + 0")
 
         zoom_in_item.connect("activate", self.on_zoom_in)
-        reset_zoom_item.connect("activate", self.on_reset_zoom)
         zoom_out_item.connect("activate", self.on_zoom_out)
+        fit_zoom_item.connect("activate", self.set_zoom_fit_to_screen)
+        reset_zoom_item.connect("activate", self.on_reset_zoom)
 
         menu.append(zoom_in_item)
-        menu.append(reset_zoom_item)
         menu.append(zoom_out_item)
+        menu.append(fit_zoom_item)
+        menu.append(reset_zoom_item)
 
         menu.show_all()
         menu.popup(None, None, None, None, event.button, event.time)
@@ -544,9 +545,9 @@ class PDFViewer:
     def on_window_size_allocate(self, widget, allocation):
         if self.current_page is None:
             return
-        self.set_zoom_fit_to_screen()
+        self.set_zoom_fit_to_screen(None)
 
-    def set_zoom_fit_to_screen(self):
+    def set_zoom_fit_to_screen(self, x):
         if not hasattr(self, "document") or self.document is None or self.current_page is None:
             return
 
@@ -636,6 +637,12 @@ class ParRect:
     ystart:     float
     xend:       float = 0.
     yend:       float = 0.
+    
+    # def __str__(self):
+        # return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
+
+    # def __repr__(self):
+        # return self.__str__()
 
 @dataclass
 class ParInfo:
@@ -643,6 +650,12 @@ class ParInfo:
     mrk:        str
     baseline:   float
     rects:      InitVar[None] = None
+
+    # def __str__(self):
+        # return f"{getattr(self, 'ref', '')}[{getattr(self, 'parnum', '')}] {self.baseline} {self.rects}"
+
+    # def __repr__(self):
+        # return self.__str__()
 
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z]+)\s*\{(.*?)\}\s*$")
