@@ -5,7 +5,7 @@ from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
 import cairo, re, time, sys
 from cairo import ImageSurface, Context
 from pathlib import Path
-from threading import Thread, Event
+from threading import Thread, Event, Timer
 from dataclasses import dataclass, InitVar, field
 from multiprocessing import sharedctypes, Process
 
@@ -54,6 +54,7 @@ class PDFViewer:
         # self.drag_start_y = None
         # self.is_dragging = False
         self.thread = None
+        self.timer = None
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -154,22 +155,27 @@ class PDFViewer:
         width, height = self.psize
         width, height = int(width * self.zoomLevel), int(height * self.zoomLevel)
 
-        if sys.platform != "win32":
-            children = self.hbox.get_children()
-            if not len(children):
-                return self.show_pdf(self.current_page)
+        children = self.hbox.get_children()
+        if not len(children):
+            return self.show_pdf(self.current_page)
 
-            images = []
-            for i,c in enumerate(children):
-                im = c.get_children()[0]
-                pbuf = im.get_pixbuf()
-                np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-                nim = Gtk.Image.new_from_pixbuf(np)
-                images.append(nim)
-            self.update_boxes(images)
-        if self.thread is None:
-            self.thread = ThreadRenderer(parent=self)
-        GLib.idle_add(self.thread.render_pages, list(range(len(self.pages))), self.zoomLevel, width, height)
+        images = []
+        for i,c in enumerate(children):
+            im = c.get_children()[0]
+            pbuf = im.get_pixbuf()
+            np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+            nim = Gtk.Image.new_from_pixbuf(np)
+            images.append(nim)
+        self.update_boxes(images)
+        def redraw():
+            GLib.idle_add(self.show_pdf, self.current_page)
+        if self.timer is not None:
+            self.timer.cancel()
+        self.timer = Timer(1.0, redraw)
+        self.timer.start()
+        #if self.thread is None:
+        #    self.thread = ThreadRenderer(parent=self)
+        #GLib.idle_add(self.thread.render_pages, list(range(len(self.pages))), self.zoomLevel, width, height)
 #        self.thread.render_pages(self.pages, self.zoomLevel)
 
     def set_zoom(self, zoomlevel):
