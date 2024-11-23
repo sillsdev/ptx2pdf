@@ -2,8 +2,9 @@
 from ptxprint.utils import refKey
 import re
 
-adjre = re.compile(r"^(\S+)\s+(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
-restre = re.compile(r"^\s*\\(\S+)\s*(\d+)")
+adjre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
+refre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)")
+restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(?:\s*\[(\d+)\])?")
 
 class AdjList:
     def __init__(self, centre, lowdiff, highdiff, diglotorder=[], gtk=None):
@@ -127,13 +128,55 @@ class AdjList:
         chfile = self.adjfile.replace(".adj", "_changes.txt")
         self.createChanges(chfile)
 
-    def increment(self, parref, offset):
-        m = adjre.match(parref)
+    def changeval(self, parref, doit):
+        if isinstance(parref, int):
+            r = self.liststore[i]
+            doit(r, i)
+            return
+        m = refre.match(parref)
         if not m:
             return False
-        cp = [m.group(0), m.group(1), int(m.group(2) or 0)]
+        cp = [m.group(1), m.group(2), int((m.group(3) if m.lastindex > 2 else 1) or 1)]
         cpk = self.calckey(cp)
-        for i, r in enumerate(self.liststore()):
+        for i, r in enumerate(self.liststore):
             rk = self.calckey(r)
             if rk == cpk:
-                self.liststore.set_value(r.iter, 2, r[2]+offset)
+                doit(r, i)
+
+    def increment(self, parref, offset):
+        def mydoit(r, i):
+            v = r[3]
+            mult = 1
+            hasplus = False
+            while len(v) and v[0] in "+-":
+                if v[0] == "-":
+                    mult = -1
+                else:
+                    hasplus = True
+                v = v[1:]
+            v = mult * int(v) if v else 0
+            v += offset
+            if (v < 0 or v > 0) and hasplus:
+                f = "+" + str(v)
+            elif v == 0 and mult:
+                f = ("+" if hasplus else "") + ("-" if mult < 0 else "") + "0"
+            else:
+                f = str(v)
+            if -2 < v < 3:
+                self.liststore.set_value(r.iter, 2, f)
+        self.changeval(parref, mydoit)
+
+    def expand(self, parref, offset):
+        def mydoit(r, i):
+            v = r[5] + offset
+            self.liststore.set_value(r.iter, 5, v)
+        self.changeval(parref, mydoit)
+
+    def getinfo(self, parref):
+        res = []
+        def mydoit(r, i):
+            res.append(r[2])
+            res.append(r[5])
+            res.append(i)
+        self.changeval(parref, mydoit)
+        return res

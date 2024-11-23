@@ -57,6 +57,7 @@ class PDFViewer:
         self.timer = None
         self.shrinkAmount = 3 #%
         self.expandAmount = 5 #%
+        self.adjlist = None
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -111,7 +112,7 @@ class PDFViewer:
         self.hbox.show()
         self.hbox.grab_focus()
 
-    def load_pdf(self, pdf_path):
+    def load_pdf(self, pdf_path, adjlist=None):
         file_uri = Path(pdf_path).as_uri()
         try:
             self.document = Poppler.Document.new_from_file(file_uri, None)
@@ -119,6 +120,7 @@ class PDFViewer:
         except Exception as e:
             print(f"Error opening PDF: {e}")
             return
+        self.adjlist = adjlist
 
     def show_pdf(self, page, rtl=False):
         self.spread_mode = self.model.get("c_bkView", False)
@@ -392,6 +394,22 @@ class PDFViewer:
             self.show_context_menu(widget, event)
         return True
 
+    def get_parloc(self, event):
+        x = event.x / self.zoomLevel
+        y = event.y / self.zoomLevel
+        inspread = False
+        if x > self.psize[0]:
+            x -= self.psize[0]
+            inspread = True
+        if inspread:
+            pnum = self.get_spread()[1]     # this all only works for LTR
+        else:
+            pnum = self.current_page
+        p = None
+        if self.parlocs is not None:
+            p = self.parlocs.findPos(pnum, x, self.psize[1] - y)
+        return p
+
     def handle_left_click(self, x, y, widget, page_number):
         zl = self.zoomLevel
         # Print page number as well as coordinates
@@ -430,18 +448,24 @@ class PDFViewer:
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
 
+        parref = self.get_parloc(event)
+        pref = parref.ref + ("[{parref.parnum}]" if parref.parnum > 1 else "")
+        if self.adjlist is not None:
+            info = self.adjlist.getinfo(pref)
+        else:
+            info = ('', 100, None)
         # First section: Identify, Shrink, Grow
-        identify_ref = Gtk.MenuItem(label="Show Book Ch:Vs Ref")
-        shrink_para = Gtk.MenuItem(label="Shrink Paragraph -1 line")
-        expand_para = Gtk.MenuItem(label="Expand Paragraph +1 line")
-        shrink_text = Gtk.MenuItem(label=f"Shrink Text (-{self.shrinkAmount}%)") # default = 3%
-        expand_text = Gtk.MenuItem(label=f"Expand Text (+{self.expandAmount}%)") # default = 5%
+        identify_ref = Gtk.MenuItem(label=f"Show Book: {pref}")
+        shrink_para = Gtk.MenuItem(label=f"Shrink Paragraph -1 line ({info[0]})")
+        expand_para = Gtk.MenuItem(label=f"Expand Paragraph +1 line ({info[0]})")
+        shrink_text = Gtk.MenuItem(label=f"Shrink Text -{self.shrinkAmount}% ({info[1]}%)") # default = 3%
+        expand_text = Gtk.MenuItem(label=f"Expand Text +{self.expandAmount}% ({info[1]}%)") # default = 5%
 
-        identify_ref.connect("activate", self.on_identify_paragraph)
-        shrink_para.connect("activate", self.on_shrink_paragraph)
-        expand_para.connect("activate", self.on_expand_paragraph)
-        shrink_text.connect("activate", self.on_shrink_text)
-        expand_text.connect("activate", self.on_expand_text)
+        identify_ref.connect("activate", self.on_identify_paragraph, info[2])
+        shrink_para.connect("activate", self.on_shrink_paragraph, info)
+        expand_para.connect("activate", self.on_expand_paragraph, info)
+        shrink_text.connect("activate", self.on_shrink_text, info)
+        expand_text.connect("activate", self.on_expand_text, info)
 
         menu.append(identify_ref)
         menu.append(Gtk.SeparatorMenuItem())
@@ -469,20 +493,24 @@ class PDFViewer:
         menu.popup(None, None, None, None, event.button, event.time)
 
     # Context menu item callbacks for paragraph actions
-    def on_identify_paragraph(self, widget):
+    def on_identify_paragraph(self, widget, info):
         print("Identify paragraph option selected")
 
-    def on_shrink_paragraph(self, widget):
-        print("Shrink paragraph option selected")
+    def on_shrink_paragraph(self, widget, info):
+        if self.adjlist is not None:
+            self.adjlist.increment(info[2], -1)
 
-    def on_expand_paragraph(self, widget):
-        print("Expand paragraph option selected")
+    def on_expand_paragraph(self, widget, info):
+        if self.adjlist is not None:
+            self.adjlist.increment(info[2], 1)
         
-    def on_shrink_text(self, widget):
-        print("Shrink text option selected")
+    def on_shrink_text(self, widget, info):
+        if self.adjlist is not None:
+            self.adjlist.expand(info[2], -2)
 
-    def on_expand_text(self, widget):
-        print("Expand text option selected")
+    def on_expand_text(self, widget, info):
+        if self.adjlist is not None:
+            self.adjlist.expand(info[2], 2)
         
     # Zoom functionality
     def on_zoom_in(self, widget):
@@ -685,9 +713,9 @@ class Paragraphs(list):
         # just iterate over paragraphs on this page
         if pnum >= len(self.pindex):
             return None
-        e = self.pindex[pnum+1] if pnum < len(self.pindex) - 1 else len(self)
+        e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
-        for p in self[self.pindex[pnum]:e+1]:
+        for p in self[self.pindex[pnum-1]:e+1]:
             for r in p.rects:
                 if r.pagenum > pnum:
                     done = True

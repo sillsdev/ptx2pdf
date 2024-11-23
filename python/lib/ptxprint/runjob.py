@@ -345,7 +345,8 @@ class RunJob:
                     prvw = self.printer.builder.get_object("dlg_preview")
                     prvw.set_title("PDF Preview: " + os.path.basename(startname))
                     prvw.show_all()
-                    self.printer.pdf_viewer.load_pdf(startname)
+                    adjlist = self.printer.adjView.adjlist if self.printer.adjView is not None else None
+                    self.printer.pdf_viewer.load_pdf(startname, adjlist)
                     self.printer.pdf_viewer.show_pdf(int(self.printer.get("s_pgNum", 1)), 
                                                     rtl    = self.printer.get("c_RTLbookBinding", False))
                     fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".parlocs"))
