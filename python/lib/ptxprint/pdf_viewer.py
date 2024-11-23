@@ -149,7 +149,7 @@ class PDFViewer:
             return
         return render_page(self.pages[pi], zoomlevel, imarray)
 
-    def resize_pdf(self):
+    def resize_pdf(self, scrolled=False):
         if self.zoomLevel == self.old_zoom:
             return
         width, height = self.psize
@@ -171,17 +171,20 @@ class PDFViewer:
             GLib.idle_add(self.show_pdf, self.current_page)
         if self.timer is not None:
             self.timer.cancel()
-        self.timer = Timer(1.0, redraw)
-        self.timer.start()
+        if scrolled:
+            self.timer = Timer(0.5, redraw)
+            self.timer.start()
+        else:
+            redraw()
         #if self.thread is None:
         #    self.thread = ThreadRenderer(parent=self)
         #GLib.idle_add(self.thread.render_pages, list(range(len(self.pages))), self.zoomLevel, width, height)
 #        self.thread.render_pages(self.pages, self.zoomLevel)
 
-    def set_zoom(self, zoomlevel):
+    def set_zoom(self, zoomlevel, scrolled=False):
         self.old_zoom = self.zoomLevel
         self.zoomLevel = zoomlevel
-        self.resize_pdf()
+        self.resize_pdf(scrolled=scrolled)
     
     def print_document(self):
         if not hasattr(self, 'document') or self.document is None:
@@ -265,7 +268,7 @@ class PDFViewer:
         self.zoomLevel = (min(self.zoomLevel * 1.1, 10.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
         scale_factor = self.zoomLevel / self.old_zoom
 
-        self.resize_pdf()
+        self.resize_pdf(scrolled=True)
         # Get the parent scrolled window and its adjustments
         scrolled_window = self.hbox.get_parent()
         h_adjustment = scrolled_window.get_hadjustment()
