@@ -255,9 +255,10 @@ class PDFViewer:
 
     def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
         self.old_zoom = self.zoomLevel
-        self.zoomLevel = (min(self.zoomLevel * 1.33, 10.0) if zoom_in else max(self.zoomLevel * 0.66, 0.3))
+        self.zoomLevel = (min(self.zoomLevel * 1.1, 10.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
         scale_factor = self.zoomLevel / self.old_zoom
 
+        self.resize_pdf()
         # Get the parent scrolled window and its adjustments
         scrolled_window = self.hbox.get_parent()
         h_adjustment = scrolled_window.get_hadjustment()
@@ -285,7 +286,6 @@ class PDFViewer:
         v_adjustment.set_value(new_v_value)
 
         # Redraw the canvas with the updated zoom level
-        self.resize_pdf()
 
     def show_next_page(self):
         next_page = min(self.current_page + (2 if self.spread_mode else 1), self.numpages)
@@ -547,6 +547,7 @@ class ThreadRenderer(Thread):
             if self.quit:
                 break
             pending = self.pending
+            self.pending = None
             self.lock.clear()
             zoomlevel, w, h = pending[0:3]
             images = []
@@ -556,7 +557,7 @@ class ThreadRenderer(Thread):
                 mp.start()
                 mp.join()
                 images.append(arrayImage(imarray, w, h))
-            if not self.lock.is_set() and not self.stopme and len(images) and self.parent is not None:
+            if not self.lock.is_set() and self.pending is None and not self.stopme and len(images) and self.parent is not None:
                 GLib.idle_add(self.parent.update_boxes, images)
         self.startme = True
 
