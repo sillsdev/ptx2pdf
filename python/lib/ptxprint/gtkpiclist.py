@@ -1,7 +1,7 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
-from ptxprint.utils import refKey, getlang, _, f2s, pycodedir
+from ptxprint.utils import refSort, getlang, _, f2s, pycodedir
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
 import os, re
 import logging
@@ -150,7 +150,7 @@ class PicList:
         self.clearPreview()
         self.bookfilters = bks
         if picinfo is not None:
-            for v in sorted(picinfo.get_pics(), key=lambda x:refKey(x['anchor'])):
+            for v in sorted(picinfo.get_pics(), key=lambda x:refSort(x['anchor'])):
                 if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
                 row = []

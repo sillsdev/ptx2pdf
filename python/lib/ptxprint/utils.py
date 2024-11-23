@@ -148,8 +148,17 @@ def refKey(r, info=""):
     if m:
         bkid = m.group(1) or ""
         return (books.get(bkid[:3], 99)+1, int(m.group(2) or 0), int(m.group(3) or 0), bkid[3:], info, m.group(4), m.group(5) or "")
+    elif (m := re.match(r"(\d?\D+)?\s*(\S+)[.:]?(\S+)(\s+.*)?$", r)):
+        bkid = m.group(1) or ""
+        return (books.get(bkid[:3], 99)+1, 0, m.group(2) or "", bkid[3:], info, m.group(3) or "", m.group(4) or "")
     else:
         return (100, 0, 0, r, info, "", "")
+
+def refSort(r, info=""):
+    res = refKey(r, info=info)
+    if not isinstance(res[2], int):
+        return (100, 0, 0, r, info, "", "")
+    return res
 
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")

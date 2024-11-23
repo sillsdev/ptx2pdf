@@ -1,5 +1,5 @@
 
-from ptxprint.utils import refKey, universalopen, print_traceback, nonScriptureBooks
+from ptxprint.utils import refSort, universalopen, print_traceback, nonScriptureBooks
 from threading import Thread
 import configparser
 import regex, re, logging
@@ -693,7 +693,7 @@ class Piclist:
             return
         self.rmdups()
         lines = []
-        for p in sorted(self.pics.values(), key=lambda x:refKey(x['anchor'], info=['anchor'][3:4])):
+        for p in sorted(self.pics.values(), key=lambda x:refSort(x['anchor'], info=['anchor'][3:4])):
             (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media,
                                           checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs)
             if k:

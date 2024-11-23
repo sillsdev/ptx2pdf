@@ -143,11 +143,16 @@ class PDFViewer:
         self.current_page = page
         self.update_boxes(images)
 
+    def render_pi(self, pi, zoomlevel, imarray):
+        if pi >= len(self.pages):
+            return
+        return render_page(self.pages[pi], zoomlevel, imarray)
+
     def resize_pdf(self):
-        width, height = self.psize
-        width, height = width * self.zoomLevel, height * self.zoomLevel
         if self.zoomLevel == self.old_zoom:
             return
+        width, height = self.psize
+        width, height = int(width * self.zoomLevel), int(height * self.zoomLevel)
 
         children = self.hbox.get_children()
         if not len(children):
@@ -163,7 +168,7 @@ class PDFViewer:
         self.update_boxes(images)
         if self.thread is None:
             self.thread = ThreadRenderer(parent=self)
-        GLib.idle_add(self.thread.render_pages, self.pages, self.zoomLevel)
+        GLib.idle_add(self.thread.render_pages, list(range(len(self.pages))), self.zoomLevel, width, height)
 #        self.thread.render_pages(self.pages, self.zoomLevel)
 
     def set_zoom(self, zoomlevel):
@@ -519,8 +524,8 @@ class ThreadRenderer(Thread):
         self.lock.clear()
         self.start()
 
-    def render_pages(self, pages, zoomlevel):
-        self.pending = [zoomlevel] + list(pages)
+    def render_pages(self, pages, zoomlevel, w, h):
+        self.pending = [zoomlevel, w, h] + list(pages)
         self.stopme = False
         self.lock.set()
         if self.startme:
@@ -543,13 +548,11 @@ class ThreadRenderer(Thread):
                 break
             pending = self.pending
             self.lock.clear()
-            zoomlevel = pending[0]
+            zoomlevel, w, h = pending[0:3]
             images = []
-            for p in pending[1:]:
-                w, h = p.get_size()
-                w, h = int(w * zoomlevel), int(h * zoomlevel)
+            for p in pending[3:]:
                 imarray = sharedctypes.RawArray('B', w * h * 4)
-                mp = Process(target=render_page, args=(p, zoomlevel, imarray))
+                mp = Process(target=self.parent.render_pi, args=(p, zoomlevel, imarray))
                 mp.start()
                 mp.join()
                 images.append(arrayImage(imarray, w, h))
