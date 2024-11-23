@@ -183,6 +183,8 @@ class PDFViewer:
 #        self.thread.render_pages(self.pages, self.zoomLevel)
 
     def set_zoom(self, zoomlevel, scrolled=False):
+        if zoomlevel == self.zoomLevel:
+            return
         self.old_zoom = self.zoomLevel
         self.zoomLevel = zoomlevel
         self.model.set("t_zoomLevel", str(int(self.zoomLevel*100))+"%")
