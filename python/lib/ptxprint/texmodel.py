@@ -888,6 +888,10 @@ class TexModel:
                 self.changes = self.readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk)
             else:
                 self.changes = []
+        adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "adjlists",
+                            printer.getAdjListFilename(bk).replace(".adj", "_changes.txt"))
+        if os.path.exists(adjchangesfile):
+            self.changes.extend(self.readChanges(adjchangesfile, bk))
         draft = "-" + (printer.cfgid or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')

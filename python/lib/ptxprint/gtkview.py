@@ -3748,6 +3748,8 @@ class GtkViewModel(ViewModel):
 
     def onViewEdited(self, *argv):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        if pg in (1,):
+            return
         buf = self.fileViews[pg][0]
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         label = self.builder.get_object(_allpgids[pg][5:])
