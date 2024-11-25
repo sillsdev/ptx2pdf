@@ -3527,16 +3527,16 @@ class GtkViewModel(ViewModel):
                 pdft = os.stat(pdffile).st_mtime
                 for bk in self.getBooks():
                     adj = self.get_adjlist(bk)
-                    adjt = os.stat(adj.adjfile).st_mtime
-                    print(f"{adj.adjfile}: {adjt} < {pdft}")
-                    if pdft > adjt:
-                        prvw = self.builder.get_object("dlg_preview")
-                        # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
-                        # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
-                        plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                        self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
-                                                    parlocs=plocname, widget=prvw, page=1)
-                        break
+                    if os.path.exists(adj.adjfile):
+                        adjt = os.stat(adj.adjfile).st_mtime
+                        if pdft > adjt:
+                            prvw = self.builder.get_object("dlg_preview")
+                            # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
+                            # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
+                            plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
+                            self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
+                                                        parlocs=plocname, widget=prvw, page=1)
+                            break
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.project.path, "pluginData", "Transcelerator", "Transcelerator")

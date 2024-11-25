@@ -114,8 +114,8 @@ class PDFViewer:
         self.hbox.grab_focus()
 
     def load_pdf(self, pdf_path, adjlist=None, start=None):
-        self.shrinkStep = int(self.model.get('s_shrinktextstep'))
-        self.expandStep = int(self.model.get('s_expandtextstep'))
+        self.shrinkStep  = int(self.model.get('s_shrinktextstep'))
+        self.expandStep  = int(self.model.get('s_expandtextstep'))
         self.shrinkLimit = int(self.model.get('s_shrinktextlimit'))
         self.expandLimit = int(self.model.get('s_expandtextlimit'))
         
@@ -439,41 +439,6 @@ class PDFViewer:
         # print(f"Parloc: {p=} {pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
         return p
 
-    # def handle_left_click(self, x, y, widget, page_number):
-        # zl = self.zoomLevel
-        # Print page number as well as coordinates
-        # print(f"Coordinates on page {page_number}: x={x}, y={self.psize[1]-y}, zl={zl}")
-        # if self.parlocs is not None:
-            # p = self.parlocs.findPos(page_number, x, self.psize[1] - y)
-            # if p is not None:
-                # if p.parnum == 1:
-                    # print(f"Paragraph {p.ref} % \\{p.mrk}")
-                # else:
-                    # print(f"Paragraph {p.ref}[{p.parnum}] % \\{p.mrk}")
-
-    # def on_button_press(self, widget, event):
-        # Left-click initiates dragging
-        # if event.button == 1:
-            # self.is_dragging = True
-            # self.drag_start_x = event.x
-            # self.drag_start_y = event.y
-        # return True
-
-    # def on_mouse_motion(self, widget, event):
-        # if self.is_dragging:
-            # Calculate movement offset
-            # dx = event.x - self.drag_start_x
-            # dy = event.y - self.drag_start_y
-
-            # Update PDF position by shifting the content in hbox
-            # self.hbox.set_margin_left(self.hbox.get_margin_left() + int(dx))
-            # self.hbox.set_margin_top(self.hbox.get_margin_top() + int(dy))
-
-            # Update start coordinates for smooth continuous dragging
-            # self.drag_start_x = event.x
-            # self.drag_start_y = event.y
-        # return True
-
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
         
@@ -486,7 +451,8 @@ class PDFViewer:
             self.adjlist = self.model.get_adjlist(ref[:3].upper())
             if self.adjlist is not None:
                 info = self.adjlist.getinfo(ref + pnum)
-
+                if not len(info):
+                    info = self.adjlist.getinfo(ref + pnum, insert=True)
         if len(info):
             o = 4 if ref[4:1] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1] if len(info) else ''}%"
@@ -496,9 +462,9 @@ class PDFViewer:
             menu.append(header_info)
             menu.append(Gtk.SeparatorMenuItem())
 
-            # Need to disable the shrink option if curr only shows +0 (enable only in +-0)
-            shrink_para = Gtk.MenuItem(label=f"Shrink -1 line ({parref.lines - 1})")
-            shrink_para.set_sensitive(False)  # This should only be active if/when a para is shrinkable #FixME!
+            print(f"{info[0]=}")
+            x = "Yes! Shrink" if ("-" in str(info[0]) and str(info[0]) != "-1") else "Try Shrink"
+            shrink_para = Gtk.MenuItem(label=f"{x} -1 line ({parref.lines - 1})")
             expand_para = Gtk.MenuItem(label=f"Expand +1 line ({parref.lines + 1})")
 
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)

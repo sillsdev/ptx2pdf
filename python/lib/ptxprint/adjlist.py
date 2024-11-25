@@ -1,6 +1,6 @@
 
 from ptxprint.utils import refKey
-import re
+import os,re
 import logging
 
 logger = logging.getLogger(__name__)
@@ -93,6 +93,7 @@ class AdjList:
             fname = self.adjfile
         if fname is None or not len(self.liststore):
             return
+        os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
         with open(fname, "w") as outf:
             for r in self.liststore:
                 cv = r[1].replace(":", ".").replace(" ", "")
