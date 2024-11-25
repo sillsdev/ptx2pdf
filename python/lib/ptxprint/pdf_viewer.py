@@ -751,8 +751,6 @@ class Paragraphs(list):
                     if currr is not None:
                         currr.xend = colinfo[3] + colinfo[2]
                         currr.yend = readpts(p[1])
-                        if currr.pagenum == 2:
-                            print(currr)
                         currr = None
                 elif c == "parstart":
                     currp = ParInfo(p[0], p[1], readpts(p[2]))
@@ -777,8 +775,6 @@ class Paragraphs(list):
                     currp.nextmk = p[3]
                     # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
                     currp = None
-                    if currr.pagenum == 2:
-                        print(currr)
                     currr = None
         logger.debug(f"parlocs={self}")
         

@@ -3516,14 +3516,15 @@ class GtkViewModel(ViewModel):
         self.clearEditableBuffers()
         logger.debug(f"Changed project to {prjid} {configName=}")
         self.builder.get_object("nbk_Main").set_current_page(0)
-        if self.get("fcb_afterAction") == "preview": # preview is on
+        if self.initialised and self.get("fcb_afterAction") == "preview": # preview is on
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
                 cfgt = os.stat(os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")).st_mtime
-                print(f"{pdffile=} {pdft=} {cfgt=}")
                 if pdft > cfgt:
                     prvw = self.builder.get_object("dlg_preview")
+                    # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
+                    # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
                     plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
                     self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
                                                 parlocs=plocname, widget=prvw, page=1)
