@@ -1643,6 +1643,7 @@ class GtkViewModel(ViewModel):
             self.mruBookList.pop(10)
             w.remove(10)
         self.userconfig.set('init', 'mruBooks', "\n".join(self.mruBookList))
+        self.showmybook()
         
     def onSaveConfig(self, btn, force=False):
         if self.project.prjid is None or (not force and self.configLocked()):
@@ -3359,6 +3360,7 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
         # print("onBookChange-s")
         self.set("r_book", "single")
+        self.showmybook()
 
     def _setNoteSpacingRange(self, fromTo, minimum, maximum, value):
         initSpace = int(float(self.get('s_notespacing'+fromTo)))
@@ -3516,18 +3518,25 @@ class GtkViewModel(ViewModel):
         self.clearEditableBuffers()
         logger.debug(f"Changed project to {prjid} {configName=}")
         self.builder.get_object("nbk_Main").set_current_page(0)
+        self.showmybook()
+
+    def showmybook(self):
         if self.initialised and self.get("fcb_afterAction") == "preview": # preview is on
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
-                cfgt = os.stat(os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")).st_mtime
-                if pdft > cfgt:
-                    prvw = self.builder.get_object("dlg_preview")
-                    # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
-                    # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
-                    plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                    self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
-                                                parlocs=plocname, widget=prvw, page=1)
+                for bk in self.getBooks():
+                    adj = self.get_adjlist(bk)
+                    adjt = os.stat(adj.adjfile).st_mtime
+                    print(f"{adj.adjfile}: {adjt} < {pdft}")
+                    if pdft > adjt:
+                        prvw = self.builder.get_object("dlg_preview")
+                        # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
+                        # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
+                        plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
+                        self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
+                                                    parlocs=plocname, widget=prvw, page=1)
+                        break
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.project.path, "pluginData", "Transcelerator", "Transcelerator")

@@ -127,11 +127,12 @@ class AdjList:
                 outf.write("\n".join(lines))
 
     def save(self):
-        if self.adjfile is None:
+        if self.adjfile is None or not self.changed:
             return
         self.createAdjlist()
         chfile = self.adjfile.replace(".adj", "_changes.txt")
         self.createChanges(chfile)
+        self.changed = False
 
     def changeval(self, parref, doit, insert=False):
         if isinstance(parref, int):
@@ -159,6 +160,7 @@ class AdjList:
             # book, c:v, para, stretch, mkr, expand%
                 r = [cp[0], cp[1], cp[2], "0", "", 100]
                 self.liststore.insert(i, r)
+                self.changed = True
                 doit(r, i)
 
     def increment(self, parref, offset, mrk=None):
@@ -183,12 +185,14 @@ class AdjList:
             self.liststore.set_value(r.iter, 3, f)
             if mrk is not None and not self.liststore.get_value(r.iter, 4):
                 self.liststore.set_value(r.iter, 4, mrk)
+            self.changed = True
         self.changeval(parref, mydoit)
 
     def expand(self, parref, offset, mrk=None):
         def mydoit(r, i):
             v = r[5] + offset
             self.liststore.set_value(r.iter, 5, v)
+            self.changed = True
             if mrk is not None and not self.liststore.get_value(r.iter, 4):
                 self.liststore.set_value(r.iter, 4, mrk)
         self.changeval(parref, mydoit)
