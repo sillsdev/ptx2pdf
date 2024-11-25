@@ -2556,10 +2556,7 @@ class GtkViewModel(ViewModel):
             pgid = self.notebooks["Viewer"][pg]
         buf = self.fileViews[pg][0]
         if pgid == "scroll_AdjList":
-            bk = self.get("ecb_examineBook")
-            adjname = self.getAdjListFilename(bk)
-            adjpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", adjname)
-            self.adjView.adjlist.save(adjpath)
+            self.adjView.adjlist.save()
             fpath = None
         elif pgid == "scroll_FrontMatter":
             fpath = self.configFRT()

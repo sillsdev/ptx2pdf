@@ -1261,6 +1261,11 @@ class ViewModel:
         self.writeConfig(force=force)
         self.savePics(force=force)
         self.saveStyles(force=force)
+        self.saveAdjlists(force=force)
+
+    def saveAdjlists(self, force=False):
+        for bk, adj in self.adjlists.items():
+            adj.save()
 
     def saveStyles(self, force=False):
         if not force and self.configLocked():
@@ -1366,7 +1371,7 @@ class ViewModel:
         fpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", fname)
         # get expansion of regular font
         centre = 100
-        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk)
+        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj

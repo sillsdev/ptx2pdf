@@ -10,7 +10,7 @@ refre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
 restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(?:\s*\[(\d+)\])?")
 
 class AdjList:
-    def __init__(self, centre, lowdiff, highdiff, diglotorder=[], gtk=None):
+    def __init__(self, centre, lowdiff, highdiff, diglotorder=[], gtk=None, fname=None):
         self.lowdiff = lowdiff
         self.highdiff = highdiff
         self.centre = centre
@@ -21,7 +21,7 @@ class AdjList:
         else:
             self.liststore = gtk.ListStore(str, str, int, str, str, int)
         self.changed = False
-        self.adjfile = None
+        self.adjfile = fname
 
     def clear(self):
         self.liststore.clear()
@@ -126,11 +126,8 @@ class AdjList:
             with open(fname, "w") as outf:
                 outf.write("\n".join(lines))
 
-    def save(self, fname):
-        if fname is None:
-            fname = self.adjfile
-        print(f"Saving: {self.adjfile}")
-        if fname is None:
+    def save(self):
+        if self.adjfile is None:
             return
         self.createAdjlist()
         chfile = self.adjfile.replace(".adj", "_changes.txt")
