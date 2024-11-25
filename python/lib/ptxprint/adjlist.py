@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 adjre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
-refre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)")
+refre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
 restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(?:\s*\[(\d+)\])?")
 
 class AdjList:

@@ -1,4 +1,4 @@
-import gi
+import gi, os, datetime
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
@@ -159,12 +159,13 @@ class PDFViewer:
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None):
         self.load_pdf(fname, adjlist=adjlist, start=page)
         self.show_pdf(self.current_page, rtl=rtl)
-        widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname))
+        pdft = os.stat(fname).st_mtime
+        mod_time = datetime.datetime.fromtimestamp(pdft)
+        formatted_time = mod_time.strftime("  %d-%b %H:%M:%S")
+        widget.set_title("PDF Preview: " + os.path.basename(fname) + formatted_time)
         widget.show_all()
         if parlocs is not None:
             self.load_parlocs(parlocs)                    
-        
-        
 
     def render_pi(self, pi, zoomlevel, imarray):
         if pi >= len(self.pages):
@@ -430,9 +431,10 @@ class PDFViewer:
             pnum = self.current_page
         p = None
         a = self.hbox.get_allocation()
-        # print(f"Parloc: {pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
+
         if self.parlocs is not None:
             p = self.parlocs.findPos(pnum, x, self.psize[1] - y)
+        # print(f"Parloc: {p=} {pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
         return p
 
     # def handle_left_click(self, x, y, widget, page_number):
@@ -472,12 +474,12 @@ class PDFViewer:
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
-
+        
         parref = self.get_parloc(widget, event)
         if parref is None:
             info = []
         else:
-            pnum = "[{parref.parnum}]" if parref.parnum > 1 else ""
+            pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
             ref = parref.ref
             if self.adjlist is not None:
                 info = self.adjlist.getinfo(ref + pnum)
