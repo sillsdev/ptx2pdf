@@ -152,7 +152,6 @@ class AdjList:
         else:
             i += 1
             rk = self.calckey([cp[0], "200:200", 1, 0, "", 100])
-        print(f"{i=} {rk=} {cpk=}")
         if rk == cpk:
             doit(r, i)
         elif rk > cpk:
@@ -181,8 +180,7 @@ class AdjList:
                 f = ("+" if hasplus else "") + ("-" if mult < 0 else "") + "0"
             else:
                 f = str(v)
-            if -2 < v < 3:
-                self.liststore.set_value(r.iter, 3, f)
+            self.liststore.set_value(r.iter, 3, f)
             if mrk is not None and not self.liststore.get_value(r.iter, 4):
                 self.liststore.set_value(r.iter, 4, mrk)
         self.changeval(parref, mydoit)

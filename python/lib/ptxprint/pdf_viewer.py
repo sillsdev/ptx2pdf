@@ -484,7 +484,7 @@ class PDFViewer:
             pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
             ref = parref.ref
             if self.adjlist is not None:
-                info = self.model.get_adjlist(ref[:3], gtk=Gtk).getinfo(ref + pnum)
+                info = self.model.get_adjlist(ref[:3], gtk=Gtk).getinfo(ref + pnum, insert=True)
 
         if len(info):
             o = 4 if ref[4:1] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
