@@ -463,52 +463,51 @@ class PDFViewer:
 
         parref = self.get_parloc(widget, event)
         if parref is None:
-            return
-        pnum = "[{parref.parnum}]" if parref.parnum > 1 else ""
-        ref = parref.ref
-        if self.adjlist is not None:
-            info = self.adjlist.getinfo(ref + pnum)
-        
-        if not len(info):
-            info = ('', 100, None)
-        # print(f"{info=}")
-        o = 4 if ref[4:1] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
-        hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1]}%"
-        header_info = Gtk.MenuItem(label=hdr)
-        header_info.set_sensitive(False)  # Make the header item non-clickable and grayed out
+            info = []
+        else:
+            pnum = "[{parref.parnum}]" if parref.parnum > 1 else ""
+            ref = parref.ref
+            if self.adjlist is not None:
+                info = self.adjlist.getinfo(ref + pnum)
 
-        # Need to disable the shrink option if curr only shows +0 (enable only in +-0)
-        shrink_para = Gtk.MenuItem(label=f"Shrink -1 line ({parref.lines - 1})")
-        shrink_para.set_sensitive(False)  # This should only be active if/when a para is shrinkable #FixME!
-        expand_para = Gtk.MenuItem(label=f"Expand +1 line ({parref.lines + 1})")
+        if len(info):
+            o = 4 if ref[4:1] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
+            hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1] if len(info) else ''}%"
+            header_info = Gtk.MenuItem(label=hdr)
+            header_info.set_sensitive(False)  # Make the header item non-clickable and grayed out
+            header_info.connect("activate", self.on_identify_paragraph, info[2])
+            menu.append(header_info)
+            menu.append(Gtk.SeparatorMenuItem())
 
-        shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
-        shrink_text = Gtk.MenuItem(label=f"Shrink Text ({shrLim}%)")
-        shrink_text.set_sensitive(not info[1] <= shrLim)  # clickable only if within limit%
+            # Need to disable the shrink option if curr only shows +0 (enable only in +-0)
+            shrink_para = Gtk.MenuItem(label=f"Shrink -1 line ({parref.lines - 1})")
+            shrink_para.set_sensitive(False)  # This should only be active if/when a para is shrinkable #FixME!
+            expand_para = Gtk.MenuItem(label=f"Expand +1 line ({parref.lines + 1})")
 
-        normal_text = Gtk.MenuItem(label=f"Normal Size (100%)")
-        normal_text.set_sensitive(not info[1] == 100)  # non-clickable and grayed out if already at 100%
+            shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
+            shrink_text = Gtk.MenuItem(label=f"Shrink Text ({shrLim}%)")
+            shrink_text.set_sensitive(not info[1] <= shrLim)  # clickable only if within limit%
 
-        expLim = min(self.expandLimit, info[1]+self.expandStep)
-        expand_text = Gtk.MenuItem(label=f"Expand Text ({expLim}%)")
-        expand_text.set_sensitive(not info[1] >= expLim)  # clickable only if within limit%
+            normal_text = Gtk.MenuItem(label=f"Normal Size (100%)")
+            normal_text.set_sensitive(not info[1] == 100)  # non-clickable and grayed out if already at 100%
 
-        header_info.connect("activate", self.on_identify_paragraph, info[2])
-        shrink_para.connect("activate", self.on_shrink_paragraph, info)
-        expand_para.connect("activate", self.on_expand_paragraph, info)
-        shrink_text.connect("activate", self.on_shrink_text, info)
-        normal_text.connect("activate", self.on_normal_text, info)
-        expand_text.connect("activate", self.on_expand_text, info)
+            expLim = min(self.expandLimit, info[1]+self.expandStep)
+            expand_text = Gtk.MenuItem(label=f"Expand Text ({expLim}%)")
+            expand_text.set_sensitive(not info[1] >= expLim)  # clickable only if within limit%
 
-        menu.append(header_info)
-        menu.append(Gtk.SeparatorMenuItem())
-        menu.append(shrink_para)
-        menu.append(expand_para)
-        menu.append(Gtk.SeparatorMenuItem())
-        menu.append(shrink_text)
-        menu.append(normal_text)
-        menu.append(expand_text)
-        menu.append(Gtk.SeparatorMenuItem())
+            shrink_para.connect("activate", self.on_shrink_paragraph, info)
+            expand_para.connect("activate", self.on_expand_paragraph, info)
+            shrink_text.connect("activate", self.on_shrink_text, info)
+            normal_text.connect("activate", self.on_normal_text, info)
+            expand_text.connect("activate", self.on_expand_text, info)
+
+            menu.append(shrink_para)
+            menu.append(expand_para)
+            menu.append(Gtk.SeparatorMenuItem())
+            menu.append(shrink_text)
+            menu.append(normal_text)
+            menu.append(expand_text)
+            menu.append(Gtk.SeparatorMenuItem())
 
         # Second section: Zoom In, Reset Zoom, Zoom Out
         zoom_in_item    = Gtk.MenuItem(label="Zoom In         (Ctrl +)")

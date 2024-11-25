@@ -2260,7 +2260,9 @@ class GtkViewModel(ViewModel):
             for k, v in sorted(adjs.items(), key=lambda x:refSort(x[0][0])):
                 r = refKey(k[0])
                 logger.debug(f"{k=} {r=}, {v=}")
-                if k[0][:3] != bk or r[0] >= 100 or (r[1] == 0 and not isinstance(r[2], int)): # May need to take these lines out!
+                if k[0][:3] != bk:
+                    continue
+                elif r[0] >= 100 or (r[1] == 0 and not isinstance(r[2], int)): # May need to take these lines out!
                     adj.setval(bk + r[4], ("{}.".format(r[2]) if len(r[2]) else "") + r[5], int(k[1]), s, v[3], force=forceAdjs)
                     continue                   # May need to take these lines out!
                 s = getsign(*v) + "0"

@@ -110,7 +110,7 @@ class AdjList:
                 continue
             c, v = re.split(r"[:.]", r[1], 1)
             firstv = v.split("-", 1)
-            v = int(v) - 1
+            v = int(firstv[0]) - (1 if r[2] < 2 else 0)
             if v < 0:
                 c = int(c) - 1
                 v = "end"
@@ -164,15 +164,20 @@ class AdjList:
                 f = str(v)
             if -2 < v < 3:
                 self.liststore.set_value(r.iter, 3, f)
+            if not self.liststore.get_value(r.iter, 4):
+                self.liststore.set_value(r.iter, 4, parref.mrk)
         self.changeval(parref, mydoit)
 
     def expand(self, parref, offset):
         def mydoit(r, i):
             v = r[5] + offset
             self.liststore.set_value(r.iter, 5, v)
+            if not self.liststore.get_value(r.iter, 4):
+                self.liststore.set_value(r.iter, 4, parref.mrk)
         self.changeval(parref, mydoit)
 
     def getinfo(self, parref):
+        """ returns (para:int, expand:int, adj line no:int) """
         res = []
         def mydoit(r, i):
             res.append(r[2])
