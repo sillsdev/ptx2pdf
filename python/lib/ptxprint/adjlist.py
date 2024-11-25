@@ -131,7 +131,7 @@ class AdjList:
         chfile = self.adjfile.replace(".adj", "_changes.txt")
         self.createChanges(chfile)
 
-    def changeval(self, parref, doit):
+    def changeval(self, parref, doit, insert=False):
         if isinstance(parref, int):
             r = self.liststore[parref]
             doit(r, parref)
@@ -145,6 +145,14 @@ class AdjList:
             rk = self.calckey(r)
             if rk == cpk:
                 doit(r, i)
+                break
+            elif rk > cpk:
+                if insert:
+                # book, c:v, para, stretch, mkr, expand%
+                    r = [cp[0], cp[1], cp[2], 0, parref.mrk, 100]
+                    self.liststore.insert(i, r)
+                    doit(r, i)
+                break
 
     def increment(self, parref, offset, mrk=None):
         def mydoit(r, i):
@@ -179,12 +187,12 @@ class AdjList:
                 self.liststore.set_value(r.iter, 4, mrk)
         self.changeval(parref, mydoit)
 
-    def getinfo(self, parref):
+    def getinfo(self, parref, insert=False):
         """ returns (para:int, expand:int, adj line no:int) """
         res = []
         def mydoit(r, i):
             res.append(r[2])
             res.append(r[5])
             res.append(i)
-        self.changeval(parref, mydoit)
+        self.changeval(parref, mydoit, insert=insert)
         return res
