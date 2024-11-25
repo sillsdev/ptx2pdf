@@ -8,6 +8,8 @@ from pathlib import Path
 from threading import Thread, Event, Timer
 from dataclasses import dataclass, InitVar, field
 from multiprocessing import sharedctypes, Process
+import logging
+logger = logging.getLogger(__name__)
 
 def render_page_image(page, zoomlevel):
     width, height = page.get_size()
@@ -55,15 +57,7 @@ class PDFViewer:
         # self.is_dragging = False
         self.thread = None
         self.timer = None
-        self.shrinkStep = 2 #%
-        self.expandStep = 3 #%
-        self.shrinkLimit = 90 #%
-        self.expandLimit = 110 #%
         self.adjlist = None
-        # print(f"{model.dict['texpert/shrinktextstep']}")
-        # print(f"{model.dict['texpert/expandtextstep']}")
-        # print(f"{model.dict['texpert/shrinktextlimit']}")
-        # print(f"{model.dict['texpert/expandtextlimit']}")
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -119,6 +113,11 @@ class PDFViewer:
         self.hbox.grab_focus()
 
     def load_pdf(self, pdf_path, adjlist=None):
+        self.shrinkStep = int(self.model.get('s_shrinktextstep'))
+        self.expandStep = int(self.model.get('s_expandtextstep'))
+        self.shrinkLimit = int(self.model.get('s_shrinktextlimit'))
+        self.expandLimit = int(self.model.get('s_expandtextlimit'))
+        
         file_uri = Path(pdf_path).as_uri()
         try:
             self.document = Poppler.Document.new_from_file(file_uri, None)
@@ -495,11 +494,11 @@ class PDFViewer:
             expand_text = Gtk.MenuItem(label=f"Expand Text ({expLim}%)")
             expand_text.set_sensitive(not info[1] >= expLim)  # clickable only if within limit%
 
-            shrink_para.connect("activate", self.on_shrink_paragraph, info)
-            expand_para.connect("activate", self.on_expand_paragraph, info)
-            shrink_text.connect("activate", self.on_shrink_text, info)
-            normal_text.connect("activate", self.on_normal_text, info)
-            expand_text.connect("activate", self.on_expand_text, info)
+            shrink_para.connect("activate", self.on_shrink_paragraph, info, parref)
+            expand_para.connect("activate", self.on_expand_paragraph, info, parref)
+            shrink_text.connect("activate", self.on_shrink_text, info, parref)
+            normal_text.connect("activate", self.on_normal_text, info, parref)
+            expand_text.connect("activate", self.on_expand_text, info, parref)
 
             menu.append(shrink_para)
             menu.append(expand_para)
@@ -529,34 +528,34 @@ class PDFViewer:
         menu.popup(None, None, None, None, event.button, event.time)
 
     # Context menu item callbacks for paragraph actions
-    def on_identify_paragraph(self, widget, info):
+    def on_identify_paragraph(self, widget, info, parref):
         print("Identify paragraph option selected")
 
-    def on_shrink_paragraph(self, widget, info):
+    def on_shrink_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], -1)
 
-    def on_expand_paragraph(self, widget, info):
+    def on_expand_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], 1)
         
-    def on_shrink_text(self, widget, info):
+    def on_shrink_text(self, widget, info, parref):
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:
-                self.adjlist.expand(info[2], self.shrinkLimit - info[1])
+                self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
             else:
-                self.adjlist.expand(info[2], -self.shrinkStep)
+                self.adjlist.expand(info[2], -self.shrinkStep, mrk=parref.mrk)
 
-    def on_normal_text(self, widget, info):
+    def on_normal_text(self, widget, info, parref):
         if self.adjlist is not None:
-            self.adjlist.expand(info[2], 100 - info[1])
+            self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
 
-    def on_expand_text(self, widget, info):
+    def on_expand_text(self, widget, info, parref):
         if self.adjlist is not None:
             if info[1] + self.expandStep > self.expandLimit:
-                self.adjlist.expand(info[2], self.expandLimit - info[1])
+                self.adjlist.expand(info[2], self.expandLimit - info[1], mrk=parref.mrk)
             else:
-                self.adjlist.expand(info[2], self.expandStep)
+                self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
         
     # Zoom functionality
     def on_zoom_in(self, widget):
@@ -683,11 +682,11 @@ class ParRect:
     xend:       float = 0.
     yend:       float = 0.
     
-    # def __str__(self):
-        # return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
+    def __str__(self):
+        return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
 
-    # def __repr__(self):
-        # return self.__str__()
+    def __repr__(self):
+        return self.__str__()
 
 @dataclass
 class ParInfo:
@@ -696,11 +695,11 @@ class ParInfo:
     baseline:   float
     rects:      InitVar[None] = None
 
-    # def __str__(self):
-        # return f"{getattr(self, 'ref', '')}[{getattr(self, 'parnum', '')}] {self.baseline} {self.rects}"
+    def __str__(self):
+        return f"{getattr(self, 'ref', '')}[{getattr(self, 'parnum', '')}] {self.baseline} {self.rects}"
 
-    # def __repr__(self):
-        # return self.__str__()
+    def __repr__(self):
+        return self.__str__()
 
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z]+)\s*\{(.*?)\}\s*$")
@@ -766,15 +765,16 @@ class Paragraphs(list):
                     if currr.pagenum == 2:
                         print(currr)
                     currr = None
-
+        logger.debug(f"parlocs={self}")
+        
     def findPos(self, pnum, x, y):
         done = False
         # just iterate over paragraphs on this page
-        if pnum >= len(self.pindex):
+        if pnum > len(self.pindex):
             return None
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
-        for p in self[self.pindex[pnum-1]:e+1]:
+        for p in self[max(self.pindex[pnum-1]-1, 0):e+1]:
             for r in p.rects:
                 if r.pagenum > pnum:
                     done = True

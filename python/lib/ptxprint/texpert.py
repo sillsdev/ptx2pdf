@@ -278,4 +278,3 @@ class TeXpert:
     @classmethod
     def hasopt(self, n):
         return n in texpertOptions
-

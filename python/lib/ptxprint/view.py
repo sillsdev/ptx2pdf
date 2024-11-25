@@ -252,7 +252,7 @@ class ViewModel:
             return [fname]
 
     def getPDFname(self, bks=None):
-        base = self.bsaeTeXPDFnames(bks=bks)[0]
+        base = self.baseTeXPDFnames(bks=bks)[0]
         pdfext = _outputPDFtypes.get(self.get("fcb_outputFormat", "")) or ""
         res = base + ("_"+pdfext if pdfext != "" else "") + ".pdf"
         return res

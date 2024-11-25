@@ -1,6 +1,9 @@
 
 from ptxprint.utils import refKey
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 adjre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
 refre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)")
@@ -143,7 +146,7 @@ class AdjList:
             if rk == cpk:
                 doit(r, i)
 
-    def increment(self, parref, offset):
+    def increment(self, parref, offset, mrk=None):
         def mydoit(r, i):
             v = r[3]
             mult = 1
@@ -164,16 +167,16 @@ class AdjList:
                 f = str(v)
             if -2 < v < 3:
                 self.liststore.set_value(r.iter, 3, f)
-            if not self.liststore.get_value(r.iter, 4):
-                self.liststore.set_value(r.iter, 4, parref.mrk)
+            if mrk is not None and not self.liststore.get_value(r.iter, 4):
+                self.liststore.set_value(r.iter, 4, mrk)
         self.changeval(parref, mydoit)
 
-    def expand(self, parref, offset):
+    def expand(self, parref, offset, mrk=None):
         def mydoit(r, i):
             v = r[5] + offset
             self.liststore.set_value(r.iter, 5, v)
-            if not self.liststore.get_value(r.iter, 4):
-                self.liststore.set_value(r.iter, 4, parref.mrk)
+            if mrk is not None and not self.liststore.get_value(r.iter, 4):
+                self.liststore.set_value(r.iter, 4, mrk)
         self.changeval(parref, mydoit)
 
     def getinfo(self, parref):

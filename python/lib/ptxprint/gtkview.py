@@ -1330,7 +1330,7 @@ class GtkViewModel(ViewModel):
                     res = getattr(self, "get_"+wid[1:])()
                     return res
             res = super().get(wid, default=default)
-            if not skipmissing and not (wid.startswith("_") or wid.startswith("r_")):
+            if not skipmissing and not any(wid.startswith(x) for x in ("_", "r_", "texpert/")):
                 logger.debug("Can't get {} in the model. Returning {}".format(wid, res))
             return res
         if wid.startswith("r_"):
@@ -3516,6 +3516,21 @@ class GtkViewModel(ViewModel):
         self.clearEditableBuffers()
         logger.debug(f"Changed project to {prjid} {configName=}")
         self.builder.get_object("nbk_Main").set_current_page(0)
+        if True: # preview is on
+            pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
+            if os.path.exists(pdffile):
+                pdft = os.stat(pdffile).st_mtime
+                cfgt = os.stat(os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")).st_mtime
+                print(f"{pdffile=} {pdft=} {cfgt=}")
+                if pdft > cfgt:
+                    prvw = self.builder.get_object("dlg_preview")
+                    prvw.set_title("PDF Preview: " + os.path.basename(pdffile))
+                    prvw.show_all()
+                    self.pdf_viewer.load_pdf(pdffile, adjlist=self.adjView.adjlist)
+                    self.pdf_viewer.show_pdf(1)
+                    fname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
+                    print(f"{fname}")
+                    self.pdf_viewer.load_parlocs(fname)                    
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.project.path, "pluginData", "Transcelerator", "Transcelerator")
