@@ -55,9 +55,15 @@ class PDFViewer:
         # self.is_dragging = False
         self.thread = None
         self.timer = None
-        self.shrinkAmount = 3 #%
-        self.expandAmount = 5 #%
+        self.shrinkStep = 2 #%
+        self.expandStep = 3 #%
+        self.shrinkLimit = 90 #%
+        self.expandLimit = 110 #%
         self.adjlist = None
+        # print(f"{model.dict['texpert/shrinktextstep']}")
+        # print(f"{model.dict['texpert/expandtextstep']}")
+        # print(f"{model.dict['texpert/shrinktextlimit']}")
+        # print(f"{model.dict['texpert/expandtextlimit']}")
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -196,9 +202,10 @@ class PDFViewer:
         self.model.set("t_zoomLevel", str(int(self.zoomLevel*100))+"%")
         self.resize_pdf(scrolled=scrolled)
     
-    def print_document(self):
+    def print_document(self, fitToPage=False):
         if not hasattr(self, 'document') or self.document is None:
             return
+        self.fitToPage = fitToPage
         print_op = Gtk.PrintOperation()
         print_op.set_n_pages(self.numpages)
         print_op.connect("draw_page", self.on_draw_page)
@@ -220,15 +227,29 @@ class PDFViewer:
 
         cairo_context = context.get_cairo_context()
         cairo_context.save()
-        cairo_context.set_source_rgb(1, 1, 1)  # Set background color to white
+        
+        # Set background color to white
+        cairo_context.set_source_rgb(1, 1, 1)
         cairo_context.paint()
 
+        # Get the dimensions of the PDF page
         width, height = pdf_page.get_size()
-        scale_x = context.get_width() / width
-        scale_y = context.get_height() / height
-        cairo_context.scale(scale_x, scale_y)
 
+        if self.fitToPage:
+            # Calculate scale factors to fit the page
+            scale_x = context.get_width() / width
+            scale_y = context.get_height() / height
+            scale = min(scale_x, scale_y)  # Uniform scaling to maintain aspect ratio
+            cairo_context.scale(scale, scale)
+        else:
+            # Render at actual size (1:1 scale)
+            scale = 1
+            cairo_context.scale(scale, scale)
+
+        # Render the PDF page
         pdf_page.render(cairo_context)
+
+        # Restore the original context state
         cairo_context.restore()
 
     def load_parlocs(self, fname):
@@ -263,14 +284,10 @@ class PDFViewer:
         return True
 
     def widgetPosition(self, widget):
-        # Get all children of the hbox
         children = self.hbox.get_children()
-
-        # Find the widget's index in the list of children
         for index, child in enumerate(children):
             if child == widget:
                 return index  # Return the position (index) of the widget
-        
         return -1  # If widget is not found, return -1
 
     def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
@@ -401,7 +418,7 @@ class PDFViewer:
             pnum = self.current_page
         p = None
         a = self.hbox.get_allocation()
-        # print(f"{pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
+        # print(f"Parloc: {pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
         if self.parlocs is not None:
             p = self.parlocs.findPos(pnum, x, self.psize[1] - y)
         return p
@@ -447,38 +464,57 @@ class PDFViewer:
         parref = self.get_parloc(widget, event)
         if parref is None:
             return
-        pref = parref.ref + ("[{parref.parnum}]" if parref.parnum > 1 else "")
+        pnum = "[{parref.parnum}]" if parref.parnum > 1 else ""
+        ref = parref.ref
         if self.adjlist is not None:
-            info = self.adjlist.getinfo(pref)
-        else:
+            info = self.adjlist.getinfo(ref + pnum)
+        
+        if not len(info):
             info = ('', 100, None)
-        # First section: Info, Shrink, Expand options
-        identify_ref = Gtk.MenuItem(label=f"Show Book: {pref}")
-        shrink_para = Gtk.MenuItem(label=f"Shrink Paragraph -1 line ({info[0]})")
-        expand_para = Gtk.MenuItem(label=f"Expand Paragraph +1 line ({info[0]})")
-        shrink_text = Gtk.MenuItem(label=f"Shrink Text -{self.shrinkAmount}% ({info[1]}%)") # default = 3%
-        expand_text = Gtk.MenuItem(label=f"Expand Text +{self.expandAmount}% ({info[1]}%)") # default = 5%
+        # print(f"{info=}")
+        o = 4 if ref[4:1] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
+        hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1]}%"
+        header_info = Gtk.MenuItem(label=hdr)
+        header_info.set_sensitive(False)  # Make the header item non-clickable and grayed out
 
-        identify_ref.connect("activate", self.on_identify_paragraph, info[2])
+        # Need to disable the shrink option if curr only shows +0 (enable only in +-0)
+        shrink_para = Gtk.MenuItem(label=f"Shrink -1 line ({parref.lines - 1})")
+        shrink_para.set_sensitive(False)  # This should only be active if/when a para is shrinkable #FixME!
+        expand_para = Gtk.MenuItem(label=f"Expand +1 line ({parref.lines + 1})")
+
+        shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
+        shrink_text = Gtk.MenuItem(label=f"Shrink Text ({shrLim}%)")
+        shrink_text.set_sensitive(not info[1] <= shrLim)  # clickable only if within limit%
+
+        normal_text = Gtk.MenuItem(label=f"Normal Size (100%)")
+        normal_text.set_sensitive(not info[1] == 100)  # non-clickable and grayed out if already at 100%
+
+        expLim = min(self.expandLimit, info[1]+self.expandStep)
+        expand_text = Gtk.MenuItem(label=f"Expand Text ({expLim}%)")
+        expand_text.set_sensitive(not info[1] >= expLim)  # clickable only if within limit%
+
+        header_info.connect("activate", self.on_identify_paragraph, info[2])
         shrink_para.connect("activate", self.on_shrink_paragraph, info)
         expand_para.connect("activate", self.on_expand_paragraph, info)
         shrink_text.connect("activate", self.on_shrink_text, info)
+        normal_text.connect("activate", self.on_normal_text, info)
         expand_text.connect("activate", self.on_expand_text, info)
 
-        menu.append(identify_ref)
+        menu.append(header_info)
         menu.append(Gtk.SeparatorMenuItem())
         menu.append(shrink_para)
         menu.append(expand_para)
         menu.append(Gtk.SeparatorMenuItem())
         menu.append(shrink_text)
+        menu.append(normal_text)
         menu.append(expand_text)
         menu.append(Gtk.SeparatorMenuItem())
 
         # Second section: Zoom In, Reset Zoom, Zoom Out
-        zoom_in_item = Gtk.MenuItem(label="Zoom In  Ctrl +")
-        zoom_out_item = Gtk.MenuItem(label="Zoom Out  Ctrl -")
-        fit_zoom_item = Gtk.MenuItem(label="Zoom to Fit  Ctrl + F")
-        reset_zoom_item = Gtk.MenuItem(label="Zoom to 100%  Ctrl + 0")
+        zoom_in_item    = Gtk.MenuItem(label="Zoom In         (Ctrl +)")
+        zoom_out_item   = Gtk.MenuItem(label="Zoom Out       (Ctrl -)")
+        fit_zoom_item   = Gtk.MenuItem(label="Zoom to Fit (Ctrl + F)")
+        reset_zoom_item = Gtk.MenuItem(label="Zoom 100%  (Ctrl + 0)")
 
         zoom_in_item.connect("activate", self.on_zoom_in)
         zoom_out_item.connect("activate", self.on_zoom_out)
@@ -507,11 +543,21 @@ class PDFViewer:
         
     def on_shrink_text(self, widget, info):
         if self.adjlist is not None:
-            self.adjlist.expand(info[2], -2)
+            if info[1] - self.shrinkStep < self.shrinkLimit:
+                self.adjlist.expand(info[2], self.shrinkLimit - info[1])
+            else:
+                self.adjlist.expand(info[2], -self.shrinkStep)
+
+    def on_normal_text(self, widget, info):
+        if self.adjlist is not None:
+            self.adjlist.expand(info[2], 100 - info[1])
 
     def on_expand_text(self, widget, info):
         if self.adjlist is not None:
-            self.adjlist.expand(info[2], 2)
+            if info[1] + self.expandStep > self.expandLimit:
+                self.adjlist.expand(info[2], self.expandLimit - info[1])
+            else:
+                self.adjlist.expand(info[2], self.expandStep)
         
     # Zoom functionality
     def on_zoom_in(self, widget):
@@ -714,8 +760,9 @@ class Paragraphs(list):
                         continue
                     currp.ref = p[0]
                     currp.parnum = int(p[1])
-                    currp.badness = int(p[2])
+                    currp.lines = int(p[2]) # this seems to be the current number of lines in para
                     currp.nextmk = p[3]
+                    # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
                     currp = None
                     if currr.pagenum == 2:
                         print(currr)

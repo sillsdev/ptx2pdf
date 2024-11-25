@@ -503,11 +503,28 @@ THE SOFTWARE.
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
             <property name="valign">center</property>
-            <property name="margin-start">3</property>
-            <property name="margin-end">3</property>
-            <property name="margin-top">3</property>
-            <property name="margin-bottom">3</property>
+            <property name="margin-start">2</property>
+            <property name="margin-end">2</property>
+            <property name="margin-top">2</property>
+            <property name="margin-bottom">2</property>
             <property name="hexpand">True</property>
+            <child>
+              <object class="GtkButton" id="btn_previewPrintIt">
+                <property name="label" translatable="yes">Print (on Paper)</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="always-show-image">True</property>
+                <signal name="clicked" handler="onPrintItClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkCheckButton" id="c_bkView">
                 <property name="label" translatable="yes">Book View</property>
@@ -528,7 +545,7 @@ Shortcut: Ctrl + B</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -536,6 +553,12 @@ Shortcut: Ctrl + B</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Zoom Shortcuts:
+Ctrl + F - fit to screen
+Ctrl + Plus - zoom in
+Ctrl + Minus - zoom out
+Ctrl + 0 - resets zoom level
+Ctrl + Scrollwheel - change zoom level</property>
                 <property name="halign">end</property>
                 <property name="valign">center</property>
                 <property name="margin-right">6</property>
@@ -545,7 +568,7 @@ Shortcut: Ctrl + B</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -571,7 +594,7 @@ Ctrl + Scrollwheel - change zoom level</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -587,7 +610,7 @@ Ctrl + Scrollwheel - change zoom level</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -598,6 +621,8 @@ Ctrl + Scrollwheel - change zoom level</property>
                 <property name="tooltip-text" translatable="yes">Shortcuts:
 PgUp - previous page/spread
 PgDn - next page/spread
+Ctrl+Home - First page/spread
+Ctrl+End - Last page/spread
 Mouse Scroll also changes pages</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
@@ -615,24 +640,38 @@ Mouse Scroll also changes pages</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_previewPrintIt">
-                <property name="label">gtk-print</property>
+              <object class="GtkButton" id="b_reprint">
+                <property name="label" translatable="yes">Print (Update PDF)</property>
+                <property name="width-request">120</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
-                <property name="use-stock">True</property>
+                <property name="tooltip-text" translatable="yes">Create the PDF as specified
+(automatically saves settings).
+
+Shortcut: Ctrl-P</property>
+                <property name="halign">start</property>
+                <property name="margin-left">3</property>
+                <property name="margin-right">3</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="resize-mode">immediate</property>
                 <property name="always-show-image">True</property>
-                <signal name="clicked" handler="onPrintItClicked" swapped="no"/>
+                <signal name="clicked" handler="onOK" swapped="no"/>
+                <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">5</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">6</property>
               </packing>
             </child>
             <child>
@@ -641,13 +680,14 @@ Mouse Scroll also changes pages</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="valign">center</property>
                 <property name="use-stock">True</property>
                 <signal name="clicked" handler="onClosePreview" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">6</property>
+                <property name="position">7</property>
               </packing>
             </child>
           </object>
@@ -3686,6 +3726,7 @@ Multiple Books:</property>
                                 <property name="label" translatable="yes">&lt;&lt;&lt;&lt; Start by selecting a project</property>
                                 <property name="wrap">True</property>
                                 <property name="ellipsize">end</property>
+                                <property name="width-chars">35</property>
                                 <property name="max-width-chars">40</property>
                                 <property name="xalign">0</property>
                                 <attributes>

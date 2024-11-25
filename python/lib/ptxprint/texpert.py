@@ -187,7 +187,15 @@ texpertOptions = {
                             _("Display trigger points in output")),
     "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2, -10, 50, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"),
                             _("Shift thumbtab text")),
-}
+    "ShrinkTextStep":     O("shrinktextstep", "OTH", (2, 1, 5, 1, 1, 0), "", _("Shrink Text Step Value (%)"),
+                            _("Step Value to shrink text using right-click context menu adjustment.")),
+    "ShrinkTextLimit":    O("shrinktextlimit", "OTH", (90, 75, 95, 1, 1, 0), "", _("Minimum Text Shrink (%)"),
+                            _("Limit how much text can shrink to using right-click context menu adjustment.")),
+    "ExpandTextStep":     O("expandtextstep", "OTH", (3, 1, 5, 1, 1, 0), "", _("Expand Text Step Value (%)"),
+                            _("Step Value to expand text using right-click context menu adjustment.")),
+    "ExpandTextLimit":    O("expandtextlimit", "OTH", (110, 105, 125, 1, 1, 0), "", _("Maximum Text Expand (%)"),
+                            _("Limit how much text can expand to using right-click context menu adjustment.")),
+}                          # (default, lower, upper, stepIncr, pageIncr, decPlaces)
 
 def widgetName(opt):
     t = opt.val
