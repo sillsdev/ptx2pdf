@@ -239,7 +239,7 @@ class RunJob:
         self.tmpdir = self.printer.project.printPath(configid)
         os.makedirs(self.tmpdir, exist_ok=True)
         bks = self.printer.getBooks(files=True)
-        jobs = []       # [(bkid, False) or (RefList, True)] 
+        jobs = []       # [(bkid/module_path, False) or (RefList, True)] 
         if self.printer.bookrefs is None:
             jobs = [(b, False) for b in bks]
         else:

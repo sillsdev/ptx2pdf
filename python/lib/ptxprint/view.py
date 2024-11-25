@@ -668,12 +668,13 @@ class ViewModel:
                             Sheets(self.getStyleSheets()))
         return self.usfms
 
-    def get_usfm(self, bk):
+    def get_usfm(self, bk, silent=False):
         self.get_usfms()
         try:
             res = self.usfms.get(bk)
         except SyntaxError as e:
-            self.doError(_("Syntax Error Warning"), secondary=str(e), show=not self.get("c_quickRun"))
+            if not silent:
+                self.doError(_("Syntax Error Warning"), secondary=str(e), show=not self.get("c_quickRun"))
             logger.debug(f"Syntax Error in the context of stylesheets: {self.usfms.sheets.files}")
             return None
         return res

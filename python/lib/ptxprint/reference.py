@@ -76,8 +76,16 @@ class Reference:
     def __init__(self, book, chap, verse, subverse=None, mark=None):
         self.book = book
         self.chap = chap
-        self.verse = verse
-        self.subverse = subverse
+        self.subverse = None
+        if isinstance(verse, str):
+            if (m := re.match(r"^(\d+)([\d\s]*)", verse)):
+                self.verse = int(m.group(1))
+                if len(m.group(2)):
+                    self.subverse = m.group(2)
+        else:
+            self.verse = verse
+        if self.subverse is None:
+            self.subverse = subverse
         self.mark = mark
 
     @classmethod

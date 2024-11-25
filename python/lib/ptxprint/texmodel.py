@@ -888,10 +888,12 @@ class TexModel:
                 self.changes = self.readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk)
             else:
                 self.changes = []
-        adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "adjlists",
-                            printer.getAdjListFilename(bk).replace(".adj", "_changes.txt"))
-        if os.path.exists(adjchangesfile):
-            self.changes.extend(self.readChanges(adjchangesfile, bk))
+        adjlistfile = printer.getAdjListFilename(bk)
+        if adjlistfile is not None:
+            adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "adjlists",
+                                adjlistfile.replace(".adj", "_changes.txt"))
+            if os.path.exists(adjchangesfile):
+                self.changes.extend(self.readChanges(adjchangesfile, bk, makeranges=True))
         draft = "-" + (printer.cfgid or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
@@ -1080,10 +1082,17 @@ class TexModel:
             return compfn
         return reduce(lambda currfn, are: makefn(are, currfn), reversed([c for c in changes if c is not None]), None)
 
-    def readChanges(self, fname, bk):
+    def readChanges(self, fname, bk, makeranges=False):
         changes = []
         if not os.path.exists(fname):
             return []
+        usfm = None
+        if makeranges:
+            try:
+                usfm = self.printer.get_usfm(bk)
+                usfm.addorncv()
+            except SyntaxError:
+                pass
         qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
         with universalopen(fname) as inf:
             alllines = list(inf.readlines())
@@ -1113,7 +1122,12 @@ class TexModel:
                         elif r.verse == 0:
                             atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chap), flags=regex.S)))
                         else:
-                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chap, r.verse), flags=regex.S|regex.V1)))
+                            outv = '{}{}'.format(r.verse, r.subverse or "")
+                            if usfm is not None:
+                                v = usfm.bridges.get(r, r)
+                                if v.first != v.last:
+                                    outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
+                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chap, outv), flags=regex.S|regex.V1)))
                     l = l[m.end():].strip()
                 else:
                     atcontexts = [None]
