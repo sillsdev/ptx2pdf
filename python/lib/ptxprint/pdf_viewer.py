@@ -4,6 +4,7 @@ gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
 import cairo, re, time, sys
 from cairo import ImageSurface, Context
+from ptxprint.utils import _
 from pathlib import Path
 from threading import Thread, Event, Timer
 from dataclasses import dataclass, InitVar, field
@@ -112,7 +113,7 @@ class PDFViewer:
         self.hbox.show()
         self.hbox.grab_focus()
 
-    def load_pdf(self, pdf_path, adjlist=None):
+    def load_pdf(self, pdf_path, adjlist=None, start=None):
         self.shrinkStep = int(self.model.get('s_shrinktextstep'))
         self.expandStep = int(self.model.get('s_expandtextstep'))
         self.shrinkLimit = int(self.model.get('s_shrinktextlimit'))
@@ -126,6 +127,8 @@ class PDFViewer:
             print(f"Error opening PDF: {e}")
             return
         self.adjlist = adjlist
+        if start is not None and start < self.numpages:
+            self.current_page = start
 
     def show_pdf(self, page, rtl=False):
         self.spread_mode = self.model.get("c_bkView", False)
@@ -152,6 +155,16 @@ class PDFViewer:
 
         self.current_page = page
         self.update_boxes(images)
+
+    def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None):
+        self.load_pdf(fname, adjlist=adjlist, start=page)
+        self.show_pdf(self.current_page, rtl=rtl)
+        widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname))
+        widget.show_all()
+        if parlocs is not None:
+            self.load_parlocs(parlocs)                    
+        
+        
 
     def render_pi(self, pi, zoomlevel, imarray):
         if pi >= len(self.pages):

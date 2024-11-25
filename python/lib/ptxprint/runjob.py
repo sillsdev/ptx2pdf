@@ -343,14 +343,10 @@ class RunJob:
                     startname = pdfname
                 if self.printer.get("fcb_afterAction") == "preview":
                     prvw = self.printer.builder.get_object("dlg_preview")
-                    prvw.set_title("PDF Preview: " + os.path.basename(startname))
-                    prvw.show_all()
                     adjlist = self.printer.adjView.adjlist if self.printer.adjView is not None else None
-                    self.printer.pdf_viewer.load_pdf(startname, adjlist)
-                    self.printer.pdf_viewer.show_pdf(int(self.printer.get("s_pgNum", 1)), 
-                                                    rtl    = self.printer.get("c_RTLbookBinding", False))
                     fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".parlocs"))
-                    self.printer.pdf_viewer.load_parlocs(fname)
+                    self.printer.pdf_viewer.loadnshow(startname, rtl=self.printer.get("c_RTLbookBinding", False),
+                                    adjlist=adjlist, parlocs=fname, widget=prvw, page=None)
                 elif self.printer.get("fcb_afterAction") == "sysviewer":
                     if sys.platform == "win32":
                         os.startfile(startname)

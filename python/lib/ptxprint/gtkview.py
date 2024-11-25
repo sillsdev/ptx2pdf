@@ -3516,7 +3516,7 @@ class GtkViewModel(ViewModel):
         self.clearEditableBuffers()
         logger.debug(f"Changed project to {prjid} {configName=}")
         self.builder.get_object("nbk_Main").set_current_page(0)
-        if True: # preview is on
+        if self.get("fcb_afterAction") == "preview": # preview is on
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
@@ -3524,13 +3524,9 @@ class GtkViewModel(ViewModel):
                 print(f"{pdffile=} {pdft=} {cfgt=}")
                 if pdft > cfgt:
                     prvw = self.builder.get_object("dlg_preview")
-                    prvw.set_title("PDF Preview: " + os.path.basename(pdffile))
-                    prvw.show_all()
-                    self.pdf_viewer.load_pdf(pdffile, adjlist=self.adjView.adjlist)
-                    self.pdf_viewer.show_pdf(1)
-                    fname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                    print(f"{fname}")
-                    self.pdf_viewer.load_parlocs(fname)                    
+                    plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
+                    self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
+                                                parlocs=plocname, widget=prvw, page=1)
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.project.path, "pluginData", "Transcelerator", "Transcelerator")
