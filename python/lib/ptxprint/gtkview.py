@@ -2556,7 +2556,10 @@ class GtkViewModel(ViewModel):
             pgid = self.notebooks["Viewer"][pg]
         buf = self.fileViews[pg][0]
         if pgid == "scroll_AdjList":
-            self.adjView.save()
+            bk = self.get("ecb_examineBook")
+            adjname = self.getAdjListFilename(bk)
+            adjpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", adjname)
+            self.adjView.adjlist.save(adjpath)
             fpath = None
         elif pgid == "scroll_FrontMatter":
             fpath = self.configFRT()
@@ -6179,8 +6182,9 @@ Thank you,
         # print(f"Notified of allocation change: width={allocation.width}, height={allocation.height}")
 
     def on_configure_event(self, widget, event):
-        pass # We need to save this info so that when we re-open PTXprint it places the Preview window
-             # in the same place it was when we last closed.
+        pass
+        # We need to save this info so that when we re-open PTXprint it places the Preview window
+        # in the same place it was when we last closed.
         # print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")
 
     def extractDigits(self, text):

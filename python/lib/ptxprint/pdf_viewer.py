@@ -131,6 +131,8 @@ class PDFViewer:
             self.current_page = start
 
     def show_pdf(self, page, rtl=False):
+        if page is None:
+            page = 1
         self.spread_mode = self.model.get("c_bkView", False)
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
 
@@ -161,7 +163,7 @@ class PDFViewer:
         self.show_pdf(self.current_page, rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
-        formatted_time = mod_time.strftime("  %d-%b %H:%M:%S")
+        formatted_time = mod_time.strftime("   %d-%b  %H:%M")
         widget.set_title("PDF Preview: " + os.path.basename(fname) + formatted_time)
         widget.show_all()
         if parlocs is not None:
@@ -481,8 +483,8 @@ class PDFViewer:
         else:
             pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
             ref = parref.ref
-            if self.adjlist is not None:
-                info = self.adjlist.getinfo(ref + pnum)
+            print(f"{ref=}{pnum}")
+            info = self.adjlist.getinfo(ref + pnum, insert=True)
 
         if len(info):
             o = 4 if ref[4:1] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3

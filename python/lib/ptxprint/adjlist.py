@@ -91,7 +91,7 @@ class AdjList:
     def createAdjlist(self, fname=None):
         if fname is None:
             fname = self.adjfile
-        if fname is None:
+        if fname is None or not len(self.liststore):
             return
         with open(fname, "w") as outf:
             for r in self.liststore:
@@ -105,6 +105,8 @@ class AdjList:
                 outf.write(line + "\n")
 
     def createChanges(self, fname, diglot=""):
+        if not len(self.liststore):
+            return
         lines = []
         for r in self.liststore:
             if not r[5] or r[5] == self.centre:
@@ -124,8 +126,11 @@ class AdjList:
             with open(fname, "w") as outf:
                 outf.write("\n".join(lines))
 
-    def save(self):
-        if self.adjfile is None:
+    def save(self, fname):
+        if fname is None:
+            fname = self.adjfile
+        print(f"Saving: {self.adjfile}")
+        if fname is None:
             return
         self.createAdjlist()
         chfile = self.adjfile.replace(".adj", "_changes.txt")
@@ -141,18 +146,24 @@ class AdjList:
             return False
         cp = [m.group(1), m.group(2), int((m.group(3) if m.lastindex > 2 else 1) or 1)]
         cpk = self.calckey(cp)
+        i = -1
+        # rk = self.calckey([cp[0], "200:200", 1, 0, "", 100])
         for i, r in enumerate(self.liststore):
             rk = self.calckey(r)
-            if rk == cpk:
+            if rk >= cpk:
+                break
+        else:
+            i += 1
+            rk = self.calckey([cp[0], "200:200", 1, 0, "", 100])
+        print(f"{i=} {rk=} {cpk=}")
+        if rk == cpk:
+            doit(r, i)
+        elif rk > cpk:
+            if insert:
+            # book, c:v, para, stretch, mkr, expand%
+                r = [cp[0], cp[1], cp[2], "0", "", 100]
+                self.liststore.insert(i, r)
                 doit(r, i)
-                break
-            elif rk > cpk:
-                if insert:
-                # book, c:v, para, stretch, mkr, expand%
-                    r = [cp[0], cp[1], cp[2], 0, parref.mrk, 100]
-                    self.liststore.insert(i, r)
-                    doit(r, i)
-                break
 
     def increment(self, parref, offset, mrk=None):
         def mydoit(r, i):

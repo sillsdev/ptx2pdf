@@ -342,7 +342,7 @@ class RunJob:
                 else:
                     startname = pdfname
                 if self.printer.get("fcb_afterAction") == "preview":
-                    prvw = self.builder.get_object("dlg_preview")
+                    prvw = self.printer.builder.get_object("dlg_preview")
                     adjlist = self.printer.adjView.adjlist if self.printer.adjView is not None else None
                     fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".parlocs"))
                     self.printer.pdf_viewer.loadnshow(startname, rtl=self.printer.get("c_RTLbookBinding", False),

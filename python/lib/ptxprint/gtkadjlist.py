@@ -24,11 +24,3 @@ class AdjListView:
         self.view.set_model(None if adjlist is None else adjlist.liststore)
         if adjlist is not None:
             adjlist.changed = True      # close enough
-
-    def save(self):
-        if self.adjlist is not None:
-            self.adjlist.save()
-
-
-
-
