@@ -442,7 +442,7 @@ class PDFViewer:
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
-        
+
         if False and self.isdiglot:
             info = []
         else:
@@ -454,10 +454,11 @@ class PDFViewer:
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper())
                 if self.adjlist is not None:
-                    info = self.adjlist.getinfo(ref + pnum)
+                    info = self.adjlist.getinfo(ref + pnum, insert=True)
 
+        logger.debug(f"{parref=} {info=}")
         if len(info):
-            o = 4 if ref[4:1] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
+            o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1] if len(info) else ''}%"
             header_info = Gtk.MenuItem(label=hdr)
             header_info.set_sensitive(False)  # Make the header item non-clickable and grayed out
@@ -465,7 +466,6 @@ class PDFViewer:
             menu.append(header_info)
             menu.append(Gtk.SeparatorMenuItem())
 
-            print(f"{info[0]=}")
             x = "Yes! Shrink" if ("-" in str(info[0]) and str(info[0]) != "-1") else "Try Shrink"
             shrink_para = Gtk.MenuItem(label=f"{x} -1 line ({parref.lines - 1})")
             expand_para = Gtk.MenuItem(label=f"Expand +1 line ({parref.lines + 1})")
@@ -693,7 +693,7 @@ class ParInfo:
         return self.__str__()
 
 class Paragraphs(list):
-    parlinere = re.compile(r"^\\@([a-zA-Z]+)\s*\{(.*?)\}\s*$")
+    parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
 
     def readParlocs(self, fname):
         self.pindex = []
@@ -704,6 +704,8 @@ class Paragraphs(list):
         pnum = 0
         polycol = "L"
         currps = {polycol: None}
+        colinfos = {}
+        innote = False
         with open(fname, encoding="utf-8") as inf:
             for l in inf.readlines():
                 m = self.parlinere.match(l)
@@ -721,25 +723,31 @@ class Paragraphs(list):
                     pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                     inpage = False
                 elif c == "colstart":       # col height, col depth, col width, topx, topy
-                    colinfo = [readpts(x) for x in p]
+                    colinfos[polycol] = [readpts(x) for x in p]
+                    cinfo = colinfos[polycol]
                     if currps[polycol] is not None:
-                        currr = ParRect(pnum, colinfo[3], colinfo[4])
+                        currr = ParRect(pnum, cinfo[3], cinfo[4])
                         currps[polycol].rects.append(currr)
                 elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
                     if currr is not None:
-                        currr.xend = colinfo[3] + colinfo[2]
+                        cinfo = colinfos[polycol]
+                        currr.xend = cinfo[3] + cinfo[2]
                         currr.yend = readpts(p[1])
                         currr = None
                 elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
                     currp = ParInfo(p[0], p[1], readpts(p[2]))
                     currp.rects = []
-                    currr = ParRect(pnum, colinfo[3], readpts(p[4]) + currp.baseline)
+                    cinfo = colinfos[polycol]
+                    currr = ParRect(pnum, cinfo[3], readpts(p[4]) + currp.baseline)
                     currp.rects.append(currr)
                     currps[polycol] = currp
                     self.append(currp)
                 elif c == "parend":         # badness, bottomx, bottomy
+                    cinfo = colinfos[polycol]
+                    if currps[polycol] is None:
+                        breakpoint()
                     currps[polycol].lines = int(p[0])
-                    currr.xend = colinfo[3] + colinfo[2]    # p[1] is xpos of last char in par
+                    currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
                     currr.yend = readpts(p[2])
                     endpar = True
                 elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
@@ -757,12 +765,13 @@ class Paragraphs(list):
                     currps[polycol] = None
                     currr = None
                 elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
-                    colinfo = [readpts(x) for x in p[:-1]]
                     polycol = p[5]
+                    colinfos[polycol] = [readpts(x) for x in p[:-1]]
+                    cinfo = colinfos[polycol]
                     if polycol not in currps:
                         currps[polycol] = None
                     if currps[polycol] is not None:
-                        currr = ParRect(pnum, colinfo[3], colinfo[4])
+                        currr = ParRect(pnum, cinfo[3], cinfo[4])
                         currps[polycol].rects.append(currr)
         logger.debug(f"parlocs={self}")
         

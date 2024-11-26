@@ -5,8 +5,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-adjre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
-refre = re.compile(r"^(\S{3})\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
+adjre = re.compile(r"^(\S{3})([A-Za-z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
+refre = re.compile(r"^(\S{3})([A-Za-z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
 restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(?:\s*\[(\d+)\])?")
 
 class AdjList:
@@ -76,7 +76,7 @@ class AdjList:
                 m = adjre.match(l)
                 if m:
                     try:
-                        val = [m.group(1), m.group(2), int(m.group(4) or 1), m.group(3), None, self.centre]
+                        val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1), m.group(4), None, self.centre]
                     except ValueError:
                         val = None
                     if val is not None:
@@ -144,7 +144,7 @@ class AdjList:
         m = refre.match(parref)
         if not m:
             return False
-        cp = [m.group(1), m.group(2), int((m.group(3) if m.lastindex > 2 else 1) or 1)]
+        cp = [m.group(1)+m.group(2), m.group(3), int((m.group(4) if m.lastindex > 2 else 1) or 1)]
         cpk = self.calckey(cp)
         i = -1
         # rk = self.calckey([cp[0], "200:200", 1, 0, "", 100])
