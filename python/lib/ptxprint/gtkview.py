@@ -3552,9 +3552,9 @@ class GtkViewModel(ViewModel):
         self.clearEditableBuffers()
         logger.debug(f"Changed project to {prjid} {configName=}")
         self.builder.get_object("nbk_Main").set_current_page(0)
-        self.showmybook()
+        self.showmybook(True)
 
-    def showmybook(self):
+    def showmybook(self, isfirst=False):
         if self.initialised and self.get("fcb_afterAction") == "preview": # preview is on
             logger.debug("Showing?")
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
@@ -3565,6 +3565,8 @@ class GtkViewModel(ViewModel):
                     adj = self.get_adjlist(bk)
                 if pdft > cfgt:
                     prvw = self.builder.get_object("dlg_preview")
+                    if isfirst:
+                        prvw.set_gravity(Gdk.Gravity.NORTH_EAST)
                     # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
                     # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
                     plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
