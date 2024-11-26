@@ -2278,13 +2278,13 @@ class GtkViewModel(ViewModel):
             for k, v in sorted(adjs.items(), key=lambda x:refSort(x[0][0])):
                 r = refKey(k[0])
                 logger.debug(f"{k=} {r=}, {v=}")
+                s = getsign(*v) + "0"
                 if k[0][:3] != bk:
                     continue
-                elif r[0] >= 100 or (r[1] == 0 and not isinstance(r[2], int)): # May need to take these lines out!
-                    adj.setval(bk + r[4], ("{}.".format(r[2]) if len(r[2]) else "") + r[5], int(k[1]), s, v[3], force=forceAdjs)
+                elif r[0] >= 100 or (r[1] == 0 and r[2] == 0): # May need to take these lines out!
+                    adj.setval(bk + r[3], ("{}.".format(r[4]) if len(r[4]) else "") + r[5], int(k[1]), s, v[3], force=forceAdjs)
                     continue                   # May need to take these lines out!
-                s = getsign(*v) + "0"
-                adj.setval(bk + r[4], "{}.{}{}".format(r[1], r[2], r[5]), int(k[1]), s, v[3], force=forceAdjs)
+                adj.setval(bk + r[3], "{}.{}{}".format(r[1], r[2], r[4]) + r[5], int(k[1]), s, v[3], force=forceAdjs)
             if not adj.adjfile:
                 adj.adjfile = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", self.getAdjListFilename(bk))
             adj.sort()

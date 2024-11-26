@@ -60,7 +60,7 @@ class AdjList:
 
     def calckey(self, row):
         k = refKey("{0} {1}".format(*row))
-        res = [k, row[2]]
+        res = k[:3] + (k[5], row[2], k[3], k[4], k[6])
         return res
 
     def readAdjlist(self, fname):

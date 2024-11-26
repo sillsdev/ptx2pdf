@@ -143,21 +143,23 @@ def getcaller(count=0):
     return f"{frame.f_code.co_name}({frame.f_code.co_filename}:{frame.f_lineno})"
 
 def refKey(r, info=""):
-    """ Returns (bknum, chap, versenum, book, info, verseextra, extras) """
-    m = re.match(r"^(\d?\D+)?\s*(\d*)[.:]?(\d*)(\S*?)(\s+.*)?$", r)
+    """ Returns (bknum, chap, versenum, book/glot, info, verseextra, extras) """
+    # bk, glot, c, v, postv, extras
+    m = re.match(r"^(\d\D\D|\D{3})?([A-Z]?)\s*(\d*)[.:]?(\d*)(\S*?)(\s+.*)?$", r)
     if m:
         bkid = m.group(1) or ""
-        return (books.get(bkid[:3], 99)+1, int(m.group(2) or 0), int(m.group(3) or 0), bkid[3:], info, m.group(4), m.group(5) or "")
-    elif (m := re.match(r"(\d?\D+)?\s*(\S+)[.:]?(\S+)(\s+.*)?$", r)):
+        return (books.get(bkid[:3], 99)+1, int(m.group(3) or 0), int(m.group(4) or 0), m.group(2), info, m.group(5), m.group(6) or "")
+    # bk, glot, postv, extras
+    elif (m := re.match(r"^(\d\D\D|\D{3})?([A-Z]?)\s*(\S+)(\s+.*)?$", r)):
         bkid = m.group(1) or ""
-        return (books.get(bkid[:3], 99)+1, 0, m.group(2) or "", bkid[3:], info, m.group(3) or "", m.group(4) or "")
+        return (books.get(bkid[:3], 99)+1, 0, 0, m.group(2), info, m.group(3) or "",  m.group(4) or "")
     else:
         return (100, 0, 0, r, info, "", "")
 
 def refSort(r, info=""):
     res = refKey(r, info=info)
-    if not isinstance(res[2], int):
-        return (100, 0, 0, r, info, "", "")
+    if r[1] == 0 and r[2] == 0 and len(r[5]):
+        return (100, 0, 0, r[3], info, r[5], r[6])
     return res
 
 def coltotex(s):

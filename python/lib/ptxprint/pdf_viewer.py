@@ -4,6 +4,7 @@ gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
 import cairo, re, time, sys
 from cairo import ImageSurface, Context
+from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.utils import _
 from pathlib import Path
 from threading import Thread, Event, Timer
@@ -159,6 +160,29 @@ class PDFViewer:
         self.current_page = page
         self.update_boxes(images)
 
+    # incomplete code calling for major refactor for cairo drawing
+    def add_hints(self, page, context):
+        bk = None
+        for p, r in self.parlocs.getParas(page):
+            nbk = p.ref[:3].upper()
+            if nbk != bk:
+                adjlist = self.model.get_adjlist(nbk)
+                bk = nbk
+            pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
+            info = adjlist.getinfo(p.ref + pnum)
+            if not info:
+                continue
+            s = info[0]
+            sv = int(re.sub(r"^[+-]*", s))
+            sv = -sv if "-" in s else sv
+            if sv != 0:
+                # hsv(hue, saturation full colour at 1, black/white at 0, white at 1 and black at 0)
+                col = (202 / 255., 1., min(-sv * 0.5)) if sv < 0 else (0., 1., max(1. - sv * .25, 0))
+                # insert rect r.xstart-6, r.ystart, r.xstart, r.yend
+            if info[1] != 100:
+                col = (173, 255, min(12.5 * info[1] - 1000, 255)) if info[1] < 100 else (41, 255, 1500 - 12.5 * info[1])
+                # insert rect r.xend, r.ystart, r.xend + 6, r.yend
+
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
         self.show_pdf(self.current_page, rtl=rtl)
@@ -169,11 +193,6 @@ class PDFViewer:
         widget.show_all()
         if parlocs is not None:     # and not isdiglot:
             self.load_parlocs(parlocs)                    
-
-    def render_pi(self, pi, zoomlevel, imarray):
-        if pi >= len(self.pages):
-            return
-        return render_page(self.pages[pi], zoomlevel, imarray)
 
     def resize_pdf(self, scrolled=False):
         if self.zoomLevel == self.old_zoom:
@@ -719,7 +738,7 @@ class Paragraphs(list):
                     self.pindex.append(len(self))
                     pheight = float(re.sub(r"[a-z]+", "", p[1]))
                     inpage = True
-                elif c == "parpageend":     # bottomx, bottomy, type=bottomins, botes, verybottomins, pageend
+                elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                     pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                     inpage = False
                 elif c == "colstart":       # col height, col depth, col width, topx, topy
@@ -773,6 +792,9 @@ class Paragraphs(list):
                     if currps[polycol] is not None:
                         currr = ParRect(pnum, cinfo[3], cinfo[4])
                         currps[polycol].rects.append(currr)
+                # "parnote":        # type, callerx, callery
+                # "notebox":        # type, width, height
+                # "parlines":       # numlines in previous paragraph (occurs after @parlen)
         logger.debug(f"parlocs={self}")
         
     def findPos(self, pnum, x, y):
@@ -794,3 +816,17 @@ class Paragraphs(list):
             if done:
                 break
         return None
+
+    def getParas(self, pnum):
+        if pnum > len(self.pindex):
+            return
+        e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
+
+        for p in self[max(self.pindex[pnum-1]-1, 0):e+1]:
+            for r in p.rects:
+                if r.pagenum > pnum:
+                    done = True
+                    break
+                elif r.pagenum < pnum:
+                    continue
+                yield (p, r)
