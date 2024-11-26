@@ -350,9 +350,11 @@ class StyleEditor:
             if mrk not in self.sheet:
                 self.sheet[mrk] = {}
             self.sheet[mrk][key] = val
+            self.model.changed()
         # do we really want to do this?
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
+            self.model.changed()
 
     def haskey(self, mrk, key):
         if key in self.sheet.get(mrk, {}) or key in self.basesheet.get(mrk, {}):

@@ -27,7 +27,7 @@ from tempfile import NamedTemporaryFile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
 from shutil import rmtree
-import datetime, time
+import datetime, time, traceback
 import json, logging, hashlib
 from shutil import copyfile, copytree, move
 from difflib import Differ
@@ -118,6 +118,7 @@ class ViewModel:
             setattr(self, v, None)
         self.isDiglot = False
         self.isDisplay = False
+        self.isChanged = False
         self.tempFiles = []
         self.picChecksView = PicChecks(self)
         self.loadingConfig = False
@@ -188,12 +189,15 @@ class ViewModel:
         else:
             return [font, 0]
 
+    def changed(self, val=True):
+        self.isChanged = val
+
     def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):
         if sub >= 0:
             wid += "[" + str(sub) + "]"
         return self.dict.get(wid, default)
 
-    def set(self, wid, value, sub=-1, skipmissing=False):
+    def set(self, wid, value, sub=-1, skipmissing=False, mod=True):
         if sub >= 0:
             wid += "[" + str(sub) + "]"
         if wid.startswith("s_"):
@@ -598,8 +602,7 @@ class ViewModel:
         currprj = getattr(self.project, 'prjid', None)
         if currprjguid is None or currprjguid != guid:
             if getattr(self.project, 'prjid', None) is not None and saveCurrConfig:
-                self.writeConfig()
-                self.updateSavedConfigList()
+                self.saveConfig()
                 self.set("t_savedConfig", "")
                 self.set("t_configNotes", "")
                 fdir = os.path.join(self.project.path, "shared", "fonts")
@@ -653,6 +656,7 @@ class ViewModel:
             self.loadPics(mustLoad=False, force=True)
             self.hyphenation = None
             self.adjlists = {}
+            self.changed(False)
             pts = self._getPtSettings()
             if pts is not None:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
@@ -1257,11 +1261,16 @@ class ViewModel:
         pass
 
     def saveConfig(self, force=False):
-        logger.debug("Saving config")
+        cfgpath = os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")
+        logger.debug(f"Saving config {self.isChanged=} {cfgpath=}")
+        changed = self.isChanged
+        changed = changed or self.saveAdjlists(force=force)
+        cfgt = os.stat(cfgpath).st_mtime
         self.writeConfig(force=force)
+        if not changed:
+            os.utime(cfgpath, (cfgt, cfgt))
         self.savePics(force=force)
         self.saveStyles(force=force)
-        self.saveAdjlists(force=force)
 
     def saveAdjlists(self, force=False):
         for bk, adj in self.adjlists.items():
@@ -1297,15 +1306,16 @@ class ViewModel:
 
     def savePics(self, fromdata=True, force=False):
         if not force and self.configLocked():
-            return
+            return False
+        changed = False
         pinfo = self.digbasepics if self.diglotView else self.picinfos
         if pinfo is not None and pinfo.loaded:
-            pinfo.out(os.path.join(self.project.srcPath(self.cfgid),
+            changed = changed or pinfo.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}.piclist".format(self.project.prjid, self.cfgid)))
         if self.diglotView:
-            self.picinfos.out(os.path.join(self.project.srcPath(self.cfgid),
+            changed = changed or self.picinfos.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}-diglot.piclist".format(self.project.prjid, self.cfgid)))
-        self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
+        changed = changed or self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
     def loadPics(self, mustLoad=True, fromdata=True, force=False):
         if self.loadingConfig:

@@ -129,11 +129,12 @@ class AdjList:
 
     def save(self):
         if self.adjfile is None or not self.changed:
-            return
+            return False
         self.createAdjlist()
         chfile = self.adjfile.replace(".adj", "_changes.txt")
         self.createChanges(chfile)
         self.changed = False
+        return True
 
     def changeval(self, parref, doit, insert=False):
         if isinstance(parref, int):
@@ -199,10 +200,10 @@ class AdjList:
         self.changeval(parref, mydoit)
 
     def getinfo(self, parref, insert=False):
-        """ returns (para:int, expand:int, adj line no:int) """
+        """ returns (stretch:str, expand:int, adj line no:int) """
         res = []
         def mydoit(r, i):
-            res.append(r[2])
+            res.append(r[3])
             res.append(r[5])
             res.append(i)
         self.changeval(parref, mydoit, insert=insert)

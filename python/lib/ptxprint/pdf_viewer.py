@@ -113,12 +113,13 @@ class PDFViewer:
         self.hbox.show()
         self.hbox.grab_focus()
 
-    def load_pdf(self, pdf_path, adjlist=None, start=None):
-        self.shrinkStep  = int(self.model.get('s_shrinktextstep'))
-        self.expandStep  = int(self.model.get('s_expandtextstep'))
+    def load_pdf(self, pdf_path, adjlist=None, start=None, isdiglot=False):
+        self.shrinkStep = int(self.model.get('s_shrinktextstep'))
+        self.expandStep = int(self.model.get('s_expandtextstep'))
         self.shrinkLimit = int(self.model.get('s_shrinktextlimit'))
         self.expandLimit = int(self.model.get('s_expandtextlimit'))
         
+        self.isdiglot = isdiglot
         file_uri = Path(pdf_path).as_uri()
         try:
             self.document = Poppler.Document.new_from_file(file_uri, None)
@@ -158,15 +159,15 @@ class PDFViewer:
         self.current_page = page
         self.update_boxes(images)
 
-    def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None):
-        self.load_pdf(fname, adjlist=adjlist, start=page)
+    def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
+        self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
         self.show_pdf(self.current_page, rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b  %H:%M")
         widget.set_title("PDF Preview: " + os.path.basename(fname) + formatted_time)
         widget.show_all()
-        if parlocs is not None:
+        if parlocs is not None:     # and not isdiglot:
             self.load_parlocs(parlocs)                    
 
     def render_pi(self, pi, zoomlevel, imarray):
@@ -442,17 +443,19 @@ class PDFViewer:
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
         
-        parref = self.get_parloc(widget, event)
-        if parref is None:
+        if False and self.isdiglot:
             info = []
         else:
-            pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
-            ref = parref.ref
-            self.adjlist = self.model.get_adjlist(ref[:3].upper())
-            if self.adjlist is not None:
-                info = self.adjlist.getinfo(ref + pnum)
-                if not len(info):
-                    info = self.adjlist.getinfo(ref + pnum, insert=True)
+            parref = self.get_parloc(widget, event)
+            if parref is None:
+                info = []
+            else:
+                pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
+                ref = parref.ref
+                self.adjlist = self.model.get_adjlist(ref[:3].upper())
+                if self.adjlist is not None:
+                    info = self.adjlist.getinfo(ref + pnum)
+
         if len(info):
             o = 4 if ref[4:1] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1] if len(info) else ''}%"
@@ -655,6 +658,10 @@ def readpts(s):
     s = re.sub(r"(?:\s*(?:plus|minus)\s+[-\d.]+\s*(?:pt|in|sp|em))+$", "", s)
     if s.endswith("pt"):
         return float(s[:-2])
+    elif s.endswith("in"):
+        return float(s[:-2]) * 72
+    elif s.endswith("sp"):
+        return float(s[:-2]) / 65536.
     else:
         return float(s) / 65536.
 
@@ -695,6 +702,8 @@ class Paragraphs(list):
         endpar = True
         inpage = False
         pnum = 0
+        polycol = "L"
+        currps = {polycol: None}
         with open(fname, encoding="utf-8") as inf:
             for l in inf.readlines():
                 m = self.parlinere.match(l)
@@ -702,40 +711,42 @@ class Paragraphs(list):
                     continue
                 c = m.group(1)
                 p = m.group(2).split("}{")
-                if c == "pgstart":
+                if c == "pgstart":          # pageno, available height
                     #pnum = int(p[0])
                     pnum += 1
                     self.pindex.append(len(self))
                     pheight = float(re.sub(r"[a-z]+", "", p[1]))
                     inpage = True
-                elif c == "parpageend":
+                elif c == "parpageend":     # bottomx, bottomy, type=bottomins, botes, verybottomins, pageend
                     pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                     inpage = False
-                elif c == "colstart":
+                elif c == "colstart":       # col height, col depth, col width, topx, topy
                     colinfo = [readpts(x) for x in p]
-                    if currp is not None:
+                    if currps[polycol] is not None:
                         currr = ParRect(pnum, colinfo[3], colinfo[4])
-                        currp.rects.append(currr)
-                elif c == "colstop":
+                        currps[polycol].rects.append(currr)
+                elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
                     if currr is not None:
                         currr.xend = colinfo[3] + colinfo[2]
                         currr.yend = readpts(p[1])
                         currr = None
-                elif c == "parstart":
+                elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
                     currp = ParInfo(p[0], p[1], readpts(p[2]))
                     currp.rects = []
                     currr = ParRect(pnum, colinfo[3], readpts(p[4]) + currp.baseline)
                     currp.rects.append(currr)
+                    currps[polycol] = currp
                     self.append(currp)
-                elif c == "parend":
-                    currp.lines = int(p[0])
+                elif c == "parend":         # badness, bottomx, bottomy
+                    currps[polycol].lines = int(p[0])
                     currr.xend = colinfo[3] + colinfo[2]    # p[1] is xpos of last char in par
                     currr.yend = readpts(p[2])
                     endpar = True
-                elif c == "parlen":
+                elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
                     if not endpar:
                         continue
                     endpar = False
+                    currp = currps[polycol]
                     if currp is None:
                         continue
                     currp.ref = p[0]
@@ -743,8 +754,16 @@ class Paragraphs(list):
                     currp.lines = int(p[2]) # this seems to be the current number of lines in para
                     currp.nextmk = p[3]
                     # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
-                    currp = None
+                    currps[polycol] = None
                     currr = None
+                elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
+                    colinfo = [readpts(x) for x in p[:-1]]
+                    polycol = p[5]
+                    if polycol not in currps:
+                        currps[polycol] = None
+                    if currps[polycol] is not None:
+                        currr = ParRect(pnum, colinfo[3], colinfo[4])
+                        currps[polycol].rects.append(currr)
         logger.debug(f"parlocs={self}")
         
     def findPos(self, pnum, x, y):

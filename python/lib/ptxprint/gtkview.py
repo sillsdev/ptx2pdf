@@ -230,6 +230,11 @@ c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customSc
 _ui_experimental = """
 """.split()
 
+# every control that doesn't cause a config change
+_ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
+btn_previewPrintIt c_bkView t_zoomLevel s_pgNum b_reprint
+""".split()
+
 # removed from list above: 
 # r_pictureRes_High r_pictureRes_Low
 # gr_importFrontPDF gr_importBackPDF 
@@ -942,6 +947,7 @@ class GtkViewModel(ViewModel):
             self.splash.terminate()
             self.splash = None
 
+        self.changed(False)
         logger.debug("Starting UI")
         try:
             GLib.idle_add(self.first_method)
@@ -1330,7 +1336,7 @@ class GtkViewModel(ViewModel):
                     res = getattr(self, "get_"+wid[1:])()
                     return res
             res = super().get(wid, default=default)
-            if not skipmissing and not any(wid.startswith(x) for x in ("_", "r_", "texpert/")):
+            if not skipmissing and not any(wid.startswith(x) for x in ("_", "r_")):
                 logger.debug("Can't get {} in the model. Returning {}".format(wid, res))
             return res
         if wid.startswith("r_"):
@@ -1340,7 +1346,7 @@ class GtkViewModel(ViewModel):
             return super().get(wid, default=default)
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
-    def set(self, wid, value, skipmissing=False, useMarkup=False, sub=-1):
+    def set(self, wid, value, skipmissing=False, useMarkup=False, sub=-1, mod=True):
         if "[" in wid:
             subi = wid.index("[")
             sub = int(wid[subi+1:-1])
@@ -1374,6 +1380,8 @@ class GtkViewModel(ViewModel):
             super(GtkViewModel, self).set(wid, value)
             return
         setWidgetVal(wid, w, value, useMarkup=useMarkup, sub=sub)
+        if mod and wid not in _ui_unchanged and not any(wid.startswith(x) for x in ("lb_", "nbk_")):
+            self.changed()
 
     def getvar(self, k, default="", dest=None):
         if dest is None:
@@ -1954,8 +1962,11 @@ class GtkViewModel(ViewModel):
         return state
 
     def onSimpleClicked(self, btn):
-        self.sensiVisible(Gtk.Buildable.get_name(btn))
+        wid = Gtk.Buildable.get_name(btn)
+        self.sensiVisible(wid)
         self.colorTabs()
+        if wid not in _ui_unchanged:
+            self.changed()
 
     def onLocalFRTclicked(self, w):
         if self.get('c_frontmatter'):
@@ -2037,6 +2048,7 @@ class GtkViewModel(ViewModel):
         for s in ['omitcaller', 'pageresetcallers']:
             w2 = w1[:4]+s
             self.builder.get_object(w2).set_active(status)
+        self.changed()
 
     def onLockUnlockSavedConfig(self, btn):
         if self.cfgid == "Default":
@@ -2141,6 +2153,7 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
         self.picListView.unpause()
         self.doStatus(_("Done! Picture Captions have been updated."))
+        self.changed()
 
     def onGeneratePicListClicked(self, btn):
         bks2gen = self.getBooks()
@@ -2170,6 +2183,7 @@ class GtkViewModel(ViewModel):
             self.savePics()
             if self.get('r_generate') == 'all':
                 self.set("c_filterPicList", False)
+            self.changed()
         dialog.hide()
 
     def onFilterPicListClicked(self, btn):
@@ -2191,6 +2205,7 @@ class GtkViewModel(ViewModel):
             if response == Gtk.ResponseType.OK:
                 self.generateFrontMatter(self.get("r_generateFRT"), self.get("c_includeCoverSections"))
                 self.rescanFRTvarsClicked(None, autosave=False)
+                self.changed()
             dialog.hide()
 
         if pgid == "scroll_AdjList":
@@ -2200,12 +2215,14 @@ class GtkViewModel(ViewModel):
                                 "in the list of books to be printed."))
                 return
             self.generateAdjList()
+            self.changed()
 
         elif pgid == "scroll_FinalSFM" and bk is not None:
             bk = bk if bk in bks2gen else None
             tmodel = TexModel(self, self._getPtSettings(self.project.prjid), self.project.prjid)
             out = tmodel.convertBook(bk, None, self.project.printPath(self.cfgid), self.project.path)
             self.editFile(out, loc="wrk", pgid=pgid)
+            self.changed()
         self.onViewerChangePage(None, None, pg, forced=True)
 
     def generateAdjList(self, books=None, dynamic=True):
@@ -2517,6 +2534,7 @@ class GtkViewModel(ViewModel):
                 buf.delete(start_iter, end_iter)
                 buf.insert(start_iter, newtext)
                 buf.end_user_action()
+            self.changed()
             return
 
         # if ty.startswith('method'):
@@ -2530,6 +2548,7 @@ class GtkViewModel(ViewModel):
         else:
             txt = f"{code_codelet}\n"
             buf.insert(cursor_iter, txt)
+            self.changed()
 
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
@@ -2616,6 +2635,7 @@ class GtkViewModel(ViewModel):
         # traceback.print_stack(limit=3)
         super(GtkViewModel, self).onFontChanged(fbtn)
         self.setEntryBoxFont()
+        self.changed()
 
     def onChangeViewEditFontSize(self, btn, foo):
         self.setEntryBoxFont()
@@ -2657,14 +2677,18 @@ class GtkViewModel(ViewModel):
             self.onBookSelectorChange(btn)
             self.updateExamineBook()
             self.updateDialogTitle()
+        if n not in _ui_unchanged:
+            self.changed()
 
     def onPicRadioChanged(self, btn):
         self.onRadioChanged(btn)
         self.picListView.onRadioChanged()
+        self.changed()
     
     def onReverseRadioChanged(self, btn):
         self.onPicRadioChanged(btn)
         self.picChecksView.onReverseRadioChanged()
+        self.changed()
     
     def onSectionHeadsClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -2681,6 +2705,7 @@ class GtkViewModel(ViewModel):
             self.picListView.clear()
         self.onPicRescan(None)
         self.picPreviewShowHide(pics)
+        self.changed()
         
     def picPreviewShowHide(self, show=True):
         for w in ["bx_showImage", "tb_picPreview"]: #, "fr_picPreview", "img_picPreview"]:
@@ -2704,6 +2729,7 @@ class GtkViewModel(ViewModel):
     def onPicRescan(self, btn):
         self.picListView.clearSrcPaths()
         self.picListView.onRadioChanged()
+        self.changed()
         
     def onPageNumTitlePageChanged(self, btn):
         if self.get("c_pageNumTitlePage"):
@@ -2720,6 +2746,7 @@ class GtkViewModel(ViewModel):
             w.set_text("a,b,c,d,e,f,✶,☆,✦,✪,†,‡,§")
         else:
             w.set_text(ptset)
+        self.changed()
 
     def onResetXRcallersClicked(self, btn_resetXRcallers):
         w = self.builder.get_object("t_xrcallers")
@@ -2728,6 +2755,7 @@ class GtkViewModel(ViewModel):
             w.set_text("†,‡,§,∥,#")
         else:
             w.set_text(ptset)
+        self.changed()
 
     def onResetTabGroupsClicked(self, btn_resetTabGroups):
         grps = "RUT 1SA; EZR NEH EST; ECC SNG; HOS JOL AMO OBA JON MIC; NAM HAB ZEP HAG ZEC MAL; " + \
@@ -2755,7 +2783,7 @@ class GtkViewModel(ViewModel):
     def onEditStyleClicked(self, btn):
         mkr = Gtk.Buildable.get_name(btn)[9:].strip("_")
         if mkr == "toc3" and self.get("r_thumbText") == "zthumbtab":  # "c_thumbIsZthumb"):
-            self.set("c_styTextProperties", False)  # MH: why is this being done?
+            self.set("c_styTextProperties", False, mod=False)  # MH: why is this being done?
             mkr = "zthumbtab"
         elif mkr == "x-credit|fig":
             dialog = self.builder.get_object("dlg_overlayCredit")
@@ -2793,10 +2821,12 @@ class GtkViewModel(ViewModel):
         else:
             if self.customScript != None:
                 self.builder.get_object("btn_editScript").set_sensitive(True)
+        self.changed()
 
     def onIntroOutlineClicked(self, btn):
         if not self.sensiVisible("c_introOutline"):
             self.builder.get_object("c_prettyIntroOutline").set_active(False)
+        self.changed()
 
     def onRefreshFontsclicked(self, btn):
         fc = fccache()
@@ -2991,7 +3021,7 @@ class GtkViewModel(ViewModel):
         for k, v in sorted(langs.items()):
             lslangs.append([v, k])
         if lang is not None:
-            self.set("fcb_featsLangs", lang)
+            self.set("fcb_featsLangs", lang, mod=False)
         def onLangChanged(fcb):
             newlang = self.get("fcb_featsLangs")
             newdefaults = langfeats.get(newlang, self.currdefaults)
@@ -3030,7 +3060,7 @@ class GtkViewModel(ViewModel):
                 if val is not None and ((self.currdefaults is not None and str(self.currdefaults.get(k, 0)) != str(val))\
                                         or (self.currdefaults is None and str(val) != "0")):
                     results.append("{}={}".format(k, val))
-            self.set("t_fontFeatures", ", ".join(results))
+            self.set("t_fontFeatures", ", ".join(results), mod=False)
         for i in range(numrows-1, -1, -1):
             featbox.remove_row(i)
         self.builder.get_object("fcb_featsLangs").disconnect(langChangedId)
@@ -3038,7 +3068,7 @@ class GtkViewModel(ViewModel):
 
     def onFontIsGraphiteClicked(self, btn):
         self.onSimpleClicked(btn)
-        self.set("t_fontFeatures", "")
+        self.set("t_fontFeatures", "", mod=False)
 
     # this is copied from 'onFontFeaturesClicked' in order to do something similar with TeXpert options
 
@@ -3154,7 +3184,7 @@ class GtkViewModel(ViewModel):
             self.builder.expose_object(wname, obj)
             if wname in self.dict:
                 v = self.dict[wname]
-            self.set(wname, v)
+            self.set(wname, v, mod=False)
             self.allControls.append(wname)
             obj.show()
             expanders[opt.group].show_all()  # Ensure that the expander and its content are shown
@@ -3191,9 +3221,9 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK:
             booklist = sorted((b.get_label() for b in self.alltoggles if b.get_active()), \
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
-            self.set("ecb_booklist", " ".join(b for b in booklist))
+            self.set("ecb_booklist", " ".join(b for b in booklist), mod=False)
         if not self.loadingConfig and self.get("r_book") in ("single", "multiple"):
-            self.set("r_book", "multiple" if len(booklist) else "single")
+            self.set("r_book", "multiple" if len(booklist) else "single", mod=False)
         self.updateDialogTitle()
         self.updateExamineBook()
         self.updatePicList()
@@ -3303,7 +3333,7 @@ class GtkViewModel(ViewModel):
         text = tbx.get_text().strip().split('.')[0]
         tbx.set_text(''.join([i for i in text if i in '0123456789']))
         # print("filter_numbers-s")
-        self.set("r_book", "single")
+        self.set("r_book", "single", mod=False)
             
     def fromChapChange(self, x, y):
         fr = self.get("t_chapfrom")
@@ -3360,7 +3390,8 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
         # print("onBookChange-s")
         self.set("r_book", "single")
-        self.showmybook()
+        if not self.loadingConfig:
+            self.showmybook()
 
     def _setNoteSpacingRange(self, fromTo, minimum, maximum, value):
         initSpace = int(float(self.get('s_notespacing'+fromTo)))
@@ -3370,6 +3401,7 @@ class GtkViewModel(ViewModel):
             spacing.set_value(value if value in range(minimum, maximum) else (minimum if fromTo == "min" else maximum))
         else:
             spacing.set_value(initSpace if initSpace in range(minimum, maximum) else (minimum if fromTo == "min" else initSpace + 4))
+        self.changed()
 
     def onNoteSpacingChanged(self, btn):
         if self.loadingConfig:
@@ -3406,6 +3438,7 @@ class GtkViewModel(ViewModel):
             cfg = self.get("t_configName")
             self.set("ecb_savedConfig", cfg)
             self.doConfigNameChange(cfg)
+            self.changed()
             self.onSaveConfig(None)
         dialog.hide()
 
@@ -3441,6 +3474,7 @@ class GtkViewModel(ViewModel):
         prjid = m.get_value(aid, 0)
         guid = m.get_value(aid, 1)
         cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
+        saveme = self.pendingPid is None and self.pendingConfig is None
         self.updateProjectSettings(prjid, guid, saveCurrConfig=True, configName=cfgname)
         self.updateSavedConfigList()
         for o in _olst:
@@ -3522,21 +3556,21 @@ class GtkViewModel(ViewModel):
 
     def showmybook(self):
         if self.initialised and self.get("fcb_afterAction") == "preview": # preview is on
+            logger.debug("Showing?")
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
+                cfgt = os.stat(os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")).st_mtime
                 for bk in self.getBooks():
                     adj = self.get_adjlist(bk)
-                    if os.path.exists(adj.adjfile):
-                        adjt = os.stat(adj.adjfile).st_mtime
-                        if pdft > adjt:
-                            prvw = self.builder.get_object("dlg_preview")
-                            # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
-                            # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
-                            plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                            self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
-                                                        parlocs=plocname, widget=prvw, page=1)
-                            break
+                if pdft > cfgt:
+                    prvw = self.builder.get_object("dlg_preview")
+                    # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
+                    # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
+                    plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
+                    self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
+                                                parlocs=plocname, widget=prvw, page=1,
+                                                isdiglot=self.get("c_diglot"))
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.project.path, "pluginData", "Transcelerator", "Transcelerator")
@@ -4194,8 +4228,8 @@ class GtkViewModel(ViewModel):
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
         mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
-        self.set("nbk_Main", mpgnum)
-        self.set("nbk_Viewer", pgnum)
+        self.set("nbk_Main", mpgnum, mod=False)
+        self.set("nbk_Viewer", pgnum, mod=False)
         self.onViewerChangePage(None,None,pgnum)
 
     def ontv_sizeallocate(self, atv, dummy):
@@ -4515,6 +4549,7 @@ class GtkViewModel(ViewModel):
             wid = self.builder.get_object("l_thumb"+w)
             wid.set_text(markup.format(w[:-1]))
             wid.set_use_markup(True)
+        self.changed()
 
     def onRotateTabsChanged(self, *a):
         orientation = self.get("fcb_rotateTabs")
@@ -4667,6 +4702,7 @@ class GtkViewModel(ViewModel):
             else:
                 t = re.sub(r"(?i)dcc", "\u00a9 David C Cook", t)
         w.set_text(t)
+        self.changed()
         
     def onStyleAdd(self, btn):
         self.styleEditor.mkrDialog(newkey=True)
@@ -4694,7 +4730,7 @@ class GtkViewModel(ViewModel):
     def onEditMarkerChanged(self, mkrw):
         m = mkrw.get_text()
         t = self.get("t_styName")
-        self.set("t_styName", re.sub(r"^.*?-", m+" -", t))
+        self.set("t_styName", re.sub(r"^.*?-", m+" -", t), mod=False)
 
     def onStyleDel(self, btn):
         self.styleEditor.delKey()
@@ -4725,7 +4761,7 @@ class GtkViewModel(ViewModel):
             self.set("nbk_PicList", 1)
             self.picListView.add_row()
             for w in ["t_plAnchor", "t_plFilename", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"]: 
-                self.set(w, "")
+                self.set(w, "", mod=False)
             self.picListView.set_src(os.path.basename(picfile[0]))
 
     def onPlDelClicked(self, btn):
@@ -4744,6 +4780,7 @@ class GtkViewModel(ViewModel):
     def resetParam(self, btn, foo):
         label = Gtk.Buildable.get_name(btn.get_child())
         self.styleEditor.resetParam(label)
+        self.changed()
 
     def resetLabel(self, btn, foo):
         lb = btn.get_child()
@@ -4772,6 +4809,7 @@ class GtkViewModel(ViewModel):
             ctxt.remove_class("changed")
         else:
             ctxt.add_class("changed")
+        self.changed()
 
     def labelledChanged(self, widg, *a):
         ctrl = Gtk.Buildable.get_name(widg)
@@ -4902,7 +4940,7 @@ class GtkViewModel(ViewModel):
                                 break
                             else:
                                 lsp.append_text(imgsetname)
-                    self.set("ecb_artPictureSet", imgsetname)
+                    self.set("ecb_artPictureSet", imgsetname, mod=False)
                     self.doStatus(_("Installed the downloaded Image Set: {}".format(imgsetname)))
                     self.onGetPicturesClicked(None)
             elif imgsetname == "":
@@ -4945,11 +4983,11 @@ class GtkViewModel(ViewModel):
             # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
             self.DBLfile = DBLfile[0]
             self.builder.get_object("lb_DBLbundleFilename").set_label(os.path.basename(DBLfile[0]))
-            self.set("t_DBLprojName", os.path.basename(DBLfile[0])[:8])
+            self.set("t_DBLprojName", os.path.basename(DBLfile[0])[:8], mod=False)
             self.builder.get_object("btn_locateDBLbundle").set_tooltip_text(str(DBLfile[0]))
         else:
             self.builder.get_object("lb_DBLbundleFilename").set_label("")
-            self.set("t_DBLprojName", "")
+            self.set("t_DBLprojName", "", mod=False)
             self.DBLfile = None
             self.builder.get_object("btn_locateDBLbundle").set_tooltip_text("")
     
@@ -5087,11 +5125,11 @@ class GtkViewModel(ViewModel):
         crParams = "bl,0,None" if not len(crParams) else crParams
         m = re.match(r"^([tcb]?)([lrc]?),(-?9?0?|None),(\w*)", crParams)
         if m:
-            self.set("fcb_plCreditVpos", m[1])
-            self.set("fcb_plCreditHpos", m[2])
-            self.set("fcb_plCreditRotate", m[3])
-            self.set("ecb_plCreditBoxStyle", m[4])
-        self.set("t_plCreditText", self.get("l_piccredit") if len(self.get("l_piccredit")) else "")
+            self.set("fcb_plCreditVpos", m[1], mod=False)
+            self.set("fcb_plCreditHpos", m[2], mod=False)
+            self.set("fcb_plCreditRotate", m[3], mod=False)
+            self.set("ecb_plCreditBoxStyle", m[4], mod=False)
+        self.set("t_plCreditText", self.get("l_piccredit") if len(self.get("l_piccredit")) else "", mod=False)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             vpos = self.get("fcb_plCreditVpos")
@@ -5121,11 +5159,11 @@ class GtkViewModel(ViewModel):
             try:
                 self.set("fcb_sbSize", _fullpage[m[1]])
             except KeyError:
-                self.set("fcb_sbSize", m[1])
+                self.set("fcb_sbSize", m[1], mod=False)
             frSize = self.get("fcb_sbSize")
-            self.set("fcb_sbPgPos", m[2])
-            self.set("fcb_sbHoriz", m[3])
-            self.set("s_sbLines", m[4])
+            self.set("fcb_sbPgPos", m[2], mod=False)
+            self.set("fcb_sbHoriz", m[3], mod=False)
+            self.set("s_sbLines", m[4], mod=False)
         self.updatePosnPreview()
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -5241,26 +5279,26 @@ class GtkViewModel(ViewModel):
             img = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImage', '')
             scl = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo', '')
             if img:
-                self.set("btn_coverSelectImage", img)
-                self.set("lb_coverImageFilename", img)
-                self.set("c_coverImageFront", a[1])
-                self.set("fcb_coverImageSize", self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo ', scl))
+                self.set("btn_coverSelectImage", img, mod=False)
+                self.set("lb_coverImageFilename", img, mod=False)
+                self.set("c_coverImageFront", a[1], mod=False)
+                self.set("fcb_coverImageSize", self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo ', scl), mod=False)
                 break
         if self.styleEditor.getval('cat:coverfront|esb', 'Border', '') == 'All':
             ornaments = self.styleEditor.getval('cat:coverfront|esb', 'BorderRef', '')
-            self.set('fcb_coverBorder', ornaments)
+            self.set('fcb_coverBorder', ornaments, mod=False)
             bc = textocol(self.styleEditor.getval('cat:coverfront|esb', 'BorderColor', 'xFFFFFF'))
-            self.set('col_coverBorder', bc)
-            self.set('c_coverBorder', True)
+            self.set('col_coverBorder', bc, mod=False)
+            self.set('c_coverBorder', True, mod=False)
         else:
-            self.set('c_coverBorder', False)
+            self.set('c_coverBorder', False, mod=False)
         fgc = textocol(self.styleEditor.getval('cat:coverwhole|esb', 'BgColor', 'xFFFFFF'))
-        self.set('col_coverShading', fgc)
-        self.set('c_coverShading', fgc != "rgb(255,255,255)")
+        self.set('col_coverShading', fgc, mod=False)
+        self.set('c_coverShading', fgc != "rgb(255,255,255)", mod=False)
         mtsize = float(self.styleEditor.getval('mt1', 'FontSize', 12))
         fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 12))
-        self.set('s_coverTextScale', fsize / mtsize)
-        self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')))
+        self.set('s_coverTextScale', fsize / mtsize, mod=False)
+        self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')), mod=False)
         
         # if Front Matter contains one or more cover periphs, then turn OFF the auto-overwrite,
         # but if there are no \periphs relating to the cover, then turn it ON and disable control.
@@ -5270,7 +5308,7 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object("c_coverOverwritePeriphs")
         w.set_sensitive(True if hasCoverPeriphs else False)
         w.set_label(_("Overwrite")+lt if hasCoverPeriphs else _("Create")+lt)
-        self.set('c_coverOverwritePeriphs', False if hasCoverPeriphs else True)
+        self.set('c_coverOverwritePeriphs', False if hasCoverPeriphs else True, mod=False)
         response = dialog.run()
 
         if response == Gtk.ResponseType.CANCEL:
@@ -5416,6 +5454,7 @@ class GtkViewModel(ViewModel):
                 self.doError(_("FYI: This Interlinear option is not compatible with the\n" +\
                                "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n" +\
                                "So that option has just been disabled."))
+        self.changed()
 
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
@@ -5515,6 +5554,7 @@ class GtkViewModel(ViewModel):
         if it:
             model.set(it, 1, text.strip())
             self.setvar(model.get(it, 0)[0], text.strip())
+            self.changed()
 
     def onzvarAdd(self, btn):
         def responseToDialog(entry, dialog, response):
@@ -5540,6 +5580,7 @@ class GtkViewModel(ViewModel):
         for r in reversed(i):
             itr = model.get_iter(r)
             model.remove(itr)
+            self.changed()
 
     def onPageSizeChanged(self, btn):
         val = "cropmarks" in self.get("ecb_pagesize")
@@ -5652,6 +5693,7 @@ class GtkViewModel(ViewModel):
                                   filters={"Images": {"patterns": ['*.jpg', '*.png', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
         self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
+        self.changed()
 
     def onCoverSelectImageClicked(self, btn):
         picpath = oself.project.path
@@ -5667,6 +5709,7 @@ class GtkViewModel(ViewModel):
                                   filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
         self.set("lb_coverImageFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
+        self.changed()
 
     def onDeleteTempFolders(self, btn):
         notDeleted = []
@@ -5683,6 +5726,7 @@ class GtkViewModel(ViewModel):
 
     def btn_RemoveSBimage(self, btn):
         self.set("lb_sbFilename", "")
+        self.changed()
 
     def onMarginalVersesClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -5751,7 +5795,7 @@ class GtkViewModel(ViewModel):
         
     def onExtListSourceChanges(self, fcb):
         self.Strongs = None
-        s= self.get("fcb_xRefExtListSource")
+        s = self.get("fcb_xRefExtListSource")
         ttt = self.builder.get_object("r_xrSource_{}".format(s.split("_")[0])).get_tooltip_text()
         self.builder.get_object("btn_infoXrefSource").set_tooltip_text(ttt)
         self.builder.get_object("fr_strongs").set_sensitive(s.startswith("strongs"))
@@ -6005,7 +6049,7 @@ Thank you,
     def onOverridePageCountClicked(self, btn):
         override = self.sensiVisible('c_overridePageCount')
         if not override:
-            self.set('s_totalPages', self.getPageCount())
+            self.set('s_totalPages', self.getPageCount(), mod=False)
 
     def getPageCount(self):
         if self.getBooks() == []:
@@ -6028,12 +6072,12 @@ Thank you,
 
     def onCropMarksClicked(self, btn):
         if not self.get("c_coverCropMarks"):
-            self.set("s_coverBleed", 0)
-            self.set("s_coverArtBleed", 0)
+            self.set("s_coverBleed", 0, mod=False)
+            self.set("s_coverArtBleed", 0, mod=False)
 
     def onGotCoverFocus(self, widget, event):
         if not self.get('c_overridePageCount'):
-            self.set('s_totalPages', self.getPageCount())
+            self.set('s_totalPages', self.getPageCount(), mod=False)
             
     def isCoverTabOpen(self):
         if not self.get("c_makeCoverPage"):
@@ -6202,3 +6246,4 @@ Thank you,
         adj_zl = max(30, min(self.extractDigits(zl), 800))
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)
+

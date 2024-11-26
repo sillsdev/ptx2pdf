@@ -56,6 +56,7 @@ class PicChecks:
         self.cfgProject = configparser.ConfigParser(interpolation=None)
         self.parent = parent
         self.src = None
+        self.changed = False
 
     def _init_default(self, cfg, prefix):
         if not cfg.has_section('DEFAULT'):
@@ -74,7 +75,7 @@ class PicChecks:
 
     def writeCfg(self, basepath, configid):
         if len(self.cfgShared) < 2 or configid is None:     # always a default
-            return
+            return False
         self.savepic()
         for a in ((None, self.sharedfname, self.cfgShared), (configid, self.pubfname, self.cfgProject)):
             p = os.path.join(basepath, a[0]) if a[0] else basepath
@@ -89,6 +90,9 @@ class PicChecks:
                     a[2].remove_section(s)
             with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
                 a[2].write(outf)
+        res = self.changed
+        self.changed = False
+        return res
 
     def loadpic(self, src):
         if self.src == newBase(src):
@@ -98,32 +102,33 @@ class PicChecks:
             val = cfg.get(self.src, n, fallback=v)
             if n == "picreverse" and val == "unknown":
                 val = "OK"
-            self.parent.set(k, val)
+            self.parent.set(k, val, mod=False)
         # MH - this doesn't seem to be working
-        self.parent.set("txbf_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
+        self.parent.set("txbf_picNotes", self.cfgProject.get(self.src, "notes", fallback=""), mod=False)
         for cfg in (self.cfgShared, self.cfgProject):
             if cfg.getboolean(self.src, "approved", fallback=False):
-                self.parent.set("t_pubInits", cfg.get(self.src, "approved_by", fallback=""))
-                self.parent.set("t_pubApprDate", cfg.get(self.src, "approved_date", fallback=""))
-                self.parent.set("r_pubapprove", "scopeAny" if cfg == self.cfgProject else "scopeProject")
-                self.parent.set('c_pubApproved', True)
+                self.parent.set("t_pubInits", cfg.get(self.src, "approved_by", fallback=""), mod=False)
+                self.parent.set("t_pubApprDate", cfg.get(self.src, "approved_date", fallback=""), mod=False)
+                self.parent.set("r_pubapprove", "scopeAny" if cfg == self.cfgProject else "scopeProject", mod=False)
+                self.parent.set('c_pubApproved', True, mod=False)
                 break
         else: # this happens if we never got to the break above (neither was found)
-            self.parent.set('c_pubApproved', False)
+            self.parent.set('c_pubApproved', False, mod=False)
         self.onReverseRadioChanged()
+        self.changed = False
 
     def savepic(self):
         if self.src is None:
-            return
+            return False
         for (cfg, n, defval, k) in self._allFields():
             val = self.parent.get(k)
             if val is None or not val:
                 continue
-            try:
-                cfg.set(self.src, n, val)   # update the existing entry if it already exists
-            except configparser.NoSectionError:
+            if not cfg.has_section(self.src):
                 cfg.add_section(self.src)   # otherwise add a section/src first
-                cfg.set(self.src, n, val)   # and then throw in the values
+                self.changed = True
+            self.changed = self.changed or cfg.get(self.src, n) != val
+            cfg.set(self.src, n, val)   # update the existing entry if it already exists
         val = self.parent.get("c_pubApproved")
         cfg = self.cfgShared if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgProject
         ocfg = self.cfgProject if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgShared
@@ -156,13 +161,13 @@ class PicChecks:
             cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
             yield(cfg, n, v, k)
             
-    def onReverseRadioChanged(self):
+    def onReverseRadioChanged(self, mod=True):
         r = self.parent.get("r_picreverse")
         self.parent.builder.get_object("fcb_plMirror").set_sensitive(False)
         if r == "always":
-            self.parent.set("fcb_plMirror", "both")
+            self.parent.set("fcb_plMirror", "both", mod=mod)
         elif r == "never":
-            self.parent.set("fcb_plMirror", "None")
+            self.parent.set("fcb_plMirror", "None", mod=mod)
         else: # unlock the control
             self.parent.builder.get_object("fcb_plMirror").set_sensitive(True)
 
@@ -194,6 +199,7 @@ class PicChecks:
                             self.cfgShared.add_section(k)
                         self.cfgShared.set(k, 'piccredit', crdtxt)
                         self.cfgShared.set(k, 'piccreditbox', crdtbox)
+            self.changed = True
 
 
 class Picture:
