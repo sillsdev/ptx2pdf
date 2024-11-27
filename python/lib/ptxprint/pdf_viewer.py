@@ -189,7 +189,7 @@ class PDFViewer:
             if nbk != bk:
                 adjlist = self.model.get_adjlist(nbk)
                 bk = nbk
-            pnum = f"[{p.parnum}]" if p.parnum > 1 else ""
+            pnum = f"[{p.parnum}]" if getattr(p, 'parnum', 1) > 1 else ""
             info = adjlist.getinfo(p.ref + pnum)
             if not info:
                 continue

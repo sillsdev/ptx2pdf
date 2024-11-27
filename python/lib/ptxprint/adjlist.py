@@ -15,11 +15,11 @@ class AdjList:
         self.highdiff = highdiff
         self.centre = centre
 
-        # book, c:v, para, stretch, mkr, expand%
+        # book, c:v, para, stretch, mkr, expand, comment%
         if gtk is None:
             self.liststore = []
         else:
-            self.liststore = gtk.ListStore(str, str, int, str, str, int)
+            self.liststore = gtk.ListStore(str, str, int, str, str, int, str)
         self.changed = False
         self.adjfile = fname
 
@@ -40,8 +40,8 @@ class AdjList:
         for a in sorted(allvals, key=self.calckey):
             self.liststore.append(a)
 
-    def setval(self, bk, cv, para, stretch, mkr, expand=None, append=False, force=False):
-        row = [bk, cv, para, stretch, mkr, expand or self.centre]
+    def setval(self, bk, cv, para, stretch, mkr, expand=None, append=False, force=False, comment=""):
+        row = [bk, cv, para, stretch, mkr, expand or self.centre, comment]
         if append:
             self.liststore.append(row)
             return
@@ -71,12 +71,12 @@ class AdjList:
             for l in inf.readlines():
                 c = ""
                 if '%' in l:
-                    c = l[l.find("%")+1:]
+                    c = l[l.find("%")+1:].strip()
                     l = l[:l.find("%")]
                 m = adjre.match(l)
                 if m:
                     try:
-                        val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1), m.group(4), None, self.centre]
+                        val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1), m.group(4), None, self.centre, c]
                     except ValueError:
                         val = None
                     if val is not None:
@@ -102,7 +102,7 @@ class AdjList:
                 else:
                     line = "{0[0]} {1} {0[3]}".format(r, cv)
                 if r[4] and r[5] != self.centre:
-                    line += " % \\{4} {5}".format(*r)
+                    line += " % \\{4} {5} {6}".format(*r)
                 outf.write(line + "\n")
 
     def createChanges(self, fname, diglot=""):

@@ -1,13 +1,13 @@
 from gi.repository import Gtk
 
-headers = ['Book', 'C.V', 'Para', 'Stretch', 'Marker', 'Expand']
+headers = ['Book', 'C.V', 'Para', 'Stretch', 'Marker', 'Expand', 'Comment']
 
 class AdjListView:
     def __init__(self, parent):
         self.parent = parent
         self.adjlist = None
         self.view = Gtk.TreeView()
-        for i in range(6):
+        for i in range(7):
             cr = Gtk.CellRendererText(editable=True)
             cr.connect("edited", self.edit, i)
             col = Gtk.TreeViewColumn(cell_renderer=cr, text=i, title=headers[i])
