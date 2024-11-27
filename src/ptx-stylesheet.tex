@@ -1243,12 +1243,13 @@
 \def\plainv@rse{\ifx\v@rsefrom\v@rseto\adorningrangefalse
   \AdornVerseNumber{\v@rsefrom}%                                        (2)
   \else
+    \ifversion{4}{\let\br@dgeverse\ranges@p}{\let\br@dgeverse\RangeChar}%
     \ifSeparateVerseAdornments
       \adorningrangefalse
-      \AdornVerseNumber{\v@rsefrom}\RangeChar\AdornVerseNumber{\v@rseto}%
+      \AdornVerseNumber{\v@rsefrom}\br@dgeverse\AdornVerseNumber{\v@rseto}%
     \else
       \adorningrangetrue
-      \AdornVerseNumber{\v@rsefrom \RangeChar \v@rseto}%
+      \AdornVerseNumber{\v@rsefrom \br@dgeverse \v@rseto}%
     \fi
   \fi
 }
@@ -1264,7 +1265,8 @@
     %\getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
     \dimen0=\ssf\baselineskip \advance\dimen0 by -\baselineskip
     \setbox1=\hbox{\cstyle{v}{\adornv{\v@rseto}}}%
-    \global\setbox#1=\vbox to \ht1{\s@tbaseline{v}{v}\vtop{\rightskip=0pt\leftskip=0pt\hbox{\llap{\cstyle{v}{\RangeChar}}%
+    \ifversion{4}{\let\br@dgeverse\ranges@p}{\let\br@dgeverse\RangeChar}%
+    \global\setbox#1=\vbox to \ht1{\s@tbaseline{v}{v}\vtop{\rightskip=0pt\leftskip=0pt\hbox{\llap{\cstyle{v}{\br@dgeverse}}%
                                  \vbox{\hbox to \wd1{\hskip\leftskip\cstyle{v}{\adornv{\v@rsefrom}}\hskip\rightskip}%
                                        %\kern\dimen0
                                         \box1}}}}%
