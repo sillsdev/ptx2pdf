@@ -49,6 +49,12 @@ class PDFViewer:
     def __init__(self, model, widget): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
         self.model = model
+        self.sw = widget.get_parent()
+        self.sw.connect("button-press-event", self.on_button_press)
+        self.sw.connect("button-release-event", self.on_button_release)
+        self.sw.connect("motion-notify-event", self.on_mouse_motion)
+        self.swh = self.sw.get_hadjustment()
+        self.swv = self.sw.get_vadjustment()
         self.numpages = 0
         self.current_page = None  # Keep track of the current page number
         self.zoomLevel = 1.0  # Initial zoom level is 100%
@@ -58,7 +64,7 @@ class PDFViewer:
         self.psize = (0, 0)
         # self.drag_start_x = None
         # self.drag_start_y = None
-        # self.is_dragging = False
+        self.is_dragging = False
         self.thread = None
         self.timer = None
         self.adjlist = None
@@ -377,12 +383,12 @@ class PDFViewer:
             return True  # Prevent further handling of the scroll event
 
         # Default behavior: Scroll for navigation
-        if event.direction == Gdk.ScrollDirection.UP:
-            self.show_previous_page()
-        elif event.direction == Gdk.ScrollDirection.DOWN:
-            self.show_next_page()
+        #if event.direction == Gdk.ScrollDirection.UP:
+        #    self.show_previous_page()
+        #elif event.direction == Gdk.ScrollDirection.DOWN:
+        #    self.show_next_page()
 
-        return True
+        return False
 
     def widgetPosition(self, widget):
         children = self.hbox.get_children()
@@ -496,13 +502,26 @@ class PDFViewer:
         else:
             return (page - 1, page)
 
+    def on_button_press(self, widget, event):
+        if event.button == 2:
+            self.is_dragging = True
+            self.mouse_start_x = event.x_root
+            self.mouse_start_y = event.y_root
+            return True
+
+    def on_mouse_motion(self, widget, event):
+        if self.is_dragging:
+            mh = (self.mouse_start_x - event.x_root)
+            mv = (self.mouse_start_y - event.y_root)
+            self.mouse_start_x = event.x_root
+            self.mouse_start_y = event.y_root
+            self.swh.set_value(self.swh.get_value() + mh)
+            self.swv.set_value(self.swv.get_value() + mv)
+            return True
+
     def on_button_release(self, widget, event):
-        # zl = self.zoomLevel
-        # page_number = 999  # not sure where we were getting page_number from before. #fixMe!
-        # if event.button == 1:  # Left-click
-            # x, y = event.x, event.y
-            # print(f"Left-click at x: {x}, y: {y}, on page {page_number}")
-            # self.handle_left_click(x / zl, y / zl, widget, page_number)
+        if event.button == 2:   # middle click
+            self.is_dragging = False
         if event.button == 3:  # Right-click (for context menu)
             self.show_context_menu(widget, event)
         return True
