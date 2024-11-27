@@ -202,10 +202,8 @@ class PDFViewer:
                 col = (202 / 255., 1., 1.) if sv < 0 else (0., 1., 1.)
                 make_rect(context, col, r, abs(sv) * 3)
             if info[1] != 100:
-                col = (173 / 255., 1., 1.) if info[1] < 100 else (41 / 255., 1., 1.)
-                make_rect(context, col, r, abs(100 - info[1]) * -3)
-            if col:
-                logger.debug(f"{p} with {s}, {info[1]} giving {col} at {zoomlevel}")
+                col = (41 / 255., 1., 1.) if info[1] < 100 else (173 / 255., 1., 1.)
+                make_rect(context, col, r, abs(100 - info[1]) * -2)
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
