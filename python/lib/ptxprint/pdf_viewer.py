@@ -190,7 +190,7 @@ class PDFViewer:
                 adjlist = self.model.get_adjlist(nbk)
                 bk = nbk
             pnum = f"[{p.parnum}]" if getattr(p, 'parnum', 1) > 1 else ""
-            info = adjlist.getinfo(p.ref + pnum)
+            info = adjlist.getinfo(getattr(p, 'ref', (bk or "") + "0.0") + pnum)
             if not info:
                 continue
             col = None
@@ -199,11 +199,11 @@ class PDFViewer:
             sv = -sv if "-" in s else sv
             if sv != 0:
                 # hsv(hue, saturation full colour at 1, black/white at 0, white at 1 and black at 0)
-                col = (202 / 255., min(-sv*0.2+0.6, 1.), 1.) if sv < 0 else (0., min(sv*.2+.4, 1.), 1.)
-                make_rect(context, col, r, 6)
+                col = (202 / 255., 1., 1.) if sv < 0 else (0., 1., 1.)
+                make_rect(context, col, r, abs(sv) * 3)
             if info[1] != 100:
-                col = (173 / 255., min(4.6-0.04*info[1], 1.), 1.) if info[1] < 100 else (41 / 255., min(0.04*info[1]-3.4, 1.), 1.)
-                make_rect(context, col, r, -6)
+                col = (173 / 255., 1., 1.) if info[1] < 100 else (41 / 255., 1., 1.)
+                make_rect(context, col, r, abs(100 - info[1]) * -3)
             if col:
                 logger.debug(f"{p} with {s}, {info[1]} giving {col} at {zoomlevel}")
 

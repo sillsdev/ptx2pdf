@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 adjre = re.compile(r"^(\S{3})([A-Za-z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
 refre = re.compile(r"^(\S{3})([A-Za-z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
-restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(?:\s*\[(\d+)\])?")
+restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(.*?)$")
 
 class AdjList:
     def __init__(self, centre, lowdiff, highdiff, diglotorder=[], gtk=None, fname=None):
@@ -84,6 +84,7 @@ class AdjList:
                         if n:
                             val[4] = n.group(1)
                             val[5] = int(n.group(2))
+                            val[6] = n.group(3)
                         allvals.append(val)
         for a in sorted(allvals, key=self.calckey):
             self.liststore.append(a)
@@ -101,7 +102,7 @@ class AdjList:
                     line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
                 else:
                     line = "{0[0]} {1} {0[3]}".format(r, cv)
-                if r[4] and r[5] != self.centre:
+                if r[4] and r[5] != self.centre or r[6]:
                     line += " % \\{4} {5} {6}".format(*r)
                 outf.write(line + "\n")
 
