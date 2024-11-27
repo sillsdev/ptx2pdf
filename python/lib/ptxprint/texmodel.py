@@ -890,10 +890,9 @@ class TexModel:
                 self.changes = []
         adjlistfile = printer.getAdjListFilename(bk)
         if adjlistfile is not None:
-            adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "adjlists",
+            adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
                                 adjlistfile.replace(".adj", "_changes.txt"))
-            if os.path.exists(adjchangesfile):
-                self.changes.extend(self.readChanges(adjchangesfile, bk, makeranges=True))
+            self.changes.extend(self.readChanges(adjchangesfile, bk, makeranges=True))
         draft = "-" + (printer.cfgid or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
@@ -1086,6 +1085,7 @@ class TexModel:
         changes = []
         if not os.path.exists(fname):
             return []
+        logger.debug("Reading changes file: "+fname)
         usfm = None
         if makeranges:
             try:

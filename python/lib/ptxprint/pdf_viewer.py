@@ -574,7 +574,10 @@ class PDFViewer:
         logger.debug(f"{parref=} {info=}")
         if len(info) and self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
-            hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1] if len(info) else ''}%"
+            l = info[0]
+            if l[0] not in '+-':
+                l = '+' + l
+            hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}  {l}  {info[1]}%"
             self.addMenuItem(menu, hdr, self.on_identify_paragraph, info[2], sensitivity=False)
             self.addMenuItem(menu, None, None)
 
@@ -866,7 +869,7 @@ class Paragraphs(list):
                 # "parnote":        # type, callerx, callery
                 # "notebox":        # type, width, height
                 # "parlines":       # numlines in previous paragraph (occurs after @parlen)
-        logger.debug(f"parlocs={self}")
+        logger.log(5, f"parlocs={self}")
         
     def findPos(self, pnum, x, y):
         done = False
