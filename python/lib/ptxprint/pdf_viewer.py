@@ -177,7 +177,9 @@ class PDFViewer:
             context.fill()
         bk = None
         for p, r in self.parlocs.getParas(page):
-            nbk = p.ref[:3].upper()
+            nbk = getattr(p, "ref", bk or "")[:3].upper()
+            if not len(nbk):
+                continue
             if nbk != bk:
                 adjlist = self.model.get_adjlist(nbk)
                 bk = nbk
@@ -185,6 +187,7 @@ class PDFViewer:
             info = adjlist.getinfo(p.ref + pnum)
             if not info:
                 continue
+            col = None
             s = info[0]
             sv = int(re.sub(r"^[+-]*", "", s))
             sv = -sv if "-" in s else sv
@@ -195,7 +198,8 @@ class PDFViewer:
             if info[1] != 100:
                 col = (173 / 255., min(4.6-0.04*info[1], 1.), 1.) if info[1] < 100 else (41 / 255., min(0.04*info[1]-3.4, 1.), 1.)
                 make_rect(context, col, r, -6)
-            logger.debug(f"{p} with {s}, {info[1]} giving {col} at {zoomlevel}")
+            if col:
+                logger.debug(f"{p} with {s}, {info[1]} giving {col} at {zoomlevel}")
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
