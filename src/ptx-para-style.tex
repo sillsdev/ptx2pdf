@@ -312,7 +312,7 @@
      %\fi
    \fi\fi\fi\fi
    \ifinn@te\else\ifdoingt@ble\else
-     \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}{\m@rker}{\the\curr@djpar}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+     \edef\t@mpp{\string\@parlen{\ifdiglot \dc@rref\else\c@rref\fi}{\lastc@rradj}{\the\prevgraf}{\m@rker}{\the\curr@djpar}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
    \cutoutcarryover 
    \ifversion{3}{\do@ndofthispar}{}%
@@ -737,7 +737,7 @@
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar}%
   \everypar={%
-   \trace{sP}{everypar! n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
+   \trace{sP}{everypar! n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
