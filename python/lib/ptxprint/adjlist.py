@@ -112,7 +112,7 @@ class AdjList:
         for r in self.liststore:
             if not r[5] or r[5] == self.centre:
                 continue
-            if len(r[0]) > 3 and r[0][4] != diglot:
+            if len(r[0]) > 4 and r[0][4] != diglot:
                 continue
             c, v = re.split(r"[:.]", r[1], 1)
             firstv = v.split("-", 1)
@@ -124,7 +124,7 @@ class AdjList:
                 c = int(c)
             lines.append("at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(r[0][:3], c, v, r[4], r[5]))
         if len(lines):
-            with open(fname, "w") as outf:
+            with open(fname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(lines))
 
     def save(self):

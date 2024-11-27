@@ -13,14 +13,14 @@ from multiprocessing import sharedctypes, Process
 import logging
 logger = logging.getLogger(__name__)
 
-def render_page_image(page, zoomlevel):
+def render_page_image(page, zoomlevel, pnum, annotatefn):
     width, height = page.get_size()
     width, height = int(width * zoomlevel), int(height * zoomlevel)
     buf = bytearray(width * height * 4)
-    render_page(page, zoomlevel, buf)
+    render_page(page, zoomlevel, buf, pnum, annotatefn)
     return arrayImage(buf, width, height)
 
-def render_page(page, zoomlevel, imarray):
+def render_page(page, zoomlevel, imarray, pnum, annotatefn):
     # Get page size, applying zoom factor
     width, height = page.get_size()
     width, height = width * zoomlevel, height * zoomlevel
@@ -31,6 +31,8 @@ def render_page(page, zoomlevel, imarray):
     context.paint()
     context.scale(zoomlevel, zoomlevel)
     page.render(context)
+    if annotatefn is not None:
+        annotatefn(pnum, context, zoomlevel)
 
 def arrayImage(imarray, width, height):
     stride = cairo.Format.RGB24.stride_for_width(width)
@@ -60,6 +62,7 @@ class PDFViewer:
         self.thread = None
         self.timer = None
         self.adjlist = None
+        self.showadjustments = True
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -132,9 +135,9 @@ class PDFViewer:
         if start is not None and start < self.numpages:
             self.current_page = start
 
-    def show_pdf(self, page, rtl=False):
+    def show_pdf(self, page = None, rtl=False):
         if page is None:
-            page = 1
+            page = self.current_page or 1
         self.spread_mode = self.model.get("c_bkView", False)
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
 
@@ -148,51 +151,58 @@ class PDFViewer:
                     pg = self.document.get_page(i-1)
                     self.pages.append(pg)
                     self.psize = pg.get_size()
-                    images.append(render_page_image(pg, self.zoomLevel))
+                    images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
         else:
             if page in range(self.numpages+1):
                 self.create_boxes(1)
                 pg = self.document.get_page(page-1)
                 self.pages.append(pg)
                 self.psize = pg.get_size()
-                images.append(render_page_image(pg, self.zoomLevel))
+                images.append(render_page_image(pg, self.zoomLevel, page, self.add_hints if self.showadjustments else None))
 
         self.current_page = page
         self.update_boxes(images)
 
     # incomplete code calling for major refactor for cairo drawing
-    def add_hints(self, page, context):
+    def add_hints(self, page, context, zoomlevel):
+        def make_rect(context, col, r, offset):
+            red, green, blue = hsv_to_rgb(*col)
+            context.set_source_rgba(red, green, blue, 0.4)
+            context.rectangle((r.xstart if offset >= 0 else r.xend + offset) * zoomlevel,
+                              r.ystart * zoomlevel, abs(offset) * zoomlevel, (r.ystart - r.yend) * zoomlevel)
+            context.fill()
         bk = None
         for p, r in self.parlocs.getParas(page):
             nbk = p.ref[:3].upper()
             if nbk != bk:
                 adjlist = self.model.get_adjlist(nbk)
                 bk = nbk
-            pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
+            pnum = f"[{p.parnum}]" if p.parnum > 1 else ""
             info = adjlist.getinfo(p.ref + pnum)
             if not info:
                 continue
             s = info[0]
-            sv = int(re.sub(r"^[+-]*", s))
+            sv = int(re.sub(r"^[+-]*", "", s))
             sv = -sv if "-" in s else sv
             if sv != 0:
                 # hsv(hue, saturation full colour at 1, black/white at 0, white at 1 and black at 0)
-                col = (202 / 255., 1., min(-sv * 0.5)) if sv < 0 else (0., 1., max(1. - sv * .25, 0))
-                # insert rect r.xstart-6, r.ystart, r.xstart, r.yend
+                col = (202 / 255., min(-sv*0.2+0.6, 1.), 1.) if sv < 0 else (0., min(sv*.2+.4, 1.), 1.)
+                make_rect(context, col, r, 6)
             if info[1] != 100:
-                col = (173, 255, min(12.5 * info[1] - 1000, 255)) if info[1] < 100 else (41, 255, 1500 - 12.5 * info[1])
-                # insert rect r.xend, r.ystart, r.xend + 6, r.yend
+                col = (173 / 255., min(4.6-0.04*info[1], 1.), 1.) if info[1] < 100 else (41 / 255., min(0.04*info[1]-3.4, 1.), 1.)
+                make_rect(context, col, r, -6)
+            logger.debug(f"{p} with {s}, {info[1]} giving {col} at {zoomlevel}")
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
-        self.show_pdf(self.current_page, rtl=rtl)
+        if parlocs is not None:     # and not isdiglot:
+            self.load_parlocs(parlocs)                    
+        self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b  %H:%M")
         widget.set_title("PDF Preview: " + os.path.basename(fname) + formatted_time)
         widget.show_all()
-        if parlocs is not None:     # and not isdiglot:
-            self.load_parlocs(parlocs)                    
 
     def resize_pdf(self, scrolled=False):
         if self.zoomLevel == self.old_zoom:
@@ -202,7 +212,7 @@ class PDFViewer:
 
         children = self.hbox.get_children()
         if not len(children):
-            return self.show_pdf(self.current_page)
+            return self.show_pdf()
 
         if scrolled:
             images = []
@@ -215,7 +225,7 @@ class PDFViewer:
             self.update_boxes(images)
 
         def redraw():
-            GLib.idle_add(self.show_pdf, self.current_page)
+            GLib.idle_add(self.show_pdf)
         if self.timer is not None:
             self.timer.cancel()
         if scrolled:
@@ -461,7 +471,7 @@ class PDFViewer:
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
             self.set_zoom_fit_to_screen(None)
             # print(f"Zoom adjusted to fit screen: {self.zoomLevel=:.2f}")
-            self.show_pdf(self.current_page)  # Redraw the current page
+            self.show_pdf()  # Redraw the current page
             return True
             
     def get_spread(self, page, rtl=False):
@@ -469,16 +479,14 @@ class PDFViewer:
             return (1,)
         if page > int(self.numpages):
             page = int(self.numpages)
+        if page % 2 == 0:
+            page += 1
+        if page > int(self.numpages):
+            return (page - 1,)
         if rtl:
-            if page % 2 == 0:
-                return (page + 1, page)
-            else:
-                return (page, page - 1)
+            return (page, page - 1)
         else:
-            if page % 2 == 0:
-                return (page, page + 1)
-            else:
-                return (page - 1, page)
+            return (page - 1, page)
 
     def on_button_release(self, widget, event):
         # zl = self.zoomLevel
@@ -588,10 +596,12 @@ class PDFViewer:
     def on_shrink_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], -1)
+        self.show_pdf()
 
     def on_expand_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], 1)
+        self.show_pdf()
         
     def on_shrink_text(self, widget, info, parref):
         if self.adjlist is not None:
@@ -599,10 +609,12 @@ class PDFViewer:
                 self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
             else:
                 self.adjlist.expand(info[2], -self.shrinkStep, mrk=parref.mrk)
+        self.show_pdf()
 
     def on_normal_text(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
+        self.show_pdf()
 
     def on_expand_text(self, widget, info, parref):
         if self.adjlist is not None:
@@ -610,6 +622,7 @@ class PDFViewer:
                 self.adjlist.expand(info[2], self.expandLimit - info[1], mrk=parref.mrk)
             else:
                 self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
+        self.show_pdf()
         
     # Zoom functionality
     def on_zoom_in(self, widget):
