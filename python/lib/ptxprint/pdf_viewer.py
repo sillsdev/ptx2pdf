@@ -46,7 +46,7 @@ def arrayImage(imarray, width, height):
 
 
 class PDFViewer:
-    def __init__(self, model, widget): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
+    def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
         self.model = model
         self.sw = widget.get_parent()
@@ -55,6 +55,11 @@ class PDFViewer:
         self.sw.connect("motion-notify-event", self.on_mouse_motion)
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
+        self.toctv = tv
+        cr = Gtk.CellRendererText()
+        tvc = Gtk.TreeViewColumn("Title", cr, text=0)
+        self.toctv.append_column(tvc)
+        self.toctv.connect("row-activated", self.pickToc)
         self.numpages = 0
         self.current_page = None  # Keep track of the current page number
         self.zoomLevel = 1.0  # Initial zoom level is 100%
@@ -141,9 +146,43 @@ class PDFViewer:
         except Exception as e:
             print(f"Error opening PDF: {e}")
             return
+        tocts = self.load_toc(self.document)
+        self.toctv.set_model(tocts)
+        
         self.adjlist = adjlist
         if start is not None and start < self.numpages:
             self.current_page = start
+
+    def _add_toctree(self, tocts, toci, parent):
+        action = toci.get_action()
+        if action.type != Poppler.ActionType.GOTO_DEST:
+            return
+        title = action.any.title
+        dest = action.goto_dest.dest
+        if dest.type == Poppler.DestType.NAMED:
+            dest = self.document.find_dest(dest.named_dest)
+        pnum = dest.page_num
+        #print(f"TOC: {title}, {pnum}")
+        parent = tocts.append(parent, [title, pnum])
+        toci = toci.get_child()
+        havei = toci is not None
+        while havei:
+            self._add_toctree(tocts, toci, parent)
+            havei = toci.next()
+
+    def load_toc(self, document):
+        ''' Table of Contents: [name:str, pagenum:int] '''
+        res = Gtk.TreeStore(str, int)
+        indexi = Poppler.IndexIter.new(document)
+        havei = True
+        while havei:
+            self._add_toctree(res, indexi, None)
+            havei = indexi.next()
+        return res
+
+    def pickToc(self, tv, path, col):
+        pnum = tv.get_model()[path][1]
+        self.show_pdf(pnum)
 
     def show_pdf(self, page = None, rtl=False):
         if page is None:

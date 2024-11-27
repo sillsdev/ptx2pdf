@@ -15,7 +15,7 @@ class AdjList:
         self.highdiff = highdiff
         self.centre = centre
 
-        # book, c:v, para, stretch, mkr, expand, comment%
+        # book, c:v, para:int, stretch, mkr, expand:int, comment%
         if gtk is None:
             self.liststore = []
         else:
@@ -155,13 +155,13 @@ class AdjList:
                 break
         else:
             i += 1
-            rk = self.calckey([cp[0], "200:200", 1, 0, "", 100])
+            rk = self.calckey([cp[0], "200:200", 1, 0, "", 100, ""])
         if rk == cpk:
             doit(r, i)
         elif rk > cpk:
             if insert:
-            # book, c:v, para, stretch, mkr, expand%
-                r = [cp[0], cp[1], cp[2], "0", "", 100]
+            # book, c:v, para, stretch, mkr, expand, comment%
+                r = [cp[0], cp[1], cp[2], "0", "", 100, ""]
                 self.liststore.insert(i, r)
                 self.changed = True
                 doit(r, i)

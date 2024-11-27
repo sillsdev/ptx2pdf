@@ -748,7 +748,7 @@ class GtkViewModel(ViewModel):
         logger.debug("Create PicList")
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
-        self.pdf_viewer = PDFViewer(self, self.builder.get_object("bx_previewPDF"))
+        self.pdf_viewer = PDFViewer(self, self.builder.get_object("bx_previewPDF"), self.builder.get_object("tv_pdfContents"))
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
