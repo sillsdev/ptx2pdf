@@ -3,7 +3,7 @@ import sys, subprocess, os
 import xml.etree.ElementTree as et
 from ptxprint.utils import pt_bindir
 
-if sys.platform == "linux":
+if sys.platform == "linux" or sys.platform == "darwin":
 
     def fclist(family, pattern):
         a = ["fc-list", '"{0}":style="{1}"'.format(family, pattern), 'file']

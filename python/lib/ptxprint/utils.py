@@ -111,7 +111,8 @@ def setup_i18n(i18nlang):
         locale.setlocale(locale.LC_ALL, '')
     else:
         locale.setlocale(locale.LC_ALL, (lang, enc))
-        locale.bindtextdomain(APP, localedir)
+        #locale.bindtextdomain(APP, localedir)
+        gettext.bindtextdomain(APP, localedir)
     # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
