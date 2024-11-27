@@ -168,8 +168,8 @@ class PDFViewer:
         def make_rect(context, col, r, offset):
             red, green, blue = hsv_to_rgb(*col)
             context.set_source_rgba(red, green, blue, 0.4)
-            context.rectangle((r.xstart if offset >= 0 else r.xend + offset) * zoomlevel,
-                              r.ystart * zoomlevel, abs(offset) * zoomlevel, (r.ystart - r.yend) * zoomlevel)
+            context.rectangle((r.xstart if offset >= 0 else r.xend + offset),
+                              (self.psize[1] - r.ystart), abs(offset), (r.ystart - r.yend))
             context.fill()
         bk = None
         for p, r in self.parlocs.getParas(page):
