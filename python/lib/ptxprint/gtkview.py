@@ -232,7 +232,7 @@ _ui_experimental = """
 
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
-btn_previewPrintIt c_bkView t_zoomLevel s_pgNum b_reprint
+btn_previewPrintIt c_bkView s_pdfZoomLevel s_pgNum b_reprint
 """.split()
 
 # removed from list above: 
@@ -6250,8 +6250,8 @@ Thank you,
         digits = re.sub(r'\D', '', text)  # \D matches any non-digit character
         return int(digits) if digits else 0
     
-    def onZoomLevelChanged(self, widget, x):
-        zl = self.get("t_zoomLevel", 100)
+    def onZoomLevelChanged(self, widget):
+        zl = self.get("s_pdfZoomLevel", 100)
         adj_zl = max(30, min(self.extractDigits(zl), 800))
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)

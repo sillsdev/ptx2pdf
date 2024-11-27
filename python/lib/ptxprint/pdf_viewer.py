@@ -245,7 +245,7 @@ class PDFViewer:
             self.timer.start()
         else:
             redraw()
-        self.model.set("t_zoomLevel", str(int(self.zoomLevel*100))+"%")
+        self.model.set("s_pdfZoomLevel", self.zoomLevel*100)
         #if self.thread is None:
         #    self.thread = ThreadRenderer(parent=self)
         #GLib.idle_add(self.thread.render_pages, list(range(len(self.pages))), self.zoomLevel, width, height)
@@ -256,7 +256,7 @@ class PDFViewer:
             return
         self.old_zoom = self.zoomLevel
         self.zoomLevel = zoomlevel
-        self.model.set("t_zoomLevel", str(int(self.zoomLevel*100))+"%")
+        self.model.set("s_pdfZoomLevel", self.zoomLevel*100)
         self.resize_pdf(scrolled=scrolled)
     
     def print_document(self, fitToPage=False):
@@ -275,39 +275,6 @@ class PDFViewer:
                 print("Print job canceled or failed.")
         except Exception as e:
             print(f"An error occurred while printing: {e}")
-
-    def old_on_draw_page(self, operation, context, page_number):
-        if not hasattr(self, 'document') or self.document is None:
-            return
-
-        pdf_page = self.document.get_page(page_number)
-
-        cairo_context = context.get_cairo_context()
-        cairo_context.save()
-        
-        # Set background color to white
-        cairo_context.set_source_rgb(1, 1, 1)
-        cairo_context.paint()
-
-        # Get the dimensions of the PDF page
-        width, height = pdf_page.get_size()
-
-        if self.fitToPage:
-            # Calculate scale factors to fit the page
-            scale_x = context.get_width() / width
-            scale_y = context.get_height() / height
-            scale = min(scale_x, scale_y)  # Uniform scaling to maintain aspect ratio
-            cairo_context.scale(scale, scale)
-        else:
-            # Render at actual size (1:1 scale)
-            scale = 1
-            cairo_context.scale(scale, scale)
-
-        # Render the PDF page
-        pdf_page.render(cairo_context)
-
-        # Restore the original context state
-        cairo_context.restore()
 
     def on_draw_page(self, operation, context, page_number):
         if not hasattr(self, 'document') or self.document is None:
