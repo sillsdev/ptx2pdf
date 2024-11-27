@@ -67,7 +67,7 @@ class AdjList:
         self.adjfile = fname
         allvals = []
         self.liststore.clear()
-        with open(fname, "r") as inf:
+        with open(fname, "r", encoding="utf-8") as inf:
             for l in inf.readlines():
                 c = ""
                 if '%' in l:
@@ -94,7 +94,7 @@ class AdjList:
         if fname is None or not len(self.liststore):
             return
         os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
-        with open(fname, "w") as outf:
+        with open(fname, "w", encoding="utf-8") as outf:
             for r in self.liststore:
                 cv = r[1].replace(":", ".").replace(" ", "")
                 if r[2] > 1:

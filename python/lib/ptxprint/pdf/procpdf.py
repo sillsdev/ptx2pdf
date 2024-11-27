@@ -1,4 +1,4 @@
-from ptxprint.utils import coltoonemax
+from ptxprint.utils import coltoonemax, _
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject

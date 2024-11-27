@@ -254,7 +254,7 @@ class PDFViewer:
         except Exception as e:
             print(f"An error occurred while printing: {e}")
 
-    def on_draw_page(self, operation, context, page_number):
+    def old_on_draw_page(self, operation, context, page_number):
         if not hasattr(self, 'document') or self.document is None:
             return
 
@@ -280,6 +280,54 @@ class PDFViewer:
             # Render at actual size (1:1 scale)
             scale = 1
             cairo_context.scale(scale, scale)
+
+        # Render the PDF page
+        pdf_page.render(cairo_context)
+
+        # Restore the original context state
+        cairo_context.restore()
+
+    def on_draw_page(self, operation, context, page_number):
+        if not hasattr(self, 'document') or self.document is None:
+            return
+
+        pdf_page = self.document.get_page(page_number)
+
+        cairo_context = context.get_cairo_context()
+        cairo_context.save()
+        
+        # Set background color to white
+        cairo_context.set_source_rgb(1, 1, 1)
+        cairo_context.paint()
+
+        # Get the dimensions of the PDF page in points
+        pdf_width, pdf_height = pdf_page.get_size()
+        
+        # Get the physical paper size from the printer context in points
+        paper_width = context.get_width()
+        paper_height = context.get_height()
+
+        if self.fitToPage:
+            # Fit the PDF to the page while maintaining aspect ratio
+            scale_x = paper_width / pdf_width
+            scale_y = paper_height / pdf_height
+            scale = min(scale_x, scale_y)
+        else:
+            # Ensure the PDF is printed at 100% size (1:1 scale)
+            # Account for DPI to maintain physical dimensions
+            dpi_x = context.get_dpi_x()
+            dpi_y = context.get_dpi_y()
+            scale_x = dpi_x / 72  # Convert from PDF points to printer DPI
+            scale_y = dpi_y / 72
+            scale = min(scale_x, scale_y)
+
+        # Center the PDF on the page
+        offset_x = (paper_width - pdf_width * scale) / 2
+        offset_y = (paper_height - pdf_height * scale) / 2
+
+        # Apply scaling and translation
+        cairo_context.translate(offset_x, offset_y)
+        cairo_context.scale(scale, scale)
 
         # Render the PDF page
         pdf_page.render(cairo_context)
@@ -476,7 +524,7 @@ class PDFViewer:
                     info = self.adjlist.getinfo(ref + pnum, insert=True)
 
         logger.debug(f"{parref=} {info=}")
-        if len(info):
+        if len(info) and self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1] if len(info) else ''}%"
             header_info = Gtk.MenuItem(label=hdr)
@@ -518,7 +566,7 @@ class PDFViewer:
         zoom_in_item    = Gtk.MenuItem(label="Zoom In         (Ctrl +)")
         zoom_out_item   = Gtk.MenuItem(label="Zoom Out       (Ctrl -)")
         fit_zoom_item   = Gtk.MenuItem(label="Zoom to Fit (Ctrl + F)")
-        reset_zoom_item = Gtk.MenuItem(label="Zoom 100%  (Ctrl + 0)")
+        reset_zoom_item = Gtk.MenuItem(label="Zoom 100% (Ctrl + 0)")
 
         zoom_in_item.connect("activate", self.on_zoom_in)
         zoom_out_item.connect("activate", self.on_zoom_out)

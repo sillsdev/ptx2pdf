@@ -5809,6 +5809,10 @@ class GtkViewModel(ViewModel):
     def onPagesPerSpreadChanged(self, btn):
         self.colorTabs()
         status = self.get("fcb_pagesPerSpread") != "1"
+        if status and self.get("fcb_afterAction") == "preview":
+            self.set("c_bkView", False)
+        else:
+            self.builder.get_object("c_bkView").set_sensitive(True)
         for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
