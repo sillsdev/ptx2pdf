@@ -73,6 +73,10 @@ class PDFViewer:
         self.hbox.connect("scroll-event", self.on_scroll_event)
         self.hbox.set_can_focus(True)  # Ensure the widget can receive keyboard focus
 
+    def setShowAdjOverlay(self, val):
+        self.showadjustments = val
+        self.show_pdf()
+
     def exit(self):
         if self.thread is not None:
             self.thread.kill()
@@ -515,6 +519,19 @@ class PDFViewer:
         # print(f"Parloc: {p=} {pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
         return p
 
+    def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
+        if label is None:
+            res = Gtk.SeparatorMenuItem.new()
+        else:
+            res = Gtk.MenuItem(label=label)
+            if sensitivity is not None:
+                res.set_sensitive(sensitivity)
+            if fn is not None:
+                res.connect("activate", fn, *args)
+        res.show()
+        menu.append(res)
+        return res
+
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
 
@@ -535,58 +552,28 @@ class PDFViewer:
         if len(info) and self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}   {info[1] if len(info) else ''}%"
-            header_info = Gtk.MenuItem(label=hdr)
-            header_info.set_sensitive(False)  # Make the header item non-clickable and grayed out
-            header_info.connect("activate", self.on_identify_paragraph, info[2])
-            menu.append(header_info)
-            menu.append(Gtk.SeparatorMenuItem())
+            self.addMenuItem(menu, hdr, self.on_identify_paragraph, info[2], sensitivity=False)
+            self.addMenuItem(menu, None, None)
 
             x = "Yes! Shrink" if ("-" in str(info[0]) and str(info[0]) != "-1") else "Try Shrink"
-            shrink_para = Gtk.MenuItem(label=f"{x} -1 line ({parref.lines - 1})")
-            expand_para = Gtk.MenuItem(label=f"Expand +1 line ({parref.lines + 1})")
+            self.addMenuItem(menu, f"{x} -1 line ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
+            self.addMenuItem(menu, f"Expand +1 line ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
+            self.addMenuItem(menu, None, None)
 
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
-            shrink_text = Gtk.MenuItem(label=f"Shrink Text ({shrLim}%)")
-            shrink_text.set_sensitive(not info[1] <= shrLim)  # clickable only if within limit%
-
-            normal_text = Gtk.MenuItem(label=f"Normal Size (100%)")
-            normal_text.set_sensitive(not info[1] == 100)  # non-clickable and grayed out if already at 100%
+            self.addMenuItem(menu, f"Shrink Text ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
+            self.addMenuItem(menu, f"Normal Size (100%)", self.on_normal_text, info, parref, sensitivity=not info[1] == 100)
 
             expLim = min(self.expandLimit, info[1]+self.expandStep)
-            expand_text = Gtk.MenuItem(label=f"Expand Text ({expLim}%)")
-            expand_text.set_sensitive(not info[1] >= expLim)  # clickable only if within limit%
-
-            shrink_para.connect("activate", self.on_shrink_paragraph, info, parref)
-            expand_para.connect("activate", self.on_expand_paragraph, info, parref)
-            shrink_text.connect("activate", self.on_shrink_text, info, parref)
-            normal_text.connect("activate", self.on_normal_text, info, parref)
-            expand_text.connect("activate", self.on_expand_text, info, parref)
-
-            menu.append(shrink_para)
-            menu.append(expand_para)
-            menu.append(Gtk.SeparatorMenuItem())
-            menu.append(shrink_text)
-            menu.append(normal_text)
-            menu.append(expand_text)
-            menu.append(Gtk.SeparatorMenuItem())
+            self.addMenuItem(menu, f"Expand Text ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+            self.addMenuItem(menu, None, None)
 
         # Second section: Zoom In, Reset Zoom, Zoom Out
-        zoom_in_item    = Gtk.MenuItem(label="Zoom In         (Ctrl +)")
-        zoom_out_item   = Gtk.MenuItem(label="Zoom Out       (Ctrl -)")
-        fit_zoom_item   = Gtk.MenuItem(label="Zoom to Fit (Ctrl + F)")
-        reset_zoom_item = Gtk.MenuItem(label="Zoom 100% (Ctrl + 0)")
+        self.addMenuItem(menu, "Zoom In         (Ctrl +)", self.on_zoom_in)
+        self.addMenuItem(menu, "Zoom Out       (Ctrl -)", self.on_zoom_out)
+        self.addMenuItem(menu, "Zoom to Fit (Ctrl + F)", self.set_zoom_fit_to_screen)
+        self.addMenuItem(menu, "Zoom 100% (Ctrl + 0)", self.on_reset_zoom)
 
-        zoom_in_item.connect("activate", self.on_zoom_in)
-        zoom_out_item.connect("activate", self.on_zoom_out)
-        fit_zoom_item.connect("activate", self.set_zoom_fit_to_screen)
-        reset_zoom_item.connect("activate", self.on_reset_zoom)
-
-        menu.append(zoom_in_item)
-        menu.append(zoom_out_item)
-        menu.append(fit_zoom_item)
-        menu.append(reset_zoom_item)
-
-        menu.show_all()
         menu.popup(None, None, None, None, event.button, event.time)
 
     # Context menu item callbacks for paragraph actions

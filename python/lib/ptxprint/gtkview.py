@@ -6226,6 +6226,9 @@ Thank you,
         pg = min(int(self.get("s_pgNum", 1)), pages)
         self.set("s_pgNum", pg)
         self.pdf_viewer.show_pdf(pg, self.get("c_RTLbookBinding", False))
+
+    def onPdfAdjOverlayChanged(self, widget):
+        self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))
         
     def onPrintItClicked(self, widget):
         pages = self.pdf_viewer.numpages
