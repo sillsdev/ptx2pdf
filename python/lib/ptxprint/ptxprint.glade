@@ -3232,6 +3232,7 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon-name">text-x-generic</property>
     <property name="type-hint">normal</property>
+    <property name="deletable">False</property>
     <property name="gravity">east</property>
     <signal name="close" handler="onClosePreview" swapped="no"/>
     <signal name="configure-event" handler="on_configure_event" swapped="no"/>

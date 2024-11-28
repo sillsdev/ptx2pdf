@@ -612,8 +612,8 @@ class PDFViewer:
             self.addMenuItem(menu, None, None)
 
         # Second section: Zoom In, Reset Zoom, Zoom Out
-        self.addMenuItem(menu, "Zoom In         (Ctrl +)", self.on_zoom_in)
-        self.addMenuItem(menu, "Zoom Out       (Ctrl -)", self.on_zoom_out)
+        # self.addMenuItem(menu, "Zoom In         (Ctrl +)", self.on_zoom_in)
+        # self.addMenuItem(menu, "Zoom Out       (Ctrl -)", self.on_zoom_out)
         self.addMenuItem(menu, "Zoom to Fit (Ctrl + F)", self.set_zoom_fit_to_screen)
         self.addMenuItem(menu, "Zoom 100% (Ctrl + 0)", self.on_reset_zoom)
 
