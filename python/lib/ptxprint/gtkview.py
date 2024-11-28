@@ -6210,7 +6210,7 @@ Thank you,
 
     def onBookViewClicked(self, widget):
         bkviewON = self.get("c_bkView", True)
-        self._resize_window(bkviewON, large_size=(945, 775), small_size=(470, 760))
+        self._resize_window(bkviewON, large_size=(990, 690), small_size=(590, 690))
         step_increment = 2 if bkviewON else 1
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
         self.onPgNumChanged(None)
@@ -6238,21 +6238,16 @@ Thank you,
 
     def on_dlg_preview_allocation_notify(self, widget, param):
         allocation = widget.get_allocation()
-        # print(f"Notified of allocation change: width={allocation.width}, height={allocation.height}")
+        print(f"Notified of allocation change: width={allocation.width}, height={allocation.height}")
 
     def on_configure_event(self, widget, event):
-        pass
+        # pass
         # We need to save this info so that when we re-open PTXprint it places the Preview window
         # in the same place it was when we last closed.
-        # print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")
+        print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")
 
-    def extractDigits(self, text):
-        digits = re.sub(r'\D', '', text)  # \D matches any non-digit character
-        return int(digits) if digits else 0
-    
     def onZoomLevelChanged(self, widget):
-        zl = self.get("s_pdfZoomLevel", 100)
-        adj_zl = max(30, min(self.extractDigits(zl), 800))
+        adj_zl = max(30, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)
 

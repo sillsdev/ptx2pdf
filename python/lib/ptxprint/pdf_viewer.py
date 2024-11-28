@@ -386,11 +386,18 @@ class PDFViewer:
 
             return True  # Prevent further handling of the scroll event
 
-        # Default behavior: Scroll for navigation
-        #if event.direction == Gdk.ScrollDirection.UP:
-        #    self.show_previous_page()
-        #elif event.direction == Gdk.ScrollDirection.DOWN:
-        #    self.show_next_page()
+        # Get the parent scrolled window and its adjustments
+        scrolled_window = self.hbox.get_parent()
+        v_adjustment = scrolled_window.get_vadjustment()
+        if v_adjustment.get_upper() > v_adjustment.get_page_size():
+            return False # v_adjustment is active
+        else:
+            # Default behavior: Scroll for navigation
+            if event.direction == Gdk.ScrollDirection.UP:
+               self.show_previous_page()
+            elif event.direction == Gdk.ScrollDirection.DOWN:
+               self.show_next_page()
+            return True
 
         return False
 
@@ -403,7 +410,7 @@ class PDFViewer:
 
     def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
         self.old_zoom = self.zoomLevel
-        self.zoomLevel = (min(self.zoomLevel * 1.1, 10.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
+        self.zoomLevel = (min(self.zoomLevel * 1.1, 8.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
         scale_factor = self.zoomLevel / self.old_zoom
 
         self.resize_pdf(scrolled=True)
@@ -693,8 +700,8 @@ class PDFViewer:
             alloc = parent_widget.get_allocation()
 
         # Calculate the zoom level to fit the page within the dialog ( borders and padding subtracted)
-        scale_x = (alloc.width - 32) / (page_width * (2 if self.spread_mode else 1))
-        scale_y = (alloc.height - 32) / page_height
+        scale_x = (alloc.width - 16) / (page_width * (2 if self.spread_mode else 1))
+        scale_y = (alloc.height - 16) / page_height
         self.set_zoom(min(scale_x, scale_y))
 
 

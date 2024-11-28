@@ -3227,8 +3227,8 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
   <object class="GtkDialog" id="dlg_preview">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PDF Preview</property>
-    <property name="default-width">945</property>
-    <property name="default-height">775</property>
+    <property name="default-width">990</property>
+    <property name="default-height">690</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon-name">text-x-generic</property>
     <property name="type-hint">normal</property>
@@ -3401,6 +3401,8 @@ Shortcut: Ctrl-P</property>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
@@ -3408,8 +3410,7 @@ Shortcut: Ctrl-P</property>
                 <property name="halign">start</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
-                <property name="margin-top">6</property>
-                <property name="margin-bottom">6</property>
+                <property name="vexpand">True</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">3</property>
                 <child>
@@ -3420,7 +3421,6 @@ Shortcut: Ctrl-P</property>
                     <property name="valign">end</property>
                     <property name="margin-right">3</property>
                     <property name="margin-end">3</property>
-                    <property name="margin-top">3</property>
                     <property name="label" translatable="yes">Contents:</property>
                   </object>
                   <packing>
@@ -3504,6 +3504,7 @@ Shortcut: Ctrl-P</property>
                   <object class="GtkCheckButton" id="c_pdfGridlines">
                     <property name="label" translatable="yes">Grid lines</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
                     <property name="halign">start</property>
