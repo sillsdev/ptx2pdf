@@ -24,11 +24,13 @@ class Liststore(list):
         super().insert(i, rl)
         for j, r in enumerate(self[i+1:], i+1):
             r.iter = j
+        return rl.iter
 
     def append(self, row):
         rl = UserList(row)
         rl.iter = len(self)
         super().append(rl)
+        return rl.iter
         
 
 
@@ -187,6 +189,7 @@ class AdjList:
             # book, c:v, para, stretch, mkr, expand, comment%
                 r = [cp[0], cp[1], cp[2], "0", "", 100, ""]
                 self.liststore.insert(i, r)
+                r = self.listore[i]         # since the row is turned into something else
                 self.changed = True
                 doit(r, i)
 

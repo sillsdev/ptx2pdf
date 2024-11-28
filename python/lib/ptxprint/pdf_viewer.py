@@ -226,7 +226,7 @@ class PDFViewer:
             if not len(nbk):
                 continue
             if nbk != bk:
-                adjlist = self.model.get_adjlist(nbk)
+                adjlist = self.model.get_adjlist(nbk, gtk=Gtk)
                 bk = nbk
             pnum = f"[{p.parnum}]" if getattr(p, 'parnum', 1) > 1 else ""
             ref = getattr(p, 'ref', (bk or "") + "0.0") + pnum
@@ -584,7 +584,7 @@ class PDFViewer:
             else:
                 pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
                 ref = parref.ref
-                self.adjlist = self.model.get_adjlist(ref[:3].upper())
+                self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
                     info = self.adjlist.getinfo(ref + pnum, insert=True)
 
