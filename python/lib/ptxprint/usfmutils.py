@@ -10,22 +10,6 @@ import regex, time, logging
 
 logger = logging.getLogger(__name__)
 
-def isScriptureText(e):
-    if 'nonvernacular' in e.meta.get('TextProperties', []):
-        return False
-    if e.meta.get('TextType', "").lower() == "versetext":
-        return True
-    if e.meta.get('TextType', "").lower() == "other" and e.name.startswith("i"):
-        return True
-    if e.name in ("h", "h1", "id", "mt", "toc1", "toc2", "toc3"):
-        return False
-    return True
-
-takslc_cats = {'Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Sm', 'Sc', 'Sk', 'So',
-               'Nd', 'Nl', 'No', 
-               'Pd', 'Pc', 'Pe', 'Ps', 'Pi', 'Pf', 'Po'}
-space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
-
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
         p = super().__new__(cls, *pos[:2])
@@ -341,13 +325,6 @@ class Usfm:
                 a.extend(e_[:])
             return a
         res = []
-#        if addzsetref:
-#            for e in self.doc[0]:
-#                if isinstance(e, sfm.Element) and e.name == 'h':
-#                    bkname = str(e[0]).strip()
-#                    break
-#            else:
-#                bkname = refranges[0].first.book
         for c in chaps:
             if addzsetref:
                 minref = min(refranges[r].first for r in c[1])
@@ -545,33 +522,6 @@ class Usfm:
             else:
                 return e
         return list(self._proctext(fn, doc=doc))
-
-    def letter_space(self, inschar, doc=None):
-        from ptxprint.sfm.ucd import get_ucd
-        def fn(e):
-            if not e.parent or not isScriptureText(e.parent):
-                return e
-            done = False
-            lastspace = id(e.parent[0]) != id(e)
-
-            res = []
-            for (islet, c) in groupby(str(e), key=lambda x:get_ucd(ord(x), "gc") in takslc_cats and x != "|"):
-                chars = "".join(c)
-                # print("{} = {}".format(chars, islet))
-                if not len(chars):
-                    continue
-                if islet:
-                    res.append(("" if lastspace else inschar) + inschar.join(chars))
-                    done = True
-                else:
-                    res.append(chars)
-                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama") \
-                            or get_ucd(ord(chars[-1]), "gc") in ("Cf", "WS") \
-                            or chars[-1] in (r"\|")                
-            return sfm.Text("".join(res), e.pos, e.parent) if done else e
-        if self.doc is None or not len(self.doc):
-               return            
-        self._proctext(fn, doc=doc)
 
     def calc_PToffsets(self):
         def _ge(e, a, ac):

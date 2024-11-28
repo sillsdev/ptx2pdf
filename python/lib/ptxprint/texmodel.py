@@ -7,7 +7,7 @@ from ptxprint.font import TTFont
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style, Text
-from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
+from ptxprint.usfmutils import Usfm, Sheets, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath
