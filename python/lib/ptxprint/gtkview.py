@@ -6,7 +6,7 @@ gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
 from shutil import rmtree
 import datetime, time, locale, urllib.request, json, hashlib
-from ptxprint.utils import universalopen, refKey, refSort, chgsHeader, saferelpath
+from ptxprint.utils import universalopen, refKey, refSort, chgsHeader, saferelpath, startfile
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -2601,11 +2601,7 @@ class GtkViewModel(ViewModel):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         pgid = self.notebooks["Viewer"][pg]
         fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text() or ""
-        if os.path.exists(fpath):
-            if sys.platform == "win32":
-                os.startfile(fpath)
-            elif sys.platform == "linux":
-                subprocess.call(('xdg-open', fpath))
+        startfile(fpath)
 
     def onScriptChanged(self, btn):
         # If there is a matching digit style for the script that has just been set, 
@@ -4443,11 +4439,7 @@ class GtkViewModel(ViewModel):
         self.openFolder(outputfolder)
 
     def openFolder(self, fldrpath):
-        path = os.path.realpath(fldrpath)
-        if sys.platform.startswith("win") and os.path.exists(fldrpath):
-            os.startfile(fldrpath)
-        elif sys.platform == "linux":
-            subprocess.call(('xdg-open', fldrpath))
+        startfile(fldrpath)
 
     def finished(self):
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
@@ -5264,11 +5256,7 @@ class GtkViewModel(ViewModel):
             self.doStatus(_("Strong's Index generated in: {}").format(bkid))
             if self.get("c_strongsOpenIndex"):
                 fpath = os.path.join(self.project.path, self.getBookFilename(bkid))
-                if os.path.exists(fpath):
-                    if sys.platform == "win32":
-                        os.startfile(fpath)
-                    elif sys.platform == "linux":
-                        subprocess.call(('xdg-open', fpath))
+                startfile(fpath)
         dialog.hide()
         
     def onGenerateCoverClicked(self, btn):
@@ -6075,11 +6063,7 @@ Thank you,
         catpdf = os.path.join(pycodedir(), "..", "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
         if not os.path.exists(catpdf):
             catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
-        if os.path.exists(catpdf):
-            if sys.platform == "win32":
-                os.startfile(catpdf)
-            elif sys.platform == "linux":
-                subprocess.call(('xdg-open', catpdf))
+        startfile(catpdf)
 
     def onCropMarksClicked(self, btn):
         if not self.get("c_coverCropMarks"):

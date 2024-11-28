@@ -10,7 +10,8 @@ from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
-from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes
+from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
+        saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
@@ -329,10 +330,7 @@ class RunJob:
                     diffname = self.createDiff(pdfname, basename, color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     # print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
-                        if sys.platform == "win32":
-                            os.startfile(diffname)
-                        elif sys.platform == "linux":
-                            subprocess.call(('xdg-open', diffname))
+                        startfile(diffname)
                     else:
                         self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
@@ -348,16 +346,10 @@ class RunJob:
                     self.printer.pdf_viewer.loadnshow(startname, rtl=self.printer.get("c_RTLbookBinding", False),
                                     adjlist=adjlist, parlocs=fname, widget=prvw, page=None)
                 elif self.printer.get("fcb_afterAction") == "sysviewer":
-                    if sys.platform == "win32":
-                        os.startfile(startname)
-                    elif sys.platform == "linux":
-                        subprocess.call(('xdg-open', startname))
+                    startfile(startname)
                 elif self.printer.get("fcb_afterAction") == "openfolder":
                     fldrpath = os.path.dirname(startname)
-                    if sys.platform.startswith("win") and os.path.exists(fldrpath):
-                        os.startfile(fldrpath)
-                    elif sys.platform == "linux":
-                        subprocess.call(('xdg-open', fldrpath))
+                    startfile(fldrpath)
 
             fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
             logger.debug(f"Testing log file {fname}")

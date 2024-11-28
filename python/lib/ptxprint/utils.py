@@ -9,7 +9,7 @@ from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
 import regex
-from subprocess import check_output
+from subprocess import check_output, call
 import logging
 
 logger = logging.getLogger(__name__)
@@ -272,6 +272,14 @@ def universalopen(fname, rewrite=False, cp=65001):
 def print_traceback(f=None):
     traceback.print_stack(f=f)
 
+def startfile(fpath):
+    if os.path.exists(fpath):
+        if sys.platform == "win32":
+            os.startfile(fpath)
+        elif sys.platform == "linux":
+            call(('xdg-open', fpath))
+
+
 def getPDFconfig(fname):
     if str(fname).lower().endswith(".zip"):
         with open(fname, "rb") as inf:
@@ -294,7 +302,6 @@ def getPDFconfig(fname):
     return None
 
 if sys.platform == "linux":
-
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
         valuepath = os.path.join(basepath, path.lower(), "values.xml")
