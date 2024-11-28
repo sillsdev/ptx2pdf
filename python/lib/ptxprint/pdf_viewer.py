@@ -231,7 +231,6 @@ class PDFViewer:
             pnum = f"[{p.parnum}]" if getattr(p, 'parnum', 1) > 1 else ""
             ref = getattr(p, 'ref', (bk or "") + "0.0") + pnum
             info = adjlist.getinfo(ref)
-            logger.debug(f"hint: {ref} -> {info}")
             if not info:
                 continue
             col = None

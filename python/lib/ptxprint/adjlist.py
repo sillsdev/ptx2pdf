@@ -184,10 +184,9 @@ class AdjList:
             doit(r, i)
         elif rk > cpk:
             if insert:
-                lasti = r.iter
             # book, c:v, para, stretch, mkr, expand, comment%
                 r = [cp[0], cp[1], cp[2], "0", "", 100, ""]
-                self.liststore.insert(lasti, r)
+                self.liststore.insert(i, r)
                 self.changed = True
                 doit(r, i)
 
