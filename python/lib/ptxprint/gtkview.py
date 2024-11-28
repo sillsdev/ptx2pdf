@@ -162,7 +162,7 @@ r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
 fcb_afterAction
-s_pdfZoomLevel s_pgNum b_reprint btn_closePreview l_pdfContentPgCount tv_pdfContents
+s_pdfZoomLevel s_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfGridlines c_pdfadjoverlay c_bkView btn_previewPrintIt scr_previewPDF scr_previewPDF bx_previewPDF
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
@@ -3559,7 +3559,6 @@ class GtkViewModel(ViewModel):
 
     def showmybook(self, isfirst=False):
         if self.initialised and self.get("fcb_afterAction") == "preview": # preview is on
-            logger.debug("Showing?")
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
@@ -4436,7 +4435,7 @@ class GtkViewModel(ViewModel):
         return True if response == Gtk.ResponseType.YES else False
 
     def onOpenFolderButtonClicked(self, btn):
-        self.onOpenFolderClicked(self.builder.get_object("lb_working_dir"))
+        self.openFolder(self.project.printPath(None))
         
     def onOpenFolderClicked(self, btn, *argv):
         p = re.search(r'(?<=href=\")[^<>]+(?=\")',btn.get_label())
@@ -6200,14 +6199,24 @@ Thank you,
             if float(self.get("s_pagegutter",0)) < 30:
                 self.set("s_pagegutter", 40)
 
-    def onPreviewPDFclicked(self, widget):
-        previewON = self.get("c_previewPDF", False)
-        self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(1)
-        dlg_preview = self.builder.get_object("dlg_preview")
-        if previewON:
-            dlg_preview.show_all()
-        else:
-            dlg_preview.hide()
+    def onPopupShowOptions(self, widget):
+        pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
+        if os.path.exists(pdffile):
+            action = self.get("fcb_afterAction")
+            if action == "preview":
+                prvw = self.builder.get_object("dlg_preview")
+                plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
+                self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
+                                            parlocs=plocname, widget=prvw, page=1,
+                                            isdiglot=self.get("c_diglot"))
+            elif action == "sysviewer":
+                if sys.platform == "win32":
+                    os.startfile(pdffile)
+                elif sys.platform == "linux":
+                    subprocess.call(('xdg-open', pdffile))
+                
+            elif action == "openfolder":
+                self.openFolder(self.project.printPath(None))
 
     def onClosePreview(self, widget):
         dlg_preview = self.builder.get_object("dlg_preview")
@@ -6216,7 +6225,7 @@ Thank you,
 
     def onBookViewClicked(self, widget):
         bkviewON = self.get("c_bkView", True)
-        self._resize_window(bkviewON, large_size=(990, 690), small_size=(590, 690))
+        self._resize_window(bkviewON, large_size=(1020, 700), small_size=(600, 725))
         step_increment = 2 if bkviewON else 1
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
         self.onPgNumChanged(None)
@@ -6257,3 +6266,4 @@ Thank you,
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)
 
+        

@@ -3227,8 +3227,8 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
   <object class="GtkDialog" id="dlg_preview">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PDF Preview</property>
-    <property name="default-width">990</property>
-    <property name="default-height">690</property>
+    <property name="default-width">1020</property>
+    <property name="default-height">700</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon-name">text-x-generic</property>
     <property name="type-hint">normal</property>
@@ -3415,14 +3415,52 @@ Shortcut: Ctrl-P</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">3</property>
                 <child>
-                  <object class="GtkLabel" id="l_pdfContentPgCount">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">end</property>
-                    <property name="margin-right">3</property>
-                    <property name="margin-end">3</property>
-                    <property name="label" translatable="yes">Contents:</property>
+                    <property name="hexpand">False</property>
+                    <property name="vexpand">False</property>
+                    <child>
+                      <object class="GtkLabel" id="l_pdfContents">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">end</property>
+                        <property name="label" translatable="yes">Contents:</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_pdfPgCount">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="margin-end">3</property>
+                        <property name="hexpand">True</property>
+                        <property name="label" translatable="yes">NNN</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_pdfPgsSprds">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">pages</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -22182,18 +22220,7 @@ changed while doing final page layout.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_previewPDF">
-                                                    <property name="label" translatable="yes">Show PDF Preview Pane</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="draw-indicator">True</property>
-                                                    <signal name="clicked" handler="onPreviewPDFclicked" swapped="no"/>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">2</property>
-                                                    <property name="top-attach">2</property>
-                                                  </packing>
+                                                  <placeholder/>
                                                 </child>
                                               </object>
                                             </child>
@@ -27282,7 +27309,7 @@ after the PDF has been created.
             <child>
               <object class="GtkComboBoxText" id="fcb_afterAction">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can-focus">True</property>
                 <property name="tooltip-text" translatable="yes">Select where to show the PDF file once
 it has been created.
 
@@ -27298,6 +27325,9 @@ get applied on the subsequent print action.</property>
                   <item id="sysviewer" translatable="yes">PDF Viewer</item>
                   <item id="openfolder" translatable="yes">Output Folder</item>
                 </items>
+                <signal name="changed" handler="onPopupShowOptions" swapped="no"/>
+                <signal name="grab-focus" handler="onPopupShowOptions" swapped="no"/>
+                <signal name="touch-event" handler="onPopupShowOptions" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

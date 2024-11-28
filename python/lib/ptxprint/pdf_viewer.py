@@ -253,8 +253,10 @@ class PDFViewer:
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b  %H:%M")
         widget.set_title("PDF Preview: " + os.path.basename(fname) + formatted_time)
-        # Set the number of pages in the contents area
-        self.model.builder.get_object("l_pdfContentPgCount").set_label(_("Contents:  {} pages").format(self.numpages))
+        # Set the number of pages/spreads in the contents area
+        pgSprds = _("pages") if self.model.get("fcb_pagesPerSpread", "1") == "1" else _("spreads")
+        self.model.builder.get_object("l_pdfPgsSprds").set_label(pgSprds)
+        self.model.builder.get_object("l_pdfPgCount").set_label(str(self.numpages))
         widget.show_all()
 
     def resize_pdf(self, scrolled=False):
