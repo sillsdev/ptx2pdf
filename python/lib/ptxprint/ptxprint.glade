@@ -3432,12 +3432,14 @@ Shortcut: Ctrl-P</property>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow">
+                    <property name="width-request">150</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="hexpand">False</property>
                     <property name="vexpand">False</property>
                     <property name="shadow-type">in</property>
                     <property name="propagate-natural-width">True</property>
+                    <property name="propagate-natural-height">True</property>
                     <child>
                       <object class="GtkTreeView" id="tv_pdfContents">
                         <property name="visible">True</property>
@@ -3541,6 +3543,7 @@ Shortcut: Ctrl + B</property>
                 <child>
                   <object class="GtkButton" id="btn_previewPrintIt">
                     <property name="label" translatable="yes">Print (on Paper)</property>
+                    <property name="width-request">148</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -3569,7 +3572,6 @@ Shortcut: Ctrl + B</property>
                 <property name="hexpand">False</property>
                 <property name="vexpand">False</property>
                 <property name="shadow-type">in</property>
-                <property name="propagate-natural-width">True</property>
                 <property name="propagate-natural-height">True</property>
                 <child>
                   <object class="GtkViewport">
@@ -3602,8 +3604,8 @@ Shortcut: Ctrl + B</property>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
