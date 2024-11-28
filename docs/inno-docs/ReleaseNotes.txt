@@ -1,8 +1,82 @@
 PTXprint 2.6.11 Release Notes
-16 Nov 2024
+29 Nov 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+New features in 2.7  (29 Nov 2024)
+  * A built-in PDF Preview pane to view the output of PTXprint
+  * Interactive right-click context menu for making layout adjustments
+  * Option to send a PDF to the printer - 'Print (on paper)' in PDF viewer
+
+### PDF Viewer Enhancements
+  * Add page or spread counts
+  * Show in: actions can now be reinitiated (to re-open preview pane)
+  * Get the PDF viewer to resize properly
+  * Ensure PDF viewer is available even for mini View and Basic view
+  * Get PDF viewer TOC working
+  * Add treeview for PDF outline; change zoom to spinner
+  * Add diglot support to PDF viewer right-click
+  * Change PDF viewer on book change
+  * Track changes enough to allow PDF viewer switch on book switch
+  * Refactor PDF viewer load-n-show
+  * Refine the PDF viewer context menu options
+  * Add items to context menu for interactive PDF
+  * Refactor PDF viewer menus to stop temporary window errors
+  * Tidy up after action events
+
+### Scrolling and Zooming Enhancements
+  * Speed up zooming
+  * Use a timer instead of a thread for zoom
+  * Refactor PDF zoom to perhaps work in Windows
+  * Dumb down the zoom for non-forking windows
+  * Make PDF scroll wheel zooming even smoother
+  * Get scroll-zoom working properly on both sides of a spread
+  * Make scrollwheel trigger PgUp and PgDw if v_adjust is NOT active
+
+### Interactive Adjustments & Context Menus
+  * Debug interactive adjustments
+  * Add middle click drag on viewport
+  * Get smart right menu up in PDF viewer
+  * Adjust changes so that if a reference is in a range, match the range
+  * Support subverses
+
+### AdjList & Diglot Adjustments
+  * Sort out adjlist for diglots
+  * Various adjlist fixes
+  * Add comment field to adjlist
+  * Link adjlist_changes.txt file to texmodel
+  * Modify parlen string to ease parsing (and revert as needed)
+
+### Styling & Display Refinements
+  * Swap expansion color
+  * Change adjlist color bars
+  * Apply boxes to styles more selectively and with improved logic
+
+### Note Handling Improvements
+  * Recognize note-in-note message
+  * Refuse to start note-in-note. 
+  * Warn of end-of-note outside one to avoid crashing
+  * Reset footnotes for modules. 
+
+### General Improvements
+  * Unify OS file starting
+  * Apply minor changes to get things working on a Mac
+  * Only display startup the once
+
+### Bug Fixes and Debugging
+  * Fix adjustment changes file being read
+  * Fixups for pdfview overlay
+  * Fix lowercased keys in styleeditor
+  * Avoid crashes with unfinished notes slurping up verse text
+  * Debugging info coloring
+  * Handle stretchable line spacing in PDF viewer
+
+### Miscellaneous
+  * Add "CC BY-SA" license to the list of available choices and link to CC site in tooltip
+  * Add insert option to 'getinfo'
+  * Use 'c@rref' in 'parlocs' file
+  * Solve various issues with glue in baselineskips
 
 Bug fixes and Improvements in 2.6.11 (16 Nov 2024)
 
