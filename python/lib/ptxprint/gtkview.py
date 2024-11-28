@@ -161,6 +161,9 @@ fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
+fcb_afterAction
+s_pdfZoomLevel s_pgNum b_reprint btn_closePreview l_pdfContentPgCount tv_pdfContents
+c_pdfGridlines c_pdfadjoverlay c_bkView btn_previewPrintIt scr_previewPDF scr_previewPDF bx_previewPDF
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
 _ui_enable4diglot2ndary = """
@@ -5811,8 +5814,11 @@ class GtkViewModel(ViewModel):
         status = self.get("fcb_pagesPerSpread") != "1"
         if status and self.get("fcb_afterAction") == "preview":
             self.set("c_bkView", False)
+            self.set("c_pdfadjoverlay", False)
+            self.builder.get_object("c_pdfadjoverlay").set_sensitive(False)
         else:
             self.builder.get_object("c_bkView").set_sensitive(True)
+            self.builder.get_object("c_pdfadjoverlay").set_sensitive(True)
         for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)

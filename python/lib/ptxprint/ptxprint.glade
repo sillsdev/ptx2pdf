@@ -3284,7 +3284,7 @@ Ctrl + 0 - resets zoom level
 Ctrl + Scrollwheel - change zoom level</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="width-chars">8</property>
+                <property name="width-chars">4</property>
                 <property name="xalign">0.5</property>
                 <property name="progress-pulse-step">0</property>
                 <property name="input-purpose">number</property>
@@ -3327,6 +3327,7 @@ Ctrl+End - Last page/spread
 Mouse Scroll also changes pages</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
+                <property name="width-chars">4</property>
                 <property name="text" translatable="yes">1</property>
                 <property name="xalign">0.5</property>
                 <property name="adjustment">a_pgNum</property>
@@ -3394,7 +3395,7 @@ Shortcut: Ctrl-P</property>
             <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="pack-type">end</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -3410,11 +3411,11 @@ Shortcut: Ctrl-P</property>
                 <property name="halign">start</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
-                <property name="vexpand">True</property>
+                <property name="vexpand">False</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">3</property>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="l_pdfContentPgCount">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
@@ -3433,15 +3434,16 @@ Shortcut: Ctrl-P</property>
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
+                    <property name="hexpand">False</property>
+                    <property name="vexpand">False</property>
                     <property name="shadow-type">in</property>
+                    <property name="propagate-natural-width">True</property>
                     <child>
                       <object class="GtkTreeView" id="tv_pdfContents">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
+                        <property name="hexpand">False</property>
+                        <property name="vexpand">False</property>
                         <property name="model">ts_pdfContents</property>
                         <property name="headers-visible">False</property>
                         <property name="headers-clickable">False</property>
@@ -3460,30 +3462,10 @@ Shortcut: Ctrl-P</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">center</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">2</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">center</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">3</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
                   <object class="GtkLabel">
@@ -3584,8 +3566,8 @@ Shortcut: Ctrl + B</property>
               <object class="GtkScrolledWindow" id="scr_previewPDF">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
+                <property name="hexpand">False</property>
+                <property name="vexpand">False</property>
                 <property name="shadow-type">in</property>
                 <property name="propagate-natural-width">True</property>
                 <property name="propagate-natural-height">True</property>
@@ -3593,8 +3575,8 @@ Shortcut: Ctrl + B</property>
                   <object class="GtkViewport">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
+                    <property name="hexpand">False</property>
+                    <property name="vexpand">False</property>
                     <child>
                       <object class="GtkBox" id="bx_previewPDF">
                         <property name="visible">True</property>
@@ -3622,7 +3604,7 @@ Shortcut: Ctrl + B</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>

@@ -253,6 +253,8 @@ class PDFViewer:
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b  %H:%M")
         widget.set_title("PDF Preview: " + os.path.basename(fname) + formatted_time)
+        # Set the number of pages in the contents area
+        self.model.builder.get_object("l_pdfContentPgCount").set_label(_("Contents:  {} pages").format(self.numpages))
         widget.show_all()
 
     def resize_pdf(self, scrolled=False):
@@ -309,14 +311,15 @@ class PDFViewer:
         try:
             result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
             if result == Gtk.PrintOperationResult.APPLY:
-                print("Print job sent.")
+                self.model.doStatus(_("Print job sent to printer."))
             else:
-                print("Print job canceled or failed.")
+                self.model.doStatus(_("Print job canceled or failed."))
         except Exception as e:
-            print(f"An error occurred while printing: {e}")
+            self.model.doStatus(_("An error occurred while printing: ").format(e))
 
     def on_draw_page(self, operation, context, page_number):
-        if not hasattr(self, 'document') or self.document is None:
+        # Ensure the document exists and is valid
+        if not getattr(self, 'document', None):
             return
 
         pdf_page = self.document.get_page(page_number)
@@ -335,19 +338,19 @@ class PDFViewer:
         paper_width = context.get_width()
         paper_height = context.get_height()
 
-        if self.fitToPage:
+        # if self.fitToPage:
             # Fit the PDF to the page while maintaining aspect ratio
-            scale_x = paper_width / pdf_width
-            scale_y = paper_height / pdf_height
-            scale = min(scale_x, scale_y)
-        else:
+            # scale_x = paper_width / pdf_width
+            # scale_y = paper_height / pdf_height
+        # else:
+        if True:
             # Ensure the PDF is printed at 100% size (1:1 scale)
             # Account for DPI to maintain physical dimensions
             dpi_x = context.get_dpi_x()
             dpi_y = context.get_dpi_y()
             scale_x = dpi_x / 72  # Convert from PDF points to printer DPI
             scale_y = dpi_y / 72
-            scale = min(scale_x, scale_y)
+        scale = min(scale_x, scale_y)
 
         # Center the PDF on the page
         offset_x = (paper_width - pdf_width * scale) / 2
@@ -700,8 +703,8 @@ class PDFViewer:
             alloc = parent_widget.get_allocation()
 
         # Calculate the zoom level to fit the page within the dialog ( borders and padding subtracted)
-        scale_x = (alloc.width - 16) / (page_width * (2 if self.spread_mode else 1))
-        scale_y = (alloc.height - 16) / page_height
+        scale_x = alloc.width / (page_width * (2 if self.spread_mode else 1))
+        scale_y = alloc.height / page_height
         self.set_zoom(min(scale_x, scale_y))
 
 
