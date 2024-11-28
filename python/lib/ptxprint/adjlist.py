@@ -9,6 +9,15 @@ adjre = re.compile(r"^(\S{3})([A-Za-z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]
 refre = re.compile(r"^(\S{3})([A-Za-z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
 restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(.*?)$")
 
+class Liststore(list):
+
+    def get_value(self, line, col):
+        return self[line][col]
+
+    def set_value(self, line, col, val):
+        self[line][col] = val
+
+
 class AdjList:
     def __init__(self, centre, lowdiff, highdiff, diglotorder=[], gtk=None, fname=None):
         self.lowdiff = lowdiff
@@ -17,7 +26,7 @@ class AdjList:
 
         # book, c:v, para:int, stretch, mkr, expand:int, comment%
         if gtk is None:
-            self.liststore = []
+            self.liststore = Liststore()
         else:
             self.liststore = gtk.ListStore(str, str, int, str, str, int, str)
         self.changed = False
@@ -185,19 +194,19 @@ class AdjList:
                 f = ("+" if hasplus else "") + ("-" if mult < 0 else "") + "0"
             else:
                 f = str(v)
-            self.liststore.set_value(r.iter, 3, f)
+            self.liststore.set_value(i, 3, f)
             if mrk is not None and not self.liststore.get_value(r.iter, 4):
-                self.liststore.set_value(r.iter, 4, mrk)
+                self.liststore.set_value(i, 4, mrk)
             self.changed = True
         self.changeval(parref, mydoit)
 
     def expand(self, parref, offset, mrk=None):
         def mydoit(r, i):
             v = r[5] + offset
-            self.liststore.set_value(r.iter, 5, v)
+            self.liststore.set_value(i, 5, v)
             self.changed = True
-            if mrk is not None and not self.liststore.get_value(r.iter, 4):
-                self.liststore.set_value(r.iter, 4, mrk)
+            if mrk is not None and not self.liststore.get_value(i, 4):
+                self.liststore.set_value(i, 4, mrk)
         self.changeval(parref, mydoit)
 
     def getinfo(self, parref, insert=False):
