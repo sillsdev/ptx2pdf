@@ -791,13 +791,14 @@ class ParRect:
 
 @dataclass
 class ParInfo:
+    ref:        str
     partype:    str
     mrk:        str
     baseline:   float
     rects:      InitVar[None] = None
 
     def __str__(self):
-        return f"{getattr(self, 'ref', '')}[{getattr(self, 'parnum', '')}] {self.baseline} {self.rects}"
+        return f"{self.ref}[{getattr(self, 'parnum', '')}] {self.baseline} {self.rects}"
 
     def __repr__(self):
         return self.__str__()
@@ -845,10 +846,12 @@ class Paragraphs(list):
                         currr.yend = readpts(p[1])
                         currr = None
                 elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
-                    currp = ParInfo(p[0], p[1], readpts(p[2]))
+                    if len(p) == 5:
+                        p.insert(0, "")
+                    currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                     currp.rects = []
                     cinfo = colinfos[polycol]
-                    currr = ParRect(pnum, cinfo[3], readpts(p[4]) + currp.baseline)
+                    currr = ParRect(pnum, cinfo[3], readpts(p[5]) + currp.baseline)
                     currp.rects.append(currr)
                     currps[polycol] = currp
                     self.append(currp)
@@ -867,7 +870,7 @@ class Paragraphs(list):
                     currp = currps[polycol]
                     if currp is None:
                         continue
-                    currp.ref = p[0]
+                    currp.lastref = p[0]
                     currp.parnum = int(p[1])
                     currp.lines = int(p[2]) # this seems to be the current number of lines in para
                     currp.nextmk = p[3]

@@ -189,7 +189,7 @@ class AdjList:
             # book, c:v, para, stretch, mkr, expand, comment%
                 r = [cp[0], cp[1], cp[2], "0", "", 100, ""]
                 self.liststore.insert(i, r)
-                r = self.listore[i]         # since the row is turned into something else
+                r = self.liststore[i]         # since the row is turned into something else
                 self.changed = True
                 doit(r, i)
 
