@@ -992,6 +992,24 @@
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
  \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
+  \ifdiglot\edef\dc@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\else\edef\c@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\fi
+  \leavevmode % ensure we are in horizontal mode to build paragraph. This may output a chapter number
+  % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
+  % and the user has requested omission of the first verse number in a chapter
+  \c@ncelfirstversefalse
+  \dimen0=\lastkern
+  {\count1=\spacefactor\trace{hv}{spacefactor:\the\count1 NoHV1:\ifNoHangVerseNumberOne true\else \false\fi}}%
+  \ifnum\spacefactor=\n@wchaptersf \ifNoHangVerseNumberOne \kern0sp \hangingversefalse\fi\relax % override \hangversenumber here
+   \ifOmitVerseNumberOne \ifdr@ppednumber\c@ncelfirstversetrue % v1
+                         \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
+  \fi\fi
+  % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
+  % When this happens we make ll@p use llap to right justify the verse number at the current position.
+  % Otherwise make ll@p do nothing.
+  \ifdim\lastkern=-1sp \hangingversetrue\fi
+  \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+  %\trace{hv}{lastkern \the\dimen0}%
+  \bgroup
   \ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
  % If the next token IS vp, then call relevant code to interpret before dropping 
  \def\@V@{%
@@ -1042,26 +1060,11 @@
       \trace{hv}{Horiz Mode:cancel hangingverse}%
       \hangingversefalse % Cancel
     \fi
-  \global\let\prev@rsemode\empty\fi
+    \global\let\prev@rsemode\empty
+  \fi
   \ifinn@te \MSG{Verse marker found in note style (\newn@testyle), after \c@rref. End notes properly, notes including verse numbers must uses fv.}\endn@testyle*\fi
-  \leavevmode % ensure we are in horizontal mode to build paragraph
-  % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
-  % and the user has requested omission of the first verse number in a chapter
-  \c@ncelfirstversefalse
-  \dimen0=\lastkern
-  {\count1=\spacefactor\trace{hv}{spacefactor:\the\count1 NoHV1:\ifNoHangVerseNumberOne true\else \false\fi}}%
-  \ifnum\spacefactor=\n@wchaptersf \ifNoHangVerseNumberOne \kern0sp \hangingversefalse\fi\relax % override \hangversenumber here
-   \ifOmitVerseNumberOne \ifdr@ppednumber\c@ncelfirstversetrue % v1
-                         \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
-  \fi\fi
-  % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
-  % When this happens we make ll@p use llap to right justify the verse number at the current position.
-  % Otherwise make ll@p do nothing.
-  \ifdim\lastkern=-1sp \hangingversetrue\fi
-  \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
-  %\trace{hv}{lastkern \the\dimen0}%
-  \bgroup\@v@}%
- %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
+  \@v@}%
+   %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
  % remember chapter macro for later
 %-csty_verse
 %+csty_chapdef

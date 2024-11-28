@@ -273,6 +273,7 @@
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook. Normally called from inside endlastp@rstyle
 \def\par{%
+  \trace{sP}{par! n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
   \ifhmode
    \ifb@xedparstyle \trace{s}{b@xedstyle met in par! \styst@k}%
     \set@endb@xedstyle{\styst@kfirst}{\styst@k}\egroup\apply@endb@xedstyle{\tmpctsb@x}%
@@ -431,7 +432,8 @@
 \def\writep@rstart#1#2{%Call with #1 = fully expanded baselineskip
    \getp@ram{type}{#2}{#2}%
    \beginL\pdfsavepos\t@gstartfull{P}{#2}{lspace="#1" id="\adjc@rref[\the\curr@djpar]"}%
-   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parstart\x@{\p@ram}{#2}{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
+   \edef\tmp{{\ifdiglot\x@\dc@rref\else\x@\c@rref\fi}{\p@ram}}%
+   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parstart\tmp{#2}{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
 }
 
 \newif\iftoplevelp@r
@@ -1055,13 +1057,13 @@
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
 
-\def\@parstart#1#2#3#4#5{%
-  \prev@y=#5\relax
+\def\@parstart#1#2#3#4#5#6{%
+  \prev@y=#6\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
   \trace{C}{@parstart \tot@col@ht - \the\dimen1 = \prev@col@ht}%
   \csname inp@r-\c@rrdstat true\endcsname
-  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#3}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
+  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2#3{%
   \this@y=#3\relax
