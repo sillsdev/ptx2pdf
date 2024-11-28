@@ -229,7 +229,9 @@ class PDFViewer:
                 adjlist = self.model.get_adjlist(nbk)
                 bk = nbk
             pnum = f"[{p.parnum}]" if getattr(p, 'parnum', 1) > 1 else ""
-            info = adjlist.getinfo(getattr(p, 'ref', (bk or "") + "0.0") + pnum)
+            ref = getattr(p, 'ref', (bk or "") + "0.0") + pnum
+            info = adjlist.getinfo(ref)
+            logger.debug(f"hint: {ref} -> {info}")
             if not info:
                 continue
             col = None
@@ -594,7 +596,7 @@ class PDFViewer:
             if l[0] not in '+-':
                 l = '+' + l
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}  {l}  {info[1]}%"
-            self.addMenuItem(menu, hdr, self.on_identify_paragraph, info[2], sensitivity=False)
+            self.addMenuItem(menu, hdr, self.on_identify_paragraph, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
 
             x = "Yes! Shrink" if ("-" in str(info[0]) and str(info[0]) != "-1") else "Try Shrink"

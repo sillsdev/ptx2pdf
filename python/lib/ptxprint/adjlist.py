@@ -1,5 +1,6 @@
 
 from ptxprint.utils import refKey
+from collections import UserList
 import os,re
 import logging
 
@@ -16,6 +17,19 @@ class Liststore(list):
 
     def set_value(self, line, col, val):
         self[line][col] = val
+
+    def insert(self, i, row):
+        rl = UserList(row)
+        rl.iter = i
+        super().insert(i, rl)
+        for j, r in enumerate(self[i+1:], i+1):
+            r.iter = j
+
+    def append(self, row):
+        rl = UserList(row)
+        rl.iter = len(self)
+        super().append(rl)
+        
 
 
 class AdjList:
@@ -85,7 +99,8 @@ class AdjList:
                 m = adjre.match(l)
                 if m:
                     try:
-                        val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1), m.group(4), None, self.centre, c]
+                        val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1),
+                                        m.group(4), None, self.centre, c]
                     except ValueError:
                         val = None
                     if val is not None:
@@ -147,7 +162,7 @@ class AdjList:
         return True
 
     def changeval(self, parref, doit, insert=False):
-        if isinstance(parref, int):
+        if not isinstance(parref, str):
             r = self.liststore[parref]
             doit(r, parref)
             return
@@ -169,9 +184,10 @@ class AdjList:
             doit(r, i)
         elif rk > cpk:
             if insert:
+                lasti = r.iter
             # book, c:v, para, stretch, mkr, expand, comment%
                 r = [cp[0], cp[1], cp[2], "0", "", 100, ""]
-                self.liststore.insert(i, r)
+                self.liststore.insert(lasti, r)
                 self.changed = True
                 doit(r, i)
 
@@ -194,18 +210,18 @@ class AdjList:
                 f = ("+" if hasplus else "") + ("-" if mult < 0 else "") + "0"
             else:
                 f = str(v)
-            self.liststore.set_value(i, 3, f)
+            self.liststore.set_value(r.iter, 3, f)
             if mrk is not None and not self.liststore.get_value(r.iter, 4):
-                self.liststore.set_value(i, 4, mrk)
+                self.liststore.set_value(r.iter, 4, mrk)
             self.changed = True
         self.changeval(parref, mydoit)
 
     def expand(self, parref, offset, mrk=None):
         def mydoit(r, i):
             v = r[5] + offset
-            self.liststore.set_value(i, 5, v)
+            self.liststore.set_value(r.iter, 5, v)
             self.changed = True
-            if mrk is not None and not self.liststore.get_value(i, 4):
+            if mrk is not None and not self.liststore.get_value(r.iter, 4):
                 self.liststore.set_value(i, 4, mrk)
         self.changeval(parref, mydoit)
 
@@ -215,6 +231,6 @@ class AdjList:
         def mydoit(r, i):
             res.append(r[3])
             res.append(r[5])
-            res.append(i)
+            res.append(r.iter)
         self.changeval(parref, mydoit, insert=insert)
         return res
