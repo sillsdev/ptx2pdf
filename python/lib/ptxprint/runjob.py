@@ -360,6 +360,7 @@ class RunJob:
                 smry, msgList, ufPages = summarizeTexLog(log)
                 self.printer.ufCurrIndex = 0
                 self.printer.ufPages = ufPages
+                self.printer.builder.get_object("btn_seekPage2fill").set_sensitive(len(ufPages))
                 if not self.noview and not self.args.print:
                     sl = self.printer.builder.get_object("l_statusLine")
                     sl.set_text("")

@@ -1546,12 +1546,11 @@ class GtkViewModel(ViewModel):
                         with open(pdfname, "ab+") as outf:
                             outf.close()
                     except PermissionError:
-                        question = _("                   >>> PLEASE CLOSE the PDF <<<\
-                         \n\n{}\n\n Or use a different PDF viewer which will \
-                                 \n allow updates even while the PDF is open. \
-                                 \n See 'Links' on Viewer tab for more details. \
-                               \n\n                        Do you want to try again?").format(pdfname)
-                        if self.msgQuestion(_("The old PDF file is open!"), question):
+                        question = _("Please close the file in your PDF viewer.\
+                         \n\n{}\n\n Note: It is better to use the Preview Pane.\
+                                 \n See 'Show PDF' options on the PTXprint menu. \
+                               \n\n       Do you want to try again?").format(basename + ".pdf")
+                        if self.msgQuestion(_("Cannot update PDF file while it is locked!"), question):
                             continue
                         else:
                             self.doStatus(_("Close the old PDF file before you try again."))
@@ -2453,7 +2452,7 @@ class GtkViewModel(ViewModel):
     def enableCodelets(self, pgnum, fpath):
         if self.loadingConfig:
             return
-        pgcats = ['Front', 'Adjust', None, None, None, 'File', 'File', 'File']
+        pgcats = ['Front', None, None, None, None, 'File', 'File', 'File']
         cat = pgcats[pgnum]
         if self.currCodeletVbox is not None:
             self.currCodeletVbox.hide()
@@ -2461,7 +2460,12 @@ class GtkViewModel(ViewModel):
             self.currCodeletVbox.set_visible(False)
             self.currCodeletVbox = None
         if cat is None:
+            self.builder.get_object("l_codeSnippets").set_visible(False)
+            self.builder.get_object("box_codelets").set_visible(False)
             return
+        else:
+            self.builder.get_object("l_codeSnippets").set_visible(True)
+            self.builder.get_object("box_codelets").set_visible(True)
         if cat == 'File':
             cat = os.path.splitext(fpath)[1].lower()  # could be .txt, .tex, or .sty
         if not len(self.codeletVboxes):
@@ -4432,9 +4436,6 @@ class GtkViewModel(ViewModel):
         dialog.destroy()
         return True if response == Gtk.ResponseType.YES else False
 
-    def onOpenFolderButtonClicked(self, btn):
-        self.openFolder(self.project.printPath(None))
-        
     def onOpenFolderClicked(self, btn, *argv):
         p = re.search(r'(?<=href=\")[^<>]+(?=\")',btn.get_label())
         outputfolder =  p[0]
@@ -6201,7 +6202,8 @@ Thank you,
             if action == "preview":
                 prvw = self.builder.get_object("dlg_preview")
                 plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                self.pdf_viewer.loadnshow(pdffile, rtl=self.rtl, parlocs=plocname, widget=prvw, page=1, isdiglot=self.get("c_diglot"))
+                self.pdf_viewer.loadnshow(pdffile, rtl=self.get("c_RTLbookBinding", False), parlocs=plocname, \
+                                          widget=prvw, page=None, isdiglot=self.get("c_diglot"))
             elif action == "sysviewer":
                 startfile(pdffile)
             elif action == "openfolder":

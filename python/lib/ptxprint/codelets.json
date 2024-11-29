@@ -770,56 +770,5 @@
           "CodeSnippet": "\\showboxdepth=300\n\\showboxbreadth=300\n\\tracingoutput=1"
         }
       ]
-    },
-  "Adjust":
-    {
-      "Edits": [
-        {
-          "Type": "global",
-          "Label": "Remove all the redundant 0 lines",
-          "Description": "Remove (delete) all lines where no adjustment has been specified.",
-          "CodeSnippet": "[A-Z123]{3}[LR]?\\s\\d.+?[-+]+0([%[].+\\])?%?\\r?\\n > "
-        },
-        {
-          "Type": "line",
-          "Label": "Split line once for multi-para adjustments",
-          "Description": "Expand out the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]% +[4]",
-          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
-        },
-        {
-          "Type": "linemulti",
-          "Label": "Split line multiple times for multi-para adjustments",
-          "Description": "Expand out the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]\nJAS +[4]%",
-          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
-        },
-        {
-          "Type": "globalmulti",
-          "Label": "Split ALL lines to a flatter list",
-          "Description": "Expand out ALL the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]\nJAS +[4]%",
-          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
-        },
-        {
-          "Type": "global",
-          "Label": "Highlight all shrinkable paragraphs",
-          "Description": "Highlights any lines that could shrink (JAS 4.1 +-0) becomes (% JAS 4.1 -1)",
-          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?)\\s+(\\+-0)(.+?)? > % \\1 -1\\4"
-        }
-      ],
-      "-1 / +1": [
-        {
-          "Type": "line",
-          "Shortcut": "Ctrl+<",
-          "Label": "Shorten this paragraph (apply -1)",
-          "Description": "Shrink (shorten) the paragraph at the cursor position.",
-          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?).+?\\n > \\1 -1\\n"
-        },
-        {
-          "Type": "line",
-          "Shortcut": "Ctrl+>",
-          "Label": "Lengthen this paragraph (apply +1)",
-          "Description": "Grow (lengthen) the paragraph at the cursor position.",
-          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?).+?\\n > \\1 +1\\n"
-        }
-      ]
     }
 }
