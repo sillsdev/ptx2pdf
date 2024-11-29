@@ -188,6 +188,7 @@ class PDFViewer:
 
     def show_pdf(self, page = None, rtl=False):
         if self.document is None:
+            self.create_boxes(0)
             return
         if page is None:
             page = self.current_page or 1
