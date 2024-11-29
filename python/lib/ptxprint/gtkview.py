@@ -1440,8 +1440,6 @@ class GtkViewModel(ViewModel):
         if self.logfile != None:
             self.logfile.write("</actions>\n")
             self.logfile.close()
-        if self.pdf_viewer is not None:
-            self.pdf_viewer.exit()
         Gtk.main_quit()
 
     def onKeyPress(self, dlg, event):

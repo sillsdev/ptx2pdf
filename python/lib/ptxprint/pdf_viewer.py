@@ -7,9 +7,7 @@ from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.utils import _, refSort
 from pathlib import Path
-from threading import Thread, Event, Timer
 from dataclasses import dataclass, InitVar, field
-from multiprocessing import sharedctypes, Process
 import logging
 logger = logging.getLogger(__name__)
 
@@ -70,8 +68,6 @@ class PDFViewer:
         # self.drag_start_x = None
         # self.drag_start_y = None
         self.is_dragging = False
-        self.thread = None
-        self.timer = None
         self.adjlist = None
         self.showadjustments = True
 
@@ -87,10 +83,6 @@ class PDFViewer:
     def setShowAdjOverlay(self, val):
         self.showadjustments = val
         self.show_pdf()
-
-    def exit(self):
-        if self.thread is not None:
-            self.thread.kill()
 
     def create_boxes(self, num):
         boxes = self.hbox.get_children()
@@ -290,10 +282,6 @@ class PDFViewer:
         else:
             redraw()
         self.model.set("s_pdfZoomLevel", self.zoomLevel*100)
-        #if self.thread is None:
-        #    self.thread = ThreadRenderer(parent=self)
-        #GLib.idle_add(self.thread.render_pages, list(range(len(self.pages))), self.zoomLevel, width, height)
-#        self.thread.render_pages(self.pages, self.zoomLevel)
 
     def set_zoom(self, zoomlevel, scrolled=False):
         if zoomlevel == self.zoomLevel:
@@ -303,72 +291,6 @@ class PDFViewer:
         self.model.set("s_pdfZoomLevel", self.zoomLevel*100)
         self.resize_pdf(scrolled=scrolled)
     
-    def print_document(self, fitToPage=False):
-        if not hasattr(self, 'document') or self.document is None:
-            return
-        self.fitToPage = fitToPage
-        print_op = Gtk.PrintOperation()
-        print_op.set_n_pages(self.numpages)
-        print_op.connect("draw_page", self.on_draw_page)
-
-        try:
-            result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
-            if result == Gtk.PrintOperationResult.APPLY:
-                self.model.doStatus(_("Print job sent to printer."))
-            else:
-                self.model.doStatus(_("Print job canceled or failed."))
-        except Exception as e:
-            self.model.doStatus(_("An error occurred while printing: ").format(e))
-
-    def on_draw_page(self, operation, context, page_number):
-        # Ensure the document exists and is valid
-        if not getattr(self, 'document', None):
-            return
-
-        pdf_page = self.document.get_page(page_number)
-
-        cairo_context = context.get_cairo_context()
-        cairo_context.save()
-        
-        # Set background color to white
-        cairo_context.set_source_rgb(1, 1, 1)
-        cairo_context.paint()
-
-        # Get the dimensions of the PDF page in points
-        pdf_width, pdf_height = pdf_page.get_size()
-        
-        # Get the physical paper size from the printer context in points
-        paper_width = context.get_width()
-        paper_height = context.get_height()
-
-        # if self.fitToPage:
-            # Fit the PDF to the page while maintaining aspect ratio
-            # scale_x = paper_width / pdf_width
-            # scale_y = paper_height / pdf_height
-        # else:
-        if True:
-            # Ensure the PDF is printed at 100% size (1:1 scale)
-            # Account for DPI to maintain physical dimensions
-            dpi_x = context.get_dpi_x()
-            dpi_y = context.get_dpi_y()
-            scale_x = dpi_x / 72  # Convert from PDF points to printer DPI
-            scale_y = dpi_y / 72
-        scale = min(scale_x, scale_y)
-
-        # Center the PDF on the page
-        offset_x = (paper_width - pdf_width * scale) / 2
-        offset_y = (paper_height - pdf_height * scale) / 2
-
-        # Apply scaling and translation
-        cairo_context.translate(offset_x, offset_y)
-        cairo_context.scale(scale, scale)
-
-        # Render the PDF page
-        pdf_page.render(cairo_context)
-
-        # Restore the original context state
-        cairo_context.restore()
-
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
@@ -384,7 +306,6 @@ class PDFViewer:
             mouse_x, mouse_y = event.x, event.y
             posn = self.widgetPosition(widget) # 0=left page; 1=right page
 
-            # Perform zoom operation centered on mouse
             if zoom_in:
                 self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
             elif zoom_out:
@@ -420,27 +341,18 @@ class PDFViewer:
         scale_factor = self.zoomLevel / self.old_zoom
 
         self.resize_pdf(scrolled=True)
-        # Get the parent scrolled window and its adjustments
         scrolled_window = self.hbox.get_parent()
         h_adjustment = scrolled_window.get_hadjustment()
         v_adjustment = scrolled_window.get_vadjustment()
-
-        # Handle inactive scrollbars or default to zero
         h_value = h_adjustment.get_value() if h_adjustment else 0
         v_value = v_adjustment.get_value() if v_adjustment else 0
 
-        # Page dimensions
         hbox_width  = self.hbox.get_allocated_width()
         page_width  = hbox_width / 2 if self.spread_mode else hbox_width
-
-        # Set page_offset if on right page (posn: 0=left, 1=right)
         page_offset = (posn * page_width)
         
-        # New scroll positions to keep focus on the cursor
         new_h_value = (scale_factor - 1) * (mouse_x + page_offset) + h_value 
         new_v_value = (scale_factor - 1) *  mouse_y                + v_value
-        # new_h_value = max(new_h_value, 0)
-        # new_v_value = max(new_v_value, 0)
         h_adjustment.set_upper(h_adjustment.get_upper() * scale_factor)
         v_adjustment.set_upper(v_adjustment.get_upper() * scale_factor)
         h_adjustment.set_value(new_h_value)
@@ -613,7 +525,6 @@ class PDFViewer:
             self.addMenuItem(menu, f"Expand Text ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
             self.addMenuItem(menu, None, None)
 
-        # Second section: Zoom In, Reset Zoom, Zoom Out
         # self.addMenuItem(menu, "Zoom In         (Ctrl +)", self.on_zoom_in)
         # self.addMenuItem(menu, "Zoom Out       (Ctrl -)", self.on_zoom_out)
         self.addMenuItem(menu, "Zoom to Fit (Ctrl + F)", self.set_zoom_fit_to_screen)
@@ -693,77 +604,74 @@ class PDFViewer:
     def set_zoom_fit_to_screen(self, x):
         if not hasattr(self, "document") or self.document is None or self.current_page is None:
             return
-
         page = self.document.get_page(self.current_page - 1)
         try:
             page_width, page_height = page.get_size()
         except AttributeError:
             return
 
-        # Get the parent widget of self.hbox
         parent_widget = self.hbox.get_parent() # .get_parent()
-
-        # Check if the parent widget exists to avoid AttributeError
         if parent_widget is not None:
             alloc = parent_widget.get_allocation()
+            scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
+            scale_y = (alloc.height + 0) / page_height
+            self.set_zoom(min(scale_x, scale_y))
 
-        # Calculate the zoom level to fit the page within the dialog ( borders and padding subtracted)
-        scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
-        scale_y = (alloc.height + 0) / page_height
-        self.set_zoom(min(scale_x, scale_y))
+    def _saveSetting(self, key, value):
+        self.model.userconfig.set('printer', key, value)
 
+    def print_document(self, fitToPage=False):
+        if not hasattr(self, 'document') or self.document is None:
+            return
+        self.fitToPage = fitToPage
+        print_op = Gtk.PrintOperation()
+        if self.model.userconfig.has_section('printer'):
+            settings = print_op.get_print_settings()
+            for k, v in self.model.userconfig.items('printer'):
+                setting.set(k, v)
+        print_op.set_n_pages(self.numpages)
+        print_op.connect("draw_page", self.on_draw_page)
 
-class ThreadRenderer(Thread):
+        try:
+            result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
+            if result == Gtk.PrintOperationResult.APPLY:
+                self.model.doStatus(_("Print job sent to printer."))
+                settings = print_op.get_print_settings()
+                settings.foreach(self._saveSettings)
+            else:
+                self.model.doStatus(_("Print job canceled or failed."))
+        except Exception as e:
+            self.model.doStatus(_("An error occurred while printing: ").format(e))
 
-    def __init__(self, *args, parent=None, **kw):
-        super().__init__(*args, **kw)
-        self.parent = parent
-        self.pending = None
-        self.startme = False
-        self.quit = False
-        self.lock = Event()
-        self.lock.clear()
-        self.start()
+    def on_draw_page(self, operation, context, page_number):
+        if not getattr(self, 'document', None):
+            return
 
-    def render_pages(self, pages, zoomlevel, w, h):
-        self.pending = [zoomlevel, w, h] + list(pages)
-        self.stopme = False
-        self.lock.set()
-        if self.startme:
-            self.startme = False
-            self.start()
+        pdf_page = self.document.get_page(page_number)
 
-    def stop(self):
-        self.stopme = True
-        self.pending = None
+        cairo_context = context.get_cairo_context()
+        cairo_context.save()
+        cairo_context.set_source_rgb(1, 1, 1)
+        cairo_context.paint()
 
-    def kill(self):
-        self.quit = True
-        self.lock.set()
+        pdf_width, pdf_height = pdf_page.get_size()
+        paper_width = context.get_width()
+        paper_height = context.get_height()
 
-    def run(self):
-        while True:
-            time.sleep(0.2)
-            self.lock.wait()
-            if self.quit:
-                break
-            pending = self.pending
-            self.pending = None
-            self.lock.clear()
-            zoomlevel, w, h = pending[0:3]
-            images = []
-            for p in pending[3:]:
-                imarray = sharedctypes.RawArray('B', w * h * 4)
-                if sys.platform == "win32":
-                    self.parent.render_pi(p, zoomlevel, imarray)
-                else:
-                    mp = Process(target=self.parent.render_pi, args=(p, zoomlevel, imarray))
-                    mp.start()
-                    mp.join()
-                images.append(arrayImage(imarray, w, h))
-            if not self.lock.is_set() and self.pending is None and not self.stopme and len(images) and self.parent is not None:
-                GLib.idle_add(self.parent.update_boxes, images)
-        self.startme = True
+        dpi_x = context.get_dpi_x()
+        dpi_y = context.get_dpi_y()
+        scale_x = dpi_x / 72  # Convert from PDF points per inch to printer DPI
+        scale_y = dpi_y / 72
+        scale = min(scale_x, scale_y)
+
+        offset_x = (paper_width - pdf_width * scale) / 2
+        offset_y = (paper_height - pdf_height * scale) / 2
+        cairo_context.translate(offset_x, offset_y)
+        cairo_context.scale(scale, scale)
+
+        pdf_page.render(cairo_context)
+
+        cairo_context.restore()
 
 
 def readpts(s):
