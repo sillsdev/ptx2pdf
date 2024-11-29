@@ -1413,10 +1413,12 @@
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
       \setbox\colA=\vbox{\hbox to \dimen5{\noindent
+          % No \beginR does not result in the boxes coming out in document order
           \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{1}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
             \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
-          \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+          \else 
+            \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
             \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
         \kern\lastd@pth}%

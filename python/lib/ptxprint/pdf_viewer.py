@@ -5,7 +5,7 @@ from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
 import cairo, re, time, sys
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from ptxprint.utils import _
+from ptxprint.utils import _, refSort
 from pathlib import Path
 from threading import Thread, Event, Timer
 from dataclasses import dataclass, InitVar, field
@@ -193,7 +193,6 @@ class PDFViewer:
             self.spread_mode = self.model.get("c_bkView", False)
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
 
-        self.pages = []
         images = []
         if self.spread_mode:
             spread = self.get_spread(page, self.rtl_mode)
@@ -201,14 +200,12 @@ class PDFViewer:
             for i in spread:
                 if i in range(self.numpages+1):
                     pg = self.document.get_page(i-1)
-                    self.pages.append(pg)
                     self.psize = pg.get_size()
                     images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
         else:
             if page in range(self.numpages+1):
                 self.create_boxes(1)
                 pg = self.document.get_page(page-1)
-                self.pages.append(pg)
                 self.psize = pg.get_size()
                 images.append(render_page_image(pg, self.zoomLevel, page, self.add_hints if self.showadjustments else None))
 
@@ -251,7 +248,7 @@ class PDFViewer:
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
         if parlocs is not None:     # and not isdiglot:
-            self.load_parlocs(parlocs)                    
+            self.load_parlocs(parlocs, rtl=rtl)
         self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
@@ -372,9 +369,9 @@ class PDFViewer:
         # Restore the original context state
         cairo_context.restore()
 
-    def load_parlocs(self, fname):
+    def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
-        self.parlocs.readParlocs(fname)
+        self.parlocs.readParlocs(fname, rtl=rtl)
 
     def on_scroll_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
@@ -560,7 +557,7 @@ class PDFViewer:
         a = self.hbox.get_allocation()
 
         if self.parlocs is not None:
-            p = self.parlocs.findPos(pnum, x, self.psize[1] - y)
+            p = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
         # print(f"Parloc: {p=} {pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
         return p
 
@@ -587,13 +584,13 @@ class PDFViewer:
             if parref is None:
                 info = []
             else:
-                pnum = f"[{parref.parnum}]" if parref.parnum > 1 else ""
+                pnum = f"[{parref.parnum}]" if getattr(parref, 'parnum', 0) > 1 else ""
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
                     info = self.adjlist.getinfo(ref + pnum, insert=True)
 
-        logger.debug(f"{parref=} {info=}")
+        logger.debug(f"{parref=} {info=} ({event.x},{event.y})")
         if len(info) and self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             l = info[0]
@@ -808,10 +805,47 @@ class ParInfo:
     def __repr__(self):
         return self.__str__()
 
+    def sortKey(self):
+        return (self.rects[-1].pagenum, refSort(self.ref), getattr(self, 'parnum', 0))
+
+class ParlocLinesIterator:
+    def __init__(self, fname):
+        self.fname = fname
+        self.collection = []
+        self.replay = False
+
+    def __iter__(self):
+        with open(self.fname, encoding="utf-8") as inf:
+            self.lines = inf.readlines()
+        return self
+
+    def __next__(self):
+        if self.replay:
+            if len(self.collection):
+                return self.collection.pop(0)
+            else:
+                self.replay = False
+        if not len(self.lines):
+            raise StopIteration
+        return self.lines.pop(0)
+
+    def collectuntil(self, limit, lines):
+        self.collection = lines
+        while len(self.lines):
+            l = self.lines.pop(0)
+            self.collection.append(l)
+            if l.startswith(limit):
+                break
+
+    def startreplay(self):
+        if len(self.collection):
+            self.replay = True
+            logger.log(7, "Starting replay of {len(self.collection)} lines")
+
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
 
-    def readParlocs(self, fname):
+    def readParlocs(self, fname, rtl=False):
         self.pindex = []
         currp = None
         currr = None
@@ -822,95 +856,113 @@ class Paragraphs(list):
         currps = {polycol: None}
         colinfos = {}
         innote = False
-        with open(fname, encoding="utf-8") as inf:
-            for l in inf.readlines():
-                m = self.parlinere.match(l)
-                if not m:
+        pwidth = 0.
+        lines = ParlocLinesIterator(fname)
+        for l in lines:
+            m = self.parlinere.match(l)
+            if not m:
+                continue
+            logger.log(5, l[:-1])
+            c = m.group(1)
+            p = m.group(2).split("}{")
+            if c == "pgstart":          # pageno, available height, pagewidth, pageheight
+                pnum += 1
+                if len(p) > 3:
+                    pwidth = readpts(p[2])
+                else:
+                    pwidth = 0.
+                self.pindex.append(len(self))
+                pheight = float(re.sub(r"[a-z]+", "", p[1]))
+                inpage = True
+            elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
+                pginfo = [readpts(x) for x in p[:2]] + [p[2]]
+                inpage = False
+            elif c == "colstart":       # col height, col depth, col width, topx, topy
+                cinfo = [readpts(x) for x in p]
+                logger.log(5, f"Test replay: {lines.replay} {pwidth=} width={cinfo[2]} left={cinfo[3]}")
+                if rtl and not lines.replay and ((pwidth == 0. and cinfo[3] > cinfo[2]) or (cinfo[3] + cinfo[2]) * 2 < pwidth):
+                    # right column. So swap it
+                    logger.debug(f"Start column swap at {cinfo}")
+                    lines.collectuntil("\\@colstop", [l])
                     continue
-                c = m.group(1)
-                p = m.group(2).split("}{")
-                if c == "pgstart":          # pageno, available height
-                    #pnum = int(p[0])
-                    pnum += 1
-                    self.pindex.append(len(self))
-                    pheight = float(re.sub(r"[a-z]+", "", p[1]))
-                    inpage = True
-                elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
-                    pginfo = [readpts(x) for x in p[:2]] + [p[2]]
-                    inpage = False
-                elif c == "colstart":       # col height, col depth, col width, topx, topy
-                    colinfos[polycol] = [readpts(x) for x in p]
+                colinfos[polycol] = cinfo
+                if currps[polycol] is not None:
+                    currr = ParRect(pnum, cinfo[3], cinfo[4])
+                    currps[polycol].rects.append(currr)
+            elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
+                if currr is not None:
                     cinfo = colinfos[polycol]
-                    if currps[polycol] is not None:
-                        currr = ParRect(pnum, cinfo[3], cinfo[4])
-                        currps[polycol].rects.append(currr)
-                elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
-                    if currr is not None:
-                        cinfo = colinfos[polycol]
-                        currr.xend = cinfo[3] + cinfo[2]
-                        currr.yend = readpts(p[1])
-                        currr = None
-                elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
-                    # print(f"{p=}")
-                    if len(p) == 5:
-                        p.insert(0, "")
-                    currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
-                    currp.rects = []
-                    cinfo = colinfos[polycol]
-                    currr = ParRect(pnum, cinfo[3], readpts(p[5]) + currp.baseline)
-                    currp.rects.append(currr)
-                    currps[polycol] = currp
-                    self.append(currp)
-                elif c == "parend":         # badness, bottomx, bottomy
-                    cinfo = colinfos[polycol]
-                    if currps[polycol] is None:
-                        continue
-                    currps[polycol].lines = int(p[0])
-                    currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
-                    currr.yend = readpts(p[2])
-                    endpar = True
-                elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
-                    if not endpar:
-                        continue
-                    endpar = False
-                    currp = currps[polycol]
-                    if currp is None:
-                        continue
-                    currp.lastref = p[0]
-                    currp.parnum = int(p[1])
-                    currp.lines = int(p[2]) # this seems to be the current number of lines in para
-                    currp.nextmk = p[3]
-                    # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
-                    currps[polycol] = None
+                    currr.xend = cinfo[3] + cinfo[2]
+                    currr.yend = readpts(p[1])
                     currr = None
-                elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
-                    polycol = p[5]
-                    colinfos[polycol] = [readpts(x) for x in p[:-1]]
-                    cinfo = colinfos[polycol]
-                    if polycol not in currps:
-                        currps[polycol] = None
-                    if currps[polycol] is not None:
-                        currr = ParRect(pnum, cinfo[3], cinfo[4])
-                        currps[polycol].rects.append(currr)
-                # "parnote":        # type, callerx, callery
-                # "notebox":        # type, width, height
-                # "parlines":       # numlines in previous paragraph (occurs after @parlen)
-        logger.log(5, f"parlocs={self}")
+                lines.startreplay()
+            elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
+                # print(f"{p=}")
+                if len(p) == 5:
+                    p.insert(0, "")
+                logger.log(5, f"Starting para {p[0]}")
+                currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
+                currp.rects = []
+                cinfo = colinfos[polycol]
+                currr = ParRect(pnum, cinfo[3], readpts(p[5]) + currp.baseline)
+                currp.rects.append(currr)
+                currps[polycol] = currp
+                self.append(currp)
+            elif c == "parend":         # badness, bottomx, bottomy
+                cinfo = colinfos[polycol]
+                if currps[polycol] is None:
+                    continue
+                currps[polycol].lines = int(p[0])
+                currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
+                currr.yend = readpts(p[2])
+                endpar = True
+            elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
+                if not endpar:
+                    continue
+                endpar = False
+                currp = currps[polycol]
+                if currp is None:
+                    continue
+                currp.lastref = p[0]
+                currp.parnum = int(p[1])
+                currp.lines = int(p[2]) # this seems to be the current number of lines in para
+                currp.nextmk = p[3]
+                # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
+                currps[polycol] = None
+                currr = None
+            elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
+                polycol = p[5]
+                colinfos[polycol] = [readpts(x) for x in p[:-1]]
+                cinfo = colinfos[polycol]
+                if polycol not in currps:
+                    currps[polycol] = None
+                if currps[polycol] is not None:
+                    currr = ParRect(pnum, cinfo[3], cinfo[4])
+                    currps[polycol].rects.append(currr)
+            # "parnote":        # type, callerx, callery
+            # "notebox":        # type, width, height
+            # "parlines":       # numlines in previous paragraph (occurs after @parlen)
+        self.sort(key=lambda x:x.sortKey())
+        logger.log(7, "parlocs=" + "\n".join([str(p) for p in self]))
         
-    def findPos(self, pnum, x, y):
+    def findPos(self, pnum, x, y, rtl=False):
         done = False
         # just iterate over paragraphs on this page
         if pnum > len(self.pindex):
             return None
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
+        logger.debug(f"Parloc testing: {self.pindex[pnum-1]-1} -> {e}")
         for p in self[max(self.pindex[pnum-1]-1, 0):e+1]:
-            for r in p.rects:
+            for i,r in enumerate(p.rects):
                 if r.pagenum > pnum:
+                    if rtl and i != 0:
+                        continue
                     done = True
                     break
                 elif r.pagenum < pnum:
                     continue
+                logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
                     return p
             if done:
