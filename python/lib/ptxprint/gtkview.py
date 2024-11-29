@@ -3569,7 +3569,7 @@ class GtkViewModel(ViewModel):
                     # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
                     # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
                     plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                    self.pdf_viewer.loadnshow(pdffile, rtl=False, parlocs=plocname, widget=prvw, page=1,
+                    self.pdf_viewer.loadnshow(pdffile, rtl=self.rtl, parlocs=plocname, widget=prvw, page=1,
                                                 isdiglot=self.get("c_diglot"))
 
     def enableTXLoption(self):
@@ -6199,7 +6199,7 @@ Thank you,
             if action == "preview":
                 prvw = self.builder.get_object("dlg_preview")
                 plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                self.pdf_viewer.loadnshow(pdffile, rtl=False, parlocs=plocname, widget=prvw, page=1, isdiglot=self.get("c_diglot"))
+                self.pdf_viewer.loadnshow(pdffile, rtl=self.rtl, parlocs=plocname, widget=prvw, page=1, isdiglot=self.get("c_diglot"))
             elif action == "sysviewer":
                 startfile(pdffile)
             elif action == "openfolder":

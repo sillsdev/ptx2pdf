@@ -551,6 +551,8 @@ class PDFViewer:
         y = event.y / self.zoomLevel
         if self.spread_mode:
             side = self.widgetPosition(widget)
+            if len(self.hbox.get_children()) > 1 and self.rtl_mode:
+                side ^= 1 # swap side if RTL
             pnum = self.get_spread(self.current_page)[side]     # this all only works for LTR
         else:
             pnum = self.current_page
@@ -862,7 +864,7 @@ class Paragraphs(list):
                 elif c == "parend":         # badness, bottomx, bottomy
                     cinfo = colinfos[polycol]
                     if currps[polycol] is None:
-                        breakpoint()
+                        continue
                     currps[polycol].lines = int(p[0])
                     currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
                     currr.yend = readpts(p[2])
