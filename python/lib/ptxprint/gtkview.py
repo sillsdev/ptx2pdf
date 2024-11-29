@@ -161,7 +161,6 @@ fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
-fcb_afterAction
 s_pdfZoomLevel s_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfGridlines c_pdfadjoverlay c_bkView btn_previewPrintIt scr_previewPDF scr_previewPDF bx_previewPDF
 """.split() # btn_reloadConfig   btn_imgClearSelection
@@ -5802,7 +5801,7 @@ class GtkViewModel(ViewModel):
     def onPagesPerSpreadChanged(self, btn):
         self.colorTabs()
         status = self.get("fcb_pagesPerSpread") != "1"
-        if status and self.get("fcb_afterAction") == "preview":
+        if status and self.showPDFmode == "preview":
             self.set("c_bkView", False)
             self.set("c_pdfadjoverlay", False)
             self.builder.get_object("c_pdfadjoverlay").set_sensitive(False)
