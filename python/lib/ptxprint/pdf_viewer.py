@@ -70,6 +70,7 @@ class PDFViewer:
         # self.drag_start_y = None
         self.is_dragging = False
         self.adjlist = None
+        self.timer = None
         self.showadjustments = True
 
         # Enable focus and event handling
