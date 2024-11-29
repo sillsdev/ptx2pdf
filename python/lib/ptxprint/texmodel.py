@@ -1574,7 +1574,7 @@ class TexModel:
             if os.path.exists(picpagesfile):
                 hasOut = False
                 mkr = self.imageCopyrightLangs.get(lang, "pc")
-                rtl = lang in cinfo['rtl']
+                rtl = lang in cinfo.get('rtl', [])
                 if rtl == (self.dict['document/ifrtl'] == "false"):
                     mkr += "\\begin" + ("R" if rtl else "L")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
