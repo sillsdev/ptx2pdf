@@ -246,7 +246,7 @@ class PDFViewer:
                 make_rect(context, col, r, abs(sv) * 3)
             if info[1] != 100:
                 col = (41 / 255., 1., 1.) if info[1] < 100 else (173 / 255., 1., 1.)
-                make_rect(context, col, r, abs(100 - info[1]) * -2)
+                make_rect(context, col, r, abs(100 - info[1]) * -1)
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)

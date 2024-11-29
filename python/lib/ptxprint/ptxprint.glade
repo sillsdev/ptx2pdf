@@ -2609,6 +2609,58 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_showPDF">
+    <columns>
+      <!-- column-name PDFviewer -->
+      <column type="gchararray"/>
+      <!-- column-name showAction -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Preview Pane</col>
+        <col id="1">preview</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">System Viewer</col>
+        <col id="1">sysviewer</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Output Folder</col>
+        <col id="1">openfolder</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkPopover" id="menu_showPDF">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkTreeView">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="model">ls_showPDF</property>
+        <property name="headers-visible">False</property>
+        <property name="enable-search">False</property>
+        <property name="search-column">0</property>
+        <property name="show-expanders">False</property>
+        <property name="activate-on-single-click">True</property>
+        <signal name="row-activated" handler="onShowPDF" swapped="no"/>
+        <child internal-child="selection">
+          <object class="GtkTreeSelection"/>
+        </child>
+        <child>
+          <object class="GtkTreeViewColumn">
+            <property name="title" translatable="yes">Levels</property>
+            <child>
+              <object class="GtkCellRendererText"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkListStore" id="ls_snruleHorizPosn">
     <columns>
       <!-- column-name HorizPosition -->
@@ -2975,18 +3027,18 @@ settings for a similar project.</property>
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkMenuButton" id="btn_menu_reset">
+          <object class="GtkMenuButton" id="btn_menu_showPDF">
             <property name="can-focus">True</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
             <property name="no-show-all">True</property>
-            <property name="use-popover">False</property>
-            <signal name="clicked" handler="onResetPage" swapped="no"/>
+            <property name="direction">right</property>
+            <property name="popover">menu_showPDF</property>
             <child>
-              <object class="GtkLabel" id="l_menu_reset">
+              <object class="GtkLabel" id="l_menu_showPDF">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Reset Page</property>
+                <property name="label" translatable="yes">Show PDF</property>
               </object>
             </child>
           </object>
@@ -3234,9 +3286,6 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
     <property name="type-hint">normal</property>
     <property name="deletable">False</property>
     <property name="gravity">east</property>
-    <signal name="close" handler="onClosePreview" swapped="no"/>
-    <signal name="configure-event" handler="on_configure_event" swapped="no"/>
-    <signal name="notify::allocation" handler="on_dlg_preview_allocation_notify" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
@@ -27303,48 +27352,16 @@ Shortcut: Ctrl-F</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Select the action to be taken
-after the PDF has been created.
-</property>
-                <property name="halign">end</property>
-                <property name="margin-end">4</property>
-                <property name="hexpand">True</property>
-                <property name="label" translatable="yes">Show in:</property>
+                <property name="hexpand">False</property>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">5</property>
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText" id="fcb_afterAction">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="tooltip-text" translatable="yes">Select where to show the PDF file once
-it has been created.
-
-If 'Preview Pane' is selected, there are
-some text adjustment options available
-using the Right-Click context menu which
-get applied on the subsequent print action.</property>
-                <property name="valign">center</property>
-                <property name="active">0</property>
-                <property name="active-id">sysviewer</property>
-                <items>
-                  <item id="preview" translatable="yes">Preview Pane</item>
-                  <item id="sysviewer" translatable="yes">PDF Viewer</item>
-                  <item id="openfolder" translatable="yes">Output Folder</item>
-                </items>
-                <signal name="changed" handler="onPopupShowOptions" swapped="no"/>
-                <signal name="grab-focus" handler="onPopupShowOptions" swapped="no"/>
-                <signal name="touch-event" handler="onPopupShowOptions" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">6</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <object class="GtkBox">

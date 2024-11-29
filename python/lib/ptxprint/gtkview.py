@@ -674,6 +674,7 @@ class GtkViewModel(ViewModel):
         self.blInitValue = None
         self.currCodeletVbox = None
         self.codeletVboxes = {}
+        self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
@@ -3554,7 +3555,7 @@ class GtkViewModel(ViewModel):
         self.showmybook(True)
 
     def showmybook(self, isfirst=False):
-        if self.initialised and self.get("fcb_afterAction") == "preview": # preview is on
+        if self.initialised and self.showPDFmode == "preview": # preview is on
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
@@ -3568,8 +3569,7 @@ class GtkViewModel(ViewModel):
                     # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
                     # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
                     plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                    self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
-                                                parlocs=plocname, widget=prvw, page=1,
+                    self.pdf_viewer.loadnshow(pdffile, rtl=False, parlocs=plocname, widget=prvw, page=1,
                                                 isdiglot=self.get("c_diglot"))
 
     def enableTXLoption(self):
@@ -6184,16 +6184,22 @@ Thank you,
             if float(self.get("s_pagegutter",0)) < 30:
                 self.set("s_pagegutter", 40)
 
-    def onPopupShowOptions(self, widget):
+    def onShowPDF(self, tv, path=None, col=0):
+        if tv is None:
+            action = self.showPDFmode
+        else:
+            action = tv.get_model()[path][1]
+            self.showPDFmode = action
+            self.userconfig.set('init', 'showPDFmode', action)
+            mw = self.builder.get_object("menu_showPDF")
+            mw.popdown()
+
         pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
         if os.path.exists(pdffile):
-            action = self.get("fcb_afterAction")
             if action == "preview":
                 prvw = self.builder.get_object("dlg_preview")
                 plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                self.pdf_viewer.loadnshow(pdffile, rtl=False, adjlist=self.adjView.adjlist,
-                                            parlocs=plocname, widget=prvw, page=1,
-                                            isdiglot=self.get("c_diglot"))
+                self.pdf_viewer.loadnshow(pdffile, rtl=False, parlocs=plocname, widget=prvw, page=1, isdiglot=self.get("c_diglot"))
             elif action == "sysviewer":
                 startfile(pdffile)
             elif action == "openfolder":
