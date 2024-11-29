@@ -60,6 +60,7 @@ class PDFViewer:
         self.toctv.append_column(tvc)
         self.toctv.connect("row-activated", self.pickToc)
         self.numpages = 0
+        self.document = None
         self.current_page = None  # Keep track of the current page number
         self.zoomLevel = 1.0  # Initial zoom level is 100%
         self.old_zoom = 1.0
