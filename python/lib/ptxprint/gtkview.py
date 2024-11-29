@@ -3564,7 +3564,10 @@ class GtkViewModel(ViewModel):
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
-                cfgt = os.stat(os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")).st_mtime
+                cfgfile = os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")
+                if not os.path.exists(cfgfile):
+                    return
+                cfgt = os.stat(cfgfile).st_mtime
                 for bk in self.getBooks():
                     adj = self.get_adjlist(bk, gtk=Gtk)
                 if pdft > cfgt:

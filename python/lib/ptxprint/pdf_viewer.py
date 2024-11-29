@@ -170,7 +170,10 @@ class PDFViewer:
         res = Gtk.TreeStore(str, int)
         indexi = None
         if document is not None:
-            indexi = Poppler.IndexIter.new(document)
+            try:
+                indexi = Poppler.IndexIter.new(document)
+            except TypeError:
+                return res
         if indexi is not None:
             havei = True
             while havei:
