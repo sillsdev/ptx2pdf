@@ -8,6 +8,10 @@ New features in 2.7  (29 Nov 2024)
   * A built-in PDF Preview pane to view the output of PTXprint
   * Interactive right-click context menu for making layout adjustments
   * Option to send a PDF to the printer - 'Print (on paper)' in PDF viewer
+  
+NOTE: As these features are new, if you are in the middle of typesetting, we 
+      suggest that you continue using the same version of PTXprint, rather than
+	  updating to this latest version.
 
 ### PDF Viewer Enhancements
   * Add page or spread counts

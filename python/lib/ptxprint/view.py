@@ -1264,7 +1264,7 @@ class ViewModel:
         cfgpath = os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")
         logger.debug(f"Saving config {self.isChanged=} {cfgpath=}")
         changed = self.isChanged
-        changed = changed or self.saveAdjlists(force=force)
+        changed = self.saveAdjlists(force=force) or changed
         cfgt = os.stat(cfgpath).st_mtime
         self.writeConfig(force=force)
         if not changed:

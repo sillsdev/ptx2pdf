@@ -144,6 +144,7 @@ _progress = {
 
 _ui_minimal = """
 btn_menu bx_statusBar t_find
+btn_menu_showPDF l_menu_showPDF
 btn_menu_level btn_menu_lang btn_menu_feedback l_menu_level l_menu_uilang
 fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
@@ -180,7 +181,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-btn_menu_reset l_menu_reset t_configName l_configNameMsg l_projectNameMsg btn_cfg_ok btn_cfg_cancel
+t_configName l_configNameMsg l_projectNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
@@ -1249,6 +1250,7 @@ class GtkViewModel(ViewModel):
         return self.uilevel
 
     def toggleUIdetails(self, w, state):
+        # print(f"{w}")
         if w in _ui_noToggleVisible:
             self.builder.get_object(w).set_sensitive(state)
         else:
