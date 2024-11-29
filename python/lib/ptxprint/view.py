@@ -35,8 +35,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.7"
-GitVersionStr = "2.7"
+VersionStr = "2.7.1"
+GitVersionStr = "2.7.1"
 ConfigVersion = "2.20"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
