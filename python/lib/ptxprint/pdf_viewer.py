@@ -629,19 +629,22 @@ class PDFViewer:
             settings = print_op.get_print_settings()
             for k, v in self.model.userconfig.items('printer'):
                 setting.set(k, v)
+            print_op.set_print_settings(settings)
         print_op.set_n_pages(self.numpages)
         print_op.connect("draw_page", self.on_draw_page)
 
         try:
             result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
-            if result == Gtk.PrintOperationResult.APPLY:
-                self.model.doStatus(_("Print job sent to printer."))
-                settings = print_op.get_print_settings()
-                settings.foreach(self._saveSettings)
-            else:
-                self.model.doStatus(_("Print job canceled or failed."))
         except Exception as e:
             self.model.doStatus(_("An error occurred while printing: ").format(e))
+        if result == Gtk.PrintOperationResult.APPLY:
+            self.model.doStatus(_("Print job sent to printer."))
+            if not self.model.userconfig.has_section("printer"):
+                self.model.userconfig.add_section("printer")
+            settings = print_op.get_print_settings()
+            settings.foreach(self._saveSetting)
+        else:
+            self.model.doStatus(_("Print job canceled or failed."))
 
     def on_draw_page(self, operation, context, page_number):
         if not getattr(self, 'document', None):
