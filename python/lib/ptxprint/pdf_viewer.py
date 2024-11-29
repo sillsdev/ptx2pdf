@@ -139,6 +139,7 @@ class PDFViewer:
             self.numpages = self.document.get_n_pages()
         except Exception as e:
             self.model.doStatus(_("Error opening PDF: ").format(e))
+            self.document = None
             return
         tocts = self.load_toc(self.document)
         self.toctv.set_model(tocts)
@@ -167,11 +168,14 @@ class PDFViewer:
     def load_toc(self, document):
         ''' Table of Contents: [name:str, pagenum:int] '''
         res = Gtk.TreeStore(str, int)
-        indexi = Poppler.IndexIter.new(document)
-        havei = True
-        while havei:
-            self._add_toctree(res, indexi, None)
-            havei = indexi.next()
+        indexi = None
+        if document is not None:
+            indexi = Poppler.IndexIter.new(document)
+        if indexi is not None:
+            havei = True
+            while havei:
+                self._add_toctree(res, indexi, None)
+                havei = indexi.next()
         return res
 
     def pickToc(self, tv, path, col):
@@ -179,6 +183,8 @@ class PDFViewer:
         self.show_pdf(pnum)
 
     def show_pdf(self, page = None, rtl=False):
+        if self.document is None:
+            return
         if page is None:
             page = self.current_page or 1
         if self.model.get("fcb_pagesPerSpread", "1") != "1":
