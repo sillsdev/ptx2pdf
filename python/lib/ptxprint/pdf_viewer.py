@@ -8,6 +8,7 @@ from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.utils import _, refSort
 from pathlib import Path
 from dataclasses import dataclass, InitVar, field
+from threading import Timer
 import logging
 logger = logging.getLogger(__name__)
 
