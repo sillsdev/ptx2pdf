@@ -467,7 +467,7 @@ class RunJob:
                         break
         if not foundmsg:
             # Try summarizing Log file:
-            smry, msgList = summarizeTexLog('\n'.join(finalLogLines))
+            smry, msgList, ufPages = summarizeTexLog('\n'.join(finalLogLines))
             if smry["E"] > 0:
                 msgs = "\n".join(msgList)
                 finalLogLines.append(msgs)
