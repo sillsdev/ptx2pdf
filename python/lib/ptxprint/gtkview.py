@@ -6193,8 +6193,9 @@ Thank you,
             action = tv.get_model()[path][1]
             self.showPDFmode = action
             self.userconfig.set('init', 'showPDFmode', action)
-            mw = self.builder.get_object("menu_showPDF")
-            mw.popdown()
+            for a in ("menu_showPDF", "menu_main"):
+                mw = self.builder.get_object(a)
+                mw.popdown()
 
         pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
         if os.path.exists(pdffile):
@@ -6261,7 +6262,7 @@ Thank you,
             return
         pg = min(int(self.get("s_pgNum", 1)), pages)
         pg = self.ufPages[min(self.ufCurrIndex, pages)]
-        self.set("s_pgNum", pg)
+        self.set("s_pgNum", pg, mod=False)
         self.pdf_viewer.show_pdf(pg, self.rtl)
         # self.ufCurrIndex = min(self.ufCurrIndex + 1, len(self.ufPages) - 1)
         self.ufCurrIndex = (self.ufCurrIndex + 1) % len(self.ufPages)
