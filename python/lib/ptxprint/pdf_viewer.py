@@ -702,15 +702,15 @@ class PDFViewer:
             return
 
         # Get the parent widget of self.hbox
-        parent_widget = self.hbox.get_parent().get_parent()
+        parent_widget = self.hbox.get_parent() # .get_parent()
 
         # Check if the parent widget exists to avoid AttributeError
         if parent_widget is not None:
             alloc = parent_widget.get_allocation()
 
         # Calculate the zoom level to fit the page within the dialog ( borders and padding subtracted)
-        scale_x = alloc.width + 2 / (page_width * (2 if self.spread_mode else 1))
-        scale_y = alloc.height + 2 / page_height
+        scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
+        scale_y = (alloc.height + 0) / page_height
         self.set_zoom(min(scale_x, scale_y))
 
 

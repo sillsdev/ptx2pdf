@@ -3227,8 +3227,8 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
   <object class="GtkDialog" id="dlg_preview">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PDF Preview</property>
-    <property name="default-width">1020</property>
-    <property name="default-height">700</property>
+    <property name="default-width">1053</property>
+    <property name="default-height">715</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon-name">text-x-generic</property>
     <property name="type-hint">normal</property>
@@ -3506,9 +3506,6 @@ Shortcut: Ctrl-P</property>
                   <placeholder/>
                 </child>
                 <child>
-                  <placeholder/>
-                </child>
-                <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -3520,7 +3517,7 @@ Shortcut: Ctrl-P</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">4</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
@@ -3536,7 +3533,7 @@ Shortcut: Ctrl-P</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">5</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
@@ -3552,7 +3549,7 @@ Shortcut: Ctrl-P</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">6</property>
+                    <property name="position">5</property>
                   </packing>
                 </child>
                 <child>
@@ -3572,6 +3569,19 @@ Shortcut: Ctrl + B</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onBookViewClicked" swapped="no"/>
                     <accelerator key="b" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-top">8</property>
+                    <property name="margin-bottom">8</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -27327,7 +27337,7 @@ get applied on the subsequent print action.</property>
                   <item id="openfolder" translatable="yes">Output Folder</item>
                 </items>
                 <signal name="changed" handler="onPopupShowOptions" swapped="no"/>
-                <signal name="focus-in-event" handler="onPopupShowOptions" swapped="no"/>
+                <signal name="grab-focus" handler="onPopupShowOptions" swapped="no"/>
                 <signal name="touch-event" handler="onPopupShowOptions" swapped="no"/>
               </object>
               <packing>

@@ -6205,19 +6205,23 @@ Thank you,
         dlg_preview.hide()
 
     def onBookViewClicked(self, widget):
+        window = self.builder.get_object("dlg_preview")
         bkview = self.get("c_bkView", True)
         pgsprd = self.get("fcb_pagesPerSpread", "1")
+        allocation = window.get_allocation()
+        x = allocation.width
+        y = allocation.height
         if pgsprd == "1" and bkview \
            or pgsprd in ["2", "8"]:
-            sz = (1020, 700)
+            sz = ((x * 2) - 167, y) # (1040, 715)
         elif not bkview or pgsprd == "4":
-            sz = (600, 725)
+            sz = (((x - 167) / 2) + 167, y)
         else:
-            sz = (1020, 700)
-        window = self.builder.get_object("dlg_preview")
+            sz = (x, y)
         window.resize(*sz)
         step_increment = 2 if bkview else 1
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
+        self.pdf_viewer.set_zoom_fit_to_screen(None)
         self.onPgNumChanged(None)
 
     def onPgNumChanged(self, widget):
@@ -6236,16 +6240,6 @@ Thank you,
         if not pages:
             return
         self.pdf_viewer.print_document()
-
-    def on_dlg_preview_allocation_notify(self, widget, param):
-        allocation = widget.get_allocation()
-        #print(f"Notified of allocation change: width={allocation.width}, height={allocation.height}")
-
-    def on_configure_event(self, widget, event):
-        pass
-        # We need to save this info so that when we re-open PTXprint it places the Preview window
-        # in the same place it was when we last closed.
-        #print(f"Position: x={event.x}, y={event.y}, Size: width={event.width}, height={event.height}")
 
     def onZoomLevelChanged(self, widget):
         adj_zl = max(30, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
