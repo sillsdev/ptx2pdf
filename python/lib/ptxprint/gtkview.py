@@ -5803,6 +5803,7 @@ class GtkViewModel(ViewModel):
             self.set("c_bkView", False)
             self.set("c_pdfadjoverlay", False)
             self.builder.get_object("c_pdfadjoverlay").set_sensitive(False)
+            self.onBookViewClicked(None)
         else:
             self.builder.get_object("c_bkView").set_sensitive(True)
             self.builder.get_object("c_pdfadjoverlay").set_sensitive(True)
@@ -6204,15 +6205,20 @@ Thank you,
         dlg_preview.hide()
 
     def onBookViewClicked(self, widget):
-        bkviewON = self.get("c_bkView", True)
-        self._resize_window(bkviewON, large_size=(1020, 700), small_size=(600, 725))
-        step_increment = 2 if bkviewON else 1
+        bkview = self.get("c_bkView", True)
+        pgsprd = self.get("fcb_pagesPerSpread", "1")
+        if pgsprd == "1" and bkview \
+           or pgsprd in ["2", "8"]:
+            sz = (1020, 700)
+        elif not bkview or pgsprd == "4":
+            sz = (600, 725)
+        else:
+            sz = (1020, 700)
+        window = self.builder.get_object("dlg_preview")
+        window.resize(*sz)
+        step_increment = 2 if bkview else 1
         self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
         self.onPgNumChanged(None)
-
-    def _resize_window(self, condition, large_size, small_size):
-        window = self.builder.get_object("dlg_preview")
-        window.resize(*large_size if condition else small_size)
 
     def onPgNumChanged(self, widget):
         pages = self.pdf_viewer.numpages

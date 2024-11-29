@@ -144,7 +144,7 @@ class PDFViewer:
             self.document = Poppler.Document.new_from_file(file_uri, None)
             self.numpages = self.document.get_n_pages()
         except Exception as e:
-            print(f"Error opening PDF: {e}")
+            self.model.doStatus(_("Error opening PDF: ").format(e))
             return
         tocts = self.load_toc(self.document)
         self.toctv.set_model(tocts)
@@ -187,7 +187,10 @@ class PDFViewer:
     def show_pdf(self, page = None, rtl=False):
         if page is None:
             page = self.current_page or 1
-        self.spread_mode = self.model.get("c_bkView", False)
+        if self.model.get("fcb_pagesPerSpread", "1") != "1":
+            self.spread_mode = False
+        else:
+            self.spread_mode = self.model.get("c_bkView", False)
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
 
         self.pages = []
@@ -252,8 +255,8 @@ class PDFViewer:
         self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
-        formatted_time = mod_time.strftime("   %d-%b  %H:%M")
-        widget.set_title("PDF Preview: " + os.path.basename(fname) + formatted_time)
+        formatted_time = mod_time.strftime("   %d-%b %H:%M")
+        widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
         # Set the number of pages/spreads in the contents area
         pgSprds = _("pages") if self.model.get("fcb_pagesPerSpread", "1") == "1" else _("spreads")
         self.model.builder.get_object("l_pdfPgsSprds").set_label(pgSprds)
@@ -486,10 +489,10 @@ class PDFViewer:
             self.model.set("s_pgNum", p)
             self.show_pdf(p)
             return True
-        elif ctrl and keyval == Gdk.KEY_equal:  # Ctrl+Plus (Zoom In)
+        elif ctrl and keyval in {Gdk.KEY_equal, Gdk.KEY_plus}:  # Ctrl+Plus (Zoom In)
             self.on_zoom_in(widget)
             return True
-        elif ctrl and keyval == Gdk.KEY_minus:  # Ctrl+Minus (Zoom Out)
+        elif ctrl and keyval in {Gdk.KEY_minus, Gdk.KEY_underscore}:  # Ctrl+Minus (Zoom Out)
             self.on_zoom_out(widget)
             return True
         elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
@@ -706,8 +709,8 @@ class PDFViewer:
             alloc = parent_widget.get_allocation()
 
         # Calculate the zoom level to fit the page within the dialog ( borders and padding subtracted)
-        scale_x = alloc.width / (page_width * (2 if self.spread_mode else 1))
-        scale_y = alloc.height / page_height
+        scale_x = alloc.width + 2 / (page_width * (2 if self.spread_mode else 1))
+        scale_y = alloc.height + 2 / page_height
         self.set_zoom(min(scale_x, scale_y))
 
 
@@ -846,6 +849,7 @@ class Paragraphs(list):
                         currr.yend = readpts(p[1])
                         currr = None
                 elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
+                    # print(f"{p=}")
                     if len(p) == 5:
                         p.insert(0, "")
                     currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
