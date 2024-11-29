@@ -3560,7 +3560,7 @@ class GtkViewModel(ViewModel):
                 pdft = os.stat(pdffile).st_mtime
                 cfgt = os.stat(os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")).st_mtime
                 for bk in self.getBooks():
-                    adj = self.get_adjlist(bk)
+                    adj = self.get_adjlist(bk, gtk=Gtk)
                 if pdft > cfgt:
                     prvw = self.builder.get_object("dlg_preview")
                     if isfirst:
@@ -6194,11 +6194,7 @@ Thank you,
                                             parlocs=plocname, widget=prvw, page=1,
                                             isdiglot=self.get("c_diglot"))
             elif action == "sysviewer":
-                if sys.platform == "win32":
-                    os.startfile(pdffile)
-                elif sys.platform == "linux":
-                    subprocess.call(('xdg-open', pdffile))
-                
+                startfile(pdffile)
             elif action == "openfolder":
                 self.openFolder(self.project.printPath(None))
 

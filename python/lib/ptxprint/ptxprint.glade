@@ -27327,7 +27327,7 @@ get applied on the subsequent print action.</property>
                   <item id="openfolder" translatable="yes">Output Folder</item>
                 </items>
                 <signal name="changed" handler="onPopupShowOptions" swapped="no"/>
-                <signal name="grab-focus" handler="onPopupShowOptions" swapped="no"/>
+                <signal name="focus-in-event" handler="onPopupShowOptions" swapped="no"/>
                 <signal name="touch-event" handler="onPopupShowOptions" swapped="no"/>
               </object>
               <packing>
