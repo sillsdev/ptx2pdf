@@ -357,7 +357,9 @@ class RunJob:
             if os.path.exists(fname):
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                     log = logfile.read()
-                smry, msgList = summarizeTexLog(log)
+                smry, msgList, ufPages = summarizeTexLog(log)
+                self.printer.ufCurrIndex = 0
+                self.printer.ufPages = ufPages
                 if not self.noview and not self.args.print:
                     sl = self.printer.builder.get_object("l_statusLine")
                     sl.set_text("")

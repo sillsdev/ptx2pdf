@@ -182,7 +182,7 @@ def summarizeTexLog(logText):
     if __name__ == "__main__":
         print(category_counts, '\n'.join(messageSummary))
     else:
-        return category_counts, messageSummary
+        return category_counts, messageSummary, unique_page_numbers
 
 def shorten_ranges(numbers):
     ranges = []

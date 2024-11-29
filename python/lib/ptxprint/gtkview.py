@@ -674,6 +674,8 @@ class GtkViewModel(ViewModel):
         self.blInitValue = None
         self.currCodeletVbox = None
         self.codeletVboxes = {}
+        self.ufPages = []
+        self.ufCurrIndex = 0
         self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         llang = self.builder.get_object("ls_interfaceLang")
@@ -6236,7 +6238,7 @@ Thank you,
             return
         pg = min(int(self.get("s_pgNum", 1)), pages)
         self.set("s_pgNum", pg)
-        self.pdf_viewer.show_pdf(pg, self.get("c_RTLbookBinding", False))
+        self.pdf_viewer.show_pdf(pg, self.rtl)
 
     def onPdfAdjOverlayChanged(self, widget):
         self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))
@@ -6252,4 +6254,14 @@ Thank you,
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)
 
-        
+    def onSeekPage2fill(self, btn):
+        pages = self.pdf_viewer.numpages
+        if not pages:
+            return
+        pg = min(int(self.get("s_pgNum", 1)), pages)
+        pg = self.ufPages[min(self.ufCurrIndex, pages)]
+        self.set("s_pgNum", pg)
+        self.pdf_viewer.show_pdf(pg, self.rtl)
+        # self.ufCurrIndex = min(self.ufCurrIndex + 1, len(self.ufPages) - 1)
+        self.ufCurrIndex = (self.ufCurrIndex + 1) % len(self.ufPages)
+
