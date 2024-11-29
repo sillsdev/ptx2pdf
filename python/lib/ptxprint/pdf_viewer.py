@@ -134,6 +134,10 @@ class PDFViewer:
         self.expandLimit = int(self.model.get('s_expandtextlimit'))
         
         self.isdiglot = isdiglot
+        if not os.path.exists(pdf_path):
+            self.document = None
+            return False
+
         file_uri = Path(pdf_path).as_uri()
         try:
             self.document = Poppler.Document.new_from_file(file_uri, None)
@@ -141,13 +145,14 @@ class PDFViewer:
         except Exception as e:
             self.model.doStatus(_("Error opening PDF: ").format(e))
             self.document = None
-            return
+            return False
         tocts = self.load_toc(self.document)
         self.toctv.set_model(tocts)
         
         self.adjlist = adjlist
         if start is not None and start < self.numpages:
             self.current_page = start
+        return True
 
     def _add_toctree(self, tocts, toci, parent):
         action = toci.get_action()
@@ -251,7 +256,8 @@ class PDFViewer:
                 make_rect(context, col, r, abs(100 - info[1]) * -1)
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
-        self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
+        if not self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
+            return False
         if parlocs is not None:     # and not isdiglot:
             self.load_parlocs(parlocs, rtl=rtl)
         self.show_pdf(rtl=rtl)
@@ -264,6 +270,7 @@ class PDFViewer:
         self.model.builder.get_object("l_pdfPgsSprds").set_label(pgSprds)
         self.model.builder.get_object("l_pdfPgCount").set_label(str(self.numpages))
         widget.show_all()
+        return True
 
     def resize_pdf(self, scrolled=False):
         if self.zoomLevel == self.old_zoom:

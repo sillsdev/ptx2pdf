@@ -4446,8 +4446,10 @@ class GtkViewModel(ViewModel):
     def openFolder(self, fldrpath):
         startfile(fldrpath)
 
-    def finished(self):
+    def finished(self, passed=True):
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
+        if not passed and self.showPDFmode == "preview":
+            self.pdf_viewer.loadnshow(None)
         # TO DO: enable/disable the Permission Letter button
 
     def _incrementProgress(self, val=None):

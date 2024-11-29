@@ -215,7 +215,7 @@ class RunJob:
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
-        self.printer.finished()
+        self.printer.finished(False)
         self.busy = False
         unlockme()
 
@@ -295,7 +295,7 @@ class RunJob:
             if len(badbooks):
                 self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
                                      show=not self.printer.get("c_quickRun"))
-                self.printer.finished()
+                self.printer.finished(False)
                 self.busy = False
                 unlockme()
                 return
@@ -409,7 +409,7 @@ class RunJob:
             self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
-        self.printer.finished()
+        self.printer.finished(self.res == 0)
         self.busy = False
         logger.debug("done_job: Finishing thread")
         unlockme()
