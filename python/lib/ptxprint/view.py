@@ -1265,7 +1265,10 @@ class ViewModel:
         logger.debug(f"Saving config {self.isChanged=} {cfgpath=}")
         changed = self.isChanged
         changed = self.saveAdjlists(force=force) or changed
-        cfgt = os.stat(cfgpath).st_mtime
+        if not os.path.exists(cfgpath):
+            changed = True
+        else:
+            cfgt = os.stat(cfgpath).st_mtime
         self.writeConfig(force=force)
         if not changed:
             os.utime(cfgpath, (cfgt, cfgt))
