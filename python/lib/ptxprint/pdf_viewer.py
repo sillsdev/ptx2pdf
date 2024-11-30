@@ -191,12 +191,15 @@ class PDFViewer:
         pnum = tv.get_model()[path][1]
         self.show_pdf(pnum)
 
-    def show_pdf(self, page = None, rtl=False):
+    def show_pdf(self, page=None, rtl=False, setpnum=True):
         if self.document is None:
-            self.create_boxes(0)
+            self.clear()
             return
         if page is None:
             page = self.current_page or 1
+        if setpnum and self.model.get("s_pgNum") != str(page):
+            self.model.set("s_pgNum", page, mod=False)
+            return
         if self.model.get("fcb_pagesPerSpread", "1") != "1":
             self.spread_mode = False
         else:
@@ -256,7 +259,7 @@ class PDFViewer:
                 make_rect(context, col, r, abs(100 - info[1]) * -1)
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
-        if not self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot)
+        if not self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot):
             return False
         if parlocs is not None:     # and not isdiglot:
             self.load_parlocs(parlocs, rtl=rtl)
@@ -267,14 +270,28 @@ class PDFViewer:
         widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
         # Set the number of pages/spreads in the contents area
         pgSprds = _("pages") if self.model.get("fcb_pagesPerSpread", "1") == "1" else _("spreads")
-        self.model.builder.get_object("l_pdfPgsSprds").set_label(pgSprds)
-        self.model.builder.get_object("l_pdfPgCount").set_label(str(self.numpages))
+        self.model.set_preview_pages(self.numpages, pgSprds)
         widget.show_all()
         return True
 
-    def resize_pdf(self, scrolled=False):
-        if self.zoomLevel == self.old_zoom:
+    def clear(self, widget=None):
+        self.create_boxes(0)
+        self.document = None
+        m = self.toctv.get_model()
+        if m:
+            m.clear()
+        if widget is not None:
+            widget.set_title(_("PDF Preview:"))
+        self.model.set_preview_pages(None)
+
+    def set_zoom(self, zoomLevel, scrolled=False, setz=True):
+        if zoomLevel == self.zoomLevel:
             return
+        if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
+            self.model.set("s_pdfZoomLevel", zoomLevel*100, mod=False)
+            return
+        self.old_zoom = self.zoomLevel
+        self.zoomLevel = zoomLevel
         width, height = self.psize
         width, height = int(width * self.zoomLevel), int(height * self.zoomLevel)
 
@@ -301,16 +318,7 @@ class PDFViewer:
             self.timer.start()
         else:
             redraw()
-        self.model.set("s_pdfZoomLevel", self.zoomLevel*100)
 
-    def set_zoom(self, zoomlevel, scrolled=False):
-        if zoomlevel == self.zoomLevel:
-            return
-        self.old_zoom = self.zoomLevel
-        self.zoomLevel = zoomlevel
-        self.model.set("s_pdfZoomLevel", self.zoomLevel*100)
-        self.resize_pdf(scrolled=scrolled)
-    
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
@@ -357,10 +365,10 @@ class PDFViewer:
 
     def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
         self.old_zoom = self.zoomLevel
-        self.zoomLevel = (min(self.zoomLevel * 1.1, 8.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
-        scale_factor = self.zoomLevel / self.old_zoom
+        zoomLevel = (min(self.zoomLevel * 1.1, 8.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
+        scale_factor = zoomLevel / self.old_zoom
 
-        self.resize_pdf(scrolled=True)
+        self.set_zoom(zoomLevel, scrolled=True)
         scrolled_window = self.hbox.get_parent()
         h_adjustment = scrolled_window.get_hadjustment()
         v_adjustment = scrolled_window.get_vadjustment()
@@ -648,7 +656,7 @@ class PDFViewer:
         if self.model.userconfig.has_section('printer'):
             settings = print_op.get_print_settings()
             for k, v in self.model.userconfig.items('printer'):
-                setting.set(k, v)
+                settings.set(k, v)
             print_op.set_print_settings(settings)
         print_op.set_n_pages(self.numpages)
         print_op.connect("draw_page", self.on_draw_page)

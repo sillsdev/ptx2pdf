@@ -3561,6 +3561,7 @@ class GtkViewModel(ViewModel):
 
     def showmybook(self, isfirst=False):
         if self.initialised and self.showPDFmode == "preview": # preview is on
+            prvw = self.builder.get_object("dlg_preview")
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
@@ -3571,7 +3572,6 @@ class GtkViewModel(ViewModel):
                 for bk in self.getBooks():
                     adj = self.get_adjlist(bk, gtk=Gtk)
                 if pdft > cfgt:
-                    prvw = self.builder.get_object("dlg_preview")
                     if isfirst:
                         prvw.set_gravity(Gdk.Gravity.NORTH_EAST)
                     # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
@@ -3579,6 +3579,8 @@ class GtkViewModel(ViewModel):
                     plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
                     self.pdf_viewer.loadnshow(pdffile, rtl=self.rtl, parlocs=plocname, widget=prvw, page=1,
                                                 isdiglot=self.get("c_diglot"))
+            else:
+                self.pdf_viewer.clear(widget=prvw)
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.project.path, "pluginData", "Transcelerator", "Transcelerator")
@@ -6203,13 +6205,16 @@ Thank you,
                 mw.popdown()
 
         pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
-        if os.path.exists(pdffile):
-            if action == "preview":
-                prvw = self.builder.get_object("dlg_preview")
+        if action == "preview":
+            prvw = self.builder.get_object("dlg_preview")
+            if os.path.exists(pdffile):
                 plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
                 self.pdf_viewer.loadnshow(pdffile, rtl=self.get("c_RTLbookBinding", False), parlocs=plocname, \
                                           widget=prvw, page=None, isdiglot=self.get("c_diglot"))
-            elif action == "sysviewer":
+            else:
+                self.pdf_viewer.clear(widget=prvw)
+        elif os.path.exists(pdffile):
+            if action == "sysviewer":
                 startfile(pdffile)
             elif action == "openfolder":
                 self.openFolder(self.project.printPath(None))
@@ -6218,6 +6223,14 @@ Thank you,
         dlg_preview = self.builder.get_object("dlg_preview")
         self.set("c_previewPDF", False)
         dlg_preview.hide()
+
+    def set_preview_pages(self, npages, units=None):
+        self.builder.get_object("l_pdfPgsSprds").set_label(units or "")
+        lpcount = self.builder.get_object("l_pdfPgCount")
+        if npages is None:
+            lpcount.set_label("")
+        else:
+            lpcount.set_label(str(npages))
 
     def onBookViewClicked(self, widget):
         window = self.builder.get_object("dlg_preview")
@@ -6245,7 +6258,7 @@ Thank you,
             return
         pg = min(int(self.get("s_pgNum", 1)), pages)
         self.set("s_pgNum", pg)
-        self.pdf_viewer.show_pdf(pg, self.rtl)
+        self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
         self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))
@@ -6259,7 +6272,7 @@ Thank you,
     def onZoomLevelChanged(self, widget):
         adj_zl = max(30, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
         if self.pdf_viewer is not None:
-            self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True)
+            self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True, setz=False)
 
     def onSeekPage2fill(self, btn):
         pages = self.pdf_viewer.numpages
