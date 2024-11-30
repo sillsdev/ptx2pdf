@@ -1,10 +1,10 @@
 PTXprint 2.7.1 Release Notes
-29 Nov 2024
+30 Nov 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-New features in 2.7  (29 Nov 2024)
+New features in 2.7.2  (30 Nov 2024)
   * A built-in PDF Preview pane to view the output of PTXprint
   * Interactive right-click context menu for making layout adjustments
   * Option to send a PDF to the printer - 'Print (on paper)' in PDF viewer
@@ -43,6 +43,8 @@ NOTE: As these features are new, if you are in the middle of typesetting, we
   * Add middle click drag on viewport
   * Get smart right menu up in PDF viewer
   * Adjust changes so that if a reference is in a range, match the range
+  * Refine the context menus and make it easier to reset paragraphs
+  * Add feature to jump to a paragraph's style in the Style Editor
   * Support subverses
 
 ### AdjList & Diglot Adjustments
@@ -75,6 +77,9 @@ NOTE: As these features are new, if you are in the middle of typesetting, we
   * Avoid crashes with unfinished notes slurping up verse text
   * Debugging info coloring
   * Handle stretchable line spacing in PDF viewer
+  * Make sure switching projects or configs doesn't dirty the project config
+  * Fix missing _1 versions due to file being held by preview pane
+  * Fix crash on writing new config
 
 ### Miscellaneous
   * Add "CC BY-SA" license to the list of available choices and link to CC site in tooltip
