@@ -2292,6 +2292,7 @@ class GtkViewModel(ViewModel):
             if not adj.adjfile:
                 adj.adjfile = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", self.getAdjListFilename(bk))
             adj.sort()
+            adj.changed = True
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
@@ -3497,6 +3498,7 @@ class GtkViewModel(ViewModel):
         self.onUseIllustrationsClicked(None)
         self.updatePrjLinks()
         self.checkFontsMissing()
+        self.changed(False)
 
     def updatePrjLinks(self):
         if self.project is not None:
@@ -3557,6 +3559,7 @@ class GtkViewModel(ViewModel):
         self.clearEditableBuffers()
         logger.debug(f"Changed project to {prjid} {configName=}")
         self.builder.get_object("nbk_Main").set_current_page(0)
+        self.changed(False)
         self.showmybook(True)
 
     def showmybook(self, isfirst=False):
@@ -3589,7 +3592,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(True)
         else:
             self.builder.get_object(w).set_sensitive(False)
-            self.set(w, False)
+            self.set(w, False, mod=False)
 
     def doConfigNameChange(self, w):
         lockBtn = self.builder.get_object("btn_lockunlock")

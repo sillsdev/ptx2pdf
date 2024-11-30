@@ -137,6 +137,10 @@ def f_(s):
     frame = currentframe().f_back
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
 
+def calledme(s=0):
+    res = traceback.format_stack(limit=s+2)[-s-2].strip()
+    return res
+
 def getcaller(count=0):
     frame = currentframe().f_back.f_back
     for i in range(count):
@@ -159,8 +163,8 @@ def refKey(r, info=""):
 
 def refSort(r, info=""):
     res = refKey(r, info=info)
-    if r[1] == 0 and r[2] == 0 and len(r[5]):
-        return (100, 0, 0, r[3], info, r[5], r[6])
+    if res[1] == 0 and res[2] == 0 and len(res[5]):
+        return (100, 0, 0, res[3], info, res[5], res[6])
     return res
 
 def coltotex(s):

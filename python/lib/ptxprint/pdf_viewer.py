@@ -823,7 +823,6 @@ class Paragraphs(list):
                 else:
                     pwidth = 0.
                 self.pindex.append(len(self))
-                pheight = float(re.sub(r"[a-z]+", "", p[1]))
                 inpage = True
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
@@ -863,9 +862,12 @@ class Paragraphs(list):
                 cinfo = colinfos[polycol]
                 if currps[polycol] is None:
                     continue
-                currps[polycol].lines = int(p[0])
                 currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
-                currr.yend = readpts(p[2])
+                if len(p) > 2:
+                    currps[polycol].lines = int(p[0])
+                    currr.yend = readpts(p[2])
+                else:
+                    currr.yend = readpts(p[1])
                 endpar = True
             elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
                 if not endpar:
@@ -877,7 +879,6 @@ class Paragraphs(list):
                 currp.lastref = p[0]
                 currp.parnum = int(p[1])
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
-                currp.nextmk = p[3]
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
                 currps[polycol] = None
                 currr = None

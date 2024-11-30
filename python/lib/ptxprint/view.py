@@ -8,7 +8,7 @@ from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontca
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
-                            zipopentext, xdvigetfonts
+                            zipopentext, xdvigetfonts, calledme
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
 from ptxprint.piclist import Piclist, PicChecks
@@ -190,6 +190,8 @@ class ViewModel:
             return [font, 0]
 
     def changed(self, val=True):
+        # if val != self.isChanged:
+        #     print(val, calledme(2))
         self.isChanged = val
 
     def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):
@@ -606,8 +608,8 @@ class ViewModel:
         if currprjguid is None or currprjguid != guid:
             if getattr(self.project, 'prjid', None) is not None and saveCurrConfig:
                 self.saveConfig()
-                self.set("t_savedConfig", "")
-                self.set("t_configNotes", "")
+                self.set("t_savedConfig", "", mod=False)
+                self.set("t_configNotes", "", mod=False)
                 fdir = os.path.join(self.project.path, "shared", "fonts")
                 if os.path.exists(fdir):
                     cacheremovepath(fdir)
@@ -644,7 +646,7 @@ class ViewModel:
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
             if newconfig:
-                self.set("t_invisiblePassword", "")
+                self.set("t_invisiblePassword", "", mod=False)
             if oldVersion >= 0 or forceConfig:
                 logger.debug(f"Switching config from {self.cfgid} to {configName}")
                 self.cfgid = configName
