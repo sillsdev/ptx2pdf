@@ -528,6 +528,7 @@ class PDFViewer:
         if len(info) and self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             l = info[0]
+            print(f"{l}")
             if l[0] not in '+-':
                 l = '+' + l
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}  {l}  {info[1]}%"
@@ -538,15 +539,18 @@ class PDFViewer:
             self.addMenuItem(menu, f"{x} -1 line ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
             self.addMenuItem(menu, f"Expand +1 line ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
             self.addMenuItem(menu, None, None)
+            self.addMenuItem(menu, f"Reset Paragraph", self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l) == 0))
+            self.addMenuItem(menu, None, None)
 
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
             self.addMenuItem(menu, f"Shrink Text ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
-            self.addMenuItem(menu, f"Normal Size (100%)", self.on_normal_text, info, parref, sensitivity=not info[1] == 100)
+            # self.addMenuItem(menu, f"Normal Size (100%)", self.on_normal_text, info, parref, sensitivity=not info[1] == 100)
 
             expLim = min(self.expandLimit, info[1]+self.expandStep)
             self.addMenuItem(menu, f"Expand Text ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
             self.addMenuItem(menu, None, None)
-
+            if parref and parref.mrk is not None:
+                self.addMenuItem(menu, "Edit Style \\{}".format(parref.mrk), self.edit_style, parref.mrk)
         # self.addMenuItem(menu, "Zoom In         (Ctrl +)", self.on_zoom_in)
         # self.addMenuItem(menu, "Zoom Out       (Ctrl -)", self.on_zoom_out)
         self.addMenuItem(menu, "Zoom to Fit (Ctrl + F)", self.set_zoom_fit_to_screen)
@@ -568,6 +572,13 @@ class PDFViewer:
             self.adjlist.increment(info[2], 1)
         self.show_pdf()
         
+    def on_reset_paragraph(self, widget, info, parref):
+        if self.adjlist is not None:
+            pc = int(info[0].replace("+-", "-"))
+            self.adjlist.increment(info[2], - pc)
+            self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
+        self.show_pdf()
+
     def on_shrink_text(self, widget, info, parref):
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:
@@ -576,10 +587,10 @@ class PDFViewer:
                 self.adjlist.expand(info[2], -self.shrinkStep, mrk=parref.mrk)
         self.show_pdf()
 
-    def on_normal_text(self, widget, info, parref):
-        if self.adjlist is not None:
-            self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
-        self.show_pdf()
+    # def on_normal_text(self, widget, info, parref):
+        # if self.adjlist is not None:
+            # self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
+        # self.show_pdf()
 
     def on_expand_text(self, widget, info, parref):
         if self.adjlist is not None:
@@ -588,6 +599,13 @@ class PDFViewer:
             else:
                 self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
         self.show_pdf()
+
+    def edit_style(self, widget, mkr):
+        if mkr is not None:
+            self.model.styleEditor.selectMarker(mkr)
+            mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
+            self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.model.wiggleCurrentTabLabel()
         
     # Zoom functionality
     def on_zoom_in(self, widget):

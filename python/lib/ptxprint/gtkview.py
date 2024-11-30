@@ -163,7 +163,7 @@ r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
 s_pdfZoomLevel s_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
-c_pdfGridlines c_pdfadjoverlay c_bkView btn_previewPrintIt scr_previewPDF scr_previewPDF bx_previewPDF
+c_pdfadjoverlay c_bkView btn_previewPrintIt scr_previewPDF scr_previewPDF bx_previewPDF
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
 _ui_enable4diglot2ndary = """
@@ -255,8 +255,8 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
-                  "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2",
-                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
+                  "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2", 
+                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "c_pdfGridlines" "bx_imageMsgBar", 
 
 _uiLevels = {
     2 : _ui_minimal,

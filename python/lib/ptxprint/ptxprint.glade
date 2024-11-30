@@ -3573,29 +3573,16 @@ Shortcut: Ctrl-P</property>
                   <placeholder/>
                 </child>
                 <child>
+                  <placeholder/>
+                </child>
+                <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">end</property>
-                    <property name="margin-top">30</property>
+                    <property name="margin-top">18</property>
                     <property name="label" translatable="yes">Show:</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="c_pdfGridlines">
-                    <property name="label" translatable="yes">Grid lines</property>
-                    <property name="sensitive">False</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="no-show-all">True</property>
-                    <property name="halign">start</property>
-                    <property name="draw-indicator">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -3647,8 +3634,6 @@ Shortcut: Ctrl + B</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="margin-top">2</property>
-                    <property name="margin-bottom">2</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
