@@ -705,6 +705,9 @@
 |normalc@tcodes%
 %+cfig_dofigure_intro
 
+\def\@parpicstart#1#2#3#4{}
+\def\@parpicstop#1#2#3#4{}
+
 \gdef\pr@penalty{10}\gdef\p@stpenalty{10}%
 \def\d@figure#1{%
  \trace{g}{d@figure entered IncludeFigures\ifIncludeFigures true\else false\fi}%
@@ -911,6 +914,8 @@
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
   \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
+    \pdfsavepos
+    \write\p@rlocs{\noexpand\@parpicstart{\@r@f}{\csname figparam-src\endcsname}{\the\pdflastxpos}{\the\pdflastypos}}%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
       \p@cinswid=\hsize
@@ -1061,6 +1066,8 @@
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
     \t@gend{Figure}%
+    \pdfsavepos
+    \write\p@rlocs{\noexpand\@parpicstop{\@r@f}{\csname figparam-src\endcsname}{\the\pdflastxpos}{\the\pdflastypos}}%
   }% END of box0
   \temptrue
   \iffigf@und\else\ifSkipMissingFig
@@ -1161,7 +1168,10 @@
 \def\d@figureInText#1{%
   %\showbox #1
   %\vrule height 10pt depth 0pt width 10pt
-  \leavevmode\hbox{\box #1}%
+  \leavevmode
+  \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+  \hbox{\box #1}%
+  \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
 }
 \def\d@figureInl#1{%
   \let\curmode\empty
@@ -1176,6 +1186,7 @@
   \ifhmode \temptrue\fi
   \ifx\w@tsit\gr@phic \temptrue \fi
   \def\picc@ntents{%
+    \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
     \penalty\ifinn@te 10000\else\pr@penalty\fi\relax% Allow the page to break except in footnotes.
     \gridp@cfalse% Not true! It's not a floating fig.
     \trace{g}{Before gridbox \the\ht#1+\the\dp#1 (inn@te\ifinn@te true\else false\fi)}%
@@ -1187,6 +1198,7 @@
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
     \fi
   \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
+  \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
   }%
   \ifvmode \picc@ntents
   \else 
@@ -1214,6 +1226,7 @@
   \earlyeotpskipfalse
   \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
   \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
+      \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
       \gridp@ctrue% TRUE. Out of band like a floating image.
       \prevdepth=0pt
       \headingtopspace=0pt
@@ -1224,6 +1237,7 @@
       \lastdepth=0pt
       %\kern 0pt
       \ifearlyeotpskip\kern -1sp\kern 1sp\fi
+      \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
     }%
   \seteotpn@me
   \trace{g}{\eotpn@me\space defined}%
@@ -1283,7 +1297,11 @@
   \ifhmode\temptrue\else
     \ifdim\pagetotal=0pt\else\temptrue\fi
   \fi
-  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\kern#4 sp\penalty 1}% magic number
+  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic
+    \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+    \unvbox#1
+    \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+    \kern#4 sp\penalty 1}% magic number
   \iftemp\else
     %\def\pagecontents{\vss\box#1\vss}\plainoutput
     \ifh@ldfig
@@ -1416,7 +1434,11 @@
   \else\fi
   \add@pending{\dr@pthingid}{\ifdiglot\dc@rref\else\c@rref\fi}{0}{\the\dimen2}{\the\count255}{\the\tmpcount}{\thing@side}%
   \ifx\gr@phic\w@tsit
-    \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
+    \leavevmode\str@t\vadjust {\vbox to 0pt{%
+      \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+      \box#1\vss
+      \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+      }}%
   \else
     \ifhmode \vadjust{\vbox to 0pt{\box#1\vss}\penalty10021}%
     \else
@@ -1437,7 +1459,10 @@
        % \vrule height 0pt depth 1pt width 10ex\kern-1pt
         \vbox to 0pt{
           \vskip #2\baselineskip
-          \box#1\vss}%
+          \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+          \box#1\vss
+          \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+          }%
 }
 %-cfig_dofigure_7
 
