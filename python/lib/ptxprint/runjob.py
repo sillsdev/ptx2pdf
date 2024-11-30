@@ -1,7 +1,7 @@
 import os, sys, re, subprocess, time
 from PIL import Image
 from io import BytesIO as cStringIO
-from shutil import copyfile, rmtree
+from shutil import copyfile, rmtree, copy2, copystat
 from threading import Thread
 from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel
@@ -752,9 +752,10 @@ class RunJob:
                 if os.path.exists(ipdffile):
                     logger.debug(f"Rename {ipdffile} to {opdffile}")
                     try:
-                        os.rename(ipdffile, opdffile)
-                    except OSError:
-                        pass
+                        copy2(ipdffile, opdffile)
+                        copystat(ipdffile, opdffile)
+                    except OSError as e:
+                        log.error(f"Failed to copy: {ipdffile} to {opdffile}")
         if self.nothreads:
             self.run_xetex(outfname, pdffile, info)
         else:
