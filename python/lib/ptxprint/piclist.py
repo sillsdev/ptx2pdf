@@ -239,12 +239,8 @@ class Picture:
 
     def sync(self, other, suffix=None):
         ''' are they the same picture, if so update caption and return True '''
-        if 'src' not in self:
-            logger.warn(f"{self.fields}")
-        if 'src' not in other:
-            logger.warn(f"{other.fields}")
         if self.get('srcref', self['anchor']) == other.get('srcref', other['anchor']) \
-                    and newBase(self['src']) == newBase(other['src']):
+                    and self.get('src', '') == other.get('src', 'no')):
             if suffix:
                 caption = other.get('caption'+suffix, other.get('caption', None))
                 if caption is not None:
