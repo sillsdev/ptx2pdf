@@ -390,12 +390,10 @@ class PDFViewer:
 
     def show_next_page(self):
         next_page = min(self.current_page + (2 if self.spread_mode else 1), self.numpages)
-        self.model.set("s_pgNum", next_page)
         self.show_pdf(next_page)
 
     def show_previous_page(self):
         previous_page = max(self.current_page - (2 if self.spread_mode else 1), 1)
-        self.model.set("s_pgNum", previous_page)
         self.show_pdf(previous_page)
 
     # Handle keyboard shortcuts for navigation
@@ -406,24 +404,20 @@ class PDFViewer:
         ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
 
         if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
-            self.model.set("s_pgNum", 1)
             self.show_pdf(1)
             return True
         elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
             p = self.numpages
-            self.model.set("s_pgNum", p)
             self.show_pdf(p)
             return True
         elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
             next_page = self.current_page + (2 if self.spread_mode else 1)
             p = min(next_page, self.numpages)
-            self.model.set("s_pgNum", p)
             self.show_pdf(p)
             return True
         elif keyval == Gdk.KEY_Page_Up:  # Page Up (Previous page/spread)
             prev_page = self.current_page - (2 if self.spread_mode else 1)
             p = max(prev_page, 1)
-            self.model.set("s_pgNum", p)
             self.show_pdf(p)
             return True
         elif ctrl and keyval in {Gdk.KEY_equal, Gdk.KEY_plus}:  # Ctrl+Plus (Zoom In)
