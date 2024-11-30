@@ -1532,6 +1532,7 @@ class ViewModel:
         if cfgname is None:
             cfgname = self.cfgid
         cpath = prj.srcPath(cfgname)
+        res.append(os.path.join(self.scriptsdir, "usfm_sb.sty"))
         res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
         if self.get('c_useCustomSty'):
             res.append(os.path.join(prj.path, "custom.sty"))

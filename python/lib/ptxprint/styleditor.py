@@ -182,7 +182,7 @@ def fromFont(self, s, mrk=None, model=None):
         mrk = self.marker
     class Shim:
         def get(subself, key, default=None):
-            if key == 'FontName':
+            if key == 'fontname':
                 return self.sheet.get(mrk, {}).get(key,
                         self.basesheet.get(mrk, {}).get(key, default))
             return self.getval(mrk, key, default)
@@ -195,7 +195,7 @@ def toFont(self, v, mrk=None, model=None, parm=None):
         mrk = self.marker
     class Shim:
         def __setitem__(subself, key, val):
-            if key == 'FontName':
+            if key == 'fontname':
                 if mrk not in self.sheet:
                     self.sheet[mrk] = Marker()
                 self.sheet[mrk][key] = val
@@ -210,7 +210,7 @@ def toFont(self, v, mrk=None, model=None, parm=None):
         def pop(subself, key, dflt):
             return self.sheet.get(mrk, {}).pop(key, dflt)
     regularfont = model.get("bl_fontR")
-    oldfont = self.basesheet.get(mrk, {}).get("FontName", None)
+    oldfont = self.basesheet.get(mrk, {}).get("fontname", None)
     return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None, noStyles=(parm is not None))
 
 def fromOneMax(self, v, mrk=None, model=None):
@@ -333,36 +333,36 @@ class StyleEditor:
     def getval(self, mrk, key, default=None, baseonly=False):
         if mrk not in self.sheet:
             return default
-        res = self.sheet[mrk].get(key, None) if not baseonly else None
+        res = self.sheet[mrk].get(key.lower(), None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
-            res = self.basesheet[mrk].get(key, default) if mrk in self.basesheet else default
+            res = self.basesheet[mrk].get(key.lower(), default) if mrk in self.basesheet else default
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None):
-        if ifunchanged and (self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None) != \
-                (self.sheet[mrk].get(key, None) if mrk in self.sheet else None):
+        if ifunchanged and (self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None) != \
+                (self.sheet[mrk].get(key.lower(), None) if mrk in self.sheet else None):
             return
         # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
-        oldval = self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None
+        oldval = self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None
         if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
-            del self.sheet[mrk][key]
+            del self.sheet[mrk][key.lower()]
         elif oldval != val and val is not None:
             if mrk not in self.sheet:
                 self.sheet[mrk] = {}
-            self.sheet[mrk][key] = val
+            self.sheet[mrk][key.lower()] = val
             self.model.changed()
         # do we really want to do this?
         elif key in self.basesheet.get(mrk, {}) and val is None:
-            del self.basesheet[mrk][key]
+            del self.basesheet[mrk][key.lower()]
             self.model.changed()
 
     def haskey(self, mrk, key):
-        if key in self.sheet.get(mrk, {}) or key in self.basesheet.get(mrk, {}):
+        if key in self.sheet.get(mrk, {}) or key.lower() in self.basesheet.get(mrk, {}):
             return True
         return False
 
     def addMarker(self, mrk, name):
-        self.sheet[mrk] = Marker({" deletable": True, "Name": name})
+        self.sheet[mrk] = Marker({" deletable": True, "name": name})
 
     def get_font(self, mrk, style=""):
         f = self.getval(mrk, " font")
@@ -384,6 +384,7 @@ class StyleEditor:
             return
         foundp = False
         for s in sheetfiles[:-1]:
+            logger.debug(f"loading stylesheet: {s}")
             sheet = self._read_styfile(s)
             self._merge(self.basesheet, sheet)
         self.test_constraints(self.basesheet)
@@ -457,12 +458,12 @@ class StyleEditor:
             else:
                 sm = sheet.get(m, {})
             om = basesheet.get(m, {})
-            if 'zDerived' in om or 'zDerived' in sm:
+            if 'zderived' in om or 'zderived' in sm:
                 continue
             for k, v in sm.items():
                 if k.startswith(" "):
                     continue
-                if k == "Name":
+                if k == "name":
                     v = self.getval(m, k, v)
                 other = om.get(k, None)
                 if not self._eq_val(other, v, key=k):
@@ -489,7 +490,7 @@ class StyleEditor:
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
-                self.addMarker(str(m), str(newse.getval(m, 'Name', "")))
+                self.addMarker(str(m), str(newse.getval(m, 'name', "")))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 if exclfields is not None and k in exclfields:

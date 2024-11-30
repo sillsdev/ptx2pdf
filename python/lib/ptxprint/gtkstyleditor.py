@@ -410,25 +410,26 @@ class StyleEditorView(StyleEditor):
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
         old = self.basesheet.get(self.marker, {})
+        logger.debug(f"styles({self.marker}) = {old} + {data}")
         oldval = None
-        if 'LineSpacing' not in old and 'BaseLine' not in old:
-            old['LineSpacing'] = "1"
-            if 'LineSpacing' not in data and 'BaseLine' not in data:
-                data['LineSpacing'] = "1"
+        if 'linespacing' not in old and 'baseline' not in old:
+            old['linespacing'] = "1"
+            if 'linespacing' not in data and 'baseline' not in data:
+                data['linespacing'] = "1"
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker
                 urlcat = data.get(' url', '')
                 urlmkr = self.marker
-                if data.get('Endmarker', None):
-                    val += " ... \\" + data['Endmarker']
+                if data.get('endmarker', None):
+                    val += " ... \\" + data['endmarker']
                     if urlmkr not in noEndmarker:
-                        urlmkr += "-" + data['Endmarker'].strip(r'\*')
+                        urlmkr += "-" + data['endmarker'].strip(r'\*')
                 urlmkr = re.sub(r'\d', '', urlmkr)
             elif k == '_publishable':
                 # val = 'nonpublishable' in data.get('TextProperties', '')
-                oldval = 'nonpublishable' in (x.lower() for x in old.get('TextProperties', []))  # default was "nonpublishable"
-                props = data.get('TextProperties', None)
+                oldval = 'nonpublishable' in (x.lower() for x in old.get('textproperties', []))  # default was "nonpublishable"
+                props = data.get('textproperties', None)
                 if props is None:
                     val = oldval
                 else:
@@ -750,7 +751,7 @@ class StyleEditorView(StyleEditor):
                 continue
             (d, selecti) = self.treeview.get_selection().get_selected()
             name = self.model.get(dialogKeys['Name'], '')
-            if key not in self.sheet:
+            if key.lower() not in self.sheet:
                 selecti = self.addMarker(key, name)
                 for k, v in stylemap.items():
                     if not k.startswith("_"):
