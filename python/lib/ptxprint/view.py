@@ -191,7 +191,7 @@ class ViewModel:
 
     def changed(self, val=True):
         # if val != self.isChanged:
-        #     print(val, calledme(2))
+            # print(val, calledme(2))
         self.isChanged = val
 
     def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):

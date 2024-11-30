@@ -235,7 +235,7 @@ _ui_experimental = """
 
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
-btn_previewPrintIt c_bkView s_pdfZoomLevel s_pgNum b_reprint
+btn_previewPrintIt c_bkView s_pdfZoomLevel s_pgNum b_reprint fcb_project ecb_savedConfig
 """.split()
 
 # removed from list above: 
