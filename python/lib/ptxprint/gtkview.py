@@ -413,7 +413,7 @@ _nonsensitivities = {
 
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate",
-                    "btn_refreshCaptions"),
+                    "b_reprint", "btn_refreshCaptions"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
@@ -871,12 +871,12 @@ class GtkViewModel(ViewModel):
         sm.set_search_path([langpath])
         for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", \
                               "Settings1", "Settings2", "Settings3"]):
+            self.cursors.append((0,0))
             if k == "AdjList":
                 self.buf.append(None)
                 self.fileViews.append((None, None))
                 continue
             self.buf.append(GtkSource.Buffer())
-            self.cursors.append((0,0))
             view = GtkSource.View.new_with_buffer(self.buf[i])
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add(view)
@@ -2399,6 +2399,8 @@ class GtkViewModel(ViewModel):
         elif pgid == "scroll_AdjList":
             genBtn.set_sensitive(True)
             fpath = None
+            self.builder.get_object("l_codeSnippets").set_visible(False)
+            self.builder.get_object("box_codelets").set_visible(False)
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0])+fndict[pgid][1]
@@ -2460,8 +2462,8 @@ class GtkViewModel(ViewModel):
             self.currCodeletVbox.set_visible(False)
             self.currCodeletVbox = None
         if cat is None:
-            self.builder.get_object("l_codeSnippets").set_visible(False)
-            self.builder.get_object("box_codelets").set_visible(False)
+            # self.builder.get_object("l_codeSnippets").set_visible(False)
+            # self.builder.get_object("box_codelets").set_visible(False)
             return
         else:
             self.builder.get_object("l_codeSnippets").set_visible(True)

@@ -347,10 +347,10 @@ class RunJob:
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                     log = logfile.read()
                 smry, msgList, ufPages = summarizeTexLog(log)
-                self.printer.ufCurrIndex = 0
-                self.printer.ufPages = ufPages
-                self.printer.builder.get_object("btn_seekPage2fill").set_sensitive(len(ufPages))
                 if not self.noview and not self.args.print:
+                    self.printer.ufCurrIndex = 0
+                    self.printer.ufPages = ufPages
+                    self.printer.builder.get_object("btn_seekPage2fill").set_sensitive(len(ufPages))
                     sl = self.printer.builder.get_object("l_statusLine")
                     sl.set_text("")
                     sl.set_tooltip_text("")
