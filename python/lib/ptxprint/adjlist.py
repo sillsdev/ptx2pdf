@@ -128,7 +128,7 @@ class AdjList:
                     line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
                 else:
                     line = "{0[0]} {1} {0[3]}".format(r, cv)
-                if r[4] and r[5] != self.centre or r[6]:
+                if r[4]: # and r[5] != self.centre or r[6]:
                     line += " % \\{4} {5} {6}".format(*r)
                 outf.write(line + "\n")
 
@@ -155,13 +155,14 @@ class AdjList:
                 outf.write("\n".join(lines))
 
     def save(self):
-        if self.adjfile is None or not self.changed:
+        if self.adjfile is None:
             return False
         self.createAdjlist()
         chfile = self.adjfile.replace(".adj", "_changes.txt")
         self.createChanges(chfile)
+        res = self.changed
         self.changed = False
-        return True
+        return res
 
     def changeval(self, parref, doit, insert=False):
         if not isinstance(parref, str):
