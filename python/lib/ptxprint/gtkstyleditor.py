@@ -406,11 +406,11 @@ class StyleEditorView(StyleEditor):
         if self.marker in aliases:
             self.marker += "1"
         oldisLoading = getattr(self, 'isLoading', False)
-        logger.debug(f"Start editing style {self.marker}, {oldisLoading}")
+        # logger.debug(f"Start editing style {self.marker}, {oldisLoading}")
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
         old = self.basesheet.get(self.marker, {})
-        logger.debug(f"styles({self.marker}) = {old} + {data}")
+        # logger.debug(f"styles({self.marker}) = {old} + {data}")
         oldval = None
         if 'linespacing' not in old and 'baseline' not in old:
             old['linespacing'] = "1"
@@ -469,7 +469,7 @@ class StyleEditorView(StyleEditor):
                 if v[0].startswith("c_"):
                     val = val or False
                     oldval = oldval or False
-                logger.debug(f"{k}: {oldval=}, {val=}")
+                # logger.debug(f"{k}: {oldval=}, {val=}")
             if k == "_fontsize":
                 fstyles = []
                 fref = self.getval(self.marker, 'FontName')
@@ -708,13 +708,13 @@ class StyleEditorView(StyleEditor):
             r = self.treestore[selecti]
             if r[0] == cat:
                 selecti = self.treestore.append(selecti, [mrk, name, True, False])
-                logger.debug(f"Inside treestore: {self.treestore.get_string_from_iter(selecti)}")
+                # logger.debug(f"Inside treestore: {self.treestore.get_string_from_iter(selecti)}")
                 break
             selecti = self.treestore.iter_next(selecti)
         else:
             selecti = self.treestore.append(None, [cat, cat, False, False])
             selecti = self.treestore.append(selecti, [mrk, name, True, False])
-            logger.debug(f"one step {self.treestore.get_string_from_iter(selecti)}")
+            # logger.debug(f"one step {self.treestore.get_string_from_iter(selecti)}")
         return selecti
 
     def mkrDialog(self, newkey=False):

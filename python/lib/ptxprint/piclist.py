@@ -240,7 +240,7 @@ class Picture:
     def sync(self, other, suffix=None):
         ''' are they the same picture, if so update caption and return True '''
         if self.get('srcref', self['anchor']) == other.get('srcref', other['anchor']) \
-                    and self.get('src', '') == other.get('src', 'no')):
+                    and self.get('src', '') == other.get('src', ''):
             if suffix:
                 caption = other.get('caption'+suffix, other.get('caption', None))
                 if caption is not None:
