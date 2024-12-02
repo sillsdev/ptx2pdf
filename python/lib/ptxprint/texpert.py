@@ -67,10 +67,12 @@ texpertOptions = {
                               _("Hanging verses into a chapter number can result in clashes, depending on the after-chapter space. If so, then turn off hanging verse numbers for the first verse (in poetry only). ")),
     "HangVA":             O("hangva", "CVS", False, "", _("Alternate verse numbers also hang"),
                             _("If there is an alternative verse and the current verse is hanging, does the alternate hang?")),
-    "AfterChapterSpaceFactor":  O("afterchapterspace", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), r"\def{0}{{{1}}}", _("After chapter space factor"),
+    "AfterChapterSpaceFactor":  O("afterchapterspace", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), lambda k,v: r"\def\{0}{{{1}}}".format(k, float(v)*12),
+                            _("After chapter space factor"),
                             _("This sets the gap between the chapter number and the text following. The setting here is a multiple of the main body text size as specified in layout."),
                             valfn=lambda v: f2s(asfloat(v, 0.25) * 12)),
-    "AfterVerseSpaceFactor": O("afterversespace", "CVS", (0.15, -0.20, 1.0, 0.01, 0.10, 2), r"\def{0}{{{1}}}", _("After verse space factor"),
+    "AfterVerseSpaceFactor": O("afterversespace", "CVS", (0.15, -0.20, 1.0, 0.01, 0.10, 2), lambda k,v: r"\def\{0}{{{1}}}".format(k, float(v)*12),
+                            _("After verse space factor"),
                             _("This sets the gap between the verse number and the text following. The setting here is a multiple of the main body text size as specified in layout."),
                             valfn=lambda v:f2s(asfloat(v, 0.15) * 12)),
 
@@ -98,7 +100,7 @@ texpertOptions = {
     "underlineThickness": O("underlinethickness", "FNT", (0.05,  0.01, 0.5, 0.01, 0.01, 2), r"\def{0}{{{1}}}", _("Underline thickness (em)"),
                             _("This sets the thickness of the text underline, (measured in ems)."),
                             valfn=lambda v: f2s(float(v or "0.05"))),
-    "UnderlineLower":     O("underlineposition", "FNT", (0.10, -1.0 , 1.0, 0.01, 0.01, 2), r"\def{0}{{{1}}}", _("Underline vertical position (em)"),
+    "UnderlineLower":     O("underlineposition", "FNT", (0.10, -1.0 , 1.0, 0.01, 0.01, 2), r"\def{0}{{{1}em}}", _("Underline vertical position (em)"),
                             _("This sets how far (in ems) the underline is below the text and what it is relative to. If negative, it is the distance below the baseline. If positive (or zero), it is the distance below the bottom of any descenders."),
                             valfn=lambda v: f2s(float(v or "-0.1"))),
 
@@ -248,6 +250,16 @@ class TeXpert:
                 view.set(n, v, skipmissing=True)
 
     @classmethod
+    def generateOutput(self, out, k, v, default=None):
+        if out is None:
+            out=default
+        if callable(out):
+            return out(k, v)
+        elif isinstance(out, str):
+            return out.format("\\"+k, v)
+        return ("")
+
+    @classmethod
     def generateTeX(self, view):
         res = []
         for k, opt in texpertOptions.items():
@@ -256,18 +268,14 @@ class TeXpert:
             logger.debug(f"TeXpert({n})={v} was {opt.val}")
             if n.startswith("c_"):
                 if v is not None and opt.val != v:
-                    if callable(opt.output):
-                        res.append(opt.output(k, v))
-                    elif isinstance(opt.output, str):
-                        res.append(opt.output.format("\\"+k, v))
-                    else:
-                        res.append(f'\\{k}{"true" if v else "false"}')
+                    res.append(self.generateOutput(opt.output, k, v,
+                                default=lambda k,v: "\\{}{}".format(k, "true" if v else "false")))
             elif n.startswith("s_"):
                 if v is not None and float(v) != opt.val[0]:
-                    res.append(opt.output.format("\\"+k, v))
+                    res.append(self.generateOutput(opt.output, k, v))
             elif n.startswith("fcb_"):
                 if v is not None and v != list(opt.val.keys())[0]:
-                    res.append(opt.output.format("\\"+k, v))
+                    res.append(self.generateOutput(opt.output, k, v))
         return "\n".join(res)
 
     @classmethod

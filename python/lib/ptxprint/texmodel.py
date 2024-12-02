@@ -1090,9 +1090,11 @@ class TexModel:
         if makeranges:
             try:
                 usfm = self.printer.get_usfm(bk)
-                usfm.addorncv()
             except SyntaxError:
                 pass
+        if usfm is None:
+            return changes
+        usfm.addorncv()
         qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
         with universalopen(fname) as inf:
             alllines = list(inf.readlines())
