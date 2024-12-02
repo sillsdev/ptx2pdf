@@ -134,7 +134,7 @@ class PDFViewer:
         self.expandLimit = int(self.model.get('s_expandtextlimit'))
         
         self.isdiglot = isdiglot
-        if not os.path.exists(pdf_path):
+        if pdf_path is None or not os.path.exists(pdf_path):
             self.document = None
             return False
 
