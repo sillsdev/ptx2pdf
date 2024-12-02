@@ -71,7 +71,7 @@ class Emitter:
         if self.last_ws is not None and not len(self.last_ws):
             self.last_ws = " "
 
-def usx2usfm(fname, outf):
+def usx2usfm(fname, outf, reftag=None):
     emit = Emitter(outf)
     parent = None
     stack = []
@@ -117,8 +117,8 @@ def usx2usfm(fname, outf):
                 emit("\\{}".format(s))
                 append_attribs(el, emit)
                 emit("\\*")
-            elif el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
-                emit("\\ref")
+            elif reftag is not None el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
+                emit("\\"+reftag)
             elif el.tag in ("usx", "annot", "table", "usfm", "text", "ref"):
                 pass
             else:
@@ -148,9 +148,9 @@ def usx2usfm(fname, outf):
                 emit.addws()
                 if el.get("closed", "true") == "true":
                     emit("\\{}e ".format(s))
-            elif el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
-                append_attribs(el, emit, nows=True)
-                emit("\\ref*")
+            elif reftag is not None and el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
+                #append_attribs(el, emit, nows=True)
+                emit("\\{}*".format(reftag))
             lastel = el
 
 

@@ -201,14 +201,10 @@ class AdjList:
         def mydoit(r, i):
             v = r[3]
             mult = 1
-            hasplus = False
-            while len(v) and v[0] in "+-":
-                if v[0] == "-":
-                    mult = -1
-                else:
-                    hasplus = True
-                v = v[1:]
-            v = mult * int(v) if v else 0
+            hasplus = "+" in v
+            v = int(v.replace("+", ""))
+            if v < 0:
+                mult = -1
             v += offset
             if (v < 0 or v > 0) and hasplus:
                 f = "+" + str(v)

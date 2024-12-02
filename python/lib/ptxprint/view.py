@@ -1682,7 +1682,7 @@ class ViewModel:
         tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
         mystyles.output_diffile(tempfile, inArchive=True)
         tempfile.close()
-        res[tempfile.name] = basecfpath + "ptxprint.sty"
+        res[tempfile.name] = basecfpath + "/ptxprint.sty"
         tmpfiles.append(tempfile.name)
 
         # config files - take the whole tree even if not needed
