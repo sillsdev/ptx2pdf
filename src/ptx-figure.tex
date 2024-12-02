@@ -915,7 +915,7 @@
   \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
     \pdfsavepos
-    \write\p@rlocs{\noexpand\@parpicstart{\@r@f}{\csname figparam-src\endcsname}{\the\pdflastxpos}{\the\pdflastypos}}%
+    \write\p@rlocs{\noexpand\@parpicstart{\c@rref}{\csname figparam-src\endcsname}{\the\pdflastxpos}{\the\pdflastypos}}%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
       \p@cinswid=\hsize
@@ -1067,7 +1067,7 @@
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
     \t@gend{Figure}%
     \pdfsavepos
-    \write\p@rlocs{\noexpand\@parpicstop{\@r@f}{\csname figparam-src\endcsname}{\the\pdflastxpos}{\the\pdflastypos}}%
+    \write\p@rlocs{\noexpand\@parpicstop{\c@rref}{\csname figparam-src\endcsname}{\the\pdflastxpos}{\the\pdflastypos}}%
   }% END of box0
   \temptrue
   \iffigf@und\else\ifSkipMissingFig
