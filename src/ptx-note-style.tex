@@ -92,7 +92,7 @@
     \global\count\th@cl@ss=\count255 
   \fi
   \global\skip\th@cl@ss=0pt
-  \trace{n}{Note #1: Count: \the\count\th@cl@ss}%
+  \trace{n}{Note #1: Count: \the\count\csname note-#1\endcsname}%
 }
 %-c_setnotecount
 
@@ -106,7 +106,8 @@
   \else\s@tn@tep@r@ms{#1}\fi
 }
 \def\s@tn@tep@r@ms#1{%
-  \x@\count\csname note-#1\endcsname=\ifdiglot \FootnoteMulD \else \ifp@ranotes \FootnoteMulT \else \FootnoteMulS \fi\fi 
+  \count255=\ifdiglot \FootnoteMulD \else \ifp@ranotes \FootnoteMulT \else \FootnoteMulS \fi\fi 
+  \s@tn@tec@unt{#1}%
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
 }
