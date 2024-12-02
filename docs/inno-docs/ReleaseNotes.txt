@@ -1,8 +1,12 @@
 PTXprint 2.7.2 Release Notes
-30 Nov 2024
+2 Dec 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.3 (2 Dec 2024)
+  * Various fixes to get the PDF Preview pane and interaction working better
+  * Fixed texpert c and v spacing factors
 
 New features in 2.7.2  (30 Nov 2024)
   * A built-in PDF Preview pane to view the output of PTXprint
