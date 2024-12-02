@@ -5205,7 +5205,7 @@ Spacing (pt):</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkBox">
+                                      <object class="GtkBox" id="bx_onOffGridSettings">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">24</property>
@@ -5213,7 +5213,7 @@ Spacing (pt):</property>
                                         <property name="hexpand">True</property>
                                         <property name="spacing">6</property>
                                         <child>
-                                          <object class="GtkLabel">
+                                          <object class="GtkLabel" id="l_gridAligned">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">For high quality typesetting it is
@@ -5268,7 +5268,7 @@ carefully before changing this setting.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel">
+                                          <object class="GtkLabel" id="l_gridVariable">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">Allowing a small increase in the (vertical)
@@ -5346,9 +5346,10 @@ you choose this setting.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkSeparator">
+                                      <object class="GtkSeparator" id="sp_layout1">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
@@ -5723,9 +5724,10 @@ of Rule (pt):</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSeparator">
+                                  <object class="GtkSeparator" id="sp_layout2">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="no-show-all">True</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-end">6</property>

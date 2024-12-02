@@ -541,7 +541,7 @@ class PDFViewer:
             self.addMenuItem(menu, f"{x} -1 line ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
             self.addMenuItem(menu, f"Expand +1 line ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
             self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, f"Reset Paragraph", self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l) == 0))
+            self.addMenuItem(menu, f"Reset Paragraph", self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l.replace("+","")) == 0))
             self.addMenuItem(menu, None, None)
 
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
