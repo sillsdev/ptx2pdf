@@ -125,7 +125,7 @@ class ViewModel:
         self.styleEditor = StyleEditor(self, basepath=os.path.join(self.scriptsdir, "usfm_sb.sty"))
         self.adjlists = {}
         self.triggervcs = False
-        self.copyrightInfo = {}
+        self.copyrightInfo = None
         self.pubvars = {}
         self.strongsvars = {}
         self.font2baselineRatio = 1.

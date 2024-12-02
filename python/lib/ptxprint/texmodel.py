@@ -1540,6 +1540,9 @@ class TexModel:
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
         crdts = []
         cinfo = self.printer.copyrightInfo
+        if cinfo is None or not len(cinfo):
+            self.printer.readCopyrights()
+            cinfo = self.printer.copyrightInfo
         self.analyzeImageCopyrights()
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
@@ -1581,7 +1584,8 @@ class TexModel:
                     mkr += "\\begin" + ("R" if rtl else "L")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
                 crdtsstarted = True
-                plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
+                plrls = cinfo.get('plurals', None)
+                plstr = "" if plrls is None else plrls.get(lang, plrls["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
                 for art, pgs in self.printer.artpgs.items():
