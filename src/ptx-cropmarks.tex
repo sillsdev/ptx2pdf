@@ -678,7 +678,6 @@
 \def\doNoteLines{%
   \trace{G}{doNoteLines}%
   \bgroup\topskip=0pt\baselineskip=0pt\parindent=0pt\everypar{}\relax
-    \edef\NoteLineLength{\the\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit-\NoteLineXoffset-\NoteLineXmargin\relax} % length of lines
     \def\gp@type{NoteLine}%
     \count255=\NoteLineMajorDiv
     \let\th@sgprule\m@jor

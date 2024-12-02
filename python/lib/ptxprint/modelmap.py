@@ -104,6 +104,7 @@ _map = {
     "paper/ifoutergutter":      ("c_outerGutter", "layout", lambda w,v :"true" if v else "false"),
     "paper/gutter":             ("s_pagegutter", "layout", lambda w,v: round(float(v)) if v else "0"),
     "paper/notelines":          ("c_noteLines", "layout", lambda w,v: "\\doNoteLines" if v else ""),
+    "paper/ifnotelines_":       ("c_noteLines", "layout", lambda w,v: "true" if v else "false"),
     "paper/colgutteroffset":    ("s_colgutteroffset", "layout", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", "layout", lambda w,v: "2" if v else "1"),
     "paper/allowunbalanced":    ("c_allowUnbalanced", "layout", lambda w,v :"" if v else "%"),

@@ -2361,7 +2361,7 @@
   \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
 
-
+\newif\ifNoteLines \NoteLinesfalse
 \def\s@tupsizes{
  \trace{s}{s@tupsizes called from book: \id@@@}%
  \s@tb@dyb@seline{}%
@@ -2394,9 +2394,11 @@
  \fi
  \csname set@col@widths@\diglotlayout\endcsname
 %
-  %\onecolwidth{\hsize}%
-  \hsize=\textwidth
-  \trace{o}{hsize=\the\hsize, notes width=\the\XrefNotesWidth, margin=\XrefNotesMargin}%
+ \xdef\NoteLineLength{\the\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit-\NoteLineXoffset-\NoteLineXmargin\relax} % length of lines
+ %\onecolwidth{\hsize}%
+ \hsize=\textwidth
+ \ifNoteLines\advance\hsize by -\NoteLineLength\fi
+ \trace{o}{hsize=\the\hsize, notes width=\the\XrefNotesWidth, margin=\XrefNotesMargin}%
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
  \bottomm@rgin=\BottomMarginFactor\MarginUnit
