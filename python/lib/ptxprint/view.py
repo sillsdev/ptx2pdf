@@ -236,7 +236,7 @@ class ViewModel:
         if bks is None:
             bks = self.getBooks(files=True)
         if not len(bks):
-            return ""
+            return [""]
         elif len(bks) > 1:
             components['bks'] = "{}-{}".format(bks[0], bks[-1])
         elif '.' in bks[0]:

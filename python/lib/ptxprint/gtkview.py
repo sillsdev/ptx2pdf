@@ -3581,13 +3581,13 @@ class GtkViewModel(ViewModel):
                         prvw.set_gravity(Gdk.Gravity.NORTH_EAST)
                     # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
                     # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
-                    plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
-                    self.pdf_viewer.loadnshow(pdffile, rtl=self.rtl, parlocs=plocname, widget=prvw, page=1,
-                                                isdiglot=self.get("c_diglot"))
-                else:
-                    self.pdf_viewer.clear(widget=prvw)
-            else:
-                self.pdf_viewer.clear(widget=prvw)
+                    pdfname = self.baseTeXPDFnames()[0]
+                    if len(pdfname):
+                        plocname = os.path.join(self.project.printPath(self.cfgid), pdfname+".parlocs")
+                        self.pdf_viewer.loadnshow(pdffile, rtl=self.rtl, parlocs=plocname, widget=prvw, page=1,
+                                                    isdiglot=self.get("c_diglot"))
+                        return
+            self.pdf_viewer.clear(widget=prvw)
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.project.path, "pluginData", "Transcelerator", "Transcelerator")
