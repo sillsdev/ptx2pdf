@@ -259,6 +259,8 @@ class PDFViewer:
                 make_rect(context, col, r, abs(100 - info[1]) * -1)
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
+        if fname is None:
+            return False
         if not self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot):
             return False
         if parlocs is not None:     # and not isdiglot:
