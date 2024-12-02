@@ -183,6 +183,8 @@ texpertOptions = {
     # "AttrMilestoneMatchesUnattr": O("attrmsmatchunattr", "OTH", False, "", _("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*.")),
     "tildenbsp":          O("tildenbsp", "OTH", True, "", _("Tilde is No Break Space"),
                             _("Treat ~ as non breaking space")),
+    "removextreflinks":   O("removextreflinks", "OTH", True, "", _("Remove \\ref ... \\ref* links"),
+                            _("USFM 3.2 allows additional reference links to be inserted as part of \\xt ... \\xt* markup. This frequently appear in DBL text bundles, but are unhandled by PTXprint. Allow these to be removed from the USFM prior to typesetting.")),
     "BookEndDecorationSkip":   O("bedskip", "OTH", (16, -100, 100, 1, 1, 0), r"\def{0}{{{1}pt}}", _("End decoration skip"),
                                  _("The gap between the end of the book and the book-end decoration")),
     "MarkTriggerPoints":  O("mktrigpts", "OTH", False, "", _("Mark Trigger Points"),

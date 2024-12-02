@@ -1092,9 +1092,8 @@ class TexModel:
                 usfm = self.printer.get_usfm(bk)
             except SyntaxError:
                 pass
-        if usfm is None:
-            return changes
-        usfm.addorncv()
+            if usfm is not None:
+                usfm.addorncv()
         qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
         with universalopen(fname) as inf:
             alllines = list(inf.readlines())
@@ -1162,6 +1161,7 @@ class TexModel:
                         else:
                             context = at[0]
                         changes.append((context, r, m.group(3) or m.group(4) or "", f"{fname} line {i+1}"))
+                        logger.log(7, f"{context=} {r=} {m.groups()=}")
                     continue
                 elif len(l):
                     logger.warning(f"Faulty change line found in {fname} at line {i}:\n{l}")
@@ -1190,6 +1190,10 @@ class TexModel:
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append(makeChange(r"(\\[cv] [^ \\\r\n]+)(\\)", r"\1 \2", flags=regex.S))
+        
+        # Remove the \ref ... \ref* which is often inserted for \xt fields in DBL projects.
+        if self.asBool('texpert/removextreflinks'):
+            self.localChanges.append(makeChange(r'\\ref (.+?)\|loc=".+?"\\ref\*', r"\1", flags=regex.S))
         
         # Remove empty \h markers (might need to expand this list and loop through a bunch of markers)
         self.localChanges.append(makeChange(r"(\\h ?\r?\n)", r"", flags=regex.S))
@@ -1248,7 +1252,7 @@ class TexModel:
                 self.localChanges.append(makeChange(r"\\\+?w ([^|]+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
 
         if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
-            self.localChanges.append(makeChange(r'(?i)\\x .+?\\x\*', '', flags=regex.M))
+            self.localChanges.append(makeChange(r'\\x\s.+?\\x\*', '', flags=regex.S))
             
         if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
