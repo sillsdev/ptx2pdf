@@ -530,7 +530,6 @@ class PDFViewer:
         if len(info) and self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             l = info[0]
-            print(f"{l}")
             if l[0] not in '+-':
                 l = '+' + l
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}  {l}  {info[1]}%"

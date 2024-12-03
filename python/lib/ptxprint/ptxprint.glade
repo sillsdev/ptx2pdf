@@ -4916,6 +4916,7 @@ or select from the list of preset values.</property>
                                         <property name="tooltip-text" translatable="yes">Type required page width and height,
      for example:    148mm, 208mm 
 or select from the list of preset values.</property>
+                                        <property name="halign">start</property>
                                         <property name="active">1</property>
                                         <property name="has-entry">True</property>
                                         <property name="active-id">0</property>
@@ -4940,7 +4941,7 @@ or select from the list of preset values.</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">20</property>
+                                            <property name="width-chars">25</property>
                                             <property name="caps-lock-warning">False</property>
                                           </object>
                                         </child>
@@ -5210,7 +5211,7 @@ Spacing (pt):</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">24</property>
                                         <property name="margin-end">6</property>
-                                        <property name="hexpand">True</property>
+                                        <property name="hexpand">False</property>
                                         <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkLabel" id="l_gridAligned">
