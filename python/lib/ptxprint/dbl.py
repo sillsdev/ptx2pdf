@@ -117,7 +117,7 @@ def usx2usfm(fname, outf, reftag=None):
                 emit("\\{}".format(s))
                 append_attribs(el, emit)
                 emit("\\*")
-            elif reftag is not None el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
+            elif reftag is not None and el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
                 emit("\\"+reftag)
             elif el.tag in ("usx", "annot", "table", "usfm", "text", "ref"):
                 pass

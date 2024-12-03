@@ -669,9 +669,10 @@ class PDFViewer:
         print_op = Gtk.PrintOperation()
         if self.model.userconfig.has_section('printer'):
             settings = print_op.get_print_settings()
-            for k, v in self.model.userconfig.items('printer'):
-                settings.set(k, v)
-            print_op.set_print_settings(settings)
+            if settings is not None and settings.get("printer") == self.model.userconfig.get("printer", "printer"):
+                for k, v in self.model.userconfig.items('printer'):
+                    settings.set(k, v)
+                print_op.set_print_settings(settings)
         print_op.set_n_pages(self.numpages)
         print_op.connect("draw_page", self.on_draw_page)
 
