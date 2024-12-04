@@ -268,10 +268,16 @@
   \vfill\eject%
 }
 \def\bookendpagebreak{
+  \trace{o}{bookendpagebreak endbooknoeject\ifendbooknoeject true\else false\fi}%
   \ifsk@pping \egroup \fi
   \ifhe@dings\endhe@dings\fi
-  \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else
-  \trace{o}{ejecting}\vfill\eject\fi\fi
+  \ifendbooknoeject
+      \trace{o}{NOT Ejecting page}%
+  \else\ifx\PageAlign\val@MULTI
+      \trace{o}{NOT Ejecting page (align=\PageAlign)}%
+    \else
+      \trace{o}{Ejecting page}%
+      \vfill\eject\fi\fi
 }
 
 \def\columnbreak{\vfill\eject}

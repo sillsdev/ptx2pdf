@@ -944,7 +944,8 @@
  %\message{Bookname now: \b@okDiglot}%
  \ifx\b@okDiglot\prevb@okD\else
   \bgroup\liter@lspecials
-   \pdf@utline{\id@@@.}{\b@okDiglot}{0}%
+   \ifrefbookmarks\let\t@mp=\id@@@\else\let\t@mp=\b@okDiglot\fi
+   \pdf@utline{\id@@@.}{\t@mp}{0}%
    \global\let\prevb@okD\b@okDiglot
   \egroup
  \fi\fi}

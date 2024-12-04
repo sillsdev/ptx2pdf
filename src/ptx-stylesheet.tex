@@ -1051,6 +1051,7 @@
  }
  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
  \let\cat\c@t
+ \let\usfm\@usfm
 %-csty_defv
  % define handling for usfm \v marker
 %+csty_verse
@@ -2071,7 +2072,8 @@
  \ifd@nesw@p\else\singlecolumn \fi% must come after bookend-final, as that might include 2col content (as long as .
  \bookendpagebreak
  \global\output={\onecol}
- \trace{o}{end of book with \the\ht\partial \space used}
+ \trace{o}{end of book with \the\ht\partial+\the\dp\partial \space used}
+>>>>>>> 9552c518 (Fix bugs, start support for \usfm version-defined behaviour)
  \ifnum 1=\ifendbooknoeject 1 \else\ifx\PageAlign\val@MULTI 1\else 0\fi\fi
     \iflastptxfile\iflastbooknoeject\else
       \trace{o}{forcing pagebreak as this is the last file}%
@@ -2080,7 +2082,7 @@
  \fi
  \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else
   \trace{o}{Ejecting page}
-  \ifdim\ht\partial>0pt
+  \ifdim\dimexpr \ht\partial+\dp\partial\relax>0pt
     % If box255 is empty then partial box keeps its contents but has ht=0 !
     {\everypar={}\ZWSP\baselineskip=0pt\noindent}\eject\fi%\noindent\eject\fi
   \iflastptxfile\closepiclist\fi
@@ -2227,6 +2229,34 @@
 \global\let\c@tprefix\empty % category-specific prefix
 \global\let\mspr@fix\empty % Milestone-specific prefix
 %-csty_category
+%+csty_usfm
+\newif\ifimplicitcl@se \implicitcl@setrue % Does USFM<3.1.1 implicit closure of char styles apply?
+\newcount\usfm@major
+\newcount\usfm@minor
+\bgroup\obeylines%
+ \gdef\@@usfm #1^^M{\egroup\m@kedigitsletters\expandafter\@@@usfm #1...\E}%
+\egroup 
+% \usfm accepts a version matching /\d+\.\d+(\.\d+)?/   Max number in TeX is
+% 2,147,483,647  We probably could assume that the major version won't go above
+% 21, and minor versions won't take more than 4 digits, but someone will one day
+% probably enter 310 meaning 3.1.0, or similar, and I want to avoid crashes.
+\def\@usfm{\bgroup\obeylines\m@kedigitsother\@@usfm}
+\def\@@@usfm#1.#2.#3.#4\E{\global\usfm@minor=0#2\relax\global\multiply\usfm@minor by 100000\relax\global\advance\usfm@minor by 0#3\relax
+  \global\usfm@major=#1\relax
+  \temptrue
+  \ifnum\usfm@minor=0 \ifnum\usfm@major>100 \tempfalse \ifnum\usfm@major<999 \temptrue
+    \global\divide\usfm@major by 100 \count255=\numexpr #1 - 100*\usfm@major\relax
+    \divide \count255 by 10\relax\global\usfm@minor=\numexpr 100000 * \count255 + (#1 - 100*\usfm@major - 10*\count255)\relax
+  \fi\fi\fi
+  \iftemp\else\MSG{Unable to make sense of USFM version #1.#2.#3}\fi%
+  \ifnum\usfm@minor<2 \else %
+    \ifnum\usfm@minor<100000 \else %3.1 or greater:
+      \global\implicitcl@sefalse%
+    \fi%
+  \fi%
+  \trace{s}{USFM version code \the\usfm@major.\the\usfm@minor}%
+}
+%-csty_usfm
 
 \def\mapinput "#1"{%
   \message{INPUTFILE: #1}%

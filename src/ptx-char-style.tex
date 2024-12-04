@@ -73,7 +73,9 @@
 %
 
 %+cchar_charstyle
-\def\ch@rstyle#1{\trace{sa}{CH@RSTYLE:#1 nesting:(\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
+\def\ch@rstyle{\ifimplicitcl@se\let\n@xt\@ch@rstyle\else\let\n@xt\ch@rstylepls\fi\n@xt}
+\def\@ch@rstyle#1{%
+ \trace{sa}{CH@RSTYLE:#1 nesting:(\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
  \edef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
