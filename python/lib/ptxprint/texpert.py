@@ -252,7 +252,8 @@ class TeXpert:
                 view.set(n, v, skipmissing=True)
 
     @classmethod
-    def generateOutput(self, out, k, v, default=None):
+    def generateOutput(self, opt, k, v, default=None):
+        out = opt.output
         if out is None:
             out=default
         if callable(out):
@@ -267,17 +268,19 @@ class TeXpert:
         for k, opt in texpertOptions.items():
             n = widgetName(opt)
             v = view.get(n)
+            if opt.valfn:
+                v = opt.valfn(v)
             logger.debug(f"TeXpert({n})={v} was {opt.val}")
             if n.startswith("c_"):
                 if v is not None and opt.val != v:
-                    res.append(self.generateOutput(opt.output, k, v,
+                    res.append(self.generateOutput(opt, k, v,
                                 default=lambda k,v: "\\{}{}".format(k, "true" if v else "false")))
             elif n.startswith("s_"):
                 if v is not None and float(v) != opt.val[0]:
-                    res.append(self.generateOutput(opt.output, k, v))
+                    res.append(self.generateOutput(opt, k, v))
             elif n.startswith("fcb_"):
                 if v is not None and v != list(opt.val.keys())[0]:
-                    res.append(self.generateOutput(opt.output, k, v))
+                    res.append(self.generateOutput(opt, k, v))
         return "\n".join(res)
 
     @classmethod

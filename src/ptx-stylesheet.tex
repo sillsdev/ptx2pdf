@@ -2055,7 +2055,7 @@
  \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
- \let\layoutpen@lty\book@ndpenalty
+ \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else \let\layoutpen@lty\book@ndpenalty\fi\fi
  \layoutstylebreak
  \singlecolumn
  \ifOneChapBook\endOneChapBook\fi
@@ -2071,7 +2071,7 @@
  \ifd@nesw@p\else\singlecolumn \fi% must come after bookend-final, as that might include 2col content (as long as .
  \bookendpagebreak
  \global\output={\onecol}
- \trace{o}{end of book eject with \the\ht\partial \space used}
+ \trace{o}{end of book with \the\ht\partial \space used}
  \ifnum 1=\ifendbooknoeject 1 \else\ifx\PageAlign\val@MULTI 1\else 0\fi\fi
     \iflastptxfile\iflastbooknoeject\else
       \trace{o}{forcing pagebreak as this is the last file}%
@@ -2079,6 +2079,7 @@
     \fi\fi
  \fi
  \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else
+  \trace{o}{Ejecting page}
   \ifdim\ht\partial>0pt
     % If box255 is empty then partial box keeps its contents but has ht=0 !
     {\everypar={}\ZWSP\baselineskip=0pt\noindent}\eject\fi%\noindent\eject\fi

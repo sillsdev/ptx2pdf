@@ -551,7 +551,7 @@
       \fi
       %\ifnum\outputpenalty < -10000 \relax\temptrue\fi
       \ifnum\book@ndpenalty =\outputpenalty \ifendbooknoeject\else \temptrue \fi\fi
-      \trace{o}{outputpenalty = \the\outputpenalty \space temp\iftemp true\else false\fi}%
+      \trace{o}{outputpenalty = \the\outputpenalty \space for book@endpenalty=\book@ndpenalty . temp\iftemp true\else false\fi}%
     \fi
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
       \m@keinp@gegap
