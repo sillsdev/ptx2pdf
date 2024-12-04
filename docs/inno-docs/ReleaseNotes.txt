@@ -1,22 +1,33 @@
 PTXprint 2.7.3 Release Notes
-2 Dec 2024
+4 Dec 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting, 
+       we suggest that you continue using the same version of PTXprint, rather than
+       updating to this latest version.
+
+Bug fixes and Improvements in 2.7.4 (4 Dec 2024)
+  * Allow starting new book on current page
+  * Make printer settings more resiliant
+  * Micro refactors to open things up a little
+  * Fix odd behaviour with column notes
+  * Improve mini and basic view UI and fix +-0 bug related to interactive pdf
+  * Fix a fix that was a bad fix for a fix that was needed and is now fixed (texpert)
+  * Fix bugs, start support for \usfm version-defined behaviour
+  * Crowdin localization sync
 
 Bug fixes and Improvements in 2.7.3 (2 Dec 2024)
   * Various fixes to get the PDF Preview pane and interaction working better
   * Fixed texpert c and v spacing factors
 
-New features in 2.7.2  (30 Nov 2024)
+Major new features in 2.7 (30 Nov 2024)
   * A built-in PDF Preview pane to view the output of PTXprint
   * Interactive right-click context menu for making layout adjustments
   * Option to send a PDF to the printer - 'Print (on paper)' in PDF viewer
-  
-NOTE: As these features are new, if you are in the middle of typesetting, we 
-      suggest that you continue using the same version of PTXprint, rather than
-	  updating to this latest version.
 
+Other features and improvements in 2.7
 ### PDF Viewer Enhancements
   * Add page or spread counts
   * Show in: actions can now be reinitiated (to re-open preview pane)
