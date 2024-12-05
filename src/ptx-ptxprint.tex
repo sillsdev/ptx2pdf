@@ -69,3 +69,11 @@
 \def\IntroPageAlign{page}
 \def\goone{\global\BodyColumns=1\global\notransitionskiptrue\singlecolumn\global\notransitionskipfalse}
 \def\gotwo{\global\BodyColumns=2\global\notransitionskiptrue\doublecolumns\global\notransitionskipfalse}
+\gdef\pausecharspacing{\global\let\currcharspacing\XeTeXinterchartokenstate \XeTeXinterchartokenstate=0}
+\gdef\unpausecharspacing{\XeTeXinterchartokenstate=\currcharspacing}
+
+% Special active chars
+% FDEF - used as }
+% FDEE - use as {
+\DefineActiveChar{^^^^fdec}{\pausecharspacing}
+\DefineActiveChar{^^^^fded}{\unpausecharspacing}
