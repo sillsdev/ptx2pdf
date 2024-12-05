@@ -775,8 +775,11 @@ class ParlocLinesIterator:
         self.replay = False
 
     def __iter__(self):
-        with open(self.fname, encoding="utf-8") as inf:
-            self.lines = inf.readlines()
+        if os.path.exists(self.fname):
+            with open(self.fname, encoding="utf-8") as inf:
+                self.lines = inf.readlines()
+        else:
+            self.lines = []
         return self
 
     def __next__(self):

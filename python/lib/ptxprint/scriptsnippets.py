@@ -271,7 +271,8 @@ class beng(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
         res = [
-            makeChange("(?<=\\s)([\u0985-\u09CC](?![\u09C7-\u09CC])[^\\\\\\s]*?[\u09C7-\u09CC][^\\\\\\s]*?)(?=\\s)", "\uFDEC\\1\uFDED")
+            makeChange("(?<=\\s)([\u0985-\u09CC](?![\u09C7-\u09CC])[^\\\\\\s]*?"
+                       "[\u09C7-\u09CC][^\\\\\\s]*?)(?=\\s)", "\uFDEC\\1\uFDED")
             ]
         return res
 
