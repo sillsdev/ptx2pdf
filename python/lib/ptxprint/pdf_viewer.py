@@ -512,7 +512,17 @@ class PDFViewer:
 
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
-
+        ys        = _("Yes! Shrink")
+        ts        = _("Try Shrink")
+        expand    = _("Expand")
+        minusline = _("-1 line")
+        plusline  = _("+1 line")
+        rp        = _("Reset Paragraph")
+        st        = _("Shrink Text")
+        et        = _("Expand Text")
+        es        = _("Edit Style")
+        z2f       = _("Zoom to Fit")
+        z100      = _("Zoom 100%")
         if False and self.isdiglot:
             info = []
         else:
@@ -536,26 +546,23 @@ class PDFViewer:
             self.addMenuItem(menu, hdr, self.on_identify_paragraph, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
 
-            x = "Yes! Shrink" if ("-" in str(info[0]) and str(info[0]) != "-1") else "Try Shrink"
-            self.addMenuItem(menu, f"{x} -1 line ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
-            self.addMenuItem(menu, f"Expand +1 line ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
+            x = ys if ("-" in str(info[0]) and str(info[0]) != "-1") else ts
+            self.addMenuItem(menu, f"{x} {minusline} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
+            self.addMenuItem(menu, f"{expand} {plusline} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
             self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, f"Reset Paragraph", self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l.replace("+","")) == 0))
+            self.addMenuItem(menu, f"{rp}", self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l.replace("+","")) == 0))
             self.addMenuItem(menu, None, None)
 
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
-            self.addMenuItem(menu, f"Shrink Text ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
-            # self.addMenuItem(menu, f"Normal Size (100%)", self.on_normal_text, info, parref, sensitivity=not info[1] == 100)
+            self.addMenuItem(menu, f"{st} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
 
             expLim = min(self.expandLimit, info[1]+self.expandStep)
-            self.addMenuItem(menu, f"Expand Text ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+            self.addMenuItem(menu, f"{et} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
             self.addMenuItem(menu, None, None)
             if parref and parref.mrk is not None:
-                self.addMenuItem(menu, "Edit Style \\{}".format(parref.mrk), self.edit_style, parref.mrk)
-        # self.addMenuItem(menu, "Zoom In         (Ctrl +)", self.on_zoom_in)
-        # self.addMenuItem(menu, "Zoom Out       (Ctrl -)", self.on_zoom_out)
-        self.addMenuItem(menu, "Zoom to Fit (Ctrl + F)", self.set_zoom_fit_to_screen)
-        self.addMenuItem(menu, "Zoom 100% (Ctrl + 0)", self.on_reset_zoom)
+                self.addMenuItem(menu, f"{es} \\{parref.mrk}", self.edit_style, parref.mrk)
+        self.addMenuItem(menu, f"{z2f} (Ctrl + F)", self.set_zoom_fit_to_screen)
+        self.addMenuItem(menu, f"{z100} (Ctrl + 0)", self.on_reset_zoom)
 
         menu.popup(None, None, None, None, event.button, event.time)
 

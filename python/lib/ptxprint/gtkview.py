@@ -6080,6 +6080,7 @@ Thank you,
     def onCatalogClicked(self, btn):
         # catpdf = os.path.join(pycodedir(), "..", "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
         catpdf = os.path.join(pycodedir(), "PDFassets", "reference", "OrnamentsCatalog.pdf")
+        logger.debug(f"{catpdf=}")
         if not os.path.exists(catpdf):
             catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalog.pdf")
         if not os.path.exists(catpdf):
@@ -6089,9 +6090,11 @@ Thank you,
             self.pdf_viewer.loadnshow(catpdf, widget=showref)
             self.set("c_bkView", False, mod=False)
             self.pdf_viewer.set_zoom_fit_to_screen(None)
+        logger.debug(f"{catpdf=}")
 
     def onTechRefClicked(self, btn):
         techref = os.path.join(pycodedir(), "PDFassets", "reference", "PTXprintTechRef.pdf")
+        logger.debug(f"{techref=}")
         if not os.path.exists(techref):
             techref = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "PTXprintTechRef.pdf")
         if not os.path.exists(techref):
@@ -6101,6 +6104,7 @@ Thank you,
             self.pdf_viewer.loadnshow(techref, widget=showref)
             self.set("c_bkView", True, mod=False)
             self.pdf_viewer.set_zoom_fit_to_screen(None)
+        logger.debug(f"{techref=}")
 
     def onCropMarksClicked(self, btn):
         if not self.get("c_coverCropMarks"):
