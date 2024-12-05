@@ -82,7 +82,8 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
                       + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')]
-                      + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptx2pdf/contrib/ornaments')]
+                      + [('docs/documentation/OrnamentsCatalog.pdf', 'ptxprint/PDFassets/reference')]
+                      + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
                       + [('src/contrib/ornaments/*.*', 'ptx2pdf/contrib/ornaments')]
                       + [('src/contrib/QRcode.tex', 'ptx2pdf/contrib')],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]

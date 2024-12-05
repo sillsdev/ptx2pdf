@@ -1011,6 +1011,12 @@ can be set.</property>
     <property name="icon-name">changes-allow-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="icon_openFolder">
+    <property name="sensitive">False</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">folder-open-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_page2fill">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -26623,21 +26629,15 @@ included in Paratext's Send/Recv data.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_pdfViewer">
+                                  <object class="GtkLabel" id="l_trainingVideos">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">To use PTXprint effectively you need a good PDF viewer
-which allows the PDF file to be refreshed (reloaded)
-without closing it each time the PDF is to be re-created.
-
-On Linux the built-in Evince PDF viewer works great.
-
-On Windows, the freely available SumatraPDF software
-is highly recommended and is a small download. You
-will need to set SumatraPDf as the default PDF viewer
-for best results.</property>
+                                    <property name="tooltip-text" translatable="yes">There is a growing range of videos
+to teach you how to use some of
+the more advanced features of
+this very powerful software.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Recommended PDF Viewer:</property>
+                                    <property name="label" translatable="yes">Training Videos</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -26647,22 +26647,30 @@ for best results.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton" id="lb_pdfViewer">
-                                    <property name="label" translatable="yes">Visit SumatraPDF Download Page</property>
-                                    <property name="name">Link to SumatraPDF home page</property>
+                                  <object class="GtkLinkButton" id="lb_trainingOnPTsite">
+                                    <property name="label" translatable="yes">via Paratext Site</property>
+                                    <property name="name">Link to training videos on the Paratext website</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
                                     <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">There is a growing range of videos
+to teach you how to use some of
+the more advanced features of
+this very powerful software.
+
+The videos on the Paratext site are
+high-quality and carefully curated,
+but they may not always cover the
+latest features available in PTXprint.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
-                                    <property name="uri">https://www.sumatrapdfreader.org/download-free-pdf-viewer.html</property>
+                                    <property name="uri">https://paratext.org/videos/en/paratext-features-training-videos/print-draft-training-videos/</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">8</property>
-                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -26720,7 +26728,7 @@ an issue using this link.</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">6</property>
-                                    <property name="width">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -26768,7 +26776,7 @@ However, these annotated code snippets
 can be copied into the ptxprint-mods.tex
 file or the Changes.txt file as appropriate.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Further Documentation:</property>
+                                    <property name="label" translatable="yes">Reference Documentation:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -26779,7 +26787,7 @@ file or the Changes.txt file as appropriate.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_techFAQ">
-                                    <property name="label" translatable="yes">View Advanced Technical Documentation</property>
+                                    <property name="label" translatable="yes">Advanced Tech Docs</property>
                                     <property name="name">Link to deeper technical help</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -26791,9 +26799,9 @@ file or the Changes.txt file as appropriate.</property>
                                     <property name="uri">https://github.com/sillsdev/ptx2pdf/tree/master/docs#readme</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">3</property>
+                                    <property name="left-attach">5</property>
                                     <property name="top-attach">9</property>
-                                    <property name="width">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27077,6 +27085,99 @@ file which needs to be emailed to:
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkLinkButton" id="lb_trainingOnVimeo">
+                                    <property name="label" translatable="yes">via Vimeo platform</property>
+                                    <property name="name">Link to training videos on the Vimeo platform</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">There is a growing range of videos
+to teach you how to use some of
+the more advanced features of
+this very powerful software.
+
+The videos on Vimeo tend to be
+longer and more detailed, but less
+polished. However, these videos
+cover the latest available features.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://vimeo.com/showcase/9331905</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">8</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_ornaments_cat">
+                                    <property name="label">Ornaments Catalog</property>
+                                    <property name="name">Show the Ornaments Catalog</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to Open the Ornaments Catalog
+used for decorating the PDF (refer to
+the Tabs+Borders settings).</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">start</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to view Ornamental Borders Catalogue</property>
+                                    <signal name="clicked" handler="onCatalogClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">9</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_tech_ref">
+                                    <property name="label">Technical Reference</property>
+                                    <property name="name">Show the Technical Reference document</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to open the Technical Reference
+document. (For advanced users only). </property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">start</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to view the Technical Reference document</property>
+                                    <signal name="clicked" handler="onTechRefClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">9</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_learnHowTo">
+                                    <property name="label" translatable="yes">Learn: How to...</property>
+                                    <property name="name">Link to the Learn page with How To... articles</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://software.sil.org/ptxprint/learn/</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">6</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
                                   <placeholder/>
                                 </child>
                               </object>
@@ -27276,6 +27377,30 @@ from XeTeX processing.</property>
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="btn_openFolder">
+                <property name="name">Open folder containing created PDFs.</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Open the folder which contains the
+PDF file(s) created for this project.</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin-left">3</property>
+                <property name="margin-right">3</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="image">icon_openFolder</property>
+                <signal name="clicked" handler="onOpenOutputFolderclicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="btn_download_update">
                 <property name="name">Check for updates...</property>
                 <property name="can-focus">True</property>
@@ -27283,7 +27408,7 @@ from XeTeX processing.</property>
                 <property name="no-show-all">True</property>
                 <property name="tooltip-text" translatable="yes">A newer version of PTXprint is available.
 Click to visit download page on the website.</property>
-                <property name="halign">start</property>
+                <property name="halign">center</property>
                 <property name="valign">center</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
@@ -27298,7 +27423,7 @@ Click to visit download page on the website.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -27327,11 +27452,8 @@ Shortcut: Ctrl-F</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
             <child>
               <placeholder/>
@@ -29126,6 +29248,7 @@ be applied.</property>
                 <child>
                   <object class="GtkLinkButton" id="lb_openOrnamentsCatalog">
                     <property name="label">Ornamental Border Style:</property>
+                    <property name="name">Show the Ornaments Catalog</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="focus-on-click">False</property>

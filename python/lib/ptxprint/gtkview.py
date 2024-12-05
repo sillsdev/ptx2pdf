@@ -1266,20 +1266,21 @@ class GtkViewModel(ViewModel):
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
         for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
-                   "l_homePage",  "l_community", "l_pdfViewer",  "l_reportBugs",
-                  "lb_homePage", "lb_community", "lb_pdfViewer", "lb_reportBugs", 
+                   "l_homePage",  "l_community", "l_trainingVideos", "l_reportBugs", "lb_trainingOnVimeo",
+                  "lb_homePage", "lb_community", "lb_trainingOnPTsite", "lb_reportBugs", "lb_techFAQ", "lb_learnHowTo",
                   "l_giveFeedback", "lb_giveFeeback", "btn_about"]:
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
         self.userconfig.set("init", "nointernet", "true" if newval else "false")
-        # self.styleEditor.editMarker()  # Not sure WHY this was here. MH: Any ideas?
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
-        for w in ["lb_omitPics", "l_techFAQ",  "lb_techFAQ", "l_reportBugs", "lb_reportBugs"]:
+        for w in ["lb_omitPics", "lb_techFAQ", "l_reportBugs", "lb_reportBugs"]:
             self.builder.get_object(w).set_visible(not newval and adv)
+        for w in ["l_techFAQ", "lb_ornaments_cat", "lb_tech_ref"]:
+            self.builder.get_object(w).set_visible(adv)
         for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"]:
             self.builder.get_object(w).set_visible(not newval)
         self.i18nizeURIs()
@@ -1288,7 +1289,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
         tl = self.lang if not self.get("c_useEngLinks") and \
            self.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th'] else ""
-        for u in "homePage community pdfViewer techFAQ reportBugs".split(): # lb_DBLdownloads lb_openBible ?as well?
+        for u in "homePage community techFAQ reportBugs".split(): # lb_DBLdownloads lb_openBible ?as well?
             w = self.builder.get_object("lb_" + u)
             if "translate.goog" in w.get_uri():
                 continue
@@ -3208,7 +3209,7 @@ class GtkViewModel(ViewModel):
             zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
             zipdata.extractall(unpack2fldr.get_filename())
             self.doStatus(_("PDF settings unpacked. That was easy, wasn't it!"))
-            self.openFolder(unpack2fldr.get_filename())
+            startfile(unpack2fldr.get_filename())
         except BadZipFile as e:
             self.doStatus(_("Sorry, that PDF doesn't seem to be a valid PTXprint file with config settings included in it."))
 
@@ -3952,7 +3953,7 @@ class GtkViewModel(ViewModel):
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
             try:
                 self.createArchive(str(archiveZipFile[0]))
-                self.openFolder(os.path.dirname(archiveZipFile[0]))
+                startfile(os.path.dirname(archiveZipFile[0]))
             except Exception as e:
                 s = traceback.format_exc()
                 s += "\n{}: {}".format(type(e), str(e))
@@ -4449,13 +4450,12 @@ class GtkViewModel(ViewModel):
         dialog.destroy()
         return True if response == Gtk.ResponseType.YES else False
 
+    def onOpenOutputFolderclicked(self, w):
+        startfile(self.project.printPath(None))
+
     def onOpenFolderClicked(self, btn, *argv):
         p = re.search(r'(?<=href=\")[^<>]+(?=\")',btn.get_label())
-        outputfolder =  p[0]
-        self.openFolder(outputfolder)
-
-    def openFolder(self, fldrpath):
-        startfile(fldrpath)
+        startfile(p[0])
 
     def finished(self, passed=True):
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
@@ -5343,7 +5343,6 @@ class GtkViewModel(ViewModel):
                 bc = coltotex(self.get('col_coverBorder'))
                 self.set("c_useOrnaments", True)
                 ornaments = self.get('fcb_coverBorder')
-                print(f"{ornaments=}")
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', 'ornaments')
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', ornaments)
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', bc)
@@ -6078,11 +6077,30 @@ Thank you,
         else:
             return 99
 
-    def onCatalogClicked(self,btn):
-        catpdf = os.path.join(pycodedir(), "..", "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
+    def onCatalogClicked(self, btn):
+        # catpdf = os.path.join(pycodedir(), "..", "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
+        catpdf = os.path.join(pycodedir(), "PDFassets", "reference", "OrnamentsCatalog.pdf")
         if not os.path.exists(catpdf):
-            catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
-        startfile(catpdf)
+            catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalog.pdf")
+        if not os.path.exists(catpdf):
+            logger.warn(f"Ornaments Catalogue not found: {catpdf}")
+        else:
+            showref = self.builder.get_object("dlg_preview")
+            self.pdf_viewer.loadnshow(catpdf, widget=showref)
+            self.set("c_bkView", False, mod=False)
+            self.pdf_viewer.set_zoom_fit_to_screen(None)
+
+    def onTechRefClicked(self, btn):
+        techref = os.path.join(pycodedir(), "PDFassets", "reference", "PTXprintTechRef.pdf")
+        if not os.path.exists(techref):
+            techref = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "PTXprintTechRef.pdf")
+        if not os.path.exists(techref):
+            logger.warn(f"Technical Reference not found: {techref}")
+        else:
+            showref = self.builder.get_object("dlg_preview")
+            self.pdf_viewer.loadnshow(techref, widget=showref)
+            self.set("c_bkView", True, mod=False)
+            self.pdf_viewer.set_zoom_fit_to_screen(None)
 
     def onCropMarksClicked(self, btn):
         if not self.get("c_coverCropMarks"):
@@ -6226,7 +6244,7 @@ Thank you,
             if action == "sysviewer":
                 startfile(pdffile)
             elif action == "openfolder":
-                self.openFolder(self.project.printPath(None))
+                startfile(self.project.printPath(None))
 
     def onClosePreview(self, widget):
         dlg_preview = self.builder.get_object("dlg_preview")
