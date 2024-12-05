@@ -6083,7 +6083,7 @@ Thank you,
         if not os.path.exists(catpdf):
             catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalog.pdf")
         if not os.path.exists(catpdf):
-            logger.warn(f"Ornaments Catalogue not found: {catpdf}")
+            logger.warn(f"Ornaments Catalog not found: {catpdf}")
         else:
             showref = self.builder.get_object("dlg_preview")
             self.pdf_viewer.loadnshow(catpdf, widget=showref)
