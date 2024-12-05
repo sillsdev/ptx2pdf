@@ -432,6 +432,7 @@ class Piclist:
 
     def addpic(self, suffix="", **kw):
         m = kw['anchor'].split(' ', 1)
+        suffix = suffix or ""
         kw['anchor'] = m[0] + suffix + " " + m[1]
         p = Picture(**kw)
         self.add_picture(p)

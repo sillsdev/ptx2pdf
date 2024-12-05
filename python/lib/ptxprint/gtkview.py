@@ -6135,7 +6135,7 @@ Thank you,
                     ref = Reference("UNK", 0, 0)
                 if ref.verse == 0:
                     ref.verse = ref.numverses() // 2 + 1
-                self.picinfos.addpic(self.digSuffix, anchor=p[1].str(addsep=RefSeparators(cv='.')), src=p[0]+'.jpg',
+                self.picinfos.addpic(suffix=self.digSuffix, anchor=p[1].str(addsep=RefSeparators(cv='.')), src=p[0]+'.jpg',
                         ref=p[1].str(addsep=self.getRefSeparators(nobook=True)), alt=p[2], size='col', pgpos='tl')
             self.picListView.load(self.picinfos)
 
