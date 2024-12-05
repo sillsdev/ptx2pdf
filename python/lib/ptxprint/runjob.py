@@ -260,6 +260,10 @@ class RunJob:
         if not len(jobs):
             self.fail(_("No books to print"))
             return
+        spnr = self.printer.builder.get_object("spin_preview")
+        # if spnr.props.active:  # Check if the spinner is running
+        spnr.start()                
+
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
@@ -340,6 +344,9 @@ class RunJob:
                 else:
                     startname = pdfname
                 self.printer.onShowPDF(None)
+                spnr = self.printer.builder.get_object("spin_preview")
+                if spnr.props.active:  # Check if the spinner is running
+                    spnr.stop()                
 
             fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
             logger.debug(f"Testing log file {fname}")
