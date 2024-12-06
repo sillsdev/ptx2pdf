@@ -6100,13 +6100,12 @@ Thank you,
             return 99
 
     def onCatalogClicked(self, btn):
-        # catpdf = os.path.join(pycodedir(), "..", "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
-        catpdf = os.path.join(pycodedir(), "PDFassets", "reference", "OrnamentsCatalog.pdf")
+        catpdf = os.path.join(pycodedir(), "PDFassets", "reference", "OrnamentsCatalogue.pdf")
         logger.debug(f"{catpdf=}")
         if not os.path.exists(catpdf):
-            catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalog.pdf")
+            catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
         if not os.path.exists(catpdf):
-            logger.warn(f"Ornaments Catalog not found: {catpdf}")
+            logger.warn(f"Ornaments Catalogue not found: {catpdf}")
         else:
             showref = self.builder.get_object("dlg_preview")
             self.pdf_viewer.loadnshow(catpdf, widget=showref)

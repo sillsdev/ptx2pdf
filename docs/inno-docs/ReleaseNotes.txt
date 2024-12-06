@@ -1,5 +1,5 @@
 PTXprint 2.7.5 Release Notes
-5 Dec 2024
+6 Dec 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
@@ -8,6 +8,15 @@ NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting,
        we suggest that you continue using the same version of PTXprint, rather than
        updating to this latest version.
 
+Bug fixes and Improvements in 2.7.6 (6 Dec 2024)
+  * Don't put code in the PDF bookmark
+  * Get insert pic from Catalogue working again
+  * Add a spinner to the PDF Preview Pane to show when it has finished updating
+  * Fix book codes in the pdf toc
+  * Add Color of NoteLines option to Layout page
+  * Fix colours of pdf in pdf_viewer
+  * Make context menu options localizable (and update FR)
+  
 Bug fixes and Improvements in 2.7.5 (5 Dec 2024)
   * Fix prevowels in Bengali
   * Improve Help page links; re-instate open Output PDF folder.
