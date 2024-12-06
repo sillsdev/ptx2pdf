@@ -36,11 +36,15 @@ def render_page(page, zoomlevel, imarray, pnum, annotatefn):
 
 def arrayImage(imarray, width, height):
     stride = cairo.Format.ARGB32.stride_for_width(width)
-    # Pixbuf.new_from_data interprets the data as uints and applies endianness
-    # Pixbuf.new_from_bytes passes the data straight through on an even faster path
-    mbytes = GLib.Bytes.new_take(imarray)
-    pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
-        mbytes,
+    if sys.byteorder == "little":       # vs "big"
+        # a pixbuf assumes data comes as uint32s (or uint24s) not byte arrays.
+        # cairo stores data in effect in big endian order
+        # using new_from_bytes() makes no difference
+        myarray = np.frombuffer(imarray, dtype=np.uint8)
+        myarray = myarray.reshape(-1, 4)
+        myarray[:, [0, 2]] = myarray[:, [2, 0]]
+    pixbuf = GdkPixbuf.Pixbuf.new_from_data(
+        bytes(imarray),
         GdkPixbuf.Colorspace.RGB,
         True,
         8,
