@@ -412,13 +412,12 @@ _nonsensitivities = {
     "c_boxPadSymmetrical":     ["s_sbBoxPadL", "s_sbBoxPadR", "s_sbBoxPadB"],
     "c_bdrPadSymmetrical":     ["s_sbBdrPadL", "s_sbBdrPadR", "s_sbBdrPadB"],
 }
-
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate",
                     "b_reprint", "btn_refreshCaptions"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
-                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun", "col_noteLines"),
+                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -790,7 +789,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
         self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
         self.builder.get_object("scr_previewPDF").set_visible(False)
-        # self.builder.get_object("col_noteLineColor").set_size_request(10, 10)
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
@@ -968,7 +966,12 @@ class GtkViewModel(ViewModel):
 
     def first_method(self):
         """ This is called first thing after the UI is set up and all is active """
+        w = self.builder.get_object("col_noteLines")
+        (rect, bline) = w.get_allocated_size()
+        rect.width /= 2
+        w.size_allocate_with_baseline(rect, bline)
         self.doConfigNameChange(None)
+
 
     def emission_hook(self, w, *a):
         if not self.logactive:
@@ -6331,6 +6334,4 @@ Thank you,
         pg = self.ufPages[min(self.ufCurrIndex, pages)]
         self.set("s_pgNum", pg, mod=False)
         self.pdf_viewer.show_pdf(pg, self.rtl)
-        # self.ufCurrIndex = min(self.ufCurrIndex + 1, len(self.ufPages) - 1)
         self.ufCurrIndex = (self.ufCurrIndex + 1) % len(self.ufPages)
-
