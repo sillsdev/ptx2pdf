@@ -5488,7 +5488,7 @@ Spacing' section of the Advanced &gt; Other tab.</property>
                                     </child>
                                     <child>
                                       <object class="GtkColorButton" id="col_noteLines">
-                                        <property name="width-request">30</property>
+                                        <property name="width-request">14</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>

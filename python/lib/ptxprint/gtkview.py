@@ -954,7 +954,6 @@ class GtkViewModel(ViewModel):
 
         w = self.builder.get_object("col_noteLines")
         (rect, bline) = w.get_allocated_size()
-        print(f"{rect.width}x{rect.height}, {bline} {w.get_resize_mode()}")
         rect.width *= 0.75
         w.size_allocate_with_baseline(rect, bline)
 
