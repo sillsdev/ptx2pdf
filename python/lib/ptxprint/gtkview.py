@@ -418,7 +418,7 @@ _object_classes = {
                     "b_reprint", "btn_refreshCaptions"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
-                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
+                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun", "col_noteLines"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -790,6 +790,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
         self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
         self.builder.get_object("scr_previewPDF").set_visible(False)
+        # self.builder.get_object("col_noteLineColor").set_size_request(10, 10)
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
@@ -1508,7 +1509,7 @@ class GtkViewModel(ViewModel):
             self.doStatus(_("Printing busy"))
             return
 
-        # self.set("_printcount", int(self.get("_printcount", 0)), skipmissing=True)
+        self.builder.get_object("spin_preview").start()
         print_count_str = self.get("_printcount", "")
         if print_count_str:
             print_count = int(print_count_str)
@@ -2252,9 +2253,24 @@ class GtkViewModel(ViewModel):
         if len(existingFilelist):
             if len(existingFilelist) > 13:
                 existingFilelist = existingFilelist[:6] + ["..."] + existingFilelist[-6:]
-            q1 = _("One or more Paragraph Adjust file(s) already exist!")
-            q2 = "\n".join(existingFilelist)+_("\n\nDo you want to OVERWRITE the above-listed file(s)?")
-            forceAdjs = self.msgQuestion(q1, q2, default=False)
+            q1 = _("One or more Adjust List(s) already exist!")
+            q2a = _("Do you want to OVERWRITE the existing list(s)?")
+            q2b = _("Yes - Wipe out existing list(s) and start again")
+            q2c = _("No - Keep existing list(s) and merge new [safe option]")
+            q2d = _("Cancel - leave Adjust List(s) as they are [do nothing]")
+            q2 = "\n".join(existingFilelist) + f"\n\n{q2a}\n   {q2b}\n   {q2c}\n   {q2d}"
+            par = self.builder.get_object('ptxprint')
+            dialog = Gtk.MessageDialog(parent=par, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE, message_format=q1)
+            dialog.add_buttons("Yes", Gtk.ResponseType.YES, "No", Gtk.ResponseType.NO, "Cancel", Gtk.ResponseType.CANCEL)
+            dialog.format_secondary_text(q2)
+            response = dialog.run()
+            dialog.destroy()            
+            if response == Gtk.ResponseType.YES:
+                forceAdjs = True
+            elif response == Gtk.ResponseType.NO:
+                forceAdjs = False
+            elif response == Gtk.ResponseType.CANCEL:
+                return
         if not len(booklist):
             return
         parlocs = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".parlocs")
@@ -6218,9 +6234,11 @@ Thank you,
     def onNoteLinesClicked(self, wid):
         if self.loadingConfig:
             return
-        if self.get("c_noteLines"):
-            self.set("c_pagegutter", True)
-            self.set("c_outerGutter", True)
+        status = self.sensiVisible("c_noteLines")
+        self.set("c_pagegutter", status)
+        self.set("c_outerGutter", status)
+        self.builder.get_object('col_noteLines').set_visible(status)
+        if status:
             if float(self.get("s_pagegutter",0)) < 30:
                 self.set("s_pagegutter", 40)
 

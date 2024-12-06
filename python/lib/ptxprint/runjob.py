@@ -260,9 +260,6 @@ class RunJob:
         if not len(jobs):
             self.fail(_("No books to print"))
             return
-        spnr = self.printer.builder.get_object("spin_preview")
-        # if spnr.props.active:  # Check if the spinner is running
-        spnr.start()                
 
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
@@ -357,7 +354,16 @@ class RunJob:
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
-                    self.printer.builder.get_object("btn_seekPage2fill").set_sensitive(len(ufPages))
+                    seekbtn = self.printer.builder.get_object("btn_seekPage2fill")
+                    seekbtn.set_sensitive(len(ufPages))
+                    elipsis = f", ... (of {len(ufPages)})" if len(ufPages) > 5 else ""
+                    if len(ufPages):
+                        pgs = ", ".join(map(str, ufPages[:5]))
+                        print(f'{pgs}')
+                        seekText = _("Show next underfilled page.") + "\n" + pgs + elipsis
+                    else:
+                        seekText = _("No more underfilled pages detected.")
+                    seekbtn.set_tooltip_text(seekText)
                     sl = self.printer.builder.get_object("l_statusLine")
                     sl.set_text("")
                     sl.set_tooltip_text("")

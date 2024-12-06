@@ -3404,8 +3404,7 @@ Mouse Scroll also changes pages</property>
                 <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Jump to the next underfilled
-page in the document.</property>
+                <property name="tooltip-text" translatable="yes">Show next underfilled page.</property>
                 <property name="halign">center</property>
                 <property name="image">icon_page2fill</property>
                 <signal name="clicked" handler="onSeekPage2fill" swapped="no"/>
@@ -5407,13 +5406,14 @@ Secondary text on the right regardless of whether
 it is an odd or even page, then turn off this option.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="margin-start">5</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">2</property>
+                                        <property name="left-attach">3</property>
                                         <property name="top-attach">3</property>
-                                        <property name="width">3</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -5474,6 +5474,7 @@ Hint: Set the Binding Gutter to a larger value
 settings to control the appearance and spacing
 of the Notelines are in the 'Page Layout and
 Spacing' section of the Advanced &gt; Other tab.</property>
+                                        <property name="halign">end</property>
                                         <property name="margin-start">12</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onNoteLinesClicked" swapped="no"/>
@@ -5482,6 +5483,27 @@ Spacing' section of the Advanced &gt; Other tab.</property>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">3</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkColorButton" id="col_noteLines">
+                                        <property name="width-request">20</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
+                                        <property name="tooltip-text" translatable="yes">Set the color of the Notelines.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-end">6</property>
+                                        <property name="rgba">rgb(119,118,123)</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>

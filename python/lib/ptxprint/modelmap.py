@@ -105,6 +105,8 @@ _map = {
     "paper/gutter":             ("s_pagegutter", "layout", lambda w,v: round(float(v)) if v else "0"),
     "paper/notelines":          ("c_noteLines", "layout", lambda w,v: "\\doNoteLines" if v else ""),
     "paper/ifnotelines_":       ("c_noteLines", "layout", lambda w,v: "true" if v else "false"),
+    "paper/majornlcolor":       ("col_noteLines", "layout", None),
+    "majornlcolor_":            ("col_noteLines", "layout", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
     "paper/colgutteroffset":    ("s_colgutteroffset", "layout", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", "layout", lambda w,v: "2" if v else "1"),
     "paper/allowunbalanced":    ("c_allowUnbalanced", "layout", lambda w,v :"" if v else "%"),
