@@ -169,7 +169,7 @@ texpertOptions = {
                             _("Don’t output PDF bookmarks")),
     "Actions":            O("actions", "PDF", True, "", _("Allow Active Links in PDF"),
                             _("Make links active inside PDF")),
-    "refbookmarks":       O("refbkmks", "PDF", False, "", _("Use Book Codes in PDF Bookmarks"),
+    "refbookmarks":       O("refbkmks", "PDF", False, None, _("Use Book Codes in PDF Bookmarks"),
                             _("Use book codes instead of book names in bookmarks")),
     "NoTransparency":     O("notransparent", "PDF", False, "", _("Disable Transparency in PDF"),
                             _("Disable transparency output in PDF")),
