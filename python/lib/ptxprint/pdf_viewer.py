@@ -3,6 +3,7 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
 import cairo, re, time, sys
+import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.utils import _, refSort
@@ -24,7 +25,7 @@ def render_page(page, zoomlevel, imarray, pnum, annotatefn):
     width, height = page.get_size()
     width, height = width * zoomlevel, height * zoomlevel
 
-    surface = ImageSurface.create_for_data(memoryview(imarray), cairo.FORMAT_RGB24, int(width), int(height))
+    surface = ImageSurface.create_for_data(memoryview(imarray), cairo.FORMAT_ARGB32, int(width), int(height))
     context = Context(surface)
     context.set_source_rgb(1, 1, 1)
     context.paint()
@@ -34,7 +35,10 @@ def render_page(page, zoomlevel, imarray, pnum, annotatefn):
         annotatefn(pnum, context, zoomlevel)
 
 def arrayImage(imarray, width, height):
-    stride = cairo.Format.RGB24.stride_for_width(width)
+    stride = cairo.Format.ARGB32.stride_for_width(width)
+    myarray = np.frombuffer(imarray, dtype=np.uint8)
+    myarray = myarray.reshape(-1, 4)
+    myarray[:, [0, 2]] = myarray[:, [2, 0]]
     pixbuf = GdkPixbuf.Pixbuf.new_from_data(
         bytes(imarray),
         GdkPixbuf.Colorspace.RGB,
