@@ -418,6 +418,7 @@ _object_classes = {
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
+    "tinybutton":  ("col_noteLines",),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -817,7 +818,8 @@ class GtkViewModel(ViewModel):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
-            .smallbutton {font-size: 10px; min-height: 0pt; min-width:0px;  padding:1px;}
+            .smallbutton {font-size: 10px; min-height: 0pt; min-width:10px;  padding:1px;}
+            .tinybutton {font-size: 3pt; border:none; min-height: 0pt; min-width:10px;  padding:0pt;}
             .fontbutton {font-size: 12px}
             .scale-slider trough {min-height: 5px}
             tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)} 
@@ -950,6 +952,12 @@ class GtkViewModel(ViewModel):
         self.setupTeXOptions()
         self.builder.get_object('c_variableLineSpacing').set_sensitive(self.get("c_noGrid"))
 
+        w = self.builder.get_object("col_noteLines")
+        (rect, bline) = w.get_allocated_size()
+        print(f"{rect.width}x{rect.height}, {bline} {w.get_resize_mode()}")
+        rect.width *= 0.75
+        w.size_allocate_with_baseline(rect, bline)
+
         if self.splash is not None:
             self.splash.terminate()
             self.splash = None
@@ -966,10 +974,6 @@ class GtkViewModel(ViewModel):
 
     def first_method(self):
         """ This is called first thing after the UI is set up and all is active """
-        w = self.builder.get_object("col_noteLines")
-        (rect, bline) = w.get_allocated_size()
-        rect.width /= 2
-        w.size_allocate_with_baseline(rect, bline)
         self.doConfigNameChange(None)
 
 

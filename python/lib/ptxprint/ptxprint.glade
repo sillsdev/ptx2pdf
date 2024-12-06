@@ -4867,6 +4867,7 @@ be useful for a journaling layout.</property>
                                       <packing>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">2</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -5028,6 +5029,7 @@ also affects poetry indentation.
                                       <packing>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">1</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -5486,7 +5488,7 @@ Spacing' section of the Advanced &gt; Other tab.</property>
                                     </child>
                                     <child>
                                       <object class="GtkColorButton" id="col_noteLines">
-                                        <property name="width-request">20</property>
+                                        <property name="width-request">30</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -5494,19 +5496,14 @@ Spacing' section of the Advanced &gt; Other tab.</property>
                                         <property name="tooltip-text" translatable="yes">Set the color of the Notelines.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-end">6</property>
+                                        <property name="hexpand">False</property>
+                                        <property name="resize-mode">immediate</property>
                                         <property name="rgba">rgb(119,118,123)</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">1</property>
+                                        <property name="left-attach">2</property>
                                         <property name="top-attach">3</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
