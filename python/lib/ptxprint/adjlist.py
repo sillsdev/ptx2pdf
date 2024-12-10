@@ -141,9 +141,9 @@ class AdjList:
                 continue
             if len(r[0]) > 4 and r[0][4] != diglot:
                 continue
-            c, v = re.split(r"[:.]", r[1], 1)
-            firstv = v.split("-", 1)
             try:
+                c, v = re.split(r"[:.]", r[1], 1)
+                firstv = v.split("-", 1)
                 v = int(firstv[0]) - (1 if r[2] < 2 else 0)
             except ValueError:
                 continue
