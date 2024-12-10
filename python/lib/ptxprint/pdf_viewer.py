@@ -606,6 +606,7 @@ class PDFViewer:
                 self.addSubMenuItem(menu, _("Mirror Always"), mirror_all_menu)
                     
                 self.addMenuItem(menu, _("Reset Image to Defaults"), self.on_reset_image, imgref)
+                self.addMenuItem(menu, f"{es} \\fig", self.edit_fig_style)
                 self.addMenuItem(menu, None, None)
         self.addMenuItem(menu, f"{z2f} (Ctrl + F)", self.set_zoom_fit_to_screen)
         self.addMenuItem(menu, f"{z100} (Ctrl + 0)", self.on_reset_zoom)
@@ -687,6 +688,12 @@ class PDFViewer:
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.model.wiggleCurrentTabLabel()
+        
+    def edit_fig_style(self, widget):
+        self.model.styleEditor.selectMarker('fig')
+        mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
+        self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.model.wiggleCurrentTabLabel()
         
     # Zoom functionality
     def on_zoom_in(self, widget):
