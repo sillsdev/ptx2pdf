@@ -1085,7 +1085,7 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting {synchronise}.")
     return(SyncPoints[{synchronise}])
     
-def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None):
+def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
     if debug:
       debugPrint=True
@@ -1243,7 +1243,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
           debugf[col]=open("mergerewrite-"+col,"w",encoding="utf-8")
         else:
           debugf[col]=open(outfile+"-"+col,"w",encoding="utf-8")
-    if outfile is not None:
+    if len(changes):
+        outf = io.StringIO()
+    elif outfile is not None:
         outf = open(outfile, "w", encoding="utf-8")
     else:
         outf = sys.stdout
@@ -1279,5 +1281,14 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 if not (p[1].type in  (ChunkType.PREVERSEHEAD, ChunkType.HEADING, ChunkType.TITLE, ChunkType.CHAPTERHEAD)):
                     outf.write("\\p\n")
             outf.write("\\polyglotendcols\n")
+    if len(changes):
+        text = out.getvalue()
+        out.close()
+        text = runChanges(changes, book, text)
+        if outfile is not None:
+            with open(outfile, "w", encoding="utf-8") as outf:
+                outf.write(text)
+        else:
+            print(text)
 
 

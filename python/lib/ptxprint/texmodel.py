@@ -162,7 +162,7 @@ class TexModel:
         self.printer = printer
         self.ptsettings = ptsettings
         self.inArchive = inArchive
-        self.changes = None
+        self.changes = {}
         self.localChanges = None
         self.debug = False
         self.interlinear = None
@@ -742,7 +742,7 @@ class TexModel:
                     currperiphs = []
                     currk = None
                     for l in inf.readlines():
-                        l = runChanges(self.changes, a, l)
+                        l = runChanges(self.changes.get('periph', self.changes.get('default', [])), a, l)
                         logger.log(5, f"{mode}: {l}")
                         ma = re.match(r'\\periph\s*([^|]*)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))?', l)
                         if ma:
@@ -776,7 +776,7 @@ class TexModel:
             fcontent = []
             with open(infpath, encoding="utf-8") as inf:
                 for l in inf.readlines():
-                    l = runChanges(self.changes, "FRT", l)
+                    l = runChanges(self.changes.get('periph', self.changes.get('default', [])), "FRT", l)
                     if re.match(r"^\s*\\rem\s", l.lower()):
                         continue
                     l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
@@ -803,7 +803,7 @@ class TexModel:
             self.dict['project/intfile'] = "\\ptxfile{{{}}}".format(os.path.basename(outfname))
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
-            dat = runChanges(self.changes, "INT", dat)
+            dat = runChanges(self.changes.get('periph', self.changes.get('default', [])), "INT", dat)
             dat = runChanges(self.localChanges, "INT", dat)
             dat = regex.sub(r"(\\periph\s*([^\n|]+))\n", addperiphid, dat)
             with open(outfname, "w", encoding="utf-8") as outf:
@@ -880,19 +880,19 @@ class TexModel:
         except ValueError:
             isCanon = False
         printer = self.printer
-        if self.changes is None:
+        if not len(self.changes):
             if self.asBool('project/usechangesfile'):
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
                 #cpath = self.printer.configPath(self.printer.configName())
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 self.changes = self.readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk)
-            else:
-                self.changes = []
         adjlistfile = printer.getAdjListFilename(bk)
         if adjlistfile is not None:
             adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
                                 adjlistfile.replace(".adj", "_changes.txt"))
-            self.changes.extend(self.readChanges(adjchangesfile, bk, makeranges=True))
+            chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
+            for k, v in chs.items():
+                self.changes.setdefault(k, []).extend(v)
         draft = "-" + (printer.cfgid or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
@@ -929,6 +929,10 @@ class TexModel:
             dat = inf.read()
         doc = None
 
+        if 'initial' in self.changes:
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+            dat = runChanges(self.changes['initial'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+
         if chaprange is None and self.dict["project/bookscope"] == "single":
             chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
                                  Reference(bk, int(float(self.dict["document/chapto"])), 200)), ))
@@ -961,10 +965,9 @@ class TexModel:
             if doc is not None:
                 doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
-        if self.changes is not None and len(self.changes):
+        if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
-            dat = runChanges(self.changes, bk, dat, errorfn=self._changeError if bkindex == 0 else None)
-            #self.analyzeImageCopyrights(dat)
+            dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         if self.dict['project/canonicalise']:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -1006,6 +1009,14 @@ class TexModel:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
             logger.log(5,self.localChanges)
             dat = runChanges(self.localChanges, bk, dat)
+
+        if 'adjust' in self.changes:
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+            dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+
+        if 'final' in self.changes:
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+            dat = runChanges(self.changes['final'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to output\n")
         with open(outfpath, "w", encoding="utf-8") as outf:
@@ -1081,10 +1092,12 @@ class TexModel:
             return compfn
         return reduce(lambda currfn, are: makefn(are, currfn), reversed([c for c in changes if c is not None]), None)
 
-    def readChanges(self, fname, bk, makeranges=False):
-        changes = []
+    def readChanges(self, fname, bk, makeranges=False, passes=None):
+        changes = {}
+        if passes is None:
+            passes = ["default"]
         if not os.path.exists(fname):
-            return []
+            return {}
         logger.debug("Reading changes file: "+fname)
         usfm = None
         if makeranges:
@@ -1109,9 +1122,19 @@ class TexModel:
                     continue
                 contexts = []
                 atcontexts = []
+                m = re.match(r"^\s*sections\s*\((.*?)\)", l)
+                if m:
+                    ts = m.group(1).split(",")
+                    passes = [t.strip()[1:-1].strip() for t in ts]
+                    for p in passes:
+                        if p not in changes:
+                            changes[p] = []
+                    continue
                 m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
                 if m:
-                    changes.extend(self.readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk))
+                    lchs = self.readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk, passes=passes)
+                    for k, v in lchs.items():
+                        changes.setdefault(k, []).extend(v)
                     continue
                 # test for "at" command
                 m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
@@ -1160,7 +1183,9 @@ class TexModel:
                             context = self.make_contextsfn(at[0], at[1], *contexts)
                         else:
                             context = at[0]
-                        changes.append((context, r, m.group(3) or m.group(4) or "", f"{fname} line {i+1}"))
+                        ch = (context, r, m.group(3) or m.group(4) or "", f"{fname} line {i+1}")
+                        for p in passes:
+                            changes.setdefault(p, []).append(ch)
                         logger.log(7, f"{context=} {r=} {m.groups()=}")
                     continue
                 elif len(l):
