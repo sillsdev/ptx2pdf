@@ -551,7 +551,8 @@ class PDFViewer:
                     info = self.adjlist.getinfo(ref + pnum, insert=True)
 
         logger.debug(f"{parref=} {info=} ({event.x},{event.y})")
-        if len(info) and self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
+        if len(info) and re.search(r'[.:]', parref.ref) and \
+           self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
             l = info[0]
             if l[0] not in '+-':
