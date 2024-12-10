@@ -428,6 +428,7 @@
 
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   % figure out if we're adding a binding gutter, and which side
+  \immediate\write\p@rlocs{\string\@pgstart{\the\pageno}{\the\availht}{\the\pdfpagewidth}{\the\pdfpageheight}}%
   \ifnum 1=\numexpr \ifDoubleSided \ifodd\pageno 1 \else -1 \fi\else 1 \fi 
       \ifBookOpenLeft *-1 \fi \ifOuterGutter *-1 \fi\relax
     \def\g@tterside{L} \else\def\g@tterside{R}%
@@ -493,6 +494,7 @@
 \def\shipcompletep@gewithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
                                      % but without adding margins, borders, etc
                                      % (used for \includepdf)
+  \immediate\write\p@rlocs{\string\@pgstart{\the\pageno}{\the\availht}{\the\pdfpagewidth}{\the\pdfpageheight}}%
   \dimen0=0\ifCropMarks .5\fi in
   \dimen9=\pdfpageheight \dimen8=\pdfpagewidth
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
@@ -845,7 +847,6 @@
   \let\opS@ve@msprefix\mspr@fix\let\mspr@fix\empty%
   \let\opS@ve@catprefix\c@tprefix\let\c@tprefix\empty% Category and milestones have no place in determining page.
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
-  \immediate\write\p@rlocs{\string\@pgstart{\the\pageno}{\the\availht}{\the\pdfpagewidth}{\the\pdfpageheight}}%
   \trace{G}{Before shipout \the\pdfpagewidth x\the\pdfpageheight}%
   \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
   \holdXobjectsfalse

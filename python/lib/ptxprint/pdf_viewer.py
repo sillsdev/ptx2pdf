@@ -578,7 +578,7 @@ class PDFViewer:
         else:
             # New section for image context menu
             imgref = self.get_imageref(widget, event)  # Assuming a method to get the image reference
-            if False: #imgref:
+            if False:
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
 
                 class_menu = Gtk.Menu()
@@ -909,6 +909,8 @@ class Paragraphs(list):
                     pwidth = 0.
                 self.pindex.append(len(self))
                 inpage = True
+                cinfo = [readpts(x) for x in p[1:4]]
+                colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                 inpage = False
