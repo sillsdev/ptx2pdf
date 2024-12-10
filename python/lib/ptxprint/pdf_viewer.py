@@ -578,7 +578,7 @@ class PDFViewer:
         else:
             # New section for image context menu
             imgref = self.get_imageref(widget, event)  # Assuming a method to get the image reference
-            if False: imgref:
+            if False: #imgref:
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
 
                 class_menu = Gtk.Menu()

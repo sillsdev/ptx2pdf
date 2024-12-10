@@ -20,7 +20,7 @@ xcopy /s /i /y /q C:\msys64\mingw64\share\themes dist\ptxprint\share\themes
 xcopy /s /i /y /q python\lib\ptxprint\mo dist\ptxprint\mo
 xcopy /s /i /y /q python\graphics\icons dist\ptxprint\share\icons
 REM Then use a python script to build the #include list of only the needed icons from the Adwaita folders
-python python\scripts\getstockicons -f inno -s dist\ptxprint -d "{app}" -i list-remove -i list-add -i pan-end -i pan-up -i pan-down -i object-select -i edit-clear -i edit-clear-rtl -i edit-clear-symbolic-rtl -i system-run -i view-grid -i software-update-available -i changes-prevent -i changes-allow -i folder-open -i help-about -i emblem-documents -i document-revert -i open-menu -i preferences-system-sharing -i view-dual -i go-bottom -i go-top -i format-justify-fill -i media-seek-forward -i media-seek-forward-symbolic-rtl.symbolic -i process-working-symbolic.svg python\lib\ptxprint\ptxprint.glade AdwaitaIcons.txt
+python python\scripts\getstockicons -f inno -s dist\ptxprint -d "{app}" -i user-home -i user-desktop -i list-remove -i list-add -i pan-end -i pan-up -i pan-down -i object-select -i edit-clear -i edit-clear-rtl -i edit-clear-symbolic-rtl -i system-run -i view-grid -i software-update-available -i changes-prevent -i changes-allow -i folder-open -i help-about -i emblem-documents -i document-revert -i open-menu -i preferences-system-sharing -i view-dual -i go-bottom -i go-top -i format-justify-fill -i media-seek-forward -i media-seek-forward-symbolic-rtl.symbolic -i process-working-symbolic.svg python\lib\ptxprint\ptxprint.glade AdwaitaIcons.txt
 
 REM Then call InnoSetup to build the final SetupPTXprint.exe file which is distributed
 IF "%INNOSETUP_PATH%"=="" SET INNOSETUP_PATH="C:\Program Files (x86)\Inno Setup 6"
