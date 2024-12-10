@@ -122,7 +122,7 @@ for e in doc.findall('.//object'):
             elif n in ["use_stock", "use-stock"]:
                 isstock = True if c.text == "True" else False
     if isstock and l in icon_mappings:
-        icons.add(icon_mappings[l]+".png")
+        icons.add(icon_mappings[l])
 
 with open(args.outfile, "w") as outf:
     if args.format == "txt":
@@ -131,7 +131,7 @@ with open(args.outfile, "w") as outf:
         outf.write("[Files]\n")
         for i in sorted(icons):
             foundit = False
-            for (f, p) in findall(args.source, i, [".symbolic.png", ".png", ".svg"]):
+            for (f, p) in findall(args.source, i, ["-symbolic.symbolic.png", ".symbolic.png", ".png", ".svg"]):
                 foundit = True
                 p = p[p.find(args.source)+len(args.source)+1:].replace("/","\\")
                 d = args.destination + "\\" + p if args.destination else p
