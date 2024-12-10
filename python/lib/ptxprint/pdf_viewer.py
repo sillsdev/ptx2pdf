@@ -518,6 +518,12 @@ class PDFViewer:
         menu.append(res)
         return res
 
+    def addSubMenuItem(self, parent_menu, label, submenu):
+        menu_item = Gtk.MenuItem(label=label)  # Create a menu item for the parent
+        menu_item.set_submenu(submenu)         # Attach the submenu
+        parent_menu.append(menu_item)          # Add the parent item to the parent menu
+        menu_item.show()                       # Show the parent item
+
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
         ys        = _("Yes! Shrink")
@@ -569,10 +575,69 @@ class PDFViewer:
             self.addMenuItem(menu, None, None)
             if parref and parref.mrk is not None:
                 self.addMenuItem(menu, f"{es} \\{parref.mrk}", self.edit_style, parref.mrk)
+        else:
+            # New section for image context menu
+            imgref = self.get_imageref(widget, event)  # Assuming a method to get the image reference
+            if False: imgref:
+                self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
+
+                class_menu = Gtk.Menu()
+                for class_option in ["Column", "Span", "Cutout", "Page", "Full"]:
+                    self.addMenuItem(class_menu, class_option, self.on_set_image_class, (imgref, class_option))
+                self.addSubMenuItem(menu, _("Class of Position"), class_menu)
+
+                position_menu = Gtk.Menu()
+                for position_option in ["Top", "Bottom", "Inner", "Outer", "Left", "Right"]:
+                    self.addMenuItem(position_menu, position_option, self.on_set_image_position, (imgref, position_option))
+                self.addSubMenuItem(menu, _("Position"), position_menu)
+
+                self.addMenuItem(menu, None, None)
+                self.addMenuItem(menu, _("Shrink 5% size"), self.on_shrink_image, imgref)
+                self.addMenuItem(menu, _("Grow 5% size"), self.on_grow_image, imgref)
+
+                mirror_here_menu = Gtk.Menu()
+                for mirror_here_option in ["Never", "Always", "If on odd page", "If on even page", ]:
+                    self.addMenuItem(mirror_here_menu, mirror_here_option, self.on_set_mirror_here, (imgref, mirror_here_option))
+                self.addSubMenuItem(menu, _("Mirror Here"), mirror_here_menu)
+                    
+                mirror_all_menu = Gtk.Menu()
+                for mirror_all_option in ["Never", "Always", "If on odd page", "If on even page", ]:
+                    self.addMenuItem(mirror_all_menu, mirror_all_option, self.on_set_mirror_all, (imgref, mirror_all_option))
+                self.addSubMenuItem(menu, _("Mirror Always"), mirror_all_menu)
+                    
+                self.addMenuItem(menu, _("Reset Image to Defaults"), self.on_reset_image, imgref)
+                self.addMenuItem(menu, None, None)
         self.addMenuItem(menu, f"{z2f} (Ctrl + F)", self.set_zoom_fit_to_screen)
         self.addMenuItem(menu, f"{z100} (Ctrl + 0)", self.on_reset_zoom)
 
         menu.popup(None, None, None, None, event.button, event.time)
+
+    def get_imageref(self, widget, event):
+        return True
+
+    def on_edit_anchor(self, imgref):
+        print(f"Editing anchor for image: {imgref}")
+
+    def on_set_image_class(self, imgref, class_option):
+        print(f"Setting class '{class_option}' for image: {imgref}")
+
+    def on_set_image_position(self, imgref, position_option):
+        print(f"Setting position '{position_option}' for image: {imgref}")
+
+    def on_shrink_image(self, imgref):
+        print(f"Shrinking image: {imgref}")
+
+    def on_grow_image(self, imgref):
+        print(f"Growing image: {imgref}")
+
+    def on_reset_image(self, imgref):
+        print(f"Resetting image to defaults: {imgref}")
+
+    def on_set_mirror_here(self, imgref):
+        print(f"Mirror here: {imgref}")
+
+    def on_set_mirror_all(self, imgref):
+        print(f"Mirror all: {imgref}")
 
     # Context menu item callbacks for paragraph actions
     def on_identify_paragraph(self, widget, info, parref):

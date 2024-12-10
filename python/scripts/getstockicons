@@ -93,7 +93,7 @@ def findall(root, fname, exts):
         if fname in fn:
             yield (fname, dp)
         for e in exts:
-            f = fname + "." + exts
+            f = fname + e
             if f in fn:
                 yield (f, dp)
 
@@ -107,7 +107,7 @@ parser.add_argument("-i","--icon",default=[],action="append",help="Icon files to
 args = parser.parse_args()
 
 icons = set()
-icons.update([icon_mappings["gtk-"+i]+".png" for i in \
+icons.update([icon_mappings["gtk-"+i] for i in \
         ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
 for i in args.icon:
     icons.add(i)
