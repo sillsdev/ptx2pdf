@@ -88,10 +88,14 @@ icon_mappings = {
 
 #drive-optical-symbolic, drive-removable-media-symbolic, drive-harddisk-symbolic, computer-symbolic, folder-symbolic
 
-def findall(root, fname):
+def findall(root, fname, exts):
     for dp, dn, fn in os.walk(root or "."):
         if fname in fn:
-            yield dp
+            yield (fname, dp)
+        for e in exts:
+            f = fname + "." + exts
+            if f in fn:
+                yield (f, dp)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infile",help="Glade/UI file to process")
@@ -106,7 +110,7 @@ icons = set()
 icons.update([icon_mappings["gtk-"+i]+".png" for i in \
         ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
 for i in args.icon:
-    icons.add(i+".png")
+    icons.add(i)
 doc = et.parse(args.infile)
 for e in doc.findall('.//object'):
     isstock = False
@@ -127,11 +131,11 @@ with open(args.outfile, "w") as outf:
         outf.write("[Files]\n")
         for i in sorted(icons):
             foundit = False
-            for p in findall(args.source, i):
+            for (f, p) in findall(args.source, i, [".symbolic.png", ".png", ".svg"]):
                 foundit = True
                 p = p[p.find(args.source)+len(args.source)+1:].replace("/","\\")
                 d = args.destination + "\\" + p if args.destination else p
-                s = args.source.replace("/", "\\") + "\\" + p + "\\" + i if args.source != "." else p + "\\" + i
+                s = args.source.replace("/", "\\") + "\\" + p + "\\" + f if args.source != "." else p + "\\" + f
                 outf.write('Source: "{}"; DestDir: "{}"\n'.format(s, d))
             if not foundit:
                 print(f"Failed to find source for {i}")

@@ -158,6 +158,14 @@ class lana(ScriptSnippet):
                makeChange('\u200B', "", context=nonbody)]
         return res
 
+class talu(ScriptSnippet):
+    @classmethod
+    def regexes(cls, view):
+        res = [makeChange(r'/', "\u200B", context=noattrib)m
+               makeChange(r'([^\u1980-\u19DF])\u200B', r'\1'),
+               makeChange(r'\u200B([^\\\u1980-\u19DF])', r'\1'),
+               makeChange('\u200B', "", context=nonbody)]
+
 class arab(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrarabrefs", _("First verse on left"))
