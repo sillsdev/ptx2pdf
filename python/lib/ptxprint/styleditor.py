@@ -70,7 +70,7 @@ constraints = {
     'fontsize': _CRange(2.),
     'fontscale': _CRange(2.),
     'raise': _CNot(_CValue(0.)),
-    'linespacing': _CRange(2.5),
+    'linespacing': _CRange(0.01, 2.5),
 }
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
@@ -469,7 +469,7 @@ class StyleEditor:
             if 'font' in sm:
                 v = _fieldmap['font'][1](self, sm['font'], m, model=self.model, parm=None)
             for k, v in sm.items():
-                if k.startswith(" "):
+                if k.startswith(" ") or k == "font":
                     continue
                 if k == "name":
                     v = self.getval(m, k, v)
@@ -478,8 +478,7 @@ class StyleEditor:
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
-                    if k != "font":
-                        outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k, m)))
+                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k, m)))
 
     def merge(self, basese, newse):
         for m in newse.sheet.keys():
