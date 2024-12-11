@@ -15,7 +15,7 @@ stylemap = {
     'Description':  ('l_styDescription',    None,               None, None, None),
     'TextType':     ('fcb_styTextType',     'l_styTextType',    'Paragraph', None, None),
     'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
-    'FontName':     ('bl_font_styFontName', 'l_styFontName',    None, None, None),
+    'font':         ('bl_font_styFontName', 'l_styFontName',    None, None, None),
     'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
     'FontSize':     ('s_styFontSize',       'l_styFontSize',    12, None, None),
     'Bold':         ('c_styFaceBold',       'c_styFaceBold',    False, None, None),
@@ -237,8 +237,8 @@ class StyleEditorView(StyleEditor):
         self.isLoading = False
 
 
-    def setval(self, mrk, key, val, ifunchanged=False, parm=None):
-        super().setval(mrk, key, val, ifunchanged=ifunchanged, parm=parm)
+    def setval(self, mrk, key, val, ifunchanged=False, parm=None, mapin=True):
+        super().setval(mrk, key, val, ifunchanged=ifunchanged, parm=parm, mapin=mapin)
         if mrk == self.marker:
             v = stylemap.get(dualmarkers.get(key, key))
             if v is None:
@@ -246,7 +246,7 @@ class StyleEditorView(StyleEditor):
             # self.loading = True
             self.set(v[0], val or "")
             if key == "Color":
-                print(f"setval {val=}")
+                # print(f"setval {val=}")
                 self.set("l_styColor", _("Color:")+"\n"+str(val))
             # self.loading = False
 
@@ -472,7 +472,7 @@ class StyleEditorView(StyleEditor):
                 # logger.debug(f"{k}: {oldval=}, {val=}")
             if k == "_fontsize":
                 fstyles = []
-                fref = self.getval(self.marker, 'FontName')
+                fref = self.getval(self.marker, 'font')
                 if fref is None:
                     fref = self.model.get("bl_fontR")
                 bfontsize = float(self.model.get("s_fontsize"))
@@ -653,7 +653,7 @@ class StyleEditorView(StyleEditor):
         if not key.startswith("_"):
             super(self.__class__, self).setval(self.marker, key, value)
             if key in ("FontSize", "FontName", "Bold", "Italic"):
-                fref = self.getval(self.marker, 'FontName')
+                fref = self.getval(self.marker, 'font')
                 if fref is None:
                     fref = self.model.get("bl_fontR")
                     if fref is not None:
@@ -661,7 +661,7 @@ class StyleEditorView(StyleEditor):
                 if fref is not None:
                     if key in ("Bold", "Italic"):
                         setattr(fref, "is"+key, val)
-                        self.setval(self.marker, 'FontName', fref, parm=True)
+                    self.setval(self.marker, 'font', fref, parm=True, mapin=False)
                     # check that defaulting this doesn't cause problems
                     self.setFontLabel(fref, float(self.getval(self.marker, "FontSize", "1.")) * float(self.model.get("s_fontsize", "1.")))
         if v[1] is not None:
@@ -755,7 +755,7 @@ class StyleEditorView(StyleEditor):
                 selecti = self.addMarker(key, name)
                 for k, v in stylemap.items():
                     if not k.startswith("_"):
-                        self.setval(key, k, self.getval(self.marker, k))
+                        self.setval(key, k, self.getval(self.marker, k), mapin=False)
             else:
                 self.treestore.set_value(selecti, 1, name)
             for k, v in dialogKeys.items():

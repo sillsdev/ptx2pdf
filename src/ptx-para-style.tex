@@ -216,7 +216,7 @@
 %+cpar_gridbox2
 % returns in \dimen0 how much to advance \dimen1 (y) to be an integral multiple of \dimen0 (x)
 % \dimen1 := y % x, \dimen3 := y - y % x, \dimen0 := x - y + y % x
-\def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
+\def\m@d{\dimen3=\dimen1\divide\dimen1 \dimen0\multiply\dimen1 \dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 \newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
   \ifdim 0.5pt>\baselineskip \unvbox#1

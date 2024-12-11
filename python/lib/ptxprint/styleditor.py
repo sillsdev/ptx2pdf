@@ -182,7 +182,7 @@ def fromFont(self, s, mrk=None, model=None):
         mrk = self.marker
     class Shim:
         def get(subself, key, default=None):
-            if key == 'fontname':
+            if key == 'FontName':
                 return self.sheet.get(mrk, {}).get(key,
                         self.basesheet.get(mrk, {}).get(key, default))
             return self.getval(mrk, key, default)
@@ -195,7 +195,7 @@ def toFont(self, v, mrk=None, model=None, parm=None):
         mrk = self.marker
     class Shim:
         def __setitem__(subself, key, val):
-            if key == 'fontname':
+            if key == 'FontName':
                 if mrk not in self.sheet:
                     self.sheet[mrk] = Marker()
                 self.sheet[mrk][key] = val
@@ -210,7 +210,7 @@ def toFont(self, v, mrk=None, model=None, parm=None):
         def pop(subself, key, dflt):
             return self.sheet.get(mrk, {}).pop(key, dflt)
     regularfont = model.get("bl_fontR")
-    oldfont = self.basesheet.get(mrk, {}).get("fontname", None)
+    oldfont = self.basesheet.get(mrk, {}).get("font", None)
     return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None, noStyles=(parm is not None))
 
 def fromOneMax(self, v, mrk=None, model=None):
@@ -248,7 +248,7 @@ _fieldmap = {
     'fontsize':         (from12, to12, 12.),
     'spacebefore':      (from12, to12, 0),
     'spaceafter':       (from12, to12, 0),
-    'fontname':         (fromFont, toFont, None),
+    'font':             (fromFont, toFont, None),
     'textproperties':   (fromSet, toSet, None),
     'occursunder':      (fromSet, toSet, None),
     'bordercolor':      (fromOneMax, toOneMax, None),
@@ -291,6 +291,8 @@ class StyleEditor:
             if m:
                 mk = m.group(1)
                 v = m.group(2)
+                if mk.lower() == "fontname":
+                    mk = "font"
                 if mk.lower() == "marker":
                     curr = {}
                     res[v] = curr
@@ -338,10 +340,12 @@ class StyleEditor:
             res = self.basesheet[mrk].get(key.lower(), default) if mrk in self.basesheet else default
         return res
 
-    def setval(self, mrk, key, val, ifunchanged=False, parm=None):
+    def setval(self, mrk, key, val, ifunchanged=False, parm=None, mapin=False):
         if ifunchanged and (self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None) != \
                 (self.sheet[mrk].get(key.lower(), None) if mrk in self.sheet else None):
             return
+        if mapin and key.lower() in _fieldmap and val is not None:
+            val = _fieldmap[key.lower()][0](self, val, mrk=mrk, model=self.model)
         # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
         oldval = self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None
         if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
@@ -411,7 +415,9 @@ class StyleEditor:
         return val
 
     def _eq_val(self, a, b, key=""):
-        if key.lower() in absolutes:
+        if (b is None) ^ (a is None):
+            return False
+        elif key.lower() in absolutes:
             fa = asFloatPts(self, str(a))
             fb = asFloatPts(self, str(b))
             return fa == fb
@@ -460,6 +466,8 @@ class StyleEditor:
             om = basesheet.get(m, {})
             if 'zderived' in om or 'zderived' in sm:
                 continue
+            if 'font' in sm:
+                v = _fieldmap['font'][1](self, sm['font'], m, model=self.model, parm=None)
             for k, v in sm.items():
                 if k.startswith(" "):
                     continue
@@ -470,7 +478,8 @@ class StyleEditor:
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
-                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k, m)))
+                    if k != "font":
+                        outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k, m)))
 
     def merge(self, basese, newse):
         for m in newse.sheet.keys():
