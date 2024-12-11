@@ -1,5 +1,5 @@
 PTXprint 2.7.6 Release Notes
-6 Dec 2024
+11 Dec 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
@@ -7,6 +7,20 @@ _____________________________________________________________
 NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting, 
        we suggest that you continue using the same version of PTXprint, rather than
        updating to this latest version.
+
+Bug fixes and Improvements in 2.7.7 (11 Dec 2024)
+  * Add Save As button and a few others to Preview Pane
+  * Don't allow 0 linespacing
+  * Get font changing working in the style editor
+  * Make adjlist more resiliant to bad references
+  * Make parlocs more resiliant to maps and full page stuff
+  * Add missing icons for home and desktop in filechooser
+  * Support sections(periph,intial,default,adjust,final,merged) in changes.txt
+  * Only show context menu if ref contains : or .
+  * Add option to Edit Style \fig to context menu for pictures
+  * Add mirror options for context menu [unactivated]
+  * Add Talu scriptsnippet
+  * getstockitems now checks different extensions
 
 Bug fixes and Improvements in 2.7.6 (6 Dec 2024)
   * Don't put code in the PDF bookmark
