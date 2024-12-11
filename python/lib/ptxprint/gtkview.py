@@ -4,7 +4,7 @@ import sys, os, re, regex, gi, subprocess, traceback, ssl
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
-from shutil import rmtree
+from shutil import rmtree, copy2
 import datetime, time, locale, urllib.request, json, hashlib
 from ptxprint.utils import universalopen, refKey, refSort, chgsHeader, saferelpath, startfile
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
@@ -6337,3 +6337,38 @@ Thank you,
         self.set("s_pgNum", pg, mod=False)
         self.pdf_viewer.show_pdf(pg, self.rtl)
         self.ufCurrIndex = (self.ufCurrIndex + 1) % len(self.ufPages)
+
+    def onSavePDFasClicked(self, btn):
+        dialog = Gtk.FileChooserDialog(
+            title="Save PDF As...",
+            parent=self.mw,
+            action=Gtk.FileChooserAction.SAVE,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                     Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+        # Set the current folder to the user's Home/Documents directory
+        # dialog.set_current_folder(os.path.join(os.path.expanduser("~"), "Documents"))
+        dialog.set_current_folder(os.path.expanduser("~"))
+        dialog.set_current_name(self.getPDFname())
+        pdf_filter = Gtk.FileFilter()
+        pdf_filter.set_name("PDF files")
+        pdf_filter.add_mime_type("application/pdf")
+        dialog.add_filter(pdf_filter)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            new_file_path = dialog.get_filename()
+            if not new_file_path.lower().endswith('.pdf'):
+                new_file_path += '.pdf'
+            try:
+                pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
+                copy2(pdffilepath, new_file_path)
+                self.doStatus(_("PDF saved as: ") + new_file_path)
+            except Exception as e:
+                self.doError(_("Error saving PDF: ") + str(e), 
+                    secondary=_("Unable to save the PDF in the new location:") + "\n" + new_file_path)
+                self.doStatus(_("Error saving PDF: ") + new_file_path)
+        dialog.destroy()
+
+    def onShareItClicked(self, btn):
+        pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
+        whatsapp_url = f"https://wa.me/?text=Please%20Check%20out%20this%20PDF:%20{pdffilepath}"
+        # self.openURL(whatsapp_url)
