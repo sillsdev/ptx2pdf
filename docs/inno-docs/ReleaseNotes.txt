@@ -1,5 +1,5 @@
 PTXprint 2.7.7 Release Notes
-11 Dec 2024
+12 Dec 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
@@ -7,6 +7,13 @@ _____________________________________________________________
 NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting, 
        we suggest that you continue using the same version of PTXprint, rather than
        updating to this latest version.
+
+Bug fixes and Improvements in 2.7.8 (12 Dec 2024)
+  * Start towards a right menu for figures
+  * Fix not checking far enough back in pars into the previous page
+  * Various fixes for diglot pdf viewer
+  * Fix crashing if trying to import from non existent pdf
+  * Fix fontsize in style editor
 
 Bug fixes and Improvements in 2.7.7 (11 Dec 2024)
   * Add Save As button and a few others to Preview Pane
