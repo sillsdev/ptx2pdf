@@ -408,6 +408,8 @@ class StyleEditor:
                     del s[k]
 
     def _convertabs(self, key, val):
+        if key.lower() not in ("baseline", "linespacing"):
+            return val
         baseline = float(self.model.get("s_linespacing", 1.))
         if key.lower() == "baseline":
             return val * baseline

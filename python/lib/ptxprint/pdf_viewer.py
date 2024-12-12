@@ -25,6 +25,11 @@ def render_page(page, zoomlevel, imarray, pnum, annotatefn):
     width, height = page.get_size()
     width, height = width * zoomlevel, height * zoomlevel
 
+    display = Gdk.Display.get_default()
+    screen = display.get_default_screen()
+    window = screen.get_root_window()
+    scale = window.get_scale_factor()
+    logger.debug(f"Window scaling = {scale}")
     surface = ImageSurface.create_for_data(memoryview(imarray), cairo.FORMAT_ARGB32, int(width), int(height))
     context = Context(surface)
     context.set_source_rgb(1, 1, 1)
@@ -931,13 +936,13 @@ class Paragraphs(list):
                     lines.collectuntil("\\@colstop", [l])
                     continue
                 colinfos[polycol] = cinfo
-                if currps[polycol] is not None:
+                if currps.get(polycol, None) is not None:
                     currr = ParRect(pnum, cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
             elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
                 if currr is not None:
-                    cinfo = colinfos[polycol]
-                    currr.xend = cinfo[3] + cinfo[2]
+                    cinfo = colinfos.get(polycol, None)
+                    currr.xend = cinfo[3] + cinfo[2] if cinfo is not None else readpts(p[0])
                     currr.yend = readpts(p[1])
                     currr = None
                 lines.startreplay()
@@ -946,16 +951,18 @@ class Paragraphs(list):
                 if len(p) == 5:
                     p.insert(0, "")
                 logger.log(5, f"Starting para {p[0]}")
+                cinfo = colinfos.get(polycol, None)
+                if cinfo is None:
+                    continue
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                 currp.rects = []
-                cinfo = colinfos[polycol]
                 currr = ParRect(pnum, cinfo[3], readpts(p[5]) + currp.baseline)
                 currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
             elif c == "parend":         # badness, bottomx, bottomy
-                cinfo = colinfos[polycol]
-                if currps[polycol] is None:
+                cinfo = colinfos.get(polycol, None)
+                if cinfo is None or currps.get(polycol, None) is None:
                     continue
                 currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
                 if len(p) > 2:
@@ -968,7 +975,7 @@ class Paragraphs(list):
                 if not endpar:
                     continue
                 endpar = False
-                currp = currps[polycol]
+                currp = currps.get(polycol, None)
                 if currp is None:
                     continue
                 currp.lastref = p[0]
@@ -1003,10 +1010,10 @@ class Paragraphs(list):
         for p in self[max(self.pindex[pnum-1]-1, 0):e+1]:
             for i,r in enumerate(p.rects):
                 if r.pagenum > pnum:
-                    if rtl and i != 0:
-                        continue
-                    done = True
-                    break
+                    if r.pagenum > pnum + 1:
+                        done = True
+                        break
+                    continue
                 elif r.pagenum < pnum:
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")

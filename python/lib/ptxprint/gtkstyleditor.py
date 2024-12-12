@@ -627,8 +627,8 @@ class StyleEditorView(StyleEditor):
             newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
             oldval = self.getval(self.marker, otherkey)
             if oldval is not None:
-                #newval = self._convertabs(newkey, oldval)
-                newval = oldval
+                newval = self._convertabs(newkey, oldval)
+                #newval = oldval
                 logger.debug(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
                 self.setval(self.marker, newkey, newval, mapin=False)
                 newlabel = self.stylediverts[controlk][2 if val else 1]

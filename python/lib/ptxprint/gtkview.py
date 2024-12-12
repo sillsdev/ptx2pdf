@@ -238,6 +238,7 @@ _ui_experimental = """
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
 btn_previewPrintIt c_bkView s_pdfZoomLevel s_pgNum b_reprint fcb_project ecb_savedConfig
+l_menu_level
 """.split()
 
 # removed from list above: 
@@ -2731,6 +2732,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_parallelRefs").set_active(status)
 
     def onUseIllustrationsClicked(self, btn):
+        changed = not self.loadingConfig
         pics = self.get("c_includeillustrations")
         self.colorTabs()
         if pics:
@@ -2740,7 +2742,7 @@ class GtkViewModel(ViewModel):
             self.picListView.clear()
         self.onPicRescan(None)
         self.picPreviewShowHide(pics)
-        self.changed()
+        self.changed(changed)
         
     def picPreviewShowHide(self, show=True):
         for w in ["bx_showImage", "tb_picPreview"]: #, "fr_picPreview", "img_picPreview"]:
@@ -2761,10 +2763,10 @@ class GtkViewModel(ViewModel):
     def onPrefImageTypeFocusOut(self, btn, foo):
         self.onPicRescan(btn)
         
-    def onPicRescan(self, btn):
+    def onPicRescan(self, btn, changed=True):
         self.picListView.clearSrcPaths()
         self.picListView.onRadioChanged()
-        self.changed()
+        self.changed(changed)
         
     def onPageNumTitlePageChanged(self, btn):
         if self.get("c_pageNumTitlePage"):
@@ -3595,6 +3597,7 @@ class GtkViewModel(ViewModel):
         if self.initialised and self.showPDFmode == "preview": # preview is on
             prvw = self.builder.get_object("dlg_preview")
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
+            logger.debug(f"Trying to show {pdffile} exists={os.path.exists(pdffile)}")
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
                 cfgfile = os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")
@@ -3603,6 +3606,7 @@ class GtkViewModel(ViewModel):
                 cfgt = os.stat(cfgfile).st_mtime
                 for bk in self.getBooks():
                     adj = self.get_adjlist(bk, gtk=Gtk)
+                logger.debug(f"time({pdffile})={pdft}, time({cfgfile})={cfgt}")
                 if pdft > cfgt:
                     if isfirst:
                         prvw.set_gravity(Gdk.Gravity.NORTH_EAST)
