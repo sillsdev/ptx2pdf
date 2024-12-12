@@ -1983,6 +1983,8 @@ class GtkViewModel(ViewModel):
             self.changed()
 
     def onLocalFRTclicked(self, w):
+        if self.loadingConfig:
+            return
         if self.get('c_frontmatter'):
             self.set('c_colophon', False)
             frtpath = self.configFRT()
@@ -4139,7 +4141,7 @@ class GtkViewModel(ViewModel):
             prefix = None
             if self.get("r_impSource") == "pdf":
                 fname = str(getattr(self, "impSourcePDF", None))
-                if fname.endswith(".pdf"):
+                if fname.endswith(".pdf") and os.path.exists(fname):
                     confstream = getPDFconfig(fname)
                     zipinf = BytesIO(confstream)
                     zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
