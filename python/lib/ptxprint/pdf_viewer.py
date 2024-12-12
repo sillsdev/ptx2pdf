@@ -25,11 +25,6 @@ def render_page(page, zoomlevel, imarray, pnum, annotatefn):
     width, height = page.get_size()
     width, height = width * zoomlevel, height * zoomlevel
 
-    display = Gdk.Display.get_default()
-    screen = display.get_default_screen()
-    window = screen.get_root_window()
-    scale = window.get_scale_factor()
-    logger.debug(f"Window scaling = {scale}")
     surface = ImageSurface.create_for_data(memoryview(imarray), cairo.FORMAT_ARGB32, int(width), int(height))
     context = Context(surface)
     context.set_source_rgb(1, 1, 1)
@@ -95,6 +90,13 @@ class PDFViewer:
         self.hbox.connect("key-press-event", self.on_key_press_event)
         self.hbox.connect("scroll-event", self.on_scroll_event)
         self.hbox.set_can_focus(True)  # Ensure the widget can receive keyboard focus
+
+        # This may end up in page rendering code. Just collect data for now
+        display = Gdk.Display.get_default()
+        screen = display.get_default_screen()
+        window = screen.get_root_window()
+        scale = window.get_scale_factor()
+        logger.debug(f"Window scaling = {scale}")
 
     def setShowAdjOverlay(self, val):
         self.showadjustments = val
@@ -1007,7 +1009,7 @@ class Paragraphs(list):
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
         logger.debug(f"Parloc testing: {self.pindex[pnum-1]-1} -> {e}")
-        for p in self[max(self.pindex[pnum-1]-1, 0):e+1]:
+        for p in self[max(self.pindex[pnum-1]-2, 0):e+1]:
             for i,r in enumerate(p.rects):
                 if r.pagenum > pnum:
                     if r.pagenum > pnum + 1:
