@@ -548,9 +548,8 @@ class PDFViewer:
             info = []
         else:
             parref = self.get_parloc(widget, event)
-            if parref is None:
-                info = []
-            else:
+            info = []
+            if isinstance(parref, ParInfo):
                 pnum = f"[{parref.parnum}]" if getattr(parref, 'parnum', 0) > 1 else ""
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
@@ -583,9 +582,10 @@ class PDFViewer:
             self.addMenuItem(menu, None, None)
             if parref and parref.mrk is not None:
                 self.addMenuItem(menu, f"{es} \\{parref.mrk}", self.edit_style, parref.mrk)
-        else:
+        elif parref is not None and isinstance(parref, FigInfo):
             # New section for image context menu
-            imgref = self.get_imageref(widget, event)  # Assuming a method to get the image reference
+            self.addMenuItem(menu, f"{parref.ref}", None)
+            #imgref = self.get_imageref(widget, event)  # Assuming a method to get the image reference
             if False:
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
 
@@ -856,6 +856,21 @@ class ParInfo:
     def sortKey(self):
         return (self.rects[-1].pagenum, refSort(self.ref), getattr(self, 'parnum', 0))
 
+@dataclass
+class FigInfo:
+    ref:    str
+    src:    str
+    rects:  InitVar[None] = None
+
+    def __str__(self):
+        return f"{self.ref}[{self.src}] {self.rects}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def sortKey(self):
+        return (self.rects[-1].pagenum, refSort(self.ref), 0)       # must sort with ParInfo
+
 class ParlocLinesIterator:
     def __init__(self, fname):
         self.fname = fname
@@ -995,6 +1010,24 @@ class Paragraphs(list):
                 if currps[polycol] is not None:
                     currr = ParRect(pnum, cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
+            elif c == "parpicstart":
+                cinfo = colinfos.get(polycol, None)
+                if cinfo is None:
+                    return
+                currp = FigInfo(p[0], p[1])
+                currp.rects = []
+                currr = ParRect(pnum, cinfo[3], readpts(p[3]))
+                currp.rects.append(currr)
+                self.append(currp)
+            elif c == "parpicstop":
+                cinfo = colinfos.get(polycol, None)
+                if cinfo is None or currr is None:
+                    return
+                currr.xend = currr.xstart + readpts(p[2])
+                currr.yend = currr.ystart - readpts(p[3])
+                currp = None
+                currr = None
+                
             # "parnote":        # type, callerx, callery
             # "notebox":        # type, width, height
             # "parlines":       # numlines in previous paragraph (occurs after @parlen)
@@ -1002,27 +1035,19 @@ class Paragraphs(list):
         logger.log(7, "parlocs=" + "\n".join([str(p) for p in self]))
         
     def findPos(self, pnum, x, y, rtl=False):
-        done = False
         # just iterate over paragraphs on this page
         if pnum > len(self.pindex):
             return None
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
         logger.debug(f"Parloc testing: {self.pindex[pnum-1]-1} -> {e}")
-        for p in self[max(self.pindex[pnum-1]-2, 0):e+1]:
+        for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
             for i,r in enumerate(p.rects):
-                if r.pagenum > pnum:
-                    if r.pagenum > pnum + 1:
-                        done = True
-                        break
-                    continue
-                elif r.pagenum < pnum:
+                if r.pagenum != pnum:
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
                     return p
-            if done:
-                break
         return None
 
     def getParas(self, pnum):
@@ -1030,11 +1055,7 @@ class Paragraphs(list):
             return
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
-        for p in self[max(self.pindex[pnum-1]-1, 0):e+1]:
+        for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:
             for r in p.rects:
-                if r.pagenum > pnum:
-                    done = True
-                    break
-                elif r.pagenum < pnum:
-                    continue
-                yield (p, r)
+                if r.pagenum == pnum:
+                    yield (p, r)
