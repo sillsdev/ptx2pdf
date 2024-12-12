@@ -119,7 +119,7 @@ class ParatextSettings:
             for f in sfmfiles:
                 m = re.search(r"(\d{2})", f)
                 if not m:
-                    ei = f.rindex(".")
+                    ei = f.rfind(".")
                     if ei > 0:
                         for i in range(len(f)-ei-2):
                             if f[i:i+3].upper() in allbooks:

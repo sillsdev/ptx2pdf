@@ -17,7 +17,7 @@ stylemap = {
     'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
     'font':         ('bl_font_styFontName', 'l_styFontName',    None, None, None),
     'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
-    'FontSize':     ('s_styFontSize',       'l_styFontSize',    12, None, None),
+    'FontSize':     ('s_styFontSize',       'l_styFontSize',    1, None, None),
     'Bold':         ('c_styFaceBold',       'c_styFaceBold',    False, None, None),
     'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  False, None, None),
     'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    False, None, None),
@@ -447,10 +447,10 @@ class StyleEditorView(StyleEditor):
                 controlk = v[3](False)
                 # try each switch state
                 for m, f in ((v[3](x), x) for x in (not v[2], v[2])):
-                    if m in old:            # key in underlying?
+                    if m.lower() in old:            # key in underlying?
                         olddat = f          # set the state and get the val
                         oldval = self.getval(self.marker, m)
-                    if m in data:
+                    if m.lower() in data:
                         val = self.getval(self.marker, m)
                         self._setFieldVal(m, v, olddat, f)
                         break
@@ -470,14 +470,6 @@ class StyleEditorView(StyleEditor):
                     val = val or False
                     oldval = oldval or False
                 # logger.debug(f"{k}: {oldval=}, {val=}")
-            if k == "_fontsize":
-                fstyles = []
-                fref = self.getval(self.marker, 'font')
-                if fref is None:
-                    fref = self.model.get("bl_fontR")
-                bfontsize = float(self.model.get("s_fontsize"))
-                fsize = asfloat(val, 1.) * bfontsize
-                self.setFontLabel(fref, fsize)
             self._setFieldVal(k, v, oldval, val)
 
         stype = self.getval(self.marker, 'StyleType')
@@ -635,9 +627,10 @@ class StyleEditorView(StyleEditor):
             newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
             oldval = self.getval(self.marker, otherkey)
             if oldval is not None:
-                newval = self._convertabs(newkey, oldval)
+                #newval = self._convertabs(newkey, oldval)
+                newval = oldval
                 logger.debug(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
-                self.setval(self.marker, newkey, newval)
+                self.setval(self.marker, newkey, newval, mapin=False)
                 newlabel = self.stylediverts[controlk][2 if val else 1]
                 controlw = stylemap[controlk][1]
                 self.set(controlw, newlabel)
@@ -651,7 +644,7 @@ class StyleEditorView(StyleEditor):
             value = val
 
         if not key.startswith("_"):
-            super(self.__class__, self).setval(self.marker, key, value)
+            super(self.__class__, self).setval(self.marker, key, value, mapin=False)
             if key in ("FontSize", "FontName", "Bold", "Italic"):
                 fref = self.getval(self.marker, 'font')
                 if fref is None:

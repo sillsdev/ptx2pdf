@@ -231,6 +231,7 @@ def toFileName(self, s, mrk=None, model=None, parm=None):
         return '"'+v+'"'
     return v
 
+# [2] is unused
 _fieldmap = {
     'bold':             (fromBool, toBool, None),
     'italic':           (fromBool, toBool, None),
