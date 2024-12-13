@@ -1,5 +1,5 @@
 PTXprint 2.7.8 Release Notes
-12 Dec 2024
+13 Dec 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
@@ -8,6 +8,12 @@ NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting,
        we suggest that you continue using the same version of PTXprint, rather than
        updating to this latest version.
 
+Bug fixes and Improvements in 2.7.9 (13 Dec 2024)
+  * Fix missing icons - esp in File Save As dialog, and update UI tooltips etc.
+  * Bad copyrightInfo in gtkpiclist
+  * Prevent exceptions when reading parlocs files
+  * Get better parpicstops in parlocs
+  
 Bug fixes and Improvements in 2.7.8 (12 Dec 2024)
   * Start towards a right menu for figures
   * Fix not checking far enough back in pars into the previous page
