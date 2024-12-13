@@ -940,7 +940,8 @@ class Paragraphs(list):
                 self.pindex.append(len(self))
                 inpage = True
                 cinfo = [readpts(x) for x in p[1:4]]
-                colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
+                if len(cinfo) > 2:
+                    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                 inpage = False
@@ -969,7 +970,7 @@ class Paragraphs(list):
                     p.insert(0, "")
                 logger.log(5, f"Starting para {p[0]}")
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None:
+                if cinfo is None or len(cinfo) < 4:
                     continue
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                 currp.rects = []
@@ -979,11 +980,16 @@ class Paragraphs(list):
                 self.append(currp)
             elif c == "parend":         # badness, bottomx, bottomy
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or currps.get(polycol, None) is None:
+                ps = currps.get(polycol, None)
+                if ps is None or not len(ps.rects):
+                    continue
+                if currr is None:
+                    currr = ps.rects[-1]
+                if cinfo is None or currr is None:
                     continue
                 currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
                 if len(p) > 2:
-                    currps[polycol].lines = int(p[0])
+                    ps.lines = int(p[0])
                     currr.yend = readpts(p[2])
                 else:
                     currr.yend = readpts(p[1])

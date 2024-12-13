@@ -3549,7 +3549,7 @@ Shortcut: Ctrl-P</property>
                     <property name="margin-end">2</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkButton" id="btn_openFolder1">
+                      <object class="GtkButton" id="btn_prvOpenFolder">
                         <property name="name">Open folder containing created PDFs.</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -3567,7 +3567,7 @@ PDF file(s) created for this project.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="btn_openFolder2">
+                      <object class="GtkButton" id="btn_prvSaveAs">
                         <property name="name">Save a copy of the PDF with a different name</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -3585,10 +3585,9 @@ new name and/or different folder.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="btn_copyToTargetProj1">
+                      <object class="GtkButton" id="btn_prvShare">
                         <property name="name">Share PDF with others</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
                         <property name="tooltip-text" translatable="yes">Share this PDF with others 
@@ -3605,7 +3604,7 @@ via email, or social media.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="btn_previewPrintIt">
+                      <object class="GtkButton" id="btn_prvPrint">
                         <property name="name">Print the PDF on paper</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
