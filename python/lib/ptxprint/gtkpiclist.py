@@ -155,7 +155,7 @@ class PicList:
                     continue
                 row = []
                 #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
-                defaultmedia = self.parent.copyrightInfo.get(v.get('src', '')[:2].lower(),
+                defaultmedia = self.parent.readCopyrights().get(v.get('src', '')[:2].lower(),
                     { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
                 for e in _piclistfields:
                     if e == 'key':

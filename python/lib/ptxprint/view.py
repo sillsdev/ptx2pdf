@@ -655,7 +655,7 @@ class ViewModel:
                 self.get_usfms()
             self.strongs = None
             self.onNumTabsChanged()
-            self.readCopyrights()
+            self.readCopyrights(forced=True)
             self.picChecksView.init(basepath=self.project.srcPath(self.cfgid))
             self.picinfos = None
             self.loadPics(mustLoad=False, force=True)
@@ -717,7 +717,9 @@ class ViewModel:
                 prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
             return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
-    def readCopyrights(self):
+    def readCopyrights(self, forced=False):
+        if not forced and self.copyrightInfo is not None:
+            return self.copyrightInfo
         with open(os.path.join(pycodedir(), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:
             self.copyrightInfo = json.load(inf)
         fname = os.path.join(self.project.path, "shard", "ptxprint", "picCopyrights.json")
@@ -729,6 +731,7 @@ class ViewModel:
                 except json.decode.JSONDecodeError as e:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
+        return self.copyrightInfo
 
     def picMedia(self, src, loc=None):
         if self.copyrightInfo is None:
