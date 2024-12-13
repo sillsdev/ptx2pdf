@@ -164,7 +164,8 @@ r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
 s_pdfZoomLevel s_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
-c_pdfadjoverlay c_bkView btn_previewPrintIt scr_previewPDF scr_previewPDF bx_previewPDF
+c_pdfadjoverlay c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
+btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
 _ui_enable4diglot2ndary = """
@@ -238,8 +239,8 @@ _ui_experimental = """
 
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
-btn_previewPrintIt c_bkView s_pdfZoomLevel s_pgNum b_reprint fcb_project ecb_savedConfig
-l_menu_level
+c_bkView s_pdfZoomLevel s_pgNum b_reprint fcb_project ecb_savedConfig
+l_menu_level btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint 
 """.split()
 
 # removed from list above: 
@@ -6352,9 +6353,7 @@ Thank you,
             action=Gtk.FileChooserAction.SAVE,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                      Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
-        # Set the current folder to the user's Home/Documents directory
-        # dialog.set_current_folder(os.path.join(os.path.expanduser("~"), "Documents"))
-        dialog.set_current_folder(os.path.expanduser("~"))
+        dialog.set_current_folder(self.userconfig.get('init', 'saveasfolder', fallback=os.path.expanduser("~")))
         dialog.set_current_name(self.getPDFname())
         pdf_filter = Gtk.FileFilter()
         pdf_filter.set_name("PDF files")
@@ -6369,6 +6368,7 @@ Thank you,
                 pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
                 copy2(pdffilepath, new_file_path)
                 self.doStatus(_("PDF saved as: ") + new_file_path)
+                self.userconfig.set('init', 'saveasfolder', os.path.dirname(new_file_path).replace("\\", "/"))
             except Exception as e:
                 self.doError(_("Error saving PDF: ") + str(e), 
                     secondary=_("Unable to save the PDF in the new location:") + "\n" + new_file_path)

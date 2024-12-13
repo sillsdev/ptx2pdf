@@ -1026,7 +1026,7 @@ PDF file(s) created for this project.</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_prvOpenFolder">
-    <property name="sensitive">False</property>
+    <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="tooltip-text" translatable="yes">Open the folder which contains the
 PDF file(s) created for this project.</property>
@@ -1042,18 +1042,27 @@ to this device.</property>
     <property name="icon-name">document-print</property>
     <property name="icon_size">3</property>
   </object>
-  <object class="GtkImage" id="icon_refresh">
+  <object class="GtkImage" id="icon_prvSaveAs">
     <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="icon-name">view-refresh-symbolic</property>
-  </object>
-  <object class="GtkImage" id="icon_saveAs">
-    <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="tooltip-text" translatable="yes">Save a COPY of this PDF with a
 new name and/or different folder.</property>
     <property name="icon-name">document-save-as</property>
     <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_prvShare">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="tooltip-text" translatable="yes">(Coming soon...)
+Share this PDF with others 
+via email, or social media.</property>
+    <property name="icon-name">preferences-system-sharing-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_refresh">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">view-refresh-symbolic</property>
   </object>
   <object class="GtkImage" id="icon_targetProj">
     <property name="visible">True</property>
@@ -1063,16 +1072,6 @@ new name and/or different folder.</property>
 other Paratext projects in order to avoid
 having to manually re-create all the same
 settings for a similar project.</property>
-    <property name="halign">end</property>
-    <property name="icon-name">preferences-system-sharing-symbolic</property>
-    <property name="icon_size">3</property>
-  </object>
-  <object class="GtkImage" id="icon_targetProj1">
-    <property name="visible">True</property>
-    <property name="sensitive">False</property>
-    <property name="can-focus">False</property>
-    <property name="tooltip-text" translatable="yes">Share this PDF with others 
-via email, or social media.</property>
     <property name="halign">end</property>
     <property name="icon-name">preferences-system-sharing-symbolic</property>
     <property name="icon_size">3</property>
@@ -3550,7 +3549,8 @@ Shortcut: Ctrl-P</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkButton" id="btn_prvOpenFolder">
-                        <property name="name">Open folder containing created PDFs.</property>
+                        <property name="name">Preview Pane: Open folder containing the PDF</property>
+                        <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
                         <property name="tooltip-text" translatable="yes">Open the folder which contains the
@@ -3568,14 +3568,15 @@ PDF file(s) created for this project.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="btn_prvSaveAs">
-                        <property name="name">Save a copy of the PDF with a different name</property>
+                        <property name="name">Save the PDF with a different name</property>
+                        <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
                         <property name="tooltip-text" translatable="yes">Save a COPY of this PDF with a
 new name and/or different folder.</property>
                         <property name="halign">center</property>
                         <property name="valign">center</property>
-                        <property name="image">icon_saveAs</property>
+                        <property name="image">icon_prvSaveAs</property>
                         <signal name="clicked" handler="onSavePDFasClicked" swapped="no"/>
                       </object>
                       <packing>
@@ -3586,20 +3587,22 @@ new name and/or different folder.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="btn_prvShare">
-                        <property name="name">Share PDF with others</property>
+                        <property name="name">Share the PDF with others</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
-                        <property name="receives-default">True</property>
-                        <property name="tooltip-text" translatable="yes">Share this PDF with others 
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">(Coming soon...)
+Share this PDF with others 
 via email, or social media.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="image">icon_targetProj1</property>
+                        <property name="image">icon_prvShare</property>
                         <signal name="clicked" handler="onShareItClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
@@ -3608,19 +3611,18 @@ via email, or social media.</property>
                         <property name="name">Print the PDF on paper</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="receives-default">True</property>
+                        <property name="receives-default">False</property>
                         <property name="tooltip-text" translatable="yes">Print the PDF on paper using
 a physical printer connected
 to this device.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="image">icon_prvPrint</property>
-                        <property name="always-show-image">True</property>
                         <signal name="clicked" handler="onPrintItClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">3</property>
                       </packing>
                     </child>
@@ -3649,9 +3651,18 @@ to this device.</property>
                 <child>
                   <object class="GtkCheckButton" id="c_pdfadjoverlay">
                     <property name="label" translatable="yes">Adjustments</property>
+                    <property name="name">Show Adjustments </property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Show color-coded lines to the left 
+and right edges of paragraphs to
+indicate the amount of stretch and
+compress, expand and shrink.
+
+These ajustment annotations are not
+part of the PDF, but are only overlaid
+on the text to help refine the layout.</property>
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onPdfAdjOverlayChanged" swapped="no"/>
@@ -14656,6 +14667,7 @@ will need to fill in all the details in the area below.</property>
                                         <property name="label" translatable="yes">Refresh List</property>
                                         <property name="name">Refresh (reload) picture captions from Paratext</property>
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Refresh Captions:
@@ -27545,7 +27557,7 @@ Click to visit download page on the website.</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_openFolder">
-                <property name="name">Open folder containing created PDFs.</property>
+                <property name="name">Open folder containing the PDF</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
                 <property name="tooltip-text" translatable="yes">Open the folder which contains the
