@@ -550,7 +550,7 @@
 }
 \newif\ifNoMergeReflow
 \newif\ifextr@content
-\NoMergeReflowfalse
+\NoMergeReflowtrue % What to do when lastestagereflow is true and p@rtial is not empty. Changed on 16Dec2024. With false, an earlier column got repeated.
 
 \def\run@a@trial{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
@@ -586,6 +586,7 @@
       \ifvoid\p@rtl\else
         % FIXME: Merge boxes back together? More data needed! It didn't used to
         % be here, but surely it ought to be?
+        % 2024-dec: one case where merging is wrong - duplicated chunk.
         \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with NoMergeReflow\ifNoMergeReflow false\else true\fi}%
         \ifNoMergeReflow\else
           \global\setbox\@xcs\vbox{\joinboxes{\p@rtl}{\@xcs}{2}{0}}%
