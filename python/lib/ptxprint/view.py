@@ -1232,7 +1232,7 @@ class ViewModel:
                     v = self.styleEditor.getval(a+b, 'FontSize', None)
                     if v is not None:
                         self.styleEditor.setval(a+b, 'FontSize', None)
-                        self.styleEditor.setval(a+b, 'FontScale', v)
+                        self.styleEditor.setval(a+b, 'FontScale', v, mapin=False)
         elif version < 2.11:
             xre = re.compile(r"^x-credit:box=(.*?)(\|fig)?$")
             for k in self.styleEditor.allStyles():
@@ -2066,7 +2066,7 @@ set stack_size=32768""".format(self.cfgid)
                         view.styleEditor.addMarker(k, v['Name'])
                     for a in v.keys():
                         if exclfields is None or k not in exclfields:
-                            view.styleEditor.setval(k, a, newse.getval(k, a))
+                            view.styleEditor.setval(k, a, newse.getval(k, a), mapin=False)
             grabfront = True
             
         if impAll or self.get("c_oth_FrontMatter"):

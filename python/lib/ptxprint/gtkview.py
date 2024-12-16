@@ -5362,10 +5362,10 @@ class GtkViewModel(ViewModel):
             # Set foreground (text) color
             fg = coltotex(self.get('col_coverText'))
             for m in ['mt1', 'mt2']:
-                sz = float(self.styleEditor.getval(m, 'FontSize', 12))
+                sz = float(self.styleEditor.getval(m, 'FontSize', 1.0))
                 for cvr in ['front', 'spine']:
                     sf = 1 if cvr == 'front' else 0.65
-                    self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'FontSize', sz*scaleText*sf)
+                    self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'FontSize', sz*scaleText*sf, mapin=False)
                     self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'Color', fg)
 
             if self.get('c_coverBorder'):
