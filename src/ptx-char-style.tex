@@ -525,7 +525,7 @@
      \set@endb@xedstyle{\styst@kfirst}{\styst@k}%
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-     \x@\ifx\csname b@xed-\newch@rstyle\endcsname\tr@e \b@xedstyletrue\fi
+     \x@\ifx\csname b@xed-\oldch@rstyle\endcsname\tr@e \b@xedstyletrue\fi
      \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else
         \trace{A}{Attributes: \@ttriblist}\fi
      \ifAlwaysCheckAttributes\b@xedstyletrue\fi % Linking attributes are possibly universally applicable.

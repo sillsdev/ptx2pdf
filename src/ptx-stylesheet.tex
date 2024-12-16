@@ -1614,7 +1614,7 @@
 \def\whileitp@ps#1+#2+#3\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
   \global\let\wip@do=\d@
-  \trace{sa}{whileitp@ps:\mcch@cking:#1+#2+#3 (\mcstack) [\itp@psstore]}%
+  \trace{s}{whileitp@ps:\mcch@cking:#1+#2+#3 (\mcstack) [\itp@psstore]}%
   \x@\let\x@\tmp\csname\mct@stname{\mcch@cking}{#1}\endcsname
   \ifx\tmp\relax %No specific style pop, is there a generic?
     \x@\let\x@\tmp\csname\mct@stname{*}{#1}\endcsname
