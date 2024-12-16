@@ -39,6 +39,9 @@
 \newif\ifReenterIntroOK\ReenterIntroOKtrue % If true, then a chapter number does not set intr@done
 \newif\ifinextended \inextendedfalse % Test for sidebars (ptx extended)
 \newcount\l@stparbadness
+\def\EndTitle#1{\x@\let\csname at@end-#1\endcsname\tr@e} % There are a few end-titles that shouldn't trigger a penalty1000 after their titleblock
+\EndTitle{mte} \EndTitle{mte1} \EndTitle{mte2} \EndTitle{mte3}
+\EndTitle{imte} \EndTitle{imte1} \EndTitle{imte2} \EndTitle{imte3}
 
 %+cpar_init
 \def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{p}\hsize=\textwidth}
@@ -122,6 +125,7 @@
 %+cpar_endheadings
 \newif\ift@plevel@utobox
 \newif\ifhe@dings
+\newif\ifnormalhe@dings \normalhe@dingstrue
 \newskip\headingtopspace
 \newskip\headingmidspace
 \newbox\he@dingbox
@@ -134,6 +138,10 @@
     \global\let\tmppcl@ss\thisp@rclass %pass out the heading group class
   \fi
   \egroup %\showbox\he@dingbox
+  \global\normalhe@dingstrue\ifcsname at@end-\oldm@rker\endcsname \x@\ifx\csname at@end-\oldm@rker\endcsname\tr@e
+    \global\normalhe@dingsfalse
+  \fi\fi
+  \trace{h}{\oldm@rker\space is a\ifnormalhe@dings\space  normal\else n end\fi-heading}%
   \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
@@ -162,9 +170,12 @@
     \fi%
   \fi
   \let\lastp@rclass\tmppcl@ss%
-  \ifvoid\he@dingnotes\else
+  \ifvoid\he@dingnotes
+    \ifnormalhe@dings\else\penalty10\fi
+    \trace{h}{\oldm@rker: Outputting \ifnormalhe@dings normal \fi end-headings penalty}%
+  \else
     \unvbox\he@dingnotes
-    \penalty10000
+    \ifnormalhe@dings\penalty10000 \else\penalty10 \fi
   \fi
   \global\he@dingsfalse
   \global\first@fterheadingtrue
@@ -580,6 +591,7 @@
 \def\lastp@rclass{}% What was the last paragraph type? 
 \def\@p@rstyled@mp#1#2{\@p@rstyle{#1}}
 \def\@p@rstyle#1{%
+ \global\let\oldm@rker\m@rker
  \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
   \ifx\thisp@rcl@ss\undefined\else

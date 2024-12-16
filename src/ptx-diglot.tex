@@ -3092,7 +3092,7 @@
 \def\diglotlayout{simplecols}
 
 \def\diglotgr@db@x#1{%
- \ifdiglot\vbox{\gr@db@@x{#1}\penalty 10000}\penalty10000\else\gr@db@@x{#1}\fi
+ \ifdiglot\vbox{\gr@db@@x{#1}\penalty \ifnormalhe@dings 10000\else 10\fi}\penalty\ifnormalhe@dings 10000\else 10\fi\else\gr@db@@x{#1}\fi
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
