@@ -575,7 +575,7 @@
      \fi
      % Now cram the text into a box that ought to be just wide enough
      \setbox0=\vbox{\topskip=0pt\hsize=\dimen1\relax\t@xtfragment{\cr@ditstyle}{\vrule width 0pt height\ht0 \unhbox0\vrule depth\FigCreditPadding width 0pt}}%
-    \ifnum\im@gecount=5 \showbox0\fi
+    %\ifnum\im@gecount=5 \showbox0\fi
   \else
     \b@ckgroundelsewheretrue
     \ch@ckb@xedstyle{\cr@ditlist}{\cr@ditlist}%
@@ -1090,7 +1090,7 @@
   % insert into proper insertion class for this position
   \ifpicUsesIns
     \trace{g}{Picture (\the\ht0,\the\dp0) goes to insert}%
-    \edef\t@@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd0\string}\string{\the\ht0\string}}%
+    \prepwr@teparstop{0}%
     \ifdiglot
       \trace{g}{Other side: \the\otherinsht.}%
       \ifdim\ht0<\otherinsht
@@ -1167,13 +1167,22 @@
 }
 \newif\ifInlBelow \InlBelowfalse
 \newif\ifAdjustInlBelow \AdjustInlBelowfalse
+\def\prepwr@teparstop#1{%
+  \tempfalse
+  \ifx\w@tsit\gr@phic \temptrue\def\w@tsitid{\csname figparam-src\endcsname}%
+  \else\ifx\w@tsit\sb@rb@x\def\w@tsitid{\w@tsit\the\im@gecount}%
+    \else\def\w@tsitid{\w@tsit\the\notim@gecount}\fi
+  \fi
+  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\w@tsitid\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
+}
+
 \def\d@figureInText#1{%
   %\showbox #1
   %\vrule height 10pt depth 0pt width 10pt
   \leavevmode
   \pdfsavepos
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
-  \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+  \prepwr@teparstop{#1}%
+  \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
   \hbox{\box #1}%
   \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
   \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
@@ -1187,10 +1196,8 @@
     \@lignpic{#1}%
   \fi
   %\splittopskip\baselineskip
-  \tempfalse
+  \prepwr@teparstop{#1}%
   \ifhmode \temptrue\fi
-  \ifx\w@tsit\gr@phic \temptrue \fi
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
   \def\picc@ntents{%
     \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
     \penalty\ifinn@te 10000\else\pr@penalty\fi\relax% Allow the page to break except in footnotes.
@@ -1231,7 +1238,7 @@
     %\fi
     %\showbox\picb@@x
   \earlyeotpskipfalse
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
+  \prepwr@teparstop{#1}%
   \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
   \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
       \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
@@ -1301,12 +1308,12 @@
       \ifx\picV@lign\@lignCent \trace{g}{V alignment: center}\setbox#1\vbox{\vbox to #3{\vss\box#1\vss}}\else
         \trace{g}{V alignment: none}\setbox#1\vbox{\vskip 0pt plus \the\dimen0 \penalty10000\box#1\penalty10000\vskip 0pt plus \dimen0}%
     \fi\fi\fi
+  \prepwr@teparstop{#1}%
   \tempfalse
   \trace{g}{pagetotal=\the\pagetotal}%
   \ifhmode\temptrue\else
     \ifdim\pagetotal=0pt\else\temptrue\fi
   \fi
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
   \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic
     \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
     \unvbox#1
