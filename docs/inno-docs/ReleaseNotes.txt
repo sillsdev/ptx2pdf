@@ -8,11 +8,13 @@ NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting,
        we suggest that you continue using the same version of PTXprint, rather than
        updating to this latest version.
 
-Bug fixes and Improvements in 2.7.10 (17 Dec 2024)
+Bug fixes and Improvements in 2.7.11 (17 Dec 2024)
   * Fix bugs in Style Editor related to font settings and display
   * Enable cover and diff PDFs to show up in the Preview Pane
   * Add docs/help/fonttag.md to help people decode font tags
   * Differentiate between end-headings and normal ones
+  * Swap default action when meeting very rare diglot condition
+  * Ensure that \@parpicstop (in parlocs file) is giving sane IDs for sidebars
   * Fix implicit closing of boxed styles (for footnotes and xrefs)
   * Fix mapins for style edits
   * Update README.md to remove redundant date of last update info
