@@ -283,7 +283,6 @@ def startfile(fpath):
         elif sys.platform == "linux":
             call(('xdg-open', fpath))
 
-
 def getPDFconfig(fname):
     if str(fname).lower().endswith(".zip"):
         with open(fname, "rb") as inf:

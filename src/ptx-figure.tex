@@ -915,7 +915,7 @@
   \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
     \pdfsavepos
-    \edef\t@mp{\string \@parpicstart{\c@rref}{\csname figparam-src\endcsname}}%
+    \edef\t@mp{\string \@parpicstart{\c@rref}{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi}}%
     \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
@@ -1090,7 +1090,7 @@
   % insert into proper insertion class for this position
   \ifpicUsesIns
     \trace{g}{Picture (\the\ht0,\the\dp0) goes to insert}%
-    \edef\t@@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\csname figparam-src\endcsname\string}\string{\the\wd0\string}\string{\the\ht0\string}}%
+    \edef\t@@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd0\string}\string{\the\ht0\string}}%
     \ifdiglot
       \trace{g}{Other side: \the\otherinsht.}%
       \ifdim\ht0<\otherinsht
@@ -1172,7 +1172,7 @@
   %\vrule height 10pt depth 0pt width 10pt
   \leavevmode
   \pdfsavepos
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\csname figparam-src\endcsname\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
+  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
   \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
   \hbox{\box #1}%
   \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
@@ -1190,7 +1190,7 @@
   \tempfalse
   \ifhmode \temptrue\fi
   \ifx\w@tsit\gr@phic \temptrue \fi
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\csname figparam-src\endcsname\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
+  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
   \def\picc@ntents{%
     \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
     \penalty\ifinn@te 10000\else\pr@penalty\fi\relax% Allow the page to break except in footnotes.
@@ -1231,7 +1231,7 @@
     %\fi
     %\showbox\picb@@x
   \earlyeotpskipfalse
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\csname figparam-src\endcsname\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
+  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
   \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
   \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
       \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
@@ -1306,7 +1306,7 @@
   \ifhmode\temptrue\else
     \ifdim\pagetotal=0pt\else\temptrue\fi
   \fi
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\csname figparam-src\endcsname\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
+  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
   \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic
     \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
     \unvbox#1

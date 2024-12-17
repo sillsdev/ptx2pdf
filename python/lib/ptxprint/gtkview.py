@@ -5308,6 +5308,8 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def onGenerateCoverClicked(self, btn):
+        breakpoint()
+        fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 1.99))
         metadata = {"langiso":       "<Ethnologue code>", 
                     "languagename":  "<Language>", 
                     "maintitle":     "<Title>", 
@@ -5335,8 +5337,10 @@ class GtkViewModel(ViewModel):
         fgc = textocol(self.styleEditor.getval('cat:coverwhole|esb', 'BgColor', 'xFFFFFF'))
         self.set('col_coverShading', fgc, mod=False)
         self.set('c_coverShading', fgc != "rgb(255,255,255)", mod=False)
-        mtsize = float(self.styleEditor.getval('mt1', 'FontSize', 12))
-        fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 12))
+        mtsize = float(self.styleEditor.getval('mt1', 'FontSize', 1))
+        # breakpoint()
+        fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 1))
+        logger.debug(f"{mtsize=} {fsize=}")
         self.set('s_coverTextScale', fsize / mtsize, mod=False)
         self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')), mod=False)
         
@@ -5394,7 +5398,7 @@ class GtkViewModel(ViewModel):
                 
             for c in ['front', 'whole']:
                 for p in ['BgImage', 'BgImageScale', 'BgImageScaleTo', 'BgImageAlpha']:
-                    self.styleEditor.setval(f'cat:cover{c}|esb', p, '')
+                    self.styleEditor.setval(f'cat:cover{c}|esb', p, None)
             if self.get('c_coverSelectImage'):
                 img = self.get('lb_coverImageFilename')
                 scaleto = self.get('fcb_coverImageSize')
@@ -5735,7 +5739,7 @@ class GtkViewModel(ViewModel):
         self.changed()
 
     def onCoverSelectImageClicked(self, btn):
-        picpath = oself.project.path
+        picpath = self.project.path
         def update_preview(dialog):
             picpath = dialog.get_preview_filename()
             try:
@@ -6265,12 +6269,15 @@ Thank you,
             for a in ("menu_showPDF", "menu_main"):
                 mw = self.builder.get_object(a)
                 mw.popdown()
-
-        pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
+        pdffile = os.path.join(self.project.printPath(None), self.getPDFname()) if path is None else path
         if action == "preview":
             prvw = self.builder.get_object("dlg_preview")
+            print(f"{pdffile=}")
             if os.path.exists(pdffile):
-                plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
+                if pdffile.endswith(("_cover.pdf", "_diff.pdf")):
+                    plocname = None
+                else:
+                    plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
                 self.pdf_viewer.loadnshow(pdffile, rtl=self.get("c_RTLbookBinding", False), parlocs=plocname, \
                                           widget=prvw, page=None, isdiglot=self.get("c_diglot"))
             else:

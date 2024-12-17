@@ -182,9 +182,9 @@ def fromFont(self, s, mrk=None, model=None):
         mrk = self.marker
     class Shim:
         def get(subself, key, default=None):
-            if key == 'FontName':
-                return self.sheet.get(mrk, {}).get(key,
-                        self.basesheet.get(mrk, {}).get(key, default))
+            if key.lower() == 'fontname':
+                return self.sheet.get(mrk, {}).get(key.lower(),
+                        self.basesheet.get(mrk, {}).get(key.lower(), default))
             return self.getval(mrk, key, default)
     return FontRef.fromTeXStyle(Shim())
 
@@ -195,10 +195,10 @@ def toFont(self, v, mrk=None, model=None, parm=None):
         mrk = self.marker
     class Shim:
         def __setitem__(subself, key, val):
-            if key == 'FontName':
+            if key.lower() == 'fontname':
                 if mrk not in self.sheet:
                     self.sheet[mrk] = Marker()
-                self.sheet[mrk][key] = val
+                self.sheet[mrk][key.lower()] = val
             else:
                 self.setval(mrk, key, val)
         def __contains__(subself, key):
@@ -298,6 +298,8 @@ class StyleEditor:
                     curr = {}
                     res[v] = curr
                     mrk = v
+                    # if mrk == "cat:coverfront|mt1":
+                        # breakpoint()
                     continue
                 elif mk.lower() in _fieldmap:
                     v = _fieldmap[mk.lower()][0](self, v, mrk=mrk, model=self.model)
@@ -349,7 +351,7 @@ class StyleEditor:
             val = _fieldmap[key.lower()][0](self, val, mrk=mrk, model=self.model)
         # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
         oldval = self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None
-        if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
+        if mrk in self.sheet and key.lower() in self.sheet[mrk] and (val is None or val == oldval):
             del self.sheet[mrk][key.lower()]
         elif oldval != val and val is not None:
             if mrk not in self.sheet:
@@ -357,12 +359,12 @@ class StyleEditor:
             self.sheet[mrk][key.lower()] = val
             self.model.changed()
         # do we really want to do this?
-        elif key in self.basesheet.get(mrk, {}) and val is None:
+        elif key.lower() in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key.lower()]
             self.model.changed()
 
     def haskey(self, mrk, key):
-        if key in self.sheet.get(mrk, {}) or key.lower() in self.basesheet.get(mrk, {}):
+        if key.lower() in self.sheet.get(mrk, {}) or key.lower() in self.basesheet.get(mrk, {}):
             return True
         return False
 
@@ -439,11 +441,11 @@ class StyleEditor:
             return a == b
 
     def _str_val(self, v, key="", mrk=None):
-        if key in _fieldmap:
-            v = _fieldmap[key][1](self, v, mrk, model=self.model, parm=None)
+        if key.lower() in _fieldmap:
+            v = _fieldmap[key.lower()][1](self, v, mrk, model=self.model, parm=None)
         if isinstance(v, (set, list)):
-            logger.debug(f"StyleEditor:_str_val found {type(v)} for {mrk}/{key}")
-            res = " ".join(self._str_val(x, key, mrk) for x in sorted(v))
+            logger.debug(f"StyleEditor:_str_val found {type(v)} for {mrk}/{key.lower()}")
+            res = " ".join(self._str_val(x, key.lower(), mrk) for x in sorted(v))
         elif isinstance(v, float):
             res = f2s(v)
         else:

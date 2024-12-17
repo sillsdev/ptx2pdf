@@ -222,20 +222,28 @@ class PDFViewer:
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
 
         images = []
-        if self.spread_mode:
-            spread = self.get_spread(page, self.rtl_mode)
-            self.create_boxes(len(spread))
-            for i in spread:
-                if i in range(self.numpages+1):
-                    pg = self.document.get_page(i-1)
-                    self.psize = pg.get_size()
-                    images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
+        if self.model.isCoverTabOpen():
+            page = 1
+            self.create_boxes(1)
+            pg = self.document.get_page(0)
+            self.model.set("s_pgNum", page, mod=False)
+            self.psize = pg.get_size()
+            images.append(render_page_image(pg, self.zoomLevel, page, self.add_hints if self.showadjustments else None))
         else:
-            if page in range(self.numpages+1):
-                self.create_boxes(1)
-                pg = self.document.get_page(page-1)
-                self.psize = pg.get_size()
-                images.append(render_page_image(pg, self.zoomLevel, page, self.add_hints if self.showadjustments else None))
+            if self.spread_mode:
+                spread = self.get_spread(page, self.rtl_mode)
+                self.create_boxes(len(spread))
+                for i in spread:
+                    if i in range(self.numpages+1):
+                        pg = self.document.get_page(i-1)
+                        self.psize = pg.get_size()
+                        images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
+            else:
+                if page in range(self.numpages+1):
+                    self.create_boxes(1)
+                    pg = self.document.get_page(page-1)
+                    self.psize = pg.get_size()
+                    images.append(render_page_image(pg, self.zoomLevel, page, self.add_hints if self.showadjustments else None))
 
         self.current_page = page
         self.update_boxes(images)

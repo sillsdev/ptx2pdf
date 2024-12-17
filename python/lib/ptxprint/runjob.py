@@ -329,9 +329,8 @@ class RunJob:
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
                     diffname = self.createDiff(pdfname, basename, color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
-                    # print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
-                        startfile(diffname)
+                        self.printer.onShowPDF(None, path=diffname)
                     else:
                         self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
@@ -340,10 +339,7 @@ class RunJob:
                     startname = self.coverfile or pdfname
                 else:
                     startname = pdfname
-                self.printer.onShowPDF(None)
-                spnr = self.printer.builder.get_object("spin_preview")
-                if spnr.props.active:  # Check if the spinner is running
-                    spnr.stop()                
+                self.printer.onShowPDF(None, path=startname)
 
             fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
             logger.debug(f"Testing log file {fname}")
@@ -424,6 +420,9 @@ class RunJob:
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         self.printer.finished(self.res == 0)
         self.busy = False
+        spnr = self.printer.builder.get_object("spin_preview")
+        if spnr.props.active:  # Check if the spinner is running
+            spnr.stop()                
         logger.debug("done_job: Finishing thread")
         unlockme()
         if not self.noview and not self.args.print:
