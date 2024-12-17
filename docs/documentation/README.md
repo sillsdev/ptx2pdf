@@ -908,7 +908,6 @@ give the following results:
 
 
 <a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">
-<small>Updated on <abbr class="updated" title="2011-05-18T19:45:59.877Z">May 18, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">8</span>)</small>
 
 * * *
 
