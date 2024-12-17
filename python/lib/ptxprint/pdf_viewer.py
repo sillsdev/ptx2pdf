@@ -11,6 +11,7 @@ from pathlib import Path
 from dataclasses import dataclass, InitVar, field
 from threading import Timer
 import logging
+import winreg
 logger = logging.getLogger(__name__)
 
 def render_page_image(page, zoomlevel, pnum, annotatefn):
@@ -550,6 +551,7 @@ class PDFViewer:
         st        = _("Shrink Text")
         et        = _("Expand Text")
         es        = _("Edit Style")
+        # j2pt      = _("Show verse in Paratext")
         z2f       = _("Zoom to Fit")
         z100      = _("Zoom 100%")
         if False and self.isdiglot:
@@ -590,6 +592,8 @@ class PDFViewer:
             self.addMenuItem(menu, None, None)
             if parref and parref.mrk is not None:
                 self.addMenuItem(menu, f"{es} \\{parref.mrk}", self.edit_style, parref.mrk)
+            # if True: # later check for valid ref
+                # self.addMenuItem(menu, f"{j2pt}", self.on_send_ref_to_paratext, ref)
         elif parref is not None and isinstance(parref, FigInfo):
             # New section for image context menu
             self.addMenuItem(menu, f"{parref.ref}", None)
@@ -632,6 +636,38 @@ class PDFViewer:
     def get_imageref(self, widget, event):
         return True
 
+    # def on_send_ref_to_paratext(self, widget, ref):
+        # Need to do this in Utils - to make sure that the Win32, Linux and Mac versions all work well.
+        # HKEY_USERS\S-1-5-21-1253480102-4282213393-3895032969-1001\Software\SantaFe\Focus\ScriptureReference
+        # Computer\HKEY_CURRENT_USER\Software\SantaFe\Focus\ScriptureReference
+        # print(f"{ref=}")
+        # def openkey(path):
+            # try:
+                # k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
+            # except FileNotFoundError:
+                # try:
+                    # k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path.replace("/", "\\"))
+                # except FileNotFoundError:
+                    # k = None
+            # return k
+        # try:
+            # Open the registry key
+            # key_path = r"Software\SantaFe\Focus\ScriptureReference"
+            # key = openkey(key_path)
+            
+            # if key is None:
+                # If the key doesn't exist in HKEY_LOCAL_MACHINE, try HKEY_CURRENT_USER
+                # key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
+            
+            # Set the value
+            # winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "EZK 3:7")
+            
+            # Close the key
+            # winreg.CloseKey(key)
+            # print(f"Successfully set ScriptureReference to: EZK 3:7")
+        # except WindowsError as e:
+            # print(f"Error accessing the registry: {e}")
+            
     def on_edit_anchor(self, imgref):
         print(f"Editing anchor for image: {imgref}")
 

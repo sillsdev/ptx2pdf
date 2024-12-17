@@ -67,8 +67,8 @@ constraints = {
     'texttype': _CEnum('versetext', 'notetext', 'bodytext', 'title', 'section', 'other',
                         'chapternumber', 'versenumber', 'unspecified', 'standalone'),
     'styletype': _CEnum('paragraph', 'character', 'note', 'milestone', 'standalone', ''),
-    'fontsize': _CRange(2.),
-    'fontscale': _CRange(2.),
+    'fontsize': _CRange(10.),
+    'fontscale': _CRange(4.),
     'raise': _CNot(_CValue(0.)),
     'linespacing': _CRange(0.01, 2.5),
 }
@@ -183,8 +183,8 @@ def fromFont(self, s, mrk=None, model=None):
     class Shim:
         def get(subself, key, default=None):
             if key.lower() == 'fontname':
-                return self.sheet.get(mrk, {}).get(key.lower(),
-                        self.basesheet.get(mrk, {}).get(key.lower(), default))
+                return getattr(self, 'sheet', {}).get(mrk, {}).get(key.lower(),
+                        getattr(self, 'basesheet', {}).get(mrk, {}).get(key.lower(), default))
             return self.getval(mrk, key, default)
     return FontRef.fromTeXStyle(Shim())
 
@@ -197,18 +197,18 @@ def toFont(self, v, mrk=None, model=None, parm=None):
         def __setitem__(subself, key, val):
             if key.lower() == 'fontname':
                 if mrk not in self.sheet:
-                    self.sheet[mrk] = Marker()
+                    self.sheet[mrk] = {}
                 self.sheet[mrk][key.lower()] = val
             else:
                 self.setval(mrk, key, val)
         def __contains__(subself, key):
             return self.haskey(mrk, key)
         def __delitem__(subself, key):
-            return self.sheet.get(mrk, {}).pop(key, None)
+            return self.sheet.get(mrk, {}).pop(key.lower(), None)
         def __getitem__(subself, key):
-            return self.sheet.get(mrk, {}).get(key, None)
+            return self.sheet.get(mrk, {}).get(key.lower(), None)
         def pop(subself, key, dflt):
-            return self.sheet.get(mrk, {}).pop(key, dflt)
+            return self.sheet.get(mrk, {}).pop(key.lower(), dflt)
     regularfont = model.get("bl_fontR")
     oldfont = self.basesheet.get(mrk, {}).get("font", None)
     return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None, noStyles=(parm is not None))
@@ -283,35 +283,39 @@ class StyleEditor:
         else:
             self.basesheet = self._read_styfile(basepath)
 
-    def _read_styfh(self, fh):
+    def _read_styfh(self, fh, sheet=None):
         fieldre = re.compile(r"^\s*\\(\S+)\s*(.*?)\s*$")
-        res = {}
+        res = sheet if sheet is not None else {}
         curr = {}
         for l in fh.readlines():
             m = fieldre.match(l)
             if m:
                 mk = m.group(1)
                 v = m.group(2)
-                if mk.lower() == "fontname":
-                    mk = "font"
                 if mk.lower() == "marker":
+                    if len(curr):
+                        f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
+                        if f is not None:
+                            curr['font'] = f
                     curr = {}
                     res[v] = curr
                     mrk = v
-                    # if mrk == "cat:coverfront|mt1":
-                        # breakpoint()
                     continue
                 elif mk.lower() in _fieldmap:
                     v = _fieldmap[mk.lower()][0](self, v, mrk=mrk, model=self.model)
                 curr[mk.lower()] = v
+        if len(curr):
+            f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
+            if f is not None:
+                curr['font'] = f
         return res
 
-    def _read_styfile(self, fname):
+    def _read_styfile(self, fname, sheet=None):
         if not os.path.exists(fname):
             return {}
         logger.debug(f"Reading {fname}") 
         with open(fname, encoding="utf-8") as inf:
-            res = self._read_styfh(inf)
+            res = self._read_styfh(inf, sheet=sheet)
         return res
 
     def allStyles(self):
@@ -395,11 +399,14 @@ class StyleEditor:
             sheet = self._read_styfile(s)
             self._merge(self.basesheet, sheet)
         self.test_constraints(self.basesheet)
-        self.sheet = self._read_styfile(sheetfiles[-1])
+        self.sheet = {}
+        self._read_styfile(sheetfiles[-1], sheet=self.sheet)
         self.test_constraints(self.sheet)
+        # logger.debug(f"{self.sheet=}")
 
     def loadfh(self, fh):
         self.sheet = self._read_styfh(fh)
+        # logger.debug(f"{self.sheet=}")
 
     def test_constraints(self, sheet):
         for m, s in sheet.items():
@@ -462,8 +469,10 @@ class StyleEditor:
             sheet = self.sheet
         for m in sorted(self.allStyles()):
             markerout = False
+            am = m
             if m in aliases:
-                sm = self.asStyle(m+"1")
+                am = m+'1'
+                sm = sheet.get(am, {})
             elif inArchive:
                 sm = sheet.get(m, {}).copy()
             else:
@@ -472,7 +481,7 @@ class StyleEditor:
             if 'zderived' in om or 'zderived' in sm:
                 continue
             if 'font' in sm:
-                v = _fieldmap['font'][1](self, sm['font'], m, model=self.model, parm=None)
+                v = _fieldmap['font'][1](self, sm['font'], am, model=self.model, parm=None)
             for k, v in sm.items():
                 if k.startswith(" ") or k == "font":
                     continue
@@ -483,7 +492,7 @@ class StyleEditor:
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
-                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k, m)))
+                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k, am)))
 
     def merge(self, basese, newse):
         for m in newse.sheet.keys():

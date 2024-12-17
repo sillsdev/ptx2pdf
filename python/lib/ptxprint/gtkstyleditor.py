@@ -272,16 +272,13 @@ class StyleEditorView(StyleEditor):
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
-            # v = self.sheet.get(k, self.basesheet.get(k, {}))
             v = self.asStyle(k)
             if v.get('styletype', '') == 'Standalone':
                 continue
             if 'zderived' in v:
-                # self.sheet[v['zDerived']][' endMilestone']=k
                 self.setval(v['zderived'], ' endMilestone', k)
                 continue
             if k not in self.basesheet:
-                # v[' deletable'] = True
                 self.setval(k, ' deletable', True)
             if k == "p":
                 foundp = True
@@ -298,12 +295,8 @@ class StyleEditorView(StyleEditor):
                 else:
                     cat = str(v['name']).strip()
                 cat, url = categorymapping.get(cat, (cat, None))
-                # v[' category'] = cat
                 self.setval(k, ' category', cat)
-                # v[' url'] = url
                 self.setval(k, ' url', url)
-            # else:
-                # print(k)
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
@@ -320,7 +313,6 @@ class StyleEditorView(StyleEditor):
             ismarker = True
             isdisabled = False
             if k in allStyles:
-                # n = self.sheet[k].get('name', k)
                 n = self.getval(k, 'name') or "{} - Other".format(k)
                 b = re.split(r"\s*-\s*", n)
                 if not len(b):
@@ -568,6 +560,9 @@ class StyleEditorView(StyleEditor):
                 newval = textocol(val)
                 if v[0] == "col_styColor":
                     self.set("l_styColor", _("Color:")+"\n"+str(val))
+            elif k == 'font':
+                newval = val
+                self.setFontLabel(val, float(self.getval(self.marker, "FontSize", "1.")) * float(self.model.get("s_fontsize", "1.")))
             else:
                 newval = val
             if newval is None:
@@ -654,7 +649,7 @@ class StyleEditorView(StyleEditor):
                 if fref is not None:
                     if key in ("Bold", "Italic"):
                         setattr(fref, "is"+key, val)
-                    self.setval(self.marker, 'font', fref, parm=True, mapin=False)
+                        self.setval(self.marker, 'font', fref, parm=True, mapin=False)
                     # check that defaulting this doesn't cause problems
                     self.setFontLabel(fref, float(self.getval(self.marker, "FontSize", "1.")) * float(self.model.get("s_fontsize", "1.")))
         if v[1] is not None:

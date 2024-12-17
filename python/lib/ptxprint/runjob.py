@@ -420,9 +420,10 @@ class RunJob:
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         self.printer.finished(self.res == 0)
         self.busy = False
-        spnr = self.printer.builder.get_object("spin_preview")
-        if spnr.props.active:  # Check if the spinner is running
-            spnr.stop()                
+        if not self.noview and not self.args.print:
+            spnr = self.printer.builder.get_object("spin_preview")
+            if spnr.props.active:  # Check if the spinner is running
+                spnr.stop()                
         logger.debug("done_job: Finishing thread")
         unlockme()
         if not self.noview and not self.args.print:

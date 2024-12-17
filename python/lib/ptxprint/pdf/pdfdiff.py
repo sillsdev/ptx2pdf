@@ -51,7 +51,7 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
         return outname
     elif os.path.exists(outname):
-        try:
+        try: # pdf_viewer.clear() #FixME!
             os.remove(outname)
         except PermissionError as e:
             doError(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."),

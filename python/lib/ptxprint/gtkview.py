@@ -5308,8 +5308,6 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def onGenerateCoverClicked(self, btn):
-        breakpoint()
-        fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 1.99))
         metadata = {"langiso":       "<Ethnologue code>", 
                     "languagename":  "<Language>", 
                     "maintitle":     "<Title>", 
