@@ -1,5 +1,5 @@
 PTXprint 2.7.9 Release Notes
-13 Dec 2024
+17 Dec 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
@@ -7,6 +7,15 @@ _____________________________________________________________
 NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting, 
        we suggest that you continue using the same version of PTXprint, rather than
        updating to this latest version.
+
+Bug fixes and Improvements in 2.7.10 (17 Dec 2024)
+  * Fix bugs in Style Editor related to font settings and display
+  * Enable cover and diff PDFs to show up in the Preview Pane
+  * Add docs/help/fonttag.md to help people decode font tags
+  * Differentiate between end-headings and normal ones
+  * Fix implicit closing of boxed styles (for footnotes and xrefs)
+  * Fix mapins for style edits
+  * Update README.md to remove redundant date of last update info
 
 Bug fixes and Improvements in 2.7.9 (13 Dec 2024)
   * Fix missing icons - esp in File Save As dialog, and update UI tooltips etc.

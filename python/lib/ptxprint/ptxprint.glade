@@ -5591,7 +5591,7 @@ settings to control the appearance and spacing
 of the Notelines are in the 'Page Layout and
 Spacing' section of the Advanced &gt; Other tab.</property>
                                         <property name="halign">end</property>
-                                        <property name="margin-start">12</property>
+                                        <property name="margin-start">6</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onNoteLinesClicked" swapped="no"/>
                                       </object>
@@ -5603,7 +5603,6 @@ Spacing' section of the Advanced &gt; Other tab.</property>
                                     <child>
                                       <object class="GtkColorButton" id="col_noteLines">
                                         <property name="width-request">14</property>
-                                        <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
                                         <property name="no-show-all">True</property>

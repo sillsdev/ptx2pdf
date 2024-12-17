@@ -260,7 +260,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
-                  "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2", 
+                  "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2", "col_noteLines", 
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "c_pdfGridlines" "bx_imageMsgBar", 
 
 _uiLevels = {
@@ -6267,7 +6267,7 @@ Thank you,
             for a in ("menu_showPDF", "menu_main"):
                 mw = self.builder.get_object(a)
                 mw.popdown()
-        pdffile = os.path.join(self.project.printPath(None), self.getPDFname()) if path is None else path
+        pdffile = os.path.join(self.project.printPath(None), self.getPDFname()) if path is None else str(path)
         if action == "preview":
             prvw = self.builder.get_object("dlg_preview")
             print(f"{pdffile=}")
