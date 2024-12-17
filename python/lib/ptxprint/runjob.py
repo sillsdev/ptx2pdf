@@ -420,7 +420,7 @@ class RunJob:
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         self.printer.finished(self.res == 0)
         self.busy = False
-        if not self.noview and not self.args.print:
+        if not self.noview and not self.args.print and self.printer.isDisplay:
             spnr = self.printer.builder.get_object("spin_preview")
             if spnr.props.active:  # Check if the spinner is running
                 spnr.stop()                

@@ -287,13 +287,14 @@ class StyleEditor:
         fieldre = re.compile(r"^\s*\\(\S+)\s*(.*?)\s*$")
         res = sheet if sheet is not None else {}
         curr = {}
+        mrk = None
         for l in fh.readlines():
             m = fieldre.match(l)
             if m:
                 mk = m.group(1)
                 v = m.group(2)
                 if mk.lower() == "marker":
-                    if len(curr):
+                    if len(curr) and mrk:
                         f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
                         if f is not None:
                             curr['font'] = f
@@ -304,7 +305,7 @@ class StyleEditor:
                 elif mk.lower() in _fieldmap:
                     v = _fieldmap[mk.lower()][0](self, v, mrk=mrk, model=self.model)
                 curr[mk.lower()] = v
-        if len(curr):
+        if len(curr) and mrk:
             f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
             if f is not None:
                 curr['font'] = f
