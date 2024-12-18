@@ -1100,7 +1100,7 @@ class FontRef:
     def getFake(self, name):
         return self.feats.get(name, None)
 
-    def _getTeXComponents(self, inarchive=False, root=None):
+    def _getTeXComponents(self, inarchive=False, root=None, noStyles=False):
         f = self.getTtfont()
         self.isGraphite = self.isGraphite and f.isGraphite
         s = None
@@ -1123,9 +1123,9 @@ class FontRef:
         sfeats = [] if s is None else [s]
         if self.isGraphite:
             sfeats.append("/GR")
-        if self.isBold:
+        if self.isBold and noStyles:
             sfeats.append("/B")
-        if self.isItalic:
+        if self.isItalic and noStyles:
             sfeats.append("/I")
         feats = []
         for k, v in self.feats.items():
@@ -1157,7 +1157,7 @@ class FontRef:
                         del style[a]
         # All other non-main fonts use /B, etc.
         else:
-            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath)
+            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath, noStyles=noStyles)
             style['FontName'] = self.name
             if len(sfeats):
                 style['FontName'] += "".join(sfeats)
@@ -1178,10 +1178,7 @@ class FontRef:
                 style.pop("ztexFontGrSpace", None)
             if not noStyles:
                 for a in ("Bold", "Italic"):
-                    if getattr(self, "is"+a, False):
-                        style[a] = ""
-                    else:
-                        del style[a]
+                    style[a] = getattr(self, "is"+a, False)
 
     def asTeXFont(self, inarchive=False):
         (name, sfeats, feats) = self._getTeXComponents(inarchive)
