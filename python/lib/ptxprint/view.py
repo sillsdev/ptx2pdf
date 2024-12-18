@@ -490,6 +490,8 @@ class ViewModel:
             action = 0
         self.triggervcs = True
         os.makedirs(newp, exist_ok=True)
+        if oldp is None:
+            return False
         jobs = {'ptxprint.cfg': (self._copyfile, self._mergecfg),
                 'ptxprint.sty': (self._copyfile, self._mergesty),
                 'ptxprint-mods.sty': (self._copyfile, self._mergesty),

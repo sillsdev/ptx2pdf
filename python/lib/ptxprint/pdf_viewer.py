@@ -11,7 +11,7 @@ from pathlib import Path
 from dataclasses import dataclass, InitVar, field
 from threading import Timer
 import logging
-import winreg
+# import winreg
 logger = logging.getLogger(__name__)
 
 def render_page_image(page, zoomlevel, pnum, annotatefn):
@@ -890,9 +890,10 @@ class ParInfo:
     mrk:        str
     baseline:   float
     rects:      InitVar[None] = None
+    lines:      int = 0
 
     def __str__(self):
-        return f"{self.ref}[{getattr(self, 'parnum', '')}] {self.baseline} {self.rects}"
+        return f"{self.ref}[{getattr(self, 'parnum', '')}] {self.lines} @ {self.baseline} {self.rects}"
 
     def __repr__(self):
         return self.__str__()

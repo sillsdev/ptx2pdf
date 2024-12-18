@@ -67,8 +67,8 @@ constraints = {
     'texttype': _CEnum('versetext', 'notetext', 'bodytext', 'title', 'section', 'other',
                         'chapternumber', 'versenumber', 'unspecified', 'standalone'),
     'styletype': _CEnum('paragraph', 'character', 'note', 'milestone', 'standalone', ''),
-    'fontsize': _CRange(10.),
-    'fontscale': _CRange(4.),
+    'fontsize': _CRange(0.1, 10.),
+    'fontscale': _CRange(0.1, 4.),
     'raise': _CNot(_CValue(0.)),
     'linespacing': _CRange(0.01, 2.5),
 }
