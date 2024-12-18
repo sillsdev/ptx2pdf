@@ -939,6 +939,8 @@ class RunJob:
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
         if res == 2:
             self.res = 2
+        if not str(res).endswith('_diff.pdf'):
+            outname = pdfname
         return outname
 
     def checkForMissingDecorations(self, info):

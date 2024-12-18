@@ -540,6 +540,7 @@ class StyleEditorView(StyleEditor):
             self.set("l_styActualFontSize", '<span foreground="blue">{:.1f}pt\n(\u2191{:.1f} \u2193{:.1f})</span>'.format(fsize, 
                                             asc, -des), useMarkup=True)
         else:
+            self.set("l_styFontFeats", '', useMarkup=True)
             self.set("l_styActualFontSize", '<span foreground="blue">{:.1f}pt</span>'.format(fsize), useMarkup=True)
 
     def _cmp(self, a, b):

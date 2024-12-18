@@ -298,6 +298,7 @@ class PDFViewer:
         pgSprds = _("pages") if self.model.get("fcb_pagesPerSpread", "1") == "1" else _("spreads")
         self.model.set_preview_pages(self.numpages, pgSprds)
         widget.show_all()
+        self.set_zoom_fit_to_screen(None)
         return True
 
     def clear(self, widget=None):
