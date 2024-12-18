@@ -1,5 +1,5 @@
 PTXprint 2.7.11 Release Notes
-17 Dec 2024
+18 Dec 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
@@ -8,6 +8,15 @@ NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting,
        we suggest that you continue using the same version of PTXprint, rather than
        updating to this latest version.
 
+Bug fixes and Improvements in 2.7.12 (18 Dec 2024)
+  * Fit PDF to window size after showing PDF
+  * Fix bold on fonts
+  * Fix not printing footnotes
+  * Fix minor typo causing a leak of digits on output
+  * Set min Font size to 0.1 and default to 1.0 in UI
+  * Fix various little crashes
+  * Fix \resetautonum
+  * 
 Bug fixes and Improvements in 2.7.11 (17 Dec 2024)
   * Fix bugs in Style Editor related to font settings and display
   * Enable cover and diff PDFs to show up in the Preview Pane

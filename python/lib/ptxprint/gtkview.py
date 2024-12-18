@@ -6306,10 +6306,10 @@ Thank you,
         allocation = window.get_allocation()
         x = allocation.width
         y = allocation.height
-        if pgsprd == "1" and bkview \
+        if pgsprd == "1" and y > x and bkview \
            or pgsprd in ["2", "8"]:
             sz = ((x * 2) - 167, y) # (1040, 715)
-        elif not bkview or pgsprd == "4":
+        elif x > y and not bkview or pgsprd == "4":
             sz = (((x - 167) / 2) + 167, y)
         else:
             sz = (x, y)

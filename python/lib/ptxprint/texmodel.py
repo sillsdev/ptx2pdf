@@ -1283,9 +1283,6 @@ class TexModel:
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
                 self.localChanges.append(makeChange(r"\\\+?w ([^|]+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
 
-        if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
-            self.localChanges.append(makeChange(r'\\x\s.+?\\x\*', '', flags=regex.S))
-            
         if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
