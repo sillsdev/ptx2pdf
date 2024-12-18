@@ -1150,9 +1150,9 @@ class FontRef:
                     x = getattr(regular, "is"+a, False)
                     y = getattr(self, "is"+a, False)
                     if x and not y:
-                        style[a] = "-"
+                        style[a] = False
                     elif y and not x:
-                        style[a] = ""
+                        style[a] = True
                     elif x:     # implies: and y
                         del style[a]
         # All other non-main fonts use /B, etc.
