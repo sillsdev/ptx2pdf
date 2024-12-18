@@ -1173,7 +1173,7 @@
   \else\ifx\w@tsit\sb@rb@x\def\w@tsitid{\w@tsit\the\im@gecount}%
     \else\def\w@tsitid{\w@tsit\the\notim@gecount}\fi
   \fi
-  \edef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\w@tsitid\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
+  \xdef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\w@tsitid\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
 }
 
 \def\d@figureInText#1{%
