@@ -1181,7 +1181,7 @@ class FontRef:
                     style[a] = getattr(self, "is"+a, False)
 
     def asTeXFont(self, inarchive=False):
-        (name, sfeats, feats) = self._getTeXComponents(inarchive)
+        (name, sfeats, feats) = self._getTeXComponents(inarchive, noStyles=True)
         res = ['{}'.format(name), "".join(sfeats)]
         if self.lang is not None:
             res.append(":language={}".format(self.lang))

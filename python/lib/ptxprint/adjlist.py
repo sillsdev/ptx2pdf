@@ -6,8 +6,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-adjre = re.compile(r"^(\S{3})([A-Za-z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
-refre = re.compile(r"^(\S{3})([A-Za-z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
+adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
+refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
 restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(.*?)$")
 
 class Liststore(list):
