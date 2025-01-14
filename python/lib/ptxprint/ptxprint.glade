@@ -908,7 +908,7 @@ THE SOFTWARE.
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
     <property name="version">Version 2.7.12</property>
-    <property name="copyright">© 2020-2024, SIL Global</property>
+    <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
 XeTeX macros (ptx2pdf) with a long and reliable history.</property>
