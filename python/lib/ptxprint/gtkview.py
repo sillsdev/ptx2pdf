@@ -3528,7 +3528,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("l_projectFullName").set_tooltip_text("")
         if self.get("t_copyrightStatement") == "":
             self.fillCopyrightDetails()
-        self.onUseIllustrationsClicked(None)
+        # print(f"In onProjectChanged. About to call onUseIllustrationsClicked {self.initialised=}  {self.loadingConfig=}")
+        # self.onUseIllustrationsClicked(None) # Not sure why this was there. Removed 16-1-2025
         self.updatePrjLinks()
         self.checkFontsMissing()
         self.changed(False)

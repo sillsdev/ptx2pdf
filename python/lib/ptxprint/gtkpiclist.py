@@ -451,8 +451,10 @@ class PicList:
         return False
     
     def onRadioChanged(self):
+        if self.loading or self.parent.loadingConfig:
+            return
         tmpPicpath = os.path.join(self.parent.project.printPath(self.parent.cfgid), "tmpPics")
-        rmtree(tmpPicpath, ignore_errors = True)
+        # rmtree(tmpPicpath, ignore_errors = True)
         exclusive = self.parent.get("c_exclusiveFiguresFolder")
         fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
         imgorder  = self.parent.get("t_imageTypeOrder")

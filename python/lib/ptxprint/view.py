@@ -797,15 +797,15 @@ class ViewModel:
             font = FontRef(fname, "")
             self.set("bl_fontR", font)
         self.onFontChanged(None)
-        # clear generated pictures
-        for f in ("tmpPics", "tmpPicLists"):
-            path2del = os.path.join(self.project.printPath(cfgname), f)
-            if os.path.exists(path2del):
-                try:
-                    rmtree(path2del)
-                    os.makedirs(path2del, exist_ok=True)
-                except (OSError, PermissionError):
-                    pass
+        # clear generated pictures # Not sure why we need to do this. Commented out 16-1-2025
+        # for f in ("tmpPics", "tmpPicLists"):
+            # path2del = os.path.join(self.project.printPath(cfgname), f)
+            # if os.path.exists(path2del):
+                # try:
+                    # rmtree(path2del)
+                    # os.makedirs(path2del, exist_ok=True)
+                # except (OSError, PermissionError):
+                    # pass
         if forcerewrite:
             self.writeConfig(cfgname=cfgname, force=forcerewrite)
         return oldversion
