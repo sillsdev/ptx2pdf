@@ -972,6 +972,7 @@ class RunJob:
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.project.printPath(self.printer.cfgid), "tmpPics")
         if not os.path.exists(tmpPicpath):
+            picinfos.clear_destinations()
             os.makedirs(tmpPicpath)
         folderList = ["tmpPics", "tmpPicLists"] 
         cropme = info['document/iffigcrop']
@@ -985,8 +986,14 @@ class RunJob:
             return []
         picinfos.build_searchlist()
         books = [r[0][0].first.book if r[1] else r[0] for r in jobs] + ["FRT","COV"]
+        exclusive = self.printer.get("c_exclusiveFiguresFolder")
+        fldr      = self.printer.get("lb_selectFigureFolder", "") if self.printer.get("c_useCustomFolder") else ""
+        imgorder  = self.printer.get("t_imageTypeOrder")
+        lowres    = self.printer.get("r_pictureRes") == "Low"
+        picinfos.srchlist = None
         for j in books:
-            picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)
+            picinfos.getFigureSources(keys=j, exclusive=exclusive, mode=self.ispdfxa,
+                                      figFolder=fldr, imgorder=imgorder, lowres=lowres)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         logger.debug(f"{books=}, {[x.fields for x in picinfos.pics.values()]}")
         missingPics = [v['src'] for v in picinfos.get_pics() if v['anchor'][:3] in books and 'destfile' not in v and 'src' in v]

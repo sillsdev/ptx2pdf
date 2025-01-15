@@ -14995,8 +14995,7 @@ the image quality will be as good as possible.</property>
                                                 <property name="valign">center</property>
                                                 <property name="active">True</property>
                                                 <property name="draw-indicator">True</property>
-                                                <signal name="clicked" handler="onPicRescan" swapped="no"/>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">0</property>
@@ -15020,8 +15019,7 @@ share, but the image quality will be low.</property>
                                                 <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <property name="group">r_pictureRes_High</property>
-                                                <signal name="clicked" handler="onPicRescan" swapped="no"/>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">0</property>

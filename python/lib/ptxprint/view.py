@@ -1610,7 +1610,7 @@ class ViewModel:
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
             self.picinfos.getFigureSources(exclusive=exclFigsFolder)
-        if self.get("c_useCustomFolder"):
+        if self.get("c_useCustomFolder"): # What is happening here? and why? (shouldn't it happen above before we getFigureSources?)
             cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'src path'

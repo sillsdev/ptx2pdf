@@ -2758,7 +2758,7 @@ class GtkViewModel(ViewModel):
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
         else:
-            if self.get("lb_selectFigureFolder") == "":
+            if not self.get("lb_selectFigureFolder"):
                 self.onSelectFigureFolderClicked(None)
         self.onPicRescan(btn)
         
@@ -4029,7 +4029,6 @@ class GtkViewModel(ViewModel):
                 self.set("c_useCustomFolder", False)
                 self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
             if self.picListView is not None and self.picListView.picinfo is not None:
-                self.picListView.picinfo.build_searchlist()
                 self.picListView.onRadioChanged()
                 
     def onSelectTargetFolderClicked(self, btn_tgtFolder):
@@ -6270,7 +6269,6 @@ Thank you,
         pdffile = os.path.join(self.project.printPath(None), self.getPDFname()) if path is None else str(path)
         if action == "preview":
             prvw = self.builder.get_object("dlg_preview")
-            print(f"{pdffile=}")
             if os.path.exists(pdffile):
                 if pdffile.endswith(("_cover.pdf", "_diff.pdf")):
                     plocname = None

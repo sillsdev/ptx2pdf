@@ -3,6 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
 from ptxprint.utils import refSort, getlang, _, f2s, pycodedir
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
+from shutil import rmtree
 import os, re
 import logging
 
@@ -144,6 +145,7 @@ class PicList:
         self.model.refilter()
 
     def load(self, picinfo, bks=None):
+        self.loading = True
         self.picinfo = picinfo
         #self.view.set_model(None)
         self.coremodel.clear()
@@ -183,8 +185,8 @@ class PicList:
                     row.append(val)
                 self.coremodel.append(row)
         #self.view.set_model(self.model)
-        self.model.refilter()
         self.loading = False
+        self.model.refilter()
         self.select_row(0)
 
     def get(self, wid, default=None):
@@ -269,7 +271,7 @@ class PicList:
         else:
             pgpos = re.sub(r'^([PF])([lcrio])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
-        self.loading = True
+        # self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             # print(j, k, v)
             if k == 'pgpos':
@@ -361,7 +363,7 @@ class PicList:
 
     def item_changed(self, w, *a):
         key = a[-1]
-        if self.loading and key not in ("src", ):
+        if self.loading: # and key not in ("src", ):
             return
         if key in _comblist:
             val = self.get_pgpos()
@@ -383,7 +385,7 @@ class PicList:
                     cols = 2
                 else:
                     cols = 1
-                if not self.get("c_plMediaP"): # What is this doing? MP!?
+                if not self.get("c_plMediaP"):
                     locKey = "1" if cols == 1 else "2"
                 else:
                     frSize = self.currows[0][_pickeys['size']]
@@ -395,9 +397,12 @@ class PicList:
                 if r_image == "preview":
                     fpath = None
                     if self.picinfo is not None:
-                        dat = self.picinfo.getFigureSources(data=[{'src': val}],
-                                    key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"),
-                                    mode=self.picinfo.mode)
+                        exclusive = self.parent.get("c_exclusiveFiguresFolder")
+                        fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
+                        imgorder  = self.parent.get("t_imageTypeOrder")
+                        lowres    = self.parent.get("r_pictureRes") == "Low"
+                        dat = self.picinfo.getFigureSources(data=[{'src': val}], key='path', exclusive=exclusive,
+                                    mode=self.picinfo.mode, figFolder=fldr, imgorder=imgorder, lowres=lowres)
                         fpath = dat[0].get('path', None)
                         logger.debug(f"Figure Path={fpath}, {dat[0]}")
                     if fpath is not None and os.path.exists(fpath):
@@ -446,6 +451,13 @@ class PicList:
         return False
     
     def onRadioChanged(self):
+        tmpPicpath = os.path.join(self.parent.project.printPath(self.parent.cfgid), "tmpPics")
+        rmtree(tmpPicpath, ignore_errors = True)
+        exclusive = self.parent.get("c_exclusiveFiguresFolder")
+        fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
+        imgorder  = self.parent.get("t_imageTypeOrder")
+        lowres    = self.parent.get("r_pictureRes") == "Low"
+        self.picinfo.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
         self.item_changed(None, "src")
 
     def onResized(self):

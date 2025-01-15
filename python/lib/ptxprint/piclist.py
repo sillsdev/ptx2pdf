@@ -625,7 +625,7 @@ class Piclist:
             self.srchlist.append(uddir)
         self.extensions = []
         extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
-        extuser = re.sub("[ ,;/><]"," ",imgorder).split()
+        extuser = re.sub("[ ,;/><]"," ",imgorder.lower()).split()
         self.extensions = {x:i for i, x in enumerate(extuser) if x in extdflt}
         if not len(self.extensions):   # If the user hasn't defined any extensions 
             if lowres:
@@ -639,8 +639,8 @@ class Piclist:
         ''' Add source filename information to each figinfo, stored with the key '''
         if data is None:
             data = self.pics.values()
-        # if self.srchlist is None: # or not len(self.srchlist):
-        self.build_searchlist(figFolder=figFolder, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
+        if self.srchlist is None or not len(self.srchlist):
+            self.build_searchlist(figFolder=figFolder, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
         res = {}
         newfigs = {}
         for f in data:
@@ -660,15 +660,15 @@ class Piclist:
                 search = os.walk(srchdir, followlinks=True, topdown=True)
             for subdir, dirs, files in search:
                 for f in files:
+                    nB = filt(f) if filt is not None else f
+                    # logger.debug(f"{nB=} {nB in newfigs} {f=}")
+                    if nB not in newfigs:
+                        continue
                     doti = f.rfind(".")
                     origExt = f[doti:].lower()
                     if origExt[1:] not in self.extensions:
                         continue
                     filepath = os.path.join(subdir, f)
-                    nB = filt(f) if filt is not None else f
-                    # logger.debug(f"{nB=} {nB in newfigs} {f=}")
-                    if nB not in newfigs:
-                        continue
                     for p in newfigs[nB]:
                         if 'destfile' in p:
                             if mode == self.mode:
@@ -816,6 +816,11 @@ class Piclist:
     def set_destinations(self, fn=lambda x,y,z:z, keys=None, cropme=False):
         for v in self.pics.values():
             v.set_destination(fn=fn, keys=keys, cropme=cropme)
+
+    def clear_destinations(self):
+        for v in self.pics.values():
+            if 'destfile' in v:
+                del v['destfile']
 
     def getAnchor(self, src, bk):
         for p in self.pics.values():
