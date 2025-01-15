@@ -426,7 +426,7 @@ class ViewModel:
 
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27
-        hfont = self.styleEditor.getval("h", "FontName")
+        hfont = self.styleEditor.getval("h", "font")
         if hfont is None:
             # print("hfont is None")
             hfont = self.get("bl_fontR")

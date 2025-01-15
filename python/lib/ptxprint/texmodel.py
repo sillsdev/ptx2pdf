@@ -244,7 +244,14 @@ class TexModel:
             self.interlinear = Interlinear(self.dict["project/interlang"], self.dict["/ptxpath"])
         regfont = self.printer.get("bl_fontR")
         if regfont is not None:
-            self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
+            if regfont.isCtxtSpace:
+                spcnt = 2
+                self.dict["document/ifletter"] = "%"
+                self.dict["document/letterspace"] = 0
+                #self.dict["document/ifspacing"] = "%"
+            else:
+                spcnt = 0
+            self.dict["document/spacecntxtlztn"] = str(spcnt)
             self.calculateMargins()
         if self.inArchive:
             for b, a in Borders.items():
