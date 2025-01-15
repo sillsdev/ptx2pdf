@@ -1132,7 +1132,7 @@ class TexModel:
                     continue
                 m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
                 if m:
-                    lchs = self.readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk, passes=passes)
+                    lchs = self.readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk, passes=passes, makeranges=makeranges)
                     for k, v in lchs.items():
                         changes.setdefault(k, []).extend(v)
                     continue
@@ -1146,11 +1146,17 @@ class TexModel:
                         elif r.verse == 0:
                             atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chap), flags=regex.S)))
                         else:
-                            outv = '{}{}'.format(r.verse, r.subverse or "")
-                            if usfm is not None:
+                            v = None
+                            if r.first != r.last:
+                                v = r
+                            elif usfm is not None:
                                 v = usfm.bridges.get(r, r)
-                                if v.first != v.last:
-                                    outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
+                                if v.first == v.last:
+                                    v = None
+                            if v is None:
+                                outv = '{}{}'.format(r.verse, r.subverse or "")
+                            else:
+                                outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
                             atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chap, outv), flags=regex.S|regex.V1)))
                     l = l[m.end():].strip()
                 else:
