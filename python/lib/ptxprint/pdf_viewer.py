@@ -560,6 +560,7 @@ class PDFViewer:
         st        = _("Shrink Text")
         et        = _("Expand Text")
         es        = _("Edit Style")
+        ecs       = _("Edit Caption Style")
         j2pt      = _("Send Ref to Paratext")
         z2f       = _("Zoom to Fit")
         z100      = _("Zoom 100%")
@@ -598,31 +599,35 @@ class PDFViewer:
 
             expLim = min(self.expandLimit, info[1]+self.expandStep)
             self.addMenuItem(menu, f"{et} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
-            self.addMenuItem(menu, None, None)
             if parref and parref.mrk is not None:
+                self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, f"{es} \\{parref.mrk}", self.edit_style, parref.mrk)
             if sys.platform == "win32": # and ALSO (later) check for valid ref
+                self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, f"{j2pt}", self.on_broadcast_ref, ref)
+            self.addMenuItem(menu, None, None)
+            self.addMenuItem(menu, f"{z2f} (Ctrl + F)", self.set_zoom_fit_to_screen)
+            self.addMenuItem(menu, f"{z100} (Ctrl + 0)", self.on_reset_zoom)
         elif parref is not None and isinstance(parref, FigInfo):
             # New section for image context menu
-            self.addMenuItem(menu, f"{parref.ref}", None)
-            #imgref = self.get_imageref(widget, event)  # Assuming a method to get the image reference
-            if False:
+            imgref = parref.ref.strip('-preverse')
+            self.addMenuItem(menu, f"Anchored at: {imgref}", None)
+            if True:
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
 
                 class_menu = Gtk.Menu()
-                for class_option in ["Column", "Span", "Cutout", "Page", "Full"]:
+                for class_option in ["Column", "Span", "Cutout", None, "Page", "Full"]:
                     self.addMenuItem(class_menu, class_option, self.on_set_image_class, (imgref, class_option))
                 self.addSubMenuItem(menu, _("Class of Position"), class_menu)
 
                 position_menu = Gtk.Menu()
-                for position_option in ["Top", "Bottom", "Inner", "Outer", "Left", "Right"]:
+                for position_option in ["Top", "Bottom", None, "Inner", "Outer", None, "Left", "Right"]:
                     self.addMenuItem(position_menu, position_option, self.on_set_image_position, (imgref, position_option))
                 self.addSubMenuItem(menu, _("Position"), position_menu)
 
                 self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, _("Shrink 5% size"), self.on_shrink_image, imgref)
-                self.addMenuItem(menu, _("Grow 5% size"), self.on_grow_image, imgref)
+                self.addMenuItem(menu, _("Shrink Size by 5%"), self.on_shrink_image, imgref)
+                self.addMenuItem(menu, _("Grow Size by 5%"), self.on_grow_image, imgref)
 
                 mirror_here_menu = Gtk.Menu()
                 for mirror_here_option in ["Never", "Always", "If on odd page", "If on even page", ]:
@@ -632,13 +637,14 @@ class PDFViewer:
                 mirror_all_menu = Gtk.Menu()
                 for mirror_all_option in ["Never", "Always", "If on odd page", "If on even page", ]:
                     self.addMenuItem(mirror_all_menu, mirror_all_option, self.on_set_mirror_all, (imgref, mirror_all_option))
-                self.addSubMenuItem(menu, _("Mirror Always"), mirror_all_menu)
+                self.addSubMenuItem(menu, _("Mirror Everywhere"), mirror_all_menu)
                     
                 self.addMenuItem(menu, _("Reset Image to Defaults"), self.on_reset_image, imgref)
-                self.addMenuItem(menu, f"{es} \\fig", self.edit_fig_style)
+                self.addMenuItem(menu, f"{ecs} \\fig", self.edit_fig_style)
                 self.addMenuItem(menu, None, None)
-        self.addMenuItem(menu, f"{z2f} (Ctrl + F)", self.set_zoom_fit_to_screen)
-        self.addMenuItem(menu, f"{z100} (Ctrl + 0)", self.on_reset_zoom)
+                if sys.platform == "win32":
+                    self.addMenuItem(menu, None, None)
+                    self.addMenuItem(menu, f"{j2pt}", self.on_broadcast_ref, imgref)
 
         menu.popup(None, None, None, None, event.button, event.time)
 
@@ -671,9 +677,10 @@ class PDFViewer:
 
         try:
             if key is not None:
-                winreg.SetValueEx(key, "", 0, winreg.REG_SZ, self.cleanRef(ref))
+                vref = self.cleanRef(ref)
+                winreg.SetValueEx(key, "", 0, winreg.REG_SZ, vref)
                 winreg.CloseKey(key)
-                logger.debug(f"Set Scr Ref in registry to: {self.cleanRef(ref)}")
+                logger.debug(f"Set Scr Ref in registry to: {vref}")
         except WindowsError as e:
             logger.debug(f"Error: {e} while tryint to set ref in registry")
             return
