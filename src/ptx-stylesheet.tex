@@ -1439,13 +1439,16 @@
         }%
  %
  \def\b{\endlastp@rstyle{b}\bgroup % End previous par before making a gap
-   \getp@ram{baseline}{b}{b+\styst@k}\ifx\p@ram\relax
+   \getp@ram{baseline}{b}{b+\styst@k}\@@b}
+ \def\ib{\endlastp@rstyle{ib}\bgroup % End previous par before making a gap
+   \getp@ram{baseline}{ib}{ib+\styst@k}\@@b}
+ \def\@@b{%Bottom half of \b, \ib 
+  \ifx\p@ram\relax
      \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
      \vskip\baselineskip
     \else
       \vskip\p@ram
     \fi\egroup}
- \let\ib=\b
  \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
