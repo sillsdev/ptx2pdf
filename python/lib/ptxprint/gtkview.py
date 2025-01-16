@@ -163,7 +163,7 @@ fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
-s_pdfZoomLevel s_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
+s_pdfZoomLevel t_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfadjoverlay c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
 btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint
 """.split() # btn_reloadConfig   btn_imgClearSelection
@@ -239,7 +239,7 @@ _ui_experimental = """
 
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
-c_bkView s_pdfZoomLevel s_pgNum b_reprint fcb_project ecb_savedConfig
+c_bkView s_pdfZoomLevel t_pgNum b_reprint fcb_project ecb_savedConfig
 l_menu_level btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint 
 """.split()
 
@@ -6291,12 +6291,13 @@ Thank you,
         dlg_preview.hide()
 
     def set_preview_pages(self, npages, units=None):
-        self.builder.get_object("l_pdfPgsSprds").set_label(units or "")
+        if units:
+            self.builder.get_object("l_pdfPgsSprds").set_label(units)
         lpcount = self.builder.get_object("l_pdfPgCount")
         if npages is None:
             lpcount.set_label("")
         else:
-            lpcount.set_label(str(npages))
+            lpcount.set_label(f"/ {str(npages)}")
 
     def onBookViewClicked(self, widget):
         window = self.builder.get_object("dlg_preview")
@@ -6314,16 +6315,24 @@ Thank you,
             sz = (x, y)
         window.resize(*sz)
         step_increment = 2 if bkview else 1
-        self.builder.get_object("s_pgNum").get_adjustment().set_step_increment(step_increment)
         self.pdf_viewer.set_zoom_fit_to_screen(None)
-        self.onPgNumChanged(None)
+        self.onPgNumChanged(None, None)
 
-    def onPgNumChanged(self, widget):
+    def getPgNum(self):
+        try:
+            v = self.get("t_pgNum") or "1"
+            pg = int(v)
+        except ValueError:
+            pg = 1  # Fallback to a default value
+            self.set("t_pgNum", str(pg), mod=False)
+        return pg
+
+    def onPgNumChanged(self, widget, x):
         pages = self.pdf_viewer.numpages
         if not pages:
             return
-        pg = min(int(self.get("s_pgNum", 1)), pages)
-        self.set("s_pgNum", pg)
+        pg = min(self.getPgNum(), pages)
+        self.set("t_pgNum", str(pg))
         self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
@@ -6339,17 +6348,49 @@ Thank you,
         adj_zl = max(30, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True, setz=False)
+            
+    def onZoomFitClicked(self, btn):
+        self.pdf_viewer.set_zoom_fit_to_screen(None)
 
+    def onZoom100Clicked(self, btn):
+        self.pdf_viewer.set_zoom(1.0)
+        
     def onSeekPage2fill(self, btn):
         pages = self.pdf_viewer.numpages
         if not pages:
             return
-        pg = min(int(self.get("s_pgNum", 1)), pages)
+        pg = min(self.getPgNum(), pages)
         pg = self.ufPages[min(self.ufCurrIndex, pages)]
-        self.set("s_pgNum", pg, mod=False)
+        self.set("t_pgNum", str(pg), mod=False)
         self.pdf_viewer.show_pdf(pg, self.rtl)
         self.ufCurrIndex = (self.ufCurrIndex + 1) % len(self.ufPages)
 
+    def onNavigatePageClicked(self, btn):
+        pages = self.pdf_viewer.numpages
+        currPg = self.getPgNum()
+        if not pages:
+            return
+        increment = 2 if self.get("c_bkView", True) else 1
+        n = Gtk.Buildable.get_name(btn)
+        x = n.split("_")[-1]
+        if x == "first":
+            pg = 1
+        elif x == "last":
+            pg = pages
+        elif x == "previous":
+            pg = max(currPg - increment, 1)
+        elif x == "next":
+            pg = min(currPg + increment, pages)
+        self.set("t_pgNum", str(pg), mod=False)
+        self.pdf_viewer.show_pdf(pg, self.rtl)
+        
+    def updatePgCtrlButtons(self, w):
+        pg = self.getPgNum()
+        self.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
+        self.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
+        self.builder.get_object("btn_page_last").set_sensitive(not pg == self.pdf_viewer.numpages)
+        self.builder.get_object("btn_page_next").set_sensitive(not pg == self.pdf_viewer.numpages)
+        
     def onSavePDFasClicked(self, btn):
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",

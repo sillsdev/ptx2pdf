@@ -1021,11 +1021,29 @@ PDF file(s) created for this project.</property>
     <property name="icon-name">folder-open-symbolic</property>
     <property name="icon_size">3</property>
   </object>
-  <object class="GtkImage" id="icon_page2fill">
+  <object class="GtkImage" id="icon_page_first">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">media-seek-forward</property>
-    <property name="icon_size">3</property>
+    <property name="icon-name">go-first</property>
+    <property name="icon_size">2</property>
+  </object>
+  <object class="GtkImage" id="icon_page_last">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">go-last</property>
+    <property name="icon_size">2</property>
+  </object>
+  <object class="GtkImage" id="icon_page_next">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">go-next</property>
+    <property name="icon_size">2</property>
+  </object>
+  <object class="GtkImage" id="icon_page_previous">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">go-previous</property>
+    <property name="icon_size">2</property>
   </object>
   <object class="GtkImage" id="icon_prvOpenFolder">
     <property name="visible">True</property>
@@ -1066,6 +1084,12 @@ via email, or social media.</property>
     <property name="can-focus">False</property>
     <property name="icon-name">view-refresh-symbolic</property>
   </object>
+  <object class="GtkImage" id="icon_seekPage2fill">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">media-seek-forward</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_targetProj">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
@@ -1083,6 +1107,18 @@ settings for a similar project.</property>
     <property name="can-focus">False</property>
     <property name="icon-name">changes-allow-symbolic</property>
     <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_zoom_100">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">zoom-original</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_zoom_fit">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">view-fullscreen</property>
+    <property name="icon_size">2</property>
   </object>
   <object class="GtkImage" id="img_filter">
     <property name="visible">True</property>
@@ -3344,95 +3380,276 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
             <property name="margin-bottom">2</property>
             <property name="hexpand">True</property>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Zoom Shortcuts:
-Ctrl + F - fit to screen
-Ctrl + Plus - zoom in
-Ctrl + Minus - zoom out
-Ctrl + 0 - resets zoom level
-Ctrl + Scrollwheel - change zoom level</property>
-                <property name="halign">end</property>
-                <property name="valign">center</property>
-                <property name="margin-end">3</property>
-                <property name="label" translatable="yes">Zoom:</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-                <property name="non-homogeneous">True</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
-              <object class="GtkSpinButton" id="s_pdfZoomLevel">
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="tooltip-text" translatable="yes">Zoom Shortcuts:
+                <property name="can-focus">False</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Zoom Shortcuts:
 Ctrl + F - fit to screen
 Ctrl + Plus - zoom in
 Ctrl + Minus - zoom out
 Ctrl + 0 - resets zoom level
 Ctrl + Scrollwheel - change zoom level</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="width-chars">4</property>
-                <property name="xalign">0.5</property>
-                <property name="progress-pulse-step">0</property>
-                <property name="input-purpose">number</property>
-                <property name="adjustment">a_pdfZoomLevel</property>
-                <property name="climb-rate">10</property>
-                <property name="value">100</property>
-                <signal name="value-changed" handler="onZoomLevelChanged" swapped="no"/>
+                    <property name="margin-end">6</property>
+                    <property name="label" translatable="yes">Zoom:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="s_pdfZoomLevel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">Zoom Shortcuts:
+Ctrl + F - fit to screen
+Ctrl + Plus - zoom in
+Ctrl + Minus - zoom out
+Ctrl + 0 - resets zoom level
+Ctrl + Scrollwheel - change zoom level</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="width-chars">4</property>
+                    <property name="text" translatable="yes">100</property>
+                    <property name="xalign">0.5</property>
+                    <property name="progress-pulse-step">0</property>
+                    <property name="input-purpose">number</property>
+                    <property name="adjustment">a_pdfZoomLevel</property>
+                    <property name="climb-rate">10</property>
+                    <property name="snap-to-ticks">True</property>
+                    <property name="value">100</property>
+                    <signal name="value-changed" handler="onZoomLevelChanged" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_zoom_fit">
+                    <property name="name">Zoom Fit to Screen</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Zoom Fit to Screen</property>
+                    <property name="halign">center</property>
+                    <property name="image">icon_zoom_fit</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onZoomFitClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_zoom_100">
+                    <property name="name">Reset Zoom to 100%</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Reset Zoom to 100%</property>
+                    <property name="halign">center</property>
+                    <property name="image">icon_zoom_100</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onZoom100Clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
                 <property name="position">1</property>
+                <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="valign">center</property>
-                <property name="margin-end">3</property>
-                <property name="label" translatable="yes">Page:</property>
+                <property name="hexpand">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
+                <property name="fill">True</property>
                 <property name="position">2</property>
-                <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="s_pgNum">
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="tooltip-text" translatable="yes">Shortcuts:
+                <property name="can-focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="l_pdfPgsSprds">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin-left">6</property>
+                    <property name="margin-right">6</property>
+                    <property name="label" translatable="yes">Page/Spread:</property>
+                    <property name="xalign">1</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_pgNum">
+                    <property name="name">Type page number to jump to</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">Type page number to jump to.
+
+Shortcuts:
 PgUp - previous page/spread
 PgDn - next page/spread
 Ctrl+Home - First page/spread
 Ctrl+End - Last page/spread
 Mouse Scroll also changes pages</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="width-chars">4</property>
-                <property name="text" translatable="yes">1</property>
-                <property name="xalign">0.5</property>
-                <property name="adjustment">a_pgNum</property>
-                <property name="climb-rate">2</property>
-                <property name="value">1</property>
-                <signal name="value-changed" handler="onPgNumChanged" swapped="no"/>
+                    <property name="double-buffered">False</property>
+                    <property name="halign">end</property>
+                    <property name="max-length">4</property>
+                    <property name="has-frame">False</property>
+                    <property name="width-chars">3</property>
+                    <property name="xalign">1</property>
+                    <property name="progress-pulse-step">0</property>
+                    <property name="placeholder-text" translatable="yes">77</property>
+                    <signal name="changed" handler="updatePgCtrlButtons" swapped="no"/>
+                    <signal name="focus-out-event" handler="onPgNumChanged" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="l_pdfPgCount">
+                    <property name="width-request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Shortcuts:
+PgUp - previous page/spread
+PgDn - next page/spread
+Ctrl+Home - First page/spread
+Ctrl+End - Last page/spread
+Mouse Scroll also changes pages</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">/ 999</property>
+                    <property name="xalign">0</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_page_first">
+                    <property name="name">First page (or spread)</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">First page (or spread)</property>
+                    <property name="halign">center</property>
+                    <property name="image">icon_page_first</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onNavigatePageClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_page_previous">
+                    <property name="name">Previous page (or spread)</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Previous page (or spread)</property>
+                    <property name="halign">center</property>
+                    <property name="image">icon_page_previous</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onNavigatePageClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_page_next">
+                    <property name="name">Next page (or spread)</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Next page (or spread)</property>
+                    <property name="halign">center</property>
+                    <property name="image">icon_page_next</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onNavigatePageClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_page_last">
+                    <property name="name">Last page (or spread)</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Last page (or spread)</property>
+                    <property name="halign">center</property>
+                    <property name="image">icon_page_last</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onNavigatePageClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">6</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="hexpand">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">3</property>
-                <property name="non-homogeneous">True</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -3444,13 +3661,14 @@ Mouse Scroll also changes pages</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Show next underfilled page.</property>
                 <property name="halign">center</property>
-                <property name="image">icon_page2fill</property>
+                <property name="image">icon_seekPage2fill</property>
+                <property name="relief">none</property>
                 <signal name="clicked" handler="onSeekPage2fill" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -3460,13 +3678,13 @@ Mouse Scroll also changes pages</property>
                 <property name="height-request">24</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">center</property>
                 <property name="valign">center</property>
+                <property name="hexpand">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">5</property>
+                <property name="fill">True</property>
+                <property name="position">6</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -3497,7 +3715,7 @@ Shortcut: Ctrl-P</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">6</property>
+                <property name="position">7</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -3514,7 +3732,7 @@ Shortcut: Ctrl-P</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">7</property>
+                <property name="position">8</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -3711,56 +3929,16 @@ Shortcut: Ctrl + B</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkLabel" id="l_pdfContents">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="hexpand">False</property>
-                    <property name="vexpand">False</property>
-                    <child>
-                      <object class="GtkLabel" id="l_pdfContents">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="valign">end</property>
-                        <property name="label" translatable="yes">Contents:</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="l_pdfPgCount">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">end</property>
-                        <property name="margin-end">3</property>
-                        <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">NNN</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="l_pdfPgsSprds">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">pages</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
+                    <property name="halign">start</property>
+                    <property name="valign">end</property>
+                    <property name="label" translatable="yes">Contents:</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">False</property>
+                    <property name="fill">True</property>
                     <property name="position">5</property>
                   </packing>
                 </child>

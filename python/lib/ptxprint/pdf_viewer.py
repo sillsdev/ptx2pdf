@@ -213,9 +213,9 @@ class PDFViewer:
             return
         if page is None:
             page = self.current_page or 1
-        if setpnum and self.model.get("s_pgNum") != str(page):
-            self.model.set("s_pgNum", page, mod=False)
-            return
+        if setpnum: # WHY WAS THIS HERE? # and self.model.get("t_pgNum", "1") != str(page):
+            self.model.set("t_pgNum", str(page), mod=False)
+            # return # WHY?
         if self.model.get("fcb_pagesPerSpread", "1") != "1":
             self.spread_mode = False
         else:
@@ -227,7 +227,7 @@ class PDFViewer:
             page = 1
             self.create_boxes(1)
             pg = self.document.get_page(0)
-            self.model.set("s_pgNum", page, mod=False)
+            self.model.set("t_pgNum", str(page), mod=False)
             self.psize = pg.get_size()
             images.append(render_page_image(pg, self.zoomLevel, page, self.add_hints if self.showadjustments else None))
         else:
@@ -295,7 +295,7 @@ class PDFViewer:
         formatted_time = mod_time.strftime("   %d-%b %H:%M")
         widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
         # Set the number of pages/spreads in the contents area
-        pgSprds = _("pages") if self.model.get("fcb_pagesPerSpread", "1") == "1" else _("spreads")
+        pgSprds = _("Page:") if self.model.get("fcb_pagesPerSpread", "1") == "1" else _("Spread:")
         self.model.set_preview_pages(self.numpages, pgSprds)
         widget.show_all()
         self.set_zoom_fit_to_screen(None)
@@ -416,12 +416,14 @@ class PDFViewer:
         # Redraw the canvas with the updated zoom level
 
     def show_next_page(self):
-        next_page = min(self.current_page + (2 if self.spread_mode else 1), self.numpages)
-        self.show_pdf(next_page)
+        pg = min(self.current_page + (2 if self.spread_mode else 1), self.numpages)
+        self.model.set("t_pgNum", str(pg), mod=False)
+        self.show_pdf(pg)
 
     def show_previous_page(self):
-        previous_page = max(self.current_page - (2 if self.spread_mode else 1), 1)
-        self.show_pdf(previous_page)
+        pg = max(self.current_page - (2 if self.spread_mode else 1), 1)
+        self.model.set("t_pgNum", str(pg), mod=False)
+        self.show_pdf(pg)
 
     # Handle keyboard shortcuts for navigation
     def on_key_press_event(self, widget, event):
@@ -434,8 +436,7 @@ class PDFViewer:
             self.show_pdf(1)
             return True
         elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
-            p = self.numpages
-            self.show_pdf(p)
+            self.show_pdf(self.numpages)
             return True
         elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
             next_page = self.current_page + (2 if self.spread_mode else 1)
