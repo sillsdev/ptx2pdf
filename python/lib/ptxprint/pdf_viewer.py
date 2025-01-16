@@ -11,7 +11,14 @@ from pathlib import Path
 from dataclasses import dataclass, InitVar, field
 from threading import Timer
 import logging
-# import winreg
+
+# These libs are for Windows-only functionality to make 
+# Paratext+Logos scroll to a Book ch:vs reference
+if sys.platform == "win32":
+    import winreg
+    import ctypes
+    from ctypes import wintypes
+    
 logger = logging.getLogger(__name__)
 
 def render_page_image(page, zoomlevel, pnum, annotatefn):
@@ -553,7 +560,7 @@ class PDFViewer:
         st        = _("Shrink Text")
         et        = _("Expand Text")
         es        = _("Edit Style")
-        # j2pt      = _("Show verse in Paratext")
+        j2pt      = _("Send Ref to Paratext")
         z2f       = _("Zoom to Fit")
         z100      = _("Zoom 100%")
         if False and self.isdiglot:
@@ -594,8 +601,8 @@ class PDFViewer:
             self.addMenuItem(menu, None, None)
             if parref and parref.mrk is not None:
                 self.addMenuItem(menu, f"{es} \\{parref.mrk}", self.edit_style, parref.mrk)
-            # if True: # later check for valid ref
-                # self.addMenuItem(menu, f"{j2pt}", self.on_send_ref_to_paratext, ref)
+            if sys.platform == "win32": # and ALSO (later) check for valid ref
+                self.addMenuItem(menu, f"{j2pt}", self.on_broadcast_ref, ref)
         elif parref is not None and isinstance(parref, FigInfo):
             # New section for image context menu
             self.addMenuItem(menu, f"{parref.ref}", None)
@@ -638,37 +645,64 @@ class PDFViewer:
     def get_imageref(self, widget, event):
         return True
 
-    # def on_send_ref_to_paratext(self, widget, ref):
-        # Need to do this in Utils - to make sure that the Win32, Linux and Mac versions all work well.
-        # HKEY_USERS\S-1-5-21-1253480102-4282213393-3895032969-1001\Software\SantaFe\Focus\ScriptureReference
-        # Computer\HKEY_CURRENT_USER\Software\SantaFe\Focus\ScriptureReference
-        # print(f"{ref=}")
-        # def openkey(path):
-            # try:
-                # k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
-            # except FileNotFoundError:
-                # try:
-                    # k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path.replace("/", "\\"))
-                # except FileNotFoundError:
-                    # k = None
-            # return k
-        # try:
-            # Open the registry key
-            # key_path = r"Software\SantaFe\Focus\ScriptureReference"
-            # key = openkey(key_path)
-            
-            # if key is None:
-                # If the key doesn't exist in HKEY_LOCAL_MACHINE, try HKEY_CURRENT_USER
-                # key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
-            
-            # Set the value
-            # winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "EZK 3:7")
-            
-            # Close the key
-            # winreg.CloseKey(key)
-            # print(f"Successfully set ScriptureReference to: EZK 3:7")
-        # except WindowsError as e:
-            # print(f"Error accessing the registry: {e}")
+    def cleanRef(self, reference):
+        """
+        Translates a scripture reference into its canonical form with a 3-letter book code.
+        Example: "JHN1.4" --> "JHN 1:4", "MRKL12.14" --> "MRK 12:14"
+        """
+        # Regular expression to match patterns like "JHN1.4", "MRKL12.14", etc.
+        pattern = r"([A-Z]{3})(?:[A-Z]?)(\d+)\.(\d+)"
+        match = re.match(pattern, reference)
+        if not match:
+            return reference
+        book, chapter, verse = match.groups()
+        return f"{book} {chapter}:{verse}"
+    
+    def on_broadcast_ref(self, widget, ref):
+        if sys.platform != "win32":
+            return
+
+        key_path = r"Software\SantaFe\Focus\ScriptureReference"
+        try:
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
+        except FileNotFoundError:
+            logger.debug(f"Error: Registry Key not found: {path}")
+            return
+
+        try:
+            if key is not None:
+                winreg.SetValueEx(key, "", 0, winreg.REG_SZ, self.cleanRef(ref))
+                winreg.CloseKey(key)
+                logger.debug(f"Set Scr Ref in registry to: {self.cleanRef(ref)}")
+        except WindowsError as e:
+            logger.debug(f"Error: {e} while tryint to set ref in registry")
+            return
+
+        # Load user32.dll
+        user32 = ctypes.windll.user32
+
+        # Define argument and return types for RegisterWindowMessage and PostMessage
+        user32.RegisterWindowMessageW.argtypes = [wintypes.LPCWSTR]  # Wide string
+        user32.RegisterWindowMessageW.restype = wintypes.UINT        # Unsigned int
+
+        user32.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
+        user32.PostMessageW.restype = wintypes.BOOL                  # Boolean return
+
+        # Step 1: Register the custom Windows message
+        santa_fe_focus_msg = user32.RegisterWindowMessageW("SantaFeFocus")
+        if not santa_fe_focus_msg:
+            raise ctypes.WinError(ctypes.get_last_error())
+
+        # Step 2: Post the message to all top-level windows (-1 or HWND_BROADCAST)
+        HWND_BROADCAST = 0xFFFF  # -1 in the Windows API means broadcasting to all top-level windows
+        WPARAM = 1               # Parameter for the message
+        LPARAM = 0               # Additional parameter for the message
+
+        # Post the message
+        success = user32.PostMessageW(HWND_BROADCAST, santa_fe_focus_msg, WPARAM, LPARAM)
+        if not success:
+            raise ctypes.WinError(ctypes.get_last_error())
+        logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
             
     def on_edit_anchor(self, imgref):
         print(f"Editing anchor for image: {imgref}")
