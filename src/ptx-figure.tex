@@ -707,6 +707,7 @@
 
 \def\@parpicstart#1#2#3#4{}
 \def\@parpicstop#1#2#3#4#5#6{}
+\def\@parpicsize#1#2#3{}
 
 \gdef\pr@penalty{10}\gdef\p@stpenalty{10}%
 \def\d@figure#1{%
@@ -982,7 +983,7 @@
     \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\r@qdim, switching to \picaltdim@n=\p@cheight}%\sizem@ltiple\space\the\p@cwidth}%
-      \xdef\p@cinfo{\string\@parpicsize\string\picaltdim@n\string}\string{\p@cheight\string}\string{\sizem@ltiple\string}}
+      \xdef\p@cinfo{\string\@parpicsize\string{\picaltdim@n\string}\string{\p@cheight\string}\string{\sizem@ltiple\string}}
       \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\f@lename"}%
          {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
