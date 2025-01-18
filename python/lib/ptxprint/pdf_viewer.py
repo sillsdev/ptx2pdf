@@ -22,10 +22,14 @@ if sys.platform == "win32":
     
 logger = logging.getLogger(__name__)
 
-frame = {'col': "Column", 'span': "Span", 'cut': "Cutout", 'sep': None, 'page': "Page", 'full': "Full"}
+frame = {'col': "Column", 'span': "Span", 'cut': "Cutout", 'page': "Page", 'full': "Full"}
 rev_frame = {v:k for k, v in frame.items()}
 mirror = {'': 'Never', 'both': "Always", 'odd': "If on odd page", 'even': "If on even page"}
 rev_mirror = {v:k for k, v in mirror.items()}
+hpos = {'i': "Inner", 'o': "Outer", 'l': "Left", 'r': "Right"}
+rev_hpos = {v:k for k, v in hpos.items()}
+
+print(f"{frame=}\n{rev_frame=}")
 
 def render_page_image(page, zoomlevel, pnum, annotatefn):
     width, height = page.get_size()
@@ -556,8 +560,14 @@ class PDFViewer:
         parent_menu.append(menu_item)          # Add the parent item to the parent menu
         menu_item.show()                       # Show the parent item
 
+    def clear_menu(self, menu):
+        for child in menu.get_children():
+            child.destroy()
+
+
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
+        self.clear_menu(menu)
         ys        = _("Yes! Shrink")
         ts        = _("Try Shrink")
         expand    = _("Expand")
@@ -650,78 +660,64 @@ class PDFViewer:
                 pics = self.model.picinfos.find(anchor=imgref)
                 if len(pics):
                     pic = pics[0]
+                    print(f"{pic=}")
+                    self.addMenuItem(menu, f"Anchored at: {imgref}", None, sensitivity=False)
                 else:
                     showmenu = False
-                    # self.addMenuItem(menu, f"Anchored at: {imgref} (Not Found)", None, sensitivity=False)
-                    # return
-            self.addMenuItem(menu, f"Anchored at: {imgref}", None)
+                    self.addMenuItem(menu, f"Image Anchor Not Found", None, sensitivity=False)
             if showmenu:
                 for y in ['src', 'srcref', 'size', 'pgpos', 'mirror', 'scale']:
-                    print(f"{y} = {pic.get(y, '???')=}")
+                    print(f"{y} = {pic.get(y, '-')}")
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
 
                 # Mirror Menu
                 mirror_menu = Gtk.Menu()
+                self.clear_menu(mirror_menu)
                 curr_mirror = pic.get('mirror', '')
-                radio_group = None
                 for mirror_opt in mirror.values():
-                    menu_item = Gtk.RadioMenuItem.new_with_label(radio_group, mirror_opt)
-                    radio_group = menu_item.get_group()
-                    menu_item.set_active(mirror_opt == mirror[curr_mirror])
-                    menu_item.connect("toggled", self.on_set_image_mirror, (imgref, mirror_opt))
+                    menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f"   {mirror_opt}")
+                    menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
                     menu_item.show()
                     mirror_menu.append(menu_item)
                 self.addSubMenuItem(menu, _("Mirror Picture"), mirror_menu)
 
                 frame_menu = Gtk.Menu()
+                self.clear_menu(frame_menu)
                 curr_frame = pic.get('size', 'col')
-                radio_group = None
                 for frame_opt in frame.values():
-                    if frame_opt is None:
-                        separator = Gtk.SeparatorMenuItem()
-                        separator.show()
-                        frame_menu.append(separator)
-                    else:
-                        menu_item = Gtk.RadioMenuItem.new_with_label(radio_group, frame_opt)
-                        radio_group = menu_item.get_group()
-                        menu_item.set_active(frame_opt == frame[curr_frame])
-                        menu_item.connect("toggled", self.on_set_image_frame, (imgref, frame_opt))
-                        menu_item.show()
-                        frame_menu.append(menu_item)
+                    menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f"   {frame_opt}")
+                    menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
+                    menu_item.show()
+                    frame_menu.append(menu_item)
                 self.addSubMenuItem(menu, _("Frame Size"), frame_menu)
 
                 vpos_menu = Gtk.Menu()
-                curr_pos = "Top"
-                radio_group = None
+                self.clear_menu(vpos_menu)
+                curr_pos = "Top" if pic.get('pgpos', 't')[:1] == 't' else "Bottom"
                 for vpos_opt in ["Top", "Bottom"]:
-                    menu_item = Gtk.RadioMenuItem.new_with_label(radio_group, vpos_opt)
-                    radio_group = menu_item.get_group()
-                    menu_item.set_active(vpos_opt == curr_pos)
-                    menu_item.connect("toggled", self.on_set_image_vpos, (imgref, vpos_opt))
+                    menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == curr_pos else f"   {vpos_opt}")
+                    menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt))
                     menu_item.show()
                     vpos_menu.append(menu_item)
                 self.addSubMenuItem(menu, _("Vertical Position"), vpos_menu)
 
                 hpos_menu = Gtk.Menu()
-                curr_pos = "Outer"
-                radio_group = None
-                for hpos_opt in ["Inner", "Outer", "Left", "Right"]:
-                    menu_item = Gtk.RadioMenuItem.new_with_label(radio_group, hpos_opt)
-                    radio_group = menu_item.get_group()
-                    menu_item.set_active(hpos_opt == curr_pos)
-                    menu_item.connect("toggled", self.on_set_image_hpos, (imgref, hpos_opt))
+                self.clear_menu(hpos_menu)
+                p = pic.get('pgpos', 'o')
+                curr_pos = 'o' # hpos[pic.get('pgpos', 'o')[2:3]]
+                for hpos_opt in hpos.values():
+                    menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_pos] else f"   {hpos_opt}")
+                    menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt))
                     menu_item.show()
                     hpos_menu.append(menu_item)
                 self.addSubMenuItem(menu, _("Horizontal Position"), hpos_menu)
 
                 self.addMenuItem(menu, None, None)
-                # create_spin_button_menu_item(parent_menu=menu, label=_("Zoom:"), min_val=10, max_val=500, step=5, 
-                            # initial_value=self.piczoom, callback=self.on_spin_button_value_finalized, callback_args=(imgref,))                
-                self.addMenuItem(menu, _("Shrink by 1 line"), self.on_shrink_image, parref, pic)
-                self.addMenuItem(menu, _("Grow by 1 line"), self.on_grow_image, parref, pic)
+                self.addMenuItem(menu, _("Shrink by 1 line"), self.on_shrink_image, (pic, parref))
+                self.addMenuItem(menu, _("Grow by 1 line"), self.on_grow_image, (pic, parref))
                 self.addMenuItem(menu, None, None)
 
-                self.addMenuItem(menu, _("Show Details..."), self.on_image_show_details, imgref)
+                self.addMenuItem(menu, _("Show Details..."), self.on_image_show_details, pic)
                 self.addMenuItem(menu, f"{ecs} \\fig", self.edit_fig_style)
                 if sys.platform == "win32":
                     self.addMenuItem(menu, None, None)
@@ -733,8 +729,106 @@ class PDFViewer:
     def on_spin_button_value_finalized(self, spin_button, *args):
         print(f"Value finalized: {spin_button.get_value()}, Args: {args}")
 
-    def get_imageref(self, widget, event):
-        return True
+    def on_edit_anchor(self, imgref):
+        print(f"Editing anchor for image: {imgref}")
+
+    def on_set_image_frame(self, widget, data):
+        pic, frame_opt = data
+        pic['size'] = rev_frame[frame_opt]
+        print(f"Setting picture frame size: '{frame_opt}' --> {rev_frame[frame_opt]}")
+
+    def on_set_image_vpos(self, widget, data):
+        pic, vpos_opt = data
+        newpos = vpos_opt.lower()[:1] + pics[0]['pgpos'][1:]
+        pic['pgpos'] = newpos
+        print(f"Setting vertical position '{vpos_opt}' for image: {imgref} - now pgpos = {newpos}")
+
+    def on_set_image_hpos(self, widget, data):
+        pic, hpos_opt = data
+        newpos = 'o' # FixMe! hpos_opt.lower()[:1] + pics[0]['pgpos'][1:]
+        pic['pgpos'] = newpos
+        print(f"Setting horizontal position '{hpos_opt}' for image: {imgref} - now pgpos = {newpos}")
+
+    def on_shrink_image(self, widget, data):
+        pic, parref = data
+        line_height = float(self.model.get("s_linespacing", 12))
+        print(f"SHRINK: {parref.size=}  {-1 * line_height}")
+        self.adjust_fig_size(pic, parref.size, -1 * line_height)
+        
+    def on_grow_image(self, widget, data):
+        pic, parref = data
+        line_height = float(self.model.get("s_linespacing", 12))
+        print(f"GROW: {parref.size=}  {line_height}")
+        self.adjust_fig_size(pic, parref.size, line_height)
+
+    def adjust_fig_size(self, pic, psize, adj):
+        '''adj is the value in pts (+ve/-ve)'''
+        print(f"{psize[0]=} {psize[1]=}  {adj=}")
+        if psize[1] == 0:
+            print(f"returned prematurely :-(")
+            return
+        ratio = int(pic.get('scale', 100)) / 100.
+        nr = ratio - psize[1] / adj
+        if nr < .05 or nr > 2. :
+            return
+        pic['scale'] = str(int(nr * 100))
+
+    def on_image_show_details(self, imgref):
+        print(f"Show Details on the Pictures tab: {imgref}")
+
+    def on_set_image_mirror(self, widget, data):
+        pic, mirror_opt = data
+        pic['mirror'] = rev_mirror[mirror_opt]
+
+    # Context menu item callbacks for paragraph actions
+    def on_identify_paragraph(self, widget, info, parref):
+        print("Identify paragraph option selected")
+
+    def on_shrink_paragraph(self, widget, info, parref):
+        if self.adjlist is not None:
+            self.adjlist.increment(info[2], -1)
+        self.show_pdf()
+
+    def on_expand_paragraph(self, widget, info, parref):
+        if self.adjlist is not None:
+            self.adjlist.increment(info[2], 1)
+        self.show_pdf()
+        
+    def on_reset_paragraph(self, widget, info, parref):
+        if self.adjlist is not None:
+            pc = int(info[0].replace("+-", "-"))
+            self.adjlist.increment(info[2], - pc)
+            self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
+        self.show_pdf()
+
+    def on_shrink_text(self, widget, info, parref):
+        if self.adjlist is not None:
+            if info[1] - self.shrinkStep < self.shrinkLimit:
+                self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
+            else:
+                self.adjlist.expand(info[2], -self.shrinkStep, mrk=parref.mrk)
+        self.show_pdf()
+
+    def on_expand_text(self, widget, info, parref):
+        if self.adjlist is not None:
+            if info[1] + self.expandStep > self.expandLimit:
+                self.adjlist.expand(info[2], self.expandLimit - info[1], mrk=parref.mrk)
+            else:
+                self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
+        self.show_pdf()
+
+    def edit_style(self, widget, mkr):
+        if mkr is not None:
+            self.model.styleEditor.selectMarker(mkr)
+            mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
+            self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.model.wiggleCurrentTabLabel()
+        
+    def edit_fig_style(self, widget):
+        self.model.styleEditor.selectMarker('fig')
+        mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
+        self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.model.wiggleCurrentTabLabel()
 
     def cleanRef(self, reference):
         ''' JHN1.4 --> JHN 1:4, MRKL12.14 --> MRK 12:14 '''
@@ -792,94 +886,6 @@ class PDFViewer:
             raise ctypes.WinError(ctypes.get_last_error())
         logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
             
-    def on_edit_anchor(self, imgref):
-        print(f"Editing anchor for image: {imgref}")
-
-    def on_set_image_frame(self, imgref, class_option):
-        # pic['scale'] = str(int(nr * 100))
-        print(f"Setting class '{class_option}' for image: {imgref}")
-
-    def on_set_image_vpos(self, imgref, vpos):
-        print(f"Setting vertical position '{vpos}' for image: {imgref}")
-
-    def on_set_image_hpos(self, imgref, hpos):
-        print(f"Setting horizontal position '{hpos}' for image: {imgref}")
-
-    def on_shrink_image(self, widget, parref, pic):
-        print(f"SHRINK:{pic=}")
-        print(f"{parref.size=}")
-        self.adjust_fig_size(pic, parref.size, -12)
-        
-    def on_grow_image(self, widget, parref, pic):
-        print(f"GROW: {pic=}")
-        print(f"{parref.size=}")
-        self.adjust_fig_size(pic, parref.size, +12)
-
-    def adjust_fig_size(self, pic, psize, adj):
-        '''adj is the value in pts (+ve/-ve)'''
-        if psize[1] == 0:
-            return
-        ratio = int(pic.get('scale', 100)) / 100.
-        nr = ratio - psize[1] / adj
-        if nr < .05 or nr > 2. :
-            return
-        pic['scale'] = str(int(nr * 100))
-
-    def on_image_show_details(self, imgref):
-        print(f"Show Details on the Pictures tab: {imgref}")
-
-    def on_set_image_mirror(self, imgref, mirror):
-        print(f"Mirror picture: {imgref}")
-
-    # Context menu item callbacks for paragraph actions
-    def on_identify_paragraph(self, widget, info, parref):
-        print("Identify paragraph option selected")
-
-    def on_shrink_paragraph(self, widget, info, parref):
-        if self.adjlist is not None:
-            self.adjlist.increment(info[2], -1)
-        self.show_pdf()
-
-    def on_expand_paragraph(self, widget, info, parref):
-        if self.adjlist is not None:
-            self.adjlist.increment(info[2], 1)
-        self.show_pdf()
-        
-    def on_reset_paragraph(self, widget, info, parref):
-        if self.adjlist is not None:
-            pc = int(info[0].replace("+-", "-"))
-            self.adjlist.increment(info[2], - pc)
-            self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
-        self.show_pdf()
-
-    def on_shrink_text(self, widget, info, parref):
-        if self.adjlist is not None:
-            if info[1] - self.shrinkStep < self.shrinkLimit:
-                self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
-            else:
-                self.adjlist.expand(info[2], -self.shrinkStep, mrk=parref.mrk)
-        self.show_pdf()
-
-    def on_expand_text(self, widget, info, parref):
-        if self.adjlist is not None:
-            if info[1] + self.expandStep > self.expandLimit:
-                self.adjlist.expand(info[2], self.expandLimit - info[1], mrk=parref.mrk)
-            else:
-                self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
-        self.show_pdf()
-
-    def edit_style(self, widget, mkr):
-        if mkr is not None:
-            self.model.styleEditor.selectMarker(mkr)
-            mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
-            self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.model.wiggleCurrentTabLabel()
-        
-    def edit_fig_style(self, widget):
-        self.model.styleEditor.selectMarker('fig')
-        mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
-        self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.model.wiggleCurrentTabLabel()
 
     # Zoom functionality
     def on_zoom_in(self, widget):
