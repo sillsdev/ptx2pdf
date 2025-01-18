@@ -258,11 +258,11 @@ class PDFViewer:
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, page, context, zoomlevel):
-        def make_rect(context, col, r, offset):
+        def make_rect(context, col, r, width):
             red, green, blue = hsv_to_rgb(*col)
             context.set_source_rgba(red, green, blue, 0.4)
-            context.rectangle((r.xstart if offset >= 0 else r.xend + offset),
-                              (self.psize[1] - r.ystart), abs(offset), (r.ystart - r.yend))
+            context.rectangle((r.xstart if width >= 0 else r.xend + width),
+                              (self.psize[1] - r.ystart), abs(width), (r.ystart - r.yend))
             context.fill()
         bk = None
         for p, r in self.parlocs.getParas(page):
@@ -800,7 +800,16 @@ class PDFViewer:
         mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
         self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.model.wiggleCurrentTabLabel()
-        
+
+    def grow_fig(pic, psize, adj):
+        if psize[1] == 0:
+            return
+        ratio = int(pic.get('scale', 100)) / 100.
+        nr = ratio - psize[1] / adj
+        if nr < .05 or nr > 2. :
+            return
+        pic['scale'] = str(int(nr * 100))
+
     # Zoom functionality
     def on_zoom_in(self, widget):
         if self.zoomLevel < 2.0:
@@ -959,10 +968,11 @@ class ParInfo:
 class FigInfo:
     ref:    str
     src:    str
+    size:   (int, int)
     rects:  InitVar[None] = None
 
     def __str__(self):
-        return f"{self.ref}[{self.src}] {self.rects}"
+        return f"{self.ref}[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
 
     def __repr__(self):
         return self.__str__()
@@ -1119,7 +1129,7 @@ class Paragraphs(list):
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None:
                     return
-                currp = FigInfo(p[0], p[1])
+                currp = FigInfo(p[0], p[1], (0, 0))
                 currp.rects = []
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
                 currp.rects.append(currr)
@@ -1132,6 +1142,11 @@ class Paragraphs(list):
                 currr.yend = currr.ystart - readpts(p[3])
                 currp = None
                 currr = None
+            elif c == "parpicsize":
+                (w, h) = readpts(p[1]), readpts(p[2])
+                # if p[0] == "height":
+                #     (w, h) = (h, w)
+                currp.size = (w, h)
                 
             # "parnote":        # type, callerx, callery
             # "notebox":        # type, width, height
