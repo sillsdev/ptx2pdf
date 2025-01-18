@@ -717,8 +717,8 @@ class PDFViewer:
                 self.addMenuItem(menu, None, None)
                 # create_spin_button_menu_item(parent_menu=menu, label=_("Zoom:"), min_val=10, max_val=500, step=5, 
                             # initial_value=self.piczoom, callback=self.on_spin_button_value_finalized, callback_args=(imgref,))                
-                self.addMenuItem(menu, _("Shrink by 1 line"), self.on_shrink_image, imgref)
-                self.addMenuItem(menu, _("Grow by 1 line"), self.on_grow_image, imgref)
+                self.addMenuItem(menu, _("Shrink by 1 line"), self.on_shrink_image, parref, pic)
+                self.addMenuItem(menu, _("Grow by 1 line"), self.on_grow_image, parref, pic)
                 self.addMenuItem(menu, None, None)
 
                 self.addMenuItem(menu, _("Show Details..."), self.on_image_show_details, imgref)
@@ -796,6 +796,7 @@ class PDFViewer:
         print(f"Editing anchor for image: {imgref}")
 
     def on_set_image_frame(self, imgref, class_option):
+        # pic['scale'] = str(int(nr * 100))
         print(f"Setting class '{class_option}' for image: {imgref}")
 
     def on_set_image_vpos(self, imgref, vpos):
@@ -804,12 +805,26 @@ class PDFViewer:
     def on_set_image_hpos(self, imgref, hpos):
         print(f"Setting horizontal position '{hpos}' for image: {imgref}")
 
-    def on_shrink_image(self, imgref):
-        pass
+    def on_shrink_image(self, widget, parref, pic):
+        print(f"SHRINK:{pic=}")
+        print(f"{parref.size=}")
+        self.adjust_fig_size(pic, parref.size, -12)
         
-    def on_grow_image(self, imgref):
-        pass
-        
+    def on_grow_image(self, widget, parref, pic):
+        print(f"GROW: {pic=}")
+        print(f"{parref.size=}")
+        self.adjust_fig_size(pic, parref.size, +12)
+
+    def adjust_fig_size(self, pic, psize, adj):
+        '''adj is the value in pts (+ve/-ve)'''
+        if psize[1] == 0:
+            return
+        ratio = int(pic.get('scale', 100)) / 100.
+        nr = ratio - psize[1] / adj
+        if nr < .05 or nr > 2. :
+            return
+        pic['scale'] = str(int(nr * 100))
+
     def on_image_show_details(self, imgref):
         print(f"Show Details on the Pictures tab: {imgref}")
 
@@ -865,16 +880,6 @@ class PDFViewer:
         mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
         self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.model.wiggleCurrentTabLabel()
-
-    def grow_fig(self, pic, psize, adj):
-        '''adj is the value in pts (+ve/-ve)'''
-        if psize[1] == 0:
-            return
-        ratio = int(pic.get('scale', 100)) / 100.
-        nr = ratio - psize[1] / adj
-        if nr < .05 or nr > 2. :
-            return
-        pic['scale'] = str(int(nr * 100))
 
     # Zoom functionality
     def on_zoom_in(self, widget):
