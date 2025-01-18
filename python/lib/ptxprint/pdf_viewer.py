@@ -6,7 +6,7 @@ import cairo, re, time, sys
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from ptxprint.utils import _, refSort
+from ptxprint.utils import _, refSort, f2s
 from ptxprint.piclist import Piclist
 from pathlib import Path
 from dataclasses import dataclass, InitVar, field
@@ -22,14 +22,14 @@ if sys.platform == "win32":
     
 logger = logging.getLogger(__name__)
 
-frame = {'col': "Column", 'span': "Span", 'cut': "Cutout", 'page': "Page", 'full': "Full"}
-rev_frame = {v:k for k, v in frame.items()}
-mirror = {'': 'Never', 'both': "Always", 'odd': "If on odd page", 'even': "If on even page"}
+frame  = {'col': _("Column"), 'span': _("Span"), 'cut': _("Cutout"), 'page': _("Page"), 'full': _("Full")}
+mirror = {'': _("Never"), 'both': _("Always"), 'odd': _("If on odd page"), 'even': _("If on even page")}
+vpos   = {'t': _("Top"), 'b': _("Bottom")}
+hpos   = {'i': _("Inner"), 'o': _("Outer"), 'l': _("Left"), 'r': _("Right")}
+rev_frame  = {v:k for k, v in frame.items()}
 rev_mirror = {v:k for k, v in mirror.items()}
-hpos = {'i': "Inner", 'o': "Outer", 'l': "Left", 'r': "Right"}
-rev_hpos = {v:k for k, v in hpos.items()}
-
-print(f"{frame=}\n{rev_frame=}")
+rev_vpos   = {v:k for k, v in vpos.items()}
+rev_hpos   = {v:k for k, v in hpos.items()}
 
 def render_page_image(page, zoomlevel, pnum, annotatefn):
     width, height = page.get_size()
@@ -628,28 +628,6 @@ class PDFViewer:
 
         # New section for image context menu which is a lot more complicated
         elif parref is not None and isinstance(parref, FigInfo):
-            def create_spin_button_menu_item(parent_menu, label, min_val, max_val, step, initial_value, callback, callback_args=None):
-                menu_item = Gtk.MenuItem()
-                hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-                hbox.set_margin_start(0)
-                hbox.set_margin_end(0)
-                item_label = Gtk.Label(label=label)
-                item_label.set_xalign(0)
-                hbox.pack_start(item_label, expand=True, fill=True, padding=0)
-                adjustment = Gtk.Adjustment(initial_value, min_val, max_val, step, step, 0)
-                spin_button = Gtk.SpinButton(adjustment=adjustment)
-                spin_button.set_numeric(True)
-                if callback_args:
-                    spin_button.connect("value-changed", callback, *callback_args)
-                else:
-                    spin_button.connect("value-changed", callback)
-                hbox.pack_start(spin_button, expand=False, fill=False, padding=0)
-                menu_item.add(hbox)
-                hbox.show_all()
-                menu_item.show()
-                parent_menu.append(menu_item)            
-
-            # New section for image context menu
             showmenu = True
             imgref = parref.ref.strip('-preverse')
             if m := re.match(r"^(\d?[A-Z]+)(.*)$", imgref):
@@ -666,11 +644,11 @@ class PDFViewer:
                     showmenu = False
                     self.addMenuItem(menu, f"Image Anchor Not Found", None, sensitivity=False)
             if showmenu:
+                print(f"\nValues of pic when menu launched:")
                 for y in ['src', 'srcref', 'size', 'pgpos', 'mirror', 'scale']:
                     print(f"{y} = {pic.get(y, '-')}")
-                self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
+                self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref, sensitivity=False)
 
-                # Mirror Menu
                 mirror_menu = Gtk.Menu()
                 self.clear_menu(mirror_menu)
                 curr_mirror = pic.get('mirror', '')
@@ -693,9 +671,9 @@ class PDFViewer:
 
                 vpos_menu = Gtk.Menu()
                 self.clear_menu(vpos_menu)
-                curr_pos = "Top" if pic.get('pgpos', 't')[:1] == 't' else "Bottom"
-                for vpos_opt in ["Top", "Bottom"]:
-                    menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == curr_pos else f"   {vpos_opt}")
+                curr_vpos = pic.get('pgpos', 't')[:1]
+                for vpos_opt in vpos.values():
+                    menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f"   {vpos_opt}")
                     menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt))
                     menu_item.show()
                     vpos_menu.append(menu_item)
@@ -704,9 +682,9 @@ class PDFViewer:
                 hpos_menu = Gtk.Menu()
                 self.clear_menu(hpos_menu)
                 p = pic.get('pgpos', 'o')
-                curr_pos = 'o' # hpos[pic.get('pgpos', 'o')[2:3]]
+                curr_hpos = 'o' # hpos[pic.get('pgpos', 'o')[2:3]]
                 for hpos_opt in hpos.values():
-                    menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_pos] else f"   {hpos_opt}")
+                    menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f"   {hpos_opt}")
                     menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt))
                     menu_item.show()
                     hpos_menu.append(menu_item)
@@ -725,12 +703,12 @@ class PDFViewer:
 
         menu.popup(None, None, None, None, event.button, event.time)
 
-    # Example callback for when the spin button value is finalized
-    def on_spin_button_value_finalized(self, spin_button, *args):
-        print(f"Value finalized: {spin_button.get_value()}, Args: {args}")
-
     def on_edit_anchor(self, imgref):
         print(f"Editing anchor for image: {imgref}")
+
+    def on_set_image_mirror(self, widget, data):
+        pic, mirror_opt = data
+        pic['mirror'] = rev_mirror[mirror_opt]
 
     def on_set_image_frame(self, widget, data):
         pic, frame_opt = data
@@ -739,46 +717,38 @@ class PDFViewer:
 
     def on_set_image_vpos(self, widget, data):
         pic, vpos_opt = data
-        newpos = vpos_opt.lower()[:1] + pics[0]['pgpos'][1:]
+        newpos = vpos_opt.lower()[:1] + pic['pgpos'][1:]
         pic['pgpos'] = newpos
-        print(f"Setting vertical position '{vpos_opt}' for image: {imgref} - now pgpos = {newpos}")
+        print(f"Setting vertical position '{vpos_opt}' - now pgpos = {newpos}")
 
     def on_set_image_hpos(self, widget, data):
         pic, hpos_opt = data
-        newpos = 'o' # FixMe! hpos_opt.lower()[:1] + pics[0]['pgpos'][1:]
+        newpos = 'tl' # FixMe! hpos_opt.lower()[:1] + pic['pgpos'][1:]
         pic['pgpos'] = newpos
-        print(f"Setting horizontal position '{hpos_opt}' for image: {imgref} - now pgpos = {newpos}")
+        print(f"!FixMe! Setting horizontal position '{hpos_opt}' - now pgpos = {newpos}")
 
     def on_shrink_image(self, widget, data):
         pic, parref = data
         line_height = float(self.model.get("s_linespacing", 12))
-        print(f"SHRINK: {parref.size=}  {-1 * line_height}")
         self.adjust_fig_size(pic, parref.size, -1 * line_height)
         
     def on_grow_image(self, widget, data):
         pic, parref = data
         line_height = float(self.model.get("s_linespacing", 12))
-        print(f"GROW: {parref.size=}  {line_height}")
         self.adjust_fig_size(pic, parref.size, line_height)
 
     def adjust_fig_size(self, pic, psize, adj):
         '''adj is the value in pts (+ve/-ve)'''
-        print(f"{psize[0]=} {psize[1]=}  {adj=}")
         if psize[1] == 0:
-            print(f"returned prematurely :-(")
             return
-        ratio = int(pic.get('scale', 100)) / 100.
-        nr = ratio - psize[1] / adj
+        ratio = float(pic.get('scale', 1))
+        nr = ratio * (adj / psize[1] + 1)
         if nr < .05 or nr > 2. :
             return
-        pic['scale'] = str(int(nr * 100))
+        pic['scale'] = f2s(nr)
 
     def on_image_show_details(self, imgref):
         print(f"Show Details on the Pictures tab: {imgref}")
-
-    def on_set_image_mirror(self, widget, data):
-        pic, mirror_opt = data
-        pic['mirror'] = rev_mirror[mirror_opt]
 
     # Context menu item callbacks for paragraph actions
     def on_identify_paragraph(self, widget, info, parref):
@@ -886,7 +856,6 @@ class PDFViewer:
             raise ctypes.WinError(ctypes.get_last_error())
         logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
             
-
     # Zoom functionality
     def on_zoom_in(self, widget):
         if self.zoomLevel < 2.0:
@@ -996,7 +965,6 @@ class PDFViewer:
         pdf_page.render(cairo_context)
 
         cairo_context.restore()
-
 
 def readpts(s):
     s = re.sub(r"(?:\s*(?:plus|minus)\s+[-\d.]+\s*(?:pt|in|sp|em))+$", "", s)
@@ -1223,7 +1191,8 @@ class Paragraphs(list):
                 (w, h) = readpts(p[1]), readpts(p[2])
                 # if p[0] == "height":
                 #     (w, h) = (h, w)
-                currp.size = (w, h)
+                if currp is not None:
+                    currp.size = (w, h)
                 
             # "parnote":        # type, callerx, callery
             # "notebox":        # type, width, height
