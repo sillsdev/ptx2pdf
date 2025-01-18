@@ -7,6 +7,7 @@ import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.utils import _, refSort
+from ptxprint.piclist import Piclist
 from pathlib import Path
 from dataclasses import dataclass, InitVar, field
 from threading import Timer
@@ -20,6 +21,11 @@ if sys.platform == "win32":
     from ctypes import wintypes
     
 logger = logging.getLogger(__name__)
+
+frame = {'col': "Column", 'span': "Span", 'cut': "Cutout", 'sep': None, 'page': "Page", 'full': "Full"}
+rev_frame = {v:k for k, v in frame.items()}
+mirror = {'': 'Never', 'both': "Always", 'odd': "If on odd page", 'even': "If on even page"}
+rev_mirror = {v:k for k, v in mirror.items()}
 
 def render_page_image(page, zoomlevel, pnum, annotatefn):
     width, height = page.get_size()
@@ -89,6 +95,7 @@ class PDFViewer:
         self.adjlist = None
         self.timer = None
         self.showadjustments = True
+        self.piczoom = 85
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -608,7 +615,30 @@ class PDFViewer:
             self.addMenuItem(menu, None, None)
             self.addMenuItem(menu, f"{z2f} (Ctrl + F)", self.set_zoom_fit_to_screen)
             self.addMenuItem(menu, f"{z100} (Ctrl + 0)", self.on_reset_zoom)
+
+        # New section for image context menu which is a lot more complicated
         elif parref is not None and isinstance(parref, FigInfo):
+            def create_spin_button_menu_item(parent_menu, label, min_val, max_val, step, initial_value, callback, callback_args=None):
+                menu_item = Gtk.MenuItem()
+                hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+                hbox.set_margin_start(0)
+                hbox.set_margin_end(0)
+                item_label = Gtk.Label(label=label)
+                item_label.set_xalign(0)
+                hbox.pack_start(item_label, expand=True, fill=True, padding=0)
+                adjustment = Gtk.Adjustment(initial_value, min_val, max_val, step, step, 0)
+                spin_button = Gtk.SpinButton(adjustment=adjustment)
+                spin_button.set_numeric(True)
+                if callback_args:
+                    spin_button.connect("value-changed", callback, *callback_args)
+                else:
+                    spin_button.connect("value-changed", callback)
+                hbox.pack_start(spin_button, expand=False, fill=False, padding=0)
+                menu_item.add(hbox)
+                hbox.show_all()
+                menu_item.show()
+                parent_menu.append(menu_item)            
+
             # New section for image context menu
             showmenu = True
             imgref = parref.ref.strip('-preverse')
@@ -622,53 +652,93 @@ class PDFViewer:
                     pic = pics[0]
                 else:
                     showmenu = False
+                    # self.addMenuItem(menu, f"Anchored at: {imgref} (Not Found)", None, sensitivity=False)
+                    # return
             self.addMenuItem(menu, f"Anchored at: {imgref}", None)
             if showmenu:
+                for y in ['src', 'srcref', 'size', 'pgpos', 'mirror', 'scale']:
+                    print(f"{y} = {pic.get(y, '???')=}")
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
 
-                class_menu = Gtk.Menu()
-                for class_option in ["Column", "Span", "Cutout", None, "Page", "Full"]:
-                    self.addMenuItem(class_menu, class_option, self.on_set_image_class, (imgref, class_option))
-                self.addSubMenuItem(menu, _("Class of Position"), class_menu)
+                # Mirror Menu
+                mirror_menu = Gtk.Menu()
+                curr_mirror = pic.get('mirror', '')
+                radio_group = None
+                for mirror_opt in mirror.values():
+                    menu_item = Gtk.RadioMenuItem.new_with_label(radio_group, mirror_opt)
+                    radio_group = menu_item.get_group()
+                    menu_item.set_active(mirror_opt == mirror[curr_mirror])
+                    menu_item.connect("toggled", self.on_set_image_mirror, (imgref, mirror_opt))
+                    menu_item.show()
+                    mirror_menu.append(menu_item)
+                self.addSubMenuItem(menu, _("Mirror Picture"), mirror_menu)
 
-                position_menu = Gtk.Menu()
-                for position_option in ["Top", "Bottom", None, "Inner", "Outer", None, "Left", "Right"]:
-                    self.addMenuItem(position_menu, position_option, self.on_set_image_position, (imgref, position_option))
-                self.addSubMenuItem(menu, _("Position"), position_menu)
+                frame_menu = Gtk.Menu()
+                curr_frame = pic.get('size', 'col')
+                radio_group = None
+                for frame_opt in frame.values():
+                    if frame_opt is None:
+                        separator = Gtk.SeparatorMenuItem()
+                        separator.show()
+                        frame_menu.append(separator)
+                    else:
+                        menu_item = Gtk.RadioMenuItem.new_with_label(radio_group, frame_opt)
+                        radio_group = menu_item.get_group()
+                        menu_item.set_active(frame_opt == frame[curr_frame])
+                        menu_item.connect("toggled", self.on_set_image_frame, (imgref, frame_opt))
+                        menu_item.show()
+                        frame_menu.append(menu_item)
+                self.addSubMenuItem(menu, _("Frame Size"), frame_menu)
+
+                vpos_menu = Gtk.Menu()
+                curr_pos = "Top"
+                radio_group = None
+                for vpos_opt in ["Top", "Bottom"]:
+                    menu_item = Gtk.RadioMenuItem.new_with_label(radio_group, vpos_opt)
+                    radio_group = menu_item.get_group()
+                    menu_item.set_active(vpos_opt == curr_pos)
+                    menu_item.connect("toggled", self.on_set_image_vpos, (imgref, vpos_opt))
+                    menu_item.show()
+                    vpos_menu.append(menu_item)
+                self.addSubMenuItem(menu, _("Vertical Position"), vpos_menu)
+
+                hpos_menu = Gtk.Menu()
+                curr_pos = "Outer"
+                radio_group = None
+                for hpos_opt in ["Inner", "Outer", "Left", "Right"]:
+                    menu_item = Gtk.RadioMenuItem.new_with_label(radio_group, hpos_opt)
+                    radio_group = menu_item.get_group()
+                    menu_item.set_active(hpos_opt == curr_pos)
+                    menu_item.connect("toggled", self.on_set_image_hpos, (imgref, hpos_opt))
+                    menu_item.show()
+                    hpos_menu.append(menu_item)
+                self.addSubMenuItem(menu, _("Horizontal Position"), hpos_menu)
 
                 self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, _("Shrink Size by 5%"), self.on_shrink_image, imgref)
-                self.addMenuItem(menu, _("Grow Size by 5%"), self.on_grow_image, imgref)
+                # create_spin_button_menu_item(parent_menu=menu, label=_("Zoom:"), min_val=10, max_val=500, step=5, 
+                            # initial_value=self.piczoom, callback=self.on_spin_button_value_finalized, callback_args=(imgref,))                
+                self.addMenuItem(menu, _("Shrink by 1 line"), self.on_shrink_image, imgref)
+                self.addMenuItem(menu, _("Grow by 1 line"), self.on_grow_image, imgref)
+                self.addMenuItem(menu, None, None)
 
-                mirror_here_menu = Gtk.Menu()
-                for mirror_here_option in ["Never", "Always", "If on odd page", "If on even page", ]:
-                    self.addMenuItem(mirror_here_menu, mirror_here_option, self.on_set_mirror_here, (imgref, mirror_here_option))
-                self.addSubMenuItem(menu, _("Mirror Here"), mirror_here_menu)
-                    
-                mirror_all_menu = Gtk.Menu()
-                for mirror_all_option in ["Never", "Always", "If on odd page", "If on even page", ]:
-                    self.addMenuItem(mirror_all_menu, mirror_all_option, self.on_set_mirror_all, (imgref, mirror_all_option))
-                self.addSubMenuItem(menu, _("Mirror Everywhere"), mirror_all_menu)
-                    
-                self.addMenuItem(menu, _("Reset Image to Defaults"), self.on_reset_image, imgref)
+                self.addMenuItem(menu, _("Show Details..."), self.on_image_show_details, imgref)
                 self.addMenuItem(menu, f"{ecs} \\fig", self.edit_fig_style)
-                self.addMenuItem(menu, None, None)
                 if sys.platform == "win32":
                     self.addMenuItem(menu, None, None)
                     self.addMenuItem(menu, f"{j2pt}", self.on_broadcast_ref, imgref)
 
         menu.popup(None, None, None, None, event.button, event.time)
 
+    # Example callback for when the spin button value is finalized
+    def on_spin_button_value_finalized(self, spin_button, *args):
+        print(f"Value finalized: {spin_button.get_value()}, Args: {args}")
+
     def get_imageref(self, widget, event):
         return True
 
     def cleanRef(self, reference):
-        """
-        Translates a scripture reference into its canonical form with a 3-letter book code.
-        Example: "JHN1.4" --> "JHN 1:4", "MRKL12.14" --> "MRK 12:14"
-        """
-        # Regular expression to match patterns like "JHN1.4", "MRKL12.14", etc.
-        pattern = r"([A-Z]{3})(?:[A-Z]?)(\d+)\.(\d+)"
+        ''' JHN1.4 --> JHN 1:4, MRKL12.14 --> MRK 12:14 '''
+        pattern = r"([123A-Z]{3})(?:[LRA-G]?)(\d+)\.(\d+)"
         match = re.match(pattern, reference)
         if not match:
             return reference
@@ -725,26 +795,26 @@ class PDFViewer:
     def on_edit_anchor(self, imgref):
         print(f"Editing anchor for image: {imgref}")
 
-    def on_set_image_class(self, imgref, class_option):
+    def on_set_image_frame(self, imgref, class_option):
         print(f"Setting class '{class_option}' for image: {imgref}")
 
-    def on_set_image_position(self, imgref, position_option):
-        print(f"Setting position '{position_option}' for image: {imgref}")
+    def on_set_image_vpos(self, imgref, vpos):
+        print(f"Setting vertical position '{vpos}' for image: {imgref}")
+
+    def on_set_image_hpos(self, imgref, hpos):
+        print(f"Setting horizontal position '{hpos}' for image: {imgref}")
 
     def on_shrink_image(self, imgref):
-        print(f"Shrinking image: {imgref}")
-
+        pass
+        
     def on_grow_image(self, imgref):
-        print(f"Growing image: {imgref}")
+        pass
+        
+    def on_image_show_details(self, imgref):
+        print(f"Show Details on the Pictures tab: {imgref}")
 
-    def on_reset_image(self, imgref):
-        print(f"Resetting image to defaults: {imgref}")
-
-    def on_set_mirror_here(self, imgref):
-        print(f"Mirror here: {imgref}")
-
-    def on_set_mirror_all(self, imgref):
-        print(f"Mirror all: {imgref}")
+    def on_set_image_mirror(self, imgref, mirror):
+        print(f"Mirror picture: {imgref}")
 
     # Context menu item callbacks for paragraph actions
     def on_identify_paragraph(self, widget, info, parref):
@@ -775,11 +845,6 @@ class PDFViewer:
                 self.adjlist.expand(info[2], -self.shrinkStep, mrk=parref.mrk)
         self.show_pdf()
 
-    # def on_normal_text(self, widget, info, parref):
-        # if self.adjlist is not None:
-            # self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
-        # self.show_pdf()
-
     def on_expand_text(self, widget, info, parref):
         if self.adjlist is not None:
             if info[1] + self.expandStep > self.expandLimit:
@@ -801,7 +866,8 @@ class PDFViewer:
         self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.model.wiggleCurrentTabLabel()
 
-    def grow_fig(pic, psize, adj):
+    def grow_fig(self, pic, psize, adj):
+        '''adj is the value in pts (+ve/-ve)'''
         if psize[1] == 0:
             return
         ratio = int(pic.get('scale', 100)) / 100.
