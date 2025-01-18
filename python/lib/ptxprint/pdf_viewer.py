@@ -610,9 +610,20 @@ class PDFViewer:
             self.addMenuItem(menu, f"{z100} (Ctrl + 0)", self.on_reset_zoom)
         elif parref is not None and isinstance(parref, FigInfo):
             # New section for image context menu
+            showmenu = True
             imgref = parref.ref.strip('-preverse')
+            if m := re.match(r"^(\d?[A-Z]+)(.*)$", imgref):
+                imgref = m.group(1) + " " + m.group(2)
+            if not self.model.picinfos:
+                showmenu = False
+            else:
+                pics = self.model.picinfos.find(anchor=imgref)
+                if len(pics):
+                    pic = pics[0]
+                else:
+                    showmenu = False
             self.addMenuItem(menu, f"Anchored at: {imgref}", None)
-            if True:
+            if showmenu:
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref)
 
                 class_menu = Gtk.Menu()

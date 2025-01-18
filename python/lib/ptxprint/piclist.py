@@ -833,3 +833,14 @@ class Piclist:
         else:
             res = None
         return res
+
+    def find(self, **kw):
+        ''' find all the pics (so returns a list) whose attributes match those given '''
+        res = []
+        for p in self.pics.values():
+            for k, v in kw.items():
+                if p.get(k, None) != v:
+                    break
+            else:
+                res.append(p)
+        return res
