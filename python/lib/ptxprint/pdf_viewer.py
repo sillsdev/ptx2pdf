@@ -648,7 +648,7 @@ class PDFViewer:
                 print(f"\nValues of pic when menu launched:")
                 for y in ['src', 'anchor', 'srcref', 'size', 'pgpos', 'mirror', 'scale']:
                     print(f"{y} = {pic.get(y, '-')}")
-                self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref, sensitivity=False)
+                self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, pic)
 
                 mirror_menu = Gtk.Menu()
                 self.clear_menu(mirror_menu)
@@ -704,8 +704,19 @@ class PDFViewer:
 
         menu.popup(None, None, None, None, event.button, event.time)
 
-    def on_edit_anchor(self, imgref):
-        print(f"Editing anchor for image: {imgref}")
+    def on_edit_anchor(self, widget, pic):
+        a = pic['anchor']
+        piciter = self.model.picListView.find_row(a)
+        self.model.set("t_newAnchor", a, mod=False)
+        dialog = self.model.builder.get_object("dlg_newAnchor")
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            v = self.model.get("t_newAnchor")
+            print(f"{v=}")
+            pic['anchor'] = v
+            if piciter is not None:
+                self.model.picListView.set_val(piciter, anchor=v)
+        dialog.hide()
 
     def on_set_image_mirror(self, widget, data):
         pic, mirror_opt = data

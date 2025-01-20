@@ -6419,6 +6419,28 @@ Thank you,
                     secondary=_("Unable to save the PDF in the new location:") + "\n" + new_file_path)
                 self.doStatus(_("Error saving PDF: ") + new_file_path)
         dialog.destroy()
+      
+    def onAnchorKeyRelease(self, btn, *a):
+        self.builder.get_object("btn_anc_ok").set_sensitive(False) 
+        msg = ""
+        anc = self.get("t_newAnchor")
+        print(f"{anc=}")
+        pattern = r"(^[123A-Z]{3})([LRA-G]?)*\s((\d+)[.:](\d+)(-\d+)*|k\.\S+)$"  # includes possibility if GLO k.keywordinglossary
+        match = re.match(pattern, anc)
+        if not match:
+            msg = "Invalid Anchor; use format: JHN 3.16"
+        else:
+            anc = re.sub(':', '.', anc)
+            self.set("t_newAnchor", anc, mod=False)
+            # if anc already exists: # look up in piclist
+                # msg = "There is already another picture at that anchor.\nChoose a different verse as anchor."
+            self.builder.get_object("btn_anc_ok").set_sensitive(True)
+            self.anchorKeypressed = True
+
+        self.builder.get_object("l_newAnchorMsg").set_text(msg) 
+
+    def onAnchorFocusOut(self, btn, *a):
+        self.anchorKeypressed = False      
 
     def onShareItClicked(self, btn):
         pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
