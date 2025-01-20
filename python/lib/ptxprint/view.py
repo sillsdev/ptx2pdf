@@ -114,8 +114,10 @@ class ViewModel:
         for v in ("""ptsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
                      customFigFolder customOutputFolder impSourcePDF impTargetFolder coverImage
-                     prjid diglotView usfms picinfos bookrefs""").split():
+                     prjid usfms picinfos bookrefs""").split():
             setattr(self, v, None)
+        self.diglotViews = {}
+        self.digbasepics = {}
         self.isDiglot = False
         self.isDisplay = False
         self.isChanged = False
@@ -134,8 +136,6 @@ class ViewModel:
         self.artpgs = None
         self.spine = 0
         self.periphs = {}
-        self.digSuffix = None
-        self.digbasepics = None
         self.hyphenation = None
 
         # private to this implementation
@@ -713,9 +713,9 @@ class ViewModel:
             cfg = ":" + cfg if (not self.get("c_diglot") and self.get("c_doublecolumn", False)) else cfg
             prjcfg = "{}{}".format(prjid, cfg) 
             # print(f"view.py - in getDialogTitle; {prjid=}, {cfg=}")
-            if self.get("c_diglot") and self.diglotView is not None:
-                cfg2 = ":" + self.diglotView.cfgid
-                prjcfg2 = "{}{}".format(self.diglotView.project.prjid, cfg2) 
+            if self.get("c_diglot") and len(self.diglotViews):
+                cfg2 = ":" + self.diglotViews['R'].cfgid
+                prjcfg2 = "{}{}".format(self.diglotViews['R'].project.prjid, cfg2) 
                 prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
             return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
@@ -786,11 +786,10 @@ class ViewModel:
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
-            self.diglotView = self.createDiglotView("R")
+            self.diglotViews['R'] = self.createDiglotView("R")
         else:
             self.setPrintBtnStatus(2)
-            self.diglotView = None
-            self.digSuffix = None
+            self.diglotViews.pop('R', None)
         self.loadingConfig = False
         if self.get("bl_fontR", skipmissing=True) is None:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
@@ -1308,24 +1307,25 @@ class ViewModel:
         cols = 2 if self.get("c_doublecolumn") else 1
         mrgCptn = self.get("c_diglot2captions", False)
         sync = self.get("c_protectPicList", False)
-        if self.diglotView is None:
+        if not len(self.diglotViews):
             self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
         else:
-            self.digbasepics.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
-            self.diglotView.picinfos.read_books(procbks, self.diglotView.getAllBooks(), cols=cols, random=rnd, sync=sync)
-            self.picinfos.merge(self.digbasepics, self.digSuffix, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
-            self.picinfos.merge(self.diglotView.picinfos, self.diglotView.digSuffix, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+            for k, v in self.diglotViews.items():
+                self.digbasepics[k].read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
+                v.picinfos.read_books(procbks, v.getAllBooks(), cols=cols, random=rnd, sync=sync)
+                self.picinfos.merge(self.digbasepics[k], k, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+                self.picinfos.merge(v.picinfos, k, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
         if not force and self.configLocked():
             return False
         changed = False
-        pinfo = self.digbasepics if self.diglotView else self.picinfos
+        pinfo = self.digbasepics.get('R', self.picinfos) if len(self.diglotViews) else self.picinfos
         if pinfo is not None and pinfo.loaded:
             changed = changed or pinfo.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}.piclist".format(self.project.prjid, self.cfgid)))
-        if self.diglotView:
+        if len(self.diglotViews):
             changed = changed or self.picinfos.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}-diglot.piclist".format(self.project.prjid, self.cfgid)))
         changed = changed or self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
@@ -1334,21 +1334,24 @@ class ViewModel:
         if self.loadingConfig:
             return
         if self.picinfos is None:
-            self.picinfos = Piclist(self, diglot=self.diglotView is not None)
+            self.picinfos = Piclist(self, diglot=len(self.diglotViews) != 0)
         elif force:
 #            self.savePics(fromdata=fromdata)
             self.picinfos.clear(self)
         if not self.get("c_includeillustrations"):
             return
-        if self.diglotView is not None:
-            self.digbasepics = Piclist(self)
-            self.digbasepics.load_files(self)
-            if self.diglotView.picinfos is None:
-                self.diglotView.picinfos = Piclist(self.diglotView)
-                self.diglotView.picinfos.load_files(self.diglotView)
-        res = self.picinfos.load_files(self, base=self.digbasepics, suffix=self.digSuffix)
-        if not res and self.diglotView and len(self.picinfos.get_pics()):
-            self.picinfos.merge(self.diglotView.picinfos, self.diglotView.digSuffix)
+        res = None
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                self.digbasepics[k] = Piclist(self)
+                self.digbasepics[k].load_files(self)
+                if v.picinfos is None:
+                    v.picinfos = Piclist(v)
+                    v.picinfos.load_files(v)
+            res = self.picinfos.load_files(self, base=self.digpasepics[k], suffix=k)
+        if not res and len(self.diglotViews) and len(self.picinfos.get_pics()):
+            for k, v in self.diglotViews.items():
+                self.picinfos.merge(v.picinfos, k)
         if res:
             pass
 #            self.savePics(fromdata=fromdata)
@@ -1790,11 +1793,12 @@ class ViewModel:
                             break
         self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
         working_dir = self.project.printPath(self.cfgid)
-        if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.diglotView.project, parentcfg=self.cfgid)
-            ipf = os.path.join(working_dir, "diglot.sty")
-            if os.path.exists(ipf):
-                self._writearchive(zf, ipf, os.path.join(self.project.prjid, "diglot.sty"))
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                v._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
+                ipf = os.path.join(working_dir, f"diglot{k}.sty")
+                if os.path.exists(ipf):
+                    self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
         for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):

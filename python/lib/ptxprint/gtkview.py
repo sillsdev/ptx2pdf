@@ -2157,18 +2157,19 @@ class GtkViewModel(ViewModel):
 
     def onUpdatePicCaptionsClicked(self, btn):
         self.picListView.pause()
-        if self.diglotView is not None:
+        if len(self.diglotViews):
             pref = "L"
             self.picinfos = Piclist(self, diglot=True)
-            digpics = Piclist(self.diglotView)
-            digpics.threadUsfms(self.diglotView, nosave=True)
         else:
             pref = ""
         newpics = Piclist(self)
         newpics.threadUsfms(self, nosave=True)
         self.picinfos.merge(newpics, pref, mergeCaptions=True, bkanchors=True)
-        if self.diglotView is not None:
-            self.picinfos.merge(digpics, "R", mergeCaptions=True, bkanchors=True)
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                digpics = Piclist(v)
+                digpics.threadUsfms(v, nosave=True)     # is this safe?
+                self.picinfos.merge(digpics, k, mergeCaptions=True, bkanchors=True)
         self.updatePicList()
         self.picListView.unpause()
         self.doStatus(_("Done! Picture Captions have been updated."))
@@ -2184,7 +2185,7 @@ class GtkViewModel(ViewModel):
         self.set("l_generate_booklist", " ".join(bks))
         # If there is no PicList file for this config, then don't even ask - just generate it
         plpath = os.path.join(self.project.srcPath(self.cfgid),"{}-{}{}.piclist".format(
-                        self.project.prjid, self.cfgid, "-diglot" if self.diglotView is not None else ""))
+                        self.project.prjid, self.cfgid, "-diglot" if len(self.diglotViews) else ""))
         if not os.path.exists(plpath):
             response = Gtk.ResponseType.OK
             self.set("r_generate", "all")
@@ -2252,7 +2253,8 @@ class GtkViewModel(ViewModel):
         prjdir = self.project.path
         usfms = self.get_usfms()
         if diglot:
-            dusfms = self.diglotView.get_usfms()
+            for v in self.diglotViews.values():
+                dusfms = v.get_usfms()
         skipbooks = []
         for bk in booklist:
             fname = self.getAdjListFilename(bk, ext=".adj")
@@ -2687,9 +2689,10 @@ class GtkViewModel(ViewModel):
         if fontr is None:
             return
         fallbacks = ['Source Code Pro']
-        if self.diglotView is not None:
-            digfontr = self.diglotView.get("bl_fontR")
-            fallbacks.append(digfontr.name)
+        if len(self.diglotViews) is not None:
+            for v in self.diglotViews.values():
+                digfontr = v.get("bl_fontR")
+                fallbacks.append(digfontr.name)
         pangostr = fontr.asPango(fallbacks, fsize)
         p = Pango.FontDescription(pangostr)
         logger.debug(f"{pangostr=}, {p}")
@@ -4358,13 +4361,13 @@ class GtkViewModel(ViewModel):
         if self.loadingConfig:
             return
         if self.get("c_diglot"):
-            self.diglotView = self.createDiglotView()
+            self.diglotViews['R'] = self.createDiglotView()
             self.set("c_doublecolumn", True)
             self.builder.get_object("c_doublecolumn").set_sensitive(False)
         else:
             self.builder.get_object("c_doublecolumn").set_sensitive(True)
             self.setPrintBtnStatus(2)
-            self.diglotView = None
+            self.diglotViews = {}
         self.updateDialogTitle()
         self.loadPics(mustLoad=False, force=True)
         if self.get("c_includeillustrations"):
@@ -4433,10 +4436,10 @@ class GtkViewModel(ViewModel):
         if self.loadingConfig:
             return
         if self.get("c_diglot"):
-            self.diglotView = self.createDiglotView()
+            self.diglotViews['R'] = self.createDiglotView()
         else:
             self.setPrintBtnStatus(2)
-            self.diglotView = None
+            self.diglotViews = {}
         self.loadPics(force=True)
         self.updateDialogTitle()
         
@@ -5418,7 +5421,7 @@ class GtkViewModel(ViewModel):
                     # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 1)
 
             if self.get('c_coverOverwritePeriphs'):
-                self.createCoverPeriphs(noDiglot = r'\zglot|\*' if self.diglotView is not None else "")
+                self.createCoverPeriphs(noDiglot = r'\zglot|\*' if len(self.diglotViews) else "")
             self.set("c_frontmatter", True)
 
             dialog.hide()
