@@ -239,10 +239,10 @@ class PicList:
                         del p['destfile']
                     continue
 
-    def row_select(self, selection): # Populate the form from the model
+    def row_select(self, selection, update=True): # Populate the form from the model
         if self.loading or selection.count_selected_rows() == 0:
             return
-        if self.currows:
+        if update and self.currows:
             if not self.currows[-1][_pickeys['anchor']]:
                 self.parent.doError(_("Empty Anchor"), _("You must set an anchor"))
                 return
@@ -317,12 +317,36 @@ class PicList:
         self.loading = False
 
     def select_row(self, i):
-        if i >= len(self.model):
-            i = len(self.model) - 1
-        if i >= 0:
+        if isinstance(i, Gtk.TreeIter):
+            treeiter = i
+        else:
+            if i >= len(self.model):
+                i = len(self.model) - 1
+            if i < 0:
+                return
             treeiter = self.model.get_iter_from_string(str(i))
-            self.selection.unselect_all()
-            self.selection.select_iter(treeiter)
+        self.selection.unselect_all()
+        self.selection.select_iter(treeiter)
+
+    def find_row(self, anchor):
+        ''' returns an iterator for a give anchor or None '''
+        it = self.model.get_iter_first()
+        i = 0
+        while it is not None:
+            r = self.model[it]
+            if r[_pickeys['anchor']] == anchor:
+                return i
+            it = self.model.iter_next(it)
+            i += 1
+        return None
+
+    def set_val(self, it, **kw):
+        r = self.model[it]
+        for k, v in kw.items():
+            if k in _pickeys:
+                r[_pickeys[k]] = v
+        if self.selection is not None and self.selection.iter_is_selected(it):
+            self.row_select(self.selection, update=False)
 
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]
