@@ -331,19 +331,20 @@ class PicList:
     def find_row(self, anchor):
         ''' returns an iterator for a give anchor or None '''
         it = self.model.get_iter_first()
-        i = 0
         while it is not None:
             r = self.model[it]
             if r[_pickeys['anchor']] == anchor:
-                return i
+                return it
             it = self.model.iter_next(it)
-            i += 1
         return None
 
     def set_val(self, it, **kw):
         r = self.model[it]
         for k, v in kw.items():
             if k in _pickeys:
+                # if k == 'scale':
+                    # r[_pickeys[k]] = int(float(v) * 100)
+                # else:
                 r[_pickeys[k]] = v
         if self.selection is not None and self.selection.iter_is_selected(it):
             self.row_select(self.selection, update=False)

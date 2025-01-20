@@ -8,6 +8,7 @@ from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.utils import _, refSort, f2s
 from ptxprint.piclist import Piclist
+from ptxprint.gtkpiclist import PicList
 from pathlib import Path
 from dataclasses import dataclass, InitVar, field
 from threading import Timer
@@ -645,7 +646,7 @@ class PDFViewer:
                     self.addMenuItem(menu, f"Image Anchor Not Found", None, sensitivity=False)
             if showmenu:
                 print(f"\nValues of pic when menu launched:")
-                for y in ['src', 'srcref', 'size', 'pgpos', 'mirror', 'scale']:
+                for y in ['src', 'anchor', 'srcref', 'size', 'pgpos', 'mirror', 'scale']:
                     print(f"{y} = {pic.get(y, '-')}")
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, imgref, sensitivity=False)
 
@@ -708,18 +709,28 @@ class PDFViewer:
 
     def on_set_image_mirror(self, widget, data):
         pic, mirror_opt = data
-        pic['mirror'] = rev_mirror[mirror_opt]
-
+        v = rev_mirror[mirror_opt]
+        pic['mirror'] = v
+        piciter = self.model.picListView.find_row(pic['anchor'])
+        if piciter is not None:
+            self.model.picListView.set_val(piciter, mirror=v)
+            
     def on_set_image_frame(self, widget, data):
         pic, frame_opt = data
-        pic['size'] = rev_frame[frame_opt]
-        print(f"Setting picture frame size: '{frame_opt}' --> {rev_frame[frame_opt]}")
+        v = rev_frame[frame_opt]
+        pic['size'] = v
+        piciter = self.model.picListView.find_row(pic['anchor'])
+        if piciter is not None:
+            self.model.picListView.set_val(piciter, size=v)
 
     def on_set_image_vpos(self, widget, data):
         pic, vpos_opt = data
-        newpos = vpos_opt.lower()[:1] + pic['pgpos'][1:]
-        pic['pgpos'] = newpos
-        print(f"Setting vertical position '{vpos_opt}' - now pgpos = {newpos}")
+        v = vpos_opt.lower()[:1] + pic['pgpos'][1:]
+        pic['pgpos'] = v
+        print(f"Setting vertical position '{vpos_opt}' - now pgpos = {v}")
+        piciter = self.model.picListView.find_row(pic['anchor'])
+        if piciter is not None:
+            self.model.picListView.set_val(piciter, pgpos=v)
 
     def on_set_image_hpos(self, widget, data):
         pic, hpos_opt = data
@@ -745,7 +756,12 @@ class PDFViewer:
         nr = ratio * (adj / psize[1] + 1)
         if nr < .05 or nr > 2. :
             return
-        pic['scale'] = f2s(nr)
+        v = f2s(nr)
+        pic['scale'] = v
+        vint = int(float(v) * 100)
+        piciter = self.model.picListView.find_row(pic['anchor'])
+        if piciter is not None:
+            self.model.picListView.set_val(piciter, scale=vint)
 
     def on_image_show_details(self, imgref):
         print(f"Show Details on the Pictures tab: {imgref}")
