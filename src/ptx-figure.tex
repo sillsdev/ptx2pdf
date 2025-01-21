@@ -978,16 +978,16 @@
     \x@\ch@ckpath\x@{\f@lename}
     \iftemp\else\edef\f@lename{\the\PicPath\f@lename}\fi
     \setbox\newpicb@x=\hbox{%
-      \xdef\p@cinfo{\string\@parpicsize\string{\picdim@n\string}\string{\the\p@cwidth\string}\string{\the\dimexpr\p@cheight\string}}%
       \ins@rtpic{"\f@lename"}%
        {\picdim@n}{\the\p@cwidth}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
+      \xdef\p@cinfo{\string\@parpicsize\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{normal}}%
     \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\r@qdim, switching to \picaltdim@n=\p@cheight}%\sizem@ltiple\space\the\p@cwidth}%
-      \xdef\p@cinfo{\string\@parpicsize\string{\picaltdim@n\string}\string{\p@cheight\string}\string{\sizem@ltiple\string}}
       \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\f@lename"}%
          {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
+      \xdef\p@cinfo{\string\@parpicsize\string{\picaltdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{heightlimit}}%
     \fi
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
