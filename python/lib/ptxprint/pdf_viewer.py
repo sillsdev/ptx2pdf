@@ -725,8 +725,8 @@ class PDFViewer:
                 if sys.platform == "win32":
                     self.addMenuItem(menu, None, None)
                     self.addMenuItem(menu, f"{j2pt}", self.on_broadcast_ref, imgref)
-
-        menu.popup(None, None, None, None, event.button, event.time)
+        if len(menu):
+            menu.popup(None, None, None, None, event.button, event.time)
 
     def on_edit_anchor(self, widget, pic):
         a = pic['anchor']
@@ -811,18 +811,23 @@ class PDFViewer:
 
     def adjust_fig_size(self, pic, psize, adj):
         '''adj is the value in pts (+ve/-ve)'''
+        print(f"\n{psize=}   {psize[0]=}  {psize[1]=} ")
         if psize[1] == 0:
             return
+        
         ratio = float(pic.get('scale', 1))
         nr = ratio * (adj / psize[1] + 1)
         if nr < .05 or nr > 2. :
             return
         v = f2s(nr)
+        print(f"{ratio=} {adj=} {psize[1]=} {nr=} {v=}\n")
         pic['scale'] = v
         vint = int(float(v) * 100)
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
             self.model.picListView.set_val(piciter, scale=vint)
+            if self.model.get("c_updatePDF"):
+                self.model.onOK(None)
 
     def on_image_show_details(self, widget, pic):
         piciter = self.model.picListView.find_row(pic['anchor'])

@@ -3361,7 +3361,7 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
     <property name="default-width">1053</property>
     <property name="default-height">715</property>
     <property name="destroy-with-parent">True</property>
-    <property name="icon-name">text-x-generic</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">normal</property>
     <property name="deletable">False</property>
     <property name="gravity">east</property>

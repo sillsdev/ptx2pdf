@@ -1,12 +1,23 @@
 PTXprint 2.7.12 Release Notes
-18 Dec 2024
+21 Jan 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-NOTE: As the features in 2.7.x are new, if you are in the middle of typesetting, 
-       we suggest that you continue using the same version of PTXprint, rather than
-       updating to this latest version.
+Bug fixes and Improvements in 2.7.13 (21 Jan 2025)
+  * Happy New Year - it is 2025 - update About... info
+  * Vastly improved right-click context menu in PDF viewer for text AND pictures
+  * Add ability to change anchor ref via context menu
+  * Add right-click option to Send Ref to Paratext, to make it scroll to current para.
+  * Improve page and zoom controls in the PDF viewer
+  * Don't enable both contextual spaces and letter spacing
+  * Add support for \ib and Allow it to be styleable i.e have different dimension to b
+  * Add more @parpicsize output locations
+  * Add \slash
+  * Fix col initial images not selectable when in continuation paragraph
+  * Fix tex macros picsize typos
+  * Fix piclists and make it more responsive
+  * Don't check graph paper line thicknesses, as its unlikely to be professionally printed.
 
 Bug fixes and Improvements in 2.7.12 (18 Dec 2024)
   * Fit PDF to window size after showing PDF
@@ -18,7 +29,7 @@ Bug fixes and Improvements in 2.7.12 (18 Dec 2024)
   * Set min Font size to 0.1 and default to 1.0 in UI
   * Fix various little crashes
   * Fix \resetautonum
-  * 
+
 Bug fixes and Improvements in 2.7.11 (17 Dec 2024)
   * Fix bugs in Style Editor related to font settings and display
   * Enable cover and diff PDFs to show up in the Preview Pane
