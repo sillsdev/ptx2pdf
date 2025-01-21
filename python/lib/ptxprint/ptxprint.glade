@@ -949,176 +949,6 @@ Jonathan Kew (author of XeTeX + sfm2pdf)</property>
       </object>
     </child>
   </object>
-  <object class="GtkDialog" id="dlg_newAnchor">
-    <property name="width-request">200</property>
-    <property name="height-request">90</property>
-    <property name="can-focus">False</property>
-    <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: Enter new anchor verse ref</property>
-    <property name="resizable">False</property>
-    <property name="modal">True</property>
-    <property name="window-position">center-on-parent</property>
-    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
-    <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
-    <property name="gravity">center</property>
-    <property name="transient-for">ptxprint</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="margin-left">6</property>
-            <property name="margin-right">6</property>
-            <property name="margin-start">6</property>
-            <property name="margin-end">6</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
-            <property name="layout-style">end</property>
-            <child>
-              <object class="GtkButton" id="btn_anc_ok">
-                <property name="label">OK</property>
-                <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="can-focus">True</property>
-                <property name="can-default">True</property>
-                <property name="receives-default">True</property>
-                <property name="always-show-image">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn_anc_cancel">
-                <property name="label">Cancel</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="always-show-image">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="halign">end</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="margin-left">6</property>
-                <property name="margin-right">6</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="margin-top">10</property>
-                <property name="margin-bottom">10</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
-
-Note that only Roman/Latin names
-are supported using: a-z A-Z, 0-9,
-parentheses, underscores and hyphens.
-Spaces are not permitted.</property>
-                    <property name="label" translatable="yes">Anchor Ref:</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="t_newAnchor">
-                    <property name="name">Enter a name for the configuration to be saved</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="can-default">True</property>
-                    <property name="has-default">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
-
-Note that only Roman/Latin names
-are supported using: a-z A-Z, 0-9,
-parentheses, underscores and hyphens.
-Spaces are not permitted.</property>
-                    <property name="width-chars">15</property>
-                    <property name="input-purpose">terminal</property>
-                    <signal name="focus-out-event" handler="onAnchorFocusOut" swapped="no"/>
-                    <signal name="key-release-event" handler="onAnchorKeyRelease" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="l_newAnchorMsg">
-                <property name="height-request">34</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="valign">start</property>
-                <property name="margin-right">10</property>
-                <property name="margin-end">10</property>
-                <property name="label" translatable="yes">Enter the new anchor verse 
-reference (e.g. JHN 3.16)</property>
-                <property name="yalign">0</property>
-                <attributes>
-                  <attribute name="foreground" value="#bfbf1c1c2828"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="-5">btn_anc_ok</action-widget>
-      <action-widget response="-6">btn_anc_cancel</action-widget>
-    </action-widgets>
-  </object>
   <object class="GtkEntryCompletion" id="entrycompletion1"/>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
@@ -4209,6 +4039,179 @@ Shortcut: Ctrl + B</property>
     </child>
     <action-widgets>
       <action-widget response="-7">btn_closePreview</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkDialog" id="dlg_newAnchor">
+    <property name="width-request">240</property>
+    <property name="height-request">90</property>
+    <property name="can-focus">False</property>
+    <property name="valign">start</property>
+    <property name="title" translatable="yes">PTXprint: Enter new anchor verse ref</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type-hint">dialog</property>
+    <property name="skip-taskbar-hint">True</property>
+    <property name="gravity">center</property>
+    <property name="transient-for">dlg_preview</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_anc_ok">
+                <property name="label">OK</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_anc_cancel">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="width-request">220</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="halign">end</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="margin-left">6</property>
+                <property name="margin-right">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="label" translatable="yes">Anchor Ref:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_newAnchor">
+                    <property name="name">Enter a name for the configuration to be saved</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="can-default">True</property>
+                    <property name="has-default">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="width-chars">15</property>
+                    <property name="input-purpose">terminal</property>
+                    <signal name="focus-out-event" handler="onAnchorFocusOut" swapped="no"/>
+                    <signal name="key-release-event" handler="onAnchorKeyRelease" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_newAnchorMsg">
+                <property name="width-request">220</property>
+                <property name="height-request">34</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">start</property>
+                <property name="margin-right">10</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">12</property>
+                <property name="label" translatable="yes">Enter the new anchor verse 
+reference (e.g. JHN 3.16)</property>
+                <property name="yalign">0</property>
+                <attributes>
+                  <attribute name="foreground" value="#bfbf1c1c2828"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_anc_ok</action-widget>
+      <action-widget response="-6">btn_anc_cancel</action-widget>
     </action-widgets>
   </object>
   <object class="GtkTreeStore" id="ts_styles">

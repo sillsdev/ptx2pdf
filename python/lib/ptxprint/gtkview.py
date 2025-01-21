@@ -6422,21 +6422,22 @@ Thank you,
       
     def onAnchorKeyRelease(self, btn, *a):
         self.builder.get_object("btn_anc_ok").set_sensitive(False) 
+        curpos = self.builder.get_object("t_newAnchor").get_position() 
         msg = ""
-        anc = self.get("t_newAnchor")
-        print(f"{anc=}")
-        pattern = r"(^[123A-Z]{3})([LRA-G]?)*\s((\d+)[.:](\d+)(-\d+)*|k\.\S+)$"  # includes possibility if GLO k.keywordinglossary
+        anc = re.sub(':', '.', self.get("t_newAnchor"))
+        pattern = r"(^[123A-Z]{3})([LRA-G]?)*\s((\d+)\.(\d+)(-\d+)*|k\.\S+)$"  # includes possibility if GLO k.keywordinglossary
         match = re.match(pattern, anc)
         if not match:
-            msg = "Invalid Anchor; use format: JHN 3.16"
+            msg = _("Invalid Anchor; use format: JHN 3.16")
         else:
-            anc = re.sub(':', '.', anc)
             self.set("t_newAnchor", anc, mod=False)
-            # if anc already exists: # look up in piclist
-                # msg = "There is already another picture at that anchor.\nChoose a different verse as anchor."
-            self.builder.get_object("btn_anc_ok").set_sensitive(True)
+            self.builder.get_object("t_newAnchor").set_position(curpos) 
+            piciter = self.picListView.find_row(anc)
+            if piciter is not None:
+                msg = _("There is a picture at that verse.{}Choose a different verse as anchor.").format("\n")
+            else:
+                self.builder.get_object("btn_anc_ok").set_sensitive(True)
             self.anchorKeypressed = True
-
         self.builder.get_object("l_newAnchorMsg").set_text(msg) 
 
     def onAnchorFocusOut(self, btn, *a):

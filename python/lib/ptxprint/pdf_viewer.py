@@ -23,14 +23,19 @@ if sys.platform == "win32":
     
 logger = logging.getLogger(__name__)
 
-frame  = {'col': _("Column"), 'span': _("Span"), 'cut': _("Cutout"), 'page': _("Page"), 'full': _("Full")}
+frame  = {'col': _("Column"), 'span': _("Span"), 'page': _("Page"), 'full': _("Full")}  # 'cut': _("Cutout"), 
 mirror = {'': _("Never"), 'both': _("Always"), 'odd': _("If on odd page"), 'even': _("If on even page")}
-vpos   = {'t': _("Top"), 'b': _("Bottom")}
-hpos   = {'i': _("Inner"), 'o': _("Outer"), 'l': _("Left"), 'r': _("Right")}
+vpos   = {'t': _("Top"), '-': _("Center"), 'b': _("Bottom"), 'h': _("Before Verse"), 'p': _("After Paragraph"), 'c': _("Cutout"), 'B': _("Below Notes")}
+hpos   = {'l': _("Left"), 'c': _("Center"), 'r': _("Right"), 'i': _("Inner"), 'o': _("Outer"), '-': _("Unspecified")}
 rev_frame  = {v:k for k, v in frame.items()}
 rev_mirror = {v:k for k, v in mirror.items()}
 rev_vpos   = {v:k for k, v in vpos.items()}
 rev_hpos   = {v:k for k, v in hpos.items()}
+
+dsplyOpts = {'col':  ('tbhpc', 'lrio-'), 
+             'span': ('tbB',''),
+             'page': ('t-b','lcrio-'),
+             'full': ('t-b','lcrio-')    }
 
 def render_page_image(page, zoomlevel, pnum, annotatefn):
     width, height = page.get_size()
@@ -644,11 +649,57 @@ class PDFViewer:
                 else:
                     showmenu = False
                     self.addMenuItem(menu, f"Image Anchor Not Found", None, sensitivity=False)
+            print(f"\nValues of pic when menu launched:")
+            for y in ['src', 'anchor', 'size', 'pgpos', 'mirror', 'scale']:
+                print(f"{y.ljust(7)} = {pic.get(y, '-')}")
+            pgpos = pic.get('pgpos', 'tl')
+            curr_frame = pic.get('size', 'col')
+            if curr_frame in ('page', 'full'): # P,Pl,Pr,Pt,Pb,Pct,Pco,
+                pgpos = pgpos.strip("PF")[::-1]
+                
+            if len(pgpos) == 1:
+                curr_vpos = pgpos[:1]
+                curr_hpos = '-'
+            elif len(pgpos) > 1:
+                curr_vpos = pgpos[:1]
+                curr_hpos = next((char for char in reversed(pgpos) if char.isalpha()), None) # pgpos[2:3]
+            else:
+                curr_vpos = 'c'
+                curr_hpos = 'c'
+            print(f"Calculated V={curr_vpos} H={curr_hpos}")
             if showmenu:
-                print(f"\nValues of pic when menu launched:")
-                for y in ['src', 'anchor', 'srcref', 'size', 'pgpos', 'mirror', 'scale']:
-                    print(f"{y} = {pic.get(y, '-')}")
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, pic)
+
+                frame_menu = Gtk.Menu()
+                self.clear_menu(frame_menu)
+                for frame_opt in frame.values():
+                    menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f"   {frame_opt}")
+                    menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
+                    menu_item.show()
+                    frame_menu.append(menu_item)
+                self.addSubMenuItem(menu, _("Frame Size"), frame_menu)
+
+                vpos_menu = Gtk.Menu()
+                self.clear_menu(vpos_menu)
+                for k, vpos_opt in vpos.items():
+                    if k in dsplyOpts[pic['size']][0]:
+                        menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f"   {vpos_opt}")
+                        menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
+                        menu_item.show()
+                        vpos_menu.append(menu_item)
+                self.addSubMenuItem(menu, _("Vertical Position"), vpos_menu)
+
+                if curr_frame != 'span':
+                    hpos_menu = Gtk.Menu()
+                    self.clear_menu(hpos_menu)
+                    p = pic.get('pgpos', 'o')
+                    for k, hpos_opt in hpos.items():
+                        if k in dsplyOpts[pic['size']][1]:
+                            menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f"   {hpos_opt}")
+                            menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
+                            menu_item.show()
+                            hpos_menu.append(menu_item)
+                    self.addSubMenuItem(menu, _("Horizontal Position"), hpos_menu)
 
                 mirror_menu = Gtk.Menu()
                 self.clear_menu(mirror_menu)
@@ -659,37 +710,6 @@ class PDFViewer:
                     menu_item.show()
                     mirror_menu.append(menu_item)
                 self.addSubMenuItem(menu, _("Mirror Picture"), mirror_menu)
-
-                frame_menu = Gtk.Menu()
-                self.clear_menu(frame_menu)
-                curr_frame = pic.get('size', 'col')
-                for frame_opt in frame.values():
-                    menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f"   {frame_opt}")
-                    menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
-                    menu_item.show()
-                    frame_menu.append(menu_item)
-                self.addSubMenuItem(menu, _("Frame Size"), frame_menu)
-
-                vpos_menu = Gtk.Menu()
-                self.clear_menu(vpos_menu)
-                curr_vpos = pic.get('pgpos', 't')[:1]
-                for vpos_opt in vpos.values():
-                    menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f"   {vpos_opt}")
-                    menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt))
-                    menu_item.show()
-                    vpos_menu.append(menu_item)
-                self.addSubMenuItem(menu, _("Vertical Position"), vpos_menu)
-
-                hpos_menu = Gtk.Menu()
-                self.clear_menu(hpos_menu)
-                p = pic.get('pgpos', 'o')
-                curr_hpos = 'o' # hpos[pic.get('pgpos', 'o')[2:3]]
-                for hpos_opt in hpos.values():
-                    menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f"   {hpos_opt}")
-                    menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt))
-                    menu_item.show()
-                    hpos_menu.append(menu_item)
-                self.addSubMenuItem(menu, _("Horizontal Position"), hpos_menu)
 
                 self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, _("Shrink by 1 line"), self.on_shrink_image, (pic, parref))
@@ -712,43 +732,60 @@ class PDFViewer:
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             v = self.model.get("t_newAnchor")
-            print(f"{v=}")
-            pic['anchor'] = v
             if piciter is not None:
+                pic['anchor'] = v
                 self.model.picListView.set_val(piciter, anchor=v)
         dialog.hide()
 
-    def on_set_image_mirror(self, widget, data):
-        pic, mirror_opt = data
-        v = rev_mirror[mirror_opt]
-        pic['mirror'] = v
-        piciter = self.model.picListView.find_row(pic['anchor'])
-        if piciter is not None:
-            self.model.picListView.set_val(piciter, mirror=v)
-            
     def on_set_image_frame(self, widget, data):
         pic, frame_opt = data
-        v = rev_frame[frame_opt]
-        pic['size'] = v
+        f = rev_frame[frame_opt]
+        orig_pgpos = pic['pgpos']
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
-            self.model.picListView.set_val(piciter, size=v)
+            pic['size'] = f
+            self.model.picListView.set_val(piciter, size=f)
+            if f in ('page', 'full'):
+                pic['pgpos'] = f[:1].upper()
+                self.model.picListView.set_val(piciter, pgpos=f[:1].upper())
+            elif orig_pgpos.startswith(('P', 'F')):
+                pic['pgpos'] = 'tl'
+                self.model.picListView.set_val(piciter, pgpos='tl')
 
     def on_set_image_vpos(self, widget, data):
-        pic, vpos_opt = data
-        v = vpos_opt.lower()[:1] + pic['pgpos'][1:]
+        pic, vpos_opt, orig_v, orig_h = data
+        orig_pgpos = pic['pgpos']
+        if orig_pgpos[:1] in ('P', 'F'):
+            v = orig_pgpos[:1] + orig_h + rev_vpos[vpos_opt]
+            v = re.sub('[-c]', '', v)
+        else:
+            v = re.sub(orig_v, rev_vpos[vpos_opt], orig_pgpos)
         pic['pgpos'] = v
-        print(f"Setting vertical position '{vpos_opt}' - now pgpos = {v}")
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
             self.model.picListView.set_val(piciter, pgpos=v)
 
     def on_set_image_hpos(self, widget, data):
-        pic, hpos_opt = data
-        newpos = 'tl' # FixMe! hpos_opt.lower()[:1] + pic['pgpos'][1:]
-        pic['pgpos'] = newpos
-        print(f"!FixMe! Setting horizontal position '{hpos_opt}' - now pgpos = {newpos}")
+        pic, hpos_opt, orig_v, orig_h = data
+        orig_pgpos = pic['pgpos']
+        if orig_pgpos[:1] in ('P', 'F'):
+            h = orig_pgpos[:1] + rev_hpos[hpos_opt] + orig_v
+            h = re.sub('[-c]', '', h)
+        else:
+            h = re.sub(orig_h, rev_hpos[hpos_opt], orig_pgpos)
+        pic['pgpos'] = h
+        piciter = self.model.picListView.find_row(pic['anchor'])
+        if piciter is not None:
+            self.model.picListView.set_val(piciter, pgpos=h)
 
+    def on_set_image_mirror(self, widget, data):
+        pic, mirror_opt = data
+        m = rev_mirror[mirror_opt]
+        pic['mirror'] = m
+        piciter = self.model.picListView.find_row(pic['anchor'])
+        if piciter is not None:
+            self.model.picListView.set_val(piciter, mirror=m)
+            
     def on_shrink_image(self, widget, data):
         pic, parref = data
         line_height = float(self.model.get("s_linespacing", 12))
@@ -774,8 +811,13 @@ class PDFViewer:
         if piciter is not None:
             self.model.picListView.set_val(piciter, scale=vint)
 
-    def on_image_show_details(self, imgref):
-        print(f"Show Details on the Pictures tab: {imgref}")
+    def on_image_show_details(self, widget, pic):
+        piciter = self.model.picListView.find_row(pic['anchor'])
+        if piciter is not None:
+            mpgnum = self.model.notebooks['Main'].index("tb_Pictures")
+            self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.model.builder.get_object("nbk_PicList").set_current_page(1)
+            self.model.wiggleCurrentTabLabel()
 
     # Context menu item callbacks for paragraph actions
     def on_identify_paragraph(self, widget, info, parref):
