@@ -19,6 +19,7 @@ from ptxprint.texpert import TeXpert
 from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
+from ptxprint.polyglot import PolyglotConfig
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -116,8 +117,10 @@ class ViewModel:
                      customFigFolder customOutputFolder impSourcePDF impTargetFolder coverImage
                      prjid usfms picinfos bookrefs""").split():
             setattr(self, v, None)
+        self.polyglots = {}
         self.diglotViews = {}
         self.digbasepics = {}
+        self.digSuffix = ""
         self.isDiglot = False
         self.isDisplay = False
         self.isChanged = False
@@ -786,10 +789,16 @@ class ViewModel:
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
-            self.diglotViews['R'] = self.createDiglotView("R")
+            for s in config.sections():
+                if s.startswith("diglot_"):
+                    k = s[7:]
+                    pg = PolyglotConfig()
+                    pg.readConfig(config, s)
+                    self.polyglots[k] = pg
+                    self.diglotViews[k] = self.createDiglotView(k)
         else:
             self.setPrintBtnStatus(2)
-            self.diglotViews.pop('R', None)
+            self.diglotViews = {}
         self.loadingConfig = False
         if self.get("bl_fontR", skipmissing=True) is None:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
@@ -816,6 +825,9 @@ class ViewModel:
             cfgname = self.cfgid or ""
         path = os.path.join(self.project.createConfigDir(cfgname), "ptxprint.cfg")
         config = self.createConfig()
+        if self.get('c_diglot') and not self.isDiglot:
+            for k, p in self.polyglots:
+                p.writeConfig(config, f"diglot_{k}")
         self.globaliseConfig(config)
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
@@ -1095,6 +1107,14 @@ class ViewModel:
             rag = config.get("paper", "bottomrag", fallback="3")
             self._configset(config, "texpert/bottomrag", rag)
             self._configset(config, "paper/allowunbalanced", True if rag != "0" else False)
+
+        if v < 2.21: # support polyglot
+            if config.getboolean("snippets", "diglot"):
+                for k, v in {"projectid": "secprj", "projectguid": "secprjguid",
+                             "config": "secconf", "fraction": "secfraction"}.items():
+                    v = config.get("document", f"diglot{v}", fallback=None)
+                    if v is not None:
+                        self._configset(config, f"diglot_R/{k}", v)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
@@ -1746,9 +1766,12 @@ class ViewModel:
 
     def createDiglotView(self, suffix="R"):
         self.setPrintBtnStatus(2)
-        prj = self._getProject("fcb_diglotSecProject")
-        cfgid = self.get("ecb_diglotSecConfig")
+        if suffix not in self.polyglots:
+            return None
+        prj = self.prjTree.getProject(self.polyglots[suffix].prjguid)
+        cfgid = self.polyglots[suffix].cfgid
         if prj is None or cfgid is None:
+            self.setPrintBtnStatus(2, _("No Config found for Diglot"))
             digview = None
         else:
             digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
@@ -1756,10 +1779,6 @@ class ViewModel:
             digview.setPrjid(prj.prjid, prj.guid)
             if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
-        if digview is None:
-            self.setPrintBtnStatus(2, _("No Config found for Diglot"))
-        else:
-            digview.isDiglot = True
             digview.digSuffix = suffix
             self.digSuffix = "L"
         return digview
