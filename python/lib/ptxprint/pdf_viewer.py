@@ -143,8 +143,6 @@ class PDFViewer:
                                      Gdk.EventMask.POINTER_MOTION_MASK)
                 
                 event_box.connect("scroll-event", self.on_scroll_event)
-                # event_box.connect("button-press-event", self.on_button_press)
-                # event_box.connect("motion-notify-event", self.on_mouse_motion)
                 event_box.connect("button-release-event", self.on_button_release)
                 if self.rtl_mode:
                     self.hbox.pack_end(event_box, False, False, 1)
@@ -644,14 +642,12 @@ class PDFViewer:
                 pics = self.model.picinfos.find(anchor=imgref)
                 if len(pics):
                     pic = pics[0]
-                    print(f"{pic=}")
-                    self.addMenuItem(menu, f"Anchored at: {imgref}", None, sensitivity=False)
+                    self.addMenuItem(menu, _("Anchored at: {}").format(imgref), None, sensitivity=False)
                 else:
                     showmenu = False
-                    self.addMenuItem(menu, f"Image Anchor Not Found", None, sensitivity=False)
-            print(f"\nValues of pic when menu launched:")
-            for y in ['src', 'anchor', 'size', 'pgpos', 'mirror', 'scale']:
-                print(f"{y.ljust(7)} = {pic.get(y, '-')}")
+                    self.addMenuItem(menu, _("Image Anchor Not Found"), None, sensitivity=False)
+            # for y in ['src', 'anchor', 'size', 'pgpos', 'mirror', 'scale']:
+                # print(f"{y.ljust(7)} = {pic.get(y, '-')}")
             pgpos = pic.get('pgpos', 'tl')
             curr_frame = pic.get('size', 'col')
             if curr_frame in ('page', 'full'): # P,Pl,Pr,Pt,Pb,Pct,Pco,
@@ -666,7 +662,7 @@ class PDFViewer:
             else:
                 curr_vpos = 'c'
                 curr_hpos = 'c'
-            print(f"Calculated V={curr_vpos} H={curr_hpos}")
+            # print(f"Calculated V={curr_vpos} H={curr_hpos}")
             if showmenu:
                 self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, pic)
 
@@ -758,7 +754,6 @@ class PDFViewer:
             if f in ('page', 'full'):
                 pic['pgpos'] = f[:1].upper()
                 self.model.picListView.set_val(piciter, pgpos=f[:1].upper())
-            # elif orig_pgpos.startswith(('P', 'F')):
             elif f == 'span':
                 pic['pgpos'] = 't'
                 self.model.picListView.set_val(piciter, pgpos='t')
@@ -787,13 +782,10 @@ class PDFViewer:
             h = orig_pgpos[:1] + rev_hpos[hpos_opt] + orig_v
             h = h.strip('c')
         elif len(orig_pgpos) == 1:
-            print(f"short {orig_pgpos=}")
             h = orig_pgpos + rev_hpos[hpos_opt]
         else:
-            print(f"h.re.sub: {orig_pgpos=} {orig_h=} {rev_hpos[hpos_opt]=}")
             h = re.sub(orig_h, rev_hpos[hpos_opt], orig_pgpos)
         h = re.sub('-', '', h)
-        print(f"Finally new pgpos = {h}")
         pic['pgpos'] = h
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
@@ -843,7 +835,7 @@ class PDFViewer:
             treeview = self.model.builder.get_object("tv_picListEdit")
             model = treeview.get_model()
             path = model.get_path(piciter)
-            treeview.scroll_to_cell(path, None, True, 0.5, 0.0)
+            treeview.scroll_to_cell(path, None, True, 0.5, 0.0)  # Ask MH: How to do this for the StyleEditor jumps?
             self.model.picListView.select_row(piciter)
 
     def on_shrink_paragraph(self, widget, info, parref):
@@ -904,7 +896,6 @@ class PDFViewer:
         return f"{book} {chapter}:{verse}"
     
     def on_broadcast_ref(self, widget, ref):
-        print(f"{ref=}")
         if sys.platform != "win32":
             return
 
