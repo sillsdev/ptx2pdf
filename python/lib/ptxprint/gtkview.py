@@ -2839,6 +2839,7 @@ class GtkViewModel(ViewModel):
             self.styleEditor.selectMarker(mkr)
             mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("ptxprint").present()
             self.wiggleCurrentTabLabel()
 
     # def hoverOverStyleLink(self, *argv):  # signal: query_tooltip
@@ -6438,7 +6439,7 @@ Thank you,
             else:
                 self.builder.get_object("btn_anc_ok").set_sensitive(True)
             self.anchorKeypressed = True
-        self.builder.get_object("l_newAnchorMsg").set_text(msg) 
+        self.builder.get_object("l_newAnchorMsg").set_text(msg)
 
     def onAnchorFocusOut(self, btn, *a):
         self.anchorKeypressed = False      

@@ -4071,6 +4071,25 @@ Shortcut: Ctrl + B</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
             <child>
+              <object class="GtkCheckButton" id="c_updatePDF">
+                <property name="label" translatable="yes">Update PDF</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">When checked, this option
+will immediately re-create
+the PDF after changing the
+anchor ref of the picture.</property>
+                <property name="active">True</property>
+                <property name="draw-indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="btn_anc_ok">
                 <property name="label">OK</property>
                 <property name="visible">True</property>
@@ -4083,7 +4102,7 @@ Shortcut: Ctrl + B</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -4097,7 +4116,7 @@ Shortcut: Ctrl + B</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>

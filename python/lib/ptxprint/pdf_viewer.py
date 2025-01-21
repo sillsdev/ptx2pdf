@@ -602,12 +602,12 @@ class PDFViewer:
         logger.debug(f"{parref=} {info=} ({event.x},{event.y})")
         if len(info) and re.search(r'[.:]', parref.ref) and \
            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
-            o = 4 if ref[3:4] in ("L", "R", "A", "B", "C", "D", "E", "F") else 3
+            o = 4 if ref[3:4] in "LRABCDEF" else 3
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
             hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}  {l}  {info[1]}%"
-            self.addMenuItem(menu, hdr, self.on_identify_paragraph, info, sensitivity=False)
+            self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
 
             x = ys if ("-" in str(info[0]) and str(info[0]) != "-1") else ts
@@ -674,6 +674,8 @@ class PDFViewer:
                 self.clear_menu(frame_menu)
                 for frame_opt in frame.values():
                     menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f"   {frame_opt}")
+                    if frame_opt == frame[curr_frame]:
+                        menu_item.set_sensitive(False)
                     menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
                     menu_item.show()
                     frame_menu.append(menu_item)
@@ -684,6 +686,8 @@ class PDFViewer:
                 for k, vpos_opt in vpos.items():
                     if k in dsplyOpts[pic['size']][0]:
                         menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f"   {vpos_opt}")
+                        if vpos_opt == vpos[curr_vpos]:
+                            menu_item.set_sensitive(False)
                         menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
                         menu_item.show()
                         vpos_menu.append(menu_item)
@@ -696,6 +700,8 @@ class PDFViewer:
                     for k, hpos_opt in hpos.items():
                         if k in dsplyOpts[pic['size']][1]:
                             menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f"   {hpos_opt}")
+                            if hpos_opt == hpos[curr_hpos]:
+                                menu_item.set_sensitive(False)
                             menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
                             menu_item.show()
                             hpos_menu.append(menu_item)
@@ -706,6 +712,8 @@ class PDFViewer:
                 curr_mirror = pic.get('mirror', '')
                 for mirror_opt in mirror.values():
                     menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f"   {mirror_opt}")
+                    if mirror_opt == mirror[curr_mirror]:
+                        menu_item.set_sensitive(False)                    
                     menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
                     menu_item.show()
                     mirror_menu.append(menu_item)
@@ -735,6 +743,8 @@ class PDFViewer:
             if piciter is not None:
                 pic['anchor'] = v
                 self.model.picListView.set_val(piciter, anchor=v)
+                if self.model.get("c_updatePDF"):
+                    self.model.onOK(None)
         dialog.hide()
 
     def on_set_image_frame(self, widget, data):
@@ -748,7 +758,11 @@ class PDFViewer:
             if f in ('page', 'full'):
                 pic['pgpos'] = f[:1].upper()
                 self.model.picListView.set_val(piciter, pgpos=f[:1].upper())
-            elif orig_pgpos.startswith(('P', 'F')):
+            # elif orig_pgpos.startswith(('P', 'F')):
+            elif f == 'span':
+                pic['pgpos'] = 't'
+                self.model.picListView.set_val(piciter, pgpos='t')
+            else: # 'col'
                 pic['pgpos'] = 'tl'
                 self.model.picListView.set_val(piciter, pgpos='tl')
 
@@ -757,9 +771,10 @@ class PDFViewer:
         orig_pgpos = pic['pgpos']
         if orig_pgpos[:1] in ('P', 'F'):
             v = orig_pgpos[:1] + orig_h + rev_vpos[vpos_opt]
-            v = re.sub('[-c]', '', v)
+            v = v.strip('c')
         else:
             v = re.sub(orig_v, rev_vpos[vpos_opt], orig_pgpos)
+        v = re.sub('-', '', v)
         pic['pgpos'] = v
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
@@ -770,9 +785,15 @@ class PDFViewer:
         orig_pgpos = pic['pgpos']
         if orig_pgpos[:1] in ('P', 'F'):
             h = orig_pgpos[:1] + rev_hpos[hpos_opt] + orig_v
-            h = re.sub('[-c]', '', h)
+            h = h.strip('c')
+        elif len(orig_pgpos) == 1:
+            print(f"short {orig_pgpos=}")
+            h = orig_pgpos + rev_hpos[hpos_opt]
         else:
+            print(f"h.re.sub: {orig_pgpos=} {orig_h=} {rev_hpos[hpos_opt]=}")
             h = re.sub(orig_h, rev_hpos[hpos_opt], orig_pgpos)
+        h = re.sub('-', '', h)
+        print(f"Finally new pgpos = {h}")
         pic['pgpos'] = h
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
@@ -817,11 +838,13 @@ class PDFViewer:
             mpgnum = self.model.notebooks['Main'].index("tb_Pictures")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.model.builder.get_object("nbk_PicList").set_current_page(1)
+            self.model.builder.get_object("ptxprint").present()
             self.model.wiggleCurrentTabLabel()
-
-    # Context menu item callbacks for paragraph actions
-    def on_identify_paragraph(self, widget, info, parref):
-        print("Identify paragraph option selected")
+            treeview = self.model.builder.get_object("tv_picListEdit")
+            model = treeview.get_model()
+            path = model.get_path(piciter)
+            treeview.scroll_to_cell(path, None, True, 0.5, 0.0)
+            self.model.picListView.select_row(piciter)
 
     def on_shrink_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
@@ -861,17 +884,19 @@ class PDFViewer:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.model.builder.get_object("ptxprint").present()
             self.model.wiggleCurrentTabLabel()
         
     def edit_fig_style(self, widget):
         self.model.styleEditor.selectMarker('fig')
         mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
         self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.model.builder.get_object("ptxprint").present()
         self.model.wiggleCurrentTabLabel()
 
     def cleanRef(self, reference):
         ''' JHN1.4 --> JHN 1:4, MRKL12.14 --> MRK 12:14 '''
-        pattern = r"([123A-Z]{3})(?:[LRA-G]?)(\d+)\.(\d+)"
+        pattern = r"([123A-Z]{3})\s?(?:[LRA-G]?)(\d+)\.(\d+)"
         match = re.match(pattern, reference)
         if not match:
             return reference
@@ -879,6 +904,7 @@ class PDFViewer:
         return f"{book} {chapter}:{verse}"
     
     def on_broadcast_ref(self, widget, ref):
+        print(f"{ref=}")
         if sys.platform != "win32":
             return
 
@@ -1255,7 +1281,7 @@ class Paragraphs(list):
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
                 if currps.get(polycol, None) is not None:
-                    r = currps[poylcol].rects[-1]
+                    r = currps[polycol].rects[-1]
                     r.ystart = currr.yend
                 currp = None
                 currr = None

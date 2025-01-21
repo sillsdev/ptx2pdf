@@ -33,6 +33,7 @@ _map = {
     "config/name":              ("_cfgid", "meta", None),
     "config/filterpics":        ("c_filterPicList", "meta", None),
     "config/autosave":          ("c_autoSave", "uiprefs", None),
+    "config/updatePDF":         ("c_updatePDF", "uiprefs", None),
     "config/displayfontsize":   ("s_viewEditFontSize", "uiprefs", None),
     "config/pdfzoomlevel":      ("s_pdfZoomLevel", "uiprefs", None),
     "config/lockxetexlayout":   ("c_lockXeTeXLayout", "meta", None),
