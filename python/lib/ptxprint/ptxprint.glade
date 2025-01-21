@@ -1024,25 +1024,25 @@ PDF file(s) created for this project.</property>
   <object class="GtkImage" id="icon_page_first">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-first</property>
+    <property name="icon-name">go-first-symbolic</property>
     <property name="icon_size">2</property>
   </object>
   <object class="GtkImage" id="icon_page_last">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-last</property>
+    <property name="icon-name">go-last-symbolic</property>
     <property name="icon_size">2</property>
   </object>
   <object class="GtkImage" id="icon_page_next">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-next</property>
+    <property name="icon-name">go-next-symbolic</property>
     <property name="icon_size">2</property>
   </object>
   <object class="GtkImage" id="icon_page_previous">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-previous</property>
+    <property name="icon-name">go-previous-symbolic</property>
     <property name="icon_size">2</property>
   </object>
   <object class="GtkImage" id="icon_prvOpenFolder">
@@ -1059,7 +1059,7 @@ PDF file(s) created for this project.</property>
     <property name="tooltip-text" translatable="yes">Print the PDF on paper using
 a physical printer connected
 to this device.</property>
-    <property name="icon-name">document-print</property>
+    <property name="icon-name">document-print-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_prvSaveAs">
@@ -1067,7 +1067,7 @@ to this device.</property>
     <property name="can-focus">False</property>
     <property name="tooltip-text" translatable="yes">Save a COPY of this PDF with a
 new name and/or different folder.</property>
-    <property name="icon-name">document-save-as</property>
+    <property name="icon-name">document-save-as-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_prvShare">
@@ -1087,7 +1087,7 @@ via email, or social media.</property>
   <object class="GtkImage" id="icon_seekPage2fill">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">media-seek-forward</property>
+    <property name="icon-name">media-seek-forward-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_targetProj">
@@ -1111,13 +1111,13 @@ settings for a similar project.</property>
   <object class="GtkImage" id="icon_zoom_100">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">zoom-original</property>
+    <property name="icon-name">zoom-original-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_zoom_fit">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-fullscreen</property>
+    <property name="icon-name">view-fullscreen-symbolic</property>
     <property name="icon_size">2</property>
   </object>
   <object class="GtkImage" id="img_filter">
