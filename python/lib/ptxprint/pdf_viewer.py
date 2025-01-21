@@ -1212,6 +1212,9 @@ class Paragraphs(list):
                     return
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
+                if currps.get(polycol, None) is not None:
+                    r = currps[poylcol].rects[-1]
+                    r.ystart = currr.yend
                 currp = None
                 currr = None
             elif c == "parpicsize":
@@ -1224,6 +1227,8 @@ class Paragraphs(list):
             # "parnote":        # type, callerx, callery
             # "notebox":        # type, width, height
             # "parlines":       # numlines in previous paragraph (occurs after @parlen)
+            # "nontextstart":   # x, y
+            # "nontextstop":    # x, y
         self.sort(key=lambda x:x.sortKey())
         logger.log(7, "parlocs=" + "\n".join([str(p) for p in self]))
         
