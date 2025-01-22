@@ -1287,15 +1287,15 @@ class Paragraphs(list):
                 currp = None
                 currr = None
             elif c == "parpicsize":
-                (w, h) = readpts(p[0]), readpts(p[1])
+                (w, h) = readpts(p[2]), readpts(p[3])
                 # if p[0] == "height":
                 #     (w, h) = (h, w)
                 if currp is not None:
                     currp.size = (w, h)
-                if p[2] == "width":
-                    currp.wide = True
-                if p[3] == "heightlimit":
-                    currp.limit = True
+                    if p[0] == "width":
+                        currp.wide = True
+                    if p[1] == "heightlimit":
+                        currp.limit = True
                 
             # "parnote":        # type, callerx, callery
             # "notebox":        # type, width, height
