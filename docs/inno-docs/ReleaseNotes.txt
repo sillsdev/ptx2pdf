@@ -1,23 +1,27 @@
 PTXprint 2.7.12 Release Notes
-21 Jan 2025
+22 Jan 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.7.13 (21 Jan 2025)
-  * Happy New Year - it is 2025 - update About... info
+Bug fixes and Improvements in 2.7.13 (22 Jan 2025)
+  * Happy New Year! update About... info to 2025
   * Vastly improved right-click context menu in PDF viewer for text AND pictures
   * Add ability to change anchor ref via context menu
-  * Add right-click option to Send Ref to Paratext, to make it scroll to current para.
+  * Add right-click option to Send Ref to Paratext, to make it scroll to current para
+  * Add auto-update PDF option to preview pane (prints right after context menu change) 
   * Improve page and zoom controls in the PDF viewer
   * Don't enable both contextual spaces and letter spacing
   * Add support for \ib and Allow it to be styleable i.e have different dimension to b
   * Add more @parpicsize output locations
   * Add \slash
+  * Simplify color bars (LHS=shrink, RHS=expand, blue=lines, red=text)
+  * Fix adjustment color bars being offset by a front PDF attachment
   * Fix col initial images not selectable when in continuation paragraph
   * Fix tex macros picsize typos
   * Fix piclists and make it more responsive
-  * Don't check graph paper line thicknesses, as its unlikely to be professionally printed.
+  * Don't check graph paper line thicknesses, as its unlikely to be professionally printed
+  * Move parlocs open to onetimesetup
 
 Bug fixes and Improvements in 2.7.12 (18 Dec 2024)
   * Fit PDF to window size after showing PDF

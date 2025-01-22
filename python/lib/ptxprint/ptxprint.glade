@@ -3896,14 +3896,26 @@ which take longer to update.</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">Show color-coded lines to the left 
+                    <property name="tooltip-text" translatable="yes">Show color-coded lines on the left 
 and right edges of paragraphs to
-indicate the amount of stretch and
-compress, expand and shrink.
+indicate the kind of shrink or
+stretch that has been applied as well
+as the amount (thickness of line).
 
 These ajustment annotations are not
 part of the PDF, but are only overlaid
-on the text to help refine the layout.</property>
+on the text to help refine the layout.
+
+Key:
+
+LHS=shrink       RHS=expand
+
+blue=shrink/expand lines
+red=shrink/expand text
+
+Interleaved red+blue indicates
+that both lines and words have
+been stretched/expanded.</property>
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onPdfAdjOverlayChanged" swapped="no"/>
