@@ -221,6 +221,7 @@
   \fi
   \n@xt}
 
+\def\@pdffile#1#2{}
 \def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet
   \ifx\XeTeXpdfpagecount\undefined
     \MSG{*** sorry, \string\includepdf\space requires XeTeX 0.997 or later}%
@@ -237,6 +238,8 @@
   \pdfp@ges=\XeTeXpdfpagecount "#2"\relax
   \whichp@ge=0
   \msg{includepdf #2 pages=\the\pdfp@ges}
+  \edef\tmp{\string\@pdffile\string{\the\pdfp@ges\string}\string{#2\string}}%
+  \x@\immediate\x@\write\x@\p@rlocs\x@{\tmp}%
   \loop \ifnum\whichp@ge<\pdfp@ges
     \advance\whichp@ge by 1
     \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{"#2"}{page \whichp@ge #1}}%

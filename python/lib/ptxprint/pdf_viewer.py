@@ -1303,7 +1303,7 @@ class Paragraphs(list):
             # "nontextstart":   # x, y
             # "nontextstop":    # x, y
         self.sort(key=lambda x:x.sortKey())
-        logger.log(7, "parlocs=" + "\n".join([str(p) for p in self]))
+        logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         
     def findPos(self, pnum, x, y, rtl=False):
         # just iterate over paragraphs on this page
@@ -1311,7 +1311,7 @@ class Paragraphs(list):
             return None
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
-        logger.debug(f"Parloc testing: {self.pindex[pnum-1]-1} -> {e}")
+        logger.debug(f"Parloc testing: {pnum=}  {self.pindex[pnum-1]-1} -> {e}")
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
             for i,r in enumerate(p.rects):
                 if r.pagenum != pnum:
