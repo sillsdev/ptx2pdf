@@ -273,11 +273,29 @@ class PDFViewer:
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, page, context, zoomlevel):
+        def make_dashed(context, col, r, width, length):
+            red, green, blue = hsv_to_rgb(*col)
+            context.set_source_rgba(red, green, blue, 0.4)
+            s = self.psize[1] - r.ystart
+            e = self.psize[1] - r.yend
+            if length < 0:
+                s -= length
+                length = -length
+            y = s
+            x = r.xstart if width >= 0 else r.xend + width
+            while y < e:
+                l = length if y + length < e else e - y
+                context.rectangle(x, y, abs(width), l)
+                context.fill()
+                logger.log(7, f"dash({x}, {y}, {abs(width)}, {l}) @ ({red}, {green}, {blue})")
+                y += 2 * length
+            
         def make_rect(context, col, r, width):
             red, green, blue = hsv_to_rgb(*col)
             context.set_source_rgba(red, green, blue, 0.4)
             context.rectangle((r.xstart if width >= 0 else r.xend + width),
                               (self.psize[1] - r.ystart), abs(width), (r.ystart - r.yend))
+            logger.log(7, f"rect({r.xstart if width >= 0 else r.xend + width}, {self.psize[1] -r.ystart}, {abs(width)}, {r.ystart - r.yend}) @ ({red}, {green}, {blue})")
             context.fill()
         bk = None
         for p, r in self.parlocs.getParas(page):
@@ -294,15 +312,33 @@ class PDFViewer:
                 continue
             col = None
             s = info[0]
-            sv = int(re.sub(r"^[+-]*", "", s))
+            sv = int(re.sub(r"^[+-]*", "", s))  # num lines
             sv = -sv if "-" in s else sv
-            if sv != 0:
-                # hsv(hue, saturation full colour at 1, black/white at 0, white at 1 and black at 0)
-                col = (202 / 255., 1., 1.) if sv < 0 else (0., 1., 1.)
-                make_rect(context, col, r, abs(sv) * 3)
-            if info[1] != 100:
-                col = (41 / 255., 1., 1.) if info[1] < 100 else (173 / 255., 1., 1.)
-                make_rect(context, col, r, abs(100 - info[1]) * -1)
+            # right is grow, left is shrink
+            # lines = blue, orange = text
+            blue = (173 / 255., 1., 1.)
+            orange = (0., 1., 1.)
+            lwidth = sv * -3
+            twidth = 100 - info[1]
+            lh = 2 * p.baseline / 3.
+            if sv < 0:      # compress (lhs)
+                if info[1] < 100:       # both compress
+                    make_dashed(context, blue, r, lwidth, lh)  # dashed for lines
+                    make_dashed(context, orange, r, twidth, -lh)  # dashed for text
+                else:
+                    make_rect(context, blue, r, lwidth)
+                    if info[1] > 100:
+                        make_rect(context, orange, r, twidth)
+            elif sv > 0:    # expand (rhs)
+                if info[1] > 100:       # both expand
+                    make_dashed(context, blue, r, lwidth, lh)
+                    make_dashed(context, orange, r, twidth, -lh)
+                else:
+                    make_rect(context, blue, r, lwidth)
+                    if info[1] < 100:
+                        make_rect(context, orange, r, twidth)
+            elif info[1] != 100:
+                make_rect(context, orange, r, twidth)
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         if fname is None:
