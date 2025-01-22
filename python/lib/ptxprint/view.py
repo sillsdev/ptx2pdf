@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.7.12"
 GitVersionStr = "2.7.12"
-ConfigVersion = "2.20"
+ConfigVersion = "2.21"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -893,6 +893,8 @@ class ViewModel:
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False)
+        for k, v in self.polyglots.items():
+            v.writeConfig(config, f"diglot_{k}")
         TeXpert.saveConfig(config, self)
         return config
 
