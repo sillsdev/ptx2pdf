@@ -3863,13 +3863,25 @@ to this device.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkCheckButton" id="c_updatePDF">
+                    <property name="label" translatable="yes">Auto-update PDF</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">end</property>
-                    <property name="margin-top">18</property>
-                    <property name="label" translatable="yes">Show:</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">When checked, this option
+will immediately re-create
+the PDF after making changes
+using the (right-click) context
+menu options.
+
+It is recommended to set this on
+for shorter publications, but
+probably wise to uncheck the
+option for larger publications
+which take longer to update.</property>
+                    <property name="margin-top">20</property>
+                    <property name="active">True</property>
+                    <property name="draw-indicator">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -3879,7 +3891,7 @@ to this device.</property>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="c_pdfadjoverlay">
-                    <property name="label" translatable="yes">Adjustments</property>
+                    <property name="label" translatable="yes">Show Adjustments</property>
                     <property name="name">Show Adjustments </property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
@@ -4042,7 +4054,7 @@ Shortcut: Ctrl + B</property>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_newAnchor">
-    <property name="width-request">240</property>
+    <property name="width-request">220</property>
     <property name="height-request">90</property>
     <property name="can-focus">False</property>
     <property name="valign">start</property>
@@ -4070,25 +4082,6 @@ Shortcut: Ctrl + B</property>
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
-            <child>
-              <object class="GtkCheckButton" id="c_updatePDF">
-                <property name="label" translatable="yes">Update PDF</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">When checked, this option
-will immediately re-create
-the PDF after changing the
-anchor ref of the picture.</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkButton" id="btn_anc_ok">
                 <property name="label">OK</property>
@@ -4128,7 +4121,7 @@ anchor ref of the picture.</property>
         </child>
         <child>
           <object class="GtkBox">
-            <property name="width-request">220</property>
+            <property name="width-request">210</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="halign">end</property>
@@ -4197,13 +4190,12 @@ Spaces are not permitted.</property>
             </child>
             <child>
               <object class="GtkLabel" id="l_newAnchorMsg">
-                <property name="width-request">220</property>
-                <property name="height-request">34</property>
+                <property name="width-request">210</property>
+                <property name="height-request">35</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">end</property>
                 <property name="valign">start</property>
-                <property name="margin-right">10</property>
                 <property name="margin-start">12</property>
                 <property name="margin-end">12</property>
                 <property name="label" translatable="yes">Enter the new anchor verse 

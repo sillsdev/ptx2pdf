@@ -184,7 +184,7 @@ class PDFViewer:
             self.model.doStatus(_("Error opening PDF: ").format(e))
             self.document = None
             return False
-        tocts = self.load_toc(self.document)
+        tocts = self.load_toc(self.document, self.toctv)
         self.toctv.set_model(tocts)
         
         self.adjlist = adjlist
@@ -209,7 +209,7 @@ class PDFViewer:
             self._add_toctree(tocts, toci, parent)
             havei = toci.next()
 
-    def load_toc(self, document):
+    def load_toc(self, document, treeview):
         ''' Table of Contents: [name:str, pagenum:int] '''
         res = Gtk.TreeStore(str, int)
         indexi = None
@@ -223,8 +223,32 @@ class PDFViewer:
             while havei:
                 self._add_toctree(res, indexi, None)
                 havei = indexi.next()
+
+        # Expand nodes conditionally based on top-level count
+        num_top_level_nodes = self._count_top_level_nodes(res)
+        if num_top_level_nodes < 8:
+            self._expand_all_nodes(treeview, res)
+
         return res
 
+    def _count_top_level_nodes(self, treestore):
+        """Counts only the top-level nodes in the TreeStore."""
+        count = 0
+        iter = treestore.get_iter_first()  # Start with the first top-level node
+        while iter is not None:
+            count += 1
+            iter = treestore.iter_next(iter)  # Move to the next top-level node
+        return count
+
+    def _expand_all_nodes(self, treeview, treestore):
+        def expand_later():
+            def expand_recursive(model, path, iter, data):
+                treeview.expand_row(path, False)
+            treestore.foreach(expand_recursive, None)
+            return False
+
+        GLib.idle_add(expand_later)
+    
     def pickToc(self, tv, path, col):
         pnum = tv.get_model()[path][1]
         self.show_pdf(pnum)
@@ -299,6 +323,8 @@ class PDFViewer:
             context.fill()
         bk = None
         for p, r in self.parlocs.getParas(page):
+            if not isinstance(p, ParInfo):
+                continue
             nbk = getattr(p, "ref", bk or "")[:3].upper()
             if not len(nbk):
                 continue
@@ -796,6 +822,8 @@ class PDFViewer:
             else: # 'col'
                 pic['pgpos'] = 'tl'
                 self.model.picListView.set_val(piciter, pgpos='tl')
+            if self.model.get("c_updatePDF"):
+                self.model.onOK(None)
 
     def on_set_image_vpos(self, widget, data):
         pic, vpos_opt, orig_v, orig_h = data
@@ -806,10 +834,12 @@ class PDFViewer:
         else:
             v = re.sub(orig_v, rev_vpos[vpos_opt], orig_pgpos)
         v = re.sub('-', '', v)
-        pic['pgpos'] = v
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
+            pic['pgpos'] = v
             self.model.picListView.set_val(piciter, pgpos=v)
+            if self.model.get("c_updatePDF"):
+                self.model.onOK(None)
 
     def on_set_image_hpos(self, widget, data):
         pic, hpos_opt, orig_v, orig_h = data
@@ -822,18 +852,22 @@ class PDFViewer:
         else:
             h = re.sub(orig_h, rev_hpos[hpos_opt], orig_pgpos)
         h = re.sub('-', '', h)
-        pic['pgpos'] = h
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
+            pic['pgpos'] = h
             self.model.picListView.set_val(piciter, pgpos=h)
+            if self.model.get("c_updatePDF"):
+                self.model.onOK(None)
 
     def on_set_image_mirror(self, widget, data):
         pic, mirror_opt = data
         m = rev_mirror[mirror_opt]
-        pic['mirror'] = m
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
+            pic['mirror'] = m
             self.model.picListView.set_val(piciter, mirror=m)
+            if self.model.get("c_updatePDF"):
+                self.model.onOK(None)
             
     def on_shrink_image(self, widget, data):
         pic, parref = data
@@ -847,7 +881,6 @@ class PDFViewer:
 
     def adjust_fig_size(self, pic, psize, adj):
         '''adj is the value in pts (+ve/-ve)'''
-        print(f"\n{psize=}   {psize[0]=}  {psize[1]=} ")
         if psize[1] == 0:
             return
         
@@ -856,7 +889,6 @@ class PDFViewer:
         if nr < .05 or nr > 2. :
             return
         v = f2s(nr)
-        print(f"{ratio=} {adj=} {psize[1]=} {nr=} {v=}\n")
         pic['scale'] = v
         vint = int(float(v) * 100)
         piciter = self.model.picListView.find_row(pic['anchor'])
@@ -883,11 +915,15 @@ class PDFViewer:
         if self.adjlist is not None:
             self.adjlist.increment(info[2], -1)
         self.show_pdf()
+        if self.model.get("c_updatePDF"):
+            self.model.onOK(None)
 
     def on_expand_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], 1)
         self.show_pdf()
+        if self.model.get("c_updatePDF"):
+            self.model.onOK(None)
         
     def on_reset_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
@@ -895,6 +931,8 @@ class PDFViewer:
             self.adjlist.increment(info[2], - pc)
             self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
         self.show_pdf()
+        if self.model.get("c_updatePDF"):
+            self.model.onOK(None)
 
     def on_shrink_text(self, widget, info, parref):
         if self.adjlist is not None:
@@ -903,6 +941,8 @@ class PDFViewer:
             else:
                 self.adjlist.expand(info[2], -self.shrinkStep, mrk=parref.mrk)
         self.show_pdf()
+        if self.model.get("c_updatePDF"):
+            self.model.onOK(None)
 
     def on_expand_text(self, widget, info, parref):
         if self.adjlist is not None:
@@ -911,6 +951,8 @@ class PDFViewer:
             else:
                 self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
         self.show_pdf()
+        if self.model.get("c_updatePDF"):
+            self.model.onOK(None)
 
     def edit_style(self, widget, mkr):
         if mkr is not None:
