@@ -1108,6 +1108,8 @@ class FigInfo:
     ref:    str
     src:    str
     size:   (int, int)
+    limit:  bool
+    wide:   bool
     rects:  InitVar[None] = None
 
     def __str__(self):
@@ -1268,7 +1270,7 @@ class Paragraphs(list):
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None:
                     return
-                currp = FigInfo(p[0], p[1], (0, 0))
+                currp = FigInfo(p[0], p[1], (0, 0), False, False)
                 currp.rects = []
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
                 currp.rects.append(currr)
@@ -1290,6 +1292,10 @@ class Paragraphs(list):
                 #     (w, h) = (h, w)
                 if currp is not None:
                     currp.size = (w, h)
+                if p[2] == "width":
+                    currp.wide = True
+                if p[3] == "heightlimit":
+                    currp.limit = True
                 
             # "parnote":        # type, callerx, callery
             # "notebox":        # type, width, height
