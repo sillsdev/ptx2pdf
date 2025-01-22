@@ -1282,7 +1282,7 @@ class Paragraphs(list):
                 currp = None
                 currr = None
             elif c == "parpicsize":
-                (w, h) = readpts(p[1]), readpts(p[2])
+                (w, h) = readpts(p[0]), readpts(p[1])
                 # if p[0] == "height":
                 #     (w, h) = (h, w)
                 if currp is not None:

@@ -918,6 +918,7 @@
     \pdfsavepos
     \edef\t@mp{\string \@parpicstart{\c@rref}{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi}}%
     \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+    \edef\p@cinfo{\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{\p@climit}}%
     \write\x@\p@rlocs\x@{\p@cinfo}%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
@@ -978,16 +979,17 @@
     \x@\ch@ckpath\x@{\f@lename}
     \iftemp\else\edef\f@lename{\the\PicPath\f@lename}\fi
     \setbox\newpicb@x=\hbox{%
+      \xdef\p@climit{\string{\picdim@n\}\string{normal\string}}%
       \ins@rtpic{"\f@lename"}%
        {\picdim@n}{\the\p@cwidth}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
-      \xdef\p@cinfo{\string\@parpicsize\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{normal}}%
     \ifdim\ht\newpicb@x>\p@cheight
+      \xdef\p@climit{\string{\picaltdim@n\string}\string{heightlimit\string}}%
+      \ins@rtpic{"\f@lename"}%
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\r@qdim, switching to \picaltdim@n=\p@cheight}%\sizem@ltiple\space\the\p@cwidth}%
       \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\f@lename"}%
          {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
-      \xdef\p@cinfo{\string\@parpicsize\string{\picaltdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{heightlimit}}%
     \fi
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
@@ -1122,6 +1124,7 @@
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
       \pdfsavepos
       \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+      \edef\p@cinfo{\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{\p@climit}}%
       \write\x@\p@rlocs\x@{\p@cinfo}%
       \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
     }\ifx\@wrap\empty\else\egroup\fi
@@ -1187,6 +1190,7 @@
   \leavevmode
   \pdfsavepos
   \prepwr@teparstop{#1}%
+  \edef\p@cinfo{\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{\p@climit}}%
   \write\x@\p@rlocs\x@{\p@cinfo}%
   \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
   \hbox{\box #1}%
@@ -1213,6 +1217,7 @@
     %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
     \gridb@x#1%
     \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+    \edef\p@cinfo{\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{\p@climit}}%
     \write\x@\p@rlocs\x@{\p@cinfo}%
     \iftemp
       \dimen9=\lastdepth \kern\dimen9
@@ -1260,6 +1265,7 @@
       %\kern 0pt
       \ifearlyeotpskip\kern -1sp\kern 1sp\fi
       \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+      \edef\p@cinfo{\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{\p@climit}}%
       \write\x@\p@rlocs\x@{\p@cinfo}%
       \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
     }%
@@ -1326,6 +1332,7 @@
     \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
     \unvbox#1
     \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+    \edef\p@cinfo{\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{\p@climit}}%
     \write\x@\p@rlocs\x@{\p@cinfo}%
     \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
     \kern#4 sp\penalty 1}% magic number
@@ -1464,6 +1471,7 @@
     \leavevmode\str@t\vadjust {\vbox to 0pt{%
       \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
       \box#1\vss
+      \edef\p@cinfo{\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{\p@climit}}%
       \write\x@\p@rlocs\x@{\p@cinfo}%
       \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
       }}%
@@ -1489,6 +1497,7 @@
           \vskip #2\baselineskip
           \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
           \box#1\vss
+          \edef\p@cinfo{\string{\picdim@n\string}\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}{\p@climit}}%
           \write\x@\p@rlocs\x@{\p@cinfo}%
           \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
           }%
