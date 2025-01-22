@@ -1066,7 +1066,10 @@ def readpts(s):
     elif s.endswith("sp"):
         return float(s[:-2]) / 65536.
     else:
-        return float(s) / 65536.
+        try:
+            return float(s) / 65536.
+        except ValueError:
+            return 0
 
 @dataclass
 class ParRect:
