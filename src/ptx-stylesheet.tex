@@ -1829,6 +1829,8 @@
  \ifLogFonts
    \immediate\openout\f@ntl@g="\j@bname.fontusage"
  \fi
+ % open the parlocs file to record paragraph and no-break-chapter locations
+ \immediate\openout\p@rlocs="\j@bname.parlocs"
  \opentriglist "\j@bname.triggers"
  \let\@netimesetup=\relax}                                                      %(1)
 
