@@ -272,18 +272,19 @@ class PDFViewer:
         else:
             self.spread_mode = self.model.get("c_bkView", False)
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
+        cpage = self.parlocs.pnums.get(page, page)
 
         images = []
         if self.model.isCoverTabOpen():
-            page = 1
+            cpage = 1
             self.create_boxes(1)
             pg = self.document.get_page(0)
             self.model.set("t_pgNum", str(page), mod=False)
             self.psize = pg.get_size()
-            images.append(render_page_image(pg, self.zoomLevel, page, self.add_hints if self.showadjustments else None))
+            images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
         else:
             if self.spread_mode:
-                spread = self.get_spread(page, self.rtl_mode)
+                spread = self.get_spread(cpage, self.rtl_mode)
                 self.create_boxes(len(spread))
                 for i in spread:
                     if i in range(self.numpages+1):
@@ -291,11 +292,11 @@ class PDFViewer:
                         self.psize = pg.get_size()
                         images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
             else:
-                if page in range(self.numpages+1):
+                if cpage in range(self.numpages+1):
                     self.create_boxes(1)
-                    pg = self.document.get_page(page-1)
+                    pg = self.document.get_page(cpage-1)
                     self.psize = pg.get_size()
-                    images.append(render_page_image(pg, self.zoomLevel, page, self.add_hints if self.showadjustments else None))
+                    images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
 
         self.current_page = page
         self.update_boxes(images)
@@ -1246,6 +1247,7 @@ class Paragraphs(list):
 
     def readParlocs(self, fname, rtl=False):
         self.pindex = []
+        self.pnums = {}
         currp = None
         currr = None
         endpar = True
@@ -1266,6 +1268,7 @@ class Paragraphs(list):
             p = m.group(2).split("}{")
             if c == "pgstart":          # pageno, available height, pagewidth, pageheight
                 pnum += 1
+                self.pnums[int(p[0])] = pnum
                 if len(p) > 3:
                     pwidth = readpts(p[2])
                 else:
@@ -1370,15 +1373,18 @@ class Paragraphs(list):
                 currp = None
                 currr = None
             elif c == "parpicsize":
-                (w, h) = readpts(p[2]), readpts(p[3])
-                # if p[0] == "height":
-                #     (w, h) = (h, w)
-                if currp is not None:
-                    currp.size = (w, h)
-                    if p[0] == "width":
-                        currp.wide = True
-                    if p[1] == "heightlimit":
-                        currp.limit = True
+                if len(p) < 4:
+                    (w, h) = readpts(p[0]), readpts(p[1])
+                else:
+                    (w, h) = readpts(p[2]), readpts(p[3])
+                    # if p[0] == "height":
+                    #     (w, h) = (h, w)
+                    if currp is not None:
+                        currp.size = (w, h)
+                        if p[0] == "width":
+                            currp.wide = True
+                        if p[1] == "heightlimit":
+                            currp.limit = True
                 
             # "parnote":        # type, callerx, callery
             # "notebox":        # type, width, height
