@@ -1,7 +1,7 @@
 import gi, os, datetime
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
-from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib
+from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
 import cairo, re, time, sys
 import numpy as np
 from cairo import ImageSurface, Context
@@ -87,8 +87,8 @@ class PDFViewer:
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
         self.toctv = tv
-        cr = Gtk.CellRendererText()
-        tvc = Gtk.TreeViewColumn("Title", cr, text=0)
+        self.cr = Gtk.CellRendererText()
+        tvc = Gtk.TreeViewColumn("Title", self.cr, text=0)
         self.toctv.append_column(tvc)
         self.toctv.connect("row-activated", self.pickToc)
         self.numpages = 0
@@ -184,8 +184,13 @@ class PDFViewer:
             self.model.doStatus(_("Error opening PDF: ").format(e))
             self.document = None
             return False
+
         tocts = self.load_toc(self.document, self.toctv)
         self.toctv.set_model(tocts)
+        fontR = str(self.model.get('bl_fontR', None)).split("|")[0]
+        if fontR:
+            font_desc = Pango.FontDescription(fontR + " 12")  # Font name and size
+            self.cr.set_property("font-desc", font_desc)
         
         self.adjlist = adjlist
         if start is not None and start < self.numpages:

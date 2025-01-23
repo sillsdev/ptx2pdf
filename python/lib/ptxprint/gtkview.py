@@ -3929,9 +3929,13 @@ class GtkViewModel(ViewModel):
     def onChangesFileClicked(self, btn):
         self.onExtraFileClicked(btn)
         cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
+        logger.debug(f"in onChangesFileClicked: {self.loadingConfig=} {cfile=}")
         if not os.path.exists(cfile):
-            with open(cfile, "w", encoding="utf-8") as outf:
-                outf.write(chgsHeader)
+            try:
+                with open(cfile, "w", encoding="utf-8") as outf:
+                    outf.write(chgsHeader)
+            except PermissionError:
+                logger.debug(f"Cannot write file (Permission Error): {cfile}")
         self.onRefreshViewerTextClicked(None)
 
     def onMainBodyTextChanged(self, btn):

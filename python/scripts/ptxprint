@@ -207,7 +207,7 @@ else:
 config.remove_section("projectdirs")
 config.add_section("projectdirs")
 for i, p in enumerate(args.projects, 1):
-    config.set("projectdirs", str(i), p)
+    config.set("projectdirs", str(i), str(p))
 
 # handle being passed a .zip
 if args.pid is not None and args.pid.lower().endswith(".zip"):
