@@ -6370,24 +6370,9 @@ Thank you,
         self.ufCurrIndex = (self.ufCurrIndex + 1) % len(self.ufPages)
 
     def onNavigatePageClicked(self, btn):
-        pages = self.pdf_viewer.numpages
-        currPg = self.getPgNum()
-        if not pages:
-            return
-        increment = 2 if self.get("c_bkView", True) else 1
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
-        if x == "first":
-            pg = 1
-            self.ufCurrIndex = 0
-        elif x == "last":
-            pg = pages
-        elif x == "previous":
-            pg = max(currPg - increment, 1)
-        elif x == "next":
-            pg = min(currPg + increment, pages)
-        self.set("t_pgNum", str(pg), mod=False)
-        self.pdf_viewer.show_pdf(pg, self.rtl)
+        self.pdf_viewer.set_page(x)
         
     def updatePgCtrlButtons(self, w):
         pg = self.getPgNum()

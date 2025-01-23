@@ -1081,6 +1081,20 @@ class PDFViewer:
             scale_y = (alloc.height + 0) / page_height
             self.set_zoom(min(scale_x, scale_y))
 
+    def set_page(self, action):
+        increment = 2 if self.spread_mode else 1
+        cpage = self.parlocs.pnums[self.current_page] - 1
+        if action == "first":
+            pg = self.parlocs.pnumorder[0]
+        elif action == "last":
+            pg = self.parlocs.pnumorder[-1]
+        elif action == "next":
+            pg = self.parlocs.pnumorder[min(cpage + increment, len(self.parlocs.pnumorder)-1)]
+        elif action == "previous":
+            pg = self.parlocs.pnumorder[max(cpage - increment, 0)]
+        logger.debug(f"page {pg=} {cpage=} {self.current_page=}")
+        self.show_pdf(pg)
+
     def _saveSetting(self, key, value):
         self.model.userconfig.set('printer', key, value)
 
@@ -1248,6 +1262,7 @@ class Paragraphs(list):
     def readParlocs(self, fname, rtl=False):
         self.pindex = []
         self.pnums = {}
+        self.pnumorder = []
         currp = None
         currr = None
         endpar = True
@@ -1269,6 +1284,7 @@ class Paragraphs(list):
             if c == "pgstart":          # pageno, available height, pagewidth, pageheight
                 pnum += 1
                 self.pnums[int(p[0])] = pnum
+                self.pnumorder.append(int(p[0]))
                 if len(p) > 3:
                     pwidth = readpts(p[2])
                 else:
@@ -1393,6 +1409,7 @@ class Paragraphs(list):
             # "nontextstop":    # x, y
         self.sort(key=lambda x:x.sortKey())
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
+        logger.debug(f"{self.pnums=}, {self.pnumorder=}")
         
     def findPos(self, pnum, x, y, rtl=False):
         # just iterate over paragraphs on this page
