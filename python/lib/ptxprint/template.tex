@@ -250,7 +250,8 @@
 
 \PBOnBody{document/ch1pagebreak}
   
-\pageno={document/startpagenum}
+% \pageno={document/startpagenum}
+\pageno=-1
 
 %%%%% Illustration and Adjustment Locations and Lists %%%%%
 \IncludeFigures{document/ifinclfigs}
@@ -344,6 +345,7 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
+\pageno={document/startpagenum}
 {document/ifdiglot}\diglottrue
 \addtoendptxhooks{{\zautoBookEndDecoration}}
 % job files:

@@ -5077,6 +5077,7 @@ class GtkViewModel(ViewModel):
             return
         self.lang = lang
         self.builder.get_object("ptxprint").destroy()
+        self.builder.get_object("dlg_preview").destroy()
         self.onDestroy(None)
         print("Calling i18nize from changeInterfaceLang")
         self.i18nizeURIs()
@@ -6291,9 +6292,7 @@ Thank you,
                 startfile(self.project.printPath(None))
 
     def onClosePreview(self, widget):
-        dlg_preview = self.builder.get_object("dlg_preview")
-        self.set("c_previewPDF", False)
-        dlg_preview.hide()
+        self.builder.get_object("dlg_preview").hide()
 
     def set_preview_pages(self, npages, units=None):
         if units:
@@ -6380,6 +6379,7 @@ Thank you,
         x = n.split("_")[-1]
         if x == "first":
             pg = 1
+            self.ufCurrIndex = 0
         elif x == "last":
             pg = pages
         elif x == "previous":

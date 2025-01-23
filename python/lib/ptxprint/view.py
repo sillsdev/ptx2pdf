@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.7.13"
 GitVersionStr = "2.7.13"
-ConfigVersion = "2.20"
+ConfigVersion = "2.21"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1097,6 +1097,11 @@ class ViewModel:
             self._configset(config, "texpert/bottomrag", rag)
             self._configset(config, "paper/allowunbalanced", True if rag != "0" else False)
 
+        if v < 2.21: # get rid of any erroneously created .adj files in the shared/adjlist folder
+            if cfgpath is not None:
+                adjpath = os.path.join(cfgpath, "adjLists")
+                self.clean_adj_files(adjpath)
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
@@ -1116,6 +1121,31 @@ class ViewModel:
                 with open(styf, "w", encoding="utf-8") as outf:
                     outf.write("# This file left intentionally blank\n")
         return (v, forcerewrite)
+
+    def clean_adj_files(self, folder_path):
+        """
+        Examines all .adj files in the given folder and deletes those that meet the criteria:
+        1. The file size is exactly 168 bytes.
+        2. The first line starts with 'This file doesn't exist yet.'
+        """
+        if not os.path.isdir(folder_path):
+            return
+        
+        for file_name in os.listdir(folder_path):
+            if file_name.endswith(".adj"):  # Check if it's a .adj file
+                file_path = os.path.join(folder_path, file_name)
+                delMe = False
+                try:
+                    if os.path.getsize(file_path) < 200:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            first_line = f.readline().strip()
+                            if first_line.startswith("This file doesn't exist yet."):
+                                delMe = True
+                        if delMe:
+                            logger.info(f"Deleting bogus .adj file: {file_path}")
+                            os.remove(file_path)
+                except Exception as e:
+                    logger.warn(f"Error testing/deleting adj file: {file_path}: {e}")
 
     def localiseConfig(self, config):
         for a in ("header/hdrleft", "header/hdrcenter", "header/hdrright", "footer/ftrcenter"):
