@@ -6323,20 +6323,18 @@ Thank you,
         self.onPgNumChanged(None, None)
 
     def getPgNum(self):
-        try:
-            v = self.get("t_pgNum") or "1"
-            pg = int(v)
-        except ValueError:
-            pg = 1  # Fallback to a default value
-            self.set("t_pgNum", str(pg), mod=False)
+        pg = self.pdf_viewer.parlocs.pnums.get(self.pdf_viewer.current_page, 1)
         return pg
-
+        
     def onPgNumChanged(self, widget, x):
-        pages = self.pdf_viewer.numpages
-        if not pages:
-            return
-        pg = min(self.getPgNum(), pages)
-        self.set("t_pgNum", str(pg))
+        try:
+            pg = int(self.get("t_pgNum"))
+        except ValueError:
+            pg = 1
+            self.set("t_pgNum", str(pg))
+        if pg not in self.pdf_viewer.parlocs.pnums:
+            pg = 1
+            self.set("t_pgNum", str(pg))
         self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
@@ -6372,10 +6370,13 @@ Thank you,
     def onNavigatePageClicked(self, btn):
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
+        if x == 'first':
+            self.ufCurrIndex = 0
         self.pdf_viewer.set_page(x)
         
     def updatePgCtrlButtons(self, w):
         pg = self.getPgNum()
+        print(f"{pg=}")
         self.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
         self.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
         self.builder.get_object("btn_page_last").set_sensitive(not pg == self.pdf_viewer.numpages)

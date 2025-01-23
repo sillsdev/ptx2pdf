@@ -264,9 +264,6 @@ class PDFViewer:
             return
         if page is None:
             page = self.current_page or 1
-        if setpnum: # WHY WAS THIS HERE? # and self.model.get("t_pgNum", "1") != str(page):
-            self.model.set("t_pgNum", str(page), mod=False)
-            # return # WHY?
         if self.model.get("fcb_pagesPerSpread", "1") != "1":
             self.spread_mode = False
         else:
@@ -299,6 +296,8 @@ class PDFViewer:
                     images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
 
         self.current_page = page
+        if setpnum:
+            self.model.set("t_pgNum", str(page), mod=False)
         self.update_boxes(images)
 
     # incomplete code calling for major refactor for cairo drawing
@@ -466,9 +465,9 @@ class PDFViewer:
         else:
             # Default behavior: Scroll for navigation
             if event.direction == Gdk.ScrollDirection.UP:
-               self.show_previous_page()
+               self.set_page("previous")
             elif event.direction == Gdk.ScrollDirection.DOWN:
-               self.show_next_page()
+               self.set_page("next")
             return True
 
         return False
@@ -505,16 +504,6 @@ class PDFViewer:
 
         # Redraw the canvas with the updated zoom level
 
-    def show_next_page(self):
-        pg = min(self.current_page + (2 if self.spread_mode else 1), self.numpages)
-        self.model.set("t_pgNum", str(pg), mod=False)
-        self.show_pdf(pg)
-
-    def show_previous_page(self):
-        pg = max(self.current_page - (2 if self.spread_mode else 1), 1)
-        self.model.set("t_pgNum", str(pg), mod=False)
-        self.show_pdf(pg)
-
     # Handle keyboard shortcuts for navigation
     def on_key_press_event(self, widget, event):
         keyval = event.keyval
@@ -523,20 +512,16 @@ class PDFViewer:
         ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
 
         if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
-            self.show_pdf(1)
+            self.set_page("first")
             return True
         elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
-            self.show_pdf(self.numpages)
+            self.set_page("last")
             return True
         elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
-            next_page = self.current_page + (2 if self.spread_mode else 1)
-            p = min(next_page, self.numpages)
-            self.show_pdf(p)
+            self.set_page("next")
             return True
         elif keyval == Gdk.KEY_Page_Up:  # Page Up (Previous page/spread)
-            prev_page = self.current_page - (2 if self.spread_mode else 1)
-            p = max(prev_page, 1)
-            self.show_pdf(p)
+            self.set_page("previous")
             return True
         elif ctrl and keyval in {Gdk.KEY_equal, Gdk.KEY_plus}:  # Ctrl+Plus (Zoom In)
             self.on_zoom_in(widget)
@@ -1083,7 +1068,7 @@ class PDFViewer:
 
     def set_page(self, action):
         increment = 2 if self.spread_mode else 1
-        cpage = self.parlocs.pnums[self.current_page] - 1
+        cpage = self.parlocs.pnums.get(self.current_page, 1) - 1
         if action == "first":
             pg = self.parlocs.pnumorder[0]
         elif action == "last":
