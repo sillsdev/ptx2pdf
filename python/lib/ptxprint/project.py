@@ -103,6 +103,8 @@ class ProjectList:
         return sorted(self.projects.values(), key=lambda s:(s.prjid.lower(), s.path, s.guid))
 
     def findProject(self, prjid):
+        if prjid is None or not len(prjid):
+            return None
         for t in self.treedirs:
             p = os.path.join(t, prjid)
             for g, v in self.projects.items():
