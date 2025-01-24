@@ -6,9 +6,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, maxdiff=False, oldcolor=None, limit=0, **kw):
-    if color is None:
+    if color is None or not len(color):
         color = (240, 0, 0)
-    if oldcolor is None:
+    if oldcolor is None or not len(oldcolor):
         oldcolor = (0, 0, 240)
     if not os.path.exists(othername):
         return 2
@@ -69,6 +69,8 @@ def pdfimages(infile):
     numpages = doc.get_n_pages()
     for i in range(numpages):
         page = doc.get_page(i)
+        if page is None:
+            continue
         w, h = (int(x*3) for x in page.get_size())
         surface = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
         ctx = cairo.Context(surface)

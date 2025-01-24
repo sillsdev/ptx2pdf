@@ -1758,7 +1758,7 @@ class ViewModel:
 
     def _getProject(self, prjwname):
         impgui = self.get(prjwname, sub=1)
-        if impgui is None:
+        if impgui is None or not len(impgui):
             impname = self.get(prjwname)
             impprj = self.prjTree.findProject(impname)
         else:
@@ -1784,7 +1784,7 @@ class ViewModel:
             if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
         if digview is None:
-            self.setPrintBtnStatus(2, _("No Config found for Diglot"))
+            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfgid}"))
         else:
             digview.isDiglot = True
             digview.digSuffix = suffix

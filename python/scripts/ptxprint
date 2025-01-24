@@ -69,13 +69,14 @@ parser.add_argument('-N','--nointernet',action="store_true",help="Disable all in
 parser.add_argument('-l','--logging',help="Logging level [DEBUG, *INFO*, WARN, ERROR, number]")
 parser.add_argument('--logfile',default='ptxprint.log',help='Set logging file [ptxprint.log] or "none"')
 parser.add_argument('--timeout',default=1200,type=int,help='xetex runtime timeout')
-parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
+parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('--nofontcache',action="store_true",help="Don't update list of system fonts")
 parser.add_argument('--testsuite',action="store_true",help="Only use fonts from project and testsuite")
 parser.add_argument('-A','--action',help="Run view method instead of print")
 parser.add_argument('-F','--difffile',help='Create difference PDF against PDF file'),
 parser.add_argument('--diffpages',type=int,default=0,help="Maximum number of pages to insert in diff file")
+parser.add_argument('--diffoutfile',help="Output filename of difference file")
 parser.add_argument('-D','--define',action=DictAction,help="set UI component=value. Repeatable")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 parser.add_argument("-C","--capture",help="Capture interaction events to file. Not to be used yet") # help=argparse.SUPPRESS)
@@ -210,7 +211,7 @@ for i, p in enumerate(args.projects, 1):
     config.set("projectdirs", str(i), str(p))
 
 # handle being passed a .zip
-if args.pid is not None and args.pid.lower().endswith(".zip"):
+if not args.zip and args.pid is not None and args.pid.lower().endswith(".zip"):
     fname = os.path.basename(args.pid)[:-4]
     m = re.match(r"^(.+?)-(.+?)PTXprintArchive", fname)
     if m:
@@ -282,7 +283,7 @@ if args.fontpath is not None:
 
 if args.zip:
     print(f"{args.projects=} {args.pid=} {args.config=}")
-    if len(args.projects[0]) and len(args.pid):
+    if not args.testsuite and len(args.projects[0]) and len(args.pid):
         rmtree(os.path.join(args.projects[0], args.pid), ignore_errors = True)
     zf = ZipFile(args.zip)
     zf.extractall(args.projects[0])
