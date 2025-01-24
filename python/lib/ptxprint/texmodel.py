@@ -1601,7 +1601,7 @@ class TexModel:
             customStmt = []
             if len(m):
                 for f in m:
-                    print(f"{f[0]=} {f[1]=} {f[2]=} {f[3]=} {f[4]=} {f[5]=} ")
+                    # print(f"{f[0]=} {f[1]=} {f[2]=} {f[3]=} {f[4]=} {f[5]=} ")
                     if not len(f) or not f[0] or f[5] == "None":
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together

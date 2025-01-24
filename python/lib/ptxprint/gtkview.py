@@ -6372,7 +6372,8 @@ Thank you,
         pages = self.pdf_viewer.numpages
         if not pages or not self.ufPages:
             return
-        current_pg = self.getPgNum()
+        pgnum = self.getPgNum() - 1
+        current_pg = self.pdf_viewer.parlocs.pnumorder[pgnum] if self.pdf_viewer.parlocs is not None else 1
 
         if Gtk.Buildable.get_name(btn).split("_")[-1] == 'next':
             next_page = None
@@ -6403,8 +6404,9 @@ Thank you,
         self.updatePgCtrlButtons(None)
         
     def updatePgCtrlButtons(self, w):
-        pg = self.getPgNum()
+        pg = self.getPgNum() - 1
         num_pages = self.pdf_viewer.numpages
+        pnumpg = self.pdf_viewer.parlocs.pnumorder[pg] if self.pdf_viewer.parlocs is not None else 1
 
         self.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
         self.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
@@ -6418,10 +6420,10 @@ Thank you,
             firstUFpg = self.ufPages[0]
             lastUFpg = self.ufPages[-1]
 
-            hide_prev = pg <= firstUFpg or pg == 1 or not self.pdf_viewer.oneUp
+            hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.pdf_viewer.oneUp
             self.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(not hide_prev)
 
-            hide_next = pg >= lastUFpg or pg == num_pages or not self.pdf_viewer.oneUp
+            hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.pdf_viewer.oneUp
             self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(not hide_next)
         
     def onSavePDFasClicked(self, btn):
