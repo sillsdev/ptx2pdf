@@ -1084,10 +1084,16 @@ via email, or social media.</property>
     <property name="can-focus">False</property>
     <property name="icon-name">view-refresh-symbolic</property>
   </object>
-  <object class="GtkImage" id="icon_seekPage2fill">
+  <object class="GtkImage" id="icon_seekPage2fill_next">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">media-seek-forward-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_seekPage2fill_prev">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">media-seek-backward-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_targetProj">
@@ -3510,6 +3516,7 @@ Ctrl + Scrollwheel - change zoom level</property>
                     <property name="halign">start</property>
                     <property name="margin-left">6</property>
                     <property name="margin-right">6</property>
+                    <property name="margin-end">3</property>
                     <property name="label" translatable="yes">Page/Spread:</property>
                     <property name="xalign">1</property>
                   </object>
@@ -3517,36 +3524,6 @@ Ctrl + Scrollwheel - change zoom level</property>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="t_pgNum">
-                    <property name="name">Type page number to jump to</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">Type page number to jump to.
-
-Shortcuts:
-PgUp - previous page/spread
-PgDn - next page/spread
-Ctrl+Home - First page/spread
-Ctrl+End - Last page/spread
-Mouse Scroll also changes pages</property>
-                    <property name="double-buffered">False</property>
-                    <property name="halign">end</property>
-                    <property name="max-length">4</property>
-                    <property name="has-frame">False</property>
-                    <property name="width-chars">5</property>
-                    <property name="xalign">1</property>
-                    <property name="progress-pulse-step">0</property>
-                    <property name="placeholder-text" translatable="yes">77</property>
-                    <signal name="changed" handler="updatePgCtrlButtons" swapped="no"/>
-                    <signal name="focus-out-event" handler="onPgNumChanged" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -3561,13 +3538,13 @@ Ctrl+Home - First page/spread
 Ctrl+End - Last page/spread
 Mouse Scroll also changes pages</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">/ 999</property>
+                    <property name="label" translatable="yes">(15)+52</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">2</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -3585,7 +3562,7 @@ Mouse Scroll also changes pages</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">3</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -3603,6 +3580,36 @@ Mouse Scroll also changes pages</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_pgNum">
+                    <property name="name">Type page number to jump to</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">Type page number to jump to.
+
+Shortcuts:
+PgUp - previous page/spread
+PgDn - next page/spread
+Ctrl+Home - First page/spread
+Ctrl+End - Last page/spread
+Mouse Scroll also changes pages</property>
+                    <property name="double-buffered">False</property>
+                    <property name="halign">center</property>
+                    <property name="max-length">4</property>
+                    <property name="has-frame">False</property>
+                    <property name="width-chars">6</property>
+                    <property name="xalign">0.5</property>
+                    <property name="progress-pulse-step">0</property>
+                    <property name="placeholder-text" translatable="yes">77</property>
+                    <signal name="changed" handler="updatePgCtrlButtons" swapped="no"/>
+                    <signal name="focus-out-event" handler="onPgNumChanged" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="position">4</property>
                   </packing>
                 </child>
@@ -3662,17 +3669,49 @@ Mouse Scroll also changes pages</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_seekPage2fill">
-                <property name="name">Find the next underfilled page</property>
+              <object class="GtkBox" id="bx_seekPage">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Show next underfilled page.</property>
+                <property name="can-focus">False</property>
                 <property name="halign">center</property>
-                <property name="image">icon_seekPage2fill</property>
-                <property name="relief">none</property>
-                <signal name="clicked" handler="onSeekPage2fill" swapped="no"/>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkButton" id="btn_seekPage2fill_prev">
+                    <property name="name">Find the next underfilled page</property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Show next underfilled page.</property>
+                    <property name="halign">start</property>
+                    <property name="image">icon_seekPage2fill_prev</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onSeekPage2fill" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_seekPage2fill_next">
+                    <property name="name">Find the next underfilled page</property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Show next underfilled page.</property>
+                    <property name="halign">end</property>
+                    <property name="image">icon_seekPage2fill_next</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onSeekPage2fill" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>

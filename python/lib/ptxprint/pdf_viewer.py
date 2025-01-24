@@ -193,6 +193,8 @@ class PDFViewer:
             self.cr.set_property("font-desc", font_desc)
         
         self.adjlist = adjlist
+        print(f"Just loaded PDF - now calling update buttons:")
+        self.model.updatePgCtrlButtons(None)
         if start is not None and start < self.numpages:
             self.current_page = start
         return True
@@ -383,9 +385,8 @@ class PDFViewer:
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b %H:%M")
         widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
-        # Set the number of pages/spreads in the contents area
-        pgSprds = _("Page:") if self.model.get("fcb_pagesPerSpread", "1") == "1" else _("Spread:")
-        self.model.set_preview_pages(self.numpages, pgSprds)
+        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
+        self.model.set_preview_pages(self.numpages, _("Pages:") if self.oneUp else _("Spreads:"))
         widget.show_all()
         self.set_zoom_fit_to_screen(None)
         return True
@@ -638,8 +639,18 @@ class PDFViewer:
         j2pt      = _("Send Ref to Paratext")
         z2f       = _("Zoom to Fit")
         z100      = _("Zoom 100%")
-        if False and self.isdiglot:
+        
+        if not self.oneUp:  # self.oneUp is disabled
             info = []
+            parref = None
+            self.addMenuItem(menu, _("Context Menu Disabled!"), None, sensitivity=False)
+            self.addMenuItem(menu, _("Turn off Booklet pagination"), None, sensitivity=False)
+            self.addMenuItem(menu, _("on Finishing tab to re-enable"), None, sensitivity=False)
+        elif self.isdiglot:  # Document is diglot
+            info = []
+            parref = None
+            self.addMenuItem(menu, _("The context menu doesn't"), None, sensitivity=False)
+            self.addMenuItem(menu, _("yet work with doglots"), None, sensitivity=False)
         else:
             parref = self.get_parloc(widget, event)
             info = []
@@ -650,7 +661,7 @@ class PDFViewer:
                 if self.adjlist is not None:
                     info = self.adjlist.getinfo(ref + pnum, insert=True)
 
-        logger.debug(f"{parref=} {info=} ({event.x},{event.y})")
+            logger.debug(f"{parref=} {info=} ({event.x},{event.y})")
         if len(info) and re.search(r'[.:]', parref.ref) and \
            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in "LRABCDEF" else 3

@@ -680,7 +680,7 @@ class GtkViewModel(ViewModel):
         self.currCodeletVbox = None
         self.codeletVboxes = {}
         self.ufPages = []
-        self.ufCurrIndex = 0
+        self.ufCurrIndex = -1
         self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         llang = self.builder.get_object("ls_interfaceLang")
@@ -6301,7 +6301,15 @@ Thank you,
         if npages is None:
             lpcount.set_label("")
         else:
-            lpcount.set_label(f"/ {str(npages)}")
+            if npages < len(self.pdf_viewer.parlocs.pnums):
+                lpcount.set_label(f"{str(npages)}")
+            else:
+                minPg = min(self.pdf_viewer.parlocs.pnums)
+                last_key = list(self.pdf_viewer.parlocs.pnums.keys())[-1]
+                if minPg < 1:
+                    lpcount.set_label(f"({str(abs(minPg))})+{str(last_key)}")
+                else:
+                    lpcount.set_label(f"{str(last_key)}")
 
     def onBookViewClicked(self, widget):
         window = self.builder.get_object("dlg_preview")
@@ -6323,16 +6331,32 @@ Thank you,
         self.onPgNumChanged(None, None)
 
     def getPgNum(self):
-        pg = self.pdf_viewer.parlocs.pnums.get(self.pdf_viewer.current_page, 1)
+        if self.pdf_viewer.parlocs is not None:
+            pg = self.pdf_viewer.parlocs.pnums.get(self.pdf_viewer.current_page, 1)
+        else:
+            pg = 1
         return pg
-        
+
     def onPgNumChanged(self, widget, x):
+        value = self.get("t_pgNum", "1").strip()
+        pg = int(value) if value.isdigit() else 1
+        if self.pdf_viewer.parlocs is not None and pg not in self.pdf_viewer.parlocs.pnums:
+            pg = 1
+        self.set("t_pgNum", str(pg))
+        self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
+
+    def old_onPgNumChanged(self, widget, x):
         try:
-            pg = int(self.get("t_pgNum"))
+            value = self.get("t_pgNum", "1")
+            if value.strip().isdigit():
+                pg = int(value)
+            else:
+                pg = 1
+                self.set("t_pgNum", str(pg))
         except ValueError:
             pg = 1
             self.set("t_pgNum", str(pg))
-        if pg not in self.pdf_viewer.parlocs.pnums:
+        if self.pdf_viewer.parlocs is not None and pg not in self.pdf_viewer.parlocs.pnums:
             pg = 1
             self.set("t_pgNum", str(pg))
         self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
@@ -6356,31 +6380,74 @@ Thank you,
 
     def onZoom100Clicked(self, btn):
         self.pdf_viewer.set_zoom(1.0)
-        
+
     def onSeekPage2fill(self, btn):
         pages = self.pdf_viewer.numpages
-        if not pages:
+        if not pages or not self.ufPages:
             return
-        pg = min(self.getPgNum(), pages)
-        pg = self.ufPages[min(self.ufCurrIndex, pages)]
+
+        # Get the current page number
+        current_pg = self.getPgNum()
+
+        if Gtk.Buildable.get_name(btn).split("_")[-1] == 'next':
+            # Find the next page number greater than the current one
+            next_page = None
+            for pg in self.ufPages:
+                if pg > current_pg:
+                    next_page = pg
+                    break
+
+            # Update the current page if a valid next page is found
+            if next_page:
+                self.ufCurrIndex = self.ufPages.index(next_page)
+        else:  # 'prev'
+            # Find the previous page number smaller than the current one
+            prev_page = None
+            for pg in reversed(self.ufPages):
+                if pg < current_pg:
+                    prev_page = pg
+                    break
+
+            # Update the current page if a valid previous page is found
+            if prev_page:
+                self.ufCurrIndex = self.ufPages.index(prev_page)
+
+        pg = self.ufPages[self.ufCurrIndex]
         self.set("t_pgNum", str(pg), mod=False)
         self.pdf_viewer.show_pdf(pg, self.rtl)
-        self.ufCurrIndex = (self.ufCurrIndex + 1) % len(self.ufPages)
+        self.updatePgCtrlButtons(None)
 
     def onNavigatePageClicked(self, btn):
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
-        if x == 'first':
-            self.ufCurrIndex = 0
         self.pdf_viewer.set_page(x)
+        self.updatePgCtrlButtons(None)
         
     def updatePgCtrlButtons(self, w):
         pg = self.getPgNum()
-        print(f"{pg=}")
+        num_pages = self.pdf_viewer.numpages
+        print(f"{len(self.ufPages)=}")
+
+        # Standard page control button sensitivities
         self.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
         self.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
-        self.builder.get_object("btn_page_last").set_sensitive(not pg == self.pdf_viewer.numpages)
-        self.builder.get_object("btn_page_next").set_sensitive(not pg == self.pdf_viewer.numpages)
+        self.builder.get_object("btn_page_last").set_sensitive(not pg == num_pages)
+        self.builder.get_object("btn_page_next").set_sensitive(not pg == num_pages)
+
+        self.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(False)
+        self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(False)
+
+        if len(self.ufPages):
+            firstUFpg = self.ufPages[0]
+            lastUFpg = self.ufPages[-1]
+
+            hide_prev = pg <= firstUFpg or pg == 1 or not self.pdf_viewer.oneUp
+            print(f"{firstUFpg=} {pg=} {self.pdf_viewer.oneUp=}   SO {hide_prev=}")
+            self.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(not hide_prev)
+
+            hide_next = pg >= lastUFpg or pg == num_pages or not self.pdf_viewer.oneUp
+            print(f"{lastUFpg=} {pg=} {num_pages=} {self.pdf_viewer.oneUp=}   SO {hide_next=}")
+            self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(not hide_next)
         
     def onSavePDFasClicked(self, btn):
         dialog = Gtk.FileChooserDialog(
