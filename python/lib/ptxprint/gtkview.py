@@ -6301,15 +6301,18 @@ Thank you,
         if npages is None:
             lpcount.set_label("")
         else:
-            if npages < len(self.pdf_viewer.parlocs.pnums):
-                lpcount.set_label(f"{str(npages)}")
+            if not self.pdf_viewer.parlocs or not self.pdf_viewer.parlocs.pnums:
+                lpcount.set_label(f"{str(npages)}")  # Default to total pages
             else:
-                minPg = min(self.pdf_viewer.parlocs.pnums)
-                last_key = list(self.pdf_viewer.parlocs.pnums.keys())[-1]
-                if minPg < 1:
-                    lpcount.set_label(f"({str(abs(minPg))})+{str(last_key)}")
+                if npages < len(self.pdf_viewer.parlocs.pnums):
+                    lpcount.set_label(f"{str(npages)}")
                 else:
-                    lpcount.set_label(f"{str(last_key)}")
+                    minPg = min(self.pdf_viewer.parlocs.pnums)
+                    last_key = list(self.pdf_viewer.parlocs.pnums.keys())[-1]
+                    if minPg < 1:
+                        lpcount.set_label(f"({str(abs(minPg))})+{str(last_key)}")
+                    else:
+                        lpcount.set_label(f"{str(last_key)}")            
 
     def onBookViewClicked(self, widget):
         window = self.builder.get_object("dlg_preview")
@@ -6343,22 +6346,6 @@ Thank you,
         if self.pdf_viewer.parlocs is not None and pg not in self.pdf_viewer.parlocs.pnums:
             pg = 1
         self.set("t_pgNum", str(pg))
-        self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
-
-    def old_onPgNumChanged(self, widget, x):
-        try:
-            value = self.get("t_pgNum", "1")
-            if value.strip().isdigit():
-                pg = int(value)
-            else:
-                pg = 1
-                self.set("t_pgNum", str(pg))
-        except ValueError:
-            pg = 1
-            self.set("t_pgNum", str(pg))
-        if self.pdf_viewer.parlocs is not None and pg not in self.pdf_viewer.parlocs.pnums:
-            pg = 1
-            self.set("t_pgNum", str(pg))
         self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):

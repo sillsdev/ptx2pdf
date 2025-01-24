@@ -1079,14 +1079,23 @@ class PDFViewer:
     def set_page(self, action):
         increment = 2 if self.spread_mode else 1
         cpage = self.parlocs.pnums.get(self.current_page, 1) - 1
-        if action == "first":
-            pg = self.parlocs.pnumorder[0]
-        elif action == "last":
-            pg = self.parlocs.pnumorder[-1]
-        elif action == "next":
-            pg = self.parlocs.pnumorder[min(cpage + increment, len(self.parlocs.pnumorder)-1)]
-        elif action == "previous":
-            pg = self.parlocs.pnumorder[max(cpage - increment, 0)]
+        # Safeguard against invalid cpage or empty pnumorder
+        if not self.parlocs.pnumorder or cpage < 0 or cpage >= len(self.parlocs.pnumorder):
+            logger.warning(f"Invalid cpage {cpage=} or empty pnumorder: resetting to page 1")
+            pg = self.parlocs.pnumorder[0] if self.parlocs.pnumorder else 1
+        else:
+            if action == "first":
+                pg = self.parlocs.pnumorder[0]
+            elif action == "last":
+                pg = self.parlocs.pnumorder[-1]
+            elif action == "next":
+                pg = self.parlocs.pnumorder[min(cpage + increment, len(self.parlocs.pnumorder) - 1)]
+            elif action == "previous":
+                pg = self.parlocs.pnumorder[max(cpage - increment, 0)]
+            else:
+                logger.error(f"Unknown action: {action}")
+                return
+
         logger.debug(f"page {pg=} {cpage=} {self.current_page=}")
         self.show_pdf(pg)
 

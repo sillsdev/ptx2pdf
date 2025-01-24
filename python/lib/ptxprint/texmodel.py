@@ -1594,13 +1594,14 @@ class TexModel:
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()
 
-            # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + r"|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            # \figonpage{304}{56}{./tmpPics/cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
+            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:[^}]*\/)?(?:" + self.printer.getPicRe() + r"|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []
             if len(m):
                 for f in m:
+                    print(f"{f[0]=} {f[1]=} {f[2]=} {f[3]=} {f[4]=} {f[5]=} ")
                     if not len(f) or not f[0] or f[5] == "None":
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
