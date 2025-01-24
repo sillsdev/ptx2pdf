@@ -4,7 +4,7 @@ PTXprint 2.7.14 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.7.14 (24 Jan 2025)
+Bug fixes and Improvements in 2.7.15 (24 Jan 2025)
   * Use right font in Preview contents (index) pane
   * Get zimagecopyrights working again (by handling ./tmpPics/)
   * Make Peripheral page numbers start with -1 and count down
@@ -14,6 +14,7 @@ Bug fixes and Improvements in 2.7.14 (24 Jan 2025)
   * Make prev-next issue buttons only active when applicable
   * Fix startup bug if no MyParatextProjects folder found
   * Refactor tests to include archive creation
+  * Fix missing icon for find prev issue in Preview pane
   
 Bug fixes and Improvements in 2.7.13 (22 Jan 2025)
   * Happy New Year! update About... info to 2025
