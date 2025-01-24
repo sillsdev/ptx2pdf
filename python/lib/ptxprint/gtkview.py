@@ -680,7 +680,7 @@ class GtkViewModel(ViewModel):
         self.currCodeletVbox = None
         self.codeletVboxes = {}
         self.ufPages = []
-        self.ufCurrIndex = -1
+        self.ufCurrIndex = 0
         self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         llang = self.builder.get_object("ls_interfaceLang")
@@ -6385,30 +6385,22 @@ Thank you,
         pages = self.pdf_viewer.numpages
         if not pages or not self.ufPages:
             return
-
-        # Get the current page number
         current_pg = self.getPgNum()
 
         if Gtk.Buildable.get_name(btn).split("_")[-1] == 'next':
-            # Find the next page number greater than the current one
             next_page = None
             for pg in self.ufPages:
                 if pg > current_pg:
                     next_page = pg
                     break
-
-            # Update the current page if a valid next page is found
             if next_page:
                 self.ufCurrIndex = self.ufPages.index(next_page)
         else:  # 'prev'
-            # Find the previous page number smaller than the current one
             prev_page = None
             for pg in reversed(self.ufPages):
                 if pg < current_pg:
                     prev_page = pg
                     break
-
-            # Update the current page if a valid previous page is found
             if prev_page:
                 self.ufCurrIndex = self.ufPages.index(prev_page)
 
@@ -6426,9 +6418,7 @@ Thank you,
     def updatePgCtrlButtons(self, w):
         pg = self.getPgNum()
         num_pages = self.pdf_viewer.numpages
-        print(f"{len(self.ufPages)=}")
 
-        # Standard page control button sensitivities
         self.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
         self.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
         self.builder.get_object("btn_page_last").set_sensitive(not pg == num_pages)
@@ -6436,17 +6426,15 @@ Thank you,
 
         self.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(False)
         self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(False)
-
+        
         if len(self.ufPages):
             firstUFpg = self.ufPages[0]
             lastUFpg = self.ufPages[-1]
 
             hide_prev = pg <= firstUFpg or pg == 1 or not self.pdf_viewer.oneUp
-            print(f"{firstUFpg=} {pg=} {self.pdf_viewer.oneUp=}   SO {hide_prev=}")
             self.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(not hide_prev)
 
             hide_next = pg >= lastUFpg or pg == num_pages or not self.pdf_viewer.oneUp
-            print(f"{lastUFpg=} {pg=} {num_pages=} {self.pdf_viewer.oneUp=}   SO {hide_next=}")
             self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(not hide_next)
         
     def onSavePDFasClicked(self, btn):

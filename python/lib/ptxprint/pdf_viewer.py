@@ -193,7 +193,6 @@ class PDFViewer:
             self.cr.set_property("font-desc", font_desc)
         
         self.adjlist = adjlist
-        print(f"Just loaded PDF - now calling update buttons:")
         self.model.updatePgCtrlButtons(None)
         if start is not None and start < self.numpages:
             self.current_page = start

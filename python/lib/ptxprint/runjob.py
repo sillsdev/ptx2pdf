@@ -348,9 +348,8 @@ class RunJob:
                     log = logfile.read()
                 smry, msgList, ufPages = summarizeTexLog(log)
                 if not self.noview and not self.args.print:
-                    self.printer.ufCurrIndex = -1
+                    self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
-                    print(f"{self.printer.ufPages=}")
                     for x in ['previous', 'next']:
                         seekbtn = self.printer.builder.get_object(f"btn_seekPage2fill_{x[:4]}")
                         seekbtn.set_sensitive(len(ufPages))
@@ -358,7 +357,7 @@ class RunJob:
                         if len(ufPages):
                             pgs = ", ".join(map(str, ufPages[:5]))
                             seekText = _("Show {} underfilled page.").format(x) + "\n" + pgs + elipsis
-                            # self.printer.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(False)
+                            self.printer.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(False)
                             self.printer.builder.get_object(f"bx_seekPage").set_sensitive(True)
                         else:
                             seekText = _("No underfilled pages detected.")
