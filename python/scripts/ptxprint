@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import argparse, sys, os, re, configparser
+import argparse, sys, os, re, configparser, shlex
 import appdirs
 import site, logging
 from shutil import rmtree
@@ -77,6 +77,7 @@ parser.add_argument('-A','--action',help="Run view method instead of print")
 parser.add_argument('-F','--difffile',help='Create difference PDF against PDF file'),
 parser.add_argument('--diffpages',type=int,default=0,help="Maximum number of pages to insert in diff file")
 parser.add_argument('--diffoutfile',help="Output filename of difference file")
+parser.add_argument('--diffdpi',type=int,help="DPI to use for the differencing")
 parser.add_argument('-D','--define',action=DictAction,help="set UI component=value. Repeatable")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 parser.add_argument("-C","--capture",help="Capture interaction events to file. Not to be used yet") # help=argparse.SUPPRESS)
@@ -93,7 +94,12 @@ if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         tv.print_message(message)
     parser._print_message = print_message
 
-args = parser.parse_args()
+envopts = os.getenv('PTXPRINT_OPTS', None)
+args = None
+if envopts is not None:
+    opts = shlex.split(envopts)
+    args = parser.parse_args(opts, args)
+args = parser.parse_args(None, args)
 
 # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
 # setup_i18n()

@@ -5,7 +5,8 @@ from ptxprint.utils import _
 import logging
 logger = logging.getLogger(__name__)
 
-def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, maxdiff=False, oldcolor=None, limit=0, **kw):
+def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, 
+                maxdiff=False, oldcolor=None, limit=0, dpi=0, **kw):
     if color is None or not len(color):
         color = (240, 0, 0)
     if oldcolor is None or not len(oldcolor):
@@ -13,8 +14,8 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
     if not os.path.exists(othername):
         return 2
     try:
-        ingen = pdfimages(pdfname)
-        ogen = pdfimages(othername)
+        ingen = pdfimages(pdfname, dpi=dpi)
+        ogen = pdfimages(othername, dpi=dpi)
     except ImportError:
         return 1
     results = []
@@ -59,7 +60,7 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
             return 4
     return 0
 
-def pdfimages(infile):
+def pdfimages(infile, dpi=0):
     import gi
     gi.require_version('Poppler', '0.18')
     from gi.repository import Poppler, GLib
@@ -67,14 +68,18 @@ def pdfimages(infile):
     uri = GLib.filename_to_uri(infile, None)
     doc = Poppler.Document.new_from_file(uri, None)
     numpages = doc.get_n_pages()
+    if dpi == 0:
+        dpi = 3
+    else:
+        dpi /= 72
     for i in range(numpages):
         page = doc.get_page(i)
         if page is None:
             continue
-        w, h = (int(x*3) for x in page.get_size())
+        w, h = (int(x*dpi) for x in page.get_size())  # in points
         surface = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
         ctx = cairo.Context(surface)
-        ctx.scale(3., 3.)
+        ctx.scale(dpi, dpi)
         ctx.set_source_rgba(1., 1., 1., 1.)
         ctx.rectangle(0, 0, w, h)
         ctx.fill()

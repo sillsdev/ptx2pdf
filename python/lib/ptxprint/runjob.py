@@ -328,7 +328,7 @@ class RunJob:
                 diffpages = int(self.printer.get("s_diffpages") or 0)
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile,
+                    diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
                                 color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         self.printer.onShowPDF(None, path=diffname)
