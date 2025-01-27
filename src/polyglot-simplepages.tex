@@ -44,10 +44,10 @@
   \trace{dmp}{ #1 is on page \p@lyp@gestring}%
   \x@\xdef\csname p@lyp@ge#1\endcsname{\p@lyp@gestring}}
 
-\def\s@tpolyp@ges#1\E{%Called by polyglot pages, once per page. #1 is the columns for this page.
+\def\simple@s@tpolyp@ges#1\E{%Called by polyglot pages, once per page. #1 is the columns for this page.
   \edef\tmp{#1}%
   \xdef\p@lyp@ges{\the\p@lyp@geno}
-  \ifx\tmp\h@phen
+  \ifx\tmp\h@phen % empty page
     \xdef@cseq{p@lyp@gecols\p@lyp@gestring}{}% p@lyp@gecols0 ... p@lyp@gecolsN list the columns for the respective page
     \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{}% revp@lyp@gecols0 ... revp@lyp@gecolsN list the reversed columns for the respective page
   \else 
@@ -70,6 +70,7 @@
   \fi
   \global\advance\p@lyp@geno by 1
 }
+\let\s@tpolyp@ges\simple@s@tpolyp@ges
 
 \def\new@poly@page{%called with p@lyp@geno=new page
   \let\npp@d@=\d@
