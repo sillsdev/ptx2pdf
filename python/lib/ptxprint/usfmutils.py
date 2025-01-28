@@ -511,7 +511,7 @@ class Usfm:
             s = str(e)
             processed = False
             for r in regs:
-                if r[0] is not None and not r[0](e.parent):
+                if r[0] is not None and not r[0](e):
                     continue
                 ns = r[1].sub(r[2], s)
                 if ns != s:
@@ -630,7 +630,7 @@ class Usfm:
         def iterfn(el, silent=False, base=None):
             if isinstance(el, sfm.Element):
                 styletype = el.meta["StyleType"]
-                issilent = styletype is not None and styletype.lower() == "note" or el.name.startswith("s") or silent
+                issilent = styletype is not None and styletype.lower() == "note" or el.name.startswith("s")
                 if el.meta.get("Attributes", None) is not None:
                     base = el
                 for c in tuple(el):      # in case of insertions

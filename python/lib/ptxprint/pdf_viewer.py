@@ -1351,7 +1351,7 @@ class Paragraphs(list):
                     currr.yend = readpts(p[1])
                 endpar = True
             elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
-                if not endpar:
+                if not endpar or not inpage:
                     continue
                 endpar = False
                 currp = currps.get(polycol, None)
