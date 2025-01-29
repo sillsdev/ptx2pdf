@@ -93,9 +93,9 @@ class PDFViewer:
         self.toctv.connect("row-activated", self.pickToc)
         self.numpages = 0
         self.document = None
-        self.current_page = None  # Keep track of the current page number
-        self.current_index = None
-        self.zoomLevel = 1.0  # Initial zoom level is 100%
+        self.current_page = None    # current folio page number
+        self.current_index = None   # current pdf page index
+        self.zoomLevel = 1.0        # Initial zoom level is 100%
         self.old_zoom = 1.0
         self.spread_mode = self.model.get("c_bkView", False)
         self.parlocs = None
@@ -1421,10 +1421,10 @@ class Paragraphs(list):
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None:
                     return
-                currp = FigInfo(p[0], p[1], (0, 0), False, False)
-                currp.rects = []
+                currpic = FigInfo(p[0], p[1], (0, 0), False, False)
+                currpic.rects = []
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
-                currp.rects.append(currr)
+                currpic.rects.append(currr)
                 self.append(currp)
             elif c == "parpicstop":
                 cinfo = colinfos.get(polycol, None)
@@ -1432,11 +1432,15 @@ class Paragraphs(list):
                     return
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
-                if currps.get(polycol, None) is not None:
-                    r = currps[polycol].rects[-1]
-                    r.ystart = currr.yend
-                currp = None
-                currr = None
+                #if currps.get(polycol, None) is not None:
+                #    r = currps[polycol].rects[-1]
+                #    r.ystart = currr.yend
+                currpic = None
+                if currp is not None:
+                    currpr = currr
+                    currr = ParRect(pnum, currpr.xstart, currpr.yend)
+                else:
+                    currr = None
             elif c == "parpicsize":
                 if len(p) < 4:
                     (w, h) = readpts(p[0]), readpts(p[1])
