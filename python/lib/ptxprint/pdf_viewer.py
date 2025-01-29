@@ -37,6 +37,21 @@ dsplyOpts = {'col':  ('tbhpc', 'lrio-'),
              'page': ('t-b','lcrio-'),
              'full': ('t-b','lcrio-')    }
 
+mstr = {
+    'ys':   _("Yes! Shrink"),
+    'ts':   _("Try Shrink"),
+    'expand':   _("Expand"),
+    'minusline':    _("-1 line"),
+    'plusline': _("+1 line"),
+    'rp':   _("Reset Paragraph"),
+    'st':   _("Shrink Text"),
+    'et':   _("Expand Text"),
+    'es':   _("Edit Style"),
+    'ecs':  _("Edit Caption Style"),
+    'j2pt': _("Send Ref to Paratext"),
+    'z2f':  _("Zoom to Fit"),
+    'z100': _("Zoom 100%"),
+}
 def render_page_image(page, zoomlevel, pnum, annotatefn):
     width, height = page.get_size()
     width, height = int(width * zoomlevel), int(height * zoomlevel)
@@ -641,19 +656,7 @@ class PDFViewer:
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
         self.clear_menu(menu)
-        ys        = _("Yes! Shrink")
-        ts        = _("Try Shrink")
-        expand    = _("Expand")
-        minusline = _("-1 line")
-        plusline  = _("+1 line")
-        rp        = _("Reset Paragraph")
-        st        = _("Shrink Text")
-        et        = _("Expand Text")
-        es        = _("Edit Style")
-        ecs       = _("Edit Caption Style")
-        j2pt      = _("Send Ref to Paratext")
-        z2f       = _("Zoom to Fit")
-        z100      = _("Zoom 100%")
+        
         
         info = []
         parref = None
