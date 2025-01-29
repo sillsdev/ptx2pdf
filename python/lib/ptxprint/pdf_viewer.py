@@ -94,6 +94,7 @@ class PDFViewer:
         self.numpages = 0
         self.document = None
         self.current_page = None  # Keep track of the current page number
+        self.current_index = None
         self.zoomLevel = 1.0  # Initial zoom level is 100%
         self.old_zoom = 1.0
         self.spread_mode = self.model.get("c_bkView", False)
@@ -165,7 +166,7 @@ class PDFViewer:
         self.hbox.show()
         self.hbox.grab_focus()
 
-    def load_pdf(self, pdf_path, adjlist=None, start=None, isdiglot=False):
+    def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
         self.shrinkStep = int(self.model.get('s_shrinktextstep'))
         self.expandStep = int(self.model.get('s_expandtextstep'))
         self.shrinkLimit = int(self.model.get('s_shrinktextlimit'))
@@ -194,8 +195,6 @@ class PDFViewer:
         
         self.adjlist = adjlist
         self.model.updatePgCtrlButtons(None)
-        if start is not None and start < self.numpages:
-            self.current_page = start
         return True
 
     def _add_toctree(self, tocts, toci, parent):
@@ -309,6 +308,7 @@ class PDFViewer:
                     images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
 
         self.current_page = page
+        self.current_index = cpage
         if setpnum:
             self.model.set("t_pgNum", str(page), mod=False)
         self.update_boxes(images)
@@ -388,10 +388,13 @@ class PDFViewer:
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         if fname is None:
             return False
-        if not self.load_pdf(fname, adjlist=adjlist, start=page, isdiglot=isdiglot):
+        if not self.load_pdf(fname, adjlist=adjlist, isdiglot=isdiglot):
             return False
         if parlocs is not None:     # and not isdiglot:
             self.load_parlocs(parlocs, rtl=rtl)
+        if page is not None and page in self.parlocs.pnums:
+            self.current_page = page
+            self.current_index = self.parlocs.pnums[page]
         self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
@@ -556,6 +559,7 @@ class PDFViewer:
             return True
             
     def get_spread(self, page, rtl=False):
+        """ page is a page index not folio """
         if page == 1:
             return (1,)
         if page > int(self.numpages):
@@ -600,9 +604,9 @@ class PDFViewer:
             side = self.widgetPosition(widget)
             if len(self.hbox.get_children()) > 1 and self.rtl_mode:
                 side ^= 1 # swap side if RTL
-            pnum = self.get_spread(self.current_page)[side]     # this all only works for LTR
+            pnum = self.get_spread(self.current_index)[side]     # this all only works for LTR
         else:
-            pnum = self.current_page
+            pnum = self.current_index
         p = None
         a = self.hbox.get_allocation()
 
