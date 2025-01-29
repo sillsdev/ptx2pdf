@@ -350,7 +350,7 @@ class PDFViewer:
             if nbk != bk:
                 adjlist = self.model.get_adjlist(nbk, gtk=Gtk)
                 bk = nbk
-            pnum = f"[{p.parnum}]" if getattr(p, 'parnum', 1) > 1 else ""
+            pnum = str(self.parlocs.get_folio(page) or "")
             ref = getattr(p, 'ref', (bk or "") + "0.0") + pnum
             info = adjlist.getinfo(ref)
             if not info:
@@ -613,7 +613,7 @@ class PDFViewer:
         if self.parlocs is not None:
             p = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
         # print(f"Parloc: {p=} {pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
-        return p
+        return p, pnum
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
         if label is None:
@@ -666,13 +666,9 @@ class PDFViewer:
             self.addMenuItem(menu, _("yet work with doglots"), None, sensitivity=False)
         else:
             print(f"Doing something in show_context_menu")
-            parref = self.get_parloc(widget, event)
+            parref, pi = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
-                pindex = getattr(parref, 'parnum', None)
-                if pindex is None or pindex > len(self.parlocs.pnumorder):
-                    pnum = ""
-                else:
-                    pnum = str(self.parlocs.pnumorder[pindex])
+                pnum = str(self.parlocs.get_folio(pi) or "")
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
@@ -1425,7 +1421,7 @@ class Paragraphs(list):
                 currpic.rects = []
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
                 currpic.rects.append(currr)
-                self.append(currp)
+                self.append(currpic)
             elif c == "parpicstop":
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None or currr is None:
@@ -1448,12 +1444,12 @@ class Paragraphs(list):
                     (w, h) = readpts(p[2]), readpts(p[3])
                     # if p[0] == "height":
                     #     (w, h) = (h, w)
-                    if currp is not None:
-                        currp.size = (w, h)
+                    if currpic is not None:
+                        currpic.size = (w, h)
                         if p[0] == "width":
-                            currp.wide = True
+                            currpic.wide = True
                         if p[1] == "heightlimit":
-                            currp.limit = True
+                            currpic.limit = True
                 
             # "parnote":        # type, callerx, callery
             # "notebox":        # type, width, height
@@ -1490,3 +1486,10 @@ class Paragraphs(list):
             for r in p.rects:
                 if r.pagenum == pnum:
                     yield (p, r)
+
+    def get_folio(self, pindex):
+        if pindex is None or pindex > len(self.pnumorder):
+            return None
+        else:
+            return self.parlocs.pnumorder[pindex]
+
