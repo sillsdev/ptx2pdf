@@ -668,7 +668,8 @@ class PDFViewer:
             print(f"Doing something in show_context_menu")
             parref, pi = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
-                pnum = str(self.parlocs.get_folio(pi) or "")
+                pnum = getattr(parref, 'pnum', 0) or 0
+                pnum = "["+pnum+"]" if pnum > 1 else ""
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
@@ -1488,8 +1489,8 @@ class Paragraphs(list):
                     yield (p, r)
 
     def get_folio(self, pindex):
-        if pindex is None or pindex > len(self.pnumorder):
+        if pindex is None or pindex >= len(self.pnumorder):
             return None
         else:
-            return self.parlocs.pnumorder[pindex]
+            return self.pnumorder[pindex]
 
