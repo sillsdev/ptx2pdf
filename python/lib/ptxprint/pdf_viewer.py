@@ -260,6 +260,7 @@ class PDFViewer:
         self.show_pdf(pnum)
 
     def show_pdf(self, page=None, rtl=False, setpnum=True):
+        """ page is a folio """
         if self.document is None:
             self.clear()
             return
@@ -314,6 +315,7 @@ class PDFViewer:
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, page, context, zoomlevel):
+        """ page is a page index"""
         def make_dashed(context, col, r, width, length):
             red, green, blue = hsv_to_rgb(*col)
             context.set_source_rgba(red, green, blue, 0.4)
@@ -632,7 +634,6 @@ class PDFViewer:
         for child in menu.get_children():
             child.destroy()
 
-
     def show_context_menu(self, widget, event):
         menu = Gtk.Menu()
         self.clear_menu(menu)
@@ -663,7 +664,11 @@ class PDFViewer:
             print(f"Doing something in show_context_menu")
             parref = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
-                pnum = f"[{parref.parnum}]" if getattr(parref, 'parnum', 0) > 1 else ""
+                pindex = getattr(parref, 'parnum', None)
+                if pindex is None or pindex > len(self.parlocs.pnumorder):
+                    pnum = ""
+                else:
+                    pnum = str(self.parlocs.pnumorder[pindex])
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
@@ -1452,6 +1457,7 @@ class Paragraphs(list):
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
         
     def findPos(self, pnum, x, y, rtl=False):
+        """ returns a page index (not folio) """
         # just iterate over paragraphs on this page
         if pnum > len(self.pindex):
             return None
