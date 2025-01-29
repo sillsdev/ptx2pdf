@@ -6427,7 +6427,7 @@ Thank you,
             hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.pdf_viewer.oneUp
             self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(not hide_next)
         
-    def onSavePDFasClicked(self, btn):
+    def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",
             parent=self.mw,

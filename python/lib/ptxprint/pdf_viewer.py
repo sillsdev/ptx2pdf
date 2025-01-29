@@ -291,12 +291,9 @@ class PDFViewer:
                     'btn_seekPage2fill_prev', 'btn_seekPage2fill_next']:
             action = btn.split("_")[-1]
             o = self.model.builder.get_object(btn)
-            l = o.get_tooltip_text()
-            print(f"{btn=} {action=} {l=} {self.rtl_mode=}")
-            if l is not None:
-                print(f"{btn=} {l=} {action.title()=}  >  {self.check4rtl(action).title()=}")
-                o.set_tooltip_text(re.sub(action.title(), self.check4rtl(action).title(), l))
-        
+            tt = o.get_tooltip_text()
+            if tt is not None:
+                o.set_tooltip_text(re.sub(action.title(), self.check4rtl(action).title(), tt))
 
         images = []
         if self.model.isCoverTabOpen():
@@ -668,7 +665,6 @@ class PDFViewer:
             self.addMenuItem(menu, _("The context menu doesn't"), None, sensitivity=False)
             self.addMenuItem(menu, _("yet work with doglots"), None, sensitivity=False)
         else:
-            print(f"Doing something in show_context_menu")
             parref, pi = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
                 parnum = getattr(parref, 'parnum', 0) or 0
@@ -677,10 +673,8 @@ class PDFViewer:
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
                     info = self.adjlist.getinfo(ref + parnum, insert=True)
-            print(f"{event.x=},{event.y=}")
             logger.debug(f"{event.x=},{event.y=}")
 
-        print(f"{parref=} {info=}")
         logger.debug(f"{parref=} {info=}")
         if len(info) and re.search(r'[.:]', parref.ref) and \
            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
@@ -1124,20 +1118,12 @@ class PDFViewer:
         if self.rtl_mode and self.model.lang != 'ar_SA':
             if action == _('first'):
                 return _('last')
-            elif action == _('First'):
-                return _('Last')
             elif action == _('last'):
                 return _('first')
-            elif action == _('Last'):
-                return _('First')
             elif action == _('next'):
                 return _('previous')
-            elif action == _('Next'):
-                return _('Previous')
             elif action == _('previous'):
                 return _('next')
-            elif action == _('Previous'):
-                return _('Next')
             else:
                 return action
         else:
