@@ -668,12 +668,12 @@ class PDFViewer:
             print(f"Doing something in show_context_menu")
             parref, pi = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
-                pnum = getattr(parref, 'pnum', 0) or 0
-                pnum = "["+pnum+"]" if pnum > 1 else ""
+                parnum = getattr(parref, 'parnum', 0) or 0
+                parnum = "["+parnum+"]" if parnum > 1 else ""
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
-                    info = self.adjlist.getinfo(ref + pnum, insert=True)
+                    info = self.adjlist.getinfo(ref + parnum, insert=True)
             print(f"{event.x=},{event.y=}")
             logger.debug(f"{event.x=},{event.y=}")
 
@@ -1096,23 +1096,22 @@ class PDFViewer:
 
     def set_page(self, action):
         increment = 2 if self.spread_mode else 1
-        cpage = self.parlocs.pnums.get(self.current_page, 1) - 1
+        canmap = self.parlocs.pnumorder is not None and len(self.parlocs.pnumorder) > 0 \
+                    and self.numpages == len(self.parlocs.pnumorder)
+        cpage = self.current_index
         # Safeguard against invalid cpage or empty pnumorder
-        if not self.parlocs.pnumorder or cpage < 0 or cpage >= len(self.parlocs.pnumorder):
-            logger.warning(f"Invalid cpage {cpage=} or empty pnumorder: resetting to page 1")
-            pg = self.parlocs.pnumorder[0] if self.parlocs.pnumorder else 1
+        pg = self.current_page
+        if action == self.check4rtl("first"):
+            pg = self.parlocs.pnumorder[0] if canmap else 1
+        elif action == self.check4rtl("last"):
+            pg = self.parlocs.pnumorder[-1] if canmap else self.numpages - 1
+        elif action == self.check4rtl("next"):
+            pg = self.parlocs.pnumorder[min(cpage + increment, len(self.parlocs.pnumorder) - 1)] if canmap else page + increment
+        elif action == self.check4rtl("previous"):
+            pg = self.parlocs.pnumorder[max(cpage - increment, 0)] if canmap else page - increment
         else:
-            if action == self.check4rtl("first"):
-                pg = self.parlocs.pnumorder[0]
-            elif action == self.check4rtl("last"):
-                pg = self.parlocs.pnumorder[-1]
-            elif action == self.check4rtl("next"):
-                pg = self.parlocs.pnumorder[min(cpage + increment, len(self.parlocs.pnumorder) - 1)]
-            elif action == self.check4rtl("previous"):
-                pg = self.parlocs.pnumorder[max(cpage - increment, 0)]
-            else:
-                logger.error(f"Unknown action: {action}")
-                return
+            logger.error(f"Unknown action: {action}")
+            return
 
         logger.debug(f"page {pg=} {cpage=} {self.current_page=}")
         self.show_pdf(pg)
@@ -1489,6 +1488,8 @@ class Paragraphs(list):
                     yield (p, r)
 
     def get_folio(self, pindex):
+        if self.pnumorder is None or not len(self.pnumorder):
+            return pindex
         if pindex is None or pindex >= len(self.pnumorder):
             return None
         else:
