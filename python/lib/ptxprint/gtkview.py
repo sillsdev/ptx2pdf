@@ -680,7 +680,6 @@ class GtkViewModel(ViewModel):
         self.currCodeletVbox = None
         self.codeletVboxes = {}
         self.ufPages = []
-        self.ufCurrIndex = 0
         self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         llang = self.builder.get_object("ls_interfaceLang")
@@ -6369,33 +6368,8 @@ Thank you,
         self.pdf_viewer.set_zoom(1.0)
 
     def onSeekPage2fill(self, btn):
-        pages = self.pdf_viewer.numpages
-        if not pages or not self.ufPages:
-            return
-        pgnum = self.getPgNum() - 1
-        current_pg = self.pdf_viewer.parlocs.pnumorder[pgnum] if self.pdf_viewer.parlocs is not None else 1
-
-        if Gtk.Buildable.get_name(btn).split("_")[-1] == 'next':
-            next_page = None
-            for pg in self.ufPages:
-                if pg > current_pg:
-                    next_page = pg
-                    break
-            if next_page:
-                self.ufCurrIndex = self.ufPages.index(next_page)
-        else:  # 'prev'
-            prev_page = None
-            for pg in reversed(self.ufPages):
-                if pg < current_pg:
-                    prev_page = pg
-                    break
-            if prev_page:
-                self.ufCurrIndex = self.ufPages.index(prev_page)
-
-        pg = self.ufPages[self.ufCurrIndex]
-        self.set("t_pgNum", str(pg), mod=False)
-        self.pdf_viewer.show_pdf(pg, self.rtl)
-        self.updatePgCtrlButtons(None)
+        direction = Gtk.Buildable.get_name(btn).split("_")[-1]
+        self.pdf_viewer.seekUFpage(direction)
 
     def onNavigatePageClicked(self, btn):
         n = Gtk.Buildable.get_name(btn)
@@ -6414,15 +6388,20 @@ Thank you,
         self.builder.get_object("btn_page_last").set_sensitive(not pg == num_pages)
         self.builder.get_object("btn_page_next").set_sensitive(not pg == num_pages)
 
-        self.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(False)
-        self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(False)
+        if self.rtl: # fix this up later!
+            self.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(True)
+            self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(True)
+            return
+        else:
+            self.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(False)
+            self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(False)
         
         if len(self.ufPages):
             firstUFpg = self.ufPages[0]
             lastUFpg = self.ufPages[-1]
 
             hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.pdf_viewer.oneUp
-            self.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(not hide_prev)
+            self.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(not hide_prev)
 
             hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.pdf_viewer.oneUp
             self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(not hide_next)

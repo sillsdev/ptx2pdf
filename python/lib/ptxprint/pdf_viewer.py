@@ -38,19 +38,27 @@ dsplyOpts = {'col':  ('tbhpc', 'lrio-'),
              'full': ('t-b','lcrio-')    }
 
 mstr = {
-    'ys':   _("Yes! Shrink"),
-    'ts':   _("Try Shrink"),
-    'expand':   _("Expand"),
-    'minusline':    _("-1 line"),
-    'plusline': _("+1 line"),
-    'rp':   _("Reset Paragraph"),
-    'st':   _("Shrink Text"),
-    'et':   _("Expand Text"),
-    'es':   _("Edit Style"),
-    'ecs':  _("Edit Caption Style"),
-    'j2pt': _("Send Ref to Paratext"),
-    'z2f':  _("Zoom to Fit"),
-    'z100': _("Zoom 100%"),
+    'yesminus':   _("Yes! Shrink -1 line"),
+    'tryminus':   _("Try Shrink -1 line"),
+    'plusline':   _("Expand +1 line"),
+    'rp':         _("Reset Paragraph"),
+    'st':         _("Shrink Text"),
+    'et':         _("Expand Text"),
+    'es':         _("Edit Style"),
+    'ecs':        _("Edit Caption Style"),
+    'j2pt':       _("Send Ref to Paratext"),
+    'z2f':        _("Zoom to Fit"),
+    'z100':       _("Zoom 100%"),
+    'ancrdat':    _("Anchored at:"),
+    'ianf':       _("Image Anchor Not Found"),
+    'cnganc':     _("Change Anchor Ref"),
+    'frmsz':      _("Frame Size"),
+    'vpos':       _("Vertical Position"),
+    'hpos':       _("Horizontal Position"),
+    'mirror':     _("Mirror Picture"),
+    'shrinkpic':  _("Shrink by 1 line"),
+    'growpic':    _("Grow by 1 line"),
+    'shwdtl':     _("Show Details..."),
 }
 def render_page_image(page, zoomlevel, pnum, annotatefn):
     width, height = page.get_size()
@@ -122,6 +130,7 @@ class PDFViewer:
         self.timer = None
         self.showadjustments = True
         self.piczoom = 85
+        self.ufCurrIndex = 0
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -287,13 +296,27 @@ class PDFViewer:
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
         cpage = self.parlocs.pnums.get(page, page)
         
+        ufPages = self.model.ufPages
+        elipsis = f", ... (of {len(ufPages)})" if len(ufPages) > 5 else ""
         for btn in ['btn_page_first', 'btn_page_previous', 'btn_page_next', 'btn_page_last', 
-                    'btn_seekPage2fill_prev', 'btn_seekPage2fill_next']:
+                    'btn_seekPage2fill_previous', 'btn_seekPage2fill_next']:
             action = btn.split("_")[-1]
             o = self.model.builder.get_object(btn)
             tt = o.get_tooltip_text()
             if tt is not None:
-                o.set_tooltip_text(re.sub(action.title(), self.check4rtl(action).title(), tt))
+                if 'seekPage' in btn:
+                    o.set_sensitive(len(ufPages))
+                    if len(ufPages):
+                        pgs = ", ".join(map(str, ufPages[:5]))
+                    # o.set_tooltip_text(re.sub(action, self.swap4rtl(action), tt))
+                        seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
+                        self.model.builder.get_object(f"bx_seekPage").set_sensitive(True)
+                    else:
+                        seekText = _("No underfilled pages detected.")
+                        self.model.builder.get_object(f"bx_seekPage").set_sensitive(False)
+                    o.set_tooltip_text(seekText)
+                else:
+                    o.set_tooltip_text(re.sub(action.title(), self.swap4rtl(action).title(), tt))
 
         images = []
         if self.model.isCoverTabOpen():
@@ -320,7 +343,7 @@ class PDFViewer:
                     images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
 
         self.current_page = page
-        self.current_index = cpage
+        self.current_index = cpage - 1
         if setpnum:
             self.model.set("t_pgNum", str(page), mod=False)
         self.update_boxes(images)
@@ -585,6 +608,33 @@ class PDFViewer:
         else:
             return (page - 1, page)
 
+    def seekUFpage(self, direction):
+        pages = self.numpages
+        if not pages or not self.model.ufPages:
+            return
+        pgnum = self.current_index
+        current_pg = self.parlocs.pnumorder[pgnum] if self.parlocs is not None else 1
+        if direction == self.swap4rtl('next'):
+            next_page = None
+            for pg in self.model.ufPages:
+                if pg > current_pg:
+                    next_page = pg
+                    break
+            if next_page:
+                self.ufCurrIndex = self.model.ufPages.index(next_page)
+        else:  # 'previous'
+            prev_page = None
+            for pg in reversed(self.model.ufPages):
+                if pg < current_pg:
+                    prev_page = pg
+                    break
+            if prev_page:
+                self.ufCurrIndex = self.model.ufPages.index(prev_page)
+
+        pg = self.model.ufPages[self.ufCurrIndex]
+        self.show_pdf(pg)
+        self.model.updatePgCtrlButtons(None)
+
     def on_button_press(self, widget, event):
         if event.button == 2:
             self.is_dragging = True
@@ -654,21 +704,17 @@ class PDFViewer:
         menu = Gtk.Menu()
         self.clear_menu(menu)
         
-        
         info = []
         parref = None
         if not self.oneUp:  # self.oneUp is disabled
-            self.addMenuItem(menu, _("Context Menu Disabled!"), None, sensitivity=False)
-            self.addMenuItem(menu, _("Turn off Booklet pagination"), None, sensitivity=False)
-            self.addMenuItem(menu, _("on Finishing tab to re-enable"), None, sensitivity=False)
-        elif self.isdiglot:  # Document is diglot
-            self.addMenuItem(menu, _("The context menu doesn't"), None, sensitivity=False)
-            self.addMenuItem(menu, _("yet work with doglots"), None, sensitivity=False)
+            self.addMenuItem(menu, _("Context Menu Disabled!")+"\n"+ \
+                                   _("Turn off Booklet pagination")+"\n"+ \
+                                   _("on Finishing tab to re-enable"), None, sensitivity=False)
         else:
             parref, pi = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
                 parnum = getattr(parref, 'parnum', 0) or 0
-                parnum = "["+parnum+"]" if parnum > 1 else ""
+                parnum = "["+str(parnum)+"]" if parnum > 1 else ""
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
@@ -682,31 +728,31 @@ class PDFViewer:
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
-            hdr = f"{ref[:o]} {ref[o:]}{pnum}   \\{parref.mrk}  {l}  {info[1]}%"
+            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
 
-            x = ys if ("-" in str(info[0]) and str(info[0]) != "-1") else ts
-            self.addMenuItem(menu, f"{x} {minusline} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
-            self.addMenuItem(menu, f"{expand} {plusline} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
+            shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
+            self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
+            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
             self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, f"{rp}", self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l.replace("+","")) == 0))
+            self.addMenuItem(menu, mstr['rp'], self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l.replace("+","")) == 0))
             self.addMenuItem(menu, None, None)
 
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
-            self.addMenuItem(menu, f"{st} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
+            self.addMenuItem(menu, f"{mstr['st']} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
 
             expLim = min(self.expandLimit, info[1]+self.expandStep)
-            self.addMenuItem(menu, f"{et} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+            self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
             if parref and parref.mrk is not None:
                 self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, f"{es} \\{parref.mrk}", self.edit_style, parref.mrk)
+                self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, parref.mrk)
             if sys.platform == "win32": # and ALSO (later) check for valid ref
                 self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, f"{j2pt}", self.on_broadcast_ref, ref)
+                self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
             self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, f"{z2f} (Ctrl + F)", self.set_zoom_fit_to_screen)
-            self.addMenuItem(menu, f"{z100} (Ctrl + 0)", self.on_reset_zoom)
+            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.set_zoom_fit_to_screen)
+            self.addMenuItem(menu, mstr['z100']+" (Ctrl + 0)", self.on_reset_zoom)
 
         # New section for image context menu which is a lot more complicated
         elif parref is not None and isinstance(parref, FigInfo):
@@ -720,10 +766,10 @@ class PDFViewer:
                 pics = self.model.picinfos.find(anchor=imgref)
                 if len(pics):
                     pic = pics[0]
-                    self.addMenuItem(menu, _("Anchored at: {}").format(imgref), None, sensitivity=False)
+                    self.addMenuItem(menu, mstr['ancrdat']+" "+imgref, None, sensitivity=False)
                 else:
                     showmenu = False
-                    self.addMenuItem(menu, _("Image Anchor Not Found"), None, sensitivity=False)
+                    self.addMenuItem(menu, mstr['ianf'], None, sensitivity=False)
             # for y in ['src', 'anchor', 'size', 'pgpos', 'mirror', 'scale']:
                 # print(f"{y.ljust(7)} = {pic.get(y, '-')}")
             pgpos = pic.get('pgpos', 'tl')
@@ -742,7 +788,7 @@ class PDFViewer:
                 curr_hpos = 'c'
             # print(f"Calculated V={curr_vpos} H={curr_hpos}")
             if showmenu:
-                self.addMenuItem(menu, _("Change Anchor Ref"), self.on_edit_anchor, pic)
+                self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, pic)
 
                 frame_menu = Gtk.Menu()
                 self.clear_menu(frame_menu)
@@ -753,7 +799,7 @@ class PDFViewer:
                     menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
                     menu_item.show()
                     frame_menu.append(menu_item)
-                self.addSubMenuItem(menu, _("Frame Size"), frame_menu)
+                self.addSubMenuItem(menu, mstr['frmsz'], frame_menu)
 
                 vpos_menu = Gtk.Menu()
                 self.clear_menu(vpos_menu)
@@ -765,7 +811,7 @@ class PDFViewer:
                         menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
                         menu_item.show()
                         vpos_menu.append(menu_item)
-                self.addSubMenuItem(menu, _("Vertical Position"), vpos_menu)
+                self.addSubMenuItem(menu, mstr['vpos'], vpos_menu)
 
                 if curr_frame != 'span':
                     hpos_menu = Gtk.Menu()
@@ -779,7 +825,7 @@ class PDFViewer:
                             menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
                             menu_item.show()
                             hpos_menu.append(menu_item)
-                    self.addSubMenuItem(menu, _("Horizontal Position"), hpos_menu)
+                    self.addSubMenuItem(menu, mstr['hpos'], hpos_menu)
 
                 mirror_menu = Gtk.Menu()
                 self.clear_menu(mirror_menu)
@@ -791,18 +837,18 @@ class PDFViewer:
                     menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
                     menu_item.show()
                     mirror_menu.append(menu_item)
-                self.addSubMenuItem(menu, _("Mirror Picture"), mirror_menu)
+                self.addSubMenuItem(menu, mstr['mirror'], mirror_menu)
 
                 self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, _("Shrink by 1 line"), self.on_shrink_image, (pic, parref))
-                self.addMenuItem(menu, _("Grow by 1 line"), self.on_grow_image, (pic, parref))
+                self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref))
+                self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref))
                 self.addMenuItem(menu, None, None)
 
-                self.addMenuItem(menu, _("Show Details..."), self.on_image_show_details, pic)
-                self.addMenuItem(menu, f"{ecs} \\fig", self.edit_fig_style)
+                self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
+                self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
                 if sys.platform == "win32":
                     self.addMenuItem(menu, None, None)
-                    self.addMenuItem(menu, f"{j2pt}", self.on_broadcast_ref, imgref)
+                    self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, imgref)
         if len(menu):
             menu.popup(None, None, None, None, event.button, event.time)
 
@@ -1098,14 +1144,14 @@ class PDFViewer:
         cpage = self.current_index
         # Safeguard against invalid cpage or empty pnumorder
         pg = self.current_page
-        if action == self.check4rtl("first"):
+        if action == self.swap4rtl("first"):
             pg = self.parlocs.pnumorder[0] if canmap else 1
-        elif action == self.check4rtl("last"):
-            pg = self.parlocs.pnumorder[-1] if canmap else self.numpages - 1
-        elif action == self.check4rtl("next"):
-            pg = self.parlocs.pnumorder[min(cpage + increment, len(self.parlocs.pnumorder) - 1)] if canmap else page + increment
-        elif action == self.check4rtl("previous"):
-            pg = self.parlocs.pnumorder[max(cpage - increment, 0)] if canmap else page - increment
+        elif action == self.swap4rtl("last"):
+            pg = self.parlocs.pnumorder[-1] if canmap else self.numpages
+        elif action == self.swap4rtl("next"):
+            pg = self.parlocs.pnumorder[min(cpage + increment, len(self.parlocs.pnumorder) - 1)] if canmap else min(pg + increment, self.numpages)
+        elif action == self.swap4rtl("previous"):
+            pg = self.parlocs.pnumorder[max(cpage - increment, 0)] if canmap else max(pg - increment, 1)
         else:
             logger.error(f"Unknown action: {action}")
             return
@@ -1113,7 +1159,7 @@ class PDFViewer:
         logger.debug(f"page {pg=} {cpage=} {self.current_page=}")
         self.show_pdf(pg)
     
-    def check4rtl(self, action):
+    def swap4rtl(self, action):
         # Only swap the buttons for RTL if we're NOT in Arabic UI mode
         if self.rtl_mode and self.model.lang != 'ar_SA':
             if action == _('first'):

@@ -351,19 +351,6 @@ class RunJob:
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
-                    for x in ['previous', 'next']:
-                        seekbtn = self.printer.builder.get_object(f"btn_seekPage2fill_{x[:4]}")
-                        seekbtn.set_sensitive(len(ufPages))
-                        elipsis = f", ... (of {len(ufPages)})" if len(ufPages) > 5 else ""
-                        if len(ufPages):
-                            pgs = ", ".join(map(str, ufPages[:5]))
-                            seekText = _("Show {} underfilled page.").format(x) + "\n" + pgs + elipsis
-                            self.printer.builder.get_object(f"btn_seekPage2fill_prev").set_sensitive(False)
-                            self.printer.builder.get_object(f"bx_seekPage").set_sensitive(True)
-                        else:
-                            seekText = _("No underfilled pages detected.")
-                            self.printer.builder.get_object(f"bx_seekPage").set_sensitive(False)
-                        seekbtn.set_tooltip_text(seekText)
                     sl = self.printer.builder.get_object("l_statusLine")
                     sl.set_text("")
                     sl.set_tooltip_text("")
