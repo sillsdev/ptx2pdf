@@ -271,6 +271,17 @@ class PDFViewer:
             self.spread_mode = self.model.get("c_bkView", False)
         self.rtl_mode = self.model.get("c_RTLbookBinding", False)
         cpage = self.parlocs.pnums.get(page, page)
+        
+        for btn in ['btn_page_first', 'btn_page_previous', 'btn_page_next', 'btn_page_last', 
+                    'btn_seekPage2fill_prev', 'btn_seekPage2fill_next']:
+            action = btn.split("_")[-1]
+            o = self.model.builder.get_object(btn)
+            l = o.get_tooltip_text()
+            print(f"{btn=} {action=} {l=} {self.rtl_mode=}")
+            if l is not None:
+                print(f"{btn=} {l=} {action.title()=}  >  {self.check4rtl(action).title()=}")
+                o.set_tooltip_text(re.sub(action.title(), self.check4rtl(action).title(), l))
+        
 
         images = []
         if self.model.isCoverTabOpen():
@@ -639,31 +650,32 @@ class PDFViewer:
         z2f       = _("Zoom to Fit")
         z100      = _("Zoom 100%")
         
+        info = []
+        parref = None
         if not self.oneUp:  # self.oneUp is disabled
-            info = []
-            parref = None
             self.addMenuItem(menu, _("Context Menu Disabled!"), None, sensitivity=False)
             self.addMenuItem(menu, _("Turn off Booklet pagination"), None, sensitivity=False)
             self.addMenuItem(menu, _("on Finishing tab to re-enable"), None, sensitivity=False)
         elif self.isdiglot:  # Document is diglot
-            info = []
-            parref = None
             self.addMenuItem(menu, _("The context menu doesn't"), None, sensitivity=False)
             self.addMenuItem(menu, _("yet work with doglots"), None, sensitivity=False)
         else:
+            print(f"Doing something in show_context_menu")
             parref = self.get_parloc(widget, event)
-            info = []
             if isinstance(parref, ParInfo):
                 pnum = f"[{parref.parnum}]" if getattr(parref, 'parnum', 0) > 1 else ""
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
                 if self.adjlist is not None:
                     info = self.adjlist.getinfo(ref + pnum, insert=True)
+            print(f"{event.x=},{event.y=}")
+            logger.debug(f"{event.x=},{event.y=}")
 
-            logger.debug(f"{parref=} {info=} ({event.x},{event.y})")
+        print(f"{parref=} {info=}")
+        logger.debug(f"{parref=} {info=}")
         if len(info) and re.search(r'[.:]', parref.ref) and \
            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
-            o = 4 if ref[3:4] in "LRABCDEF" else 3
+            o = 4 if ref[3:4] in "LRABCDEFG" else 3
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
@@ -1084,13 +1096,13 @@ class PDFViewer:
             logger.warning(f"Invalid cpage {cpage=} or empty pnumorder: resetting to page 1")
             pg = self.parlocs.pnumorder[0] if self.parlocs.pnumorder else 1
         else:
-            if action == "first":
+            if action == self.check4rtl("first"):
                 pg = self.parlocs.pnumorder[0]
-            elif action == "last":
+            elif action == self.check4rtl("last"):
                 pg = self.parlocs.pnumorder[-1]
-            elif action == "next":
+            elif action == self.check4rtl("next"):
                 pg = self.parlocs.pnumorder[min(cpage + increment, len(self.parlocs.pnumorder) - 1)]
-            elif action == "previous":
+            elif action == self.check4rtl("previous"):
                 pg = self.parlocs.pnumorder[max(cpage - increment, 0)]
             else:
                 logger.error(f"Unknown action: {action}")
@@ -1098,6 +1110,30 @@ class PDFViewer:
 
         logger.debug(f"page {pg=} {cpage=} {self.current_page=}")
         self.show_pdf(pg)
+    
+    def check4rtl(self, action):
+        # Only swap the buttons for RTL if we're NOT in Arabic UI mode
+        if self.rtl_mode and self.model.lang != 'ar_SA':
+            if action == _('first'):
+                return _('last')
+            elif action == _('First'):
+                return _('Last')
+            elif action == _('last'):
+                return _('first')
+            elif action == _('Last'):
+                return _('First')
+            elif action == _('next'):
+                return _('previous')
+            elif action == _('Next'):
+                return _('Previous')
+            elif action == _('previous'):
+                return _('next')
+            elif action == _('Previous'):
+                return _('Next')
+            else:
+                return action
+        else:
+            return action
 
     def _saveSetting(self, key, value):
         self.model.userconfig.set('printer', key, value)
