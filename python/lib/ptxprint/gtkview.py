@@ -6406,7 +6406,8 @@ Thank you,
     def updatePgCtrlButtons(self, w):
         pg = self.getPgNum() - 1
         num_pages = self.pdf_viewer.numpages
-        pnumpg = self.pdf_viewer.parlocs.pnumorder[pg] if self.pdf_viewer.parlocs is not None else 1
+        pnumpg = self.pdf_viewer.parlocs.pnumorder[pg] if self.pdf_viewer.parlocs is not None \
+                    and pg < len(self.pdf_viewer.parlocs.pnumorder) else 1
 
         self.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
         self.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
