@@ -6378,6 +6378,7 @@ Thank you,
         self.updatePgCtrlButtons(None)
         
     def updatePgCtrlButtons(self, w):
+        self.pdf_viewer.updateButtonSensitivity()
         pg = self.getPgNum() - 1
         num_pages = self.pdf_viewer.numpages
         pnumpg = self.pdf_viewer.parlocs.pnumorder[pg] if self.pdf_viewer.parlocs is not None \

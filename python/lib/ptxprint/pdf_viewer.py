@@ -308,7 +308,6 @@ class PDFViewer:
                     o.set_sensitive(len(ufPages))
                     if len(ufPages):
                         pgs = ", ".join(map(str, ufPages[:5]))
-                    # o.set_tooltip_text(re.sub(action, self.swap4rtl(action), tt))
                         seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
                         self.model.builder.get_object(f"bx_seekPage").set_sensitive(True)
                     else:
@@ -341,6 +340,8 @@ class PDFViewer:
                     pg = self.document.get_page(cpage-1)
                     self.psize = pg.get_size()
                     images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
+
+        # print(f"\n--- At the end of show_PDF: ---\n{self.current_page=} --> {page=}\n{self.current_index=} --> cpage-1={cpage - 1}   {setpnum=}")
 
         self.current_page = page
         self.current_index = cpage - 1
@@ -377,6 +378,7 @@ class PDFViewer:
             context.fill()
         bk = None
         for p, r in self.parlocs.getParas(page):
+            # print(f"in add_hints, for loop: {page=} {p=} {r=}")
             if not isinstance(p, ParInfo):
                 continue
             nbk = getattr(p, "ref", bk or "")[:3].upper()
@@ -385,8 +387,10 @@ class PDFViewer:
             if nbk != bk:
                 adjlist = self.model.get_adjlist(nbk, gtk=Gtk)
                 bk = nbk
-            pnum = str(self.parlocs.get_folio(page) or "")
-            ref = getattr(p, 'ref', (bk or "") + "0.0") + pnum
+            parnum = getattr(r, 'parnum', 0) or 0
+            parnum = "["+str(parnum)+"]" if parnum > 1 else ""            
+            ref = getattr(p, 'ref', (bk or "") + "0.0") + parnum
+            # print(f"In add_hints: {page=} {parnum=}  {ref=}")
             info = adjlist.getinfo(ref)
             if not info:
                 continue
@@ -635,6 +639,35 @@ class PDFViewer:
         self.show_pdf(pg)
         self.model.updatePgCtrlButtons(None)
 
+    def updateButtonSensitivity(self):
+        pg = self.current_index
+        num_pages = self.numpages 
+        pnumpg = self.parlocs.pnumorder[pg] if self.parlocs is not None \
+                    and pg < len(self.parlocs.pnumorder) else 1
+
+        self.model.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
+        self.model.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
+        self.model.builder.get_object("btn_page_last").set_sensitive(not pg == num_pages)
+        self.model.builder.get_object("btn_page_next").set_sensitive(not pg == num_pages)
+
+        if getattr(self, 'rtl_mode', False): # fix this up later to include test for Arabic UI
+            self.model.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(True)
+            self.model.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(True)
+            return
+        else:
+            self.model.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(False)
+            self.model.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(False)
+        
+        if len(self.model.ufPages):
+            firstUFpg = self.model.ufPages[0]
+            lastUFpg = self.model.ufPages[-1]
+
+            hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
+            self.model.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(not hide_prev)
+
+            hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
+            self.model.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(not hide_next)
+
     def on_button_press(self, widget, event):
         if event.button == 2:
             self.is_dragging = True
@@ -673,8 +706,10 @@ class PDFViewer:
         a = self.hbox.get_allocation()
 
         if self.parlocs is not None:
+            # print(f"Calling findpos with: {pnum=} {x=}  {self.psize[1]=} - {y=}, {self.rtl_mode=}")
             p = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
         # print(f"Parloc: {p=} {pnum=} {x=} y={self.psize[1]-y}   {self.psize=}   {a.x=} {a.y=}")
+        # print(f"Returning from get_parloc: {p=} {pnum=}")
         return p, pnum
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
@@ -1156,6 +1191,7 @@ class PDFViewer:
             logger.error(f"Unknown action: {action}")
             return
 
+        # print(f"At end of set_page: s{pg=} {cpage=} {self.current_page=}")
         logger.debug(f"page {pg=} {cpage=} {self.current_page=}")
         self.show_pdf(pg)
     
@@ -1498,11 +1534,13 @@ class Paragraphs(list):
     def findPos(self, pnum, x, y, rtl=False):
         """ returns a page index (not folio) """
         # just iterate over paragraphs on this page
-        if pnum > len(self.pindex):
+        if pnum > len(self.pindex): # need some other test here 
             return None
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
-        logger.debug(f"Parloc testing: {pnum=}  {self.pindex[pnum-1]-1} -> {e}")
+        # print(f"Parloc testing: {pnum=}")
+        # print(f"Parloc testing: {self.pindex[pnum-1]=} -> {e=}")
+        # logger.debug(f"Parloc testing: {pnum=}  {self.pindex[pnum-1]-1} -> {e}")
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
             for i,r in enumerate(p.rects):
                 if r.pagenum != pnum:
