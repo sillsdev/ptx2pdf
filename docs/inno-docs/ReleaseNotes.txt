@@ -1,4 +1,4 @@
-PTXprint 2.7.15 Release Notes
+PTXprint 2.7.16 Release Notes
 31 Jan 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
@@ -22,7 +22,7 @@ Bug fixes and Improvements in 2.7.16 (31 Jan 2025)
   * Add PTXPRINT_OPTS and --diffdpi
 
 Bug fixes and Improvements in 2.7.15 (24 Jan 2025)
-  *   * Use right font in Preview contents (index) pane
+  * Use right font in Preview contents (index) pane
   * Get zimagecopyrights working again (by handling ./tmpPics/)
   * Make Peripheral page numbers start with -1 and count down
   * Advance pages in pdfviewer by folio number
