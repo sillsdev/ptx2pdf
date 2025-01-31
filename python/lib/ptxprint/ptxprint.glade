@@ -3457,6 +3457,7 @@ Ctrl + Scrollwheel - change zoom level</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Zoom Fit to Screen</property>
                     <property name="halign">center</property>
+                    <property name="margin-start">12</property>
                     <property name="image">icon_zoom_fit</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="onZoomFitClicked" swapped="no"/>

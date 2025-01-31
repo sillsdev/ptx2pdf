@@ -1060,15 +1060,6 @@ class PDFViewer:
         if self.model.get("c_updatePDF"):
             self.model.onOK(None)
 
-    def old_on_reset_paragraph(self, widget, info, parref):
-        if self.adjlist is not None:
-            pc = int(info[0].replace("+-", "-"))
-            self.adjlist.increment(info[2], - pc)
-            self.adjlist.expand(info[2], 100 - info[1], mrk=parref.mrk)
-        self.show_pdf()
-        if self.model.get("c_updatePDF"):
-            self.model.onOK(None)
-
     def on_shrink_text(self, widget, info, parref):
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:

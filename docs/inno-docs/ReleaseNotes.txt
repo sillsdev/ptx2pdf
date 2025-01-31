@@ -1,11 +1,28 @@
 PTXprint 2.7.15 Release Notes
-24 Jan 2025
+31 Jan 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
+Bug fixes and Improvements in 2.7.16 (31 Jan 2025)
+  * Allow right-click DEL AdjList rows; and reset Para removes the row as well
+  * Improve RTL UI for prev and next underfilled pages
+  * Swap pg navigation button behaviour and tooltips for RTL PDF with non Arabic UI
+  * Fix page indexing bugs and improve tooltip for prev and next undefilled page
+  * Move btnSensitivity to pdf_viewer, get add_hints working again
+  * Fix xo and fr to be no-break space after
+  * Clean up context menu
+  * Handle pdf page numbers if no parlocs
+  * Put the paragraph number on the context menu
+  * Refactor continuing paragraph after a picture
+  * In pdf viewer introduce current_index to parallel current_page
+  * Fix page number on pdf viewer context menu
+  * Fix handling out of range page indices
+  * Add usfmutils unit tests and fix abarent parlen between pages
+  * Add PTXPRINT_OPTS and --diffdpi
+
 Bug fixes and Improvements in 2.7.15 (24 Jan 2025)
-  * Use right font in Preview contents (index) pane
+  *   * Use right font in Preview contents (index) pane
   * Get zimagecopyrights working again (by handling ./tmpPics/)
   * Make Peripheral page numbers start with -1 and count down
   * Advance pages in pdfviewer by folio number
