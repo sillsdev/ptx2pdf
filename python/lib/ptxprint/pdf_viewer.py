@@ -1044,8 +1044,23 @@ class PDFViewer:
         self.show_pdf()
         if self.model.get("c_updatePDF"):
             self.model.onOK(None)
-        
+
     def on_reset_paragraph(self, widget, info, parref):
+        """Finds and deletes the row in AdjList based on parref."""
+        if self.adjlist is None:
+            return
+        model = self.adjlist.liststore
+        fullref = (parref.ref, parref.parnum)
+        for row in model:
+            row_ref = (row[0] + str(row[1]), int(row[2]))
+            if row_ref == fullref:
+                model.remove(row.iter)
+                break
+        self.show_pdf()
+        if self.model.get("c_updatePDF"):
+            self.model.onOK(None)
+
+    def old_on_reset_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             pc = int(info[0].replace("+-", "-"))
             self.adjlist.increment(info[2], - pc)
