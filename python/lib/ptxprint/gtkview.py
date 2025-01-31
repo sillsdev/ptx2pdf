@@ -1261,7 +1261,6 @@ class GtkViewModel(ViewModel):
         return self.uilevel
 
     def toggleUIdetails(self, w, state):
-        # print(f"{w}")
         if w in _ui_noToggleVisible:
             self.builder.get_object(w).set_sensitive(state)
         else:
@@ -1320,7 +1319,6 @@ class GtkViewModel(ViewModel):
         else:
             partA = url
             partB = ''
-        # print(f"1: {url=}\n{partA=} / {partB=}")
 
         return partA, partB
 
@@ -2440,7 +2438,6 @@ class GtkViewModel(ViewModel):
         elif pgid in ("scroll_Settings1", "scroll_Settings2", "scroll_Settings3"): # mulit-purpose View/Edit tabs
             lname = "l_{1}".format(*pgid.split('_'))
             fpath = self.builder.get_object(lname).get_tooltip_text()
-            # print(f"{pgid=} | {fpath=}")
             if fpath == None:
                 self.uneditedText[pgnum] = _("Use the 'Advanced' tab to select which settings you want to view or edit.")
                 self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
@@ -3613,8 +3610,6 @@ class GtkViewModel(ViewModel):
                 if pdft > cfgt:
                     if isfirst:
                         prvw.set_gravity(Gdk.Gravity.NORTH_EAST)
-                    # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
-                    # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
                     pdfname = self.baseTeXPDFnames()[0]
                     if len(pdfname):
                         plocname = os.path.join(self.project.printPath(self.cfgid), pdfname+".parlocs")
@@ -6344,7 +6339,7 @@ Thank you,
         pg = int(value) if value.isdigit() else 1
         if self.pdf_viewer.parlocs is not None and pg not in self.pdf_viewer.parlocs.pnums:
             pg = 1
-        self.set("t_pgNum", str(pg))
+        self.set("t_pgNum", str(pg), mod=False)
         self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
@@ -6372,40 +6367,17 @@ Thank you,
         self.pdf_viewer.seekUFpage(direction)
 
     def onNavigatePageClicked(self, btn):
+        if self.loadingConfig:
+            return
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
         self.pdf_viewer.set_page(x)
-        self.updatePgCtrlButtons(None)
+        self.pdf_viewer.updatePageNavigation()
         
     def updatePgCtrlButtons(self, w):
-        self.pdf_viewer.updateButtonSensitivity()
-        pg = self.getPgNum() - 1
-        num_pages = self.pdf_viewer.numpages
-        pnumpg = self.pdf_viewer.parlocs.pnumorder[pg] if self.pdf_viewer.parlocs is not None \
-                    and pg < len(self.pdf_viewer.parlocs.pnumorder) else 1
-
-        self.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
-        self.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
-        self.builder.get_object("btn_page_last").set_sensitive(not pg == num_pages)
-        self.builder.get_object("btn_page_next").set_sensitive(not pg == num_pages)
-
-        if self.rtl: # fix this up later!
-            self.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(True)
-            self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(True)
+        if self.loadingConfig:
             return
-        else:
-            self.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(False)
-            self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(False)
-        
-        if len(self.ufPages):
-            firstUFpg = self.ufPages[0]
-            lastUFpg = self.ufPages[-1]
-
-            hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.pdf_viewer.oneUp
-            self.builder.get_object(f"btn_seekPage2fill_previous").set_sensitive(not hide_prev)
-
-            hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.pdf_viewer.oneUp
-            self.builder.get_object(f"btn_seekPage2fill_next").set_sensitive(not hide_next)
+        self.pdf_viewer.updatePageNavigation()
         
     def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
         dialog = Gtk.FileChooserDialog(

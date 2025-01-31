@@ -3469,13 +3469,13 @@ Ctrl + Scrollwheel - change zoom level</property>
                 </child>
                 <child>
                   <object class="GtkButton" id="btn_zoom_100">
+                    <property name="label" translatable="yes">100%</property>
                     <property name="name">Reset Zoom to 100%</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Reset Zoom to 100%</property>
                     <property name="halign">center</property>
-                    <property name="image">icon_zoom_100</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="onZoom100Clicked" swapped="no"/>
                   </object>
@@ -3678,7 +3678,6 @@ Mouse Scroll also changes pages</property>
                   <object class="GtkButton" id="btn_seekPage2fill_previous">
                     <property name="name">Find the next underfilled page</property>
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Show previous underfilled page.</property>
@@ -3697,7 +3696,6 @@ Mouse Scroll also changes pages</property>
                   <object class="GtkButton" id="btn_seekPage2fill_next">
                     <property name="name">Find the next underfilled page</property>
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Show next underfilled page.</property>
