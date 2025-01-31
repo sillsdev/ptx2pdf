@@ -406,7 +406,7 @@ class PDFViewer:
             return False
         if not self.load_pdf(fname, adjlist=adjlist, isdiglot=isdiglot):
             return False
-        if parlocs is not None:     # and not isdiglot:
+        if parlocs is not None:
             self.load_parlocs(parlocs, rtl=rtl)
         if page is not None and page in self.parlocs.pnums:
             self.current_page = page
@@ -614,88 +614,88 @@ class PDFViewer:
 
     def updatePageNavigation(self):
         """Update button sensitivity and tooltips dynamically based on the current index."""
-        
         # Get current page index and total pages
         pg = self.current_index or 1
         num_pages = self.numpages 
         ufPages = self.model.ufPages
+        is_rtl = getattr(self, 'rtl_mode', False) and self.model.lang != 'ar_SA'
 
         # Get page number mapping
         pnumpg = self.parlocs.pnumorder[pg - 1] if self.parlocs and pg <= len(self.parlocs.pnumorder) else 1
 
         # Enable or disable navigation buttons based on position
-        self.model.builder.get_object("btn_page_first").set_sensitive(pg > 1)
-        self.model.builder.get_object("btn_page_previous").set_sensitive(pg > 1)
-        self.model.builder.get_object("btn_page_last").set_sensitive(pg < num_pages)
-        self.model.builder.get_object("btn_page_next").set_sensitive(pg < num_pages)
+        if is_rtl:
+            self.model.builder.get_object("btn_page_first").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_previous").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_last").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_next").set_sensitive(pg > 1)
+        else:
+            self.model.builder.get_object("btn_page_first").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_previous").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_last").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_next").set_sensitive(pg < num_pages)
 
-        # Determine sensitivity for "seek underfilled page" buttons
         seekPrevBtn = self.model.builder.get_object("btn_seekPage2fill_previous")
         seekNextBtn = self.model.builder.get_object("btn_seekPage2fill_next")
+        seekPrevBtn.set_sensitive(False)
+        seekNextBtn.set_sensitive(False)
 
-        if getattr(self, 'rtl_mode', False):  # Fix later to include Arabic UI detection
-            seekPrevBtn.set_sensitive(True)
-            seekNextBtn.set_sensitive(True)
-            return
-        else:
-            seekPrevBtn.set_sensitive(False)
-            seekNextBtn.set_sensitive(False)
-
-        if len(ufPages):
+        total_count = len(ufPages)
+        self.model.builder.get_object("bx_seekPage").set_sensitive(total_count > 0)
+        if total_count:
+            curr_pos = self.ufCurrIndex
             firstUFpg = ufPages[0]
             lastUFpg = ufPages[-1]
 
-            hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-            seekPrevBtn.set_sensitive(not hide_prev)
+            if is_rtl:  # Fix later to include Arabic UI detection
+                hide_prev = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
+                hide_next = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
+            else:
+                hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
+                hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
 
-            hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
+            seekPrevBtn.set_sensitive(not hide_prev)
             seekNextBtn.set_sensitive(not hide_next)
 
-        # --- Update Tooltips ---
-        for btn in ['btn_seekPage2fill_previous', 'btn_seekPage2fill_next']:
-            action = btn.split("_")[-1]
-            o = self.model.builder.get_object(btn)
-            
-            if not len(ufPages):
-                o.set_tooltip_text(_("No underfilled pages detected."))
-                self.model.builder.get_object("bx_seekPage").set_sensitive(False)
-                continue
-            
-            self.model.builder.get_object("bx_seekPage").set_sensitive(True)
+            for btn in ['btn_seekPage2fill_previous', 'btn_seekPage2fill_next']:
+                action = btn.split("_")[-1]
+                o = self.model.builder.get_object(btn)
+                # if not total_count:
+                    # o.set_tooltip_text(_("No underfilled pages detected."))
+                    # continue
 
-            # --- Sliding Window Logic for Tooltip ---
-            total_count = len(ufPages)
-            curr_pos = self.ufCurrIndex
-            window_size = 3  # Show 3 numbers before and after the current one
+                window_size = 3  # Show 3 numbers before and after the current one
 
-            # If fewer than 7 numbers, display all without ellipses
-            if total_count < 7:
-                formatted_pages = list(map(str, ufPages))
-                formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
-                pgs = ", ".join(formatted_pages)
-                elipsis = ""  # No "(of X)" when all numbers are shown
-            else:
-                # Determine window bounds
-                start_idx = max(0, curr_pos - window_size)
-                end_idx = min(total_count, curr_pos + window_size + 1)
-                display_pages = ufPages[start_idx:end_idx]
+                # --- If there are fewer than 7 pages, show all without ellipses ---
+                if total_count <= 7:
+                    formatted_pages = list(map(str, ufPages))
+                    formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
+                    pgs = "  ".join(formatted_pages)
+                    elipsis = ""  # No "(of X)" when all numbers are shown
+                else:
+                    # Determine sliding window bounds
+                    start_idx = max(0, curr_pos - window_size)
+                    end_idx = min(total_count, curr_pos + window_size + 1)
+                    display_pages = ufPages[start_idx:end_idx]
 
-                # Format pages with marker `<number>`
-                formatted_pages = list(map(str, display_pages))
-                formatted_pages[display_pages.index(ufPages[curr_pos])] = f"<{formatted_pages[display_pages.index(ufPages[curr_pos])]}>" 
+                    # Format pages with marker `<number>`
+                    formatted_pages = list(map(str, display_pages))
+                    formatted_pages[display_pages.index(ufPages[curr_pos])] = f"<{formatted_pages[display_pages.index(ufPages[curr_pos])]}>" 
 
-                # Add leading/trailing ellipses when necessary
-                if start_idx > 0:
-                    formatted_pages.insert(0, "...")
-                if end_idx < total_count:
-                    formatted_pages.append("...")
+                    # Add leading/trailing ellipses when necessary
+                    if start_idx > 0:
+                        formatted_pages.insert(0, "...")
+                    if end_idx < total_count:
+                        formatted_pages.append("...")
 
-                pgs = ", ".join(formatted_pages)
-                elipsis = f" (of {total_count})"  # Show count only when ellipses are present
+                    pgs = "  ".join(formatted_pages)
+                    elipsis = f" (of {total_count})"  # Show count only when ellipses are present
 
-            # Update tooltip text
-            seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
-            o.set_tooltip_text(seekText)
+                if is_rtl or self.model.lang == 'ar_SA':
+                    pgs = "  ".join(reversed(pgs.split("  ")))  # Reverse order of numbers in RTL mode
+
+                seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
+                o.set_tooltip_text(seekText)
         
     def on_button_press(self, widget, event):
         if event.button == 2:
