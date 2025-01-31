@@ -224,7 +224,7 @@ class Usfm:
                 if m:
                     ind = int(m.group(1))
                     if ind > len(self.tocs):
-                        self.tocs.extend([""] * (ind - len(self.tocs) + 1))
+                        self.tocs.extend([""] * (ind - len(self.tocs)))
                     self.tocs[ind-1] = e[0].strip()
 
     def getwords(self, init=None, constrain=None, lowercase=False):
