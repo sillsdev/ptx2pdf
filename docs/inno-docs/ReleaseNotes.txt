@@ -1,9 +1,14 @@
 PTXprint 2.7.16 Release Notes
-31 Jan 2025
+1 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
+Bug fixes and Improvements in 2.7.17 (1 Feb 2025)
+  * Allow stretch and shrink (text) in GLO paragraphs
+  * Fix navigation tooltip regression (next/prev/first/last)
+  * Allow selecting and deleting multiple rows in AdjLists
+  
 Bug fixes and Improvements in 2.7.16 (31 Jan 2025)
   * Allow right-click DEL AdjList rows; and reset Para removes the row as well
   * Improve RTL UI for prev and next underfilled pages
