@@ -293,10 +293,8 @@ class PDFViewer:
             self.spread_mode = False
         else:
             self.spread_mode = self.model.get("c_bkView", False)
-        self.rtl_mode = self.model.get("c_RTLbookBinding", False)
         cpage = self.parlocs.pnums.get(page, page)
         
-        self.updatePageNavigation()
         images = []
         if self.model.isCoverTabOpen():
             cpage = 1
@@ -323,10 +321,10 @@ class PDFViewer:
 
         self.current_page = page
         self.current_index = cpage
-        self.updatePageNavigation()
         if setpnum:
             self.model.set("t_pgNum", str(page), mod=False)
         self.update_boxes(images)
+        self.updatePageNavigation()
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, page, context, zoomlevel):
@@ -402,6 +400,7 @@ class PDFViewer:
                 make_rect(context, orange, r, twidth)
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
+        self.rtl_mode = rtl
         if fname is None:
             return False
         if not self.load_pdf(fname, adjlist=adjlist, isdiglot=isdiglot):
@@ -411,7 +410,6 @@ class PDFViewer:
         if page is not None and page in self.parlocs.pnums:
             self.current_page = page
             self.current_index = self.parlocs.pnums[page]
-            self.updatePageNavigation()
         self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
@@ -421,6 +419,7 @@ class PDFViewer:
         self.model.set_preview_pages(self.numpages, _("Pages:") if self.oneUp else _("Spreads:"))
         widget.show_all()
         self.set_zoom_fit_to_screen(None)
+        self.updatePageNavigation()
         return True
 
     def clear(self, widget=None):
@@ -610,7 +609,6 @@ class PDFViewer:
                 self.ufCurrIndex = self.model.ufPages.index(prev_page)
         pg = self.model.ufPages[self.ufCurrIndex]
         self.show_pdf(pg)
-        self.updatePageNavigation()
 
     def updatePageNavigation(self):
         """Update button sensitivity and tooltips dynamically based on the current index."""
@@ -618,7 +616,7 @@ class PDFViewer:
         pg = self.current_index or 1
         num_pages = self.numpages 
         ufPages = self.model.ufPages
-        is_rtl = getattr(self, 'rtl_mode', False) and self.model.lang != 'ar_SA'
+        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
 
         # Get page number mapping
         pnumpg = self.parlocs.pnumorder[pg - 1] if self.parlocs and pg <= len(self.parlocs.pnumorder) else 1
@@ -642,60 +640,61 @@ class PDFViewer:
 
         total_count = len(ufPages)
         self.model.builder.get_object("bx_seekPage").set_sensitive(total_count > 0)
-        if total_count:
-            curr_pos = self.ufCurrIndex
-            firstUFpg = ufPages[0]
-            lastUFpg = ufPages[-1]
-
-            if is_rtl:  # Fix later to include Arabic UI detection
-                hide_prev = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
-                hide_next = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
+        for btn in ['btn_page_first', 'btn_page_previous', 'btn_page_next', 'btn_page_last', 
+                    'btn_seekPage2fill_previous', 'btn_seekPage2fill_next']:
+            action = btn.split("_")[-1]
+            o = self.model.builder.get_object(btn)
+            tt = o.get_tooltip_text()
+            if not 'seekPage' in btn:
+                o.set_tooltip_text(re.sub(action.title(), self.swap4rtl(action).title(), tt))
             else:
-                hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-                hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
+                if total_count:
+                    curr_pos = self.ufCurrIndex
+                    firstUFpg = ufPages[0]
+                    lastUFpg = ufPages[-1]
 
-            seekPrevBtn.set_sensitive(not hide_prev)
-            seekNextBtn.set_sensitive(not hide_next)
+                    if is_rtl:  # Fix later to include Arabic UI detection
+                        hide_prev = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
+                        hide_next = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
+                    else:
+                        hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
+                        hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
 
-            for btn in ['btn_seekPage2fill_previous', 'btn_seekPage2fill_next']:
-                action = btn.split("_")[-1]
-                o = self.model.builder.get_object(btn)
-                # if not total_count:
-                    # o.set_tooltip_text(_("No underfilled pages detected."))
-                    # continue
+                    seekPrevBtn.set_sensitive(not hide_prev)
+                    seekNextBtn.set_sensitive(not hide_next)
 
-                window_size = 3  # Show 3 numbers before and after the current one
+                    window_size = 3  # Show 3 numbers before and after the current one
 
-                # --- If there are fewer than 7 pages, show all without ellipses ---
-                if total_count <= 7:
-                    formatted_pages = list(map(str, ufPages))
-                    formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
-                    pgs = "  ".join(formatted_pages)
-                    elipsis = ""  # No "(of X)" when all numbers are shown
-                else:
-                    # Determine sliding window bounds
-                    start_idx = max(0, curr_pos - window_size)
-                    end_idx = min(total_count, curr_pos + window_size + 1)
-                    display_pages = ufPages[start_idx:end_idx]
+                    # --- If there are fewer than 7 pages, show all without ellipses ---
+                    if total_count <= 7:
+                        formatted_pages = list(map(str, ufPages))
+                        formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
+                        pgs = "  ".join(formatted_pages)
+                        elipsis = ""  # No "(of X)" when all numbers are shown
+                    else:
+                        # Determine sliding window bounds
+                        start_idx = max(0, curr_pos - window_size)
+                        end_idx = min(total_count, curr_pos + window_size + 1)
+                        display_pages = ufPages[start_idx:end_idx]
 
-                    # Format pages with marker `<number>`
-                    formatted_pages = list(map(str, display_pages))
-                    formatted_pages[display_pages.index(ufPages[curr_pos])] = f"<{formatted_pages[display_pages.index(ufPages[curr_pos])]}>" 
+                        # Format pages with marker `<number>`
+                        formatted_pages = list(map(str, display_pages))
+                        formatted_pages[display_pages.index(ufPages[curr_pos])] = f"<{formatted_pages[display_pages.index(ufPages[curr_pos])]}>" 
 
-                    # Add leading/trailing ellipses when necessary
-                    if start_idx > 0:
-                        formatted_pages.insert(0, "...")
-                    if end_idx < total_count:
-                        formatted_pages.append("...")
+                        # Add leading/trailing ellipses when necessary
+                        if start_idx > 0:
+                            formatted_pages.insert(0, "...")
+                        if end_idx < total_count:
+                            formatted_pages.append("...")
 
-                    pgs = "  ".join(formatted_pages)
-                    elipsis = f" (of {total_count})"  # Show count only when ellipses are present
+                        pgs = "  ".join(formatted_pages)
+                        elipsis = f" (of {total_count})"  # Show count only when ellipses are present
 
-                if is_rtl or self.model.lang == 'ar_SA':
-                    pgs = "  ".join(reversed(pgs.split("  ")))  # Reverse order of numbers in RTL mode
+                    if is_rtl or self.model.lang == 'ar_SA':
+                        pgs = "  ".join(reversed(pgs.split("  ")))  # Reverse order of numbers in RTL mode
 
-                seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
-                o.set_tooltip_text(seekText)
+                    seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
+                    o.set_tooltip_text(seekText)
         
     def on_button_press(self, widget, event):
         if event.button == 2:
@@ -921,8 +920,7 @@ class PDFViewer:
             if piciter is not None:
                 pic['anchor'] = v
                 self.model.picListView.set_val(piciter, anchor=v)
-                if self.model.get("c_updatePDF"):
-                    self.model.onOK(None)
+                self.hitPrint()
         dialog.hide()
 
     def on_set_image_frame(self, widget, data):
@@ -942,8 +940,7 @@ class PDFViewer:
             else: # 'col'
                 pic['pgpos'] = 'tl'
                 self.model.picListView.set_val(piciter, pgpos='tl')
-            if self.model.get("c_updatePDF"):
-                self.model.onOK(None)
+                self.hitPrint()
 
     def on_set_image_vpos(self, widget, data):
         pic, vpos_opt, orig_v, orig_h = data
@@ -958,8 +955,7 @@ class PDFViewer:
         if piciter is not None:
             pic['pgpos'] = v
             self.model.picListView.set_val(piciter, pgpos=v)
-            if self.model.get("c_updatePDF"):
-                self.model.onOK(None)
+            self.hitPrint()
 
     def on_set_image_hpos(self, widget, data):
         pic, hpos_opt, orig_v, orig_h = data
@@ -976,8 +972,7 @@ class PDFViewer:
         if piciter is not None:
             pic['pgpos'] = h
             self.model.picListView.set_val(piciter, pgpos=h)
-            if self.model.get("c_updatePDF"):
-                self.model.onOK(None)
+            self.hitPrint()
 
     def on_set_image_mirror(self, widget, data):
         pic, mirror_opt = data
@@ -986,8 +981,7 @@ class PDFViewer:
         if piciter is not None:
             pic['mirror'] = m
             self.model.picListView.set_val(piciter, mirror=m)
-            if self.model.get("c_updatePDF"):
-                self.model.onOK(None)
+            self.hitPrint()
             
     def on_shrink_image(self, widget, data):
         pic, parref = data
@@ -1014,8 +1008,7 @@ class PDFViewer:
         piciter = self.model.picListView.find_row(pic['anchor'])
         if piciter is not None:
             self.model.picListView.set_val(piciter, scale=vint)
-            if self.model.get("c_updatePDF"):
-                self.model.onOK(None)
+            self.hitPrint()
 
     def on_image_show_details(self, widget, pic):
         piciter = self.model.picListView.find_row(pic['anchor'])
@@ -1035,15 +1028,13 @@ class PDFViewer:
         if self.adjlist is not None:
             self.adjlist.increment(info[2], -1)
         self.show_pdf()
-        if self.model.get("c_updatePDF"):
-            self.model.onOK(None)
+        self.hitPrint()
 
     def on_expand_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], 1)
         self.show_pdf()
-        if self.model.get("c_updatePDF"):
-            self.model.onOK(None)
+        self.hitPrint()
 
     def on_reset_paragraph(self, widget, info, parref):
         """Finds and deletes the row in AdjList based on parref."""
@@ -1057,8 +1048,7 @@ class PDFViewer:
                 model.remove(row.iter)
                 break
         self.show_pdf()
-        if self.model.get("c_updatePDF"):
-            self.model.onOK(None)
+        self.hitPrint()
 
     def on_shrink_text(self, widget, info, parref):
         if self.adjlist is not None:
@@ -1067,8 +1057,7 @@ class PDFViewer:
             else:
                 self.adjlist.expand(info[2], -self.shrinkStep, mrk=parref.mrk)
         self.show_pdf()
-        if self.model.get("c_updatePDF"):
-            self.model.onOK(None)
+        self.hitPrint()
 
     def on_expand_text(self, widget, info, parref):
         if self.adjlist is not None:
@@ -1077,6 +1066,9 @@ class PDFViewer:
             else:
                 self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
         self.show_pdf()
+        self.hitPrint()
+
+    def hitPrint(self):
         if self.model.get("c_updatePDF"):
             self.model.onOK(None)
 
@@ -1225,7 +1217,7 @@ class PDFViewer:
     
     def swap4rtl(self, action):
         # Only swap the buttons for RTL if we're NOT in Arabic UI mode
-        if self.rtl_mode and self.model.lang != 'ar_SA':
+        if (self.rtl_mode or False) and self.model.lang != 'ar_SA':
             if action == _('first'):
                 return _('last')
             elif action == _('last'):

@@ -6339,7 +6339,7 @@ Thank you,
         pg = int(value) if value.isdigit() else 1
         if self.pdf_viewer.parlocs is not None and pg not in self.pdf_viewer.parlocs.pnums:
             pg = 1
-        self.set("t_pgNum", str(pg), mod=False)
+        self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
         self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):

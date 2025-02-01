@@ -1104,6 +1104,7 @@ class TexModel:
         if passes is None:
             passes = ["default"]
         if not os.path.exists(fname):
+            print(f"returning fromreadchanges 'cos {fname} doesn't exist!")
             return {}
         logger.debug("Reading changes file: "+fname)
         usfm = None
@@ -1223,8 +1224,15 @@ class TexModel:
             sscript = getattr(scriptsnippets, script[8:].lower(), None)
             if sscript is not None:
                 self.localChanges.extend(sscript.regexes(self.printer))
-        if bk == "GLO" and self.dict['document/filterglossary']:
-            self.filterGlossary(printer)
+        if bk == "GLO":
+            if self.dict['document/filterglossary']:
+                self.filterGlossary(printer)
+            def mkkid(m):
+                if ' ' in m.group(1):
+                    return r'\k {}|{}\k*'.format(m.group(1), m.group(1).replace(" ", ""))
+                else:
+                    return r'\k {}\k*'.format(m.group(1))
+            self.localChanges.append(makeChange(r"\\k\s+([^|\\]+)\s*(?=\\)\\k\*", mkkid, flags=regex.S))
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append(makeChange(r"(\\[cv] [^ \\\r\n]+)(\\)", r"\1 \2", flags=regex.S))

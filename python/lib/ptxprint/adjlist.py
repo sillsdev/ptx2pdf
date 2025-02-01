@@ -141,18 +141,22 @@ class AdjList:
                 continue
             if len(r[0]) > 4 and r[0][4] != diglot:
                 continue
-            try:
-                c, v = re.split(r"[:.]", r[1], 1)
-                firstv = v.split("-", 1)
-                v = int(firstv[0]) - (1 if r[2] < 2 else 0)
-            except ValueError:
-                continue
-            if v < 0:
-                c = int(c) - 1
-                v = "end"
+            if r[0].startswith('GLO'):
+                k, w = re.split(r"\.", r[1], 1)
+                lines.append(r"at {0} '\\{1}(\s+\\k\s+([^\\]*?\|)?{2}\s*\\k\*)' > '\\{1}^{3}\1'".format(r[0][:3], r[4], w, r[5]))
             else:
-                c = int(c)
-            lines.append("at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(r[0][:3], c, v, r[4], r[5]))
+                try:
+                    c, v = re.split(r"[:.]", r[1], 1)
+                    firstv = v.split("-", 1)
+                    v = int(firstv[0]) - (1 if r[2] < 2 else 0)
+                except ValueError:
+                    continue
+                if v < 0:
+                    c = int(c) - 1
+                    v = "end"
+                else:
+                    c = int(c)
+                lines.append("at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(r[0][:3], c, v, r[4], r[5]))
         if len(lines):
             with open(fname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(lines))

@@ -9,8 +9,12 @@ class AdjListView:
         self.adjlist = None
         self.view = Gtk.TreeView()
 
-        # Enable right-click event
+        # Enable multi-selection
+        self.view.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+
+        # Enable right-click event and keypress detection
         self.view.connect("button-press-event", self.on_right_click)
+        self.view.connect("key-press-event", self.on_key_press)
 
         for i in range(7):
             cr = Gtk.CellRendererText(editable=True)
@@ -20,8 +24,8 @@ class AdjListView:
 
         # Create right-click menu
         self.menu = Gtk.Menu()
-        self.delete_item = Gtk.MenuItem(label=_("Delete Row"))
-        self.delete_item.connect("activate", self.delete_selected_row)
+        self.delete_item = Gtk.MenuItem(label=_("Delete Row(s)"))
+        self.delete_item.connect("activate", self.delete_selected_rows)
         self.menu.append(self.delete_item)
         self.menu.show_all()
 
@@ -51,10 +55,17 @@ class AdjListView:
             return True  # Stop event propagation
         return False
 
-    def delete_selected_row(self, widget):
-        """Deletes the selected row from the model."""
+    def delete_selected_rows(self, widget=None):
+        """Deletes all selected rows from the model."""
         selection = self.view.get_selection()
-        model, tree_iter = selection.get_selected()
+        model, paths = selection.get_selected_rows()
 
-        if tree_iter is not None:
-            model.remove(tree_iter)  # Delete the selected row
+        # Convert paths to iters, then delete in reverse order to avoid index shifting
+        iters_to_remove = [model.get_iter(path) for path in reversed(paths)]
+        for tree_iter in iters_to_remove:
+            model.remove(tree_iter)
+
+    def on_key_press(self, widget, event):
+        """Handles keypress events to delete selected rows when DEL is pressed."""
+        if event.keyval == Gdk.KEY_Delete:
+            self.delete_selected_rows()
