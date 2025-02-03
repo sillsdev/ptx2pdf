@@ -330,9 +330,9 @@ class Picture:
         elif getattr(self, 'pgpos', None) is None:
             posns = self.picposns[suffix].get(self.get('size', 'col'), self.picposns[suffix]["col"])
             if randomize:
-                self['gpos'] = random.choice(posns)
+                self['pgpos'] = random.choice(posns)
             else:
-                self['gpos'] = posns[0]
+                self['pgpos'] = posns[0]
 
     def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False):
         if self.get(' crop', False) == cropme and 'destfile' in self:
