@@ -14,7 +14,7 @@ This does not allow for any columns to be full width,  and the questoin of verti
 
 As such, it is assumed that  the more desirable abstraction is that of the rows-of-columns polyglots, 
  such as the `LR/A`layout  (with `/` indicating a new row)  that below (showing a 
-double-page spread, with mirroring).  L~1~ etc are intended to show  vertical  alignment between the L and R chunks on a given row.
+double-page spread, with mirroring).  L<sub>1</sub> etc are intended to show  vertical  alignment between the L and R chunks on a given row.
 
 ![ ](mirrored.svg  "Mirrored triglot (LR/A)")
 
@@ -48,7 +48,7 @@ second variety includes where a double-column layout is desired for one or more 
 Algorithms for both of these layouts will be considered below. One user has already asked if it would be possible to have one translation being in a 2 column layout at the top of the page, with another 2 translations below it.
 
 That seems possible, but  there are some arrangements that, while seeming plausible, need to be  rapidly rejected out of hand.  It is simply not possible for XeTeX to produce a layout in which 
-a single flow of text changes its column width without a *rigid* page layout,  or simulating one with multiple additional runs, as are required for  figures in cutouts.  If each page needed only a single re-run (probably unlikely) the number of job re-runs needed would scale as  O(2^N^) (N being the page count).
+a single flow of text changes its column width without a *rigid* page layout,  or simulating one with multiple additional runs, as are required for  figures in cutouts.  If each page needed only a single re-run (probably unlikely) the number of job re-runs needed would scale as  O(2<sup>N</sup>) (N being the page count).
 
 ### "Accounting" issues.
 The boxes and variables for each displayed column will be needed as at present, and  these will need a 'display identifier' to identify them.
@@ -69,24 +69,24 @@ should be a permanent assignment. (e.g. no matter if other layouts are used, A2 
 ### Multiple chunks and alternative displays with repeated columns
 If  a given column is repeated, then the question of responding to a new chunk
 becomes very important.  Compare with a layout `LR/A`,  and the page contents
-coming as 2 chunks (L~1~,L~2~, R~1~,R~2~, etc) then (without repeating
+coming as 2 chunks (L<sub>1</sub>,L<sub>2</sub>, R<sub>1</sub>,R<sub>2</sub>, etc) then (without repeating
 columns), the result would be expected to be 
-with L~2~ below L~1~, and so on, much like with the current diglot code - once
+with L<sub>2</sub> below L<sub>1</sub>, and so on, much like with the current diglot code - once
 a chunk or chunk-fragment is defined, it is fixed, and either occurs on the
 page or it does not (say because it is a section heading and the following
 chunk won't fit).
-  However, if L~1~ has been split into 
+  However, if L<sub>1</sub> has been split into 
 multiple columns, (L and Z), then duplicating this behaviour will result in 
 the reading order being entirely unintuitive:
 
 ![](2chunks.svg  "Chunk alignment for layout LR/A")
 
-If the second chunks L~2~ and A~2~ were not present in the input (or did not
+If the second chunks L<sub>2</sub> and A<sub>2</sub> were not present in the input (or did not
 fit on the page, either due to space available or other factors, such as them
 being headings), then the principle of unused space being at the bottom of the
 page would say dividing L~1a~ and L~1b~ as in  the crossed-out middle
 figure above was correct *in that first chunk*.  If they *are* present, then
-L~1~ must be merged and re-broken (combined notes) or the galley reprocessed (per-column footnotes).
+L<sub>1</sub> must be merged and re-broken (combined notes) or the galley reprocessed (per-column footnotes).
 
 ### Summary for repeated columns
 Thus it is necessary that if a column is repeated, then:
@@ -94,12 +94,12 @@ Thus it is necessary that if a column is repeated, then:
 1. There is *no* column synchronisation for columns that appear more than 
 once in a  page-set, except (possibly) the end-verse.
 2. Consideration on positioning of footnotes may alter how the algorithm behaves. 
-3.  The full galley (or processed galley, see efficiency possibilities **E~1~**, and **E~2~** below) 
+3.  The full galley (or processed galley, see efficiency possibilities **E<sub>1</sub>**, and **E<sub>2</sub>** below) 
 for all split columns must be preserved between chunks, in case a following chunk is added. 
 4. The processed column(s) / (page state) must be preserved between chunks and *still be
  available* after the new chunk is processed, in case the new chunk does not 
  fit. This is potentially more significant than the current state-reset on a chunk being pulled onto the next page.
-5. **E~3~**  and  **E~4~** below suggest that *potential* solutions for all columns might need to be saved to reduce the page-rebuilding time.
+5. **E<sub>3</sub>**  and  **E<sub>4</sub>** below suggest that *potential* solutions for all columns might need to be saved to reduce the page-rebuilding time.
 6. Probably other things I've not thought of yet.
 ## Common elements for (all forms of) polyglot
 There are certain  parts of the algorithms that the processing that stand unchanged, or only need some minor tweaking for the different algorithms.
@@ -208,14 +208,14 @@ If, however, the repeated columns are on the same page, it might be argued
 that a third option-exists: (c) to place notes at the end of the final column
 on the page. This question needs more thought and can almost certainly be
 resolved later. However, options (b) and (c) do raise the more efficient 
-possibility (**E~1~**) of *not* always needing a new trial if adjusting the break-point
+possibility (**E<sub>1</sub>**) of *not* always needing a new trial if adjusting the break-point
 between columns, only when the processing changes one page to the next in the
 page-set.
 
 ## Other efficiency gains possible
-* **E~2~**  When a column contains no notes or other inserts, then trimming the column cannot add more notes. Thus vsplit is sufficient, and  there is no need to reprocess the content.
-* **E~3~** Rather than successively trimming one line from the galley at a time before reprocessing, a binary search pattern could be used. This would, however, require some modification of the loop, changing from 'first fill that fits' to a more complex method of scoring.
-* **E~4~** Cache old results rather than discard them. Rationale: with the potential for multiple solutions inherent in a page with multiple texts, the code is performing, in effect, a multivariable optimisation, in which returning to a previously tested state for one or more columns might be the best solution. Eg. After run *N*, the page is too long by 1 line, with the  longer columns being `L` and `A`. `L` is shortened by 1 line and reprocessed removing a long footnote, producing a large gap. A better solution is to shorten `A`, return `L` to what it was at run *N*.   This need for back-tracking also strongly implies that the algorithm given above is overly simplistic. 
+* **E<sub>2</sub>**  When a column contains no notes or other inserts, then trimming the column cannot add more notes. Thus vsplit is sufficient, and  there is no need to reprocess the content.
+* **E<sub>3</sub>** Rather than successively trimming one line from the galley at a time before reprocessing, a binary search pattern could be used. This would, however, require some modification of the loop, changing from 'first fill that fits' to a more complex method of scoring.
+* **E<sub>4</sub>** Cache old results rather than discard them. Rationale: with the potential for multiple solutions inherent in a page with multiple texts, the code is performing, in effect, a multivariable optimisation, in which returning to a previously tested state for one or more columns might be the best solution. Eg. After run *N*, the page is too long by 1 line, with the  longer columns being `L` and `A`. `L` is shortened by 1 line and reprocessed removing a long footnote, producing a large gap. A better solution is to shorten `A`, return `L` to what it was at run *N*.   This need for back-tracking also strongly implies that the algorithm given above is overly simplistic. 
 
 
 # Whitespace removal *vs* verse tracking
