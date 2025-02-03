@@ -1,8 +1,12 @@
 PTXprint 2.7.17 Release Notes
-1 Feb 2025
+3 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.18 (3 Feb 2025)
+  * Fix regression with pgpos not working
+  * Prevent Index Errors while navigating in PDF previewer
 
 Bug fixes and Improvements in 2.7.17 (1 Feb 2025)
   * Allow stretch and shrink (text) in GLO paragraphs
