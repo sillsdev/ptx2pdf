@@ -1104,7 +1104,6 @@ class TexModel:
         if passes is None:
             passes = ["default"]
         if not os.path.exists(fname):
-            print(f"returning fromreadchanges 'cos {fname} doesn't exist!")
             return {}
         logger.debug("Reading changes file: "+fname)
         usfm = None

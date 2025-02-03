@@ -133,9 +133,11 @@ class AdjList:
                 outf.write(line + "\n")
 
     def createChanges(self, fname, diglot=""):
+        # This method needs to be expanded so that it handles any diglot changes L, R, A, B, C, etc.
+        # Where/how do we get hold of the di/poly-glot config settings?
         if not len(self.liststore):
             return
-        lines = []
+        lines = [] # this should be a dict with one lines list for each of the poly-glot configs
         for r in self.liststore:
             if not r[5] or r[5] == self.centre:
                 continue
@@ -157,7 +159,11 @@ class AdjList:
                 else:
                     c = int(c)
                 lines.append("at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(r[0][:3], c, v, r[4], r[5]))
+        # need to cycle through each of the poly-configs, 
+        # and if not len(lines) then try to DELETE the "_changes.txt" file for that config
+        # and if there are lines, then create the file with the appropriate changes listed.
         if len(lines):
+            os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
             with open(fname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(lines))
 
@@ -165,6 +171,8 @@ class AdjList:
         if self.adjfile is None:
             return False
         self.createAdjlist()
+        # possibly loop through the poly-glot configs here and then call createChanges with 
+        # the right diglot letter, L,R,A,B,C and appropriate chfile for the other config.
         chfile = self.adjfile.replace(".adj", "_changes.txt")
         self.createChanges(chfile)
         res = self.changed

@@ -590,7 +590,11 @@ class PDFViewer:
         if not pages or not self.model.ufPages:
             return
         pgnum = self.current_index
-        current_pg = self.parlocs.pnumorder[pgnum - 1] if self.parlocs is not None else 1
+        try:
+            current_pg = self.parlocs.pnumorder[pgnum - 1] if self.parlocs is not None else 1
+        except IndexError:
+            print(f"Index Error in seekUFpage: {pgnum=} {pages=}")
+            current_pg = 1
         if direction == self.swap4rtl('next'):
             next_page = None
             for pg in self.model.ufPages:
@@ -1200,18 +1204,21 @@ class PDFViewer:
         cpage = self.current_index
         # Safeguard against invalid cpage or empty pnumorder
         pg = self.current_page
-        if action == self.swap4rtl("first"):
-            pg = self.parlocs.pnumorder[0] if canmap else 1
-        elif action == self.swap4rtl("last"):
-            pg = self.parlocs.pnumorder[-1] if canmap else self.numpages
-        elif action == self.swap4rtl("next"):
-            pg = self.parlocs.pnumorder[min(cpage + increment - 1, len(self.parlocs.pnumorder) - 1)] if canmap else min(pg + increment, self.numpages)
-        elif action == self.swap4rtl("previous"):
-            pg = self.parlocs.pnumorder[max(cpage - increment - 1, 0)] if canmap else max(pg - increment, 1)
-        else:
-            logger.error(f"Unknown action: {action}")
-            return
-
+        try:
+            if action == self.swap4rtl("first"):
+                pg = self.parlocs.pnumorder[0] if canmap else 1
+            elif action == self.swap4rtl("last"):
+                pg = self.parlocs.pnumorder[-1] if canmap else self.numpages
+            elif action == self.swap4rtl("next"):
+                pg = self.parlocs.pnumorder[min(cpage + increment - 1, len(self.parlocs.pnumorder) - 1)] if canmap else min(pg + increment, self.numpages)
+            elif action == self.swap4rtl("previous"):
+                pg = self.parlocs.pnumorder[max(cpage - increment - 1, 0)] if canmap else max(pg - increment, 1)
+            else:
+                logger.error(f"Unknown action: {action}")
+                return
+        except IndexError:
+            # print(f"FAILED with IndexError in set_page. {action=}  {increment=}  {cpage=}  {pg=}  {canmap=}")
+            pg = 1
         logger.debug(f"page {pg=} {cpage=} {self.current_page=}")
         self.show_pdf(pg)
     
