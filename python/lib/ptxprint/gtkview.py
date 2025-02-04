@@ -319,8 +319,6 @@ _sensitivities = {
     "c_pagegutter" :           ["s_pagegutter", "c_outerGutter"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition"],
-    "c_grid" :                 ["btn_adjustGrid"],
-    "c_gridGraph" :            ["gr_graphPaper"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
     "c_ch1pagebreak" :         ["c_pagebreakAllChs"],
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
@@ -3122,7 +3120,7 @@ class GtkViewModel(ViewModel):
             'NTS': 'Footnotes, Cross-references, Study Notes',
             'DIG': 'Diglot',
             'PIC': 'Pictures, Figures, Images, Sidebars', 
-            'PDF': 'PDF Options',
+            'PDF': 'PDF Options, Show/Hide',
             'OTH': 'Other Miscellaneous Settings' }
 
         texopts = self.builder.get_object("gr_texoptions")
@@ -4864,9 +4862,8 @@ class GtkViewModel(ViewModel):
         lbl = widg.get_child()
         self.changeLabel(ctrl, lbl)
 
-    def adjustGuideGrid(self, btn):
-        # if self.get('c_grid'):
-        dialog = self.builder.get_object("dlg_gridsGuides")
+    def adjustGridSettings(self, btn):
+        dialog = self.builder.get_object("dlg_gridSettings")
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             pass
@@ -6243,6 +6240,7 @@ Thank you,
         if self.get("c_doublecolumn") \
            and self.get("c_allowUnbalanced") and float(self.get("s_bottomrag")) == 0:
             self.highlightwidget("c_allowUnbalanced")
+            self.set("s_bottomrag", 3.0)
         else: # float(self.get("s_bottomrag")) > 0:
             self.highlightwidget("c_allowUnbalanced", highlight=False)
 
@@ -6436,3 +6434,9 @@ Thank you,
         whatsapp_url = f"https://wa.me/?text=Please%20Check%20out%20this%20PDF:%20{pdffilepath}"
         # self.openURL(whatsapp_url)
 
+    def onLocateDigitMappingClicked(self, btn):
+        self.highlightwidget('fcb_fontdigits')
+        
+    def showRulesOrGridClicked(self, btn):
+        if self.get('c_updatePDF', False):
+            self.onOK(None)

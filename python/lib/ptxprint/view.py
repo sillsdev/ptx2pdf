@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.7.18"
 GitVersionStr = "2.7.18"
-ConfigVersion = "2.21"
+ConfigVersion = "2.22"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1101,6 +1101,11 @@ class ViewModel:
             if cfgpath is not None:
                 adjpath = os.path.join(cfgpath, "adjLists")
                 self.clean_adj_files(adjpath)
+
+        if v < 2.22: # transfer Show/Hide settings to Advanced > texpert
+            self._configset(config, 'texpert/showadjpoints', config.get('snippets', 'adjlabelling', fallback=False))
+            self._configset(config, 'texpert/showusfmcodes', config.get('snippets', 'paralabelling', fallback=False))
+            self._configset(config, 'texpert/showhboxerrorbars', config.get('document', 'ifhidehboxerrors', fallback=False))
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":

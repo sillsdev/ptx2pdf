@@ -964,17 +964,6 @@ Jonathan Kew (author of XeTeX + sfm2pdf)</property>
     <property name="icon-name">view-dual-symbolic</property>
     <property name="icon_size">3</property>
   </object>
-  <object class="GtkImage" id="icon_adjust_grid">
-    <property name="visible">True</property>
-    <property name="sensitive">False</property>
-    <property name="can-focus">False</property>
-    <property name="tooltip-text" translatable="yes">Set which marks are to be displayed. Any
-combination of Crop marks, Guides (margins,
-baselines, etc.) and/or a graph-paper-like Grid
-can be set.</property>
-    <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
-  </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
@@ -1112,12 +1101,6 @@ settings for a similar project.</property>
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">changes-allow-symbolic</property>
-    <property name="icon_size">3</property>
-  </object>
-  <object class="GtkImage" id="icon_zoom_100">
-    <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="icon-name">zoom-original-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_zoom_fit">
@@ -1863,6 +1846,7 @@ settings for a similar project.</property>
     <signal name="closed" handler="menu_inner_closed" swapped="no"/>
     <child>
       <object class="GtkTreeView">
+        <property name="height-request">200</property>
         <property name="visible">True</property>
         <property name="can-focus">True</property>
         <property name="model">ls_interfaceLang</property>
@@ -3802,8 +3786,6 @@ Shortcut: Ctrl-P</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
                 <property name="vexpand">False</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">3</property>
@@ -3928,9 +3910,46 @@ which take longer to update.</property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkCheckButton" id="c_bkView">
+                    <property name="label" translatable="yes">Book View</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Toggle between a single page view
+and a book (spread) view.
+Shortcut: Ctrl + B</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="active">True</property>
+                    <property name="draw-indicator">True</property>
+                    <signal name="clicked" handler="onBookViewClicked" swapped="no"/>
+                    <accelerator key="b" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-top">12</property>
+                    <property name="label" translatable="yes">Show:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkCheckButton" id="c_pdfadjoverlay">
-                    <property name="label" translatable="yes">Show Adjustments</property>
-                    <property name="name">Show Adjustments </property>
+                    <property name="label" translatable="yes">Adjustments</property>
+                    <property name="name">Adjustments </property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -3946,7 +3965,7 @@ on the text to help refine the layout.
 
 Key:
 
-LHS=shrink       RHS=expand
+Left=shrink       Right=expand
 
 blue=shrink/expand lines
 red=shrink/expand text
@@ -3961,31 +3980,80 @@ been stretched/expanded.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">2</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="c_bkView">
-                    <property name="label" translatable="yes">Book View</property>
+                  <object class="GtkCheckButton" id="c_gridLines">
+                    <property name="label" translatable="yes">Rules and Baselines</property>
+                    <property name="name">Show rules and baselines</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">Toggle between a single page view
-and a book (spread) view.
-Shortcut: Ctrl + B</property>
+                    <property name="tooltip-text" translatable="yes">Enabling this option will turn on various guides 
+(showing the margins, headers, footers) as well 
+as the baselines of the body text.</property>
                     <property name="halign">start</property>
-                    <property name="valign">center</property>
-                    <property name="margin-right">6</property>
-                    <property name="margin-end">6</property>
-                    <property name="active">True</property>
                     <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="onBookViewClicked" swapped="no"/>
-                    <accelerator key="b" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                    <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">3</property>
+                    <property name="fill">True</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkCheckButton" id="c_gridGraph">
+                        <property name="label" translatable="yes">Grid</property>
+                        <property name="name">Marks &amp; Guides dialog: Show grid (graph paper)</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">If the standard Rules and Guides are inadequate
+you can generate a graph-paper-like grid behind
+the text. This may be useful for precise measuring.</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLinkButton" id="lb_adjustGrid">
+                        <property name="label">Settings</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="focus-on-click">False</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Change the gridline settings.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="relief">none</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <property name="uri">Click to change the Grid settings</property>
+                        <signal name="clicked" handler="adjustGridSettings" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">6</property>
                   </packing>
                 </child>
                 <child>
@@ -3996,7 +4064,7 @@ Shortcut: Ctrl + B</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">4</property>
+                    <property name="position">7</property>
                   </packing>
                 </child>
                 <child>
@@ -4010,7 +4078,7 @@ Shortcut: Ctrl + B</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">5</property>
+                    <property name="position">8</property>
                   </packing>
                 </child>
                 <child>
@@ -4043,7 +4111,7 @@ Shortcut: Ctrl + B</property>
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">6</property>
+                    <property name="position">9</property>
                   </packing>
                 </child>
               </object>
@@ -4507,9 +4575,9 @@ Multiple Books:</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">&lt;&lt;&lt;&lt; Start by selecting a project</property>
                                 <property name="wrap">True</property>
-                                <property name="ellipsize">end</property>
-                                <property name="width-chars">35</property>
-                                <property name="max-width-chars">40</property>
+                                <property name="ellipsize">middle</property>
+                                <property name="width-chars">30</property>
+                                <property name="max-width-chars">30</property>
                                 <property name="xalign">0</property>
                                 <attributes>
                                   <attribute name="scale" value="0.90000000000000002"/>
@@ -5361,8 +5429,9 @@ However, if Outer Gutter is enabled
 this extra space will appear on the
 outside edge of each page. This can
 be useful for a journaling layout.</property>
-                                        <property name="halign">end</property>
+                                        <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="margin-start">6</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                       </object>
@@ -5501,7 +5570,7 @@ or select from the list of preset values.</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">25</property>
+                                            <property name="width-chars">31</property>
                                             <property name="caps-lock-warning">False</property>
                                           </object>
                                         </child>
@@ -5654,7 +5723,7 @@ on the OUTER edge of each page as
 commonly seen in a journaling layout.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-start">2</property>
+                                        <property name="margin-start">6</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -5692,7 +5761,7 @@ changes when the spacing changes.</property>
                                         <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_indentUnit">
-                                            <property name="width-request">90</property>
+                                            <property name="width-request">80</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">The space by which paragraphs
@@ -5705,8 +5774,7 @@ updates automatically when you change
 from 1 to 2 columns, and vice versa. </property>
                                             <property name="halign">end</property>
                                             <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Base
-Indent:</property>
+                                            <property name="label" translatable="yes">Base Indent:</property>
                                             <property name="xalign">1</property>
                                           </object>
                                         </child>
@@ -5730,7 +5798,6 @@ text. All other font sizes are calculated (according
 to their factor size) based on this value.</property>
                                             <property name="halign">end</property>
                                             <property name="valign">center</property>
-                                            <property name="hexpand">True</property>
                                             <property name="label" translatable="yes">Base Font
 Size (pt):</property>
                                             <property name="justify">right</property>
@@ -5772,7 +5839,6 @@ Spacing (pt):</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">24</property>
                                         <property name="margin-end">6</property>
-                                        <property name="hexpand">False</property>
                                         <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkLabel" id="l_gridAligned">
@@ -5859,17 +5925,6 @@ enforced with Variable Line Spacing.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkCheckButton" id="c_variableLineSpacing">
                                             <property name="label" translatable="yes">Fill Columns</property>
                                             <property name="name">Variable/Increased Line Spacing</property>
@@ -5897,7 +5952,7 @@ you choose this setting.</property>
                                           <packing>
                                             <property name="expand">True</property>
                                             <property name="fill">True</property>
-                                            <property name="position">4</property>
+                                            <property name="position">3</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -5920,81 +5975,6 @@ you choose this setting.</property>
                                         <property name="left-attach">0</property>
                                         <property name="top-attach">4</property>
                                         <property name="width">7</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_mirrorpages">
-                                        <property name="label" translatable="yes">Mirror Pages</property>
-                                        <property name="name">Mirror page layout</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Mirror Pages makes use of an Inner+Outer layout.
-This will make the left page header the inner header and
-the right page header will be shown on the outer edge
-(i.e. headers on odd and even pages are mirrored).
-
-Behaviour for Diglots:
-Note that when creating a Diglot, this will place the
-primary text as the Inner text (closest to the spine),
-and the secondary text as the Outer text (closest to
-the edge of the page).
-
-If you always want the Primary text on the left and
-Secondary text on the right regardless of whether
-it is an odd or even page, then turn off this option.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">5</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">3</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_adjustGrid">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Show dialog to choose Guides (margins, 
-baselines, etc.) and/or a graph-paper-like 
-Grid for precise measuring. Grid settings 
-can be customized.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="image">icon_adjust_grid</property>
-                                        <signal name="clicked" handler="adjustGuideGrid" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">6</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_grid">
-                                        <property name="label" translatable="yes">Marks &amp; Guides</property>
-                                        <property name="name">Marks &amp; Guides</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Enable Guides or a Grid to sit behind the
-text to assist with final adjustments; 
-or enable a Watermark to show behind the text;
-or turn on USFM codes temporarily.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-left">2</property>
-                                        <property name="margin-start">2</property>
-                                        <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">5</property>
-                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -6021,6 +6001,7 @@ Spacing' section of the Advanced &gt; Other tab.</property>
                                       <packing>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">3</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -6032,13 +6013,46 @@ Spacing' section of the Advanced &gt; Other tab.</property>
                                         <property name="tooltip-text" translatable="yes">Set the color of the Notelines.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="hexpand">False</property>
                                         <property name="resize-mode">immediate</property>
                                         <property name="rgba">rgb(119,118,123)</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">2</property>
+                                        <property name="left-attach">3</property>
                                         <property name="top-attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_mirrorpages">
+                                        <property name="label" translatable="yes">Mirror Pages</property>
+                                        <property name="name">Mirror page layout</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Mirror Pages makes use of an Inner+Outer layout.
+This will make the left page header the inner header and
+the right page header will be shown on the outer edge
+(i.e. headers on odd and even pages are mirrored).
+
+Behaviour for Diglots:
+Note that when creating a Diglot, this will place the
+primary text as the Inner text (closest to the spine),
+and the secondary text as the Outer text (closest to
+the edge of the page).
+
+If you always want the Primary text on the left and
+Secondary text on the right regardless of whether
+it is an odd or even page, then turn off this option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">5</property>
+                                        <property name="margin-start">20</property>
+                                        <property name="active">True</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">5</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -6261,9 +6275,9 @@ the Page Layout and Spacing section.
 
 If this setting is highlighted in orange
 it means that the abovementioned
-setting is set to 0 (rendering this
-setting inactive). Increase the value
-on the Advanced tab to 1 or more.</property>
+setting was set to 0 (rendering this
+setting inactive), and has now been
+increased to the default value of 3.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">3</property>
@@ -7437,6 +7451,7 @@ Margins, Columns and Rules (lines).</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="halign">end</property>
+                                        <property name="margin-top">10</property>
                                         <property name="label" translatable="yes">Body Text
 (Regular):</property>
                                       </object>
@@ -7457,6 +7472,8 @@ Margins, Columns and Rules (lines).</property>
 Note that the font chooser dialog also has a
 number of other options for setting advanced
 font features and, if needed, Graphite rendering.</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-top">10</property>
                                         <property name="xalign">0.5</property>
                                         <property name="yalign">0.5</property>
                                         <signal name="clicked" handler="onFontRclicked" swapped="no"/>
@@ -7477,6 +7494,7 @@ font features and, if needed, Graphite rendering.</property>
                                         <property name="tooltip-text" translatable="yes">If you see the style in parentheses (bold)
 this indicates that PTXprint could not
 locate the bold style and will fake the style.</property>
+                                        <property name="valign">center</property>
                                         <property name="xalign">0.5</property>
                                         <signal name="clicked" handler="onFontBclicked" swapped="no"/>
                                       </object>
@@ -7496,6 +7514,7 @@ locate the bold style and will fake the style.</property>
                                         <property name="tooltip-text" translatable="yes">If you see the style in parentheses (italic)
 this indicates that PTXprint could not
 locate the italic style and will fake the style.</property>
+                                        <property name="valign">center</property>
                                         <property name="xalign">0.5</property>
                                         <signal name="clicked" handler="onFontIclicked" swapped="no"/>
                                       </object>
@@ -7515,6 +7534,7 @@ locate the italic style and will fake the style.</property>
                                         <property name="tooltip-text" translatable="yes">If you see either of the styles in parentheses (bold)
 or (italic) this indicates that PTXprint could not
 locate the style and will fake the bold-italic style.</property>
+                                        <property name="valign">center</property>
                                         <property name="xalign">0.5</property>
                                         <signal name="clicked" handler="onFontBIclicked" swapped="no"/>
                                       </object>
@@ -7579,7 +7599,26 @@ text will appear in black.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkLinkButton" id="lb_NumberScript">
+                                        <property name="label">Script for
+Numbers</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="focus-on-click">False</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">To change the script for numbers, click here
+to locate the Digit Mapping setting at the end
+of the Font selection dialog.</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">center</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to open the Digit Mapping setting</property>
+                                        <signal name="clicked" handler="onLocateDigitMappingClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -26576,7 +26615,7 @@ runs.</property>
                         <property name="margin-bottom">10</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=8 n-rows=3 -->
+                          <!-- n-columns=8 n-rows=4 -->
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -26661,7 +26700,7 @@ should be trimmed after binding.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
+                                <property name="top-attach">2</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -26736,7 +26775,7 @@ share config settings with other users.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">2</property>
+                                <property name="top-attach">1</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -26902,6 +26941,72 @@ file for such things as coloured diacritics.</property>
                                 <property name="left-attach">3</property>
                                 <property name="top-attach">2</property>
                                 <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <!-- n-columns=3 n-rows=1 -->
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-start">12</property>
+                                <property name="margin-end">11</property>
+                                <property name="column-spacing">12</property>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_applyWatermark">
+                                    <property name="label" translatable="yes">Apply Watermark PDF</property>
+                                    <property name="name">Marks &amp; Guides dialog: Apply watermark</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">A watermark can be applied to all pages of 
+the publication. The file must be a PDF and
+should ideally have the same dimensions as 
+the publication being printed.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw-indicator">True</property>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_selectWatermarkPDF">
+                                    <property name="label" translatable="yes">Select...</property>
+                                    <property name="name">Marks &amp; Guides dialog: Select watermark to apply</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lb_applyWatermark">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="opacity">0.80</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="ellipsize">middle</property>
+                                    <property name="max-width-chars">26</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">3</property>
+                                <property name="width">8</property>
                               </packing>
                             </child>
                             <child>
@@ -33291,9 +33396,9 @@ B/W Image Set</property>
       <action-widget response="-6">btn_imgSet_cancel</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkDialog" id="dlg_gridsGuides">
+  <object class="GtkDialog" id="dlg_gridSettings">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Guides, Crop Marks, Watermark and Grid Settings</property>
+    <property name="title" translatable="yes">PTXprint: Change the Grid Settings</property>
     <property name="window-position">center-always</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
@@ -33348,459 +33453,281 @@ B/W Image Set</property>
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="tb_gridsGuides">
+          <object class="GtkFrame">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="margin-start">6</property>
-            <property name="margin-end">6</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">12</property>
+            <property name="label-xalign">0.019999999552965164</property>
             <child>
-              <object class="GtkCheckButton" id="c_gridLines">
-                <property name="label" translatable="yes">Guides (Rules and Baselines)</property>
-                <property name="name">Marks &amp; Guides dialog: Show rules and baselines</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Enabling this option will turn on various guides 
-(showing the margins, headers, footers) as well 
-as the baselines of the body text.</property>
-                <property name="halign">start</property>
-                <property name="margin-start">6</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkCheckButton" id="c_markAdjPoints">
-                <property name="label" translatable="yes">Show Adjust Points</property>
-                <property name="name">Marks &amp; Guides dialog: Show adjust points</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">When using an AdjList to grow or shrink
-paragraphs, it can be helpful to display the
-adjust points in the margin of the text.</property>
-                <property name="halign">start</property>
-                <property name="margin-start">6</property>
-                <property name="draw-indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkCheckButton" id="c_showUSFMcodes">
-                <property name="label" translatable="yes">Show USFM Codes</property>
-                <property name="name">Marks &amp; Guides dialog: Show USFM codes</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Show the USFM marker of paragraphs.
-This can be useful when growing and
-shrinking paragraphs using changes.txt
-
-Note that in some situations, having these
-markers visible will result in changes to the
-layout. Only use this feature temporarily
-when trying to identify a marker.</property>
-                <property name="halign">start</property>
-                <property name="margin-start">6</property>
-                <property name="draw-indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkCheckButton" id="c_showHboxErrorBars">
-                <property name="label" translatable="yes">Show Error Bars For Overfull Lines</property>
-                <property name="name">Marks &amp; Guides dialog: Show error bars for overfull lines</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Enable this option to have TeX make overfull lines stand out.
-If you don't know what this means, or just want to get rid of 
-black boxes at the end of lines in the PDF then uncheck it. </property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="margin-start">6</property>
-                <property name="draw-indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <!-- n-columns=3 n-rows=1 -->
-              <object class="GtkGrid">
+              <object class="GtkAlignment">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="column-spacing">12</property>
+                <property name="left-padding">12</property>
                 <child>
-                  <object class="GtkCheckButton" id="c_applyWatermark">
-                    <property name="label" translatable="yes">Apply Watermark PDF</property>
-                    <property name="name">Marks &amp; Guides dialog: Apply watermark</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">A watermark can be applied to all pages of 
-the publication. The file must be a PDF and
-should ideally have the same dimensions as 
-the publication being printed.</property>
-                    <property name="halign">start</property>
-                    <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="btn_selectWatermarkPDF">
-                    <property name="label" translatable="yes">Select...</property>
-                    <property name="name">Marks &amp; Guides dialog: Select watermark to apply</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="halign">start</property>
-                    <property name="valign">center</property>
-                    <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="lb_applyWatermark">
+                  <!-- n-columns=5 n-rows=4 -->
+                  <object class="GtkGrid" id="gr_graphPaper">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="opacity">0.80</property>
-                    <property name="halign">start</property>
-                    <property name="valign">center</property>
-                    <property name="ellipsize">middle</property>
-                    <property name="max-width-chars">26</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">2</property>
-                    <property name="top-attach">0</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkFrame">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label-xalign">0.019999999552965164</property>
-                <child>
-                  <object class="GtkAlignment">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="left-padding">12</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-bottom">12</property>
+                    <property name="row-spacing">8</property>
+                    <property name="column-spacing">8</property>
                     <child>
-                      <!-- n-columns=5 n-rows=4 -->
-                      <object class="GtkGrid" id="gr_graphPaper">
+                      <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="valign">end</property>
+                        <property name="label" translatable="yes">Color</property>
+                        <attributes>
+                          <attribute name="style" value="italic"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="valign">end</property>
+                        <property name="label" translatable="yes">Line Thickness (pt)</property>
+                        <attributes>
+                          <attribute name="style" value="italic"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">Specify the number of minor divisions there should
+be between the thicker (major) lines. 
+Recommendations: 2, 5, or 10 for centimeters, 
+and 3, 4, 6, or 12 for inches.</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Minor Divisions:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkColorButton" id="col_gridMajor">
+                        <property name="name">Grid: Major line color</property>
+                        <property name="width-request">30</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
+                        <property name="halign">center</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
-                        <property name="margin-bottom">12</property>
-                        <property name="row-spacing">8</property>
-                        <property name="column-spacing">8</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="valign">end</property>
-                            <property name="label" translatable="yes">Color</property>
-                            <attributes>
-                              <attribute name="style" value="italic"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="valign">end</property>
-                            <property name="label" translatable="yes">Line Thickness (pt)</property>
-                            <attributes>
-                              <attribute name="style" value="italic"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">0</property>
-                            <property name="width">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">Specify the number of minor divisions there should
-be between the thicker (major) lines. 
-Recommendations: 2, 5, or 10 for centimeters, 
-and 3, 4, 6, or 12 for inches.</property>
-                            <property name="halign">end</property>
-                            <property name="label" translatable="yes">Minor Divisions:</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="col_gridMajor">
-                            <property name="name">Grid: Major line color</property>
-                            <property name="width-request">30</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
-                            <property name="halign">center</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="title" translatable="yes">Color of major lines in grid.</property>
-                            <property name="rgba">rgb(237,51,59)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="col_gridMinor">
-                            <property name="name">Grid: Minor line color</property>
-                            <property name="width-request">30</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
-                            <property name="halign">center</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="title" translatable="yes">Color of minor lines in grid.</property>
-                            <property name="rgba">rgb(255,190,111)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="halign">end</property>
-                            <property name="label" translatable="yes">Major Units:</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="s_gridMajorThick">
-                            <property name="name">Grid: Major line thickness</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">Specify the thickness
+                        <property name="title" translatable="yes">Color of major lines in grid.</property>
+                        <property name="rgba">rgb(237,51,59)</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkColorButton" id="col_gridMinor">
+                        <property name="name">Grid: Minor line color</property>
+                        <property name="width-request">30</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
+                        <property name="halign">center</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="title" translatable="yes">Color of minor lines in grid.</property>
+                        <property name="rgba">rgb(255,190,111)</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Major Units:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_gridMajorThick">
+                        <property name="name">Grid: Major line thickness</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Specify the thickness
 of the major lines.</property>
-                            <property name="text">0.0</property>
-                            <property name="xalign">1</property>
-                            <property name="adjustment">a_gridMajorThick</property>
-                            <property name="climb-rate">0.10</property>
-                            <property name="digits">1</property>
-                            <property name="value">0.20</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">1</property>
-                            <property name="width">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="s_gridMinorThick">
-                            <property name="name">Grid: Minor line thickness</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">Specify the line thickness
+                        <property name="text">0.0</property>
+                        <property name="xalign">1</property>
+                        <property name="adjustment">a_gridMajorThick</property>
+                        <property name="climb-rate">0.10</property>
+                        <property name="digits">1</property>
+                        <property name="value">0.20</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">1</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_gridMinorThick">
+                        <property name="name">Grid: Minor line thickness</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Specify the line thickness
 of the minor divisions.</property>
-                            <property name="text">0.0</property>
-                            <property name="xalign">1</property>
-                            <property name="adjustment">a_gridMinorThick</property>
-                            <property name="climb-rate">0.10</property>
-                            <property name="digits">1</property>
-                            <property name="value">0.10</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">2</property>
-                            <property name="width">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="s_gridMinorDivisions">
-                            <property name="name">Grid: Number of minor divisions</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">Specify the number of minor divisions there should
+                        <property name="text">0.0</property>
+                        <property name="xalign">1</property>
+                        <property name="adjustment">a_gridMinorThick</property>
+                        <property name="climb-rate">0.10</property>
+                        <property name="digits">1</property>
+                        <property name="value">0.10</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_gridMinorDivisions">
+                        <property name="name">Grid: Number of minor divisions</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Specify the number of minor divisions there should
 be between the thicker (major) lines. 
 Recommendations: 2, 5, or 10 for centimeters, 
 and 3, 4, 6, or 12 for inches.</property>
-                            <property name="width-chars">5</property>
-                            <property name="text">0</property>
-                            <property name="xalign">1</property>
-                            <property name="adjustment">a_gridMinorDivisions</property>
-                            <property name="climb-rate">1</property>
-                            <property name="value">12</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">Depending on what you are trying
+                        <property name="width-chars">5</property>
+                        <property name="text">0</property>
+                        <property name="xalign">1</property>
+                        <property name="adjustment">a_gridMinorDivisions</property>
+                        <property name="climb-rate">1</property>
+                        <property name="value">12</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">Depending on what you are trying
 to measure, it can be helpful to
 position the grid at the top-left 
 corner of the page, or margins.</property>
-                            <property name="halign">end</property>
-                            <property name="label" translatable="yes">Start Grid At:</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_resetGrid">
-                            <property name="name">Grid: Reload default values</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Clicking this button will refresh
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Start Grid At:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_resetGrid">
+                        <property name="name">Grid: Reload default values</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Clicking this button will refresh
 the default Grid settings:
 Centimeters with 5 divisions (2mm each) 
 red and light green lines (0.2pt thickness).</property>
-                            <property name="image">icon_refresh</property>
-                            <signal name="clicked" handler="onRefreshGridDefaults" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left-attach">4</property>
-                            <property name="top-attach">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBox" id="fcb_gridUnits">
-                            <property name="name">Grid: Select major units</property>
-                            <property name="width-request">130</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="can-default">True</property>
-                            <property name="tooltip-text" translatable="yes">The grid can use Centimeters or 
-Inches as the major units.</property>
-                            <property name="halign">start</property>
-                            <property name="model">ls_gridUnits</property>
-                            <property name="wrap-width">1</property>
-                            <property name="active">1</property>
-                            <property name="entry-text-column">0</property>
-                            <property name="id-column">1</property>
-                            <property name="active-id">1</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBox" id="fcb_gridOffset">
-                            <property name="name">Grid: Starting position (page or margin)</property>
-                            <property name="width-request">130</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="can-default">True</property>
-                            <property name="tooltip-text" translatable="yes">The grid can start at the top-left corner
-of the Page, or at the top-left Margin.</property>
-                            <property name="halign">start</property>
-                            <property name="model">ls_gridOffset</property>
-                            <property name="wrap-width">1</property>
-                            <property name="active">0</property>
-                            <property name="entry-text-column">0</property>
-                            <property name="id-column">1</property>
-                            <property name="active-id">1</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">3</property>
-                            <property name="width">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
+                        <property name="image">icon_refresh</property>
+                        <signal name="clicked" handler="onRefreshGridDefaults" swapped="no"/>
                       </object>
+                      <packing>
+                        <property name="left-attach">4</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="fcb_gridUnits">
+                        <property name="name">Grid: Select major units</property>
+                        <property name="width-request">130</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
+                        <property name="tooltip-text" translatable="yes">The grid can use Centimeters or 
+Inches as the major units.</property>
+                        <property name="halign">start</property>
+                        <property name="model">ls_gridUnits</property>
+                        <property name="wrap-width">1</property>
+                        <property name="active">1</property>
+                        <property name="entry-text-column">0</property>
+                        <property name="id-column">1</property>
+                        <property name="active-id">1</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="fcb_gridOffset">
+                        <property name="name">Grid: Starting position (page or margin)</property>
+                        <property name="width-request">130</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
+                        <property name="tooltip-text" translatable="yes">The grid can start at the top-left corner
+of the Page, or at the top-left Margin.</property>
+                        <property name="halign">start</property>
+                        <property name="model">ls_gridOffset</property>
+                        <property name="wrap-width">1</property>
+                        <property name="active">0</property>
+                        <property name="entry-text-column">0</property>
+                        <property name="id-column">1</property>
+                        <property name="active-id">1</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">3</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                 </child>
-                <child type="label">
-                  <object class="GtkCheckButton" id="c_gridGraph">
-                    <property name="label" translatable="yes">Grid (Graph Paper)</property>
-                    <property name="name">Marks &amp; Guides dialog: Show grid (graph paper)</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">If the standard Rules and Guides are inadequate
-you can generate a graph-paper-like grid behind
-the text. This may be useful for precise measuring.</property>
-                    <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                  </object>
-                </child>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">5</property>
-              </packing>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Grid Settings</property>
+              </object>
             </child>
           </object>
           <packing>

@@ -174,6 +174,16 @@ texpertOptions = {
                             _("Use book codes instead of book names in bookmarks")),
     "NoTransparency":     O("notransparent", "PDF", False, "", _("Disable Transparency in PDF"),
                             _("Disable transparency output in PDF")),
+    "ShowAdjPoints":      O("showadjpoints", "PDF", False, "", _("Show adjust points"),
+                            _("Show adjust points in the margin of the text.")),
+    "ShowUSFMcodes":      O("showusfmcodes", "PDF", False, "", _("Show USFM codes"),
+                            _("Show the USFM marker of paragraphs.\nNote that displaying these \
+                               markers may result in changes to the layout of the text.")),
+    "ShowHboxErrorBars":  O("showhboxerrorbars", "PDF", False, "", _("Show Error Bars For Overfull Lines"),
+                            _("Enable this option to have TeX make overfull lines stand out."),
+                            valfn = lambda v:"%" if v else ""),
+    # "ProperCase":         O("lowercase", "PDF", False, "", _("Title"),
+                            # _("Description in Tooltip")),
 
     "UnderlineSpaces":    O("underlnsp", "OTH", True, "", _("Underline Spaces"),
                             _("Underline spaces in underlined runs")),

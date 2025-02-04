@@ -128,8 +128,8 @@ class TexModel:
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
         "snippets/grid":                  ("c_grid", None, Grid),
-        "snippets/adjlabelling":          ("c_markAdjPoints", None, AdjustLabelling),
-        "snippets/parlabelling":          ("c_showUSFMcodes", None, ParaLabelling)
+        "snippets/adjlabelling":          ("c_markAdjPoints", None, AdjustLabelling), # How to do this for a texpert/value?
+        "snippets/parlabelling":          ("c_showUSFMcodes", None, ParaLabelling)    # How to do this for a texpert/value?
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
