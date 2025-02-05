@@ -59,6 +59,7 @@ logger = logging.getLogger(__name__)
 ssl._create_default_https_context = ssl._create_unverified_context
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
+
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
 # but remove everything not in the range 100-499
 _allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
@@ -764,6 +765,8 @@ class GtkViewModel(ViewModel):
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
 
         self.mw = self.builder.get_object("ptxprint")
+        if sys.platform.startswith("win"):
+            self.restore_window_geometry()
 
         for w in self.allControls:
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
@@ -1685,6 +1688,8 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "bkview",     "true" if self.get("c_bkView")     else "false")
         self.noInt = self.get("c_noInternet")
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
+        if sys.platform.startswith("win"):
+            self.save_window_geometry()
         if self.cfgid is not None:
             self.userconfig.set("init", "config", self.cfgid)
         self.saveConfig(force=force)
@@ -6450,4 +6455,60 @@ Thank you,
             
     def onShowMainDialogClicked(self, btn):
         self.builder.get_object("ptxprint").present()
+
+    def get_dialog_geometry(self, dialog):
+        """Retrieve the position, size, and monitor details of a given GTK dialog."""
+        if dialog is None:
+            return None
+
+        # Get position (x, y) and size (width, height)
+        x, y = dialog.get_position()
+        width, height = dialog.get_size()
+
+        # Get the screen and monitor number
+        screen = dialog.get_screen()
+        monitor_num = screen.get_monitor_at_window(dialog.get_window())
+
+        return {
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height,
+            "monitor": monitor_num
+        }
+
+    def save_window_geometry(self):
+        """Save positions and sizes of multiple dialogs to userconfig."""
+        if not self.userconfig.has_section("geometry"):
+            self.userconfig.add_section("geometry")
+        prvw = self.builder.get_object("dlg_preview")
+        _dialogs = {"ptxprint":    self.mw,
+                    "dlg_preview": prvw }
+
+        for name, dialog in _dialogs.items():
+            geom = self.get_dialog_geometry(dialog)
+            if geom:
+                for key in ["x", "y", "width", "height", "monitor"]:
+                    self.userconfig.set("geometry", f"{name}_{key}", str(geom[key]))
+
+        self.saveConfig(force=True)  # Ensure settings are written
+
+    def restore_window_geometry(self):
+        """Restore dialog positions and sizes from userconfig, if the monitor is available."""
+        screen = self.mw.get_screen()  # Get screen info
+        current_monitor_count = screen.get_n_monitors()
+        prvw = self.builder.get_object("dlg_preview")
+        _dialogs = {"ptxprint":    self.mw,
+                    "dlg_preview": prvw }
+
+        for name, dialog in _dialogs.items():
+            x = self.userconfig.getint("geometry", f"{name}_x", fallback=-1)
+            y = self.userconfig.getint("geometry", f"{name}_y", fallback=-1)
+            width = self.userconfig.getint("geometry", f"{name}_width", fallback=800)
+            height = self.userconfig.getint("geometry", f"{name}_height", fallback=600)
+            saved_monitor = self.userconfig.getint("geometry", f"{name}_monitor", fallback=0)
+
+            if saved_monitor < current_monitor_count:
+                dialog.move(x, y)
+                dialog.resize(width, height)
         
