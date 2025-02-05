@@ -128,8 +128,8 @@ class TexModel:
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
         "snippets/grid":                  ("c_grid", None, Grid),
-        "snippets/adjlabelling":          ("c_markAdjPoints", None, AdjustLabelling), # How to do this for a texpert/value?
-        "snippets/parlabelling":          ("c_showUSFMcodes", None, ParaLabelling)    # How to do this for a texpert/value?
+        "texpert/adjlabelling":           ("c_markAdjPoints", None, AdjustLabelling),
+        "texpert/parlabelling":           ("c_showUSFMcodes", None, ParaLabelling)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
@@ -694,6 +694,7 @@ class TexModel:
                     for t in self.tablespans:
                         res.append(r"\spanningcols{{{}}}{{{}}}{{{}}}{{{}}}".format(*t))
                     for k, c in sorted(self._snippets.items(), key=lambda x: x[1][2].order):
+                        print(f"{k=} {c=}")
                         if c[1] is None:
                             v = self.asBool(k)
                         else:

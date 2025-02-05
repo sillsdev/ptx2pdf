@@ -6438,5 +6438,7 @@ Thank you,
         self.highlightwidget('fcb_fontdigits')
         
     def showRulesOrGridClicked(self, btn):
+        if self.loadingConfig:
+            return
         if self.get('c_updatePDF', False):
             self.onOK(None)

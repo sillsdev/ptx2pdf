@@ -3985,14 +3985,14 @@ been stretched/expanded.</property>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="c_gridLines">
-                    <property name="label" translatable="yes">Rules and Baselines</property>
-                    <property name="name">Show rules and baselines</property>
+                    <property name="label" translatable="yes">Guides and Baselines</property>
+                    <property name="name">Show guides and baselines</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">Enabling this option will turn on various guides 
-(showing the margins, headers, footers) as well 
-as the baselines of the body text.</property>
+                    <property name="tooltip-text" translatable="yes">This option displays various guides 
+(showing margins, headers and footers) 
+as well as the baselines of the body text.</property>
                     <property name="halign">start</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
@@ -5387,7 +5387,7 @@ Configuration settings.</property>
                         <property name="halign">start</property>
                         <child>
                           <object class="GtkFrame" id="fr_pageSetup">
-                            <property name="width-request">483</property>
+                            <property name="width-request">460</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
@@ -5837,7 +5837,7 @@ Spacing (pt):</property>
                                       <object class="GtkBox" id="bx_onOffGridSettings">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="margin-start">24</property>
+                                        <property name="margin-start">30</property>
                                         <property name="margin-end">6</property>
                                         <property name="spacing">6</property>
                                         <child>
@@ -5916,11 +5916,12 @@ Do NOT use this setting if doing final
 typesetting for thin Bible paper as 
 front-to-back registration is not
 enforced with Variable Line Spacing.</property>
+                                            <property name="halign">start</property>
                                             <property name="label" translatable="yes">Variable Line Spacing</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
-                                            <property name="fill">True</property>
+                                            <property name="fill">False</property>
                                             <property name="position">2</property>
                                           </packing>
                                         </child>

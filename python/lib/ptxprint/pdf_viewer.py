@@ -798,14 +798,12 @@ class PDFViewer:
 
             shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
             self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
-            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
+            shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
+            self.addMenuItem(menu, f"{mstr['st']} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
             self.addMenuItem(menu, None, None)
             self.addMenuItem(menu, mstr['rp'], self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l.replace("+","")) == 0))
             self.addMenuItem(menu, None, None)
-
-            shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
-            self.addMenuItem(menu, f"{mstr['st']} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
-
+            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
             expLim = min(self.expandLimit, info[1]+self.expandStep)
             self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
             if parref and parref.mrk is not None:
@@ -816,7 +814,9 @@ class PDFViewer:
                 self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
             self.addMenuItem(menu, None, None)
             self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.set_zoom_fit_to_screen)
-            self.addMenuItem(menu, mstr['z100']+" (Ctrl + 0)", self.on_reset_zoom)
+            if not self.model.get("c_updatePDF"):
+                self.addMenuItem(menu, None, None)
+                self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
 
         # New section for image context menu which is a lot more complicated
         elif parref is not None and isinstance(parref, FigInfo):
@@ -910,6 +910,9 @@ class PDFViewer:
                 if sys.platform == "win32":
                     self.addMenuItem(menu, None, None)
                     self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, imgref)
+                if not self.model.get("c_updatePDF"):
+                    self.addMenuItem(menu, None, None)
+                    self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
         if len(menu):
             menu.popup(None, None, None, None, event.button, event.time)
 
@@ -1076,6 +1079,9 @@ class PDFViewer:
         if self.model.get("c_updatePDF"):
             self.model.onOK(None)
 
+    def on_update_pdf(self, x):
+        self.model.onOK(None)
+
     def edit_style(self, widget, mkr):
         if mkr is not None:
             self.model.styleEditor.selectMarker(mkr)
@@ -1090,7 +1096,7 @@ class PDFViewer:
         self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.model.builder.get_object("ptxprint").present()
         self.model.wiggleCurrentTabLabel()
-
+        
     def cleanRef(self, reference):
         ''' JHN1.4 --> JHN 1:4, MRKL12.14 --> MRK 12:14 '''
         pattern = r"([123A-Z]{3})\s?(?:[LRA-G]?)(\d+)\.(\d+)"
