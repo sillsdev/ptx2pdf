@@ -25,7 +25,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, AdjustLabelling, ParaLabelling
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, ParaLabelling
 
 def loosint(x):
     try:
@@ -128,8 +128,7 @@ class TexModel:
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
         "snippets/grid":                  ("c_grid", None, Grid),
-        "texpert/adjlabelling":           ("c_markAdjPoints", None, AdjustLabelling),
-        "texpert/parlabelling":           ("c_showUSFMcodes", None, ParaLabelling)
+        "texpert/showusfmcodes":          ("c_showusfmcodes", None, ParaLabelling)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
@@ -694,7 +693,6 @@ class TexModel:
                     for t in self.tablespans:
                         res.append(r"\spanningcols{{{}}}{{{}}}{{{}}}{{{}}}".format(*t))
                     for k, c in sorted(self._snippets.items(), key=lambda x: x[1][2].order):
-                        print(f"{k=} {c=}")
                         if c[1] is None:
                             v = self.asBool(k)
                         else:

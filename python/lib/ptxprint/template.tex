@@ -325,6 +325,8 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 \BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
+\expandafter\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=007f00" at 7pt % AdjustPar
+
 \NoBodytrue
 {document/iftocleaders}\addtoinithooks{{\relax \tocleaders{document/tocleaderrule}{{{document/tocleaderstyle}}}{{3pt}} \relax}}
 {document/toc}\includeifpresent{{{jobname}.toc}}

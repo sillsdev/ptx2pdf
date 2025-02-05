@@ -849,7 +849,7 @@ class PDFViewer:
                 curr_vpos = 'c'
                 curr_hpos = 'c'
             if showmenu:
-                self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, pic)
+                self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, (pic, parref))
 
                 frame_menu = Gtk.Menu()
                 self.clear_menu(frame_menu)
@@ -916,7 +916,8 @@ class PDFViewer:
         if len(menu):
             menu.popup(None, None, None, None, event.button, event.time)
 
-    def on_edit_anchor(self, widget, pic):
+    def on_edit_anchor(self, widget, data):
+        pic, parref = data
         a = pic['anchor']
         piciter = self.model.picListView.find_row(a)
         self.model.set("t_newAnchor", a, mod=False)
@@ -927,6 +928,8 @@ class PDFViewer:
             if piciter is not None:
                 pic['anchor'] = v
                 self.model.picListView.set_val(piciter, anchor=v)
+                parref.ref = v.replace(" ","")+'-preverse'
+                print(f"{parref.ref=}")
                 self.hitPrint()
         dialog.hide()
 
@@ -1537,7 +1540,13 @@ class Paragraphs(list):
                 currpic = None
                 if currp is not None:
                     currpr = currr
-                    currr = ParRect(pnum, currpr.xstart, currpr.yend)
+                    if not len(currp.rects) or currp.rects[-1].xend > 0:
+                        currr = ParRect(pnum, currpr.xstart, currpr.yend)
+                        currp.rects.append(currr)
+                    else:
+                        currr = currp.rects[-1]
+                        currr.xstart = currpr.xstart
+                        currr.ystart = currpr.yend
                 else:
                     currr = None
             elif c == "parpicsize":
