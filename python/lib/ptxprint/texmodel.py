@@ -1357,8 +1357,9 @@ class TexModel:
             self.localChanges.append(makeChange(r"(\\[fx]q .+?):* ?(\\[fx]t)", r"\1: \2", flags=regex.M)) 
 
         # HELP NEEDED from MH to fix this section up again.
-        # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo
-        self.localChanges.append(makeChange(r"(?<![\p{Nd}\p{L}])(\p{Nd})\s(\p{L})", r"\1\u00A0\2", context=self.make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\]+)"))))
+        # in "\\r .+?[\r\n]+": "\s(\d)" > "~\1"  # Don't allow the line to break in the middle of a \r reference
+        # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo # [\p{Nd}\p{L}])(\p{Nd})\s
+        self.localChanges.append(makeChange(r"(?<!\\\S+)\s(\p{Nd})", r"\u00A0\1", context=self.make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\]+)"))))
                         
         # Temporary fix to stop blowing up when \fp is found in notes (need a longer term TeX solution from DG or MH)
         # Solved on the TeX side on 11-Aug-2023, so we no longer need this hack below:

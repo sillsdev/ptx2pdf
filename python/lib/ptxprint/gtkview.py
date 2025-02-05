@@ -653,6 +653,8 @@ class GtkViewModel(ViewModel):
         self.searchWidget = []
         self.uilevel = int(self.userconfig.get('init', 'userinterface', fallback='4'))
         self.set("c_quickRun", self.userconfig.getboolean('init', 'quickrun', fallback=False))
+        self.set("c_updatePDF", self.userconfig.getboolean('init', 'updatepdf', fallback=True))
+        self.set("c_bkView", self.userconfig.getboolean('init', 'bkview', fallback=True))
         logger.debug(f"Loaded UI level from user config: {self.uilevel}")
         self.painted = set()
         self.locked = set()
@@ -1679,6 +1681,8 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "project", self.project.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.userconfig.set("init", "quickrun",   "true" if self.get("c_quickRun")   else "false")
+        self.userconfig.set("init", "updatepdf",  "true" if self.get("c_updatePDF")  else "false")
+        self.userconfig.set("init", "bkview",     "true" if self.get("c_bkView")     else "false")
         self.noInt = self.get("c_noInternet")
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
         if self.cfgid is not None:
@@ -6322,8 +6326,9 @@ Thank you,
             sz = (x, y)
         window.resize(*sz)
         step_increment = 2 if bkview else 1
-        self.pdf_viewer.set_zoom_fit_to_screen(None)
-        self.onPgNumChanged(None, None)
+        if hasattr(self, 'pdf_viewer'):
+            self.pdf_viewer.set_zoom_fit_to_screen(None)
+            self.onPgNumChanged(None, None)
 
     def getPgNum(self):
         if self.pdf_viewer.parlocs is not None:
@@ -6442,3 +6447,7 @@ Thank you,
             return
         if self.get('c_updatePDF', False):
             self.onOK(None)
+            
+    def onShowMainDialogClicked(self, btn):
+        self.builder.get_object("ptxprint").present()
+        

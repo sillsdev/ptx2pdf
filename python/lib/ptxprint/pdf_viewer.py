@@ -701,6 +701,10 @@ class PDFViewer:
                     o.set_tooltip_text(seekText)
         
     def on_button_press(self, widget, event):
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
+            print("Middle button clicked!")
+            self.on_update_pdf(None)
+            return
         if event.button == 2:
             self.is_dragging = True
             self.mouse_start_x = event.x_root
@@ -929,7 +933,6 @@ class PDFViewer:
                 pic['anchor'] = v
                 self.model.picListView.set_val(piciter, anchor=v)
                 parref.ref = v.replace(" ","")+'-preverse'
-                print(f"{parref.ref=}")
                 self.hitPrint()
         dialog.hide()
 

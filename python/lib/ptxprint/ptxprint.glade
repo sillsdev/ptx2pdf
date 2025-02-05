@@ -1085,6 +1085,15 @@ via email, or social media.</property>
     <property name="icon-name">media-seek-backward-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="icon_settings">
+    <property name="name">Show main PTXprint settings</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="tooltip-text" translatable="yes">Show the main PTXprint
+dialog with all the settings. </property>
+    <property name="icon-name">emblem-system-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_targetProj">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
@@ -3348,8 +3357,8 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
   <object class="GtkDialog" id="dlg_preview">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PDF Preview</property>
-    <property name="default-width">1053</property>
-    <property name="default-height">715</property>
+    <property name="default-width">1100</property>
+    <property name="default-height">750</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">normal</property>
@@ -3363,23 +3372,14 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="halign">end</property>
             <property name="valign">center</property>
             <property name="margin-start">2</property>
             <property name="margin-end">2</property>
             <property name="margin-top">2</property>
             <property name="margin-bottom">2</property>
-            <property name="hexpand">True</property>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="hexpand">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <object class="GtkBox">
@@ -3395,6 +3395,7 @@ Ctrl + Plus - zoom in
 Ctrl + Minus - zoom out
 Ctrl + 0 - resets zoom level
 Ctrl + Scrollwheel - change zoom level</property>
+                    <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="label" translatable="yes">Zoom:</property>
                   </object>
@@ -3472,23 +3473,14 @@ Ctrl + Scrollwheel - change zoom level</property>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="hexpand">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <object class="GtkBox">
@@ -3636,22 +3628,14 @@ Mouse Scroll also changes pages</property>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">3</property>
+                <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="hexpand">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">4</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <object class="GtkBox" id="bx_seekPage">
@@ -3727,15 +3711,11 @@ Mouse Scroll also changes pages</property>
                 <property name="can-focus">True</property>
                 <property name="has-default">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Create the PDF as specified
-(automatically saves settings).
+                <property name="tooltip-text" translatable="yes">Update the PDF
 
-Shortcut: Ctrl-P</property>
-                <property name="halign">start</property>
-                <property name="margin-left">3</property>
-                <property name="margin-right">3</property>
-                <property name="margin-start">3</property>
-                <property name="margin-end">3</property>
+Shortcuts: Ctrl-P or click 
+the middle mouse button</property>
+                <property name="halign">end</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="resize-mode">immediate</property>
@@ -3751,19 +3731,40 @@ Shortcut: Ctrl-P</property>
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="btn_showSettings">
+                <property name="name">Show main PTXprint settings</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Show the main PTXprint
+dialog with all the settings. </property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="image">icon_settings</property>
+                <signal name="clicked" handler="onShowMainDialogClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">8</property>
+                <property name="non-homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="btn_closePreview">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="valign">center</property>
+                <property name="margin-end">6</property>
                 <property name="use-stock">True</property>
                 <signal name="clicked" handler="onClosePreview" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">8</property>
+                <property name="position">9</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -4084,6 +4085,7 @@ the text. This may be useful for precise measuring.</property>
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="width-request">150</property>
+                    <property name="height-request">300</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="hexpand">False</property>
