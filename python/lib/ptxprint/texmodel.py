@@ -1360,15 +1360,15 @@ class TexModel:
 
         # HELP NEEDED from MH to fix this section up again.
         # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo
-        self.localChanges.append(makeChange(r"(\d)\s(\p{L})", r"\1\u00A0\2", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)"))))
+        self.localChanges.append(makeChange(r"(?<![\p{Nd}\p{L}])(\p{Nd})\s(\p{L})", r"\1\u00A0\2", context=self.make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\]+)"))))
                         
         # Temporary fix to stop blowing up when \fp is found in notes (need a longer term TeX solution from DG or MH)
         # Solved on the TeX side on 11-Aug-2023, so we no longer need this hack below:
         # self.localChanges.append((None, regex.compile(r"\\fp ", flags=regex.M), r" --- ")) 
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo
-            self.localChanges.append(makeChange(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?)\s(\d+[:.]\d+(-\d+)?)", r"\1\u2000\2", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\|]+)"))))
-            self.localChanges.append(makeChange(r"(\s.) ", r"\1\u2000", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")))) # Ensure no floating single chars in note text
+            self.localChanges.append(makeChange(r"(\\p{Nd}?[^\s\p{Nd}\-\\,;]{3,}[^\\\s]*?)\s(\p{Nd}+[:.]\p{Nd}+(-\p{Nd}+)?)", r"\1\u2000\2", context=self.make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\|]+)"))))
+            self.localChanges.append(makeChange(r"(\s\S) ", r"\1\u2000", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")))) # Ensure no floating single chars in note text
         
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append(makeChange(r"(\\(xo|fr) [^\\]+?)\s*\\", r"\1\u00A0\\"))
@@ -1383,10 +1383,10 @@ class TexModel:
                 self.localChanges.append(makeChange(r"(\d )(\\[{0}] - .*?\\[{0}]\*)\s+".format(c[0]), r"\1\2"))
 
         if self.asBool("notes/frverseonly"):
-            self.localChanges.append(makeChange(r"\\fr \d+[:.](\d+)", r"\\fr \1"))
+            self.localChanges.append(makeChange(r"\\fr \p{Nd}+[:.](\p{Nd}+)", r"\\fr \1"))
 
         if self.asBool("notes/xrverseonly"):
-            self.localChanges.append(makeChange(r"\\xo \d+[:.](\d+)", r"\\xo \1"))
+            self.localChanges.append(makeChange(r"\\xo \p{Nd}+[:.](\p{Nd}+)", r"\\xo \1"))
 
         # Paratext marks no-break space as a tilde ~, but the TeX handles it.
         # self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
