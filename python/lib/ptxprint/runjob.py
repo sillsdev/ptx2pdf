@@ -709,14 +709,14 @@ class RunJob:
                 if os.path.exists(ptxmacrospath):
                     break
 
-        pathjoiner = (";" if sys.platform=="win32" else ":")
+        pathjoiner = (";" if sys.platform.startswith("win") else ":")
         envtexinputs = os.getenv("TEXINPUTS")
         texinputs = envtexinputs.split(pathjoiner) if envtexinputs is not None and len(envtexinputs) else []
         for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
             if a not in texinputs:
                 texinputs.append(a+"//")
         miscfonts = getfontcache().fontpaths[:]
-        if sys.platform != "win32" and not nosysfonts:
+        if sys.platform.startswith("win") and not nosysfonts:
             a = "/usr/share/ptx2pdf/texmacros"
             if a not in texinputs:
                 texinputs.append(a)

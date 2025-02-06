@@ -277,9 +277,9 @@ def print_traceback(f=None):
 
 def startfile(fpath):
     if os.path.exists(fpath):
-        if sys.platform == "win32":
+        if sys.platform.startswith("win"):
             os.startfile(fpath)
-        elif sys.platform == "linux":
+        elif sys.platform.startswith("linux"):
             call(('xdg-open', fpath))
 
 def getPDFconfig(fname):
@@ -319,7 +319,7 @@ if sys.platform == "linux":
         else:
             return res.text
 
-elif sys.platform == "win32":
+elif sys.platform.startswith("win"):
     import winreg
 
     def openkey(path):
@@ -353,7 +353,7 @@ def get_ptsettings():
     if ptob is None:
         logger.debug(f"No registry key found for Paratext. Searching for data folder...")
         for v in ('9', '8'):
-            if sys.platform == "win32":
+            if sys.platform.startswith("win"):
                 for d in map(chr, range(ord('C'), ord('Z')+1)):
                     if os.path.exists("{}:\\".format(d)):
                         tempstr = "{}:\\My Paratext {} Projects"

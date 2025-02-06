@@ -5514,7 +5514,7 @@ class GtkViewModel(ViewModel):
         else:
             logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
             self.lastUpdatetime = time.time()
-        if sys.platform != "win32":
+        if not sys.platform.startswith("win"):
             return
         version = None
         if self.noInt is None or self.noInt:
@@ -6456,7 +6456,7 @@ Thank you,
     def onShowMainDialogClicked(self, btn):
         self.builder.get_object("ptxprint").present()
 
-    def get_dialog_geometry(self, dialog):
+    def old_get_dialog_geometry(self, dialog):
         """Retrieve the position, size, and monitor details of a given GTK dialog."""
         if dialog is None:
             return None
@@ -6468,6 +6468,36 @@ Thank you,
         # Get the screen and monitor number
         screen = dialog.get_screen()
         monitor_num = screen.get_monitor_at_window(dialog.get_window())
+
+        return {
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height,
+            "monitor": monitor_num
+        }
+
+    def get_dialog_geometry(self, dialog):
+        """Retrieve the position, size, and monitor details of a given GTK dialog."""
+        if dialog is None:
+            print("Warning: Dialog is None.")
+            return None
+
+        # Ensure the dialog has a valid window before proceeding
+        if not dialog.get_realized():
+            print(f"Warning: {dialog} has not been realized yet.")
+            return None
+
+        x, y = dialog.get_position()
+        width, height = dialog.get_size()
+
+        screen = dialog.get_screen()
+        window = dialog.get_window()
+        if window is None:
+            print("Warning: dialog.get_window() returned None.")
+            return None
+
+        monitor_num = screen.get_monitor_at_window(window)
 
         return {
             "x": x,

@@ -16,7 +16,7 @@ import logging
 
 # These libs are for Windows-only functionality to make 
 # Paratext+Logos scroll to a Book ch:vs reference
-if sys.platform == "win32":
+if sys.platform.startswith("win"):
     import winreg
     import ctypes
     from ctypes import wintypes
@@ -38,6 +38,7 @@ dsplyOpts = {'col':  ('tbhpc', 'lrio-'),
              'full': ('t-b','lcrio-')    }
 
 mstr = {
+    'sstm':       _("SpeedSlice™"),
     'yesminus':   _("Yes! Shrink -1 line"),
     'tryminus':   _("Try Shrink -1 line"),
     'plusline':   _("Expand +1 line"),
@@ -799,6 +800,10 @@ class PDFViewer:
             hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
+            print(f"{parref.mrk=}")
+            if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
+                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref)
+                
 
             shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
             self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
@@ -813,7 +818,7 @@ class PDFViewer:
             if parref and parref.mrk is not None:
                 self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, parref.mrk)
-            if sys.platform == "win32": # and ALSO (later) check for valid ref
+            if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
                 self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
             self.addMenuItem(menu, None, None)
@@ -911,7 +916,7 @@ class PDFViewer:
 
                 self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
                 self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
-                if sys.platform == "win32":
+                if sys.platform.startswith("win"):
                     self.addMenuItem(menu, None, None)
                     self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, imgref)
                 if not self.model.get("c_updatePDF"):
@@ -1037,6 +1042,26 @@ class PDFViewer:
             treeview.scroll_to_cell(path, None, True, 0.5, 0.0)  # Ask MH: How to do this for the StyleEditor jumps?
             self.model.picListView.select_row(piciter)
 
+    def speed_slice(self, widget, info, parref):
+        print(f"This feature will only produce a small segment (slice) of the PDF")
+        print(f"{info=}  {parref=}")
+        if parref.ref is not None and parref.ref != self.model.get("t_sliceRef", ""):
+            self.model.set("t_sliceWord", "", mod=False)
+        if parref.ref is not None:
+            ref = parref.ref[:3]+' '+parref.ref[3:].replace(".",":")
+        self.model.set("t_sliceRef", ref, mod=False)
+        # self.model.set("t_sliceMkr", "\m", mod=False)
+        dialog = self.model.builder.get_object("dlg_slice4speed")
+        
+        response = dialog.run()
+        dialog.hide()
+        if response == Gtk.ResponseType.OK:
+            self.hitPrint()
+            print(f"SpeedSlice [{int(self.model.get('s_sliceLength', 4))}] chapters active!")
+        else:
+            self.model.set("t_sliceRef", "", mod=False)
+            print(f"SpeedSlice NO LONGER active!")
+
     def on_shrink_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], -1)
@@ -1113,7 +1138,7 @@ class PDFViewer:
         return f"{book} {chapter}:{verse}"
     
     def on_broadcast_ref(self, widget, ref):
-        if sys.platform != "win32":
+        if sys.platform.startswith("win"):
             return
 
         key_path = r"Software\SantaFe\Focus\ScriptureReference"

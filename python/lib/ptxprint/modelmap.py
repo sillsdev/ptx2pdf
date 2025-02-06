@@ -280,6 +280,11 @@ _map = {
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
     "document/diffpages":       ("s_diffpages", "finish", None),
     "document/printarchive":    ("c_printArchive", "finish", None),
+    
+    "slice/ref":                ("t_sliceRef", "slice", None),
+    "slice/word":               ("t_sliceWord", "slice", None),
+    "slice/marker":             ("t_sliceMkr", "slice", None),
+    "slice/length":             ("s_sliceLength", "slice", None),
 
     "cover/makecoverpage":      ("c_makeCoverPage", "cover", lambda w,v: "" if v else "%"),
     "cover/rtlbookbinding":     ("c_RTLbookBinding", "cover", lambda w,v: "true" if v else "false"),

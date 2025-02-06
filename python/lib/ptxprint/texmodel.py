@@ -36,6 +36,8 @@ def loosint(x):
 def makeChange(pattern, to, flags=regex.M, context=None):
     frame =  traceback.extract_stack(limit=2)[0]
     return (context, regex.compile(pattern, flags), to, f"{frame.filename} line {frame.lineno}")
+    
+bcvref = re.compile(r'([A-Z]{3})\s*(\d+)[.:](\d+(?:-\d+)?)')
 
 Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),
            'c_inclSectionHeader':   ('sectionheader', 'fancy/sectionheaderpdf', 'A5 section head border.pdf'),
@@ -843,7 +845,7 @@ class TexModel:
             if doti > 0:
                 outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
             cmd = [script, infpath, outfpath]
-            if script.lower().endswith(".bat") and sys.platform == "win32":
+            if script.lower().endswith(".bat") and sys.platform.startswith("win"):
                 cmd = [os.environ.get('COMSPEC', 'cmd.exe'), '/c'] + cmd
             else:
                 hasrun = False
@@ -1241,6 +1243,34 @@ class TexModel:
         
         # Remove empty \h markers (might need to expand this list and loop through a bunch of markers)
         self.localChanges.append(makeChange(r"(\\h ?\r?\n)", r"", flags=regex.S))
+
+        sliceRef = self.dict['slice/ref']
+        foundSlice = False
+        if len(sliceRef):
+            match = bcvref.match(sliceRef)
+            if match and len(self.dict['slice/word']):
+                foundSlice = True
+                b,c,v = match.groups()
+                endc = int(c) + int(self.dict['slice/length'])
+                # I need help with tidying this up because local changes doesn't (yet) support the "at b c:v" notation
+                # what I want to say is: at B c:v '(word)' > '\uFFFF\n\\m \1' 
+                self.localChanges.append(makeChange(rf"\\v {v}\s.+?({self.dict['slice/word']})", \
+                                                    rf"\uFFFF\n\{self.dict['slice/marker']} \1", \
+                                                    flags=regex.S, context=self.make_contextsfn(None, \
+                                                    regex.compile(rf'\\c {c}\s.+?\\v {str(int(v)+1)}'))))
+                                                    # regex.compile(rf'at {b} {c}:{v} '))))
+                self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf"\\c {c}\n", flags=regex.S))
+            else:
+                try:
+                    startc = int(sliceRef.split(" ",1)[-1])
+                    if startc > 0:
+                        foundSlice = True
+                        self.localChanges.append(makeChange(rf"\\mt\d?\s*.+(\\c {startc}\s)", r"\1", flags=regex.S))
+                        endc = int(startc) + int(self.dict['slice/length'])
+                except ValueError:
+                    pass
+            if foundSlice:
+                self.localChanges.append(makeChange(rf"\\c {endc}\s.+", "", flags=regex.S))
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
         if self.asBool("document/ifchaplabels", true="%"):
