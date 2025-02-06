@@ -23,10 +23,13 @@ if sys.platform.startswith("win"):
     
 logger = logging.getLogger(__name__)
 
+reset  = {'para': _("Paragraph"), 'col': _("Column"), 'page': _("Page"), 'sprd': _("Spread")}
 frame  = {'col': _("Column"), 'span': _("Span"), 'page': _("Page"), 'full': _("Full")}  # 'cut': _("Cutout"), 
 mirror = {'': _("Never"), 'both': _("Always"), 'odd': _("If on odd page"), 'even': _("If on even page")}
 vpos   = {'t': _("Top"), '-': _("Center"), 'b': _("Bottom"), 'h': _("Before Verse"), 'p': _("After Paragraph"), 'c': _("Cutout"), 'B': _("Below Notes")}
 hpos   = {'l': _("Left"), 'c': _("Center"), 'r': _("Right"), 'i': _("Inner"), 'o': _("Outer"), '-': _("Unspecified")}
+
+rev_reset  = {v:k for k, v in reset.items()}
 rev_frame  = {v:k for k, v in frame.items()}
 rev_mirror = {v:k for k, v in mirror.items()}
 rev_vpos   = {v:k for k, v in vpos.items()}
@@ -42,7 +45,7 @@ mstr = {
     'yesminus':   _("Yes! Shrink -1 line"),
     'tryminus':   _("Try Shrink -1 line"),
     'plusline':   _("Expand +1 line"),
-    'rp':         _("Reset Paragraph"),
+    'rp':         _("Reset Adjustments"),
     'st':         _("Shrink Text"),
     'et':         _("Expand Text"),
     'es':         _("Edit Style"),
@@ -368,6 +371,7 @@ class PDFViewer:
             parnum = "["+str(parnum)+"]" if parnum > 1 else ""            
             ref = getattr(p, 'ref', (bk or "") + "0.0") + parnum
             info = adjlist.getinfo(ref)
+            # print(f"{ref=} {parnum=} {info=}")
             if not info:
                 continue
             col = None
@@ -579,7 +583,7 @@ class PDFViewer:
             return (1,)
         if page % 2 == 0:
             page += 1
-        if page >= int(self.numpages):
+        if page > int(self.numpages):
             return (int(self.numpages),)
         if rtl:
             return (page, page - 1)
@@ -744,6 +748,7 @@ class PDFViewer:
 
         if self.parlocs is not None:
             p = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
+            print(f"{p=}")
         return p, pnum
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
@@ -800,18 +805,29 @@ class PDFViewer:
             hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
-            print(f"{parref.mrk=}")
             if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
                 self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref)
-                
+                self.addMenuItem(menu, None, None)
 
             shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
             self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
             self.addMenuItem(menu, f"{mstr['st']} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
             self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, mstr['rp'], self.on_reset_paragraph, info, parref, sensitivity=not (info[1] == 100 and int(l.replace("+","")) == 0))
+            
+            reset_menu = Gtk.Menu()
+            self.clear_menu(reset_menu)
+            for k, v in reset.items():
+                if k == "sprd" and not self.spread_mode:
+                    continue
+                menu_item = Gtk.MenuItem(label=f"{v}")
+                menu_item.connect("activate", self.on_reset_paragraph, info, parref)
+                menu_item.set_sensitive(k == "para" and not (info[1] == 100 and int(l.replace("+","")) == 0))
+                menu_item.show()
+                reset_menu.append(menu_item)
+            self.addSubMenuItem(menu, mstr['rp'], reset_menu)            
             self.addMenuItem(menu, None, None)
+            
             self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
             expLim = min(self.expandLimit, info[1]+self.expandStep)
             self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
