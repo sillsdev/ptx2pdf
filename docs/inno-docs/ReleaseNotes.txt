@@ -1,8 +1,25 @@
 PTXprint 2.7.18 Release Notes
-3 Feb 2025
+7 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.19 (7 Feb 2025)
+  * Enhance PDF Preview UI, and save 'Auto-update' and 'Book View' settings in user config
+  * Enhance 'Reset Adjustments' to have more options: Para, Column, Page, or Spread
+  * First attempt at remembering window sizes, positions, and monitors (Win32 only feature)
+  * Improved context menu layout (grouping shrink options, and expand options)
+  * Add Auto-Update delay and TeXpert option to modify default val (3sec)
+  * Add button to bring main dialog (settings) to front
+  * Allow digits in any script when adding non breaking spaces
+  * Another attempt to prevent references from breaking away from bookname
+  * Move Rules, Guides and Grid settings to PDF Viewer and TeXpert; Cropmarks to Finishing tab
+  * Get Guides and Baselines and Grids working properly again
+  * Disable default \par in generating graphpaper, notelines
+  * Add SpeedSlice to allow faster updates to PDF when paginating in Preview pane [unreleased]
+  * Fix rects after pictures [MH]
+  * Fix immediately update ref after changing picture anchor to prevent crashing
+  * Fix Fallback font not handling smart quotes
 
 Bug fixes and Improvements in 2.7.18 (3 Feb 2025)
   * Fix regression with pgpos not working
