@@ -9,7 +9,7 @@ Bug fixes and Improvements in 2.7.19 (7 Feb 2025)
   * Enhance 'Reset Adjustments' to have more options: Para, Column, Page, or Spread
   * First attempt at remembering window sizes, positions, and monitors (Win32 only feature)
   * Improved context menu layout (grouping shrink options, and expand options)
-  * Add Auto-Update delay and TeXpert option to modify default val (3sec)
+  * Add Auto-Update delay and Advanced > Other option to modify default val (3sec)
   * Add button to bring main dialog (settings) to front
   * Allow digits in any script when adding non breaking spaces
   * Another attempt to prevent references from breaking away from bookname

@@ -552,16 +552,16 @@ class PDFViewer:
         ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
 
         if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
-            self.set_page("first")
+            self.set_page(self.swap4rtl("first"))
             return True
         elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
-            self.set_page("last")
+            self.set_page(self.swap4rtl("last"))
             return True
         elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
-            self.set_page("next")
+            self.set_page(self.swap4rtl("next"))
             return True
         elif keyval == Gdk.KEY_Page_Up:  # Page Up (Previous page/spread)
-            self.set_page("previous")
+            self.set_page(self.swap4rtl("previous"))
             return True
         elif ctrl and keyval in {Gdk.KEY_equal, Gdk.KEY_plus}:  # Ctrl+Plus (Zoom In)
             self.on_zoom_in(widget)
@@ -710,7 +710,6 @@ class PDFViewer:
         
     def on_button_press(self, widget, event):
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
-            print("Middle button clicked!")
             self.on_update_pdf(None)
             return
         if event.button == 2:
@@ -811,7 +810,7 @@ class PDFViewer:
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
             if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
-                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref, sensitivity=False)
+                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
                 self.addMenuItem(menu, None, None)
 
             shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
@@ -1073,14 +1072,17 @@ class PDFViewer:
         if parref.ref is not None:
             ref = parref.ref[:3]+' '+parref.ref[3:].replace(".",":")
         self.model.set("t_sliceRef", ref, mod=False)
-        dialog = self.model.builder.get_object("dlg_slice4speed")
-        
+        dialog =   self.model.builder.get_object("dlg_slice4speed")
+        textview = self.model.builder.get_object("t_sliceWord")
+        fontR = str(self.model.get('bl_fontR', None)).split("|")[0]
+        if fontR:
+            font_desc = Pango.FontDescription(fontR + " 12")
+            textview.modify_font(font_desc)
         response = dialog.run()
         dialog.hide()
-        if response == Gtk.ResponseType.OK:
-            self.hitPrint()
-        else:
+        if not response == Gtk.ResponseType.OK:
             self.model.set("t_sliceRef", "", mod=False)
+        self.hitPrint()
 
     def on_shrink_paragraph(self, widget, info, parref):
         if self.adjlist is not None:

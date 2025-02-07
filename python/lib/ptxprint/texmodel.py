@@ -35,6 +35,7 @@ def loosint(x):
 
 def makeChange(pattern, to, flags=regex.M, context=None):
     frame =  traceback.extract_stack(limit=2)[0]
+    # print(f"'{pattern}' > '{to}' # {flags}")
     return (context, regex.compile(pattern, flags), to, f"{frame.filename} line {frame.lineno}")
     
 bcvref = re.compile(r'([A-Z]{3})\s*(\d+)[.:](\d+(?:-\d+)?)')
@@ -1254,11 +1255,9 @@ class TexModel:
                 endc = int(c) + int(self.dict['slice/length'])
                 # I need help with tidying this up because local changes doesn't (yet) support the "at b c:v" notation
                 # what I want to say is: at B c:v '(word)' > '\uFFFF\n\\m \1' 
-                self.localChanges.append(makeChange(rf"\\v {v}\s.+?({self.dict['slice/word']})", \
-                                                    rf"\uFFFF\n\{self.dict['slice/marker']} \1", \
-                                                    flags=regex.S, context=self.make_contextsfn(None, \
-                                                    regex.compile(rf'\\c {c}\s.+?\\v {str(int(v)+1)}'))))
-                                                    # regex.compile(rf'at {b} {c}:{v} '))))
+                # print(f"in:{} Find:{} Repl:{}")
+                self.localChanges.append(makeChange(rf"\\c {c}\s.+?\\v {v}\s.+?({self.dict['slice/word']})", \
+                                                    rf"\uFFFF\n\{self.dict['slice/marker']} \1", flags=regex.S))
                 self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf"\\c {c}\n", flags=regex.S))
             else:
                 try:
