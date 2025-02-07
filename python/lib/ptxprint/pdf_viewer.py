@@ -361,6 +361,7 @@ class PDFViewer:
         for p, r in self.parlocs.getParas(page):
             if not isinstance(p, ParInfo):
                 continue
+            # print(f"{p.ref=}[{getattr(p, 'parnum', '')}]")
             nbk = getattr(p, "ref", bk or "")[:3].upper()
             if not len(nbk):
                 continue
@@ -748,7 +749,6 @@ class PDFViewer:
 
         if self.parlocs is not None:
             p = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
-            print(f"{p=}")
         return p, pnum
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
@@ -785,7 +785,7 @@ class PDFViewer:
                                    _("Turn off Booklet pagination")+"\n"+ \
                                    _("on Finishing tab to re-enable"), None, sensitivity=False)
         else:
-            parref, pi = self.get_parloc(widget, event)
+            parref, pgindx = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
                 parnum = getattr(parref, 'parnum', 0) or 0
                 parnum = "["+str(parnum)+"]" if parnum > 1 else ""
@@ -817,12 +817,17 @@ class PDFViewer:
             
             reset_menu = Gtk.Menu()
             self.clear_menu(reset_menu)
+            print(f"pages showing now: {len(self.get_spread(pgindx))=}")
             for k, v in reset.items():
-                if k == "sprd" and not self.spread_mode:
+                if k == "sprd" and not self.spread_mode or \
+                   k == "sprd" and len(self.get_spread(pgindx)) < 2 or \
+                   k == "col"  and not self.model.get('c_doublecolumn', True):
                     continue
                 menu_item = Gtk.MenuItem(label=f"{v}")
-                menu_item.connect("activate", self.on_reset_paragraph, info, parref)
-                menu_item.set_sensitive(k == "para" and not (info[1] == 100 and int(l.replace("+","")) == 0))
+                menu_item.connect("activate", self.on_reset_adjustments, k, pgindx, info, parref)
+                menu_item.set_sensitive((k == "para" and not (info[1] == 100 and int(l.replace("+","")) == 0)) \
+                                     or (k == "col" ) or (k == "page") \
+                                     or (k == "sprd" and self.spread_mode and len(self.get_spread(pgindx))))
                 menu_item.show()
                 reset_menu.append(menu_item)
             self.addSubMenuItem(menu, mstr['rp'], reset_menu)            
@@ -1059,8 +1064,6 @@ class PDFViewer:
             self.model.picListView.select_row(piciter)
 
     def speed_slice(self, widget, info, parref):
-        print(f"This feature will only produce a small segment (slice) of the PDF")
-        print(f"{info=}  {parref=}")
         if parref.ref is not None and parref.ref != self.model.get("t_sliceRef", ""):
             self.model.set("t_sliceWord", "", mod=False)
         if parref.ref is not None:
@@ -1073,10 +1076,8 @@ class PDFViewer:
         dialog.hide()
         if response == Gtk.ResponseType.OK:
             self.hitPrint()
-            print(f"SpeedSlice [{int(self.model.get('s_sliceLength', 4))}] chapters active!")
         else:
             self.model.set("t_sliceRef", "", mod=False)
-            print(f"SpeedSlice NO LONGER active!")
 
     def on_shrink_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
@@ -1090,17 +1091,35 @@ class PDFViewer:
         self.show_pdf()
         self.hitPrint()
 
-    def on_reset_paragraph(self, widget, info, parref):
-        """Finds and deletes the row in AdjList based on parref."""
+    def on_reset_adjustments(self, widget, scope, pgindx, info, parref):
         if self.adjlist is None:
             return
+        refs2del = []
+        if scope == 'para':
+            refs2del.append((parref.ref, getattr(parref, 'parnum', '')))
+        elif scope == 'col':
+            for p, r in self.parlocs.getParasByColumn(pgindx):
+                refs2del.append((p.ref, getattr(p, 'parnum', '')))
+        elif scope == 'page':
+            for p, r in self.parlocs.getParas(pgindx):
+                refs2del.append((p.ref, getattr(p, 'parnum', '')))
+        elif scope == 'sprd':
+            for pg in self.get_spread(pgindx):
+                for p, r in self.parlocs.getParas(pg):
+                    refs2del.append((p.ref, getattr(p, 'parnum', '')))
+        
+        # Remove duplicates while preserving order
+        refs2del = list(dict.fromkeys(refs2del)) 
+        refs2del = refs2del[1:] if pgindx > 1 and len(refs2del) > 1 else refs2del
+
+        # x = '\n'.join(map(str, refs2del))
+        # print(f"Deleting Adjustments for:\n{x}")
         model = self.adjlist.liststore
-        fullref = (parref.ref, parref.parnum)
         for row in model:
             row_ref = (row[0] + str(row[1]), int(row[2]))
-            if row_ref == fullref:
+            if row_ref in refs2del:
                 model.remove(row.iter)
-                break
+            
         self.show_pdf()
         self.hitPrint()
 
@@ -1641,6 +1660,17 @@ class Paragraphs(list):
             for r in p.rects:
                 if r.pagenum == pnum:
                     yield (p, r)
+
+    def getParasByColumn(self, pnum, column=1):
+        if pnum > len(self.pindex):
+            return
+        x_values = [r.xstart for p, r in self.getParas(pnum)]
+        if not x_values:
+            return
+        threshold = (min(x_values) + max(x_values)) / 2
+        for p, r in self.getParas(pnum):
+            if (column == 1 and r.xstart < threshold) or (column == 2 and r.xstart >= threshold):
+                yield (p, r)
 
     def get_folio(self, pindex):
         if self.pnumorder is None or not len(self.pnumorder):

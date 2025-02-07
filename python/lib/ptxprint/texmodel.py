@@ -1244,7 +1244,7 @@ class TexModel:
         # Remove empty \h markers (might need to expand this list and loop through a bunch of markers)
         self.localChanges.append(makeChange(r"(\\h ?\r?\n)", r"", flags=regex.S))
 
-        sliceRef = self.dict['slice/ref']
+        sliceRef = self.dict['slice/ref'] or ""
         foundSlice = False
         if len(sliceRef):
             match = bcvref.match(sliceRef)

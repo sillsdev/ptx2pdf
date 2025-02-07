@@ -118,7 +118,10 @@ class AdjList:
     def createAdjlist(self, fname=None):
         if fname is None:
             fname = self.adjfile
-        if fname is None or not len(self.liststore):
+        if fname is None:
+            return
+        if not len(self.liststore):
+            self.remove_file(fname)
             return
         os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
         with open(fname, "w", encoding="utf-8") as outf:
@@ -133,19 +136,23 @@ class AdjList:
                 outf.write(line + "\n")
 
     def createChanges(self, fname, diglot=""):
-        # This method needs to be expanded so that it handles any diglot changes L, R, A, B, C, etc.
-        # Where/how do we get hold of the di/poly-glot config settings?
+        # If there are no changes, remove the existing _changes.txt file and return
         if not len(self.liststore):
+            self.remove_file(fname)
             return
-        lines = [] # this should be a dict with one lines list for each of the poly-glot configs
+        lines_dict = {}  # Dictionary to store lists of changes for each diglot category
         for r in self.liststore:
-            if not r[5] or r[5] == self.centre:
-                continue
+            book_code = r[0][:3]  # Always take the first three characters as book code
+            letter = r[0][3] if len(r[0]) > 3 else ''  # Extract fourth character or default to 'L'
             if len(r[0]) > 4 and r[0][4] != diglot:
-                continue
+                continue  # Skip if it's not the expected diglot
+            if not r[5] or r[5] == self.centre:
+                continue  # Skip if there is no valid reference
+            if letter not in lines_dict:
+                lines_dict[letter] = []  # Initialize list for this letter if not already present
             if r[0].startswith('GLO'):
                 k, w = re.split(r"\.", r[1], 1)
-                lines.append(r"at {0} '\\{1}(\s+\\k\s+([^\\]*?\|)?{2}\s*\\k\*)' > '\\{1}^{3}\1'".format(r[0][:3], r[4], w, r[5]))
+                change_line = r"at {0} '\\{1}(\s+\\k\s+([^\\]*?\|)?{2}\s*\\k\*)' > '\\{1}^{3}\1'".format(book_code, r[4], w, r[5])
             else:
                 try:
                     c, v = re.split(r"[:.]", r[1], 1)
@@ -158,14 +165,30 @@ class AdjList:
                     v = "end"
                 else:
                     c = int(c)
-                lines.append("at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(r[0][:3], c, v, r[4], r[5]))
-        # need to cycle through each of the poly-configs, 
-        # and if not len(lines) then try to DELETE the "_changes.txt" file for that config
-        # and if there are lines, then create the file with the appropriate changes listed.
-        if len(lines):
-            os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
-            with open(fname, "w", encoding="utf-8") as outf:
-                outf.write("\n".join(lines))
+                change_line = "at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(book_code, c, v, r[4], r[5])
+            lines_dict[letter].append(change_line)
+
+        # print(f"{self.diglotView.getAdjListFilename(book_code)}")
+            # adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
+                                # adjlistfile.replace(".adj", "_changes.txt"))            
+            
+        for letter, lines in lines_dict.items():
+            if lines:  # Only create a file if there are changes
+                file_path = fname.replace("_changes.txt", f"{letter}_changes.txt")
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Ensure directory exists
+                with open(file_path, "w", encoding="utf-8") as outf:
+                    outf.write("\n".join(lines))  # Write all changes for this diglot
+            else:
+                # If no lines exist for this category, try deleting the _changes.txt file
+                self.remove_file(fname.replace("_changes.txt", f"{letter}_changes.txt"))
+
+    def remove_file(self, fname):
+        try:
+            os.remove(fname)
+        except FileNotFoundError:
+            pass  # File does not exist, no action needed
+        except PermissionError:
+            self.model.statusMsg(_(f"Warning! File: {fname} is locked. Could not be deleted."))
 
     def save(self):
         if self.adjfile is None:
