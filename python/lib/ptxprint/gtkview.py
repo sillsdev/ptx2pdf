@@ -1588,6 +1588,7 @@ class GtkViewModel(ViewModel):
             self.doError(s, copy2clip=True)
             unlockme()
             self.builder.get_object("t_find").set_placeholder_text("Search for settings")
+            
 
     def onCancel(self, btn):
         self.onDestroy(btn)

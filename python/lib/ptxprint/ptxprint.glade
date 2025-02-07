@@ -4152,21 +4152,22 @@ to this device.</property>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="c_updatePDF">
-                    <property name="label" translatable="yes">Auto-update PDF</property>
+                    <property name="label" translatable="yes">Auto-update</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">When checked, this option
-will immediately re-create
+                    <property name="tooltip-text" translatable="yes">When enabled, this re-creates
 the PDF after making changes
 using the (right-click) context
 menu options.
 
-It is recommended to set this on
-for shorter publications, but
-probably wise to uncheck the
-option for larger publications
-which take longer to update.</property>
+Note that there is a short delay 
+enabling you to make several
+adjustments one after the other
+before the update is triggered.
+This delay can be adjusted.
+Refer to: Advanced &gt; Other &gt; 
+Other Miscellaneous Settings.</property>
                     <property name="margin-top">20</property>
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>

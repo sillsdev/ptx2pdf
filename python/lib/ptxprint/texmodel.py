@@ -655,7 +655,7 @@ class TexModel:
                                                                             self.dict["paragraph/missingchars"])
                     # print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
                     if self.dict["paragraph/ifusefallback"] and len(spclChars):
-                        badlist = "\u2018\u2019\u201c\u201d*#%"
+                        badlist = "*#%" # \u2018\u2019\u201c\u201d
                         specials = spclChars.replace(" ", "").encode("raw_unicode_escape").decode("raw_unicode_escape")
                         a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23)
                              for c in str(hex(ord(x)))[2:]).lower() for x in specials]

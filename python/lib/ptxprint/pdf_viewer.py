@@ -135,7 +135,9 @@ class PDFViewer:
         self.showadjustments = True
         self.piczoom = 85
         self.ufCurrIndex = 0
-
+        self.timer_id = None  # Stores the timer reference
+        self.last_click_time = 0  # Timestamp of the last right-click
+        
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
         self.hbox.add_events(Gdk.EventMask.SCROLL_MASK | Gdk.EventMask.BUTTON_PRESS_MASK)
@@ -775,6 +777,9 @@ class PDFViewer:
             child.destroy()
 
     def show_context_menu(self, widget, event):
+        self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
+        self.last_click_time = time.time()
+
         menu = Gtk.Menu()
         self.clear_menu(menu)
         
@@ -806,7 +811,7 @@ class PDFViewer:
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
             if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
-                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref)
+                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref, sensitivity=False)
                 self.addMenuItem(menu, None, None)
 
             shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
@@ -817,7 +822,6 @@ class PDFViewer:
             
             reset_menu = Gtk.Menu()
             self.clear_menu(reset_menu)
-            print(f"pages showing now: {len(self.get_spread(pgindx))=}")
             for k, v in reset.items():
                 if k == "sprd" and not self.spread_mode or \
                    k == "sprd" and len(self.get_spread(pgindx)) < 2 or \
@@ -1069,7 +1073,6 @@ class PDFViewer:
         if parref.ref is not None:
             ref = parref.ref[:3]+' '+parref.ref[3:].replace(".",":")
         self.model.set("t_sliceRef", ref, mod=False)
-        # self.model.set("t_sliceMkr", "\m", mod=False)
         dialog = self.model.builder.get_object("dlg_slice4speed")
         
         response = dialog.run()
@@ -1098,7 +1101,7 @@ class PDFViewer:
         if scope == 'para':
             refs2del.append((parref.ref, getattr(parref, 'parnum', '')))
         elif scope == 'col':
-            for p, r in self.parlocs.getParasByColumn(pgindx):
+            for p, r in self.parlocs.getParasByColumnOrParref(parref=parref):
                 refs2del.append((p.ref, getattr(p, 'parnum', '')))
         elif scope == 'page':
             for p, r in self.parlocs.getParas(pgindx):
@@ -1113,7 +1116,7 @@ class PDFViewer:
         refs2del = refs2del[1:] if pgindx > 1 and len(refs2del) > 1 else refs2del
 
         # x = '\n'.join(map(str, refs2del))
-        # print(f"Deleting Adjustments for:\n{x}")
+        # print(f"\n\nDeleting Adjustments for:\n{x}\n")
         model = self.adjlist.liststore
         for row in model:
             row_ref = (row[0] + str(row[1]), int(row[2]))
@@ -1142,10 +1145,25 @@ class PDFViewer:
         self.hitPrint()
 
     def hitPrint(self):
+        """ Delayed execution of print with a N-second debounce timer. """
         if self.model.get("c_updatePDF"):
-            self.model.onOK(None)
+            now = time.time()
+            self.last_click_time = now
+            if self.timer_id:
+                GLib.source_remove(self.timer_id)  # Cancel previous timer if it exists
+            # Schedule a delayed execution, but check timestamp before running
+            self.timer_id = GLib.timeout_add(self.autoUpdateDelay * 1000, self.executePrint)
 
-    def on_update_pdf(self, x):
+    def executePrint(self):
+        """ Actually triggers print only if no new clicks happened in the last N seconds. """
+        self.timer_id = None  # Reset timer reference
+        # If the last click was within the last N seconds, cancel execution
+        if time.time() - self.last_click_time < self.autoUpdateDelay:
+            return False  # Do nothing, just stop the timer
+        self.model.onOK(None)
+        return False
+
+    def on_update_pdf(self, x): # From middle-button click
         self.model.onOK(None)
 
     def edit_style(self, widget, mkr):
@@ -1661,13 +1679,23 @@ class Paragraphs(list):
                 if r.pagenum == pnum:
                     yield (p, r)
 
-    def getParasByColumn(self, pnum, column=1):
-        if pnum > len(self.pindex):
+    def getParasByColumnOrParref(self, pnum=None, parref=None, column=None):
+        """Returns paragraphs from a specific column on a page OR all paragraphs 
+        in the same column as a given paragraph reference."""
+        if parref:
+            if not hasattr(parref, "rects") or not parref.rects:
+                return
+            pnum = parref.rects[0].pagenum
+
+        if not pnum or pnum >= len(self.pindex):
             return
         x_values = [r.xstart for p, r in self.getParas(pnum)]
+        
         if not x_values:
-            return
+            return  # No paragraphs found, exit early
         threshold = (min(x_values) + max(x_values)) / 2
+        if parref and column is None:
+            column = 1 if parref.rects[0].xstart < threshold else 2
         for p, r in self.getParas(pnum):
             if (column == 1 and r.xstart < threshold) or (column == 2 and r.xstart >= threshold):
                 yield (p, r)
