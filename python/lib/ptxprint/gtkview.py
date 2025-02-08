@@ -6287,6 +6287,8 @@ Thank you,
                                           widget=prvw, page=None, isdiglot=self.get("c_diglot"))
             else:
                 self.pdf_viewer.clear(widget=prvw)
+            # print(f"Calling updatePageNavigation from onShowPDF in GtkView.py")
+            # self.pdf_viewer.updatePageNavigation()
         elif os.path.exists(pdffile):
             if action == "sysviewer":
                 startfile(pdffile)
@@ -6346,8 +6348,10 @@ Thank you,
     def onPgNumChanged(self, widget, x):
         value = self.get("t_pgNum", "1").strip()
         pg = int(value) if value.isdigit() else 1
-        if self.pdf_viewer.parlocs is not None and pg not in self.pdf_viewer.parlocs.pnums:
-            pg = 1
+        if self.pdf_viewer.parlocs is not None:
+            available_pnums = self.pdf_viewer.parlocs.pnums.keys()
+            if pg not in available_pnums:
+                pg = min(available_pnums, key=lambda p: abs(p - pg))
         self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
         self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
 
@@ -6381,12 +6385,15 @@ Thank you,
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
         self.pdf_viewer.set_page(x)
-        self.pdf_viewer.updatePageNavigation()
-        
-    def updatePgCtrlButtons(self, w):
+        print(f"No longer calling updatePageNavigation after set_page in onNavigatePageClicked")
+        # self.pdf_viewer.updatePageNavigation()
+
+    def onEditingPgNum(self, w, x):  # From 'key-release' event on t_pgNum
         if self.loadingConfig:
             return
-        self.pdf_viewer.updatePageNavigation()
+        if hasattr(self, "pgnum_timer") and self.pgnum_timer:
+            GLib.source_remove(self.pgnum_timer)
+        self.pgnum_timer = GLib.timeout_add(500, self.onPgNumChanged, None, None)
         
     def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
         dialog = Gtk.FileChooserDialog(

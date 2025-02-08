@@ -317,6 +317,7 @@ class RunJob:
         if pdfname is not None:
             print(pdfname)
         self.printer.set("l_statusLine", "")
+        print(f"{self.res=}")
         if self.res == 0:
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
@@ -340,7 +341,6 @@ class RunJob:
                     startname = self.coverfile or pdfname
                 else:
                     startname = pdfname
-                self.printer.onShowPDF(None, path=startname)
 
             fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
             logger.debug(f"Testing log file {fname}")
@@ -384,6 +384,7 @@ class RunJob:
                                   _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
+            self.printer.onShowPDF(None, path=startname)
 
         elif self.res == 3:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),

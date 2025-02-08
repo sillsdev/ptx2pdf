@@ -137,6 +137,7 @@ class PDFViewer:
         self.ufCurrIndex = 0
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
+        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
         
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -224,7 +225,8 @@ class PDFViewer:
             self.cr.set_property("font-desc", font_desc)
         
         self.adjlist = adjlist
-        self.model.updatePgCtrlButtons(None)
+        # print(f"In load_pdf. No longer calling: updatePgCtrlButtons")
+        # self.model.updatePgCtrlButtons(None)
         return True
 
     def _add_toctree(self, tocts, toci, parent):
@@ -1161,12 +1163,15 @@ class PDFViewer:
         self.timer_id = None  # Reset timer reference
         # If the last click was within the last N seconds, cancel execution
         if time.time() - self.last_click_time < self.autoUpdateDelay:
+            print(f"Returned early from executePrint")
             return False  # Do nothing, just stop the timer
         self.model.onOK(None)
+        self.updatePageNavigation()
         return False
 
     def on_update_pdf(self, x): # From middle-button click
         self.model.onOK(None)
+        self.updatePageNavigation()
 
     def edit_style(self, widget, mkr):
         if mkr is not None:

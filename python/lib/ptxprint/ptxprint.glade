@@ -3588,8 +3588,8 @@ Mouse Scroll also changes pages</property>
                     <property name="xalign">0.5</property>
                     <property name="progress-pulse-step">0</property>
                     <property name="placeholder-text" translatable="yes">77</property>
-                    <signal name="changed" handler="updatePgCtrlButtons" swapped="no"/>
                     <signal name="focus-out-event" handler="onPgNumChanged" swapped="no"/>
+                    <signal name="key-release-event" handler="onEditingPgNum" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -4451,7 +4451,7 @@ content will be skipped over.</property>
                 <property name="height-request">35</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">end</property>
+                <property name="halign">start</property>
                 <property name="valign">start</property>
                 <property name="label" translatable="yes">Enter a chapter number (e.g. JHN 4)  or 
 last verse of pevious page (e.g. GEN 3:23)</property>
