@@ -1,8 +1,15 @@
 PTXprint 2.7.19 Release Notes
-7 Feb 2025
+8 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.20 (8 Feb 2025)
+  * Ensure prev+next undefilled page buttons are active from the start after printing
+  * Resize the main settings window to the same size it was when last closed
+  * Activate SpeedSlice (experimental feature)
+  * Fix RTL PageUp+PageDn going the wrong way
+  * Fix page navigation (again) allowing page number to be typed in
 
 Bug fixes and Improvements in 2.7.19 (7 Feb 2025)
   * Enhance PDF Preview UI, and save 'Auto-update' and 'Book View' settings in user config

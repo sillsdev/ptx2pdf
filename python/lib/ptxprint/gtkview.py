@@ -6527,7 +6527,7 @@ Thank you,
                 for key in ["x", "y", "width", "height", "monitor"]:
                     self.userconfig.set("geometry", f"{name}_{key}", str(geom[key]))
 
-        self.saveConfig(force=True)  # Ensure settings are written
+        self.saveConfig(force=True)  # Ensure settings are written (not sure we want to do this every time)
 
     def restore_window_geometry(self):
         """Restore dialog positions and sizes from userconfig, if the monitor is available."""
