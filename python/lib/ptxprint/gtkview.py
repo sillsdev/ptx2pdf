@@ -929,8 +929,9 @@ class GtkViewModel(ViewModel):
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
 
-        # self.mw.resize(830, 594)
-        self.mw.resize(1005, 665)
+        width = self.userconfig.getint("geometry", f"ptxprint_width", fallback=1005)
+        height = self.userconfig.getint("geometry", f"ptxprint_height", fallback=665)
+        self.mw.resize(width, height)
         self.mw.show_all()
         self.set_uiChangeLevel(self.uilevel)
         GObject.timeout_add(1000, self.monitor)
@@ -1256,7 +1257,7 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         self.onRotateTabsChanged()
         self.checkUpdates()
-        self.mw.resize(200, 200)
+        # self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
         return True
 
@@ -2751,11 +2752,8 @@ class GtkViewModel(ViewModel):
         self.changed(changed)
         
     def picPreviewShowHide(self, show=True):
-        for w in ["bx_showImage", "tb_picPreview"]: #, "fr_picPreview", "img_picPreview"]:
+        for w in ["bx_showImage", "tb_picPreview"]:
             self.builder.get_object(w).set_visible(show)
-        # if show and self.picListView is not None:
-            # self.mw.resize(830, 594)
-            # self.picListView.onResized()
             
     def onUseCustomFolderclicked(self, btn):
         status = self.sensiVisible("c_useCustomFolder")

@@ -421,6 +421,7 @@ class StyleEditor:
         if key.lower() not in ("baseline", "linespacing"):
             return val
         baseline = float(self.model.get("s_linespacing", 1.))
+        val = float(val)
         if key.lower() == "baseline":
             return val * baseline
         elif key.lower() == "linespacing":
