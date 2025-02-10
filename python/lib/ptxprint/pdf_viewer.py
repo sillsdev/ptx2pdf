@@ -302,6 +302,8 @@ class PDFViewer:
         else:
             self.spread_mode = self.model.get("c_bkView", False)
         cpage = self.parlocs.pnums.get(page, page)
+        print(f"{self.parlocs.pnums}")
+        print(f"in show_pdf: {cpage=}   {page=}")
         
         images = []
         if self.model.isCoverTabOpen():
@@ -662,7 +664,9 @@ class PDFViewer:
             if not 'seekPage' in btn:
                 o.set_tooltip_text(re.sub(action.title(), self.swap4rtl(action).title(), tt))
             else:
-                if total_count:
+                if total_count < 1:
+                    seekText = _("Show {} underfilled page.{}(None identified)").format(self.swap4rtl(action), "\n")
+                else:
                     curr_pos = self.ufCurrIndex
                     firstUFpg = ufPages[0]
                     lastUFpg = ufPages[-1]
@@ -708,7 +712,7 @@ class PDFViewer:
                         pgs = "  ".join(reversed(pgs.split("  ")))  # Reverse order of numbers in RTL mode
 
                     seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
-                    o.set_tooltip_text(seekText)
+                o.set_tooltip_text(seekText)
         
     def on_button_press(self, widget, event):
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
@@ -1299,6 +1303,8 @@ class PDFViewer:
         canmap = self.parlocs.pnumorder is not None and len(self.parlocs.pnumorder) > 0 \
                     and self.numpages == len(self.parlocs.pnumorder)
         cpage = self.current_index
+        
+        print(f"{canmap=}  {cpage=}       {action}  RTL:{self.swap4rtl(action)}")
         # Safeguard against invalid cpage or empty pnumorder
         pg = self.current_page
         try:

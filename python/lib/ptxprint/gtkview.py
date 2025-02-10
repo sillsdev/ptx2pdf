@@ -6383,7 +6383,7 @@ Thank you,
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
         self.pdf_viewer.set_page(x)
-        print(f"No longer calling updatePageNavigation after set_page in onNavigatePageClicked")
+        # print(f"No longer calling updatePageNavigation after set_page in onNavigatePageClicked")
         # self.pdf_viewer.updatePageNavigation()
 
     def onEditingPgNum(self, w, x):  # From 'key-release' event on t_pgNum

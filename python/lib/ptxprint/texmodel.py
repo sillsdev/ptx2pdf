@@ -1253,12 +1253,9 @@ class TexModel:
                 foundSlice = True
                 b,c,v = match.groups()
                 endc = int(c) + int(self.dict['slice/length'])
-                # I need help with tidying this up because local changes doesn't (yet) support the "at b c:v" notation
-                # what I want to say is: at B c:v '(word)' > '\uFFFF\n\\m \1' 
-                # print(f"in:{} Find:{} Repl:{}")
                 self.localChanges.append(makeChange(rf"\\c {c}\s.+?\\v {v}\s.+?({self.dict['slice/word']})", \
                                                     rf"\uFFFF\n\{self.dict['slice/marker']} \1", flags=regex.S))
-                self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf"\\c {c}\n", flags=regex.S))
+                self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf'\\zsetref|bkid="{b}" chapter="{c}" verse="{v}"\*\n', flags=regex.S))
             else:
                 try:
                     startc = int(sliceRef.split(" ",1)[-1])
