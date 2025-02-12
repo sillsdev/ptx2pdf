@@ -339,7 +339,7 @@ if args.print or args.action is not None:
                 mainw.set("s_keepVersions", "1")
         mainw.savePics()
         mainw.saveStyles()
-        job = doit(mainw, nothreads=True)
+        job = doit(mainw, noview=True, nothreads=True)
         if job is not None:
             res = job.res
         else:

@@ -385,8 +385,8 @@ class RunJob:
                                   _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
-            if startname is not None:
-                self.printer.onShowPDF(None, path=startname)
+            if not self.noview and startname is not None:
+                    self.printer.onShowPDF(None, path=startname)
 
         elif self.res == 3:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),

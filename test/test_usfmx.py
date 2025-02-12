@@ -3,7 +3,10 @@
 import unittest, re
 from ptxprint.usfmutils import Usfm, Sheets
 from ptxprint.reference import RefList
-from ptxprint.usxutils import Usfm as Usx
+
+testmode = "usfm"
+if testmode == "usx":
+    from ptxprint.usxxutils import Usfm as Usx
 
 testdatpath = "projects/WSGBTpub/44JHNWSGBTpub.SFM"
 
@@ -26,7 +29,7 @@ class MockStrongs:
             return []
 
 class TestUSFMClass(unittest.TestCase):
-    mode = "usfm"
+    mode = testmode
 
     def setUp(self):
         if self.mode == "usfm":
