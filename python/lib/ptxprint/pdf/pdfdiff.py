@@ -55,8 +55,7 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         try: # pdf_viewer.clear() #FixME!
             os.remove(outname)
         except PermissionError as e:
-            doError(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."),
-                                 title=_("{} could not be deleted").format(outname), secondary=str(e), threaded=True)
+            logger.warn(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."))
             return 4
     return 0
 

@@ -41,7 +41,7 @@ dsplyOpts = {'col':  ('tbhpc', 'lrio-'),
              'full': ('t-b','lcrio-')    }
 
 mstr = {
-    'sstm':       _("SpeedSlice™"),
+    'sstm':       _("SpeedSlice"),  # Not yet ™
     'yesminus':   _("Yes! Shrink -1 line"),
     'tryminus':   _("Try Shrink -1 line"),
     'plusline':   _("Expand +1 line"),
@@ -302,8 +302,8 @@ class PDFViewer:
         else:
             self.spread_mode = self.model.get("c_bkView", False)
         cpage = self.parlocs.pnums.get(page, page)
-        print(f"{self.parlocs.pnums}")
-        print(f"in show_pdf: {cpage=}   {page=}")
+        # print(f"{self.parlocs.pnums}")
+        # print(f"in show_pdf: {cpage=}   {page=}")
         
         images = []
         if self.model.isCoverTabOpen():
@@ -1304,7 +1304,7 @@ class PDFViewer:
                     and self.numpages == len(self.parlocs.pnumorder)
         cpage = self.current_index
         
-        print(f"{canmap=}  {cpage=}       {action}  RTL:{self.swap4rtl(action)}")
+        # print(f"{canmap=}  {cpage=}       {action}  RTL:{self.swap4rtl(action)}")
         # Safeguard against invalid cpage or empty pnumorder
         pg = self.current_page
         try:

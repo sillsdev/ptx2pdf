@@ -308,6 +308,7 @@ class RunJob:
 
     def done_job(self, outfname, pdfname, info):
         # Work out what the resulting PDF was called
+        startname = None
         logger.debug(f"done_job: {outfname}, {pdfname}, {self.res=}")
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
@@ -333,8 +334,8 @@ class RunJob:
                                 color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         self.printer.onShowPDF(None, path=diffname)
-                    else:
-                        self.printer.set("l_statusLine", _("No differences found"))
+                        if diffname == pdfname:
+                            self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if self.printer.isCoverTabOpen():
@@ -384,7 +385,8 @@ class RunJob:
                                   _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
-            self.printer.onShowPDF(None, path=startname)
+            if startname is not None:
+                self.printer.onShowPDF(None, path=startname)
 
         elif self.res == 3:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),

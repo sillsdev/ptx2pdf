@@ -513,13 +513,14 @@ _dlgtriggers = {
     "dlg_fontChooser":      "getFontNameFace",
     "dlg_features":         "onFontFeaturesClicked",
     "dlg_multProjSelector": "onChooseTargetProjectsClicked",
-    "dlg_gridsGuides":      "adjustGuideGrid",
+    "dlg_gridsGuides":      "adjustGridSettings",
     "dlg_DBLbundle":        "onDBLbundleClicked",
     "dlg_overlayCredit":    "onOverlayCreditClicked",
     "dlg_sbPosition":       "onSBpositionClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
     "dlg_generateCover":    "onGenerateCoverClicked",
-    "dlg_borders":          "onSBborderClicked"
+    "dlg_borders":          "onSBborderClicked",
+    # "dlg_preview":          "????",
 }
 
 def getPTDir():
@@ -1142,6 +1143,8 @@ class GtkViewModel(ViewModel):
                 else:
                     w.get_style_context().remove_class("highlighted")
                 break
+            else: # Something needs to be added here to handle dlg_preview items
+                print(f"{name=}")
             parent = parent.get_parent()
         if atfinish is not None:
             Gdk.threads_add_idle(0, atfinish)

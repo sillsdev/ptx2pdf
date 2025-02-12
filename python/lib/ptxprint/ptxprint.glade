@@ -3911,6 +3911,7 @@ Other Miscellaneous Settings.</property>
                     <property name="margin-top">20</property>
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>
+                    <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -4019,7 +4020,7 @@ as well as the baselines of the body text.</property>
                     <child>
                       <object class="GtkCheckButton" id="c_gridGraph">
                         <property name="label" translatable="yes">Grid</property>
-                        <property name="name">Marks &amp; Guides dialog: Show grid (graph paper)</property>
+                        <property name="name">Show grid (graph paper)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
