@@ -408,6 +408,9 @@ class Piclist:
     def __delitem__(self, k):
         del self.pics[k]
 
+    def __setitem__(self, k, v):
+        self.pics[k] = v
+
     def remove(self, p):
         if p.key in self.pics:
             del self.pics[p.key]

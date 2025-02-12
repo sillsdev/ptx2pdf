@@ -1617,6 +1617,9 @@ class Paragraphs(list):
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None:
                     return
+                if currr is not None:
+                    currr.yend = readpts(p[3])
+                    currr.xend = cinfo[3]
                 currpic = FigInfo(p[0], p[1], (0, 0), False, False)
                 currpic.rects = []
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
