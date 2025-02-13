@@ -1202,7 +1202,7 @@ class PDFViewer:
         return f"{book} {chapter}:{verse}"
     
     def on_broadcast_ref(self, widget, ref):
-        if sys.platform.startswith("win"):
+        if not sys.platform.startswith("win"):
             return
 
         key_path = r"Software\SantaFe\Focus\ScriptureReference"
