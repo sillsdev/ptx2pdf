@@ -1,8 +1,18 @@
 PTXprint 2.7.20 Release Notes
-8 Feb 2025
+14 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.21 (14 Feb 2025)
+  * Updated information about Ubuntu package as well as steps to install from source
+  * Added missing dependency and removed outdated docstring
+  * Get refs working properly for SpeedSlice.
+  * Fix missing paragraph rects before pictures in pdf viewer
+  * Fix tests trying to load visual display
+  * Add missing file for tests
+  * Fix regression on _diff.pdf production
+  * Fix jump to reference in Paratext 
 
 Bug fixes and Improvements in 2.7.20 (8 Feb 2025)
   * Ensure prev+next undefilled page buttons are active from the start after printing
