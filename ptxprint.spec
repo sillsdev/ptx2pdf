@@ -61,7 +61,7 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                 # These end up where specified (each entry is a 2 tuple: (source, target dir)
              binaries = binaries
                       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
-                            ('A5 section head border.pdf', 'A5 section head border 2 column.pdf', 'A5 section head border(RTL).pdf',
+                            ('A5 section head border.pdf', 'A5 section head border 2 column.pdf', 'A5 section head border-RTL-taller.pdf',
                              'A5 page border.pdf', 'A5 page border - no footer.pdf', 'Verse number star.pdf', 'decoration.pdf',
                              'Verse number rounded box.pdf')]
                       + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
