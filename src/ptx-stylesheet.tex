@@ -1751,9 +1751,12 @@
 \newif\ifsubc@ll \subc@llfalse
 %-csty_stylesheet
 
+% Four flags that determine how the file should process the end of a ptx file file.
 \newif\iflastptxfile
-\newif\iflastpage
-\newif\ifendbook
+\newif\ifinendbook % Is this one of the last few pages of a ptxfile
+\newif\ifendbook % Is this the (very) last page of a ptxfile
+\newif\iflastpage % This is the very last page of the volume (end of last ptxfile) (i.e. it's a combination of lastptxfile and endbook
+
 \newif\ifscripturebook
 \newdimen\origb@selineskip %Save the initial baselineskip here
 \newif\ifinperiph
@@ -1868,6 +1871,7 @@
  \let\\=\bslash
  \m@kedigitsletters
  \inptxfiletrue
+ \endbookfalse
 }
 
 \def\unprepusfm{
@@ -2033,6 +2037,7 @@
  \the\st@rtptxhooks
  \ifseriesdiglot\let\c@rrdstat\empty\fi % atn@xtptxfile will set things up if so desired, but cover periphs need loading with c@rrdstat unaffected by setup code.
  \prepusfm
+ \global\inendbookfalse \global\endbookfalse
  \edef\t@st{#1}%
  \ifx\t@st\empty\else %opening empty file causes problems with some paths.
    \trace{d}{\meaning\atn@xtptxfile}%
@@ -2051,19 +2056,21 @@
 \newsp@cialpen{sect@ndpenalty}
 \def\postptxfile{%
  \inptxfilefalse  
- \trace{o}{postptxfile \iflastptxfile LAST ptx file\fi pg=\the\pagegoal, pt=\the\pagetotal}%
+ \trace{o}{postptxfile \iflastptxfile LAST file \fi pg=\the\pagegoal, pt=\the\pagetotal}%
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  %\iflastptxfile \global\lastpagetrue\fi
- %\endbooktrue Now set by output routine.
+ %\inendbooktrue 
  \ifdiglot
   \enddigl@t
  \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
- \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else \let\layoutpen@lty\book@ndpenalty\fi\fi
+ %FIXME: Next line sholdn't be needed but works to save unwanted last-line issue
+  \ifdim\the\dimexpr\pagegoal-\pagetotal\relax<.25\baselineskip\relax\penalty 9999\fi
+ \let\layoutpen@lty\book@ndpenalty 
  \layoutstylebreak
  \singlecolumn
  \ifOneChapBook\endOneChapBook\fi
