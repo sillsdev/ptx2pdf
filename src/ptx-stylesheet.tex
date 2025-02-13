@@ -2061,18 +2061,27 @@
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
  \endt@ble
- %\iflastptxfile \global\lastpagetrue\fi
- %\inendbooktrue 
+ \inendbooktrue 
  \ifdiglot
   \enddigl@t
  \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
  %FIXME: Next line sholdn't be needed but works to save unwanted last-line issue
-  \ifdim\the\dimexpr\pagegoal-\pagetotal\relax<.25\baselineskip\relax\penalty 9999\fi
+  %\ifdim\the\dimexpr\pagegoal-\pagetotal\relax<.25\baselineskip\relax\penalty 9999\fi
  \let\layoutpen@lty\book@ndpenalty 
+ \iflastptxfile
+   \setbox\bookendbox\vbox{\lastbookendrule}%
+ \else
+   \ifnum 1=\ifendbooknoeject 1\else\ifx\PageAlign\val@MULTI 1 \else 0\fi\fi
+     \setbox\bookendbox\vbox{\bookendrule}%
+   \else
+     \setbox\bookendbox\vbox{}%
+   \fi
+ \fi
  \layoutstylebreak
  \singlecolumn
+ \box\bookendbox
  \ifOneChapBook\endOneChapBook\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
  \ifx\id@@@\n@ID\relax\else\csname bookend-\id@@@\endcsname\relax\fi

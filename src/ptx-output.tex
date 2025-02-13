@@ -119,6 +119,8 @@
           \doTextB@rder{\colA}%3
         \fi
         \box\colA\kern0pt \vfil}%
+      \m@keinp@gegap
+      \p@geendcontent
   }%
 }
 \def\@@onecolp@gects#1{
@@ -139,10 +141,7 @@
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
-      \m@keinp@gegap
-      \p@geendcontent
       \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14\fi\fi
-      \inendbookfalse
 }
 %+c_onecoltrial_pagecontents
 
@@ -172,14 +171,20 @@
   \setbox\colA=\vsplit255 to \dimexpr \availht + \lastdepth\relax
   \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
   \setbox\colA\vbox \ifNoGrid to \availht\fi {\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
-  \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
+  \ifvoid255
+    \ifinendbook
+      \ifnum \outputpenalty=\book@ndpenalty\relax 
+        \endbooktrue
+        \iflastptxfile\lastpagetrue\fi
+      \fi
+    \fi
+    \fitonpagetrue
+  \else
+    \endbookfalse\lastpagefalse\fitonpagefalse
+  \fi
   \und@rfill=\availht \decr{\und@rfill}{\colA}%
 %-c_onecoltrial_intro
   \iffitonpage
-    \endbookfalse
-    \ifinendbook\ifvoid255 \endbooktrue
-      \iflastptxfile\lastpagetrue\fi
-    \fi\fi
     \dimen3=\ht\colA \advance\dimen3\lastd@pth
     \if\XrefNotes\relax\relax % pretty sure we need two \relaxes, for the \if.
     \else
@@ -450,7 +455,7 @@
 \def\savepartialpage{% save a partially-full page when switching to 2-column format, or end of 1 col document.
   \xdef\p@gebotmark{\botmark}%
   \ifnum\outputpenalty=\book@ndpenalty\global\endbooktrue\inendbooktrue\iflastptxfile\global\lastpagetrue\fi\fi
-  \trace{o}{savepartialpage: hIns=\the\holdinginserts\space partial=\the\ht\partial, lastptxfile\iflastptxfile true \else false \fi endbook\ifendbook true \else false \fi inptxfile \ifinptxfile true\else false \fi}%
+  \trace{o}{savepartialpage: hIns=\the\holdinginserts\space partial=\the\ht\partial, lastptxfile\iflastptxfile true \else false \fi inendbook\ifinendbook true \else false \fi endbook\ifendbook true \else false \fi inptxfile\ifinptxfile true\else false \fi}%
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
@@ -506,7 +511,7 @@
         \box\partial}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \@@onecolp@gects{\unvbox\colA\vfil%\special{"testme2"}%
-       }%
+       }
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \ifMidPageFootnotes
@@ -540,8 +545,11 @@
       \setbox0=\box255\deadcycles=0
     \fi % dump empty pages (typically at end)
     \tempfalse%
-    \iflastptxfile
-      \ifdim\availht<2\baselineskip \temptrue\fi
+    \ifinendbook
+      \ifdim\dimexpr \availht - \ht\partial \ifendbook -\ht\bookendbox - \dp\bookendbox \fi \relax<0pt \relax
+        \trace{o}{outputting full box, but better to resize}%
+         \temptrue
+      \fi
     \else
       \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
       \iftob@dy
@@ -561,10 +569,13 @@
         \p@geendcontent
         \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14 \fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\notst@dynotesfalse\clearn@tes\s@tpage 
+      \ifinptxfile
+        \global\output{\savepartialpagebounce}%
+      \fi
     \else
-      \trace{o}{savepartial noeject}% partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage%
+      \trace{o}{savepartial noeject \the\availht\space partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
       \unsavem@rks
-      \trace{o}{savepartial noeject partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
+      \trace{o}{savepartial noeject \the\availht\space partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
       \ifm@rksonpage
         \edef\mktmp{\botmark}%
         \ifx\mktmp\t@tle\else
@@ -577,8 +588,9 @@
       \fi
     \fi
     \fin@lverybottom
-    \global\holdinginserts=1
-    \inendbookfalse
+    \ifinptxfile
+      \global\holdinginserts=1
+    \fi
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
     \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts\space ip=\the\insertpenalties}%
@@ -599,6 +611,7 @@
 \newbox\ornXobjects % Unboxed at shipout (or maybe definition), for any Xobject definitions.
 \let\ornXFid@list\empty % Xobject IDs  should be added to this list, for debugging.
 \newif\ifholdXobjects\holdXobjectsfalse  %
+\newbox\bookendbox
 %-c_savepartialpage
 
 %+c_twocols
@@ -1355,8 +1368,6 @@
   \rem@inderfalse\balanced
   \ifdim\availht<\baselineskip \fitonpagefalse \fi
   \iffitonpage
-    \inendbookfalse
-    \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \c@lcboxheights
     \setbox\colA=\vbox{\unvbox\colA\unskip}\setbox\colB=\vbox{\unvbox\colB\unskip}%
     \s@veallnotes{1}%
@@ -1448,7 +1459,6 @@
     \trace{o}{sppd: \the\pageno, s@ved=\the\ht\s@vedpage+\the\dp\s@vedpage, op=\the\outputpenalty \the\output}%
     \unsavem@rks
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
-    \inendbookfalse
   \else
     \trace{o}{sppd: Not fit on page\space ip=\the\insertpenalties}%
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
@@ -1552,8 +1562,6 @@
 %-c_twocoltrial_intro
 %+c_twocoltrial
   \iffitonpage
-    \inendbookfalse
-    \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \c@lcboxheights
     \ifNoGrid\s@tcolhts\availht\fi
     \trace{o}{NoGrid\ifNoGrid true\else false\fi , A=\the\ht\colA, B=\the\ht\colB, colhtA=\the\colhtA, colhtB=\the\colhtB}%
@@ -1633,7 +1641,6 @@
       \global\output={\twocols}%
     \fi
     \unvbox\s@vedpage
-    \inendbookfalse
     %\ifnum\interactionmode=1
       %\showlists
     %\fi
@@ -1888,7 +1895,7 @@
 %+c_singlecolumn
 % to switch back to single column, we reset the page size parameters
 \def\layoutstylebreak@singlecolumn{
-  \trace{o}{LAYOUTSTYLE break (single col) pen=\layoutpen@lty}%
+  \trace{o}{LAYOUTSTYLE break (single col) pen=\layoutpen@lty/\csname d@code:\layoutpen@lty\endcsname}%
   \global\outputpenalty=0
   \ifhe@dings\endhe@dings\fi
   \par
@@ -1906,8 +1913,8 @@
   \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial \space \iflastpage LASTPAGE \fi \ifinendbook INENDBOOK\fi \ifendbook ENDBOOK\fi}%\tracingmacros=1
   \ifnum 1=\ifnum \c@rrentcols>1 1\else \ifendbook 1 \else 0 \fi\fi
     \layoutstylebreak % save any partially-full page into \partial
-    \global\let\layoutpen@lty=\sect@ndpenalty % Back to normal
     %LOTS happens before this line is reached!
+    \global\let\layoutpen@lty=\sect@ndpenalty % Back to normal
     \ifendbook
       \iftextborder\ifpartialfr@med
           \ifdim\posttextb@rderskip=0pt \else\ifdim\ht\partial>10pt \setbox\partial\vbox{\unvbox\partial}% Let the box have its natural size.
@@ -1962,16 +1969,9 @@
     \iftob@dy\else\ifdim0pt<\baselineskip \ifdim \dimexpr \ht\partial+\dp\partial\relax >0.5\baselineskip % \vbox{\unvbox\partial}%
       %\ifx\p@gefirstmark\t@tle\else
         \trace{o}{ht partial=\the\ht\partial, bls=\the\baselineskip}%
-        \iflastptxfile
-          \trace{o}{lastbookendrule}%
-          \setbox\partial\vbox{\unvbox\partial \lastbookendrule}%
-        \else
-          \ifnum 1=\ifendbooknoeject 1\else\ifx\PageAlign\val@MULTI 1 \else 0\fi\fi
-            \trace{o}{bookendrule}%
-            \setbox\partial\vbox{\unvbox\partial \bookendrule}%
-          \fi
+        \trace{o}{\iflastpage last\fi bookendrule}%
+        \setbox\partial\vbox{\unvbox\partial \unvbox\bookendbox}%
       %\fi
-      \fi
     \fi\fi\fi
   \fi
   %\ifnum\pageno>10\tracingmacros=1\tracingassigns=1\fi
