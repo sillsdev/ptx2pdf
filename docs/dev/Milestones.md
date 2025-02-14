@@ -39,7 +39,7 @@ re-read convinced him it wasn't. He's now confused about what is intended in the
 standard. ```\qt-s \* ...\qt-e\* ``` while quoted text as in who is saying what, seems
 distinct to ```\qt``` 'quoted text from the Old Testament'.
 
-The milestone certainly gets a different treatment to the character stle in the style sheet.
+The milestone certainly gets a different treatment to the character style in the style sheet.
 
 
 ### Actor Script Markup
@@ -215,7 +215,7 @@ however, a user who wishes to define their own attributes and use them for styli
 capable of supplying their own ```\Attributes``` list in the stylesheet, and so 
 this should not be an issue if documented.
 
-Implementing ANY of this will need some additoinal parsing steps.
+Implementing ANY of this will need some additional parsing steps.
 
 However, in all of this, it is assumed to be incorrect to apply the (unique) id fields to such a list.
 
@@ -267,7 +267,7 @@ name itself.
 
 [DG] I don't understand. Why is gloss in the above, and is it not  ``\Marker morph|wit```
 
-#### Disussion
+#### Discussion
 While there are going to be distinct layouts for different markers/attributes there are some 
 comonalities.
 1. Colour size / position should be applied.

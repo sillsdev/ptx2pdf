@@ -131,7 +131,7 @@ then update it by inserts and notes.
 
 c@lcavailht is the routine for calculating and setting up the various parameters
 for a page measurement. It sets the marks and sets available height to the trial
-heigth. Then it reduces  that available height by the heights of the notes, then
+height. Then it reduces  that available height by the heights of the notes, then
 we round the result up to the nearest line grid. Then we subtract any top and
 bottom inserts (figures). Advancing by `-\dp255` and `\dp255` just shifts the
 grid somewhat (the amount of actual descent of the last line in the text).
@@ -365,7 +365,7 @@ vertical column gutter rule, the height of the column boxes again to give the
 height of the box that is to be returned and the maximum depth of the two
 columns, which is a side effect of running `\c@lcboxheights`. From these we
 assemble a box that is centred. If there is a ColumnGutterRule then we create a
-vertical rule of an appropriate heigh inside an hbox which is shifted down by
+vertical rule of an appropriate height inside an hbox which is shifted down by
 the ColumnGutterRuleSkip. This whole box is given an appropriate depth as passed
 in and then centred with a right hand column shift. This is passed back for
 inclusion in the horizontal list of boxes. 
@@ -462,7 +462,7 @@ Then it passes a box for the page to the routine that adds any cropmarks. The
 contents of that page are the head line the page body and the foot line. After
 that we restore the pdf page dimensions and advance the page number. There is
 check that the document is not stupidly long. The value of `@MM` is 20000 and is
-only emmitted in a supereject. Thus we are merely passing the supereject along.
+only emitted in a supereject. Thus we are merely passing the supereject along.
 Otherwise clear various flags.
 
 [=c_plainoutput]::

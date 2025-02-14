@@ -71,7 +71,7 @@ test-file):
 
 Each sidebar may have the normal array  normal sidebar foreground and
 background images and colours which may be defined (but clearly, not all options or 
-combinations make sense). Styling is discussed futher down, and this document
+combinations make sense). Styling is discussed further down, and this document
 ends with a complete stylesheet that could be used to set the above text.
 
 Note that by default the barcode for the ISBN uses the font Andika. 
@@ -124,7 +124,7 @@ The relevant options are:
 \BgImageScaleTo inner
 \BgImageScale 1
 ```
-Preserving the orginal aspect ratio, fit the image the the width of the `inner` box:
+Preserving the original aspect ratio, fit the image the the width of the `inner` box:
 
 ![inner](coverpics/cover_inner1.jpg "inner|1")
 

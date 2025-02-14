@@ -566,7 +566,7 @@ class Collector:
             if self.acc[i].type == ChunkType.PARVERSE:
                 logger.log(7,f"Merge.5 {self.colkey}? {self.acc[i].position} prev:{self.acc[i-1].type}")
                 if  self.acc[i-1].type in (ChunkType.PREVERSEPAR, ChunkType.NB):
-                    # A PARVERSE gives its address and content up to the preceeding PREVERSEPAR, as the two may not be seperated
+                    # A PARVERSE gives its address and content up to the preceding PREVERSEPAR, as the two may not be separated
                     if bi is None:
                         bi=i-1
                     self.acc[bi].verse=self.acc[i].verse
@@ -1013,7 +1013,7 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
 # directory.  The scores (from all columns) are added and a sum of 100 or more
 # at a given point causes splitting and synchronisation.
 # Any value not listed is assumed to be 0.
-# Values -2<=x<=2 are treated as multiplyers of the WEIGHT value.  Other values
+# Values -2<=x<=2 are treated as multipliers of the WEIGHT value.  Other values
 # are treated as absolute values. Non-integer values (e.g. 0.5) are allowed.
 # Chapter and verse numbers are remembered, other break-points increment a
 # paragraph counter.\n""")
@@ -1106,7 +1106,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         scorearr={}
         for k,v in tmp:
             if k in scorearr:
-                raise ValueError("Cannot have reapeated entries in key array! (%c already seen)" %(k))
+                raise ValueError("Cannot have repeated entries in key array! (%c already seen)" %(k))
             scorearr[k]=int(v)
         del tmp
     logger.debug(f"{type(scorearr)}, {scorearr=}")

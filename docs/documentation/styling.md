@@ -104,8 +104,8 @@ Special styling for when an angel says the name of the LORD, in a standard `\p`-
 ### Styling based on book and/or periph
 There are times when a certain book (e.g. the glossary) or a certain periph
 division (e.g. the imprimatur) should be styled differently. These prefix the
-style stack in an analagous manner to categories. The codes for these are
-`id:GEN|` and `periph:title|` repsectively.
+style stack in an analogous manner to categories. The codes for these are
+`id:GEN|` and `periph:title|` respectively.
 If the USFM is:
 ```tex
 \id FRT
@@ -176,8 +176,8 @@ This may cause gaps between words and spaces due to the difference in length of 
 ```
 
 In the above example, the marker ul 'underlines' with the character U+223F Sine
-Wave, and ul2 'underlines' with the string of U+223F and a normal hypen/minus character. ul3 underlines with the results of a piece of TeX code.
-Rather than the literal character, it could have been defined using the XeTeX hexadecimal notation  `^^^^223F` but multi-token constructs such as `\char123` are not accepted in the unquoted form, althogh they may be used in the quoted or bracketed form.
+Wave, and ul2 'underlines' with the string of U+223F and a normal hyphen/minus character. ul3 underlines with the results of a piece of TeX code.
+Rather than the literal character, it could have been defined using the XeTeX hexadecimal notation  `^^^^223F` but multi-token constructs such as `\char123` are not accepted in the unquoted form, although they may be used in the quoted or bracketed form.
 The relevant font for the characters are set by the underline+ul complex style (or underline+ul2, etc, respectively), which sets the font and colour parameters.
 The distance specified by `\UnderlineLower` (see section above) applies. However if, for example, the intention is
 to put Xes through the 'underlined' word, the `\Raise` parameter can be used (on the underline+... styling) to accomplish this. In choosing the value here, it should be remembered that the starting point is with the bottom of the word and the top of the underline character, .
@@ -282,7 +282,7 @@ If for some reason this portion of text were being quoted in a side bar:
 \p Jesus said, <<\wj It is written, <You shall not put the \+nd Lord\+nd*...
 \esbe
 ```
-Then as each style-stack entry could be be preceeded by the category information, the full  style stack emtry would be:
+Then as each style-stack entry could be be preceded by the category information, the full  style stack emtry would be:
 `cat:Temptation|nd+wj+p`, and the order of precedence,  (the search-list for `\Marker` entries)  would be:
 with category: `cat:Temptation|nd+wj+p`, `cat:Temptation|nd+wj`, `cat:Temptation|nd`, `cat:Temptation|wj+p`, `cat:Temptation|wj`, `cat:Temptation|p`, `nd+wj+p`, `nd+wj`, `nd`, `wj+p`, `wj`, `p`
 
@@ -310,7 +310,7 @@ E.g. Consider this example, (in which the `\ts-s` milestone  has been enhanced w
 \p Jesus said, <<\qt-s|Jesus\* It is written, \+bd <You shall not put the \+nd Lord\+nd*...
 ```
 
-As milestones always 'float' above the paragraph mark, then for this example, the fullly specified style stack for `Lord` will be `nd+bd+Jesus|qt-s+Alice|ts-s+p`
+As milestones always 'float' above the paragraph mark, then for this example, the fully specified style stack for `Lord` will be `nd+bd+Jesus|qt-s+Alice|ts-s+p`
 If `\StackComplexity` were **2**  then  the search list would be:
 
  * Full list: `nd+bd+Jesus|qt-s+Alice|ts-s+p`
@@ -333,7 +333,7 @@ Once the above list has been determined, it is rapidly reduced again, by compari
 
 
 ## Font features  and possibly unexpected behaviour for FontScale
-For most parameters, processing the list stops at the first encoutered value. For `\ztexFontFeatures`, `Bold` and `Italic` (and any others
+For most parameters, processing the list stops at the first encountered value. For `\ztexFontFeatures`, `Bold` and `Italic` (and any others
  other values affected by `\Regular`), processing of the search-list continues until a `\Regular` is encountered, allowing  italic and bold to be specified by 
 different markers but still combine.
 
@@ -394,7 +394,7 @@ The parameter give this way *can* be overridden by character style.
 
 Character styles can now also take the `\ft^102` format, which is of particular
 use in footnotes. Note that the footnote style *itself* cannot accept the
-notation, as the potiential for confusion seems much too probable. The extend
+notation, as the potential for confusion seems much too probable. The extend
 parameter applies strictly to the character style, and is not continued by
 other character styles on a given line, except where nesting is used.
 

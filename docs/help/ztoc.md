@@ -10,7 +10,7 @@ Include a table of contents
 This milestone imports table of contents data.
 ` \ztoc|keyword\*`  Where &lt;keyword&gt; can be replaced with:
 
-*  main – primary, all-inclusive table of contents, in order of occurance.
+*  main – primary, all-inclusive table of contents, in order of occurrence.
 *  pre – any book prior to scripture (FRT, INT)
 *  ot – only Old Testament books are listed
 *  heb - OT books sorted according to the Hebrew TaNaKh

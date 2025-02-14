@@ -35,7 +35,7 @@ my @partype=('','');
 my @heading;
 my @headingstack=(['','','',''],['','','']);
 my @oldhead=(['','','',''],['','','']);
-my @first_inrange; # Shortcut to the start of interesing data
+my @first_inrange; # Shortcut to the start of interesting data
 my $logfile=undef;
 my $debug="merge.dbg" ;#undef; # ".diglot.dbg";
 if (defined($ENV{'DEBUG'})) {
@@ -84,7 +84,7 @@ sub makeheading {
 	}
 }
 	
-sub logit { # Gerneral purpose logging routine
+sub logit { # General purpose logging routine
 	my ($side)=shift(@_);
 	if ($logging) {
 		if (defined($side)) {
@@ -277,10 +277,10 @@ my $usage="\nUsage: $0 [-mode|options]  File1 File2 File3\n"
 	. join("\n ",map {'-'.$_." \t:".$modes{$_}.(($_ eq $mode)?" (default)":"") } (keys %modes)) . "\n"
 	. "Options are:\n "
 	. "-L file\t: Log to file\n"
-	. "-R 11:25-25:12\t Only ouput specified range\n"
+	. "-R 11:25-25:12\t Only output specified range\n"
 	. "-s \tSplit off section headings into a separate chunk (makes verses line up)\n"
 	. "-C \tIf \\cl is used, consider the chapter mark to be a heading\n"
-	. "-S 60,45,45,10\t Use an uneven scoring for each file. A potential break-point becomes a real (forced) break-point if the total score is 100 or ore. This example will force a break any time the first column has a break that coincides with one in the second or third column, or if any three columns agree.columns.\n"
+	. "-S 60,45,45,10\t Use an uneven scoring for each file. A potential break-point becomes a real (forced) break-point if the total score is 100 or more. This example will force a break any time the first column has a break that coincides with one in the second or third column, or if any three columns agree.columns.\n"
 	. "-o file\t: Output to file\n";
 ###########################
 # Option parsing
@@ -342,13 +342,13 @@ if ($#ARGV<1) {
 
 # Read the input files
 if (defined($logfile)) {
-	print STDERR ("Openning log file $logfile\n");
+	print STDERR ("Opening log file $logfile\n");
 	open(LOG,'>',$logfile) || die($!);
 	$logging=1;
 } 
 
 if (defined($debug)) {
-	print STDERR ("Openning debug file $debug\n");
+	print STDERR ("Opening debug file $debug\n");
 	open(DBG,'>',$debug) || die($!);
 } 
 

@@ -18,6 +18,6 @@ markup.
 * `marker="add"` - the marker to be tested.
 
 ## See also
-* Documentation on [Contitional text](conditional.md)
+* Documentation on [Conditional text](conditional.md)
 * [ztruetext](ztruetext.md)
 * [zfalsetext](zfalsetext.md)

@@ -320,7 +320,7 @@ for the given references (in this example: JHN 16, 2CO 6, HEB 6).
 ## Add extra  TOC entries 
 
 Additional TOC entries can be specified to appear before or after an automatic table of
-contents. As this is done by seting values that are used while `\ztoc` runs, it must occur 
+contents. As this is done by setting values that are used while `\ztoc` runs, it must occur 
 *before* the call to ztoc:
 
 ```tex

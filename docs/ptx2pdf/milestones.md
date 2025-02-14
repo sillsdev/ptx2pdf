@@ -13,7 +13,7 @@ Most chapter numbers are a drop number. What makes scripture typesetting tricky
 is that there are a few drop chapter numbers that occur mid paragraph. Since
 USFM says that paragraphs occur under a chapter marker. There is a special
 paragraph marker for the non paragraph break: `\nb`. To achieve the cutout we
-have verious things to set up in the chapter marker itself. We start by
+have various things to set up in the chapter marker itself. We start by
 squirrelling away the `\c` paragraph style. After this, there are two parts
 to the chapter marker processing. We
 start with the pattern matching chapter that collects the chapter number and
@@ -62,7 +62,7 @@ The problem with this is if you divide two dimensions you get an integer
 division, which is often not very useful. To increase accuracy, we multiple up
 by 128 (giving a maximum dimension of 512pt which should be enough for 2 lines
 of text). This means keeping track of when we multiply, values are in effect
-mulitplied by $2^{16}$ and if a number that is multiplied by $2^{16}$ is divided by
+multiplied by $2^{16}$ and if a number that is multiplied by $2^{16}$ is divided by
 another number multiplied by $2^{16}$ then the result has no multiplier, and so on.
 Multiplying numbers by 128 for extra accuracy can either result in having to
 divide the result by 128 or multiply it by $512 = (2^{16} / 2^7)$.
@@ -144,7 +144,7 @@ is that scary looking `\strip@pt` which gets used in `\special` commands.
 When a paragraph starts with a drop chapter number we need to make a box for the
 chapter number. For this we need box metrics to be based on the glyphs themselves
 and not on the font metrics. We then create a default macro for printing the
-chapter number. There is a user defineable hook `\PrepChapterNumber` that can
+chapter number. There is a user definable hook `\PrepChapterNumber` that can
 redefine that `\printchapter` macro to style the chapter number text
 appropriately. Then we create a box with the font set to the drop chapter size
 and font and print the chapter number.
@@ -160,7 +160,7 @@ dimen value
 ----- -----
  0    Height of the chapter box. The width of the new box
  1    Height + depth of chapter box plus `\AfterChapterSpaceFactor`. The height of the rotated box 
- 2    Half the heigh - width of the chapter box. The amount to shift the chapter box
+ 2    Half the height - width of the chapter box. The amount to shift the chapter box
 
 Then we create the box and rotate it. Then we set the height of the box to the
 width of the chapter box and the width to the new height, because height and
@@ -221,7 +221,7 @@ for the book (or id) space chapter.
 
 In the rare case that this paragraph follows a single line paragraph containing
 a chapter cutout, drop any cutouts in this paragraph and prepare to recalculate.
-Againt we choose the appropriate side for the cutout and, as per the chapter
+Against we choose the appropriate side for the cutout and, as per the chapter
 processing above, we test for a margin. With no margin, we simply insert a
 single line cutout (since the first line was in the previous paragraph). If
 there is a margin, then we find the first line indent. If it is less than the

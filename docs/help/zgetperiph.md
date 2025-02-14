@@ -6,7 +6,7 @@ Milestone to use a stored periphery
 \zgetperiph|side="L" id="intnt"\*
 ```
 ## Description
-The USFM line `\periph|id="measurements"` will store what follows (until the next `\periph` or `\zendperiph`) for later usage, witth an id of 'measurements'.
+The USFM line `\periph|id="measurements"` will store what follows (until the next `\periph` or `\zendperiph`) for later usage, with an id of 'measurements'.
  
 `\zgetperiph` puts such stored content at the current point (even if that makes little sense). Used peripheries are normally single-use, i.e. they are discarded to save space. See documentation on KeepPeriph if that's undersired.
 

@@ -33,7 +33,7 @@
 \makeatletter
 \newif\ifpgfsys@eorule\pgfsys@eoruletrue % Using evenodd rule?
 \newif\ifClipOrnaments\ClipOrnamentsfalse
-\newif\ifboxorn\boxornfalse % Set to true to surroud all ornaments with boxes.
+\newif\ifboxorn\boxornfalse % Set to true to surround all ornaments with boxes.
 \newif\ifCacheOrnaments\CacheOrnamentsfalse % Cache ornaments in boxes
 \newif\ifXformOrnaments\XformOrnamentsfalse % Use XForm objects 
 \newif\ifpdf@ornament@stretch
@@ -332,7 +332,7 @@
 \def\localornament@dims#1{\x@\let\x@\@pgfornamentX\csname localornament@#1@X\endcsname
   \x@\let\x@\@pgfornamentY\csname localornament@#1@Y\endcsname}%
 \LocalOrnament{0}{10}{10}{ }% A space
-\LocalOrnament{-1}{10}{10}{\m 0.0 5 \l 10 5 \k } % A centred line of equal lenght to a space
+\LocalOrnament{-1}{10}{10}{\m 0.0 5 \l 10 5 \k } % A centred line of equal length to a space
 \LocalOrnament{-2}{20}{10}{\m 0.0 5 \l 20 5 \k } % A centred line twice as long as a space
 \LocalOrnament{-3}{50}{10}{\m 0.0 5 \l 50 5 \k } % A centred line five times longer than as a space
 	
@@ -504,7 +504,7 @@
         \setbox0\hbox to \dimen0{\x@\special\x@{\tmp }}%
         \ifpdf@ornament@repeat\else
           \ifholdXobjects\else\ifvoid\ornXobjects\else
-            \trace{orn}{Emmitting Xobj definitions: \ornXFid@list (gt:\the\currentgrouptype, gd:\the\currentgrouplevel)}%
+            \trace{orn}{Emitting Xobj definitions: \ornXFid@list (gt:\the\currentgrouptype, gd:\the\currentgrouplevel)}%
             \global\let\ornXFid@list\empty
             \box\ornXobjects
           \fi\fi
@@ -706,7 +706,7 @@
 %#1 ornament  Ornament number or string. May be prefixed with ^label^style^ which will be centred and set in an hbox.
 %#2 orientation
 %#3 Stretch/mult
-%#4 Size {=|[a-z]|N.NN}  If a number (1.0 is valid, 2. is not) then the item's size will be this much times the normal calulated size.
+%#4 Size {=|[a-z]|N.NN}  If a number (1.0 is valid, 2. is not) then the item's size will be this much times the normal calculated size.
 % if =, the previous scaling will be applied, if it's set, but not '=' or a
 % number in formal N.N, then a pre-set scale [which must have been set by setornscale] will be applied 
 % #5 offset (-)0.NN  Ajdusts ornYalign. ornYalign takes values: 0.5=align to centre, 1=align to top, 0=align to bottom. Units are size of object.
@@ -771,7 +771,7 @@
         \fi
         \ifx\tmpa\ptn@sim
 	  \pdf@ornament@repeattrue
-	  \edef\orn@repeat@class{\tmpb}% Varable, range set elsewhere
+	  \edef\orn@repeat@class{\tmpb}% Variable, range set elsewhere
 	\else 
 	  \ifx\tmpa\ptn@ast % Any number
 	    \pdf@ornament@repeattrue
@@ -833,7 +833,7 @@
     \orn@do@ornament
     \ifXformOrnaments
       \ifholdXobjects\else\ifvoid\ornXobjects\else
-        \trace{orn}{Emmitting Xobj definitions: \ornXFid@list (gt:\the\currentgrouptype, gd:\the\currentgrouplevel)}%
+        \trace{orn}{Emitting Xobj definitions: \ornXFid@list (gt:\the\currentgrouptype, gd:\the\currentgrouplevel)}%
         \global\let\ornXFid@list\empty
         \box\ornXobjects
       \fi\fi
@@ -1237,7 +1237,7 @@
 % ?V	- Variable V should be 0 or 1
 % (L-H)V - Variable V should be any integer between L and H (inclusve)
 % ~V	- Variable V (no change to rules)
-% =V	- Variable V (unchanged from reuslt.)
+% =V	- Variable V (unchanged from result.)
 % Items sharing the same  variable V use the same range limits
 % The last range limit is the one that will take effect. 
 \newbox\orn@bdr@bot

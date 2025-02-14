@@ -11,11 +11,11 @@ benefit.
 The flow of boxes and penalties is shown in dig2.dia / diglot2.pdf (xetlatex diglot2.tex)
 
 New algorithm (aka diglot2):
- Asumptions: 
+ Assumptions: 
  1. Because of figures/notes, etc. any text-chunk may affect other text-chunks on the page.
  2. It is legitimate to re-process any text-chunk that is still in the 'working set'.
  3. If there is space, it is legitimate for an image to lower all text-chunks en-masse. If there is no space, it is 
- legitimate  and prefereable to force a page break in the column that seeks to lower all text chunks en-masse.
+ legitimate  and preferable to force a page break in the column that seeks to lower all text chunks en-masse.
  4. It is not permitted to have over-full sections of text.
  5. In vertically aligned multiglots, chunks must start at the same point, but an image or footnote may occupy space 
  in one column when text does so in another column. 
@@ -59,7 +59,7 @@ equivalent 1-letter column code will take the place of the Left, e.g.
 `\DiglotLFraction`, `\DiglotAFraction` and `\DiglotRFraction
 
 
-### Backward compatability
+### Backward compatibility
 The code is being re-written in a way intended to be backwards compatible. E.g. If `\DiglotLFraction` is not defined,
 `\DiglotLeftFraction` will be used instead, and `\lefttext`,  `\righttext` etc.
 are expected to retain their current behaviour, but will give unexpected results

@@ -31,7 +31,7 @@ my @partype=('','');
 my @heading;
 my @headingstack=(['','','',''],['','','']);
 my @oldhead=(['','','',''],['','','']);
-my @first_inrange; # Shortcut to the start of interesing data
+my @first_inrange; # Shortcut to the start of interesting data
 my $logfile=undef;
 my $debug=undef; # ".diglot.dbg";
 if (defined($ENV{'DEBUG'})) {
@@ -61,7 +61,7 @@ sub readfile {
 	return @result;
 }
 
-sub logit { # Gerneral purpose logging routine
+sub logit { # General purpose logging routine
 	my ($side)=shift(@_);
 	if ($logging) {
 		if (defined($side)) {
@@ -266,7 +266,7 @@ my $usage="\nUsage: $0 [-mode|options] LeftFile RightFile\n"
 	. join("\n ",map {'-'.$_." \t:".$modes{$_}.(($_ eq $mode)?" (default)":"") } (keys %modes)) . "\n"
 	. "Options are:\n "
 	. "-L file\t: Log to file\n"
-	. "-R 11:25-25:12\t Only ouput specified range\n"
+	. "-R 11:25-25:12\t Only output specified range\n"
 	. "-s \tSplit off section headings into a separate chunk (makes verses line up)\n"
 	. "-C \tIf \cl is used, consider the chapter mark to be a heading\n"
 	. "-o file\t: Output to file\n";
@@ -324,13 +324,13 @@ my ($leftfile,$rightfile)=@ARGV;
 
 
 if (defined($logfile)) {
-	print STDERR ("Openning log file $logfile\n");
+	print STDERR ("Opening log file $logfile\n");
 	open(LOG,'>',$logfile) || die($!);
 	$logging=1;
 } 
 
 if (defined($debug)) {
-	print STDERR ("Openning debug file $debug\n");
+	print STDERR ("Opening debug file $debug\n");
 	open(DBG,'>',$debug) || die($!);
 } 
 

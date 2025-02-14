@@ -81,7 +81,7 @@ texpertOptions = {
                             _("Allow indented paragraphs following a heading")),
     "maxorphanlength":    O("maxorphanlength", "BDY", (8, 1, 20, 1, 1, 0), "", _("Maximum orphan word length"), _("Maximum length of the word that will erreceived orphan protection at the end of a paragraph")),
     "badspacepenalty":    O("badsppen", "BDY", (100, -10000, 10000, 10, 100, 0), "{0}={1}", _("Bad space penalty"),
-                            _("A bad but not impossible place to breal")),
+                            _("A bad but not impossible place to break")),
     "OptionalBreakPenalty": O("optbkpen", "BDY", (300, 0, 10000, 10, 100, 0), r"\def{0}{{{1}}}", _("Optional break penalty"),
                               _("Penalty for the optional break")),
     "pretolerance":       O("pretolerance", "BDY", (100, -1, 10000, 10, 100, 0), "{0}={1}", _("Hyphenation threshold"),

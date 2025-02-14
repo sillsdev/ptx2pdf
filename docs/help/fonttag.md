@@ -15,7 +15,7 @@ Errors like this might crop up if you're using someone else's project in a diglo
 * `+h` The paragraph is in the header.
 
  For technical reasons the footer is normally  generated before the header, and indeed most projects don't define any special formatting for the footer.
-Moreover, in some projects, the header and footer are generated before any normal body text is typeset, thus if there's a problem with the font designated for `\Regular` this may be the first occurance of it.  **Recommended checking sequence**:
+Moreover, in some projects, the header and footer are generated before any normal body text is typeset, thus if there's a problem with the font designated for `\Regular` this may be the first occurrence of it.  **Recommended checking sequence**:
  
 1.  the basic font choices in the secondary project. 
 2. Styling for `\h` in the secondary project

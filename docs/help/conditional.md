@@ -17,7 +17,7 @@ or `\sls` are inserting code via hooks.
 `\zifvarset|var="varname"\*`   Sets up the conditional text code depending if the zvar  
 `varname` has been set. The optional parameter `emptyok="T"` determines whether
 an empty variable should be treated as unset (the default, if emptyok is not
-specified) or as set (any value for emptyok except "F"). i.e., an empty varible will 
+specified) or as set (any value for emptyok except "F"). i.e., an empty variable will 
 give the following results:
 * `\zifvarset|var="varname"\*`   -> false
 * `\zifvarset|var="varname" emptyok="F"\*`   -> false

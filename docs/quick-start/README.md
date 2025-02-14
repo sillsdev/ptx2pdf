@@ -12,7 +12,7 @@ A typical ptx2pdf project consists of:
 *   project file, this is the tex file that contains the references to all the files that are needed,
 *   setup file, this is a txt file that contains the user defined setups,
 *   usfm.sty, the standard USFM style sheet,
-*   one or more sfm file(s) containing the formated scripture(s)
+*   one or more sfm file(s) containing the formatted scripture(s)
 
 ## <a name="TOC-The-project-file-e.g.-GLW.tex">The project file, e.g. GLW.tex</a>
 

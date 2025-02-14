@@ -4,7 +4,7 @@ Typesetting is nothing if text cannot be styled. The PTX macros have the
 concepts of character styles, paragraph styles and note styles (for footnotes,
 etc.). In addition styles may be stacked, thus a run of text in one character
 style may be embedded in a run of another style, such that anything not
-specifically defined in the inner style is interpretted as coming from the outer
+specifically defined in the inner style is interpreted as coming from the outer
 style, which may in turn derive the information from an outer paragraph style.
 
 A USFM text is marked up in terms of styled runs of text witch rules about how
@@ -70,7 +70,7 @@ and paragraph styles and milestones.
 log file but puts a space after
 rather than a newline. We clear any font associated with the marker and then
 call the type appropriate definition for the marker. In each case we create a
-defintion for the marker token that calls the appropriate style routine. In the
+definition for the marker token that calls the appropriate style routine. In the
 case of character styles we also create a handler for the emebdeed form of the
 character style that is prefixed by `+`.
 
@@ -107,7 +107,7 @@ don't need those routines outside of stylesheet reading.
 A complicating issue for styles is that USFM version 2.1 introduced the concept 
 of categories  for `\esb` blocks and `\ef` extended / enhanced footnotes.
 Any number of categories may be defined, and it is relatively clear that while
-not altering the semantic meaning of the markers, they change the appearence.
+not altering the semantic meaning of the markers, they change the appearance.
 I.e. each category potentially represents an alternative set of styles. 
 
 Further complicating issues is that a category is selected once, within the `\esb`, 
@@ -238,7 +238,7 @@ style type:
 
 Type  Description
 ----- -----------
- c    Embeded character style
+ c    Embedded character style
  C    Normal non emebded character style
  P    Paragraph style
  N    Note
@@ -252,7 +252,7 @@ The third component is the current  style-stack, which is a `+`-separated list
 of markers that are valid for styling the character. The style stack uniquely defines the font
 in use and it (or portions of it) can be used to specify styling in the style sheet.
 
-There is an apparent redundency in that the style stack contains the marker
+There is an apparent redundancy in that the style stack contains the marker
 itself, however it is not *exact*, since for milestones (and maybe other styles too), the is additional
 information stored in the marker stack (for instance id numbers).
 
@@ -306,7 +306,7 @@ structure. When `\d@` is called, the stack macros append the item with `\E` as a
 delimiting token to aid in pattern matching. Inside the macro we store the type
 in a temporary macro to make testing it easier. String matching in TeX is a pain
 and just deciding whether the value is empty (which happens with the bottom of
-the stack which has an empty sentinal item) involves storing the value. We test
+the stack which has an empty sentinel item) involves storing the value. We test
 if it is empty, and ignore the item. If the type is `c` (for embedded character
 style) then simply close the character style. We do the same for a normal type
 `C` character style as well (since we are closing all character styles). If the
@@ -378,7 +378,7 @@ actually want to output the text in this run. This involves seeing if the string
 `nonpublishable` is in the properties parameter for this marker. This is done
 using TeX's macro pattern matching. We get the parameter and then assemble a
 string of the parameter value followed by `nonpublishable!`. Then we match for
-`nonpublishable` and the sentinal `!`. If the parameter value has nonpublishable
+`nonpublishable` and the sentinel `!`. If the parameter value has nonpublishable
 in it, then that first nonpublishable will match the `nonpublishable` in the
 macro parameter match and there will be something after that (at least the
 `nonpublishable` we appended to the parameter) in `#2` and so the parameter
@@ -391,7 +391,7 @@ Returning to starting a character style. If the text is not to be published (1)
 we group it up into an hbox which we will dump later. But we don't have to do
 anything regarding setting up any styling. We do start a new group, because all
 character styles start a new group. While grouping is a way to handle a style
-hiearchy, it doesn't allow interrogating of style information above us in the
+hierarchy, it doesn't allow interrogating of style information above us in the
 groups. We also track the currently open style in the group.
 
 (2) Normally we do want to publish the text and to do that we need to be in
@@ -545,7 +545,7 @@ undo any paragraph final space and then close off all open character styles.
 file is used to work out whether the layout has changed significantly between
 runs. Notice that the position is not written immediately. A `\write` command
 actually stores a _whatsit_ in the page. This zero sized item is generally
-ignored until the page containing it is shipped out. When the item reachs the
+ignored until the page containing it is shipped out. When the item reaches the
 point of being written to the output file, it is executed. At that point the
 `\pdflastposx`, etc. are expanded (and known) and the actual position on the
 page is output to the `.parlocs` file.
@@ -627,7 +627,7 @@ then we are also an intro paragraph. The next step is to use the `type`
 parameter of our marker to work out what type of paragraph we are. We clear the
 `he@dingstyle` flag to its default and look up the type of the paragraph and for
 each type we do what needs to be done. If it is `title` then set the reference
-mark to the sentinal `title` to indicate that we are on a title page and not to
+mark to the sentinel `title` to indicate that we are on a title page and not to
 output headers and footers. This also applies to diglot marks. If we are not in
 a title block already but we are in a headings block, then finish the headings
 block. Now start a title block (which does nothing if we are already in a title
@@ -679,7 +679,7 @@ And so we come to the start of the paragraph. Finally!
 [=cpar_parstyle_transition]::
 
 There are a number of routines, referenced above, to describe before we continue.
-Each of the paragraph modes needs to siwtch to the appropriate number of
+Each of the paragraph modes needs to switch to the appropriate number of
 columns. For each mode start we first test to see if we are already in that
 mode. If we are not, then if we are not creating a diglot, we test to see if twe
 have to change the number of columns and if so we call the appropriate column
@@ -824,7 +824,7 @@ the first line indent for the paragraph.
 
 [=cpar_parstyle_start]::
 
-Reading the code linearly, the next part of thie paragraph style routine is
+Reading the code linearly, the next part of this paragraph style routine is
 concerned with drop chapter number support. We will discuss that as part of
 [Milestones](#milestones).
 
@@ -927,7 +927,7 @@ then no caller is output, otherwise use the caller character itself.
 
 We start a group for the note and its caller. We collect any `after` hook for
 the note. Was there some space before the note, then flag the need later. Then
-we reset the paragrph style within the note group for the note text itself. (1)
+we reset the paragraph style within the note group for the note text itself. (1)
 
 The core of note handling is a call to `\m@kenote`. The parameters to that macro
 are themselves token sequences. Notice that the sequences are not expanded until

@@ -1,5 +1,5 @@
 '''
-The original callback based SFM parser API implemented ontop of the new SFM
+The original callback based SFM parser API implemented on top of the new SFM
 parser system.
 '''
 __version__ = '20101011'

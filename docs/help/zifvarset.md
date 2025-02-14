@@ -22,7 +22,7 @@ barcode in a sidebar if the zvar `isbn` has been set. Otherwise, that
 * `emptyok="T"` - Does a set but empty variable count as true? If this parameter is given but not `"F"`, then setting the zvar to an empty value counts as it being set. If it is set to "F", then an empty value is considered undefined.
 
 ## See also
-* Documentation on [Contitional text](conditional.md)
+* Documentation on [Conditional text](conditional.md)
 * [ztruetext](ztruetext.md)
 * [zfalsetext](zfalsetext.md)
 * [zvar](zvar.md)

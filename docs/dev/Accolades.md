@@ -18,7 +18,7 @@ What a cool program! I've wrestled with printing/outputting from Paratext
 and it was a pain. The Thai script is a small font compared to Western
 fonts and so things like the verse numbers or brackets/parentheses always
 look way too big and various other issues meant I had to spend a lot of
-time after outputing from Paratext to make it look halfway decent - just to
+time after outputting from Paratext to make it look halfway decent - just to
 have a draft print! If we found things that needed improving we would make
 the changes in Paratext and then I'd have to go through all that rigamarole
 again just to print it again.

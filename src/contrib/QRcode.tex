@@ -11,7 +11,7 @@
 \def\QRdata{\QRreset\QRdataadd}%
 \def\QRdataadd{\QRchars\QRdatacont}
 \def\QRdatacont#1{\def\QRdatacontcont##1#1{\edef\QRcontent{\QRcontent##1}\plainchars}\QRdatacontcont}%
-%^ want to allow active chars to allow UTF8 codding
+%^ want to allow active chars to allow UTF8 coding
 \def\QRcode{\!\QRBIN\QRcontent\ENDQRBIN\ReedSolomon\QRSet\QRSelectMask\QRSetBox}%
 \def\QRminVersion{1}%
 \def\QRmaxVersion{40}%
@@ -21,14 +21,14 @@
 %\QRreset resets the data \QRdata calls reset first (\QRdata.. does the same as \QRreset)
 %\QRdimen allows setting size of QRcodebox including the quiet zone
 %\DPI is used to find optimal granularity according to printer resolution
-%\QRminVersion allows prohibitting smaller versions
-%\QRmaxVersion allows prohibitting higher versions Issues \errmessage{No room in versions till ...}
+%\QRminVersion allows prohibiting smaller versions
+%\QRmaxVersion allows prohibiting higher versions Issues \errmessage{No room in versions till ...}
 %\QRminVerion and \QRmaxVersion is used in default \freeVersion mode
 %\fixVersion{5} is an alternative to use given version number even when smaller version is sufficient
 %\QRSetMinECLevel allows to force at least that error correction. The EC level is chosen after the version, but the version choice is constrained by the min level
 %\QRSetECLevel allows to fix level of error correction
 %
-% The code is optimized for using big collection of simillar sized QR codes at one run ... after a QRcode version is used,
+% The code is optimized for using big collection of similar sized QR codes at one run ... after a QRcode version is used,
 % it's template is remembered for further use. Masking is done on the fly. 
 % (It was desined first for generating QRpayments for a lot of clients (versions 4 and 5 were sufficient), 
 % but full set of versions is implemented now).
@@ -43,7 +43,7 @@
 %
 % There are example formats here after \endinput
 % usage for czech mecards require UTF8 encodding conversion (from 1250 codepage), 
-% extension for other alphabets would be simillar
+% extension for other alphabets would be similar
 %%%% WHERE TO CONTINUE? NOT DONE YET! %%%%
 % Input the text file instead
 %\QRmaxChainLen allows prohibiting QRCode chains
@@ -51,10 +51,10 @@
 % 1) minimize chain len as possible (no chains implemented yet)
 % 2) chose minimal version possible to be capable to code the data, use same version in the chain.
 % 3) chose maximal correction level X to be capable to code the data
-% 4) if using correction level X+1 for the current part allows codding rest of the message in the remaining parts of the chain using correction level X, use correction level X+1 for this part, otherwise use correction level X.
+% 4) if using correction level X+1 for the current part allows coding rest of the message in the remaining parts of the chain using correction level X, use correction level X+1 for this part, otherwise use correction level X.
 % When there is not enough capacity the error should be issued
 % If more than one box is used, the box \QRcodebox would be composed of all the boxes. They could be separated by \lastbox.
-%\QRchainLen is usefull in that case
+%\QRchainLen is useful in that case
 %
 %%%%%% GLOBAL %%%%%%
 \let\!=\expandafter
@@ -95,7 +95,7 @@
 \QRnumE=\QRnumB\advance\QRnumE by -16\multiply \QRnumE by 2 %timing pattern area
 %\message{;timing \the\QRnumE,area without finders and aligns \the\QRnumF}%
 \advance\QRnumF by -\QRnumE% timing area excluded as well
-%\message{;area witout finders, aligns and timing\the\QRnumF}%
+%\message{;area without finders, aligns and timing\the\QRnumF}%
 \ifnum\QRnumA>6
  \advance\QRnumF by -36 % version encodding area excluded as well
  %\message{;data+ECmask info area\the\QRnumF}%
@@ -257,7 +257,7 @@
 % should be changed if chosen version is higher than 10/27 and rerun again ... 
 %A:number of chars of the last type, 
 %B:number of not yet counted chars when ending by type A, 
-%C:number of not yet counted chars wher ending by type B,
+%C:number of not yet counted chars where ending by type B,
 %D:length, when ending by type N including the last sequence \infty is represented by one more than version40L capacity \QRinfty
 %E:length, when ending by type A excluding the last B chars, \infty is represented by \QRinfty again
 %F:length, when ending by type B excluding last C chars
@@ -697,7 +697,7 @@
 \advance\QRnumB by -1 \ifnum\QRnumB<0 \let\GFPmulnext=\relax\fi\GFPmulnext}\GFPmulnext\endgroup
 }%
 %
-%GFPcopy expects #1 is not defined at all or was defined with smaler degree ... otherwise there remains non accessed allocation
+%GFPcopy expects #1 is not defined at all or was defined with smaller degree ... otherwise there remains non accessed allocation
 \def\GFPcopy#1#2{\begingroup\escapechar=-1 \!\xdef\csname\string#1Deg\endcsname{\csname\string#2Deg\endcsname}%
 \QRnumA=\csname\string#1Deg\endcsname
 \def\GFPcopyloop{\!\!\!\!\!\!\!\gdef\!\!\!\csname\!\!\!\string\!\!\!#1\!\!\![\!\!\!\the\!\!\!\QRnumA\!\!\!]\!\!\!\endcsname\!\!\!{\csname\string#2[\the\QRnumA]\endcsname}\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\GFPcopyloop\fi}%

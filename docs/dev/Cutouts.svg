@@ -410,7 +410,7 @@
          id="tspan4622"
          x="111.125"
          y="29.770834"
-         style="stroke-width:0.26458332px">Old ptx2pdf cutout caclulation method clearly assumes that </tspan><tspan
+         style="stroke-width:0.26458332px">Old ptx2pdf cutout calculation method clearly assumes that </tspan><tspan
          sodipodi:role="line"
          x="111.125"
          y="34.180557"
@@ -463,7 +463,7 @@
          x="111.125"
          y="61.935947"
          style="stroke-width:0.26458332px"
-         id="tspan4680">postions 2,  3 and 5. An object in position 2 will have its cutout in </tspan><tspan
+         id="tspan4680">positions 2,  3 and 5. An object in position 2 will have its cutout in </tspan><tspan
          sodipodi:role="line"
          x="111.125"
          y="66.345673"
@@ -633,7 +633,7 @@
          id="tspan4783"
          x="111.125"
          y="24.479166"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px">Consider a 3 colum paragraph </tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px">Consider a 3 column paragraph </tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -750,7 +750,7 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px"
          id="tspan4924"><tspan
    style="fill:#ff0000"
-   id="tspan959">5) At a \@parlines, \p@rlinesgone is compared to N and horrible error messsages are generated if they don't agr</tspan>ee.</tspan><tspan
+   id="tspan959">5) At a \@parlines, \p@rlinesgone is compared to N and horrible error messages are generated if they don't agr</tspan>ee.</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
          y="140.42899"

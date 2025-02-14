@@ -11,11 +11,11 @@ where any given event (e.g. verse 5) occurs.
 The `.parlocs` file is written - *at output* - to record the position of
 paragraph starts/ends, and column starts/ends. The positional numbers in the file are in TeX's sp (smallest possible) units.
 They are  always {X}{Y} and the last or last-but one item. 
-On the vertical acess, they are measured from the bottom edge of the page, with a +72pt offset.
+On the vertical access, they are measured from the bottom edge of the page, with a +72pt offset.
 I.e.  Vertical distance  = (Y/2^16) - 72. Possibly this offset is  is 72.27,
 but for measuring on a screen this is not significant.
 
-At each paragaph, the `\@parstart` line is written, which now contains the appropriate value of \baselineskip.
+At each paragraph, the `\@parstart` line is written, which now contains the appropriate value of \baselineskip.
 Polyglot columns use `\@Poly@colstart`  and `\@Poly@colstop`   both of these
 record the polyglot column as the final parameter.
 
@@ -29,8 +29,8 @@ its job is done. Instructions for the next run are contained in the `.delayed`
 file.
 
 ## Complexities, Loops and Re-run messages.
-The postition of the cutout adjusts the pagination of the text. With balanced columns it can alter the final 
-arangement of a whole page. Adjusting the cutout postion thus requires that the process be repeated.
+The position of the cutout adjusts the pagination of the text. With balanced columns it can alter the final 
+arrangement of a whole page. Adjusting the cutout position thus requires that the process be repeated.
 It is quite possible that a loop situation is reached, where moving the cutout down moves the anchor up one line.
 Moving the anchor up to follow the anchor point then moves the anchor down again. To avoid this situation,
 a certain amount of 'slop' or hysteresis is permitted in cutout positions; if an item is within a certain closeness 
@@ -105,7 +105,7 @@ top-left).
 
 A fully automatic loop detection and mitigation strategy might look like this:
 
-1) After each run, a checksum (even a weak sum such as md5 ought to be suficient!) is calculated for the 
+1) After each run, a checksum (even a weak sum such as md5 ought to be sufficient!) is calculated for the 
 `\jobname.delayed` file. This is added to a table of known results. The 
 corresponding .delayed file could be remembered.
 

@@ -1,10 +1,10 @@
 ## Named border styles
 `\SetBorder`  Defines a new border style. `\SetBorder foo` is precisely equivalent to `\Marker b@rder-foo` 
 `\BorderRef`  Defines indicates that the present style inherits the border settings from another style.
-`\BorderStyle` Can is overloaded. If the given parameter not recognised as a valid procesing engine (plain, double, or - if plugin is loaded - ornaments), then it calls `\BorderRef`
+`\BorderStyle` Can is overloaded. If the given parameter not recognised as a valid processing engine (plain, double, or - if plugin is loaded - ornaments), then it calls `\BorderRef`
 
 
-###  Ineritance processing.
+###  Inheritance processing.
 Inheritance processing is a once-only step which occurs at the first USFM file. There can only be one parent from which a style 
 inherits. However nesting of A builds on B which builds on C (etc) is allowed.
 The process operates as follows:

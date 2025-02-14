@@ -39,7 +39,7 @@ You can also select a range using ```-R chapter:verse-chaper:verse``` It might w
 
 
 ## Set up the stylesheet options.
-Any given marker ```\thing``` applies to both sides unless it is overridden; marker ```\thingL``` only applys to left column, ```\thingR``` only applys to the right column.  Ptxplus's addition ```\BaseLine``` property should actually work, so you can have different baselines if you need them for your fonts, as well as different faces.
+Any given marker ```\thing``` applies to both sides unless it is overridden; marker ```\thingL``` only applies to left column, ```\thingR``` only applies to the right column.  Ptxplus's addition ```\BaseLine``` property should actually work, so you can have different baselines if you need them for your fonts, as well as different faces.
 
 **Make sure that you set** ```\diglottrue``` 
 If you plan to use the ```\thingL``` format, you must load the style sheets with ```\diglottrue``` set, even if you then use monoglot text first.

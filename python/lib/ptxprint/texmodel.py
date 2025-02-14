@@ -865,7 +865,7 @@ class TexModel:
                         sys.argv = sys._argv
                         hasrun = True
             if not hasrun:
-                checkoutput(cmd) # dont't pass cmd as list when shell=True
+                checkoutput(cmd) # don't pass cmd as list when shell=True
         return outfpath
 
     def _getText(self, data, doc, bk, logmsg=""):

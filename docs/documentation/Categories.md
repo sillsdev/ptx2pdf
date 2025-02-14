@@ -4,7 +4,7 @@ Categories add an additional dimension to styling. While there are not may *cont
 [http://ubs-icap.org/chm/usfm/3.0/notes_study/categories.html]
 
 In the XeTeX macros, categories can apply to most markers. Normally they will be enclosed by another marker. Some
-markers form an explict enclosure (such as footnotes, cross-references and
+markers form an explicit enclosure (such as footnotes, cross-references and
 side-bars), others form an implicit enclosure, (such as tables), where the end marker 
 is implicitly provided by the following paragraph style.  Paragraph styles (and section headers) 
 can now also have categories applied to them. In this case starting the category creates 
@@ -163,7 +163,7 @@ For example, for  styling notes of the form:
 \ef - \cat People\cat*\fr 1.2-6a: \fq Tamar: \ft Bore her twin sons out of wedlock (Gen 38.6-30).\ef*
 ```
 In the hypothetical example below, the language-group represented by the left (inner) column do
-not accept the use of green text for styling humans names, prefering red. 
+not accept the use of green text for styling humans names, preferring red. 
 Those represented by the right column consider that all living creatures named
 in Scripture should be in green.
 

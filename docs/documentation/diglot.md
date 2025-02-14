@@ -11,7 +11,7 @@ with ptxprint, one of the perl programs is considerably older and both have more
 
 
 ## The structure of a diglot-friendly usfm file.
-The preprocessing step "shuffles" the two files together, interspersing them with instructions to switch sides. (For as-yet-uncertain reasons, these instructions seem to work much better if  preceeded by \p). There are four instructions:  ```\lefttext``` ```\righttext``` ```\nolefttext``` ```\norighttext```. The ```\nolefttext``` specifies that the text that follows ought to begin below any text remaining in the the left-hand column, and start a chunk that will not have any corresponding left-hand text.   A sample of the  file that produced the above image is given below.
+The preprocessing step "shuffles" the two files together, interspersing them with instructions to switch sides. (For as-yet-uncertain reasons, these instructions seem to work much better if  preceded by \p). There are four instructions:  ```\lefttext``` ```\righttext``` ```\nolefttext``` ```\norighttext```. The ```\nolefttext``` specifies that the text that follows ought to begin below any text remaining in the the left-hand column, and start a chunk that will not have any corresponding left-hand text.   A sample of the  file that produced the above image is given below.
 ```
 \lefttext
 \s The birth of diglot
@@ -70,7 +70,7 @@ Page breaks are a challenge in diglot processing. What does the user actually
 *want*? (a) To break *that* column, not process any others, and output
 everything read  so-far, or (b) end the column there, continuing on the next page, 
 but process other columns, expecting them to have their own pagebreaks if that's what is wanted.
-Interpretation (a) seems more likley to cause problems than to be of use in a
+Interpretation (a) seems more likely to cause problems than to be of use in a
 parallel diglot, and interpretation (b) is how the code attempts to processes
 things. 
 
@@ -223,10 +223,10 @@ will apply the ```\hangversenumber``` only for the left column.
 ### Setting hyphenation languages
 
 - ```\def\languageL{english}```
-  Left column is in english. (Requires that the language's hypenation patterns have been loaded).
+  Left column is in english. (Requires that the language's hyphenation patterns have been loaded).
 
 - ```\def\languageR{nohyphen}```
-  Right column should not be hypenated
+  Right column should not be hyphenated
 
 
 ### Mixing diglot and monoglot text
@@ -269,7 +269,7 @@ If this is defined, then old-stlye (broken) paragraph numbering for adjust lists
 ## Easy solutions to common problems
 
 ### Avoiding mismatched titles
-Sometimes the title or section headers can be misaligned. Seen by, for instance a book title being out of place by quarter of a line.  This is because the main program adjusts the title spacing in ways that the diglot code cannot discover (yet?). It is most noticable in book titles, but can also occur in multi-line section headings. The cause is normally that one side contains a taller letter than the other side, or a letter that descends below the line further.
+Sometimes the title or section headers can be misaligned. Seen by, for instance a book title being out of place by quarter of a line.  This is because the main program adjusts the title spacing in ways that the diglot code cannot discover (yet?). It is most noticeable in book titles, but can also occur in multi-line section headings. The cause is normally that one side contains a taller letter than the other side, or a letter that descends below the line further.
 
 If that's the case, and say one side has no descenders and the other contains a 'p', then the nasty work-around is to add ```\dstrut p``` to the side which has no 'p'. ```\dstrut```  swallows the letter that comes after it and replaces it with a non-visible object of zero width, exactly as high and deep as the letter it destroyed.
 
@@ -333,7 +333,7 @@ At various points in the process, boxes (see later) get joined together, by a ma
 
 - ```\def\diglotDbgeachcol{134}```
 - ```\def\diglotDbgdiglotDbgupdtPtl{213}```
-Trigger detailed debugging code for a particular occurance of the (frequently met) `\each@col` and `\upd@tep@rtial` macros.
+Trigger detailed debugging code for a particular occurrence of the (frequently met) `\each@col` and `\upd@tep@rtial` macros.
 
 - ```\diglotDebugFollowContentstrue```
 This is the extreme version of `\diglotDbgJoinboxes` above. Rather than just showing boxes at a single point in the code, this will show the box contents at most points of potential interest. Combined with `\tracing{d}\tracing{D}`, log files on the order of 10Mbytes per page are to be expected.

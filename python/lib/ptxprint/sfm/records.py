@@ -1,6 +1,6 @@
 '''
 The SFM DB file parser module.  Given a database schema defining field names
-and types it generates the necessary sytlesheet for that SFM DB to drive the
+and types it generates the necessary stylesheet for that SFM DB to drive the
 palaso.sfm module.  This guide the palaso.sfm parser to so it can correctly
 parser an SFM database document.
 

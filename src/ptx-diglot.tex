@@ -138,14 +138,14 @@
 }
 % These are the things that might get called by the loop.
 
-% If theres a side-specific version, switch to it. If there's no side-specific version, 
+% If there's a side-specific version, switch to it. If there's no side-specific version, 
 % switch to the \original version, if that exists.
 \def\sp@cificSideDef#1{\ifcsname #1\sfx\endcsname\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname
   \trace{S}{SpS: #1\sfx\space selected}\else
   \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
     \trace{S}{SpS: #1 returned to original }\else\trace{S}{SpS: #1 unmodified (no #1\sfx, no #1\@rig)}\fi\fi}
 
-% If theres a side-specific version and its not -1sp, switch to it. If there's no side-specific verision,
+% If there's a side-specific version and its not -1sp, switch to it. If there's no side-specific verision,
 % switch to the \original version, if that exists.
 \def\sp@cificSideDim#1{\x@\ifdim\csname #1\sfx\endcsname=-1sp%
    \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
@@ -209,7 +209,7 @@
 }% For use with style definitions, etc.
 
 \def\SSsetLRspecific{\ifx\ds@ffix\empty\def\sfx{\@orig}\else\edef\sfx{\ds@ffix}\fi
-  \let\wh@t\sp@cificSideDef\pr@cessSpecific}% for use in stylesheet, no need to check dimensions, just existance
+  \let\wh@t\sp@cificSideDef\pr@cessSpecific}% for use in stylesheet, no need to check dimensions, just existence
 
 \def\showLRspecific{\edef\sfx{\ifdiglot \c@rrdstat\else \@rig\fi}%
   \let\wh@t\sh@wSpecificDef\pr@cessSpecificDef
@@ -282,7 +282,7 @@
     \empty@cseq{oldbot#1mark}%old First X mark on this pave
     \empty@cseq{book#1}% Name of book to put in PDF.
     \empty@cseq{ch@plabel#1}% Chapter label
-    \empty@cseq{@ch@pter#1}% Chapter Nuber
+    \empty@cseq{@ch@pter#1}% Chapter Number
     \empty@cseq{@v@rse#1}% verse label
     \empty@cseq{BelowBaseline#1}% If not empty, fraction of baselineskip due to interlinear lines
     %\newsideSpecificIf{OmitChapterNumber#1} % global config option
@@ -430,7 +430,7 @@
 \newcount\partialLpenalty% The penalty that goes between partialL and excessL (also used while loading excessL during excessL
 \newcount\partialRpenalty% ~"~
 \newcount\endtri@lpen@lty %the penalty we EXPECT at the end of the trial
-\newcount\chunkpenalty %highest penalty encoutered yet for this chunk 
+\newcount\chunkpenalty %highest penalty encountered yet for this chunk 
 \newcount\lastchunkpenalty %highest penalty previouschunk
 \newif\ifLneedsemptying
 \newif\ifallNeedEmptying %set by lefttext, etc. to indicate that the current chunk ends with the next side-transition. 
@@ -891,7 +891,7 @@
   \loc@lhttrue\dglt@calc@vailht
   \TempDim=\availht
   \trace{dP}{bld:\the\baselineDelta}%
-  {% Don't autmatically remove baselinedelta... that'd be wrong for titles, etc.
+  {% Don't automatically remove baselinedelta... that'd be wrong for titles, etc.
     \vfuzz=\maxdimen
     \setbox0=\vbox{\penalty0\unvcopy255}%
     \setbox1=\vsplit0 to 0pt % Remove topskip glue
@@ -1070,7 +1070,7 @@
   \fi
   %\showlists
   %\global\savedpenalty=0 % avoid cross-contamination
-  \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
+  \global\output={\diglotCollect}%Why wouldn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
   \ifx\tmp\empty\else
@@ -1390,11 +1390,11 @@
        \global\pagefullfalse%
 }
 
-\def\makevtop#1{%There is a strong posibility that a vbox has a depth that
+\def\makevtop#1{%There is a strong possibility that a vbox has a depth that
 %is unrecoverable on changing it to a vtop, e.g. if the last item in the
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
 \global%the depth of the box. We therefore *assume* the box will be joined and if
-%the depth is not recoverable we add a kern to remove the orignial depth.
+%the depth is not recoverable we add a kern to remove the original depth.
  \s@tbaseline{p}{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
  \TempDim=\dp#1\relax%
@@ -1616,7 +1616,7 @@
 \def\@prepare@layout@simplecols{%
     \bgroup
       \trace{d}{@prepare@layout@simplecols \l@gdims{\partial}}%
-      % caclulate column deltas.
+      % calculate column deltas.
       \def\v@lpfx{}\def\v@lsfx{ht}\dimen1=0pt%
       \let\col@do\sum@val
       \x@\each@col\cts@list\E
@@ -2055,7 +2055,7 @@
   \advance\dimen2 by \dimen1\relax%dimen2 now contains total natural height of text from last true synch-point and notes.
   \edef\v@lpfxb{@fn}\dimen1=\dimen2
   \trace{Df}{Finding min note sep \v@lpfxb Xht}%
-  \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
+  \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smallest value in dimen1
   \x@\each@col\diglot@list\E
   \trace{Df}{=\the\dimen1}%
   \dimen3=\dimen1

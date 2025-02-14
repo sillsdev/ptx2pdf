@@ -2,7 +2,7 @@
 
 There are a lot of things that can have gone wrong in diglots over the years,
 and a lot of tracing elements have been added.  One of the most basic
-steps (in David's opinion) is to do the folowing:
+steps (in David's opinion) is to do the following:
 
 ```
 \VisTracetrue
@@ -55,7 +55,7 @@ left on the page), you may wish to  enable ```\tracing{Dh}```.
 If `\scrollmode`
 is set (which scrolls past errors and normal stop conditions, carrying on until a fatal error is 
 found) is set, some parts of the code automatically trigger extra debugging
-when an unsual event occurs e.g. when they get told to add a zero-height box to
+when an usual event occurs e.g. when they get told to add a zero-height box to
 the page, they display its contents for inspection. Since showbox stops processing, this
 automatic debugging output only makes sense in this particular case. 
 

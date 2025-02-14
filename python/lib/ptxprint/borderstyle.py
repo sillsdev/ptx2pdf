@@ -132,7 +132,7 @@ class BorderStyle:
         values = [brdrs[i].title() for i in range(len(brdrs)) if bitfield & (1<<i) != 0]
         tgt.setval(mkr, "Border", " ".join(values))
         # if all 4 are identical then just set BoxPadding and/or BorderPadding
-        # if T&B identical, set BoxVPadding; if L&R (or I&O) idential, set BoxHPadding
+        # if T&B identical, set BoxVPadding; if L&R (or I&O) identical, set BoxHPadding
         # pack BoxVPadding, BoxHPadding, BorderVPadding, BorderHPadding
 
     def onSBborderSettingsChanged(self):

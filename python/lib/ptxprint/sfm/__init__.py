@@ -10,7 +10,7 @@ __version__ = '20200813'
 __date__ = '13 August 2020'
 __author__ = 'Tim Eves <tim_eves@sil.org>'
 __history__ = '''
-    20081210 - djd - Seperated SFM definitions from the module
+    20081210 - djd - Separated SFM definitions from the module
         to allow for parsing other kinds of SFM models
         Also changed the name to parse_sfm.py as the
         module is more generalized now
@@ -104,7 +104,7 @@ class Element(list):
                  content=[],
                  annotations=None):
         """
-        The `name` of the marker, and optionally any marker argments in
+        The `name` of the marker, and optionally any marker arguments in
         `args`. If this element is a child of another it `parent` should point
         back to that element. The position in the source text can be supplied
         with `pos`, and the marker stylesheet record used to parse it should be
@@ -344,9 +344,9 @@ class ErrorLevel(IntEnum):
     Marker = 0
     "Markers that are not in the stylesheet or private namespace."
     Content = 1
-    'Issues with parsing or formating marker arguments or element content.'
+    'Issues with parsing or formatting marker arguments or element content.'
     Structure = 2
-    'Issues that result in incorectly parsed document structure, if ignored.'
+    'Issues that result in incorrectly parsed document structure, if ignored.'
     Unrecoverable = 100
     'Always reported as an error, parser cannot make progress past it.'
 
@@ -529,7 +529,7 @@ class parser(collections.abc.Iterable):
                  debug=False,
                  quiet=False):
         """
-        Create a SFM parser object. This object is an interator over SFM
+        Create a SFM parser object. This object is an iterator over SFM
         Element trees. For simple unstructured documents this is one element
         per line, for more complex stylsheet guided parse this can be one or
         more complete element trees.
@@ -537,7 +537,7 @@ class parser(collections.abc.Iterable):
         source: An interable sequence of lines, such as a File like object,
             representing the document.
         stylesheet: A style sheet dict mapping marker names to metadata, used
-            to guide parsing documet structure. Optional
+            to guide parsing document structure. Optional
         default_meta: Marker metadata to use when a marker cannot be found in
             the stylesheet or is in the private namespace. If none are supplied
             the following is used: dict(TextType=default',
@@ -592,8 +592,8 @@ class parser(collections.abc.Iterable):
             following format syntax markers they will be filled out:
                 {token}:  The Text object ev representing the subject token.
                 {source}: The source name.
-        ev: The Text object representing the token at which the issue occured.
-        Any remaining aguments or keyword arguments are used to format the msg
+        ev: The Text object representing the token at which the issue occurred.
+        Any remaining arguments or keyword arguments are used to format the msg
         string.
         """
         path = []
@@ -754,7 +754,7 @@ class parser(collections.abc.Iterable):
                     self._tokens.put_back(tok)
                     if not force_need:
                         return
-            else:   # Pass non marker data through with a litte fix-up
+            else:   # Pass non marker data through with a little fix-up
                 if parent is not None \
                         and len(parent) == 0 \
                         and tok.startswith(" "):
@@ -814,7 +814,7 @@ def sreduce(elementf, textf, trees, initial):
         value.
         t: The Text node under consideration.
         a: The current accumulator object.
-    trees: An iterable over Element trees, generaly the output of parser().
+    trees: An iterable over Element trees, generally the output of parser().
     initial:  The initial value for the accumulator.
 
     A crude word count example:
@@ -852,7 +852,7 @@ def smap(elementf, textf, trees):
         body: The elements mapped children.
     textf: A callable the accepts 1 parameters and returns a new Text node
         t: The Text node to be transformed
-    trees: An iterable over Element trees, generaly the output of parser().
+    trees: An iterable over Element trees, generally the output of parser().
 
 
     A crude upper casing example:
@@ -888,7 +888,7 @@ def smap(elementf, textf, trees):
 def sfilter(pred, trees):
     """
     Filter a sequence of element trees down into another sequence of
-    structurally similar element trees, keeping only nodes and leaves wich
+    structurally similar element trees, keeping only nodes and leaves which
     return True when passed to a predicate function. Used for same tasks a
     normal filter but it operates on the element tree structure rather than a
     linear sequence.
@@ -897,7 +897,7 @@ def sfilter(pred, trees):
         function returns False for an element then it and all it's children
         will absent from silter()'s output.
         e: The Element or Text node under consideration.
-    trees: An iterable over Element trees, generaly the output of parser().
+    trees: An iterable over Element trees, generally the output of parser().
     """
     def _g(a, e):
         if isinstance(e, Text):
@@ -950,7 +950,7 @@ def text_properties(*props):
 
 def generate(doc):
     """
-    Format a document inserting line separtors after paragraph markers where
+    Format a document inserting line separators after paragraph markers where
     the first element has children.
 
     trees: An iterable over Element trees, such as the output of parser().

@@ -56,7 +56,7 @@
     \def\rev@layout@list{}\def\list@type{layout}%
     \x@\each@col\tmp\E%
     \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{\rev@layout@list}% revp@lyp@gecols0 ... revp@lyp@gecolsN list the reversed columns for the respective page
-    %For chosing the correct inserts:
+    %For choosing the correct inserts:
     \xdef@cseq{left@p@ly@col\p@lyp@gestring}{\x@\first@item\layout@list\E}%
     \xdef@cseq{right@p@ly@col\p@lyp@gestring}{\x@\first@item\rev@layout@list\E}%
     \let\col@do=\s@tpolyp@ge
@@ -208,7 +208,7 @@
   \pre@scol@cmd
   \scol@cmd
   \p@lyp@geno=\sdp@pgno \let\sdp@pgno=\undefined
-  %Itterate
+  %Iterate
   \ifnum\p@lyp@geno<\p@lyp@ges\relax
     \advance\p@lyp@geno by 1
     \let\n@xtlsp=\@@do@simplepage@

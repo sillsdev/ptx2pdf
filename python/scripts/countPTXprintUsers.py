@@ -117,7 +117,7 @@ def categorizeBySize(filepath, sizedict):
     elif sz < 51200: #50MB
         incHashRef(sizedict, "5. Massive (< 50 MB)")
     else:
-        incHashRef(sizedict, "6. Probaby a _diff file (> 50 MB)")
+        incHashRef(sizedict, "6. Probably a _diff file (> 50 MB)")
     return sz
 
 # -------------------------------------------------------------------------------------------

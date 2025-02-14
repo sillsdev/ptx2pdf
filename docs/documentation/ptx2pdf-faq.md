@@ -6,8 +6,8 @@
 
 There are two ways to reference a color using the \Color marker:
 
-- Prefix a 6 digit hex number with x as in x400000. The 6 digits are interpretted in pairs RRGGBB.
-- An integer is interpretted as a 24 bit number with the upper 8 bits as B, then G, then R. This
+- Prefix a 6 digit hex number with x as in x400000. The 6 digits are interpreted in pairs RRGGBB.
+- An integer is interpreted as a 24 bit number with the upper 8 bits as B, then G, then R. This
   is opposite to the RGB most people are used to.
 
 Thus `\Color x400000` is dark red, while the corresponding `\Color 4194304` is dark blue.
@@ -351,7 +351,7 @@ The types of pages are:
 - odd, even - a page containing normal biblical text (critically, numbered verses), with odd and even page numbers respectively.
 - noVodd, noVeven - a page that is neither a title page nor a page with numbered verses, e.g. introductions and glossary pages.
 
-The  three horizontal postions are (left, center, right).
+The  three horizontal positions are (left, center, right).
 
 Thus there are *thirty* possible locations that may be defined.
 
@@ -390,7 +390,7 @@ used in a diglot publication if the two sides use different fonts.
 
 
 ### I'm setting a diglot and the fonts switch around 
-To ensure a particular font, use the ```\headfootL{}``` and ```\headfootR{}``` macros, putting the text inside the curly-brackets. e.g.: ```\headfootL{Draft: \isodate}```. Simlarly to the verse reference macros above, ```\hrsmins```, ```\timestamp```  and the date macros now have ....L and ...R variants as a convenience. 
+To ensure a particular font, use the ```\headfootL{}``` and ```\headfootR{}``` macros, putting the text inside the curly-brackets. e.g.: ```\headfootL{Draft: \isodate}```. Similarly to the verse reference macros above, ```\hrsmins```, ```\timestamp```  and the date macros now have ....L and ...R variants as a convenience. 
 
 ## Marginal Verses
 

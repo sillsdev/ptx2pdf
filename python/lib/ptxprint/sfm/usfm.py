@@ -1,5 +1,5 @@
 '''
-The USFM parser module, provides the default sytlesheet for USFM and
+The USFM parser module, provides the default stylesheet for USFM and
 USFM specific textype parsers to the palaso.sfm module.  These guide the
 palaso.sfm parser to so it can correctly parser USFM document structure.
 '''
@@ -7,7 +7,7 @@ __version__ = '20101011'
 __date__ = '11 October 2010'
 __author__ = 'Tim Eves <tim_eves@sil.org>'
 __history__ = '''
-    20081210 - djd - Seperated SFM definitions from the module
+    20081210 - djd - Separated SFM definitions from the module
         to allow for parsing other kinds of SFM models
         Also changed the name to parse_sfm.py as the
         module is more generalized now

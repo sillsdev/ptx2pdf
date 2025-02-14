@@ -115,7 +115,7 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 *   \ColumnGutterRule```true``` – Place a vertical line between the columns in the column gutter? (default = false)
 
 </a>
-## <a name="ptx2pdf-Periph"> Peripheral mater</a>
+## <a name="ptx2pdf-Periph"> Peripheral matter</a>
 Assuming that the perpheral matter has been marked with a USFM-3 id="...", thus:
 ```
 \periph Introduction to OT|id="intot"
@@ -265,7 +265,7 @@ Headers for a page that has neither verses nor titles, e.g. a glossary.
 For control over the footer, fifteen similar ```\def``` commands are available, beginning with ```\RF``` instead of ```\RH```.
 
 ### <a name="ptx2pdf-MacroSetupParameters-HEADFOOT">Setting a complete set</a>
-It is sometimes desirable to set a complete set of the 6 header / footer postitions in one go.
+It is sometimes desirable to set a complete set of the 6 header / footer positions in one go.
 A convenience function has been implemented to allow this:
 ```
 \HEADFOOTset{H}{noV}{\pageno}{\empty}{\empty}{\empty}{\empty}{\pageno}
@@ -336,7 +336,7 @@ There are two sorts of paragraphed footnotes, old-style and new-style. As they p
     -  `\fparnoteskilldepth` (false) Kern away (kill) the glyph/font depth of each footnote as it is added. If true this positions the bottom note's baseline on the margin.
     - `\ifparnotesruletopskip` (false) If true, the footnote rule is positioned relative to the hypothetical baseline above the topmost footnote, rather than relative to the glyph/font height.
     - `\ifparnotesmidtopskip` (true) If true, then the hypothetical baseline above the topmost entry in a given style is used as the basis for the vertical `\InterNoteSpace`, rather than the glyph/font height
-* **Incompatability**: No baseline correction between the overflow of center-column notes and footnotes. Old style paragraphed notes automatically apply this correction, it has not proven possible to replicate this yet. This leads to some significant spacing differences in a font with a high ascent, or with GlyphMetrics turned on.
+* **Incompatibility**: No baseline correction between the overflow of center-column notes and footnotes. Old style paragraphed notes automatically apply this correction, it has not proven possible to replicate this yet. This leads to some significant spacing differences in a font with a high ascent, or with GlyphMetrics turned on.
  
 ### End notes
 *   \NoteAtEnd{```f```} – To make the specified note class an endnote (default: only ```fe``` 'endnotes' are endnotes). 
@@ -466,7 +466,7 @@ problematic ambiguous markers are no longer treated as ambiguous, (except for
 ## <a name="#ptx2pdf-MacroSetupParameters-Graphpaper"> Graph-paper and Grid</a>
 
 Sometimes it is useful to display a graph-paper-like measurement grid or  the
-grid which the text is (should be) layed out to.
+grid which the text is (should be) laid out to.
  * ```\def\doLines{\doGraphPaper}``` Display graph-paper
  * ```\def\doLines{\doGridLines}``` Display gridlines
  * ```\def\doLines{\doGraphPaper\doGridLines}``` Display both gridlines and graphpaper
@@ -542,7 +542,7 @@ WARNING: spaces in the string are ignored (due to a peculiarity of TeX).
 * `\zNeedOddPage` - Insert 0 or 1 intentionally empty page(s) so that what follows is on a odd-numbered page.
 * `\zNeedEvenPage` - Insert 0 or 1 intentionally empty page(s) so that what follows is on a even-numbered page.
 * `\zNeedQuadPage` - Insert 0 to 3 intentionally empty page(s) so that what follows is on page exactly divisible by 4.
-* `\zfillsignature|pagenums="no" extra="0" pages="8"\*` Calculate `\afterwordpages` + "extra" + current page count. Work out how many pages are needed to fill the signature of "pages" pages, and call \zEmptyPage that many times. The pagenums parameter can either be entirely ommitted or contain "do" (`\dopagenums`) or "no" (`\nopagenums`).
+* `\zfillsignature|pagenums="no" extra="0" pages="8"\*` Calculate `\afterwordpages` + "extra" + current page count. Work out how many pages are needed to fill the signature of "pages" pages, and call \zEmptyPage that many times. The pagenums parameter can either be entirely omitted or contain "do" (`\dopagenums`) or "no" (`\nopagenums`).
 Note that the page count used by this is now the *actual* count of pages
 printed by PTXprint, not the current page number.
 
@@ -569,7 +569,7 @@ be altered by: `\def\ISBNfont{Helvetica}`
 
 #### ISBN barcodes with a price code
 `\zISBNbarcode|isbn="01-234-56789" price="$8.45" pricecode="50845"\*`
-Some ISBN barcodes include a recommended sale price, using the EAN-5 extention,
+Some ISBN barcodes include a recommended sale price, using the EAN-5 extension,
 which can hold 5 digits.  Only a few countries (mainly English-speaking) seem
 to use this, but at least one document states that it is necessary for
 books to scan properly in some countries.  The `price` attribute  is the text
@@ -604,7 +604,7 @@ or `\sls` are inserting code via hooks.
 `\zifvarset|var="varname"\*`   Sets up the conditional text code depending if the zvar  
 `varname` has been set. The optional parameter `emptyok="T"` determines whether
 an empty variable should be treated as unset (the default, if emptyok is not
-specified) or as set (any value for emptyok except "F"). i.e., an empty varible will 
+specified) or as set (any value for emptyok except "F"). i.e., an empty variable will 
 give the following results:
 * `\zifvarset|var="varname"\*`   -> false
 * `\zifvarset|var="varname" emptyok="F"\*`   -> false

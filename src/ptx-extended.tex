@@ -213,7 +213,7 @@
   \def\fig@lskip{0pt}\def\fig@rskip{0pt}%
   \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
   \trace{sc}{sb@rinswidth (\the\c@rrentcols) \the\dimen1}%
-  %we need to distingiush between things like c,p,h which have sub-specifications and t, tl, tr, etc (which don't)
+  %we need to distinguish between things like c,p,h which have sub-specifications and t, tl, tr, etc (which don't)
   \x@\let\csname sb@onlypure-t\endcsname\tr@e
   \x@\let\csname sb@onlypure-b\endcsname\tr@e
   \let\@t@st\tempc
@@ -646,7 +646,7 @@
   \fi
 }
 
-\def\p@rsefigscale#1{%interpret bacground figure scale
+\def\p@rsefigscale#1{%interpret background figure scale
   \ifdim\wd\extb@x>0pt
     \dimen1=\wd\extb@x
   \fi
@@ -963,7 +963,7 @@
           \global\setbox\extchunkb@x=\vsplit\extb@x to \dimen1
           \ifnum\badness>999999
             \setbox\extb@x=\box2
-            \advance\dimen1 by \baselineskip %Couldnt split, make the chunk bigger.
+            \advance\dimen1 by \baselineskip %Couldn't split, make the chunk bigger.
             \trace{e}{Chunk grown to \the\dimen1}%
         \@REPEAT
       }%

@@ -6,7 +6,7 @@ The first file to be loaded is `paratext2.tex` and it has some initial
 definitions and set up that it does. The macros make extensive use of
 bidirectional controls and for this we need ETeX and its extensions. This is a
 prerequisite and therefore all other ETeX extensions are also available to us.
-We also follow the LaTeX convension of using the `@` in internal tokens since
+We also follow the LaTeX convention of using the `@` in internal tokens since
 outside of the macros we turn off `@` as a letter, making such tokens
 inaccessible. `\expandafter` is a long name for this token and can often occur
 very frequently in a short space. It is easier to have a short name for the same
@@ -79,8 +79,8 @@ The code for the opening and closing hooks has been merged, into
 `\fillh@@ks` which fills a tokslist using the `\p@ssHooks` list.
 Following the historic pattern, it used to be that starting hooks ran fillh@@ks with 
 csstackup (most general first) and closing hooks used csstackdown .
-In an ammendment to the code in Oct 2022, rather than running all these items,
-only the *most* specific existant hook is executed.
+In an amendment to the code in Oct 2022, rather than running all these items,
+only the *most* specific existent hook is executed.
 
 For opening hooks (`\op@ninghooks`), the task is simply to executes this token
 list and empty it. 
@@ -192,7 +192,7 @@ setting. Otherwise it is simply a paragraph style that clears any drop chapter
 number. Collecting the chapter label globally is almost identical to processing
 `\h`.
 
-The `\id` line is generaly useful to collect, particularly to output as part of
+The `\id` line is generally useful to collect, particularly to output as part of
 any cropmarks. In addition we collect the first up to 3 characters as the book
 id. Again we do the same trick for handling the id line. In addition we convert
 space back to its normal interpretation and so any initial or final space will

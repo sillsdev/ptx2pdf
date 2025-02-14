@@ -8,7 +8,7 @@ Remember the page number for/reference this place
 
 ```
 ## Description
-A milestone which produces no output but asks XeTeX to remember the page and verse-reference that this occurs on (writing it to a reference file). The label can then be used in future runs to insert the page (`\zpage`) or scripture reference (`\zref`) that the label occurrred on.
+A milestone which produces no output but asks XeTeX to remember the page and verse-reference that this occurs on (writing it to a reference file). The label can then be used in future runs to insert the page (`\zpage`) or scripture reference (`\zref`) that the label occurred on.
 ## Attributes
 * id="uniqueID" 
 ## See also

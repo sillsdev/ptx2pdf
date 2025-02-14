@@ -2,7 +2,7 @@ import os, re, datetime
 
 categories = {"I": "Info", "W": "Warning", "E": "Error"}
 
-# Note: Multiple response values are possible - with the most likley problem first:
+# Note: Multiple response values are possible - with the most likely problem first:
 responses = {
     "R": "Rerun and see if that fixes it.",
     "U": "Fix usfm",

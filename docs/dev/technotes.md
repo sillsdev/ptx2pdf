@@ -11,7 +11,7 @@ fix needed to the code.
 
 ### Why we don't split footnotes.
 By default, TeX is able to split footnotes. In some circumstances this might be
-desireable, for instance when there are very long footnotes on a page. However,
+desirable, for instance when there are very long footnotes on a page. However,
 there is a fundamental feature of TeX that means that we cannot discard a galley (as is 
 done by the page balancer, diglot column-arranger, etc) without that saving the 'cut-off' 
 portion of the foot-note onto the next page. There is no way to purge that page
@@ -83,8 +83,8 @@ include similar code.
 
 This expands to:
 ```
-\ifcsname polyglot-simplepages@plugin@lo@ded\endcsname\else
-\let\polyglot-simplepages@plugin@lo@ded\empty
+\ifcsname polyglot-simplepages@plugin@lo@dead\endcsname\else
+\let\polyglot-simplepages@plugin@lo@dead\empty
 . . .
 \fi
 ```
@@ -98,5 +98,5 @@ Stylesheet macros that depend on a plugin should be registered like this, e.g. i
 ```
 \PluginOptions{ornaments}{BorderFillColour,BorderFillColor,BorderPatternTop,BorderPatternBot,BorderPatternLeft,BorderPatternRight,BorderPadding,BorderHPadding,BorderVPadding,BorderLineWidth}
 ```
-Each one of the sylesheet macros listed in the second argument will (if not defined) become code that will produce a warning or attempt to load the necessary plugin. That activity is controlled by the switch `\ifpluginjustwarn`
+Each one of the stylesheet macros listed in the second argument will (if not defined) become code that will produce a warning or attempt to load the necessary plugin. That activity is controlled by the switch `\ifpluginjustwarn`
 At present, only the ornaments plugin uses this functionality, and only warnings are possible 

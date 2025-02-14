@@ -7,7 +7,7 @@ you make an empty file, PTXprint might moan a bit).  Each configuration that PTX
 
 
 ## Prepare the input files
-You probably want (at least) 3 project/configuratons: (a). A diglot of the primary and 
+You probably want (at least) 3 project/configurations: (a). A diglot of the primary and 
 secondary  text (b) a monoglot (or diglot) for the 3rd (and 4th, 5th) text(s) (c) eventually, 
 the polyglot configuration.
 
@@ -79,7 +79,7 @@ files be loaded.
 
 The sample above does *not* load `mergedMAT.usfm` (the line is commented out)
 and but it does load the `mergedJHN.usfm` file.  Other files should be loaded
-in the place that `MAT` is, and the last file should be preceeded by
+in the place that `MAT` is, and the last file should be preceded by
 `\lastptxfiletrue` so that the colophon is triggered.
 
 Notice that the hook resets itself (to generate the colophon). Commenting out

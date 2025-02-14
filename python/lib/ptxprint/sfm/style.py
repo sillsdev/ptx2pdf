@@ -213,7 +213,7 @@ def update_sheet(sheet, ammendments={}, field_replace=False, **kwds):
         the fields to be updated.
     field_replace: When True replace OccursUnder and TextProperties.
         When False merge them instead. Defaults to False.
-    **kwds: marker id keywords assigned to marker records continaing
+    **kwds: marker id keywords assigned to marker records containing
         the fields to be updated.
     >>> from pprint import pprint
     >>> base = parse(r'''

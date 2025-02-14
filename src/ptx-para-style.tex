@@ -235,7 +235,7 @@
       \ifhmode\endgraf\lastdepth=\prevdepth
         \global\l@stparbadness=\badness
         \trace{h}{gr@db@@x needed to end paragraph. Why?}%
-      \fi % Not sure why, but sometiems we get here in hmode
+      \fi % Not sure why, but sometimes we get here in hmode
       \edef\oldprevdepth{\the\prevdepth}%
       \prevdepth=0pt
       % \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
@@ -381,7 +381,7 @@
      \fi
    \fi
    \ifx\pn@xt\empty\else
-     % Time to acually include the picture
+     % Time to actually include the picture
      \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x / \the\ht\picb@xR}%
      %\nonstopmode
      %\show\pn@xt
@@ -476,7 +476,7 @@
 %+cpar_parstyle_after
  \t@stpublishability{#1}% test if the new marker is nonpublishable
  \ifn@npublishable
-  \p@r% End the present paragaph, to make sure that cutouts, etc. are handled properly
+  \p@r% End the present paragraph, to make sure that cutouts, etc. are handled properly
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
@@ -1138,11 +1138,11 @@
   \@@colstart{#1}{#2}{#3}{#4}{#5}}
 \def\@colstop#1#2{\def\c@rrdstat{}%%
   \@@colstop{#1}{#2}}
-%Do somehing clever for items that are near 
+%Do something clever for items that are near 
 %the end of the column.. Problem: the ones we're
 %interested in doing clever things with were not put
 %on the pending stack. Use a new stack, \par@items and
-%...  Do somthing with it. At the moment just moan.
+%...  Do something with it. At the moment just moan.
 \def\check@pagefoot#1|#2|#3\E{%
   \ifnum #3 < \this@col@y
   \dimen1=\this@col@y sp

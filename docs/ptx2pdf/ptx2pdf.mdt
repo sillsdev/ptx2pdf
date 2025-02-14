@@ -24,7 +24,7 @@ The first file to be loaded is `paratext2.tex` and it has some initial
 definitions and set up that it does. The macros make extensive use of
 bidirectional controls and for this we need ETeX and its extensions. This is a
 prerequisite and therefore all other ETeX extensions are also available to us.
-We also follow the LaTeX convension of using the `@` in internal tokens since
+We also follow the LaTeX convention of using the `@` in internal tokens since
 outside of the macros we turn off `@` as a letter, making such tokens
 inaccessible. `\expandafter` is a long name for this token and can often occur
 very frequently in a short space. It is easier to have a short name for the same
@@ -278,7 +278,7 @@ job. There are various different log traces that are available and a job may
 enable as many as it wants. Each trace has an identifier.
 
 There is nothing special that says the tracing code has to be a single character.
-It is also better to have more identifiers than less to allow for more targetted tracing.
+It is also better to have more identifiers than less to allow for more targeted tracing.
 Trace identifiers allocated in ptx macros:
 
 | Identifier | Trace
@@ -444,7 +444,7 @@ setting. Otherwise it is simply a paragraph style that clears any drop chapter
 number. Collecting the chapter label globally is almost identical to processing
 `\h`.
 
-The `\id` line is generaly useful to collect, particularly to output as part of
+The `\id` line is generally useful to collect, particularly to output as part of
 any cropmarks. In addition we collect the first up to 3 characters as the book
 id. Again we do the same trick for handling the id line. In addition we convert
 space back to its normal interpretation and so any initial or final space will
@@ -643,7 +643,7 @@ Typesetting is nothing if text cannot be styled. The PTX macros have the
 concepts of character styles, paragraph styles and note styles (for footnotes,
 etc.). In addition styles may be stacked, thus a run of text in one character
 style may be embedded in a run of another style, such that anything not
-specifically defined in the inner style is interpretted as coming from the outer
+specifically defined in the inner style is interpreted as coming from the outer
 style, which may in turn derive the information from an outer paragraph style.
 
 A USFM text is marked up in terms of styled runs of text witch rules about how
@@ -697,7 +697,7 @@ complexity:
 -- ------
 Sets temporary macro \\p@ram to the value
 The macro is diglot aware, allowing all parameters to have L Left/Right variant or use
-default. (e.g when asked for paramter for v, check for vL|vR, default to v)
+default. (e.g when asked for parameter for v, check for vL|vR, default to v)
 
 \fileheader{ptx-stylesheet.tex}
 ```{.latex .numberLines startFrom="151"}
@@ -818,7 +818,7 @@ Each style type is processed very differently. `\message` is a TeX primitive
 that outputs the contents to the console and log file but puts a space after
 rather than a newline. We clear any font associated with the marker and then
 call the type appropriate definition for the marker. In each case we create a
-defintion for the marker token that calls the appropriate style routine. In the
+definition for the marker token that calls the appropriate style routine. In the
 case of character styles we also create a handler for the emebdeed form of the
 character style that is prefixed by `+`.
 
@@ -1023,7 +1023,7 @@ style type:
 
 Type  Description
 ----- -----------
- c    Embeded character style
+ c    Embedded character style
  C    Normal non emebded character style
  P    Paragraph style
  N    Note
@@ -1037,7 +1037,7 @@ at the bottom of the stack to make processing easier.
 We define quite a few macros to handle all this. First there are the generic
 stack handling macros that work with any kind of stack and then there are the
 macros we use specifically for working with the `mcstack` which contains the
-style stack we are interested in. The good news is that TeX's parameter matchin
+style stack we are interested in. The good news is that TeX's parameter matching
 capabilities make handling a stack relatively straightforward. The first three
 macros are the core definition for a stack: pop, push, peek. The up and down
 macros ❶ are for iterating through the stack either from bottom to top (up) or
@@ -1214,7 +1214,7 @@ Returning to starting a character style. If the text is not to be published ❶
 we group it up into an hbox which we will dump later. But we don't have to do
 anything regarding setting up any styling. We do start a new group, because all
 character styles start a new group. While grouping is a way to handle a style
-hiearchy, it doesn't allow interrogating of style information above us in the
+hierarchy, it doesn't allow interrogating of style information above us in the
 groups. We also track the currently open style in the group.
 
 ❷ Normally we do want to publish the text and to do that we need to be in
@@ -1551,7 +1551,7 @@ undo any paragraph final space and then close off all open character styles.
 file is used to work out whether the layout has changed significantly between
 runs. Notice that the position is not written immediately. A `\write` command
 actually stores a _whatsit_ in the page. This zero sized item is generally
-ignored until the page containing it is shipped out. When the item reachs the
+ignored until the page containing it is shipped out. When the item reaches the
 point of being written to the output file, it is executed. At that point the
 `\pdflastposx`, etc. are expanded (and known) and the actual position on the
 page is output to the `.parlocs` file.
@@ -1670,7 +1670,7 @@ style stack. Then we run any `before` hooks for this new marker.
 ```{.latex .numberLines startFrom="257"}
  \t@stpublishability{#1}% test if the new marker is nonpublishable
  \ifn@npublishable
-  \par % End the present paragaph, to make sure that cutouts, etc. are handled properly
+  \par % End the present paragraph, to make sure that cutouts, etc. are handled properly
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
@@ -1809,7 +1809,7 @@ And so we come to the start of the paragraph. Finally!
 ```
 
 There are a number of routines, referenced above, to describe before we continue.
-Each of the paragraph modes needs to siwtch to the appropriate number of
+Each of the paragraph modes needs to switch to the appropriate number of
 columns. For each mode start we first test to see if we are already in that
 mode. If we are not, then if we are not creating a diglot, we test to see if twe
 have to change the number of columns and if so we call the appropriate column
@@ -1998,7 +1998,7 @@ we inhibit page breaking after the heading box, and we are done.
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
 \def\gr@db@@x#1{%
-  \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
+  \ifhmode\endgraf\fi % Not sure why, but sometimes we get here in hmode
   \prevdepth=0pt
   \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
   \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\headingtopspace*\the\verticalsp@ceunit; depth=\the\lastdepth}%
@@ -2088,7 +2088,7 @@ the first line indent for the paragraph.
    \getp@ram{firstindent}{\m@rker}\let\f@rstindent=\p@ram
 ```
 
-Reading the code linearly, the next part of thie paragraph style routine is
+Reading the code linearly, the next part of this paragraph style routine is
 concerned with drop chapter number support. We will discuss that as part of
 (Milestones)[#milestones].
 
@@ -2314,7 +2314,7 @@ then no caller is output, otherwise use the caller character itself.
 
 We start a group for the note and its caller. We collect any `after` hook for
 the note. Was there some space before the note, then flag the need later. Then
-we reset the paragrph style within the note group for the note text itself. ❶
+we reset the paragraph style within the note group for the note text itself. ❶
 
 The core of note handling is a call to `\m@kenote`. The parameters to that macro
 are themselves token sequences. Notice that the sequences are not expanded until
@@ -2577,7 +2577,7 @@ Most chapter numbers are a drop number. What makes scripture typesetting tricky
 is that there are a few drop chapter numbers that occur mid paragraph. Since
 USFM says that paragraphs occur under a chapter marker. There is a special
 paragraph marker for the non paragraph break: `\nb`. To achieve the cutout we
-have verious things to set up in the chapter marker itself. We start by
+have various things to set up in the chapter marker itself. We start by
 squirrelling away the `\c` paragraph style. After this, there are two parts
 to the chapter marker processing. We
 start with the pattern matching chapter that collects the chapter number and
@@ -2653,7 +2653,7 @@ The problem with this is if you divide two dimensions you get an integer
 division, which is often not very useful. To increase accuracy, we multiple up
 by 128 (giving a maximum dimension of 512pt which should be enough for 2 lines
 of text). This means keeping track of when we multiply, values are in effect
-mulitplied by $2^{16}$ and if a number that is multiplied by $2^{16}$ is divided by
+multiplied by $2^{16}$ and if a number that is multiplied by $2^{16}$ is divided by
 another number multiplied by $2^{16}$ then the result has no multiplier, and so on.
 Multiplying numbers by 128 for extra accuracy can either result in having to
 divide the result by 128 or multiply it by $512 = (2^{16} / 2^7)$.
@@ -2812,7 +2812,7 @@ is that scary looking `\strip@pt` which gets used in `\special` commands.
 When a paragraph starts with a drop chapter number we need to make a box for the
 chapter number. For this we need box metrics to be based on the glyphs themselves
 and not on the font metrics. We then create a default macro for printing the
-chapter number. There is a user defineable hook `\PrepChapterNumber` that can
+chapter number. There is a user definable hook `\PrepChapterNumber` that can
 redefine that `\printchapter` macro to style the chapter number text
 appropriately. Then we create a box with the font set to the drop chapter size
 and font and print the chapter number.
@@ -2828,7 +2828,7 @@ dimen value
 ----- -----
  0    Height of the chapter box. The width of the new box
  1    Height + depth of chapter box plus `\AfterChapterSpaceFactor`. The height of the rotated box 
- 2    Half the heigh - width of the chapter box. The amount to shift the chapter box
+ 2    Half the height - width of the chapter box. The amount to shift the chapter box
 
 Then we create the box and rotate it. Then we set the height of the box to the
 width of the chapter box and the width to the new height, because height and
@@ -2984,7 +2984,7 @@ for the book (or id) space chapter.
 
 In the rare case that this paragraph follows a single line paragraph containing
 a chapter cutout, drop any cutouts in this paragraph and prepare to recalculate.
-Againt we choose the appropriate side for the cutout and, as per the chapter
+Against we choose the appropriate side for the cutout and, as per the chapter
 processing above, we test for a margin. With no margin, we simply insert a
 single line cutout (since the first line was in the previous paragraph). If
 there is a margin, then we find the first line indent. If it is less than the
@@ -3784,7 +3784,7 @@ kern upwards to ignore the depth.
       \dimen0=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}
-      \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
+      \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % output bottom spanning pictures
       \f@rstnotetrue%
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}
@@ -3888,7 +3888,7 @@ then update it by inserts and notes.
 
 c@lcavailht is the routine for calculating and setting up the various parameters
 for a page measurement. It sets the marks and sets available height to the trial
-heigth. Then it reduces  that available height by the heights of the notes, then
+height. Then it reduces  that available height by the heights of the notes, then
 we round the result up to the nearest line grid. Then we subtract any top and
 bottom inserts (figures). Advancing by `-\dp255` and `\dp255` just shifts the
 grid somewhat (the amount of actual descent of the last line in the text).
@@ -4336,7 +4336,7 @@ at this new shorter height.
       \hbox to \dimen1{\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colA
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}
-      \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
+      \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % output bottom spanning pictures
       \f@rstnotetrue
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
@@ -4467,7 +4467,7 @@ vertical column gutter rule, the height of the column boxes again to give the
 height of the box that is to be returned and the maximum depth of the two
 columns, which is a side effect of running `\c@lcboxheights`. From these we
 assemble a box that is centred. If there is a ColumnGutterRule then we create a
-vertical rule of an appropriate heigh inside an hbox which is shifted down by
+vertical rule of an appropriate height inside an hbox which is shifted down by
 the ColumnGutterRuleSkip. This whole box is given an appropriate depth as passed
 in and then centred with a right hand column shift. This is passed back for
 inclusion in the horizontal list of boxes. 
@@ -4696,7 +4696,7 @@ Then it passes a box for the page to the routine that adds any cropmarks. The
 contents of that page are the head line the page body and the foot line. After
 that we restore the pdf page dimensions and advance the page number. There is
 check that the document is not stupidly long. The value of `@MM` is 20000 and is
-only emmitted in a supereject. Thus we are merely passing the supereject along.
+only emitted in a supereject. Thus we are merely passing the supereject along.
 Otherwise clear various flags.
 
 \fileheader{ptx-cropmarks.tex}
@@ -5389,12 +5389,12 @@ second parameter may itself be 1 or more characters with the secondary position
 as the first character and the tertiary position as the rest.
 
 Initially, we check to see if the second (alignment) parameter is page-number
-dependant (`i` or `o` for inner or outer). We then convert that to the relevant 
+dependent (`i` or `o` for inner or outer). We then convert that to the relevant 
 absolute alignment (`l` or `r`). If the location is `t` or `b`,  an
 image that will be in an insert, then we regenerate the relevant code.
 
 If the location is `h`, meaning an inline graphic, then capture the main
-location and the second parameter is the absoulute alignment (`l`, `r` or `c`
+location and the second parameter is the absolute alignment (`l`, `r` or `c`
 for left, right or central).
 Since we are
 inline, clear the flag to store the picture box in an insert. If the alignment
@@ -5413,7 +5413,7 @@ insertion. If the alignment is not central, then set the narrow picture flag.
 If the location is `P` for page then set the picture width to the page width.
 Likewise if the location is `F` for full (page to edge), then don't set a width.
 In either case warn the user we are entering experimental waters and set the
-alignment to be the second character (the familar `l`, `r`, `c`, `i`, or `o`) 
+alignment to be the second character (the familiar `l`, `r`, `c`, `i`, or `o`) 
 and the vertical alignment the third.
 
 \fileheader{ptx-figure.tex}
@@ -5646,7 +5646,7 @@ will be used if the page constraint is met.
 ```{.latex .numberLines startFrom="99"}
 \def\getnum#1=#2\end{#1}%
  
-% These three macros split up x-xetex="foo" parameter, stripping out any key=val formated parameters and leaving the rest.
+% These three macros split up x-xetex="foo" parameter, stripping out any key=val formatted parameters and leaving the rest.
 % 
 \def\p@rs@xtr@#1=#2=#3\end{\edef\t{#2}%
   \ifx\t\empty \edef\t{#1}
@@ -5910,7 +5910,7 @@ page-shipping  routine's use of `\vss` (vertical stretch or shrink) above and
 below the image, and the `\topm@rgin` and `\bottomm@rgin` that are added above
 and below the image before this 'centering' occurs. 
 
-Cutout pictures really do not like occuring mid paragraph. Ideally they occur at
+Cutout pictures really do not like occurring mid paragraph. Ideally they occur at
 the start of a paragraph before the first text. But if they do occur mid
 paragraph then either start a new paragraph of the same type or else the marker
 before a `\v` occurred.
@@ -6042,7 +6042,7 @@ those tokens and execute them. This outputs the image at this point.
    \fi
  \fi
  \ifx\pn@xt\empty\else
-   % Time to acually include the picture
+   % Time to actually include the picture
    \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x / \the\ht\picb@xR}%
    %\nonstopmode
    %\show\pn@xt
@@ -6063,7 +6063,7 @@ If there is one or more pictures waiting to be output we split the vbox to the p
 and we rebox the result, leaving the remainder back in the `wholepagepic`. We
 also capture the final penalty, which uses a protocol of special numbers to
 communicate whether this image is a full page within margins or full page to the
-edge image. If this image goes to the limits of the physical page then svae the
+edge image. If this image goes to the limits of the physical page then save the
 page width and height and ship the image as a page and restore the physical page
 dimensions and advance the page number. Otherwise this is a normal page filling
 image to the margins and we create a `pagecontents` that consists of the image
@@ -6256,7 +6256,7 @@ the file.
 }
 ```
 
-`.piclist` files are read sequentially an interpretted sequentially. Only the
+`.piclist` files are read sequentially an interpreted sequentially. Only the
 next picture is read and its location is stored. If that location never matches,
 no new picture lines will be read, of if there is a syntax error, the rest of
 the file will be ignored.

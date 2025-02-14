@@ -84,7 +84,7 @@
   \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
   \trace{b}{botomins=\the\ht\bottomins + \the\dp\bottomins, +\the\skip\bottomins}%
   \ifdim\ht\bottomins>0pt \inp@gegap \temptrue\tmpwrite{bottomins}\kern-\lastd@pth
-    \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
+    \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % output bottom spanning pictures
   \trace{b}{BALANCE pageouttxt: border=\csname b@dr@bot@pad\endcsname notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255, temp\iftemp true\else false\fi}%
   \trace{b}{notes=\the\ht\n@tesbox + \the\dp\n@tesbox}%
   \ifdim\ht\n@tesbox > 0pt \ifnum \ifinendbook\ifFinalNotesDown\iftemp 0\else 1\fi\else 0\fi\else 1\fi =1\relax\trace{o}{notes fill \ifnoinkinmargin not\space \fi into margin}\inp@gegap \ifnoinkinmargin\kern-\lastd@pth\fi\relax \temptrue\fi
@@ -897,7 +897,7 @@
     \setbox0=\copy\n@tesbox
     \dimen0=\dimexpr  \skip0 * \NoteShaveMin \relax 
     \dimen1=\dimexpr \skip0 * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
-    \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minumum shave amount
+    \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minimum shave amount
     \trace{fp}{Initial note length \the\ht\n@tesbox, first shave: \the\sh@vedim, stay: \the\dimen1 (\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
     \@LOOP\ifdim \sh@vedim>\dimen1 
       %\showbox\n@tesbox
@@ -1335,7 +1335,7 @@
 %+c_savepartialpaged_intro
 \newif\ifrerunsavepartialpaged
 \newdimen\und@rfill
-\def\savepartialpaged{%Double columnn version of save partial page
+\def\savepartialpaged{%Double column version of save partial page
   \trace{o}{savepartialpaged. hIns=\the\holdinginserts, iflevel=\the\currentiflevel}%
   \traceifset{savepartialpaged}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost! (\the\ht255+\the\dp255)}\fi
@@ -1818,7 +1818,7 @@
 
 \def\diglotcolumns{
   \trace{o}{DiglotColumns: partial:\the\ht\partial. Pff:  \PageFullFactor\space\the\textheight}%
-  \ifx\@netimesetup\relax%Skip ending diglot if there's no possibily we've started.
+  \ifx\@netimesetup\relax%Skip ending diglot if there's no possibly we've started.
     \ifdiglot
       \enddigl@t
     \fi
@@ -1912,7 +1912,7 @@
           \ifdim\posttextb@rderskip=0pt \else\ifdim\ht\partial>10pt \setbox\partial\vbox{\unvbox\partial}% Let the box have its natural size.
           \fi\fi
         \else
-          \trace{et}{Apply border from single column transtion}%
+          \trace{et}{Apply border from single column transition}%
           \doTextB@rder{\partial}%
           \ifdiglot \setbox\partial\vbox{\unvbox\partial}\fi% Undo the "ignore the border" shrink. Why does only diglot need this? Or is that a wrong assumption? 
           \global\partialfr@medtrue

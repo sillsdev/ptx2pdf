@@ -21,7 +21,7 @@ I would like to use a non-breakable space to keep two words together.
 
 <a name="TOC-Solution">
 
-Use the Unicode charecter U+00A0 NO-BREAK SPACE for this. Ptx2pdf handles these automatically.
+Use the Unicode character U+00A0 NO-BREAK SPACE for this. Ptx2pdf handles these automatically.
 
 </a>
 

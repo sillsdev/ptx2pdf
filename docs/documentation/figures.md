@@ -32,7 +32,7 @@ The USFM-3 standard is not very useful here; for example, for
 the `loc` attribute it says "a list of verses where it might be inserted", while paratext help suggests an entirely different use for this attribute. For size, USFM-3 only 'span' and 'col', with no scaling factor. The ptx2pdf XeTeX macros give better
 control on both of these, offering multiple positioning options and if you want
 a smaller image than full-page or column-width you can say, e.g. `span*0.6` (see
-a later discusion also). They also add the extra sizes 'width', 'page' and 'full'. 
+a later discussion also). They also add the extra sizes 'width', 'page' and 'full'. 
 'Full' suppresses headers and footers.
 
 ## Attributes
@@ -60,7 +60,7 @@ considered a `media` attribute. If it matches any of the values that a page
 position can take, it is considered a `pgpos` attribute. If the value looks like
 the start of a scripture reference, then it is a `loc` attribute.
 
-Within the ptx macros, the `LOC` column is always interpretted as a `pgpos`
+Within the ptx macros, the `LOC` column is always interpreted as a `pgpos`
 attribute. In addition, for USFM3, if there is only a `loc` attribute, it is
 treated as a `pgpos` attribute for backward compatibility.
 
@@ -84,7 +84,7 @@ In the table below, 'left-align
 These positions do not depend on where the trigger-text is on the page, as they are referenced to the 
 physical page.
 
-Code | Mnemnonic              | Position                                                      | Max. caption width 
+Code | Mnemonic              | Position                                                      | Max. caption width 
 ---- | -----------------------|-----------------------------------------------------------|-----------------------------------------------
 t    | 'Top'                  | Above everything except the header line.                        | across both columns 
 b    | 'Bottom'               | Below all verse text (and footnotes in diglot).                 | across both columns 
@@ -116,7 +116,7 @@ Left and right aligned images have a caption-space the same width as the image. 
 In the table below, * is used to indicate any of the alignment positions above, X is used to indicate any alignment except `c`.
 The third code is always optional. `#` indicates a number (integer) e.g. 2 or (decimal) e.g. 3.2.   @ indicates that the third parameter is a vertical alignment, for which values can be `t`-top, `b`-bottom, `c`-centre or (for sidebars) `f`- fill page height if possible (stretch vertical spaces).
 
-Class | Mnemnonic              | Description
+Class | Mnemonic              | Description
 ---- | -----------------------|----------------------
 h    | 'Here'                 | Line above where defined / before the verse in piclist 
 j    | 'Just below'                 | Line below where defined / before the verse in piclist
@@ -141,12 +141,12 @@ F*@ | 'Full page'  | The entirety of the paper [^9]  but horizontally and vertic
     The image will *always* be on the same page/column as the anchor (normally 
     a verse);  It may occur off the page's bottom, even if the notch is partly
     or fully on the next. A negative number (e.g. cr-1) will raise the image and
-    cut-out, but while this can raise the image into the preceeding paragraph, 
+    cut-out, but while this can raise the image into the preceding paragraph, 
     it  cannot make the cutout begin earlier than the paragraph containing the anchor.
     A fractional number (e.g. cr0.2) will adjust the image by a fractional
     amount within the cutout. i.e. cr1.9 will be 0.1 lines higher than cr2. 
     cr1.5 is treated as cr2 (two full-width lines before the image) with an
-    adjustment of -0.5lines, cr1.4999 as cr1 with an ajustment of +0.4999 lines.
+    adjustment of -0.5lines, cr1.4999 as cr1 with an adjustment of +0.4999 lines.
     
 [^7]: Since `p` is also interpretable as a media target, `pc` should always be
     used in USFM-2.
@@ -209,7 +209,7 @@ the code considers this acceptable.  Rather than adjusting the shape of the
 paragraph again (which risks moving the anchor point again), an annotation is
 made to the `.delayed` file that the image is to raised or lowered relative to
 the anchor point to fit into the cutout.  The following command allows
-`droppic4` (image number 4, in a cutout analagous to a drop-cap)  to accept
+`droppic4` (image number 4, in a cutout analogous to a drop-cap)  to accept
 being raised by 3 lines or lowered by two.
 
 ```
@@ -217,7 +217,7 @@ being raised by 3 lines or lowered by two.
 ```
 
 It is not recommended to try to guess the image count by counting images, 
-as sidebars may also increase the number. Futhermore, some numbers may  
+as sidebars may also increase the number. Furthermore, some numbers may  
 be skipped. Instead, the `.delayed` file could be inspected. It will have a 
 format similar to this, with only the items which might be subject to these
 slop calculations included. The first item after '\DelayedItem` is the 
@@ -274,14 +274,14 @@ down to 60% of that size.
 
 While in USFM2 the `size` attribute position has been extended to support a
 scale factor via `*`. This is not ideal and in USFM3 it is better to separate
-the scale factor into its own `scale` attribute. This value is a multipler that
+the scale factor into its own `scale` attribute. This value is a multiplier that
 scales an image after its size has been established via the `size` attribute. A
 value of `1.0` implies no size change.
 
 ### x-spacebeside Attribute 
 
 An image in a cutout needs some space beside it, so that the text does not touch the image.
-This can be controlled globally by puting a different distance in the the configuration 
+This can be controlled globally by putting a different distance in the the configuration 
 parameter `\def\DefaultSpaceBeside{10pt}` If a particular figure needs a different value,
 this can be controlled by setting the x-spacebeside USFM3 attribute. e.g.
 `x-spacebeside="15pt"` This attribute is only relevant for figures in cutouts.
@@ -557,9 +557,9 @@ the combinations do not trigger an unprintable page.
     item, a suffix of ```=1``` is normally an invalid trigger point and will never match.
     The exception to this is when a *stand-alone milestone* **immediately** follows a paragraph break. 
     In that case the trigger will activate just before the first piece of actual text after the milestone, assuming there is some.
-  - The code assumes that *any* occurance of the separator in the piclist reference 
+  - The code assumes that *any* occurrence of the separator in the piclist reference 
     means that what follows is a paragraph number. Using some other separator is now 
-    supported, with the restriction that (a) it sould not be expected to occur 
+    supported, with the restriction that (a) it should not be expected to occur 
     in normal text of a type that might crop up in a key term. (b) it must not contain characters 
     with a special meaning within TeX (e.g. `#`, `$`, `%`, `{`, `}`). Multiple character separators 
     are permissible. The command  below (to be included in the `.tex` file
@@ -610,7 +610,7 @@ To position the reference before the caption text, add this line to the .tex fil
 ```
 
 ### Decoration of the reference
- By default the reference (if present) folows the catption and is in (rounded) brackets. The code for this is:
+ By default the reference (if present) follows the catption and is in (rounded) brackets. The code for this is:
 ```
 \def\DecorateRef#1{(#1)}
 ```
@@ -625,7 +625,7 @@ would put an em-dash (unicode U-2014) and a non-breaking space before the refere
 spaces such as `\NBSP`, `\EMSPACE`, `\THINSPACE`  are defined in the macros).
 
 ### Caption Alignment 
-Captions are normally centred. If for some reason left-justified or right-justified captions are required, this can be controled 
+Captions are normally centred. If for some reason left-justified or right-justified captions are required, this can be controlled 
 in the normal manner in the style sheet, via the `fig` marker, even though officially the marker is officially a character style, not a paragraph style:
 
 ```
@@ -646,8 +646,8 @@ The gap between the caption and the figure can be adjusted globally by the follo
 Per-image category adjustments are also possible. See below. 
 ### Caption font and size
 
-As noted above, caption styling is controled via the `fig` marker in the stylesheet. Font-related styles can be selected in the normal manner.
-For multi-line captions, the line spacing may be controlled by modification of `\LineSpacing` (in the same scaleable units as parameter `\FontSize`) or 
+As noted above, caption styling is controlled via the `fig` marker in the stylesheet. Font-related styles can be selected in the normal manner.
+For multi-line captions, the line spacing may be controlled by modification of `\LineSpacing` (in the same scalable units as parameter `\FontSize`) or 
 `\BaseLine` (units must be supplied).
 
 ### No Captions and references at all
@@ -657,8 +657,8 @@ For multi-line captions, the line spacing may be controlled by modification of `
 
 ## Image Categories
 ### Borders and backgrounds
-If the (non-standard) `cat` attribute (e.g. `cat="myborder"`)  is specified in the piclist (or USFM3 attribute list), then sidebar-like borders and background colours may be speicified for the image.
-The border or frame is positioned relative to the image itself (i.e. exlcuding the caption).
+If the (non-standard) `cat` attribute (e.g. `cat="myborder"`)  is specified in the piclist (or USFM3 attribute list), then sidebar-like borders and background colours may be specified for the image.
+The border or frame is positioned relative to the image itself (i.e. excluding the caption).
 For example:
 ![](imgs/rose_border.png)
 
@@ -687,7 +687,7 @@ This makes it possible to apply a caption to a full-page map, for instance.
 
 Font-related style options (fontname, size, bold, italic, etc) and also justification and margin settings also take effect, but this would normally be avoided for the sake of consistent appearance.
 
-### Image Credit contols
+### Image Credit controls
 The image category also applies to the credit box, allowing it to
 be moved and coloured so that there is no clash with the border or background:
 

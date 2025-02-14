@@ -4,7 +4,7 @@ In addition to the special-purpose `piclist` and `adjlist` files, there are now
 two methods to insert generic USFM mark-up or TeX code into the input.  Both
 methods use the same mechanism, indeed the same mechanism is used by piclists
 and adjustlits (with some behind-the-scenes modifications) and specially
-formated files. In a `.tex` file (e.g. `ptxprint-mods.tex`), it is possible to add
+formatted files. In a `.tex` file (e.g. `ptxprint-mods.tex`), it is possible to add
 short pieces of text or code like this:
 
 ```\addtrigger{REV20.14-preverse}{\code}```
@@ -70,7 +70,7 @@ A stand-alone milestone can normally serves as a trigger point. However, for
 some stand-alone milestones that really makes no sense. An example would be the
 `\xts` milestone used for Strong's numbers. To suppress the milestone-calling for that 
 milestone, the code includes `\NotTriggerPoint{xts}`. Other milestones can be
-similary skipped.
+similarly skipped.
 To revert to previous behaviour, `\IsTriggerPoint{xts}` can be specified.
 
 The test to skip triggers *only* affects milestones with their default attribute set. 

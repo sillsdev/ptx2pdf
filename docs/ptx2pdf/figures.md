@@ -101,12 +101,12 @@ second parameter may itself be 1 or more characters with the secondary position
 as the first character and the tertiary position as the rest.
 
 Initially, we check to see if the second (alignment) parameter is page-number
-dependant (`i` or `o` for inner or outer). We then convert that to the relevant 
+dependent (`i` or `o` for inner or outer). We then convert that to the relevant 
 absolute alignment (`l` or `r`). If the location is `t` or `b`,  an
 image that will be in an insert, then we regenerate the relevant code.
 
 If the location is `h`, meaning an inline graphic, then capture the main
-location and the second parameter is the absoulute alignment (`l`, `r` or `c`
+location and the second parameter is the absolute alignment (`l`, `r` or `c`
 for left, right or central).
 Since we are
 inline, clear the flag to store the picture box in an insert. If the alignment
@@ -125,7 +125,7 @@ insertion. If the alignment is not central, then set the narrow picture flag.
 If the location is `P` for page then set the picture width to the page width.
 Likewise if the location is `F` for full (page to edge), then don't set a width.
 In either case warn the user we are entering experimental waters and set the
-alignment to be the second character (the familar `l`, `r`, `c`, `i`, or `o`) 
+alignment to be the second character (the familiar `l`, `r`, `c`, `i`, or `o`) 
 and the vertical alignment the third.
 
 [=cfig_parsepicuse]::
@@ -249,7 +249,7 @@ paragraph is completed and we add a half space at the end.
 
 The ```\add@credit``` macro performs similar handling to the  caption, except that 
 there are considerably more placement options, including rotation. Also the 
-alignmnet of the positions is somewhat tricky.
+alignment of the positions is somewhat tricky.
 No attempt at precise trigonometry is performed, so rotation in steps of 90 degrees 
 is highly recommended. The rotation and box commands are the same ones used for 
 thumb-tabs.
@@ -329,7 +329,7 @@ page-shipping  routine's use of `\vss` (vertical stretch or shrink) above and
 below the image, and the `\topm@rgin` and `\bottomm@rgin` that are added above
 and below the image before this 'centering' occurs. 
 
-Cutout pictures really do not like occuring mid paragraph. Ideally they occur at
+Cutout pictures really do not like occurring mid paragraph. Ideally they occur at
 the start of a paragraph before the first text. But if they do occur mid
 paragraph then either start a new paragraph of the same type or else the marker
 before a `\v` occurred.
@@ -375,7 +375,7 @@ If there is one or more pictures waiting to be output we split the vbox to the p
 and we rebox the result, leaving the remainder back in the `wholepagepic`. We
 also capture the final penalty, which uses a protocol of special numbers to
 communicate whether this image is a full page within margins or full page to the
-edge image. If this image goes to the limits of the physical page then svae the
+edge image. If this image goes to the limits of the physical page then save the
 page width and height and ship the image as a page and restore the physical page
 dimensions and advance the page number. Otherwise this is a normal page filling
 image to the margins and we create a `pagecontents` that consists of the image
@@ -431,7 +431,7 @@ the file.
 
 [=cpic_read]::
 
-`.piclist` files are read sequentially an interpretted sequentially. Only the
+`.piclist` files are read sequentially an interpreted sequentially. Only the
 next picture is read and its location is stored. If that location never matches,
 no new picture lines will be read, of if there is a syntax error, the rest of
 the file will be ignored.

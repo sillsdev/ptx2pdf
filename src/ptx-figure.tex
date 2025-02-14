@@ -218,7 +218,7 @@
 %+cfig_parsextra
 \def\getnum#1=#2\end{#1}%
 
-% These three macros split up x-xetex="foo" parameter, stripping out any key=val formated parameters and leaving the rest.
+% These three macros split up x-xetex="foo" parameter, stripping out any key=val formatted parameters and leaving the rest.
 %
 
 \def\p@rs@xtr@#1=#2=#3\end{\edef\t{#2}%
@@ -550,7 +550,7 @@
   \trace{g}{credit natural size is \the\ht0+\the\dp0 x\the\wd0}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
-  % Calculuate maximum credit width.  (note count255 is now
+  % Calculate maximum credit width.  (note count255 is now
   % positive)
   \ifnum \cr@ditr@tn>45
     \ifnum \cr@ditr@tn<135
@@ -1091,7 +1091,7 @@
  \fi% end \ifIncludeFigures
 }
 
-\def\pl@cefigure{%Acutally place the figure
+\def\pl@cefigure{%Actually place the figure
   \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\csname pic@lign\endcsname}%
 %-cfig_dofigure_4
 %+cfig_dofigure_5
@@ -1334,7 +1334,7 @@
     \ifh@ldfig
       \h@ldfigfalse
     \else
-      \trace{g}{Can proceess immediately}%
+      \trace{g}{Can process immediately}%
       \dofigp@ge
     \fi
   \fi

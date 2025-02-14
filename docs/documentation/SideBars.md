@@ -1,5 +1,5 @@
 # Sidebars
-Sidebars (`\esb`) are boxes of text (or other USFM elements) which (in spite of their name) are not necessarily on the side. They *are* normally 'asides', i.e. not part of the scripture text, and were intitially designed for study notes and similar. 
+Sidebars (`\esb`) are boxes of text (or other USFM elements) which (in spite of their name) are not necessarily on the side. They *are* normally 'asides', i.e. not part of the scripture text, and were initially designed for study notes and similar. 
 
  As implemented in PTXprint, they act as miniature pages, which may have a background colour which may in turn be transparent (allowing a whole-page background image or decoration to show through). They may also have
 borders and their own watermark or background image, and a foreground image such as a logo that would further identify the type of information being presented (e.g. a scroll for historic notes, or a compass for geographical notes).
@@ -9,7 +9,7 @@ Although the USFM standard is silent on this matter, PTXprint allows sidebars to
 
 ## Styling options for side bars
 The USFM standard suggests `\esb \cat people\cat* ....`   to be the opening of  a sidebar. The styling is thus associated with a sub-category of `\esb`. Paratext does not appear to have a format for indicating such styling in the stylesheet, and PTXprint thus had to invent one:  
-`\Marker cat:people|esb`  Most of this document discusses the multitude of styling options for controling the sidebar itself. However, first the styling of paragraphs, etc. will be addressed:
+`\Marker cat:people|esb`  Most of this document discusses the multitude of styling options for controlling the sidebar itself. However, first the styling of paragraphs, etc. will be addressed:
 
 ##Styling markers within sidebars
 A feature of sidebars is that it is **normal** for styling to be different inside them. E.g. font size may be smaller, the font face may be different, etc.
@@ -53,7 +53,7 @@ that are shared with images are `t`, `b`, `c` for top, bottom, centre respective
 for borders and padding, and then tells TeX to expand the text contents to fill the page. This is 
 very useful for cover-pages, etc., where the TeX command `\vfill` can be used to provide stretch.
 
-E.g.: `\Postion Fcf` will stretch the box vertically to occupy the entire paper, whereas `Position Fcc` will 
+E.g.: `\Position Fcf` will stretch the box vertically to occupy the entire paper, whereas `Position Fcc` will 
 center the box on the page taking up as little space as possible.
 
 Note that `h` and `p` sidebars, if they have  no background colour or images, and are not positioned 
@@ -88,7 +88,7 @@ If the sidebar is in a cutout, this is the space between the edge of the sidebar
 
 * Default: no image
 
-Name of a foreground image.  The foreground image will appear in the defined place for all occurances of \esb boxes in this category.
+Name of a foreground image.  The foreground image will appear in the defined place for all occurrences of \esb boxes in this category.
 Note that JPEG has no transparency, use PDF images for line art / transparent images above a coloured background.
 
 
@@ -176,7 +176,7 @@ Options relevant for normal sidebars (see [covers documentation](covers.md) for 
 * `box` The background colour
 * `iborder` Inner edge of the border
 * `border` Outer edge of the border
-* `outer` Whichever is futher out, the outer edge of the border or the background colour.
+* `outer` Whichever is further out, the outer edge of the border or the background colour.
 
 **Note** At present this does not interact well with `s__` positioned foreground images.
 
@@ -352,7 +352,7 @@ The TeX code has two opportunites to interact with the content of a sidebar: bef
 Once the sidebar has ended, the content has been arranged into a series of paragraphs and is basically an opaque box. That contents-box has, as is normal in TeX,  a height, width and depth (below the baseline) of the last line of text. There is no opportunity to adjust the width, reposition paragraphs, or know where the baseline of mid-sidebar paragraphs are.
 
 ### Width
-The total width of the contents-box and any surrounding borders and padding  must fit in the space defined -- the width of the containing element (page, column or another sidebar) multiplied by the `\Scale` property supplied. Thus dimensions are calculated by the code **before** the sidebar content starts. This width of the sidebar contents  and the box padding, border width and padding. Similarily, the position of foreground images must be determined before any content has been defined, and for images positioned at the side of the sidebar, this further reduces the width of text. For images in cut-outs, the image must also be added to the input stream. (This, hopefully, explains why foreground images cannot in general reference the as-yet-unknown height of the sidebar contents).
+The total width of the contents-box and any surrounding borders and padding  must fit in the space defined -- the width of the containing element (page, column or another sidebar) multiplied by the `\Scale` property supplied. Thus dimensions are calculated by the code **before** the sidebar content starts. This width of the sidebar contents  and the box padding, border width and padding. Similarly, the position of foreground images must be determined before any content has been defined, and for images positioned at the side of the sidebar, this further reduces the width of text. For images in cut-outs, the image must also be added to the input stream. (This, hopefully, explains why foreground images cannot in general reference the as-yet-unknown height of the sidebar contents).
 
 ### Height
 The final height of the sidebar is similarly constructed with paddings, etc, but also includes the `SpaceBefore` and `SpaceAfter` (which 
@@ -394,7 +394,7 @@ The considerations in selecting the best option are as follows:
 * (Long) sidebars that use the standard baseline should be expected to keep back-to-back registration, for clarity on thin paper. Use `normal` or `orig`
 * For sidebars that always use a non-standard baseline, registration is a non-issue, and it may be preferable to select `none`.
 * For very short sidebars, back-to-back registration is less of an issue, pick in accordance with aesthetics.
-* For sidebar styles that occasionally contain paragraph styles with unusual baselines, but often tend towards being long, `smart`  is probably to be prefered.
+* For sidebar styles that occasionally contain paragraph styles with unusual baselines, but often tend towards being long, `smart`  is probably to be preferred.
 * `normal` or `orig` should be used if the paragraphs use the standard baseline but the sidebar often starts with rules, `\b` or `\zgap`   that would cause `smart` to ignore gridding.
 * For the automatic titlebox and headingsbox sidebars,  only `orig` and `heading` obey the heading-style's `SpaceBefore` parameter, which may be a significant decision factor. (All options obey the heading-styles `SpaceAfter`)
 
@@ -411,7 +411,7 @@ The considerations in selecting the best option are as follows:
 
 The above show that using `smart` reduces the space used on the page by a line in the case where the linespacing is smaller. `none` further affects the space used, by altering the internal layout within the sidebar, but it the issue of lost back-to-back registration means that it is normally unsuitable for long sidebars.
 
-Note: all of the comparisons above used `\XeTeXuseglyphmetrics=1` and a `BorderPadding` of 1. Not making use of glyph-based metrics would have caused a noticable increase in the spacing.
+Note: all of the comparisons above used `\XeTeXuseglyphmetrics=1` and a `BorderPadding` of 1. Not making use of glyph-based metrics would have caused a noticeable increase in the spacing.
 
 #### Comparison of options for headingsbox 
 
@@ -463,7 +463,7 @@ any stylesheet commands will behave as though in a normal stylesheet, and any ca
 options listed above  will apply to \esb boxes without a specified category.
 
 If the stylesheet is loaded by `\categorysheet`, then is used internally,
-before and after the categorysheet is read, and is not normally necesary.
+before and after the categorysheet is read, and is not normally necessary.
 
 The `\stylesheet` command should issues a warning if `\Category` is used without an
 `\EndCategory` command towards the end of the file. However, there is no need to place

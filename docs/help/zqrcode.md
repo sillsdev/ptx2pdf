@@ -10,7 +10,7 @@ A milestone that will generate a QR code
 ## Description
  Generates a QR-code from attribute data (which may not contain double-quotes), with the specified size (or from FontSize, if cat is provided). 
 
-While the ISO standard allows codes to be as small as 1cm, and the code can generate them at any size that fits on the page, it is generaly recommended that a QR-code not be smaller than 2cm, for scanning at 20cm. Lower-end phones may not be able to focus sufficiently closely for smaller codes. The resolution of the printer also impacts the size of a printable QR code (see section later on)
+While the ISO standard allows codes to be as small as 1cm, and the code can generate them at any size that fits on the page, it is generally recommended that a QR-code not be smaller than 2cm, for scanning at 20cm. Lower-end phones may not be able to focus sufficiently closely for smaller codes. The resolution of the printer also impacts the size of a printable QR code (see section later on)
 
 ## Attributes
 * `data="contents"` the data to be turned into a QR code.
@@ -29,14 +29,14 @@ The QR code generator does its work automatically. I.e. you probably don't need 
 
 QRcodes exist in different '*versions*'. The version number (up to 40) determines how many 'modules' (dots) are on each side - 4 × version number + 17 dots on each side.  A QR code always contains some data reserved for error-correcting, but the *amount* of error-correcting data varies, depending on the 'error-correcting level'.
 The number of characters that can be encoded further depends on the
-*type* of data: numeric data is the most efficient, (3.33 bits/character); then alpha-numeric (`0-9`, `A-Z`, space and a few symbols, but **no** lower case -- 5.5 bits/character); or other 8-bit data. Unicode data is stored according to UTF-8, and so may require several 8-bit bytes.
+*type* of data: numeric data is the most efficient, (3.33 bits/character); then alphanumeric (`0-9`, `A-Z`, space and a few symbols, but **no** lower case -- 5.5 bits/character); or other 8-bit data. Unicode data is stored according to UTF-8, and so may require several 8-bit bytes.
 
 ### Some gruesome details...
 There are 4 error correcting levels, (`L`, `M`, `Q` and `H`, with Q and H being recommended for use in dirty environments, and M being considered 'normal use').
 **A QR code does not necessarily contain a single type of data**, and the type of data must also be encoded (further reducing the number of  bits available for data).
 
 ### Helpful result
-If a URL can be written with only upper-case and does not contain `&`,  `?`, `#` or quotes,  then it probably all qualifies as alpha-numeric.  However, while site-names are case-insensitive (and thus, if written in upper case can be encoded more economically), the rest of the URL is case sensitive (i.e. the link [HTTPS://EN.WIKIPEDIA.ORG/wiki/QR_code](HTTPS://EN.WIKIPEDIA.ORG/wiki/QR_code) is still a valid link, and a long block of alphanumeric data like this will be encoded more economically than the more normal version of the URL).
+If a URL can be written with only upper-case and does not contain `&`,  `?`, `#` or quotes,  then it probably all qualifies as alphanumeric.  However, while site-names are case-insensitive (and thus, if written in upper case can be encoded more economically), the rest of the URL is case sensitive (i.e. the link [HTTPS://EN.WIKIPEDIA.ORG/wiki/QR_code](HTTPS://EN.WIKIPEDIA.ORG/wiki/QR_code) is still a valid link, and a long block of alphanumeric data like this will be encoded more economically than the more normal version of the URL).
 
 ### Capacity of some QR code versions
 Version | Size | Data bits: ... L | ... M | ... Q |... H | Bytes of binary data
@@ -52,7 +52,7 @@ Version | Size | Data bits: ... L | ... M | ... Q |... H | Bytes of binary data
 
 
 ### Size implications of versions
-If  a home-style printer is being used, which might have a resolution of, say 600dpi, then 1pt (1/72.27 in) represents just over 8 printer dots. That's not many dots to draw a square, especially since a printer's nozzles sometimes block. Probably 1pt squares are going to be too small to be printed / read reliably. It might be decided that each 'module' in the QR code should be at least 16 printer dots, or 1.92pt. Even that would probably give some noticable pixelised effects if there were no fuzziness from the ink/toner. This example gives the following minimum sizes for the printed area:
+If  a home-style printer is being used, which might have a resolution of, say 600dpi, then 1pt (1/72.27 in) represents just over 8 printer dots. That's not many dots to draw a square, especially since a printer's nozzles sometimes block. Probably 1pt squares are going to be too small to be printed / read reliably. It might be decided that each 'module' in the QR code should be at least 16 printer dots, or 1.92pt. Even that would probably give some noticeable pixelised effects if there were no fuzziness from the ink/toner. This example gives the following minimum sizes for the printed area:
 
 | Ver | Size | Dimension at 1.92pt/square
 |------| ------ | ------------- 
@@ -64,7 +64,7 @@ If  a home-style printer is being used, which might have a resolution of, say 60
 | 8 | 49x49 | 3.28 cm
 | 10 | 57x57 | 3.81 cm
 
-**NOTE** that the size parameter for `\zqrcode` is the total size of the code, including the surrouding frame or 'quite zone'.
+**NOTE** that the size parameter for `\zqrcode` is the total size of the code, including the surrounding frame or 'quite zone'.
 
 ### Typesetting implications of versions
 From the above, it should be clear that visually similar QR codes (same number of dots per side) can hold different quantities of data.  If consecutive pages in a publication have QR codes, (representing, say, links to on-line media for the relevant sections), it may be preferable that all be the same version despite variations in the link length. It may also be preferable to enforce a maximum version number to force an error rather than print a URL which will have dots too small to scan in practice. E.g. a QR code of size 2.5cm shouldn't 

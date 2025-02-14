@@ -116,7 +116,7 @@
   \fi
 }
 
-\def\r@tio#1#2{{% find the fractional ratio #1/#2, trying to get to the limit of TeX's fixed-point maths. Assumption is that both values are "reasonable" font/line/page dimenstions.
+\def\r@tio#1#2{{% find the fractional ratio #1/#2, trying to get to the limit of TeX's fixed-point maths. Assumption is that both values are "reasonable" font/line/page dimensions.
   \dimen1=#1 \dimen2=1pt \count255=16384 % maxdimen=16384pt-1sp. 
   \loop
     \ifdim \dimen1>\dimen2
@@ -177,7 +177,7 @@
 \def\newm@rknum#1{%define a new m@rknum#1 which gets set as the next unused marks  register (assuming all marksN are registered with this function.
   {\count255=\numexpr \m@rksm@x+1\relax%
   \x@\xdef\x@\m@rksm@x{\the\count255}%
-  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}% Don't change this witout a lot of search and replace!
+  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}% Don't change this without a lot of search and replace!
   \trace{ma}{newm@rknum #1 -> \m@rksm@x}%
 }
 \def\addnewm@rk#1{\x@\usedm@rks\x@{\the\usedm@rks \\{#1}}\trace{ma}{addnewm@rk #1 - usedm@rks=\the\usedm@rks}}

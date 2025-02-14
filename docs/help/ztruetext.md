@@ -17,7 +17,7 @@ This appears like a character style, but in fact it can swallow entire paragraph
 
 ## See also
 
-* Documentation on [Contitional text](conditional.md)
+* Documentation on [Conditional text](conditional.md)
 * [zifvarset](zifvarset.md)
 * [zifhook](zifhook.md)
 

@@ -35,7 +35,7 @@ An alternative, (possibly *additional*) mechanism is to  "**shave**" some lines 
 ### Current limitations on shaved notes at time of writing:
 1. Only the last footnote class appearing on the page can be shaved.
 2. Only paragraphed notes can get shaved
-3. As the current mecahnism is to try the longest page-contents *first* and then try to shave footnotes so that they fit, breaking a footnote is not a last resort, and no amount of tweaking penalties can make it so.
+3. As the current mechanism is to try the longest page-contents *first* and then try to shave footnotes so that they fit, breaking a footnote is not a last resort, and no amount of tweaking penalties can make it so.
 4. Diglot use is untested.
 
 ### Controls

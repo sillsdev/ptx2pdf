@@ -1,11 +1,11 @@
 # zcolsync
 ## Summary
-A manual syncronisation point for diglots / polyglots synchronsied with the 'scores' method.
+A manual synchronisation point for diglots / polyglots synchronsied with the 'scores' method.
 ## Examples
 ```
-\zcolsync|id\* % This position shuold be synchronised with id on the other column(s)
+\zcolsync|id\* % This position should be synchronised with id on the other column(s)
 \zcolsync|v23a\* % This position should be synchronised as if it were verse 23a.
-\zcolsync|p3\* % This position should syncronised as if it were paragraph 3.
+\zcolsync|p3\* % This position should synchronised as if it were paragraph 3.
 
 ```
 ## Description

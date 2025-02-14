@@ -129,7 +129,7 @@
 % Thumb-tabs codes assume  setup in the form \settumbtab{Gen}{1}, 
 % where Gen exactly matches the \toc3 entry for the book.
 \def\ThumbTabStyle{toc3}%Which style defines the font? Default is toc3
-\def\tabBoxCol{0 0 0}%Bacground as r g b 
+\def\tabBoxCol{0 0 0}%Background as r g b 
 \def\tabFontCol{1 1 1}%Foregreound as r g b
 
 \def\sett@bname#1{\xdef\t@bname{t@b-#1}}
@@ -450,7 +450,7 @@
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
     \pdfp@geout
     \ifvoid\ornXobjects\else
-      \trace{orn}{Emmitting Xobj definitions: \ornXFid@list}%
+      \trace{orn}{Emitting Xobj definitions: \ornXFid@list}%
       \global\let\ornXFid@list\empty
       \vbox to 0pt{\vss\box\ornXobjects}%
     \fi
@@ -507,7 +507,7 @@
     \offinterlineskip                                                           %(1)
     \vbox to \pdfpageheight{\vss
       \ifvoid\ornXobjects\else
-        \trace{orn}{Emmitting Xobj definitions: \ornXFid@list}%
+        \trace{orn}{Emitting Xobj definitions: \ornXFid@list}%
         \global\let\ornXFid@list\empty
         \vbox to 0pt{\vss\box\ornXobjects}%
       \fi

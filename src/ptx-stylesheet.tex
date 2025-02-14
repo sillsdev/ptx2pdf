@@ -214,7 +214,7 @@
 %  \ifx\c@tprefix\empty\else\should@xist{\c@tprefix#2\ds@ffix}\fi
 %} % expand now, not later
 
-\def\setp@ram#1#2#3{\relax\edef\@mkr{\x@\cstackpeek #2,\E}% Potentialy we have a fake stack. Save as uppermost
+\def\setp@ram#1#2#3{\relax\edef\@mkr{\x@\cstackpeek #2,\E}% Potentially we have a fake stack. Save as uppermost
   \ifx\ds@ffix\empty\x@\@set@mkr\@mkr++\E\fi
   \trace{sC}{Setting parameter for #1/\c@tprefix#2/#3}%
   \x@\xdef\csname\c@tprefix\@mkr:#1\endcsname{#3}\trace{sa}{set \c@tprefix\@mkr:#1 -> #3}%
@@ -232,7 +232,7 @@
 % --|------
 % Sets temporary macro \p@ram to the value
 % The macro was once just diglot aware, allowing all parameters to have L Left/Right variant or use
-% default. (e.g when asked for paramter for v, check for vL|vR, default to v). Now it (potentially) needs to
+% default. (e.g when asked for parameter for v, check for vL|vR, default to v). Now it (potentially) needs to
 % take into account: diglot, categories and milestones.
 % Rather than attempt to code \ifs for all possible 8 (16? more?) options, it
 % now subcontracts s@tpossParams to build a comma-separated list of them,
@@ -604,7 +604,7 @@
   \let\d@\d@gettheparam
 }
 
-\def\getthep@ramObeyRegularTopChar#1{%Called with p@ssParams set up. work down through possParam list, stopping on value or \Regular in the stylesheet, and not decending from char to paragaph style
+\def\getthep@ramObeyRegularTopChar#1{%Called with p@ssParams set up. work down through possParam list, stopping on value or \Regular in the stylesheet, and not descending from char to paragraph style
   \let\d@gettheparam=\d@
   \let\@@metC\relax
   \trace{sa}{getthep@ramObeyRegularTopChar{#1}}%
@@ -655,8 +655,8 @@
     \trace{sa}{Merging options}%
     \x@\fe@turemaths\r@s[] \E
     \trace{sa}{Final feature list:\f@atureset}%
-    % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
-    \let\r@s\empty % MUST start with empy list!
+    % Font-features should now be recorded in \f@atureset. Now Rebuild r@s based on its contents.
+    \let\r@s\empty % MUST start with empty list!
     \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\x@\st@rtswithsl@sh\t@st\E\edef\r@s{\ifx\r@s\empty\iftemp\t@st\else:\t@st\fi\else\iftemp\t@st\r@s\else\r@s:\t@st\fi\fi}\x@\let\csname ##1\endcsname\relax\fi}%
     \x@\cstackdown\f@atureset,\E
     \let\n@xt\f@aturen@xt
@@ -938,7 +938,7 @@
 %+csty_testpublishability
 % All types of marker use this to check for the "nonpublishable" property
 \def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
- \getp@ram{properties}{#1}{#1}%Should not decend, but can have specific version
+ \getp@ram{properties}{#1}{#1}%Should not descend, but can have specific version
  \x@\t@stnonpub\p@ram nonpublishable!}
 \def\@@t@stpublishability#1#2{\n@npublishablefalse % Some things may need a descending version
  \getp@ram{properties}{#1}{#2}%
@@ -1098,7 +1098,7 @@
     % in the configuration file in order to omit chapter numbers for single chapter books.
    \ifhmode\unskip\fi % since a chapter effectively starts a new paragraph, clear out paragraph final whitespace
    \ifOmitChapterNumber
-     \trace{c}{Chapter numbers ommitted}%
+     \trace{c}{Chapter numbers omitted}%
      % If we are mid paragraph remove the space caused by the \n before the \c.
      % Not sure why the damage is already done (e.g. end of ior*)
      %\ifhmode\unskip\fi
@@ -1631,7 +1631,7 @@
     \if Y\tmp\relax  %end it and pop it
       \if #1\ss@Para\relax\xdef\last@popped@parstyle{#2}\fi
       \ifcsname endit@#1\endcsname
-        \trace{sa}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop
+        \trace{sa}{Complex pop endit@#1}% endit@ macros are assumed(required) to call mcpop
         \csname endit@#1\endcsname
       \else
         \trace{sa}{Simple pop sufficient}%
@@ -1641,7 +1641,7 @@
       \let\wip@do=\cstackrelax %stop here
       \if P\tmp\relax % ....but end it and pop first
         \ifcsname endit@#1\endcsname
-          \trace{sa}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop
+          \trace{sa}{Complex pop endit@#1}% endit@ macros are assumed(required) to call mcpop
           \csname endit@#1\endcsname
 	    \else
           \trace{sa}{Simple pop sufficient}%
@@ -2195,7 +2195,7 @@
 % remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
 \def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{\doc@t{#1}}
-\def\doc@t#1{% Called to start categorry from all sorts of places, including footnotes. No extra parargaphs please!
+\def\doc@t#1{% Called to start categorry from all sorts of places, including footnotes. No extra paragraphs please!
   \trace{sc}{Starting category #1, with stylet@pe=\stylet@pe, mcstack=\mcstack}%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%

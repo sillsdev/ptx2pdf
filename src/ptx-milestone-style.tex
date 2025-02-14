@@ -147,7 +147,7 @@
    \csname init@ttribs\endcsname
 }
 
-\def\dr@pmilest@ne#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
+\def\dr@pmilest@ne#1+#2+#3\E{% This iterates the stack to kills the TOP matching milestone 
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\empty
     \let\d@=\cstackrelax %Stop processing (permanent change)
@@ -184,7 +184,7 @@
   \trace{m}{dr@pmilest@ne: \@ut}%
 }
 
-\def\dr@pmilest@neB#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
+\def\dr@pmilest@neB#1+#2+#3\E{% This iterates the stack to kills the TOP matching milestone 
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\empty
     \let\d@=\cstackrelax %Stop processing 
@@ -196,7 +196,7 @@
   \trace{m}{dr@pmilest@neB: \@ut}%
 }
 
-\def\dr@pmilestone#1#2{%Kill a milestone that might be burried in the stack, and might be nested.
+\def\dr@pmilestone#1#2{%Kill a milestone that might be buried in the stack, and might be nested.
   \trace{m}{Dropping milestone #1 from \mcstack}% 
   \edef\MSch@cking{#1}%
   \edef\MSch@ckid{#2}%
@@ -226,8 +226,8 @@
 } 
 
 % If there is '\s \qt-s\*' in the input, should the qt-s have effect on the paragraph style? If the boolean is true, 
-% then it does not, and the paragaph starts differently to '\qt-s\* \s'. Note that this does not trigger any extra paragraph break,
-% all it does is ensure that a parargaph waiting to start *is* safely started.
+% then it does not, and the paragraph starts differently to '\qt-s\* \s'. Note that this does not trigger any extra paragraph break,
+% all it does is ensure that a paragraph waiting to start *is* safely started.
 \newif\ifDefineParBeforeMilestone
 \DefineParBeforeMilestonetrue 
 
@@ -643,7 +643,7 @@
   % set ztruetext or zfalsetext to produce output, depending on result.
   % testing is of zvar variable var, if the variable is non-empty, the result is true.
   % If it's set but empty, then if emptyok is given but not "F", then the
-  % varible having been defined *at all* is sufficent to be considered true.
+  % variable having been defined *at all* is sufficient to be considered true.
   %
   %\message{MSzifvarset}%
   \get@ttribute{var}%
