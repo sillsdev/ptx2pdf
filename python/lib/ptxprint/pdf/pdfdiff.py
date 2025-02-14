@@ -91,3 +91,28 @@ def pdfimages(infile, dpi=0):
             return
         yield img
 
+def main():
+    def splithex(s):
+        return [int(s[i:i+2], 16) for i in range(0, 6, 2)]
+
+    def doError(txt, secondary=None, **kw):
+        print(txt)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('infilea', help="Original input PDF file")
+    parser.add_argument('infileb', help="Different input PDF file")
+    parser.add_argument('outfile', help="Output difference PDF file")
+    parser.add_argument('-O','--oldcol',help="From colour 6 hex RGB digits")
+    parser.add_argument('-N','--newcol',help="To colour 6 hex RGB digits")
+    args = parser.parse_args()
+
+    if args.oldcol is not None:
+        args.oldcol = splithex(args.oldcol)
+    if args.newcol is not None:
+        args.newcol = splithex(args.newcol)
+
+    res = createDiff(os.path.abspath(args.infilea), os.path.abspath(args.infileb),
+            os.path.abspath(args.outfile), doError, color=args.oldcol, oldcolor=args.newcol)
+
+if __name__ == "__main__":
+    ptxprint.pdf.pdfdiff.main()
