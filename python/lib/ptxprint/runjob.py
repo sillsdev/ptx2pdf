@@ -867,7 +867,7 @@ class RunJob:
             if not rererun:
                 break
 
-        if not self.noview and not self.args.testing and not self.res:
+        if not self.res:
             self.printer.incrementProgress(stage="xp")
             tmppdf = self.procpdfFile(outfname, pdffile, info)
             if info["finishing/extraxdvproc"]:
