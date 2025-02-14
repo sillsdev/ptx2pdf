@@ -2067,21 +2067,36 @@
  \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
- %FIXME: Next line sholdn't be needed but works to save unwanted last-line issue
-  %\ifdim\the\dimexpr\pagegoal-\pagetotal\relax<.25\baselineskip\relax\penalty 9999\fi
  \let\layoutpen@lty\book@ndpenalty 
  \iflastptxfile
-   \setbox\bookendbox\vbox{\lastbookendrule}%
+   \setbox\bookendbox\vbox{\hsize=\textwidth \lastbookendrule}%
  \else
    \ifnum 1=\ifendbooknoeject 1\else\ifx\PageAlign\val@MULTI 1 \else 0\fi\fi
-     \setbox\bookendbox\vbox{\bookendrule}%
+     \setbox\bookendbox\vbox{\hsize=\textwidth \bookendrule}%
    \else
      \setbox\bookendbox\vbox{}%
    \fi
  \fi
  \layoutstylebreak
  \singlecolumn
- \box\bookendbox
+ \tempfalse
+ \iffilehasverses\temptrue\fi
+ \ifnum\pageno=\ptxst@rtp@ge
+    \ifnum\pagetotal>0pt \temptrue\fi
+ \else
+    \temptrue
+ \fi
+ \ifdim\pagetotal=0pt
+   \trace{o}{No bookendbox at the start of a page}%
+   \setbox\bookendbox\box\voidb@x
+ \fi
+ \iftemp
+   \ifnum \ifdim\ht\bookendbox=0pt \ifdim\dp\bookendbox=0pt 0 \else 1 \fi \else 1 \fi =1 
+     \box\bookendbox
+   \fi
+ \else
+    \trace{o}{No bookendbox, as the book is empty}%
+ \fi
  \ifOneChapBook\endOneChapBook\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
  \ifx\id@@@\n@ID\relax\else\csname bookend-\id@@@\endcsname\relax\fi

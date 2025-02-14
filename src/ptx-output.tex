@@ -91,7 +91,7 @@
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \fi
   \noteseenfalse
-  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins, wd=\the\wd\verybottomins, availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}%
+  \trace{o}{verybottomins(p@geendcontent): height=\the\ht\verybottomins, wd=\the\wd\verybottomins, availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}%
   \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\inp@gegap\tmpwrite{verybottomins}\fi % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\lshiftc@lumn{\the\pageno}\vbox{\unvbox\verybottomins}}%
   \fi\fi
@@ -101,6 +101,7 @@
 
 %+c_onecoltrial_pagecontents
 \def\onecolp@gects{%
+  \m@keinp@gegap
   \def\pagecontents{%                                                     %(3)
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
@@ -119,8 +120,8 @@
           \doTextB@rder{\colA}%3
         \fi
         \box\colA\kern0pt \vfil}%
-      \m@keinp@gegap
       \p@geendcontent
+      \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14\fi\fi
   }%
 }
 \def\@@onecolp@gects#1{
@@ -141,7 +142,6 @@
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
-      \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14\fi\fi
 }
 %+c_onecoltrial_pagecontents
 
@@ -505,6 +505,7 @@
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
     \ifinendbook\ifvoid255 \endbooktrue\fi\fi
+    \m@keinp@gegap
     \global\setbox\partial=\vbox{%
       \dimen1=\textwidth
       \ifvoid\partial\else \vbox{\hbox to \dimen1{%
@@ -547,7 +548,7 @@
     \tempfalse%
     \ifinendbook
       \ifdim\dimexpr \availht - \ht\partial \ifendbook -\ht\bookendbox - \dp\bookendbox \fi \relax<0pt \relax
-        \trace{o}{outputting full box, but better to resize}%
+        \trace{o}{outputting full box, but it would have bene better to resize}%
          \temptrue
       \fi
     \else
@@ -1411,6 +1412,7 @@
     \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     % do this after we have the final boxes
     \dimen4=\ht\partial \dimen5=\dp\partial
+    \m@keinp@gegap
     \global\setbox\partial=\vbox{
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
@@ -1595,6 +1597,7 @@
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
     \trace{o}{box height + gap = \the\availht \space + \the\bmg@p}%
+    \m@keinp@gegap
     \def\pagecontents{%
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, boxA=\the\ht\colA, boxB=\the\ht\colB, colbox=\the\ht\xr@fbox}%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
@@ -1617,7 +1620,6 @@
       \dimen4=\dimexpr \dimen2 - \dimen3 
       \trace{o}{textbox height=\the\ht\colA, depth=\the\dp\colA, newdepth=\the\dimen4}\dp\colA=\dimen4
       \box\colA
-      \m@keinp@gegap
       \p@geendcontent
       \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14\fi\fi
     }%
@@ -1860,6 +1862,7 @@
 %+c_twocolpageout
 \def\twocolp@geout{%This gets used a few times
   \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins : topskip=\the\topskip , \the\splittopskip}%
+  \m@keinp@gegap
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins  : topskip=\the\topskip , \the\splittopskip}%
     \setbox0\vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
@@ -1869,7 +1872,6 @@
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
-      \m@keinp@gegap
       \p@geendcontent
     }\ifFinalNotesDown\unvbox0\else\box0\fi}\plainoutput\trace{p}{plainoutput for twocolp@geout}%
     \s@tpage
