@@ -1,4 +1,5 @@
 include python/readme.md
 include python/LICENSE.txt
 recursive-include python/lib/ *.*
-graft src/
+global-exclude *.py[cod] *~
+graft xetex/bin

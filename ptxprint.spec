@@ -81,21 +81,22 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
                       + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
                       + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
-                      + [('src/mappings/*.tec', 'ptx2pdf/mappings')]
+                      + [('python/lib/ptx2pdf/mappings/*.tec', 'ptx2pdf/mappings')]
                       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptxprint/PDFassets/reference')]
                       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
-                      + [('src/contrib/ornaments/*.*', 'ptx2pdf/contrib/ornaments')]
-                      + [('src/contrib/QRcode.tex', 'ptx2pdf/contrib')],
+                      + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')]
+                      + [('python/lib/ptxprint/xetex/texmf-var/web2c/xetex/*.fmt', 'ptxprint/xetex/texmf-var/web2c/xetex')]
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
                 # data files are considered text and end up where specified by the tuple.
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
                       + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
+#                      + sum(([('{}/*.*'.format(dp), 'ptxprint/{}'.format(dp))] for dp, dn, fn in os.walk('xetex') if dp not in ('xetex/bin/windows', ), [])
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
-                      + [('docs/inno-docs/*.txt', 'ptxprint')]
-                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
-                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
+                      + [('docs/inno-docs/*.txt', 'ptxprint')],
+#                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
+#                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
                 # The registry tends not to get included
              hiddenimports = ['_winreg'],
              hookspath = [],

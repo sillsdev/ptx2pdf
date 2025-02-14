@@ -244,14 +244,13 @@ def main():
     log.debug(f"project id={args.pid}, config={args.config}, directory={args.directory}")
 
     scriptsdir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    macrosdir = os.path.join(scriptsdir, 'ptx2pdf')
     if args.macros:
         macrosdir = args.macros
-    elif os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "..", "src")):
+    elif os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(macrosdir):
         scriptsdir = "/usr/share/ptx2pdf"
         macrosdir = "/usr/share/ptx2pdf/texmacros"
-    elif getattr(sys, 'frozen', False):
-        macrosdir = os.path.join(scriptsdir, "ptx2pdf")
-    else:
+    elif not getattr(sys, 'frozen', False) and not os.path.exists(macrosdir):
         macrosdir = os.path.join(scriptsdir, "..", "..", "..", "src")
 
     def doit(printer, maxruns=0, noview=False, nothreads=False, forcedlooseness=None):
