@@ -16,3 +16,7 @@ pip install .
 Config files (like the default path to the translation project files) are stored in ~/.config/ptxprint/
 
 
+Dev environment:
+
+python3 -m build 
+
