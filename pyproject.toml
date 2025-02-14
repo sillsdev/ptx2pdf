@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=62.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ptxprint"
+version = "2.7.20"
+authors = [{name = "SIL Global"}]
+readme = "README.md"
+license = {file = "python/LICENSE.txt"}
+description = "Typesetting using (Xe)TeX for Paratext"
+classifiers = [
+   "Programming Language :: Python :: 3",
+   "Environment :: X11 Applications :: GTK",
+   "Topic :: Text Editors :: Text Processing",
+   "License :: OSI Approved :: MIT License",
+]
+requires-python = ">=3.8"
+
+dependencies = [
+"regex",
+"pygobject",
+"fonttools",
+"pycairo",
+"appdirs",
+"Pillow", 
+"numpy"
+]
+
+
+[project.urls]
+Home-Page = "https://software.sil.org/ptxprint"
+
+[tool.setuptools.packages.find]
+where = ["python/lib"]
+
+[tool.setuptools.package-data]
+
+[tool.bdist_wheel]
+universal = true
+
+[tool.setuptools]
+script-files = ["python/scripts/ptxprint", "python/scripts/pdfdiff", "python/scripts/xdvitype"]
