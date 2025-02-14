@@ -98,6 +98,7 @@ aliases = {"q", "s", "mt", "to", "imt", "imte", "io", "iq", "is", "ili", "pi",
 _defFields = {"Marker", "EndMarker", "Name", "Description", "OccursUnder", "TextProperties", "TextType", "StyleType"}
 
 def asFloatPts(self, s, mrk=None, model=None):
+    s = re.sub(r'\s*#.*$', '', s)
     if mrk is None:
         mrk = self.marker
     m = re.match(r"^\s*(-?\d+(?:\.\d+)?)\s*(\D*?)\s*$", str(s))
@@ -138,6 +139,7 @@ def toFloatPts(self, v, mrk=None, model=None, parm=None):
     return "{} pt".format(f2s(float(v)))
 
 def fromFloat(self, s, mrk=None, model=None):
+    s = re.sub(r'\s*#.*$', '', s)
     try:
         return float(s)
     except (ValueError, TypeError):
@@ -147,6 +149,7 @@ def toFloat(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v))
 
 def from12(self, s, mrk=None, model=None):
+    s = re.sub(r'\s*#.*$', '', s)
     try:
         return float(s) / 12.
     except (TypeError, ValueError):
@@ -156,6 +159,7 @@ def to12(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v) * 12.)
 
 def fromBool(self, s, mrk=None, model=None):
+    s = re.sub(r'\s*#.*$', '', s)
     return not(s is None or s is False or s == "-")
 
 def toBool(self, v, mrk=None, model=None, parm=None):
@@ -346,9 +350,11 @@ class StyleEditor:
         res = self.sheet[mrk].get(key.lower(), None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
             res = self.basesheet[mrk].get(key.lower(), default) if mrk in self.basesheet else default
+        logger.log(8, f"Getting {mrk=} {key=} {res=}")
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None, mapin=False):
+        logger.log(8, f"Setting {mrk=} {key=} {val=}")
         if ifunchanged and (self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None) != \
                 (self.sheet[mrk].get(key.lower(), None) if mrk in self.sheet else None):
             return
