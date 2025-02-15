@@ -1,0 +1,10 @@
+[DEFAULT]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[image]
+approved = false
+notes = 
+

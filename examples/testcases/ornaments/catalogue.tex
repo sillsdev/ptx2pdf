@@ -94,14 +94,14 @@
 \iftrue
   \def\paperY{21cm}
   \def\paperX{29.69cm}
-  \dimen1=10cm % Sample height
-  \dimen2=29.69cm % orig height
+  \dimen1=9.5cm % Sample height
+  \dimen2=29.69cm % orig A4 height
   \edef\SampleY{\the\dimen1}
   \edef\SampleX{\the\dimexpr 0.707\dimen1\relax}
 \else
   \def\paperX{21cm}
   \def\paperY{29.69cm}
-  \dimen1=10cm % Sample height
+  \dimen1=9cm % Sample height
   \dimen2=29.69cm % orig height
   \edef\SampleY{\the\dimen1}
   \edef\SampleX{\the\dimexpr 0.707\dimen1\relax}
@@ -129,21 +129,23 @@
     \fi\fi}\x@\cstackdown\b@rderparameters,\E
 }
 \edef\bksl{\char"5C}
+
 \def\demoborder #1|#2 #3\E{%
   \boxornfalse
-  \leavevmode
-  \traceifset{demob}%
+  \noindent\leavevmode\traceifset{demob}%
   \bgroup\PaperHeight=\SampleY \PaperWidth=\SampleX 
     \widowpenalty=10
     \clubpenalty=10
     \modcat #1|#2 
     \esb\cat testpage\cat* 
     \vfill \pc #1 on #2 \pc #3 \vfill 
-    \esbe\leavevmode 
-    \hbox{\box\wholepagepic} %
+    \esbe
+    %\global\setbox\demopages\hbox{\unhbox\demopages \hskip 10pt plus 1fil \box\wholepagepic} 
+    \box\wholepagepic \hskip 5pt plus 10em 
   \egroup 
-  \traceifcheck{demob}%
-  \lineskip=10pt
+    \lineskip=15pt
+  \traceifcheck{demob}
+  \penalty0
 }
 
 \tracingstats=1
@@ -152,8 +154,8 @@
 \stylesheet{ptx2pdf.sty}
 \stylesheet{standardborders.sty}
 \stylesheet{default-custom.sty}
-\tracing{sc}
-%\tracing{sC}
+%\tracing{sc}
+\tracing{sC}
 \stylesheet{test.sty}
 \stylesheet{catalogue.sty}
 %\tracing{C}
@@ -162,12 +164,14 @@
 \tracing{m}
 \tracing{eb}
 \tracing{ebi}
-%\tracing{s}
+\tracing{F}
+\tracing{s}
 %\tracing{sP}
 \tracing{g}
 \tracing{h}
 \tracing{V}
 \tracing{I}
+\tracing{Fe}
 %\tracingmacros=1
 \categorysheet{mycats.sty}
 %\def\doLines{\doGridLines}
@@ -217,12 +221,13 @@
 \bigorn{52}{pgfhan}
 \bigorn{53}{pgfhan}
 \bigorn{54}{pgfhan}
-\SetupOrnament{0.1}{0.0 0.5 0.0}{0.9 0.8 0.0}
+%Green and yellow
+\SetupOrnament{0.3}{0.0 0.5 0.2}{0.8 0.7 0.2}
 \def\typeout#1{}
 \def\SwitchToHan{\message{switchtohan}\SwitchOrnamentsFamily{pgfhan}}
 \def\testornamentsh{
   \xdef\ornamentheight{20pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.8\hsize\relax}
-  \SetupOrnament{0.1}{1.0 0.0 0.0}{0.9 0.8 0.0}
+  \SetupOrnament{0.3}{0.8 0.2 0.2}{0.8 0.7 0.0}
   \SwitchOrnamentsFamily{pgfhan}
   \catcode`\#=6 \catcode`\%=14
   %\includeifpresent{\pgfOrnamentsObject}
@@ -230,8 +235,15 @@
   \ornscaletrue
   \def\max{79}
   \ornloop
+  \ornscaletrue
+  \SetupOrnament{1}{0.0 0.5 0.2}{0.8 0.7 0.2}
+  \count255=100
+  \def\max{108}
+  \ornloop
   \hfil\par
-  \xdef\ornamentheight{45pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.9\hsize\relax}
+  \xdef\ornamentheight{95pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.9\hsize\relax}
+  \ornscaletrue
+  \SetupOrnament{0.3}{0.8 0.2 0.2}{0.8 0.7 0.0}
   \the\bigorns
   \par
 }
@@ -265,6 +277,7 @@
 
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
+\lastptxfiletrue
+\tracingoutput=1
 \ptxfile{catalogue.usfm}
-
 \bye

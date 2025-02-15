@@ -92,14 +92,17 @@
 }
 
 \def\runtrigg@rscv{%after the verse number
-  \p@rnum=1
+  \ifversion{4}{%
+    \global\p@rnum=\ifhmode 1\else 0\fi
+  }{\global\p@rnum=1}%
+  {\let\\=\clearn@tecount \the\n@tecl@sses}%
   \settrig@refcv
   \ifMarkTriggerPoints\trigg@rmark{TV}\fi
-  \trace{T}{running (cv) triggers \c@rref}%
+  \trace{T}{running (cv) triggers \c@rref (p@rnum reset to \the\p@rnum)}%
   \the\trigg@rchecks
 }
 \def\runtrigg@rsprecv{% before the verse number
-  \p@rnum=0
+  \global\p@rnum=0
   \settrig@refprecv
   \trace{T}{running (precv) triggers \c@rref}%
   \the\trigg@rchecks
@@ -112,8 +115,9 @@
 
 
 \def\runtrigg@rspar{%Paragraph trigger
-  \trace{T}{runtrigg@rspar}%
+  \trace{T}{runtrigg@rspar[\m@rker ]}%
   \global\advance\p@rnum by 1
+  {\let\\=\clearn@tecount \the\n@tecl@sses}%
   \ifx\v@rse\empty\else
     \settrig@refcv
   \fi
@@ -155,7 +159,10 @@
       \runtrigg@rs{\mkp@cref{\id@@@\c@rrdstat}{#1}}%
       \xdef\dc@rref{\id@@@\c@rrdstat#1}% 
     \fi
-    \xdef\c@rref{\id@@@#1}\global\p@rnum=1% Paragraph number (for triggers) resets on keywords
+    \xdef\c@rref{\id@@@#1}% Paragraph number (for triggers) resets on keywords
+    \ifversion{4}{%
+      \global\p@rnum=\ifhmode 1\else 0\fi
+    }{\global\p@rnum=1}%
 }
 
 \def\runtrigg@rs#1{%Generic something trigger (milestone, or...)

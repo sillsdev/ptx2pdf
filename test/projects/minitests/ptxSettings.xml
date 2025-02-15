@@ -1,0 +1,12 @@
+<ScriptureText>
+    <BooksPresent>0000000000000000000000000000000000000000111000000000000000000000000000000000000000000000000000000000000000000000000000000000</BooksPresent>
+    <DefaultFont />
+    <Encoding>65001</Encoding>
+    <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+    <FileNamePostPart>test.usfm</FileNamePostPart>
+    <FileNamePrePart>None</FileNamePrePart>
+    <Guid>8FDD6D245E9F11EFAF92C4C6E67080C3</Guid>
+    <LanguageIsoCode>en</LanguageIsoCode>
+    <StyleSheet>usfm.sty</StyleSheet>
+    <Versification>4</Versification>
+</ScriptureText>

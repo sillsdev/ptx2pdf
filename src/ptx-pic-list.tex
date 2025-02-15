@@ -163,7 +163,7 @@
 \def\ch@ckN@xtPicid{%Check to see if there's one or more pictures for this verse.
   \mkp@cid
   \mkkp@cid
-  \trace{P}{ch@ckN@xtPicid: \p@cid (keepid:\kp@cid)}%
+  \trace{P}{ch@ckN@xtPicid: \p@cid (keepid:\kp@cid) \ifcsname\p@cid\endcsname found\fi}%
   \ifcsname\p@cid\endcsname 
     \traceifset{ch@ckN@xtPicid}%
     \x@\let\x@\t@st\csname \p@cid\endcsname

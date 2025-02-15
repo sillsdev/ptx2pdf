@@ -114,7 +114,20 @@ The PTXprint user interface code loads the primary and secondary styling with
 via the user interface is side-specific (as `\Marker pL` above). Thus introductory material, etc. should be prefaced with `\zglot|L\*` etc. to specify which formatting set to use.
 
 
-## Configuration items to go in foo-setup.tex (or main .tex file)
+## Configuration items to go in ptxprint-mods.tex (or other TeX file)
+
+### Background Colour
+Sometimes it might help the reader to have a coloured background to guide them to the right part of the page. This can now be done with the commands such as:
+```tex
+\SetDiglotBGColour{L}{0.9 0.9 1.0}{}
+\SetDiglotBGColour{R}{xff00ff}{0.2}
+\def\DiglotColourPad{1.5pt} % Default is 3pt
+```
+`\SetDiglotBGColour` needs three parameters. Column, Colour and Alpha. (Alpha of 0 is fully transparent, alpha of 1 totally hides whatever is behind it). If a Colour is given as empty,  then the no colour box will be produced for that column. (i.e. it will unset any previous value).
+The colour white `(1.0 1.0 1.0)` *does* have an effect on any background image, and so counts as a coloured box. However, if the alpha is 0, the box is not counted as coloured.
+
+The `\DiglotColourPad` adds a small amount of horizontal padding to either side of the text.
+
 
 ### Extra columns
 `\newPolyglotCol A` This specifies that just `L` and `R` are a bit boring, and you wish to use another column (`A`) as well. The perl program to merge files uses L,R,A,B,C.... as column identifiers. So far there is no python code to cope with polyglots.

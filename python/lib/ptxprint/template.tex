@@ -3,6 +3,9 @@
 \def\pluginlist{{{plugins_}}}
 \input paratext2.tex
 \input ptx-ptxprint.tex
+\def\zautoBookEndDecoration{{}}
+\def\zBookEndDecoration{{}}
+\def\BookEndDecorationSkip{{16pt}}
 \csname idf@nt\endcsname % use a locally available font (we ship this one)
 {fancy/enableornaments}\stylesheet{{standardborders.sty}}
 {fancy/enableornaments}\SwitchOrnamentsFamily{{pgfhan}}
@@ -15,15 +18,16 @@
 {document/ifdiglot}\diglotcolumns
 {document/ifdiglot}\diglotInnerOuter{header/mirrorlayout}
 {document/ifdiglot}\diglotSepNotes{document/diglotsepnotes}
+{document/ifdiglot}{document/ifdiglotcolour}\SetDiglotBGColour{{L}}{{{document/diglotcolour}}}{{}}
 
 %%%%% Stylesheets %%%%%
 \stylesheet{{usfm_sb.sty}}
-%{document/ifdiglot}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/usfm.sty}}
-%\stylesheet{L_}{{{/ptxrpath}/{project/id}/usfm.sty}}
+%{document/ifdiglot}\stylesheet{R_}{{{/ptxrpath}/usfm.sty}}
+%\stylesheet{L_}{{{/ptxrpath}/usfm.sty}}
 \stylesheet{{ptx2pdf.sty}}
 
-{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/{project/id}/custom.sty}}
-%\diglot {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{s_}{{{/ptxrpath}/{document/diglotsecprj}/custom.sty}}
+{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/custom.sty}}
+%\diglot {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{s_}{{{/ptxrpath}/../{document/diglotsecprj}/custom.sty}}
 
 \stylesheet{L_}{{{/cfgrpath}/ptxprint.sty}}
 %\diglot {document/ifdiglot}\stylesheet{s_}{{{diglot[cfgrpath]}/ptxprint.sty}} % Right side (secondary) styles
@@ -38,7 +42,9 @@
 \PaperHeight={paper/height}
 \CropMarks{paper/ifcropmarks}
 \BookOpenLeft{cover/rtlbookbinding}
-{paper/ifgrid}\def\doLines{{{grid/gridgraph}{grid/gridlines}}}
+{paper/ifgrid}\def\doLines{{{grid/gridgraph}{grid/gridlines}{paper/notelines}}}
+\NoteLines{paper/ifnotelines_}
+\def\NoteLineColMajor{{{majornlcolor_}}} % Colour (R G B)
 
 %% Margins
 \MarginUnit={paper/margins}mm
@@ -48,7 +54,7 @@
 \BindingGutter{paper/ifaddgutter}
 \BindingGutter={paper/gutter}mm
 \OuterGutter{paper/ifoutergutter}
-\def\DefaultSpaceBeside{{{document/cutouterpadding} pt}}
+\def\DefaultSpaceBeside{{{texpert/cutouterpadding} pt}}
 \noinkinmargin{footer/noinkinmargin}
 
 %% Columns
@@ -67,15 +73,16 @@
 {document/marginalverses}\VerseBoxWidth={document/columnshift}pt
 {document/marginalverses}\def\colshiftmode{{{document/marginalposn}}}
 %{document/marginalverses}\def\AfterVerseSpaceFactor{{0}}
-\endbooknoeject{project/ifstarthalfpage}
-\def\PageFullFactor{{{document/pagefullfactor}}}
-\def\BalanceThreshold{{{paper/bottomrag}}}
+\def\PageFullFactor{{{texpert/pagefullfactor}}}
+{paper/allowunbalanced}\def\BalanceThreshold{{{texpert/bottomrag}}}
 
 %%%%% Text Spacing %%%%%
-\def\LineSpaceBase{{{paragraph/linespacebase}}}
+{document/nogrid}\NoGridtrue
+{document/nogrid}{document/varlinespacing}\def\ColAdjskip{{0pt plus 2pt}}
+\def\LineSpaceBase{{{texpert/linespacebase}}}
 \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 \def\VerticalSpaceFactor{{1.0}}
-{paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
+{texpert/useglyphmetrics}\XeTeXuseglyphmetrics=0
 
 {cover/makecoverpage}\NoTransparencyfalse
 %% Cross-space contextualization
@@ -92,20 +99,23 @@
 {document/ifspacing}\def\SpaceShrinkFactor{{{document/spaceshrink}}}
 {document/ifcolorfonts}\ColorFontsfalse
 
-\def\UnderlineThickness{{{document/underlinethickness}em}}
-\def\UnderlineLower{{{document/underlineposition}em}}
+\def\UnderlineThickness{{{texpert/underlinethickness}em}}
+\def\UnderlineLower{{{texpert/underlineposition}em}}
 \RuleThickness={document/rulethickness}pt
 
 %% Specify the fallback font to be used for special/missing characters
 %\extrafont
 
-\newskip\intercharskip \intercharskip=0pt plus {document/letterstretch:.2f}em minus {document/lettershrink:.2f}em
-{document/ifletter}\def\intercharspace{{\leavevmode\nobreak\hskip\intercharskip}}
+\newskip\intercharskip \intercharskip=0pt plus {document/letterstretch:.4f}em minus {document/lettershrink:.4f}em
+{document/ifdiglot}\def\intercharskip{L_}{{\intercharskip}}
+{document/ifletter}\def\intercharspace{L_}{{\leavevmode\nobreak\hskip\intercharskip}}
 {document/ifletter}\XeTeXinterchartokenstate=1
+{document/ifdiglot}\addToSideHooks{{L}}{{\XeTeXinterchartokenstate={document/letterspace}}}
 
 %%%%% Layout %%%%%
-{document/ifhidehboxerrors}\overfullrule=0pt
+{texpert/showhboxerrorbars}\overfullrule=0pt
 \RTL{document/ifrtl}   % Use right-to-left layout mode?
+\RTL{L_}{document/ifrtl}
 {document/toptobottom}\XeTeXupwardsmode=1     % Top-to-Bottom and Left-to-Right layout
 {document/toptobottom}\rotatetrue
 % Specify ISO 639-1 language code.
@@ -117,13 +127,13 @@
 %\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
 \JustifyPars{paragraph/ifjustify}
 \IndentAfterHeading{document/firstparaindent}
-\IndentUnit={document/indentunit}in
+\IndentUnit{L_}={document/indentunit}in
 
 %%% Chapters & Verses %%%
 \OmitVerseNumberOne{document/ifomitverseone}
 {document/ifshowchapternums}\OmitChapterNumbertrue
-\def\AfterChapterSpaceFactor{{{document/afterchapterspace}}}
-{document/ifshowversenums}\def\AfterVerseSpaceFactor{{{document/afterversespace}}}
+\def\AfterChapterSpaceFactor{{{texpert/afterchapterspace}}}
+{document/ifshowversenums}\def\AfterVerseSpaceFactor{{{texpert/afterversespace}}}
 
 %%% Poetry - Hang Verse Numbers
 {document/hangpoetry}\catcode`\@=11
@@ -203,8 +213,8 @@
 \def\HeaderPosition{{{paper/headerposition}}}
 \def\FooterPosition{{{paper/footerposition}}}
 {header/ifrhrule}\RHruleposition={paper/ruleposition}pt
-\def\RangeSeparator{{\kern.1em\char"2013\kern.1em}} % what to put between first - last of a reference range
-\def\ChapterVerseSeparator{{\kern.02em{header/chvseparator}\kern.02em}} % what to put between chapter:verse
+\def\RangeSeparator{{\kern.1em{rangesep_}\kern.1em}} % what to put between first - last of a reference range
+\def\ChapterVerseSeparator{{\kern.02em{chvssep_}\kern.02em}} % what to put between chapter:verse
 
 %% Even Header
 \def\RHevenleft{{{header/evenleft}}}
@@ -240,7 +250,8 @@
 
 \PBOnBody{document/ch1pagebreak}
   
-\pageno={document/startpagenum}
+% \pageno={document/startpagenum}
+\pageno=-1
 
 %%%%% Illustration and Adjustment Locations and Lists %%%%%
 \IncludeFigures{document/ifinclfigs}
@@ -270,7 +281,7 @@
 %%%%% Hyphenation %%%%%
 \newlanguage\langund \language\langund
 \catcode`\@=11
-{paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\bgroup\liter@lspecials\input "{/ptxrpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex" \egroup
+{paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\bgroup\liter@lspecials\input "{/ptxrpath}/shared/ptxprint/hyphen-{project/id}.tex" \egroup
 {paragraph/ifomithyphen}\defaulthyphenchar=8203 % \u200B
 {paragraph/ifnothyphenate}\hyphenpenalty=10000 \exhyphenpenalty=10000
 \catcode`\@=12
@@ -300,7 +311,7 @@
 {project/ifcolophon}\layoutstylebreak
 {project/ifcolophon}\singlecolumn
 {project/ifcolophon}{project/pgbreakcolophon}\pb
-{project/ifcolophon}\zcolophon}}
+{project/ifcolophon}\zcolophon\csname beenb@dyfalse\endcsname}}
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
 {project/ifusemodstex}\includeifpresent{{{/modspath}}}% adjust/override setup parameters here
 
@@ -314,8 +325,10 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 \BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
+\expandafter\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=007f00" at 7pt % AdjustPar
+
 \NoBodytrue
-{document/iftocleaders}\tocleaders{{{document/tocleaderstyle}}}{{3pt}}
+{document/iftocleaders}\addtoinithooks{{\relax \tocleaders{document/tocleaderrule}{{{document/tocleaderstyle}}}{{3pt}} \relax}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
 {frontincludes_}
 {document/ifdiglot}\diglotfalse
@@ -334,7 +347,9 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
+\pageno={document/startpagenum}
 {document/ifdiglot}\diglottrue
+\addtoendptxhooks{{\zautoBookEndDecoration}}
 % job files:
 %\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 
@@ -344,5 +359,5 @@
 
 \csname final-afterincludes\endcsname
 {document/ifdiglot}\inptxfiletrue\zglot|L\* 
-{cover/makecoverpage}\m@kecover
+{cover/makecoverpage}\csname m@kecover\endcsname
 \end

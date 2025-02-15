@@ -2,8 +2,8 @@
 all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 .tex.pdf:
-	TEXINPUTS=.:$(DIR) xetex -no-pdf $<
-	TEXINPUTS=.:$(DIR) xetex $<
+	TEXINPUTS=.:$(DIR) max_print_line=1000 xetex  -no-pdf $<
+	TEXINPUTS=.:$(DIR) max_print_line=1000 xetex  $<
 	
 
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex cat.usfm *.sty
@@ -14,5 +14,5 @@ bisect:
 
 auto:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ; make test.pdf ; done < /dev/null
 

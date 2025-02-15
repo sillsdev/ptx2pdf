@@ -61,6 +61,7 @@
 % This lot has to be early
 \newif\ifinn@te\inn@tefalse
 \newif\ifm@rksonpage % Try to keep track of marks, so we can kill them in end-sections. 
+\newif\ifm@rksinchunk % Try to keep track of marks, so we know what needs a textborder
 \m@rksonpagefalse
 %-c_pt_intro
 
@@ -114,7 +115,7 @@
 %+c_evenpage
 % Some things need to start on an odd-numbered page, others on an even numbered page
 \def\TPILB{}
-\def\zEmptyPage{\message{Blank page for \the\pageno}\bgroup\m@rksonpagefalse\pagecontents\def\pagecontents{\vfill\TPILB}\plainoutput\egroup}
+\def\zEmptyPage{\message{Blank page for \the\pageno}\ifp@geone\temptrue\else\tempfalse\fi\bgroup\m@rksonpagefalse\def\pagecontents{\vfill\TPILB}\plainoutput\egroup\iftemp\global\p@geonetrue\fi}
 \def\need@evenpage{\endgraf\ifodd\pageno\zEmptyPage\fi}
 \def\need@oddpage{\endgraf\ifodd\pageno\else\zEmptyPage\fi}
 \def\need@quadpage{\endgraf\ifodd\pageno\zEmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \zEmptyPage\zEmptyPage\fi}
@@ -122,6 +123,9 @@
 \let\zNeedOddPage\need@oddpage
 \let\zNeedQuadPage\need@quadpage
 %-c_evenpage
+\def\ptxversion{0}
+\def\ifversion#1#2#3{\ifnum\ptxversion=0\relax #2\else
+    \ifnum\ptxversion < #1\relax #3\else #2\fi\fi}
 
 %+c_imports
 \input ptx-constants.tex
@@ -196,7 +200,7 @@
       \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
       \trace{F}{baseline [\f@ntstyle] (#1,#2) = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
       \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0
-      \should@xist{\f@ntstyle}%
+      \should@xist{}{\f@ntstyle}%
     \fi
   \else
     \def\s@urce{store:\f@ntstyle}%
@@ -217,6 +221,7 @@
   \fi
   \n@xt}
 
+\def\@pdffile#1#2{}
 \def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet
   \ifx\XeTeXpdfpagecount\undefined
     \MSG{*** sorry, \string\includepdf\space requires XeTeX 0.997 or later}%
@@ -233,6 +238,8 @@
   \pdfp@ges=\XeTeXpdfpagecount "#2"\relax
   \whichp@ge=0
   \msg{includepdf #2 pages=\the\pdfp@ges}
+  \edef\tmp{\string\@pdffile\string{\the\pdfp@ges\string}\string{#2\string}}%
+  \x@\immediate\x@\write\x@\p@rlocs\x@{\tmp}%
   \loop \ifnum\whichp@ge<\pdfp@ges
     \advance\whichp@ge by 1
     \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{"#2"}{page \whichp@ge #1}}%
@@ -255,17 +262,25 @@
 \totalp@ges=0
 \newif\ifendbooknoeject \endbooknoejectfalse
 \newif\iflastbooknoeject \lastbooknoejectfalse
-\def\pagebreak{\leavevmode\message{pagebreak}\ifhmode\par\fi
+\def\pagebreak{\leavevmode\message{pagebreak}\endp@ge} %A pagebreak that forces a blank page to be output if there's nothing on the page yet.
+\def\endpage{\message{endpage}\endp@ge} %A pagebreak that doesn't force a blank page to be output
+\def\endp@ge{\ifhmode\par\fi
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
   \ifdiglot \vbox to 0pt{}\fi%
   \vfill\eject%
 }
 \def\bookendpagebreak{
-  \ifsk@pping \egroup \fi%
-  \ifhe@dings\endhe@dings\fi%
-  \ifendbooknoeject\else%
-  \vfill\eject\fi%
+  \trace{o}{bookendpagebreak endbooknoeject\ifendbooknoeject true\else false\fi}%
+  \ifsk@pping \egroup \fi
+  \ifhe@dings\endhe@dings\fi
+  \ifendbooknoeject
+      \trace{o}{NOT Ejecting page}%
+  \else\ifx\PageAlign\val@MULTI
+      \trace{o}{NOT Ejecting page (align=\PageAlign)}%
+    \else
+      \trace{o}{Ejecting page}%
+      \vfill\eject\fi\fi
 }
 
 \def\columnbreak{\vfill\eject}
@@ -281,7 +296,6 @@
 \frenchspacing
 
 \XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
-\def\currintercharstate{0}
 
 %% various Unicode characters that we handle in TeX... and protect in TOC and PDF bookmarks
 \def\intercharspace{\hskip0pt}
@@ -298,15 +312,12 @@
 \def\FOURPEREMSPACE{\hskip .25em}
 \def\SIXPEREMSPACE{\hskip .1666em}
 \def\THINSPACE{\hskip .2em plus .1em minus .1em}
-\def\HAIRSPACE{\hskip 0.042em\nobreak\intercharspace} % 1/24 em
+\def\HAIRSPACE{\nobreak\hskip 0.042em\nobreak\intercharspace} % 1/24 em
 \def\HYPHEN{\char"2010\discretionary{}{}{}}% Contrastive hyphen with hyphen break
 \def\LINESEP{\break}
 \def\GOODBREAK{\penalty-\OptionalBreakPenalty}
 \def\BADBREAK{\penalty\the\badspacepenalty}
 \def\emdash{\char"2014\relax}
-\def\LRE{\xdef\currintercharstate{\XeTeXinterchartokenstate}\char"202A}
-\def\RLE{\xdef\currintercharstate{\XeTeXinterchartokenstate}\char"202B}
-\def\PDF{\char"202C\XeTeXinterchartokenstate=\currintercharstate}
 \chardef\|"7C
 \chardef\bslash"5C%
 \chardef\tilde"7E%
@@ -333,9 +344,6 @@
   \let\LINESEP=\relax
   \let\GOODBREAK=\relax
   \let\BADBREAK=\relax
-  \let\LRE=\relax
-  \let\RLE=\relax
-  \let\PDF=\relax
 }
 
 \catcode"A0=12
@@ -362,7 +370,7 @@
   \def\pr@tect{}%
   \def\NBSP{^^a0}%
   \def\SFTHYPHEN{^^ad}%
-  %\def\ZWSP{^^^^200b}%
+  \def\ZWSP{^^^^200b}%
   \def\WJ{^^^^2060}%
   \def\ZWNBSP{^^^^feff}%
   \def\NQUAD{^^^^2000}%
@@ -378,9 +386,6 @@
   \def\LINESEP{^^^^2028}%
   \def\GOODBREAK{^^^^2063}%
   \def\BADBREAK{^^^^2064}%
-  \def\LRE{^^^^202a}%
-  \def\RLE{^^^^202b}%
-  \def\PDF{^^^^202c}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -404,9 +409,6 @@
 \lccode"2010="2010
 \lccode"2011="2011
 \catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
-\catcode"202A=\active \def^^^^202a{\pr@tect\LRE}
-\catcode"202B=\active \def^^^^202b{\pr@tect\RLE}
-\catcode"202C=\active \def^^^^202c{\pr@tect\PDF}
 \catcode`\@=12
 
 \def\asterisk{*}

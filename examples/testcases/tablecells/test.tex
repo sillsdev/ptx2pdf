@@ -5,6 +5,7 @@
 %\input "ptxplus-marginalverses.tex"
 \catcode`\@=12
 \stylesheet{usfm.sty}
+\stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \input "usfmTex-settings.tex"
 \tracingmacros=0
@@ -14,8 +15,11 @@
 \def\RHoddleft{\isodate}
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
-\ptxfile{test.usfm}
+\spanningcell{tc}{}{1}{2}
+\spanningcell{th}{c}{1}{2}
 \tracing{s}
+\tracing{t}
+\ptxfile{test.usfm}
 \unbalancedtrue
 \ptxfile{cat.usfm}
 \bye

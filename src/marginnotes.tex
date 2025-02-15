@@ -30,8 +30,12 @@
 % use or other dealings in this Software without prior written  
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TeX does not allow these to be executed inside a conditional:
+\newif\ifm@rginnotesopen 
 \newif\ifm@rginalnotesw@rn
-\plugin@startif{marginalnotes}
+\newwrite\m@rginnotes
+\plugin@startif{marginnotes}
 
 \def\@marginnote#1#2#3#4#5#6#7#8{%
 % #1 = reference, #2 = marker, #3 = side, #4 = distance from text, #5 = width,
@@ -61,7 +65,7 @@
     \else\noindent\hfill\rlap{\kern #4\kern #3\box #1}%
     \fi
     \vss\endgroup}%
-  %\ifx\t@mp\l@ft\else\showbox0
+  % \ifx\t@mp\l@ft\showbox0
   \dp0=0pt\indent\vadjust {%
     \kern -\dimen9
     \kern #5\box0
@@ -81,7 +85,7 @@
   \fi
 }
 
-\newwrite\m@rginnotes \newif\ifm@rginnotesopen \m@rginnotesopenfalse
+\m@rginnotesopenfalse
 \def\writem@rginnote#1#2#3#4#5#6#7{%
 % #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
 % #6 = reference, #7 = marker
@@ -109,6 +113,5 @@
   \writem@rginnote{#1}{\p@s}{\the\dimen0}{\the\dimen1}{\the\dimen2}{#2}{#3}%
   \pl@cemnote{#1}{\s@de}{\dimen0}{\dimen1}{\dimen2}%
 }
-
 
 \plugin@endif

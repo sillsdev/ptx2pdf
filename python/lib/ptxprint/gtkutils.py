@@ -3,20 +3,30 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
 from ptxprint.utils import _, f2s
 from PIL import Image
+import logging
+from ptxprint.view import GitVersionStr, VersionStr
 
-def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
+logger = logging.getLogger(__name__)
+
+def _getcomboval(w, sub):
+    model = w.get_model()
+    i = w.get_active()
+    if i < 0:
+        e = w.get_child()
+        if e is not None and isinstance(e, Gtk.Entry):
+            return e.get_text()
+    elif model is not None:
+        return model[i][w.get_entry_text_column() if sub < 0 else sub]
+
+def getWidgetVal(wid, w, default=None, asstr=False, sub=-1):
     v = None
     if wid.startswith("ecb_"):
-        model = w.get_model()
-        i = w.get_active()
-        if i < 0:
-            e = w.get_child()
-            if e is not None and isinstance(e, Gtk.Entry):
-                v = e.get_text()
-        elif model is not None:
-            v = model[i][sub]
+        v = _getcomboval(w, sub)
     elif wid.startswith("fcb_"):
-        v = w.get_active_id()
+        if sub < 0:
+            v = w.get_active_id()
+        else:
+            v = _getcomboval(w, sub)
     elif wid.startswith("t_"):
         v = w.get_text()
     elif wid.startswith("txbf_"):
@@ -43,20 +53,26 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         return default
     return v
 
-def setWidgetVal(wid, w, value, noui=False, useMarkup=False):
+def _setcomboval(w, value, sub):
+        model = w.get_model()
+        e = w.get_child()
+        for i, v in enumerate(model):
+            if v[w.get_entry_text_column() if sub < 0 else sub] == value:
+                w.set_active(i)
+                break
+        else:
+            if e is not None and isinstance(e, Gtk.Entry):
+                e.set_text(value)
+
+def setWidgetVal(wid, w, value, noui=False, useMarkup=False, sub=-1):
     try:
         if wid.startswith("ecb_"):
-            model = w.get_model()
-            e = w.get_child()
-            for i, v in enumerate(model):
-                if v[w.get_entry_text_column()] == value:
-                    w.set_active(i)
-                    break
-            else:
-                if e is not None and isinstance(e, Gtk.Entry):
-                    e.set_text(value)
+            _setcomboval(w, value, sub)
         elif wid.startswith("fcb_"):
-            w.set_active_id(value)
+            if sub < 0:
+                w.set_active_id(value)
+            else:
+                _setcomboval(w, value, sub)
         elif wid.startswith("t_"):
             w.set_text(value or "")
         elif wid.startswith("txbf_"):
@@ -141,3 +157,47 @@ class HelpTextViewWindow(Gtk.Window):
         self.tb.set_text(message, -1)
         self.show_all()
         Gtk.main()
+
+def doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", **kw):
+    logger.error(text)
+    if secondary:
+        logger.error(secondary)
+    if copy2clip:
+        if who2email.startswith("ptxp"):
+            if secondary is not None:
+                secondary += _("\nPTXprint Version {}").format(GitVersionStr)
+            lines = [title or ""]
+        else:
+            lines = [""]
+        if text is not None and len(text):
+            lines.append(text)
+        if secondary is not None and len(secondary):
+            lines.append(secondary)
+        s = _(f"Mailto: <{who2email}>") + "\n{}".format("\n".join(lines))
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(s, -1)
+        clipboard.store() # keep after app crashed
+        if secondary is not None:
+            if who2email.startswith("ptxp"):
+                secondary += "\n\n" + " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
+            else:
+                secondary += "\n" + _("The letter above has been copied to the clipboard.")
+                secondary += "\n" + _("Send it by e-mail to: {}").format(who2email)
+        else:
+            secondary = " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
+    if show:
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
+                 buttons=Gtk.ButtonsType.OK, text=text)
+        if title is None and who2email.startswith("ptxp"):
+            title = "PTXprint Version " + VersionStr
+        dialog.set_title(title)
+        if secondary is not None:
+            dialog.format_secondary_text(secondary)
+        dialog.run()
+        dialog.destroy()
+    else:
+        print(text)
+        if secondary is not None:
+            print(secondary)
+
+

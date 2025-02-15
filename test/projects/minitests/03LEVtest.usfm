@@ -25,5 +25,6 @@ Impedit porro similique quia ullam ut. Error accusamus nisi minus. Cupiditate sa
 \p 
 Error cupiditate id quia eveniet. Porro est dolores aperiam nisi id libero similique quis.
 \p This should be a backslash, tilde, pipe  \\, \~ , \|
+\p This should be an empty footnote\f +\f*. It shouldn't crash
 
 

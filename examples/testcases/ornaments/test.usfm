@@ -46,7 +46,7 @@ We are now inside a qt-s..qt-e block \nd*
 \qt-e\* And out of the block again
 \p This is an ornamental rule (0.9 wide, 5pt high, right-aligned), followed by a normal rule:
 \zrule |cat="ornaments" width="0.9" align="r"\*
-\zrule |width="0.9" align="r"\*
+\zrule |cat="annotated" width="0.9" align="r"\*
 
 \p This is another ornamental rule of the same style (at it's normal width, alignment etc are controlled by the style's margins):
 \zrule |cat="ornaments" \*
@@ -84,7 +84,6 @@ doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
 \p  We're outside the esb (after esb testing3) so ought to be back to normal now
 \zrule |cat="ornaments2"\*
 \v 3 Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-\p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
 \p
 \esb \cat foo\cat*
 \s Testing 5
@@ -98,11 +97,9 @@ doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
 \esbe
 \v 4
 At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
-\p Et harum quidem rerum facilis est et expedita distinctio.
 \p
 \v 5  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, 
 \esb\cat cut\cat*
-\s1 Testing 4
 \p
 This esb should be in a cut-out, a line below 'possimus'. It
 has a pale blue background, an orange border just inside the edge
@@ -111,6 +108,8 @@ of the background, and a pdf image as a
 colour\f + \cat class\cat* \fk Inherent colour\fk* \ft Sadly, colour-unspecified PDFs are quite hard to do with most drawing packages. This one was created from LaTeX. (This note from a sidebar has a category)\f*, we can pick the colour of in the style sheet.
 \esbe
 omnis voluptas assumenda est, omnis dolor repellendus.
+\p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+\p Et harum quidem rerum facilis est et expedita distinctio.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
 \p \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
 \p 
@@ -197,13 +196,12 @@ v:\zornament |pattern="1|v"\*
 \par
 
 \zornament |pattern="2|v"\*\zornament |pattern="1|h" \* Hi
-\pb
 
+\p Ornaments:
+\zrule |cat="ornaments" width="0.9" align="r"\*
 
-\s1 The default ornaments  (vectorian)
-\p
-\rem \testornamentsv
+\p Annotated border elements:
+\p ~
+\boxornfalse
+\fig a test image|src="rose.jpg" cat="annotated" scale="0.7" size="col" pgpos="h"\fig*
 
-\s1 pgfhan ornaments
-\p
-\rem \testornamentsh

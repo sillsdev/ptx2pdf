@@ -114,9 +114,9 @@ If the USFM is:
 of the life of any Christian's life...
 ```
 Then not leaving anything unspecified, the book name `Holy Bible` is formatted:
-```
+```tex
 \Marker id:FRT|periph:promo|cat:Main|bk+ip
-``` 
+```
 
 ### Style stack boundaries
 As paragraph styling does not affect a footnote, the stylestack for inside a footnote ends at the `\f` or `\x`
@@ -125,7 +125,7 @@ Similarly, the style-stack in force outside a sidebar does not affect anything i
 ## Double underlining
 If underlining is recommended against, double-unlerlineing is doubly so. But it has been asked for, so it is now
 implemented. To specify it, pass the *exact* value of 2 to the `\Underline` 'boolean'.
-```
+```tex
 \Marker wj
 \Underline 2
 ```
@@ -134,13 +134,68 @@ Note that while single-underlining of spaces works quite nicely, for double-unde
 line-fragments. These may look ugly on PDF viewers, but hopefully print OK.
 
 ###Underlining parameters (TeX file):
-```
+```tex
 \def\DoubleUnderlineSpaceQuantum{0.05ex} %  how long are the chunks that get added together to underline a variable width space
 \def\DoubleUnderlineSep{0.05em} % How separate are the lines
 \def\UnderlineLower{0.1em} % How much lower is the (top of the) underline from the decender?
 \def\UnderlineThickness{0.05em} % Line thickness
-\UnderlineSpacetrie % or false 
+\UnderlineSpacetrue % or false 
 ```
+
+## Underlining with a character or string
+In very odd circumstances, it might be necessary to 'underline' with a
+character, or perhaps strike through a piece of text with Xes, etc. to highlight errors.
+
+This may cause gaps between words and spaces due to the difference in length of an integral number of underlining bits and the width of a word or space, and it may be preferable to apply the setting `\UnderlineSpacefalse` either globally or via a hook.
+
+```tex
+\Marker ul
+\Endmarker ul*
+\Underline 
+\UnderChar ∿
+\StyleType Character
+
+\Marker ul2
+\Endmarker ul2*
+\Underline 
+\UnderChar "∿-"
+\StyleType Character
+
+\Marker ul3
+\Endmarker ul3*
+\Underline 
+\UnderChar [\hbox to 2ex{\hfill x\hfill}]
+\StyleType Character
+
+\Marker underline+ul
+\FontSize 3
+\FontName DejaVu Sans
+\SpaceBeside -.125
+\Color xff0000
+%Strike through text with e.g.: \Raise 1ex
+```
+
+In the above example, the marker ul 'underlines' with the character U+223F Sine
+Wave, and ul2 'underlines' with the string of U+223F and a normal hypen/minus character. ul3 underlines with the results of a piece of TeX code.
+Rather than the literal character, it could have been defined using the XeTeX hexadecimal notation  `^^^^223F` but multi-token constructs such as `\char123` are not accepted in the unquoted form, althogh they may be used in the quoted or bracketed form.
+The relevant font for the characters are set by the underline+ul complex style (or underline+ul2, etc, respectively), which sets the font and colour parameters.
+The distance specified by `\UnderlineLower` (see section above) applies. However if, for example, the intention is
+to put Xes through the 'underlined' word, the `\Raise` parameter can be used (on the underline+... styling) to accomplish this. In choosing the value here, it should be remembered that the starting point is with the bottom of the word and the top of the underline character, .
+
+In the (ul2) `"`quoted`"` form, a box containing the underlining string is repeated as many times as will fit, with gaps between the copies of the string, so that the end elements reach the end of the word being underlined.
+
+In the (ul3) `[`bracketed`]` form,  an alternative fill strategy is used, which leaves gaps at the end of the underlining if there's not a perfect match, but does not insert gaps between the underlining characters.
+Either quoted or bracketed forms may include TeX code.
+
+The (ul) unquoted form is only applicable to single characters, and the code has been written to perform a special handling for such characters: the font is queried about the bounds of the inked portion of the glyph (difference between the ink and the normal space around the letter), and any reported horizontal spacing is removed.  Assuming the font information is  correct, this means that ink of the underlining characters will touch one another. As with the bracketed form, 'spare' space is inserted at either end of the underlined word.
+
+If some overlap between underline characters is required (or additional separation), such as to make the 'sine wave' join up, this can be accomplished with `\SpaceBeside`  parameter, which adds / removes the specified amount of space on *both* sides of the glyph.
+Unlike normal use (where scaling is to the indentation unit, the base unit for this factor is the width of the character).
+
+The `\SpaceBeside` parameter is also applicable to the bracketed form, where the base unit is the natural width of the string or code.
+
+The quoted form currently ignores `\SpaceBeside`, as the relative positioning
+of the characters should be expected to change from word to word anyway.
 
 ## Styling of ranged milestones with and without attributes
 Milestones such as `\qt-s \* ... \qt-e \*` define a range of text that cuts

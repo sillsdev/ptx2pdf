@@ -15,6 +15,7 @@ temp/
 /python/dist/
 /python/build/
 /python/lib/PTXprint.egg-info/
+/python/lib/ptxprint.egg-info/
 /wine/
 /ptx2pdf_wine/
 /dev/
@@ -40,6 +41,7 @@ tmpPicLists/
 /pictures/
 /projects/
 /projects2/
+/resources/
 /results/
 /specials/
 /templates/

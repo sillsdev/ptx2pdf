@@ -71,7 +71,7 @@ class Emitter:
         if self.last_ws is not None and not len(self.last_ws):
             self.last_ws = " "
 
-def usx2usfm(fname, outf):
+def usx2usfm(fname, outf, reftag=None):
     emit = Emitter(outf)
     parent = None
     stack = []
@@ -117,6 +117,8 @@ def usx2usfm(fname, outf):
                 emit("\\{}".format(s))
                 append_attribs(el, emit)
                 emit("\\*")
+            elif reftag is not None and el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
+                emit("\\"+reftag)
             elif el.tag in ("usx", "annot", "table", "usfm", "text", "ref"):
                 pass
             else:
@@ -146,24 +148,34 @@ def usx2usfm(fname, outf):
                 emit.addws()
                 if el.get("closed", "true") == "true":
                     emit("\\{}e ".format(s))
+            elif reftag is not None and el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
+                #append_attribs(el, emit, nows=True)
+                emit("\\{}*".format(reftag))
             lastel = el
 
 
 _dblMapping = {
-    'Name':             ('meta', 'identification/systemId[@type="paratext"]/name'),
-    'Language':         ('meta', 'language/name'),
-    'Encoding':         ('string', '65001'),
-    'Copyright':        ('metamulti', 'copyright/fullStatement/statementContent/p'),
-    'DefaultFont':      ('styles', 'property[@name="font-family"]'),
-    'DefaultFontSize':  ('styles', 'property[@name="font-size"]'),
-    'FileNamePostPart': ('eval', lambda info: info['prjid']+".USFM"),
-    'FileNameBookNameForm': ('string', '41MAT'),
-    'FileNamePrePart':  ('string', ''),
-    'StyleSheet':       ('string', "usfm.sty"),
-    'MinParatextVersion': ('string', '8.0.63.1'),
-    'FullName':         ('meta', 'identification/systemId[@type="paratext"]/fullName'),
-    'Editable':         ('string', 'F'),
-    'BooksPresent':     ('eval', lambda info: info['bookspresent'])
+    'Name':                         ('meta', 'identification/systemId[@type="paratext"]/name'),
+    'Language':                     ('meta', 'language/name'),
+    'Encoding':                     ('string', '65001'),
+    'Copyright':                    ('metamulti', 'copyright/fullStatement/statementContent/p'),
+    'DefaultFont':                  ('styles', 'property[@name="font-family"]'),
+    'DefaultFontSize':              ('styles', 'property[@name="font-size"]'),
+    'FileNamePostPart':             ('eval', lambda info: info['prjid']+".USFM"),
+    'FileNameBookNameForm':         ('string', '41MAT'),
+    'NoSpaceBetweenBookAndChapter': ('string', 'False'),
+    'ChapterVerseSeparator':        ('string', ':'),
+    'RangeIndicator':               ('string', '-'),
+    'SequenceIndicator':            ('string', ','),
+    'ChapterRangeSeparator':        ('string', '–'),
+    'BookSequenceSeparator':        ('string', '; '),
+    'ChapterNumberSeparator':       ('string', '; '),
+    'FileNamePrePart':              ('string', ''),
+    'StyleSheet':                   ('string', "usfm.sty"),
+    'MinParatextVersion':           ('string', '8.0.63.1'),
+    'FullName':                     ('meta', 'identification/systemId[@type="paratext"]/fullName'),
+    'Editable':                     ('string', 'F'),
+    'BooksPresent':                 ('eval', lambda info: info['bookspresent'])
 }
 
 def innertext(root, path):

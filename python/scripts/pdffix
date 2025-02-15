@@ -1,0 +1,14 @@
+#!/usr/bin/python3
+from ptxprint.pdf.fixcol import fixpdffile
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infile")
+parser.add_argument("outfile")
+parser.add_argument("--parlocs")
+parser.add_argument("-c","--color",default="rgb",help="color settings: [cmyk, *rgb, rgbx4]")
+args = parser.parse_args()
+
+if args.parlocs is None:
+    args.parlocs = args.infile.replace(".pdf", ".parlocs")
+fixpdffile(args.infile, args.outfile, parlocs=args.parlocs, colour=args.color)

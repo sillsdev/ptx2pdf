@@ -1,0 +1,7 @@
+% simple bar
+\m 0 50
+\l 50 50
+\l 50 0
+\l 0 0
+\s
+\endinput

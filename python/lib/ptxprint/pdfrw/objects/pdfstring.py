@@ -52,7 +52,7 @@ signs ("<" and ">").
 A literal string may encode bytes almost unmolested.  The caveat is
 that if a byte has the same value as a parenthesis, it must be escaped
 so that the tokenizer knows the string is not finished.  This is accomplished
-by using the ASCII backslash ("\") as an escape character.  Of course,
+by using the ASCII backslash ("\\") as an escape character.  Of course,
 now any backslash appearing in the data must likewise be escaped.
 
 Hexadecimal strings
@@ -364,7 +364,7 @@ class PdfString(str):
         return unescape_func
 
     def decode_literal(self):
-        """ Decode a PDF literal string, which is enclosed in parentheses ()
+        r""" Decode a PDF literal string, which is enclosed in parentheses ()
 
             Many pdfrw users never decode strings, so defer creating
             data structures to do so until the first string is decoded.

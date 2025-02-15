@@ -11,20 +11,31 @@
 %\tracingmacros=1
 %\tracinggroups=1
 %\tracingifs=1
-\tracing{g}
-\tracing{s}
-\tracing{C}
-\tracing{F}
+%\tracing{g}
+\tracing{G}
+%\tracing{s}
+%\tracing{C}
+%\tracing{F}
 \CropMarkstrue
-\def\doLines{\doGridLines\doGraphPaper}
+\def\doLines{\doGraphPaper}
+%\def\doLines{\doNoteLines}
 %\tracing{P}
 \tracingoutput=1
 % Set added material in desired form
 \def\addmtlquteht{2pt}
 \def\addmtlqutewd{1.5pt}
 \def\addmtlqutelw{0.2pt}
+\BindingGutter=3cm
+\BindingGuttertrue
+\def\NoteLineY{0.6cm}
 \csname ColorFontstrue\endcsname
 \lastptxfiletrue
 \unbalancedtrue
+\def\NoteLineRuleType{rule}
+\def\NoteLineColMinor{0 0 0}
+\def\NoteLineLineMinor{0.3pt}
+\def\NoteLineXoffset{1cm}
+\showboxbreadth=30
+\showboxdepth=30
 \ptxfile{test.usfm}
 \bye

@@ -1,7 +1,7 @@
 ; Inno Setup Script
 #define MyAppName "PTXprint"
-#define MyAppVersion "2.4.16"
-#define MyAppPublisher "SIL International"
+#define MyAppVersion "2.7.22"
+#define MyAppPublisher "SIL Global"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
 
@@ -22,7 +22,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequiredOverridesAllowed=dialog
 LicenseFile=docs\inno-docs\MIT License.txt
 InfoBeforeFile=docs\inno-docs\ReleaseNotes.txt
-InfoAfterFile=docs\inno-docs\AboutPTXprint.txt
+InfoAfterFile=docs\inno-docs\AboutPTXprint.rtf
 OutputBaseFilename=SetupPTXprint({#MyAppVersion})
 SetupIconFile=icon\62859-open-book-icon-setup.ico
 Compression=lzma
@@ -40,11 +40,11 @@ Name: "russian";    MessagesFile: "compiler:Languages\Russian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
-[InstallDelete]
-Type: filesandordirs; Name: "{app}\xetex"
+; [InstallDelete]
+; Type: filesandordirs; Name: "{app}\xetex"
 
 [Files]
-Source: dist\ptxprint\PTXprint.exe; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,gspawn-win64-helper.exe"
 ; These are the (14) languages that PTXprint's UI is available in:
@@ -62,16 +62,19 @@ Source: "dist\ptxprint\share\locale\ro\*"; DestDir: "{app}\share\locale\ro\"; Fl
 Source: "dist\ptxprint\share\locale\ru\*"; DestDir: "{app}\share\locale\ru\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\th\*"; DestDir: "{app}\share\locale\th\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
+; Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita" 
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+; Add an item for PDFinish in the Start menu
+; Name: "{autoprograms}\{#MyAppName}\PDFinish"; Filename: "{app}\pdfinish.exe"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall 
+;Filename: "{app}\pdfinish.exe"; Description: "{cm:LaunchProgram, 'PDFinish'}"; Flags: nowait postinstall 
 ;skipifsilent - removed this flag/param so it can automatically (re)start the app after a silent install
 
 [InstallDelete]

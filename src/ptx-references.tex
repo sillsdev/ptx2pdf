@@ -49,9 +49,9 @@
     \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
     \edef\@@firstref{\ifx\@book\empty\else
       \ifOmitBookRef\else\@book\fi
-      \ifOmitChapterNumberRH\else\ \@chapter\fi
+      \ifOmitChapterNumberRH\else\bkchs@p\@chapter\fi
       \ifVerseRefs
-        \ifOmitChapterNumberRH\ \else\cvs@p\fi
+        \ifOmitChapterNumberRH\bkchs@p\else\cvs@p\fi
         \@verse
       \fi
     \fi}%
@@ -69,7 +69,7 @@
    \x@\extr@ctlast\t@st\relax
      \ifx\@@book\empty\else
        \ifx\@@book\t@tle\else
-         \ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\ \@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\ \else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
+         \ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\bkchs@p\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\bkchs@p\else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
@@ -84,36 +84,36 @@
   \ifOmitBookRef\else\@book\fi
   \ifVerseRefs
    \ifOmitChapterNumberRH\else
-    \ifx\@chapter\empty\else\ \@chapter\cvs@p\fi\@verse
+    \ifx\@chapter\empty\else\bkchs@p\@chapter\cvs@p\fi\@verse
     \ifx\@book\@@book
      \ifx\@chapter\@@chapter
       \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
      \else
-      \ranges@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
+      \rangechs@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
      \fi
     \else
-     \ranges@p\ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\ \@@chapter\cvs@p\@@verse\fi
+     \rangechs@p\ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\bkchs@p\@@chapter\cvs@p\@@verse\fi
     \fi
    \fi
   \else
    \ifx\@book\@@book
     \ifOmitChapterNumberRH\else
      \ifx\@chapter\empty\else
-      \ \@chapter
+      \bkchs@p\@chapter
       \ifx\@chapter\@@chapter\else\ifx\@@chapter\empty\else
        \setbox0=\hbox{\tracinglostchars=0
        \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
        \advance\c@untA by 1
-       \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
+       \ifnum\c@untA=\c@untB \pairs@p \else \rangechs@p \fi
        \@@chapter
       \fi\fi
      \fi
     \fi
    \else
     \ifOmitChapterNumberRH
-      \ranges@p \@@book
+      \rangechs@p \@@book
     \else
-      \ \@chapter \ranges@p \@@book \ \@@chapter
+      \bkchs@p\@chapter \rangechs@p \@@book \bkchs@p\@@chapter
     \fi
    \fi
   \fi
@@ -157,12 +157,17 @@
 % Specify separators to use when constructing references
 %
 \def\ranges@p{\hbox{\RangeSeparator}} % box this to avoid possible bidi problems
+\def\rangechs@p{\hbox{\RangeChapSeparator}} % box this to avoid possible bidi problems
+\def\bkchs@p{\hbox{\BookChapSeparator}} % box this to avoid possible bidi problems
 %\def\pairs@p{,\kern.2em}
-\let\pairs@p\ranges@p
+\let\pairs@p\ranges@p % box to use when it's e.g. 1,2 (normally the same as 1-3)
 \def\cvs@p{\hbox{\ChapterVerseSeparator}}
 \def\endash{\char"2013\relax}
+\let\RangeChar\endash
+\def\BookChapSeparator{\ }
+\def\RangeSeparator{\kern.1em\RangeChar\kern.1em} % what to put between first - last of a range, when it's verse-verse
+\def\RangeChapSeparator{\kern.1em\RangeChar\kern.1em} % what to put between first - last of a range, when it's chapter:verse-chapter:verse
 
-\def\RangeSeparator{\kern.1em\endash\kern.1em} % what to put between first - last of a range
 \def\ChapterVerseSeparator{\kern.02em.\kern.02em} % what to put between chapter:verse
 
 %
@@ -176,7 +181,7 @@
  \s@tfont{h}{h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark -> \p@gebotmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
- \trace{h}{page \the\pageno (h), first mark=\t@st p@geone\ifp@geone true\else false\fi}%
+ \trace{h}{page \the\pageno (h), first mark=\t@st \space p@geone\ifp@geone true\else false\fi}%
  \global\rhr@letrue
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else\ifx\t@st\intr@\ifp@geone 0\else 1\fi\else 0\fi\fi =1
   \trace{h}{no p@gefirstmark (\t@st). Page 1 is \ifp@geone True\else False\fi}%
@@ -190,13 +195,13 @@
  \else
     \trace{h}{Testing for \t@tle\space in \t@st}%
     \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
-      \ifodd\pageno\the\titleoddhead\else\the\titleevenhead\fi
+      \ifodd\pageno\the\titleoddhead\trace{h}{using titleoddhead}\else\the\titleevenhead\trace{h}{using titleevenhead}\fi
       \global\rhr@lefalse
     \else
       \ifodd\pageno
-	\the\oddhead
+        \the\oddhead
       \else
-	\ifDoubleSided \the\evenhead \else \the\oddhead\fi
+        \ifDoubleSided \the\evenhead \else \the\oddhead\fi
       \fi
     \fi
 %  \fi
@@ -241,18 +246,18 @@
 \def\defineheads{
   \trace{M}{Defining heads for \mainBodyColumns \space columns}%
   \ifnum\mainBodyColumns=2
-    \oddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHoddcenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \evenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHevencenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \noVoddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHnoVoddcenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \noVevenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHnoVevencenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \oddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFoddcenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \evenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFevencenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \noVoddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFnoVoddcenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \noVevenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFnoVevencenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \titleevenfoot={\RF@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \titleoddfoot={\RF@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \titleevenhead={\RH@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \titleoddhead={\RH@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \oddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHoddleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RHoddcenter\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\RHoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \evenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHevenleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RHevencenter\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\RHevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVoddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVoddleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RHnoVoddcenter\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVevenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVevenleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RHnoVevencenter\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \oddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFoddleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RFoddcenter\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RFoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \evenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFevenleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RFevencenter\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RFevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVoddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVoddleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RFnoVoddcenter\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RFnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVevenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVevenleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RFnoVevencenter\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RFnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleevenfoot={\RF@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleoddfoot={\RF@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleevenhead={\RH@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleoddhead={\RH@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
   \else
     \oddhead={\lshiftc@lumn{1}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}\rshiftc@lumn{1}}
     \evenhead={\lshiftc@lumn{0}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}\rshiftc@lumn{0}}
@@ -369,12 +374,12 @@
 \def\RFtitleright{\empty}
 
 \def\HEADFOOTset#1#2#3#4#5#6#7#8{%
-  \x@\def\csname R#1#2evenleft\endcsname{#3}%
-  \x@\def\csname R#1#2evencenter\endcsname{#4}%
-  \x@\def\csname R#1#2evenright\endcsname{#5}%
-  \x@\def\csname R#1#2oddleft\endcsname{#6}%
-  \x@\def\csname R#1#2oddcenter\endcsname{#7}%
-  \x@\def\csname R#1#2oddright\endcsname{#8}}%
+  \x@\gdef\csname R#1#2evenleft\endcsname{#3}%
+  \x@\gdef\csname R#1#2evencenter\endcsname{#4}%
+  \x@\gdef\csname R#1#2evenright\endcsname{#5}%
+  \x@\gdef\csname R#1#2oddleft\endcsname{#6}%
+  \x@\gdef\csname R#1#2oddcenter\endcsname{#7}%
+  \x@\gdef\csname R#1#2oddright\endcsname{#8}}%
 %usage: #1 H or F (head or foot)
 % #2 {}, {title} {noV}
 % #3-#8 Left,centre,right / left, centre,right for even,odd pages.

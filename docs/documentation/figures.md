@@ -316,7 +316,8 @@ parameters.
 ### x-edgeadjust Attribute
  `x-edgeadjust` moves the image relative to the margin, like indentation does to text.  As the same units are used, a figure 
 with `x-edgeadjust="0.25"`and  `pgpos="hl"` will align with the left-hand edge of a paragraph with an indentation of 0.25. 
-Negative numbers will cause the image to extend into the respective margin.
+Negative numbers will cause the image to extend into the respective margin. Note that sidebars can be similarly adjusted 
+via their `\FirstLineIndent` parameter
 
 ### x-xetex Attribute - Rotation control and PDF page selection 
 #### Rotation
@@ -638,11 +639,11 @@ as above. There is no support for controlling indentation of the first line or
 other paragraphing style elements.
 
 ### Caption Gap Adjustment
-The gap between the caption and the figure can be adjusted by the following definition:
+The gap between the caption and the figure can be adjusted globally by the following definition:
 ```
 \def\FigCaptionAdjust{0.0pt}
 ```
-
+Per-image category adjustments are also possible. See below. 
 ### Caption font and size
 
 As noted above, caption styling is controled via the `fig` marker in the stylesheet. Font-related styles can be selected in the normal manner.
@@ -653,3 +654,83 @@ For multi-line captions, the line spacing may be controlled by modification of `
 ```
 \DoCaptionsfalse
 ```
+
+## Image Categories
+### Borders and backgrounds
+If the (non-standard) `cat` attribute (e.g. `cat="myborder"`)  is specified in the piclist (or USFM3 attribute list), then sidebar-like borders and background colours may be speicified for the image.
+The border or frame is positioned relative to the image itself (i.e. exlcuding the caption).
+For example:
+![](imgs/rose_border.png)
+
+
+was selected with `cat="dblborder"` and used these style settings:
+```
+\Marker cat:dblborder|fig
+\BorderStyle double
+\Border All
+\BorderWidth 3
+\BorderColour xff0000
+\BoxPadding 4
+\BorderPadding 0
+\BgColour x0000ff 
+\Alpha 0.1
+```
+The double-line style border uses a red (`xff0000`) line and the default black fill. As the `\BorderLineWidth` has not been specified, the default of 1/3 of the border thickness is selected for these red lines.
+The inner edge of the border separated from the outer edge of the 'background' box by 0 points (`\BorderPadding 0`) and that pale (`\Alpha 0.1`)  blue (`\x0000ff`) box extends 4pt  (`BoxPadding 4`) out from the image.
+
+With negative `\BorderPadding` values, and high `\BoxPadding` it is possible to position the border inside the box, and even leave sufficient bottom padding for the background colour to  make space for the caption too.
+
+### Caption controls
+Borders are not the only thing that may be altered by an image category. The styling parameter `\SpaceBetween` allows control of the gap between the caption and the image. Negative values can move the catpion into the background box, border or even onto the image.
+
+This makes it possible to apply a caption to a full-page map, for instance.
+
+Font-related style options (fontname, size, bold, italic, etc) and also justification and margin settings also take effect, but this would normally be avoided for the sake of consistent appearance.
+
+### Image Credit contols
+The image category also applies to the credit box, allowing it to
+be moved and coloured so that there is no clash with the border or background:
+
+```
+\Marker cat:ornborder|x-credit|fig
+\Outline 1
+\OutlineColour xffff00
+\SpaceBeside 8
+```
+
+### Complex example
+This example shows the transparency in the  classic 'Ghostscript tiger' image,
+an inset caption and and  an ornamental (`Vectorian2`) frame set fully inside
+the background box. 
+![](imgs/tiger_border.png)
+```
+\Marker cat:ornborder|fig
+\BorderStyle Vectorian2
+\BorderLineWidth 0.5
+\Border All
+\BorderWidth 15
+\BorderColour x007f00
+\BorderFillColour xcfcf7f
+\BgColour x7f7fc0
+\BorderPadding -25
+\BoxBPadding 44
+\SpaceBetween -4.5
+\Justification Right
+\LeftMargin 1.1
+\RightMargin 0.5
+\FontScale 0.7
+\Alpha 0.5
+
+```
+
+The piclist entry is:
+```
+TST 2.5 The Ghostscript tiger in a PDF file [Fcb]|pgpos="tr" src="tiger.pdf" ref="" size="col" scale="1" x-credit="Ghostscript" cat="ornborder"
+```
+
+## Figures in footnotes
+In general, footnote processing is not compatible with figures. However, the following observations have been made:
+
+ * A footnote with `pgpos="H"` (i.e. in-text) may occur in paragraphed and non-paragraphed notes.
+ * A footnote with `pgpos="h"` can occur in non-paragraphed footnotes.
+

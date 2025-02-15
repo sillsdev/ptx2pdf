@@ -24,12 +24,18 @@ def parsestrtok(s):
         return s
     return PdfObject(s)
 
-def rgb_to_cmyk(r, g, b):
+def rgb_to_cmyk(r, g, b, maxsat=0.):
     k = 1 - max(r, g, b)
     if k < 1.0:
         c = (1 - r - k) / (1 - k)
         m = (1 - g - k) / (1 - k)
         y = (1 - b - k) / (1 - k)
+        # desaturate if too much ink
+        if maxsat > 1. and (s := c + m + y) > (x := maxsat - k):
+            f = x / s
+            c = c * f
+            m = m * f
+            y = y * f
     else:
         c, m, y = (0, 0, 0)
     return [c, m, y, k]
@@ -122,12 +128,13 @@ class PdfStreamParser:
 class PageCMYKState(PdfStreamParser):
     opmap = {'K': 'k', 'RG': 'rg'}
 
-    def __init__(self, threshold):
+    def __init__(self, threshold, **kw):
         self.currgs = None
         self.threshold = threshold
         self.testnumcols = False
         self.profile = None
         self.hascolor = False
+        self.maxsat = kw.get('maxsat', 0.)
 
     def parsepage(self, page, trailer, gstates, **kw):
         self.gstates = gstates
@@ -187,7 +194,7 @@ class PageCMYKState(PdfStreamParser):
 
     def rgb2cmyk(self, r, g, b):
         if self.profile is None:
-            return rgb_to_cmyk(r, g, b)
+            return rgb_to_cmyk(r, g, b, maxsat=self.maxsat)
         im = Image.new("RGB", (1, 1), (r*255, g*255, b*255))
         newim = applyTransform(im, self.profile)
         return newim.getpixel(0, 0)
@@ -195,9 +202,11 @@ class PageCMYKState(PdfStreamParser):
     def processImg(self, img):
         if "rgb" in img.cs.lower():
             if not img.rgb_black():
-                img.rgb_cmyk()
+                img.rgb_cmyk(maxsat=self.maxsat)
             logger.debug(f"After convert to CMYK, {img.cs=}")
             return img.asXobj()
+        elif "cmyk" in img.cs.lower() and self.maxsat > 1.:
+            img.cmyk_maxsat()
         elif img.cmyk_black():
             return img.asXobj()
         else:
@@ -306,7 +315,8 @@ def compress(mylist):
             obj.DecodeParms = None
 
 def fixpdfcmyk(trailer, threshold=1., **kw):
-    pstate = PageCMYKState(threshold)
+    maxsat = kw.get('maxsat', 0.)
+    pstate = PageCMYKState(threshold, **kw)
     for pagenum, page in enumerate(trailer.pages, 1):
         pstate.parsepage(page, trailer, page.Resources.ExtGState, **kw)
         annots = page.Annots
@@ -314,7 +324,7 @@ def fixpdfcmyk(trailer, threshold=1., **kw):
             for a in annots:
                 col = a.C
                 if len(col) == 3:
-                    newc = rgb_to_cmyk(*map(float, col))
+                    newc = rgb_to_cmyk(*map(float, col), maxsat=maxsat)
                     a.C = PdfArray(list(map(PdfObject, newc)))
     _pushICC(trailer, os.path.join(pycodedir(), "default_cmyk.icc"), 4, **kw)
 

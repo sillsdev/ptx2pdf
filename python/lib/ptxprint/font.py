@@ -21,6 +21,11 @@ fontconfig_template = """<?xml version="1.0"?>
         <rejectfont>
             <glob>*.woff</glob>
         </rejectfont>
+<!--        <rejectfont>
+            <pattern>
+                <patelt name="variable"/>
+            </pattern>
+        </rejectfont> -->
     </selectfont>
 </fontconfig>
 """
@@ -28,7 +33,13 @@ fontconfig_template = """<?xml version="1.0"?>
 fontconfig_template_nofc = """<?xml version="1.0"?>
 <fontconfig>
     {fontsdirs}
-    <cachedir prefix="xdg">fontconfig</cachedir>
+<!--    <selectfont>
+        <rejectfont>
+            <pattern>
+                <patelt name="variable"/>
+            </pattern>
+        </rejectfont>
+    </selectfont> -->
 </fontconfig>
 """
 
@@ -1079,12 +1090,17 @@ class FontRef:
         return res
 
     def getTtfont(self):
-        return TTFont(self.name, self.style)
+        styles = [self.style or ""]
+        if self.isBold:
+            styles.append("Bold")
+        if self.isItalic:
+            styles.append("Italic")
+        return TTFont(self.name, " ".join(styles).lstrip())
 
     def getFake(self, name):
         return self.feats.get(name, None)
 
-    def _getTeXComponents(self, inarchive=False, root=None):
+    def _getTeXComponents(self, inarchive=False, root=None, noStyles=False):
         f = self.getTtfont()
         self.isGraphite = self.isGraphite and f.isGraphite
         s = None
@@ -1107,9 +1123,9 @@ class FontRef:
         sfeats = [] if s is None else [s]
         if self.isGraphite:
             sfeats.append("/GR")
-        if self.isBold:
+        if self.isBold and noStyles:
             sfeats.append("/B")
-        if self.isItalic:
+        if self.isItalic and noStyles:
             sfeats.append("/I")
         feats = []
         for k, v in self.feats.items():
@@ -1134,14 +1150,14 @@ class FontRef:
                     x = getattr(regular, "is"+a, False)
                     y = getattr(self, "is"+a, False)
                     if x and not y:
-                        style[a] = "-"
+                        style[a] = False
                     elif y and not x:
-                        style[a] = ""
+                        style[a] = True
                     elif x:     # implies: and y
                         del style[a]
         # All other non-main fonts use /B, etc.
         else:
-            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath)
+            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath, noStyles=noStyles)
             style['FontName'] = self.name
             if len(sfeats):
                 style['FontName'] += "".join(sfeats)
@@ -1162,13 +1178,10 @@ class FontRef:
                 style.pop("ztexFontGrSpace", None)
             if not noStyles:
                 for a in ("Bold", "Italic"):
-                    if getattr(self, "is"+a, False):
-                        style[a] = ""
-                    else:
-                        del style[a]
+                    style[a] = getattr(self, "is"+a, False)
 
     def asTeXFont(self, inarchive=False):
-        (name, sfeats, feats) = self._getTeXComponents(inarchive)
+        (name, sfeats, feats) = self._getTeXComponents(inarchive, noStyles=True)
         res = ['{}'.format(name), "".join(sfeats)]
         if self.lang is not None:
             res.append(":language={}".format(self.lang))

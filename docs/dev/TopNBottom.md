@@ -82,3 +82,21 @@ continuous paragraphs.
 It might be easier to consider chunks that extend a previous paragraph rather than 
 an output mechanism that needs to drive an input-control mechanism, which this sounds like.
 
+### Intermediate step
+The polyglot chunking code splits lines into roughly-speaking equal chunks.  To a 
+first-order approximation, X% of the way through a given chunk of column L
+corresponds to the same position as X% of the way through column R (and  A, B, C...).
+Footnotes  and figures obviously complicate this, but they can be partially ignored 
+in the following algorithm:
+a) Determine available space (availht).
+b) Read the chunk on each of the N columns (until \polyglotendcols). Store into excessX (X=L,R etc.)
+c) Set Xht as \ht\excessX+\dp\excessX and htot is sum(Lht, Rht,...): 
+d)  Split (availht * Xht/htot) from excessX into partialX. (the galley for X).
+e) Run the gallies (holdinginserts=0),  
+f) Compare the trial size including inserts with the available space.
+g1) If the trial fails, adjust htot and Xht, restore excessX, go to (d).
+g2) If the trial fits, add to the page, Update availht. If full, output page.
+Go to (c) if there's nothing remaining in excessX, else (a).
+
+
+

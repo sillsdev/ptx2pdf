@@ -32,7 +32,8 @@
 *.xdv    binary
 *.ico    binary
 *.zip    binary
-*.ods    binary
+*.ods    binary diff=odf
+*.odt    binary diff=odf
 *.tfm    binary
 python/scripts/ptxprint text ident
 ls-R     text

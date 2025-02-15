@@ -4,31 +4,7 @@ picaccept = Unknown
 picreverse = OK
 piccreditbox = 
 piccredit = 
-approved = false
 
 [image]
-picclear = unknown
-picaccept = Unknown
-picreverse = OK
-approved = false
-piccreditbox = br,90,None
-piccredit = IM
-
-[slithytoves]
-picclear = unknown
-picaccept = Unknown
-picreverse = OK
-approved = false
-
-[gutenberg]
-picclear = unknown
-picaccept = Unknown
-picreverse = OK
-approved = false
-
-[test]
-picclear = unknown
-picaccept = Unknown
-picreverse = OK
 approved = false
 

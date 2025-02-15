@@ -200,6 +200,7 @@ You can also specify a font definition like this directly in a stylesheet marker
 
 ## <a name="ptx2pdf-MacroSetupParameters-RunningHeader/Footer">Running Header/Footer</a>
 
+
 ### <a name="ptx2pdf-MacroSetupParameters-Header/FooterPosition">Header/Footer Position</a>
 
 *   \def\HeaderPosition{```0.7```} – Position of the baseline of the header relative to the top edge of the paper (not the text area) (default = 0.5)
@@ -287,6 +288,16 @@ convenience.
 
 
 Literal text can also be included (e.g., to add dashes around a centered page number, ```\\def\RFtitlecenter{-\pagenumber -}```).
+
+
+### <a name="ptx2pdf-MacroSetupParameters-Header/Range">Header/Footer Scripture Ranges</a>
+Items such as rangeref, firstref, etc. need to know how to construct a scripture reference from individual parts. The following macros can be redefinied:
+
+* `\def\RangeChar{\endash}` specifies a character (can be multiple characters, of course) that the code should  use for ranges in the running header, bridged verses, etc.
+* `\def\RangeSeparator{\kern.1em\RangeChar\kern.1em}` used for ranges of verses (in the running header).  The default uses `\RangeChar` with some spacing either side.
+* `\def\RangeChapSeparator{\kern.1em\RangeChar\kern.1em}` the range separator for range of chapters or books (in the running header). The default uses RangeChar with some spacing.
+* `\def\BookChapSeparator{ }` By default a space, but maybe someone wants **Genesis:1.2** or something in the running header.
+* `\def\ChapterVerseSeparator{:}` What goes between the chapter and verse numbers in the running header (typically `\def\ChapterVerseSeparator{.}` or `{:`)?
 
 
 ### <a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">Other Header Setup</a>
@@ -897,7 +908,6 @@ give the following results:
 
 
 <a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">
-<small>Updated on <abbr class="updated" title="2011-05-18T19:45:59.877Z">May 18, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">8</span>)</small>
 
 * * *
 

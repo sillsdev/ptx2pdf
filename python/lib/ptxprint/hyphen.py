@@ -1,5 +1,9 @@
 import re, os, regex
 from ptxprint.utils import universalopen, runChanges, _
+from itertools import accumulate
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Hyphenation:
 
@@ -11,6 +15,7 @@ class Hyphenation:
         outfname = os.path.join(prjdir, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
         hyphenatedWords = []
         if not os.path.exists(infname):
+            self = cls()
             self.m1 = _("Failed to Generate Hyphenation List")
             self.m2 = _("{} Paratext Project's Hyphenation file not found:\n{}").format(prjid, infname)
             return self
@@ -127,8 +132,12 @@ class Hyphenation:
         return self.wordlist.get(k, default)
 
     def analyse(self):
-        self.has2010 = any("\u2010" in x for x in self.wordlist.keys())
-        self.has2011 = any("\u2011" in x for x in self.wordlist.keys())
+        self.calcChars()
+        self.has2010 = "\u2010" in self.chars
+        self.has2011 = "\u2011" in self.chars
+
+    def get_hyphen_char(self):
+        return "\u2010" if self.has2010 else "-"
             
     def outTeX(self, outfname):
         hyphenatedWords = sorted(self.wordlist.values(), key=lambda x:(-len(x), x))
@@ -143,3 +152,61 @@ class Hyphenation:
         self.chars = set()
         for k in self.wordlist.keys():
             self.chars.update(k)
+        self.splitre = re.compile(r"(?i)([^{}]+)".format("".join(sorted(self.chars))))
+
+    def hyphenate(self, t, hyphenchar):
+        t = t.replace("-", hyphenchar)
+        bits = self.splitre.split(t)
+        for i in range(0, len(bits), 2):
+            s = bits[i].replace("-", hyphenchar)
+            if s.lower() in self:
+                h = self.get(s.lower()).lower()
+                if s.lower() != s:
+                    hbits = h.split("-")
+                    hpos = list(accumulate([len(x) for x in hbits]))
+                    r = [s[x:y] for x, y in zip([0] + hpos, hpos)]
+                    bits[i] = "\u00AD".join(r)
+                    logger.log(6,f"hyphenating {s} at {hpos} giving {'-'.join(r)}")
+                else:
+                    logger.log(6,f"hyphenating {s} giving {h}")
+                    bits[i] = h.replace("-", "\u00AD")
+            else:
+                bits[i] = s
+        return "".join(bits)
+
+
+class Hunspell:
+
+    def __init_(self, infile):
+        from spylls.hunspell import Dictioanry
+        if infile.lower().endswith(".zip"):
+            self.dict = Dictionary.from_zip(infile)
+        else:
+            self.dict = Dictionary.from_files(infile)
+        self.chars = None
+        self.has2010 = False
+        self.splitre = None
+
+    def analyse(self):
+        if self.chars is not None:
+            return
+        self.chars = set()
+        for w in self.dict.dic.words:
+            self.chars.update(w.stem)
+        self.has2010 = "\u2010" in self.chars
+        self.splitre = re.compile(r"(?i)([^{}]+)".format("".join(sorted(self.chars))))
+
+    def get_hyphen_char(self):
+        return "\u2010" if self.has2010 else "-"
+
+    def hyphenate(self, t, hyphenchar):
+        if hyphenchar != "-":
+            t = t.replace("-", hyphenchar)
+        bits = self.splitre.split(t)
+        for i in range(0, len(bits), 2):
+            bw = self.dict.lookuper.break_word(bits[i])
+            bits[i] = max(bw, key=len)      # maximal breaking
+        return "".join(bits)
+
+
+

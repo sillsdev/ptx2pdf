@@ -34,6 +34,7 @@
 \newif\ifhorizb@rder
 \newif\ifhasb@rder
 \newif\ifearlybgimage
+\newif\iftextborder
 \def\borderstylelist{plain, double}
 
 \let\b@drcol\relax
@@ -59,12 +60,86 @@
 \def\BorderRef #1\relax{\initc@t\setsbp@ram{borderref}{#1}\xdef\dep@ndlist{\ifx\empty\dep@ndlist\else\dep@ndlist,\fi\c@tprefix\m@rker[\ds@ffix]}}%\x@\xdef\csname border@deps-#1\endcsname{\ifcsname border@deps-#1\endcsname\csname border@deps\endcsname,\fi\m@rker}}
 \def\SetBorder #1\relax{\Marker bdr-#1\relax}
 
-\def\mkb@rder{%Put a simple border around a box
+\def\bc@lsetup{%
   \ifx\b@drcol\relax
     \def\bc@l{}\def\endbc@l{}%
+    \let\thinlinest@ndard\tls@black
   \else
-    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+    \ifx\b@drcol\fill@none
+      \def\bc@l{}\def\endbc@l{}%
+      \let\thinlinest@ndard\tls@nochk
+    \else
+      \x@\chk@colortype\b@drcol\E
+      \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+    \fi
   \fi
+}
+
+\def\chk@colortype#1 #2 #3\E{%
+  \ifdim #1 pt = #2pt \ifdim #2 pt = #3 pt \ifdim #1pt=0pt
+        \let\thinlinest@ndard\tls@black
+      \else\ifdim #1pt=1pt
+          \let\thinlinest@ndard\tls@white % 1 1 1 = White
+        \else
+          \let\thinlinest@ndard\tls@grey % Grey / gray, depending on your spelling preferences
+      \fi\fi
+    \else
+      \let\thinlinest@ndard\tls@colour % Colour
+    \fi
+  \else
+    \let\thinlinest@ndard\tls@colour % Colour
+  \fi
+} 
+
+\newdimen\minblackline \minblackline=0.25pt
+\newdimen\mincolourline \mincolourline=0.5pt
+\newdimen\minwhiteline \minwhiteline=0.5pt
+\def\OverThinRule{warn}
+\def\OverThinCurve{warn}
+\newdimen\mingreyline 
+\def\thinlinecheck#1#2#3#4{%
+  \ifx\thinlinest@ndard\tls@nochk\else\ifdim #1#2 =0pt\else 
+    \ifdim #1#2 < \csname min\thinlinest@ndard line\endcsname\relax
+      \x@\let\x@\@@rule\csname OverThin\thinlin@type\endcsname
+      \ifcsname overthin@\@@rule\endcsname
+        \csname overthin@\@@rule\endcsname{#1}{#2}{#3}{#4}%
+      \else
+        \message{!! Undefined action '\@@rule' wanted by \msl@sh OverThin\thinlin@type. (#3) near \c@rref. (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname - #4) Issue ignored!}%
+      \fi
+    \fi
+  \fi\fi
+}
+
+\def\overthin@fix#1#2#3#4{% If #2 is a space, then use = assignment, else use edef, (maybe with units)
+  \tracingassigns=1
+  \def\tmp{#2}\ifx\tmp\empty
+    \edef#1{\the\csname min\thinlinest@ndard line\endcsname}%
+  \else
+    \ifx\tmp\space
+      #1=\csname min\thinlinest@ndard line\endcsname
+    \else\ifx\tmp\@pt@
+        \edef#1{\strip@pt{\dimexpr \csname min\thinlinest@ndard line\endcsname \relax}}%
+      \else
+        % TODO! Generic unit conversion? Fortunately not needed so far
+        \message{!! The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref. Cannot fix because of unexpected units.}%
+    \fi\fi
+  \fi
+  \tracingassigns=0
+}
+\gdef\overthin@warn#1#2#3#4{%
+  \message{The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref}%
+}
+\gdef\overthin@warnfix#1#2#3#4{%
+  \overthin@warn{#1}{#2}{#3}{#4}%
+  \overthin@fix{#1}{#2}{#3}{#4}%
+}
+\gdef\overthin@error#1#2#3#4{%
+  \errmessage{The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref}%
+}
+\def\overthin@ignore#1#2#3#4{}
+
+\def\mkb@rder{%Put a simple border around a box
+  \bc@lsetup
   \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drwidth pt  * \b@drvsides\relax
   \dimen1=0pt
   \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width\bc@l
@@ -82,7 +157,7 @@
 \endbc@l}%
 }
 
-\def\ch@ckiftextborderadj{\trace{eb}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \pretextb@rderskip, \posttextb@rderskip}%
+\def\ch@ckiftextborderadj{\trace{eb}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \ifb@dy body\fi,\pretextb@rderskip, \posttextb@rderskip}%
   \tempfalse\ifm@rksonpage
   \ifdim 0pt < \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax
     \temptrue
@@ -90,8 +165,9 @@
  \fi
 }
 
-\def\s@ttextb@rderdims{%
+\def\s@ttextb@rderdims{%Called per book
   \trace{et}{s@ttextb@rderdims}%
+  \global\textborderfalse
   \testm@rkerexists{textborder}%
   \iftemp
     \t@stpublishability{textborder}%
@@ -105,10 +181,13 @@
       \ch@ckhasb@rder
       \@prepVb@rderdims
       \ifhasb@rder
+        \global\textbordertrue
         \getsbp@ram{spacebefore}%
-        \xdef\pretextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}
+        \xdef\pretextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}%
         \getsbp@ram{spaceafter}%
-        \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}
+        \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}%
+        \global\let\textb@dr@bot@pad\b@dr@bot@pad
+        \global\let\textb@dr@top@pad\b@dr@top@pad
       \else
         \xdef\pretextb@rderskip{0pt}%
         \xdef\posttextb@rderskip{0pt}%
@@ -137,6 +216,7 @@
         \trace{et}{Botmark:\t@st, \the\BodyColumns/\the\IntroColumns, m@rksonpage\ifm@rksonpage true\else false\fi}%
         \ifx\t@st\intr@ \tempfalse\fi
         \ifx\t@st\t@tle\ifnum\BodyColumns=\IntroColumns \else \tempfalse\fi\fi
+        \ifbeenb@dy\else \tempfalse\fi
         \ifm@rksonpage\else\tempfalse\fi
         \ifx\t@st\empty\tempfalse\fi
         \iftemp
@@ -164,15 +244,13 @@
 
 \let\mkb@rder@plain\mkb@rder
 \def\d@ublesetup{%
-  \ifx\b@drcol\relax
-    \def\bc@l{}\def\endbc@l{}%
-  \else
-    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
-  \fi
+  \bc@lsetup
   \ifx\b@drlinewidth\relax
     \edef\b@drlinewidth{\strip@pt{\dimexpr \b@drwidth pt /3\relax}}% Use pt for division.
     \let\b@drfillwidth\b@drlinewidth
+    \edef\@thinlinedesc{BorderLineWidth not supplied. 1/3 of Borderwidth}\let\@thinlinedescF\@thinlinedesc
   \else
+    \edef\@thinlinedesc{BorderLineWidth supplied}\def\@thinlinedescF{Remainder of BorderWidth after lines subtracted}%
     \edef\b@drfillwidth{\strip@pt{\dimexpr \b@drwidth pt  - 2\dimexpr \b@drlinewidth pt  \relax\relax}}%
     %\edef\b@drwidth{\strip@pt{\dimexpr \b@drlinewidth pt \relax}}%
   \fi
@@ -197,11 +275,14 @@
   \fi
   \edef\b@drwidth{\strip@pt{\dimexpr \rule@thk\relax}}%
   %\tracingassigns=1
-  \d@ublesetup
+  \d@ublesetup % this sets b@drlinewidth if it's not been defined yet.
+  \let\thinlin@type\tlt@R % Rule, not Curve
+  \thinlinecheck{\b@drlinewidth}{pt}{double-rule zrule (outer lines)}{\@thinlinedesc}%
   %\tracingassigns=0
   \hbox{\raise \rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
     \vbox{\baselineskip=0pt \lineskiplimit=0pt \hbox{\bc@l\vrule height \b@drlinewidth pt  depth 0pt width \rule@wid \endbc@l}%
-      \ifx\b@drfillcolour\fill@none\vskip\b@drfillwidth pt\else
+      \ifx\b@drfillcolour\fill@none\vskip\b@drfillwidth pt \else
+        \thinlinecheck{\b@drfillwidth}{pt}{double-rule zrule (fill)}{\@thinlinedescF}%
         \hbox{\fc@l\vrule height \b@drfillwidth pt depth 0pt width \rule@wid \endfc@l}%
       \fi%
       \hbox{\bc@l\vrule height \b@drlinewidth  pt depth 0pt width \rule@wid \endbc@l}}%
@@ -210,6 +291,9 @@
 }
 \def\mkb@rder@double{%
   \d@ublesetup
+  \let\thinlin@type\tlt@R % Rule, not Curve
+  \thinlinecheck{\b@drlinewidth}{pt}{double-rule border (outer line)}{\@thinlinedesc}%
+  \thinlinecheck{\b@drfillwidth}{pt}{double-rule border (fill)}{\@thinlinedescF}%
   \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drlinewidth pt  * \b@drvsides\relax %Inner vertical
   \dimen1=\dimen0 \advance\dimen1 by \dimexpr -\b@drfillwidth pt  * \b@drvsides\relax %Fill vertical
   \dimen2=\dimen1 \advance\dimen2 by \dimexpr -\b@drlinewidth pt  * \b@drvsides\relax %Outer vertical
@@ -263,7 +347,7 @@
 \def\@get@Vborder@style@params{%Read the minimal set of border-related parameters for vertical spacing
   \traceifset{@get@Vborder@style@params}%
   \trace{eb}{Reading border vertical params for \c@tprefix\sb@rmarker}%
-  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
   \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\xdef\border@tpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\xdef\border@bpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram

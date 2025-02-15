@@ -15,6 +15,7 @@ class MergeF(Flag):
     HeadWithText=4  # Is a heading considered part of the text, or a separate chunk?
     SwapChapterHead=8
     HeadWithChapter=16  # Is a heading considered part of the chapter, or is it (initially) a separate chunk?
+    CLwithChapter=32 # IS cl treated as part of a chapter or is it a heading?
 
 settings= MergeF.NoSplitNB | MergeF.HeadWithChapter 
 logger = logging.getLogger(__name__)
@@ -53,7 +54,7 @@ _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the con
     ChunkType.ID :"(!)The \\id line",
     ChunkType.TABLE :"A table",
     ChunkType.VERSE :"A verse chunk, inside a paragraph",
-    ChunkType.PARVERSE :"A verse chunk, just after starting a paragraph",
+    ChunkType.PARVERSE :"A verse chunk, first thing after starting a paragraph",
     ChunkType.MIDVERSEPAR :"A paragraph which is mid-paragraph",
     ChunkType.PREVERSEPAR :"A paragrpah where the next content is a verse number",
     ChunkType.NOVERSEPAR :"A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction",
@@ -119,7 +120,7 @@ _marker_modes = {
     'sts': ChunkType.HEADER,
     'usfm': ChunkType.HEADER,
     'v': ChunkType.VERSE,
-    'cl': ChunkType.CHAPTER,
+    'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
     'nb': ChunkType.NB
 }
 
@@ -198,7 +199,7 @@ class Chunk(list):
 _headingidx=5
 _validatedhpi=False # Has the heading(position)idx above been validated?
 
-nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
+nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp')) 
 
 SyncPoints = {
     "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:0,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # Just split at chapters
@@ -207,6 +208,7 @@ SyncPoints = {
     "custom":{} # No default
 }
 
+globalcl = False # Has a cl been met?
 def ispara(c):
     return 'paragraph' == str(c.meta.get('StyleType', 'none')).lower()
     
@@ -302,8 +304,16 @@ class Collector:
             self.waschap = False
         else:
             if c.name == "cl":
-                mode = ChunkType.TITLE if self.chap == 0 else ChunkType.HEADING
-                logger.log(8, f'cl found for {self.chap}')
+                if self.chap == 0: 
+                  mode = ChunkType.TITLE 
+                  logger.debug('cl found at chapter 0')
+                  globalcl = True
+                else:
+                  if self.waschap:
+                      mode = ChunkType.CHAPTERHEAD if not MergeF.CLwithChapter in settings else ChunkType.CHAPTER
+                  else:
+                    mode = ChunkType.HEADING
+                logger.log(8, f'cl found for {self.chap} mode:{mode}')
             elif c.name == "id":
                 mode = ChunkType.ID
             elif c.name == "nb":
@@ -377,27 +387,29 @@ class Collector:
                 # turn \id into a paragraph level and main children as siblings
                 elements = root[0][1:]
                 idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=root[0].meta)
+                root = root[0][1:]
                 currChunk = self.makeChunk(idel)
                 currChunk.append(idel)
+        i = 0
         for c in elements:
+            i += 1
             if not isinstance(c, sfm.Element): 
-                if (isinstance(c,sfm.Text) and len(c)>3):
+                if isinstance(c, sfm.Text) and len(c) > 3:
                     self.waspar=False
-                if(currChunk): # It's a text node, make sure it's attached to the right place.
+                if currChunk: # It's a text node, make sure it's attached to the right place.
                     currChunk.append(c)
-                    try:
-                      root.remove(c)
-                    except (ValueError):
-                      pass
+                    i -= 1
+                    root.pop(i)
                 continue
             if c.name == "fig":
                 if self.fsecondary == primary:
-                    root.remove(c)
+                    i -= 1
+                    root.pop(i)
                     continue
             newchunk = False
             if ispara(c):
                 newmode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
-                ok= (newmode==ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
+                ok = (newmode==ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
                 if c.name not in nestedparas and ((newmode != self.mode and not ok)\
                                           or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE, ChunkType.HEADER)):
                     newchunk = True
@@ -412,12 +424,12 @@ class Collector:
                 logger.log(8, f" {self.chap}:{self.verse}:{self.syncp} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
                 M=re.search(r"\|v(\d+)(\D*)$",self.syncp)
                 if (M is not None):
-                  Mv=M.group(1)
-                  Ms=M.group(2)
+                  Mv = M.group(1)
+                  Ms = M.group(2)
                   logger.log(7,f"RE: {M}, Match: '{Mv}.{Ms}'")
                   if Mv and len(Mv)>0:
-                    self.verse=int(Mv)
-                    self.end=int(Mv)
+                    self.verse = int(Mv)
+                    self.end = int(Mv)
             if isverse(c):
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
@@ -439,7 +451,7 @@ class Collector:
                     self.currChunk.label(self.chap, self.verse, self.end, 0,'')
                 logger.log(8, f" {self.chap}:{self.verse} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
             if newchunk:
-                self.oldmode=self.mode
+                self.oldmode = self.mode
                 currChunk = self.makeChunk(c)
                 if MergeF.ChunkOnVerses in settings:
                     if isverse(c):
@@ -453,7 +465,8 @@ class Collector:
             if currChunk is not None:
                 currChunk.append(c)
                 if c in root:
-                    root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
+                    i -= 1
+                    root.pop(i)
             if ischap(c):
                 logger.log(8, f" chapter {c}")
                 self.verse = 0
@@ -471,19 +484,22 @@ class Collector:
                     currChunk[-1] = newc
                 logger.log(8, f" newchapter {newc}")
             #logger.log(7,f'collecting {c.name}')
-            t = self.collect(c, primary=primary,depth=1+depth)
+            t = self.collect(c, primary=primary, depth=1+depth)
             #logger.log(7,f'collected {c.name}')
             if t is not None:
-                logger.log(7,t)
+                logger.log(7, t)
                 currChunk=t
-            else:
-                if currChunk is None:
-                    logger.log(7,f'Empty currChunk:{c} at {c.pos}, {self.currChunk[0].name}')
-                    # Chapters need special treatment because it's a new node without prior connectoins to existing sub-
-                    if self.currChunk[0].name == "c": 
-                        self.currChunk.append(c)
-                        if c in root:
-                            root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
+            elif currChunk is None:
+                logger.log(7, f'Empty currChunk:{c} at {c.pos}, {c.name}/{root.name} {self.currChunk[0].name}')
+                # Chapters need special treatment because it's a new node without prior connections to existing sub-nodes
+                if root.name == "c": 
+                    logger.log(7, f'Root node is c. Applying special handling')
+                    self.currChunk.append(c)
+                    #currChunk=self.currChunk[0]
+                    if c in root:
+                        # FIXME: Not convinced if this is needed now.
+                        i -= 1
+                        root.pop(i)
         logger.log(9-depth,"}" * depth)
         return currChunk
 
@@ -494,6 +510,12 @@ class Collector:
         ni = None
         #for i in range(0, 10):
             #print(i,self.acc[i].ident if isinstance(self.acc[i],Chunk) else '-' ,self.acc[i].type,self.acc[i])
+        logger.log(7, "Chunks before reordering")
+        for i in range(0, len(self.acc)):
+            if isinstance(self.acc[i],Chunk):
+              logger.log(7, f"r: {i}, {self.acc[i].ident}//{self.acc[i].position}, {self.acc[i].type=}, {self.acc[i]=}")
+            else:
+              logger.log(7, f"r: {i}, '-//-', {self.acc[i].type=}, {self.acc[i]=}")
         for i in range(1, len(self.acc)):
             if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
                 if bi is None:
@@ -846,6 +868,10 @@ def alignScores(*columns):
     oldconfl=None
     conflicts=[]
     for i in range (0,len(positions)-1):
+        if globalcl:
+          chlist=('CHAPTERHEAD','CHAPTER')
+        else:
+          chlist=('CHAPTERHEAD')
         if(positions[i][_headingidx] in ('HEADING','PREVERSEHEAD')):
             if (merged[positions[i+1]]>99):
                 a=0
@@ -856,9 +882,9 @@ def alignScores(*columns):
                 if MergeF.HeadWithText in settings:
                     merged[positions[i+1]]=0
                     logger.debug(f"Not splitting between positions {positions[i]} and {positions[i+1]} (score={merged[positions[i+1]]})")
-        elif(positions[i][_headingidx]=='CHAPTERHEAD'):
+        elif(positions[i][_headingidx] in chlist):
             a=1
-            while(positions[i+a][_headingidx]=='CHAPTERHEAD'):
+            while(positions[i+a][_headingidx] in chlist):
                 a+=1
             if MergeF.HeadWithText in settings:
                 logger.debug(f"Not splitting head from text between positions {positions[i]} and {positions[i+a]}")
@@ -950,9 +976,13 @@ modes = {
     "scores" : alignScores
 }
 
-def WriteSyncPoints(mergeconfigfile,variety,confname,scores):
-    global _chunkDesc_map
+def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
+    global _chunkDesc_map,settings
     config={}#configparser.ConfigParser()
+    flaga={}
+    for k in MergeF:
+      flaga[k.name]=k in settings
+    config['FLAGS']=flaga
     config['DEFAULT']={k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
     config['L']={'WEIGHT':51}
     config['R']={'WEIGHT':51}
@@ -963,14 +993,30 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores):
     logger.debug(f"Writing default configuration to {mergeconfigfile}")
     with open(mergeconfigfile,'w') as configfile:
         configfile.write("# Custom merge configuration file.\n")
-        configfile.write("# This was written because no merge.cfg file could be found. As generated it contains all potential break-points the program expects.\n")
-        configfile.write("# Items in the [DEFAULT] section define the global defaults, which apply if there are no overriding values in a given section.\n")
-        configfile.write("# Valid sections include [L] and [R] (primary and secondary), [configuration], and [variety] for custom-variety.\n")
-        configfile.write("# Sections [L] and [R] are ignored if the file is in the root paratext directory.\n")
-        configfile.write("# The scores (from all columns) are added and a sum of 100 or more at a given point causes splitting and synchronisation.\n")
-        configfile.write("# Any value not listed is assumed to be 0.\n")
-        configfile.write("# Values -2<=x<=2 are treated as multiplyers of the WEIGHT value. Other values are treated as absolute values. Non-integer values (e.g. 0.5) are allowed.\n")
-        configfile.write("# Chapter and verse numbers are remembered, other break-points increment a paragraph counter.\n")
+        configfile.write(f"# This was written because no merge-{synchronise}.cfg file could be found.\n")
+        configfile.write(f"# As generated it contains all potential break-points the program expects,\n")
+        configfile.write(f"# with settings appropriate for the '{synchronise}' merge. Customisation of\n")
+        configfile.write(f"# this file can entirely change the behaviour of merge strategy '{synchronise}'\n")
+        configfile.write("""#(delete file to reverse any customisation)
+#
+# YOU HAVE BEEN WARNED! 
+# 
+# Items in the [FLAGS] section (if specified) are global values, affecting the
+# entire merge process, and override the defaults, including such matters as
+# whether verses are synchronisation points or not.
+#
+# Items in the [DEFAULT] section define the global defaults, which apply if
+# there are no overriding values in a given section.  Valid sections include
+# [L] and [R] (primary and secondary), [configuration], and [variety] for
+# custom-variety.
+# Sections [L] and [R] are ignored if the file is in the root paratext
+# directory.  The scores (from all columns) are added and a sum of 100 or more
+# at a given point causes splitting and synchronisation.
+# Any value not listed is assumed to be 0.
+# Values -2<=x<=2 are treated as multiplyers of the WEIGHT value.  Other values
+# are treated as absolute values. Non-integer values (e.g. 0.5) are allowed.
+# Chapter and verse numbers are remembered, other break-points increment a
+# paragraph counter.\n""")
         #configfile.write("# The number at the end of the comment indicates the group a given break-point falls into,\n")
         #configfile.write("# i.e. to which other positions it will be compared\n")
         for section in config:
@@ -983,6 +1029,8 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores):
                         #cannon=_canonical_order[k] if k in _canonical_order else 9
                         #configfile.write(f"#{comment} ({cannon})\n{k.name} = {v}\n")
                         configfile.write(f"#{comment}\n{k.name} = {v}\n")
+                elif section=="FLAGS":
+                    configfile.write(f"# {k} = {v}\n")
                 else:
                     configfile.write(f"{k} = {v}\n")
         #config.write(configfile)
@@ -994,6 +1042,15 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     logger.debug(f"Reading config file {mergeconfigfile} for ({column if column is not None else ''}, {variety}, {confname})")
     config=configparser.ConfigParser()
     config.read(mergeconfigfile)
+    if config.has_section("FLAGS"):
+      for key in MergeF:
+        if config.has_option("FLAGS",key.name):
+          tf=config.getboolean("FLAGS",key.name)
+          logger.debug(f"Flag {key} is set to {tf}")
+          if tf:
+            settings = settings | key
+          else:
+            settings = settings & (~key)
     if not config.has_section('zzzDEFAULT'):
         config['zzzDEFAULT']={} # make it possible to access the DEFAULT values.
     if column is None:
@@ -1006,6 +1063,7 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
             keys=[column,confname,"zzzDEFAULT"]
         else:
             keys=[variety+"-"+column,variety,column,confname,"zzzDEFAULT"]
+    logger.debug(f"Keys: {keys}")
     for key in keys:
         if config.has_section(key):
             weight=config.getfloat(key,"WEIGHT",fallback=fallbackweight)
@@ -1022,11 +1080,12 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
             return(scores)
         else:
             logger.debug(f"No section {key}")
-                
-    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting to normal.")
-    return(SyncPoints['normal'])
+    if synchronise in  SyncPoints:
+        synchronise="normal"
+    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting {synchronise}.")
+    return(SyncPoints[{synchronise}])
     
-def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None):
+def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
     if debug:
       debugPrint=True
@@ -1120,7 +1179,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 priptpath=os.path.dirname(os.path.dirname(os.path.dirname(prifilepath)))
                 priconfpath=os.path.join(priptpath,"shared","ptxprint",priconfname)
         for colkey,infile in zip(keyarr,infilearr):
-            if (syncarr[colkey].startswith("custom")):
+                #if (syncarr[colkey].startswith("custom")):
                 # determine the config name; and  determine the custom merge control file.
                 # Look for merge config file in : (1) same dir as file, (2) {Project}/shared/ptxprint/{config}, (3) {Project}
                 if (syncarr[colkey]=="custom"):
@@ -1128,17 +1187,17 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                     varfile=None
                 else:
                     variety=syncarr[colkey][7:]
-                    varfile="merge-"+variety+".cfg"
+                    varfile="merge-"+synchronise+variety+".cfg"
                 (filepath,filename)=os.path.split(os.path.abspath(infile))
                 confname=os.path.basename(filepath)
                 ptpath=os.path.dirname(os.path.dirname(os.path.dirname(filepath)))
                 confpath=os.path.join(ptpath,"shared","ptxprint",confname)
                 searchlist=[]
-                cfile="merge.cfg"
+                cfile="merge-"+synchronise+".cfg"
                 if (varfile is not None):
                     if (colkey!='L' and prifilepath != filepath):
                         searchlist.extend(((os.path.join(prifilepath,varfile),1),(os.path.join(priconfpath,varfile),1)))
-                    searchlist.extend((os.path.join(filepath,varfile),1),(os.path.join(confpath,varfile),1),(os.path.join(ptpath,varfile),0))
+                    searchlist.extend(((os.path.join(filepath,varfile),1),(os.path.join(confpath,varfile),1),(os.path.join(ptpath,varfile),0)))
                     
                 searchlist.extend(((os.path.join(prifilepath,cfile),1),(os.path.join(priconfpath,cfile),1),(os.path.join(priptpath,cfile),0)))
                 if (colkey!='L' and prifilepath != filepath):
@@ -1146,17 +1205,18 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 done=0
                 for searchpair in searchlist:
                     (confpath,useLR)=searchpair
-                    logger.debug(f"Checking if config file {confpath} exists")
+                    logger.debug(f"Checking if {colkey} config file {confpath} exists")
                     if (os.path.exists(confpath)):
                         scorearr[colkey]=ReadSyncPoints(confpath,(colkey if useLR else None),variety,confname)
+                        logger.debug(f"found {confpath}!")
                         done=1
                         break
                 if (not done):
                     logger.debug(f"Did not find expected custom merge file. Resorting to normal.")
                     if os.path.exists(priconfpath):
-                        WriteSyncPoints(os.path.join(priconfpath,cfile),variety,confname,SyncPoints['normal'])
+                        WriteSyncPoints(os.path.join(priconfpath,cfile),variety,confname,SyncPoints[synchronise],synchronise)
                     else:
-                        WriteSyncPoints(os.path.join(prifilepath,cfile),variety,confname,SyncPoints['normal'])
+                        WriteSyncPoints(os.path.join(prifilepath,cfile),variety,confname,SyncPoints[synchronise],synchronise)
 
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
@@ -1183,7 +1243,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
           debugf[col]=open("mergerewrite-"+col,"w",encoding="utf-8")
         else:
           debugf[col]=open(outfile+"-"+col,"w",encoding="utf-8")
-    if outfile is not None:
+    if len(changes):
+        outf = io.StringIO()
+    elif outfile is not None:
         outf = open(outfile, "w", encoding="utf-8")
     else:
         outf = sys.stdout
@@ -1219,5 +1281,14 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 if not (p[1].type in  (ChunkType.PREVERSEHEAD, ChunkType.HEADING, ChunkType.TITLE, ChunkType.CHAPTERHEAD)):
                     outf.write("\\p\n")
             outf.write("\\polyglotendcols\n")
+    if len(changes):
+        text = out.getvalue()
+        out.close()
+        text = runChanges(changes, book, text)
+        if outfile is not None:
+            with open(outfile, "w", encoding="utf-8") as outf:
+                outf.write(text)
+        else:
+            print(text)
 
 

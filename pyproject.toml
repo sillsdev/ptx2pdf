@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=62.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ptxprint"
+#version = "2.7.14"
+authors = [{name = "SIL", email = "fonts@sil.org"}]
+readme = "README.md"
+license = {file = "python/LICENSE.txt"}
+description = "USFM based Bible typesetting (Xe)TeX based application"
+classifiers = [
+   "Environment :: X11 Applications :: GTK",
+   "Programming Language :: Python :: 3.8",
+   "Intended Audience :: End Users/Desktop",
+   "License :: OSI Approved :: MIT License",
+   "Topic :: Text Processing :: General"
+   ]
+requires-python = ">=3.8"
+dynamic = ["version"]
+
+dependencies = [
+"usfmtc",
+"regex",
+"pygobject",
+"fonttools",
+"pycairo",
+"appdirs",
+"Pillow",
+"numpy"
+]
+
+[project.optional-dependencies]
+git = [ ]
+
+[project.urls]
+Home-Page = "https://github.com/sillsdev/ptx2pdf"
+
+[tool.setuptools.packages.find]
+where = ["python/lib"]
+
+#[tool.setuptools.exclude-package-data]
+#ptxprint = ["*.pyc"]
+
+[tool.setuptools.package-data]
+
+[tool.setuptools.dynamic]
+version = {attr = "ptxprint.view.VersionStr"}
+
+#[tool.setuptools]
+#packages = ["ptxprint"]
+#script-files = ["python/scripts/ptxprint", "python/scripts/pdfdiff", "pythons/scripts/xdvitype"]
+
+[tool.bdist_wheel]
+universal = true
+
+[project.scripts]
+ptxprint = "ptxprint.main:main"
+pdfdiff = "ptxprint.pdf.pdfdiff:main"
+xdvitype = "ptxprint.xdv.xdvtype:main"

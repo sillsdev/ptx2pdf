@@ -6,9 +6,8 @@ FONTCONFIG_FILE=~/.config/ptxprint/fonts.conf
 TPATH:=.:$(DIR)//
 
 .tex.pdf:
-	TEXINPUTS="$(TPATH)" FONTCONFIG_FILE=${FONTCONFIG_FILE} xetex --no-pdf $<
-	TEXINPUTS="$(TPATH)" FONTCONFIG_FILE=${FONTCONFIG_FILE} xetex --no-pdf $<
-	xdvipdfmx -o $@ $*.xdv
+	-TEXINPUTS="$(TPATH)" FONTCONFIG_FILE=${FONTCONFIG_FILE} xetex --no-pdf $<
+	TEXINPUTS="$(TPATH)" FONTCONFIG_FILE=${FONTCONFIG_FILE} xetex $<
 	
 
 test.pdf: test.tex  test.usfm $(DIR)/*.tex *.sty $(DIR)/*.sty
@@ -39,4 +38,4 @@ auto3:
 	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make calctest.pdf ; done < /dev/null
 auto4:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make catalogue.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make catalogue.pdf ; sleep 5 ; done < /dev/null

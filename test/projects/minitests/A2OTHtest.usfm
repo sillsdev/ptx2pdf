@@ -20,12 +20,11 @@
 
 \periph whole cover|coverwhole
 \pc |<-------\hfil \the\hsize \hfil ------->|
-\endgraf
 
 \periph back|coverback
 \pc The back
 \vfill
-\pc |<-------\hfil \the\hsize \hfil -------->|\endgraf
+\pc |<-------\hfil \the\hsize \hfil -------->|
 \esb \cat ISBNbox\cat*
 \pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
 \esbe

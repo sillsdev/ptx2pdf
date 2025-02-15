@@ -14,13 +14,16 @@ class _CEnum:
         self.vals = vals
 
     def __contains__(self, v):
-        return v in self.vals
+        return v.lower() in self.vals
 
     def __str__(self):
         return "in " + ", ".join(self.vals)
 
 class _CRange:
     def __init__(self, first, last=None):
+        if last is None:
+            last = first
+            first = 0.
         self.first = first
         self.last = last
 
@@ -35,7 +38,7 @@ class _CRange:
         return True
 
     def __str__(self):
-        return "in range({}, {}+1)".format(self.first, self.last)
+        return "in range({}, {})".format(self.first, self.last)
 
 class _CValue:
     def __init__(self, val):
@@ -61,30 +64,31 @@ class _CNot:
         return "not(" + str(self.constraint) + ")"
 
 constraints = {
-    'texttype': _CEnum('VerseText', 'NoteText', 'BodyText', 'Title', 'Section', 'Other', 'other',
-                        'ChapterNumber', 'VerseNumber', 'Unspecified', 'Standalone'),
-    'styletype': _CEnum('Paragraph', 'Character', 'Note', 'Milestone', 'Standalone', ''),
-    'fontsize': _CRange(1.),
-    'fontscale': _CRange(0.1),
+    'texttype': _CEnum('versetext', 'notetext', 'bodytext', 'title', 'section', 'other',
+                        'chapternumber', 'versenumber', 'unspecified', 'standalone'),
+    'styletype': _CEnum('paragraph', 'character', 'note', 'milestone', 'standalone', ''),
+    'fontsize': _CRange(0.1, 10.),
+    'fontscale': _CRange(0.1, 4.),
     'raise': _CNot(_CValue(0.)),
-    'linespacing': _CRange(0.05),
+    'linespacing': _CRange(0.01, 2.5),
 }
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
                 'FontSize', 'FirstLineIndent', 'LeftMargin', 'RightMargin',
                 'SpaceBefore', 'SpaceAfter', 'CallerStyle', 'CallerRaise',
-                'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
+                'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing', 'UnderChar',
                 'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures', 'ztexFontGrSpace',
                 'FgImage', 'FgImagePos', 'FgImageScale', 'FgImageScaleTo', 
                 'BgImage', 'BgImagePos', 'BgImageScale', 'BgImageScaleTo', 'BgImageLow',
                 'BgImageColour', 'BgImageColor', 'BgImageAlpha', 'BgImageOversize', 'BgColour', 'BgColor',
-                'BorderWidth', 'BorderColour', 'BorderColor', 'BorderFillColour', 'BorderFillColor',
+                'BorderWidth', 'BorderLineWidth', 
+                'BorderColour', 'BorderColor', 'BorderFillColour', 'BorderFillColor',
                 'BorderPadding', 'BorderVPadding', 'BorderHPadding', 
                 'BorderTPadding', 'BorderBPadding', 'BorderLPadding', 'BorderRPadding', 
                 'BoxPadding', 'BoxTPadding', 'BoxBPadding', 'BoxLPadding', 'BoxRPadding', 
                 'BorderPaddingInnerOuter','BoxPaddingInnerOuter',
                 'BoxVPadding', 'BoxHPadding', 'BorderStyle', 'BorderStyleExtra', 'BorderRef', 'NonJustifiedFill',
-                'SidebarGridding','SpaceBeside',
+                'SidebarGridding','SpaceBeside', 'VerticalAlign',
                 'BorderPatternLeft','BorderPatternRight', 'BorderPatternTop','BorderPatternBot','OrnamentScaleRef')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
@@ -94,6 +98,9 @@ aliases = {"q", "s", "mt", "to", "imt", "imte", "io", "iq", "is", "ili", "pi",
 _defFields = {"Marker", "EndMarker", "Name", "Description", "OccursUnder", "TextProperties", "TextType", "StyleType"}
 
 def asFloatPts(self, s, mrk=None, model=None):
+    if isinstance(s, float):
+        return s
+    s = re.sub(r'\s*#.*$', '', s)
     if mrk is None:
         mrk = self.marker
     m = re.match(r"^\s*(-?\d+(?:\.\d+)?)\s*(\D*?)\s*$", str(s))
@@ -134,6 +141,9 @@ def toFloatPts(self, v, mrk=None, model=None, parm=None):
     return "{} pt".format(f2s(float(v)))
 
 def fromFloat(self, s, mrk=None, model=None):
+    if isinstance(s, float):
+        return s
+    s = re.sub(r'\s*#.*$', '', s)
     try:
         return float(s)
     except (ValueError, TypeError):
@@ -143,6 +153,9 @@ def toFloat(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v))
 
 def from12(self, s, mrk=None, model=None):
+    if isinstance(s, float):
+        return s
+    s = re.sub(r'\s*#.*$', '', s)
     try:
         return float(s) / 12.
     except (TypeError, ValueError):
@@ -152,31 +165,38 @@ def to12(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v) * 12.)
 
 def fromBool(self, s, mrk=None, model=None):
+    if isinstance(s, bool):
+        return s
+    s = re.sub(r'\s*#.*$', '', s)
     return not(s is None or s is False or s == "-")
 
 def toBool(self, v, mrk=None, model=None, parm=None):
     return "" if v else "-"
 
 def fromSet(self, s, mrk=None, model=None):
-    if isinstance(s, set):
+    if isinstance(s, dict):
         return s
-    elif not len(s):
-        return set()
-    return set(s.split())
+    elif isinstance(s, str):
+        return {k:v for v,k in enumerate(s.split())}
+    else:
+        return {k:v for v,k in enumerate(s)}
 
 def toSet(self, s, mrk=None, model=None, parm=None):
-    if isinstance(s, set):
+    if isinstance(s, str):
+        return s
+    elif isinstance(s, dict):
+        return " ".join(k for k,v in sorted(s.items(), key=lambda x:x[1]))
+    else:
         return " ".join(s)
-    return s
 
 def fromFont(self, s, mrk=None, model=None):
     if mrk is None:
         mrk = self.marker
     class Shim:
         def get(subself, key, default=None):
-            if key == 'FontName':
-                return self.sheet.get(mrk, {}).get(key,
-                        self.basesheet.get(mrk, {}).get(key, default))
+            if key.lower() == 'fontname':
+                return getattr(self, 'sheet', {}).get(mrk, {}).get(key.lower(),
+                        getattr(self, 'basesheet', {}).get(mrk, {}).get(key.lower(), default))
             return self.getval(mrk, key, default)
     return FontRef.fromTeXStyle(Shim())
 
@@ -187,32 +207,30 @@ def toFont(self, v, mrk=None, model=None, parm=None):
         mrk = self.marker
     class Shim:
         def __setitem__(subself, key, val):
-            if key == 'FontName':
+            if key.lower() == 'fontname':
                 if mrk not in self.sheet:
-                    self.sheet[mrk] = Marker()
-                self.sheet[mrk][key] = val
+                    self.sheet[mrk] = {}
+                self.sheet[mrk][key.lower()] = val
             else:
                 self.setval(mrk, key, val)
         def __contains__(subself, key):
             return self.haskey(mrk, key)
         def __delitem__(subself, key):
-            return self.sheet.get(mrk, {}).pop(key, None)
+            return self.sheet.get(mrk, {}).pop(key.lower(), None)
         def __getitem__(subself, key):
-            return self.sheet.get(mrk, {}).get(key, None)
+            return self.sheet.get(mrk, {}).get(key.lower(), None)
         def pop(subself, key, dflt):
-            return self.sheet.get(mrk, {}).pop(key, dflt)
+            return self.sheet.get(mrk, {}).pop(key.lower(), dflt)
     regularfont = model.get("bl_fontR")
-    oldfont = self.basesheet.get(mrk, {}).get("FontName", None)
+    oldfont = self.basesheet.get(mrk, {}).get("font", None)
     return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None, noStyles=(parm is not None))
 
 def fromOneMax(self, v, mrk=None, model=None):
     res = coltotex(textocol(v))
-    # print(f"FROM: {mrk=} {v=} {res=}")
     return res
 
 def toOneMax(self, v, mrk=None, model=None, parm=None):
     res = " ".join("{:.2f}".format(x) for x in coltoonemax(textocol(v)))
-    # print(f"TO: {mrk=} {v=} {res=}")
     return res
 
 def fromFileName(self, s, mrk=None, model=None):
@@ -225,6 +243,7 @@ def toFileName(self, s, mrk=None, model=None, parm=None):
         return '"'+v+'"'
     return v
 
+# [2] is unused
 _fieldmap = {
     'bold':             (fromBool, toBool, None),
     'italic':           (fromBool, toBool, None),
@@ -242,10 +261,11 @@ _fieldmap = {
     'fontsize':         (from12, to12, 12.),
     'spacebefore':      (from12, to12, 0),
     'spaceafter':       (from12, to12, 0),
-    'fontname':         (fromFont, toFont, None),
+    'font':             (fromFont, toFont, None),
     'textproperties':   (fromSet, toSet, None),
     'occursunder':      (fromSet, toSet, None),
     'bordercolor':      (fromOneMax, toOneMax, None),
+    'borderfillcolor':  (fromOneMax, toOneMax, None),
     'bgimagecolor':     (fromOneMax, toOneMax, None),
     'bgcolor':          (fromOneMax, toOneMax, None),
     'bgimage':          (fromFileName, toFileName, None),
@@ -254,12 +274,12 @@ _fieldmap = {
 
 class StyleEditor:
 
-    def __init__(self, model):
+    def __init__(self, model, basepath=None):
         self.model = model
         self.sheet = {}
-        self.basesheet = {}
         self.marker = None
         self.registers = {}
+        self.reset(basepath=basepath)
 
     def copy(self):
         res = self.__class__(self.model)
@@ -267,6 +287,48 @@ class StyleEditor:
         res.basesheet = Sheets(base=self.basesheet)
         res.marker = self.marker
         res.registers = dict(self.registers)
+        return res
+
+    def reset(self, basepath=None):
+        if basepath is None:
+            self.basesheet = {}
+        else:
+            self.basesheet = self._read_styfile(basepath)
+
+    def _read_styfh(self, fh, sheet=None):
+        fieldre = re.compile(r"^\s*\\(\S+)\s*(.*?)\s*$")
+        res = sheet if sheet is not None else {}
+        curr = {}
+        mrk = None
+        for l in fh.readlines():
+            m = fieldre.match(l)
+            if m:
+                mk = m.group(1)
+                v = m.group(2)
+                if mk.lower() == "marker":
+                    if len(curr) and mrk:
+                        f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
+                        if f is not None:
+                            curr['font'] = f
+                    curr = {}
+                    res[v] = curr
+                    mrk = v
+                    continue
+                elif mk.lower() in _fieldmap:
+                    v = _fieldmap[mk.lower()][0](self, v, mrk=mrk, model=self.model)
+                curr[mk.lower()] = v
+        if len(curr) and mrk:
+            f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
+            if f is not None:
+                curr['font'] = f
+        return res
+
+    def _read_styfile(self, fname, sheet=None):
+        if not os.path.exists(fname):
+            return {}
+        logger.debug(f"Reading {fname}") 
+        with open(fname, encoding="utf-8") as inf:
+            res = self._read_styfh(inf, sheet=sheet)
         return res
 
     def allStyles(self):
@@ -283,53 +345,50 @@ class StyleEditor:
         if m is None:
             res = {}
             for m in self.allStyles():
-                res[m] = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
-                res[m].update({str(k):v for k, v in self.sheet.get(m, {}).items()})
+                res[m] = {k:v for k, v in self.basesheet.get(m, {}).items()}
+                res[m].update({k:v for k, v in self.sheet.get(m, {}).items()})
         else:
-            res = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
-            res.update({str(k):v for k, v in self.sheet.get(m, {}).items()})
+            res = {k:v for k, v in self.basesheet.get(m, {}).items()}
+            res.update({k:v for k, v in self.sheet.get(m, {}).items()})
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
-        if default is None:
-            default = _fieldmap.get(key.lower(), [None, None, None])[2]
         if mrk not in self.sheet:
-            self.sheet[mrk] = Marker()
-        res = self.sheet[mrk].get(key, None) if not baseonly else None
+            return default
+        res = self.sheet[mrk].get(key.lower(), None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
-            res = self.basesheet[mrk].get(key, default) if mrk in self.basesheet else default
-        if key.lower() in _fieldmap and res is not None:
-            res = _fieldmap[key.lower()][0](self, res, mrk=mrk, model=self.model)
+            res = self.basesheet[mrk].get(key.lower(), default) if mrk in self.basesheet else default
+        logger.log(8, f"Getting {mrk=} {key=} {res=}")
         return res
 
-    def setval(self, mrk, key, val, ifunchanged=False, parm=None):
-        if ifunchanged and (self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None) != \
-                (self.sheet[mrk].get(key, None) if mrk in self.sheet else None):
+    def setval(self, mrk, key, val, ifunchanged=False, parm=None, mapin=False):
+        logger.log(8, f"Setting {mrk=} {key=} {val=}")
+        if ifunchanged and (self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None) != \
+                (self.sheet[mrk].get(key.lower(), None) if mrk in self.sheet else None):
             return
-        if val is not None and key.lower() in _fieldmap:
-            newval = _fieldmap[key.lower()][1](self, val, mrk=mrk, model=self.model, parm=parm)
-            if newval is None and val is not None:
-                return      # Probably a font which has edited the object for us
-            else:
-                val = newval
+        if mapin and key.lower() in _fieldmap and val is not None:
+            val = _fieldmap[key.lower()][0](self, val, mrk=mrk, model=self.model)
         # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
-        oldval = self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None
-        if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
-            del self.sheet[mrk][key]
+        oldval = self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None
+        if mrk in self.sheet and key.lower() in self.sheet[mrk] and (val is None or val == oldval):
+            del self.sheet[mrk][key.lower()]
         elif oldval != val and val is not None:
             if mrk not in self.sheet:
-                self.sheet[mrk] = Marker()
-            self.sheet[mrk][key] = val
-        elif key in self.basesheet.get(mrk, {}) and val is None:
-            del self.basesheet[mrk][key]
+                self.sheet[mrk] = {}
+            self.sheet[mrk][key.lower()] = val
+            self.model.changed()
+        # do we really want to do this?
+        elif key.lower() in self.basesheet.get(mrk, {}) and val is None:
+            del self.basesheet[mrk][key.lower()]
+            self.model.changed()
 
     def haskey(self, mrk, key):
-        if key in self.sheet.get(mrk, {}) or key in self.basesheet.get(mrk, {}):
+        if key.lower() in self.sheet.get(mrk, {}) or key.lower() in self.basesheet.get(mrk, {}):
             return True
         return False
 
     def addMarker(self, mrk, name):
-        self.sheet[mrk] = Marker({" deletable": True, "Name": name})
+        self.sheet[mrk] = Marker({" deletable": True, "name": name})
 
     def get_font(self, mrk, style=""):
         f = self.getval(mrk, " font")
@@ -338,20 +397,31 @@ class StyleEditor:
         f = self.model.getFont(style if len(style) else "regular")
         return f
 
+    def _merge(self, sheet, styles):
+        for k, v in styles.items():
+            if k in sheet:
+                sheet[k].update(v)
+            else:
+                sheet[k] = v
+        return sheet
+
     def load(self, sheetfiles):
         if len(sheetfiles) == 0:
             return
         foundp = False
-        self.basesheet = Sheets(sheetfiles[:-1])
+        for s in sheetfiles[:-1]:
+            logger.debug(f"loading stylesheet: {s}")
+            sheet = self._read_styfile(s)
+            self._merge(self.basesheet, sheet)
         self.test_constraints(self.basesheet)
-        self.sheet = Sheets(sheetfiles[-1:], base = "")
+        self.sheet = {}
+        self._read_styfile(sheetfiles[-1], sheet=self.sheet)
         self.test_constraints(self.sheet)
+        # logger.debug(f"{self.sheet=}")
 
-    def loadfh(self, fh, base=None):
-        self.basesheet = Sheets()
-        self.sheet = Sheets(base=base)
-        self.sheet.appendfh(fh)
-        self.test_constraints(self.sheet)
+    def loadfh(self, fh):
+        self.sheet = self._read_styfh(fh)
+        # logger.debug(f"{self.sheet=}")
 
     def test_constraints(self, sheet):
         for m, s in sheet.items():
@@ -362,7 +432,10 @@ class StyleEditor:
                     del s[k]
 
     def _convertabs(self, key, val):
+        if key.lower() not in ("baseline", "linespacing"):
+            return val
         baseline = float(self.model.get("s_linespacing", 1.))
+        val = float(val)
         if key.lower() == "baseline":
             return val * baseline
         elif key.lower() == "linespacing":
@@ -370,10 +443,14 @@ class StyleEditor:
         return val
 
     def _eq_val(self, a, b, key=""):
-        if key.lower() in absolutes:
+        if (b is None) ^ (a is None):
+            return False
+        elif key.lower() in absolutes:
             fa = asFloatPts(self, str(a))
             fb = asFloatPts(self, str(b))
             return fa == fb
+        elif isinstance(a, dict) and isinstance(b, dict):
+            return set(a.keys()) == set(b.keys())
         else:
             try:
                 fa = float(a)
@@ -386,12 +463,12 @@ class StyleEditor:
                 b = b or ""
             return a == b
 
-    def _str_val(self, v, key=""):
+    def _str_val(self, v, key="", mrk=None):
+        if key.lower() in _fieldmap:
+            v = _fieldmap[key.lower()][1](self, v, mrk, model=self.model, parm=None)
         if isinstance(v, (set, list)):
-            if key.lower() == "textproperties":
-                res = " ".join(x.lower() if x else "" for x in sorted(v))
-            else:
-                res = " ".join(self._str_val(x, key) for x in sorted(v))
+            logger.debug(f"StyleEditor:_str_val found {type(v)} for {mrk}/{key.lower()}")
+            res = " ".join(self._str_val(x, key.lower(), mrk) for x in sorted(v))
         elif isinstance(v, float):
             res = f2s(v)
         else:
@@ -408,26 +485,30 @@ class StyleEditor:
             sheet = self.sheet
         for m in sorted(self.allStyles()):
             markerout = False
+            am = m
             if m in aliases:
-                sm = self.asStyle(m+"1")
+                am = m+'1'
+                sm = sheet.get(am, {})
             elif inArchive:
                 sm = sheet.get(m, {}).copy()
             else:
                 sm = sheet.get(m, {})
             om = basesheet.get(m, {})
-            if 'zDerived' in om or 'zDerived' in sm:
+            if 'zderived' in om or 'zderived' in sm:
                 continue
+            if 'font' in sm:
+                v = _fieldmap['font'][1](self, sm['font'], am, model=self.model, parm=None)
             for k, v in sm.items():
-                if k.startswith(" "):
+                if k.startswith(" ") or k == "font":
                     continue
-                if k == "Name":
+                if k == "name":
                     v = self.getval(m, k, v)
                 other = om.get(k, None)
                 if not self._eq_val(other, v, key=k):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
-                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k)))
+                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k, am)))
 
     def merge(self, basese, newse):
         for m in newse.sheet.keys():
@@ -447,7 +528,7 @@ class StyleEditor:
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
-                self.addMarker(str(m), str(newse.getval(m, 'Name', "")))
+                self.addMarker(str(m), str(newse.getval(m, 'name', "")))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 if exclfields is not None and k in exclfields:

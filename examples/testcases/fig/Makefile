@@ -3,11 +3,12 @@ all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 test.pdf:test.tex $(DIR)/*.tex
 	-rm test.delayed
-	TEXINPUTS=.:$(DIR) FONTCONFIG_FILE=~/.config/ptxprint/fonts.conf xetex $< && cp test.pdf test.parlocs test.delayed test.log 1
-	A=1 ; while grep Rerun test.log ; do FONTCONFIG_FILE=~/.config/ptxprint/fonts.conf TEXINPUTS=.:$(DIR) xetex $<  && mkdir $$A ; cp test.pdf test.parlocs test.delayed test.log $$A; A=$$((A+1)); if [ $$A -gt 20 ] ; then break ; fi ;  done ; echo last one: $$A  ; for A in `seq $$A 15` ; do rm $$A/*;done
+	TEXINPUTS=.:$(DIR)/:$(DIR)/contrib/ornaments: FONTCONFIG_FILE=~/.config/ptxprint/fonts.conf xetex $< && cp test.pdf test.parlocs test.delayed test.log 1
+	A=1 ; while grep Rerun test.log ; do FONTCONFIG_FILE=~/.config/ptxprint/fonts.conf TEXINPUTS=.:$(DIR)// xetex $<  && mkdir $$A ; cp test.pdf test.parlocs test.delayed test.log $$A; A=$$((A+1)); if [ $$A -gt 20 ] ; then break ; fi ;  done ; echo last one: $$A  ; for A in `seq $$A 15` ; do rm $$A/*;done
 	
 testpages.pdf:testpages.tex
 	xetex testpages.tex
+	cp testpages.pdf "test pages.pdf"
 
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm test.usfm.piclist testpages.pdf
 
@@ -22,7 +23,7 @@ map.jpg:?/test.pdf Makefile
 	
 auto:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ; make test.pdf ; done < /dev/null
 
 1:
 	rename -f 's/\./.1./' test.pdf test.parlocs test.delayed

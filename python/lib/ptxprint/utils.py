@@ -4,10 +4,12 @@ import os, sys, re, pathlib, zipfile
 import xml.etree.ElementTree as et
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
+from shutil import copy2
 from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
-from subprocess import check_output
+import regex
+from subprocess import check_output, call
 import logging
 
 logger = logging.getLogger(__name__)
@@ -74,9 +76,8 @@ oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
 APP = 'ptxprint'
 
-chgsHeader = """# This (changes.txt) file is for configuration-specific changes (which will not affect other saved configurations).
-# Other generic project-wide changes can be specified in PrintDraftChanges.txt).
-# Note that the 'inlcude' statement on the next line imports those (legacy/generic) project-wide changes.
+chgsHeader = """# This (changes.txt) file is for configuration-specific changes (not affecting other configs).
+# More generic project-wide changes can be specified in PrintDraftChanges.txt.
 include "../../../PrintDraftChanges.txt"
 """
 
@@ -94,6 +95,7 @@ def setup_i18n(i18nlang):
     else:
         lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
     enc = "UTF-8"
+    logger.debug(f"Loading locale for {lang}.{enc}")
     if sys.platform.startswith('win'):
         from ctypes import cdll, windll
         from ctypes.util import find_msvcrt
@@ -108,7 +110,8 @@ def setup_i18n(i18nlang):
         locale.setlocale(locale.LC_ALL, '')
     else:
         locale.setlocale(locale.LC_ALL, (lang, enc))
-        locale.bindtextdomain(APP, localedir)
+        #locale.bindtextdomain(APP, localedir)
+        gettext.bindtextdomain(APP, localedir)
     # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
@@ -126,9 +129,16 @@ def getlang():
     global lang
     return lang.replace('-','_').split('_')
 
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent",
+                   "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
+
 def f_(s):
     frame = currentframe().f_back
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
+
+def calledme(s=0):
+    res = traceback.format_stack(limit=s+2)[-s-2].strip()
+    return res
 
 def getcaller(count=0):
     frame = currentframe().f_back.f_back
@@ -137,12 +147,24 @@ def getcaller(count=0):
     return f"{frame.f_code.co_name}({frame.f_code.co_filename}:{frame.f_lineno})"
 
 def refKey(r, info=""):
-    m = re.match(r"^(\d?\D+)?\s*(\d*)\.?(\d*)(\S*?)(\s+.*)?$", r)
+    """ Returns (bknum, chap, versenum, book/glot, info, verseextra, extras) """
+    # bk, glot, c, v, postv, extras
+    m = re.match(r"^(\d\D\D|\D{3})?([A-Z]?)\s*(\d*)[.:]?(\d*)(\S*?)(\s+.*)?$", r)
     if m:
         bkid = m.group(1) or ""
-        return (books.get(bkid[:3], 99)+1, int(m.group(2) or 0), int(m.group(3) or 0), bkid[3:], info, m.group(4), m.group(5) or "")
+        return (books.get(bkid[:3], 99)+1, int(m.group(3) or 0), int(m.group(4) or 0), m.group(2), info, m.group(5), m.group(6) or "")
+    # bk, glot, postv, extras
+    elif (m := re.match(r"^(\d\D\D|\D{3})?([A-Z]?)\s*(\S+)(\s+.*)?$", r)):
+        bkid = m.group(1) or ""
+        return (books.get(bkid[:3], 99)+1, 0, 0, m.group(2), info, m.group(3) or "",  m.group(4) or "")
     else:
         return (100, 0, 0, r, info, "", "")
+
+def refSort(r, info=""):
+    res = refKey(r, info=info)
+    if res[1] == 0 and res[2] == 0 and len(res[5]):
+        return (100, 0, 0, res[3], info, res[5], res[6])
+    return res
 
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
@@ -253,6 +275,13 @@ def universalopen(fname, rewrite=False, cp=65001):
 def print_traceback(f=None):
     traceback.print_stack(f=f)
 
+def startfile(fpath):
+    if os.path.exists(fpath):
+        if sys.platform.startswith("win"):
+            os.startfile(fpath)
+        elif sys.platform.startswith("linux"):
+            call(('xdg-open', fpath))
+
 def getPDFconfig(fname):
     if str(fname).lower().endswith(".zip"):
         with open(fname, "rb") as inf:
@@ -275,7 +304,6 @@ def getPDFconfig(fname):
     return None
 
 if sys.platform == "linux":
-
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
         valuepath = os.path.join(basepath, path.lower(), "values.xml")
@@ -291,7 +319,7 @@ if sys.platform == "linux":
         else:
             return res.text
 
-elif sys.platform == "win32":
+elif sys.platform.startswith("win"):
     import winreg
 
     def openkey(path):
@@ -316,7 +344,8 @@ def pycodedir():
     return os.path.abspath(os.path.dirname(__file__))
 
 def pt_bindir():
-    res = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+    res = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))), "ptxprint")
+    logger.debug(f"pt_bindir= {res}")
     return res
 
 def get_ptsettings():
@@ -325,7 +354,7 @@ def get_ptsettings():
     if ptob is None:
         logger.debug(f"No registry key found for Paratext. Searching for data folder...")
         for v in ('9', '8'):
-            if sys.platform == "win32":
+            if sys.platform.startswith("win"):
                 for d in map(chr, range(ord('C'), ord('Z')+1)):
                     if os.path.exists("{}:\\".format(d)):
                         tempstr = "{}:\\My Paratext {} Projects"
@@ -431,6 +460,8 @@ def asfloat(v, d):
         return d
 
 def strtobool(s):
+    if isinstance(s, bool):
+        return s
     return s.lower() in ('true', '1', 't')
 
 def pluralstr(s, l):
@@ -478,7 +509,7 @@ def ustr(x):
     res = re.sub(r"\\U([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), res)
     return res
 
-def runChanges(changes, bk, dat):
+def runChanges(changes, bk, dat, errorfn=None):
     def wrap(t, l):
         def proc(m):
             res = m.expand(t) if isinstance(t, str) else t(m)
@@ -500,6 +531,9 @@ def runChanges(changes, bk, dat):
                 dat = c[0](simple, bk, dat)
         except TypeError as e:
             raise TypeError(str(e) + "\n at "+c[3])
+        except regex._regex_core.error as e:
+            if errorfn is not None:
+                errorfn(str(e) + "\n at " + c[3])
     return dat
 
 _htmlentities = {
@@ -585,55 +619,96 @@ def xdvigetpages(xdv):
         res = unpack(">I", dat[1:])[0]
     return res
 
+def xdvigetfonts(xdv):
+    res = set()
+    try:
+        with open(xdv, "rb") as inf:
+            inf.seek(-12, 2)
+            dat = inf.read(12).rstrip(b"\xdf")
+            if len(dat) < 5:
+                return res
+            postpost = inf.tell() - 7 + len(dat)
+            postamble = unpack(">I", dat[-5:-1])[0]
+            inf.seek(postamble + 29, 0) # skip the postamble command itself
+            while inf.tell() < postpost:
+                dat = inf.read(12)
+                if len(dat) < 12:
+                    break
+                flags = unpack(">H", dat[9:11])[0]
+                a = dat[11]
+                path = inf.read(a).decode(errors="ignore")
+                ext = 4
+                if flags & 0x200:
+                    ext += 4
+                if flags & 0x800:
+                    ndat = inf.read(ext+2)
+                    nvars = unpack(">H", ndat[-2:])
+                    ext = 4 * nvars
+                for a in (0x1000, 0x2000, 0x4000):
+                    if flags & a:
+                        ext += 4
+                ndat = inf.read(ext)
+                res.add(path)
+    except OSError:
+        pass
+    return res
+
 varpaths = (
-    ('prjdir', ('settings_dir', 'prjid')),
-    ('settingsdir', ('settings_dir',)),
-    ('workingdir', ('working_dir',)),
+    ('prjdir', lambda p,v: p.path),
+    ('settingsdir', lambda p,v: os.path.join(p.path, '..')),
+    ('workingdir', lambda p,v: p.printPath(v.cfgid)),
 )
 
-class Path(pathlib.Path):
-
-    _flavour = pathlib._windows_flavour if os.name == "nt" else pathlib._posix_flavour
+class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath):
 
     @staticmethod
     def create_varlib(aView):
         res = {}
         for k, v in varpaths:
-            res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
+            res[k] = pathlib.Path(v(aView.project, aView))
         res['pdfassets'] = pathlib.Path(pycodedir(), 'PDFassets')
         return res
 
-    def __new__(cls, txt, view=None):
+    def __new__(cls, txt, *args):
         if not isinstance(txt, str):
             return txt
-        if view is None or not txt.startswith("${"):
+        if not len(args) or not txt.startswith("${"):
             return pathlib.Path.__new__(cls, txt)
-        varlib = cls.create_varlib(view)
+        varlib = cls.create_varlib(args[0])
         k = txt[2:txt.find("}")]
         return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:])
 
+    def __init__(self, txt, *args):
+        if sys.version_info.major > 3 or sys.version_info.minor >= 12:
+            if len(args) and txt.startswith("${"):
+                varlib = self.create_varlib(args[0])
+                k = txt[2:txt.find("}")]
+                txt = str(varlib[k]) + "/" + txt[len(k)+4:]
+            super().__init__(txt)
+
     def withvars(self, aView):
         varlib = self.create_varlib(aView)
-        bestl = len(str(self))
+        bestr = self.as_posix()
         bestk = None
         for k, v in varlib.items():
             try:
-                rpath = self.relative_to(v)
-            except ValueError:
+                rpath = os.path.relpath(self.as_posix(), start=v.as_posix())
+            except (ValueError, TypeError):
                 continue
-            if len(str(rpath)) < bestl:
+            if len(str(rpath)) < len(bestr):
                 bestk = k
+                bestr = str(rpath)
         if bestk is not None:
-            return "${"+bestk+"}/"+rpath.as_posix()
+            return "${"+bestk+"}/"+bestr
         else:
             return self.as_posix()
 
 
-def zipopentext(zf, fname):
+def zipopentext(zf, fname, prefix=""):
     if isinstance(zf, UnzipDir):
-        return zf.open(fname, mode="rt", encoding="utf-8")
+        return zf.open(prefix+fname, mode="rt", encoding="utf-8")
     else:
-        zp = zipfile.Path(zf, fname)
+        zp = zipfile.Path(zf, prefix+fname)
         return zp.open(encoding="utf-8")
 
 class UnzipDir:
@@ -666,6 +741,17 @@ class UnzipDir:
         with open(os.path.join(self.filename, name), 'r') as inf:
             res = inf.read()
         return res
+
+    def extract(self, member, path=None, pwd=None):
+        copy2(os.path.join(os.filename, member), os.path.join(path, member) if path is not None else member)
+
+    def extractall(self, path=None, members=None, pwd=None):
+        for dp, dn, fn in os.walk(self.filename):
+            for f in fn:
+                fp = os.path.join(dp, f)
+                if members is not None and fp not in members:
+                    continue
+                self.extract(fp, path=path)
 
     def close(self):
         pass

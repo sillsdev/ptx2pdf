@@ -81,7 +81,7 @@ See [OrnamentsCatalogue.pdf](OrnamentsCatalogue.pdf).
 
 ## Configuring a border for a sidebar
 ### Ornament specification
-Each ornament that builds part of the border is specified by four parameters. The parameters are separated by vertical bars `|`, and may be omitted. 
+Each ornament that builds part of the border is specified by four parameters. The parameters are separated by vertical bars `|`.
 
  1. Ornament number (or string for font-based ornaments)
  2. Rotation/mirroring
@@ -99,7 +99,8 @@ scaling is used to adjusted their size to something appropriate.
 If a string is specified, it must be enclosed in straight double quotes (`"thus"`).
 Specifying a string in the ornament specification is a shorthand which autogenerates a 
 new ornament number if there's no matching string already been used. Such ornaments always use the 
-font named by `\StringOrnamentFont`.
+font named by `\StringOrnamentFont. Note that there are certain characters that may *never* occur in an ornament 
+specified using this string notation, as they will interfere with rule-parsing. At present they are: `,` `"`  and  `|` 
 
 #### Rotation and mirroring
  -  `u` 0° rotation (up becomes Up)

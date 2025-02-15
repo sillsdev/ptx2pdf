@@ -116,9 +116,82 @@
   \fi
 }
 
+\def\r@tio#1#2{{% find the fractional ratio #1/#2, trying to get to the limit of TeX's fixed-point maths. Assumption is that both values are "reasonable" font/line/page dimenstions.
+  \dimen1=#1 \dimen2=1pt \count255=16384 % maxdimen=16384pt-1sp. 
+  \loop
+    \ifdim \dimen1>\dimen2
+      \divide\count255 by 2
+      \multiply\dimen2 by 2
+      \repeat
+  \ifdim\dimen1=\dimen2 % can't sensibly do >=, so check the = case here.
+    \multiply\dimen2 by 2
+    \divide\count255 by 2
+  \fi
+  \multiply\dimen1 by \count255 % left-shift numerator as much as possible.
+  \dimen3=#2
+  \count255=\dimen2 
+  \divide\count255 by 32768 %dimen2 is an integer number of pt. 1pt=65536sp => 65536 when put into a count.
+  \dimen4=1pt
+  \divide\dimen4 by \count255 \relax
+  %\message{\the\dimen3, \the\dimen4, \the\numexpr\dimen3/\dimen4\relax}%
+  \ifnum 1 = \ifdim \dimen3> 4pt 1 \else \ifdim \dimen3 >4092\dimen4 1 \else 0 \fi\fi % ensure there'll be a reasnonable number left after shifting
+    %\message{strategy1}
+    \divide\dimen3 by \count255 %right-shifting the denominator saves multiplying the result later. Both lose accuracy.
+    \divide\dimen1 by \dimen3 
+    \multiply\dimen1 by 2% Scale to factor 1 = 1pt. 
+  \else
+    %\message{strategy2}
+    \divide\dimen1 by \dimen3 
+    \multiply\count255 by 2
+    \multiply\dimen1 by \count255
+  \fi
+  \xdef\@@r@tio{\strip@pt{\dimen1}}%
+}}
+
 \def\decod@lastnode#1{\ifnum #1<0 none\else \ifcase #1
     char%0
 \or hlist\or vlist\or rule\or ins\or mark%5
 \or adjust\or lig\or disc\or whatsit\or math%10
 \or glue\or  kern\or penalty\or unset\or mathmode%15
 \else UNK\fi\fi}
+
+%Defined penalties
+\xdef\sp@cialpen{-10001}
+\def\newsp@cialpen#1{%define a new special penalty {#1}  which gets set as the next special penalty number (assuming all special penalties are registered with this function.
+  {\count255=\numexpr \sp@cialpen-1\relax
+  \x@\xdef\x@\sp@cialpen{\the\count255}%
+  \message{Special penalty #1 is \sp@cialpen}%
+  \x@\xdef\csname #1\endcsname{\sp@cialpen}
+  \x@\xdef\csname d@code:\sp@cialpen\endcsname{#1}}%
+}
+
+% Some special penalty values
+\x@\xdef\csname d@code:-101\endcsname{layoutswap}
+\x@\xdef\csname d@code:-10000\endcsname{eject}
+\x@\xdef\csname d@code:-20000\endcsname{supereject}
+\x@\xdef\csname d@code:0\endcsname{ - }
+
+% Custom marks
+\xdef\m@rksm@x{0}
+\newtoks\usedm@rks
+\def\newm@rknum#1{%define a new m@rknum#1 which gets set as the next unused marks  register (assuming all marksN are registered with this function.
+  {\count255=\numexpr \m@rksm@x+1\relax%
+  \x@\xdef\x@\m@rksm@x{\the\count255}%
+  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}% Don't change this witout a lot of search and replace!
+  \trace{ma}{newm@rknum #1 -> \m@rksm@x}%
+}
+\def\addnewm@rk#1{\x@\usedm@rks\x@{\the\usedm@rks \\{#1}}\trace{ma}{addnewm@rk #1 - usedm@rks=\the\usedm@rks}}
+\def\getm@rknum#1{%retrieve or get a new m@rknum#1
+  \x@\let\x@\m@rknum\csname m@rknum#1\endcsname%
+  \ifx\m@rknum\relax%
+    \newm@rknum{#1}\let\m@rknum\m@rksm@x%
+  \fi%
+  \trace{ma}{getm@rknum #1 -> \m@rknum}%
+}
+
+\def\savem@rks{%
+ % \ifnum\pageno=33 \showthe\usedm@rks\fi
+  \let\\=\relax\trace{ma}{Saving marks: \the\usedm@rks}\let\\=\save@m@rk \the\usedm@rks}
+\def\save@m@rk#1{\getm@rknum{#1}\x@\xdef\csname customtopmark-#1\endcsname{\firstmarks\m@rknum}\x@\xdef\csname custombotmark-#1\endcsname{\botmarks\m@rknum}\trace{ma}{top=\csname customtopmark-#1\endcsname, bot=\csname custombotmark-#1\endcsname}}
+\def\unsavem@rks{\trace{ma}{Unsaving marks: \the\usedm@rks}\let\\=\unsave@m@rk \the\usedm@rks}
+\def\unsave@m@rk#1{\getm@rknum{#1}\ifcsname customtopmark-#1\endcsname\marks\m@rknum{\csname customtopmark-#1\endcsname}\else\trace{ma}{-skipping customtopmark-#1 (undefined)-}\fi\ifcsname custombotmark-#1\endcsname\marks\m@rknum{\csname custombotmark-#1\endcsname}\fi}

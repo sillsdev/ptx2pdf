@@ -3,7 +3,7 @@ import sys, subprocess, os
 import xml.etree.ElementTree as et
 from ptxprint.utils import pt_bindir
 
-if sys.platform == "linux":
+if sys.platform == "linux" or sys.platform == "darwin":
 
     def fclist(family, pattern):
         a = ["fc-list", '"{0}":style="{1}"'.format(family, pattern), 'file']
@@ -42,6 +42,8 @@ elif sys.platform == "win32":
     def call(*a, **kw):
         path = os.path.join(pt_bindir(), "xetex", "bin", "windows", a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
-        res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
+        kw['stdout'] = kw.get('stdout', subprocess.PIPE)
+        kw['stderr'] = kw.get('stderr', subprocess.STDOUT)
+        res = subprocess.run(*newa, creationflags=CREATE_NO_WINDOW, **kw)
         return res
 

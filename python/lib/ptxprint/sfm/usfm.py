@@ -238,21 +238,21 @@ class parser(sfm.parser):
     ...     list(parser([r'\\id TEST\\mt \\whoops']))
     Traceback (most recent call last):
     ...
-    SyntaxWarning: <string>: line 1,14: unknown marker \whoops: not in stylesheet
+    SyntaxWarning: <string>: line 1,14: unknown marker \\whoops: not in stylesheet
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\mt \\whoops'],
     ...                 error_level=sfm.ErrorLevel.Marker))
     Traceback (most recent call last):
     ...
-    SyntaxError: <string>: line 1,14: unknown marker \whoops: not in stylesheet
+    SyntaxError: <string>: line 1,14: unknown marker \\whoops: not in stylesheet
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\mt \\zwhoops'],
     ...                 error_level=sfm.ErrorLevel.Note))
     Traceback (most recent call last):
     ...
-    SyntaxWarning: <string>: line 1,14: unknown private marker \zwhoops: not it stylesheet using default marker definition
+    SyntaxWarning: <string>: line 1,14: unknown private marker \\zwhoops: not it stylesheet using default marker definition
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\c 1\\p a \\png b \\+w c \\+nd d \\png e \\png*']))
@@ -304,7 +304,7 @@ class parser(sfm.parser):
                  stylesheet=default_stylesheet,
                  default_meta=_default_meta,
                  canonicalise_footnotes=True,
-                 tag_escapes=r"[|\\+%!@#$^&()=-_`/]",
+                 tag_escapes=r"[|\\%!@#$^&()=-_`/]",
                  debug=False,
                  *args, **kwds):
         if not canonicalise_footnotes:
@@ -325,22 +325,23 @@ class parser(sfm.parser):
     @classmethod
     def __synthesise_private_meta(cls, sty, default_meta):
         private_metas = dict(r for r in sty.items() if r[0].startswith('z'))
-        metas = {
-            n: deepcopy(sty.get(
-                cls.__unspecified_metas.get(
-                    (m['TextType'],
-                     m['Endmarker'] is None and m.get('StyleType', None) == 'Paragraph'),
-                    None),
-                default_meta))
-            for n, m in private_metas.items()
-        }
+        metas = {}
+        for n, m in private_metas.items():
+            if m.get('StyleType', '') in ('Standalone', 'Milestone'):
+                continue
+            sid = cls.__unspecified_metas.get((m['TextType'],
+                    m['Endmarker'] is None and m.get('StyleType', None) == 'Paragraph'), None)
+            v = sty.get(sid, default_meta)
+            for k, a in v.items():
+                if (k not in m or not m[k]) and k not in ('Endmarker',):
+                    m[k] = a
         for v in list(sty.values()):
             if v.get('StyleType', '') == 'Milestone':
                 k = v.get('Endmarker', None)
                 v['Endmarker'] = '*'
                 if k is not None:
                     sty[k] = deepcopy(v)
-        return style.update_sheet(sty, style.update_sheet(metas, private_metas))
+        return sty
 
     def _force_close(self, parent, tok, tag):
         if tok is sfm.parser._eos:
@@ -456,7 +457,7 @@ class parser(sfm.parser):
                         parent)
             parent.args = ['\uFFFD']
         else:
-            parent.args = [str(tok[caller.start(1):caller.end(1)])]
+            parent.args = [str(tok[caller.start(1):caller.end(1)]),str(" ")]
             tok = tok[caller.end():]
 
         if not self.sep_re.match(str(tok)):

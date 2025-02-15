@@ -1,8 +1,19 @@
 \def\pluginlist{ornaments,cover}
 \input "paratext2.tex"
+\LogFontstrue
 \catcode`\@=11
+\def\hSEQ{\noexpand\horizSeq}
+\def\SEQ{\noexpand\vertSeq}
+\def\horizSeq{\the\orn@seq@num}
+\def\vertSeq{\the\orn@seq@num}
 \tracing{m}
+\tracing{Fe}
+\tracing{F}
+\tracing{sC}
+\tracing{s}
+%\def\MapBorderTlabels{^^^^03b1,β,γ,δ,ε,ζ}
 \pluginjustwarntrue
+\def\ptxversion{0}
 %\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
 %\input "ptx-extended.tex"
 %\input "ptxplus-marginalverses.tex"
@@ -76,7 +87,7 @@
 \vfuzz=0.1pt
 
 % INSTALLED FONTS
-\def\regular{"Gentium"}
+\def\regular{"Gentium Plus"}
 \def\bold{"Charis SIL/B"}
 \def\italic{"Charis SIL/I"}
 \def\bolditalic{"Charis SIL/BI"}
@@ -97,6 +108,8 @@
 \stylesheet{default-custom.sty}
 \tracing{sc}
 \tracing{orn}
+\def\OverThinRule{warnfix}
+\def\OverThinCurve{warnfix}
 %\tracing{sC}
 \stylesheet{test.sty}
 \stylesheet{cover.sty}
@@ -184,13 +197,13 @@
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
 \CacheOrnamentsfalse
-\XformOrnamentstrue
+\XformOrnamentsfalse
 \holdXobjectsfalse
 \tracingoutput=1
 \newbox\myorn
 \setbookhook{start}{all}{\setbox\myorn\hbox{\zornament|pattern="1|||" \*}}%showbox\myorn}
-\sethook{start}{p}{\leavevmode xx\copy\myorn}% 
-
+\sethook{start}{p}{\leavevmode \copy\myorn}% 
+\hfuzz=500pt
 \ptxfile{test.usfm}
 \zNeedEvenPage
 \makeatletter
@@ -201,6 +214,7 @@
 \BookOpenLeftfalse
 \showboxdepth=999
 \showboxbreadth=99
+\message{OrnamentUnit \the\OrnamentUnit}%
 \tracing{cov}
 \eject
 %\BookOpenLefttrue
@@ -209,5 +223,4 @@
 \boxornfalse
 \unprepusfm
 \m@kecover
-
 \bye

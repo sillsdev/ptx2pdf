@@ -54,7 +54,8 @@ class ScriptSnippet:
         res += [makeChange(cls.hyphenChar + r"(?=[\u0d23\u0d28\u0d30\u0d32\u0d33\u0d15]\u0d4d\u200d)", '', context=onlybody)] # Remove break before MAL old-style chillu 
         return res
 
-nonbodymarkers = ("id", "h", "h1", "toc1", "toc2", "toc3", "mt1", "mt2")
+#nonbodymarkers = ("id", "h", "h1", "toc1", "toc2", "toc3", "mt1", "mt2")
+nonbodymarkers = ("id", "h", "h1")    # keep in toc to allow wrapping
 
 def onlybody(fn, bj, dat):
     res = []
@@ -78,6 +79,13 @@ def nonbody(fn, bj, dat):
         res.append(fn(l))
     return "\n".join(res)
 
+def notattrib(fn, bj, dat):
+    #if "/" in dat:
+    #    import pdb; pdb.set_trace()
+    b = re.split(r"((?<!\\)\|.*?\\[a-z*])", dat)
+    for i, w in enumerate(b[0::2]):
+        b[2*i] = fn(w)
+    return "".join(b)
 
 class Indic(ScriptSnippet):
     dialogstruct = [
@@ -104,7 +112,7 @@ class mymr(ScriptSnippet):
                makeChange('([\u00AB\u2018\u201B\u201C\u201F\u2039\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20])/', r'\1', re.S),
                makeChange('/([\u00BB\u2019\u201D\u203A\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21])', r'\1', re.S),
                makeChange('/([\\s\u104A\u104B])', r'\1', re.S),
-               makeChange(r'/', "\u200B"),
+               makeChange(r'/', "\u200B", context=notattrib),
                makeChange('\u200B', "", context=nonbody)]
         if view.get("c_scrmymrSyllable"):
             cons = "[\u1000-\u102A\u103F\u104C-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081" + \
@@ -122,7 +130,7 @@ class thai(ScriptSnippet):
     def regexes(cls, view):
         res = [makeChange(r'(\s)/', r'\1'),
                makeChange('/([\\s\u0E46])', r'\1'),
-               makeChange(r'/', "\u200B"),
+               makeChange(r'/', "\u200B", context=notattrib),
                makeChange(r'([^\u0E00-\u0E7F])\u200B', r'\1'),
                makeChange(r'\u200B([^\\\u0E00-\u0E7F])', r'\1'),
                makeChange('\u200B', "", context=nonbody)]
@@ -133,7 +141,7 @@ class laoo(ScriptSnippet):
     def regexes(cls, view):
         res = [makeChange(r'(\s)/', r'\1'),
                makeChange('/([\\s\u0EC6])', r'\1'),
-               makeChange(r'/', "\u200B"),
+               makeChange(r'/', "\u200B", context=notattrib),
                makeChange(r'([^\u0E80-\u0EFF])\u200B', r'\1'),
                makeChange(r'\u200B([^\\\u0E80-\u0EFF])', r'\1'),
                makeChange('\u200B', "", context=nonbody)]
@@ -144,18 +152,26 @@ class lana(ScriptSnippet):
     def regexes(cls, view):
         res = [makeChange(r'(\s)/', r'\1'),
                makeChange('/([\\s\u1AA7])', r'\1'),
-               makeChange(r'/', "\u200B"),
+               makeChange(r'/', "\u200B", context=notattrib),
                makeChange(r'([^\u1A20-\u1A7F])\u200B', r'\1'),
                makeChange(r'\u200B([^\\\u1A20-\u1A7F])', r'\1'),
                makeChange('\u200B', "", context=nonbody)]
         return res
+
+class talu(ScriptSnippet):
+    @classmethod
+    def regexes(cls, view):
+        res = [makeChange(r'/', "\u200B", context=noattrib),
+               makeChange(r'([^\u1980-\u19DF])\u200B', r'\1'),
+               makeChange(r'\u200B([^\\\u1980-\u19DF])', r'\1'),
+               makeChange('\u200B', "", context=nonbody)]
 
 class arab(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrarabrefs", _("First verse on left"))
     ]
     refseparators = (RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "),
-                     RefSeparators(range="\u200F-", cv="\u200E:", verses="\u060C ", chaps="\u061B "))
+                     RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "))
 
     @classmethod
     def getrefseps(cls, view):
@@ -258,3 +274,13 @@ class orya(Indic):
             cls.vmodifiers = r'\u0b01-\u0b03\u0b4d'  
             res = cls.indicSyls()
         return res
+
+class beng(ScriptSnippet):
+    @classmethod
+    def regexes(cls, view):
+        res = [
+            makeChange("(?<=\\s)([\u0985-\u09CC](?![\u09C7-\u09CC])[^\\\\\\s]*?"
+                       "[\u09C7-\u09CC][^\\\\\\s]*?)(?=\\s)", "\uFDEC\\1\uFDED")
+            ]
+        return res
+

@@ -13,6 +13,7 @@ responses = {
     "T": "Contact programming team (TeX)",
     "Y": "Contact programming team (python)",
     "E": "Configuration environment (including ptxprint-mods.tex, file locations, etc)"
+    # "F": "Use a different font which is not a Variable Font."
 }
 
 messages = [
@@ -34,6 +35,9 @@ messages = [
     ("W","UP", r'Unknown picture size \".+?\", expected \"col\", \"span\", \"width\", \"page\" or \"full\"'),
     ("E","UY", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
     ("E","U", r"zglot must be followed by a sensible argument\. '.+?' Hasn't been specified"),
+    ("E","U", r"Verse marker found in note style .+? End notes properly, notes including verse numbers must uses fv."),
+    ("E","U", r"note marker \(.+?\) found while still in note style, after .+? end notes properly, notes may not nest."),
+    ("W","U", r"Bad marker .+? \(end-of-note when not in a note\) near .+? Ignored."),
     ("I","U", r"Table column overflow, reducing resolution"),
     ("W","S", r"\*\* .+? specification of .+? \(at \d+:\d+\) leaves .+? for text\. That's probably not enough\."),
     ("W","UP", r"Did not use all pictures in list\. Waiting for .+"),
@@ -51,8 +55,8 @@ messages = [
     ("I","ST", r"Image crop not supported"),
     ("W","P", r"Expected rotate=.+? or similar in definition of picture .+"),
     ("W","T", r"Eh? .+? called for .+? and empty parameter"),
-    ("W","EU", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
-    ("W","EU", r'Thumb tab contents \".+?\" too wide for tab width'),
+    ("WS","EU", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
+    ("WS","EU", r'Thumb tab contents \".+?\" too wide for tab width'),
     ("E","S", r"Error in stylesheet: Stylesheet changed category from '.+?' to '.+?\'\. Resetting to '.+?'"),
     ("E","UY", r"polyglotcolumn may not be called with an empty argument"),
     ("W","S", r"No side defined for foreground image in sidebar class '.+?\. Assuming outer\."),
@@ -88,6 +92,7 @@ messages = [
     ("E","U", r"Malformed input near .+?: periph called while there was a pending chapter number \(.+?\)"),
     ("E","PU", r"No space for text on page!"),
     ("E","P", r"Not a PDF file, page=\.\.\. only supported on PDFs"),
+    ("W","P", r"Fractional part (\S*) of paragraph skip"),
     ("W","SU", r"Ornamental border: unrecognised control char '.+?'"),
     ("I","S", r"Paragraph font for .+? including a verse number claims it is taller \(.+?\) than baseline \(.+?\)"),
     ("I","", r"Polyglot: layout across .+? pages"),
@@ -111,6 +116,7 @@ messages = [
     ("W","U", r"valid options for pagenums attribute of zfillsignature are 'do' and 'no'"),
     ("W","S", r'converted sidebar placement \".+?\" to \".+?\" in single-column layout'),
     ("W","A", r'\*\* WARNING: adjustlist entries should not contain space.+'),
+    # ("E","F", r"xdvipdfmx:fatal: Invalid font:"),
     ("W","U", r"WARNING: p\..+?:.+? used in text when .+? is a footnote, not an endnote\.")]
 
 # These (below) have not been added to the list above (yet) as they seems to require some further knowledge as to how to 'fish' for them.
@@ -147,22 +153,27 @@ def summarizeTexLog(logText):
     # Create dictionaries to count occurrences of each category
     category_counts = {"I": 0, "W": 0, "E": 0}
     messageSummary = []
+    allmsgs = set()
 
     # Iterate through the messages and check for matches
-    for i, (category, response, pattern) in enumerate(messages, start=1):
+    for category, response, pattern in messages:
         matches = re.finditer(pattern, logText)
-        for match in matches:
-            category_counts[category] += 1
+        for i, match in enumerate(matches):
+            category_counts[category[0]] += 1
             # print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
-            if category in ["W", "E"]:
-                messageSummary.append(f"{categories[category]}: {match.group(0)}")
-                for i, r in enumerate(response, start=1):
-                    if i == 1:
-                        messageSummary.append(f"  To fix it, try:")
-                    messageSummary.append(f"  {i}. {responses[r]}")
+            if category[0] in ["W", "E"]:
+                msg = f"{categories[category[0]]}: {match.group(0)}"
+                if msg in allmsgs:
+                    continue
+                allmsgs.add(msg)
+                messageSummary.append(msg)
+                if i < 1 or len(category) < 2 or 'S' not in category:
+                    for j, r in enumerate(response, start=1):
+                        messageSummary.append(f"  Try {j}. {responses[r]}")
 
-    # Look for Unbalanced or Unfilled pages (only show up if \tracing{b} is enabled in ptxprint-mods.tex)
+    # Look for Unbalanced or Unfilled pages
     uf_matches = re.findall(r'Underfill\[(A|B)\]: \[(\d+)\]', logText)
+    unique_page_numbers = []
     if len(uf_matches):
         # Extract unique page numbers and sort them in ascending order
         unique_page_numbers = sorted(set(int(match[1]) for match in uf_matches), key=int)
@@ -172,7 +183,7 @@ def summarizeTexLog(logText):
     if __name__ == "__main__":
         print(category_counts, '\n'.join(messageSummary))
     else:
-        return category_counts, messageSummary
+        return category_counts, messageSummary, unique_page_numbers
 
 def shorten_ranges(numbers):
     ranges = []

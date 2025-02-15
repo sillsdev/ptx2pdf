@@ -1,8 +1,9 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
-from ptxprint.utils import refKey, getlang, _, f2s, pycodedir
+from ptxprint.utils import refSort, getlang, _, f2s, pycodedir
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
+from shutil import rmtree
 import os, re
 import logging
 
@@ -37,7 +38,38 @@ _comblist = ['pgpos', 'hpos', 'nlines']
 _comblistcr = ['crVpos', 'crHpos']
 
 newrowcounter = 1
+previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
 
+_locGrid = {
+"1"   :    (0,0),"1-b":     (1,0),"1-cl":    (2,0),"1-cr":   (3,0),"1-hc":    (4,0),"1-hl":    (5,0),"1-hr":    (6,0),"1-p":     (7,0),
+"1-pa":    (0,1),"1-pb":    (1,1),"1-t":     (2,1),"2":      (3,1),"2-col-bl":(4,1),"2-col-br":(5,1),"2-col-cl":(6,1),"2-col-cr":(7,1),
+"2-col-hc":(0,2),"2-col-hl":(1,2),"2-col-hr":(2,2),"2-col-p":(3,2),"2-col-pa":(4,2),"2-col-pb":(5,2),"2-col-tl":(6,2),"2-col-tr":(7,2),
+"2-span-b":(0,3),"2-span-t":(1,3),"full":    (2,3),"page":   (3,3)
+}
+    
+def dispLocPreview(key):
+    x,y = _locGrid.get(key, (7,3))
+    x = x * 212 + 14
+    y = y * 201 + 10
+    pic = previewBuf.new_subpixbuf(x,y,130,180)
+    return pic
+
+def getLocnKey(cols, frSize, pgposLocn):
+    locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
+    locnKey = re.sub(r'^\d\-(page|full)\-.+', r'\1', locnKey)
+    locnKey = re.sub(r'^1\-(col|span)\-', '1-', locnKey)
+    locnKey = re.sub(r'^(.+)i(\d?)$', r'\1l\2', locnKey)
+    locnKey = re.sub(r'^(.+)o(\d?)$', r'\1r\2', locnKey)
+    locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
+    locnKey = re.sub(r'^1\-p[lcrio]', '1-p', locnKey)
+    locnKey = re.sub(r'^2\-col\-p[lcrio]', '2-col-p', locnKey)
+    locnKey = re.sub(r'^2\-col\-h$', '2-col-hc', locnKey)
+    locnKey = re.sub(r'^2\-col\-c$', '2-col-cl', locnKey)
+    locnKey = re.sub(r'^1\-c$', '1-cl', locnKey)
+    locnKey = re.sub(r'\-?\d*\.?\d$', '', locnKey)
+    locnKey = re.sub(r'B', 'b', locnKey)  # Until we get some updated graphics
+    # print(f"{cols=} {frSize=} {pgposLocn=} ==> {locnKey=}")
+    return locnKey
 
 class PicList:
     def __init__(self, view, builder, parent):
@@ -48,7 +80,7 @@ class PicList:
         self.coremodel = view.get_model()
         self.model = self.coremodel.filter_new()
         self.model.set_visible_func(self.checkfilter)
-        self.view. set_model(self.model)
+        self.view.set_model(self.model)
         self.builder = builder
         self.parent = parent
         self.picinfo = None
@@ -69,7 +101,7 @@ class PicList:
             elif v.startswith("c_"):
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
-        self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
+        # self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
         self.clear()
         self.loading = False
 
@@ -105,23 +137,31 @@ class PicList:
         self.coremodel.clear()
         self.clearPreview()
 
+    def pause(self):
+        self.view.set_model(None)
+
+    def unpause(self):
+        self.view.set_model(self.model)
+        self.model.refilter()
+
     def load(self, picinfo, bks=None):
+        self.loading = True
         self.picinfo = picinfo
         #self.view.set_model(None)
         self.coremodel.clear()
         self.clearPreview()
         self.bookfilters = bks
         if picinfo is not None:
-            for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
+            for v in sorted(picinfo.get_pics(), key=lambda x:refSort(x['anchor'])):
                 if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
                 row = []
                 #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
-                defaultmedia = self.parent.copyrightInfo.get(v.get('src', '')[:2].lower(),
+                defaultmedia = self.parent.readCopyrights().get(v.get('src', '')[:2].lower(),
                     { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
                 for e in _piclistfields:
                     if e == 'key':
-                        val = k
+                        val = v.key
                     elif e == "scale":
                         try:
                             val = float(v.get(e, 1)) * 100
@@ -145,8 +185,8 @@ class PicList:
                     row.append(val)
                 self.coremodel.append(row)
         #self.view.set_model(self.model)
-        self.model.refilter()
         self.loading = False
+        self.model.refilter()
         self.select_row(0)
 
     def get(self, wid, default=None):
@@ -154,7 +194,7 @@ class PicList:
         w = self.builder.get_object(wid)
         res = getWidgetVal(wid, w, default=default)
         if wid.startswith("s_"):
-            res = float(res[:res.find(".")]) if res.find(".") >= 0 else int(res)
+            res = float(res) if res.find(".") >= 0 else int(res)
         return res
 
     def updateinfo(self, picinfos):
@@ -163,7 +203,7 @@ class PicList:
             k = row[_pickeys['key']]
             # if k.startswith("row"):
                 # print(f"{k} added")
-            p = picinfos.setdefault(k, {})
+            p = picinfos.get(k, {})
             for i, e in enumerate(_piclistfields):
                 if e == 'key':
                     allkeys.add(row[i])
@@ -171,17 +211,18 @@ class PicList:
                 elif e == 'scale':
                     val = f2s(row[i] / 100.)
                 elif e == "cleardest":
-                    if row[i] and 'dest file' in p:
-                        del p['dest file']
+                    if row[i] and 'destfile' in p:
+                        del p['destfile']
                     continue
                 else:
                     val = row[i]
                 p[e] = val
-        for k,v in list(picinfos.items()):
-            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
-                if k.startswith("row"):
-                    print(f"{k} removed")
-                del picinfos[k]
+#        breakpoint()
+#        for k,v in list(picinfos.items()):
+#            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
+#                if k.startswith("row"):
+#                    print(f"{k} removed")
+#                picinfos.remove(v)
         return picinfos
 
     def clearPicSources(self, picinfos):
@@ -194,14 +235,14 @@ class PicList:
                     allkeys.add(row[i])
                     continue
                 elif e == "cleardest":
-                    if row[i] and 'dest file' in p:
-                        del p['dest file']
+                    if row[i] and 'destfile' in p:
+                        del p['destfile']
                     continue
 
-    def row_select(self, selection): # Populate the form from the model
+    def row_select(self, selection, update=True): # Populate the form from the model
         if self.loading or selection.count_selected_rows() == 0:
             return
-        if self.currows:
+        if update and self.currows:
             if not self.currows[-1][_pickeys['anchor']]:
                 self.parent.doError(_("Empty Anchor"), _("You must set an anchor"))
                 return
@@ -225,9 +266,12 @@ class PicList:
             self.currows.append(self.model[cit][:])    # copy it so that any edits don't mess with the model if the iterator moves
             self.currows[-1].append(cit)
         currow = self.currows[0]
-        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
+        if not currow[_pickeys['pgpos']]:
+            pgpos = ""
+        else:
+            pgpos = re.sub(r'^([PF])([lcrio])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
-        self.loading = True
+        # self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             # print(j, k, v)
             if k == 'pgpos':
@@ -272,51 +316,38 @@ class PicList:
         self.parent.unpause_logging()
         self.loading = False
 
-    _locGrid = {
-"1"   :    (0,0),"1-b":     (1,0),"1-cl":    (2,0),"1-cr":   (3,0),"1-hc":    (4,0),"1-hl":    (5,0),"1-hr":    (6,0),"1-p":     (7,0),
-"1-pa":    (0,1),"1-pb":    (1,1),"1-t":     (2,1),"2":      (3,1),"2-col-bl":(4,1),"2-col-br":(5,1),"2-col-cl":(6,1),"2-col-cr":(7,1),
-"2-col-hc":(0,2),"2-col-hl":(1,2),"2-col-hr":(2,2),"2-col-p":(3,2),"2-col-pa":(4,2),"2-col-pb":(5,2),"2-col-tl":(6,2),"2-col-tr":(7,2),
-"2-span-b":(0,3),"2-span-t":(1,3),"full":    (2,3),"page":   (3,3)
-}
-    
-    def dispLocPreview(self, key):
-        x,y = self._locGrid.get(key, (7,3))
-        x = x * 212 + 14
-        y = y * 201 + 10
-        pic = self.previewBuf.new_subpixbuf(x,y,130,180)
-        return pic
-
-    def getLocnKey(self):
-        if self.get("c_doublecolumn"):
-            cols = 2
-        else:
-            cols = 1
-        if not self.get("c_plMediaP"):
-            locnKey = "1" if cols == 1 else "2"
-        else:
-            frSize = self.currows[0][_pickeys['size']]
-            pgposLocn = self.currows[0][_pickeys['pgpos']]
-            locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
-            locnKey = re.sub(r'^\d\-(page|full)\-.+', r'\1', locnKey)
-            locnKey = re.sub(r'^1\-(col|span)\-', '1-', locnKey)
-            locnKey = re.sub(r'^(.+)i(\d?)$', r'\1l\2', locnKey)
-            locnKey = re.sub(r'^(.+)o(\d?)$', r'\1r\2', locnKey)
-            locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
-            locnKey = re.sub(r'^1\-p[lcrio]', '1-p', locnKey)
-            locnKey = re.sub(r'^2\-col\-p[lcrio]', '2-col-p', locnKey)
-            locnKey = re.sub(r'^2\-col\-h$', '2-col-hc', locnKey)
-            locnKey = re.sub(r'^2\-col\-c$', '2-col-cl', locnKey)
-            locnKey = re.sub(r'^1\-c$', '1-cl', locnKey)
-            locnKey = re.sub(r'\d$', '', locnKey)
-        return locnKey
-
     def select_row(self, i):
-        if i >= len(self.model):
-            i = len(self.model) - 1
-        if i >= 0:
+        if isinstance(i, Gtk.TreeIter):
+            treeiter = i
+        else:
+            if i >= len(self.model):
+                i = len(self.model) - 1
+            if i < 0:
+                return
             treeiter = self.model.get_iter_from_string(str(i))
-            self.selection.unselect_all()
-            self.selection.select_iter(treeiter)
+        self.selection.unselect_all()
+        self.selection.select_iter(treeiter)
+
+    def find_row(self, anchor):
+        ''' returns an iterator for a give anchor or None '''
+        it = self.model.get_iter_first()
+        while it is not None:
+            r = self.model[it]
+            if r[_pickeys['anchor']] == anchor:
+                return it
+            it = self.model.iter_next(it)
+        return None
+
+    def set_val(self, it, **kw):
+        r = self.model[it]
+        for k, v in kw.items():
+            if k in _pickeys:
+                # if k == 'scale':
+                    # r[_pickeys[k]] = int(float(v) * 100)
+                # else:
+                r[_pickeys[k]] = v
+        if self.selection is not None and self.selection.iter_is_selected(it):
+            self.row_select(self.selection, update=False)
 
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]
@@ -343,7 +374,7 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblist[:-1]).replace("-", "")
         # if res.startswith("c"):
             # res += str(self.get(_comblist[-1]))
-        res = re.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res)
+        res = re.sub(r'([PF])([tcb])([lcrio])', r'\1\3\2', res)
         if len(res) and res[0] in "PF":
             res = res.strip("c")
         lines = self.get("nlines", 0)
@@ -357,7 +388,7 @@ class PicList:
 
     def item_changed(self, w, *a):
         key = a[-1]
-        if self.loading and key not in ("src", ):
+        if self.loading: # and key not in ("src", ):
             return
         if key in _comblist:
             val = self.get_pgpos()
@@ -375,17 +406,30 @@ class PicList:
             currow[fieldi] = val
             r_image = self.parent.get("r_image", default="preview")
             if i == 0 and r_image == "location":
-                locKey = self.getLocnKey()
-                pic = self.dispLocPreview(locKey)
+                if self.get("c_doublecolumn"):
+                    cols = 2
+                else:
+                    cols = 1
+                if not self.get("c_plMediaP"):
+                    locKey = "1" if cols == 1 else "2"
+                else:
+                    frSize = self.currows[0][_pickeys['size']]
+                    pgposLocn = self.currows[0][_pickeys['pgpos']]
+                    locKey = getLocnKey(cols, frSize, pgposLocn)
+                pic = dispLocPreview(locKey)
                 self.setPreview(pic)
             if key == "src":
                 if r_image == "preview":
                     fpath = None
                     if self.picinfo is not None:
-                        dat = self.picinfo.getFigureSources(data={'1': {'src': val}},
-                                    key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"),
-                                    mode=self.picinfo.mode)
-                        fpath = dat['1'].get('path', None)
+                        exclusive = self.parent.get("c_exclusiveFiguresFolder")
+                        fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
+                        imgorder  = self.parent.get("t_imageTypeOrder")
+                        lowres    = self.parent.get("r_pictureRes") == "Low"
+                        dat = self.picinfo.getFigureSources(data=[{'src': val}], key='path', exclusive=exclusive,
+                                    mode=self.picinfo.mode, figFolder=fldr, imgorder=imgorder, lowres=lowres)
+                        fpath = dat[0].get('path', None)
+                        logger.debug(f"Figure Path={fpath}, {dat[0]}")
                     if fpath is not None and os.path.exists(fpath):
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
@@ -432,6 +476,15 @@ class PicList:
         return False
     
     def onRadioChanged(self):
+        if self.loading or self.parent.loadingConfig:
+            return
+        tmpPicpath = os.path.join(self.parent.project.printPath(self.parent.cfgid), "tmpPics")
+        # rmtree(tmpPicpath, ignore_errors = True)
+        exclusive = self.parent.get("c_exclusiveFiguresFolder")
+        fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
+        imgorder  = self.parent.get("t_imageTypeOrder")
+        lowres    = self.parent.get("r_pictureRes") == "Low"
+        self.picinfo.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
         self.item_changed(None, "src")
 
     def onResized(self):

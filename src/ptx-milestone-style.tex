@@ -29,16 +29,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Milestone macros
-\def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all milestones represent unique locations.
 \def\NotTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\@ne} %Not all milestones with attributes represent trigger locations.
+\def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all trigger-generating milestones represent unique locations-> keep the trigger around.
 \def\IsTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\undefined} 
-
+\let\attr@b\relax
 \NotTriggerPoint{xts} %Strongs numbers like 'ms:xtx=5447' not trigger points by default.
+\NotTriggerPoint{zcustombotmark}
+\NotTriggerPoint{zcustomtopmark}
+\NotTriggerPoint{zcustomfirstmark}
+\NotTriggerPoint{ztocline}
+
 \newif\ifsuppresstr@gger
 \def\ch@ckislocation#1{\keeptriggerfalse\suppresstr@ggerfalse\ifcsname n@tLocn@#1\endcsname\keeptriggertrue\fi\ifcsname n@tTrig@#1\endcsname\suppresstr@ggertrue\fi}
 
 \def\mst@nestyle#1{\trace{m}{mst@nestyle:#1 (\milestoneOp)}%
- \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
+ \xdef\thismil@stone{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  %\tracingassigns=1
@@ -309,6 +314,7 @@
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   %\tracingmacros=1
   %\tracingassigns=1
+  \ifx\attr@b\undefined\let\attr@b\relax\fi
   \ifx\attr@b\relax\else
     \edef\@@tmp{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
     \trace{m}{Checking for  \@@tmp}%
@@ -331,12 +337,16 @@
   \ifcsname MS:\thismil@stone\endcsname \csname MS:\thismil@stone\endcsname\fi 
   \ifx\attr@b\relax
     \ch@ckislocation{\thismil@stone}% 
-    \ifsuppresstr@gger\else
+    \ifsuppresstr@gger
+      \trace{m}{No trigger for \thismil@stone}%
+    \else
       \runtrigg@rs{ms:\thismil@stone}%
     \fi
   \else
     \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
-    \ifsuppresstr@gger\else
+    \ifsuppresstr@gger
+      \trace{m}{No trigger for \thismil@stone}%
+    \else
       \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
       \ifdiglot
 	\runtrigg@rs{\mkp@cref{\id@@@\c@rrdstat}{\x@\detokenize\x@{\attr@b}}}%
@@ -414,8 +424,10 @@
 \def\attrid{}
 \notlocation{zvar}
 %\notlocation{zuseperiph}
-\def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
+\def\m@kenumberns#1{\m@kedigitsother\x@\m@kenumb@rE #1\END} % real numbers are terminated by a training space. But if we have mixed text, a space may not be wanted.
+\def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}% The version with a space to stop premature expansion.
 \def\m@kenumb@r#1={\p@sheof\edef\@@result{\scantokens{#1\noexpand}}\p@peof\m@kedigitsletters}
+\def\m@kenumb@rE#1\END{\p@sheof\edef\@@result{\scantokens{#1\noexpand}}\p@peof\m@kedigitsletters}
 \def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}
 \x@\def\csname MS:zrule\endcsname{%
   \endgraf
@@ -431,17 +443,20 @@
       \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}%
     \fi
     \getp@ram{bordercolour}{zrule}{\styst@k}\let\b@drcol\p@ram
-    \get@ttribute{thick}%A
+    \get@ttribute{thick}%
     \ifx\attr@b\relax
       \getp@ram{borderwidth}{zrule}{\styst@k}%
       \ifx\p@ram\relax
         \def\rule@thk{0.5pt}%
+        \def\@thinlinedesc{Default zrule thickness of \rule@thk}%
       \else
         \edef\rule@thk{\the\dimexpr \p@ram\FontSizeUnit\relax}%
+        \def\@thinlinedesc{Style sheet 'BorderWidth \p@ram'}%
         %\def\rule@thk{0.5pt}%
       \fi
     \else
       \m@kenumber{\attr@b}%
+      \def\@thinlinedesc{zrule attribute}%
       \let\rule@thk\@@result%
     \fi
     \get@ttribute{raise}%A
@@ -484,27 +499,26 @@
   \lastdepth=\prevdepth
 }
 
-\x@\def\csname drawzrule-plain\endcsname{%
-  \ifx\b@drcol\relax
-    \def\bc@l{}\def\endbc@l{}%
-  \else
-    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
-  \fi
+\x@\def\csname drawzrule-plain\endcsname{% 
+  \bc@lsetup
+  \let\thinlin@type\tlt@R
+  \thinlinecheck{\rule@thk}{}{zrule}{\@thinlinedesc}%
   \hbox{\raise \rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
     \bc@l\vrule height \rule@thk depth 0pt width \rule@wid \endbc@l
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
 }
 
 \def\getcustommarknum#1{%
+  \ifcsname m@rknum#1\endcsname\trace{ma}{Already got #1}\else\addnewm@rk{#1}\fi
   \getm@rknum{#1}%
   \let\custommarknum\m@rknum
 }
 \def\getcustomm@rknum{%
   \get@ttribute{type}% 
   \ifx\attr@b\relax
-    \getm@rknum{user}%
+    \getcustommarknum{user}%
   \else
-    \getm@rknum{\attr@b}%
+    \getcustommarknum{\attr@b}%
   \fi
 }
 
@@ -512,6 +526,7 @@
   \ifnum\currentgrouptype>0
     \savingmarks
   \fi
+  \trace{ma}{zcustommark}%
   \getcustomm@rknum
   \get@ttribute{value}%
   \trace{m}{zcustommark(\m@rknum) \attr@b}%
@@ -522,10 +537,16 @@
 
 \x@\def\csname MS:zsetref\endcsname{%
   \get@ttribute{book}\ifx\attr@b\relax\else
-    \x@\global\x@\let\csname book\g@tdstat\endcsname\attr@b
+    \x@\ifx\csname book\g@tdstat\endcsname\attr@b\else
+      {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+      \x@\global\x@\let\csname book\g@tdstat\endcsname\attr@b
+    \fi
   \fi
   \get@ttribute{bkid}\ifx\attr@b\relax\else
-    \global\let\id@@@\attr@b
+    \ifx\id@@@\attr@b\else
+      \global\let\id@@@\attr@b
+      {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+    \fi
   \fi
   \get@ttribute{chapter}\ifx\attr@b\relax\else
     \global\let\ch@pter\attr@b
@@ -537,17 +558,18 @@
 
 \x@\def\csname MS:zcustombotmark\endcsname{%
   \getcustomm@rknum
-  \botmarks\custommarknum
+  \botmarks\m@rknum
 }
 \x@\def\csname MS:zcustomfirstmark\endcsname{%
   \getcustomm@rknum
-  \firstmarks\custommarknum
+  \firstmarks\m@rknum
 }
 \x@\def\csname MS:zcustomtopmark\endcsname{%
   \getcustomm@rknum
-  \topmarks\custommarknum
+  \topmarks\m@rknum
 }
 
+\NotTriggerPoint{zgap}
 \x@\def\csname MS:zgap\endcsname{%
   \endlastp@rstyle{zgap}%
   \endgraf
@@ -564,6 +586,7 @@
   \vbox{}\penalty10000\vskip\gap@dim\relax%
 }
 
+\NotTriggerPoint{zfillsignature}
 \x@\def\csname MS:zfillsignature\endcsname{{%
   \get@ttribute{pagenums}%
   \ifx\attr@b\relax\else
@@ -573,7 +596,7 @@
     \fi
   \fi
   \ifdim\pagetotal>0pt
-    \pagebreak\endgraf
+    \endgraf\endpage
   \fi
   \get@ttribute{pages}%
   \ifx\attr@b\relax
@@ -608,6 +631,10 @@
     \repeat
   \fi
 }}
+\def\runmilestone#1#2{% Macro for when a stand-alone milestone is wanted from a hook/TeX or other code
+  \def\attrib@rgs{#2}\def\thismil@stone{#1}\parse@ttribs{#2}%
+  \get@ttribute{\thisdefault@ttrkey}%
+  \st@ndalonemilestone}
 
 \x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
 \x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}
@@ -693,7 +720,7 @@
   \def\G##1{\bgroup\let\bc\bcg\L##1\egroup}% reverse
   \def\bc##1##2##3##4##5{\stack{\0##1\1##2\0##3\1##4}##5}%
   \def\bcg##1##2##3##4##5{\stack{\0##4\1##3\0##2\1##1}##5}%
-  \def\bcR##1##2##3##4##5##6{\R##1\R##2\R##3\R##4\R##5\R##6\11\01\11\09 %
+  \def\bcR##1##2##3##4##5##6{\R##1\R##2\R##3\R##4\R##5\R##6\11\01\11\09%
     \endgroup}%
   \stack{\09}#1\11\01\11\L#2%
   \ifcase#1\L#3\L#4\L#5\L#6\L#7\or\L#3\G#4\L#5\G#6\G#7%
@@ -762,13 +789,14 @@
 %  Call barcode using stripped down version
 \def\bcode#1-{\count@rgs{#1}%
   \lineskip=10pt \lineskiplimit=0pt
-  \ifnum\num@rgs=13 \barcode#1\relax\else
+  \ifnum\num@rgs=13 \barcode#1\relax
+    \else
     \ifnum\num@rgs=10 \count255=0 %\tracingmacros=1\tracingassigns=1 
       \let\r@code\empty\r@encodeten 978#1\relax\relax
      \else
       \MSG{*** ISBN Barcodes can have 10 or 13 digits (\the\num@rgs\space were supplied)}%
      \fi
-  \fi}%
+  \fi\ifversion{2}{}{\ifnum \num@rgs=10 \else \space\fi}}%
 % strip off minuses one by one. There's probably a more efficient way, but this seems to work
 % Call with \isbn _code_-\emptything-
 \def\emptything{}
@@ -833,7 +861,7 @@
       \fi
     \fi
   \fi
-  \m@kenumber{\attr@b}%
+  \m@kenumberns{\attr@b}%
   \hbox{\ISBN{\@@result}%
     \get@ttribute{price}%
     \ifx\attr@b\relax
@@ -857,7 +885,7 @@
       \fi
     \fi
     \ifx\attr@b\relax\else
-      \m@kenumber{\attr@b}%
+      \m@kenumberns{\attr@b}%
       \belowISBN\x@\barcodeV \@@result{\@price}\relax\relax\relax\relax%
     \fi
   }\egroup}

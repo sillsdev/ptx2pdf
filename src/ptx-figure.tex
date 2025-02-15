@@ -98,12 +98,30 @@
       \fi
     \fi
   \else
-    \x@\let\x@#1\csname figparam-x-#2\endcsname
-    \ifx#1\empty
-      \edef#1{#4}%
-    \fi
+    \let#1\tmpp@ram
   \fi
+  \trace{F}{\string#1 is #1}%
 }
+\def\setf@gNval#1#2#3#4{\edef#1{#4}% As above, but allowing for Normal fig values too
+  \x@\let\x@\tmpp@ram\csname figparam-x-#2\endcsname
+  \trace{F}{figparam-x-#2 (lo:\loc@ption, \picl@c, \l@cspec@a\l@cspec@b) is \meaning\tmpp@ram }%
+  \ifx\tmpp@ram\relax\let\tmpp@ram\empty\fi
+  \ifx\tmpp@ram\empty
+    \getp@ram{#2}{fig}{fig}%
+    \ifx\p@ram\relax\else
+      \ifx\p@ram\empty
+        \edef#1{#4}%
+      \else
+        \edef#1{\p@ram #3}%
+      \fi
+    \fi
+  \else
+    \let#1\tmpp@ram
+  \fi
+  \trace{F}{\string#1 is #1}%
+}
+
+
 % Generate the insert save-boxes for each class at start-up
 \addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\ins@rts\E}
 
@@ -124,11 +142,11 @@
   \ifnum \p@ramnumber<0
     \edef\p@ramid{NEG\the\p@ramnumber}%
   \else
-    \ifnum \p@ramnumber>19 \global\morep@ramsfalse\fi
+    \ifnum \p@ramnumber>21 \global\morep@ramsfalse\fi % The number on this line should be 1 below the count of valid parameters.
     %WARNING: There must not be a space after the text(before \or / \else / \fi) or (re)-initialisation will break
-    \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or
-        scale\or media\or pgpos\or x-credit\or x-creditpos\or
-        x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\or x-edgeadjust\else UNK-\the\p@ramnumber\fi}%
+    \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or  %0-9
+         scale\or media\or pgpos\or x-credit\or x-creditpos\or x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\or %10-19
+         x-edgeadjust\or cat\or x-spacebetween\else UNK-\the\p@ramnumber\fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -341,16 +359,20 @@
   \ifx\l@cspec@a\loc@Cut
     \global\let\picl@c\loc@Cut\global\picUsesInsfalse\global\picNarrowtrue\p@cinswid=\hsize
     \xdef\l@cspec{\l@cspec@b}%
-    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
+    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\gdef\c@tskipfrac{0}\else
+      \x@\c@tskipparse\l@cspec@c...\E %split c@tskip into whole and fractional parts.
+    \fi
     \trace{g}{Experimental \w@tsit in cutout, after \c@tskip lines}%
-    \x@\c@tskipparse\c@tskip...\E %split c@tskip into whole and fractional parts.
   \fi
   \ifx\l@cspec@a\loc@Par
-    \global\let\picl@c=\loc@Par\p@cinswid=\hsize\trace{g}{Experimental after-paragraph \w@tsit}%
+    \global\let\picl@c=\loc@Par\p@cinswid=\hsize
     \xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse
     \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
     \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
-    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%Borrow cutskip for parskip
+    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else
+      \x@\p@rskipparse\l@cspec@c...\E
+    \fi%We Borrow cutskip for parskip
+    \trace{g}{Experimental after-paragraph \w@tsit, delay: \c@tskip}%
   \fi
   % full-page options
   \tempfalse
@@ -426,6 +448,7 @@
 }
 
 \def\t@xtfragment#1#2{\bgroup\everypar={}\let\par\endgraf
+    \trace{F}{t@xtfragment{#1}}%
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
     \getp@ram{justification}{#1}{#1}%
     \ifx\p@ram\r@ght\rightskip=0pt\fi
@@ -438,7 +461,18 @@
     \ifRTL\beginR\fi
     \linepenalty=1000
     \s@tbaseline{#1}{#1}%
-    \noindent\leavevmode #2\par
+    \trace{F}{Checking boxed style for #1 /  \c@tprefix:\m@rker (\tmpstyst@k)}%
+    \let\styst@k\tmpstyst@k
+    \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
+    \ifb@xedstyle
+      \trace{F}{t@xtfragment applying boxed style}%
+      \setbox1\hbox{#2}%
+      \set@endb@xedstyle{\styst@kfirst}{\styst@k}%
+      \apply@endb@xedstyle{1}%
+      \noindent\leavevmode\unhbox1\par
+    \else
+      \noindent\leavevmode #2\par
+    \fi
     \ifRTL\endR\fi
     \egroup
 }
@@ -493,7 +527,7 @@
       \edef\cr@ditlist{x-credit:box=\cr@ditbox|fig,\cr@ditbox|x-credit,x-credit|fig,\cr@ditstyle}%
     \fi
   \fi
-  \trace{g}{cr@ditlist is \cr@ditlist}%
+  \trace{g}{cr@ditlist is \cr@ditlist.}%
   % Determine if the credit (as a full line) is wider or taller, and whether it should be treated as a paragraph or a
   % small piece of text.
   \count255=\cr@ditrot % adjust to -180 to 180 range.
@@ -510,8 +544,10 @@
   \fi
   \edef\cr@ditr@tn{\the\count255}%credit rotation as a positive number (0-180)
   %pad credit
-  \setbox0=\hbox{\XeTeXuseglyphmetrics=3 \s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
+  \s@tfont{\cr@ditlist}{\cr@ditlist}% Use the fact that s@tfont checks for #1=#2 
+  \setbox0=\hbox{\XeTeXuseglyphmetrics=3 % We subvert s@tfont's mechanism and provide a pre-formed list
     \ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
+  \trace{g}{credit natural size is \the\ht0+\the\dp0 x\the\wd0}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
@@ -538,9 +574,21 @@
        \dimen1=\dimen0
      \fi
      % Now cram the text into a box that ought to be just wide enough
-     \setbox0=\vbox{\hsize=\dimen1\relax\t@xtfragment{\cr@ditstyle}{\vrule width 0pt height\ht0 \unhbox0\vrule depth\FigCreditPadding width 0pt}}%
+     \setbox0=\vbox{\topskip=0pt\hsize=\dimen1\relax\t@xtfragment{\cr@ditstyle}{\vrule width 0pt height\ht0 \unhbox0\vrule depth\FigCreditPadding width 0pt}}%
+    %\ifnum\im@gecount=5 \showbox0\fi
+  \else
+    \b@ckgroundelsewheretrue
+    \ch@ckb@xedstyle{\cr@ditlist}{\cr@ditlist}%
+    \ifb@xedstyle
+      \trace{g}{before applyingb@xedstyle \space credit boxed size is \the\ht0+\the\dp0 x\the\wd0}%
+      \set@endb@xedstyle{\cr@ditlist}{\cr@ditlist}%
+      \b@ckgroundelsewheretrue
+      \apply@endb@xedstyle{0}%
+      %\ifnum\im@gecount=5 \showbox0\fi
+    \fi
   \fi
   \setbox0=\hbox{\hskip \FigCreditPadding\box0\hskip \FigCreditPadding}%
+  \trace{g}{image\the\im@gecount \space credit boxed size is \the\ht0+\the\dp0 x\the\wd0}%
   \ifx\cr@ditbox\empty\else
     \ifx\cr@dit@col\empty
       \getp@ram{background}{\cr@ditlist}{\cr@ditlist}%
@@ -619,25 +667,25 @@
    \x@\strip@pt\x@{\x@\dimexpr "#1#2 pt / 255}
    \x@\strip@pt\x@{\x@\dimexpr "#3#4 pt / 255}
    \x@\strip@pt\x@{\x@\dimexpr "#5#6 pt / 255}}}}
- 
 \setp@ram{fontsize}{x-credit|fig}{7}
 %-cfig_hex
 
+\def\PlaceHolderRule{0.5pt}% Thickness of rule around skipped figures
 \def\m@kepl@ceholder#1#2#3{%
 \vbox to #2{\offinterlineskip
   \trace{g}{makeplaceholder #3}%
-  \hrule height .2pt \kern-.2pt
-  \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
+  \hrule height \PlaceHolderRule\kern-\PlaceHolderRule
+  \hbox to #1{\vrule height #2 width \PlaceHolderRule\vrule width \PlaceHolderRule}%
   \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt #3\hss}\vss}%
-  \kern-.2pt \hrule height .2pt}}
+  \kern-\PlaceHolderRule\relax \hrule height \PlaceHolderRule\relax}}
 
 \newif\ifSkipMissingFig \SkipMissingFigfalse
 \newif\iffigf@und
 
-\def\ins@rtpic#1#2#3#4#5#6#7{%
+\def\ins@rtpic#1#2#3#4#5#6#7{%Figure name #1 already has quotes.
  \edef\tmpfile{\mapinputfile{#1}}%
  \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
- \openin\t@stread=#1
+ \openin\t@stread=#1\relax
    \ifeof\t@stread
      \message{MISSING IMAGE: #1 -> \tmpfile}%
      \global\figf@undfalse
@@ -657,6 +705,14 @@
 |normalc@tcodes%
 %+cfig_dofigure_intro
 
+\def\@parpicstart#1#2#3#4{}
+\def\@parpicstop#1#2#3#4#5#6{}
+\def\@parpicsize#1#2#3#4{}
+
+\def\write@parpicsize{%
+  \edef\p@cinfo{\p@climit\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}}%
+  \write\x@\p@rlocs\x@{\p@cinfo}%
+}
 \gdef\pr@penalty{10}\gdef\p@stpenalty{10}%
 \def\d@figure#1{%
  \trace{g}{d@figure entered IncludeFigures\ifIncludeFigures true\else false\fi}%
@@ -703,6 +759,23 @@
         \x@\xdef\csname figparam-loc\endcsname{}%
       \fi
     \fi
+  \fi
+  \let\origc@t\c@tegory
+  \let\orig@sbm\sb@rmarker
+  \ifcsname figparam-cat\endcsname
+    % Relying on the fact that \fig is always in a box, pretend to be in a sidebar called 'fig', and get the border parameters.
+    \x@\S@tCat\x@{\csname figparam-cat\endcsname}%
+    \def\sb@rmarker{fig}%
+    \get@border@style@params
+    \prepb@rderdims
+    \getsbp@ram{hascol}\let\h@scol\cp@ram%
+    \ifx\h@scol\tr@e
+      \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
+      \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
+    \fi
+  \else
+    \hasb@rderfalse
+    \let\h@scol\false
   \fi
   % get location
   \edef\loc@ption{\csname figparam-pgpos\endcsname}%%
@@ -840,11 +913,15 @@
   \setf@gval{\sp@cebeside}{spacebeside}{pt}{\DefaultSpaceBeside}% absolute value
   \setf@gval{\sp@cebefore}{spacebefore}{}{0}%  in \onel@neunit
   \setf@gval{\sp@ceafter}{spaceafter}{}{0}% in \onel@neunit
+  \setf@gNval{\sp@cebetween}{spacebetween}{}{0}%  in \onel@neunit
   \setf@gval{\tmp}{edgeadjust}{}{0}% in same units as margins - \IndentUnit
   \p@chshift=\tmp\IndentUnit
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
   \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
+    \pdfsavepos
+    \edef\t@mp{\string \@parpicstart{\c@rref}{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi}}%
+    \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
       \p@cinswid=\hsize
@@ -852,19 +929,29 @@
       \hsize=\p@cinswid
     \fi
     \ifdim\sp@cebefore pt =0pt \else\vskip \sp@cebefore\onel@neunit\fi
-    \ifCaptionFirst\d@caption
-      \ifdim\FigCaptionAdjust=0pt\else
-        \vskip \FigCaptionAdjust\relax
+    \tempfalse
+    %\ifpicUsesIns\temptrue\fi
+    \ifx\picl@c\loc@Inl\temptrue\fi
+    \ifx\picl@c\loc@Par\temptrue\fi
+    \ifx\picl@c\loc@Cut\temptrue\fi
+    \ifCaptionFirst
+      \setbox0\vbox{\d@caption
+      \ifdim\dimexpr \FigCaptionAdjust+ \sp@cebetween\onel@neunit\relax =0pt\else
+        \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
+      \fi}%
+      \dimen0=\ht0
+      \ifdim\ht0<0pt
+    %      \vskip0.3\baselineskip
+        \kern -\ht0
       \fi
+      \unvbox0
     \else
-      \tempfalse
-      %\ifpicUsesIns\temptrue\fi
-      \ifx\picl@c\loc@Inl\temptrue\fi
-      \ifx\picl@c\loc@Par\temptrue\fi
-      \ifx\picl@c\loc@Cut\temptrue\fi
       \iftemp
         \vskip0.3\baselineskip
       \fi
+    \fi
+    \ifdim \border@tpadding < -\b@drwidth pt  
+      \kern\the\dimexpr -\border@tpadding - \b@drwidth pt\relax%
     \fi
     % insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
@@ -881,37 +968,43 @@
     \else
       \def\picdim@n{width}\def\picaltdim@n{height}%Normal
     \fi
+    \edef\r@qdim{\sizem@ltiple\space\the\p@cwidth}%
+    \p@cwidth=\sizem@ltiple\p@cwidth%
+    \ifhasb@rder
+      \dimen1=\p@cwidth
+      \@@sb@width@calcs
+      \trace{g}{Reducing image size to \the\dimen1 \space  from \the\p@cwidth, due to border}%
+      \p@cwidth=\dimen1
+    \fi
     % First, try to set it at the requested dimension:
     \tempfalse
     \x@\ch@ckpath\x@{\f@lename}
-    \iftemp
-      \setbox\newpicb@x=\hbox{%
-        \ins@rtpic{"\csname figparam-src\endcsname"}%
-                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
-    \else
-      \setbox\newpicb@x=\hbox{%
-        \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
-    \fi
+    \iftemp\else\edef\f@lename{\the\PicPath\f@lename}\fi
+    \setbox\newpicb@x=\hbox{%
+      \xdef\p@climit{\string\@parpicsize\string{\picdim@n\string}\string{normal\string}}%
+      \ins@rtpic{"\f@lename"}%
+       {\picdim@n}{\the\p@cwidth}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
     \ifdim\ht\newpicb@x>\p@cheight
+      \xdef\p@climit{\string\@parpicsize\string{\picaltdim@n\string}\string{heightlimit\string}}%
+      \ins@rtpic{"\f@lename"}%
       %It doesn't fit. Scale to other dimension:
-      \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\space\the\p@cwidth}%
+      \trace{g}{Picture too big set with \picdim@n=\r@qdim, switching to \picaltdim@n=\p@cheight}%\sizem@ltiple\space\the\p@cwidth}%
       \setbox\newpicb@x=\hbox{%
-        \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
+        \ins@rtpic{"\f@lename"}%
+         {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
     \fi
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
     \fi
-    \trace{g}{Object going into hbox \sizem@ltiple x \the\p@cwidth}%
+	\write@parpicsize
+    \trace{g}{Object going into hbox \the\p@cwidth}%
     \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
     \ifpicTall %Tall boxes don't get centred.
       \setbox\newpicb@x=\hbox{\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x}%
     \else
-      \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x\hss}%
+      \setbox\newpicb@x=\hbox to \p@cwidth{\hss\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x\hss}%
     \fi
 %-cfig_dofigure_3
-    % FIXME: Something like this?
 %+cfig_dofigure_4
     \tempfalse
     \def\pr@pic{}\def\p@stpic{}%
@@ -937,6 +1030,23 @@
         \x@\let\x@\cr@ditbox\x@=\csname figparam-x-creditbox\endcsname
         \add@credit%
     \fi
+    \ifx\h@scol\tr@e
+      \ifx\pdf@lpha\relax\def\pdf@lpha{1}\fi
+      \setbox\newpicb@x\vbox{\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\newpicb@x}}%
+    \else
+      \ifhasb@rder \ifdim\dp\newpicb@x < \fb@bpadding \dp\newpicb@x=\fb@bpadding\fi\fi
+    \fi
+    \ifhasb@rder
+      \prepb@rderbox\newpicb@x 
+      \headingtopspace=0pt
+      \dob@rder % Actually generate the border
+      \let\xtra@depth\empty
+      \ifx\h@scol\tr@e \ifx\b@drbottom\tr@e \ifdim \border@bpadding < -\b@drwidth pt  
+            \def\xtra@depth{-\border@bpadding - \b@drwidth pt }%
+      \fi \fi \fi 
+      \setbox\newpicb@x\vbox to \dimexpr \ht\b@rderbox+\dp\b@rderbox \xtra@depth\relax{\lineskiplimit=0pt \lineskip=0pt \baselineskip=0pt
+          \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\newpicb@x\hskip\b@dr@right@pad}\vss}\penalty10000\vskip\headingtopspace\vbox to 0pt{\box\b@rderbox\vss}}%
+    \fi
     %Align image left/right or centre
     \ifx\picl@c\loc@InText % InTextBoxes get their natural width + spacebeside 
       \p@cinswid=\wd\newpicb@x
@@ -950,14 +1060,23 @@
       \else\hbox to \p@cinswid{\hss\box\newpicb@x\hss}\fi
     \fi
     \ifCaptionFirst\vskip 0.5\onel@neunit\else
-      \ifdim\FigCaptionAdjust=0pt\else
-        \vskip \FigCaptionAdjust\relax
+      \setbox0\vbox{\ifdim\dimexpr \FigCaptionAdjust+ \sp@cebetween\onel@neunit\relax =0pt\else
+        \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
       \fi
-      \d@caption
+      \d@caption}\trace{g}{caption box is \the\ht0 high}%
+      \dimen0=0pt
+      \ifdim\ht0<0pt
+        \dimen0=-\ht0
+      \fi
+      \unvbox0
+      \ifdim\dimen0=0pt\else
+        \kern\dimen0
+      \fi
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
     \t@gend{Figure}%
+    \pdfsavepos
   }% END of box0
   \temptrue
   \iffigf@und\else\ifSkipMissingFig
@@ -967,17 +1086,20 @@
   \iftemp
     \pl@cefigure
   \fi
+  \let\sb@rmarker\orig@sbm
+  \S@tCat{\origc@t}%
  \fi% end \ifIncludeFigures
 }
 
 \def\pl@cefigure{%Acutally place the figure
-  \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\pic@lign}%
+  \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\csname pic@lign\endcsname}%
 %-cfig_dofigure_4
 %+cfig_dofigure_5
   \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%
   % insert into proper insertion class for this position
   \ifpicUsesIns
     \trace{g}{Picture (\the\ht0,\the\dp0) goes to insert}%
+    \prepwr@teparstop{0}%
     \ifdiglot
       \trace{g}{Other side: \the\otherinsht.}%
       \ifdim\ht0<\otherinsht
@@ -1004,6 +1126,7 @@
       \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}\penalty10000%
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
       \pdfsavepos
+      \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
       \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
     }\ifx\@wrap\empty\else\egroup\fi
 %-cfig_dofigure_5
@@ -1053,10 +1176,25 @@
 }
 \newif\ifInlBelow \InlBelowfalse
 \newif\ifAdjustInlBelow \AdjustInlBelowfalse
+\def\prepwr@teparstop#1{%
+  \tempfalse
+  \ifx\w@tsit\gr@phic \temptrue\def\w@tsitid{\csname figparam-src\endcsname}%
+  \else\ifx\w@tsit\sb@rb@x\def\w@tsitid{\w@tsit\the\im@gecount}%
+    \else\def\w@tsitid{\w@tsit\the\notim@gecount}\fi
+  \fi
+  \xdef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\w@tsitid\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
+}
+
 \def\d@figureInText#1{%
   %\showbox #1
   %\vrule height 10pt depth 0pt width 10pt
-  \leavevmode\hbox{\box #1}%
+  \leavevmode
+  \pdfsavepos
+  \prepwr@teparstop{#1}%
+  \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+  \hbox{\box #1}%
+  \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+  \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
 }
 \def\d@figureInl#1{%
   \let\curmode\empty
@@ -1067,21 +1205,24 @@
     \@lignpic{#1}%
   \fi
   %\splittopskip\baselineskip
-  \tempfalse
+  \prepwr@teparstop{#1}%
   \ifhmode \temptrue\fi
-  \ifx\w@tsit\gr@phic \temptrue \fi
   \def\picc@ntents{%
-    \penalty\pr@penalty % Allow the page to break
+    \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+    \penalty\ifinn@te 10000\else\pr@penalty\fi\relax% Allow the page to break except in footnotes.
     \gridp@cfalse% Not true! It's not a floating fig.
-    \trace{g}{Before gridbox \the\ht#1+\the\dp#1}%
+    \trace{g}{Before gridbox \the\ht#1+\the\dp#1 (inn@te\ifinn@te true\else false\fi)}%
     %\lastdepth=0pt
     %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
     \gridb@x#1%
+    \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
     \iftemp
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
     \fi
-  \penalty\p@stpenalty}%
+  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
+  \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+  }%
   \ifvmode \picc@ntents
   \else 
     \ifInlBelow
@@ -1106,8 +1247,10 @@
     %\fi
     %\showbox\picb@@x
   \earlyeotpskipfalse
+  \prepwr@teparstop{#1}%
   \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
   \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
+      \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
       \gridp@ctrue% TRUE. Out of band like a floating image.
       \prevdepth=0pt
       \headingtopspace=0pt
@@ -1118,10 +1261,13 @@
       \lastdepth=0pt
       %\kern 0pt
       \ifearlyeotpskip\kern -1sp\kern 1sp\fi
+      \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+      \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
     }%
-  \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which at@ndofthispar macro?\emspace
+  \seteotpn@me
   \trace{g}{\eotpn@me\space defined}%
-  \x@\gdef\csname \eotpn@me\endcsname{%
+  \addtoeotp{%
+    \seteotpn@me
     \trace{s}{eotp: \eotpn@me. st@k:\styst@k, cref:\c@rref}%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
     \ifhmode\edef\eotpprevdepth{0pt}\else\edef\eotpprevdepth{\the\prevdepth}%
@@ -1129,7 +1275,7 @@
     \fi%
     \lastdepth=0pt  % prevdepth accounted for...
     \earlyeotpskipfalse % An early skip of -prevdepth doesn't look good with figures, but keeps gridding for sidebars.
-    \setbox0\vbox{\unvbox\picb@@x \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\global\earlyeotpskiptrue\fi}%
+    \setbox0\vbox{\unvbox\picb@@x \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\aftergroup\earlyeotpskiptrue\fi}%
     \trace{g}{Box flagged for early skip? \ifearlyeotpskip true\else false\fi}%
     \ifearlyeotpskip \vskip-\eotpprevdepth\relax\fi
     \penalty10 % Allow the page to break
@@ -1145,7 +1291,7 @@
        \edef\temp{D|\temp}\advance\count255 by -1
      \repeat
    \fi
-   \trace{g}{Delay for \eotpn@me set to '\temp'}%
+   \trace{g}{\eotpn@me Delay  set to '\temp'}%
    \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
    \relax\relax
 }
@@ -1171,12 +1317,18 @@
       \ifx\picV@lign\@lignCent \trace{g}{V alignment: center}\setbox#1\vbox{\vbox to #3{\vss\box#1\vss}}\else
         \trace{g}{V alignment: none}\setbox#1\vbox{\vskip 0pt plus \the\dimen0 \penalty10000\box#1\penalty10000\vskip 0pt plus \dimen0}%
     \fi\fi\fi
+  \prepwr@teparstop{#1}%
   \tempfalse
   \trace{g}{pagetotal=\the\pagetotal}%
   \ifhmode\temptrue\else
     \ifdim\pagetotal=0pt\else\temptrue\fi
   \fi
-  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\kern#4 sp\penalty 1}% magic number
+  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic
+    \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+    \unvbox#1
+    \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+    \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+    \kern#4 sp\penalty 1}% magic number
   \iftemp\else
     %\def\pagecontents{\vss\box#1\vss}\plainoutput
     \ifh@ldfig
@@ -1194,19 +1346,28 @@
 \def\c@tskipparse#1.#2.#3\E{%
   \def\t@mp{#2}\ifx\t@mp\empty
     \gdef\c@tskipfrac{#1}%
+    \xdef\c@tskip{#1}%
   \else
     \xdef\c@tskipfrac{#1.#2}%
+    \def\t@mp{#1}\ifx\t@mp\empty\def\t@mp{0}\else\ifx\t@mp\h@phen\def\t@mp{0}\fi\fi
     \ifnum #2 < 5
-      \xdef\c@tskip{#1}%
+      \xdef\c@tskip{\t@mp}%
     \else
-      \ifnum #1<0
-        \xdef\c@tskip{\the\numexpr #1  -1\relax}%
+      \ifnum \t@mp<0
+        \xdef\c@tskip{\the\numexpr \t@mp  -1\relax}%
       \else
-        \xdef\c@tskip{\the\numexpr #1  +1\relax}%
+        \xdef\c@tskip{\the\numexpr \t@mp  +1\relax}%
       \fi
     \fi
   \fi
   \trace{g}{cut skip is \c@tskip (\c@tskipfrac)}%
+}
+\def\p@rskipparse#1.#2.#3\E{%
+  \trace{g}{paragraph skip is #1}%
+  \xdef\c@tskip{#1}\edef\t@mp{#2}\ifx\t@mp\empty
+  \else
+    \MSG{Fractional part (.#2) of paragraph skip meaningless and ignored for \ifx\w@tsit\gr@phic\csname figparam-src\endcsname\fi (\w@tsit\space\the\im@gecount), at \c@rref}%
+  \fi
 }
 \newif\ifimmediatefigure \immediatefigurefalse
 \def\d@figureCut#1{% Expects: count255=number of lines gap, \c@tskip=delay
@@ -1266,7 +1427,7 @@
     \advance\dimen1 by \count255\baselineskip
   \fi
   \setbox#1\vbox to 0pt{\kern\dimen1\vbox to 0pt{\vss\box#1}\vss}%
-  \advance\tmpcount by \c@tskip
+  \advance\tmpcount by \c@tskip\relax
   \ifx\l@cspec\@lignLeft
     \let\c@tcmd\leftcutout
     \edef\thing@side{L}%
@@ -1300,7 +1461,11 @@
   \else\fi
   \add@pending{\dr@pthingid}{\ifdiglot\dc@rref\else\c@rref\fi}{0}{\the\dimen2}{\the\count255}{\the\tmpcount}{\thing@side}%
   \ifx\gr@phic\w@tsit
-    \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
+    \leavevmode\str@t\vadjust {\vbox to 0pt{%
+      \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+      \box#1\vss
+      \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+      }}%
   \else
     \ifhmode \vadjust{\vbox to 0pt{\box#1\vss}\penalty10021}%
     \else
@@ -1321,7 +1486,10 @@
        % \vrule height 0pt depth 1pt width 10ex\kern-1pt
         \vbox to 0pt{
           \vskip #2\baselineskip
-          \box#1\vss}%
+          \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+          \box#1\vss
+          \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+          }%
 }
 %-cfig_dofigure_7
 

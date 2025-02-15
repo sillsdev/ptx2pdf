@@ -247,3 +247,9 @@ print(prjtypes)
 # Other specific questions that we could answer IF we query the .cfg files
 # How many are diglots?
 # How many are interlinear?
+
+# How many (different) configs do projects use (on average)?
+
+# How can this information be represented graphically?
+
+

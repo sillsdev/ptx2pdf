@@ -86,6 +86,8 @@
 \def\valb@th{both}
 \def\val@BIND{binding}
 \def\val@EDGE{edge}
+\def\val@MULTI{multi}
+\def\val@GROUP{group}
 \def\@x@{x}
 \def\@pdf{pdf}
 \def\gr@phic{graphic}
@@ -138,6 +140,8 @@
 \x@\let\csname @gr@d@\gr@dnone\endcsname\false
 \x@\let\csname @gr@d@\gr@dheading\endcsname\false
 
+% General matching values
+\def\relaxval{\relax}
 \def\h@phen{-} % for matching
 {\catcode`+=11 
  \catcode`-=11
@@ -174,10 +178,14 @@
 % Functional constants
 \gdef\mcstack@mpty{++,} 
 \def\cstackempty{,}
+\def\n@ID{UNK}
 
 %Margin notes positions
 \def\@uter{outer}
 \def\@nner{inner}
+% Rule types for graphpaper, grid, etc.
+\def\m@jor{Major}
+\def\m@nor{Minor}
 
 \def\usc@re{_}
 \def\periph@sep@print@name{insert} % Prefix for separate printing.
@@ -187,4 +195,19 @@
 \edef\dt@undefined{\detokenize{undefined}}
 \edef\dt@marker{\detokenize{marker}}
 
+% colour/thinline styles and types
+\def\tls@nochk{nocheck}
+\def\tls@black{black}
+\def\tls@white{white}
+\def\tls@colour{colour}
+\def\tls@grey{grey}
+\def\tlt@R{Rule}
+\def\tlt@C{Curve}
+\def\@pt@{pt}
 
+% standard categories
+\def\c@ttoc{cat:toc|}
+% standard numbers
+\def\el@ven{11} % Letter
+\def\tw@lve{12} % Other
+\def\f@urteen{14} % comment

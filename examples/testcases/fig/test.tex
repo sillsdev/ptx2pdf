@@ -1,9 +1,11 @@
 % Test the 'hook' code.
 %\tracingassigns=1
 %\tracinggroups=1
+\def\pluginlist{ornaments}
 \input "paratext2.tex"
 %\MarkTriggerPointstrue
 \stylesheet{usfm.sty}
+\stylesheet{standardborders.sty}
 \stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
@@ -15,12 +17,17 @@
 %\tracingifs=1
 \tracing{g}
 \tracing{s}
+\tracing{sC}
+\tracing{sP}
+\tracing{T}
 \tracing{C}
 \tracing{F}
-\tracing{sa}
+%\tracing{sa}
 \tracing{h}
 \tracing{pt}
 \tracing{P}
+\tracing{eb}
+\tracing{cov}
 \tracingoutput=1
 % Set added material in desired form
 \def\addmtlquteht{2pt}
@@ -28,7 +35,8 @@
 \def\addmtlqutelw{0.2pt}
 \csname ColorFontstrue\endcsname
 \def\doLines{\doGridLines}
-%\CropMarkstrue
+\CropMarkstrue
+%\CaptionFirsttrue
 %\hoffset=-1in
 %\voffset=-1in
 %\setCutoutSlop{droppic3}{2}{2}

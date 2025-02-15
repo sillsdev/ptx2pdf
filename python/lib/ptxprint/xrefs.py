@@ -421,7 +421,7 @@ class StrongsXrefs(XMLXrefs):
                 if a is not None:
                     a = s
                     s += r"\s+" + b
-                    b = s + "r\s+" + a
+                    b = s + r"\s+" + a
                     pending += r + b + p + "|"
                 pending += r + s + p
             reg.append(pending)
@@ -436,9 +436,11 @@ class StrongsXrefs(XMLXrefs):
         self.loadinfo(lang)
         fallback = view.get("fcb_strongsFallbackProj")
         if fallback is not None and fallback and fallback != "None":
-            fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
-            if os.path.exists(fallbackfile):
-                self._readTermRenderings(fallbackfile, self.strongs, None, self.btmap, 'def')
+            fallbackprj = view.prjTree.findProject(fallback)
+            if fallbackprj is not None:
+                fallbackfile = os.path.join(fallbackprj.path, "TermRenderings.xml")
+                if os.path.exists(fallbackfile):
+                    self._readTermRenderings(fallbackfile, self.strongs, None, self.btmap, 'def')
         title = view.getvar("index_book_title", dest="strongs") or "Strong's Index"
         with open(outfile, "w", encoding="utf-8") as outf:
             outf.write("\\id {0} Strong's based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))

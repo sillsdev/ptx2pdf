@@ -12,6 +12,8 @@ class ModelInfo:
 
 def get(k): return k
 
+#   config/template val:        widget, category, val expression
+# widget: [x] says sub value of widget
 _map = {
     "L_":                       ("c_diglot", "diglot", lambda w,v: "L" if v else ""),
     "R_":                       ("c_diglot", "diglot", lambda w,v: "R" if v else ""),
@@ -31,8 +33,13 @@ _map = {
     "config/name":              ("_cfgid", "meta", None),
     "config/filterpics":        ("c_filterPicList", "meta", None),
     "config/autosave":          ("c_autoSave", "uiprefs", None),
+    "config/updatePDF":         ("c_updatePDF", "uiprefs", None),
     "config/displayfontsize":   ("s_viewEditFontSize", "uiprefs", None),
+    "config/pdfzoomlevel":      ("s_pdfZoomLevel", "uiprefs", None),
+    "config/lockxetexlayout":   ("c_lockXeTeXLayout", "meta", None),
+    "config/lockui4layout":     ("c_lockUI4Layout", "meta", None),
     "config/texperthacks":      ("c_showTeXpertHacks", "uiprefs", None),
+    "config/printcount":        ("_printcount", "meta", None),
 
     "project/id":               ("_prjid", "meta", None),
     "project/bookscope":        ("r_book", "meta", None),
@@ -58,12 +65,12 @@ _map = {
     "project/ifusepremodstex":  ("c_usePreModsTex", "advanced", lambda w,v: "" if v else "%"),
     "project/ifusecustomsty":   ("c_useCustomSty", "advanced", lambda w,v: "" if v else "%"),
     "project/ifusemodssty":     ("c_useModsSty", "advanced", lambda w,v: "" if v else "%"),
-    "project/ifstarthalfpage":  ("c_startOnHalfPage", "layout", lambda w,v :"true" if v else "false"),
     "project/randompicposn":    ("c_randomPicPosn", "uiprefs", None),
     "project/canonicalise":     ("c_canonicalise", "advanced", None),
     "project/autotaghebgrk":    ("c_autoTagHebGrk", "advanced", None),
     "project/interlinear":      ("c_interlinear", "advanced", lambda w,v: "" if v else "%"),
     "project/interlang":        ("t_interlinearLang", "advanced", None),
+    "project/interpunc":        ("c_usePunctuation", "advanced", None),
     "project/ruby":             ("c_ruby", "advanced", lambda w,v : "t" if v else "b"),
     "project/plugins":          ("t_plugins", "advanced", lambda w,v: v or ""),
     "project/license":          ("ecb_licenseText", "meta", None),
@@ -85,7 +92,9 @@ _map = {
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", "finish", lambda w,v: w.watermarks.as_posix() \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/cropmarks":          ("c_cropmarks", "finish", None),  
-    "paper/ifgrid":             ("c_grid", "finish", lambda w,v :"" if v else "%"),
+    "paper/ifgrid":             (None, "finish", lambda w,v :"" if w.get("c_gridLines") \
+                                                                    or w.get("c_noteLines") \
+                                                                    or w.get("c_gridGraph") else "%"),
     "paper/ifverticalrule":     ("c_verticalrule", "layout", lambda w,v :"true" if v else "false"),
     "paper/margins":            ("s_margins", "layout", lambda w,v: round(float(v) * 100) / 100. if v else "12"),
     "paper/topmargin":          ("s_topmargin", "layout", None),
@@ -97,14 +106,18 @@ _map = {
     "paper/ifaddgutter":        ("c_pagegutter", "layout", lambda w,v :"true" if v else "false"),
     "paper/ifoutergutter":      ("c_outerGutter", "layout", lambda w,v :"true" if v else "false"),
     "paper/gutter":             ("s_pagegutter", "layout", lambda w,v: round(float(v)) if v else "0"),
+    "paper/notelines":          ("c_noteLines", "layout", lambda w,v: "\\doNoteLines" if v else ""),
+    "paper/ifnotelines_":       ("c_noteLines", "layout", lambda w,v: "true" if v else "false"),
+    "paper/majornlcolor":       ("col_noteLines", "layout", None),
+    "majornlcolor_":            ("col_noteLines", "layout", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
     "paper/colgutteroffset":    ("s_colgutteroffset", "layout", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", "layout", lambda w,v: "2" if v else "1"),
-    "paper/bottomrag":          ("s_bottomRag", "layout", None),
+    "paper/allowunbalanced":    ("c_allowUnbalanced", "layout", lambda w,v :"" if v else "%"),
     "paper/fontfactor":         ("s_fontsize", "fontscript", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
     "paper/lockfont2baseline":  ("c_lockFontSize2Baseline", "fontscript", None),
 
-    "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\doGridLines" if v else ""),
-    "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\doGraphPaper" if v else ""),
+    "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\\doGridLines" if v else ""),
+    "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\\doGraphPaper" if v else ""),
     "grid/majorcolor":          ("col_gridMajor", "finish", None),
     "majorcolor_":              ("col_gridMajor", "finish", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
     "grid/minorcolor":          ("col_gridMinor", "finish", None),
@@ -117,8 +130,9 @@ _map = {
     "grid/xyoffset":            ("fcb_gridOffset", "finish", None),
     
     "fancy/enableornaments":    ("c_useOrnaments", None, lambda w,v: "" if v else "%"),
-    "fancy/enableborders":      ("c_borders", "decorate", lambda w,v: "" if v else "%"),
-    "fancy/pageborder":         ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"),
+    "fancy/pageborders":        ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Border"
+    "fancy/pageborder":         ("r_border", "fancy", lambda w,v : "" if v == "pdf" else "%"),
+    "fancy/pagebordertype":     ("r_border", "decorate", None),
     "fancy/pageborderfullpage": ("c_borderPageWide", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pagebordernfullpage_": ("c_borderPageWide", "decorate", lambda w,v: "%" if v else ""),
     "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", "decorate", lambda w,v: w.pageborder.as_posix() \
@@ -143,9 +157,10 @@ _map = {
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", "decorate", lambda w,v: int(float(v or "1.0")*1000)),
     "fancy/endayah":            ("c_decorator_endayah", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
+    "document/nogrid":          ("c_noGrid", "body", lambda w,v: "" if v else "%"),
+    "document/varlinespacing":  ("c_variableLineSpacing", "body", lambda w,v: "" if v else "%"),
+    
     "paragraph/linespacing":       ("s_linespacing", "layout", lambda w,v: f2s(float(v), dp=8) if v else "15"),
-    "paragraph/linespacebase":     ("c_AdvCompatLineSpacing", "layout", lambda w,v: 14 if v else 12),
-    "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", "layout", lambda w,v: "%" if v else ""),
     "paragraph/ifjustify":      ("c_justify", "body", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", "body", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", "body", lambda w,v: "" if v else "%"),
@@ -188,8 +203,6 @@ _map = {
     "document/ifshow1chbooknum": ("c_show1chBookNum", "body", None),
     "document/ifomitverseone":  ("c_omitverseone", "body", lambda w,v: "true" if v else "false"),
     "document/ifshowversenums": ("c_verseNumbers", "body", lambda w,v: "" if v else "%"),
-    "document/afterchapterspace": ("s_afterChapterSpace", "body", lambda w,v: f2s(asfloat(v, 0.25) * 12)),
-    "document/afterversespace": ("s_afterVerseSpace", "body", lambda w,v: f2s(asfloat(v, 0.15) * 12)),
     "document/ifmainbodytext":  ("c_mainBodyText", "body", None),
     "document/glueredupwords":  ("c_glueredupwords", "body", None),
     "document/ifinclfigs":      ("c_includeillustrations", "pictures", lambda w,v: "true" if v else "false"),
@@ -208,6 +221,7 @@ _map = {
     "document/imagetypepref":   ("t_imageTypeOrder", "pictures", None),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", "body", None),
     "document/filterglossary":  ("c_filterGlossary", "body", None),
+    "document/glossarydepth":  ("s_glossarydepth", "body", lambda w,v: int(v) if v else None ),
     "document/hangpoetry":      ("c_hangpoetry", "body", lambda w,v: "" if v else "%"),
     "document/preventorphans":  ("c_preventorphans", "body", None),
     "document/preventwidows":   ("c_preventwidows", "body", None),
@@ -217,13 +231,13 @@ _map = {
     "document/introoutline":    ("c_introOutline", "body", None),
     "document/indentunit":      ("s_indentUnit", "body", lambda w,v: round(float(v or "1.0"), 1)),
     "document/firstparaindent": ("c_firstParaIndent", "body", lambda w,v: "true" if v else "false"),
-    "document/ifhidehboxerrors": ("c_showHboxErrorBars", "finish", lambda w,v :"%" if v else ""),
     "document/hidemptyverses":  ("c_hideEmptyVerses", "body", None),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", "body", None),
     "document/ifspacing":       ("c_spacing", "fontscript", lambda w,v :"" if v else "%"),
     "document/spacestretch":    ("s_maxSpace", "fontscript", lambda w,v : str((int(float(v or 150)) - 100) / 100.)),
     "document/spaceshrink":     ("s_minSpace", "fontscript", lambda w,v : str((100 - int(float(v or 66))) / 100.)),
     "document/ifletter":        ("c_letterSpacing", "fontscript", lambda w,v: "" if v else "%"),
+    "document/letterspace":     ("c_letterSpacing", "fontscript", lambda w,v: "1" if v else "0"),
     "document/letterstretch":   ("s_letterStretch", "fontscript", lambda w,v: float(v or "5.0") / 100.),
     "document/lettershrink":    ("s_letterShrink", "fontscript", lambda w,v: float(v or "1.0") / 100.),
     "document/ifcolorfonts":    ("c_colorfonts", "fontscript", lambda w,v: "%" if v else ""),
@@ -240,6 +254,8 @@ _map = {
     "document/diglotprifraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
     "document/diglotsecfraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":        ("fcb_diglotSecProject", "diglot", None),
+    "document/diglotsecprjguid":    ("fcb_diglotSecProject[1]", "diglot", None),
+    "document/diglotserialbooks":   ("t_diglotSerialBooks", "diglot", None),
     "document/diglotpicsources":    ("fcb_diglotPicListSources", "diglot", None),
     "document/diglot2captions": ("c_diglot2captions", "diglot", None),
     "document/diglotswapside":  ("c_diglotSwapSide", "diglot", lambda w,v: "true" if v else "false"),
@@ -250,14 +266,12 @@ _map = {
     "document/diglotheaders":   ("c_diglotHeaders", "diglot", None),
     "document/diglotnotesrule": ("c_diglotNotesRule", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotjoinvrule": ("c_diglotJoinVrule", "diglot", lambda w,v: "true" if v else "false"),
+    "document/diglotcolour":    ("col_dibackcol", "diglot", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "1.0 1.0 1.0"),
+    "document/ifdiglotcolour":  ("col_dibackcol", "diglot", lambda w,v : "%" if v is None or v == "rgb(255,255,255)" else ""),
 
     "document/hasnofront_":        ("c_frontmatter", "front", lambda w,v: "%" if v else ""),
     "document/noblankpage":        ("c_periphSuppressPage", "layout", None),
-    "document/cutouterpadding":    ("s_cutouterpadding", "layout", None),
-    "document/underlinethickness": ("s_underlineThickness", "body", lambda w,v: float(v or "0.05")),
     "document/rulethickness":      ("s_ruleThickness", "body", lambda w,v: float(v or "0.40")),
-    "document/underlineposition":  ("s_underlinePosition", "body", lambda w,v: float(v or "-0.1")),
-    "document/pagefullfactor":     ("s_pageFullFactor", "layout", lambda w,v: float(v or "0.65")),
     
     "document/onlyshowdiffs":   ("c_onlyDiffs", "finish", None),
     "document/ndiffcolor":      ("col_ndiffColor", "finish", None),
@@ -266,6 +280,11 @@ _map = {
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
     "document/diffpages":       ("s_diffpages", "finish", None),
     "document/printarchive":    ("c_printArchive", "finish", None),
+    
+    "slice/ref":                ("t_sliceRef", "slice", None),
+    "slice/word":               ("t_sliceWord", "slice", None),
+    "slice/marker":             ("t_sliceMkr", "slice", None),
+    "slice/length":             ("s_sliceLength", "slice", None),
 
     "cover/makecoverpage":      ("c_makeCoverPage", "cover", lambda w,v: "" if v else "%"),
     "cover/rtlbookbinding":     ("c_RTLbookBinding", "cover", lambda w,v: "true" if v else "false"),
@@ -295,9 +314,6 @@ _map = {
     "covergen/imagealpha":      ("s_coverImageAlpha", "cover", None),
     "covergen/useimage":        ("c_coverSelectImage", "cover", None),
     "covergen/overwriteperiphs":("c_coverOverwritePeriphs", "cover", None),
-    # "covergen/imagefront":      ("c_coverImageFront", "cover", None),
-    # "covergen/imagefile":       ("btn_coverSelectImage", "cover", lambda w,v: w.coverImage.as_posix() if w.coverImage is not None else ""),
-    # "covergen/imgfname":       ("lb_coverImageFilename", "cover", None),
 
     "document/keepversions":    ("s_keepVersions", "finish", None),
     "document/settingsinpdf":   ("c_inclSettingsInPDF", "finish", None),
@@ -427,9 +443,7 @@ _map = {
     "snippets/fancyintro":      ("c_prettyIntroOutline", "body", None),
     "snippets/pdfoutput":       ("fcb_outputFormat", "finish", None),
     "snippets/diglot":          ("c_diglot", "diglot", lambda w,v: True if v else False),
-    "snippets/fancyborders":    ("c_borders", "decorate", None),
-    "snippets/adjlabelling":    ("c_markAdjPoints", "finish", None),
-    # "snippets/paralabelling":   ("c_showUSFMcodes", "finish", None), # Don't save this setting so it is OFF by default
+    "snippets/fancyborders":    ("c_useOrnaments", "decorate", None),
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
     
@@ -437,7 +451,6 @@ _map = {
     "thumbtabs/numtabs":        ("s_thumbtabs", "tabsborders", None),
     "thumbtabs/length":         ("s_thumblength", "tabsborders", None),
     "thumbtabs/height":         ("s_thumbheight", "tabsborders", None),
-    "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
     "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
     "thumbtabs/rotate":         ("c_thumbrotate", "tabsborders", None),
     "thumbtabs/tabsoddonly":    ("c_tabsOddOnly", "tabsborders", None),
@@ -476,6 +489,14 @@ _map = {
                                  if (w.impSourcePDF is not None and w.impSourcePDF != 'None') else ""),
     "import/project":           ("fcb_impProject", None, None),
     "import/config":            ("ecb_impConfig", None, None),
+    
+    "import/imptarget":         ("r_impTarget", None, None),
+    "import/imptgtfolder":      ("btn_tgtFolder", None, lambda w,v: w.impTargetFolder.as_posix()  \
+                                 if (w.impTargetFolder is not None and w.impTargetFolder != 'None') else ""),
+    "import/tgtproject":        ("ecb_targetProject", None, None),
+    "import/tgtconfig":         ("ecb_targetConfig", None, None),
+    
+    "import/everything":        ("c_impEverything", None, None),
     "import/layout":            ("c_impLayout", None, None),
     "import/fontsscript":       ("c_impFontsScript", None, None),
     "import/styles":            ("c_impStyles", None, None),
@@ -491,7 +512,7 @@ _map = {
     "import/body":              ("c_oth_Body", None, None),
     "import/notesrefs":         ("c_oth_NotesRefs", None, None),
     "import/headerfooter":      ("c_oth_HeaderFooter", None, None),
-    "import/tabsborders":       ("c_oth_TabsBorders", None, None),
+    "import/tabsborders":       ("c_oth_ThumbTabs", None, None),
     "import/advanced":          ("c_oth_Advanced", None, None),
     "import/frontmatter":       ("c_oth_FrontMatter", None, None),
     "import/overwitefrtmatter": ("c_oth_OverwriteFrtMatter", None, None),
@@ -502,13 +523,18 @@ _map = {
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}
 
 ImportCategories = {
+# 'variables' is an extra entry
+# missing: 'diglot', 'strongs', 'meta', 'uirefs'
     'c_oth_Body': 'body',
     'c_oth_NotesRefs': 'noteref',
     'c_oth_HeaderFooter': 'headfoot',
     'c_oth_FrontMatter': 'front',
-    'c_oth_TabsBorders': 'tabsborders',
+    'c_oth_ThumbTabs': 'thumbtabs',
     'c_oth_Advanced': 'advanced',
     'c_oth_Cover': 'cover',
+    'c_oth_Finish': 'finish',
+    'c_oth_Texpert': 'texpert',
+    'c_oth_Decorate': 'decorate',
     'c_impFontsScript': 'fontscript',
     'c_impLayout': 'layout',
     'c_impPictures': 'pictures'

@@ -188,7 +188,7 @@ class PDFx1aOutput(Snippet):
         for a in ('author', 'title', 'subject'):
             extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
         if model['document/printarchive']:
-            res += "\XeTeXgenerateactualtext=1\n"
+            res += "\\XeTeXgenerateactualtext=1\n"
         return res.format(**{**model.dict, **extras}) + "\n"
     
 class FancyIntro(Snippet):
@@ -205,12 +205,12 @@ class Diglot(Snippet):
 \def\DiglotLFraction{{{document/diglotprifraction}}}
 \addToSideHooks{{{s_}}}{{\RTL{document/ifrtl}}}
 \diglotSwap{document/diglotswapside}
-{diglot/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
+{project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \let\language{s_}=\langund
-\should@xist{{f{s_}}}
-\should@xist{{x{s_}}}
+\should@xist{{}}{{f{s_}}}
+\should@xist{{}}{{x{s_}}}
 \catcode `@=12
 
 """
@@ -223,23 +223,28 @@ class Diglot(Snippet):
 \def\italic{s_}{{"{diglot[fontitalic]}{diglot[docscript]}"}}
 \def\bolditalic{s_}{{"{diglot[fontbolditalic]}{diglot[docscript]}"}}
 \FontSizeUnit{s_}={diglot[fontfactor]}pt
+\RTL{s_}{diglot[ifrtl]}
 \def\LineSpacingFactor{s_}{{{diglot[linespacingfactor]}}}
 \def\AfterChapterSpaceFactor{s_}{{{diglot[afterchapterspace]}}}
 \def\AfterVerseSpaceFactor{s_}{{{diglot[afterversespace]}}}
-\newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[letterstretch]:.2f}em minus {diglot[lettershrink]:.2f}em
-\def\letterspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
+\IndentUnit{s_}={diglot[indentunit]}in
+\newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[letterstretch]:.4f}em minus {diglot[lettershrink]:.4f}em
+\def\intercharspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
+\addToSideHooks{{{s_}}}{{\XeTeXinterchartokenstate={diglot[letterspace]}}}
+{diglot[ifdiglotcolour_]}\SetDiglotBGColour{{{s_}}}{{{diglot[diglotcolour]}}}{{}}
 {diglot[ifincludefootnotes_]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {diglot[ifincludexrefs_]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \makeatletter
-\should@xist{{f{s_}}}
-\should@xist{{x{s_}}}
+\should@xist{{}}{{f{s_}}}
+\should@xist{{}}{{x{s_}}}
 \newlanguage\language{s_} \language\language{s_}
 {diglot[ifhavehyphenate_]}{diglot[ifhyphenate_]}\bgroup\liter@lspecials\input "{diglot[cfgrpath]}/hyphen-{diglot[prjid_]}.tex" \egroup
 \makeatother
 """
 
         res = baseCode.format(s_="L", **model.dict)
-        res += persideCode.format(diglot = {x[7:]: y for x,y in model.dict.items() if x.startswith("diglot/")}, s_="R", **model.dict)
+        diglotmap = {x[7:]: y for x,y in model.dict.items() if x.startswith("diglot/")}
+        res += persideCode.format(diglot=diglotmap, s_="R", **model.dict)
         res += "\n" + r"\def\addInt{" + "\n"
         for a in (("L", "project/intfile"), ("R", "diglot/intfile")):
             res += r"\zglot|{0}\*{1}".format(a[0], model.dict[a[1]]) + "\n"
@@ -254,13 +259,14 @@ class FancyBorders(Snippet):
 %   "scaled <factor>" adjusts the size (1000 would keep the border at its original size)
 % Can also use "xscaled 850 yscaled 950" to scale separately in each direction,
 %   or "width 5.5in height 8in" to scale to a known size
-{fancy/pageborder}{fancy/pageborderfullpage}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/width} height {paper/height}}}
-{fancy/pageborder}{fancy/pagebordernfullpage_}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/pagegutter} height {paper/height}}}
+{fancy/pageborders}{fancy/pageborder}{fancy/pageborderfullpage}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/width} height {paper/height}}}
+{fancy/pageborders}{fancy/pageborder}{fancy/pagebordernfullpage_}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/pagegutter} height {paper/height}}}
 
 {fancy/endofbook}\newbox\decorationbox
 {fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
-{fancy/endofbook}\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
-{fancy/endofbook}\addtoendptxhooks{{\z}}
+{fancy/endofbook}\def\zBookEndDecoration{{\par\nobreak\vbox{{\kern \BookEndDecorationSkip\centerline{{\copy\decorationbox}}}}}}
+{fancy/endofbook}\def\zautoBookEndDecoration{{\iffilehasverses \zBookEndDecoration\fi}}
+
 
 """
         if texmodel.dict.get("_isDiglot", False):
@@ -458,13 +464,6 @@ class Grid(Snippet):
 """
     takesDiglot = False
 
-class AdjustLabelling(Snippet):
-    processTex = True
-    texCode = r'''
-{paper/ifgrid}\MarkAdjustPointstrue
-\expandafter\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=007f00" at 7pt % AdjustPar
-'''
-
 class ParaLabelling(Snippet):
     processTex = True
     texCode = r'''
@@ -476,6 +475,6 @@ class ParaLabelling(Snippet):
     \advance\pcount by 1
     \d@marginnote{{0}}{{\the\pcount}}{{zpmkr}}{{left}}}}
 }}
-{paper/ifgrid}\addtoeveryparhooks{{\parmkr}}
+\addtoeveryparhooks{{\parmkr}}
 '''
 

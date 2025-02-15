@@ -7,7 +7,7 @@ from ptxprint.font import TTFont
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style, Text
-from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
+from ptxprint.usfmutils import Usfm, Sheets, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath
@@ -25,7 +25,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, AdjustLabelling, ParaLabelling
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, ParaLabelling
 
 def loosint(x):
     try:
@@ -35,7 +35,10 @@ def loosint(x):
 
 def makeChange(pattern, to, flags=regex.M, context=None):
     frame =  traceback.extract_stack(limit=2)[0]
+    # print(f"'{pattern}' > '{to}' # {flags}")
     return (context, regex.compile(pattern, flags), to, f"{frame.filename} line {frame.lineno}")
+    
+bcvref = re.compile(r'([A-Z]{3})\s*(\d+)[.:](\d+(?:-\d+)?)')
 
 Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),
            'c_inclSectionHeader':   ('sectionheader', 'fancy/sectionheaderpdf', 'A5 section head border.pdf'),
@@ -82,10 +85,11 @@ _periphids = {
 
 
 class TexModel:
+    _ptxversion = 4
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
-                    ("MAT-REV", "intnt"), ("MAT-JHN", "intgospel"), ("ROM-PHM", "intepistles"), ("HEB-REV", "intletters"))
+                    ("MAT-REV", "intnt"), ("MAT-JHN", "intgospels"), ("ROM-PHM", "intepistles"), ("HEB-REV", "intletters"))
     _fonts = {
         "fontregular":              ("bl_fontR", None, None, None, None),
         "fontbold":                 ("bl_fontB", None, "c_fakebold", "fontbold/embolden", "fontbold/slant"),
@@ -123,12 +127,11 @@ class TexModel:
         "snippets/fancyintro":            ("c_prettyIntroOutline", None, FancyIntro),
         "snippets/pdfoutput":             ("fcb_outputFormat", lambda x: True, PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", None, Diglot),
-        "snippets/fancyborders":          ("c_borders", None, FancyBorders),
+        "snippets/fancyborders":          ("c_useOrnaments", None, FancyBorders),
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
-        "snippets/grid":                  ("c_grid", None, Grid),
-        "snippets/adjlabelling":          ("c_markAdjPoints", None, AdjustLabelling),
-        "snippets/parlabelling":          ("c_showUSFMcodes", None, ParaLabelling)
+        "snippets/grid":                  ("c_gridLines", None, Grid),
+        "texpert/showusfmcodes":          ("c_showusfmcodes", None, ParaLabelling)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
@@ -154,14 +157,14 @@ class TexModel:
     }
         # '|': 'pipe'
 
-    def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
+    def __init__(self, printer, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
         self.printer = printer
         self.ptsettings = ptsettings
         self.inArchive = inArchive
-        self.changes = None
+        self.changes = {}
         self.localChanges = None
         self.debug = False
         self.interlinear = None
@@ -170,11 +173,15 @@ class TexModel:
         self.xrefs = None
         self.inserts = {}
         self.usedfiles = {}
+        self.tablespans = set()
         libpath = pycodedir()
+        path = printer.project.path
+        printpath = printer.project.printPath(printer.cfgid)
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "default_cmyk.icc").replace("\\","/"),
-                     "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/")}
+                     "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/"),
+                     "/ptxdocpath": printpath.replace("\\", "/")}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
@@ -184,8 +191,10 @@ class TexModel:
             self.update()
 
     def docdir(self):
-        base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
-        docdir = os.path.join(base, 'local', 'ptxprint', self.printer.configName())
+        #base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
+        base = self.dict["/ptxpath"]
+        docdir = self.dict["/ptxdocpath"]
+        logger.debug(f"TeX model basepaths: {base=}, {docdir=}")
         return docdir, base
 
     def update(self):
@@ -193,16 +202,15 @@ class TexModel:
         j = os.path.join
         rel = lambda x, y:saferelpath(x, y).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now
-        cpath = self.printer.configPath(self.printer.configName())
-        rcpath = self.printer.configPath("")
+        cpath = self.printer.project.srcPath(self.printer.cfgid)
         self.updatefields(ModelMap.keys())
-        self.dict['project/id'] = self.printer.prjid
+        self.dict['project/id'] = self.printer.project.prjid
         docdir, base = self.docdir()
         self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = rel(j(cpath, "AdjLists"), docdir).replace("\\","/") + "/"
         self.dict['project/triggers'] = rel(j(cpath, "triggers"), docdir).replace("\\","/") + "/"
-        self.dict['project/piclists'] = rel(j(self.printer.working_dir, "tmpPicLists"), docdir).replace("\\","/") + "/"
-        self.dict['config/name'] = self.printer.configId
+        self.dict['project/piclists'] = rel(j(self.printer.project.printPath(self.printer.cfgid), "tmpPicLists"), docdir).replace("\\","/") + "/"
+        self.dict['config/name'] = self.printer.cfgid
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.dict['/cfgrpath'] = rel(cpath, docdir)
         self.dict['/ptxprint_version'] = self.VersionStr
@@ -216,18 +224,14 @@ class TexModel:
         self.dict["project/picdir"] = rel(picdir, docdir).replace("\\","/")
         # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found
         fpath = j(cpath, "ptxprint-mods.tex")
-        if not os.path.exists(fpath):
-            fpath = j(rcpath, "ptxprint-mods.tex")
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
         fpath = j(cpath, "ptxprint-premods.tex")
-        if not os.path.exists(fpath):
-            fpath = j(rcpath, "ptxprint-premods.tex")
         self.dict['/premodspath'] = rel(fpath, docdir).replace("\\","/")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
         self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
-                    / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']), dp=8)
-        self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
+                    / float(self.dict["texpert/linespacebase"]) / float(self.dict['paper/fontfactor']), dp=8)
+        self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
         if self.dict["project/ifusemodssty"] == "":
@@ -239,11 +243,17 @@ class TexModel:
         self.dict["paper/pagegutter"] = "{:.2f}mm".format(Dimension(self.dict["paper/width"]).asunits("mm") \
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
         if self.dict["project/interlinear"] != "%":
-            self.interlinear = Interlinear(self.dict["project/interlang"],
-                                            os.path.join(self.dict["/ptxpath"], self.dict["project/id"]))
+            self.interlinear = Interlinear(self.dict["project/interlang"], self.dict["/ptxpath"])
         regfont = self.printer.get("bl_fontR")
         if regfont is not None:
-            self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
+            if regfont.isCtxtSpace:
+                spcnt = 2
+                self.dict["document/ifletter"] = "%"
+                self.dict["document/letterspace"] = 0
+                #self.dict["document/ifspacing"] = "%"
+            else:
+                spcnt = 0
+            self.dict["document/spacecntxtlztn"] = str(spcnt)
             self.calculateMargins()
         if self.inArchive:
             for b, a in Borders.items():
@@ -292,6 +302,7 @@ class TexModel:
             self.dict['document/tocleaders'] = 0
         self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
+        self.dict['document/tocleaderrule'] = "hrule" if int(self.dict['document/tocleaders'] or 0) == 4 else ""
         self.calcRuleParameters()
         if self.asBool('cover/includespine'):
             self.dict['cover/spinewidth_'] = float((self.dict.get("cover/spinewidth") or "0mm").replace("mm", ""))
@@ -309,6 +320,10 @@ class TexModel:
             self.dict['project/plugins'] = ''
         else:
             self.plugins = set()
+        chvssep = self.dict['header/chvseparator']
+        self.dict['chvssep_'] = self.ptsettings.get('ChapterVerseSeparator', chvssep) if chvssep == ':' else chvssep
+        rsep = self.ptsettings.get('RangeIndicator', '-')
+        self.dict['rangesep_'] = "\u2013" if rsep == "-" else rsep
 
     def updatefields(self, a):
         modelmap.get = lambda k: self[k]
@@ -326,6 +341,9 @@ class TexModel:
                         self.dict[k] = v.process(self.printer, val, self)
                 except Exception as e:
                     raise type(e)("In TeXModel with key {}, ".format(k) + str(e))
+        for k, opt, wname in TeXpert.opts():
+            v = self.printer.get(wname)
+            self.dict["texpert/"+opt.ident] = v if opt.valfn is None else opt.valfn(v) 
 
     def calcRuleParameters(self):
         notemap = {'fn': 'note', 'xr': 'xref', 'sn': 'study'}
@@ -342,7 +360,7 @@ class TexModel:
             dat = []
             if a[1] is not None:
                 pos = int(self.dict['notes/{}ruleposn'.format(a[1])] or 0)
-                left = "\hskip {:.2f} mm".format(float(self.dict['notes/{}ruleindent'.format(a[1])] or 0.))
+                left = r"\hskip {:.2f} mm".format(float(self.dict['notes/{}ruleindent'.format(a[1])] or 0.))
                 right = r"\hss"
                 if pos == 2 or pos == 4:      # Right or Outer
                     right, left = (left, right)
@@ -469,9 +487,9 @@ class TexModel:
             pass
         else:
             if pri:
-                t = "\headfootL{{{}}}".format(t)
+                t = r"\headfootL{{{}}}".format(t)
             else:
-                t = "\headfootR{{{}}}".format(t)
+                t = r"\headfootR{{{}}}".format(t)
         return t
 
     def mirrorHeaders(self, h, dig=False):
@@ -565,7 +583,7 @@ class TexModel:
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
                 # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
-        self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext']).replace("//","\u2028")
+        self.dict['project/colophontext'] = re.sub('://', ':/\u200B/\u200B', self.dict['project/colophontext']).replace("//","\u2028")
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})",
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         self.updateStyles()
@@ -602,12 +620,11 @@ class TexModel:
                             if len(insertnames):
                                 if digtexmodel is not None:
                                     res.append(r"\diglotfalse")
-                                res.append(r"\prepusfm")
                                 for ins in insertnames:
                                     res.extend(self._doptxfile(ins, None if digtexmodel is None else ins, 
-                                            (r"\pb" if self.dict['project/periphpagebreak'] else "")
-                                            + r"\zgetperiph|{}\*", ""))
-                                res.append(r"\unprepusfm")
+                                            ("\\intropages{{{}}}" 
+                                                if self.dict['project/periphpagebreak']
+                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), ""))
                                 if digtexmodel is not None:
                                     res.append(r"\diglottrue")
                         if i == len(self.dict['project/bookids']) - 1: 
@@ -616,7 +633,7 @@ class TexModel:
                                 beforelast.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in nonScriptureBooks: 
                             if not self.dict['document/noblankpage']:
-                                res.append(r"\ifodd\pageno\else\emptyoutput \fi")
+                                res.append(r"\zNeedOddPage")
                             res.append(r"\edef\oldpageno{\the\pageno}% Just in case the user wants it");
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True
@@ -676,6 +693,8 @@ class TexModel:
                                 res.append((r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000"
                                             + r"\widowpenalty=10000}}").format(bk))
                 elif l.startswith(r"%\snippets"):
+                    for t in self.tablespans:
+                        res.append(r"\spanningcols{{{}}}{{{}}}{{{}}}{{{}}}".format(*t))
                     for k, c in sorted(self._snippets.items(), key=lambda x: x[1][2].order):
                         if c[1] is None:
                             v = self.asBool(k)
@@ -720,24 +739,28 @@ class TexModel:
         return "\n".join(res).replace("\\OneChapBookfalse\n\\OneChapBooktrue\n","")
 
     def _doperiph(self, k):
-        if self.frontperiphs is None:
+        if self.frontperiphs is None or not len(self.frontperiphs):
+            self.frontperiphs = {}
             for a in ('FRT', 'INT'):
-                frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename(a))
-                self.frontperiphs = {}
+                frtfile = os.path.join(self.printer.project.path, self.printer.getBookFilename(a))
+                logger.debug(f"Trying periphs file {frtfile}")
                 if not os.path.exists(frtfile):
-                    return ""
+                    continue
                 with open(frtfile, encoding="utf-8") as inf:
                     mode = 0        # default
                     currperiphs = []
                     currk = None
                     for l in inf.readlines():
-                        ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))', l)
+                        l = runChanges(self.changes.get('periph', self.changes.get('default', [])), a, l)
+                        logger.log(5, f"{mode}: {l}")
+                        ma = re.match(r'\\periph\s*([^|]*)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))?', l)
                         if ma:
                             if mode == 1:    # already collecting so save
                                 self.frontperiphs[currk] = "\n".join(currperiphs)
                             currk = ma[2] or ma[3]
                             if not currk:
-                                currk = _periphids.get(m[1].lower(), m[1].lower())
+                                t = ma[1].strip().lower()
+                                currk = _periphids.get(t, t)
                             currperiphs = [l.rstrip()]
                             mode = 1
                         elif mode == 1:
@@ -748,7 +771,8 @@ class TexModel:
                     if currk is not None:
                         self.frontperiphs[currk] = "\n".join(currperiphs)
                         # print(f"{currk=}\n{self.frontperiphs[currk]=}")
-        return self.frontperiphs.get(k, "")
+            logger.debug(f"Contains periphs: {sorted(self.frontperiphs.keys())}")
+        return self.frontperiphs.get(k, f"\\rem zgetperiph|{k}\\*")
 
     def createFrontMatter(self, outfname):
         self.dict['project/frontfile'] = os.path.basename(outfname)
@@ -761,15 +785,15 @@ class TexModel:
             fcontent = []
             with open(infpath, encoding="utf-8") as inf:
                 for l in inf.readlines():
-                    l = runChanges(self.changes, "FRT", l)
-                    #l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
+                    l = runChanges(self.changes.get('periph', self.changes.get('default', [])), "FRT", l)
+                    if re.match(r"^\s*\\rem\s", l.lower()):
+                        continue
+                    l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \
                                      + '.jpg" copy="None" ' + m.group(2)+ r'\fig*', l)
                     l = re.sub(r'(\\fig .*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
-                    if re.match(r"^\s*\\rem\s", l.lower()):
-                        continue
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
@@ -778,15 +802,22 @@ class TexModel:
         intfname = self.printer.getBookFilename('INT')
         if intfname is None or not len(intfname):
             return
-        intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
+        intfile = os.path.join(self.printer.project.path, intfname)
+        def addperiphid(m):
+            if m.group(2).lower() in _periphids:
+                return m.group(1) + f'|id="{_periphids[m.group(2).lower()]}"\n'
+            else:
+                return m.group(1)+"\n"
         if os.path.exists(intfile):
             self.dict['project/intfile'] = "\\ptxfile{{{}}}".format(os.path.basename(outfname))
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
-            dat = runChanges(self.changes, "INT", dat)
+            dat = runChanges(self.changes.get('periph', self.changes.get('default', [])), "INT", dat)
             dat = runChanges(self.localChanges, "INT", dat)
+            dat = regex.sub(r"(\\periph\s*([^\n|]+))\n", addperiphid, dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
+        logger.debug(f"INT file {intfname} processed to {outfname}")
         return outfname
 
     def flattenModule(self, infpath, outdir, usfm=None):
@@ -815,7 +846,7 @@ class TexModel:
             if doti > 0:
                 outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
             cmd = [script, infpath, outfpath]
-            if script.lower().endswith(".bat") and sys.platform == "win32":
+            if script.lower().endswith(".bat") and sys.platform.startswith("win"):
                 cmd = [os.environ.get('COMSPEC', 'cmd.exe'), '/c'] + cmd
             else:
                 hasrun = False
@@ -848,21 +879,30 @@ class TexModel:
             doc = self._makeUSFM(data.splitlines(True), bk)
         return (None if doc else data, doc)
         
-    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True):
+    def _changeError(self, txt):
+        self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \\ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
+        logger.warn(txt)
+
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
         except ValueError:
             isCanon = False
         printer = self.printer
-        if self.changes is None:
+        if not len(self.changes):
             if self.asBool('project/usechangesfile'):
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
                 #cpath = self.printer.configPath(self.printer.configName())
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
-                self.changes = self.readChanges(os.path.join(printer.configPath(printer.configName()), 'changes.txt'), bk)
-            else:
-                self.changes = []
-        draft = "-" + (printer.configName() or "draft")
+                self.changes = self.readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk)
+        adjlistfile = printer.getAdjListFilename(bk)
+        if adjlistfile is not None:
+            adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
+                                adjlistfile.replace(".adj", "_changes.txt"))
+            chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
+            for k, v in chs.items():
+                self.changes.setdefault(k, []).extend(v)
+        draft = "-" + (printer.cfgid or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -875,9 +915,9 @@ class TexModel:
             infpath = self.flattenModule(infpath, outdir)
             if isinstance(infpath, tuple) and infpath[0] is None:
                 self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
-                secondary=str(infpath[1]), 
-                title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
-                show=not self.printer.get("c_quickRun"))
+                        secondary=str(infpath[1]), 
+                        title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
+                        show=not self.printer.get("c_quickRun"))
                 return None
         else:
             infpath = os.path.join(prjdir, fname)
@@ -897,6 +937,10 @@ class TexModel:
         with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
         doc = None
+
+        if 'initial' in self.changes:
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+            dat = runChanges(self.changes['initial'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         if chaprange is None and self.dict["project/bookscope"] == "single":
             chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
@@ -918,7 +962,7 @@ class TexModel:
             (dat, doc) = self._getDoc(dat, doc, bk)
             if doc is not None:
                 doc.calc_PToffsets()
-                self.interlinear.convertBk(bk, doc, linelengths)
+                self.interlinear.convertBk(bk, doc, linelengths, keep_punct = self.dict.get("project/interpunc", True))
                 if len(self.interlinear.fails):
                     refs = RefList(self.interlinear.fails)
                     refs.simplify()
@@ -930,10 +974,9 @@ class TexModel:
             if doc is not None:
                 doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
-        if self.changes is not None and len(self.changes):
+        if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
-            dat = runChanges(self.changes, bk, dat)
-            #self.analyzeImageCopyrights(dat)
+            dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         if self.dict['project/canonicalise']:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -975,6 +1018,14 @@ class TexModel:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
             logger.log(5,self.localChanges)
             dat = runChanges(self.localChanges, bk, dat)
+
+        if 'adjust' in self.changes:
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+            dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+
+        if 'final' in self.changes:
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+            dat = runChanges(self.changes['final'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to output\n")
         with open(outfpath, "w", encoding="utf-8") as outf:
@@ -1042,7 +1093,7 @@ class TexModel:
             if currfn is not None:
                 def compfn(fn, b, s):
                     def domatch(m):
-                        return currfn(lambda x:fn(x.group(0)), m.group(0))
+                        return currfn(lambda x:fn(m.group(0)), b, m.group(0))
                     return reg.sub(domatch, s) if bk is None or b == bk else s
             else:
                 def compfn(fn, b, s):
@@ -1050,10 +1101,21 @@ class TexModel:
             return compfn
         return reduce(lambda currfn, are: makefn(are, currfn), reversed([c for c in changes if c is not None]), None)
 
-    def readChanges(self, fname, bk):
-        changes = []
+    def readChanges(self, fname, bk, makeranges=False, passes=None):
+        changes = {}
+        if passes is None:
+            passes = ["default"]
         if not os.path.exists(fname):
-            return []
+            return {}
+        logger.debug("Reading changes file: "+fname)
+        usfm = None
+        if makeranges:
+            try:
+                usfm = self.printer.get_usfm(bk)
+            except SyntaxError:
+                pass
+            if usfm is not None:
+                usfm.addorncv()
         qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
         with universalopen(fname) as inf:
             alllines = list(inf.readlines())
@@ -1069,9 +1131,19 @@ class TexModel:
                     continue
                 contexts = []
                 atcontexts = []
+                m = re.match(r"^\s*sections\s*\((.*?)\)", l)
+                if m:
+                    ts = m.group(1).split(",")
+                    passes = [t.strip()[1:-1].strip() for t in ts]
+                    for p in passes:
+                        if p not in changes:
+                            changes[p] = []
+                    continue
                 m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
                 if m:
-                    changes.extend(self.readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk))
+                    lchs = self.readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk, passes=passes, makeranges=makeranges)
+                    for k, v in lchs.items():
+                        changes.setdefault(k, []).extend(v)
                     continue
                 # test for "at" command
                 m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
@@ -1083,7 +1155,18 @@ class TexModel:
                         elif r.verse == 0:
                             atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chap), flags=regex.S)))
                         else:
-                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chap, r.verse), flags=regex.S|regex.V1)))
+                            v = None
+                            if r.first != r.last:
+                                v = r
+                            elif usfm is not None:
+                                v = usfm.bridges.get(r, r)
+                                if v.first == v.last:
+                                    v = None
+                            if v is None:
+                                outv = '{}{}'.format(r.verse, r.subverse or "")
+                            else:
+                                outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
+                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chap, outv), flags=regex.S|regex.V1)))
                     l = l[m.end():].strip()
                 else:
                     atcontexts = [None]
@@ -1102,6 +1185,12 @@ class TexModel:
                 # capture the actual change
                 m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
                 if m:
+                    try:
+                        r = regex.compile(m.group(1) or m.group(2), flags=regex.M)
+                        # t = regex.template(m.group(3) or m.group(4) or "")
+                    except (re.error, regex._regex_core.error) as e:
+                        self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1))
+                        continue
                     for at in atcontexts:
                         if at is None:
                             context = self.make_contextsfn(None, *contexts) if len(contexts) else None
@@ -1109,44 +1198,75 @@ class TexModel:
                             context = self.make_contextsfn(at[0], at[1], *contexts)
                         else:
                             context = at[0]
-                        try:
-                            changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
-                                        m.group(3) or m.group(4) or "", f"{fname} line {i+1}"))
-                        except re.error as e:
-                            self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
-                                                 show=not self.printer.get("c_quickRun"))
-                            break
+                        ch = (context, r, m.group(3) or m.group(4) or "", f"{fname} line {i+1}")
+                        for p in passes:
+                            changes.setdefault(p, []).append(ch)
+                        logger.log(7, f"{context=} {r=} {m.groups()=}")
                     continue
                 elif len(l):
-                    logger.warning(f"Faulty change line found at {i}:\n{l}")
+                    logger.warning(f"Faulty change line found in {fname} at line {i}:\n{l}")
         return changes
 
     def makelocalChanges(self, printer, bk, chaprange=None):
         #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
-        if self.printer is not None and self.printer.get("c_tracing"):
-            print("List of changes.txt:-------------------------------------------------------------")
-            report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
-            if getattr(self.printer, "logger", None) is not None:
-                self.printer.logger.insert_at_cursor(v)
-            else:
-                try:
-                    print(report)
-                except UnicodeEncodeError:
-                    print("Unable to print details of changes.txt")
+        # if self.printer is not None and self.printer.get("c_tracing"):
+            # print("List of changes.txt:-------------------------------------------------------------")
+            # report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
+            # if getattr(self.printer, "logger", None) is not None:
+                # self.printer.logger.insert_at_cursor(v)
+            # else:
+                # try:
+                    # print(report)
+                # except UnicodeEncodeError:
+                    # print("Unable to print details of changes.txt")
         self.localChanges = []
         script = self.dict["document/script"]
         if len(script):
             sscript = getattr(scriptsnippets, script[8:].lower(), None)
             if sscript is not None:
                 self.localChanges.extend(sscript.regexes(self.printer))
-        if bk == "GLO" and self.dict['document/filterglossary']:
-            self.filterGlossary(printer)
+        if bk == "GLO":
+            if self.dict['document/filterglossary']:
+                self.filterGlossary(printer)
+            def mkkid(m):
+                if ' ' in m.group(1):
+                    return r'\k {}|{}\k*'.format(m.group(1), m.group(1).replace(" ", ""))
+                else:
+                    return r'\k {}\k*'.format(m.group(1))
+            self.localChanges.append(makeChange(r"\\k\s+([^|\\]+)\s*(?=\\)\\k\*", mkkid, flags=regex.S))
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append(makeChange(r"(\\[cv] [^ \\\r\n]+)(\\)", r"\1 \2", flags=regex.S))
         
+        # Remove the \ref ... \ref* which is often inserted for \xt fields in DBL projects.
+        if self.asBool('texpert/removextreflinks'):
+            self.localChanges.append(makeChange(r'\\ref (.+?)\|loc=".+?"\\ref\*', r"\1", flags=regex.S))
+        
         # Remove empty \h markers (might need to expand this list and loop through a bunch of markers)
         self.localChanges.append(makeChange(r"(\\h ?\r?\n)", r"", flags=regex.S))
+
+        sliceRef = self.dict['slice/ref'] or ""
+        foundSlice = False
+        if len(sliceRef):
+            match = bcvref.match(sliceRef)
+            if match and len(self.dict['slice/word']):
+                foundSlice = True
+                b,c,v = match.groups()
+                endc = int(c) + int(self.dict['slice/length'])
+                self.localChanges.append(makeChange(rf"\\c {c}\s.+?\\v {v}\s.+?({self.dict['slice/word']})", \
+                                                    rf"\uFFFF\n\{self.dict['slice/marker']} \1", flags=regex.S))
+                self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf'\\zsetref|bkid="{b}" chapter="{c}" verse="{v}"\*\n', flags=regex.S))
+            else:
+                try:
+                    startc = int(sliceRef.split(" ",1)[-1])
+                    if startc > 0:
+                        foundSlice = True
+                        self.localChanges.append(makeChange(rf"\\mt\d?\s*.+(\\c {startc}\s)", r"\1", flags=regex.S))
+                        endc = int(startc) + int(self.dict['slice/length'])
+                except ValueError:
+                    pass
+            if foundSlice:
+                self.localChanges.append(makeChange(rf"\\c {endc}\s.+", "", flags=regex.S))
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
         if self.asBool("document/ifchaplabels", true="%"):
@@ -1162,6 +1282,17 @@ class TexModel:
 
         # Throw out the known "nonpublishable" markers and their text (if any)
         self.localChanges.append(makeChange(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", ""))
+
+        # Throw out any empty footnotes or cross-references (if any) even if they have an xo or fr but no content
+        # e.g.  \f + \f*     \x +\x*    \f + \fr 27:12 \ft \f*    \x - \xo 27:13-15 \xt \x*    \x - \xo 27:12 \xo*\xt \xt*\x*
+        self.localChanges.append(makeChange(r"\\(f|fe|ef|x)\s+\S+?\s*(\\(xo|fr)\s+[^\\]+|\\\S+\s*)*?\\\1\*", ""))
+
+        # Remove notes if not included
+        if self.asBool("notes/includefootnotes"):
+            self.localChanges.append(makeChange(r"\\f\s+.*?\\f\*", ""))
+
+        if self.asBool("notes/includexrefs"):
+            self.localChanges.append(makeChange(r"\\x\s+.*?\\x\*", ""))
 
         ############ Temporary (to be removed later) ########%%%%
         # Throw out \esb ... \esbe blocks if Study Bible Sidebars are not wanted
@@ -1197,9 +1328,6 @@ class TexModel:
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
                 self.localChanges.append(makeChange(r"\\\+?w ([^|]+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
 
-        if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
-            self.localChanges.append(makeChange(r'(?i)\\x .+?\\x\*', '', flags=regex.M))
-            
         if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
@@ -1210,6 +1338,8 @@ class TexModel:
                 if a is None:
                     return ""
                 ref = re.sub(r"^\S+\s+", r"", a)
+                if ref.startswith("k."):
+                    return ""
                 return r"\zfiga|{}\*".format(ref)
             logger.debug(self.printer.picinfos)
             self.localChanges.append(makeChange(r'\\fig.*?src="([^"]+?)".*?\\fig\*', figtozfiga, flags=regex.M))
@@ -1228,9 +1358,14 @@ class TexModel:
         if not self.asBool("document/parallelrefs"): # Drop ALL Parallel Passage References
             self.localChanges.append(makeChange(r"\\r .+", "", flags=regex.M))
 
-        if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph
-            self.localChanges.append(makeChange(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{1,6})) ([\S]{1,9}\s*\n)", r"\1\u2000\5", flags=regex.M))
-            self.localChanges.append(makeChange(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{1,6}) ([^ 0-9\\\n\u2000\u00A0]{1,8}\n(?:\\[pmqsc]|$))", r"\1\u2000\2", flags=regex.S))
+        if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph (TO DO: make len of short word a parameter in TeXhacks)
+            if int(self.dict['texpert/ptxversion']) > 3 or int(self.dict['texpert/ptxversion']) == 0:
+                self.localChanges.append(makeChange(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{{1,6}})) ([\S]{{1,{}}}\s*\n)", r"\1\u2000\5".format(self.dict['texpert/maxorphanlength']), flags=regex.M))
+                self.localChanges.append(makeChange(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{{1,6}}) ((?:\p{{L}}\p{{M}}*|[^ 0-9\\\n\u2000]){{1,{}}}\n(?:\\[pmqsc]|$))".format(self.dict['texpert/maxorphanlength']), r"\1\u2000\2", flags=regex.S))
+            else:
+                self.localChanges.append(makeChange(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{1,6})) ([\S]{1,9}\s*\n)", r"\1\u2000\5", flags=regex.M))
+                self.localChanges.append(makeChange(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{1,6}) ([^ 0-9\\\n\u00A0\u2000]{1,8}\n(?:\\[pmqsc]|$))", r"\1\u2000\2", flags=regex.S))
+
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
@@ -1248,19 +1383,21 @@ class TexModel:
             self.localChanges.append(makeChange(r"(\\[fx]q .+?):* ?(\\[fx]t)", r"\1: \2", flags=regex.M)) 
 
         # HELP NEEDED from MH to fix this section up again.
-        # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo
-        self.localChanges.append(makeChange(r"(\d)\s(\p{L})", r"\1\u00A0\2", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)"))))
+        # This may be good, but only when bumping the version number: r"(?<!\\\S+)\s(\p{Nd})", r"\u00A0\1"
+        # in "\\r .+?[\r\n]+": "\s(\d)" > "~\1"  # Don't allow the line to break in the middle of a \r reference
+        # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo # [\p{Nd}\p{L}])(\p{Nd})\s
+        self.localChanges.append(makeChange(r"(?<![\p{Nd}\p{L}])(\p{Nd})\s(\p{L})", r"\1\u00A0\2", context=self.make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\]+)"))))
                         
         # Temporary fix to stop blowing up when \fp is found in notes (need a longer term TeX solution from DG or MH)
         # Solved on the TeX side on 11-Aug-2023, so we no longer need this hack below:
         # self.localChanges.append((None, regex.compile(r"\\fp ", flags=regex.M), r" --- ")) 
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo
-            self.localChanges.append(makeChange(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?)\s(\d+[:.]\d+(-\d+)?)", r"\1\u2000\2", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\|]+)"))))
-            self.localChanges.append(makeChange(r"(\s.) ", r"\1\u2000", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")))) # Ensure no floating single chars in note text
+            self.localChanges.append(makeChange(r"(\\p{Nd}?[^\s\p{Nd}\-\\,;]{3,}[^\\\s]*?)\s(\p{Nd}+[:.]\p{Nd}+(-\p{Nd}+)?)", r"\1\u2000\2", context=self.make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\|]+)"))))
+            self.localChanges.append(makeChange(r"(\s\S) ", r"\1\u2000", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")))) # Ensure no floating single chars in note text
         
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
-        self.localChanges.append(makeChange(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) ", r"\1\u00A0"))
+        self.localChanges.append(makeChange(r"(\\(xo|fr) [^\\]+?)\s*\\", r"\1\u00A0\\"))
 
         for c in ("fn", "xr"):
             # Force all footnotes/x-refs to be either '+ ' or '- ' rather than '*/#'
@@ -1272,13 +1409,13 @@ class TexModel:
                 self.localChanges.append(makeChange(r"(\d )(\\[{0}] - .*?\\[{0}]\*)\s+".format(c[0]), r"\1\2"))
 
         if self.asBool("notes/frverseonly"):
-            self.localChanges.append(makeChange(r"\\fr \d+[:.](\d+)", r"\\fr \1"))
+            self.localChanges.append(makeChange(r"\\fr \p{Nd}+[:.](\p{Nd}+)", r"\\fr \1"))
 
         if self.asBool("notes/xrverseonly"):
-            self.localChanges.append(makeChange(r"\\xo \d+[:.](\d+)", r"\\xo \1"))
+            self.localChanges.append(makeChange(r"\\xo \p{Nd}+[:.](\p{Nd}+)", r"\\xo \1"))
 
         # Paratext marks no-break space as a tilde ~, but the TeX handles it.
-        #self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
+        # self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
         # Paratext marks forced line breaks as //
         # self.localChanges.append((None, regex.compile(r"//", flags=regex.M), r"\u2028"))  
@@ -1291,10 +1428,15 @@ class TexModel:
             # self.localChanges.append(makeChange(r"(?<!\\(?:f|x|ef|fe)\s)((?<=\s)-|-(?=\s))", r"\u2010", flags=regex.M))
             
 
+        # Capture \tc2-3 type spans
+        def getspan(m):
+            self.tablespans.add((m.group(1), m.group(2), m.group(3), m.group(4)))
+            return m.group(0)
+        self.localChanges.append(makeChange(r"\\(t[hc])([cr]?)(\d+)-(\d+)", getspan))
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):
             if self.dict["document/script"][8:].lower() != "hebr":
-                hchar = r"\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"
+                hchar = r"\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"  # Zyyy is common
                 self.localChanges.append(makeChange(rf"(?<!\\[+]?wh[^\\]*)(\s+)([{hchar}][\\s{hchar}]*[\p{{sc=Hebr}}][\s{hchar}]*\b)", "\\1\\+wh \\2\\+wh*", flags=regex.M | regex.V1))
             if self.dict["document/script"][8:].lower() != "grek":
                 gchar = r"\p{sc=Grek}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"
@@ -1304,10 +1446,10 @@ class TexModel:
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book
             for c in range(1,4): # Remove any \toc lines that we don't want appearing in the ToC
                 if not self.asBool("document/usetoc{}".format(c)):
-                    self.localChanges.append(makeChange(r"(\\toc{} .+)".format(c), "", flags=regex.M))
+                    self.localChanges.append(makeChange(r"(\\toc{} [^\n]+\n)".format(c), "", flags=regex.M | regex.S))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
-        if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in nonScriptureBooks \
+        if self.asBool("fancy/enableornaments") and self.asBool("fancy/endofbook") and bk not in nonScriptureBooks \
            and self.dict["fancy/endofbookpdf"].lower().endswith('.pdf'):
             self.localChanges.append(makeChange(r"\Z", r"\n", flags=regex.M))
         
@@ -1343,13 +1485,13 @@ class TexModel:
         #self.localChanges.append((None, regex.compile(r"(?<=\n\r?)\r+"), ""))
         self.localChanges.append(makeChange(r"^\s*(?=\\id)", ""))
 
-        if self.printer is not None and self.printer.get("c_tracing"):
-            print("List of Local Changes:----------------------------------------------------------")
-            report = "\n".join("{}: {} -> {}".format(p[3], p[1].pattern, p[2]) for p in self.localChanges)
-            if getattr(printer, "logger", None) is not None:
-                printer.logger.insert_at_cursor(v)
-            else:
-                print(report)
+        # if self.printer is not None and self.printer.get("c_tracing"):
+            # print("List of Local Changes:----------------------------------------------------------")
+            # report = "\n".join("{}: {} -> {}".format(p[3], p[1].pattern, p[2]) for p in self.localChanges)
+            # if getattr(printer, "logger", None) is not None:
+                # printer.logger.insert_at_cursor(v)
+            # else:
+                # print(report)
         return self.localChanges
 
     def base(self, fpath):
@@ -1372,9 +1514,9 @@ class TexModel:
 
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes
-        prjid = self.dict['project/id']
-        prjdir = os.path.join(self.ptsettings.basedir, prjid)
-        fname = printer.getBookFilename("GLO", prjdir)
+        prjid = printer.project.prjid
+        prjdir = printer.project.path
+        fname = printer.getBookFilename("GLO", prjid)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
@@ -1389,9 +1531,13 @@ class TexModel:
 
     def filterGlossary(self, printer):
         # Only keep entries that have appeared in this collection of books
-        glossentries = []
+        glossentries = set()
+        glosstext={}
+        # Note for future debugging... the re.findall below works on the input, the localChanges rule below works after any changes.txt things have taken effect. Allow for random spaces.
+        glopattern=r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)"
         prjid = self.dict['project/id']
-        prjdir = os.path.join(self.dict["/ptxpath"], prjid)
+        prjdir = self.dict["/ptxpath"]
+        logger.debug(f"Filter Glossary for {prjid=} {prjdir=}")
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
                 fname = printer.getBookFilename(bk, prjid)
@@ -1399,16 +1545,52 @@ class TexModel:
                 if os.path.exists(fpath):
                     with universalopen(fpath) as inf:
                         sfmtxt = inf.read()
-                    glossentries += re.findall(r"\\w .*?\|?([^\|]+?)\\w\*", sfmtxt)
-        fname = printer.getBookFilename("GLO", prjdir)
+                    glossentries.update(re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", sfmtxt))
+        fname = printer.getBookFilename("GLO", prjid)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
-                ge = re.findall(r"\\\S+ \\k (.+?)\\k\*.+?\r?\n", dat) # Finds all glossary entries in GLO book
-        for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
-            logger.debug(f"Building regex for {delGloEntry=}")
-            self.localChanges.append(makeChange(r"\\\S+ \\k {}\\k\*.+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), "", flags=regex.M))
+                ge = re.findall(r"\\k ([^\\]+?)\\k\*", dat) # Finds all glossary entries in GLO book
+                for thisGE in ge:
+                    pattern = glopattern.format(thisGE)
+                    #logger.debug(f"pattern: {pattern}, dat:{dat}")
+                    geText = re.findall(pattern, dat, regex.M) # Find the glossary entry
+                    logger.debug(f"Finding {thisGE}, got {geText}")
+                    glosstext[thisGE] = geText
+        logger.debug(f"{glossentries=}")
+        if (self.dict["document/glossarydepth"]):
+            count = self.dict["document/glossarydepth"]# How deep do we follow the chain of A includes B includes C?
+        else:
+            count = 0 # Default is not to go deeper
+        logger.debug(f"glossarydepth={count}")
+        glossdone=[]
+        while count > 0:
+            count = count - 1
+            xtraglossentries = set()
+            for gte in (x for x in glossentries if x not in glossdone): #entries from te glossary text.
+                logger.debug(f"Checking entry for {gte}")
+                glossdone.append(gte)
+                if gte in glosstext: # Not every glossentry actually occurs
+                    gts = glosstext[gte] # Might there be more than one glossary entry?? Assume that's a possibility
+                    for gt in gts: 
+                        logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
+                        xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", gt)
+                        xtraglossentries.update((x for x in xgl if x not in glossentries))
+            logger.debug(f"Adding {len(xtraglossentries)} extra gloss entries: {xtraglossentries}")
+            if (len(xtraglossentries) == 0): # No more new entries
+                break
+            glossentries.update(xtraglossentries)
+            logger.debug(f"glossarydepth={count}")
+        missings = [ge for ge in glossentries if ge not in glosstext]
+        if len(missings)>0:
+            logger.warn(f"Glossary entries for {','.join(missings)} wanted, but not found in glossary.")
+        else:
+            logger.debug(f"All wanted glossary entries found.")
+        logger.debug(f"{glossentries=}, {ge=}")
+        for delGloEntry in [x for x in ge if x not in glossentries]:
+            # logger.debug(f"Building regex for {delGloEntry=}")
+            self.localChanges.append(makeChange(glopattern.format(delGloEntry), "", flags=regex.M))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":
@@ -1438,18 +1620,22 @@ class TexModel:
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
         crdts = []
         cinfo = self.printer.copyrightInfo
+        if cinfo is None or not len(cinfo):
+            self.printer.readCopyrights()
+            cinfo = self.printer.copyrightInfo
         self.analyzeImageCopyrights()
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()
 
-            # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            # \figonpage{304}{56}{./tmpPics/cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
+            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:[^}]*\/)?(?:" + self.printer.getPicRe() + r"|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []
             if len(m):
                 for f in m:
+                    # print(f"{f[0]=} {f[1]=} {f[2]=} {f[3]=} {f[4]=} {f[5]=} ")
                     if not len(f) or not f[0] or f[5] == "None":
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
@@ -1474,12 +1660,13 @@ class TexModel:
             if os.path.exists(picpagesfile):
                 hasOut = False
                 mkr = self.imageCopyrightLangs.get(lang, "pc")
-                rtl = lang in cinfo['rtl']
+                rtl = lang in cinfo.get('rtl', [])
                 if rtl == (self.dict['document/ifrtl'] == "false"):
                     mkr += "\\begin" + ("R" if rtl else "L")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
                 crdtsstarted = True
-                plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
+                plrls = cinfo.get('plurals', None)
+                plstr = "" if plrls is None else plrls.get(lang, plrls["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
                 for art, pgs in self.printer.artpgs.items():
@@ -1566,7 +1753,7 @@ class TexModel:
             localfile = None
             xrsrc = self.dict['notes/xrlistsource']
             if xrsrc == "strongs_proj":
-                localfile = os.path.join(self.printer.settings_dir, self.printer.prjid, "TermRenderings.xml")
+                localfile = os.path.join(self.printer.project.path, "TermRenderings.xml")
                 if not os.path.exists(localfile):
                     localfile = None
             if xrsrc[-1] in "0123456789":

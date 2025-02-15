@@ -3,28 +3,12 @@ from ptxprint import sfm
 from ptxprint.reference import RefList, RefRange, Reference, BookNames
 import re, os, traceback, warnings
 from collections import namedtuple
-from itertools import groupby, accumulate
+from itertools import groupby
 from functools import reduce
 from copy import deepcopy
 import regex, time, logging
 
 logger = logging.getLogger(__name__)
-
-def isScriptureText(e):
-    if 'nonvernacular' in e.meta.get('TextProperties', []):
-        return False
-    if e.meta.get('TextType', "").lower() == "versetext":
-        return True
-    if e.meta.get('TextType', "").lower() == "other" and e.name.startswith("i"):
-        return True
-    if e.name in ("h", "h1", "id", "mt", "toc1", "toc2", "toc3"):
-        return False
-    return True
-
-takslc_cats = {'Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Sm', 'Sc', 'Sk', 'So',
-               'Nd', 'Nl', 'No', 
-               'Pd', 'Pc', 'Pe', 'Ps', 'Pi', 'Pf', 'Po'}
-space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
 
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
@@ -44,6 +28,7 @@ class Sheets(dict):
     def __init__(self, init=[], base=None):
         if base != "":
             self.update(deepcopy(base) if base is not None else deepcopy(self.default))
+        self.files = []
         if init is None or not len(init):
             return
         for s in init:
@@ -55,6 +40,7 @@ class Sheets(dict):
         if os.path.exists(sf):
             with open(sf, encoding="utf-8", errors="ignore") as s:
                 self.appendfh(s, nodefaults=nodefaults)
+            self.files.append(sf)
 
     def appendfh(self, s, nodefaults=False):
         sp = style.parse(s, fields = style.Marker({})) if not nodefaults else style.parse(s)
@@ -238,7 +224,7 @@ class Usfm:
                 if m:
                     ind = int(m.group(1))
                     if ind > len(self.tocs):
-                        self.tocs.extend([""] * (ind - len(self.tocs) + 1))
+                        self.tocs.extend([""] * (ind - len(self.tocs)))
                     self.tocs[ind-1] = e[0].strip()
 
     def getwords(self, init=None, constrain=None, lowercase=False):
@@ -264,39 +250,16 @@ class Usfm:
         return words
 
     def hyphenate(self, hyph, nbhyphens):
-        hyph.calcChars()
-        splitre = re.compile(r"(?i)([^{}]+)".format("".join(sorted(hyph.chars))))
-        if nbhyphens:
-            hyphenchar = "\u2011"
-        elif hyph.has2010:
-            hyphenchar = "\u2010"
-        else:
-            hyphenchar = "-"
+        hyphenchar = "\u2011" if nbhyphens else hyph.get_hyphen_char()
         def isincluded(e):
-           return "nonvernacular" not in getattr(e, "meta", {}).get('TextProperties', "").lower()
+           return "nonvernacular" not in getattr(e.parent, "meta", {}).get('TextProperties', "") \
+                    and getattr(e.parent, "meta", {}).get("TextType", "") == "VerseText"
         def proc(e):
             if isinstance(e, sfm.Element):
                 for c in e:
                     proc(c)
             elif isincluded(e):
-                t = str(e).replace("-", hyphenchar)
-                bits = splitre.split(t)
-                for i in range(0, len(bits), 2):
-                    s = bits[i].replace("-", hyphenchar)
-                    if s.lower() in hyph:
-                        h = hyph.get(s.lower())
-                        if s.lower() != s:
-                            hbits = h.split("-")
-                            hpos = list(accumulate([len(x) for x in hbits]))
-                            r = [s[x:y] for x, y in zip([0] + hpos, hpos)]
-                            bits[i] = "\u00AD".join(r)
-                            logger.log(6,f"hyphenating {s} at {hpos} giving {'-'.join(r)}")
-                        else:
-                            logger.log(6,f"hyphenating {s} giving {h}")
-                            bits[i] = h.replace("-", "\u00AD")
-                    else:
-                        bits[i] = s
-                e.data = "".join(bits)
+                e.data = hyph.hyphenate(str(e), hyphenchar)
         proc(self.doc[0])
         
     def getmarkers(self):
@@ -327,6 +290,7 @@ class Usfm:
         ispara = sfm.text_properties('paragraph')
         last = (0, -1)
         chaps = []
+        #breakpoint()
         for i, r in enumerate(refranges):
             if r.first.chap > last[1] or r.first.chap < last[0]:
                 chaps.append((self.chapters[r.first.chap:r.last.chap+1], [i]))
@@ -338,7 +302,10 @@ class Usfm:
                 chaps[-1][1].append(i)
                 last = (last[0], r.last.chap)
         def pred(e, rlist):
-            if isinstance(e.pos, _Reference) and any(e.pos.ref in refranges[i] for i in rlist):
+            if isinstance(e, sfm.Text) and e.parent.name in removes:
+                return False
+            if isinstance(e.pos, _Reference) and any(e.pos.ref in refranges[i] for i in rlist) \
+                    and (e.pos.ref.first.verse != 0 or refranges[i].first.verse == 0 or isinstance(e, sfm.Element) and e.name == "c"):
                 if strippara and isinstance(e, sfm.Element) and ispara(e):
                     return False
                 return True
@@ -350,23 +317,14 @@ class Usfm:
                 if pred(e, rlist):
                     a.append(sfm.Text(e, e.pos, a))
                 return a
-            if e is None or e.name in removes:
-                return a
-            e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
+            e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta, annotations=e.annotations)
             reduce(_g, [(x, rlist) for x in e], e_)
-            if pred(e, rlist) or (keepchap and e.name == "cl"):
+            if e.name not in removes and (pred(e, rlist) or (keepchap and e.name == "cl") or (len(a) == 0 and len(e_))):
                 a.append(e_)
             elif len(e_):
                 a.extend(e_[:])
             return a
         res = []
-#        if addzsetref:
-#            for e in self.doc[0]:
-#                if isinstance(e, sfm.Element) and e.name == 'h':
-#                    bkname = str(e[0]).strip()
-#                    break
-#            else:
-#                bkname = refranges[0].first.book
         for c in chaps:
             if addzsetref:
                 minref = min(refranges[r].first for r in c[1])
@@ -379,14 +337,14 @@ class Usfm:
     def getsubbook(self, refrange, removes={}):
         # refrange.reify()
         d = self.doc[0]
-        res = sfm.Element(d.name, d.pos, d.args, None, meta=d.meta)
+        res = sfm.Element(d.name, d.pos, d.args, None, meta=d.meta, annotations=d.annotations)
         for c in d:
             if isinstance(c, sfm.Element) and c.name == "c":
                 break
             res.append(c)
         subres = self.subdoc(refrange, removes=removes, keepchap=True)
         for i, e in enumerate(subres):
-            if isinstance(e, sfm.Element) and e.meta.get('styletype', '').lower() == 'paragraph':
+            if isinstance(e, sfm.Element) and str(e.meta.get('styletype', '')).lower() == 'paragraph':
                 if i > 0:
                     n = sfm.Element('p', subres[0].pos, parent=subres[0].parent, meta=self.sheets['p'])
                     for c in subres[:i]:
@@ -474,7 +432,7 @@ class Usfm:
             if not isinstance(e, sfm.Element):
                 continue
             etype = e.meta.get('texttype', '').lower()
-            style = e.meta.get('styletype', '').lower()
+            style = str(e.meta.get('styletype', '')).lower()
             if style == 'paragraph' and etype == 'versetext':
                 # if e.parent is not None and e.parent.name == 'p':
                     # print(e)
@@ -553,7 +511,7 @@ class Usfm:
             s = str(e)
             processed = False
             for r in regs:
-                if r[0] is not None and not r[0](e.parent):
+                if r[0] is not None and not r[0](e):
                     continue
                 ns = r[1].sub(r[2], s)
                 if ns != s:
@@ -565,39 +523,12 @@ class Usfm:
                 return e
         return list(self._proctext(fn, doc=doc))
 
-    def letter_space(self, inschar, doc=None):
-        from ptxprint.sfm.ucd import get_ucd
-        def fn(e):
-            if not e.parent or not isScriptureText(e.parent):
-                return e
-            done = False
-            lastspace = id(e.parent[0]) != id(e)
-
-            res = []
-            for (islet, c) in groupby(str(e), key=lambda x:get_ucd(ord(x), "gc") in takslc_cats and x != "|"):
-                chars = "".join(c)
-                # print("{} = {}".format(chars, islet))
-                if not len(chars):
-                    continue
-                if islet:
-                    res.append(("" if lastspace else inschar) + inschar.join(chars))
-                    done = True
-                else:
-                    res.append(chars)
-                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama") \
-                            or get_ucd(ord(chars[-1]), "gc") in ("Cf", "WS") \
-                            or chars[-1] in (r"\|")                
-            return sfm.Text("".join(res), e.pos, e.parent) if done else e
-        if self.doc is None or not len(self.doc):
-               return            
-        self._proctext(fn, doc=doc)
-
     def calc_PToffsets(self):
         def _ge(e, a, ac):
             attrs = e.meta.get('Attributes', None)
             if attrs is None:
                 return None
-            styletype = e.meta['StyleType']
+            styletype = str(e.meta['StyleType'])
             if styletype.lower() == "character":
                 s = str(e[0])
                 bits = s.split("|")
@@ -684,7 +615,7 @@ class Usfm:
                     except (AttributeError, ValueError):
                         pass
                 predels = [ell] if ell is not None else []
-                st = el.meta.get("styletype", "") 
+                st = el.meta.get("styletype", "")
                 if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
                     # el.parent.remove(el)
                     return True if st is None else False  # To handle empty markers like \pagebreak 
@@ -699,7 +630,7 @@ class Usfm:
         def iterfn(el, silent=False, base=None):
             if isinstance(el, sfm.Element):
                 styletype = el.meta["StyleType"]
-                issilent = styletype is not None and styletype.lower() == "note" or el.name.startswith("s") or silent
+                issilent = styletype is not None and styletype.lower() == "note" or el.name.startswith("s")
                 if el.meta.get("Attributes", None) is not None:
                     base = el
                 for c in tuple(el):      # in case of insertions
@@ -755,12 +686,14 @@ def read_module(inf, sheets):
         lines.insert(0, "\\id MOD Module\n")
     return Usfm(lines, sheets)
 
+#    e: ([mkrs], modelmap entry, invert_test)
 exclusionmap = {
-    'v': (['v'], "document/ifshowversenums"),
-    'x': (['x'], None),
-    'f': (['f'], "notes/includefootnotes"),
-    's': (['s', 's1', 's2'], "document/sectionheads"),
-    'p': (['fig'], None)
+    'v': (['v'], "document/ifshowversenums", False),
+    'x': (['x'], None, False),
+    'f': (['f'], "notes/includefootnotes", True),
+    's': (['s', 's1', 's2', 'r'], "document/sectionheads", False),
+    'c': (['c'], 'document/ifshowchapternums', True),
+    'p': (['fig'], None, False)
 }
 
 class Module:
@@ -805,7 +738,7 @@ class Module:
         if self.doc.doc is None:
             return []
         #self.removes = set()
-        self.removes = set((sum((e[0] for e in exclusionmap.values() if e[1] is None or model[e[1]]), [])))
+        self.removes = set((sum((e[0] for e in exclusionmap.values() if self.testexclude(e)), [])))
         final = sum(map(self.parse_element, self.doc.doc), [])
         return final
 
@@ -814,6 +747,9 @@ class Module:
         loctype = m.group(1) or "a"
         tocindex = self.localcodes.get(loctype.lower(), 0)
         return rl.str(context=self.usfms.booknames, level=tocindex)
+
+    def testexclude(self, einfo):
+        return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))
 
     def parse_element(self, e):
         if isinstance(e, sfm.Text):
@@ -831,7 +767,7 @@ class Module:
                 if not isinstance(rep, sfm.Element) or rep.name != "rep":
                     break
                 # parse rep
-                m = re.match("^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)
+                m = re.match(r"^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)
                 if m:
                     reps.append((None,
                             re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),
@@ -846,20 +782,19 @@ class Module:
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
                 if not len(p):
                     continue
+                # what is the end of the passage given \c contains so much
                 if isinstance(p[-1], sfm.Element) and p[-1].name == "c":
                     b = p[-1]
                 else:
                     b = p
+                # strip trailing whitespace
                 while len(b) and isinstance(b[-1], sfm.Element) and (not len(b[-1]) or 
                         (len(b[-1]) == 1 and isinstance(b[-1][-1], sfm.Text) and not len(str(b[-1][-1]).strip()))):
                     b.pop()
-                if e.name == "ref":
-                    for i, t in enumerate(p):
-                        if isinstance(t, sfm.Element) and t.meta.get('StyleType', '').lower() == 'paragraph':
-                            if i:
-                                p[0:i] = [self.new_element(e, "p1" if isidparent else "p", p[0:i])]
-                            break
-                    else:
+                if e.name == "ref" and len(p) > 1:
+                    # Ensure we start with a paragraph (skipping the initial \zsetref)
+                    t = p[1]
+                    if not isinstance(t, sfm.Element) or t.meta.get('StyleType', '').lower() != 'paragraph':
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
             if len(reps):
@@ -868,10 +803,10 @@ class Module:
         elif e.name == 'inc':
             s = "".join(map(str, e)).strip()
             for c in s:
-                einfo = exclusionmap.get(c, ([], None))
+                einfo = exclusionmap.get(c, ([], None, False))
                 if c == "-":
                     self.removes = set(sum((e[0] for e in exclusionmap.values()), []))
-                elif einfo[1] is None or (self.model is not None and not self.model[einfo[1]]):
+                elif not self.testexclude(einfo):
                     self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
             dirname = os.path.dirname(self.fname)
@@ -901,5 +836,5 @@ class Module:
 
     def new_element(self, e, name, content):
         return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos, e)] \
-                                                        + content, meta=self.sheets[name])
+                                                        + content, meta=self.sheets[name], annotations=e.annotations)
 

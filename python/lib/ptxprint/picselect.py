@@ -12,17 +12,29 @@ logger = logging.getLogger(__name__)
 from ptxprint.utils import _, extraDataDir
 from ptxprint.reference import RefList
 
-def unpackImageset(filename):
-    # print(f"{filename=}")
+def unpackImageset(filename, prjdir):
     with zipfile.ZipFile(filename) as zf:
-        with zf.open("illustrations.json") as zill:
-            zdat = json.load(zill)
-        dirname = zdat.get('id', "Unknown")
-        uddir = extraDataDir("imagesets", dirname, create=True)
+        if "illustrations.json" in zf.namelist():
+            with zf.open("illustrations.json") as zill:
+                zdat = json.load(zill)
+            dirname = zdat.get('id', "Unknown")
+            uddir = extraDataDir("imagesets", dirname, create=True)
+        else:
+            # Check if the ZIP file contains any image files
+            contains_images = any(is_image_file(name) for name in zf.namelist())
+            if not contains_images:
+                return None
+            uddir = os.path.join(prjdir,"local","figures")
+            os.makedirs(uddir, exist_ok=True)
+            dirname = ""
         if uddir is None:
             return None
         zf.extractall(path=uddir)
     return dirname
+
+def is_image_file(filename):
+    image_extensions = {'.jpg', '.jpeg', '.tif', '.tiff', '.png', '.gif', '.bmp'}
+    return any(filename.lower().endswith(ext) for ext in image_extensions)
 
 def getImageSets():
     uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
@@ -126,7 +138,6 @@ class ThumbnailDialog:
             model.append([False, a.upper(), name])
         self.artists.clear()
         langpath = os.path.join(imagesetdir, "lang_{}.json".format(self.view.lang.lower()))
-        print(langpath)
         if not os.path.exists(langpath):
             langpath = os.path.join(imagesetdir, "lang_en.json")
         if os.path.exists(langpath):

@@ -101,7 +101,8 @@ class Element(list):
                  args=[],
                  parent=None,
                  meta={},
-                 content=[]):
+                 content=[],
+                 annotations=None):
         """
         The `name` of the marker, and optionally any marker argments in
         `args`. If this element is a child of another it `parent` should point
@@ -115,10 +116,10 @@ class Element(list):
         self.args = args
         self.parent = parent
         self.meta = meta
-        self.annotations = {}
+        self.annotations = annotations or {}
 
     def __repr__(self):
-        args = [repr(self.name)] \
+        args = [("+" if 'nested' in self.annotations else "") + repr(self.name)] \
             + (self.args and [f'args={self.args!r}']) \
             + (self and [f'content={super().__repr__()}'])
         return f"Element({', '.join(args)!s})"
@@ -151,7 +152,9 @@ class Element(list):
         endmarker = self.meta.get('Endmarker', '')
         body = ''.join(map(str, self))
         sep = ''
-        if len(self) > 0:
+        if self.name == "c":
+            marker += "\n"
+        elif len(self) > 0:
             if not body.startswith(('\r\n', '\n')):
                 sep = ' '
         elif self.meta.get('StyleType') == 'Character':
@@ -572,10 +575,10 @@ class parser(collections.abc.Iterable):
         # Compute end marker stylesheet definitions
         em_def = {'TextType': None, 'Endmarker': None}
         self._sty = stylesheet.copy()
-        self._sty.update(
-            (m['Endmarker'], type(m)(em_def, OccursUnder={k}))
-            for k, m in stylesheet.items() 
-            if m['Endmarker'])
+        for k, m in stylesheet.items():
+            if m['Endmarker']:
+                v = type(m)(em_def, OccursUnder=[k])
+                self._sty[m['Endmarker']] = v
 
     def _error(self, severity, msg, ev, *args, **kwds):
         """

@@ -36,7 +36,10 @@ If it is desired to specify styling for e.g. a block that starts with an `\s2` d
 
 `\Position` option
 
-* Options: `t`, `tl`, `tr`, `ti`, `to`,  `b`, `bl`, `br`, `bi`, `bo`, `h`, `p`, `F`, `P`  or `B`
+* Options: `t`, `tl` (etc),  `b`, `bl` (etc),`h` *, `p`, `c`  `F`, `P`  or `B`
+  * Whole pagewidth: t, b, B, P, F
+  * Column top or bottom: tl (etc), bl (etc)
+  * Inline: [vertical: h,p or c][horizontal: l/r/i/o][extra]  e.g. cr2.3 (cutout, right, 2.3 lines below anchor, subject to slop)
 
 Default: b
 The position for this class of side-bars.  Any image position may be specified. For detail of the meaning, see the [Figures documentation](figures.md) 
@@ -57,26 +60,26 @@ Note that `h` and `p` sidebars, if they have  no background colour or images, an
 horizontally
 may be permitted to break across pages.
  
-#### `\Scale` 
+#### `Size: \Scale` 
 `\Scale  value(0-1)`
 
 * Default: 1
 
 Width of the box relative to the nominal size of the containing column or box (like the scale="..." `\fig` parameter).
 
-#### `\FirstLineIndent`
+#### `Horizontal shift: \FirstLineIndent`
 
 * `\FirstLineIndent` value
 * Default: 0
 
-This measurement (directly equivalent to the paragraph parameter) allows in-line  sidebars (and images) to be shifted sideways. Negative values move the sidebar into the margin. In the image below, the automatic sidebars have a `\FirstLineIndent` of -0.125:
+This measurement (directly equivalent to the paragraph parameter, and the figure attribute x-edgeadjust) allows in-line  sidebars (and images) to be shifted sideways. Negative values move the sidebar into the margin. In the image below, the automatic sidebars have a `\FirstLineIndent` of -0.125:
  
 ![](imgs/20230929-170748.png)
 
-#### `\SpaceBeside`
+#### `Gap beside sidebar cutout: \SpaceBeside`
 `\SpaceBeside 3pt`
 
-If the sidebar is in a cutout, this is the space between the edge of the sidebar and the surrounding text. See also the use below for foreground images. 
+If the sidebar is in a cutout, this is the space between the edge of the sidebar and the surrounding text. See also the use below for foreground images in a cutout. 
 
 ### Sidebar category logo
 ####`\FgImage` 
@@ -113,7 +116,7 @@ See `\BgImageScaleto`. While scaling the foreground image to outer elements is c
 
 ![](imgs/20230929-213735.png)
 
-#### `\SpaceBeside`
+#### `Gap beside image in cutout: \SpaceBeside`
 `\SpaceBeside 3pt`
 
 If the foreground image is in a cutout, this measurement gives the 

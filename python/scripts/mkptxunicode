@@ -3,18 +3,63 @@
 import argparse
 from ptxprint.sfm.ucd import find_ucd
 
+class Or:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def get(self):
+        a = self.a.get()
+        b = self.b.get()
+        return a | b
+
+class And:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def get(self):
+        a = self.a.get()
+        b = self.b.get()
+        return a & b
+
+class T:
+    def __init__(self, group, vals):
+        self.group = group
+        self.vals = vals
+
+    def __or__(self, o):
+        return Or(self, o)
+
+    def __and__(self, o):
+        return And(self, o)
+
+    def get(self):
+        tmp = set()
+        for val in self.vals:
+            tmp.update(find_ucd(self.group, val))
+        return tmp
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("outfile",nargs="?",default="ptx-unicode.tex",help="Output TeX file")
 args = parser.parse_args()
 
 classes = {
-    "Vir":  [("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"])],
-    "CM":   [("gc", ["Mc", "Mn"]), ("InSC", ["Top"])],
-    "Num":  [("bc", ["ES", "EN", "ET", "AN", "CS", "BN"])],
+    "Vir":      [T("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"])],
+    "CM":       [T("gc", ["Mc", "Mn"]) | T("InSC", ["Top"])],
+    "Num":      [T("bc", ["ES", "EN", "ET", "AN", "CS", "BN"])],
+    "ArabL":    [T("jt", ["L"])],
+    "ArabR":    [T("jt", ["R"])],
+    "ArabD":    [T("jt", ["D", "C"])],
+    "ArabU":    [T("jt", ["U"]) & (T("bc", ["AL"]) | T("sc", ["Mong"]))],
 }
 
-pairs = [ (0, 0), ("\\KclassCM", 0), ("\\KclassNum", 0), (0, "\\KclassNum"),
-          ("\\KclassCM", "\\KclassNum") ]
+pairs = [   (0, 0), ("CM", 0), ("Num", 0), (0, "Num"), ("CM", "Num"), ("CM", "ArabL"),
+            ("ArabD", "ArabL"), ("ArabL", "ArabL"), ("ArabR", "ArabL"), ("ArabR", "ArabD"),
+            ("ArabR", "ArabR"), ("CM", "ArabU"), ("ArabU", "ArabL"), ("ArabU", "ArabR"),
+            ("ArabU", "ArabD"), ("ArabU", "ArabU"), ("Num", "ArabL"), ("Num", "ArabR"),
+            ("Num", "ArabD"), ("Num", "ArabU") ]
 
 extras = {
     0x0E33: 'CM'
@@ -24,8 +69,7 @@ classdat = {}
 for k, b in classes.items():
     dat = set()
     for v in b:
-        for val in v[1]:
-            dat.update(find_ucd(v[0], val))
+        dat.update(v.get())
     if "Vir" in classdat:
         dat -= classdat["Vir"]
     classdat[k] = dat
@@ -33,6 +77,8 @@ for k, b in classes.items():
 for k, v in extras.items():
     classdat[v].add(k)
 
+used = {}
+duplicates = {}
 with open(args.outfile, "w", encoding="utf-8") as outf:
     outf.write("\\XeTeXinterchartokenstate=1\n")
     for k in classes.keys():
@@ -41,8 +87,16 @@ with open(args.outfile, "w", encoding="utf-8") as outf:
         outf.write("\n")
         for c in sorted(v):
             if 0x20 <= c < 0xE0000:
-                outf.write('\\XeTeXcharclass"{:04X}=\\Kclass{}\n'.format(c, k))
+                if c in used:
+                    duplicates[c] = duplicates.get(c, ["*"+used[c]]) + [k]
+                else:
+                    outf.write('\\XeTeXcharclass"{:04X}=\\Kclass{}\n'.format(c, k))
+                    used[c] = k
     outf.write("\n% Interclass rules\n")
     for p in pairs:
-        outf.write("\\XeTeXinterchartoks {} {}{{\\intercharspace}}\n".format(*p))
+        kp = ("\\Kclass"+x if x != 0 else "0" for x in p)
+        outf.write("\\XeTeXinterchartoks {} {}{{\\intercharspace}}\n".format(*kp))
     outf.write("\\XeTeXinterchartokenstate=0\n")
+
+if len(duplicates):
+    print("Duplicates: " + ", ".join("{:04X}: {}".format(c, " ".join(v)) for c,v in sorted(duplicates.items())))

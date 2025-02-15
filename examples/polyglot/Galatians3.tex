@@ -1,5 +1,9 @@
 \def\pluginlist{polyglot-simplecols,ornaments} % probably built in, but futureproofing.
 \input paratext2.tex
+\def\lastbookendrule{\runmilestone{zrule}{style="double" width="0.5" thick="6pt"}}
+\def\bookendrule{}
+\def\bookendrule{\vskip 3pt\runmilestone{zrule}{style="double" width="0.3" thick="5pt"}\vskip 3pt}
+%\kern2pt\hrule\kern2pt\hrule}
 %\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
 %\VisTracetrue% Every chunk joined, mark with the current trace number
 %\diglotDbgJoinboxes=1246 % And if that's not enough, assuming trace entry 1246
@@ -15,19 +19,23 @@
 \def\DiglotAFraction{0.44} 
 
 \newPolyglotCol A
+\endbooknoejecttrue
+\endbooknoejectfalse
 
 \input Galatians-setup.tex
 \iftrue
 \CropMarkstrue
+\tracing{o}
+\tracing{oh}
  \tracing{H}
  \tracing{d}
  \tracing{g}
  \tracing{F}
  \tracing{dP}
- \tracing{s}
+ %\tracing{s}
  \tracing{n}
- \tracing{sC}
- \VisTracetrue
+ %\tracing{sC}
+ %\VisTracetrue
  \tracing{D}
  \tracing{Dh}
  \tracing{et}
@@ -38,6 +46,16 @@
 \pageno=-1
 %\tracing{s}\tracing{S}
 %\uselanguage{british}
+\catcode"FDEE=1 \catcode"FDEF=2
+\prepusfm
+\def\zcolophon﷮
+\esb\cat colophon\cat*
+\bigskip
+\pc This is the colophon that might go at the end of the book
+\esbe 
+﷯
+
+\unprepusfm
 \diglotfalse
 \singlecolumn
 \ptxfile{intro.usfm}
@@ -51,11 +69,17 @@
 %\addToRightHooks{\RTLtrue}
 \diglotSepNotestrue
 \diglotBalNotestrue
+\SetDiglotBGColour{A}{0.9 0.9 1.0}{1}
 \stylesheet{standardborders.sty}
 \stylesheet{Galatians3.sty}
+\expandafter\def\csname bookend-final\endcsname{
+\layoutstylebreak
+\singlecolumn
+\zcolophon\csname beenb@dyfalse\endcsname}
 \ptxfile{mergedGal.usfm}
-\diglotcolumns
+\ifdiglot\else\errormessage{help}\fi
 \diglotSepNotesfalse
+\lastptxfiletrue
 \ptxfile{mergedGalV.usfm}
 
 %\shipout\vbox{\hbox{partial}\unvbox\partial}

@@ -6,34 +6,34 @@
 %+cmargin_verse
 \newdimen\VerseBoxWidth \VerseBoxWidth=0pt
 \def\getverseboxwidth{\setbox2=\hbox{\cstyle{v}{\endash 000}}\global\VerseBoxWidth=\wd2}
-
+\newif\ifrsh@ft % Does AfterVerseSpaceFactor go right or left of the verse number -- too much happening after setting to use ift@mp
 \def\getnum#1#2{\setbox0=\hbox{\global #1=0#2}}
 \def\mymarginpverse{%
   \ifdim\VerseBoxWidth=0pt \getverseboxwidth\fi
-  \trace{v}{position is \colshiftmode}%
-  \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
+  \trace{v}{position is \colshiftmode, VerseBoxWidth=\the\VerseBoxWidth}%
+  \ifnum\c@rrentcols=1 \edef\t@mpa{page}\else\edef\t@mpa{col}\fi
   \ifx\v@rsefrom\v@rseto\edef\t@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\t@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
   \ifcsname marginnote-\t@mp @v:\t@mpa no\endcsname \count10=\csname marginnote-\t@mp @v:\t@mpa no\endcsname
     \trace{v}{from marginnote-\t@mp @v:\t@mpa no, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
   \else\trace{v}{no marginnote-\t@mp @v:\t@mpa no, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
   \trace{v}{pagenumber is \ift@mp odd\else even\fi, and side is \colshiftmode, value=\the\count10, mcstack=\mcstack}%
   \ifnum \ifx\colshiftmode\@nner\ift@mp 0\else 1\fi\else\ifx\colshiftmode\@uter\ift@mp 1\else 0\fi\else\ifx\colshiftmode\r@ght 1\else 0\fi\fi\fi =0
-    \t@mptrue\else\t@mpfalse
+    \rsh@fttrue\else\rsh@ftfalse
   \fi
   \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{%
-        \ift@mp\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\mysimpleprintv@rse
-        \ift@mp\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
-    \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ift@mp left\else right\fi, pad to \the\VerseBoxWidth}%
+        \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\mysimpleprintv@rse
+        \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
+    \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ifrsh@ft left\else right\fi, pad to \the\VerseBoxWidth}%
   \else
     \s@tsideskips{v}%
-    \ift@mp \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
+    \ifrsh@ft \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
     \trace{v}{leftskip=\the\leftskip, rightskip=\the\rightskip}%
     \myh@ngprintv@rse{2}%
     \setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{%
-        \ift@mp\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\box2
-        \ift@mp\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
+        \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\box2
+        \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
   \fi
-  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ift@mp left\else right\fi}%
+  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ifrsh@ft left\else right\fi}%
   \d@marginnote{2}{\t@mp}{v}{\colshiftmode}%
   \outputmvmkr
 }
@@ -41,14 +41,20 @@
 \def\mysimpleprintv@rse{\cstyle{v}{\plainv@rse}}
 \let\defaultprintverse=\mymarginpverse
 \let\printverse\defaultprintverse
-\newif\ifversehyphen \versehyphenfalse
+\newif\ifversehyphen \versehyphentrue
+\newif\ifversehyphenup \versehyphenupfalse
 \def\myh@ngprintv@rse#1{%
     \p@sheof
     \setbox1=\hbox{\p@sheof\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}
         \global\c@untA=0\tmp \xdef\tmp{\x@\scantokens\x@{\v@rseto\noexpand}} \global\c@untB=0\tmp \p@peof}%\advance\c@untA by 1
-    \setbox1=\hbox{\cstyle{v}{\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi\adornv{\v@rseto}}}%
-    \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\cstyle{v}{\adornv{\v@rsefrom}}}%
-        \box1}%
+    \ifversehyphenup
+      \setbox1=\hbox{\cstyle{v}{\adornv{\v@rsefrom}\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi}}%
+      \dimen0=\wd1
+      \setbox#1=\vtop{\box1\s@tbaseline{v}{v}\hbox to \dimen0{\cstyle{v}{\adornv{\v@rseto}}\hfil}}%
+    \else
+      \setbox1=\hbox{\cstyle{v}{\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi\adornv{\v@rseto}}}%
+      \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\cstyle{v}{\adornv{\v@rsefrom}}}\box1}%
+    \fi
     \p@peof}
 
 %-cmargin_verse
