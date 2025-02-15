@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.7.22"
 GitVersionStr = "2.7.22"
-ConfigVersion = "2.22"
+ConfigVersion = "2.23"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1103,10 +1103,15 @@ class ViewModel:
                 self.clean_adj_files(adjpath)
 
         if v < 2.22: # transfer Show/Hide settings to Advanced > texpert
-            self._configset(config, 'texpert/showadjpoints', config.get('snippets', 'adjlabelling', fallback=False))
-            self._configset(config, 'texpert/showusfmcodes', config.get('snippets', 'paralabelling', fallback=False))
-            self._configset(config, 'texpert/showhboxerrorbars', config.get('document', 'ifhidehboxerrors', fallback=False))
+            self._configset(config, 'texpert/showadjpoints', config.getboolean('snippets', 'adjlabelling', fallback=False))
+            self._configset(config, 'texpert/showusfmcodes', config.getboolean('snippets', 'paralabelling', fallback=False))
+            self._configset(config, 'texpert/showhboxerrorbars', config.getboolean('document', 'ifhidehboxerrors', fallback=False))
 
+        if v < 2.23:
+            if not config.getboolean('paper', 'ifgrid', fallback=False):
+                self._configset(config, 'grid/gridgraph', False)
+                self._configset(config, 'grid/gridlines', False)
+                
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")

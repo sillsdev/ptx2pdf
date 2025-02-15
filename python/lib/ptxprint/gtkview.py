@@ -5631,10 +5631,10 @@ class GtkViewModel(ViewModel):
             model.remove(itr)
             self.changed()
 
-    def onPageSizeChanged(self, btn):
-        val = "cropmarks" in self.get("ecb_pagesize")
-        for w in ["c_cropmarks", "c_grid"]:
-            self.set(w, val)
+    # def onPageSizeChanged(self, btn): # was a signal on ecb_pagesize
+        # val = "cropmarks" in self.get("ecb_pagesize")
+        # for w in ["c_cropmarks", "c_grid"]:
+            # self.set(w, val)
 
     def onFootnoteRuleClicked(self, btn):
         status = self.sensiVisible("c_footnoterule")

@@ -130,7 +130,7 @@ class TexModel:
         "snippets/fancyborders":          ("c_useOrnaments", None, FancyBorders),
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
-        "snippets/grid":                  ("c_grid", None, Grid),
+        "snippets/grid":                  ("c_gridLines", None, Grid),
         "texpert/showusfmcodes":          ("c_showusfmcodes", None, ParaLabelling)
     }
     _settingmappings = {
