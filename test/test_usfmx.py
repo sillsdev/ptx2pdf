@@ -4,9 +4,9 @@ import unittest, re
 from ptxprint.usfmutils import Usfm, Sheets
 from ptxprint.reference import RefList
 
-testmode = "usfm"
+testmode = ("usfm", "usx")[0]
 if testmode == "usx":
-    from ptxprint.usxxutils import Usfm as Usx
+    from ptxprint.usxutils import Usfm as Usx
 
 testdatpath = "projects/WSGBTpub/44JHNWSGBTpub.SFM"
 

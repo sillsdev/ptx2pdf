@@ -889,6 +889,7 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                 self.res = 4 if runner.returncode else 0
+                logger.debug(f"{runner.stdout}")
             else:
                 self.res = 4 if runner else 0
             self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
