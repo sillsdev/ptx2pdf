@@ -1,5 +1,5 @@
 
-import os
+import os, argparse
 from PIL import Image, ImageChops, ImageEnhance, ImageOps
 from ptxprint.utils import _
 import logging

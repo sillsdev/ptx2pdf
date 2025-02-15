@@ -98,6 +98,8 @@ aliases = {"q", "s", "mt", "to", "imt", "imte", "io", "iq", "is", "ili", "pi",
 _defFields = {"Marker", "EndMarker", "Name", "Description", "OccursUnder", "TextProperties", "TextType", "StyleType"}
 
 def asFloatPts(self, s, mrk=None, model=None):
+    if isinstance(s, float):
+        return s
     s = re.sub(r'\s*#.*$', '', s)
     if mrk is None:
         mrk = self.marker
@@ -139,6 +141,8 @@ def toFloatPts(self, v, mrk=None, model=None, parm=None):
     return "{} pt".format(f2s(float(v)))
 
 def fromFloat(self, s, mrk=None, model=None):
+    if isinstance(s, float):
+        return s
     s = re.sub(r'\s*#.*$', '', s)
     try:
         return float(s)
@@ -149,6 +153,8 @@ def toFloat(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v))
 
 def from12(self, s, mrk=None, model=None):
+    if isinstance(s, float):
+        return s
     s = re.sub(r'\s*#.*$', '', s)
     try:
         return float(s) / 12.
@@ -159,6 +165,8 @@ def to12(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v) * 12.)
 
 def fromBool(self, s, mrk=None, model=None):
+    if isinstance(s, bool):
+        return s
     s = re.sub(r'\s*#.*$', '', s)
     return not(s is None or s is False or s == "-")
 

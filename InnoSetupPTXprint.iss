@@ -40,11 +40,11 @@ Name: "russian";    MessagesFile: "compiler:Languages\Russian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
-[InstallDelete]
-#Type: filesandordirs; Name: "{app}\xetex"
+; [InstallDelete]
+; Type: filesandordirs; Name: "{app}\xetex"
 
 [Files]
-Source: dist\ptxprint\PTXprint.exe; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,gspawn-win64-helper.exe"
 ; These are the (14) languages that PTXprint's UI is available in:
@@ -62,7 +62,7 @@ Source: "dist\ptxprint\share\locale\ro\*"; DestDir: "{app}\share\locale\ro\"; Fl
 Source: "dist\ptxprint\share\locale\ru\*"; DestDir: "{app}\share\locale\ru\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\th\*"; DestDir: "{app}\share\locale\th\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
-#Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
+; Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita" 
 

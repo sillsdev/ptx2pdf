@@ -42,12 +42,12 @@ def anyver(p, path=".", ext=".dll"):
 # including GTK, etc.
 mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):
-    binaries = [('C:\\msys64\\mingw64\\lib\\girepository-1.0\\{}.typelib'.format(x),
+    binaries = [(f'C:\\msys64\\mingw64\\lib\\girepository-1.0\\{x}.typelib',
                                             'gi_typelibs') for x in
                     ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0', 'GdkPixbuf-2.0', 
                      'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'Poppler-0.18')] \
               + [(f'{mingwb}\\gspawn-win64-helper.exe', 'ptxprint')] \
-              + [('{}\\{}.dll'.format(mingwb, x), '.') for x in
+              + [(f'{mingwb}\\{x}.dll', '.') for x in
                     (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', 'libpoppler-cpp-0', 'libcurl-4',
                      'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
                      'libpsl-5', 'libssh2-1', 'libplds4', anyver('libunistring-', mingwb)) if x is not None] 
@@ -80,18 +80,22 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
                       + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
-                      + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
-                      + [('python/lib/ptx2pdf/mappings/*.tec', 'ptx2pdf/mappings')]
+#                      + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
+                      + [('python/lib/ptxprint/ptx2pdf/mappings/*.tec', 'ptxprint/ptx2pdf/mappings')]
                       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptxprint/PDFassets/reference')]
                       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
-                      + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')]
+#                      + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')]
                       + [('python/lib/ptxprint/xetex/texmf-var/web2c/xetex/*.fmt', 'ptxprint/xetex/texmf-var/web2c/xetex')]
+                      + [('python/lib/ptxprint/xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
                 # data files are considered text and end up where specified by the tuple.
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
-                      + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
-#                      + sum(([('{}/*.*'.format(dp), 'ptxprint/{}'.format(dp))] for dp, dn, fn in os.walk('xetex') if dp not in ('xetex/bin/windows', ), [])
+                      + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')]
+#                      + sum(([('{}/*.*'.format(dp), 'ptxprint/{}'.format(dp))] for dp, dn, fn in os.walk('xetex') if dp not in ('xetex/bin/windows', ) and any(os.path.isfile(os.path.join(dp, f)) and '.' in f for f in fn)), [])
+					  + [(f"{dp}/*.*", f"ptxprint/{dp}") for dp, _, fn in os.walk("xetex") if dp != "xetex/bin/windows" and any("." in f for f in fn)]
+					  + [(f'python/lib/ptxprint/ptx2pdf{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
+					  + [(f'python/lib/ptxprint/ptx2pdf/mappings/*.map', f'ptxprint/ptx2pdf/mappings')]
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')],

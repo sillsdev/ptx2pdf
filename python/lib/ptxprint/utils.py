@@ -345,6 +345,7 @@ def pycodedir():
 
 def pt_bindir():
     res = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))), "ptxprint")
+    logger.debug(f"pt_bindir= {res}")
     return res
 
 def get_ptsettings():

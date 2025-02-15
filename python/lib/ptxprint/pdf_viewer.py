@@ -301,7 +301,7 @@ class PDFViewer:
             self.spread_mode = False
         else:
             self.spread_mode = self.model.get("c_bkView", False)
-        cpage = self.parlocs.pnums.get(page, page)
+        cpage = self.parlocs.pnums.get(page, page) if self.parlocs is not None else page
         # print(f"{self.parlocs.pnums}")
         # print(f"in show_pdf: {cpage=}   {page=}")
         
