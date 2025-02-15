@@ -95,6 +95,7 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
 #                      + sum(([('{}/*.*'.format(dp), 'ptxprint/{}'.format(dp))] for dp, dn, fn in os.walk('xetex') if dp not in ('xetex/bin/windows', ) and any(os.path.isfile(os.path.join(dp, f)) and '.' in f for f in fn)), [])
 					  + [(f"{dp}/*.*", f"ptxprint/{dp}") for dp, _, fn in os.walk("xetex") if dp != "xetex/bin/windows" and any("." in f for f in fn)]
 					  + [(f'python/lib/ptxprint/ptx2pdf{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
+					  + [(f'xetex/{d}/*', f'ptxprint/xetex/{d}') for d in ('texmf-dist', 'texmf-var')]
 					  + [(f'python/lib/ptxprint/ptx2pdf/mappings/*.map', f'ptxprint/ptx2pdf/mappings')]
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]

@@ -821,6 +821,9 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                 self.res = runner.returncode
+            elif isinstance(runner, subprocess.CompletedProcess):
+                self.res = runner.returncode
+                logger.debug(f"{runner.stdout.decode('UTF-8')}")
             else:
                 self.res = runner
             print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
@@ -888,6 +891,9 @@ class RunJob:
                     #runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
+                self.res = 4 if runner.returncode else 0
+                logger.debug(f"{runner.stdout.decode('UTF-8')}")
+            elif isinstance(runner, subprocess.CompletedProcess):
                 self.res = 4 if runner.returncode else 0
                 logger.debug(f"{runner.stdout}")
             else:
