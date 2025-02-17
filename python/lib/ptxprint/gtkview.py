@@ -6546,7 +6546,6 @@ Thank you,
         screen = dialog.get_screen()
         window = dialog.get_window()
         if window is None:
-            print("Warning: dialog.get_window() returned None.")
             return None
 
         monitor_num = screen.get_monitor_at_window(window)
