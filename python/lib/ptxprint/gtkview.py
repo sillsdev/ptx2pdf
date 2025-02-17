@@ -3275,6 +3275,9 @@ class GtkViewModel(ViewModel):
             if wname in self.dict:
                 v = self.dict[wname]
             self.set(wname, v, mod=False)
+            if wname.startswith("c_"): # Making sure that even the unchecked labels get bold applied if not default
+                lbl = obj.get_child()
+                self.changeLabel(wname, lbl)                
             self.allControls.append(wname)
             obj.show()
             expanders[opt.group].show_all()  # Ensure that the expander and its content are shown

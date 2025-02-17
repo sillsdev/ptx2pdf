@@ -302,35 +302,3 @@ class TeXpert:
     @classmethod
     def hasopt(self, n):
         return n in texpertOptions
-
-
-# All set to None (Feb 2025) --> true/false
-# \squashgridboxfalse
-# \lastbooknoejecttrue
-# \marginalVerseIsMargintrue
-# \CalcChapSizefalse
-# \NoHangVerseNumberOnefalse
-# \HangVAtrue
-# \IndentAtChaptertrue
-# \IndentAfterHeadingfalse
-# \bookresetcallersfalse
-# \notesEachBookfalse
-# \newparnotestrue
-# \parnoteskillprevdepthfalse
-# \parnoteskilldepthtrue
-# \parnotesruletopskiptrue
-# \parnotesmidtopskipfalse
-# \FootNoteGlyphMetricstrue
-# \VisTracetrue
-# \VisTraceExtratrue
-# \figlocleftfalse
-# \CaptionRefFirsttrue
-# \CaptionFirsttrue
-# \DropActionstrue
-# \Actionsfalse
-# \refbookmarkstrue
-# \NoTransparencytrue
-# \MarkAdjustPointstrue
-# \UnderlineSpacesfalse
-# \TOCthreetabfalse
-# \tildenbspfalse
