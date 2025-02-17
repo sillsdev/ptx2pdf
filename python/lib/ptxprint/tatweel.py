@@ -2,7 +2,6 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, Pango, GObject
 import sys
-import winreg
 
 # import logging
 # logger = logging.getLogger(__name__)
@@ -79,17 +78,20 @@ class TatweelDialog:
         if not sys.platform.startswith("win"):
             return None
 
-        key_path = r"Software\SantaFe\Focus\ScriptureReference"
-        try:
-            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_READ)
-            value, _ = winreg.QueryValueEx(key, "")
-            winreg.CloseKey(key)
-            # logger.debug(f"Retrieved Scripture Reference: {value}")
-            return value
-        except FileNotFoundError:
-            logger.debug(f"Error: Registry Key not found: {key_path}")
-        except WindowsError as e:
-            logger.debug(f"Error: {e} while trying to read ref from registry")
+        if sys.platform == "win32":
+            import winreg
+            os.path.abspath(os.path.join(b, 'ptx2pdf'))
+            key_path = r"Software\SantaFe\Focus\ScriptureReference"
+            try:
+                key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_READ)
+                value, _ = winreg.QueryValueEx(key, "")
+                winreg.CloseKey(key)
+                # logger.debug(f"Retrieved Scripture Reference: {value}")
+                return value
+            except FileNotFoundError:
+                logger.debug(f"Error: Registry Key not found: {key_path}")
+            except WindowsError as e:
+                logger.debug(f"Error: {e} while trying to read ref from registry")
 
         return None  # Return None if not found or on error
 

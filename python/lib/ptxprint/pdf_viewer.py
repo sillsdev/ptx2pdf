@@ -313,21 +313,22 @@ class PDFViewer:
             self.model.set("t_pgNum", str(page), mod=False)
             self.psize = pg.get_size()
             images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
-        else:
-            if self.spread_mode:
-                spread = self.get_spread(cpage, self.rtl_mode)
-                self.create_boxes(len(spread))
-                for i in spread:
-                    if i in range(self.numpages+1):
-                        pg = self.document.get_page(i-1)
-                        self.psize = pg.get_size()
-                        images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
-            else:
-                if cpage in range(self.numpages+1):
-                    self.create_boxes(1)
-                    pg = self.document.get_page(cpage-1)
+            self.parlocs.load_page(self.document, pg, cpage)
+        elif self.spread_mode:
+            spread = self.get_spread(cpage, self.rtl_mode)
+            self.create_boxes(len(spread))
+            for i in spread:
+                if i in range(self.numpages+1):
+                    pg = self.document.get_page(i-1)
                     self.psize = pg.get_size()
-                    images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
+                    images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
+                    self.parlocs.load_page(self.document, pg, i)
+        elif cpage in range(self.numpages+1):
+            self.create_boxes(1)
+            pg = self.document.get_page(cpage-1)
+            self.psize = pg.get_size()
+            images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
+            self.parlocs.load_page(self.document, pg, cpage)
 
         self.current_page = page
         self.current_index = cpage
@@ -755,8 +756,8 @@ class PDFViewer:
         a = self.hbox.get_allocation()
 
         if self.parlocs is not None:
-            p = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
-        return p, pnum
+            p, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
+        return p, pnum, a
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
         if label is None:
@@ -795,7 +796,7 @@ class PDFViewer:
                                    _("Turn off Booklet pagination")+"\n"+ \
                                    _("on Finishing tab to re-enable"), None, sensitivity=False)
         else:
-            parref, pgindx = self.get_parloc(widget, event)
+            parref, pgindx, annot = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
                 parnum = getattr(parref, 'parnum', 0) or 0
                 parnum = "["+str(parnum)+"]" if parnum > 1 else ""
@@ -805,14 +806,14 @@ class PDFViewer:
                     info = self.adjlist.getinfo(ref + parnum, insert=True)
             logger.debug(f"{event.x=},{event.y=}")
 
-        logger.debug(f"{parref=} {info=}")
+        logger.debug(f"{parref=} {info=}, {annot=}")
         if len(info) and re.search(r'[.:]', parref.ref) and \
            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in "LRABCDEFG" else 3
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
-            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
+            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}% ({annot or ''})"
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
             if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
@@ -1418,15 +1419,32 @@ def readpts(s):
 class ParRect:
     pagenum:    int
     xstart:     float
-    ystart:     float
+    ystart:     float       # Usually > yend
     xend:       float = 0.
     yend:       float = 0.
+    dests:      InitVar[None] = None
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
 
     def __repr__(self):
         return self.__str__()
+
+    def get_dest(self, x, y, baseline):
+        if self.dests is None:
+            return None
+        ydiff = None
+        xdiff = None
+        curra = None
+        for a in self.dests:
+            if a[1][1] > y and (ydiff is None and a[1][1] - y < ydiff):
+                ydiff = a[1][1] - y
+                curra = a
+            if ydiff < baseline and a[1][1] > y and a[1][0] <= x and (xdiff is None or x - a[1][0] < xdiff):
+                xdiff = x - a[1][0]
+                curra = a
+        return None if curra is None else curra[0]
+
 
 @dataclass
 class ParInfo:
@@ -1672,7 +1690,7 @@ class Paragraphs(list):
         """ returns a page index (not folio) """
         # just iterate over paragraphs on this page
         if pnum > len(self.pindex): # need some other test here 
-            return None
+            return (None, None)
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
@@ -1681,8 +1699,8 @@ class Paragraphs(list):
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return p
-        return None
+                    return (p, r.get_annot(x, y, p.baseline))
+        return (None, None)
 
     def getParas(self, pnum):
         if pnum > len(self.pindex):
@@ -1722,4 +1740,25 @@ class Paragraphs(list):
             return None
         else:
             return self.pnumorder[pindex - 1]
+
+    def load_page(self, doc, page, pindex):
+        dests_tree = doc.create_dests_tree()
+        dests = []
+        def collect_dest(k, v, d):
+            dests.append((str(v.named_dest), v.page_num, (v.left, v.top)))
+        #dests_tree.foreach(collect_dest, None)
+        dests_tree.destroy()
+        logger.debug(f"{len(dests)=}")
+        for p, r in self.getParas(pindex):
+            if r.dests is None:
+                r.dests = []
+            else:
+                continue
+            for a in dests:
+                logger.log(5, f"{a=}, {r=}")
+                if a[1] != pindex:
+                    continue
+                if a[2][0] >= r.xstart and a[2][0] <= r.xend and a[2][1] >= r.yend and a[2][1] <= r.ystart:
+                    r.dests.append((a[0], a[2]))
+
 
