@@ -1167,7 +1167,6 @@ class PDFViewer:
         self.timer_id = None  # Reset timer reference
         # If the last click was within the last N seconds, cancel execution
         if time.time() - self.last_click_time < self.autoUpdateDelay:
-            print(f"Returned early from executePrint")
             return False  # Do nothing, just stop the timer
         self.model.onOK(None)
         self.updatePageNavigation()

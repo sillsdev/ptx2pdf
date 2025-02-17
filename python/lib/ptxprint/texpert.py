@@ -59,8 +59,8 @@ texpertOptions = {
     # "NoteLineMajorDiv":   O("notelinediv", "LAY", (0, 0, 100, 1, 5, 0), r"\def{0}{{{1}}}", _("Noteline subdivisions"), 
                             # _("Major noteline happens at the start then every this many lines after.")),
 
-    "versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
-    "versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
+    "versehyphen":        O("vhyphen", "CVS", True, "", _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
+    "versehyphenup":      O("vhyphenup", "CVS", False, "", _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
     "marginalVerseIsMargin": O("mverseismargin", "CVS", False, None, _("No column space reduction for marginal verses"), _("If false, the space for marginal verses is taken from the column. If true, the space for marginal verses is taken from the margins or rule gutter")),
     "CalcChapSize":       O("calcchapsize", "CVS", True, "", _("Auto Calc Optimum Chapter Size"),
                             _("Attempt to automatically calculate drop chapter number size")),
@@ -103,9 +103,9 @@ texpertOptions = {
                             _("This sets how far (in ems) the underline is below the text and what it is relative to. If negative, it is the distance below the baseline. If positive (or zero), it is the distance below the bottom of any descenders."),
                             valfn=lambda v: f2s(float(v or "-0.1"))),
 
-    "MidPageFootnotes":   O("midnotes", "NTS", False, "", _("Mid-Page Footnotes"),
+    "MidPageFootnotes":   O("midnotes", "NTS", False, None, _("Mid-Page Footnotes"),
                             _("Should footnotes go before a single-double column transition")),
-    "FinalNotesDown":     O("fnotesdown", "NTS", False, "", _("Final Page Notes Down"),
+    "FinalNotesDown":     O("fnotesdown", "NTS", False, None, _("Final Page Notes Down"),
                             _("Push notes on the final page to the bottom of the page")),
     "bookresetcallers":   O("bookresetcallers", "NTS", True, "", _("Reset Callers at Each Book"),
                             _("Re-start the footnote and cross-reference callers at the start of each book")),
