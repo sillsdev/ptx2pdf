@@ -2615,7 +2615,6 @@ class GtkViewModel(ViewModel):
             self.changed()
 
     def on_insert_tatweel_rule(self, button):
-        """Inserts the rule into Changes.txt file."""
         w = self.builder.get_object("t_tatweelPreview")
         rule_text = w.get_text()
         nbk_Viewer = self.builder.get_object("nbk_Viewer")
@@ -2624,26 +2623,6 @@ class GtkViewModel(ViewModel):
         cursor_iter = buf.get_iter_at_mark(buf.get_insert())
         buf.insert(cursor_iter, rule_text+'\n')
         self.changed()        
-
-    def on_insert_tatweel(self):
-        """types a tatweel"""
-        nbk_Viewer = self.builder.get_object("nbk_Viewer")
-        pgnum = nbk_Viewer.get_current_page()
-        buf = self.fileViews[pgnum][0]
-        cursor_iter = buf.get_iter_at_mark(buf.get_insert())
-        buf.insert(cursor_iter, r'ـ')
-        self.changed()        
-
-    def onSettingsKeyPressed(self, widget, event):
-        """Handles global shortcut keys for inserting Tatweel."""
-        keyval = event.keyval
-        state = event.state
-        # Debugging: Print key pressed
-        # print(f"Key Pressed: {keyval} | Name: {Gdk.keyval_name(keyval)} | State: {state}")
-        if keyval == Gdk.KEY_F9:
-            self.on_insert_tatweel()
-            return True  # Stop event propagation
-        return False  # Allow other keypresses to function normally
         
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
@@ -2655,9 +2634,6 @@ class GtkViewModel(ViewModel):
     def loadPics(self, mustLoad=True, fromdata=True, force=False):
         super().loadPics(mustLoad=mustLoad, fromdata=fromdata, force=force)
         self.updatePicList()
-
-    # def onSavePicListEdits(self, btn):
-        # self.savePics()
 
     def onSaveEdits(self, btn, pgid=None):
         if pgid is not None:

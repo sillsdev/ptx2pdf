@@ -23769,7 +23769,6 @@ Keyboard Shortcuts:
                             <property name="enable-popup">True</property>
                             <property name="group-name">gr_ViewEdit</property>
                             <signal name="change-current-page" handler="onViewerChangePage" swapped="no"/>
-                            <signal name="key-press-event" handler="onSettingsKeyPressed" swapped="no"/>
                             <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                             <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
                             <child>
@@ -23964,7 +23963,6 @@ are likely to have to re-do it all again.</property>
                                 <property name="hexpand">False</property>
                                 <property name="vexpand">True</property>
                                 <property name="shadow-type">in</property>
-                                <signal name="key-press-event" handler="onSettingsKeyPressed" swapped="no"/>
                                 <child>
                                   <placeholder/>
                                 </child>
@@ -23989,7 +23987,6 @@ are likely to have to re-do it all again.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="shadow-type">in</property>
-                                <signal name="key-press-event" handler="onSettingsKeyPressed" swapped="no"/>
                                 <child>
                                   <placeholder/>
                                 </child>
@@ -36432,6 +36429,7 @@ to insert one or more Tatweels.
 (Note that this box is automatically
 updated from the clipboard if the
 word/phrase is 30 characters or less).</property>
+                <property name="valign">center</property>
                 <property name="width-chars">20</property>
                 <property name="input-purpose">terminal</property>
               </object>
@@ -36503,6 +36501,7 @@ cursor location?</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="tooltip-text" translatable="yes">The rule to be added to Changes.txt</property>
+                <property name="valign">center</property>
                 <property name="hexpand">True</property>
                 <property name="editable">False</property>
                 <property name="has-frame">False</property>

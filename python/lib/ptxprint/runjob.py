@@ -704,6 +704,7 @@ class RunJob:
         os.putenv("max_print_line", "32767")    # Allow long error messages
         ptxmacrospath = os.path.abspath(self.macrosdir)
         ptxmacrobase = os.path.join(pycodedir(), 'ptx2pdf')
+        print(f"{ptxmacrobase=}")
         if not os.path.exists(ptxmacrobase):
             ptxmacrobase = os.path.join(pycodedir(), "..", "..", "..", "src")
         if not os.path.exists(ptxmacrospath) or not os.path.exists(os.path.join(ptxmacrospath, "paratext2.tex")):

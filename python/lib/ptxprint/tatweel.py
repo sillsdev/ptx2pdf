@@ -75,12 +75,9 @@ class TatweelDialog:
                     self.t_tatweelRef.set_text(ref)
 
     def read_scripture_reference(self):
-        if not sys.platform.startswith("win"):
-            return None
-
         if sys.platform == "win32":
             import winreg
-            os.path.abspath(os.path.join(b, 'ptx2pdf'))
+            # os.path.abspath(os.path.join(b, 'ptx2pdf'))
             key_path = r"Software\SantaFe\Focus\ScriptureReference"
             try:
                 key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_READ)

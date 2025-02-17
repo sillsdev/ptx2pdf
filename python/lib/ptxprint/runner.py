@@ -1,7 +1,9 @@
 
-import sys, subprocess, os
+import sys, subprocess, os, logging
 import xml.etree.ElementTree as et
 from ptxprint.utils import pt_bindir
+
+logger = logging.getLogger(__name__)
 
 if sys.platform == "linux" or sys.platform == "darwin":
 
@@ -42,6 +44,7 @@ elif sys.platform == "win32":
     def call(*a, **kw):
         path = os.path.join(pt_bindir(), "xetex", "bin", "windows", a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
+        logger.debug(f"{path=} {newa=}")
         kw['stdout'] = kw.get('stdout', subprocess.PIPE)
         kw['stderr'] = kw.get('stderr', subprocess.STDOUT)
         res = subprocess.run(*newa, creationflags=CREATE_NO_WINDOW, **kw)
