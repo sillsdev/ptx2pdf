@@ -74,6 +74,10 @@ def commentOut(buffer, view, model, *a): # ^/
     buffer.delete_mark(start_mark)
     buffer.delete_mark(end_mark)
     
+def tatweel(buffer, view, model, *a):
+    cursor_iter = buffer.get_iter_at_mark(buffer.get_insert())
+    buffer.insert(cursor_iter, r'ـ')
+    
 def justPlusOne(buffer, view, model, *a): # ^1
     processLine(buffer, r"\+(\d)", lambda m:"+" + ("1" if m.group(1) == "0" else "0"))
 
@@ -137,27 +141,28 @@ bindings = [
     # Front Matter
     {Gdk.KEY_0:     (commentOut, r"\rem"),
      Gdk.KEY_comma: (commentOut, r"\rem"),
+     Gdk.KEY_grave: (tatweel, ),
      Gdk.KEY_d:     (duplicateLine, ),
      Gdk.KEY_Up:    (moveLines, False),
      Gdk.KEY_Down:  (moveLines, True),
      Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, ),
      Gdk.KEY_l:     (removeLine, )},
-    # AdjList
+    # AdjList - no longer uses the text editor!
     {Gdk.KEY_0:     (commentOut, r"%"),
-     Gdk.KEY_comma: (commentOut, r"%"),
-     Gdk.KEY_1:     (justPlusOne, ),
-     Gdk.KEY_2:     (removeUntilNum, 2),
-     Gdk.KEY_3:     (removeUntilNum, 3),
-     Gdk.KEY_4:     (removeUntilNum, 4),
-     Gdk.KEY_5:     (removeUntilNum, 5),
-     Gdk.KEY_6:     (removeUntilNum, 6),
-     Gdk.KEY_7:     (removeUntilNum, 7),
-     Gdk.KEY_8:     (removeUntilNum, 8),
-     Gdk.KEY_9:     (removeUntilNum, 9),
-     Gdk.KEY_grave: (shrinkLine, ),
-     Gdk.KEY_i:     (shrinkLine, ),
-     Gdk.KEY_d:     (duplicateLine, ),
+     # Gdk.KEY_comma: (commentOut, r"%"),
+     # Gdk.KEY_1:     (justPlusOne, ),
+     # Gdk.KEY_2:     (removeUntilNum, 2),
+     # Gdk.KEY_3:     (removeUntilNum, 3),
+     # Gdk.KEY_4:     (removeUntilNum, 4),
+     # Gdk.KEY_5:     (removeUntilNum, 5),
+     # Gdk.KEY_6:     (removeUntilNum, 6),
+     # Gdk.KEY_7:     (removeUntilNum, 7),
+     # Gdk.KEY_8:     (removeUntilNum, 8),
+     # Gdk.KEY_9:     (removeUntilNum, 9),
+     # Gdk.KEY_grave: (shrinkLine, ),
+     # Gdk.KEY_i:     (shrinkLine, ),
+     # Gdk.KEY_d:     (duplicateLine, ),
      Gdk.KEY_l:     (removeLine, )},
     # Final SFM
     {Gdk.KEY_minus: (shrinkText, ),
@@ -171,6 +176,7 @@ bindings = [
     # General Editing tab(1)
     {Gdk.KEY_0:     (commentOut, r"#"),
      Gdk.KEY_comma: (commentOut, r"%"),
+     Gdk.KEY_grave: (tatweel, ),
      Gdk.KEY_d:     (duplicateLine, ),
      Gdk.KEY_Up:    (moveLines, False),
      Gdk.KEY_Down:  (moveLines, True),
@@ -180,6 +186,17 @@ bindings = [
     # General Editing tab(2)
     {Gdk.KEY_0:     (commentOut, r"#"),
      Gdk.KEY_comma: (commentOut, r"%"),
+     Gdk.KEY_grave: (tatweel, ),
+     Gdk.KEY_d:     (duplicateLine, ),
+     Gdk.KEY_Up:    (moveLines, False),
+     Gdk.KEY_Down:  (moveLines, True),
+     Gdk.KEY_minus: (shrinkText, ),
+     Gdk.KEY_equal: (growText, ),
+     Gdk.KEY_l:     (removeLine, )},
+    # General Editing tab(3)
+    {Gdk.KEY_0:     (commentOut, r"#"),
+     Gdk.KEY_comma: (commentOut, r"%"),
+     Gdk.KEY_grave: (tatweel, ),
      Gdk.KEY_d:     (duplicateLine, ),
      Gdk.KEY_Up:    (moveLines, False),
      Gdk.KEY_Down:  (moveLines, True),

@@ -42,6 +42,7 @@ from ptxprint.hyphen import Hyphenation
 from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
 from ptxprint.pdf_viewer import PDFViewer, Paragraphs
+from ptxprint.tatweel import TatweelDialog
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -2456,6 +2457,8 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(lname).set_text("Settings")
                 self.noUpdate = False
                 return
+            else:
+                self.enableCodelets(pgnum, fpath)
         else:
             self.noUpdate = False
             return
@@ -2529,6 +2532,9 @@ class GtkViewModel(ViewModel):
             
             # Add categories and buttons
             for category, codeitems in info.items():
+                # if category == "Arabic" and self.get('fcb_script') != 'Arab': # FixMe! (this needs to updated when we
+                    # print(f"Skipping Arabic")                                 # change projects/configs but it doesn't
+                    # continue                                                  # because the menu is already populated
                 button = Gtk.Button.new_with_label(category)
                 button.set_focus_on_click(False)
                 button.set_halign(Gtk.Align.START)
@@ -2543,7 +2549,16 @@ class GtkViewModel(ViewModel):
                     submenu.append(menu_item)
             
                 button.connect("clicked", self.showCodeletMenu, submenu)
+
             vb.set_no_show_all(True)
+
+    def showMakeTatweelRuleDialog(self):
+        # Instantiate TatweelDialog and display it
+        if not hasattr(self, 'tatweel_dialog'):
+            font = str(self.get('bl_fontR', None)).split("|")[0]
+            self.dialog = TatweelDialog(self.builder, font)
+        else:
+            self.tatweel_dialog.show_all()
 
     def showCodeletMenu(self, button, menu):
         menu.show_all()
@@ -2587,19 +2602,28 @@ class GtkViewModel(ViewModel):
             self.changed()
             return
 
-        # if ty.startswith('method'):
-            # m = getattr(self, code_codelet, None)
-            # if m is not None:
-                # m()
-
         if ty.startswith('comment'):
             txt = f"{ty[7:]} {codelet['Label']}\n{code_codelet}\n"
             buf.insert(cursor_iter, txt)
+        elif ty.startswith('method'):
+            m = getattr(self, code_codelet, None)
+            if m is not None:
+                m()
         else:
             txt = f"{code_codelet}\n"
             buf.insert(cursor_iter, txt)
             self.changed()
 
+    def on_insert_tatweel_rule(self, button):
+        w = self.builder.get_object("t_tatweelPreview")
+        rule_text = w.get_text()
+        nbk_Viewer = self.builder.get_object("nbk_Viewer")
+        pgnum = nbk_Viewer.get_current_page()
+        buf = self.fileViews[pgnum][0]
+        cursor_iter = buf.get_iter_at_mark(buf.get_insert())
+        buf.insert(cursor_iter, rule_text+'\n')
+        self.changed()        
+        
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
             return
@@ -2610,9 +2634,6 @@ class GtkViewModel(ViewModel):
     def loadPics(self, mustLoad=True, fromdata=True, force=False):
         super().loadPics(mustLoad=mustLoad, fromdata=fromdata, force=force)
         self.updatePicList()
-
-    # def onSavePicListEdits(self, btn):
-        # self.savePics()
 
     def onSaveEdits(self, btn, pgid=None):
         if pgid is not None:
@@ -3230,6 +3251,9 @@ class GtkViewModel(ViewModel):
             if wname in self.dict:
                 v = self.dict[wname]
             self.set(wname, v, mod=False)
+            if wname.startswith("c_"): # Making sure that even the unchecked labels get bold applied if not default
+                lbl = obj.get_child()
+                self.changeLabel(wname, lbl)                
             self.allControls.append(wname)
             obj.show()
             expanders[opt.group].show_all()  # Ensure that the expander and its content are shown
@@ -6489,12 +6513,10 @@ Thank you,
     def get_dialog_geometry(self, dialog):
         """Retrieve the position, size, and monitor details of a given GTK dialog."""
         if dialog is None:
-            print("Warning: Dialog is None.")
             return None
 
         # Ensure the dialog has a valid window before proceeding
         if not dialog.get_realized():
-            print(f"Warning: {dialog} has not been realized yet.")
             return None
 
         x, y = dialog.get_position()
@@ -6503,7 +6525,6 @@ Thank you,
         screen = dialog.get_screen()
         window = dialog.get_window()
         if window is None:
-            print("Warning: dialog.get_window() returned None.")
             return None
 
         monitor_num = screen.get_monitor_at_window(window)

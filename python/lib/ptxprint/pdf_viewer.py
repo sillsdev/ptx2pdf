@@ -1,4 +1,4 @@
-import gi, os, datetime
+import gi, os, datetime, ctypes
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
@@ -313,21 +313,22 @@ class PDFViewer:
             self.model.set("t_pgNum", str(page), mod=False)
             self.psize = pg.get_size()
             images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
-        else:
-            if self.spread_mode:
-                spread = self.get_spread(cpage, self.rtl_mode)
-                self.create_boxes(len(spread))
-                for i in spread:
-                    if i in range(self.numpages+1):
-                        pg = self.document.get_page(i-1)
-                        self.psize = pg.get_size()
-                        images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
-            else:
-                if cpage in range(self.numpages+1):
-                    self.create_boxes(1)
-                    pg = self.document.get_page(cpage-1)
+            self.parlocs.load_page(self.document, pg, cpage)
+        elif self.spread_mode:
+            spread = self.get_spread(cpage, self.rtl_mode)
+            self.create_boxes(len(spread))
+            for i in spread:
+                if i in range(self.numpages+1):
+                    pg = self.document.get_page(i-1)
                     self.psize = pg.get_size()
-                    images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
+                    images.append(render_page_image(pg, self.zoomLevel, i, self.add_hints if self.showadjustments else None))
+                    self.parlocs.load_page(self.document, pg, i)
+        elif cpage in range(self.numpages+1):
+            self.create_boxes(1)
+            pg = self.document.get_page(cpage-1)
+            self.psize = pg.get_size()
+            images.append(render_page_image(pg, self.zoomLevel, cpage, self.add_hints if self.showadjustments else None))
+            self.parlocs.load_page(self.document, pg, cpage)
 
         self.current_page = page
         self.current_index = cpage
@@ -755,8 +756,8 @@ class PDFViewer:
         a = self.hbox.get_allocation()
 
         if self.parlocs is not None:
-            p = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
-        return p, pnum
+            p, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
+        return p, pnum, a
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
         if label is None:
@@ -795,7 +796,7 @@ class PDFViewer:
                                    _("Turn off Booklet pagination")+"\n"+ \
                                    _("on Finishing tab to re-enable"), None, sensitivity=False)
         else:
-            parref, pgindx = self.get_parloc(widget, event)
+            parref, pgindx, annot = self.get_parloc(widget, event)
             if isinstance(parref, ParInfo):
                 parnum = getattr(parref, 'parnum', 0) or 0
                 parnum = "["+str(parnum)+"]" if parnum > 1 else ""
@@ -805,14 +806,14 @@ class PDFViewer:
                     info = self.adjlist.getinfo(ref + parnum, insert=True)
             logger.debug(f"{event.x=},{event.y=}")
 
-        logger.debug(f"{parref=} {info=}")
+        logger.debug(f"{parref=} {info=}, {annot=}")
         if len(info) and re.search(r'[.:]', parref.ref) and \
            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             o = 4 if ref[3:4] in "LRABCDEFG" else 3
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
-            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
+            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"  # ({annot or ''})
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
             if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
@@ -1167,7 +1168,6 @@ class PDFViewer:
         self.timer_id = None  # Reset timer reference
         # If the last click was within the last N seconds, cancel execution
         if time.time() - self.last_click_time < self.autoUpdateDelay:
-            print(f"Returned early from executePrint")
             return False  # Do nothing, just stop the timer
         self.model.onOK(None)
         self.updatePageNavigation()
@@ -1419,15 +1419,50 @@ def readpts(s):
 class ParRect:
     pagenum:    int
     xstart:     float
-    ystart:     float
+    ystart:     float       # Usually > yend
     xend:       float = 0.
     yend:       float = 0.
+    dests:      InitVar[None] = None
+    lastdest:   InitVar[None] = None
+    firstdest:  InitVar[None] = None
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
 
     def __repr__(self):
         return self.__str__()
+
+    def get_dest(self, x, y, baseline):
+        if self.dests is None:
+            return None
+        ydiff = None
+        xdiff = None
+        curra = None
+        for a in self.dests:
+            logger.log(5, f"Testing ({x}, {y}) against {a}")
+            if a[1][1] > y and (ydiff is None or a[1][1] - y < ydiff):
+                ydiff = a[1][1] - y
+                curra = a
+            if ydiff is not None and ydiff < baseline and a[1][1] > y and a[1][0] <= x and (xdiff is None or x - a[1][0] < xdiff):
+                xdiff = x - a[1][0]
+                curra = a
+        res = None if curra is None else curra[0]
+        logger.log(5, f"Found {curra}")
+        return res
+
+
+@dataclass
+class ParDest:
+    name:       str
+    pagenum:    int
+    x:          float
+    y:          float
+
+    def __gt__(self, other):
+        return self.y < other.y or self.y == other.y and self.x > other.x
+
+    def __lt__(self, other):
+        return self.y > other.y or self.y == other.y and self.x < other.x
 
 @dataclass
 class ParInfo:
@@ -1501,6 +1536,24 @@ class ParlocLinesIterator:
         if len(self.collection):
             self.replay = True
             logger.log(7, "Starting replay of {len(self.collection)} lines")
+
+
+
+class PopplerDest(ctypes.Structure):
+    _fields_ = [
+        ("type", ctypes.c_int),
+        ("page_num", ctypes.c_int),
+        ("left", ctypes.c_double),
+        ("bottom", ctypes.c_double),
+        ("right", ctypes.c_double),
+        ("top", ctypes.c_double),
+        ("zoom", ctypes.c_double),
+        ("named_dest", ctypes.c_char_p),
+        ("change_left", ctypes.c_uint, 1),
+        ("change_top", ctypes.c_uint, 1),
+        ("change_zoom", ctypes.c_uint, 1),
+    ]
+
 
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
@@ -1673,7 +1726,7 @@ class Paragraphs(list):
         """ returns a page index (not folio) """
         # just iterate over paragraphs on this page
         if pnum > len(self.pindex): # need some other test here 
-            return None
+            return (None, None)
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
@@ -1682,15 +1735,27 @@ class Paragraphs(list):
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return p
-        return None
+                    return (p, r.get_dest(x, y, p.baseline))
+        return (None, None)
 
-    def getParas(self, pnum):
+    def getParas(self, pnum, inclast=False):
         if pnum > len(self.pindex):
             return
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
-        for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:
+        start = max(self.pindex[pnum-1], 0)
+        if inclast and pnum > 1:        # pnum is 1 based
+            done = False
+            for p in self[start:-1:-1]:
+                for r in reversed(p.rects):
+                    if r.pagenum == pnum - 1:
+                        yield (p, r)
+                        done = True
+                        break
+                if done:
+                    break
+        start = max(start - 2, 0)
+        for p in self[start:e+2]:
             for r in p.rects:
                 if r.pagenum == pnum:
                     yield (p, r)
@@ -1723,4 +1788,37 @@ class Paragraphs(list):
             return None
         else:
             return self.pnumorder[pindex - 1]
+
+    def load_page(self, doc, page, pindex):
+        dests_tree = doc.create_dests_tree()
+        dests = []
+        def collect_dest(k, v, d):
+            dests.append((str(v.named_dest), v.page_num, (v.left, v.top)))
+        n = dests_tree.node_first()
+        while n is not None:
+            adest = ctypes.cast(n.value(), ctypes.POINTER(PopplerDest)).contents
+            akey = ctypes.cast(n.key(), ctypes.c_char_p).value
+            dests.append(ParDest(str(akey.decode("utf-8") if akey else ""), adest.page_num, adest.left, adest.top))
+            n = n.next()
+        dests_tree.destroy()
+        logger.debug(f"{len(dests)=}")
+        currlast = None
+        for p, r in self.getParas(pindex, inclast=True):
+            logger.log(5, f"load_page processing {p=} {r=}")
+            if r.pagenum < pindex:
+                opg = doc.get_page(r.pagenum)
+                if r.dests is None and opg is not None:
+                    self.load_page(doc, opg, r.pagenum)
+                currlast = max(r.dests)
+                continue
+            if r.dests is None:
+                r.dests = [(currlast.name, (r.xstart, r.ystart))] if currlast is not None else []
+            else:
+                continue
+            for a in dests:
+                if a.pagenum != pindex:
+                    continue
+                if a.x >= r.xstart and a.x <= r.xend and a.y >= r.yend and a.y <= r.ystart:
+                    r.dests.append((a.name, (a.x, a.y)))
+                    currlast = max(currlast, a) if currlast is not None else a
 

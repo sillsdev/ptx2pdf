@@ -722,6 +722,7 @@ class TexModel:
                     if "diglot/copyright" in self.dict:
                         res.append("\\def\\zcopyrightR\uFDEE{}\uFDEF".format(self.dict["diglot/copyright"]))
                     res.append("\\unprepusfm")
+                    res.append("\n%% Advanced TeXpert options")
                     res.append(TeXpert.generateTeX(self.printer))
                 elif l.startswith(r"%\defzvar"):
                     for k in self.printer.allvars():

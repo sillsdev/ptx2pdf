@@ -2,4 +2,6 @@ include python/readme.md
 include python/LICENSE.txt
 recursive-include python/lib/ *.*
 global-exclude *.py[cod] *~
-graft xetex/bin
+graft xetex
+graft src
+prune test docs bin examples fonts icon 

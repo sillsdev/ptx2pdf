@@ -4,7 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ptxprint"
-#version = "2.7.14"
 authors = [{name = "SIL", email = "fonts@sil.org"}]
 readme = "README.md"
 license = {file = "python/LICENSE.txt"}
@@ -36,20 +35,20 @@ git = [ ]
 [project.urls]
 Home-Page = "https://github.com/sillsdev/ptx2pdf"
 
-[tool.setuptools.packages.find]
-where = ["python/lib"]
+[tool.setuptools]
+zip-safe = false
 
-#[tool.setuptools.exclude-package-data]
-#ptxprint = ["*.pyc"]
+[tool.setuptools.package-dir]
+"ptxprint" = "python/lib/ptxprint"
+"ptxprint.ptx2pdf" = "src"
+"ptxprint.xetex.texmf-var" = "xetex/texmf-var"
+"ptxprint.xetex.texmf-dist" = "xetex/texmf-dist"
 
 [tool.setuptools.package-data]
+"ptxprint.ptx2pdf" = ["*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "ptxprint.view.VersionStr"}
-
-#[tool.setuptools]
-#packages = ["ptxprint"]
-#script-files = ["python/scripts/ptxprint", "python/scripts/pdfdiff", "pythons/scripts/xdvitype"]
 
 [tool.bdist_wheel]
 universal = true
