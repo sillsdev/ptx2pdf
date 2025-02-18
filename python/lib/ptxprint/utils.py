@@ -344,13 +344,14 @@ def pycodedir():
     return os.path.abspath(os.path.dirname(__file__))
 
 def pt_bindir():
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    ext = "ptx2pdf"
+    basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
     if not os.path.exists(basedir):
-        basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
-        ext = None
-    res = getattr(sys, '_MEIPASS', basedir)
-    res = res if ext is None else os.path.join(res, ext)
+        basedir = os.path.abspath(os.path.dirname(__file__))
+    res = getattr(sys, '_MEIPASS', None)
+    if res is None:
+        res = basedir
+    else:
+        res = os.path.join(res, 'ptxprint')
     logger.debug(f"pt_bindir= {res}")
     return res
 
