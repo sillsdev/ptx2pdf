@@ -1,4 +1,4 @@
-import gi, os, datetime
+import gi, os, datetime, ctypes
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
@@ -1423,6 +1423,8 @@ class ParRect:
     xend:       float = 0.
     yend:       float = 0.
     dests:      InitVar[None] = None
+    lastdest:   InitVar[None] = None
+    firstdest:  InitVar[None] = None
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
@@ -1437,14 +1439,30 @@ class ParRect:
         xdiff = None
         curra = None
         for a in self.dests:
-            if a[1][1] > y and (ydiff is None and a[1][1] - y < ydiff):
+            logger.log(5, f"Testing ({x}, {y}) against {a}")
+            if a[1][1] > y and (ydiff is None or a[1][1] - y < ydiff):
                 ydiff = a[1][1] - y
                 curra = a
-            if ydiff < baseline and a[1][1] > y and a[1][0] <= x and (xdiff is None or x - a[1][0] < xdiff):
+            if ydiff is not None and ydiff < baseline and a[1][1] > y and a[1][0] <= x and (xdiff is None or x - a[1][0] < xdiff):
                 xdiff = x - a[1][0]
                 curra = a
-        return None if curra is None else curra[0]
+        res = None if curra is None else curra[0]
+        logger.log(5, f"Found {curra}")
+        return res
 
+
+@dataclass
+class ParDest:
+    name:       str
+    pagenum:    int
+    x:          float
+    y:          float
+
+    def __gt__(self, other):
+        return self.y < other.y or self.y == other.y and self.x > other.x
+
+    def __lt__(self, other):
+        return self.y > other.y or self.y == other.y and self.x < other.x
 
 @dataclass
 class ParInfo:
@@ -1518,6 +1536,24 @@ class ParlocLinesIterator:
         if len(self.collection):
             self.replay = True
             logger.log(7, "Starting replay of {len(self.collection)} lines")
+
+
+
+class PopplerDest(ctypes.Structure):
+    _fields_ = [
+        ("type", ctypes.c_int),
+        ("page_num", ctypes.c_int),
+        ("left", ctypes.c_double),
+        ("bottom", ctypes.c_double),
+        ("right", ctypes.c_double),
+        ("top", ctypes.c_double),
+        ("zoom", ctypes.c_double),
+        ("named_dest", ctypes.c_char_p),
+        ("change_left", ctypes.c_uint, 1),
+        ("change_top", ctypes.c_uint, 1),
+        ("change_zoom", ctypes.c_uint, 1),
+    ]
+
 
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
@@ -1699,15 +1735,27 @@ class Paragraphs(list):
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return (p, r.get_annot(x, y, p.baseline))
+                    return (p, r.get_dest(x, y, p.baseline))
         return (None, None)
 
-    def getParas(self, pnum):
+    def getParas(self, pnum, inclast=False):
         if pnum > len(self.pindex):
             return
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
-        for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:
+        start = max(self.pindex[pnum-1], 0)
+        if inclast and pnum > 1:        # pnum is 1 based
+            done = False
+            for p in self[start:-1:-1]:
+                for r in reversed(p.rects):
+                    if r.pagenum == pnum - 1:
+                        yield (p, r)
+                        done = True
+                        break
+                if done:
+                    break
+        start = max(start - 2, 0)
+        for p in self[start:e+2]:
             for r in p.rects:
                 if r.pagenum == pnum:
                     yield (p, r)
@@ -1746,19 +1794,31 @@ class Paragraphs(list):
         dests = []
         def collect_dest(k, v, d):
             dests.append((str(v.named_dest), v.page_num, (v.left, v.top)))
-        #dests_tree.foreach(collect_dest, None)
+        n = dests_tree.node_first()
+        while n is not None:
+            adest = ctypes.cast(n.value(), ctypes.POINTER(PopplerDest)).contents
+            akey = ctypes.cast(n.key(), ctypes.c_char_p).value
+            dests.append(ParDest(str(akey.decode("utf-8") if akey else ""), adest.page_num, adest.left, adest.top))
+            n = n.next()
         dests_tree.destroy()
         logger.debug(f"{len(dests)=}")
-        for p, r in self.getParas(pindex):
+        currlast = None
+        for p, r in self.getParas(pindex, inclast=True):
+            logger.log(5, f"load_page processing {p=} {r=}")
+            if r.pagenum < pindex:
+                opg = doc.get_page(r.pagenum)
+                if r.dests is None and opg is not None:
+                    self.load_page(doc, opg, r.pagenum)
+                currlast = max(r.dests)
+                continue
             if r.dests is None:
-                r.dests = []
+                r.dests = [(currlast.name, (r.xstart, r.ystart))] if currlast is not None else []
             else:
                 continue
             for a in dests:
-                logger.log(5, f"{a=}, {r=}")
-                if a[1] != pindex:
+                if a.pagenum != pindex:
                     continue
-                if a[2][0] >= r.xstart and a[2][0] <= r.xend and a[2][1] >= r.yend and a[2][1] <= r.ystart:
-                    r.dests.append((a[0], a[2]))
-
+                if a.x >= r.xstart and a.x <= r.xend and a.y >= r.yend and a.y <= r.ystart:
+                    r.dests.append((a.name, (a.x, a.y)))
+                    currlast = max(currlast, a) if currlast is not None else a
 
