@@ -813,7 +813,7 @@ class PDFViewer:
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
-            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}% ({annot or ''})"
+            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"  # ({annot or ''})
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
             if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
