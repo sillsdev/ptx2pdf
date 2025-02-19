@@ -4,9 +4,9 @@ Source: https://software.sil.org/ptxprint
 
 Files: *
 Copyright: 
- Copyright (c) 2020, SIL International (http://www.sil.org)
+ Copyright (c) 2020-2025, SIL Global (http://www.sil.org)
 License: MIT 
- Copyright (c) 2020, SIL International (http://www.sil.org)
+ Copyright (c) 2020-2025, SIL Global (http://www.sil.org)
  Released under the MIT license cited below:
  .
  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -29,7 +29,7 @@ License: MIT
 
 Files: python/scripts/merge_diglot.pl
 Copyright: 
- Copyright (c) 2020, SIL International (http://www.sil.org)
+ Copyright (c) 2020-2025, SIL Global (http://www.sil.org)
 License:
  You may use it and distribute it under terms of the Perl Artistic Licence 2.0:
 
