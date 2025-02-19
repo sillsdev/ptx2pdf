@@ -1312,9 +1312,9 @@ class PDFViewer:
             elif action == self.swap4rtl("last"):
                 pg = self.numpages
             elif action == self.swap4rtl("next"):
-                pg = min(pg + 1, self.numpages)
+                pg = min(pg + increment, self.numpages)
             elif action == self.swap4rtl("previous"):
-                pg = max(pg - 1, 1)
+                pg = max(pg - increment, 1)
             else:
                 logger.error(f"Unknown action: {action}")
                 return

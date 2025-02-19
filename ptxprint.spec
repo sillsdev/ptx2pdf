@@ -83,21 +83,22 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptxprint/ptx2pdf/mappings')]
                       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptxprint/PDFassets/reference')]
-                      + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
-                      + [('xetex/texmf-var/web2c/xetex/*.fmt', 'ptxprint/xetex/texmf-var/web2c/xetex')]
-                      + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')],
+                      + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')],
+##                    + [('xetex/texmf-var/web2c/xetex/*.fmt', 'ptxprint/xetex/texmf-var/web2c/xetex')],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
+
                 # data files are considered text and end up where specified by the tuple.
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
                       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')]
 #                      + sum(([('{}/*.*'.format(dp), 'ptxprint/{}'.format(dp))] for dp, dn, fn in os.walk('xetex') if dp not in ('xetex/bin/windows', ) and any(os.path.isfile(os.path.join(dp, f)) and '.' in f for f in fn)), [])
-					  + [(f"{dp}/*.*", f"ptxprint/{dp}") for dp, _, fn in os.walk("xetex") if dp != "xetex/bin/windows" and any("." in f for f in fn)]
+##					  + [(f"{dp}/*.*", f"ptxprint/{dp}") for dp, _, fn in os.walk("xetex") if dp != "xetex/bin/windows" and any("." in f for f in fn)]
 					  + [(f'src{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
-					  + [(f'xetex/{d}/*', f'ptxprint/xetex/{d}') for d in ('texmf-dist', 'texmf-var')]
+##					  + [(f'xetex/{d}/*', f'ptxprint/xetex/{d}') for d in ('texmf-dist', 'texmf-var')]
 					  + [(f'src/mappings/*.map', f'ptxprint/ptx2pdf/mappings')]
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
+##                      + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')],
 #                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
 #                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
