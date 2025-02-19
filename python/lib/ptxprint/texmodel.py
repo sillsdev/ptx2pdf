@@ -633,7 +633,7 @@ class TexModel:
                                 beforelast.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in nonScriptureBooks: 
                             if not self.dict['document/noblankpage']:
-                                res.append(r"\zNeedOddPage")
+                                res.append(r"\need@oddpage{\emptyoutput}")
                             res.append(r"\edef\oldpageno{\the\pageno}% Just in case the user wants it");
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True

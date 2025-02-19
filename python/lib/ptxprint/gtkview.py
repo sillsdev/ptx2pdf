@@ -6378,7 +6378,8 @@ Thank you,
             if pg not in available_pnums:
                 pg = min(available_pnums, key=lambda p: abs(p - pg))
         self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
-        self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
+        pnum = self.pdf_viewer.parlocs.pnums.get(pg, pg) if self.pdf_viewer.parlocs is not None else pg
+        self.pdf_viewer.show_pdf(pnum, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
         self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))

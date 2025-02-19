@@ -80,11 +80,10 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
                       + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
-#                      + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
+                      + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptxprint/ptx2pdf/mappings')]
                       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptxprint/PDFassets/reference')]
                       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
-#                      + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')]
                       + [('xetex/texmf-var/web2c/xetex/*.fmt', 'ptxprint/xetex/texmf-var/web2c/xetex')]
                       + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
