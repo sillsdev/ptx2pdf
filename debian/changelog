@@ -1,3 +1,9 @@
+ptxprint (2.7.23-1ubuntu2) bionic; urgency=medium
+
+  * Adjusted rules and build-depends
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Wed, 19 Feb 2025 11:16:22 -0600
+
 ptxprint (2.7.23-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 2.7.23
