@@ -3,6 +3,8 @@ export DH_VERBOSE = 1
 
 export PYBUILD_NAME=ptxprint
 
+export PYBUILD_SYSTEM=pyproject
+
 export PYBUILD_DISABLE_python3.6=test
 export PYBUILD_DISABLE_python3.7=test
 export PYBUILD_DISABLE_python3.8=test
