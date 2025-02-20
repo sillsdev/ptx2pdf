@@ -749,6 +749,9 @@ class RunJob:
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
         os.chdir(self.tmpdir)
+        if os.system == "win32":
+            os.mkdirs("fontconfig", exist_ok=True)
+            os.putenv("XDG_CONFIG_HOME", self.tmpdir)
         outpath = os.path.join(self.tmpdir, '..', outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
