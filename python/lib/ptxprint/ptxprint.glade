@@ -36297,7 +36297,7 @@ when exporting to an external folder of settings.</property>
     <property name="can-focus">False</property>
     <property name="valign">start</property>
     <property name="hexpand">True</property>
-    <property name="title" translatable="yes">PTXprint: Add Tatweel Rules ([kq]ashidas)</property>
+    <property name="title" translatable="yes">PTXprint: Add Tatweel (kashida) Rules</property>
     <property name="window-position">center-on-parent</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>

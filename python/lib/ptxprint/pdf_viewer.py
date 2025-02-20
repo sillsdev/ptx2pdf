@@ -111,6 +111,8 @@ class PDFViewer:
         self.sw.connect("button-press-event", self.on_button_press)
         self.sw.connect("button-release-event", self.on_button_release)
         self.sw.connect("motion-notify-event", self.on_mouse_motion)
+        self.sw.connect("scroll-event", self.on_scroll_parent_event) # outer box (not the pages)
+        
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
         self.toctv = tv
@@ -483,6 +485,22 @@ class PDFViewer:
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
 
+    def on_scroll_parent_event(self, widget, event):
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+        if ctrl_pressed:
+            return False 
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, _, z = event.get_scroll_deltas()
+            if z < 0:
+                self.set_page(self.swap4rtl("previous"))
+            elif z > 0:
+                self.set_page(self.swap4rtl("next"))
+        elif event.direction == Gdk.ScrollDirection.UP:
+            self.set_page(self.swap4rtl("previous"))
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            self.set_page(self.swap4rtl("next"))
+        return True
+
     def on_scroll_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
 
@@ -509,9 +527,9 @@ class PDFViewer:
         else:
             # Default behavior: Scroll for navigation
             if event.direction == Gdk.ScrollDirection.UP:
-               self.set_page(self.swap4rtl("previous"))
+                self.set_page(self.swap4rtl("previous"))
             elif event.direction == Gdk.ScrollDirection.DOWN:
-               self.set_page(self.swap4rtl("next"))
+                self.set_page(self.swap4rtl("next"))
             return True
 
         return False
