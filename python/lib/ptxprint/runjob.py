@@ -751,7 +751,8 @@ class RunJob:
         os.chdir(self.tmpdir)
         if os.system == "win32":
             os.mkdirs("fontconfig", exist_ok=True)
-            os.putenv("XDG_CONFIG_HOME", self.tmpdir)
+            os.putenv("FC_CACHEDIR", os.path(self.tmpdir, 'fontconfig'))
+            # os.putenv("XDG_CONFIG_HOME", self.tmpdir)
         outpath = os.path.join(self.tmpdir, '..', outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""

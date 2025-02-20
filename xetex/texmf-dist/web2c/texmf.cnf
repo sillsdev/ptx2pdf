@@ -460,7 +460,7 @@ MAILCAPLIBDIR = $TEXMFROOT/etc
 % 
 FONTCONFIG_FILE = fonts.conf
 FONTCONFIG_PATH = $TEXMFSYSVAR/fonts/conf
-FC_CACHEDIR = $TEXMFSYSVAR/fonts/cache
+% FC_CACHEDIR = $TEXMFSYSVAR/fonts/cache
 
 % TeX documentation and source files, for use with texdoc and kpsewhich.
 TEXDOCS = $TEXMF/doc//
