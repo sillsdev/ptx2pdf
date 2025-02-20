@@ -1,7 +1,8 @@
 FROM python:3.11
 WORKDIR /app
 RUN apt-get update
-RUN apt-get install -y texlive-xetex
+RUN apt-get install --no-install-recommends -y texlive-xetex
+RUN apt-get clean
 COPY python/ python/
 COPY xetex/ xetex/
 COPY src/ src/
