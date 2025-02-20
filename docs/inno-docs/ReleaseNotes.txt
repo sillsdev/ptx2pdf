@@ -1,8 +1,18 @@
 PTXprint 2.7.23 Release Notes
-19 Feb 2025
+20 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.24 (20 Feb 2025)
+  * Allow scroll wheel beyond edge of page to navigate page numbers
+  * Modify insertion of tatweels to allow multiple locations and longer texts
+  * Perhaps fix windows font caching
+  * Shrink docker image by cleaning up apt cache
+  * Add Dockerfile
+  * Add cache dir logging
+  * Various buglet fixes
+  * Put setup.py back
 
 Bug fixes and Improvements in 2.7.23 (19 Feb 2025)
   * Add tatweel rule generator dialog
