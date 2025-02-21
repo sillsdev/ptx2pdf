@@ -6375,7 +6375,7 @@ Thank you,
         pg = int(value) if value.isdigit() else 1
         if self.pdf_viewer.parlocs is not None:
             available_pnums = self.pdf_viewer.parlocs.pnums.keys()
-            if len(available_nums) and pg not in available_pnums:
+            if len(available_pnums) and pg not in available_pnums:
                 pg = min(available_pnums, key=lambda p: abs(p - pg))
         self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
         pnum = self.pdf_viewer.parlocs.pnums.get(pg, pg) if self.pdf_viewer.parlocs is not None else pg
