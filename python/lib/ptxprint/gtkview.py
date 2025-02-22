@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess, traceback, ssl
+import sys, os, re, regex, subprocess, traceback, ssl
+try:
+    import gi
+except ModuleNotFoundError:
+    print("PTXprint is in an environment where it can only run headless. Make sure -P is in the command line options")
+    sys.exit(1)
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
