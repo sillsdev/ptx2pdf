@@ -602,7 +602,8 @@ class Piclist:
         for v in [a for a in anchormap.values() if len(a) > 1]:
             dups = {}
             for p in v:
-                dups.setdefault(p['src'], []).append(p)
+                if 'src' in p:
+                    dups.setdefault(p['src'], []).append(p)
             for d in [v for v in dups.values() if len(v) > 1]:
                 for p in d[1:]:
                     self.remove(p)

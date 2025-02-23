@@ -573,6 +573,7 @@ def cachedData(filepath, fn):
     cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")
     os.makedirs(cfgdir, exist_ok=True)
     cfgfilepath = os.path.join(cfgdir, os.path.basename("{}.pickle_{}.gz".format(filepath, DataVersion)))
+    logger.debug(f"Reading cache file {cfgfilepath}")
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
             return pickle.load(inf)
@@ -580,6 +581,7 @@ def cachedData(filepath, fn):
     for l in os.listdir(cfgdir):
         if l.startswith(testbase):
             os.unlink(os.path.join(cfgdir, l))
+    logger.debug(f"Writing cache file {filepath}")
     with open(filepath, "r", encoding="utf8") as inf:
         res = fn(inf)
     with contextlib.closing(gzip.open(cfgfilepath, "wb")) as outf:

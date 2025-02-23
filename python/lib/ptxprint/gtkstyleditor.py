@@ -271,6 +271,7 @@ class StyleEditorView(StyleEditor):
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
+        foundp = False
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             v = self.asStyle(k)
             if v.get('styletype', '') == 'Standalone':

@@ -1,8 +1,38 @@
-PTXprint 2.7.22 Release Notes
-14 Feb 2025
+PTXprint 2.7.24 Release Notes
+20 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.24 (20 Feb 2025)
+  * Allow scroll wheel beyond edge of page to navigate page numbers
+  * Modify insertion of tatweels to allow multiple locations and longer texts
+  * Perhaps fix windows font caching
+  * Shrink docker image by cleaning up apt cache
+  * Add Dockerfile
+  * Add cache dir logging
+  * Various buglet fixes
+  * Put setup.py back
+
+Bug fixes and Improvements in 2.7.23 (19 Feb 2025)
+  * Add tatweel rule generator dialog
+  * Change tatweel shortcut key Ctrl ` to accelerate.py with other shortcuts
+  * Get Windows build working again after major refactor
+  * Get packaging working again (paths etc.) for windows
+  * Change show_pdf to use page index
+  * Hide 'annot' until we can use it for something helpful
+  * Now show the verse the mouse clicked inside
+  * Make sure that even the unchecked c_ labels get bold applied if not default
+  * Get paths sorted out for pypi and dev. pyinstaller might work
+  * Refactor pyproject packaging to remove need for symlinks
+  * Tidy up TeXpert options which weren't being added to .tex file
+  * Tidy up if grid settings
+  * Perhaps capture xetex run output in debug
+  * Replace Tahoma with Lato
+  * Update standards
+  * Why disable pdf generation for testing?
+  * Fix styleeditor reading floats with comments
+  * Refactor for pypi packaging
 
 Bug fixes and Improvements in 2.7.22 (14 Feb 2025)
   * Updated information about Ubuntu package as well as steps to install from source

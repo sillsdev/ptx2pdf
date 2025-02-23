@@ -1,5 +1,6 @@
 from xml.etree import ElementTree as et
-from ptxprint.usfmutils import Usfm, Sheets
+from ptxprint.usfmutils import Usfm
+from ptxprint.usfmutils import Sheets
 from ptxprint import sfm
 from hashlib import md5
 from ptxprint.reference import Reference

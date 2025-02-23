@@ -111,6 +111,8 @@ class PDFViewer:
         self.sw.connect("button-press-event", self.on_button_press)
         self.sw.connect("button-release-event", self.on_button_release)
         self.sw.connect("motion-notify-event", self.on_mouse_motion)
+        self.sw.connect("scroll-event", self.on_scroll_parent_event) # outer box (not the pages)
+        
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
         self.toctv = tv
@@ -287,21 +289,20 @@ class PDFViewer:
     
     def pickToc(self, tv, path, col):
         pnum = tv.get_model()[path][1]
-        pg = self.parlocs.pnumorder[pnum - 1] if self.parlocs and pnum <= len(self.parlocs.pnumorder) else 1
-        self.show_pdf(pg)
+        self.show_pdf(pnum)
 
-    def show_pdf(self, page=None, rtl=False, setpnum=True):
-        """ page is a folio """
+    def show_pdf(self, cpage=None, rtl=False, setpnum=True):
+        """ cpage is a index (1 based) """
         if self.document is None:
             self.clear()
             return
-        if page is None:
-            page = self.current_page or 1
+        if cpage is None:
+            cpage = self.current_index or self.parlocs.pnums.get(1, 1) if self.parlocs is not None else 1
         if self.model.get("fcb_pagesPerSpread", "1") != "1":
             self.spread_mode = False
         else:
             self.spread_mode = self.model.get("c_bkView", False)
-        cpage = self.parlocs.pnums.get(page, page) if self.parlocs is not None else page
+        page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
         # print(f"{self.parlocs.pnums}")
         # print(f"in show_pdf: {cpage=}   {page=}")
         
@@ -484,6 +485,22 @@ class PDFViewer:
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
 
+    def on_scroll_parent_event(self, widget, event):
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+        if ctrl_pressed:
+            return False 
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, _, z = event.get_scroll_deltas()
+            if z < 0:
+                self.set_page(self.swap4rtl("previous"))
+            elif z > 0:
+                self.set_page(self.swap4rtl("next"))
+        elif event.direction == Gdk.ScrollDirection.UP:
+            self.set_page(self.swap4rtl("previous"))
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            self.set_page(self.swap4rtl("next"))
+        return True
+
     def on_scroll_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
 
@@ -510,9 +527,9 @@ class PDFViewer:
         else:
             # Default behavior: Scroll for navigation
             if event.direction == Gdk.ScrollDirection.UP:
-               self.set_page(self.swap4rtl("previous"))
+                self.set_page(self.swap4rtl("previous"))
             elif event.direction == Gdk.ScrollDirection.DOWN:
-               self.set_page(self.swap4rtl("next"))
+                self.set_page(self.swap4rtl("next"))
             return True
 
         return False
@@ -587,6 +604,7 @@ class PDFViewer:
             
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
+        logger.debug(f"get_spread({page}, {rtl=})")
         if page == 1:
             return (1,)
         if page % 2 == 0:
@@ -625,7 +643,8 @@ class PDFViewer:
             if prev_page:
                 self.ufCurrIndex = self.model.ufPages.index(prev_page)
         pg = self.model.ufPages[self.ufCurrIndex]
-        self.show_pdf(pg)
+        pnum = self.parlocs.pnums.get(pg, pg) if self.parlocs is not None else pg
+        self.show_pdf(pnum)
 
     def updatePageNavigation(self):
         """Update button sensitivity and tooltips dynamically based on the current index."""
@@ -1302,27 +1321,25 @@ class PDFViewer:
         increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
         canmap = self.parlocs.pnumorder is not None and len(self.parlocs.pnumorder) > 0 \
                     and self.numpages == len(self.parlocs.pnumorder)
-        cpage = self.current_index
-        
         # print(f"{canmap=}  {cpage=}       {action}  RTL:{self.swap4rtl(action)}")
         # Safeguard against invalid cpage or empty pnumorder
-        pg = self.current_page
+        pg = self.current_index
         try:
             if action == self.swap4rtl("first"):
-                pg = self.parlocs.pnumorder[0] if canmap else 1
+                pg = 1
             elif action == self.swap4rtl("last"):
-                pg = self.parlocs.pnumorder[-1] if canmap else self.numpages
+                pg = self.numpages
             elif action == self.swap4rtl("next"):
-                pg = self.parlocs.pnumorder[min(cpage + increment - 1, len(self.parlocs.pnumorder) - 1)] if canmap else min(pg + increment, self.numpages)
+                pg = min(pg + increment, self.numpages)
             elif action == self.swap4rtl("previous"):
-                pg = self.parlocs.pnumorder[max(cpage - increment - 1, 0)] if canmap else max(pg - increment, 1)
+                pg = max(pg - increment, 1)
             else:
                 logger.error(f"Unknown action: {action}")
                 return
         except IndexError:
             # print(f"FAILED with IndexError in set_page. {action=}  {increment=}  {cpage=}  {pg=}  {canmap=}")
             pg = 1
-        logger.debug(f"page {pg=} {cpage=} {self.current_page=}")
+        logger.debug(f"page {pg=} {self.current_page=}")
         self.show_pdf(pg)
     
     def swap4rtl(self, action):
@@ -1582,8 +1599,10 @@ class Paragraphs(list):
             p = m.group(2).split("}{")
             if c == "pgstart":          # pageno, available height, pagewidth, pageheight
                 pnum += 1
-                self.pnums[int(p[0])] = pnum
-                self.pnumorder.append(int(p[0]))
+                npnum = int(p[0])
+                if npnum not in self.pnums:
+                    self.pnums[npnum] = pnum
+                self.pnumorder.append(npnum)
                 if len(p) > 3:
                     pwidth = readpts(p[2])
                 else:
@@ -1798,7 +1817,7 @@ class Paragraphs(list):
         while n is not None:
             adest = ctypes.cast(n.value(), ctypes.POINTER(PopplerDest)).contents
             akey = ctypes.cast(n.key(), ctypes.c_char_p).value
-            dests.append(ParDest(str(akey.decode("utf-8") if akey else ""), adest.page_num, adest.left, adest.top))
+            dests.append(ParDest(str(akey.decode("utf-8").replace(".", " ").replace(":", ".") if akey else ""), adest.page_num, adest.left, adest.top))
             n = n.next()
         dests_tree.destroy()
         logger.debug(f"{len(dests)=}")

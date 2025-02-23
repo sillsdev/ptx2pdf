@@ -32,6 +32,11 @@ import pickle
 import re
 import site
 from ptxprint.utils import pycodedir
+import logging
+
+logger = logging.getLogger(__name__)
+
+logger.debug(f"usfm cache dir = {site.getuserbase()}, or {pycodedir()}")
 
 _PALASO_DATA = os.path.join(
     site.getuserbase(),

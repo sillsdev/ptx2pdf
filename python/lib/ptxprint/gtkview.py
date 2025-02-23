@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess, traceback, ssl
+import sys, os, re, regex, subprocess, traceback, ssl
+try:
+    import gi
+except ModuleNotFoundError:
+    print("PTXprint is in an environment where it can only run headless. Make sure -P is in the command line options")
+    sys.exit(1)
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
@@ -6375,10 +6380,11 @@ Thank you,
         pg = int(value) if value.isdigit() else 1
         if self.pdf_viewer.parlocs is not None:
             available_pnums = self.pdf_viewer.parlocs.pnums.keys()
-            if pg not in available_pnums:
+            if len(available_pnums) and pg not in available_pnums:
                 pg = min(available_pnums, key=lambda p: abs(p - pg))
         self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
-        self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
+        pnum = self.pdf_viewer.parlocs.pnums.get(pg, pg) if self.pdf_viewer.parlocs is not None else pg
+        self.pdf_viewer.show_pdf(pnum, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
         self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))

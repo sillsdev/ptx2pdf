@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.7.22</property>
+    <property name="version">Version 2.7.24</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -36293,10 +36293,11 @@ when exporting to an external folder of settings.</property>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_makeTatweelRule">
+    <property name="width-request">340</property>
     <property name="can-focus">False</property>
     <property name="valign">start</property>
     <property name="hexpand">True</property>
-    <property name="title" translatable="yes">PTXprint: Add Tatweel Rules ([kq]ashidas)</property>
+    <property name="title" translatable="yes">PTXprint: Add Tatweel (kashida) Rules</property>
     <property name="window-position">center-on-parent</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
@@ -36320,6 +36321,7 @@ when exporting to an external folder of settings.</property>
             <property name="margin-end">6</property>
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
+            <property name="hexpand">True</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_tatweel_insertRule">
@@ -36364,8 +36366,6 @@ when exporting to an external folder of settings.</property>
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="margin-left">6</property>
-            <property name="margin-right">6</property>
             <property name="margin-start">6</property>
             <property name="margin-end">6</property>
             <property name="margin-top">8</property>
@@ -36375,7 +36375,7 @@ when exporting to an external folder of settings.</property>
             <property name="column-spacing">4</property>
             <child>
               <object class="GtkEntry" id="t_tatweelRef">
-                <property name="name">Slice Dialog: Enter reference to begin SpeedSlice</property>
+                <property name="name">Tatweel Dialog: Enter reference</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
@@ -36388,8 +36388,8 @@ where the word is located.
 automatically updated from
 the current Paratext reference.)</property>
                 <property name="halign">start</property>
-                <property name="width-chars">17</property>
-                <property name="input-purpose">terminal</property>
+                <property name="width-chars">12</property>
+                <property name="placeholder-text" translatable="yes">JHN 3:16</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -36407,6 +36407,7 @@ where the word is located.
 automatically updated from
 the current Paratext reference.)</property>
                 <property name="halign">end</property>
+                <property name="hexpand">False</property>
                 <property name="label" translatable="yes">Reference:</property>
               </object>
               <packing>
@@ -36415,8 +36416,8 @@ the current Paratext reference.)</property>
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="t_tatweelFind">
-                <property name="name">Slice Dialog: Enter first word on page</property>
+              <object class="GtkEntry" id="t_tatweelText">
+                <property name="name">Tatweel Dialog: Enter word or phrase to be lengthened</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
@@ -36424,14 +36425,16 @@ the current Paratext reference.)</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Enter the word to be lengthened
 and place the cursor at the location
-to insert one or more Tatweels.
+and use shortcut Ctrl-` (Ctrl-grave) 
+to insert Tatweels. Repeat at other 
+words and/or locations.
 
 (Note that this box is automatically
 updated from the clipboard if the
-word/phrase is 30 characters or less).</property>
+word/phrase is 60 characters or less).</property>
                 <property name="valign">center</property>
-                <property name="width-chars">20</property>
-                <property name="input-purpose">terminal</property>
+                <property name="hexpand">True</property>
+                <property name="placeholder-text" translatable="yes">text from clipboard</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -36444,12 +36447,15 @@ word/phrase is 30 characters or less).</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">Enter the word to be lengthened
 and place the cursor at the location
-to insert one or more Tatweels.
+and use shortcut Ctrl-` (Ctrl-grave) 
+to insert Tatweels. Repeat at other 
+words and/or locations.
 
 (Note that this box is automatically
 updated from the clipboard if the
-word/phrase is 30 characters or less).</property>
+word/phrase is 60 characters or less).</property>
                 <property name="halign">end</property>
+                <property name="hexpand">False</property>
                 <property name="label" translatable="yes">Word / Phrase:</property>
                 <property name="justify">right</property>
               </object>
@@ -36460,7 +36466,6 @@ word/phrase is 30 characters or less).</property>
             </child>
             <child>
               <object class="GtkLabel">
-                <property name="width-request">100</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">How many Tatweels should
@@ -36468,6 +36473,7 @@ be inserted at the current
 cursor location?
 </property>
                 <property name="halign">end</property>
+                <property name="hexpand">False</property>
                 <property name="label" translatable="yes">Tatweels to insert:</property>
               </object>
               <packing>
@@ -36477,13 +36483,14 @@ cursor location?
             </child>
             <child>
               <object class="GtkSpinButton" id="s_tatweelLength">
-                <property name="name">Slice Dialog: Length of Slice</property>
+                <property name="name">Tatweel Dialog: Number of Tatweels to insert</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="tooltip-text" translatable="yes">Hw many Tatweels should
 be inserted at the current
 cursor location?</property>
                 <property name="halign">start</property>
+                <property name="hexpand">True</property>
                 <property name="text" translatable="yes">3</property>
                 <property name="xalign">0.5</property>
                 <property name="adjustment">a_tatweelLength</property>
@@ -36530,7 +36537,7 @@ cursor location?</property>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>

@@ -52,16 +52,17 @@
 \gdef\r@setpagenums #1^^M{\global\pageno=#1\egroup}
 \endgroup
 \sethook{start}{xts}{\proc@strong{xts}}
+\def\needoddemptyp@ge{\need@oddpage{\emptyoutput}}
 \def\intropages#1{\ifversion{2}{\ifcsname\g@tperiphid{}{#1}\endcsname
-    \ifx\IntroPageAlign\val@dd \endpage\zNeedOddPage \else
-      \ifx\IntroPageAlign\val@GROUP \ifin@ntro\else\endpage\zNeedOddPage \fi\else
+    \ifx\IntroPageAlign\val@dd \endpage\needoddemptyp@ge \else
+      \ifx\IntroPageAlign\val@GROUP \ifin@ntro\else\endpage\needoddemptyp@ge \fi\else
         \ifx\IntroPageAlign\val@MULTI\else
           \endpage
     \fi\fi\fi
     %\def\p@gefirstmark{}%
     \prepusfm\zgetperiph|#1\*\unprepusfm\in@ntrotrue
     \ifx\IntroPageAlign\val@MULTI \else\endpage\fi
-  \fi}{\pb\zNeedOddPage\prepusfm\zgetperiph|#1\*\unprepusfm\pb\zNeedOddPage}}
+  \fi}{\pb\needoddemptyp@ge\prepusfm\zgetperiph|#1\*\unprepusfm\pb\needoddemptyp@ge}}
 \in@ntrofalse
 \def\slash{\sl@shprint}
 \catcode`\@=12

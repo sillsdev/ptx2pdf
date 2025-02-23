@@ -27,14 +27,14 @@ def istype(s, t):
         t = [t]
     return category(s) in t
 
-def textiter(root, blocks=[], invertblocks=False):
+def textiter(root, invertblocks=False, **kw):
     ''' Iterates the element hiearchy returning all non empty text. Optionally
         it ignores any elements whose style is in the blocked categories passed. '''
-    for this in iterusx(root, blocks=blocks, unblocks=invertblocks, filt=[hastext]):
+    for this in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
         yield this.parent.text if this.head is None else this.head.tail
 
-def modifytext(root, fn, blocks=[], invertblocks=False):
-    for this in iterusx(root, blocks=blocks, unblocks=invertblocks, filt=[hastext]):
+def modifytext(root, fn, invertblocks=False, **kw):
+    for this in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
         if this.head is None:
             this.parent.text = fn(this.parent.text, this.parent)
         else:

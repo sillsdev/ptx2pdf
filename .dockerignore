@@ -1,0 +1,7 @@
+*/
+!python/
+!xetex/
+!src/
+!fonts/
+!pyproject.toml
+!MANIFEST.in
