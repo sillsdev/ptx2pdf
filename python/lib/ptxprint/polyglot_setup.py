@@ -18,17 +18,18 @@ class PolyglotSetup(Gtk.Window):
         # Dropdown options
         self.codes = ["L", "R", "A", "B", "C", "D", "E", "F", "G"]
         self.prjs = ["(None)", "BSB", "WSG", "WSGdev", "GRKNT", "WSGgong", "WSGlatin", "WSGBTpub"]
-        # self.cfgs = ["(None)", "Normal", "2ndary", "Plain", "Gunjala", "Modern", "Default"]
         self.spread_side = ["1", "2"]
 
-        # Create ListStore model
-        self.liststore = Gtk.ListStore(str, str, str, str, bool, float, str)
+        # Create ListStore model. Note 3 extra cols: for Help, '% Width' color, and int=weight
+        self.liststore = Gtk.ListStore(str, str, str, str, bool, float, str, str, str, int)  
+
         for item in self.data:
             code = list(item.keys())[0]
             values = item[code]
             self.liststore.append([
-                code, values.get("spread_side", "1"), values['prj'], values['cfg'], \
-                values['captions'], values.get("percentage", 50.0), values.get('color', "#FFFFFF")
+                code, values.get("spread_side", "1"), values['prj'], values['cfg'],
+                values['captions'], values.get("percentage", 50.0), values.get('color', "#FFFFFF"),
+                "Right-Click for options", "#000000", 400
             ])
 
         # Create TreeView
@@ -51,10 +52,7 @@ class PolyglotSetup(Gtk.Window):
         self.treeview.connect("drag-data-get", self.on_drag_data_get)
         self.treeview.connect("button-press-event", self.on_right_click)
 
-        # We need to set up a unique cell renderer for each of the rows - based on the project
-        # But I have no idea how to do so yet!
-        # for row in self.liststore:
-            # self.get_available_configs(row[2])
+        self.validate_page_widths() # Make sure % Width gets colored red if invalid (even on loading)
                     
         # Add TreeView to ScrolledWindow
         scrolled_window = Gtk.ScrolledWindow()
@@ -72,13 +70,23 @@ class PolyglotSetup(Gtk.Window):
             renderer = Gtk.CellRendererText()
             renderer.set_property("editable", editable)
             
-            column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+            # Only apply color formatting to the % Width column
+            if column_id == 5:
+                column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+                column.add_attribute(renderer, "foreground", 8)  # Use column 8 for text color
+                column.add_attribute(renderer, "weight", 9)      # Use column 9 for bold effect
+            else:
+                column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+
+            # Store tooltips inside the last column (index 7)
+            if column_id in range(0,7):
+                self.treeview.set_has_tooltip(True)  # Enable tooltips
+                self.treeview.connect("query-tooltip", self.on_query_tooltip)  # Connect event
 
             # Apply formatting function *only* to the % Width column (index 5)
             if column_id == 5:
                 column.set_cell_data_func(renderer, self.format_width_data_func)
                 renderer.connect("edited", self.on_width_edited, column_id)  # Connect edit event
-
             column.set_resizable(True)
             column.set_expand(True)
             
@@ -99,15 +107,25 @@ class PolyglotSetup(Gtk.Window):
 
         elif renderer_type == "combo":
             renderer = Gtk.CellRendererCombo()
-            # renderer.set_property("editable", editable)
 
             if column_id == 0:  # Special handling for 'Code' column
                 self.code_renderer = renderer  # Store renderer reference
                 options = self.get_available_codes()  # Get only available codes
 
             if column_id == 3:  # Special handling for 'Config' column
-                self.config_renderer = renderer  # Store renderer reference
-                options = self.get_available_configs()  # Get only available configs
+                renderer = Gtk.CellRendererCombo()
+                renderer.set_property("editable", True)
+                renderer.set_property("text-column", 0)
+                renderer.set_property("has-entry", False)
+                renderer.connect("edited", self.on_combo_changed, column_id)
+
+                column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+                column.set_cell_data_func(renderer, self.config_cell_data_func)  # Dynamic per-row options
+                column.set_resizable(True)
+                column.set_expand(True)
+
+                self.treeview.append_column(column)
+                return
 
             renderer.set_property("model", self.get_combo_model(options))
             renderer.set_property("text-column", 0)
@@ -122,10 +140,8 @@ class PolyglotSetup(Gtk.Window):
             column = Gtk.TreeViewColumn(title, renderer, text=column_id, background=column_id)
             column.set_resizable(True)
             column.set_expand(True)
-            # renderer.connect("editing-started", self.on_color_clicked, column_id)
             self.treeview.append_column(column)
             self.treeview.connect("row-activated", self.on_color_clicked, column_id)
-            # self.treeview.connect("editing-started", self.on_color_clicked, column_id)
             return
         
         if not isinstance(renderer, Gtk.CellRendererToggle):
@@ -136,17 +152,51 @@ class PolyglotSetup(Gtk.Window):
         column.set_expand(True)
         self.treeview.append_column(column)
 
+    def on_query_tooltip(self, widget, x, y, keyboard_mode, tooltip):
+        """Displays tooltips dynamically based on column."""
+        path_info = self.treeview.get_path_at_pos(x, y)
+
+        if path_info is not None:
+            path, column, _, _ = path_info
+
+            # Find the correct column index
+            column_id = self.treeview.get_columns().index(column)
+
+            # Set tooltip text based on the column
+            tooltips = {
+                0: "Code: Unique identifier for the text/glot (L, R, A, B, C, ... G)",
+                1: "1|2: Specifies whether the content appears on the left (1) or right (2) page.",
+                2: "Project: The name of the (Paratext) project text.",
+                3: "Configuration: The configuration settings to be applied for the selected project.",
+                4: "Captions: Toggle to enable/disable captions for this text.",
+                5: "% Width: The percentage of the page width this text should occupy.\nIf the values are red, this indicates that the total for the page doesn't\nadd to 100%, so one or more values need to be adjusted.",
+                6: "Color: [Optional] Double-click to select a background color for this text.",
+                7: "Help: Show more details in tooltip."
+            }
+
+            # Apply the correct tooltip based on column
+            if column_id in tooltips:
+                tooltip.set_text(tooltips[column_id])
+                return True  # Tooltip set successfully
+
+        return False  # No tooltip found
+
+    def config_cell_data_func(self, column, cell, model, iter, data=None):
+        """Dynamically updates the Config dropdown per row based on its Project value."""
+        project = model.get_value(iter, 2)  # Get the project for this row
+        available_configs = self.get_available_configs(project)  # Get project-specific configs
+        cell.set_property("model", self.get_combo_model(available_configs))  # Update dropdown list
+
     def on_width_edited(self, widget, path, new_text, column_id):
         """Handles editing of the % Width column and ensures it updates the ListStore."""
         try:
-            new_value = float(new_text)  # Convert input to float
+            new_value = float(new_text)      # Convert input to float
             new_value = round(new_value, 1)  # Keep only 1 decimal place
 
             # Update the ListStore
             self.liststore[path][column_id] = new_value
+            self.validate_page_widths() # Validate total widths after any edit
             self.save_data()  # Save changes
-
-            print(f"Updated % Width: Row {path} = {new_value}")  # Debug output
 
         except ValueError:
             print(f"Invalid input for % Width: {new_text}")  # Handle non-numeric input gracefully
@@ -186,13 +236,11 @@ class PolyglotSetup(Gtk.Window):
             if text in {row[0] for row in self.liststore if row[0]}:
                 print(f"Duplicate Code not allowed: {text}")
                 return  # Prevent duplicate
-
-        if column_id == 2:  # Project column changed
-            available_configs = self.get_available_configs()
             
-            # Update the configuration dropdown for this row
-            self.liststore[path][3] = available_configs[0]  # Set first available config
-            self.refresh_config_dropdown()  # Update the dropdown list
+        if column_id == 2:  # Project column changed
+            available_configs = self.get_available_configs(text)  # Get new configs for the selected project
+            self.liststore[path][3] = available_configs[0]  # Set first available config for this row
+            self.treeview.queue_draw()  # Refresh UI
 
         if column_id == 2 or column_id == 3:  # Project or Configuration columns
             prj = self.liststore[path][2]
@@ -204,17 +252,21 @@ class PolyglotSetup(Gtk.Window):
                 cfg = text  # If changing configuration
             
             for row in self.liststore:
-                if row[2] == prj and row[3] == cfg and self.liststore[path][0] != row[0]:  
+                if row[2] == prj and row[3] == cfg and self.liststore[path][0] != row[0]:
+                    # FixMe! Turn this into a proper error/warning message.
                     print("Duplicate Project+Configuration not allowed.")
                     return  # Prevent duplicate
             
         self.liststore[path][column_id] = text
         self.save_data()
         
-        # Refresh the Code and Config dropdowns after updating
-        if column_id == 0:
+        # Refresh dropdowns and other dependencies after updating the combo box
+        if column_id == 0:    # Unique code changed
             self.refresh_code_dropdowns()
-        if column_id == 2:
+        elif column_id == 1:  # Page 1 or 2 changed
+            self.validate_page_widths()
+            self.treeview.queue_draw()  # Refresh UI
+        elif column_id == 2:  # Project changed
             self.refresh_config_dropdown()
 
     def refresh_code_dropdowns(self):
@@ -297,31 +349,28 @@ class PolyglotSetup(Gtk.Window):
 
     def on_right_click(self, widget, event):
         """Shows a context menu on right-click."""
-        if event.button == 3:
-            menu = Gtk.Menu()
+        if event.button == 3:  # Right-click
+            self.context_menu = Gtk.Menu()  # Store reference
 
             add_item = Gtk.MenuItem(label="Add a row/text")
             add_item.connect("activate", self.add_row)
-            menu.append(add_item)
+            self.context_menu.append(add_item)
 
             delete_item = Gtk.MenuItem(label="Delete Row")
             delete_item.connect("activate", self.delete_selected_row)
-            menu.append(delete_item)
+            self.context_menu.append(delete_item)
 
             move_up_item = Gtk.MenuItem(label="Move Up")
             move_up_item.connect("activate", self.move_selected_row, -1)
-            menu.append(move_up_item)
+            self.context_menu.append(move_up_item)
 
             move_down_item = Gtk.MenuItem(label="Move Down")
             move_down_item.connect("activate", self.move_selected_row, 1)
-            menu.append(move_down_item)
+            self.context_menu.append(move_down_item)
 
-            move_down_item = Gtk.MenuItem(label="Edit Configuration...")
-            move_down_item.connect("activate", self.edit_other_config)
-            menu.append(move_down_item)
-
-            menu.show_all()
-            menu.popup_at_pointer(event)
+            self.context_menu.show_all()
+            self.update_context_menu()  # Apply correct state
+            self.context_menu.popup_at_pointer(event)
 
     def change_config(self, prj, cfg):
         """Stub function for opening config."""
@@ -335,6 +384,17 @@ class PolyglotSetup(Gtk.Window):
             model.remove(iter)
             self.save_data()
             self.refresh_code_dropdowns()  # Refresh available codes
+            self.update_context_menu()     # Refresh menu state
+            self.validate_page_widths()    # Refresh color of % width
+
+    def update_context_menu(self):
+        """Enables or disables the 'Add a row/text' menu option based on the row count."""
+        max_rows = 9
+        has_room = len(self.liststore) < max_rows
+
+        for item in self.context_menu.get_children():
+            if isinstance(item, Gtk.MenuItem) and item.get_label() == "Add a row/text":
+                item.set_sensitive(has_room)  # Enable/disable based on row count
 
     def edit_other_config(self, widget):
         """Starts up another instance of PTXprint to edit one of the polyglot configs."""
@@ -346,10 +406,18 @@ class PolyglotSetup(Gtk.Window):
             print(f"Editing other config for: {prj}+{cfg}")
 
     def add_row(self, widget):
-        """Adds a new row to the list."""
-        self.liststore.append(["", "1", "(None)", "(None)", False, 33.3, "#FFFFFF"])
+        """Adds a new row to the list, enforcing a max limit of 9."""
+        if len(self.liststore) >= 9:
+            print("Maximum of 9 rows reached. Cannot add more.")
+            return  # Stop if the limit is reached
+
+        self.liststore.append(["", "1", "(None)", "(None)", False, 33.3, "#FFFFFF", "Help", "#000000", 400])
+
         self.save_data()
-        
+
+        self.validate_page_widths() # Validate total widths after adding a row
+        self.update_context_menu()  # Refresh menu state
+
     def move_selected_row(self, widget, direction):
         """Moves the selected row up (-1) or down (+1)."""
         selected = self.get_selected_row()
@@ -403,7 +471,33 @@ class PolyglotSetup(Gtk.Window):
 
             self.save_data()  # Save changes
 
+    def validate_page_widths(self):
+        """Checks that the total width per page (1|2) is 100% and highlights invalid rows."""
+        page_totals = {"1": 0.0, "2": 0.0}  # Track total % width per page
+
+        # Step 1: Calculate total widths for each page (1 or 2)
+        for row in range(len(self.liststore)):
+            page = self.liststore[row][1]  # Column index 1 stores "1" or "2"
+            width = self.liststore[row][5]  # Column index 5 stores % Width
+            page_totals[page] += width  # Accumulate width for each page
+
+        # Step 2: Apply formatting to **every row** that shares the same `1|2` page value
+        for row in range(len(self.liststore)):
+            page = self.liststore[row][1]  # "1" or "2"
+            total = page_totals[page]  # Get total width for this page
+            is_invalid = abs(total - 100.0) > 0.11  # Allow small floating-point errors
+            # print(f"{page=}  {total=}  {is_invalid=}")
+
+            text_color = "#FF0000" if is_invalid else "#000000"  # Red if invalid, black if valid
+            font_weight = 700 if is_invalid else 400  # Bold if invalid, normal if valid
+
+            self.liststore[row][8] = text_color  # Update text color
+            self.liststore[row][9] = font_weight  # Update font weight
+
+        self.treeview.queue_draw()  # Refresh UI
+
     def get_available_configs(self, project=None):
+        # This method will need to be updated once integrated into the main code.
         """Returns a list of available configurations for the current row's project."""
         configs = {
             "BSB": ["Default", "Modern"],
