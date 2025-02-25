@@ -1,8 +1,20 @@
 PTXprint 2.7.24 Release Notes
-20 Feb 2025
+25 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.25 (25 Feb 2025)
+  * Delete old/redundant ptx2pdf and xetex folders prior to installation (.iss file changed)
+  * Adjusted the venv installation example to have the [gui] optional dependencies #1047
+  * Fix verse numbers in tables (tables are not footnotes, no setting the innote flag)
+  * Fix pnums typo - affecting page navigation
+  * Give friendly error message to docker users, et al.
+  * Add a bunch of common fonts to docker image
+  * Dockerfile must have Unix-style lf line endings
+  * Create docker-image.yml
+  * More docker image shaving (780MB)
+  * Optimise docker image size a bit
 
 Bug fixes and Improvements in 2.7.24 (20 Feb 2025)
   * Allow scroll wheel beyond edge of page to navigate page numbers
