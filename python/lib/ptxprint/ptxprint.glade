@@ -18148,7 +18148,6 @@ to copyrights.</property>
                           <object class="GtkGrid" id="gr_diglot">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="halign">center</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
@@ -18254,8 +18253,6 @@ a Diglot use Pictures from:</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="margin-end">6</property>
-                                <property name="margin-top">6</property>
                                 <property name="margin-bottom">3</property>
                                 <property name="label-xalign">0.10000000149011612</property>
                                 <child>
@@ -18463,8 +18460,8 @@ algorithms which may be used to obtain the best overall result:
                             <child>
                               <object class="GtkEntry" id="t_diglotSerialBooks">
                                 <property name="name">List of diglot books not to be merged, to come one after the other</property>
+                                <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
                                 <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
 in a diglot publication should not be merged to appear
 side-by-side, but instead need to occur one after the other.
@@ -18483,8 +18480,8 @@ not be merged. These will appear one after the other.</property>
                             </child>
                             <child>
                               <object class="GtkLabel" id="l_diglotSerialBooks">
+                                <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
                                 <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
 in a diglot publication should not be merged to appear
 side-by-side, but instead need to occur one after the other.
@@ -18535,10 +18532,47 @@ for These Books:</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkToggleButton" id="btn_adjust_diglot">
+                                <property name="name">Auto-calculate optimum widths of diglot columns</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="margin-right">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="image">icon_adjust_diglot</property>
+                                <property name="always-show-image">True</property>
+                                <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">3</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkButton" id="btn_DBLbundleDiglot2">
+                                <property name="label" translatable="yes">DBL</property>
+                                <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
+available texts to print from. Note that the
+DBL bundle will get unpacked into your 
+regular folder (e.g. My Paratext 9 Projects)
+but will only be used by PTXprint. It cannot
+be viewed or edited in Paratext.</property>
+                                <property name="halign">end</property>
+                                <property name="margin-right">6</property>
+                                <property name="margin-end">6</property>
+                                <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">4</property>
+                                <property name="top-attach">3</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
@@ -18566,12 +18600,12 @@ options here to create a Diglot or Didoc.</property>
                     </child>
                     <child>
                       <object class="GtkBox" id="tb_diglotSwitch">
-                        <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <child>
                           <object class="GtkLabel" id="l_dibackcol">
-                            <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="no-show-all">True</property>
                             <property name="margin-end">3</property>
                             <property name="label" translatable="yes">Background
 Colour</property>
@@ -18584,9 +18618,9 @@ Colour</property>
                         </child>
                         <child>
                           <object class="GtkColorButton" id="col_dibackcol">
-                            <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
+                            <property name="no-show-all">True</property>
                             <property name="title" translatable="yes">Primary background colour</property>
                             <property name="rgba">rgb(255,255,255)</property>
                           </object>
@@ -18602,9 +18636,9 @@ Colour</property>
   Diglot Project</property>
                             <property name="name">Diglot: Switch to other project</property>
                             <property name="width-request">150</property>
-                            <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
+                            <property name="no-show-all">True</property>
                             <property name="halign">end</property>
                             <property name="valign">start</property>
                             <property name="margin-end">6</property>
@@ -18647,8 +18681,8 @@ Colour</property>
                         <property name="margin-bottom">6</property>
                         <child>
                           <object class="GtkLabel" id="l_diglotSecProject">
-                            <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="no-show-all">True</property>
                             <property name="tooltip-text" translatable="yes">Select the project for the other text
 to be printed. This will usually appear
 in the right-hand (or outer) column.</property>
@@ -18665,9 +18699,9 @@ in the right-hand (or outer) column.</property>
                           <object class="GtkComboBox" id="fcb_diglotSecProject">
                             <property name="name">Diglot: Secondary project name</property>
                             <property name="width-request">120</property>
-                            <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="can-default">True</property>
+                            <property name="no-show-all">True</property>
                             <property name="tooltip-text" translatable="yes">Select the project for the other text
 to be printed. This will usually appear
 in the right-hand (or outer) column.</property>
@@ -18691,8 +18725,8 @@ in the right-hand (or outer) column.</property>
                         </child>
                         <child>
                           <object class="GtkLabel" id="l_diglotSecConfig">
-                            <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="no-show-all">True</property>
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">Use Saved Configuration
 (from Secondary Project):</property>
@@ -18707,8 +18741,8 @@ in the right-hand (or outer) column.</property>
                           <object class="GtkComboBoxText" id="ecb_diglotSecConfig">
                             <property name="name">Diglot: Secondary project configuration</property>
                             <property name="width-request">250</property>
-                            <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="no-show-all">True</property>
                             <property name="tooltip-text" translatable="yes">Select a previously-saved/shared
 configuration to retrieve those settings.
 
@@ -18730,8 +18764,8 @@ settings for the project)</property>
                         </child>
                         <child>
                           <object class="GtkLabel" id="l_diglotPriFraction">
-                            <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="no-show-all">True</property>
                             <property name="tooltip-text" translatable="yes">If you need the column widths to be different
 for the primary and secondary texts, then adjust
 the proportion here.</property>
@@ -18748,8 +18782,8 @@ be Used by Primary (Left) Text</property>
                         <child>
                           <object class="GtkScale" id="s_diglotPriFraction">
                             <property name="name">Diglot: Proportion to be used by primary text</property>
-                            <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="no-show-all">True</property>
                             <property name="tooltip-text" translatable="yes">If you need the column widths to be different
 for the primary and secondary texts, then adjust
 the proportion here.</property>
@@ -18768,55 +18802,12 @@ the proportion here.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkToggleButton" id="btn_adjust_diglot">
-                            <property name="name">Auto-calculate optimum widths of diglot columns</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
-                            <property name="halign">end</property>
-                            <property name="valign">center</property>
-                            <property name="margin-right">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="image">icon_adjust_diglot</property>
-                            <property name="always-show-image">True</property>
-                            <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_DBLbundleDiglot2">
-                            <property name="label" translatable="yes">DBL</property>
-                            <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
-available texts to print from. Note that the
-DBL bundle will get unpacked into your 
-regular folder (e.g. My Paratext 9 Projects)
-but will only be used by PTXprint. It cannot
-be viewed or edited in Paratext.</property>
-                            <property name="halign">end</property>
-                            <property name="margin-right">6</property>
-                            <property name="margin-end">6</property>
-                            <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkCheckButton" id="c_diglot2captions">
                             <property name="label" translatable="yes">Dual Captions</property>
                             <property name="name">Diglot: Dual captions</property>
-                            <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
+                            <property name="no-show-all">True</property>
                             <property name="tooltip-text" translatable="yes">When creating the PicList for a diglot,
 if the pictures are set to be used from
 either the Primary OR the Secondary
@@ -18841,6 +18832,12 @@ option does not apply at all.</property>
                             <property name="left-attach">2</property>
                             <property name="top-attach">1</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
