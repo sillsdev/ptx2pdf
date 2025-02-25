@@ -3,10 +3,9 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 import json
 
-class PolyglotSetup(Gtk.Window):
-    def __init__(self):
-        Gtk.Window.__init__(self, title="Settings for Polyglot")
-        self.set_default_size(600, 450)
+class PolyglotSetup(Gtk.Box):
+    def __init__(self, treeview):
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
 
         # Load data from JSON file
         try:
@@ -20,8 +19,16 @@ class PolyglotSetup(Gtk.Window):
         self.prjs = ["(None)", "BSB", "WSG", "WSGdev", "GRKNT", "WSGgong", "WSGlatin", "WSGBTpub"]
         self.spread_side = ["1", "2"]
 
-        # Create ListStore model. Note 3 extra cols: for Help, '% Width' color, and int=weight
-        self.liststore = Gtk.ListStore(str, str, str, str, bool, float, str, str, str, int)  
+        # Use the existing treeview instead of creating a new one
+        self.treeview = treeview  
+        self.treeview.set_reorderable(True)
+
+        # Create ListStore model if not already set
+        if self.treeview.get_model() is None:
+            self.liststore = Gtk.ListStore(str, str, str, str, bool, float, str, str, str, int)  
+            self.treeview.set_model(self.liststore)
+        else:
+            self.liststore = self.treeview.get_model()
 
         for item in self.data:
             code = list(item.keys())[0]
@@ -31,10 +38,6 @@ class PolyglotSetup(Gtk.Window):
                 values['captions'], values.get("percentage", 50.0), values.get('color', "#FFFFFF"),
                 "Right-Click for options", "#000000", 400
             ])
-
-        # Create TreeView
-        self.treeview = Gtk.TreeView(model=self.liststore)
-        self.treeview.set_reorderable(True)
 
         # Define Columns
         self.add_column("Code", 0, editable=True, renderer_type="combo", options=self.codes, align="center")
@@ -53,16 +56,17 @@ class PolyglotSetup(Gtk.Window):
         self.treeview.connect("button-press-event", self.on_right_click)
 
         self.validate_page_widths() # Make sure % Width gets colored red if invalid (even on loading)
-                    
-        # Add TreeView to ScrolledWindow
+
+        # Add TreeView to Layout
         scrolled_window = Gtk.ScrolledWindow()
-        scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
         scrolled_window.add(self.treeview)
 
-        # Layout
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        vbox.pack_start(scrolled_window, True, True, 0)
-        self.add(vbox)
+        self.pack_start(scrolled_window, True, True, 0)
+
+    def get_treeview(self):
+        """ Expose the TreeView for integration with other modules. """
+        return self.treeview        
         
     def add_column(self, title, column_id, editable=False, renderer_type="text", options=None, align="left"):
         """Adds a column with the specified properties."""
@@ -99,6 +103,7 @@ class PolyglotSetup(Gtk.Window):
             renderer.connect("toggled", self.on_toggle, column_id)
 
             column = Gtk.TreeViewColumn(title, renderer, active=column_id)  # Bind "active" property
+            column.set_alignment(0.5)
             column.set_resizable(True)
             column.set_expand(True)
 
@@ -136,18 +141,25 @@ class PolyglotSetup(Gtk.Window):
 
         elif renderer_type == "color":
             renderer = Gtk.CellRendererText()
-            renderer.set_property("text", " 🎨 Pick")
+            renderer.set_property("editable", True)
+            renderer.set_property("background-set", True)
             column = Gtk.TreeViewColumn(title, renderer, text=column_id, background=column_id)
+            column.add_attribute(renderer, "foreground", column_id)  # Set the text color to match the background
             column.set_resizable(True)
             column.set_expand(True)
+            renderer.connect("editing-started", self.on_color_clicked, column_id)
             self.treeview.append_column(column)
             self.treeview.connect("row-activated", self.on_color_clicked, column_id)
+            self.treeview.connect("editing-started", self.on_color_clicked, column_id)
             return
         
         if not isinstance(renderer, Gtk.CellRendererToggle):
             renderer.set_property("editable", editable)
 
         column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+        # Center-align the headers for Code, 1|2, and Captions
+        if column_id in [0, 1, 4]:  
+            column.set_alignment(0.5)  # Center align the column title
         column.set_resizable(True)
         column.set_expand(True)
         self.treeview.append_column(column)
@@ -281,11 +293,23 @@ class PolyglotSetup(Gtk.Window):
             available_configs = self.get_available_configs()
             self.config_renderer.set_property("model", self.get_combo_model(available_configs))
 
+    def set_color_from_menu(self, widget):
+        """Opens the color picker for the selected row via the context menu."""
+        selected = self.get_selected_row()
+        if selected:
+            model, iter, path = selected
+            column_id = 6  # Color column index
+            self.on_color_clicked(None, path, model[path][column_id], column_id)
+
     def on_color_clicked(self, widget, path, text, column_id):
         """Opens a color picker and updates the selected row's color."""
         model = self.liststore
         iter = model.get_iter(path)
-        dialog = Gtk.ColorChooserDialog(title="Pick a background color", parent=self)
+        # Find the top-level window (main parent)
+        parent_window = self.get_toplevel() if hasattr(self, "get_toplevel") else None
+        # Create the color picker with a valid parent
+        dialog = Gtk.ColorChooserDialog(title="Pick a background color", parent=parent_window)
+
         current_color = model[path][column_id]  # Hex color format
         if current_color:
             rgba = Gdk.RGBA()
@@ -359,6 +383,14 @@ class PolyglotSetup(Gtk.Window):
             delete_item = Gtk.MenuItem(label="Delete Row")
             delete_item.connect("activate", self.delete_selected_row)
             self.context_menu.append(delete_item)
+            
+            color_item = Gtk.MenuItem(label="Set Color...")
+            color_item.connect("activate", self.set_color_from_menu)
+            self.context_menu.append(color_item)
+            
+            distribute_item = Gtk.MenuItem(label="Distribute Widths")
+            distribute_item.connect("activate", self.distribute_width_evenly)
+            self.context_menu.append(distribute_item)
 
             move_up_item = Gtk.MenuItem(label="Move Up")
             move_up_item.connect("activate", self.move_selected_row, -1)
@@ -406,17 +438,20 @@ class PolyglotSetup(Gtk.Window):
             print(f"Editing other config for: {prj}+{cfg}")
 
     def add_row(self, widget):
-        """Adds a new row to the list, enforcing a max limit of 9."""
+        """Adds a new row with the next available code."""
         if len(self.liststore) >= 9:
             print("Maximum of 9 rows reached. Cannot add more.")
             return  # Stop if the limit is reached
 
-        self.liststore.append(["", "1", "(None)", "(None)", False, 33.3, "#FFFFFF", "Help", "#000000", 400])
+        available_codes = self.get_available_codes()
+        next_code = str(available_codes[0]) if available_codes else ""  # Auto-assign next available code
 
+        self.liststore.append([next_code, "1", "(None)", "(None)", False, 50.0, "#FFFFFF", "Right-Click for options", "#000000", 400])
         self.save_data()
-
+        self.refresh_code_dropdowns()  # Refresh available codes
         self.validate_page_widths() # Validate total widths after adding a row
         self.update_context_menu()  # Refresh menu state
+        self.save_data()
 
     def move_selected_row(self, widget, direction):
         """Moves the selected row up (-1) or down (+1)."""
@@ -471,6 +506,31 @@ class PolyglotSetup(Gtk.Window):
 
             self.save_data()  # Save changes
 
+    def distribute_width_evenly(self, widget):
+        """Evenly distributes the % Width across all rows sharing the same page (1 or 2)."""
+        selected = self.get_selected_row()
+        if not selected:
+            return  # No row selected
+
+        model, iter, path = selected
+        page = model[path][1]  # Column index 1 stores "1" or "2"
+
+        # Find all rows that share the same page (1 or 2)
+        same_page_rows = [row for row in range(len(model)) if model[row][1] == page]
+        row_count = len(same_page_rows)
+
+        if row_count == 0:
+            return  # Avoid division by zero
+
+        new_width = round(100.0 / row_count, 1)  # Calculate even width per row
+
+        # Apply the new width to each row
+        for row in same_page_rows:
+            model[row][5] = new_width  # Column index 5 is % Width
+
+        self.save_data()
+        self.validate_page_widths()  # Refresh highlighting
+
     def validate_page_widths(self):
         """Checks that the total width per page (1|2) is 100% and highlights invalid rows."""
         page_totals = {"1": 0.0, "2": 0.0}  # Track total % width per page
@@ -522,8 +582,3 @@ class PolyglotSetup(Gtk.Window):
         data = [{row[0]: {"spread_side": row[1], "prj": row[2], "cfg": row[3], "captions": row[4], "percentage": row[5], "color": row[6]}} for row in self.liststore]
         with open("data.json", "w") as f:
             json.dump(data, f, indent=4)
-
-win = PolyglotSetup()
-win.connect("destroy", Gtk.main_quit)
-win.show_all()
-Gtk.main()

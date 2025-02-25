@@ -48,6 +48,7 @@ from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
 from ptxprint.pdf_viewer import PDFViewer, Paragraphs
 from ptxprint.tatweel import TatweelDialog
+from ptxprint.polyglot_setup import PolyglotSetup
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -806,6 +807,21 @@ class GtkViewModel(ViewModel):
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
         logger.debug("Project list loaded")
+
+        # Main layout container
+        # vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+
+        # Existing TreeView
+        self.tv_polyglot = Gtk.TreeView()
+
+        # Embed PolyglotSetup instead of opening a new window
+        self.polyglot_setup = PolyglotSetup(self.tv_polyglot)
+        polyset = self.builder.get_object('bx_polyglot')
+        polyset.pack_start(self.polyglot_setup, True, True, 0)
+
+        # polyset.add(vbox)
+        polyset.show_all()
+        
         return True
 
     def _setup_digits(self):
