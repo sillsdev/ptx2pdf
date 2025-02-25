@@ -9,7 +9,7 @@ cd ptx2pdf
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip setuptools wheel build
-pip install .
+pip install .[gui]
 ```
 
 

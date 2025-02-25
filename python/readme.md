@@ -47,7 +47,7 @@ sudo apt install libgirepository1.0-dev libcairo2-dev pkg-config python3-dev gir
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip setuptools wheel build
-pip install .
+pip install .[gui]
 ```
 
 Config files (like the default path to the translation project files) are stored in ~/.config/ptxprint/
