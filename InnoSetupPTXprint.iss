@@ -40,8 +40,9 @@ Name: "russian";    MessagesFile: "compiler:Languages\Russian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
-; [InstallDelete]
-; Type: filesandordirs; Name: "{app}\xetex"
+[InstallDelete]
+Type: filesandordirs; Name: "{app}\xetex"
+Type: filesandordirs; Name: "{app}\ptx2pdf"
 
 [Files]
 Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
