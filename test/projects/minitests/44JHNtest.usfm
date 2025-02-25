@@ -21,7 +21,7 @@
 
 
 \p The following is a test of table behaviour
-\p \v 12-83 They presented their offerings in the following order:
+\p \v 6b-7 They presented their offerings in the following order:
 \tr \thc1 Day \thc2 Tribe \thc3 Leader
 \tr \tcr1 1st \tc2 Judah \tc3 Nahshon son of Amminadab
 \tr \tcr1 2nd \tc2 Issachar \tc3 Nethanel son of Zuar
@@ -35,3 +35,23 @@
 \tr \tc1 Issachar \tc2 Nethanel son of Zuar \tcr3 54,400
 \tr \tc1 Zebulun \tc2 Eliab son of Helon \tcr3 57,400
 \tr \tcr1-2 Total of all the tribes: \tcr3 186,400
+
+\p
+\v 8 the hill country, the western foothills, the Arabah, the mountain slopes, the desert and the Negev—the lands of the Hittites, Amorites, Canaanites, Perizzites, Hivites and Jebusites):
+\b
+\tr \tc1 Text
+ \v 9 the king of Jericho \tcr2 one
+\tr \tc1 the king of Ai (near Bethel) \tcr2 one
+\tr \tc1
+\v 10 the king of Jerusalem \tcr2 one
+\tr \tc1 the king of Hebron \tcr2 one
+\tr \tc1
+\v 11 the king of Jarmuth \tcr2 one
+\tr \tc1 the king of Lachish \tcr2 one
+\tr \tc1
+\v 12 the king of Eglon \tcr2 one
+\tr \tc1 the king of Gezer \tcr2 one
+\tr \tc1
+\v 13 the king of Debir \tcr2 one
+\tr \tc1 the king of Geder \tcr2 one
+
