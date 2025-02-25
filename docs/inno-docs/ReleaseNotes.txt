@@ -1,10 +1,10 @@
 PTXprint 2.7.25 Release Notes
-25 Feb 2025
+26 Feb 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.7.25 (25 Feb 2025)
+Bug fixes and Improvements in 2.7.26 (26 Feb 2025)
   * Delete old/redundant ptx2pdf and xetex folders prior to installation (.iss file changed)
   * Adjusted the venv installation example to have the [gui] optional dependencies #1047
   * Fix verse numbers in tables (tables are not footnotes, no setting the innote flag)
