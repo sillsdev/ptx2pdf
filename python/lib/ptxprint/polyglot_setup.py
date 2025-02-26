@@ -2,6 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 import json
+from ptxprint.utils import _
 
 class PolyglotSetup(Gtk.Box):
     def __init__(self, treeview):
@@ -112,19 +113,32 @@ class PolyglotSetup(Gtk.Box):
             return  # Important! Prevents duplicate column creation
 
         elif renderer_type == "combo":
-            # Disable editing for Row 0 for Code (0), Project (2), and Config (3)
+            # Function to disable editing and gray out text for Row 0
             def disable_edit_for_first_row(column, cell, model, iter, data=None):
                 path = model.get_path(iter).to_string()
-                if path == "0" and column_id in [0, 2, 3]:  # Row 0: Lock these columns
-                    cell.set_property("editable", False)
+                if path == "0" and column_id in [0, 2, 3]:  # Lock Code, Project, and Config in Row 0
+                    cell.set_property("editable", False)  # Prevent edits
+                    cell.set_property("foreground", "#888888")  # Gray out text
+                    cell.set_property("has-entry", False)  # Hide dropdown
                 else:
-                    cell.set_property("editable", True)            
-            renderer = Gtk.CellRendererCombo()
+                    cell.set_property("editable", True)  # Normal for other rows
+                    cell.set_property("foreground", "#000000")  # Black text
+                    # cell.set_property("has-entry", True)  # Allow dropdown
 
-            if column_id == 0:  # Special handling for 'Code' column
+            # Create a CellRendererCombo
+            renderer = Gtk.CellRendererCombo()
+            renderer.set_property("editable", True)
+            renderer.set_property("text-column", 0)
+            renderer.set_property("has-entry", False)
+            renderer.connect("edited", self.on_combo_changed, column_id)
+
+            # Special handling for 'Code' column (column 0)
+            if column_id == 0:
                 self.code_renderer = renderer  # Store renderer reference
                 options = self.get_available_codes()  # Get only available codes
+                renderer.set_property("model", self.get_combo_model(options))
 
+            # Special handling for 'Config' column (column 3)
             if column_id == 3:  # Special handling for 'Config' column
                 renderer = Gtk.CellRendererCombo()
                 renderer.set_property("editable", True)
@@ -134,18 +148,24 @@ class PolyglotSetup(Gtk.Box):
 
                 column = Gtk.TreeViewColumn(title, renderer, text=column_id)
                 column.set_cell_data_func(renderer, self.config_cell_data_func)  # Dynamic per-row options
+                # column.set_cell_data_func(renderer, disable_edit_for_first_row)  # Lock Row 0
                 column.set_resizable(True)
                 column.set_expand(True)
 
                 self.treeview.append_column(column)
                 return
 
+            # Apply model for other columns (including Project - column 2)
             renderer.set_property("model", self.get_combo_model(options))
-            renderer.set_property("text-column", 0)
-            renderer.set_property("has-entry", False)
-            renderer.connect("edited", self.on_combo_changed, column_id)
             if align == "center":
                 renderer.set_property("xalign", 0.5)
+
+            # Create column (avoiding duplicates)
+            existing_columns = [col.get_title() for col in self.treeview.get_columns()]
+            if title not in existing_columns:  # Prevent duplicate columns
+                column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+                column.set_cell_data_func(renderer, disable_edit_for_first_row)  # Apply locking
+                self.treeview.append_column(column)
 
         elif renderer_type == "color":
             renderer = Gtk.CellRendererText()
@@ -167,6 +187,8 @@ class PolyglotSetup(Gtk.Box):
         # Center-align the headers for Code, 1|2, and Captions
         if column_id in [0, 1, 4]:  
             column.set_alignment(0.5)  # Center align the column title
+        if column_id in [0, 1, 2]:
+            return
         column.set_resizable(True)
         column.set_expand(True)
         self.treeview.append_column(column)
@@ -192,21 +214,20 @@ class PolyglotSetup(Gtk.Box):
         path_info = self.treeview.get_path_at_pos(x, y)
 
         if path_info is not None:
-            path, column, _, _ = path_info
+            path, column, y, z = path_info
 
             # Find the correct column index
             column_id = self.treeview.get_columns().index(column)
 
             # Set tooltip text based on the column
             tooltips = {
-                0: _("Code: Unique identifier for the text/glot (L, R, A, B, C, ... G)"),
-                1: _("1|2: Specifies whether the content appears on the left (1) or right (2) page."),
-                2: _("Project: The name of the (Paratext) project text."),
-                3: _("Configuration: The configuration settings to be applied for the selected project."),
-                4: _("Captions: Toggle to enable/disable captions for this text."),
-                5: _("% Width: The percentage of the page width this text should occupy.\nIf the values are red, this indicates that the total for the page doesn't\nadd to 100%, so one or more values need to be adjusted."),
-                6: _("Color: [Optional] Type #color code, or right-click to change background color for this text."),
-                7: _("Help: Show more details in tooltip.")
+                0: _("Unique identifier for the text/glot (L, R, A, B, C, ... G)"),
+                1: _("Specify whether the should be on the left (1) or right (2) page."),
+                2: _("The (Paratext) project code."),
+                3: _("The configuration settings to be applied for the selected project."),
+                4: _("Whether to show captions for this text."),
+                5: _("The page width (as %) that this text should occupy.\nIf the values are red, this indicates that the total doesn't\nadd to 100%, so adjust the values.\nUse right-click menu option to distribute width evenly between columns."),
+                6: _("[Optional] Type #color code, or right-click to change background color for this text.")
             }
 
             # Apply the correct tooltip based on column
@@ -217,10 +238,23 @@ class PolyglotSetup(Gtk.Box):
         return False  # No tooltip found
 
     def config_cell_data_func(self, column, cell, model, iter, data=None):
-        """Dynamically updates the Config dropdown per row based on its Project value."""
-        project = model.get_value(iter, 2)  # Get the project for this row
-        available_configs = self.get_available_configs(project)  # Get project-specific configs
-        cell.set_property("model", self.get_combo_model(available_configs))  # Update dropdown list
+        """Dynamically sets the available configurations per row and locks Row 0."""
+        path = model.get_path(iter).to_string()
+        project = model.get_value(iter, 2)  # Column 2 contains the Project
+        available_configs = self.get_available_configs(project)  # Get configs for that project
+
+        # Ensure Row 0 is locked
+        if path == "0":  # If this is the first row
+            cell.set_property("editable", False)  # Disable dropdown
+            cell.set_property("foreground", "#888888")  # Gray out text
+            cell.set_property("has-entry", False)  # Prevent dropdown
+        else:
+            cell.set_property("editable", True)  # Enable dropdown for other rows
+            cell.set_property("foreground", "#000000")  # Normal text color
+            # cell.set_property("has-entry", True)  # Allow dropdown
+
+        # Apply the correct config options for the row
+        cell.set_property("model", self.get_combo_model(available_configs))
 
     def on_width_edited(self, widget, path, new_text, column_id):
         """Handles editing of the % Width column and ensures it updates the ListStore."""
