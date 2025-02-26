@@ -34,7 +34,7 @@
 \def\endofperiph{\relax}
 {\catcode13=12 %
 \gdef\@@rem{\bgroup\catcode13=12 \unc@tcodespecials\catcode`\\=12\@@rem@}%
-\gdef\@@rem@#1^^M{\egroup\@@realrem }% Swallow first line like I thought it was designed to.
+\gdef\@@rem@#1^^M{\egroup\trace{s}{rem: Grabbed #1 to ignore}\@@realrem }% Swallow first line like I thought it was designed to.
 %Code to read periph sections line by line.
 \gdef\@periph{%
   \trace{per}{periph: \sh@wstuff}%
@@ -273,9 +273,11 @@
     \advance\periphdepth by 1
     \inperiphtrue
     \catcode13=10
-    \everyeof{%
+    \everyeof{\relax%
+      \ifsk@pping\egroup\fi
+      \trace{per}{EOF1 \sh@wstuff }%
       \ifhe@dings\endhe@dings\fi
-      \trace{per}{EOF1 \sh@wstuff}\ifinperiph\endp@riph\fi}%
+    \ifinperiph\endp@riph\fi}%
     \aftergroup\@ndofperiphgroup%
     \let\n@xt\relax
   \fi

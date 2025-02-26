@@ -2015,6 +2015,7 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi \ifdoingt@ble doingtable??\fi \c@tegory,\c@tprefix}%
+ \traceifset{ptxfile}%
  \ifhmode\endgraf\fi
  \ifdim\pagetotal>20pt \message{Pagetotal = \the\pagetotal, Trigggring endpage \the\output}\endpage\fi
  \seriesdiglotfalse % Set this so we know it's always valid
@@ -2044,9 +2045,12 @@
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
      \else \closein\t@stread \def\n@xt{\atn@xtptxfile \input "\the\PtxFilePath#1"\relax}\fi
-   \n@xt
+   \traceifset{ptxfile-contents}%
+   \n@xt\relax
+   \traceifcheck{ptxfile-contents}%
    \gdef\atn@xtptxfile{}% This can't carry over.
  \fi
+ \traceifcheck{ptxfile}%
  \postptxfile
 }
 \gdef\atn@xtptxfile{}
