@@ -2,10 +2,25 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 import re, json
+from enum import IntEnum
 from ptxprint.utils import _
 
+_modeltypes = (str, str, str, str, bool, float, str, str, str, int)
+_modelfields = ('code', '1|2', 'prj', 'cfg', 'caption', 'width', 'color', 'something', 'bold', 'else')
+m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
+
+if m.prj == 2:
+    print(f"Hey, it works!")
+if m(2).name == 'prj':
+    print(f"Hey, it still works!")
+    
+for x in m:
+    print(f"{x=} {x.name=}  {x.value=}")
+
 class PolyglotSetup(Gtk.Box):
-    def __init__(self, treeview):
+    def __init__(self, builder, projects, tv):
+        # self.model = model
+        self.builder = builder
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
 
         # Load data from JSON file #FixMe!
@@ -17,17 +32,19 @@ class PolyglotSetup(Gtk.Box):
 
         # Dropdown options
         self.codes = ["L", "R", "A", "B", "C", "D", "E", "F", "G"]
-        # Need to connect this to the liststore for fcb_projects!
-        self.prjs = ["(None)", "BSB", "WSG", "WSGdev", "GRKNT", "WSGgong", "WSGlatin", "WSGBTpub"]
         self.spread_side = ["1", "2"]
+        # Get the shared project ListStore from the main program
+        self.project_liststore = self.builder.get_object("ls_projects")
+        # self.prjs = ["(None)", "BSB", "WSG", "WSGdev", "GRKNT", "WSGgong", "WSGlatin", "WSGBTpub"]
 
         # Use the existing treeview instead of creating a new one
-        self.treeview = treeview  
+        self.treeview = tv  
         self.treeview.set_reorderable(True)
 
         # Create ListStore model if not already set
         if self.treeview.get_model() is None:
-            self.liststore = Gtk.ListStore(str, str, str, str, bool, float, str, str, str, int)  
+            self.liststore = Gtk.ListStore(*_modeltypes)  
+            # self.liststore = Gtk.ListStore(str, str, str, str, bool, float, str, str, str, int)  
             self.treeview.set_model(self.liststore)
         else:
             self.liststore = self.treeview.get_model()
@@ -44,7 +61,7 @@ class PolyglotSetup(Gtk.Box):
         # Define Columns
         self.add_column("Code", 0, editable=True, renderer_type="combo", options=self.codes, align="center")
         self.add_column("1|2", 1, editable=True, renderer_type="combo", options=self.spread_side, align="center")
-        self.add_column("Project", 2, editable=True, renderer_type="combo", options=self.prjs)
+        self.add_column("Project", 2, editable=True, renderer_type="combo", options=self.project_liststore)
         self.add_column("Configuration", 3, editable=True, renderer_type="combo", options=['(None)'])
         self.add_column("Captions", 4, editable=True, renderer_type="toggle")
         self.add_column("% Width", 5, editable=True, renderer_type="text")
@@ -77,12 +94,10 @@ class PolyglotSetup(Gtk.Box):
             renderer.set_property("editable", editable)
             
             # Only apply color formatting to the % Width column
+            column = Gtk.TreeViewColumn(title, renderer, text=column_id)
             if column_id == 5:
-                column = Gtk.TreeViewColumn(title, renderer, text=column_id)
                 column.add_attribute(renderer, "foreground", 8)  # Use column 8 for text color
                 column.add_attribute(renderer, "weight", 9)      # Use column 9 for bold effect
-            else:
-                column = Gtk.TreeViewColumn(title, renderer, text=column_id)
 
             # Store tooltips inside the last column (index 7)
             if column_id in range(0,7):
@@ -93,8 +108,10 @@ class PolyglotSetup(Gtk.Box):
             if column_id == 5:
                 column.set_cell_data_func(renderer, self.format_width_data_func)
                 renderer.connect("edited", self.on_width_edited, column_id)  # Connect edit event
+            column.set_fixed_width(70)  # Increase width (default is often too narrow)
+            column.set_alignment(1.0)   # This sets the column title on the right.
             column.set_resizable(True)
-            column.set_expand(True)
+            # column.set_expand(True)
             
             self.treeview.append_column(column)
             return
@@ -105,9 +122,10 @@ class PolyglotSetup(Gtk.Box):
             renderer.connect("toggled", self.on_toggle, column_id)
 
             column = Gtk.TreeViewColumn(title, renderer, active=column_id)  # Bind "active" property
+            column.set_fixed_width(70)  # Increase width (default is often too narrow)
             column.set_alignment(0.5)
             column.set_resizable(True)
-            column.set_expand(True)
+            # column.set_expand(True)
 
             self.treeview.append_column(column)
             return  # Important! Prevents duplicate column creation
@@ -148,22 +166,33 @@ class PolyglotSetup(Gtk.Box):
 
                 column = Gtk.TreeViewColumn(title, renderer, text=column_id)
                 column.set_cell_data_func(renderer, self.config_cell_data_func)  # Dynamic per-row options
-                # column.set_cell_data_func(renderer, disable_edit_for_first_row)  # Lock Row 0
                 column.set_resizable(True)
                 column.set_expand(True)
 
                 self.treeview.append_column(column)
                 return
 
-            # Apply model for other columns (including Project - column 2)
-            renderer.set_property("model", self.get_combo_model(options))
+            wide = int(len(options) / 16) + 1 if len(options) > 14 else 1
+            print(f"{len(options)=}  {wide=}")
+
+            if isinstance(options, Gtk.ListStore):  # If options is a ListStore, use it directly
+                renderer.set_property("model", options)
+            else:  # Otherwise, assume it's a list and convert it
+                renderer.set_property("model", self.get_combo_model(options))
+
+            # Connect the signal to apply wrap-width dynamically
+            renderer.connect("editing-started", self.on_editing_started)
+
             if align == "center":
                 renderer.set_property("xalign", 0.5)
-
+            
             # Create column (avoiding duplicates)
             existing_columns = [col.get_title() for col in self.treeview.get_columns()]
             if title not in existing_columns:  # Prevent duplicate columns
                 column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+                if column_id == 2:
+                    column.set_fixed_width(100)  # Increase width (default is often too narrow)
+                    column.set_resizable(True)
                 column.set_cell_data_func(renderer, disable_edit_for_first_row)  # Apply locking
                 self.treeview.append_column(column)
 
@@ -173,8 +202,9 @@ class PolyglotSetup(Gtk.Box):
             renderer.set_property("background-set", True)
             column = Gtk.TreeViewColumn(title, renderer, text=column_id, background=column_id)
             column.add_attribute(renderer, "foreground", column_id)  # Set the text color to match the background
+            column.set_fixed_width(70)  # Increase width (default is often too narrow)
             column.set_resizable(True)
-            column.set_expand(True)
+            # column.set_expand(True)
             renderer.connect("edited", self.on_color_typed, column_id)
             self.treeview.append_column(column)
             self.treeview.connect("row-activated", self.on_color_clicked, column_id)
@@ -192,6 +222,19 @@ class PolyglotSetup(Gtk.Box):
         column.set_resizable(True)
         column.set_expand(True)
         self.treeview.append_column(column)
+
+    def on_editing_started(self, cell, editable, path):
+        """
+        This method is called when a cell with a dropdown is being edited.
+        It dynamically applies wrap width to the dropdown for multi-column support.
+        """
+        if isinstance(editable, Gtk.ComboBox):
+            print("Applying wrap width to ComboBox for multi-column support")
+
+            # Dynamically set wrap width based on the number of items
+            num_projects = len(self.project_liststore) if hasattr(self, "project_liststore") else 0
+            number_of_columns = max(1, num_projects // 16) + 1 if num_projects > 14 else 1
+            editable.set_wrap_width(number_of_columns)
 
     def on_color_typed(self, widget, path, text, column_id):
         """Handles direct text input in the Color column, ensuring valid HEX codes."""
@@ -278,6 +321,7 @@ class PolyglotSetup(Gtk.Box):
         if isinstance(value, (int, float)):
             formatted_value = f"{value:.2f}"  # Format to 2 decimal places
             cell.set_property("text", formatted_value)
+            cell.set_property("xalign", 1.0)  # 1.0 = Right, 0.5 = Center, 0.0 = Left
         else:
             cell.set_property("text", "")
 
@@ -437,9 +481,9 @@ class PolyglotSetup(Gtk.Box):
         if event.button == 3:  # Right-click
             self.context_menu = Gtk.Menu()  # Store reference
 
-            validator_item = Gtk.MenuItem(label=_("Validate codes..."))
-            validator_item.connect("activate", self.testValidator)
-            self.context_menu.append(validator_item)
+            # validator_item = Gtk.MenuItem(label=_("Validate codes..."))
+            # validator_item.connect("activate", self.testValidator)
+            # self.context_menu.append(validator_item)
 
             add_item = Gtk.MenuItem(label=_("Add a row/text"))
             add_item.connect("activate", self.add_row)
@@ -653,7 +697,11 @@ class PolyglotSetup(Gtk.Box):
         data = [{row[0]: {"spread_side": row[1], "prj": row[2], "cfg": row[3], "captions": row[4], "percentage": row[5], "color": row[6]}} for row in self.liststore]
         with open("data.json", "w") as f:
             json.dump(data, f, indent=4)
-        # t_layout.set_text(self.generate_layout_from_treeview())
+        t = self.generate_layout_from_treeview()
+        w = self.builder.get_object('t_layout')
+        if not "\\" in w.get_text():
+            w.set_text(t)
+            self.update_layout_preview()
 
     def generate_layout_from_treeview(self):
         """
@@ -679,13 +727,61 @@ class PolyglotSetup(Gtk.Box):
 
         # Step 3: If both '1' and '2' exist, separate them with a comma ','
         if left_side and right_side:
-            print(f"{left_side},{right_side}")
             return f"{left_side},{right_side}"
         else:
-            print(left_side or right_side) 
             return left_side or right_side  # Return whichever side has values
 
     def validate_layout(self, t_layout, liststore):
+        """
+        Validates the layout string in t_layout based on the updated rules.
+
+        :param t_layout: The input string from the text box.
+        :param liststore: The Gtk.ListStore containing used letter codes and their assigned 1|2 values.
+        :return: (is_valid, error_message) - Boolean validity and error message if invalid.
+        """
+        # Rule 2: Ensure there are no spaces
+        if " " in t_layout:
+            return False, "Layout must not contain spaces."
+
+        # Extract used codes and their '1|2' values from the ListStore
+        used_codes = {}  # Dictionary mapping codes -> '1' or '2'
+        for row in liststore:
+            code, side = row[0], row[1]  # Column 0: Code, Column 1: 1|2
+            if code:
+                used_codes[code] = side
+
+        # Rule 1: Ensure all letters in t_layout exist in the used_codes
+        all_letters = set("".join(t_layout.replace(",", "").replace("/", "")))
+        if not all_letters.issubset(set(used_codes.keys())):
+            return False, "Layout contains invalid codes."
+
+        # Rule 3: If both '1' and '2' exist in the ListStore, a comma must be present
+        if "1" in used_codes.values() and "2" in used_codes.values() and "," not in t_layout:
+            return False, "Layout must contain a comma to indicate separate sides."
+
+        # Rule 4: Ensure left-side codes appear in '1' and right-side codes in '2'
+        if "," in t_layout:
+            left_side, right_side = t_layout.split(",", 1)
+            left_codes = set(left_side.replace("/", ""))
+            right_codes = set(right_side.replace("/", ""))
+            if not left_codes.issubset({k for k, v in used_codes.items() if v == "1"}):
+                return False, "Left-side codes must be assigned to '1'."
+            if not right_codes.issubset({k for k, v in used_codes.items() if v == "2"}):
+                return False, "Right-side codes must be assigned to '2'."
+
+        # Rule 6: Ensure L and R are always present
+        if not ("L" in all_letters and "R" in all_letters):
+            return False, "Layout must include both L and R."
+
+        # Rule 10: Hyphen '-' is allowed to indicate a blank page
+        valid_chars = set(used_codes.keys()).union({",", "/", "-"})
+        if not set(t_layout).issubset(valid_chars):
+            return False, "Layout contains invalid characters."
+
+        return True, "Valid layout."
+
+
+    def old_validate_layout(self, t_layout, liststore):
         """
         Validates the layout string in t_layout based on the defined rules.
 
@@ -753,7 +849,6 @@ class PolyglotSetup(Gtk.Box):
         return True, "Layout is valid."
 
     def testValidator(self, x):
-        t = self.generate_layout_from_treeview()
         print(f"Layout: {t}")
         for l in "LR L,R L/R L,RA LR,A L,R/A L/R,A L/R,AB L/R,A/B LR,ABC L/RA,B/CD L/A/B,R/C/D LR/ /LR AB AB,CD A/B LR/AB".split():
             is_valid, message = self.validate_layout(l, self.liststore)
@@ -763,23 +858,21 @@ class PolyglotSetup(Gtk.Box):
             else:
                 print(f"Valid: {l}")
 
-    def update_layout_preview(self, widget, layout='LR'):
+    def update_layout_preview(self):
         """
         Generates a dynamic UI representation of the t_layout text using GtkFrames and attaches it to the given widget (bx_layoutPreview).
         - Parses t_layout to determine structure (left/right pages, horizontal/vertical layout).
         - Uses colors from the TreeView's color column.
         - Automatically resizes to fit available space.
-        
-        :param widget: The Gtk.Box container where the layout preview will be displayed.
         """
+        widget = self.builder.get_object('bx_layoutPreview')
+        layout = self.builder.get_object('t_layout').get_text()
 
         # Step 1: Clear the existing layout preview
         for child in widget.get_children():
             widget.remove(child)
 
         # Step 2: Validate t_layout
-        # layout = 'LR,A/BC' # self.t_layout.get_text().strip()
-        print(f"{layout=}")
         is_valid, error_message = self.validate_layout(layout, self.liststore)
 
         if not is_valid:
@@ -806,14 +899,33 @@ class PolyglotSetup(Gtk.Box):
         def create_horizontal_box(codes):
             """
             Creates a horizontal GtkBox containing individual frames for each letter code.
+            Each frame's width is proportional to the '% Width' column in the TreeView.
 
-            :param codes: String containing letter codes (e.g., "BC").
-            :return: Gtk.Box containing frames.
+            :param codes: String containing letter codes (e.g., "LRA").
+            :return: Gtk.Box containing frames with proportional widths.
             """
             box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
             box.set_hexpand(True)
             box.set_vexpand(True)
 
+            # Retrieve width percentages from the TreeView
+            widths = {}
+            total_width = 0  # Used for normalization
+
+            for row in self.liststore:
+                code = row[0]  # Column 0 = Code
+                width_percentage = row[5]  # Column 5 = % Width
+
+                if code in codes:
+                    widths[code] = width_percentage
+                    total_width += width_percentage
+
+            # Normalize widths to prevent errors (Ensure sum = 100%)
+            if total_width > 0:
+                for code in widths:
+                    widths[code] = widths[code] / total_width  # Convert to ratio (0.0 - 1.0)
+
+            # Create Frames with Proportional Widths
             for code in codes:
                 frame = Gtk.Frame()
                 frame.set_shadow_type(Gtk.ShadowType.IN)
@@ -837,21 +949,30 @@ class PolyglotSetup(Gtk.Box):
                 label.set_justify(Gtk.Justification.CENTER)
 
                 frame.add(label)
-                box.pack_start(frame, True, True, 0)
+
+                # Create an event box to wrap frame & set width proportionally
+                event_box = Gtk.EventBox()
+                event_box.add(frame)
+
+                if code in widths:
+                    width_ratio = widths[code]  # Get proportion (0.0 - 1.0)
+                    event_box.set_size_request(int(100 * width_ratio), -1)  # Scale width (135px is arbitrary)
+
+                box.pack_start(event_box, True, True, 0)
 
             return box
 
         # Step 5: Helper function to create a page frame
-        def create_page_frame(codes, is_right_page):
+        def create_page_frame(codes, is_right_page, is_single, rtl):
             """
             Creates a page frame with the appropriate orientation and labels.
             - If '/' is present, a vertical split is created.
             - If there is only ONE '/', it creates a 2-section layout where the top contains the first item,
               and the bottom contains the remaining items in a horizontal row.
-
             :param codes: String of codes for this page.
             :param is_right_page: Boolean indicating if this is the right page.
-            :return: Gtk.Frame containing the page layout.
+            :param is_single: Boolean indicating if this is the only page (don't display L/R).
+            :param rtl: Boolean indicating if this is an RTL publication (not implemented yet).
             """
             if "/" in codes:
                 parts = codes.split("/")  # Split based on `/`
@@ -878,56 +999,12 @@ class PolyglotSetup(Gtk.Box):
                 page_box = create_horizontal_box(codes)
 
             # Create the page frame with 'Left Page' or 'Right Page' labels
-            page_frame = Gtk.Frame(label="Right Page" if is_right_page else "Left Page")
-            page_frame.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-            page_frame.set_hexpand(True)
-            page_frame.set_vexpand(True)
-            page_frame.add(page_box)
-
-            return page_frame
-        
-        def old_create_page_frame(codes, is_right_page):
-            """
-            Creates a page frame with the appropriate orientation and labels.
-            :param codes: String of codes for this page.
-            :param is_right_page: Boolean indicating if this is the right page.
-            :return: Gtk.Frame containing the page layout.
-            """
-            # Determine if the layout is vertical or horizontal
-            orientation = Gtk.Orientation.VERTICAL if "/" in codes else Gtk.Orientation.HORIZONTAL
-            page_box = Gtk.Box(orientation=orientation, spacing=5)
-            page_box.set_hexpand(True)
-            page_box.set_vexpand(True)
-
-            # Create frames for each code
-            for code in codes.replace("/", ""):  # Remove '/' since we already set orientation
-                frame = Gtk.Frame()  # Frame without an outer label
-                frame.set_shadow_type(Gtk.ShadowType.IN)
-
-                # Retrieve the background color from the TreeView
-                color_hex = "#FFFFFF"  # Default to white
-                for row in self.liststore:
-                    if row[0] == code:  # Match the code in the liststore
-                        color_hex = row[6]  # Column 6 contains the color
-                        break
-
-                # Apply background color
-                rgba = Gdk.RGBA()
-                rgba.parse(color_hex)
-                frame.override_background_color(Gtk.StateFlags.NORMAL, rgba)
-
-                # Centered label inside the frame
-                label = Gtk.Label(label=code)
-                label.set_hexpand(True)
-                label.set_vexpand(True)
-                label.set_justify(Gtk.Justification.CENTER)
-
-                frame.add(label)
-                page_box.pack_start(frame, True, True, 0)
-
-            # Create the page frame with 'Left Page' or 'Right Page' labels
-            page_frame = Gtk.Frame(label="Right Page" if is_right_page else " Left Page ")
-            page_frame.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+            if is_single:
+                page_frame = Gtk.Frame(label="")
+            else:
+                page_frame = Gtk.Frame(label="Right Page" if is_right_page else "  Left Page  ")
+            page_frame.set_shadow_type(Gtk.ShadowType.NONE)
+            page_frame.set_size_request(70, -1)  # Width = 70px, Height flexible
             page_frame.set_hexpand(True)
             page_frame.set_vexpand(True)
             page_frame.add(page_box)
@@ -935,8 +1012,8 @@ class PolyglotSetup(Gtk.Box):
             return page_frame
 
         # Step 6: Generate left and right page layouts
-        left_page = create_page_frame(left_side, is_right_page=False)
-        right_page = create_page_frame(right_side, is_right_page=True) if right_side else None
+        left_page = create_page_frame(left_side, is_right_page=False, is_single=right_side == "", rtl=False)
+        right_page = create_page_frame(right_side, is_right_page=True, is_single=False, rtl=False) if right_side else None
 
         # Step 7: Pack into the spread box
         spread_box.pack_start(left_page, True, True, 0)

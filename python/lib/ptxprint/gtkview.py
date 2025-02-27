@@ -818,7 +818,7 @@ class GtkViewModel(ViewModel):
         self.tv_polyglot = Gtk.TreeView()
 
         # Embed PolyglotSetup instead of opening a new window
-        self.polyglot_setup = PolyglotSetup(self.tv_polyglot)
+        self.polyglot_setup = PolyglotSetup(self.builder, projects, self.tv_polyglot)
         polyset = self.builder.get_object('bx_polyglot')
         polyset.pack_start(self.polyglot_setup, True, True, 0)
 
@@ -6598,7 +6598,4 @@ Thank you,
                 dialog.resize(width, height)
         
     def onPolyglotLayoutFocusOut(self, a, b):
-        bx = self.builder.get_object('bx_layoutPreview')
-        l = self.get('t_layout')
-        # l = self.builder.get_object('t_layout').set_text("")
-        self.polyglot_setup.update_layout_preview(bx, layout=l)
+        self.polyglot_setup.update_layout_preview()

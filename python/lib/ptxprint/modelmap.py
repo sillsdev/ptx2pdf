@@ -520,6 +520,12 @@ _map = {
     
 }
 
+polymap = {
+    "percent" : ("t_polywidth", None, None),
+    "percent" : ("t_polywidth", None, None),
+    "percent" : ("t_polywidth", None, None),
+    "percent" : ("t_polywidth", None, None),
+    }
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}
 
 ImportCategories = {
