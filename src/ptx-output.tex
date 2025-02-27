@@ -212,7 +212,7 @@
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
       \global\holdinginserts=0
-      \global\output={\savepartialpage}\global\rerunsavepartialpagedfalse\unvbox255% leave flag set to allow caller to trigger extra \eject   %(+)
+      \global\output={\savepartialpagebounce}\global\rerunsavepartialpagedfalse\unvbox255% leave flag set to allow caller to trigger extra \eject   %(+)
     \else
       \global\holdinginserts=1
       \global\output={\onecol}\unvbox255\fi
@@ -1792,18 +1792,21 @@
 }
 
 \def\savepartialpagebounce{%
-  \@prepbounce %Sets hIns to 0 and trialheight
-  \vsize=\availht
-  \advance\vsize by \baselineskip
-  \global\output={\savepartialpage}%
   \setbox255\vbox{\unvbox255}%
   \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, pg:\the\pagegoal, th:\the\trialheight, g:\the\ht255, \the\ht\galley, op=\the\outputpenalty/\@utputpenalty \csname d@code:\@utputpenalty\endcsname}%
-  \unvbox255\ifnum\the\outputpenalty>-10000
-    \trace{o}{Unexpected output penalty at partialpagebounce. Not adding fill & eject.}%
-    %\showlists
+  \@prepbounce %saves galley etc, Sets hIns to 0  and trialheight
+  \vsize=\availht
+  \advance\vsize by \baselineskip
+  \ifnum\the\outputpenalty>-10000
+    \trace{o}{Unexpected output penalty at partialpagebounce. redirecting to onecoltrial.}%
+    \global\output={\onecoltrial}%
+    \def\n@xt{\unvbox255\@@eject}%
+    \global\rerunsavepartialpagedtrue
   \else
-    \@@eject
+    \global\output={\savepartialpage}%
+    \def\n@xt{\unvbox255 \@@eject}%
   \fi
+  \n@xt
 }
 
 \def\savepartialpagedbounce{%
@@ -2024,4 +2027,3 @@
     \ifdim\ht\colA>\colhtA \ifdim\ht\colB<1pt \ifdim\ht\colA<\colhtB \setbox\colB=\box\colA\fi\fi\fi
     \trace{o}{splitcols A:\the\ht\colA, B:\the\ht\colB, C:\the\ht\colC, \the\ht#1}%
 }
-
