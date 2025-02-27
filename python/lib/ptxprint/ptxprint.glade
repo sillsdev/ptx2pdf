@@ -18342,46 +18342,6 @@ leave this option checked ON.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <child>
-                                  <object class="GtkComboBox" id="fcb_diglotPicListSources">
-                                    <property name="name">Diglot: Source of illustrations for PicList creation </property>
-                                    <property name="width-request">90</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">When generating a PicList for a
-Diglot/DiScript publication, you
-need to decide which images to
-include in the publication.
-
-Note that this control remains
-inactive until Diglot is enabled.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="model">ls_diglotPicListSources</property>
-                                    <property name="active">0</property>
-                                    <property name="id-column">1</property>
-                                    <property name="active-id">1</property>
-                                    <signal name="changed" handler="diglotPicListSourcesChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkSeparator" id="rule_diglotSep">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -18473,7 +18433,7 @@ not be merged. These will appear one after the other.</property>
                                 <property name="placeholder-text" translatable="yes">e.g. FRT BAK GLO XXA XXB</property>
                               </object>
                               <packing>
-                                <property name="left-attach">1</property>
+                                <property name="left-attach">3</property>
                                 <property name="top-attach">3</property>
                                 <property name="width">2</property>
                               </packing>
@@ -18493,35 +18453,89 @@ not be merged. These will appear one after the other.</property>
 for These Books:</property>
                               </object>
                               <packing>
-                                <property name="left-attach">0</property>
+                                <property name="left-attach">2</property>
                                 <property name="top-attach">3</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFrame">
+                              <object class="GtkComboBox" id="fcb_diglotPicListSources">
+                                <property name="name">Diglot: Source of illustrations for PicList creation </property>
+                                <property name="width-request">90</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="valign">start</property>
-                                <property name="hexpand">True</property>
-                                <property name="vexpand">True</property>
-                                <property name="label-xalign">0</property>
+                                <property name="tooltip-text" translatable="yes">When generating a PicList for a
+Diglot/DiScript publication, you
+need to decide which images to
+include in the publication.
+
+Note that this control remains
+inactive until Diglot is enabled.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="model">ls_diglotPicListSources</property>
+                                <property name="active">0</property>
+                                <property name="id-column">1</property>
+                                <property name="active-id">1</property>
+                                <signal name="changed" handler="diglotPicListSourcesChanged" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="spacing">6</property>
                                 <child>
-                                  <object class="GtkBox" id="bx_polyglot">
-                                    <property name="width-request">550</property>
-                                    <property name="height-request">120</property>
+                                  <object class="GtkFrame">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="valign">start</property>
                                     <property name="hexpand">True</property>
                                     <property name="vexpand">True</property>
+                                    <property name="label-xalign">0</property>
+                                    <child>
+                                      <object class="GtkBox" id="bx_polyglot">
+                                        <property name="width-request">550</property>
+                                        <property name="height-request">120</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="valign">start</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label_item">
+                                      <placeholder/>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox" id="bx_layoutPreview">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="margin-top">4</property>
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <placeholder/>
                                     </child>
                                   </object>
-                                </child>
-                                <child type="label_item">
-                                  <placeholder/>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
@@ -18532,45 +18546,80 @@ for These Books:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkToggleButton" id="btn_adjust_diglot">
-                                <property name="name">Auto-calculate optimum widths of diglot columns</property>
+                              <object class="GtkEntry" id="t_layout">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="margin-right">6</property>
-                                <property name="margin-end">6</property>
-                                <property name="image">icon_adjust_diglot</property>
-                                <property name="always-show-image">True</property>
-                                <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
+                                <property name="placeholder-text" translatable="yes">LR,A/B</property>
+                                <signal name="focus-out-event" handler="onPolyglotLayoutFocusOut" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">3</property>
+                                <property name="left-attach">1</property>
                                 <property name="top-attach">3</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="btn_DBLbundleDiglot2">
-                                <property name="label" translatable="yes">DBL</property>
-                                <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                              <object class="GtkBox">
                                 <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
+                                <property name="can-focus">False</property>
+                                <property name="spacing">6</property>
+                                <child>
+                                  <object class="GtkButton" id="btn_DBLbundleDiglot2">
+                                    <property name="label" translatable="yes">DBL</property>
+                                    <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
 available texts to print from. Note that the
 DBL bundle will get unpacked into your 
 regular folder (e.g. My Paratext 9 Projects)
 but will only be used by PTXprint. It cannot
 be viewed or edited in Paratext.</property>
-                                <property name="halign">end</property>
-                                <property name="margin-right">6</property>
-                                <property name="margin-end">6</property>
-                                <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
+                                    <property name="halign">end</property>
+                                    <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToggleButton" id="btn_adjust_diglot">
+                                    <property name="name">Auto-calculate optimum widths of diglot columns</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="image">icon_adjust_diglot</property>
+                                    <property name="always-show-image">True</property>
+                                    <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin-start">20</property>
+                                    <property name="label" translatable="yes">Layout:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
-                                <property name="left-attach">4</property>
+                                <property name="left-attach">0</property>
                                 <property name="top-attach">3</property>
                               </packing>
                             </child>

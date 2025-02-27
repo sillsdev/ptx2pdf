@@ -6597,3 +6597,8 @@ Thank you,
                 dialog.move(x, y)
                 dialog.resize(width, height)
         
+    def onPolyglotLayoutFocusOut(self, a, b):
+        bx = self.builder.get_object('bx_layoutPreview')
+        l = self.get('t_layout')
+        # l = self.builder.get_object('t_layout').set_text("")
+        self.polyglot_setup.update_layout_preview(bx, layout=l)

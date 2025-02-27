@@ -1,7 +1,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
-import json
+import re, json
 from ptxprint.utils import _
 
 class PolyglotSetup(Gtk.Box):
@@ -437,6 +437,10 @@ class PolyglotSetup(Gtk.Box):
         if event.button == 3:  # Right-click
             self.context_menu = Gtk.Menu()  # Store reference
 
+            validator_item = Gtk.MenuItem(label=_("Validate codes..."))
+            validator_item.connect("activate", self.testValidator)
+            self.context_menu.append(validator_item)
+
             add_item = Gtk.MenuItem(label=_("Add a row/text"))
             add_item.connect("activate", self.add_row)
             self.context_menu.append(add_item)
@@ -649,3 +653,296 @@ class PolyglotSetup(Gtk.Box):
         data = [{row[0]: {"spread_side": row[1], "prj": row[2], "cfg": row[3], "captions": row[4], "percentage": row[5], "color": row[6]}} for row in self.liststore]
         with open("data.json", "w") as f:
             json.dump(data, f, indent=4)
+        # t_layout.set_text(self.generate_layout_from_treeview())
+
+    def generate_layout_from_treeview(self):
+        """
+        Generates a valid layout string based on the current TreeView data.
+        - Extracts the letter codes and their '1|2' values.
+        - Constructs a valid layout format (without '/' for now).
+        - Ensures 'L' and 'R' are always included.
+        - Adds a ',' if there are texts on both '1' and '2'.
+        
+        :return: A valid layout string.
+        """
+
+        # Step 1: Extract used codes and their '1|2' values from the ListStore
+        codes_by_side = {"1": [], "2": []}  # Store codes grouped by page side
+        for row in self.liststore:
+            code, side = row[0], row[1]  # Column 0: Code, Column 1: 1|2
+            if code:
+                codes_by_side[side].append(code)
+
+        # Step 2: Construct the layout string
+        left_side = "".join(codes_by_side["1"])  # Combine left side letters
+        right_side = "".join(codes_by_side["2"])  # Combine right side letters
+
+        # Step 3: If both '1' and '2' exist, separate them with a comma ','
+        if left_side and right_side:
+            print(f"{left_side},{right_side}")
+            return f"{left_side},{right_side}"
+        else:
+            print(left_side or right_side) 
+            return left_side or right_side  # Return whichever side has values
+
+    def validate_layout(self, t_layout, liststore):
+        """
+        Validates the layout string in t_layout based on the defined rules.
+
+        :param t_layout: The input string from the text box.
+        :param liststore: The Gtk.ListStore containing used letter codes and their assigned 1|2 values.
+        :return: (is_valid, error_message) - Boolean validity and error message if invalid.
+        """
+        # Rule 2: Ensure there are no spaces
+        if " " in t_layout:
+            return False, "Layout must not contain spaces."
+
+        # Extract used codes and their '1|2' values from the ListStore
+        used_codes = {}  # Dictionary mapping codes -> '1' or '2'
+        for row in liststore:
+            code, side = row[0], row[1]  # Column 0: Code, Column 1: 1|2
+            if code:
+                used_codes[code] = side
+
+        all_used_codes = set(used_codes.keys())  # Set of valid codes from TreeView
+        all_layout_codes = set(re.findall(r"[A-Z]", t_layout))  # Extract all letter codes from layout
+
+        # Rule 1: Ensure only used codes are present in t_layout
+        if not all_layout_codes.issubset(all_used_codes):
+            return False, f"Invalid letters found: {', '.join(all_layout_codes - all_used_codes)}"
+
+        # Rule 7 (NEW): Ensure all codes in the TreeView are included in t_layout
+        missing_codes = all_used_codes - all_layout_codes
+        if missing_codes:
+            return False, f"Missing codes in layout: {', '.join(missing_codes)}"
+
+        # Rule 6: Ensure L and R are present
+        if not {"L", "R"}.issubset(all_layout_codes):
+            return False, "Layout must include both 'L' and 'R'."
+
+        # Rule 5: Ensure '/' is used correctly (not at start or end, no consecutive slashes)
+        if t_layout.startswith("/") or t_layout.endswith("/") or "//" in t_layout:
+            return False, "Slashes must be between letters and not at the start or end."
+
+        # Rule 3: Check if both '1' and '2' exist in the data, requiring a comma
+        contains_1 = any(side == "1" for side in used_codes.values())
+        contains_2 = any(side == "2" for side in used_codes.values())
+        needs_comma = contains_1 and contains_2
+
+        if needs_comma and "," not in t_layout:
+            return False, "A comma is required to separate '1' and '2' sections."
+
+        # Rule 4: Ensure left-side codes are in '1' and right-side codes are in '2'
+        if "," in t_layout:
+            left_side, right_side = t_layout.split(",", 1)  # Split at first comma
+        else:
+            left_side, right_side = t_layout, ""
+
+        left_codes = set(re.findall(r"[A-Z]", left_side))
+        right_codes = set(re.findall(r"[A-Z]", right_side))
+
+        left_mismatch = {code for code in left_codes if used_codes.get(code) != "1"}
+        right_mismatch = {code for code in right_codes if used_codes.get(code) != "2"}
+
+        if left_mismatch:
+            return False, f"Invalid placement: {', '.join(left_mismatch)} should be on '2' side."
+        if right_mismatch:
+            return False, f"Invalid placement: {', '.join(right_mismatch)} should be on '1' side."
+
+        # If all checks pass, layout is valid
+        return True, "Layout is valid."
+
+    def testValidator(self, x):
+        t = self.generate_layout_from_treeview()
+        print(f"Layout: {t}")
+        for l in "LR L,R L/R L,RA LR,A L,R/A L/R,A L/R,AB L/R,A/B LR,ABC L/RA,B/CD L/A/B,R/C/D LR/ /LR AB AB,CD A/B LR/AB".split():
+            is_valid, message = self.validate_layout(l, self.liststore)
+
+            if not is_valid:
+                print(f"Error: {l} - {message}")
+            else:
+                print(f"Valid: {l}")
+
+    def update_layout_preview(self, widget, layout='LR'):
+        """
+        Generates a dynamic UI representation of the t_layout text using GtkFrames and attaches it to the given widget (bx_layoutPreview).
+        - Parses t_layout to determine structure (left/right pages, horizontal/vertical layout).
+        - Uses colors from the TreeView's color column.
+        - Automatically resizes to fit available space.
+        
+        :param widget: The Gtk.Box container where the layout preview will be displayed.
+        """
+
+        # Step 1: Clear the existing layout preview
+        for child in widget.get_children():
+            widget.remove(child)
+
+        # Step 2: Validate t_layout
+        # layout = 'LR,A/BC' # self.t_layout.get_text().strip()
+        print(f"{layout=}")
+        is_valid, error_message = self.validate_layout(layout, self.liststore)
+
+        if not is_valid:
+            # Display a red error frame with an error message
+            error_frame = Gtk.Frame(label="Error")
+            error_label = Gtk.Label(label=error_message)
+            error_label.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(1, 0, 0, 1))  # Red color
+            error_frame.add(error_label)
+            widget.add(error_frame)
+            widget.show_all()
+            return
+
+        # Step 3: Parse t_layout into left and right pages
+        if "," in layout:
+            left_side, right_side = layout.split(",", 1)
+        else:
+            left_side, right_side = layout, ""
+
+        # Step 4: Create the horizontal box for the spread (landscape book layout)
+        spread_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        spread_box.set_hexpand(True)
+        spread_box.set_vexpand(True)
+
+        def create_horizontal_box(codes):
+            """
+            Creates a horizontal GtkBox containing individual frames for each letter code.
+
+            :param codes: String containing letter codes (e.g., "BC").
+            :return: Gtk.Box containing frames.
+            """
+            box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+            box.set_hexpand(True)
+            box.set_vexpand(True)
+
+            for code in codes:
+                frame = Gtk.Frame()
+                frame.set_shadow_type(Gtk.ShadowType.IN)
+
+                # Retrieve the background color from the TreeView
+                color_hex = "#FFFFFF"  # Default to white
+                for row in self.liststore:
+                    if row[0] == code:  # Match the code in the liststore
+                        color_hex = row[6]  # Column 6 contains the color
+                        break
+
+                # Apply background color
+                rgba = Gdk.RGBA()
+                rgba.parse(color_hex)
+                frame.override_background_color(Gtk.StateFlags.NORMAL, rgba)
+
+                # Centered label inside the frame
+                label = Gtk.Label(label=code)
+                label.set_hexpand(True)
+                label.set_vexpand(True)
+                label.set_justify(Gtk.Justification.CENTER)
+
+                frame.add(label)
+                box.pack_start(frame, True, True, 0)
+
+            return box
+
+        # Step 5: Helper function to create a page frame
+        def create_page_frame(codes, is_right_page):
+            """
+            Creates a page frame with the appropriate orientation and labels.
+            - If '/' is present, a vertical split is created.
+            - If there is only ONE '/', it creates a 2-section layout where the top contains the first item,
+              and the bottom contains the remaining items in a horizontal row.
+
+            :param codes: String of codes for this page.
+            :param is_right_page: Boolean indicating if this is the right page.
+            :return: Gtk.Frame containing the page layout.
+            """
+            if "/" in codes:
+                parts = codes.split("/")  # Split based on `/`
+                num_splits = len(parts)  # Count number of groups
+
+                # Create a vertical GtkBox for stacking sections
+                page_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+                page_box.set_hexpand(True)
+                page_box.set_vexpand(True)
+
+                if num_splits == 2:  # Special handling when only ONE `/`
+                    top_section = create_horizontal_box(parts[0])  # First part alone
+                    bottom_section = create_horizontal_box(parts[1])  # Remaining in a row
+                    page_box.pack_start(top_section, True, True, 0)
+                    page_box.pack_start(bottom_section, True, True, 0)
+                else:
+                    # If more than one '/', treat each section as a row
+                    for part in parts:
+                        section_box = create_horizontal_box(part)  # Each section in a row
+                        page_box.pack_start(section_box, True, True, 0)
+
+            else:
+                # Default case (horizontal layout with no '/')
+                page_box = create_horizontal_box(codes)
+
+            # Create the page frame with 'Left Page' or 'Right Page' labels
+            page_frame = Gtk.Frame(label="Right Page" if is_right_page else "Left Page")
+            page_frame.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+            page_frame.set_hexpand(True)
+            page_frame.set_vexpand(True)
+            page_frame.add(page_box)
+
+            return page_frame
+        
+        def old_create_page_frame(codes, is_right_page):
+            """
+            Creates a page frame with the appropriate orientation and labels.
+            :param codes: String of codes for this page.
+            :param is_right_page: Boolean indicating if this is the right page.
+            :return: Gtk.Frame containing the page layout.
+            """
+            # Determine if the layout is vertical or horizontal
+            orientation = Gtk.Orientation.VERTICAL if "/" in codes else Gtk.Orientation.HORIZONTAL
+            page_box = Gtk.Box(orientation=orientation, spacing=5)
+            page_box.set_hexpand(True)
+            page_box.set_vexpand(True)
+
+            # Create frames for each code
+            for code in codes.replace("/", ""):  # Remove '/' since we already set orientation
+                frame = Gtk.Frame()  # Frame without an outer label
+                frame.set_shadow_type(Gtk.ShadowType.IN)
+
+                # Retrieve the background color from the TreeView
+                color_hex = "#FFFFFF"  # Default to white
+                for row in self.liststore:
+                    if row[0] == code:  # Match the code in the liststore
+                        color_hex = row[6]  # Column 6 contains the color
+                        break
+
+                # Apply background color
+                rgba = Gdk.RGBA()
+                rgba.parse(color_hex)
+                frame.override_background_color(Gtk.StateFlags.NORMAL, rgba)
+
+                # Centered label inside the frame
+                label = Gtk.Label(label=code)
+                label.set_hexpand(True)
+                label.set_vexpand(True)
+                label.set_justify(Gtk.Justification.CENTER)
+
+                frame.add(label)
+                page_box.pack_start(frame, True, True, 0)
+
+            # Create the page frame with 'Left Page' or 'Right Page' labels
+            page_frame = Gtk.Frame(label="Right Page" if is_right_page else " Left Page ")
+            page_frame.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+            page_frame.set_hexpand(True)
+            page_frame.set_vexpand(True)
+            page_frame.add(page_box)
+
+            return page_frame
+
+        # Step 6: Generate left and right page layouts
+        left_page = create_page_frame(left_side, is_right_page=False)
+        right_page = create_page_frame(right_side, is_right_page=True) if right_side else None
+
+        # Step 7: Pack into the spread box
+        spread_box.pack_start(left_page, True, True, 0)
+        if right_page:
+            spread_box.pack_start(right_page, True, True, 0)
+
+        # Step 8: Attach to the provided widget and show
+        widget.add(spread_box)
+        widget.show_all()
