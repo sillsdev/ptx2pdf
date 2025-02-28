@@ -275,19 +275,20 @@ class RunJob:
         else:
             joblist = [[j] for j in jobs]
 
-        if self.printer.diglotView is not None:
-            self.printer.diglotView.loadHyphenation()
+        if len(self.printer.diglotViews):
+            dv = self.printer.diglotViews['R']
+            dv.loadHyphenation()
             digfraction = info.dict["document/diglotprifraction"]
             digprjid = info.dict["document/diglotsecprj"]
             digcfg = info.dict["document/diglotsecconfig"]
-            digprjdir = self.printer.diglotView.project.path
+            digprjdir = dv.project.path
             digptsettings = ParatextSettings(digprjdir)
-            diginfo = TexModel(self.printer.diglotView, digptsettings, digprjid, inArchive=self.inArchive)
+            diginfo = TexModel(dv, digptsettings, digprjid, inArchive=self.inArchive)
             reasons = diginfo.prePrintChecks()
             if len(reasons):
                 self.fail(", ".join(reasons) + " in diglot secondary")
                 return
-            digbooks = self.printer.diglotView.getAllBooks()
+            digbooks = dv.getAllBooks()
             badbooks = set()
             for j in joblist:
                 allj = set(r[0][0].first.book for r in j if r[1])
