@@ -750,6 +750,9 @@ class PolyglotSetup(Gtk.Box):
             if code:
                 used_codes[code] = side
 
+        all_used_codes = set(used_codes.keys())  # Set of valid codes from TreeView
+        all_layout_codes = set(re.findall(r"[A-Z]", t_layout))  # Extract all letter codes from layout
+
         # Rule 1: Ensure all letters in t_layout exist in the used_codes
         all_letters = set("".join(t_layout.replace(",", "").replace("/", "")))
         if not all_letters.issubset(set(used_codes.keys())):
@@ -769,10 +772,19 @@ class PolyglotSetup(Gtk.Box):
             if not right_codes.issubset({k for k, v in used_codes.items() if v == "2"}):
                 return False, "Right-side codes must be assigned to '2'."
 
+        # Rule 5: Ensure '/' is used correctly (not at start or end, no consecutive slashes)
+        if t_layout.startswith("/") or t_layout.endswith("/") or "//" in t_layout:
+            return False, "Slashes must be between letters and not at the start or end."
+            
         # Rule 6: Ensure L and R are always present
         if not ("L" in all_letters and "R" in all_letters):
             return False, "Layout must include both L and R."
 
+        # Rule 7 (NEW): Ensure all codes in the TreeView are included in t_layout
+        missing_codes = all_used_codes - all_layout_codes
+        if missing_codes:
+            return False, f"Missing codes in layout: {', '.join(missing_codes)}"
+            
         # Rule 10: Hyphen '-' is allowed to indicate a blank page
         valid_chars = set(used_codes.keys()).union({",", "/", "-"})
         if not set(t_layout).issubset(valid_chars):
