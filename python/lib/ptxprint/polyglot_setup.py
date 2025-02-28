@@ -6,20 +6,14 @@ from enum import IntEnum
 from ptxprint.utils import _
 
 _modeltypes = (str, str, str, str, bool, float, str, str, str, int)
-_modelfields = ('code', '1|2', 'prj', 'cfg', 'caption', 'width', 'color', 'something', 'bold', 'else')
+_modelfields = ('code', 'pg', 'prj', 'cfg', 'captions', 'width', 'color', 'tooltip', 'widcol', 'bold')
 m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
 
-if m.prj == 2:
-    print(f"Hey, it works!")
-if m(2).name == 'prj':
-    print(f"Hey, it still works!")
-    
 for x in m:
-    print(f"{x=} {x.name=}  {x.value=}")
+    print(f"{x.value} = {x.name}")
 
 class PolyglotSetup(Gtk.Box):
-    def __init__(self, builder, projects, tv):
-        # self.model = model
+    def __init__(self, builder, tv):
         self.builder = builder
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
 
@@ -33,9 +27,8 @@ class PolyglotSetup(Gtk.Box):
         # Dropdown options
         self.codes = ["L", "R", "A", "B", "C", "D", "E", "F", "G"]
         self.spread_side = ["1", "2"]
-        # Get the shared project ListStore from the main program
+        # Get the shared project ListStore from the builder
         self.project_liststore = self.builder.get_object("ls_projects")
-        # self.prjs = ["(None)", "BSB", "WSG", "WSGdev", "GRKNT", "WSGgong", "WSGlatin", "WSGBTpub"]
 
         # Use the existing treeview instead of creating a new one
         self.treeview = tv  
@@ -44,13 +37,12 @@ class PolyglotSetup(Gtk.Box):
         # Create ListStore model if not already set
         if self.treeview.get_model() is None:
             self.liststore = Gtk.ListStore(*_modeltypes)  
-            # self.liststore = Gtk.ListStore(str, str, str, str, bool, float, str, str, str, int)  
             self.treeview.set_model(self.liststore)
         else:
             self.liststore = self.treeview.get_model()
 
         for item in self.data:
-            code = list(item.keys())[0]
+            code = list(item.keys())[m.code]
             values = item[code]
             self.liststore.append([
                 code, values.get("spread_side", "1"), values['prj'], values['cfg'],
@@ -59,13 +51,13 @@ class PolyglotSetup(Gtk.Box):
             ])
 
         # Define Columns
-        self.add_column("Code", 0, editable=True, renderer_type="combo", options=self.codes, align="center")
-        self.add_column("1|2", 1, editable=True, renderer_type="combo", options=self.spread_side, align="center")
-        self.add_column("Project", 2, editable=True, renderer_type="combo", options=self.project_liststore)
-        self.add_column("Configuration", 3, editable=True, renderer_type="combo", options=['(None)'])
-        self.add_column("Captions", 4, editable=True, renderer_type="toggle")
-        self.add_column("% Width", 5, editable=True, renderer_type="text")
-        self.add_column("Color", 6, editable=True, renderer_type="color")
+        self.add_column("Code", m.code, editable=True, renderer_type="combo", options=self.codes, align="center")
+        self.add_column("1|2", m.pg, editable=True, renderer_type="combo", options=self.spread_side, align="center")
+        self.add_column("Project", m.prj, editable=True, renderer_type="combo", options=self.project_liststore)
+        self.add_column("Configuration", m.cfg, editable=True, renderer_type="combo", options=['(None)'])
+        self.add_column("Captions", m.captions, editable=True, renderer_type="toggle")
+        self.add_column("% Width", m.width, editable=True, renderer_type="text")
+        # self.add_column("Color", m.color, editable=True, renderer_type="color")
 
         # Enable drag and drop
         self.treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [('text/plain', 0, 0)], Gdk.DragAction.MOVE)
@@ -270,7 +262,7 @@ class PolyglotSetup(Gtk.Box):
                 3: _("The configuration settings to be applied for the selected project."),
                 4: _("Whether to show captions for this text."),
                 5: _("The page width (as %) that this text should occupy.\nIf the values are red, this indicates that the total doesn't\nadd to 100%, so adjust the values.\nUse right-click menu option to distribute width evenly between columns."),
-                6: _("[Optional] Type #color code, or right-click to change background color for this text.")
+                # 6: _("[Optional] Type #color code, or right-click to change background color for this text.")
             }
 
             # Apply the correct tooltip based on column
@@ -327,11 +319,11 @@ class PolyglotSetup(Gtk.Box):
 
     def get_available_codes(self, exclude_path=None):
         """Returns a list of unused codes, excluding the code in the given row (if any)."""
-        used_codes = {row[0] for row in self.liststore if row[0]}  # Set of used codes
+        used_codes = {row[m.code] for row in self.liststore if row[m.code]}  # Set of used codes
 
         if exclude_path is not None:
-            current_code = self.liststore[exclude_path][0]  # Get current code of the row
-            used_codes.discard(current_code)  # Allow reselecting the same code in the row
+            current_code = self.liststore[exclude_path][m.code]
+            used_codes.discard(current_code)
 
         available_codes = [code for code in self.codes if code not in used_codes]
         return available_codes
@@ -350,18 +342,18 @@ class PolyglotSetup(Gtk.Box):
             return
         
         if column_id == 0:  # Code column
-            if text in {row[0] for row in self.liststore if row[0]}:
+            if text in {row[m.code] for row in self.liststore if row[m.code]}:
                 print(f"Duplicate Code not allowed: {text}")
                 return  # Prevent duplicate
             
         if column_id == 2:  # Project column changed
             available_configs = self.get_available_configs(text)  # Get new configs for the selected project
-            self.liststore[path][3] = available_configs[0]  # Set first available config for this row
+            self.liststore[path][m.cfg] = available_configs[m.code]  # Set first available config for this row
             self.treeview.queue_draw()  # Refresh UI
 
         if column_id == 2 or column_id == 3:  # Project or Configuration columns
-            prj = self.liststore[path][2]
-            cfg = self.liststore[path][3]
+            prj = self.liststore[path][m.prj]
+            cfg = self.liststore[path][m.cfg]
             
             if column_id == 2:
                 prj = text  # If changing project
@@ -369,7 +361,7 @@ class PolyglotSetup(Gtk.Box):
                 cfg = text  # If changing configuration
             
             for row in self.liststore:
-                if row[2] == prj and row[3] == cfg and self.liststore[path][0] != row[0]:
+                if row[m.prj] == prj and row[m.cfg] == cfg and self.liststore[path][m.code] != row[m.code]:
                     # FixMe! Turn this into a proper error/warning message.
                     print("Duplicate Project+Configuration not allowed.")
                     return  # Prevent duplicate
@@ -558,7 +550,7 @@ class PolyglotSetup(Gtk.Box):
             self.liststore.append(["L", "1", pri_prj, pri_cfg, False, 33.33, "#FFFFFF", "Right-Click for options", "#000000", 400])
         else:
             available_codes = self.get_available_codes()
-            next_code = str(available_codes[0]) if available_codes else ""  # Auto-assign next available code
+            next_code = str(available_codes[m.code]) if available_codes else ""  # Auto-assign next available code
 
             self.liststore.append([next_code, "1", "(None)", "(None)", False, 50.0, "#FFFFFF", "Right-Click for options", "#000000", 400])
 
@@ -573,7 +565,7 @@ class PolyglotSetup(Gtk.Box):
         selected = self.get_selected_row()
         if selected:
             model, iter, path = selected
-            index = path.get_indices()[0]
+            index = path.get_indices()[m.code]
             new_index = index + direction
 
             if 0 <= new_index < len(model):
@@ -628,10 +620,10 @@ class PolyglotSetup(Gtk.Box):
             return  # No row selected
 
         model, iter, path = selected
-        page = model[path][1]  # Column index 1 stores "1" or "2"
+        page = model[path][m.pg]
 
         # Find all rows that share the same page (1 or 2)
-        same_page_rows = [row for row in range(len(model)) if model[row][1] == page]
+        same_page_rows = [row for row in range(len(model)) if model[row][m.pg] == page]
         row_count = len(same_page_rows)
 
         if row_count == 0:
@@ -641,7 +633,7 @@ class PolyglotSetup(Gtk.Box):
 
         # Apply the new width to each row
         for row in same_page_rows:
-            model[row][5] = new_width  # Column index 5 is % Width
+            model[row][m.width] = new_width
 
         self.save_data()
         self.validate_page_widths()  # Refresh highlighting
@@ -652,13 +644,13 @@ class PolyglotSetup(Gtk.Box):
 
         # Step 1: Calculate total widths for each page (1 or 2)
         for row in range(len(self.liststore)):
-            page = self.liststore[row][1]  # Column index 1 stores "1" or "2"
-            width = self.liststore[row][5]  # Column index 5 stores % Width
+            page = self.liststore[row][m.pg]
+            width = self.liststore[row][m.width]
             page_totals[page] += width  # Accumulate width for each page
 
         # Step 2: Apply formatting to **every row** that shares the same `1|2` page value
         for row in range(len(self.liststore)):
-            page = self.liststore[row][1]  # "1" or "2"
+            page = self.liststore[row][m.pg]
             total = page_totals[page]  # Get total width for this page
             is_invalid = abs(total - 100.0) > 0.02  # Allow small floating-point errors
             # print(f"{page=}  {total=}  {is_invalid=}")
@@ -694,7 +686,7 @@ class PolyglotSetup(Gtk.Box):
 
     def save_data(self): #FixMe!
         """Saves the liststore data to a JSON file."""
-        data = [{row[0]: {"spread_side": row[1], "prj": row[2], "cfg": row[3], "captions": row[4], "percentage": row[5], "color": row[6]}} for row in self.liststore]
+        data = [{row[m.code]: {"spread_side": row[m.pg], "prj": row[m.prj], "cfg": row[m.cfg], "captions": row[m.captions], "percentage": row[m.width], "color": row[m.color]}} for row in self.liststore]
         with open("data.json", "w") as f:
             json.dump(data, f, indent=4)
         t = self.generate_layout_from_treeview()
@@ -717,7 +709,7 @@ class PolyglotSetup(Gtk.Box):
         # Step 1: Extract used codes and their '1|2' values from the ListStore
         codes_by_side = {"1": [], "2": []}  # Store codes grouped by page side
         for row in self.liststore:
-            code, side = row[0], row[1]  # Column 0: Code, Column 1: 1|2
+            code, side = row[m.code], row[m.pg]
             if code:
                 codes_by_side[side].append(code)
 
@@ -746,7 +738,7 @@ class PolyglotSetup(Gtk.Box):
         # Extract used codes and their '1|2' values from the ListStore
         used_codes = {}  # Dictionary mapping codes -> '1' or '2'
         for row in liststore:
-            code, side = row[0], row[1]  # Column 0: Code, Column 1: 1|2
+            code, side = row[m.code], row[m.pg]
             if code:
                 used_codes[code] = side
 
@@ -791,74 +783,6 @@ class PolyglotSetup(Gtk.Box):
             return False, "Layout contains invalid characters."
 
         return True, "Valid layout."
-
-
-    def old_validate_layout(self, t_layout, liststore):
-        """
-        Validates the layout string in t_layout based on the defined rules.
-
-        :param t_layout: The input string from the text box.
-        :param liststore: The Gtk.ListStore containing used letter codes and their assigned 1|2 values.
-        :return: (is_valid, error_message) - Boolean validity and error message if invalid.
-        """
-        # Rule 2: Ensure there are no spaces
-        if " " in t_layout:
-            return False, "Layout must not contain spaces."
-
-        # Extract used codes and their '1|2' values from the ListStore
-        used_codes = {}  # Dictionary mapping codes -> '1' or '2'
-        for row in liststore:
-            code, side = row[0], row[1]  # Column 0: Code, Column 1: 1|2
-            if code:
-                used_codes[code] = side
-
-        all_used_codes = set(used_codes.keys())  # Set of valid codes from TreeView
-        all_layout_codes = set(re.findall(r"[A-Z]", t_layout))  # Extract all letter codes from layout
-
-        # Rule 1: Ensure only used codes are present in t_layout
-        if not all_layout_codes.issubset(all_used_codes):
-            return False, f"Invalid letters found: {', '.join(all_layout_codes - all_used_codes)}"
-
-        # Rule 7 (NEW): Ensure all codes in the TreeView are included in t_layout
-        missing_codes = all_used_codes - all_layout_codes
-        if missing_codes:
-            return False, f"Missing codes in layout: {', '.join(missing_codes)}"
-
-        # Rule 6: Ensure L and R are present
-        if not {"L", "R"}.issubset(all_layout_codes):
-            return False, "Layout must include both 'L' and 'R'."
-
-        # Rule 5: Ensure '/' is used correctly (not at start or end, no consecutive slashes)
-        if t_layout.startswith("/") or t_layout.endswith("/") or "//" in t_layout:
-            return False, "Slashes must be between letters and not at the start or end."
-
-        # Rule 3: Check if both '1' and '2' exist in the data, requiring a comma
-        contains_1 = any(side == "1" for side in used_codes.values())
-        contains_2 = any(side == "2" for side in used_codes.values())
-        needs_comma = contains_1 and contains_2
-
-        if needs_comma and "," not in t_layout:
-            return False, "A comma is required to separate '1' and '2' sections."
-
-        # Rule 4: Ensure left-side codes are in '1' and right-side codes are in '2'
-        if "," in t_layout:
-            left_side, right_side = t_layout.split(",", 1)  # Split at first comma
-        else:
-            left_side, right_side = t_layout, ""
-
-        left_codes = set(re.findall(r"[A-Z]", left_side))
-        right_codes = set(re.findall(r"[A-Z]", right_side))
-
-        left_mismatch = {code for code in left_codes if used_codes.get(code) != "1"}
-        right_mismatch = {code for code in right_codes if used_codes.get(code) != "2"}
-
-        if left_mismatch:
-            return False, f"Invalid placement: {', '.join(left_mismatch)} should be on '2' side."
-        if right_mismatch:
-            return False, f"Invalid placement: {', '.join(right_mismatch)} should be on '1' side."
-
-        # If all checks pass, layout is valid
-        return True, "Layout is valid."
 
     def testValidator(self, x):
         print(f"Layout: {t}")
@@ -925,8 +849,8 @@ class PolyglotSetup(Gtk.Box):
             total_width = 0  # Used for normalization
 
             for row in self.liststore:
-                code = row[0]  # Column 0 = Code
-                width_percentage = row[5]  # Column 5 = % Width
+                code = row[m.code]  # Column 0 = Code
+                width_percentage = row[m.width]
 
                 if code in codes:
                     widths[code] = width_percentage
@@ -945,8 +869,8 @@ class PolyglotSetup(Gtk.Box):
                 # Retrieve the background color from the TreeView
                 color_hex = "#FFFFFF"  # Default to white
                 for row in self.liststore:
-                    if row[0] == code:  # Match the code in the liststore
-                        color_hex = row[6]  # Column 6 contains the color
+                    if row[m.code] == code:  # Match the code in the liststore
+                        color_hex = row[m.color]  # Column 6 contains the color
                         break
 
                 # Apply background color
@@ -996,8 +920,8 @@ class PolyglotSetup(Gtk.Box):
                 page_box.set_vexpand(True)
 
                 if num_splits == 2:  # Special handling when only ONE `/`
-                    top_section = create_horizontal_box(parts[0])  # First part alone
-                    bottom_section = create_horizontal_box(parts[1])  # Remaining in a row
+                    top_section = create_horizontal_box(parts[m.code])  # First part alone
+                    bottom_section = create_horizontal_box(parts[m.pg])  # Remaining in a row
                     page_box.pack_start(top_section, True, True, 0)
                     page_box.pack_start(bottom_section, True, True, 0)
                 else:

@@ -811,20 +811,6 @@ class GtkViewModel(ViewModel):
         self.tabsHorizVert()
         logger.debug("Project list loaded")
 
-        # Main layout container
-        # vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-
-        # Existing TreeView
-        self.tv_polyglot = Gtk.TreeView()
-
-        # Embed PolyglotSetup instead of opening a new window
-        self.polyglot_setup = PolyglotSetup(self.builder, projects, self.tv_polyglot)
-        polyset = self.builder.get_object('bx_polyglot')
-        polyset.pack_start(self.polyglot_setup, True, True, 0)
-
-        # polyset.add(vbox)
-        polyset.show_all()
-        
         return True
 
     def _setup_digits(self):
@@ -3641,6 +3627,7 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
+        self.loadPolyglotSettings()
         self.enableTXLoption()
         self.onBodyHeightChanged(None)
         self.checkFontsMissing()
@@ -3649,6 +3636,14 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(0)
         self.changed(False)
         self.showmybook(True)
+
+    def loadPolyglotSettings(self):
+        self.tv_polyglot = Gtk.TreeView()
+        # projects = self.builder.get_object("ls_projects")
+        self.polyglot_setup = PolyglotSetup(self.builder, self.tv_polyglot)
+        polyset = self.builder.get_object('bx_polyglot')
+        polyset.pack_start(self.polyglot_setup, True, True, 0)
+        polyset.show_all()
 
     def showmybook(self, isfirst=False):
         if self.initialised and self.showPDFmode == "preview": # preview is on
