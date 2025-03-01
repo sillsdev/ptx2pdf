@@ -1587,6 +1587,7 @@ class ViewModel:
                 if os.path.exists(fp):
                     res.append(fp)
             res.append(os.path.join(cpath, subdir, "ptxprint.sty"))
+        logger.debug(f"getStyleSheets: {res=}")
         return res
 
     def getallfonts(self):
