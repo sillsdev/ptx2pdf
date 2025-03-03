@@ -4011,7 +4011,7 @@ been stretched/expanded.</property>
 as well as the baselines of the body text.</property>
                     <property name="halign">start</property>
                     <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                    <signal name="clicked" handler="showRulesClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
