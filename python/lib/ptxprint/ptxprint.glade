@@ -4035,7 +4035,7 @@ you can generate a graph-paper-like grid behind
 the text. This may be useful for precise measuring.</property>
                         <property name="margin-bottom">10</property>
                         <property name="draw-indicator">True</property>
-                        <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                        <signal name="clicked" handler="showGridClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>

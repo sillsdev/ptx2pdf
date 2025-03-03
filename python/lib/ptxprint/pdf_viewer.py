@@ -6,7 +6,7 @@ import cairo, re, time, sys
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from ptxprint.utils import _, refSort, f2s
+from ptxprint.utils import _, refSort, f2s, coltoonemax
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
 from pathlib import Path
@@ -64,6 +64,10 @@ mstr = {
     'growpic':    _("Grow by 1 line"),
     'shwdtl':     _("Show Details..."),
 }
+
+def mm_pts(n):
+    return n * 72.27 / 25.4
+
 def render_page_image(page, zoomlevel, pnum, annotatefns):
     width, height = page.get_size()
     width, height = int(width * zoomlevel), int(height * zoomlevel)
@@ -137,6 +141,7 @@ class PDFViewer:
         self.showadjustments = True
         self.piczoom = 85
         self.showguides = False
+        self.showgrid = False
         self.ufCurrIndex = 0
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
@@ -307,10 +312,12 @@ class PDFViewer:
         # print(f"{self.parlocs.pnums}")
         # print(f"in show_pdf: {cpage=}   {page=}")
         layerfns = []
-        if self.showadjustments:
-            layerfns.append(self.add_hints)
+        if self.showgrid:
+            layerfns.append(self._draw_grid)
         if self.showguides:
             layerfns.append(self._draw_guides)
+        if self.showadjustments:        # draw annotations over the rest
+            layerfns.append(self.add_hints)
         
         images = []
         if self.model.isCoverTabOpen():
@@ -344,10 +351,18 @@ class PDFViewer:
         self.update_boxes(images)
         self.updatePageNavigation()
 
-    def _draw_guides(self, page, pindex, context, zoomlevel):
-        def mm_pts(n):
-            return n * 72.27 / 25.4
+    def _get_margins(self, page):
+        margin = mm_pts(float(self.model.get("s_margins")))
+        gutter = mm_pts(float(self.model.get("s_pagegutter"))) if self.model.get("c_pagegutter") else 0.
+        left = margin
+        right = margin
+        if (self.current_page & 1 != 0) ^ self.model.get("c_pagegutter"):
+            left += gutter
+        else:
+            right += gutter
+        return (left, right)
 
+    def _draw_guides(self, page, pindex, context, zoomlevel):
         def drawline(x, y, width, height, col):
             context.set_source_rgba(col[0], col[1], col[2], 1)
             context.rectangle(x, y, width, height)
@@ -356,8 +371,6 @@ class PDFViewer:
         pwidth, pheight = page.get_size()
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos,
                 headerlabel, footerlabel) = self.model.getMargins()
-        margin = mm_pts(float(self.model.get("s_margins")))
-        gutter = mm_pts(float(self.model.get("s_pagegutter"))) if self.model.get("c_pagegutter") else 0.
         texttop = mm_pts(float(self.model.get("s_topmargin")))
         hdrbot = float(self.model.get("s_headerposition"))
         ftrtop = float(self.model.get("s_footerposition"))
@@ -367,32 +380,30 @@ class PDFViewer:
         colgutterwidth = mm_pts(float(self.model.get("s_colgutterfactor")))
         minorcol = (0.68, 0.85, 0.68)
         majorcol = (0.8, 0.6, 0.6)
-        left = margin
-        right = margin
-        if (self.current_page & 1 != 0) ^ self.model.get("c_pagegutter"):
-            left += gutter
-        else:
-            right += gutter
+        left, right = self._get_margins(page)
         innerheight = pheight - texttop - textbot
 
+        # header
         drawline(left, mm_pts(headerpos), pwidth - right - left, 0.5, minorcol)
         drawline(left, mm_pts(headerpos) + textsize, pwidth - right - left, 0.5, minorcol)
-        drawline(0, texttop - 0.4, pwidth, 0.8, majorcol)
+        drawline(0, texttop - 0.4, pwidth, 0.8, majorcol)       # main top margin
         tstop = pheight - textbot
         tstart = texttop
         while tstart < tstop:
             tstart += lineheight
-            drawline(0, tstart, pwidth, 0.5, minorcol)
-        drawline(0, pheight - textbot, pwidth, 0.8, majorcol)
+            drawline(0, tstart, pwidth, 0.5, minorcol)          # text base lines
+        # footer
+        drawline(0, pheight - textbot, pwidth, 0.8, majorcol)   # main bottom margin
         drawline(left, pheight - textbot + ftrtop, pwidth - right - left, 0.5, minorcol)
         drawline(left, pheight - textbot + ftrtop - textsize, pwidth - right - left, 0.5, minorcol)
 
-        drawline(left - 0.4, 0, 0.8, pheight, majorcol)
-        drawline(pwidth - right - 0.4, 0, 0.8, pheight, majorcol)
+        # vertical lines
+        drawline(left - 0.4, 0, 0.8, pheight, majorcol)         # left margin
+        drawline(pwidth - right - 0.4, 0, 0.8, pheight, majorcol)       # right margin
 
         if self.model.get("c_doublecolumn"):
             centre = 0.5 * (left + pwidth - right)
-            drawline(centre - 0.4, 0, 0.8, pheight, majorcol)
+            drawline(centre - 0.4, 0, 0.8, pheight, majorcol)   # centre line
             gap = colgutterwidth * 0.5
             if self.model.get("r_xrpos") == "centre":
                 gap += (float(self.model.get("s_centreColWidth")) + float(self.model.get("s_xrGutterWidth"))) * 0.5
@@ -403,13 +414,62 @@ class PDFViewer:
                 if mode == "left" or mode == "inner":
                     rgap += cshift
                 if mode == "left" or mode == "outer":
-                    drawline(left + cshift - 0.25, texttop, 0.5, innerheight, minorcol)
+                    drawline(left + cshift - 0.25, texttop, 0.5, innerheight, minorcol)     # extra margin verses
                 if mode == "right" or mode == "inner":
                     lgap += cshift
                 if mode == "right" or mode == "outer":
-                    drawline(pwidth - right - 0.25, texttop, 0.5, innerheight, minorcol)
-            drawline(centre - lgap - 0.25, texttop, 0.5, innerheight, minorcol)
-            drawline(centre + rgap - 0.25, texttop, 0.5, innerheight, minorcol)
+                    drawline(pwidth - right - 0.25, texttop, 0.5, innerheight, minorcol)    # extra margin verses
+            drawline(centre - lgap - 0.25, texttop, 0.5, innerheight, minorcol)     # left of centre mini margin
+            drawline(centre + rgap - 0.25, texttop, 0.5, innerheight, minorcol)     # right of centre mini margin
+
+    def _draw_grid(self, page, pnum, context, zoomlevel):
+        def drawline(x, y, width, height, col):
+            context.set_source_rgba(col[0], col[1], col[2], 1)
+            context.rectangle(x, y, width, height)
+            context.fill()
+
+        pwidth, pheight = page.get_size()
+        units = self.model.get("fcb_gridUnits")
+        minordivs = int(self.model.get("s_gridMinorDivisions"))
+        edge = self.model.get("fcb_gridOffset")
+        majorcol = coltoonemax(self.model.get("col_gridMajor"))
+        majorthick = float(self.model.get("s_gridMajorThick"))
+        minorcol = coltoonemax(self.model.get("col_gridMinor"))
+        minorthick = float(self.model.get("s_gridMinorThick"))
+
+        if edge == "page":
+            jobs = [((0,0), (pwidth, pheight))]
+        elif edge == "margin":
+            texttop = mm_pts(float(self.model.get("s_topmargin")))
+            textbot = mm_pts(float(self.model.get("s_bottommargin")))
+            (left, right) = self._get_margins(page)
+            jobs = [((left, texttop), (right, pheight - textbot))]
+        # now we can do multiple jobs for bits outside the margins
+        for j in jobs:
+            major = 72.27 if units == "in" else mm_pts(10)
+            minor = major / minordivs
+            # horizontals
+            start = j[0][1]     # y
+            while start < j[1][1]:
+                nextv = min(start + major, j[1][1])
+                if start > j[0][1]:
+                    drawline(j[0][0], start, j[1][0] - j[0][0], majorthick, majorcol)
+                v = start + minor
+                while v < nextv:
+                    drawline(j[0][0], v, j[1][0] - j[0][0], minorthick, minorcol)
+                    v += minor
+                start += major
+            # verticals
+            start = j[0][0]
+            while start < j[1][0]:
+                nextv = min(start + major, j[1][0])
+                if start > j[0][0]:
+                    drawline(start, j[0][1], majorthick, j[1][1] - j[0][1], majorcol)
+                v = start + minor
+                while v < nextv:
+                    drawline(v, j[0][1], minorthick, j[1][1] - j[0][1], minorcol)
+                    v += minor
+                start += major
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):
