@@ -91,8 +91,8 @@ class ViewModel:
         "notes/xrcallers": "crossrefs",
         "notes/fncallers": "footnotes"
     }
+        # "document/diglotsecprj": "updateDiglotConfigList",
     _activekeys = {
-        "document/diglotsecprj": "updateDiglotConfigList",
         "import/project":        "updateimpProjectConfigList"
     }
     _nonresetcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
@@ -465,8 +465,8 @@ class ViewModel:
     def updateSavedConfigList(self):
         pass
 
-    def updateDiglotConfigList(self):
-        pass
+    # def updateDiglotConfigList(self):
+        # pass
 
     def updateimpProjectConfigList(self):
         pass
@@ -1367,7 +1367,8 @@ class ViewModel:
             procbks = ab.keys()
         rnd = self.get("c_randomPicPosn")
         cols = 2 if self.get("c_doublecolumn") else 1
-        mrgCptn = self.get("c_diglot2captions", False)
+        # mrgCptn = self.get("c_diglot2captions", False) # FixMe!
+        mrgCptn = False # FixMe!
         sync = self.get("c_protectPicList", False)
         if not len(self.diglotViews):
             self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)

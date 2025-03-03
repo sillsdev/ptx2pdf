@@ -269,10 +269,10 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
                   "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2", "col_noteLines", 
-                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR",
-                  "col_dibackcol", "fcb_diglotSecProject", "ecb_diglotSecConfig", "c_diglot2captions", 
-                  "s_diglotPriFraction", "btn_diglotSwitch", "btn_adjust_diglot", "l_diglotSecProject",
-                  "l_dibackcol", "l_diglotSecConfig", "l_diglotPriFraction", "tb_diglotSwitch"]  # "c_pdfGridlines" "bx_imageMsgBar", 
+                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
+                  # "col_dibackcol", "fcb_diglotSecProject", "ecb_diglotSecConfig", "c_diglot2captions", 
+                  # "s_diglotPriFraction", "btn_diglotSwitch", "btn_adjust_diglot", "l_diglotSecProject",
+                  # "l_dibackcol", "l_diglotSecConfig", "l_diglotPriFraction", "tb_diglotSwitch"]  # "c_pdfGridlines" "bx_imageMsgBar", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -281,7 +281,7 @@ _uiLevels = {
 
 _showActiveTabs = {
     "c_includeillustrations" : ["tb_Pictures"],
-    "c_diglot" :               ["tb_Diglot", "fr_diglot", "btn_diglotSwitch"],
+    "c_diglot" :               ["tb_Diglot", "fr_diglot"], #, "btn_diglotSwitch"],
     "c_thumbtabs" :            ["tb_TabsBorders", "fr_tabs"],
     "c_useOrnaments" :         ["tb_TabsBorders", "fr_borders"],
     "c_inclFrontMatter" :      ["tb_Peripherals", "gr_importFrontPDF"],
@@ -321,8 +321,8 @@ _sensitivities = {
     "c_strongsShowInText" :    ["c_strongsShowAll"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
-    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
-                                "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
+    "c_diglot" :               ["gr_diglot", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
+                                "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"], # "fcb_diglotPicListSources", 
     "c_diglotSeparateNotes" :  ["c_diglotNotesRule", "c_diglotJoinVrule"],
     "c_diglotNotesRule" :      ["c_diglotJoinVrule"],
     "c_useOrnaments" :         ["gr_borders"],
@@ -425,8 +425,8 @@ _nonsensitivities = {
     "c_bdrPadSymmetrical":     ["s_sbBdrPadL", "s_sbBdrPadR", "s_sbBdrPadB"],
 }
 _object_classes = {
-    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate",
-                    "b_reprint", "btn_refreshCaptions"),
+    "printbutton": ("b_print", "btn_refreshFonts", "btn_createZipArchiveXtra", "btn_Generate",
+                    "b_reprint", "btn_refreshCaptions"),  # "btn_adjust_diglot", 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
@@ -434,7 +434,7 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
-    "scale-slider":("s_diglotPriFraction", "s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
+    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"), # "s_diglotPriFraction", 
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
@@ -706,7 +706,7 @@ class GtkViewModel(ViewModel):
         self.noInt = self.userconfig.getboolean('init', 'nointernet', fallback=None)
         if self.noInt is not None:
             self.set("c_noInternet", self.noInt)
-        for fcb in ("project", "fontdigits", "script", "diglotPicListSources",
+        for fcb in ("project", "fontdigits", "script",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "snHorizPosn", "filterXrefs", "colXRside", "outputFormat", 
@@ -714,7 +714,7 @@ class GtkViewModel(ViewModel):
                     "sbBorderStyle"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
-        self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
+        # self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
         self.ecb_impConfig = self.builder.get_object("ecb_impConfig")
         self.ecb_targetConfig = self.builder.get_object("ecb_targetConfig")
         for k, v in _object_classes.items():
@@ -800,7 +800,7 @@ class GtkViewModel(ViewModel):
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         # self.builder.get_object("fcb_project").set_wrap_width(1)
         self.builder.get_object("fcb_project").set_wrap_width(wide)
-        self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+        # self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
@@ -1508,7 +1508,7 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print4cover", "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"]:
+        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"
             self.builder.get_object(w).set_sensitive(not self.printReason)
 
     def checkFontsMissing(self):
@@ -1526,9 +1526,9 @@ class GtkViewModel(ViewModel):
     def onOK(self, btn):
         if btn == self.builder.get_object("b_print2ndDiglotText"):
             pass
-        elif self.otherDiglot is not None:
-            self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
-            return
+        # elif self.otherDiglot is not None:
+            # self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
+            # return
         if isLocked():
             self.doStatus(_("Printing busy"))
             return
@@ -1824,17 +1824,17 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_configNotes").set_text("")
         self.configNoUpdate = False
 
-    def updateDiglotConfigList(self):
-        currdigcfg = self.get("ecb_diglotSecConfig")
-        self.ecb_diglotSecConfig.remove_all()
-        digprj = self._getProject("fcb_diglotSecProject")
-        if digprj is None:
-            return
-        diglotConfigs = sorted(digprj.configs.keys())
-        if len(diglotConfigs):
-            for cfgName in sorted(diglotConfigs):
-                self.ecb_diglotSecConfig.append_text(cfgName)
-            self.set("ecb_diglotSecConfig", currdigcfg if currdigcfg in diglotConfigs else "Default")
+    # def updateDiglotConfigList(self): # Use this logic in polyglot_setup to populate the available configs for each project listed
+        # currdigcfg = self.get("ecb_diglotSecConfig")
+        # self.ecb_diglotSecConfig.remove_all()
+        # digprj = self._getProject("fcb_diglotSecProject")
+        # if digprj is None:
+            # return
+        # diglotConfigs = sorted(digprj.configs.keys())
+        # if len(diglotConfigs):
+            # for cfgName in sorted(diglotConfigs):
+                # self.ecb_diglotSecConfig.append_text(cfgName)
+            # self.set("ecb_diglotSecConfig", currdigcfg if currdigcfg in diglotConfigs else "Default")
 
     def _fillConfigList(self, prjwname, configlist):
         impprj = self._getProject(prjwname)
@@ -1859,7 +1859,7 @@ class GtkViewModel(ViewModel):
         self.updateSavedConfigList()
         self.updateimpProjectConfigList()
         self.updatetgtProjectConfigList()
-        self.updateDiglotConfigList()
+        # self.updateDiglotConfigList()
     
     def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
@@ -2230,7 +2230,7 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
 
     def onGenerateClicked(self, btn):
-        priority=self.get("fcb_diglotPicListSources")
+        # priority=self.get("fcb_diglotPicListSources")
         pg = self.get("nbk_Viewer")
         pgid = self.notebooks['Viewer'][pg]
         bks2gen = self.getBooks()
@@ -3785,10 +3785,10 @@ class GtkViewModel(ViewModel):
         elif loc == "cfg":
             cfgname = self.cfgid
             fpath = os.path.join(self.project.srcPath(cfgname), file2edit)
-        elif loc == "dig":
-            digprj = self._getProject("fcb_diglotSecProject")
-            currdigcfg = self.get("ecb_diglotSecConfig")
-            fpath = os.path.join(digprj.srcPath(currdigcfg), file2edit)
+        # elif loc == "dig": #FixMe! - what to do here with the new polyglot setup in mind?
+            # digprj = self._getProject("fcb_diglotSecProject")
+            # currdigcfg = self.get("ecb_diglotSecConfig")
+            # fpath = os.path.join(digprj.srcPath(currdigcfg), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
         return fpath
@@ -4424,30 +4424,30 @@ class GtkViewModel(ViewModel):
         if self.get("c_includeillustrations"):
             self.onUpdatePicCaptionsClicked(None)
 
-    def onDiglotSwitchClicked(self, btn):
-        oprjid = None
-        oconfig = None
-        if self.otherDiglot is not None:
-            oprjid, oconfig = self.otherDiglot
-            self.otherDiglot = None
-            btn.set_label(_("Switch to Other\nDiglot Project"))
-            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
-            self.changeBtnLabel("b_print", _("Print (Make PDF)"))
-        elif self.get("c_diglot"):
-            oprjid = self.get("fcb_diglotSecProject")
-            oconfig = self.get("ecb_diglotSecConfig")
-            if oprjid is not None and oconfig is not None:
-                self.otherDiglot = (self.project.prjid, self.cfgid)
-                btn.set_label(_("Save & Return to\nDiglot Project"))
-            self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-            self.changeBtnLabel("b_print", _("Return to Primary"))
-        self.onSaveConfig(None)
-        if oprjid is not None and oconfig is not None:
-            self.set("fcb_project", oprjid)
-            self.set("ecb_savedConfig", oconfig)
-        mpgnum = self.notebooks['Main'].index("tb_Diglot")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.updateDialogTitle()
+    # def onDiglotSwitchClicked(self, btn): #FixMe!
+        # oprjid = None
+        # oconfig = None
+        # if self.otherDiglot is not None:
+            # oprjid, oconfig = self.otherDiglot
+            # self.otherDiglot = None
+            # btn.set_label(_("Switch to Other\nDiglot Project"))
+            # self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            # self.changeBtnLabel("b_print", _("Print (Make PDF)"))
+        # elif self.get("c_diglot"):
+            # oprjid = self.get("fcb_diglotSecProject")
+            # oconfig = self.get("ecb_diglotSecConfig")
+            # if oprjid is not None and oconfig is not None:
+                # self.otherDiglot = (self.project.prjid, self.cfgid)
+                # btn.set_label(_("Save & Return to\nDiglot Project"))
+            # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+            # self.changeBtnLabel("b_print", _("Return to Primary"))
+        # self.onSaveConfig(None)
+        # if oprjid is not None and oconfig is not None:
+            # self.set("fcb_project", oprjid)
+            # self.set("ecb_savedConfig", oconfig)
+        # mpgnum = self.notebooks['Main'].index("tb_Diglot")
+        # self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        # self.updateDialogTitle()
 
     def changeBtnLabel(self, w, lbl):
         b = self.builder.get_object(w)
@@ -4473,8 +4473,8 @@ class GtkViewModel(ViewModel):
         self.set("r_impTarget", "prjcfg")
         self.setImportButtonOKsensitivity(None)
         
-    def ondiglotSecProjectChanged(self, btn):
-        self.updateDiglotConfigList()
+    def ondiglotSecProjectChanged(self, btn): # FixMe! Polyglot
+        # self.updateDiglotConfigList()
         self.updateDialogTitle()
         
     def onCoverFrontBackClicked(self, w):
@@ -4487,7 +4487,7 @@ class GtkViewModel(ViewModel):
         if self.loadingConfig:
             return
         if self.get("c_diglot"):
-            self.diglotViews['R'] = self.createDiglotView()
+            self.diglotViews['R'] = self.createDiglotView() # FixMe! for polyglot
         else:
             self.setPrintBtnStatus(2)
             self.diglotViews = {}
@@ -5311,25 +5311,25 @@ class GtkViewModel(ViewModel):
         btn.set_active(True)
         xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         def score(x):
-            self.set("s_diglotPriFraction", x*100)
+            # self.set("s_diglotPriFraction", x*100) # FixMe! The fraction will need to be stored/udpdated in the TreeView L+R rows
             runjob = self.callback(self, maxruns=1, noview=True)
             while runjob.thread.is_alive():
                 Gtk.main_iteration_do(False)
             runres = runjob.res
             return 20000 if runres else xdvigetpages(xdvname)
-        mid = float(self.get("s_diglotPriFraction")) / 100.
+        # mid = float(self.get("s_diglotPriFraction")) / 100. # FixMe!
         res = brent(0., 1., mid, score, 0.001)
-        self.set("s_diglotPriFraction", res*100)
+        # self.set("s_diglotPriFraction", res*100) # FixMe!
         self.isDiglotMeasuring = False
         self.callback(self)
         btn.set_active(False)
 
-    def onDiglotSwapSideClicked(self, btn):
-        if self.get("r_hdrLeft") != self.get("r_hdrRight"):
-            for a in ("r_hdrLeft", "r_hdrRight"):
-                v = self.get(a)
-                v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
-                self.set(a, v)
+    # def onDiglotSwapSideClicked(self, btn):
+        # if self.get("r_hdrLeft") != self.get("r_hdrRight"):
+            # for a in ("r_hdrLeft", "r_hdrRight"):
+                # v = self.get(a)
+                # v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
+                # self.set(a, v)
 
     def onFootnotesClicked(self, btn):
         if not self.sensiVisible("c_includeFootnotes"):
@@ -5690,10 +5690,10 @@ class GtkViewModel(ViewModel):
         status = self.sensiVisible("c_xrefrule")
         self.builder.get_object("rule_xref").set_visible(status)
 
-    def diglotPicListSourcesChanged(self, btn):
-        status = not self.get("fcb_diglotPicListSources") == "bth"
-        self.builder.get_object("c_diglot2captions").set_sensitive(status)
-        self.set("c_diglot2captions", status)
+    # def diglotPicListSourcesChanged(self, btn): # FixMe!
+        # status = not self.get("fcb_diglotPicListSources") == "bth"
+        # self.builder.get_object("c_diglot2captions").set_sensitive(status)
+        # self.set("c_diglot2captions", status)
 
     def button_release_callback(self, widget, event, data=None):
         # If a user wants to highlight a control (for training or documentation

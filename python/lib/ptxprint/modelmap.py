@@ -251,23 +251,24 @@ _map = {
 
     "document/ifdiglot":            ("c_diglot", "diglot", lambda w,v : "" if v else "%"),
     "document/ifndiglot":           ("c_diglot", "diglot", lambda w,v : "%" if v else ""),
-    "document/diglotprifraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
-    "document/diglotsecfraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
-    "document/diglotsecprj":        ("fcb_diglotSecProject", "diglot", None),
-    "document/diglotsecprjguid":    ("fcb_diglotSecProject[1]", "diglot", None),
+    # "document/diglotprifraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
+    # "document/diglotsecfraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
+    # "document/diglotsecprj":        ("fcb_diglotSecProject", "diglot", None),
+    # "document/diglotsecprjguid":    ("fcb_diglotSecProject[1]", "diglot", None),
+    "document/diglotlayout":        ("t_layout", "diglot", None),
     "document/diglotserialbooks":   ("t_diglotSerialBooks", "diglot", None),
-    "document/diglotpicsources":    ("fcb_diglotPicListSources", "diglot", None),
-    "document/diglot2captions": ("c_diglot2captions", "diglot", None),
-    "document/diglotswapside":  ("c_diglotSwapSide", "diglot", lambda w,v: "true" if v else "false"),
+    # "document/diglotpicsources":    ("fcb_diglotPicListSources", "diglot", None),
+    # "document/diglot2captions": ("c_diglot2captions", "diglot", None),
+    # "document/diglotswapside":  ("c_diglotSwapSide", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", "diglot", lambda w,v: "true" if v else "false"),
-    "document/diglotsecconfig": ("ecb_diglotSecConfig", "diglot", None),
+    # "document/diglotsecconfig": ("ecb_diglotSecConfig", "diglot", None),
     "document/diglotmergemode": ("fcb_diglotMerge", "diglot", None),
     "document/diglotadjcenter": ("c_diglotAdjCenter", "diglot", None),
     "document/diglotheaders":   ("c_diglotHeaders", "diglot", None),
     "document/diglotnotesrule": ("c_diglotNotesRule", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotjoinvrule": ("c_diglotJoinVrule", "diglot", lambda w,v: "true" if v else "false"),
-    "document/diglotcolour":    ("col_dibackcol", "diglot", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "1.0 1.0 1.0"),
-    "document/ifdiglotcolour":  ("col_dibackcol", "diglot", lambda w,v : "%" if v is None or v == "rgb(255,255,255)" else ""),
+    # "document/diglotcolour":    ("col_dibackcol", "diglot", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "1.0 1.0 1.0"),
+    # "document/ifdiglotcolour":  ("col_dibackcol", "diglot", lambda w,v : "%" if v is None or v == "rgb(255,255,255)" else ""),
 
     "document/hasnofront_":        ("c_frontmatter", "front", lambda w,v: "%" if v else ""),
     "document/noblankpage":        ("c_periphSuppressPage", "layout", None),
@@ -521,10 +522,13 @@ _map = {
 }
 
 polymap = {
-    "percent" : ("t_polywidth", None, None),
-    "percent" : ("t_polywidth", None, None),
-    "percent" : ("t_polywidth", None, None),
-    "percent" : ("t_polywidth", None, None),
+  # "code" :    ("t_polycode", None, None),
+    "project" : ("fcb_polyproject", None, None),
+    "captions": ("c_polycaptions", None, None),
+    "width" :   ("t_polywidth", None, None),
+    "config" :  ("fcb_polyconfig", None, None),
+    "page" :    ("fcb_polypage", None, None),
+    "color" :   ("t_polycolor", None, None),
     }
     
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}

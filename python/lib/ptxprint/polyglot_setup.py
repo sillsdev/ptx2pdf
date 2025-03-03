@@ -9,9 +9,6 @@ _modeltypes = (str, str, str, str, bool, float, str, str, str, int)
 _modelfields = ('code', 'pg', 'prj', 'cfg', 'captions', 'width', 'color', 'tooltip', 'widcol', 'bold')
 m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
 
-for x in m:
-    print(f"{x.value} = {x.name}")
-
 class PolyglotSetup(Gtk.Box):
     def __init__(self, builder, tv):
         self.builder = builder
@@ -57,7 +54,6 @@ class PolyglotSetup(Gtk.Box):
         self.add_column("Configuration", m.cfg, editable=True, renderer_type="combo", options=['(None)'])
         self.add_column("Captions", m.captions, editable=True, renderer_type="toggle")
         self.add_column("% Width", m.width, editable=True, renderer_type="text")
-        # self.add_column("Color", m.color, editable=True, renderer_type="color")
 
         # Enable drag and drop
         self.treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [('text/plain', 0, 0)], Gdk.DragAction.MOVE)
@@ -74,6 +70,33 @@ class PolyglotSetup(Gtk.Box):
         scrolled_window.add(self.treeview)
 
         self.pack_start(scrolled_window, True, True, 0)
+        self.update_layout_string()
+        self.update_layout_preview()
+
+    def row_draggable(self, model, path):
+        """Prevents Row 0 from being dragged."""
+        row_index = path.get_indices()[0]  # Get row index
+        if row_index == 0:
+            print("Drag prevented: Row 0 cannot be moved.")
+            return False  # 🚫 Prevent Row 0 from being dragged
+        return True  # ✅ Allow other rows to be dragged
+
+    def row_drop_possible(self, model, dest_path, selection_data):
+        """Prevents dropping any row into Row 0."""
+        target_index = dest_path.get_indices()[0]  # Get destination row index
+        dragged_index = int(selection_data.get_text().strip()) if selection_data.get_text() else None
+
+        # 🚫 Prevent dropping into Row 0
+        if target_index == 0:
+            print("Drop prevented: Cannot drop into Row 0.")
+            return False
+
+        # 🚫 Prevent Row 0 from being moved at all
+        if dragged_index == 0:
+            print("Drop prevented: Row 0 cannot be moved.")
+            return False
+
+        return True  # ✅ Allow all other valid drops
 
     def get_treeview(self):
         """ Expose the TreeView for integration with other modules. """
@@ -85,7 +108,7 @@ class PolyglotSetup(Gtk.Box):
             renderer = Gtk.CellRendererText()
             renderer.set_property("editable", editable)
             
-            # Only apply color formatting to the % Width column
+            # Only apply text color formatting to the % Width column
             column = Gtk.TreeViewColumn(title, renderer, text=column_id)
             if column_id == 5:
                 column.add_attribute(renderer, "foreground", 8)  # Use column 8 for text color
@@ -148,6 +171,13 @@ class PolyglotSetup(Gtk.Box):
                 options = self.get_available_codes()  # Get only available codes
                 renderer.set_property("model", self.get_combo_model(options))
 
+                # renderer = Gtk.CellRendererText()
+                # renderer.set_property("editable", True)
+                renderer.set_property("background-set", True)
+                column = Gtk.TreeViewColumn(title, renderer, text=column_id, background=m.color)
+                self.treeview.append_column(column)
+                self.treeview.connect("row-activated", self.on_color_clicked, column_id)                
+
             # Special handling for 'Config' column (column 3)
             if column_id == 3:  # Special handling for 'Config' column
                 renderer = Gtk.CellRendererCombo()
@@ -165,7 +195,6 @@ class PolyglotSetup(Gtk.Box):
                 return
 
             wide = int(len(options) / 16) + 1 if len(options) > 14 else 1
-            print(f"{len(options)=}  {wide=}")
 
             if isinstance(options, Gtk.ListStore):  # If options is a ListStore, use it directly
                 renderer.set_property("model", options)
@@ -188,20 +217,6 @@ class PolyglotSetup(Gtk.Box):
                 column.set_cell_data_func(renderer, disable_edit_for_first_row)  # Apply locking
                 self.treeview.append_column(column)
 
-        elif renderer_type == "color":
-            renderer = Gtk.CellRendererText()
-            renderer.set_property("editable", True)
-            renderer.set_property("background-set", True)
-            column = Gtk.TreeViewColumn(title, renderer, text=column_id, background=column_id)
-            column.add_attribute(renderer, "foreground", column_id)  # Set the text color to match the background
-            column.set_fixed_width(70)  # Increase width (default is often too narrow)
-            column.set_resizable(True)
-            # column.set_expand(True)
-            renderer.connect("edited", self.on_color_typed, column_id)
-            self.treeview.append_column(column)
-            self.treeview.connect("row-activated", self.on_color_clicked, column_id)
-            return
-        
         if not isinstance(renderer, Gtk.CellRendererToggle):
             renderer.set_property("editable", editable)
 
@@ -221,8 +236,6 @@ class PolyglotSetup(Gtk.Box):
         It dynamically applies wrap width to the dropdown for multi-column support.
         """
         if isinstance(editable, Gtk.ComboBox):
-            print("Applying wrap width to ComboBox for multi-column support")
-
             # Dynamically set wrap width based on the number of items
             num_projects = len(self.project_liststore) if hasattr(self, "project_liststore") else 0
             number_of_columns = max(1, num_projects // 16) + 1 if num_projects > 14 else 1
@@ -441,41 +454,20 @@ class PolyglotSetup(Gtk.Box):
             return model, iter, model.get_path(iter)
         return None
 
-    def on_drag_data_received(self, treeview, drag_context, x, y, selection, info, time):
-        """Handles dropping a row at a new position in the TreeView."""
-        model = treeview.get_model()
-        drop_info = treeview.get_dest_row_at_pos(x, y)
-
-        dragged_path_str = selection.get_text().strip()  # Get the dragged row path as a string
-        if not dragged_path_str:
-            return  # Prevent crashes if the selection is empty
-
-        dragged_iter = model.get_iter_from_string(dragged_path_str)  # Get the dragged row iterator
-        dragged_data = list(model[dragged_iter])  # Copy row data before removing
-
-        if drop_info:
-            path, position = drop_info
-            target_iter = model.get_iter(path)
-
-            # Move before or after the target row
-            if position == Gtk.TreeViewDropPosition.BEFORE:
-                new_iter = model.insert_before(target_iter, dragged_data)
-            else:
-                new_iter = model.insert_after(target_iter, dragged_data)
-
-            # Remove the old row after insertion
-            model.remove(dragged_iter)
-
-            self.save_data()
-
     def on_right_click(self, widget, event):
-        """Shows a context menu on right-click."""
+        """Shows a context menu on right-click, disabling options for Row 0."""
         if event.button == 3:  # Right-click
             self.context_menu = Gtk.Menu()  # Store reference
 
-            # validator_item = Gtk.MenuItem(label=_("Validate codes..."))
-            # validator_item.connect("activate", self.testValidator)
-            # self.context_menu.append(validator_item)
+            # Get the row that was right-clicked on
+            path_info = self.treeview.get_path_at_pos(int(event.x), int(event.y))
+            if path_info:
+                path, column, a, b = path_info
+                row_index = path.get_indices()[0]  # Extract the row index
+            else:
+                row_index = None  # No valid row found
+
+            is_first_row = row_index == 0  # Check if row 0 was clicked
 
             add_item = Gtk.MenuItem(label=_("Add a row/text"))
             add_item.connect("activate", self.add_row)
@@ -483,10 +475,12 @@ class PolyglotSetup(Gtk.Box):
 
             move_up_item = Gtk.MenuItem(label=_("Move Up"))
             move_up_item.connect("activate", self.move_selected_row, -1)
+            move_up_item.set_sensitive(not is_first_row and not row_index == 1)  # Disable if Row 0
             self.context_menu.append(move_up_item)
 
             move_down_item = Gtk.MenuItem(label=_("Move Down"))
             move_down_item.connect("activate", self.move_selected_row, 1)
+            move_down_item.set_sensitive(not is_first_row)  # Disable if Row 0
             self.context_menu.append(move_down_item)
 
             distribute_item = Gtk.MenuItem(label=_("Distribute Widths"))
@@ -495,12 +489,13 @@ class PolyglotSetup(Gtk.Box):
 
             delete_item = Gtk.MenuItem(label=_("Delete Row"))
             delete_item.connect("activate", self.delete_selected_row)
+            delete_item.set_sensitive(not is_first_row)  # Disable if Row 0
             self.context_menu.append(delete_item)
-            
+
             color_item = Gtk.MenuItem(label=_("Set Color..."))
             color_item.connect("activate", self.set_color_from_menu)
             self.context_menu.append(color_item)
-            
+
             self.context_menu.show_all()
             self.update_context_menu()  # Apply correct state
             self.context_menu.popup_at_pointer(event)
@@ -584,6 +579,8 @@ class PolyglotSetup(Gtk.Box):
         model, iter = treeview.get_selection().get_selected()
         if iter:
             path = model.get_path(iter).to_string()  # Get row index as a string
+            
+            # Allow row 0 to be dragged, but do not move it
             selection_data.set_text(path, -1)  # Store it in drag data
 
     def on_drag_data_received(self, treeview, drag_context, x, y, selection, info, time):
@@ -591,15 +588,30 @@ class PolyglotSetup(Gtk.Box):
         model = treeview.get_model()
         drop_info = treeview.get_dest_row_at_pos(x, y)
 
-        dragged_path_str = selection.get_text().strip()  # Get the dragged row path as a string
-        if not dragged_path_str:
-            return  # Prevent crashes if the selection is empty
+        dragged_path_str = selection.get_text()  # Get the dragged row path as a string
+
+        if not dragged_path_str:  # Check if dragged data is empty
+            return  # Prevent crashes if the selection is empty or None
+
+        dragged_path_str = dragged_path_str.strip()  # Safe to call .strip() now
 
         dragged_iter = model.get_iter_from_string(dragged_path_str)  # Get the dragged row iterator
         dragged_data = list(model[dragged_iter])  # Copy row data before removing
 
+        # Get the target row at the drop position
         if drop_info:
             path, position = drop_info
+            
+            # Prevent dropping row 0 to another row
+            if dragged_path_str == "0":
+                # Re-insert row 0 at its original position
+                model.insert_before(model.get_iter_first(), dragged_data)  # Insert at the beginning (index 0)
+                return  # Row 0 goes back to where it was; no need to proceed further
+
+            # Prevent drop on row 0
+            if path.to_string() == "0":
+                return  # Do nothing if trying to drop onto row 0
+
             target_iter = model.get_iter(path)
 
             # Move before or after the target row
@@ -689,6 +701,9 @@ class PolyglotSetup(Gtk.Box):
         data = [{row[m.code]: {"spread_side": row[m.pg], "prj": row[m.prj], "cfg": row[m.cfg], "captions": row[m.captions], "percentage": row[m.width], "color": row[m.color]}} for row in self.liststore]
         with open("data.json", "w") as f:
             json.dump(data, f, indent=4)
+        self.update_layout_string()
+            
+    def update_layout_string(self):
         t = self.generate_layout_from_treeview()
         w = self.builder.get_object('t_layout')
         if not "\\" in w.get_text():
@@ -938,9 +953,10 @@ class PolyglotSetup(Gtk.Box):
             if is_single:
                 page_frame = Gtk.Frame(label="")
             else:
-                page_frame = Gtk.Frame(label="Right Page" if is_right_page else "  Left Page  ")
+                page_frame = Gtk.Frame(label=_("Right Page (2)") if is_right_page else _("Left Page (1)"))
+            page_frame.set_label_align(0.5, 0.5)  # Center horizontally & vertically
             page_frame.set_shadow_type(Gtk.ShadowType.NONE)
-            page_frame.set_size_request(70, -1)  # Width = 70px, Height flexible
+            page_frame.set_size_request(50, -1)  # Width = 70px, Height flexible
             page_frame.set_hexpand(True)
             page_frame.set_vexpand(True)
             page_frame.add(page_box)

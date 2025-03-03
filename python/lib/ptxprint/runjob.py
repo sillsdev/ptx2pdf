@@ -276,11 +276,11 @@ class RunJob:
             joblist = [[j] for j in jobs]
 
         if len(self.printer.diglotViews):
-            dv = self.printer.diglotViews['R']
+            dv = self.printer.diglotViews['R'] # FixMe!
             dv.loadHyphenation()
-            digfraction = info.dict["document/diglotprifraction"]
-            digprjid = info.dict["document/diglotsecprj"]
-            digcfg = info.dict["document/diglotsecconfig"]
+            # digfraction = info.dict["document/diglotprifraction"]
+            # digprjid = info.dict["document/diglotsecprj"]
+            # digcfg = info.dict["document/diglotsecconfig"]
             digprjdir = dv.project.path
             digptsettings = ParatextSettings(digprjdir)
             diginfo = TexModel(dv, digptsettings, digprjid, inArchive=self.inArchive)

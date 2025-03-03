@@ -200,11 +200,12 @@ class FancyIntro(Snippet):
 class Diglot(Snippet):
     processTex = True
 
+# \def\DiglotLFraction{{{document/diglotprifraction}}} # FixMe! 0.5 temporary below
+# \def\DiglotLFraction{{0.5}}  # Assuming this is the default (so leaving it out for now)
+# \diglotSwap{document/diglotswapside}
     def generateTex(self, model, diglotSide=""):
         baseCode = r"""
-\def\DiglotLFraction{{{document/diglotprifraction}}}
 \addToSideHooks{{{s_}}}{{\RTL{document/ifrtl}}}
-\diglotSwap{document/diglotswapside}
 {project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
