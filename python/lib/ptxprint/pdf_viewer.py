@@ -356,10 +356,11 @@ class PDFViewer:
         gutter = mm_pts(float(self.model.get("s_pagegutter"))) if self.model.get("c_pagegutter") else 0.
         left = margin
         right = margin
-        if (self.current_page & 1 != 0) ^ self.model.get("c_pagegutter"):
-            left += gutter
-        else:
-            right += gutter
+        if self.model.get("c_pagegutter"):
+            if (self.current_page & 1 != 0):
+                left += gutter
+            else:
+                right += gutter
         return (left, right)
 
     def _draw_guides(self, page, pindex, context, zoomlevel):
