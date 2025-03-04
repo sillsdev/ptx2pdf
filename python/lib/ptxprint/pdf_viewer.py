@@ -553,8 +553,7 @@ class PDFViewer:
             return False
         if not self.load_pdf(fname, adjlist=adjlist, isdiglot=isdiglot):
             return False
-        if parlocs is not None:
-            self.load_parlocs(parlocs, rtl=rtl)
+        self.load_parlocs(parlocs, rtl=rtl)
         if page is not None and page in self.parlocs.pnums:
             self.current_page = page
             self.current_index = self.parlocs.pnums[page]
