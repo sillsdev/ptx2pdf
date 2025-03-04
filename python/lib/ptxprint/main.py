@@ -258,7 +258,11 @@ def main():
 
     log.debug(f"project id={args.pid}, config={args.config}, directory={args.directory}")
 
-    scriptsdir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        scriptsdir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), 'ptxprint')
+    else:
+        scriptsdir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    
     macrosdir = os.path.join(scriptsdir, 'ptx2pdf')
     if args.macros:
         macrosdir = args.macros

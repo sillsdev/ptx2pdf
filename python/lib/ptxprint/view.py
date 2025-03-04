@@ -1614,6 +1614,7 @@ class ViewModel:
                 if os.path.exists(fp):
                     res.append(fp)
             res.append(os.path.join(cpath, subdir, "ptxprint.sty"))
+        logger.debug(f"getStyleSheets: {res=}")
         return res
 
     def getallfonts(self):
@@ -1953,6 +1954,8 @@ set stack_size=32768""".format(self.cfgid)
             batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\\..\\..'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.project.prjid), batfile)
 
+    _includeexts = (".cfg", ".txt", ".adj", ".sfm", ".tex", ".sty", ".piclist")
+
     def createSettingsZip(self, outf):
         res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
         sdir = self.project.srcPath(self.cfgid)
@@ -1961,7 +1964,7 @@ set stack_size=32768""".format(self.cfgid)
             if not os.path.exists(ind):
                 continue
             for f in os.listdir(ind):
-                if "_override" in f or f == "_runinfo.txt":
+                if "_override" in f or f == "_runinfo.txt" or os.path.splitext(f)[1].lower() not in self._includeexts:
                     continue
                 fpath = os.path.realpath(os.path.join(ind, f))
                 if os.path.isfile(fpath):

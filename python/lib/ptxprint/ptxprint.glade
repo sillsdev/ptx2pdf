@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.7.24</property>
+    <property name="version">Version 2.7.27</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -1775,12 +1775,16 @@ settings for a similar project.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Edge of Page</col>
+        <col id="0" translatable="yes">Whole Page</col>
         <col id="1">page</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Top-Left Margin</col>
-        <col id="1">margin</col>
+        <col id="0" translatable="yes">In Margin Areas</col>
+        <col id="1" translatable="yes">margin</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Only in Text Area</col>
+        <col id="1">text</col>
       </row>
     </data>
   </object>
@@ -4011,7 +4015,7 @@ been stretched/expanded.</property>
 as well as the baselines of the body text.</property>
                     <property name="halign">start</property>
                     <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                    <signal name="clicked" handler="showRulesClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -4035,7 +4039,7 @@ you can generate a graph-paper-like grid behind
 the text. This may be useful for precise measuring.</property>
                         <property name="margin-bottom">10</property>
                         <property name="draw-indicator">True</property>
-                        <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                        <signal name="clicked" handler="showGridClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -33703,7 +33707,7 @@ to measure, it can be helpful to
 position the grid at the top-left 
 corner of the page, or margins.</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">Start Grid At:</property>
+                        <property name="label" translatable="yes">Place Grid:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>

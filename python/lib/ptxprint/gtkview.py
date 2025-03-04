@@ -6502,7 +6502,19 @@ Thank you,
 
     def onLocateDigitMappingClicked(self, btn):
         self.highlightwidget('fcb_fontdigits')
-        
+
+    def showRulesClicked(self, btn):
+        v = self.get("c_gridLines")
+        if self.pdf_viewer is not None:
+            self.pdf_viewer.showguides = v
+            self.pdf_viewer.show_pdf()
+
+    def showGridClicked(self, btn):
+        v = self.get("c_gridGraph")
+        if self.pdf_viewer is not None:
+            self.pdf_viewer.showgrid = v
+            self.pdf_viewer.show_pdf()
+
     def showRulesOrGridClicked(self, btn):
         if self.loadingConfig:
             return
