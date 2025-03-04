@@ -351,13 +351,15 @@ class PDFViewer:
         self.update_boxes(images)
         self.updatePageNavigation()
 
-    def _get_margins(self, page):
+    def _get_margins(self, pindex):
         margin = mm_pts(float(self.model.get("s_margins")))
         gutter = mm_pts(float(self.model.get("s_pagegutter"))) if self.model.get("c_pagegutter") else 0.
         left = margin
         right = margin
         if self.model.get("c_pagegutter"):
-            if (self.current_page & 1 != 0):
+            pnum = self.parlocs.pnumorder[pindex-1] if self.parlocs is not None \
+                        and pindex <= len(self.parlocs.pnumorder) else pindex
+            if (pnum & 1 != 0):
                 left += gutter
             else:
                 right += gutter
@@ -381,7 +383,7 @@ class PDFViewer:
         colgutterwidth = mm_pts(float(self.model.get("s_colgutterfactor")))
         minorcol = (0.68, 0.85, 0.68)
         majorcol = (0.8, 0.6, 0.6)
-        left, right = self._get_margins(page)
+        left, right = self._get_margins(pindex)
         innerheight = pheight - texttop - textbot
 
         # header
@@ -443,7 +445,7 @@ class PDFViewer:
         elif edge == "margin":
             texttop = mm_pts(float(self.model.get("s_topmargin")))
             textbot = mm_pts(float(self.model.get("s_bottommargin")))
-            (left, right) = self._get_margins(page)
+            (left, right) = self._get_margins(pnum)
             jobs = [((left, texttop), (right, pheight - textbot))]
         # now we can do multiple jobs for bits outside the margins
         for j in jobs:
