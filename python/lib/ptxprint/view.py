@@ -717,8 +717,9 @@ class ViewModel:
             prjcfg = "{}{}".format(prjid, cfg) 
             # print(f"view.py - in getDialogTitle; {prjid=}, {cfg=}")
             if self.get("c_diglot") and len(self.diglotViews):
-                cfg2 = ":" + self.diglotViews['R'].cfgid
-                prjcfg2 = "{}{}".format(self.diglotViews['R'].project.prjid, cfg2) 
+                # cfg2 = ":" + self.diglotViews['R'].cfgid # FixMe! -- fails every time.
+                # prjcfg2 = "{}{}".format(self.diglotViews['R'].project.prjid, cfg2) 
+                prjcfg2 = "Dig:FixMe"
                 prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
             return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
