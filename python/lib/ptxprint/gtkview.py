@@ -1824,18 +1824,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_configNotes").set_text("")
         self.configNoUpdate = False
 
-    # def updateDiglotConfigList(self): # Use this logic in polyglot_setup to populate the available configs for each project listed
-        # currdigcfg = self.get("ecb_diglotSecConfig")
-        # self.ecb_diglotSecConfig.remove_all()
-        # digprj = self._getProject("fcb_diglotSecProject")
-        # if digprj is None:
-            # return
-        # diglotConfigs = sorted(digprj.configs.keys())
-        # if len(diglotConfigs):
-            # for cfgName in sorted(diglotConfigs):
-                # self.ecb_diglotSecConfig.append_text(cfgName)
-            # self.set("ecb_diglotSecConfig", currdigcfg if currdigcfg in diglotConfigs else "Default")
-
     def _fillConfigList(self, prjwname, configlist):
         impprj = self._getProject(prjwname)
         if impprj is None:

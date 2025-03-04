@@ -674,6 +674,19 @@ class PolyglotSetup(Gtk.Box):
                 project = "(None)"
         return configs.get(project, ["(None)"])  # Default to ["(None)"] if project not found
 
+    # def updateDiglotConfigList(self): # Use this logic in polyglot_setup to populate the available configs for each project listed
+        # currdigcfg = self.get("ecb_diglotSecConfig")
+        # self.ecb_diglotSecConfig.remove_all()
+        # digprj = self._getProject("fcb_diglotSecProject")
+        # if digprj is None:
+            # return
+        # diglotConfigs = sorted(digprj.configs.keys())
+        # if len(diglotConfigs):
+            # for cfgName in sorted(diglotConfigs):
+                # self.ecb_diglotSecConfig.append_text(cfgName)
+            # self.set("ecb_diglotSecConfig", currdigcfg if currdigcfg in diglotConfigs else "Default")
+        
+
     def save_data(self): #FixMe!
         """Saves the liststore data to a JSON file."""
         data = [{row[m.code]: {"spread_side": row[m.pg], "prj": row[m.prj], "cfg": row[m.cfg], "captions": row[m.captions], "fontsize": row[m.fontsize], "baseline": row[m.baseline], "percentage": row[m.width], "color": row[m.color]}} for row in self.liststore]
@@ -726,7 +739,7 @@ class PolyglotSetup(Gtk.Box):
         """
         # Rule 2: Ensure there are no spaces
         if " " in t_layout:
-            return False, "Layout must not contain spaces."
+            return False, "Spaces not allowed"
 
         # Extract used codes and their '1|2' values from the ListStore
         used_codes = {}  # Dictionary mapping codes -> '1' or '2'
@@ -737,15 +750,11 @@ class PolyglotSetup(Gtk.Box):
 
         all_used_codes = set(used_codes.keys())  # Set of valid codes from TreeView
         all_layout_codes = set(re.findall(r"[A-Z]", t_layout))  # Extract all letter codes from layout
-
-        # Rule 1: Ensure all letters in t_layout exist in the used_codes
         all_letters = set("".join(t_layout.replace(",", "").replace("/", "")))
-        if not all_letters.issubset(set(used_codes.keys())):
-            return False, "Layout contains invalid codes."
 
         # Rule 3: If both '1' and '2' exist in the ListStore, a comma must be present
         if "1" in used_codes.values() and "2" in used_codes.values() and "," not in t_layout:
-            return False, "Layout must contain a comma to indicate separate sides."
+            return False, "Comma required for\nmulti-page spread"
 
         # Rule 4: Ensure left-side codes appear in '1' and right-side codes in '2'
         if "," in t_layout:
@@ -753,29 +762,33 @@ class PolyglotSetup(Gtk.Box):
             left_codes = set(left_side.replace("/", ""))
             right_codes = set(right_side.replace("/", ""))
             if not left_codes.issubset({k for k, v in used_codes.items() if v == "1"}):
-                return False, "Left-side codes must be assigned to '1'."
+                return False, "Codes on left must\nbe assigned to page '1'"
             if not right_codes.issubset({k for k, v in used_codes.items() if v == "2"}):
-                return False, "Right-side codes must be assigned to '2'."
+                return False, "Codes on right must\nbe assigned to page '2'"
 
         # Rule 5: Ensure '/' is used correctly (not at start or end, no consecutive slashes)
         if t_layout.startswith("/") or t_layout.endswith("/") or "//" in t_layout:
-            return False, "Slashes must be between letters and not at the start or end."
+            return False, "Invalid position for slash"
             
         # Rule 6: Ensure L and R are always present
         if not ("L" in all_letters and "R" in all_letters):
-            return False, "Layout must include both L and R."
+            return False, "L or R missing"
 
         # Rule 7 (NEW): Ensure all codes in the TreeView are included in t_layout
         missing_codes = all_used_codes - all_layout_codes
         if missing_codes:
-            return False, f"Missing codes in layout: {', '.join(missing_codes)}"
+            return False, f"Missing: {','.join(missing_codes)}"
             
         # Rule 10: Hyphen '-' is allowed to indicate a blank page
         valid_chars = set(used_codes.keys()).union({",", "/", "-"})
         if not set(t_layout).issubset(valid_chars):
-            return False, "Layout contains invalid characters."
+            return False, "Invalid characters"
 
-        return True, "Valid layout."
+        # Rule 1: Ensure all letters in t_layout exist in the used_codes
+        if not all_letters.issubset(set(used_codes.keys())):
+            return False, "Invalid codes used"
+
+        return True, "Valid layout"
 
     def testValidator(self, x):
         print(f"Layout: {t}")
@@ -783,9 +796,9 @@ class PolyglotSetup(Gtk.Box):
             is_valid, message = self.validate_layout(l, self.liststore)
 
             if not is_valid:
-                print(f"Error: {l} - {message}")
+                print(f"Layout Error: {l} - {message}")
             else:
-                print(f"Valid: {l}")
+                print(f"Valid Layout: {l}")
 
     def update_layout_preview(self):
         """
@@ -806,7 +819,7 @@ class PolyglotSetup(Gtk.Box):
 
         if not is_valid:
             # Display a red error frame with an error message
-            error_frame = Gtk.Frame(label="Error")
+            error_frame = Gtk.Frame(label=_("Layout Error"))
             error_label = Gtk.Label(label=error_message)
             error_label.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(1, 0, 0, 1))  # Red color
             error_frame.add(error_label)
@@ -953,3 +966,4 @@ class PolyglotSetup(Gtk.Box):
         # Step 8: Attach to the provided widget and show
         widget.add(spread_box)
         widget.show_all()
+
