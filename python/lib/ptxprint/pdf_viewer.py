@@ -359,10 +359,24 @@ class PDFViewer:
         if self.model.get("c_pagegutter"):
             pnum = self.parlocs.pnumorder[pindex-1] if self.parlocs is not None \
                         and pindex <= len(self.parlocs.pnumorder) else pindex
-            if (pnum & 1 != 0):
-                left += gutter
-            else:
+
+            flip = self.rtl_mode  # Reverse logic if RTL mode is enabled
+            
+            if self.model.get("c_outerGutter") == ((pnum & 1 == 0) == flip):
                 right += gutter
+            else:
+                left += gutter
+            
+            # if self.model.get("c_outerGutter"):
+                # if (pnum & 1 == 0) == flip:  # Even pages (LTR) or Odd pages (RTL)
+                    # right += gutter
+                # else:
+                    # left += gutter
+            # else:
+                # if (pnum & 1 == 0) == flip:  # Even pages (LTR) or Odd pages (RTL)
+                    # left += gutter
+                # else:
+                    # right += gutter
         return (left, right)
 
     def _draw_guides(self, page, pindex, context, zoomlevel):
