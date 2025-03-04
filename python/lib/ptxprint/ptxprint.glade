@@ -1775,12 +1775,16 @@ settings for a similar project.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Edge of Page</col>
+        <col id="0" translatable="yes">Whole Page</col>
         <col id="1">page</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Top-Left Margin</col>
-        <col id="1">margin</col>
+        <col id="0" translatable="yes">In Margin Areas</col>
+        <col id="1" translatable="yes">margin</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Only in Text Area</col>
+        <col id="1">text</col>
       </row>
     </data>
   </object>
@@ -33910,7 +33914,7 @@ to measure, it can be helpful to
 position the grid at the top-left 
 corner of the page, or margins.</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">Start Grid At:</property>
+                        <property name="label" translatable="yes">Place Grid:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
