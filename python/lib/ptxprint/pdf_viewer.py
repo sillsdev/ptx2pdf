@@ -361,22 +361,10 @@ class PDFViewer:
                         and pindex <= len(self.parlocs.pnumorder) else pindex
 
             flip = self.rtl_mode  # Reverse logic if RTL mode is enabled
-            
             if self.model.get("c_outerGutter") == ((pnum & 1 == 0) == flip):
                 right += gutter
             else:
                 left += gutter
-            
-            # if self.model.get("c_outerGutter"):
-                # if (pnum & 1 == 0) == flip:  # Even pages (LTR) or Odd pages (RTL)
-                    # right += gutter
-                # else:
-                    # left += gutter
-            # else:
-                # if (pnum & 1 == 0) == flip:  # Even pages (LTR) or Odd pages (RTL)
-                    # left += gutter
-                # else:
-                    # right += gutter
         return (left, right)
 
     def _draw_guides(self, page, pindex, context, zoomlevel):
@@ -453,14 +441,19 @@ class PDFViewer:
         majorthick = float(self.model.get("s_gridMajorThick"))
         minorcol = coltoonemax(self.model.get("col_gridMinor"))
         minorthick = float(self.model.get("s_gridMinorThick"))
+        texttop = mm_pts(float(self.model.get("s_topmargin")))
+        textbot = mm_pts(float(self.model.get("s_bottommargin")))
+        (left, right) = self._get_margins(pnum)
 
         if edge == "page":
             jobs = [((0,0), (pwidth, pheight))]
+        elif edge == "text":
+            jobs = [((left, texttop), (pwidth - right, pheight - textbot))]
         elif edge == "margin":
-            texttop = mm_pts(float(self.model.get("s_topmargin")))
-            textbot = mm_pts(float(self.model.get("s_bottommargin")))
-            (left, right) = self._get_margins(pnum)
-            jobs = [((left, texttop), (right, pheight - textbot))]
+            jobs = [((0, 0), (pwidth, texttop))]
+            jobs.append(((0, pheight - textbot), (pwidth, pheight))) 
+            jobs.append(((0, texttop), (left, pheight - textbot))) 
+            jobs.append(((pwidth - right, texttop), (pwidth, pheight - textbot))) 
         # now we can do multiple jobs for bits outside the margins
         for j in jobs:
             major = 72.27 if units == "in" else mm_pts(10)

@@ -33825,7 +33825,7 @@ and 3, 4, 6, or 12 for inches.</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="title" translatable="yes">Color of minor lines in grid.</property>
-                        <property name="rgba">rgb(255,190,111)</property>
+                        <property name="rgba">rgb(98,160,234)</property>
                       </object>
                       <packing>
                         <property name="left-attach">2</property>

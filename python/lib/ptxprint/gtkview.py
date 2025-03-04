@@ -4906,7 +4906,7 @@ class GtkViewModel(ViewModel):
         dialog = self.builder.get_object("dlg_gridSettings")
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            pass
+            self.showGridClicked(None)
         elif response == Gtk.ResponseType.CANCEL:
             pass
         dialog.hide()
@@ -4918,7 +4918,7 @@ class GtkViewModel(ViewModel):
         self.set("s_gridMajorThick", "0.2")
         self.set("col_gridMajor", "rgb(204,0,0)")
         self.set("s_gridMinorThick", "0.2")
-        self.set("col_gridMinor", "rgb(115,210,22)")
+        self.set("col_gridMinor", "rgb(98,160,234)")
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = 99
