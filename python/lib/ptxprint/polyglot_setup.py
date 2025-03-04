@@ -5,8 +5,8 @@ import re, json
 from enum import IntEnum
 from ptxprint.utils import _
 
-_modeltypes = (str, str, str, str, bool, float, str, str, str, int)
-_modelfields = ('code', 'pg', 'prj', 'cfg', 'captions', 'width', 'color', 'tooltip', 'widcol', 'bold')
+_modeltypes = (str, str, str, str, bool, float, float, float, str, str, str, int)
+_modelfields = ('code', 'pg', 'prj', 'cfg', 'captions', 'fontsize', 'baseline', 'width', 'color', 'tooltip', 'widcol', 'bold')
 m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
 
 class PolyglotSetup(Gtk.Box):
@@ -42,9 +42,10 @@ class PolyglotSetup(Gtk.Box):
             code = list(item.keys())[m.code]
             values = item[code]
             self.liststore.append([
-                code, values.get("spread_side", "1"), values['prj'], values['cfg'],
-                values['captions'], values.get("percentage", 50.0), values.get('color', "#FFFFFF"),
-                "Right-Click for options", "#000000", 400
+                code, values.get('spread_side', '1'), values['prj'], values['cfg'],
+                values['captions'], values.get('fontsize', 11.0), values.get('baseline', 14.0),
+                values.get('percentage', 50.0), values.get('color', '#FFFFFF'),
+                'Tooltip', '#000000', 400
             ])
 
         # Define Columns
@@ -53,6 +54,8 @@ class PolyglotSetup(Gtk.Box):
         self.add_column("Project", m.prj, editable=True, renderer_type="combo", options=self.project_liststore)
         self.add_column("Configuration", m.cfg, editable=True, renderer_type="combo", options=['(None)'])
         self.add_column("Captions", m.captions, editable=True, renderer_type="toggle")
+        self.add_column("Font Size", m.fontsize, editable=True, renderer_type="text")
+        self.add_column("Spacing", m.baseline, editable=True, renderer_type="text")
         self.add_column("% Width", m.width, editable=True, renderer_type="text")
 
         # Enable drag and drop
@@ -73,56 +76,31 @@ class PolyglotSetup(Gtk.Box):
         self.update_layout_string()
         self.update_layout_preview()
 
-    def row_draggable(self, model, path):
-        """Prevents Row 0 from being dragged."""
-        row_index = path.get_indices()[0]  # Get row index
-        if row_index == 0:
-            print("Drag prevented: Row 0 cannot be moved.")
-            return False  # 🚫 Prevent Row 0 from being dragged
-        return True  # ✅ Allow other rows to be dragged
-
-    def row_drop_possible(self, model, dest_path, selection_data):
-        """Prevents dropping any row into Row 0."""
-        target_index = dest_path.get_indices()[0]  # Get destination row index
-        dragged_index = int(selection_data.get_text().strip()) if selection_data.get_text() else None
-
-        # 🚫 Prevent dropping into Row 0
-        if target_index == 0:
-            print("Drop prevented: Cannot drop into Row 0.")
-            return False
-
-        # 🚫 Prevent Row 0 from being moved at all
-        if dragged_index == 0:
-            print("Drop prevented: Row 0 cannot be moved.")
-            return False
-
-        return True  # ✅ Allow all other valid drops
-
     def get_treeview(self):
         """ Expose the TreeView for integration with other modules. """
         return self.treeview        
         
-    def add_column(self, title, column_id, editable=False, renderer_type="text", options=None, align="left"):
+    def add_column(self, title, col_id, editable=False, renderer_type="text", options=None, align="left"):
         """Adds a column with the specified properties."""
         if renderer_type == "text":
             renderer = Gtk.CellRendererText()
             renderer.set_property("editable", editable)
             
             # Only apply text color formatting to the % Width column
-            column = Gtk.TreeViewColumn(title, renderer, text=column_id)
-            if column_id == 5:
-                column.add_attribute(renderer, "foreground", 8)  # Use column 8 for text color
-                column.add_attribute(renderer, "weight", 9)      # Use column 9 for bold effect
+            column = Gtk.TreeViewColumn(title, renderer, text=col_id)
+            if col_id == m.width:
+                column.add_attribute(renderer, "foreground", m.widcol)  # text color
+                column.add_attribute(renderer, "weight", m.bold)        # bold effect
 
-            # Store tooltips inside the last column (index 7)
-            if column_id in range(0,7):
+            # Store tooltips
+            if col_id in range(0,m.tooltip):
                 self.treeview.set_has_tooltip(True)  # Enable tooltips
                 self.treeview.connect("query-tooltip", self.on_query_tooltip)  # Connect event
 
             # Apply formatting function *only* to the % Width column (index 5)
-            if column_id == 5:
-                column.set_cell_data_func(renderer, self.format_width_data_func)
-                renderer.connect("edited", self.on_width_edited, column_id)  # Connect edit event
+            if col_id in [m.fontsize, m.baseline, m.width]:
+                column.set_cell_data_func(renderer, self.format_width_data_func, col_id)
+                renderer.connect("edited", self.on_width_edited, col_id)  # Connect edit event
             column.set_fixed_width(70)  # Increase width (default is often too narrow)
             column.set_alignment(1.0)   # This sets the column title on the right.
             column.set_resizable(True)
@@ -134,9 +112,9 @@ class PolyglotSetup(Gtk.Box):
         elif renderer_type == "toggle":
             renderer = Gtk.CellRendererToggle()
             renderer.set_property("activatable", True)
-            renderer.connect("toggled", self.on_toggle, column_id)
+            renderer.connect("toggled", self.on_toggle, col_id)
 
-            column = Gtk.TreeViewColumn(title, renderer, active=column_id)  # Bind "active" property
+            column = Gtk.TreeViewColumn(title, renderer, active=col_id)  # Bind "active" property
             column.set_fixed_width(70)  # Increase width (default is often too narrow)
             column.set_alignment(0.5)
             column.set_resizable(True)
@@ -149,7 +127,7 @@ class PolyglotSetup(Gtk.Box):
             # Function to disable editing and gray out text for Row 0
             def disable_edit_for_first_row(column, cell, model, iter, data=None):
                 path = model.get_path(iter).to_string()
-                if path == "0" and column_id in [0, 2, 3]:  # Lock Code, Project, and Config in Row 0
+                if path == "0" and col_id in [m.code, m.prj, m.cfg]:  # Lock Code, Project, and Config in Row 0
                     cell.set_property("editable", False)  # Prevent edits
                     cell.set_property("foreground", "#888888")  # Gray out text
                     cell.set_property("has-entry", False)  # Hide dropdown
@@ -163,10 +141,10 @@ class PolyglotSetup(Gtk.Box):
             renderer.set_property("editable", True)
             renderer.set_property("text-column", 0)
             renderer.set_property("has-entry", False)
-            renderer.connect("edited", self.on_combo_changed, column_id)
+            renderer.connect("edited", self.on_combo_changed, col_id)
 
             # Special handling for 'Code' column (column 0)
-            if column_id == 0:
+            if col_id == m.code:
                 self.code_renderer = renderer  # Store renderer reference
                 options = self.get_available_codes()  # Get only available codes
                 renderer.set_property("model", self.get_combo_model(options))
@@ -174,19 +152,19 @@ class PolyglotSetup(Gtk.Box):
                 # renderer = Gtk.CellRendererText()
                 # renderer.set_property("editable", True)
                 renderer.set_property("background-set", True)
-                column = Gtk.TreeViewColumn(title, renderer, text=column_id, background=m.color)
+                column = Gtk.TreeViewColumn(title, renderer, text=col_id, background=m.color)
                 self.treeview.append_column(column)
-                self.treeview.connect("row-activated", self.on_color_clicked, column_id)                
+                self.treeview.connect("row-activated", self.on_color_clicked, col_id)                
 
             # Special handling for 'Config' column (column 3)
-            if column_id == 3:  # Special handling for 'Config' column
+            if col_id == m.cfg:  # Special handling for 'Config' column
                 renderer = Gtk.CellRendererCombo()
                 renderer.set_property("editable", True)
                 renderer.set_property("text-column", 0)
                 renderer.set_property("has-entry", False)
-                renderer.connect("edited", self.on_combo_changed, column_id)
+                renderer.connect("edited", self.on_combo_changed, col_id)
 
-                column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+                column = Gtk.TreeViewColumn(title, renderer, text=col_id)
                 column.set_cell_data_func(renderer, self.config_cell_data_func)  # Dynamic per-row options
                 column.set_resizable(True)
                 column.set_expand(True)
@@ -210,8 +188,8 @@ class PolyglotSetup(Gtk.Box):
             # Create column (avoiding duplicates)
             existing_columns = [col.get_title() for col in self.treeview.get_columns()]
             if title not in existing_columns:  # Prevent duplicate columns
-                column = Gtk.TreeViewColumn(title, renderer, text=column_id)
-                if column_id == 2:
+                column = Gtk.TreeViewColumn(title, renderer, text=col_id)
+                if col_id == m.prj:
                     column.set_fixed_width(100)  # Increase width (default is often too narrow)
                     column.set_resizable(True)
                 column.set_cell_data_func(renderer, disable_edit_for_first_row)  # Apply locking
@@ -220,11 +198,11 @@ class PolyglotSetup(Gtk.Box):
         if not isinstance(renderer, Gtk.CellRendererToggle):
             renderer.set_property("editable", editable)
 
-        column = Gtk.TreeViewColumn(title, renderer, text=column_id)
+        column = Gtk.TreeViewColumn(title, renderer, text=col_id)
         # Center-align the headers for Code, 1|2, and Captions
-        if column_id in [0, 1, 4]:  
+        if col_id in [m.code, m.pg, m.captions]:  
             column.set_alignment(0.5)  # Center align the column title
-        if column_id in [0, 1, 2]:
+        if col_id in [m.code, m.pg, m.prj]:
             return
         column.set_resizable(True)
         column.set_expand(True)
@@ -241,7 +219,7 @@ class PolyglotSetup(Gtk.Box):
             number_of_columns = max(1, num_projects // 16) + 1 if num_projects > 14 else 1
             editable.set_wrap_width(number_of_columns)
 
-    def on_color_typed(self, widget, path, text, column_id):
+    def on_color_typed(self, widget, path, text, col_id):
         """Handles direct text input in the Color column, ensuring valid HEX codes."""
         text = text.strip()  # Remove spaces
 
@@ -250,7 +228,7 @@ class PolyglotSetup(Gtk.Box):
             try:
                 # Convert from HEX to ensure validity
                 int(text[1:], 16)  
-                self.liststore[path][column_id] = text  # Save valid color
+                self.liststore[path][col_id] = text  # Save valid color
                 self.save_data()
             except ValueError:
                 print(f"Invalid color code: {text}")  # Invalid HEX
@@ -265,22 +243,23 @@ class PolyglotSetup(Gtk.Box):
             path, column, y, z = path_info
 
             # Find the correct column index
-            column_id = self.treeview.get_columns().index(column)
+            col_id = self.treeview.get_columns().index(column)
 
             # Set tooltip text based on the column
             tooltips = {
-                0: _("Unique identifier for the text/glot (L, R, A, B, C, ... G)"),
-                1: _("Specify whether the should be on the left (1) or right (2) page."),
-                2: _("The (Paratext) project code."),
-                3: _("The configuration settings to be applied for the selected project."),
-                4: _("Whether to show captions for this text."),
-                5: _("The page width (as %) that this text should occupy.\nIf the values are red, this indicates that the total doesn't\nadd to 100%, so adjust the values.\nUse right-click menu option to distribute width evenly between columns."),
-                # 6: _("[Optional] Type #color code, or right-click to change background color for this text.")
+                m.code:     _("Unique identifier for the text/glot (L, R, A, B, C, ... G)\nRight-click to change background color."),
+                m.pg:       _("Specify whether the should be on the left (1) or right (2) page."),
+                m.prj:      _("The (Paratext) project code."),
+                m.cfg:      _("The configuration settings to be applied for the selected project."),
+                m.captions: _("Whether to show captions for this text."),
+                m.fontsize: _("The font size for this text."),
+                m.baseline: _("The line spacing (baseline) for this text."),
+                m.width:    _("The page width (as %) that this text should occupy.\nIf the values are red, this indicates that the total doesn't\nadd to 100%, so adjust the values.\nUse right-click menu option to distribute width evenly between columns."),
             }
 
             # Apply the correct tooltip based on column
-            if column_id in tooltips:
-                tooltip.set_text(tooltips[column_id])
+            if col_id in tooltips:
+                tooltip.set_text(tooltips[col_id])
                 return True  # Tooltip set successfully
 
         return False  # No tooltip found
@@ -304,23 +283,22 @@ class PolyglotSetup(Gtk.Box):
         # Apply the correct config options for the row
         cell.set_property("model", self.get_combo_model(available_configs))
 
-    def on_width_edited(self, widget, path, new_text, column_id):
+    def on_width_edited(self, widget, path, new_text, col_id):
         """Handles editing of the % Width column and ensures it updates the ListStore."""
         try:
             new_value = float(new_text)      # Convert input to float
             new_value = round(new_value, 2)  # Keep 2 decimal places
 
             # Update the ListStore
-            self.liststore[path][column_id] = new_value
+            self.liststore[path][col_id] = new_value
             self.validate_page_widths() # Validate total widths after any edit
             self.save_data()  # Save changes
 
         except ValueError:
             print(f"Invalid input for % Width: {new_text}")  # Handle non-numeric input gracefully
 
-    def format_width_data_func(self, column, cell, model, iter, data=None):  # Added `data=None`
-        """Formats the % Width column to display 2 decimal places."""
-        value = model.get_value(iter, 5)  # Column index for % Width
+    def format_width_data_func(self, column, cell, model, iter, col_id):  # Added `data=None`
+        value = model.get_value(iter, col_id)
 
         # Ensure the value is a float before formatting
         if isinstance(value, (int, float)):
@@ -348,27 +326,27 @@ class PolyglotSetup(Gtk.Box):
             model.append([option])
         return model
         
-    def on_combo_changed(self, widget, path, text, column_id):
+    def on_combo_changed(self, widget, path, text, col_id):
         """Handles changes in combo box selections, preventing duplicate Code or Project+Config combinations. Prevents edits in row 0 for certain fields."""
-        if path == "0" and column_id in [0, 2, 3]:  # Row 0 should not be editable for these columns
-            print(f"Editing not allowed for Row 0 in column {column_id}.")
+        if path == "0" and col_id in [m.code, m.prj, m.cfg]:  # Row 0 should not be editable for these columns
+            print(f"Editing not allowed for Row 0 in column {col_id}.")
             return
         
-        if column_id == 0:  # Code column
+        if col_id == m.code:  # Code column
             if text in {row[m.code] for row in self.liststore if row[m.code]}:
                 print(f"Duplicate Code not allowed: {text}")
                 return  # Prevent duplicate
             
-        if column_id == 2:  # Project column changed
+        if col_id == m.prj:  # Project column changed
             available_configs = self.get_available_configs(text)  # Get new configs for the selected project
             self.liststore[path][m.cfg] = available_configs[m.code]  # Set first available config for this row
             self.treeview.queue_draw()  # Refresh UI
 
-        if column_id == 2 or column_id == 3:  # Project or Configuration columns
+        if col_id == m.prj or col_id == m.cfg:  # Project or Configuration columns
             prj = self.liststore[path][m.prj]
             cfg = self.liststore[path][m.cfg]
             
-            if column_id == 2:
+            if col_id == m.prj:
                 prj = text  # If changing project
             else:
                 cfg = text  # If changing configuration
@@ -379,16 +357,16 @@ class PolyglotSetup(Gtk.Box):
                     print("Duplicate Project+Configuration not allowed.")
                     return  # Prevent duplicate
             
-        self.liststore[path][column_id] = text
+        self.liststore[path][col_id] = text
         self.save_data()
         
         # Refresh dropdowns and other dependencies after updating the combo box
-        if column_id == 0:    # Unique code changed
+        if col_id == m.code:    # Unique code changed
             self.refresh_code_dropdowns()
-        elif column_id == 1:  # Page 1 or 2 changed
+        elif col_id == m.pg:  # Page 1 or 2 changed
             self.validate_page_widths()
             self.treeview.queue_draw()  # Refresh UI
-        elif column_id == 2:  # Project changed
+        elif col_id == m.prj:  # Project changed
             self.refresh_config_dropdown()
 
     def refresh_code_dropdowns(self):
@@ -408,10 +386,10 @@ class PolyglotSetup(Gtk.Box):
         selected = self.get_selected_row()
         if selected:
             model, iter, path = selected
-            column_id = 6  # Color column index
-            self.on_color_clicked(None, path, model[path][column_id], column_id)
+            col_id = m.color  # Color column index
+            self.on_color_clicked(None, path, model[path][col_id], col_id)
 
-    def on_color_clicked(self, widget, path, text, column_id):
+    def on_color_clicked(self, widget, path, text, col_id):
         """Opens a color picker and updates the selected row's color."""
         model = self.liststore
         iter = model.get_iter(path)
@@ -420,7 +398,7 @@ class PolyglotSetup(Gtk.Box):
         # Create the color picker with a valid parent
         dialog = Gtk.ColorChooserDialog(title="Pick a background color", parent=parent_window)
 
-        current_color = model[path][column_id]  # Hex color format
+        current_color = model[path][col_id]  # Hex color format
         if current_color:
             rgba = Gdk.RGBA()
             rgba.parse(current_color)
@@ -433,17 +411,17 @@ class PolyglotSetup(Gtk.Box):
                 int(color.green * 255),
                 int(color.blue * 255)
             )
-            model.set_value(iter, column_id, color_hex)  # Update color in ListStore
+            model.set_value(iter, col_id, color_hex)  # Update color in ListStore
             self.save_data()  # Save changes
 
         dialog.destroy()
 
-    def on_toggle(self, widget, path, column_id):
+    def on_toggle(self, widget, path, col_id):
         """Handles toggling checkboxes in the Captions column."""
         model = self.liststore
         iter = model.get_iter(path)  # Get the iterator for the row
-        current_value = model.get_value(iter, column_id)  # Read current state
-        model.set_value(iter, column_id, not current_value)  # Toggle it
+        current_value = model.get_value(iter, col_id)  # Read current state
+        model.set_value(iter, col_id, not current_value)  # Toggle it
         self.save_data()
         
     def get_selected_row(self):
@@ -542,12 +520,12 @@ class PolyglotSetup(Gtk.Box):
         if len(self.liststore) == 0:  # First row must be locked
             pri_prj = 'WSG' # FixMe!
             pri_cfg = 'Gospels-n-Acts' # FixMe!
-            self.liststore.append(["L", "1", pri_prj, pri_cfg, False, 33.33, "#FFFFFF", "Right-Click for options", "#000000", 400])
+            self.liststore.append(["L", "1", pri_prj, pri_cfg, False, 11.0, 14.0, 33.33, "#FFFFFF", "Tooltips", "#000000", 400])
         else:
             available_codes = self.get_available_codes()
             next_code = str(available_codes[m.code]) if available_codes else ""  # Auto-assign next available code
 
-            self.liststore.append([next_code, "1", "(None)", "(None)", False, 50.0, "#FFFFFF", "Right-Click for options", "#000000", 400])
+            self.liststore.append([next_code, "1", "(None)", "(None)", False, 11.0, 14.0, 50.0, "#FFFFFF", "Tooltips", "#000000", 400])
 
         self.save_data()
         self.refresh_code_dropdowns()  # Refresh available codes
@@ -670,8 +648,8 @@ class PolyglotSetup(Gtk.Box):
             text_color = "#FF0000" if is_invalid else "#000000"  # Red if invalid, black if valid
             font_weight = 700 if is_invalid else 400  # Bold if invalid, normal if valid
 
-            self.liststore[row][8] = text_color  # Update text color
-            self.liststore[row][9] = font_weight  # Update font weight
+            self.liststore[row][m.widcol] = text_color   # Update text color
+            self.liststore[row][m.bold]   = font_weight  # Update font weight
 
         self.treeview.queue_draw()  # Refresh UI
 
@@ -698,7 +676,7 @@ class PolyglotSetup(Gtk.Box):
 
     def save_data(self): #FixMe!
         """Saves the liststore data to a JSON file."""
-        data = [{row[m.code]: {"spread_side": row[m.pg], "prj": row[m.prj], "cfg": row[m.cfg], "captions": row[m.captions], "percentage": row[m.width], "color": row[m.color]}} for row in self.liststore]
+        data = [{row[m.code]: {"spread_side": row[m.pg], "prj": row[m.prj], "cfg": row[m.cfg], "captions": row[m.captions], "fontsize": row[m.fontsize], "baseline": row[m.baseline], "percentage": row[m.width], "color": row[m.color]}} for row in self.liststore]
         with open("data.json", "w") as f:
             json.dump(data, f, indent=4)
         self.update_layout_string()
