@@ -228,12 +228,14 @@ class Usfm:
                 minref = min(refranges[r].first for r in c[1])
                 if minref.verse > 0:
                     res.append(self.make_zsetref(minref, None, c[0][0].parent, c[0][0].pos))
+            if len(c[0]) > 2:
+                print(f"chapter too long: {c[0]}")
             for chap in range(*c[0]):
                 copyrange(d[chap], res, c[1])
         return res
 
     def getsubbook(self, refrange, removes={}):
-        return self.subdoc([refrange], removes=removes)
+        return self.subdoc(refrange, removes=removes)
 
     def versesToEnd(self):
         root = self.getroot()

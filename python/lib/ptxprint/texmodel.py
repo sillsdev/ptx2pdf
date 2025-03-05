@@ -976,12 +976,7 @@ class TexModel:
                 doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
         if 'default' in self.changes:
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            doc.outUsx("test.usx")
-
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
-            with open("test.usfm", "w", encoding="utf-8") as outf:
-                outf.write(dat)
             dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
         if self.dict['project/canonicalise']:
             (dat, doc) = self._getDoc(dat, doc, bk)
