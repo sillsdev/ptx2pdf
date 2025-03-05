@@ -14,7 +14,14 @@ logger = logging.getLogger(__name__)
 
 class RefPos:
     def __init__(self, pos, ref):
-        self.pos = pos
+        if pos is not None:
+            self.l = pos.l
+            self.c = pos.c
+            self.kw = pos.kw
+        else:
+            self.l = 0
+            self.c = 0
+            self.kw = {}
         self.ref = ref
 
 _recat = re.compile(r"[_^].*?")
@@ -48,22 +55,29 @@ def _addorncv_hierarchy(e, curr):
 
 class Usfm:
 
-    def __init__(self, xml):
-        self.root = xml
+    def __init__(self, xml, parser=None):
+        self.xml = xml
+        self.parser = parser
         self.cvaddorned = False
 
     @classmethod
-    def readfile(cls, fname):
-        usxdoc = usfmtc.readFile(fname)
-        return cls(usxdoc.getroot())
+    def readfile(cls, fname):           # can also take the data straight
+        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True)
+        return cls(usxdoc, usxdoc.parser)
 
-    def get_root(self):
-        return self.root
+    def getroot(self):
+        return self.xml.getroot()
+
+    def asUsfm(self):
+        return self.xml.outUsfm()
+
+    def outUsx(self, fname):
+        return self.xml.outUsx(fname)
 
     def addorncv(self, curr=None, factory=ParentElement):
         if self.cvaddorned:
             return
-        root = self.get_root()
+        root = self.getroot()
         bk = root[0].get('code')
         self.factory = factory
         self.chapters = [0]
@@ -105,7 +119,7 @@ class Usfm:
         self.cvaddorned = True
 
     def readnames(self):
-        root = self.get_root()
+        root = self.getroot()
         res = [""] * 3
         for i in range(3):
             e = root.find('.//para[@style="toc{}"]'.format(i+1))
@@ -115,7 +129,7 @@ class Usfm:
 
     nonvernacular = ('otherpar', 'header', 'attrib')
     def getwords(self, init=None, constrain=None, lowercase=False):
-        root = self.get_root()
+        root = self.getroot()
         wre = regex.compile(r"([\p{L}\p{M}\p{Cf}]+)")
         if init is None:
             init = {}
@@ -132,13 +146,13 @@ class Usfm:
         hyphenchar = "\u2011" if nbhyphens else hyph.get_hyphen_char()
         def dohyphenate(txt, parent):
             return hyph.hyphenate(txt, hyphenchar)
-        modifytext(self.get_root(), dohyphenate, blocks=self.nonvernacular)
+        modifytext(self.getroot(), dohyphenate, blocks=self.nonvernacular)
 
     tagmapping = {"chapter": "c", "verse": "v", "ref": "ref"}
 
     def getmarkers(self, root=None, acc=None):
         if root is None:
-            root = self.get_root()
+            root = self.getroot()
         if acc is None:
             acc = set()
         if root.tag in ("char", "para", "note", "ms", "figure", "link", "book", "row", "sidebar", "cell"):
@@ -205,7 +219,7 @@ class Usfm:
                 res.tail = start.tail
             return endactive
 
-        root = self.get_root()
+        root = self.getroot()
         d = list(root)
         res = self.factory("usx", root.attrib)
         res.text = root.text
@@ -222,7 +236,7 @@ class Usfm:
         return self.subdoc([refrange], removes=removes)
 
     def versesToEnd(self):
-        root = self.get_root()
+        root = self.getroot()
         addesids(root)
         for el in root.findall('verse[eid=""]'):
             el.parent.remove(el)
@@ -241,9 +255,7 @@ class Usfm:
     def iterVerse(self, chap, verse):
         if chap >= len(self.chapters):
             return
-        if chap >= len(self.chapters):
-            return
-        start = list(self.get_root())[self.chapters[chap]]
+        start = list(self.getroot())[self.chapters[chap]]
         it = self.iter(start)
         for e in it:
             if e.tag == "chapter" and int(e.get('number')) != chap:
@@ -260,7 +272,7 @@ class Usfm:
 
     def normalise(self):
         ''' Normalise USFM in place '''
-        canonicalise(self.get_root())
+        canonicalise(self.getroot())
 
     def _proctext(self, root, fn, pred=None, stopfn=None):
         def proctextatend(e):
@@ -284,7 +296,7 @@ class Usfm:
                     continue
                 s = r[1].sub(r[2], s)
             return s
-        self._proctext(doc or self.get_root(), fn)
+        self._proctext(doc or self.getroot(), fn)
 
     def stripIntro(self, noIntro=True, noOutline=True):
         if noIntro and noOutline:
@@ -298,7 +310,7 @@ class Usfm:
                 return not e.tag.startswith("io") and Grammar.marker_categories.get(e.get('style', ''), "") == "introduction"
         else:
             return
-        root = self.get_root()
+        root = self.getroot()
         inels = list(root)
         for i, c in enumerate(inels):
             if c.tag == "chapter" or Grammar.marker_categories.get(c.get('style', ''), "") == "versepara":
@@ -321,7 +333,7 @@ class Usfm:
                 except IndexError:
                     raise IndexError(f"slice bug {i=}, {s=}, {f=}, {len(els)=}")
             return s-f
-        root = self.get_root()
+        root = self.getroot()
         inels = list(root)
         # scan for first chapter
         for i, e in enumerate(inels):
@@ -375,7 +387,7 @@ class Usfm:
     def addStrongs(self, strongs, showall):
         self.addorncv()
         currstate = [None, set()]
-        root = self.get_root()
+        root = self.getroot()
         enters = "cell char versepara".split()
         for x in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
             if x.head is None:

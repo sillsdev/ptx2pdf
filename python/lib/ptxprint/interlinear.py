@@ -1,15 +1,36 @@
 from xml.etree import ElementTree as et
-from ptxprint.usfmutils import Usfm
+from ptxprint.usxutils import Usfm
 from ptxprint.usfmutils import Sheets
 from ptxprint import sfm
 from hashlib import md5
 from ptxprint.reference import Reference
+from usfmtc.usxmodel import iterusx
 import re, os
 import logging
 
 logger = logging.getLogger(__name__)
 
 _refre = re.compile(r"^(\d?\D+?)\s+(\d+):(\S+)\s*$")
+
+def mkvss(v):
+    res = []
+    vs = v.split("-")
+    for a in vs:
+        m = re.match(r'(\d+)(\D*)', a)
+        if m is None:
+            res.append((0, ''))
+        else:
+            res.append((int(m.group(1)), m.group(2)))
+    return res
+
+def vcmp(a, b):
+    avs = mkvss(a)
+    bvs = mkvss(b)
+    if avs == bvs:
+        return 0
+    elif avs > bvs:
+        return 1
+    return -1
 
 class Interlinear:
     def __init__(self, lang, prjdir):
@@ -43,6 +64,61 @@ class Interlinear:
             return (int(m[2]), m[3])
         else:
             raise SyntaxError("Bad Reference {}".format(s))
+
+    def replaceusx(self, doc, curref, lexemes, linelengths, mrk="wit"):
+        lexemes.sort()
+        parindex = doc.chapters[curref[0]]
+        def stop(e):
+            #if e.tag == "verse" and e.get("number", "") == "7-8":
+            #    breakpoint()
+            return doc.getroot()[parindex] != e and (e.tag == 'chapter' or (e.tag == 'verse' and vcmp(e.get('number', "0"), curref[1]) > 0))
+        def start(e):
+            return e.tag == "verse" and e.get('number', 0) == curref[1]
+        basepos = None
+        for eloc in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
+            #if eloc.parent.tag == "para" and eloc.parent.get("style", "") == "s":
+            #    breakpoint()
+            if eloc.head is None:       # inside an element use .text
+                if basepos is None:
+                    basepos = eloc.parent.pos
+                if not eloc.parent.text:
+                    continue
+                spos = getattr(eloc.parent, 'textpos', None)
+                if spos is None:
+                    continue
+                self.replacetext(eloc, lexemes, basepos, linelengths, spos, mrk)
+            else:                       # tail of an element
+                spos = getattr(eloc.head, 'tailpos', None)
+                if spos is None:
+                    continue
+                self.replacetext(eloc, lexemes, basepos, linelengths, spos, mrk)
+
+    def replacetext(self, eloc, lexemes, basepos, linelengths, spos, mrk):
+        if basepos is None:
+            return
+        cpos = sum(linelengths[basepos.l:spos.l]) - basepos.c + spos.c + 1
+        t = eloc.parent.text if eloc.head is None else eloc.head.tail
+        cend = cpos + len(t)
+        i = cpos
+        laste = eloc.head
+        outt = None
+        for l in ((lex[0][0], lex[0][1], lex[1]) for lex in lexemes if lex[0][0] >= cpos and lex[0][0] < cend):
+            if l[0] >= i:
+                outt = t[i-cpos:l[0]-cpos]
+            newe = eloc.parent.makeelement("char", {'style': mrk, 'gloss': l[2]})
+            newe.text = t[l[0]-cpos:l[0]+l[1]-cpos]
+            i = l[0] + l[1]
+            if laste is None:
+                eloc.parent.text = outt
+                eloc.parent.insert(0, newe)
+            else:
+                laste.tail = outt
+                laste.addnext(newe)
+            laste = newe
+            outt = None
+        if i < cend and laste is not None:
+            laste.tail = t[i-cpos:cend-cpos]
+            
 
     def replaceindoc(self, doc, curref, lexemes, linelengths, mrk="+wit"):
         lexemes.sort()
@@ -81,12 +157,13 @@ class Interlinear:
                 res.append(e[i:])
             e.data = str("".join(str(s) for s in res))
 
-    def convertBk(self, bkid, doc, linelengths, mrk="+rb", keep_punct=True):
+    def convertBk(self, bkid, doc, mrk="rb", keep_punct=True):
         intname = "Interlinear_{}".format(self.lang)
         intfile = os.path.join(self.prjdir, intname, "{}_{}.xml".format(intname, bkid))
         if not os.path.exists(intfile):
             return
         doc.addorncv()
+        linelengths = doc.parser.lexer.lengths
 
         dones = set()
         notdones = set()
@@ -117,7 +194,7 @@ class Interlinear:
                         lexemes = []
                     elif e.tag == "VerseData":
                         if e.get('Hash', "") != "":
-                            self.replaceindoc(doc, curref, lexemes, linelengths, mrk=mrk)
+                            self.replaceusx(doc, curref, lexemes, linelengths, mrk)
                             for v in vrange:
                                 dones.add((curref[0], v))
                         else:
@@ -126,4 +203,5 @@ class Interlinear:
                 elif event == "end" and e.tag == skipping:
                     skipping = None
         self.fails.extend([Reference(bkid, a[0], a[1]) for a in notdones if a not in dones])
+
 
