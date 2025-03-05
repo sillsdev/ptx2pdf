@@ -5,6 +5,8 @@ import re, json
 from enum import IntEnum
 from ptxprint.utils import _
 
+#self.model.statusMsg(_(f"Warning! File: ...."))
+
 _modeltypes = (str, str, str, str, bool, float, float, float, str, str, str, int)
 _modelfields = ('code', 'pg', 'prj', 'cfg', 'captions', 'fontsize', 'baseline', 'width', 'color', 'tooltip', 'widcol', 'bold')
 m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
@@ -77,11 +79,9 @@ class PolyglotSetup(Gtk.Box):
         self.update_layout_preview()
 
     def get_treeview(self):
-        """ Expose the TreeView for integration with other modules. """
         return self.treeview        
         
     def add_column(self, title, col_id, editable=False, renderer_type="text", options=None, align="left"):
-        """Adds a column with the specified properties."""
         if renderer_type == "text":
             renderer = Gtk.CellRendererText()
             renderer.set_property("editable", editable)
@@ -209,34 +209,13 @@ class PolyglotSetup(Gtk.Box):
         self.treeview.append_column(column)
 
     def on_editing_started(self, cell, editable, path):
-        """
-        This method is called when a cell with a dropdown is being edited.
-        It dynamically applies wrap width to the dropdown for multi-column support.
-        """
         if isinstance(editable, Gtk.ComboBox):
             # Dynamically set wrap width based on the number of items
             num_projects = len(self.project_liststore) if hasattr(self, "project_liststore") else 0
             number_of_columns = max(1, num_projects // 16) + 1 if num_projects > 14 else 1
             editable.set_wrap_width(number_of_columns)
 
-    def on_color_typed(self, widget, path, text, col_id):
-        """Handles direct text input in the Color column, ensuring valid HEX codes."""
-        text = text.strip()  # Remove spaces
-
-        # Validate HEX color format
-        if len(text) == 7 and text.startswith("#"):
-            try:
-                # Convert from HEX to ensure validity
-                int(text[1:], 16)  
-                self.liststore[path][col_id] = text  # Save valid color
-                self.save_data()
-            except ValueError:
-                print(f"Invalid color code: {text}")  # Invalid HEX
-        else:
-            print(f"Invalid color format: {text}")  # Wrong format
-
     def on_query_tooltip(self, widget, x, y, keyboard_mode, tooltip):
-        """Displays tooltips dynamically based on column."""
         path_info = self.treeview.get_path_at_pos(x, y)
 
         if path_info is not None:
@@ -265,7 +244,6 @@ class PolyglotSetup(Gtk.Box):
         return False  # No tooltip found
 
     def config_cell_data_func(self, column, cell, model, iter, data=None):
-        """Dynamically sets the available configurations per row and locks Row 0."""
         path = model.get_path(iter).to_string()
         project = model.get_value(iter, 2)  # Column 2 contains the Project
         available_configs = self.get_available_configs(project)  # Get configs for that project
@@ -284,7 +262,6 @@ class PolyglotSetup(Gtk.Box):
         cell.set_property("model", self.get_combo_model(available_configs))
 
     def on_width_edited(self, widget, path, new_text, col_id):
-        """Handles editing of the % Width column and ensures it updates the ListStore."""
         try:
             new_value = float(new_text)      # Convert input to float
             new_value = round(new_value, 2)  # Keep 2 decimal places
@@ -295,7 +272,7 @@ class PolyglotSetup(Gtk.Box):
             self.save_data()  # Save changes
 
         except ValueError:
-            print(f"Invalid input for % Width: {new_text}")  # Handle non-numeric input gracefully
+            self.doStatus(f"Invalid input for % Width: {new_text}")  # Handle non-numeric input gracefully
 
     def format_width_data_func(self, column, cell, model, iter, col_id):  # Added `data=None`
         value = model.get_value(iter, col_id)
@@ -309,7 +286,6 @@ class PolyglotSetup(Gtk.Box):
             cell.set_property("text", "")
 
     def get_available_codes(self, exclude_path=None):
-        """Returns a list of unused codes, excluding the code in the given row (if any)."""
         used_codes = {row[m.code] for row in self.liststore if row[m.code]}  # Set of used codes
 
         if exclude_path is not None:
@@ -320,21 +296,19 @@ class PolyglotSetup(Gtk.Box):
         return available_codes
 
     def get_combo_model(self, options):
-        """Creates a ListStore model for a combo box with given options."""
         model = Gtk.ListStore(str)
         for option in options:
             model.append([option])
         return model
         
     def on_combo_changed(self, widget, path, text, col_id):
-        """Handles changes in combo box selections, preventing duplicate Code or Project+Config combinations. Prevents edits in row 0 for certain fields."""
         if path == "0" and col_id in [m.code, m.prj, m.cfg]:  # Row 0 should not be editable for these columns
-            print(f"Editing not allowed for Row 0 in column {col_id}.")
+            self.doStatus(f"Editing not allowed for Row 0 in column {col_id}.")
             return
         
         if col_id == m.code:  # Code column
             if text in {row[m.code] for row in self.liststore if row[m.code]}:
-                print(f"Duplicate Code not allowed: {text}")
+                self.doStatus(f"Duplicate Code not allowed: {text}")
                 return  # Prevent duplicate
             
         if col_id == m.prj:  # Project column changed
@@ -354,7 +328,7 @@ class PolyglotSetup(Gtk.Box):
             for row in self.liststore:
                 if row[m.prj] == prj and row[m.cfg] == cfg and self.liststore[path][m.code] != row[m.code]:
                     # FixMe! Turn this into a proper error/warning message.
-                    print("Duplicate Project+Configuration not allowed.")
+                    self.doStatus("Duplicate Project+Configuration not allowed.")
                     return  # Prevent duplicate
             
         self.liststore[path][col_id] = text
@@ -370,19 +344,16 @@ class PolyglotSetup(Gtk.Box):
             self.refresh_config_dropdown()
 
     def refresh_code_dropdowns(self):
-        """Refreshes the combo box dropdown for the Code column with updated available codes."""
         if hasattr(self, "code_renderer"):  # Ensure renderer exists before updating
             available_codes = self.get_available_codes()
             self.code_renderer.set_property("model", self.get_combo_model(available_codes))
 
     def refresh_config_dropdown(self):
-        """Refreshes the combo box dropdown for the Config column with updated available configs for the project."""
         if hasattr(self, "config_renderer"):  # Ensure renderer exists before updating
             available_configs = self.get_available_configs()
             self.config_renderer.set_property("model", self.get_combo_model(available_configs))
 
     def set_color_from_menu(self, widget):
-        """Opens the color picker for the selected row via the context menu."""
         selected = self.get_selected_row()
         if selected:
             model, iter, path = selected
@@ -390,7 +361,6 @@ class PolyglotSetup(Gtk.Box):
             self.on_color_clicked(None, path, model[path][col_id], col_id)
 
     def on_color_clicked(self, widget, path, text, col_id):
-        """Opens a color picker and updates the selected row's color."""
         model = self.liststore
         iter = model.get_iter(path)
         # Find the top-level window (main parent)
@@ -417,7 +387,6 @@ class PolyglotSetup(Gtk.Box):
         dialog.destroy()
 
     def on_toggle(self, widget, path, col_id):
-        """Handles toggling checkboxes in the Captions column."""
         model = self.liststore
         iter = model.get_iter(path)  # Get the iterator for the row
         current_value = model.get_value(iter, col_id)  # Read current state
@@ -425,7 +394,6 @@ class PolyglotSetup(Gtk.Box):
         self.save_data()
         
     def get_selected_row(self):
-        """Returns (model, iter, path) of the selected row, or None if none is selected."""
         selection = self.treeview.get_selection()
         model, iter = selection.get_selected()
         if iter:
@@ -433,7 +401,6 @@ class PolyglotSetup(Gtk.Box):
         return None
 
     def on_right_click(self, widget, event):
-        """Shows a context menu on right-click, disabling options for Row 0."""
         if event.button == 3:  # Right-click
             self.context_menu = Gtk.Menu()  # Store reference
 
@@ -479,11 +446,9 @@ class PolyglotSetup(Gtk.Box):
             self.context_menu.popup_at_pointer(event)
 
     def change_config(self, prj, cfg):
-        """Stub function for opening config."""
-        print(f"Opening config for Project: {prj}, Configuration: {cfg} ...")
+        self.doStatus(f"Opening config for Project: {prj}, Configuration: {cfg} ...")
 
     def delete_selected_row(self, widget):
-        """Deletes the selected row."""
         selected = self.get_selected_row()
         if selected:
             model, iter, _ = selected
@@ -494,7 +459,6 @@ class PolyglotSetup(Gtk.Box):
             self.validate_page_widths()    # Refresh color of % width
 
     def update_context_menu(self):
-        """Enables or disables the 'Add a row/text' menu option based on the row count."""
         max_rows = 9
         has_room = len(self.liststore) < max_rows
 
@@ -503,23 +467,21 @@ class PolyglotSetup(Gtk.Box):
                 item.set_sensitive(has_room)  # Enable/disable based on row count
 
     def edit_other_config(self, widget):
-        """Starts up another instance of PTXprint to edit one of the polyglot configs."""
         selection = self.treeview.get_selection()
         model, iter = selection.get_selected()
         if iter:
-            prj = model.get_value(iter, 2)
-            cfg = model.get_value(iter, 3)
-            print(f"Editing other config for: {prj}+{cfg}")
+            prj = model.get_value(iter, m.prj)
+            cfg = model.get_value(iter, m.cfg)
+            self.doStatus(f"Editing other config for: {prj}+{cfg}")
 
     def add_row(self, widget):
-        """Adds a new row with the next available code; ensuring row 0 is locked to 'L'."""
         if len(self.liststore) >= 9:
-            print("Maximum of 9 rows reached. Cannot add more.")
+            self.doStatus("Maximum of 9 rows reached. Cannot add more.")
             return  # Stop if the limit is reached
 
         if len(self.liststore) == 0:  # First row must be locked
-            pri_prj = 'WSG' # FixMe!
-            pri_cfg = 'Gospels-n-Acts' # FixMe!
+            pri_prj = self.builder.get_object('fcb_project').get_text()     # FixMe!
+            pri_cfg = self.builder.get_object('ecb_savedConfig').get_text() # FixMe!
             self.liststore.append(["L", "1", pri_prj, pri_cfg, False, 11.0, 14.0, 33.33, "#FFFFFF", "Tooltips", "#000000", 400])
         else:
             available_codes = self.get_available_codes()
@@ -534,7 +496,6 @@ class PolyglotSetup(Gtk.Box):
         self.save_data()
 
     def move_selected_row(self, widget, direction):
-        """Moves the selected row up (-1) or down (+1)."""
         selected = self.get_selected_row()
         if selected:
             model, iter, path = selected
@@ -553,7 +514,6 @@ class PolyglotSetup(Gtk.Box):
                 self.save_data()
 
     def on_drag_data_get(self, treeview, drag_context, selection_data, info, time):
-        """Stores the dragged row's index in the selection_data object."""
         model, iter = treeview.get_selection().get_selected()
         if iter:
             path = model.get_path(iter).to_string()  # Get row index as a string
@@ -562,7 +522,6 @@ class PolyglotSetup(Gtk.Box):
             selection_data.set_text(path, -1)  # Store it in drag data
 
     def on_drag_data_received(self, treeview, drag_context, x, y, selection, info, time):
-        """Handles dropping a row at a new position in the TreeView."""
         model = treeview.get_model()
         drop_info = treeview.get_dest_row_at_pos(x, y)
 
@@ -604,7 +563,6 @@ class PolyglotSetup(Gtk.Box):
             self.save_data()  # Save changes
 
     def distribute_width_evenly(self, widget):
-        """Evenly distributes the % Width across all rows sharing the same page (1 or 2)."""
         selected = self.get_selected_row()
         if not selected:
             return  # No row selected
@@ -629,7 +587,6 @@ class PolyglotSetup(Gtk.Box):
         self.validate_page_widths()  # Refresh highlighting
 
     def validate_page_widths(self):
-        """Checks that the total width per page (1|2) is 100% and highlights invalid rows."""
         page_totals = {"1": 0.0, "2": 0.0}  # Track total % width per page
 
         # Step 1: Calculate total widths for each page (1 or 2)
@@ -643,7 +600,7 @@ class PolyglotSetup(Gtk.Box):
             page = self.liststore[row][m.pg]
             total = page_totals[page]  # Get total width for this page
             is_invalid = abs(total - 100.0) > 0.02  # Allow small floating-point errors
-            # print(f"{page=}  {total=}  {is_invalid=}")
+            # self.doStatus(f"{page=}  {total=}  {is_invalid=}")
 
             text_color = "#FF0000" if is_invalid else "#000000"  # Red if invalid, black if valid
             font_weight = 700 if is_invalid else 400  # Bold if invalid, normal if valid
@@ -655,7 +612,6 @@ class PolyglotSetup(Gtk.Box):
 
     def get_available_configs(self, project=None): #FixMe!
         # This method will need to be updated once integrated into the main code.
-        """Returns a list of available configurations for the current row's project."""
         configs = {
             "BSB": ["Default", "Modern"],
             "WSG": ["Normal", "2ndary", "Plain", "Gospels-n-Acts"],
@@ -702,16 +658,6 @@ class PolyglotSetup(Gtk.Box):
             self.update_layout_preview()
 
     def generate_layout_from_treeview(self):
-        """
-        Generates a valid layout string based on the current TreeView data.
-        - Extracts the letter codes and their '1|2' values.
-        - Constructs a valid layout format (without '/' for now).
-        - Ensures 'L' and 'R' are always included.
-        - Adds a ',' if there are texts on both '1' and '2'.
-        
-        :return: A valid layout string.
-        """
-
         # Step 1: Extract used codes and their '1|2' values from the ListStore
         codes_by_side = {"1": [], "2": []}  # Store codes grouped by page side
         for row in self.liststore:
@@ -730,13 +676,6 @@ class PolyglotSetup(Gtk.Box):
             return left_side or right_side  # Return whichever side has values
 
     def validate_layout(self, t_layout, liststore):
-        """
-        Validates the layout string in t_layout based on the updated rules.
-
-        :param t_layout: The input string from the text box.
-        :param liststore: The Gtk.ListStore containing used letter codes and their assigned 1|2 values.
-        :return: (is_valid, error_message) - Boolean validity and error message if invalid.
-        """
         # Rule 2: Ensure there are no spaces
         if " " in t_layout:
             return False, "Spaces not allowed"
@@ -791,22 +730,16 @@ class PolyglotSetup(Gtk.Box):
         return True, "Valid layout"
 
     def testValidator(self, x):
-        print(f"Layout: {t}")
+        self.doStatus(f"Layout: {t}")
         for l in "LR L,R L/R L,RA LR,A L,R/A L/R,A L/R,AB L/R,A/B LR,ABC L/RA,B/CD L/A/B,R/C/D LR/ /LR AB AB,CD A/B LR/AB".split():
             is_valid, message = self.validate_layout(l, self.liststore)
 
             if not is_valid:
-                print(f"Layout Error: {l} - {message}")
+                self.doStatus(f"Layout Error: {l} - {message}")
             else:
-                print(f"Valid Layout: {l}")
+                self.doStatus(f"Valid Layout: {l}")
 
     def update_layout_preview(self):
-        """
-        Generates a dynamic UI representation of the t_layout text using GtkFrames and attaches it to the given widget (bx_layoutPreview).
-        - Parses t_layout to determine structure (left/right pages, horizontal/vertical layout).
-        - Uses colors from the TreeView's color column.
-        - Automatically resizes to fit available space.
-        """
         widget = self.builder.get_object('bx_layoutPreview')
         layout = self.builder.get_object('t_layout').get_text()
 
@@ -820,6 +753,7 @@ class PolyglotSetup(Gtk.Box):
         if not is_valid:
             # Display a red error frame with an error message
             error_frame = Gtk.Frame(label=_("Layout Error"))
+            error_frame.set_label_align(0.5, 0.5)  # Center horizontally & vertically
             error_label = Gtk.Label(label=error_message)
             error_label.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(1, 0, 0, 1))  # Red color
             error_frame.add(error_label)
@@ -839,13 +773,6 @@ class PolyglotSetup(Gtk.Box):
         spread_box.set_vexpand(True)
 
         def create_horizontal_box(codes):
-            """
-            Creates a horizontal GtkBox containing individual frames for each letter code.
-            Each frame's width is proportional to the '% Width' column in the TreeView.
-
-            :param codes: String containing letter codes (e.g., "LRA").
-            :return: Gtk.Box containing frames with proportional widths.
-            """
             box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
             box.set_hexpand(True)
             box.set_vexpand(True)
@@ -906,16 +833,6 @@ class PolyglotSetup(Gtk.Box):
 
         # Step 5: Helper function to create a page frame
         def create_page_frame(codes, is_right_page, is_single, rtl):
-            """
-            Creates a page frame with the appropriate orientation and labels.
-            - If '/' is present, a vertical split is created.
-            - If there is only ONE '/', it creates a 2-section layout where the top contains the first item,
-              and the bottom contains the remaining items in a horizontal row.
-            :param codes: String of codes for this page.
-            :param is_right_page: Boolean indicating if this is the right page.
-            :param is_single: Boolean indicating if this is the only page (don't display L/R).
-            :param rtl: Boolean indicating if this is an RTL publication (not implemented yet).
-            """
             if "/" in codes:
                 parts = codes.split("/")  # Split based on `/`
                 num_splits = len(parts)  # Count number of groups
@@ -967,3 +884,9 @@ class PolyglotSetup(Gtk.Box):
         widget.add(spread_box)
         widget.show_all()
 
+    def doStatus(self, txt=""):
+        sl = self.builder.get_object("l_statusLine")
+        sl.set_text(txt)
+        status = len(txt)
+        sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
+        
