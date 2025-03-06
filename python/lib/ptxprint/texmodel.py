@@ -1523,12 +1523,13 @@ class TexModel:
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
                 # Note that this will only pick up the first para of glossary entries
-                ge = re.findall(r"\\\S+ \\k (.+)\\k\*(.+?)\r?\n", dat) # Finds all glossary entries in GLO book
+                ge = re.findall(r"(\S+~\s*)?\\k (.+?)\\k\*(.+?)\r?\n", dat) # Finds all glossary entries in GLO book
                 if ge is not None:
                     for g in ge:
-                        gdefn = re.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
-                        self.localChanges.append(makeChange(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), \
-                                                                     r"\1\\f + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn), flags=regex.M))
+                        gdefn = re.sub(r"\\xt (.+?)\\xt\*", r"\1", g[2])
+                        gpfx = re.sub(r"~\s+"," ",g[0]) # Remove any trailing spaces from glossary item prefix
+                        self.localChanges.append(makeChange(r"(\\w (.+?\|)?{} ?\\w\*)".format(g[1]), \
+                                                                     r"\1\\f + {}\\fq {}: \\ft {}\\f* ".format(gpfx,g[1],gdefn), flags=regex.M))
 
     def filterGlossary(self, printer):
         # Only keep entries that have appeared in this collection of books
