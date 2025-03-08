@@ -3631,7 +3631,7 @@ class GtkViewModel(ViewModel):
     def loadPolyglotSettings(self):
         self.tv_polyglot = Gtk.TreeView()
         # projects = self.builder.get_object("ls_projects")
-        self.polyglot_setup = PolyglotSetup(self.builder, self.tv_polyglot)
+        self.polyglot_setup = PolyglotSetup(self.builder, self, self.tv_polyglot)
         polyset = self.builder.get_object('bx_polyglot')
         polyset.pack_start(self.polyglot_setup, True, True, 0)
         polyset.show_all()
