@@ -1,9 +1,10 @@
-import re, regex, logging
-from ptxprint.reference import MakeReference
+import re, regex, logging, os, time
+from ptxprint.reference import MakeReference, BookNames
 import usfmtc
 from usfmtc.usfmparser import Grammar
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx
+from copy import deepcopy
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +12,216 @@ logger = logging.getLogger(__name__)
 #   footnote, footnotechar, header, ident, internal, chapter, introchar,
 #   introduction, list, listchar, milestone, otherpara, sectionpara, title,
 #   versepara
+
+_occurstypes = {
+    'footnotechar': 'fe f efe ef',
+    'crossreferencechar': 'ex x',
+    'char': 'p',
+    'introchar': 'ip',
+    'listchar': 'li',
+    'versepara': 'c',
+    'header': 'id',
+}
+
+_typetypes = {      # type: (type, StyleType, TextType, startswith)
+    'footnote': ('char', 'note', None, None),
+    'introduction': ('header', 'paragraph', 'other', "i"),
+    'list': ('versepara', 'paragraph', 'other', "l"),
+    'milestone': (None, 'milestone', None, None),
+    'otherpara': ('versepara', 'paragraph', 'other', None),
+    'sectionpara': ('versepara', 'paragraph', 'section', None),
+    'title': ('header', 'paragraph', 'other', "m"),
+}
+    
+def simple_parse(source, categories=False, keyfield="Marker"):
+    res = {}
+    mkr = ""
+    category = ""
+    for l in source.readlines():
+        m = re.match(r"\\(\S+)\s*(.*)\s*$", l)
+        if m is not None:
+            key = m.group(1)
+            v = m.group(2)
+        else:
+            continue
+        val = v.strip()
+        if categories and key.lower() == "category":
+            category = val
+            key = "Marker"
+            val = "esb"
+        elif key.lower() == "endcategory":
+            category = ""
+            continue
+        if key.lower() == keyfield.lower():
+            mkr = f"cat:{category}|{val}" if category else val
+        res.setdefault(mkr,{})[key.lower()] = val
+    return res
+
+def merge_sty(base, other, forced=False, exclfields=None):
+    for m, ov in other.items():
+        if m not in base or forced:
+            base[m] = ov.copy()
+        else:
+            for k, v in ov.items():
+                if exclfields is not None and k in exclfields:
+                    continue
+                base[m][k] = v
+
+def out_sty(base, outf, keyfield="Marker"):
+    for m, rec in base.items():
+        outf.write(f"\n\\{keyfield} {m}\n")
+        for k, v in rec.items():
+            if isinstance(v, (set, list, tuple)):
+                v = " ".join(v)
+            outf.write(f"\\{k} {v}\n")
+
+
+class Sheets(dict):
+    ''' Extracts mrkr info relevant for parsing from the stylesheet '''
+
+    def __init__(self, init=None, base=None):
+        if base is not None and base != "":
+            self.update(deepcopy(base))
+        self.files = []
+        if init is None or not len(init):
+            return
+        for s in init:
+            if os.path.exists(s):
+                self.append(s)
+        self.cleanup()      # make extra markers etc.
+
+    def copy(self):
+        res = self.__class__(base=self)
+        return res
+
+    def append(self, sf):
+        if os.path.exists(sf):
+            with open(sf, encoding="utf-8", errors="ignore") as s:
+                self.appendfh(s)
+            self.files.append(sf)
+
+    def appendfh(self, inf):
+        news = simple_parse(inf)
+        for k, v in news.items():
+            if k in self:
+                self[k].update(v)
+            else:
+                self[k] = v
+
+    def cleanup(self):
+        for k, v in list(self.items()):
+            mt = self.mrktype(k)
+            if mt == "milestone" and 'endmarker' in v:
+                newk = v['endmarker']
+                if newk not in self:
+                    newv = v.copy()
+                    self[newk] = newv
+
+    def mrktype(self, mrk):
+        if mrk not in self:
+            return None
+        mtype = self[mrk].get('mrktype', None)
+        if mtype is not None:
+            return mtype
+        occurs = set(self[mrk].get('occursunder', "").split(' '))
+        stype = self[mrk].get('styletype', "").lower()
+        ttype = self[mrk].get('texttype', "").lower()
+        for k, v in _occurstypes.items():
+            if any(x in occurs for x in v.split(" ")):
+                mtype = k
+                break
+        for k, v in _typetypes.items():
+            matched = True
+            for i, a in enumerate((mtype, stype, ttype)):
+                if v[i] is not None and v[i] != a:
+                    matched = False
+                    break
+            if v[3] is not None and not mrk.startswith(v[3]):
+                matched = False
+            if matched:
+                mtype = k
+                break
+        if mtype is not None:
+            self[mrk]['mrktype'] = mtype
+        return mtype
+
+def createGrammar(sheets):
+    grammar = Grammar()
+    for k in sheets:
+        if k not in grammar.marker_categories:
+            v = sheets.mrktype(k)
+            if v is not None:
+                grammar.marker_categories[k] = v
+    return grammar
+
+
+class UsfmCollection:
+    def __init__(self, bkmapper, basedir, sheets):
+        self.bkmapper = bkmapper
+        self.basedir = basedir
+        self.sheets = sheets
+        self.books = {}
+        self.times = {}
+        self.tocs = []
+        self.booknames = None
+        self.setgrammar()
+
+    def setgrammar(self):
+        self.grammar = createGrammar(self.sheets)
+
+    def get(self, bk):
+        bkfile = self.bkmapper(bk)
+        if bkfile is None:
+            return None
+        bkfile = os.path.join(self.basedir, bkfile)
+        if not os.path.exists(bkfile):
+            return None
+        mtime = os.stat(bkfile).st_mtime
+        if mtime > self.times.get(bk, 0):
+            self.books[bk] = Usfm.readfile(bkfile, self.grammar)
+            self.times[bk] = time.time()
+        return self.books[bk]
+
+    def makeBookNames(self):
+        if self.booknames is not None:
+            return
+        self.booknames = BookNames()
+        bknamesp = os.path.join(self.basedir, "BookNames.xml")
+        if os.path.exists(bknamesp):
+           self.booknames.readBookNames(bknamesp)
+        else:
+            tocre = re.compile(r"^\\toc(\d)\s+(.*)\s*$")
+            for bk in list(self.booknames.bookStrs.keys()):
+                tocs = [""] * 3
+                bkfile = self.bkmapper(bk)
+                if bkfile is None or not len(bkfile):
+                    continue
+                bkfile = os.path.join(self.basedir, bkfile)
+                if not os.path.exists(bkfile):
+                    continue
+                nochap = True
+                with open(bkfile, encoding="utf-8") as inf:
+                    while nochap:
+                        l = inf.readline()
+                        m = tocre.match(l)
+                        if m:
+                            r = int(m.group(1))
+                            if r <= len(tocs):
+                                tocs[r-1] = m.group(2)
+                        elif '\\c ' in l:
+                            nochap = False
+                for i in range(len(tocs)-2,-1, -1):
+                    if tocs[i] == "":
+                        tocs[i] = tocs[i+1]
+                self.booknames.addBookName(bk, *tocs)
+
+    def get_markers(self, bks):
+        ''' returns a list of all markers used in the corpus '''
+        res = set()
+        for bk in bks:
+            mkrs = self.get(bk).getmarkers()
+            res.update(mkrs)
+        return res
 
 class RefPos:
     def __init__(self, pos, ref):
@@ -25,6 +236,7 @@ class RefPos:
         self.ref = ref
 
 _recat = re.compile(r"[_^].*?")
+
 def category(s):
     s = _recat.sub("", s)
     return Grammar.marker_categories.get(s, "")
@@ -61,8 +273,10 @@ class Usfm:
         self.cvaddorned = False
 
     @classmethod
-    def readfile(cls, fname):           # can also take the data straight
-        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True)
+    def readfile(cls, fname, grammar=None, sheet=None):           # can also take the data straight
+        if grammar is None and sheet is not None:
+            grammar = createGrammar(sheet)
+        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar)
         return cls(usxdoc, usxdoc.parser)
 
     def getroot(self):
@@ -78,6 +292,7 @@ class Usfm:
         if self.cvaddorned:
             return
         root = self.getroot()
+        self.bridges = {}
         bk = root[0].get('code')
         self.factory = factory
         self.chapters = [0]
@@ -104,6 +319,9 @@ class Usfm:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
                         currv = p[0].get("number", curr.last.verse)
                         curr = MakeReference(bk, curr.first.chap, currv)
+                        if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
+                            for r in curr.allrefs():
+                                self.bridges[r] = curr
                         # add to bridges if a RefRange
                     _addorncv_hierarchy(p, curr)
                     for s in sections:
@@ -208,7 +426,7 @@ class Usfm:
             if pred(start, rlist):
                 isactive = True
                 if out.tag == "usx" and start.tag != "para":
-                    out = self.factory("para", style=pstyle, parent=out, pos=start.pos)
+                    out = self.factory("para", attrib=dict(style=pstyle), parent=out, pos=start.pos)
                 res = self.factory(start.tag, start.attrib, parent=out, pos=start.pos)
                 out.append(res)
                 res.text = start.text
@@ -230,9 +448,9 @@ class Usfm:
                     res.append(self.make_zsetref(minref, None, c[0][0].parent, c[0][0].pos))
             if len(c[0]) > 2:
                 print(f"chapter too long: {c[0]}")
-            for chap in range(*c[0]):
+            for chap in range(c[0][0], c[0][-1]):
                 copyrange(d[chap], res, c[1])
-        return res
+        return Usfm(usfmtc.USX(res), parser=self.parser)
 
     def getsubbook(self, refrange, removes={}):
         return self.subdoc(refrange, removes=removes)
@@ -247,10 +465,10 @@ class Usfm:
             el.set('number', str(ref.verse) + (ref.subverse or ""))
             del el.attrib['eid']
 
-    def iter(self, e, atend=None):
+    def iterel(self, e, atend=None):
         yield e
         for c in e:
-            yield from self.iter(c, atend=atend)
+            yield from self.iterel(c, atend=atend)
         if atend is not None:
             atend(e)
 
@@ -258,7 +476,7 @@ class Usfm:
         if chap >= len(self.chapters):
             return
         start = list(self.getroot())[self.chapters[chap]]
-        it = self.iter(start)
+        it = self.iterel(start)
         for e in it:
             if e.tag == "chapter" and int(e.get('number')) != chap:
                 return
@@ -276,18 +494,7 @@ class Usfm:
         ''' Normalise USFM in place '''
         canonicalise(self.getroot())
 
-    def _proctext(self, root, fn, pred=None, stopfn=None):
-        def proctextatend(e):
-            if pred is None or pred(e):
-                e.tail = fn(e.tail, parent=e.parent)
-        for e in self.iter(root, atend=proctextatend):
-            if stopfn is not None and stopfn(e):
-                return
-            if pred is not None and not pred(e):
-                continue
-            e.text = fn(e.text, parent=e)
-
-    def transform_text(self, *regs, doc=None):
+    def transform_text(self, *regs, parts):
         """ Given tuples of (lambda, match, replace) tests the lambda against the
             parent of a text node and if matches (or is None) does match and replace. """
         def fn(s, parent=None):
@@ -298,7 +505,8 @@ class Usfm:
                     continue
                 s = r[1].sub(r[2], s)
             return s
-        self._proctext(doc or self.getroot(), fn)
+        for p in parts:
+            modifytext(p, fn)
 
     def stripIntro(self, noIntro=True, noOutline=True):
         if noIntro and noOutline:

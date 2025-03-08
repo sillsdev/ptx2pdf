@@ -1,6 +1,5 @@
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.sfm.style import CaselessStr
 from ptxprint.styleditor import StyleEditor, aliases
 from ptxprint.utils import _, coltotex, textocol, asfloat
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle

@@ -9,8 +9,8 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
                             zipopentext, xdvigetfonts, calledme
-from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
-from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
+from ptxprint.usxutils import UsfmCollection, Usfm, Sheets, simple_parse, merge_sty, out_sty
+from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs

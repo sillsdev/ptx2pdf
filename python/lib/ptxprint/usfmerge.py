@@ -1,11 +1,11 @@
 #!/usr/bin/python3
-import sys, os, re
-import ptxprint.sfm as sfm
-from ptxprint.sfm import usfm
-from ptxprint.sfm import style
+import sys, os, re, io
+from ptxprint.usxutils import Usfm, Sheets
+from usfmtc.usfmgenerate import usx2usfm
 import argparse, difflib, sys
 from enum import Enum,Flag
 from itertools import groupby
+from functools import reduce
 import configparser
 import logging
 
@@ -20,6 +20,7 @@ class MergeF(Flag):
 settings= MergeF.NoSplitNB | MergeF.HeadWithChapter 
 logger = logging.getLogger(__name__)
 debugPrint = False
+
 class ChunkType(Enum):
     DEFSCORE = 0        # Value for default scores
     CHAPTER = 1
@@ -145,7 +146,7 @@ _canonical_order={
     
 
 class Chunk(list):
-    def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0,syncp='~'):
+    def __init__(self, *a, mode=None, doc=None, chap=0, verse=0, end=0, pnum=0,syncp='~'):
         super(Chunk, self).__init__(a)
         self.type = mode
         self.otype = mode
@@ -161,6 +162,7 @@ class Chunk(list):
             self.verseText = False
         self.labelled = False
         self.score = None
+        self.doc = doc
 
     def label(self, chap, verse, end, pnum, syncp):
         if self.labelled:
@@ -193,9 +195,20 @@ class Chunk(list):
         return (_chunkClass_map[self.type], self.chap, self.verse)# , self.pnum) # , self.end, self.pnum)
 
     def __str__(self):
-        #return "".join(repr(x) for x in self)
-        #return "".join(sfm.generate(x) for x in self)
-        return sfm.generate(self)
+        return self.astext()
+
+    def astext(self):
+        with io.StringIO() as outf:
+            lastel = None
+            for e in self:
+                if e.tag == "para":
+                    outf.write(f"\n\\{e.get('style', '')} {e.text}")
+                    lastel = e
+                else:
+                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else None), lastel=lastel)
+            res = outf.getvalue() + "\n"
+        return res
+
 _headingidx=5
 _validatedhpi=False # Has the heading(position)idx above been validated?
 
@@ -248,30 +261,30 @@ class Collector:
         logger.debug(f"Scores supplied are: {type(scores)}, {scores=}")
         if synchronise in SyncPoints:
             logger.debug(f"Sync points: {synchronise.lower()}")
-            syncpoints=SyncPoints[synchronise.lower()] 
+            syncpoints = SyncPoints[synchronise.lower()] 
         elif synchronise is None:
-            syncpoints=SyncPoints['normal'] 
+            syncpoints = SyncPoints['normal'] 
             logger.debug("Sync points are normal")
         else:
             raise ValueError(f"Synchronise method '{synchronise}' not recognised.")
-        if (type(scores)==int):
-            tmp=scores
-            scores={ChunkType.DEFSCORE:tmp}
+        if (type(scores) == int):
+            tmp = scores
+            scores = {ChunkType.DEFSCORE:tmp}
             logger.debug(f"Default score = {scores[ChunkType.DEFSCORE]}")
         if 'nb' in self.protect:
             logger.debug(f"Protecing nbchapter, like nb")
-            self.scores[ChunkType.NBCHAPTER.value]=-self.protect['nb']
+            self.scores[ChunkType.NBCHAPTER.value] = -self.protect['nb']
             logger.debug(self.scores)
         for st in ChunkType:
-            if st.value==ChunkType.DEFSCORE:
-                self.scores[st.value]=scores[st]
+            if st.value == ChunkType.DEFSCORE:
+                self.scores[st.value] = scores[st]
             else:
                 if (st.value not in self.scores):
-                    self.scores[st.value]=0
+                    self.scores[st.value] = 0
                 if (st in scores):
-                    self.scores[st.value]+=scores[st] 
+                    self.scores[st.value] += scores[st] 
                 elif (st in syncpoints):
-                    self.scores[st.value]+=scores[ChunkType.DEFSCORE] * syncpoints[st]
+                    self.scores[st.value] += scores[ChunkType.DEFSCORE] * syncpoints[st]
  
             #if (self.scores[st.value]):
             #    splitpoints[st] = True
@@ -279,31 +292,32 @@ class Collector:
             #    if (st not in splitpoints):
             #        splitpoints[st] = False
             logger.debug(f"Score for {st}({st.value}) -> {self.scores[st.value]}, {syncpoints[st] if st in syncpoints else '-'}")
+        self.doc = doc
         if doc is not None:
-            self.collect(doc, primary=primary)
+            self.collect(doc.getroot(), primary=primary)
             self.reorder()
+
+    def text_properties(self, e):
+        return set(self.stylesheet.get(e.get('style', ''), {}).get('textproperties', '').split())
+
+    def texttype(self, e, default=''):
+        return self.stylesheet.get(e.get('style', ''), {}).get('texttype', default)
 
     def pnum(self, c):
         if c is None:
             return 0
-        if hasattr(c,'name') :
-            n=c.name
-        else:
-            n=c
-        res = self.counts.get(n, 0)
-        #if debugPrint:
-             #print(n,res)
-        self.counts[n] = res + 1
+        res = self.counts[c] = self.counts.get(c, 0) + 1
         return res
 
     def makeChunk(self, c=None):
-        global _validatedhpi,_headingidx
+        global _validatedhpi, _headingidx
         if c is None:
-            currChunk = Chunk(mode=self.mode)
+            currChunk = Chunk(mode=self.mode, doc=doc)
             self.waspar = False
             self.waschap = False
         else:
-            if c.name == "cl":
+            name = c.get("style", "")
+            if name == "cl":
                 if self.chap == 0: 
                   mode = ChunkType.TITLE 
                   logger.debug('cl found at chapter 0')
@@ -314,57 +328,54 @@ class Collector:
                   else:
                     mode = ChunkType.HEADING
                 logger.log(8, f'cl found for {self.chap} mode:{mode}')
-            elif c.name == "id":
+            elif c.tag == "book":
                 mode = ChunkType.ID
-            elif c.name == "nb":
+            elif name == "nb":
                 mode = ChunkType.NB
-            elif c.name == "tr":
+            elif c.tag == "row":
                 mode = ChunkType.TABLE
-            elif sfm.text_properties('diglotsync')(c):
+            elif 'diglotsync' in self.text_properties(c):
                 mode = ChunkType.USERSYNC
                 if (self.waspar):
                   mode = ChunkType.PARUSERSYNC
-            elif c.name in nestedparas:
+            elif name in nestedparas:
                 mode = ChunkType.NPARA
-            elif c.name == "v":
+            elif c.tag == "verse":
                 if self.waspar:
                     mode = ChunkType.PARVERSE
                 else:
                     mode = ChunkType.VERSE
             else:
-                mode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
+                mode = _marker_modes.get(name, _textype_map.get(self.texttype(c), self.mode))
                 if mode == ChunkType.HEADING:
                     if self.waschap:
                         mode = ChunkType.CHAPTERHEAD
-                elif mode == ChunkType.BODY and ispara(c):
+                elif mode == ChunkType.BODY and c.tag == "para":
                     logger.log(8, f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}: {len(self.acc)}')
-                    if len(c)==1 and isinstance(c[0],sfm.Text):
-                        logger.log(8, f'Bodypar(simple): {c.name} {c[0]} {type(c[0])}')
-                        if (len(c[0])>2 and self.currChunk.verseText):
+                    if len(c) == 0:
+                        logger.log(8, f'Bodypar(simple): {name} {c.text}')
+                        if c.text and len(c.text.strip()) and self.currChunk.verseText:
                             mode = ChunkType.MIDVERSEPAR
-                    elif (len(c)>1):
+                    elif len(c):
+                        cs = list(c)
                         #Multi-component body paragraph
-                        logger.log(8, f'Bodypar: {c.name}, {type(c[0])}, {c[0]}, {type(c[1])}, {c[1]}')
-                        if (len(c[0])>2 and self.currChunk.verseText):
+                        logger.log(8, f'Bodypar: {name}, {type(cs[0])}, {cs[0]}')
+                        if (len(cs[0]) > 1 and self.currChunk.verseText):
                             mode = ChunkType.MIDVERSEPAR
-                        elif(isinstance(c[0],sfm.Element)):
-                            if (c[0].name=="v" ):
-                                mode = ChunkType.PREVERSEPAR
-                        elif(isinstance(c[1],sfm.Element)):
-                            if (c[1].name=="v" ):
-                                mode = ChunkType.PREVERSEPAR
-                        elif(isinstance(c[1],sfm.Text)):
+                        elif cs[0].tag == "verse" or (len(cs) > 1 and cs[1].tag == "verse"):
+                            mode = ChunkType.PREVERSEPAR
+                        elif cs[0].tail or cs[0].text:
                             if self.currChunk.verseText:
                                 mode = ChunkType.MIDVERSEPAR
                     logger.log(9, f"Conclusion: bodypar type is {mode}")
                         
-            pn=self.pnum
+            pn = self.pnum
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(mode))
             if not _validatedhpi:
-                p=currChunk.position
-                assert p[_headingidx]==mode.name, "It looks like someone altered the position tuple, but didn't update _headingidx"
-                _validatedhpi=True
-            self.waspar = ispara(c)
+                p = currChunk.position
+                assert p[_headingidx] == mode.name, "It looks like someone altered the position tuple, but didn't update _headingidx"
+                _validatedhpi = True
+            self.waspar = c.tag == "para"
             self.waschap = (mode in (ChunkType.CHAPTER,ChunkType.CHAPTERHEAD))
             self.mode = mode
         self.acc.append(currChunk)
@@ -372,68 +383,47 @@ class Collector:
         return currChunk
 
     def collect(self, root, primary=True, depth=0):
-        ischap = sfm.text_properties('chapter')
-        isverse = sfm.text_properties('verse')
-        issync = sfm.text_properties('diglotsync')
-
         currChunk = None
-        if depth==0:
+        if depth == 0:
             self.type=None
         else:
             logger.log(9-depth,"{" * depth)
-        elements = root[:]
-        if len(self.acc) == 0:
-            if isinstance(root[0], sfm.Element) and root[0].name == "id":
-                # turn \id into a paragraph level and main children as siblings
-                elements = root[0][1:]
-                idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=root[0].meta)
-                root = root[0][1:]
-                currChunk = self.makeChunk(idel)
-                currChunk.append(idel)
+        elements = list(root)
         i = 0
+        #if depth == 0:
+        #    breakpoint()
         for c in elements:
-            i += 1
-            if not isinstance(c, sfm.Element): 
-                if isinstance(c, sfm.Text) and len(c) > 3:
-                    self.waspar=False
-                if currChunk: # It's a text node, make sure it's attached to the right place.
-                    currChunk.append(c)
-                    i -= 1
-                    root.pop(i)
+            if c.tag == "figure" and self.fsecondary == primary:
+                root.remove(c)
                 continue
-            if c.name == "fig":
-                if self.fsecondary == primary:
-                    i -= 1
-                    root.pop(i)
-                    continue
             newchunk = False
-            if ispara(c):
-                newmode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
-                ok = (newmode==ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
-                if c.name not in nestedparas and ((newmode != self.mode and not ok)\
-                                          or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE, ChunkType.HEADER)):
+            name = c.get("style", "")
+            if c.tag == "para" or c.tag == "book":
+                newmode = _marker_modes.get(name, _textype_map.get(self.texttype(c), self.mode))
+                ok = (newmode == ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
+                if name not in nestedparas and ((newmode != self.mode and not ok) \
+                            or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE, ChunkType.HEADER)):
                     newchunk = True
-                logger.log(7, f"Para:{c.name} {newmode} {self.chap}:{self.verse} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
-            if issync(c):
+                logger.log(7, f"Para:{name} {newmode} {self.chap}:{self.verse} {newchunk} context: {self.oldmode}, {self.mode}")
+            if 'diglotsync' in self.text_properties(c):
                 newchunk = True
                 try:
-                  self.syncp=str(c[0])
-                  self.syncp=re.sub(r"(?s)\\\*.*$","",self.syncp)
+                    self.syncp = c.get("syncaddr", "")
                 except (ValueError, TypeError):
-                  self.syncp='@'
+                    self.syncp = '@'
                 logger.log(8, f" {self.chap}:{self.verse}:{self.syncp} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
-                M=re.search(r"\|v(\d+)(\D*)$",self.syncp)
+                M=re.search(r"v(\d+)(\D*)$", self.syncp)
                 if (M is not None):
-                  Mv = M.group(1)
-                  Ms = M.group(2)
-                  logger.log(7,f"RE: {M}, Match: '{Mv}.{Ms}'")
-                  if Mv and len(Mv)>0:
-                    self.verse = int(Mv)
-                    self.end = int(Mv)
-            if isverse(c):
-                vc = re.sub(r"[^0-9\-]", "", c.args[0])
+                    Mv = M.group(1)
+                    Ms = M.group(2)
+                    logger.log(7,f"RE: {M}, Match: '{Mv}.{Ms}'")
+                    if Mv and len(Mv)>0:
+                        self.verse = int(Mv)
+                        self.end = int(Mv)
+            if c.tag == "verse":
+                vc = re.sub(r"[^0-9\-]", "", c.get("number", ""))
                 try:
-                    if "-" in c.args[0]:
+                    if "-" in vc:
                         v, e = map(int, vc.split('-'))
                     else:
                         v = int(vc)
@@ -449,7 +439,7 @@ class Collector:
                     newchunk = True
                 else:
                     self.currChunk.label(self.chap, self.verse, self.end, 0,'')
-                logger.log(8, f" {self.chap}:{self.verse} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
+                logger.log(8, f" {self.chap}:{self.verse} {c.get('style', '')} {newchunk} context: {self.oldmode}, {self.mode}")
             if newchunk:
                 self.oldmode = self.mode
                 currChunk = self.makeChunk(c)
@@ -458,48 +448,33 @@ class Collector:
                         currChunk.hasVerse = True # By definition!
                         self.currChunk.label(self.chap, self.verse, self.end, 0,'')
                         self.currChunk.hasVerse = True
-                if issync(c):
+                if 'diglotsync' in self.text_properties(c):
                     self.currChunk.label(self.chap, self.verse, self.end, 0,self.syncp)
                 #elif (currChunk.type==ChunkType.BODY and ispara(c) and self.oldmode == ChunkType.MIDVERSEPAR): 
                     #currChunk.type=ChunkType.MIDVERSEPAR
-            if currChunk is not None:
-                currChunk.append(c)
-                if c in root:
-                    i -= 1
-                    root.pop(i)
-            if ischap(c):
+            if c.tag == "chapter":
                 logger.log(8, f" chapter {c}")
                 self.verse = 0
-                vc = re.sub(r"[^0-9\-]", "", c.args[0])
+                vc = re.sub(r"[^0-9\-]", "", c.get("number", ""))
                 try:
                     self.chap = int(vc)
                 except (ValueError, TypeError):
                     self.chap = 0
-                newc = sfm.Element(c.name, pos=c.pos, parent=c.parent, args=c.args, meta=c.meta)
                 if currChunk is None:
-                    currChunk=makeChunk(newc)
+                    currChunk=makeChunk(c)
                 else:
                     currChunk.chap = self.chap
                     currChunk.verse = self.verse
-                    currChunk[-1] = newc
-                logger.log(8, f" newchapter {newc}")
+                    currChunk[-1] = c
+            else:
+                self.currChunk.append(c)
             #logger.log(7,f'collecting {c.name}')
-            t = self.collect(c, primary=primary, depth=1+depth)
+            if c.tag == "para":
+                t = self.collect(c, primary=primary, depth=1+depth)
             #logger.log(7,f'collected {c.name}')
-            if t is not None:
-                logger.log(7, t)
-                currChunk=t
-            elif currChunk is None:
-                logger.log(7, f'Empty currChunk:{c} at {c.pos}, {c.name}/{root.name} {self.currChunk[0].name}')
-                # Chapters need special treatment because it's a new node without prior connections to existing sub-nodes
-                if root.name == "c": 
-                    logger.log(7, f'Root node is c. Applying special handling')
-                    self.currChunk.append(c)
-                    #currChunk=self.currChunk[0]
-                    if c in root:
-                        # FIXME: Not convinced if this is needed now.
-                        i -= 1
-                        root.pop(i)
+                if t is not None:
+                    logger.log(7, t)
+                    currChunk = t
         logger.log(9-depth,"}" * depth)
         return currChunk
 
@@ -544,7 +519,7 @@ class Collector:
         # Merge nb with chapter number and 1st verse.
         for i in range(1, len(self.acc) - 1):
             if self.acc[i].type is ChunkType.NB:
-                self.acc[i-1].type=ChunkType.NBCHAPTER
+                self.acc[i-1].type = ChunkType.NBCHAPTER
                 if MergeF.NoSplitNB in settings:
                     self.acc[i-1].extend(self.acc[i])
                     self.acc[i].deleteme = True
@@ -559,7 +534,6 @@ class Collector:
                         self.acc[i-1].deleteme = True
                         logger.debug('Merged.4b')
                     logger.debug(f"Merged.4: {'deleteme' in self.acc[i-1]}, {self.acc[i-1]}")
-                        
 
         # Merge pre-verse paragraph and verses.
         for i in range(1, len(self.acc) ):
@@ -569,13 +543,13 @@ class Collector:
                     # A PARVERSE gives its address and content up to the preceeding PREVERSEPAR, as the two may not be seperated
                     if bi is None:
                         bi=i-1
-                    self.acc[bi].verse=self.acc[i].verse
-                    self.acc[bi].pnum=self.acc[i].pnum
+                    self.acc[bi].verse = self.acc[i].verse
+                    self.acc[bi].pnum = self.acc[i].pnum
                     self.acc[bi].extend(self.acc[i])
                     self.acc[i].deleteme = True
                     logger.debug(f"Merged.5: {'deleteme' in self.acc[bi]}, {self.acc[bi].position}")
                     if bi>1 and self.acc[bi-1].type == ChunkType.CHAPTER:
-                        self.acc[bi].type=ChunkType.CHAPTERPAR
+                        self.acc[bi].type = ChunkType.CHAPTERPAR
                 elif (self.acc[i-1].type in (ChunkType.CHAPTER, ChunkType.NBCHAPTER)):
                     pass 
                 else:
@@ -586,11 +560,11 @@ class Collector:
                 if bi is None:
                     bi=i-1
                 logger.log(7, f"Merge.5b: {self.acc[bi].position} , {self.acc[i].position}?")
-                self.acc[i].verse=self.acc[i].verse
-                self.acc[i].pnum=self.acc[i].pnum
+                self.acc[i].verse = self.acc[i].verse
+                self.acc[i].pnum = self.acc[i].pnum
                 self.acc[i].insert(0,self.acc[bi][0])
-                #self.acc[bi].syncp=self.acc[i].syncp
-                #self.acc[bi].type=ChunkType.USERSYNC
+                #self.acc[bi].syncp = self.acc[i].syncp
+                #self.acc[bi].type = ChunkType.USERSYNC
                 #self.acc[bi].extend(self.acc[i])
                 self.acc[bi].deleteme = True
                 logger.log(7, f"Merging.5b: {self.acc[bi].position} , {self.acc[i].position}?")
@@ -604,9 +578,9 @@ class Collector:
                 cn = self.acc[i]
                 logger.debug(f"Compare.6: {c.position=}, {c.type,cn.type=}")
                 if cn.type == ChunkType.PREVERSEPAR:
-                    c.verse=cn.verse
-                    c.pnum=cn.pnum
-                    c.type=ChunkType.PREVERSEHEAD
+                    c.verse = cn.verse
+                    c.pnum = cn.pnum
+                    c.type = ChunkType.PREVERSEHEAD
                     # c.extend(cn)
                     # cn.deleteme = True
                     logger.debug(f"Merged.6: {'deleteme' in c}, {c.position}")
@@ -619,7 +593,7 @@ class Collector:
           #logger.debug(debstr(self.acc[i].type));
           if  self.acc[i].type == ChunkType.CHAPTER and self.acc[i-1].type == ChunkType.HEADING:
               if not MergeF.SwapChapterHead in settings:
-                self.acc[i-1].type=ChunkType.CHAPTERHEAD
+                self.acc[i-1].type = ChunkType.CHAPTERHEAD
                 self.acc[i].extend(self.acc[i-1])
                 self.acc[i-1].deleteme = True
                 logger.debug(f"Merged.7: {'deleteme' in self.acc[i]}, {self.acc[i]}")
@@ -627,8 +601,8 @@ class Collector:
               if MergeF.SwapChapterHead in settings:
                 logger.debug("SwapChapterHead");
                 tmp=self.acc[i-1]
-                self.acc[i-1]=self.acc[i]
-                self.acc[i]=tmp
+                self.acc[i-1] = self.acc[i]
+                self.acc[i] = tmp
                 logger.debug(f"Merged.7b: {'deleteme' in self.acc[i]}, {self.acc[i]}")
               else:
                 if MergeF.HeadWithChapter in settings:
@@ -643,31 +617,6 @@ class Collector:
                     self.acc[i].deleteme = True
                     if debugPrint:
                         logger.debug(f"Merged.8: {deleteme in self.acc[i-1]}, {self.acc[i-1]}")
-        # merge \c with body chunk following
-        if 0:
-            lastchunk = None
-            prelastchunk = None
-            for i in range(1, len(self.acc)):
-                if getattr(self.acc[i], 'deleteme', False):
-                    continue
-                if lastchunk is not None and lastchunk.type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.BODY:
-                    tag = self.acc[i][0].name
-                    lastchunk.extend(self.acc[i])
-                    lastchunk.type = self.acc[i].type
-                    self.acc[i].deleteme = True
-                    if tag == "nb" and prelastchunk is not None:
-                        prelastchunk.extend(lastchunk)
-                        lastchunk.deleteme = True
-                    elif tag.startswith("q") and i < len(self.acc) - 1 and self.acc[i+1][0].name.startswith("q"):
-                        lastchunk.extend(self.acc[i+1])
-                        self.acc[i+1].deleteme = True
-                if not getattr(lastchunk, 'deleteme', False):
-                    prelastchunk = lastchunk
-                else:
-                    lastchunk = prelastchunk
-                    prelastchunk = None     # can't really move backwards
-                if not getattr(self.acc[i], 'deleteme', False):
-                    lastchunk = self.acc[i]
         logger.debug("Chunks before reordering: {}".format(len(self.acc)))
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
         logger.debug("Chunks after reordering: {}".format(len(self.acc)))
@@ -676,6 +625,7 @@ class Collector:
               logger.log(7, f"r: {i}, {self.acc[i].ident}//{self.acc[i].position}, {self.acc[i].type=}, {self.acc[i]=}")
             else:
               logger.log(7, f"r: {i}, '-//-', {self.acc[i].type=}, {self.acc[i]=}")
+
     def score(self,results={}):
         """Calculate the scores for each chunk, returning an array of non-zero scores (potential break points)
         If the results parameter is given, then the return value is a summation
@@ -688,26 +638,27 @@ class Collector:
             if self.acc[i][0].name in self.protect:
                 logger.debug(f"Protecting \\{self.acc[i][0].name}")
                 scval -= self.protect[self.acc[i][0].name]
-            self.acc[i].score=scval
+            self.acc[i].score = scval
             pos=self.acc[i].position
-            self.loc[pos]=i
+            self.loc[pos] = i
             if pos in results:
-                results[pos]+=scval
+                results[pos] += scval
                 logger.debug("%s(%s)  + %d = %d" % (pos,self.acc[i][0].name, scval, results[pos]))
             else:
-                results[pos]=scval
+                results[pos] = scval
                 logger.debug(f"{pos}({self.acc[i][0].name}) = {scval}")
         return results
+
     def getofs(self,pos, incremental=True):
         """Return the index into acc[] of the (end-point) pos. If an exact match for pos cannot be found, return the index of the next highest point. If incremental is true, it assumes that calls to this are always done in increasing sequence.
         """
-        if (pos in self.loc):
+        if pos in self.loc:
             self.lastloc=self.loc[pos]
         else:
-            if (self.lastloc is None) or (not incremental):
-                self.lastloc=0
+            if self.lastloc is None or not incremental:
+                self.lastloc = 0
             lim=len(self.acc)
-            while self.lastloc< lim and self.acc[self.lastloc].position < pos:
+            while self.lastloc < lim and self.acc[self.lastloc].position < pos:
                 self.lastloc+=1
         return self.lastloc
 
@@ -867,44 +818,44 @@ def alignScores(*columns):
     # Ensure headings get split from preceding text if there's a coming break
     oldconfl=None
     conflicts=[]
-    for i in range (0,len(positions)-1):
+    for i in range (0, len(positions)-1):
         if globalcl:
           chlist=('CHAPTERHEAD','CHAPTER')
         else:
           chlist=('CHAPTERHEAD')
-        if(positions[i][_headingidx] in ('HEADING','PREVERSEHEAD')):
-            if (merged[positions[i+1]]>99):
-                a=0
+        if positions[i][_headingidx] in ('HEADING','PREVERSEHEAD'):
+            if merged[positions[i+1]] > 99:
+                a = 0
                 while positions[i-a-1][3] in ('HEADING','PREVERSEHEAD'):
-                    a+=1
+                    a += 1
                 logger.debug(f"Splitting between positions {positions[i-a]} and {positions[i+1]}")
-                merged[positions[i-a]]=100
+                merged[positions[i-a]] = 100
                 if MergeF.HeadWithText in settings:
-                    merged[positions[i+1]]=0
+                    merged[positions[i+1]] = 0
                     logger.debug(f"Not splitting between positions {positions[i]} and {positions[i+1]} (score={merged[positions[i+1]]})")
-        elif(positions[i][_headingidx] in chlist):
-            a=1
-            while(positions[i+a][_headingidx] in chlist):
-                a+=1
+        elif positions[i][_headingidx] in chlist:
+            a = 1
+            while positions[i+a][_headingidx] in chlist:
+                a += 1
             if MergeF.HeadWithText in settings:
                 logger.debug(f"Not splitting head from text between positions {positions[i]} and {positions[i+a]}")
-                merged[positions[i+a]]=0
+                merged[positions[i+a]] = 0
             else:
                 logger.debug(f"Splitting head from text between positions {positions[i]} and {positions[i+a]}")
-                merged[positions[i+a]]=100
+                merged[positions[i+a]] = 100
             
-        confl=positions[i][0:(_headingidx)]
-        if confl==oldconfl:
+        confl = positions[i][0:_headingidx]
+        if confl == oldconfl:
             conflicts.append(positions[i])
             logger.debug(f'matching posn {confl}: {conflicts}')
         else:
-            if len(conflicts)>1:
-                tot=0
+            if len(conflicts) > 1:
+                tot = 0
                 includesCPar = False
                 includesHead = False
                 includesMVPar = False
                 for p in conflicts:
-                    tot+=merged[p]
+                    tot += merged[p]
                     if (p[_headingidx] == 'CHAPTERPAR'):
                         includesCPar = True
                     if (p[_headingidx] in ( 'HEADING','PREVERSEHEAD')):
@@ -914,61 +865,60 @@ def alignScores(*columns):
                 if (not includesCPar) and not (includesMVPar and includesHead):
                     for p in conflicts:
                         del(merged[p])
-                    merged[confl]=tot
+                    merged[confl] = tot
                     logger.debug(f'Combined score at {confl} ({conflicts}) set to {tot}')
-            conflicts=[positions[i]]
-        oldconfl=confl
+            conflicts = [positions[i]]
+        oldconfl = confl
     del positions
-    syncpositions=[k for k,v in merged.items() if v>=100]
+    syncpositions = [k for k,v in merged.items() if v >= 100]
     syncpositions.sort()
     logger.debug("Sync positions:" + " ".join(map(str,syncpositions)))
-    results=[]
-    colkeys={}
-    for i in range(0,len(columns)):
-        colkeys[columns[i][0].colkey]=i
+    results = []
+    colkeys = {}
+    for i in range(0, len(columns)):
+        colkeys[columns[i][0].colkey] = i
     logger.debug("colkeys:", colkeys)
-    ofs={}
-    blank={}
-    lim={}
-    acc={}
-    coln={}
-    for c,i in colkeys.items():
-        ofs[c]=0
-        blank[c]=None
-        lim[c]=len(columns[i][0].acc)
-        coln[c]=columns[i][0]
-        acc[c]=coln[c].acc
+    ofs = {}
+    blank = {}
+    lim = {}
+    acc = {}
+    coln = {}
+    for c, i in colkeys.items():
+        ofs[c] = 0
+        blank[c] = None
+        lim[c] = len(columns[i][0].acc)
+        coln[c] = columns[i][0]
+        acc[c] = coln[c].acc
     syncpositions.append((999,999,999))
     for posn in syncpositions:
-        chunks=blank.copy()
+        chunks = blank.copy()
         logger.log(7, f"CHUNK: {posn}, {merged[posn] if posn in merged else '-'}")
         for c,i in colkeys.items():
-            nxt=coln[c].getofs(posn) # Get the next offset.
+            nxt = coln[c].getofs(posn) # Get the next offset.
             logger.log(7, f"{c=}, {ofs[c]=} ,{posn=}, {nxt=}, {lim[c]=}")
-            if (ofs[c]==nxt and nxt<lim[c]):
+            if ofs[c] == nxt and nxt < lim[c]:
                 logger.log(7, f"not yet: {nxt} = {acc[c][nxt].position}")
-            if (nxt>lim[c]):
+            if nxt > lim[c]:
                 raise ValueError(f"This shouldn't happen, {nxt} > {lim[c]}!")
-            p=merged
-            while (ofs[c]<lim[c]) and (ofs[c]<nxt): 
-                thispos=acc[c][ofs[c]].position
+            p = merged
+            while ofs[c] < lim[c] and ofs[c] < nxt: 
+                thispos = acc[c][ofs[c]].position
                 logger.log(7,f"{ofs[c]}={thispos} {merged[thispos] if thispos in merged else '0'}")  
                 if chunks[c]:
                     chunks[c].append(acc[c][ofs[c]])
                 else:
-                    chunks[c]=[acc[c][ofs[c]]]
-                ofs[c]+=1
+                    chunks[c] = [acc[c][ofs[c]]]
+                ofs[c] += 1
             #print()
-            if (chunks[c]):
+            if chunks[c]:
                 logger.log(7,"".join(map(str,chunks[c])))
-        results.append({c:chunks[c] for c in colkeys})
+        results.append({c: chunks[c] for c in colkeys})
     return results
 
-def appendsheet(fname, sheet):
-    if os.path.exists(fname):
-        with open(fname) as s:
-            sheet = style.update_sheet(sheet, style.parse(s))
-    return sheet
+def createSheets(sheets):
+    res = Sheets(sheets[0])
+    for s in sheets[1:]:
+        res.append(s)
 
 modes = {
     "doc": alignChunks,
@@ -977,19 +927,18 @@ modes = {
 }
 
 def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
-    global _chunkDesc_map,settings
-    config={}#configparser.ConfigParser()
-    flaga={}
+    config = {}#configparser.ConfigParser()
+    flaga = {}
     for k in MergeF:
-      flaga[k.name]=k in settings
-    config['FLAGS']=flaga
-    config['DEFAULT']={k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
-    config['L']={'WEIGHT':51}
-    config['R']={'WEIGHT':51}
-    if variety!="":
-        config[variety]={}
-    if confname!="":
-        config[confname]={}
+      flaga[k.name] = k in settings
+    config['FLAGS'] = flaga
+    config['DEFAULT'] = {k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
+    config['L'] = {'WEIGHT': 51}
+    config['R'] = {'WEIGHT': 51}
+    if variety != "":
+        config[variety] = {}
+    if confname != "":
+        config[confname] = {}
     logger.debug(f"Writing default configuration to {mergeconfigfile}")
     with open(mergeconfigfile,'w') as configfile:
         configfile.write("# Custom merge configuration file.\n")
@@ -1022,14 +971,14 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
         for section in config:
             configfile.write(f"\n[{section}]\n\n")
             for k in config[section]:
-                v=config[section][k]
+                v = config[section][k]
                 if k in _chunkDesc_map:
-                    comment=_chunkDesc_map[k]
+                    comment = _chunkDesc_map[k]
                     if not comment.startswith('(!)'):
                         #cannon=_canonical_order[k] if k in _canonical_order else 9
                         #configfile.write(f"#{comment} ({cannon})\n{k.name} = {v}\n")
                         configfile.write(f"#{comment}\n{k.name} = {v}\n")
-                elif section=="FLAGS":
+                elif section == "FLAGS":
                     configfile.write(f"# {k} = {v}\n")
                 else:
                     configfile.write(f"{k} = {v}\n")
@@ -1040,55 +989,55 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     """
     global settings
     logger.debug(f"Reading config file {mergeconfigfile} for ({column if column is not None else ''}, {variety}, {confname})")
-    config=configparser.ConfigParser()
+    config = configparser.ConfigParser()
     config.read(mergeconfigfile)
     if config.has_section("FLAGS"):
       for key in MergeF:
-        if config.has_option("FLAGS",key.name):
-          tf=config.getboolean("FLAGS",key.name)
+        if config.has_option("FLAGS", key.name):
+          tf = config.getboolean("FLAGS", key.name)
           logger.debug(f"Flag {key} is set to {tf}")
           if tf:
             settings = settings | key
           else:
             settings = settings & (~key)
     if not config.has_section('zzzDEFAULT'):
-        config['zzzDEFAULT']={} # make it possible to access the DEFAULT values.
+        config['zzzDEFAULT'] = {} # make it possible to access the DEFAULT values.
     if column is None:
         if variety == "":
-            keys=[confname,"zzzDEFAULT"]
+            keys = [confname, "zzzDEFAULT"]
         else:
-            keys=[variety,confname,"zzzDEFAULT"]
+            keys = [variety, confname, "zzzDEFAULT"]
     else:
         if variety == "":
-            keys=[column,confname,"zzzDEFAULT"]
+            keys = [column, confname, "zzzDEFAULT"]
         else:
-            keys=[variety+"-"+column,variety,column,confname,"zzzDEFAULT"]
+            keys = [variety + "-" + column, variety, column, confname, "zzzDEFAULT"]
     logger.debug(f"Keys: {keys}")
     for key in keys:
         if config.has_section(key):
-            weight=config.getfloat(key,"WEIGHT",fallback=fallbackweight)
+            weight = config.getfloat(key, "WEIGHT", fallback=fallbackweight)
             scores={}
             for st in ChunkType:
-                if st==ChunkType.DEFSCORE:
+                if st == ChunkType.DEFSCORE:
                     continue
-                val=config.getfloat(key,str(st.name),fallback=0)
-                if (val>=-2 and val <=2):
-                    scores[st]=val*weight
+                val=config.getfloat(key, str(st.name), fallback=0)
+                if (val >= -2 and val <= 2):
+                    scores[st] = val * weight
                 else:
-                    scores[st]=val
+                    scores[st] = val
                 logger.log(7,f"score for {st} is {val} -> {scores[st]}")
             return(scores)
         else:
             logger.debug(f"No section {key}")
     if synchronise in  SyncPoints:
-        synchronise="normal"
+        synchronise = "normal"
     logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting {synchronise}.")
     return(SyncPoints[{synchronise}])
     
 def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
     if debug:
-      debugPrint=True
+      debugPrint = True
       logger.debug("Writing debug files")
     else:
       logger.debug("Not Writing debug files")
@@ -1096,56 +1045,48 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     tag_escapes = r"[^a-zA-Z0-9]"
     # Check input
     sheets={}
-    if len(keyarr)==0:
-        keyarr=['L','R']
+    if len(keyarr) == 0:
+        keyarr = ['L', 'R']
     if (len(keyarr) != len(infilearr)):
         raise ValueError("Cannot have %d keys and %d files!" % (len(keyarr),len(infilearr)) )
         
-    if type(scorearr)==list:
-        tmp=zip(keyarr,scorearr)
-        scorearr={}
-        for k,v in tmp:
+    if type(scorearr) == list:
+        tmp = zip(keyarr, scorearr)
+        scorearr = {}
+        for k, v in tmp:
             if k in scorearr:
                 raise ValueError("Cannot have reapeated entries in key array! (%c already seen)" %(k))
-            scorearr[k]=int(v)
+            scorearr[k] = int(v)
         del tmp
     logger.debug(f"{type(scorearr)}, {scorearr=}")
     logger.debug(f"{type(keyarr)}, {keyarr=}")
     logger.log(7, f"{stylesheetsa=}, {stylesheetsb=}")
     if configarr is None:
-        configarr={}
-        for k in keyarr[:]:
-            configarr[k]=None
+        configarr = {}
+        for k in keyarr:
+            configarr[k] = None
         
     # load stylesheets
-    for k in keyarr[:]:
-        logger.debug(f"defining stylesheet {k}")
-        sheets[k]=usfm._load_cached_stylesheet('usfm_sb.sty')
-    for s in stylesheetsa:
-        logger.log(7, f"Appending {s} to stylesheet L")
-        sheets['L']=appendsheet(s, sheets['L'])
-    for s in stylesheetsb:
-        logger.log(7, f"Appending {s} to stylesheet R")
-        sheets['R']=appendsheet(s, sheets['R'])
-    for k,s in stylesheets:
-        logger.log(7, f"Appending {s} to stylesheet {k}")
-        sheets[k] = appendsheet(s,sheets[k])
+    sheets['L'] = Sheets(stylesheetsa)
+    sheets['R'] = Sheets(stylesheetsb)
+    for k, s in stylesheets:
+        sheets[k] = Sheets(s)
     # Set-up potential synch points
     tmp=synchronise.split(",")
-    if len(tmp)==1:
-        syncarr={k:synchronise for k in keyarr}
+    if len(tmp) == 1:
+        syncarr = {k:synchronise for k in keyarr}
     else:
-        if len(tmp)!=len(keyarr):
+        if len(tmp) != len(keyarr):
             raise ValueError("Cannot have %d keys and %d synchronisation modes!" % (len(keyarr),len(tmp)) )
         else:
-            syncarr={k:val for k,val in zip(keyarr,tmp)}
+            syncarr= {k: val for k, val in zip(keyarr,tmp)}
 
     logger.debug(f"{type(syncarr)}, {syncarr=}")
 
-    if len(scorearr)==0:
-        s=int(1+100/len(keyarr))
-        scorearr={k:s for k in keyarr}
-    elif len(scorearr)!=len(keyarr) :
+    if len(scorearr) == 0:
+        s = int(1 + 100 / len(keyarr))
+        scorearr = {k: s for k in keyarr}
+    elif len(scorearr) != len(keyarr):
         raise ValueError("Cannot have %d keys and %d scores!" % (len(keyarr),len(scorearr)) )
 
     def texttype(m):
@@ -1167,35 +1108,35 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         settings = settings | MergeF.ChunkOnVerses
     if (mode == "scores"):
         settings = settings & (~MergeF.HeadWithChapter) #  scores needs them initially separated
-        priconfname=None
-        priptpath=None
-        priconfpath=None
+        priconfname = None
+        priptpath = None
+        priconfpath = None
         for colkey,infile in zip(keyarr,infilearr):
-            if (colkey=='L'):
+            if (colkey == 'L'):
                 #Primary might be in a different place to other files, if run
                 # from command line. If so, that should take priority.
-                (prifilepath,filename)=os.path.split(os.path.abspath(infile))
-                priconfname=os.path.basename(prifilepath)
-                priptpath=os.path.dirname(os.path.dirname(os.path.dirname(prifilepath)))
-                priconfpath=os.path.join(priptpath,"shared","ptxprint",priconfname)
-        for colkey,infile in zip(keyarr,infilearr):
+                (prifilepath, filename) = os.path.split(os.path.abspath(infile))
+                priconfname = os.path.basename(prifilepath)
+                priptpath = os.path.dirname(os.path.dirname(os.path.dirname(prifilepath)))
+                priconfpath = os.path.join(priptpath, "shared", "ptxprint", priconfname)
+        for colkey,infile in zip(keyarr, infilearr):
                 #if (syncarr[colkey].startswith("custom")):
                 # determine the config name; and  determine the custom merge control file.
                 # Look for merge config file in : (1) same dir as file, (2) {Project}/shared/ptxprint/{config}, (3) {Project}
-                if (syncarr[colkey]=="custom"):
+                if (syncarr[colkey] == "custom"):
                     variety=""
-                    varfile=None
+                    varfile = None
                 else:
                     variety=syncarr[colkey][7:]
-                    varfile="merge-"+synchronise+variety+".cfg"
-                (filepath,filename)=os.path.split(os.path.abspath(infile))
-                confname=os.path.basename(filepath)
-                ptpath=os.path.dirname(os.path.dirname(os.path.dirname(filepath)))
-                confpath=os.path.join(ptpath,"shared","ptxprint",confname)
-                searchlist=[]
-                cfile="merge-"+synchronise+".cfg"
+                    varfile = "merge-" + synchronise+variety + ".cfg"
+                (filepath,filename) = os.path.split(os.path.abspath(infile))
+                confname = os.path.basename(filepath)
+                ptpath = os.path.dirname(os.path.dirname(os.path.dirname(filepath)))
+                confpath = os.path.join(ptpath, "shared", "ptxprint", confname)
+                searchlist = []
+                cfile="merge-" + synchronise + ".cfg"
                 if (varfile is not None):
-                    if (colkey!='L' and prifilepath != filepath):
+                    if (colkey != 'L' and prifilepath != filepath):
                         searchlist.extend(((os.path.join(prifilepath,varfile),1),(os.path.join(priconfpath,varfile),1)))
                     searchlist.extend(((os.path.join(filepath,varfile),1),(os.path.join(confpath,varfile),1),(os.path.join(ptpath,varfile),0)))
                     
@@ -1221,13 +1162,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
-            doc = list(usfm.parser(inf, stylesheet=sheets[colkey], debug=False,
-                                   canonicalise_footnotes=False)) # , tag_escapes=tag_escapes))
-            while len(doc) > 1:
-                if isinstance(doc[0], sfm.Text):
-                    doc.pop(0)
-                else:
-                    break
+            doc = Usfm.readfile(infile, sheet=sheets[colkey])
             colls[colkey] = Collector(doc=doc, colkey=colkey, primary=(colkey=='L'), fsecondary=fsecondary, stylesheet=sheets[colkey], scores=scorearr[colkey],synchronise=syncarr[colkey],protect=protect)
         chunks[colkey] = {c.ident: c for c in colls[colkey].acc}
         chunklocs[colkey] = ["_".join(str(x) for x in c.ident) for c in colls[colkey].acc]

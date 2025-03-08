@@ -5,10 +5,8 @@ from inspect import signature
 import regex
 from ptxprint.font import TTFont
 from ptxprint.runner import checkoutput
-from ptxprint import sfm
-from ptxprint.sfm import usfm, style, Text
-from ptxprint.usxutils import Usfm
-from ptxprint.usfmutils import Sheets, Module
+from ptxprint.usxutils import Usfm, Sheets
+from ptxprint.module import Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath
@@ -188,7 +186,7 @@ class TexModel:
             self.dict['project/id'] = self.prjid
         self._hdrmappings = localhdrmappings()
         if self.printer is not None:
-            self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
+            # self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
             self.update()
 
     def docdir(self):
@@ -822,21 +820,21 @@ class TexModel:
         logger.debug(f"INT file {intfname} processed to {outfname}")
         return outfname
 
-    def flattenModule(self, infpath, outdir, usfm=None):
+    def flattenModule(self, infpath, outdir, text=None):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
         doti = outfpath.rfind(".")
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         try:
-            mod = Module(infpath, usfms, self, usfm=usfm)
-            res = mod.parse(self)
+            mod = Module(infpath, usfms, self, text=text)
+            mod.parse()
+            res = mod.doc
         except SyntaxError as e:
             return (None, e)
-        if usfm is not None:
+        if text is not None:
             return res
-        with open(outfpath, "w", encoding="utf-8") as outf:
-            outf.write(sfm.generate(res))
+        res.xml.outUsfm(outfpath)
         return outfpath
 
     def runConversion(self, infpath, outdir):
@@ -971,16 +969,15 @@ class TexModel:
                                     show=not printer.get("c_quickRun"))
                     self.interlinear.fails = []
         elif bk.lower().startswith("xx"):
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            if doc is not None:
-                doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
+            (dat, doc) = self._getText(dat, doc, bk)
+            doc = self.flattenModule(infpath, outfpath, text=dat)
 
         if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
             dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
         if self.dict['project/canonicalise']:
             (dat, doc) = self._getDoc(dat, doc, bk)
-
+            dat = None
 
         if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
             (dat, doc) = self._getDoc(dat, doc, bk)

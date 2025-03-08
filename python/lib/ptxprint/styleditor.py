@@ -1,7 +1,6 @@
 
 import re, os
-from ptxprint.usfmutils import Sheets
-from ptxprint.sfm.style import Marker
+from ptxprint.usxutils import Sheets
 from ptxprint.font import FontRef
 from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path, saferelpath, asfloat
 from copy import deepcopy
@@ -388,7 +387,7 @@ class StyleEditor:
         return False
 
     def addMarker(self, mrk, name):
-        self.sheet[mrk] = Marker({" deletable": True, "name": name})
+        self.sheet[mrk] = {" deletable": True, "name": name}
 
     def get_font(self, mrk, style=""):
         f = self.getval(mrk, " font")

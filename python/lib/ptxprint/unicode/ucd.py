@@ -94,7 +94,7 @@ class UCD(list):
         else:
             cls._singletemp = list.__new__(cls)
         if localfile is None:
-            localfile = os.path.join(pycodedir(), "sfm", "ucdata_pickle.bz2")
+            localfile = os.path.join(pycodedir(), "unicode", "ucdata_pickle.bz2")
         if not os.path.exists(localfile):
             res = cls._singletemp
         elif localfile.endswith(".bz2"):
