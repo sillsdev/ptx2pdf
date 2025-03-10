@@ -382,8 +382,8 @@ class Usfm:
             self.getmarkers(c, acc)
         return acc
 
-    def make_zsetref(self, ref, book, parent):
-        attribs = {'bkid': str(ref.book), 'chapter': str(ref.chap), 'verse': str(ref.verse)}
+    def make_zsetref(self, ref, book, parent, pos):
+        attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chap), 'verse': str(ref.verse)}
         if book is not None:
             attribs['book'] = book
         res = self.factory("ms", attribs, parent=parent)

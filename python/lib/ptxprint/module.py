@@ -37,6 +37,9 @@ class Module:
         if usfm is not None:
             self.doc = usfm
         else:
+            if text is None and self.fname is not None:
+                with open(self.fname, encoding="utf-8") as inf:
+                    text = inf.read()
             self.doc = Usfm.readfile(text if text is not None else fname, sheet=self.sheets)
 
     def getBookRefs(self):
@@ -66,21 +69,24 @@ class Module:
             if skipme > 0:
                 skipme -= 1
                 continue
-            if eloc.head is None:
-                if eloc.parent.text is not None:
-                    eloc.parent.text = self.localise_re.sub(self.localref, eloc.parent.text)
+            if eloc.head is not None:
+                if eloc.head.tail is not None:
+                    eloc.head.tail = self.localise_re.sub(self.localref, eloc.head.tail)
                 continue
-            e = eloc.head
+            e = eloc.parent
             if e.tail is not None:
                 e.tail = self.localise_re.sub(self.localref, e.text)
-            if e.tag != "para":
+            if e.tag == "para":
+                s = e.get("style", None)
+            elif e.tag == "ref":
+                s = "ref"
+            else:
                 continue
-            s = e.get("style", None)
             if s == "ref" or s == "refnp":
                 res = []
                 reps = []
                 nc = e.getnext_sibling()
-                if nc.get("style", "") == "rep":
+                if nc is not None and nc.get("style", "") == "rep":
                     m = re.match(r"^\s*(.*?)\s*=>\s*(.*?)\s*$", nc.text, re.M)
                     if m:
                         reps.append((None,
@@ -98,9 +104,10 @@ class Module:
                     if not len(p):
                         continue
                     (curri, currp) = e._getindex()
-                    for pe in p:
+                    for pe in reversed(p):
                         pe.parent = currp
                         currp.insert(curri, pe)
+                    currp.remove(e)
                     skipme += 1
                     if len(reps):
                         self.doc.transform_text(*reps, parts=p)
@@ -130,9 +137,9 @@ class Module:
             book = None
         if book is None:
             return []
-        res = book.subdoc(ref, removes=removes, strippara=strippara, addzsetref=False)
+        res = book.subdoc(ref, removes=removes, strippara=strippara, addzsetref=False).getroot()
         #zsetref = book.make_zsetref(ref.first, self.usfms.booknames.getLocalBook(ref.first.book, 1), res[0].parent, res[0].pos)
         if not len(res):
             return res
         zsetref = book.make_zsetref(ref.first, None, res[0].parent, res[0].pos)
-        return [zsetref] + res
+        return [zsetref] + list(res)
