@@ -790,13 +790,16 @@ class ViewModel:
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
+            print(f"readConfig: Diglot is on.")
             for s in config.sections():
+                print(f"{s=}")
                 if s.startswith("diglot_"):
                     k = s[7:]
                     pg = PolyglotConfig()
                     pg.readConfig(config, s)
                     self.polyglots[k] = pg
-                    self.diglotViews[k] = self.createDiglotView(k)
+                    print(f"{k=}")
+                    self.createDiglotView(k)
         else:
             self.setPrintBtnStatus(2)
             self.diglotViews = {}
@@ -827,7 +830,7 @@ class ViewModel:
         path = os.path.join(self.project.createConfigDir(cfgname), "ptxprint.cfg")
         config = self.createConfig()
         if self.get('c_diglot') and not self.isDiglot:
-            for k, p in self.polyglots:
+            for k, p in self.polyglots.items():
                 p.writeConfig(config, f"diglot_{k}")
         self.globaliseConfig(config)
         with open(path, "w", encoding="utf-8") as outf:
@@ -894,8 +897,18 @@ class ViewModel:
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False)
-        for k, v in self.polyglots.items():
-            v.writeConfig(config, f"diglot_{k}")
+        # for attribute, value in vars(self.polyglots).items():
+            # print(f"{attribute}: {value}")    
+        # for k, v in self.polyglots.items():
+            # v.writeConfig(config, f"diglot_{k}")
+        if isinstance(self.polyglots, dict):  # Ensure it's a dictionary
+            for attribute, value in self.polyglots.items():
+                print(f"{attribute}: {value}")    
+            for k, v in self.polyglots.items():
+                v.writeConfig(config, f"diglot_{k}")
+        else:
+            print("Error: self.polyglots is not a dictionary.")
+
         TeXpert.saveConfig(config, self)
         return config
 
@@ -1810,8 +1823,10 @@ class ViewModel:
         return res
 
     def createDiglotView(self, suffix="R"):
+        breakpoint()
         self.setPrintBtnStatus(2)
         if suffix not in self.polyglots:
+            print(f"Returned early from: createDiglotView. {suffix=}")
             return None
         prj = self.prjTree.getProject(self.polyglots[suffix].prjguid)
         cfgid = self.polyglots[suffix].cfgid
@@ -1830,6 +1845,7 @@ class ViewModel:
             digview.isDiglot = True
             digview.digSuffix = suffix
             self.digSuffix = "L"
+        self.diglotViews[suffix] = digview
         return digview
 
     def createArchive(self, filename=None):

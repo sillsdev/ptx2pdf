@@ -4,6 +4,7 @@ from gi.repository import Gtk, Gdk
 import re, json
 from enum import IntEnum
 from ptxprint.utils import _
+from ptxprint.polyglot import PolyglotConfig
 
 _modeltypes = (str, str, str, str, bool, float, float, float, str, str, str, str, int)
 _modelfields = ('code', 'pg', 'prj', 'cfg', 'captions', 'fontsize', 'baseline', 'width', 'color', 'prjguid', 'tooltip', 'widcol', 'bold')
@@ -14,60 +15,59 @@ class PolyglotSetup(Gtk.Box):
         self.builder = builder
         self.view = view
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
-
-        # Load data from JSON file #FixMe!
-        try:
-            with open('data.json', 'r') as f:
-                self.data = json.load(f)
-        except FileNotFoundError:
-            self.data = []
-
-        # Dropdown options
-        self.codes = ["L", "R", "A", "B", "C", "D", "E", "F", "G"]
-        self.spread_side = ["1", "2"]
-        # Get the shared project ListStore from the builder
-        self.project_liststore = self.builder.get_object("ls_projects")
-
-        # Use the existing treeview instead of creating a new one
         self.treeview = tv  
-        self.treeview.set_reorderable(True)
+        self.treeview.set_reorderable(False)
 
         # Create ListStore model if not already set
         if self.treeview.get_model() is None:
-            self.ls_treeview = Gtk.ListStore(*_modeltypes)  
+            self.ls_treeview = Gtk.ListStore(*_modeltypes)
             self.treeview.set_model(self.ls_treeview)
         else:
             self.ls_treeview = self.treeview.get_model()
             
-        self.ls_config = []  # List to store separate ListStores for each row
+        self.ls_config = []  # List to store separate cfg listStores for each row
 
-        for item in self.data:
-            code = list(item.keys())[m.code]
-            values = item[code]
-            self.ls_treeview.append([
-                code, values.get('spread_side', '1'), values['prj'], values['cfg'],
-                values['captions'], values.get('fontsize', 11.0), values.get('baseline', 14.0),
-                values.get('percentage', 50.0), values.get('color', '#FFFFFF'), values.get('prjguid', ""),
-                'Tooltip', '#000000', 400
-            ])
+        # combo dropdown options (cfg gets filled in dynamincally)
+        self.codes = ["L", "R", "A", "B", "C", "D", "E", "F", "G"]
+        self.spread_side = ["1", "2"]
+        self.project_liststore = self.builder.get_object("ls_projects")
+
+        if True:
+            self.load_polyglots_into_treeview()
+        else:
+            # FixMe! TEMP: Load data from JSON file #FixMe!
+            try:
+                with open('data.json', 'r') as f:
+                    self.data = json.load(f)
+            except FileNotFoundError:
+                self.data = []
+
+            for item in self.data:
+                code = list(item.keys())[m.code]
+                values = item[code]
+                self.ls_treeview.append([
+                    code, values.get('spread_side', '1'), values['prj'], values['cfg'],
+                    values['captions'], values.get('fontsize', 11.0), values.get('baseline', 14.0),
+                    values.get('percentage', 50.0), values.get('color', '#FFFFFF'), values.get('prjguid', ""),
+                    'Tooltip', '#000000', 400
+                ])
 
         # Define Columns
-        self.add_column("Code", m.code, editable=True, renderer_type="combo", options=self.codes, align="center")
-        self.add_column("1|2", m.pg, editable=True, renderer_type="combo", options=self.spread_side, align="center")
-        self.add_column("Project", m.prj, editable=True, renderer_type="combo", options=self.project_liststore)
-        self.add_column("Configuration", m.cfg, editable=True, renderer_type="combo", options=['(None)'])
-        self.add_column("Captions", m.captions, editable=True, renderer_type="toggle")
-        self.add_column("Font Size", m.fontsize, editable=True, renderer_type="text")
-        self.add_column("Spacing", m.baseline, editable=True, renderer_type="text")
-        self.add_column("% Width", m.width, editable=True, renderer_type="text")
+        self.add_column("Code", m.code, editable=True, renderer_type="combo", options=self.codes, align="center", width=40)
+        self.add_column("1|2", m.pg, editable=True, renderer_type="combo", options=self.spread_side, align="center", width=40)
+        self.add_column("Project", m.prj, editable=True, renderer_type="combo", options=self.project_liststore, width=90)
+        self.add_column("Configuration", m.cfg, editable=True, renderer_type="combo", options=['(None)'], width=140)
+        self.add_column("Captions", m.captions, editable=True, renderer_type="toggle", align="center", width=60)
+        self.add_column("Font Size", m.fontsize, editable=True, renderer_type="text", align="right", width=60)
+        self.add_column("Spacing", m.baseline, editable=True, renderer_type="text", align="right", width=60)
+        self.add_column("% Width", m.width, editable=True, renderer_type="text", align="right", width=60)
 
-        # Enable drag and drop
-        self.treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [('text/plain', 0, 0)], Gdk.DragAction.MOVE)
-        self.treeview.enable_model_drag_dest([('text/plain', 0, 0)], Gdk.DragAction.MOVE)
-        self.treeview.connect("drag-data-received", self.on_drag_data_received)
-        self.treeview.connect("drag-data-get", self.on_drag_data_get)
         self.treeview.connect("button-press-event", self.on_right_click)
 
+        # Connect tooltips
+        for col_id in range(0,m.tooltip):
+            self.treeview.set_has_tooltip(True)  # Enable tooltips
+            self.treeview.connect("query-tooltip", self.on_query_tooltip)  # Connect event
         self.validate_page_widths() # Make sure % Width gets colored red if invalid (even on loading)
 
         # Add TreeView to Layout
@@ -79,150 +79,145 @@ class PolyglotSetup(Gtk.Box):
         self.update_layout_string()
         self.update_layout_preview()
 
-    def get_treeview(self):
-        return self.treeview        
-        
-    def add_column(self, title, col_id, editable=False, renderer_type="text", options=None, align="left"):
-        if renderer_type == "text":
-            renderer = Gtk.CellRendererText()
-            renderer.set_property("editable", editable)
-            
-            # Only apply text color formatting to the % Width column
-            column = Gtk.TreeViewColumn(title, renderer, text=col_id)
-            if col_id == m.width:
-                column.add_attribute(renderer, "foreground", m.widcol)  # text color
-                column.add_attribute(renderer, "weight", m.bold)        # bold effect
+    def load_polyglots_into_treeview(self):
+        for sfx in self.codes:
+            if sfx in self.view.polyglots:  # Check if polyglot exists for this suffix
+                plyglt = self.view.polyglots[sfx]
+                row_index = self.find_or_create_row(sfx)  # Find existing row or create a new one
+                
+                # Set treeview values
+                for attr, column in [
+                    ("prjid", m.prj), 
+                    ("prjguid", m.prjguid), 
+                    ("cfgid", m.cfg), 
+                    ("page", m.pg), 
+                    ("fraction", m.width), 
+                    ("captions", m.captions), 
+                    ("backcolor", m.color)
+                ]:
+                    self.ls_treeview[row_index][column] = getattr(plyglt, attr, "")
 
-            # Store tooltips
-            if col_id in range(0,m.tooltip):
-                self.treeview.set_has_tooltip(True)  # Enable tooltips
-                self.treeview.connect("query-tooltip", self.on_query_tooltip)  # Connect event
+                # Load additional values
+                polyview = self.view.createDiglotView(suffix=sfx)
+                self.ls_treeview[row_index][m.fontsize] = float(polyview.get('s_fontsize', 11.0))
+                self.ls_treeview[row_index][m.baseline] = float(polyview.get('s_linespacing', 15.0))
 
-            # Apply formatting function *only* to the % Width column (index 5)
-            if col_id in [m.fontsize, m.baseline, m.width]:
-                column.set_cell_data_func(renderer, self.format_width_data_func, col_id)
-                renderer.connect("edited", self.on_width_edited, col_id)  # Connect edit event
-            column.set_fixed_width(70)  # Increase width (default is often too narrow)
-            column.set_alignment(1.0)   # This sets the column title on the right.
-            column.set_resizable(True)
-            # column.set_expand(True)
-            
-            self.treeview.append_column(column)
-            return
+    def find_or_create_row(self, sfx):
+        """Find an existing row with the given sfx or create a new one."""
+        for i, row in enumerate(self.ls_treeview):
+            if row[m.code] == sfx:
+                return i  # Return existing row index
 
-        elif renderer_type == "toggle":
-            renderer = Gtk.CellRendererToggle()
-            renderer.set_property("activatable", True)
-            renderer.connect("toggled", self.on_toggle, col_id)
+        # If not found, create a new row
+        new_row = [""] * len(self.ls_treeview[0])  # Create an empty row
+        new_row[m.code] = sfx  # Set the sfx code
+        self.ls_treeview.append(new_row)
+        return len(self.ls_treeview) - 1  # Return new row index
 
-            column = Gtk.TreeViewColumn(title, renderer, active=col_id)  # Bind "active" property
-            column.set_fixed_width(70)  # Increase width (default is often too narrow)
-            column.set_alignment(0.5)
-            column.set_resizable(True)
-            # column.set_expand(True)
 
-            self.treeview.append_column(column)
-            return  # Important! Prevents duplicate column creation
+    def add_column(self, title, col_id, editable=False, renderer_type="text", options=None, align="left", width=70):
+        # Function to disable editing and gray out text for Row 0
+        def disable_edit_for_first_row(column, cell, model, iter, data=None):
+            path = model.get_path(iter).to_string()
+            if path == "0" and col_id in [m.code, m.prj, m.cfg]:  # Lock Code, Project, and Config in Row 0
+                cell.set_property("editable", False)  # Prevent edits
+                cell.set_property("foreground", "#888888")  # Gray out text
+                cell.set_property("has-entry", False)  # Hide dropdown
+            else:
+                cell.set_property("editable", True)  # Normal for other rows
+                cell.set_property("foreground", "#000000")  # Black text
 
-        elif renderer_type == "combo":
-            # Function to disable editing and gray out text for Row 0
-            def disable_edit_for_first_row(column, cell, model, iter, data=None):
-                path = model.get_path(iter).to_string()
-                if path == "0" and col_id in [m.code, m.prj, m.cfg]:  # Lock Code, Project, and Config in Row 0
-                    cell.set_property("editable", False)  # Prevent edits
-                    cell.set_property("foreground", "#888888")  # Gray out text
-                    cell.set_property("has-entry", False)  # Hide dropdown
-                else:
-                    cell.set_property("editable", True)  # Normal for other rows
-                    cell.set_property("foreground", "#000000")  # Black text
-                    # cell.set_property("has-entry", True)  # Allow dropdown
+        if renderer_type == "combo":
 
             # Create a CellRendererCombo
             renderer = Gtk.CellRendererCombo()
             renderer.set_property("editable", True)
             renderer.set_property("text-column", 0)
             renderer.set_property("has-entry", False)
+            column = Gtk.TreeViewColumn(title, renderer, text=col_id)
             
-            renderer.connect("edited", self.on_combo_changed, col_id)
-
             # Special handling for 'Code' column (column 0)
             if col_id == m.code:
                 self.code_renderer = renderer  # Store renderer reference
-                options = self.get_available_codes()  # Get only available codes
-                renderer.set_property("model", self.get_combo_model(options))
-
-                # renderer = Gtk.CellRendererText()
-                # renderer.set_property("editable", True)
+                availCodes = self.get_available_codes()  # Get only available codes
+                renderer.set_property("model", self.set_combo_options(availCodes))
                 renderer.set_property("background-set", True)
                 column = Gtk.TreeViewColumn(title, renderer, text=col_id, background=m.color)
-                self.treeview.append_column(column)
-                self.treeview.connect("row-activated", self.on_color_clicked, col_id)                
 
-            # Special handling for 'Config' column (column 3)
-            if col_id == m.cfg:  # ✅ Special handling for "Configuration" column
-                self.ls_config = [Gtk.ListStore(str) for _ in range(len(self.liststore))]  # ✅ Create a ListStore per row
+            # Special handling for 'Config' column (column 3) a set of liststores - one per row
+            if col_id == m.cfg:  # Special handling for "Configuration" column
+                self.ls_config = [Gtk.ListStore(str) for _ in range(9)] # len(self.liststore) # Create a ListStore per row
 
-                # ✅ Assign the correct ListStore to each row dynamically
+                # Assign the correct ListStore to each row dynamically
                 def set_config_model(column, cell, model, iter, data):
-                    row_index = model.get_path(iter).get_indices()[0]  # Get row index
-                    cell.set_property("model", self.ls_config[row_index])  # ✅ Set per-row ListStore
+                    row_index = model.get_path(iter).get_indices()[0]      # Get row index
+                    cell.set_property("model", self.ls_config[row_index])  # Set per-row ListStore
 
-                column.set_cell_data_func(renderer, set_config_model)  # ✅ Attach function to dynamically assign models
+                column.set_cell_data_func(renderer, set_config_model)      # Attach function to dynamically assign models
 
             renderer.connect("edited", self.on_combo_changed, col_id)
-
-            self.treeview.append_column(column)
-            # if col_id == m.cfg:  # Special handling for 'Config' column
-                # renderer = Gtk.CellRendererCombo()
-                # renderer.set_property("editable", True)
-                # renderer.set_property("text-column", 0)
-                # renderer.set_property("has-entry", False)
-                # renderer.connect("edited", self.on_combo_changed, col_id)
-
-                # column = Gtk.TreeViewColumn(title, renderer, text=col_id)
-                # column.set_cell_data_func(renderer, self.config_cell_data_func)  # Dynamic per-row options
-                # column.set_resizable(True)
-                # column.set_expand(True)
-
-                # self.treeview.append_column(column)
-                # return
-
-            wide = int(len(options) / 16) + 1 if len(options) > 14 else 1
 
             if isinstance(options, Gtk.ListStore):  # If options is a ListStore, use it directly
                 renderer.set_property("model", options)
             else:  # Otherwise, assume it's a list and convert it
-                renderer.set_property("model", self.get_combo_model(options))
+                renderer.set_property("model", self.set_combo_options(options))
 
             # Connect the signal to apply wrap-width dynamically
-            renderer.connect("editing-started", self.on_editing_started)
-
+            if col_id == m.prj:
+                renderer.connect("editing-started", self.on_editing_started)
             if align == "center":
                 renderer.set_property("xalign", 0.5)
-            
-            # Create column (avoiding duplicates)
-            existing_columns = [col.get_title() for col in self.treeview.get_columns()]
-            if title not in existing_columns:  # Prevent duplicate columns
-                column = Gtk.TreeViewColumn(title, renderer, text=col_id)
-                if col_id == m.prj:
-                    column.set_fixed_width(100)  # Increase width (default is often too narrow)
-                    column.set_resizable(True)
-                column.set_cell_data_func(renderer, disable_edit_for_first_row)  # Apply locking
-                self.treeview.append_column(column)
 
-        if not isinstance(renderer, Gtk.CellRendererToggle):
+        elif renderer_type == "toggle":
+            renderer = Gtk.CellRendererToggle()
+            renderer.set_property("activatable", True)
+            renderer.connect("toggled", self.on_toggle, col_id)
+            column = Gtk.TreeViewColumn(title, renderer, active=col_id)  # Bind "active" property
+
+        elif renderer_type == "text":
+            renderer = Gtk.CellRendererText()
             renderer.set_property("editable", editable)
+            column = Gtk.TreeViewColumn(title, renderer, text=col_id)
+            
+            # Only apply text color formatting to the % Width column
+            if col_id == m.width:
+                column.add_attribute(renderer, "foreground", m.widcol)  # text color
+                column.add_attribute(renderer, "weight", m.bold)        # bold effect
 
-        column = Gtk.TreeViewColumn(title, renderer, text=col_id)
-        # Center-align the headers for Code, 1|2, and Captions
-        if col_id in [m.code, m.pg, m.captions]:  
-            column.set_alignment(0.5)  # Center align the column title
-        if col_id in [m.code, m.pg, m.prj]:
-            return
+            # Apply formatting function *only* to the % Width column (index 5)
+            if col_id in [m.fontsize, m.baseline, m.width]:
+                column.set_cell_data_func(renderer, self.format_width_data_func, col_id)
+                renderer.connect("edited", self.on_text_edited, col_id)  # Connect edit event
+            
+        # Common to all renderer_types:
+        if align == 'right':
+            column.set_alignment(1.0)
+        elif align == 'center':
+            column.set_alignment(0.5)
+        else:
+            column.set_alignment(0.0)
+        column.set_fixed_width(width)
         column.set_resizable(True)
-        column.set_expand(True)
-        self.treeview.append_column(column)
+        if col_id not in [m.code, m.pg, m.prj]: # these are fixed-width, the rest should grow
+            column.set_expand(True)
+            
+        # Create column (avoiding creation of duplicate columns)
+        existing_columns = [col.get_title() for col in self.treeview.get_columns()]
+        if title not in existing_columns:  # Prevent duplicate columns
+            # if col_id != m.captions:
+                # column.set_cell_data_func(renderer, disable_edit_for_first_row)  # Apply locking
+            self.treeview.append_column(column)
 
+    def get_available_configs(self, project):
+        impprj = self.view.prjTree.findProject(project)
+        prjguid = impprj.guid
+        prjobj = self.view.prjTree.getProject(prjguid)
+        cfgList = list(prjobj.configs.keys()) # or ["(None)"]  # Default to ["(None)"] if project not found
+        # print(f"get_available_configs: {project}:{prjguid} {cfgList}")
+        if not len(cfgList):
+            cfgList = ['Default']
+        return prjguid, cfgList
+        
     def on_editing_started(self, cell, editable, path):
         if isinstance(editable, Gtk.ComboBox):
             # Dynamically set wrap width based on the number of items
@@ -258,37 +253,17 @@ class PolyglotSetup(Gtk.Box):
 
         return False  # No tooltip found
 
-    def config_cell_data_func(self, column, cell, model, iter, data=None):
-        print(f"config_cell_data_func")
-        path = model.get_path(iter).to_string()
-        # project = model.get_value(iter, m.prj)  # Column 2 contains the Project
-        # available_configs = self.get_available_configs()  # Get configs for that project
-
-        # Ensure Row 0 is locked
-        if path == "0":  # If this is the first row
-            cell.set_property("editable", False)  # Disable dropdown
-            cell.set_property("foreground", "#888888")  # Gray out text
-            cell.set_property("has-entry", False)  # Prevent dropdown
-        else:
-            cell.set_property("editable", True)  # Enable dropdown for other rows
-            cell.set_property("foreground", "#000000")  # Normal text color
-            # cell.set_property("has-entry", True)  # Allow dropdown
-
-        # Apply the correct config options for the row
-        # cell.set_property("model", self.get_combo_model(available_configs))
-
-    def on_width_edited(self, widget, path, new_text, col_id):
+    def on_text_edited(self, widget, path, new_text, col_id):
         try:
             new_value = float(new_text)      # Convert input to float
             new_value = round(new_value, 2)  # Keep 2 decimal places
-
             # Update the ListStore
             self.ls_treeview[path][col_id] = new_value
-            self.validate_page_widths() # Validate total widths after any edit
+            if col_id == m.width:
+                self.validate_page_widths() # Validate total widths after any edit
             self.save_data()  # Save changes
-
         except ValueError:
-            self.doStatus(f"Invalid input for % Width: {new_text}")  # Handle non-numeric input gracefully
+            self.view.doStatus(f"Invalid input: {new_text}")  # Handle non-numeric input gracefully
 
     def format_width_data_func(self, column, cell, model, iter, col_id):  # Added `data=None`
         value = model.get_value(iter, col_id)
@@ -311,68 +286,79 @@ class PolyglotSetup(Gtk.Box):
         available_codes = [code for code in self.codes if code not in used_codes]
         return available_codes
 
-    def get_combo_model(self, options):
-        print(f"get_combo_model")
+    def set_combo_options(self, options):
         model = Gtk.ListStore(str)
         if options is not None:
             for option in options:
-                print(f"Adding: {option}")
                 model.append([option])
         return model
         
     def on_combo_changed(self, widget, path, text, col_id):
-        if path == "0" and col_id in [m.code, m.prj, m.cfg]:  # Row 0 should not be editable for these columns
-            self.doStatus(f"Editing not allowed for Row 0 in column {col_id}.")
+        row_index = int(path)
+        if row_index == 0 and col_id not in [m.pg, m.width]:  # Row 0 should not be editable for these columns
+            self.view.doStatus(_("Cannot edit that value for 'L' row"))
             return
         
-        if col_id == m.code:  # Code column
+        if col_id == m.code:  # Code changed
             if text in {row[m.code] for row in self.ls_treeview if row[m.code]}:
-                self.doStatus(f"Duplicate Code not allowed: {text}")
-                return  # Prevent duplicate
+                self.view.doStatus(_("Duplicate Code not allowed"))
+                return
 
-        row_index = int(path)  # Get the row index
+        if col_id == m.prj:  # Project column changed
+            prjguid, available_configs = self.get_available_configs(text)
+            old_cfg = self.ls_treeview[row_index][m.cfg] if 0 <= row_index < len(self.ls_treeview) else None
 
-        if col_id == m.prj:  # ✅ Project column changed
-            print(f"on_combo_changed: Project changed to {text}")
-
-            available_configs = self.get_available_configs(text)  # ✅ Fetch new configs
-
-            # ✅ Update the ListStore for this specific row
+            # Update the ListStore for this specific row
             if 0 <= row_index < len(self.ls_config):  # Ensure row is valid
                 self.ls_config[row_index].clear()
-                for c in available_configs:
-                    self.ls_config[row_index].append([c])  # ✅ Append new options
-
-                # ✅ Set the first available config in the ListStore row
-                self.liststore[path][m.cfg] = available_configs[0] if available_configs else "(None)"
-
+                list(map(lambda c: self.ls_config[row_index].append([c]), available_configs))
+                # Determine the new config to select
+                if available_configs:
+                    new_cfg = old_cfg if old_cfg in available_configs else available_configs[0]
+                else:
+                    new_cfg = "Default"
+                
+                # Set the selected config
+                tree_iter = self.ls_config[row_index].get_iter_first()
+                if tree_iter:
+                    self.ls_config[row_index].set_value(tree_iter, 0, new_cfg)                
             self.treeview.queue_draw()  # Refresh UI            
-        # if col_id == m.prj:  # Project column changed
-            # print(f"on_combo_changed")
-            # available_configs = self.get_available_configs()  # Get new configs for the selected project
-            # ls = self.ls_cfg[path]
-            # for c in available_configs:
-                # print(f"{c=}")
-                # ls.append(c)
-            # self.treeview.queue_draw()  # Refresh UI
 
-        if col_id == m.prj or col_id == m.cfg:  # Project or Configuration columns
-            prj = self.ls_prj[path]
-            cfg = self.ls_cfg[path]
-            
-            if col_id == m.prj:
-                prj = text  # If changing project
-            else:
-                cfg = text  # If changing configuration
-            
-            for row in self.ls_treeview:
-                if row[m.prj] == prj and row[m.cfg] == cfg and self.ls_code[path] != row[m.code]:
-                    # FixMe! Turn this into a proper error/warning message.
-                    self.doStatus("Duplicate Project+Configuration not allowed.")
-                    return  # Prevent duplicate
-            
+        # Check for duplicated Project and Configuration names
+        if col_id == m.prj or col_id == m.cfg:  
+            prj, cfg = self.get_prj_cfg()
+            prj, cfg = (text, cfg) if col_id == m.prj else (prj, text)
+            for i, row in enumerate(self.ls_treeview):
+                if i != row_index and row[m.prj] == prj and row[m.cfg] == cfg:
+                    self.view.doStatus(_("Duplicate Project+Configuration not allowed)"))
+                    return
+                    
+        if col_id == m.prj: # Only done AFTER we've checked for duplicates
+            self.ls_treeview[row_index][m.prjguid] = prjguid
+            self.ls_treeview[row_index][m.cfg] = new_cfg
+        
+        for row in self.ls_treeview:
+            print(" | ".join(map(str, row)))  # Use "\t" for tab-separated values or "," for CSV format
+
+        # Need to load the Prj+Cfg as a view and populate the Treeview fontsize + baseline values
+        plyglt = PolyglotConfig()
+        plyglt.prjid     = self.ls_treeview[row_index][m.prj]
+        plyglt.prjguid   = self.ls_treeview[row_index][m.prjguid]
+        plyglt.cfgid     = self.ls_treeview[row_index][m.cfg]
+        plyglt.page      = self.ls_treeview[row_index][m.pg]
+        plyglt.fraction  = self.ls_treeview[row_index][m.width]
+        plyglt.captions  = self.ls_treeview[row_index][m.captions]
+        plyglt.backcolor = self.ls_treeview[row_index][m.color]
+        sfx = self.ls_treeview[row_index][m.code]
+        self.view.polyglots[sfx] = plyglt
+        polyview = self.view.createDiglotView(suffix=sfx)
+        f = polyview.get('s_fontsize', 11.0)
+        b = polyview.get('s_linespacing', 15.0)
+        self.ls_treeview[row_index][m.fontsize] = float(f)
+        self.ls_treeview[row_index][m.baseline] = float(b)
+
         self.ls_treeview[path][col_id] = text
-        self.save_data()
+        self.save_data() # Soon we can get rid of this line.
         
         # Refresh dropdowns and other dependencies after updating the combo box
         if col_id == m.code:    # Unique code changed
@@ -380,19 +366,11 @@ class PolyglotSetup(Gtk.Box):
         elif col_id == m.pg:  # Page 1 or 2 changed
             self.validate_page_widths()
             self.treeview.queue_draw()  # Refresh UI
-        elif col_id == m.prj:  # Project changed
-            self.refresh_config_dropdown()
 
     def refresh_code_dropdowns(self):
         if hasattr(self, "code_renderer"):  # Ensure renderer exists before updating
             available_codes = self.get_available_codes()
-            self.code_renderer.set_property("model", self.get_combo_model(available_codes))
-
-    def refresh_config_dropdown(self):
-        print(f"refresh_config_dropdown")
-        # if hasattr(self, "config_renderer"):  # Ensure renderer exists before updating
-            # available_configs = self.get_available_configs()
-            # self.config_renderer.set_property("model", self.get_combo_model(available_configs))
+            self.code_renderer.set_property("model", self.set_combo_options(available_codes))
 
     def set_color_from_menu(self, widget):
         selected = self.get_selected_row()
@@ -407,7 +385,7 @@ class PolyglotSetup(Gtk.Box):
         # Find the top-level window (main parent)
         parent_window = self.get_toplevel() if hasattr(self, "get_toplevel") else None
         # Create the color picker with a valid parent
-        dialog = Gtk.ColorChooserDialog(title="Pick a background color", parent=parent_window)
+        dialog = Gtk.ColorChooserDialog(title=_("Pick a background color"), parent=parent_window)
 
         current_color = model[path][col_id]  # Hex color format
         if current_color:
@@ -478,6 +456,11 @@ class PolyglotSetup(Gtk.Box):
             delete_item.set_sensitive(not is_first_row)  # Disable if Row 0
             self.context_menu.append(delete_item)
 
+            change_cfg_settings = Gtk.MenuItem(label=_("Edit Settings..."))
+            change_cfg_settings.connect("activate", self.edit_other_config)
+            change_cfg_settings.set_sensitive(not is_first_row)  # Disable if Row 0
+            self.context_menu.append(change_cfg_settings)
+
             color_item = Gtk.MenuItem(label=_("Set Color..."))
             color_item.connect("activate", self.set_color_from_menu)
             self.context_menu.append(color_item)
@@ -485,9 +468,6 @@ class PolyglotSetup(Gtk.Box):
             self.context_menu.show_all()
             self.update_context_menu()  # Apply correct state
             self.context_menu.popup_at_pointer(event)
-
-    def change_config(self, prj, cfg):
-        self.doStatus(f"Opening config for Project: {prj}, Configuration: {cfg} ...")
 
     def delete_selected_row(self, widget):
         selected = self.get_selected_row()
@@ -498,6 +478,7 @@ class PolyglotSetup(Gtk.Box):
             self.refresh_code_dropdowns()  # Refresh available codes
             self.update_context_menu()     # Refresh menu state
             self.validate_page_widths()    # Refresh color of % width
+            # FixMe! Need to delete the self.view.polyglots['code'] dict as well
 
     def update_context_menu(self):
         max_rows = 9
@@ -507,13 +488,20 @@ class PolyglotSetup(Gtk.Box):
             if isinstance(item, Gtk.MenuItem) and item.get_label() == "Add a row/text":
                 item.set_sensitive(has_room)  # Enable/disable based on row count
 
-    def edit_other_config(self, widget):
+    def get_prj_cfg(self):
         selection = self.treeview.get_selection()
         model, iter = selection.get_selected()
         if iter:
             prj = model.get_value(iter, m.prj)
             cfg = model.get_value(iter, m.cfg)
-            self.doStatus(f"Editing other config for: {prj}+{cfg} - FixMe! - do something...")
+            return prj, cfg
+        else:
+            return None, None
+        
+    def edit_other_config(self, menu_item):
+        prj, cfg = self.get_prj_cfg()
+        if prj is not None and cfg is not None:
+            self.view.doStatus(_("Opening {}:{} ...").format(prj, cfg))
 
     def get_curr_proj(self):
         w = self.builder.get_object('fcb_project')
@@ -526,7 +514,7 @@ class PolyglotSetup(Gtk.Box):
 
     def add_row(self, widget):
         if len(self.ls_treeview) >= 9:
-            self.doStatus("Maximum of 9 rows reached. Cannot add more.")
+            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.")
             return  # Stop if the limit is reached
 
         if len(self.ls_treeview) == 0:  # First row must be locked
@@ -568,55 +556,6 @@ class PolyglotSetup(Gtk.Box):
 
                 self.save_data()
 
-    def on_drag_data_get(self, treeview, drag_context, selection_data, info, time):
-        model, iter = treeview.get_selection().get_selected()
-        if iter:
-            path = model.get_path(iter).to_string()  # Get row index as a string
-            
-            # Allow row 0 to be dragged, but do not move it
-            selection_data.set_text(path, -1)  # Store it in drag data
-
-    def on_drag_data_received(self, treeview, drag_context, x, y, selection, info, time):
-        model = treeview.get_model()
-        drop_info = treeview.get_dest_row_at_pos(x, y)
-
-        dragged_path_str = selection.get_text()  # Get the dragged row path as a string
-
-        if not dragged_path_str:  # Check if dragged data is empty
-            return  # Prevent crashes if the selection is empty or None
-
-        dragged_path_str = dragged_path_str.strip()  # Safe to call .strip() now
-
-        dragged_iter = model.get_iter_from_string(dragged_path_str)  # Get the dragged row iterator
-        dragged_data = list(model[dragged_iter])  # Copy row data before removing
-
-        # Get the target row at the drop position
-        if drop_info:
-            path, position = drop_info
-            
-            # Prevent dropping row 0 to another row
-            if dragged_path_str == "0":
-                # Re-insert row 0 at its original position
-                model.insert_before(model.get_iter_first(), dragged_data)  # Insert at the beginning (index 0)
-                return  # Row 0 goes back to where it was; no need to proceed further
-
-            # Prevent drop on row 0
-            if path.to_string() == "0":
-                return  # Do nothing if trying to drop onto row 0
-
-            target_iter = model.get_iter(path)
-
-            # Move before or after the target row
-            if position == Gtk.TreeViewDropPosition.BEFORE:
-                new_iter = model.insert_before(target_iter, dragged_data)
-            else:
-                new_iter = model.insert_after(target_iter, dragged_data)
-
-            # Remove the old row after insertion
-            model.remove(dragged_iter)
-
-            self.save_data()  # Save changes
-
     def distribute_width_evenly(self, widget):
         selected = self.get_selected_row()
         if not selected:
@@ -655,7 +594,6 @@ class PolyglotSetup(Gtk.Box):
             page = self.ls_treeview[row][m.pg]
             total = page_totals[page]  # Get total width for this page
             is_invalid = abs(total - 100.0) > 0.02  # Allow small floating-point errors
-            # self.doStatus(f"{page=}  {total=}  {is_invalid=}")
 
             text_color = "#FF0000" if is_invalid else "#000000"  # Red if invalid, black if valid
             font_weight = 700 if is_invalid else 400  # Bold if invalid, normal if valid
@@ -665,31 +603,10 @@ class PolyglotSetup(Gtk.Box):
 
         self.treeview.queue_draw()  # Refresh UI
 
-        # else:
-            # impprj = self.prjTree.getProject(impgui)
-
-    def get_available_configs(self):
-        selection = self.treeview.get_selection()
-        model, iter = selection.get_selected()
-        if not iter:
-            return
-        # prjguid = model.get_value(iter, m.prjguid)
-        # if prjguid is None or not len(prjguid):
-        prjname = model.get_value(iter, m.prj)
-        impprj = self.view.prjTree.findProject(prjname)
-        prjguid = impprj.guid
-        # cfgList = list(impprj.configs)
-        model.set_value(iter, m.prjguid, prjguid)
-        prjobj = self.view.prjTree.getProject(prjguid)
-        cfgList = list(prjobj.configs.keys()) # or ["(None)"]  # Default to ["(None)"] if project not found
-        print(f"get_available_configs: {prjname}:{prjguid} {cfgList}")
-        if not len(cfgList):
-            cfgList = ['Default',]
-        return cfgList
-
     def save_data(self): #FixMe!
         """Saves the liststore data to a JSON file."""
         data = [{row[m.code]: {"spread_side": row[m.pg], "prj": row[m.prj], "cfg": row[m.cfg], "captions": row[m.captions], "fontsize": row[m.fontsize], "baseline": row[m.baseline], "percentage": row[m.width], "color": row[m.color], "prjguid": row[m.prjguid]}} for row in self.ls_treeview]
+        # Change this to look through the rows and add to the ploglots dicts IF neither prj nor cfg are (None).
         with open("data.json", "w") as f:
             json.dump(data, f, indent=4)
         self.update_layout_string()
@@ -697,7 +614,7 @@ class PolyglotSetup(Gtk.Box):
     def update_layout_string(self):
         t = self.generate_layout_from_treeview()
         w = self.builder.get_object('t_layout')
-        if not "\\" in w.get_text():
+        if not "/" in w.get_text():
             w.set_text(t)
             self.update_layout_preview()
 
@@ -722,7 +639,7 @@ class PolyglotSetup(Gtk.Box):
     def validate_layout(self, t_layout, liststore):
         # Rule 2: Ensure there are no spaces
         if " " in t_layout:
-            return False, "Spaces not allowed"
+            return False, _("Spaces not allowed")
 
         # Extract used codes and their '1|2' values from the ListStore
         used_codes = {}  # Dictionary mapping codes -> '1' or '2'
@@ -745,43 +662,33 @@ class PolyglotSetup(Gtk.Box):
             left_codes = set(left_side.replace("/", ""))
             right_codes = set(right_side.replace("/", ""))
             if not left_codes.issubset({k for k, v in used_codes.items() if v == "1"}):
-                return False, "Codes on left must\nbe assigned to page '1'"
+                return False, _("Codes on left must {}be assigned to page '1'").format('\n')
             if not right_codes.issubset({k for k, v in used_codes.items() if v == "2"}):
-                return False, "Codes on right must\nbe assigned to page '2'"
+                return False, _("Codes on right must {}be assigned to page '2'").format('\n')
 
         # Rule 5: Ensure '/' is used correctly (not at start or end, no consecutive slashes)
         if t_layout.startswith("/") or t_layout.endswith("/") or "//" in t_layout:
-            return False, "Invalid position for slash"
+            return False, _("Invalid position for slash")
             
         # Rule 6: Ensure L and R are always present
         if not ("L" in all_letters and "R" in all_letters):
-            return False, "L or R missing"
+            return False, _("L or R missing")
 
         # Rule 7 (NEW): Ensure all codes in the TreeView are included in t_layout
         missing_codes = all_used_codes - all_layout_codes
         if missing_codes:
-            return False, f"Missing: {','.join(missing_codes)}"
+            return False, _("Missing: {}").format(','.join(missing_codes))
             
         # Rule 10: Hyphen '-' is allowed to indicate a blank page
         valid_chars = set(used_codes.keys()).union({",", "/", "-"})
         if not set(t_layout).issubset(valid_chars):
-            return False, "Invalid characters"
+            return False, _("Invalid characters")
 
         # Rule 1: Ensure all letters in t_layout exist in the used_codes
         if not all_letters.issubset(set(used_codes.keys())):
-            return False, "Invalid codes used"
+            return False, _("Invalid codes used")
 
-        return True, "Valid layout"
-
-    def testValidator(self, x):
-        self.doStatus(f"Layout: {t}")
-        for l in "LR L,R L/R L,RA LR,A L,R/A L/R,A L/R,AB L/R,A/B LR,ABC L/RA,B/CD L/A/B,R/C/D LR/ /LR AB AB,CD A/B LR/AB".split():
-            is_valid, message = self.validate_layout(l, self.ls_treeview)
-
-            if not is_valid:
-                self.doStatus(f"Layout Error: {l} - {message}")
-            else:
-                self.doStatus(f"Valid Layout: {l}")
+        return True, _("Valid layout")
 
     def update_layout_preview(self):
         widget = self.builder.get_object('bx_layoutPreview')
@@ -928,9 +835,4 @@ class PolyglotSetup(Gtk.Box):
         widget.add(spread_box)
         widget.show_all()
 
-    def doStatus(self, txt=""):
-        sl = self.builder.get_object("l_statusLine")
-        sl.set_text(txt)
-        status = len(txt)
-        sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
         

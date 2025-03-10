@@ -1872,7 +1872,7 @@ settings for a similar project.</property>
     <signal name="closed" handler="menu_inner_closed" swapped="no"/>
     <child>
       <object class="GtkTreeView">
-        <property name="height-request">200</property>
+        <property name="height-request">210</property>
         <property name="visible">True</property>
         <property name="can-focus">True</property>
         <property name="model">ls_interfaceLang</property>
@@ -18577,6 +18577,9 @@ not be merged. These will appear one after the other.</property>
                                 <property name="left-attach">1</property>
                                 <property name="top-attach">4</property>
                               </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

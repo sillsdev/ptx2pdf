@@ -518,21 +518,7 @@ _map = {
     "import/frontmatter":       ("c_oth_FrontMatter", None, None),
     "import/overwitefrtmatter": ("c_oth_OverwriteFrtMatter", None, None),
     "import/cover":             ("c_oth_Cover", None, None),
-    
 }
-
-polymap = {
-  # "code" :    ("t_polycode", None, None),
-    "project" : ("fcb_polyproject", None, None),
-    "captions": ("c_polycaptions", None, None),
-    "fontsize": ("t_polyfontsize", None, None),
-    "baseline": ("t_polybaseline", None, None),
-    "width" :   ("t_polywidth", None, None),
-    "config" :  ("fcb_polyconfig", None, None),
-    "page" :    ("fcb_polypage", None, None),
-    "color" :   ("t_polycolor", None, None),
-    }
-    
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}
 
 ImportCategories = {
