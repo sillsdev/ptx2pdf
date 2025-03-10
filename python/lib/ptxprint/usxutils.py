@@ -267,9 +267,10 @@ def _addorncv_hierarchy(e, curr):
 
 class Usfm:
 
-    def __init__(self, xml, parser=None):
+    def __init__(self, xml, parser=None, grammar=None):
         self.xml = xml
         self.parser = parser
+        self.grammar = grammar
         self.cvaddorned = False
 
     @classmethod
@@ -277,7 +278,7 @@ class Usfm:
         if grammar is None and sheet is not None:
             grammar = createGrammar(sheet)
         usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar)
-        return cls(usxdoc, usxdoc.parser)
+        return cls(usxdoc, usxdoc.parser, grammar=grammar)
 
     def getroot(self):
         return self.xml.getroot()
@@ -511,22 +512,25 @@ class Usfm:
     def stripIntro(self, noIntro=True, noOutline=True):
         if noIntro and noOutline:
             def filter(e):
-                return Grammar.marker_categories.get(e.get('style', ''), "") == "introduction"
+                return self.grammar.marker_categories.get(e.get('style', ''), "") == "introduction"
         elif noOutline:
             def filter(e):
-                return e.tag.startswith("io")
+                return e.get("style", "").startswith("io")
         elif noIntro:
             def filter(e):
-                return not e.tag.startswith("io") and Grammar.marker_categories.get(e.get('style', ''), "") == "introduction"
+                return not e.get("style", "").startswith("io") and self.grammar.marker_categories.get(e.get('style', ''), "") == "introduction"
         else:
             return
         root = self.getroot()
         inels = list(root)
+        count = 0
         for i, c in enumerate(inels):
-            if c.tag == "chapter" or Grammar.marker_categories.get(c.get('style', ''), "") == "versepara":
+            if c.tag == "chapter" or self.grammar.marker_categories.get(c.get('style', ''), "") == "versepara":
                 break
             if filter(c):
+                count += 1
                 root.remove(c)
+        logger.debug(f"stripIntro removed {count} paragraphs")
 
     def stripEmptyChVs(self, ellipsis=False):
         def hastext(c):

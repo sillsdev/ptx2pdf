@@ -202,10 +202,14 @@ class Chunk(list):
             lastel = None
             for e in self:
                 if e.tag == "para":
+                    if lastel is not None and lastel.tail:
+                        outf.write(lastel.tail)
                     outf.write(f"\n\\{e.get('style', '')} {e.text}")
                     lastel = e
                 else:
                     lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else None), lastel=lastel)
+            if lastel is not None and lastel.tail:
+                outf.write(lastel.tail)
             res = outf.getvalue() + "\n"
         return res
 
@@ -390,8 +394,8 @@ class Collector:
             logger.log(9-depth,"{" * depth)
         elements = list(root)
         i = 0
-        #if depth == 0:
-        #    breakpoint()
+        # if depth == 0:
+        #     breakpoint()
         for c in elements:
             if c.tag == "figure" and self.fsecondary == primary:
                 root.remove(c)
@@ -465,7 +469,7 @@ class Collector:
                 else:
                     currChunk.chap = self.chap
                     currChunk.verse = self.verse
-                    currChunk[-1] = c
+                    currChunk.append(c)
             else:
                 self.currChunk.append(c)
             #logger.log(7,f'collecting {c.name}')

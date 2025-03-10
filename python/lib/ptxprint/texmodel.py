@@ -1045,7 +1045,7 @@ class TexModel:
         # import pdb; pdb.set_trace()
         syntaxErrors = []
         try:
-            doc = Usfm.readfile(txt)
+            doc = Usfm.readfile(txt, grammar=self.printer.usfms.grammar)
             doc.xml.canonicalise()
         except SyntaxError as e:
             syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))

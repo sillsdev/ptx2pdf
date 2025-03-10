@@ -348,7 +348,7 @@ def normal_ucd(txt, mode="NFC"):
 
 if __name__ == '__main__':
     import sys, pickle
-    from ptxprint.sfm.ucd import UCD, get_ucd, normal_ucd
+    from ptxprint.unicode.ucd import UCD, get_ucd, normal_ucd
     from timeit import timeit
 
     def struni(s):
@@ -360,7 +360,7 @@ if __name__ == '__main__':
         s = "\u212B\u0324"
         snfd = normal_ucd(s, "NFD")
         snfc = normal_ucd(s, "NFC")
-        #print(timeit('snfc = normal_ucd("\u212B\u0324", "NFC")', setup='from ptxprint.sfm.ucd import normal_ucd; normal_ucd("A")'))
+        #print(timeit('snfc = normal_ucd("\u212B\u0324", "NFC")', setup='from ptxprint.unicode.ucd import normal_ucd; normal_ucd("A")'))
         print("orig={}, nfd={}, nfc={}".format(struni(s), struni(snfd), struni(snfc)))
     else:
         try:
