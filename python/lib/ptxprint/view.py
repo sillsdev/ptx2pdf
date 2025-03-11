@@ -790,15 +790,12 @@ class ViewModel:
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
-            print(f"readConfig: Diglot is on.")
             for s in config.sections():
-                print(f"{s=}")
                 if s.startswith("diglot_"):
                     k = s[7:]
                     pg = PolyglotConfig()
                     pg.readConfig(config, s)
                     self.polyglots[k] = pg
-                    print(f"{k=}")
                     self.createDiglotView(k)
         else:
             self.setPrintBtnStatus(2)
@@ -1823,24 +1820,24 @@ class ViewModel:
         return res
 
     def createDiglotView(self, suffix="R"):
-        breakpoint()
+        # breakpoint()
         self.setPrintBtnStatus(2)
         if suffix not in self.polyglots:
             print(f"Returned early from: createDiglotView. {suffix=}")
             return None
         prj = self.prjTree.getProject(self.polyglots[suffix].prjguid)
-        cfgid = self.polyglots[suffix].cfgid
-        if prj is None or cfgid is None:
+        cfg = self.polyglots[suffix].cfg
+        if prj is None or cfg is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))
             digview = None
         else:
             digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
             digview.isDiglot = True
             digview.setPrjid(prj.prjid, prj.guid)
-            if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
+            if cfg is None or cfg == "" or not digview.setConfigId(cfg):
                 digview = None
         if digview is None:
-            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfgid}"))
+            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfg}"))
         else:
             digview.isDiglot = True
             digview.digSuffix = suffix

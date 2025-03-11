@@ -1,27 +1,28 @@
 from ptxprint.utils import f2s
 
-configmap = {
-    "projectid":    ("prjid", str),
+# 'code', 'pg', 'prj', 'cfg', 'captions', 'width', 'color', 'prjguid'
+configmap = { 
+    "projectid":    ("prj", str),
     "projectguid":  ("prjguid", str),
-    "config":       ("cfgid", str),
-    "page":         ("page", int),
-    "fraction":     ("fraction", float),
+    "config":       ("cfg", str),
+    "page":         ("pg", str),
+    "fraction":     ("width", float),
     "captions":     ("captions", bool),
-    "backcolor":    ("backcolor", str)
+    "backcolor":    ("color", str)
 }
 
 class PolyglotConfig:
     def __init__(self):
-        self.prjid = None
+        self.prj = None
         self.prjguid = None
-        self.cfgid = None
-        self.fraction = None
+        self.cfg = None
+        self.pg = None
+        self.width = None
         self.captions = None
-        self.backcolor = None
+        self.color = None
 
     def readConfig(self, config, sect):
         for k, v in configmap.items():
-            print(f"{k=} {v=}")
             nv = None
             if v[1] == float:
                 nv = config.getfloat(sect, k, fallback=None)
