@@ -1527,6 +1527,7 @@ class TexModel:
                 if ge is not None:
                     for g in ge:
                         gdefn = re.sub(r"\\xt (.+?)\\xt\*", r"\1", g[2])
+                        gdefn = re.sub(r"\\w (.+?\|)?(.+?)\\w\*", r"\2", gdefn) # FIXME! This strips out \w from notes, preventing broken USFM (notes in notes). It would be better to leave them as-is, and avoid detecting them in notes, so readers can follow the chain.
                         gdefn = re.sub(r"\\", r"\\\\", gdefn)
                         gpfx = re.sub(r"~\s+"," ",g[0]) # Remove any trailing spaces from glossary item prefix
                         self.localChanges.append(makeChange(r"(\\w (.+?\|)?{} ?\\w\*)".format(g[1]), \
