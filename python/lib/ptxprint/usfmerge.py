@@ -448,7 +448,7 @@ class Collector:
                 self.oldmode = self.mode
                 currChunk = self.makeChunk(c)
                 if MergeF.ChunkOnVerses in settings:
-                    if isverse(c):
+                    if c.tag == "verse":
                         currChunk.hasVerse = True # By definition!
                         self.currChunk.label(self.chap, self.verse, self.end, 0,'')
                         self.currChunk.hasVerse = True

@@ -1,6 +1,6 @@
 import re
 from ptxprint.usxutils import Usfm
-from ptxprint.reference import RefList
+from ptxprint.reference import RefList, RefRange
 from usfmtc.usxmodel import iterusx
 
 def read_module(inf, sheets):
