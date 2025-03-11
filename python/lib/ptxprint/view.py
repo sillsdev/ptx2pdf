@@ -645,14 +645,14 @@ class ViewModel:
                 self.resetToInitValues(updatebklist=False)
             logger.debug(f"Reading config {configName} in the config context of {self.cfgid}")
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
-            if oldVersion < 0:
+            if float(oldVersion) < 0:
                 return False
             self.styleEditor.reset(os.path.join(self.scriptsdir, "usfm_sb.sty"))
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
             if newconfig:
                 self.set("t_invisiblePassword", "", mod=False)
-            if oldVersion >= 0 or forceConfig:
+            if float(oldVersion) >= 0 or forceConfig:
                 logger.debug(f"Switching config from {self.cfgid} to {configName}")
                 self.cfgid = configName
             if readConfig:  # project changed
@@ -672,7 +672,7 @@ class ViewModel:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
                 if self.get("t_txlQuestionsLang") == "":
                     self.set("t_txlQuestionsLang", lngCode)
-            return oldVersion >= 0
+            return float(oldVersion) >= 0
         else:
             return True
 
@@ -899,8 +899,6 @@ class ViewModel:
         # for k, v in self.polyglots.items():
             # v.writeConfig(config, f"diglot_{k}")
         if isinstance(self.polyglots, dict):  # Ensure it's a dictionary
-            for attribute, value in self.polyglots.items():
-                print(f"{attribute}: {value}")    
             for k, v in self.polyglots.items():
                 v.writeConfig(config, f"diglot_{k}")
         else:
@@ -1290,9 +1288,9 @@ class ViewModel:
         self.updateFont2BaselineRatio()
 
     def updateStyles(self, version):
-        if version < 0:
+        if float(version) < 0:
             return
-        if version < 1.601:
+        if float(version) < 1.601:
            if self.get("fcb_textDirection", "") == "rtl":
                 for k in self.styleEditor.allStyles():
                     j = self.styleEditor.getval(k, 'Justification')
@@ -1300,14 +1298,14 @@ class ViewModel:
                         self.styleEditor.setval(k, 'Justification', 'Left')
                     elif j == "Left":
                         self.styleEditor.setval(k, 'Justification', 'Right')
-        elif version < 1.602:
+        elif float(version) < 1.602:
             for a in "fx":
                 for b in "klmopqrtvw":
                     v = self.styleEditor.getval(a+b, 'FontSize', None)
                     if v is not None:
                         self.styleEditor.setval(a+b, 'FontSize', None)
                         self.styleEditor.setval(a+b, 'FontScale', v, mapin=False)
-        elif version < 2.11:
+        elif float(version) < 2.11:
             xre = re.compile(r"^x-credit:box=(.*?)(\|fig)?$")
             for k in self.styleEditor.allStyles():
                 if k is not None and k.startswith("x-credit:"):
@@ -1320,7 +1318,7 @@ class ViewModel:
                         if k in s:
                             s[newk] = s[k]
                             del s[k]
-        elif version < 2.16:
+        elif float(version) < 2.16:
             for k in self.styleEditor.allStyles():
                 j = self.styleEditor.getval(k, 'Justification')
                 if j == "Left":

@@ -48,7 +48,7 @@ from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
 from ptxprint.pdf_viewer import PDFViewer, Paragraphs
 from ptxprint.tatweel import TatweelDialog
-from ptxprint.polyglot_setup import PolyglotSetup
+from ptxprint.gtkpolyglot import PolyglotSetup
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -3631,9 +3631,9 @@ class GtkViewModel(ViewModel):
     def loadPolyglotSettings(self):
         self.tv_polyglot = Gtk.TreeView()
         # projects = self.builder.get_object("ls_projects")
-        self.polyglot_setup = PolyglotSetup(self.builder, self, self.tv_polyglot)
+        self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
         polyset = self.builder.get_object('bx_polyglot')
-        polyset.pack_start(self.polyglot_setup, True, True, 0)
+        polyset.pack_start(self.gtkpolyglot, True, True, 0)
         polyset.show_all()
 
     def showmybook(self, isfirst=False):
@@ -6596,4 +6596,4 @@ Thank you,
                 dialog.resize(width, height)
         
     def onPolyglotLayoutFocusOut(self, a, b):
-        self.polyglot_setup.update_layout_preview()
+        self.gtkpolyglot.update_layout_preview()
