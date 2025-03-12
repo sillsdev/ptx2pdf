@@ -1045,8 +1045,12 @@ class ViewModel:
             bmargin = config.getfloat("paper", "bottommargin", fallback=10) * 72.27 / 25.4
             lineskip = config.getfloat("paragraph", "linespacing", fallback=12)
             self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos))))
-            self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=False))
             self._configset(config, "document/marginalposn", "left")
+            try:
+                noinkinmargin = config.getboolean("footer", "noinkinmargin", fallback=False)
+            except ValueError:
+                noinkinmargin = False  # Default value if the value is not a valid boolean
+            self._configset(config, "footer/noinkinmargin", not noinkinmargin)            
         if v < 2.12:
             if (x := config.get("document", "diffColor", fallback=None)) is not None:
                 self._configset(config, "document/odiffcolor", x)
@@ -1912,7 +1916,7 @@ REM To run this batch script (in Windows) change the extension
 REM from .txt to .bat and then type: runtex.bat <Enter>
 cd local\\ptxprint\\{0}
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
-if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\windows\\xetex.exe
+if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\ptxprint\\xetex\\bin\\windows\\xetex.exe
 set FONTCONFIG_FILE=%cd%\\..\\..\\..\\fonts.conf
 set TEXINPUTS=.;%cd%\\..\\..\\..\\src\\;
 set hyph_size=32749
