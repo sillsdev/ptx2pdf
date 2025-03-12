@@ -1,8 +1,24 @@
 PTXprint 2.7.27 Release Notes
-1 Mar 2025
+12 Mar 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.28 (12 Mar 2025)
+  * Add width to insert rule codelet
+  * Footnote glossary work-around, and backslashed-slash
+  * Fix - only add to anchormap if 'anchor' key exists in p (PR#1053 n8marti)
+  * Escape any slashes in glossary footnote contents
+  * Improve glossary-entry finding regex
+  * Recover pre-section title (etc) spacing
+  * Add in margin scope gridlines
+  * Add another Grid option for 'In Margin Areas' and rename the Text Area option
+  * Get Guides working for RTL as well
+  * Get left and right pages working for gridding in pdf_viewer
+  * Keep going if no parlocs file
+  * Fix unbalanced gutters
+  * Add gridlines to viewer
+  * Move guidelines to being drawn only in the viewer
 
 Bug fixes and Improvements in 2.7.27 (1 Mar 2025)
   * Fix missing stylesheets after folder moved (usfm_sb.sty was missing)
