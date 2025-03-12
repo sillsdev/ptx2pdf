@@ -1820,7 +1820,7 @@ class Paragraphs(list):
                 if currps[polycol] is not None:
                     currr = ParRect(pnum, cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
-            elif c == "parpicstart":
+            elif c == "parpicstart":     # ref, src (filename or type), x, y
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None:
                     return
@@ -1832,15 +1832,12 @@ class Paragraphs(list):
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
-            elif c == "parpicstop":
+            elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or currr is None:
+                if cinfo is None or currr is None or currpic is None:
                     return
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
-                #if currps.get(polycol, None) is not None:
-                #    r = currps[polycol].rects[-1]
-                #    r.ystart = currr.yend
                 currpic = None
                 if currp is not None:
                     currpr = currr

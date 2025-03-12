@@ -3,7 +3,7 @@ from ptxprint.reference import MakeReference, BookNames
 import usfmtc
 from usfmtc.usfmparser import Grammar
 from usfmtc.xmlutils import ParentElement, hastext, isempty
-from usfmtc.usxmodel import iterusx
+from usfmtc.usxmodel import iterusx, addesids
 from copy import deepcopy
 
 logger = logging.getLogger(__name__)
@@ -264,6 +264,12 @@ def _addorncv_hierarchy(e, curr):
     for c in e:
         _addorncv_hierarchy(c, curr)
 
+def allparas(root):
+    for e in root:
+        if e.tag in ("para", "book", "chapter"):
+            yield e
+        if e.tag in ("sidebar", ):
+            yield from allparas(e)
 
 class Usfm:
 
@@ -524,7 +530,7 @@ class Usfm:
         root = self.getroot()
         inels = list(root)
         count = 0
-        for i, c in enumerate(inels):
+        for i, c in enumerate(allparas(inels)):
             if c.tag == "chapter" or self.grammar.marker_categories.get(c.get('style', ''), "") == "versepara":
                 break
             if filter(c):
@@ -557,7 +563,7 @@ class Usfm:
             return
         startc = i
         i += 1
-        for e in inels[i:]:
+        for e in allparas(inels[i:]):
             # process paragraphs and perhaps remove them if empty
             if e.tag == "para":
                 isempty = False

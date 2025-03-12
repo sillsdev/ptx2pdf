@@ -415,7 +415,7 @@ class Collector:
                     self.syncp = c.get("syncaddr", "")
                 except (ValueError, TypeError):
                     self.syncp = '@'
-                logger.log(8, f" {self.chap}:{self.verse}:{self.syncp} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
+                logger.log(8, f" {self.chap}:{self.verse}:{self.syncp} {c.get('style', '')} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
                 M=re.search(r"v(\d+)(\D*)$", self.syncp)
                 if (M is not None):
                     Mv = M.group(1)
@@ -472,10 +472,10 @@ class Collector:
                     currChunk.append(c)
             else:
                 self.currChunk.append(c)
-            #logger.log(7,f'collecting {c.name}')
+            #logger.log(7,f'collecting {c.get('style', '')}')
             if c.tag == "para":
                 t = self.collect(c, primary=primary, depth=1+depth)
-            #logger.log(7,f'collected {c.name}')
+            #logger.log(7,f'collected {c.get('style', '')}')
                 if t is not None:
                     logger.log(7, t)
                     currChunk = t
@@ -639,18 +639,18 @@ class Collector:
         for i in range(0, len(self.acc)):
             t=self.acc[i].type.value
             scval=self.scores[t]
-            if self.acc[i][0].name in self.protect:
-                logger.debug(f"Protecting \\{self.acc[i][0].name}")
-                scval -= self.protect[self.acc[i][0].name]
+            if self.acc[i][0].get("style", "") in self.protect:
+                logger.debug(f"Protecting \\{self.acc[i][0].get('style', '')}")
+                scval -= self.protect[self.acc[i][0].get("style", "")]
             self.acc[i].score = scval
             pos=self.acc[i].position
             self.loc[pos] = i
             if pos in results:
                 results[pos] += scval
-                logger.debug("%s(%s)  + %d = %d" % (pos,self.acc[i][0].name, scval, results[pos]))
+                logger.debug("%s(%s)  + %d = %d" % (pos,self.acc[i][0].get('style', ''), scval, results[pos]))
             else:
                 results[pos] = scval
-                logger.debug(f"{pos}({self.acc[i][0].name}) = {scval}")
+                logger.debug(f"{pos}({self.acc[i][0].get('style', '')}) = {scval}")
         return results
 
     def getofs(self,pos, incremental=True):
@@ -934,7 +934,7 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
     config = {}#configparser.ConfigParser()
     flaga = {}
     for k in MergeF:
-      flaga[k.name] = k in settings
+      flaga[k.get('style', '')] = k in settings
     config['FLAGS'] = flaga
     config['DEFAULT'] = {k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
     config['L'] = {'WEIGHT': 51}
@@ -980,8 +980,8 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
                     comment = _chunkDesc_map[k]
                     if not comment.startswith('(!)'):
                         #cannon=_canonical_order[k] if k in _canonical_order else 9
-                        #configfile.write(f"#{comment} ({cannon})\n{k.name} = {v}\n")
-                        configfile.write(f"#{comment}\n{k.name} = {v}\n")
+                        #configfile.write(f"#{comment} ({cannon})\n{k.get('style', '')} = {v}\n")
+                        configfile.write(f"#{comment}\n{k.get('style', '')} = {v}\n")
                 elif section == "FLAGS":
                     configfile.write(f"# {k} = {v}\n")
                 else:
@@ -997,8 +997,8 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     config.read(mergeconfigfile)
     if config.has_section("FLAGS"):
       for key in MergeF:
-        if config.has_option("FLAGS", key.name):
-          tf = config.getboolean("FLAGS", key.name)
+        if config.has_option("FLAGS", key.get('style', '')):
+          tf = config.getboolean("FLAGS", key.get('style', ''))
           logger.debug(f"Flag {key} is set to {tf}")
           if tf:
             settings = settings | key
