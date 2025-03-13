@@ -1592,7 +1592,7 @@ class ParRect:
         return self.__str__()
 
     def get_dest(self, x, y, baseline):
-        if self.dests is None:
+        if self.dests is None or baseline is None:
             return None
         ydiff = None
         xdiff = None
@@ -1666,7 +1666,7 @@ class ParlocLinesIterator:
         self.replay = False
 
     def __iter__(self):
-        if os.path.exists(self.fname):
+        if self.fname is not None and os.path.exists(self.fname):
             with open(self.fname, encoding="utf-8") as inf:
                 self.lines = inf.readlines()
         else:
@@ -1718,6 +1718,8 @@ class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
 
     def readParlocs(self, fname, rtl=False):
+        if fname is None:
+            return
         self.pindex = []
         self.pnums = {}
         self.pnumorder = []
@@ -1896,7 +1898,7 @@ class Paragraphs(list):
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return (p, r.get_dest(x, y, p.baseline))
+                    return (p, r.get_dest(x, y, getattr(p, 'baseline' None)))
         return (None, None)
 
     def getParas(self, pnum, inclast=False):
