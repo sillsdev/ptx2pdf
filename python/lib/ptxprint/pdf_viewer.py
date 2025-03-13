@@ -308,7 +308,11 @@ class PDFViewer:
             self.spread_mode = False
         else:
             self.spread_mode = self.model.get("c_bkView", False)
-        page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
+        # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
+        if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
+            page = self.parlocs.pnumorder[cpage - 1]
+        else:
+            page = cpage
         # print(f"{self.parlocs.pnums}")
         # print(f"in show_pdf: {cpage=}   {page=}")
         layerfns = []
@@ -1718,11 +1722,11 @@ class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
 
     def readParlocs(self, fname, rtl=False):
-        if fname is None:
-            return
         self.pindex = []
         self.pnums = {}
         self.pnumorder = []
+        if fname is None:
+            return
         currp = None
         currr = None
         endpar = True
@@ -1884,6 +1888,9 @@ class Paragraphs(list):
         self.sort(key=lambda x:x.sortKey())
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
+        
+    def isEmpty(self):
+        return not len(self.pindex)
         
     def findPos(self, pnum, x, y, rtl=False):
         """ returns a page index (not folio) """
