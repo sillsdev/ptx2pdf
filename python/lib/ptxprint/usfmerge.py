@@ -997,8 +997,8 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     config.read(mergeconfigfile)
     if config.has_section("FLAGS"):
       for key in MergeF:
-        if config.has_option("FLAGS", key.get('style', '')):
-          tf = config.getboolean("FLAGS", key.get('style', ''))
+        if config.has_option("FLAGS", key.name):
+          tf = config.getboolean("FLAGS", key.name)
           logger.debug(f"Flag {key} is set to {tf}")
           if tf:
             settings = settings | key
