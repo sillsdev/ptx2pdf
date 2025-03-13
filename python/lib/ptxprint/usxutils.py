@@ -281,8 +281,8 @@ class Usfm:
 
     @classmethod
     def readfile(cls, fname, grammar=None, sheet=None):           # can also take the data straight
-        if grammar is None and sheet is not None:
-            grammar = createGrammar(sheet)
+        if grammar is None:
+            grammar = createGrammar(sheet if sheet is not None else [])
         usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar)
         return cls(usxdoc, usxdoc.parser, grammar=grammar)
 
