@@ -375,7 +375,7 @@ class PDFViewer:
 
         pwidth, pheight = page.get_size()
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos,
-                headerlabel, footerlabel) = self.model.getMargins()
+                headerlabel, footerlabel, hfontsizemms) = self.model.getMargins()
         texttop = mm_pts(float(self.model.get("s_topmargin")))
         hdrbot = float(self.model.get("s_headerposition"))
         ftrtop = float(self.model.get("s_footerposition"))
@@ -389,8 +389,8 @@ class PDFViewer:
         innerheight = pheight - texttop - textbot
 
         # header
-        drawline(left, mm_pts(headerpos), pwidth - right - left, 0.5, minorcol)
-        drawline(left, mm_pts(headerpos) + textsize, pwidth - right - left, 0.5, minorcol)
+        drawline(left, mm_pts(headerpos) + mm_pts(hfontsizemms), pwidth - right - left, 0.5, minorcol)
+        drawline(left, mm_pts(headerpos) + 2 * mm_pts(hfontsizemms), pwidth - right - left, 0.5, minorcol)
         drawline(0, texttop - 0.4, pwidth, 0.8, majorcol)       # main top margin
         tstop = pheight - textbot
         tstart = texttop
@@ -1898,7 +1898,7 @@ class Paragraphs(list):
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return (p, r.get_dest(x, y, getattr(p, 'baseline' None)))
+                    return (p, r.get_dest(x, y, getattr(p, 'baseline', None)))
         return (None, None)
 
     def getParas(self, pnum, inclast=False):

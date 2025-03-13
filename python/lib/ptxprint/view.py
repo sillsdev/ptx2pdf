@@ -419,7 +419,7 @@ class ViewModel:
     def onNumTabsChanged(self, *a):
         if self.loadingConfig:
             return False
-        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
+        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel, hfontsizemms) = self.getMargins()
         self.set("l_margin2header", "{}mm".format(f2s(headerlabel, 1)))
         self.set("l_footer2edge", "{}mm".format(f2s(footerlabel, 1)))
         return True
@@ -457,7 +457,7 @@ class ViewModel:
         # print(f"{headerposmms=} {footerposmms=} {headerlabel=} {footerlabel=} ")
         # simply subtract ruler gap from header gap
         rulerposmms = asmm(float(self.get("s_headerposition")) - float(self.get("s_rhruleposition")))
-        return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel)
+        return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel, hfontsizemms)
 
     def updateSavedConfigList(self):
         pass

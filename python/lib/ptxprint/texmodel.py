@@ -506,7 +506,7 @@ class TexModel:
 
     def calculateMargins(self):
         (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms,
-         ruleposmms, headerlabel, footerlabel) = self.printer.getMargins()
+         ruleposmms, headerlabel, footerlabel, hfontsizemms) = self.printer.getMargins()
         self.dict["paper/topmarginfactor"] = f2s(topmarginmms / marginmms)
         self.dict["paper/bottommarginfactor"] = f2s(bottommarginmms / marginmms)
         self.dict["paper/headerposition"] = f2s(headerposmms / marginmms)
