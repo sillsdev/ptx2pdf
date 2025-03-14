@@ -197,7 +197,7 @@ class AdjList:
         # possibly loop through the poly-glot configs here and then call createChanges with 
         # the right diglot letter, L,R,A,B,C and appropriate chfile for the other config.
         chfile = self.adjfile.replace(".adj", "_changes.txt")
-        self.createChanges(chfile)
+        # self.createChanges(chfile)
         res = self.changed
         self.changed = False
         return res

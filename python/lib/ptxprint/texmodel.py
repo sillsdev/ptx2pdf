@@ -895,13 +895,13 @@ class TexModel:
                 #cpath = self.printer.configPath(self.printer.configName())
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 self.changes = self.readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk)
-        adjlistfile = printer.getAdjListFilename(bk)
-        if adjlistfile is not None:
-            adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
-                                adjlistfile.replace(".adj", "_changes.txt"))
-            chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
-            for k, v in chs.items():
-                self.changes.setdefault(k, []).extend(v)
+        #adjlistfile = printer.getAdjListFilename(bk)
+        #if adjlistfile is not None:
+        #    adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
+        #                        adjlistfile.replace(".adj", "_changes.txt"))
+        #    chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
+        #    for k, v in chs.items():
+        #        self.changes.setdefault(k, []).extend(v)
         draft = "-" + (printer.cfgid or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
@@ -1017,9 +1017,11 @@ class TexModel:
             logger.log(5,self.localChanges)
             dat = runChanges(self.localChanges, bk, dat)
 
-        if 'adjust' in self.changes:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
-            dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+        adjlist = self.printer.get_adjlist(bk)
+        if adjlist is not None:
+            (dat, doc) = self._getDoc(dat, doc, bk)
+            doc.apply_adjlist(bk, adjlist)
+            # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         if 'final' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")

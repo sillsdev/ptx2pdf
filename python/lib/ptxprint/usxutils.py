@@ -646,3 +646,31 @@ class Usfm:
                         i += 1
                     matched = True
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
+
+    def getcvpara(self, c, v):
+        pstart = self.chapters[c]
+        pend = self.chapters[c+1]
+        for i, p in enumerate(list(self.getroot()[pstart:pend]), pstart):
+            for c in p:
+                if c.tag == "verse" and c.get("number") == v:
+                    return i
+        return None
+        
+
+    def apply_adjlist(self, bk, adjlist):
+        if adjlist is None:
+            return
+        self.addorncv()
+        for a in adjlist.liststore:
+            # book, c:v, para:int, stretch, mkr, expand:int, comment%
+            if a[0] != bk or a[5] == 100:
+                continue
+            c, v = a[1].replace(":", ".").split(".")
+            i = self.getcvpara(int(c), v)
+            if i is None:
+                continue
+            p = list(self.getroot())[i + a[2] - 1]
+            s = p.get("style", "")
+            if "^" not in s:
+                p.set("style", f"{s}^{a[5]}")
+
