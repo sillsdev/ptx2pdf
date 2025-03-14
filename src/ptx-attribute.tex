@@ -207,7 +207,7 @@
 }
 
 \def\setup@ttr@grab#1{%
-  \x@\xdef\csname \gr@bname\endcsname{\catcode`\/=12\relax % FIXME other active chars too?
+  \x@\xdef\csname \gr@bname\endcsname{\catcode47=12\relax % FIXME other active chars too?
     \csname @@\gr@bname\endcsname}%
   \x@\gdef\csname @@\gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}#1}}
 
@@ -219,7 +219,7 @@
     \in@ttribfalse
   \fi
   \catcode`\|=12
-  \catcode`\/=\active
+  \catcode47=\active
   \activ@tecustomch@rs
   }
 
@@ -246,10 +246,10 @@
 
 %\def\foo#1{Thatsit "#1"}
 
-\def\oddc@tcodes{\xdef\sl@shcode{\the\catcode`\/}\catcode`"=11 \catcode`==11
-\catcode`\ =11 \catcode`|=0\catcode`\/=12\catcode`\\=12}
+\def\oddc@tcodes{\xdef\sl@shcode{\the\catcode47}\catcode`"=11 \catcode`==11
+\catcode`\ =11 \catcode`|=0\catcode47=12\catcode`\\=12}
 \def\normalc@tcodes{\catcode`"=12 \catcode`==12
-\catcode`\ =10\catcode`\\=0\catcode`\/=\sl@shcode\catcode`\|=12}
+\catcode`\ =10\catcode`\\=0\catcode47=\sl@shcode\catcode`\|=12}
 \trace{A}{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 
 

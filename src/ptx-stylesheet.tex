@@ -1409,11 +1409,11 @@
  \let\pb=\pagebreak %pb isn't a paragraph style, 
  \let\fp\@fp
  \let\@H=\h%
- \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
+ \def\h{\bgroup\deactiv@tecustomch@rs\catcode47=12\relax%
         %\tracingassigns=1
         \let\aftergr@b\@h\gr@btomacro}% \h gets stored as the book name (for references)
  \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
- \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \let\aftergr@b\@hh\gr@btomacro}% \h1 gets stored as the book name (for references)
+ \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode47=12 \let\aftergr@b\@hh\gr@btomacro}% \h1 gets stored as the book name (for references)
  \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
  \def\bookalt{\csname b@ok1\g@tdstat\endcsname}%
  \x@\let\csname h1\endcsname=\h@h
@@ -1449,7 +1449,7 @@
     \else
       \vskip\p@ram
     \fi\egroup}
- \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
+ \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode47=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
@@ -1764,7 +1764,7 @@
 \def\codesforperiphgr@b{% Turn off everything
   \catcode13=12 %cr
   \catcode92=12 %bkslash
-  \catcode`\/=12 
+  \catcode47=12 
   \catcode`\|=12
   \catcode`\~=12
   \catcode"2000=12
@@ -1862,7 +1862,7 @@
  \catcode`\#=12
  \catcode`\{=12 \catcode`\}=12
  \catcode`\_=11 % treat as letter for TE custom styles
- \catcode`\/=\active
+ \catcode47=\active
  \catcode13=10
  \catcode`+=11 % treat as letter
  \activ@tecustomch@rs
@@ -1879,7 +1879,7 @@
  \m@kedigitsother
  \deactiv@tecustomch@rs
  \catcode13=5
- \catcode`\/=12
+ \catcode47=12
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
  \catcode`+=\pl@scatcode % don't treat as letter any more
@@ -2176,18 +2176,20 @@
 \DefineActiveChar{(}{\openparen}   % (useful at end-of-line before new verse)
 
 %+csty_slash
-\catcode`\/=\active
+\catcode47=\active
 \def/{\futurelet\n@xt\sl@sh}
 \def\sl@sh{\ifx\n@xt/\let\n@@xt\sl@shbreak\else\let\n@@xt\sl@shprint\fi\n@@xt}
 \def\OptionalBreakPenalty{300}
 \let\oldlinepenalty\relax
 \def\sl@shbreak/{\ifx\oldlinepenalty\relax\edef\oldlinepenalty{\the\linepenalty}\fi\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
-\def\sl@shprint{\char`\/{}% Empty group makes any following spaces behave properly
+\def\sl@shprint{\char47{}% Empty group makes any following spaces behave properly
   %\message{next character after slash: '\meaning\n@xt'}%
 }
-% \let\/\sl@shprint
+\let\it@liccorrection\/
+\def\italiccorrection{\it@liccorrection{}}
+\let\/\sl@shprint
 
-\catcode`\/=12
+\catcode47=12
 %-csty_slash
 %+csty_category
 % Define the current category

@@ -294,7 +294,7 @@
   \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\undefined
     \x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \fi
-  \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
+  \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\italiccorrection\fi%
   % if footnote is on a chapter number ...
   \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
     \ifdoingt@ble #3\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes\hsize=\t@blehsize}\else%
