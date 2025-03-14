@@ -339,6 +339,7 @@ class Usfm:
                 curr = MakeReference(bk, curr.first.chap, currv)
                 # add to bridges if a RefRange
             p.pos = RefPos(p.pos, curr)
+        self.chapters.append(i)
         for s in sections:
             _addorncv_hierarchy(s, curr)
         self.cvaddorned = True
