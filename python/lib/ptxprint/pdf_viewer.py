@@ -1836,7 +1836,7 @@ class Paragraphs(list):
             elif c == "parpicstart":
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None:
-                    return
+                    continue
                 if currr is not None:
                     currr.yend = readpts(p[3])
                     currr.xend = cinfo[3]
@@ -1847,8 +1847,8 @@ class Paragraphs(list):
                 self.append(currpic)
             elif c == "parpicstop":
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or currr is None:
-                    return
+                if cinfo is None or currr is None or currpic is None:
+                    continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
                 #if currps.get(polycol, None) is not None:
