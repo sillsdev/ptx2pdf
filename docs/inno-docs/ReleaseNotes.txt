@@ -1,8 +1,15 @@
 PTXprint 2.7.28 Release Notes
-12 Mar 2025
+14 Mar 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.29 (14 Mar 2025)
+  * parse the whole of parlocs file (don't early return)
+  * Make sure other PDFs don't crash due to lack of parlocs file
+  * Add ptxstats report script
+  * Fix guidelines headers
+  * pdf_viewer resilience
 
 Bug fixes and Improvements in 2.7.28 (12 Mar 2025)
   * Add width to insert rule codelet
