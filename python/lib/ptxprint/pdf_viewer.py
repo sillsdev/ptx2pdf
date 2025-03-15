@@ -523,11 +523,10 @@ class PDFViewer:
             if nbk != bk:
                 adjlist = self.model.get_adjlist(nbk, gtk=Gtk)
                 bk = nbk
-            parnum = getattr(r, 'parnum', 0) or 0
+            parnum = getattr(p, 'parnum', 0) or 0
             parnum = "["+str(parnum)+"]" if parnum > 1 else ""            
             ref = getattr(p, 'ref', (bk or "") + "0.0") + parnum
             info = adjlist.getinfo(ref)
-            # print(f"{ref=} {parnum=} {info=}")
             if not info:
                 continue
             col = None
