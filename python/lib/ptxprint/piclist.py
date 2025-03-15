@@ -598,7 +598,8 @@ class Piclist:
         ''' Makes sure there are not two entries with the same anchor and same image source'''
         anchormap = {}
         for p in self.pics.values():
-            anchormap.setdefault(p['anchor'], []).append(p)
+            if p.get('anchor', None):
+              anchormap.setdefault(p['anchor'], []).append(p)
         for v in [a for a in anchormap.values() if len(a) > 1]:
             dups = {}
             for p in v:
