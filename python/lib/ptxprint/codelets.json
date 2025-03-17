@@ -334,7 +334,7 @@
           "Type": "comment#",
           "Label": "Insert a rule before \\c 1 starts",
           "Description": "Insert a rule after the intro (for all books)",
-          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule\\\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule|width=\".6\"\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",

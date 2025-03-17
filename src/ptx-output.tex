@@ -246,10 +246,11 @@
 }
   %\showlists
 %-c_onecoltrial_fail
-
+\newdimen\aftergalleyskip
 \def\clearthenbackup{%Clear any held-over inserts.
   \trace{o}{clearthenbackup \the\outputpenalty, \the\ht255, ip=\the\insertpenalties}% ip counts the whole/partial inserts held over
   %\showbox255
+  \setbox0\vbox{\pagediscards\global\aftergalleyskip=\lastskip\ifdim\aftergalleyskip=0pt \unskip\global\aftergalleyskip=\lastskip\fi}%\showbox0%
   \setbox0\box255
   \ifnum\insertpenalties>0
     \box\voidb@x
@@ -259,9 +260,11 @@
     \global\output={\backingup}%
     \bgroup \dimen0=\the\prevdepth
       \dimen1=\dp\galley
-      \trace{o}{ctb: pd=\the\dimen0, gd=\the\dp\galley}%
-      \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-      \ifdim\dimen0=-1000pt \kern -\dimen1\fi % Fix needed in some circumstances.
+      \trace{o}{ctb: pd=\the\dimen0, gd=\the\dp\galley, ags=\the\aftergalleyskip}%
+      \unvbox\galley  \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+      \ifdim\aftergalleyskip=0pt
+        \ifdim\dimen0=-1000pt \kern -\dimen1\fi % Fix needed in some circumstances.
+      \else \trace{o}{Restoring ags}\vskip\aftergalleyskip \global\aftergalleyskip=0pt \fi
     \egroup
   \fi
 }
@@ -630,6 +633,7 @@
   \global\holdinginserts=0 % when doing trial place insertions into boxes
   \unvbox255 % force invoking \twocoltrial
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi % (A) restore output penalty
+  %\showlists
   }
 \newbox\galley
 \newcount\galleypenalty
@@ -1538,7 +1542,7 @@
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
-  \setbox\s@vedpage=\copy255
+  \setbox\s@vedpage=\copy255 %\showbox255
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark, rerunsavepartialpaged\ifrerunsavepartialpaged true\else false\fi\space op=\the\outputpenalty}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
@@ -1763,7 +1767,7 @@
                % it will cause a new page break to be found, and then the \trial routine is called again \trace{o}{backingup hIns=\the\holdinginserts(==1)}%
   \global\deadcycles=0
   \global\endbookfalse % We might *not* be dealing with the end of the book now.
-  \global\setbox\galley=\copy255
+  \global\setbox\galley=\vbox{\unvcopy255}%
   \global\galleypenalty=\outputpenalty
   \global\output={\whichtrial}%
   \global\holdinginserts=0

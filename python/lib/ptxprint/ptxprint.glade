@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.7.27</property>
+    <property name="version">Version 2.7.29</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -33621,7 +33621,7 @@ and 3, 4, 6, or 12 for inches.</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="title" translatable="yes">Color of minor lines in grid.</property>
-                        <property name="rgba">rgb(255,190,111)</property>
+                        <property name="rgba">rgb(98,160,234)</property>
                       </object>
                       <packing>
                         <property name="left-attach">2</property>

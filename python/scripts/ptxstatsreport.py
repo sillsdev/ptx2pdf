@@ -3,6 +3,63 @@ from math import log10
 from simpleapp import *
 current_module = sys.modules[__name__]
 
+# data from metrics.paratext.org
+# run from commandline with something like this:
+python python/scripts/ptxstatsreport.py -f projectAge -f cfgCount -f first_last_used -f intlin -f hasOT -f org -f font
+
+# --------------------------- snip ------------------------------
+
+from datetime import datetime, timedelta
+from collections import defaultdict
+
+def convert_to_month(timestamp):
+    """Convert UNIX timestamp to 'YYYY-MM' format."""
+    return datetime.utcfromtimestamp(timestamp).strftime("%Y-%m")
+
+def filter_n_months(data):
+    """Filter data to keep only the last 60 months."""
+    current_date = datetime.utcnow()
+    cutoff_date = current_date - timedelta(days=5 * 365)  # 5 years
+    return {month: count for month, count in data.items() if datetime.strptime(month, "%Y-%m") >= cutoff_date}
+
+def first_last_used_analyze(results, stat):
+    """Analyze firstUsed and lastUsed, aggregating counts by month."""
+    first_used = stat.get("ptxPrint", {}).get("firstUsed")
+    last_used = stat.get("ptxPrint", {}).get("lastUsed")
+
+    if first_used:
+        month = convert_to_month(first_used)
+        results.setdefault("firstUsed", defaultdict(int))[month] += 1
+
+    if last_used:
+        month = convert_to_month(last_used)
+        results.setdefault("lastUsed", defaultdict(int))[month] += 1
+
+def first_last_used_results(results):
+    """Generate histogram of firstUsed and lastUsed per month."""
+    res = ["First Used Histogram"]
+    first_used_data = filter_n_months(results.get("firstUsed", {}))
+    res.append(histogram_from_dict(first_used_data, indent=4, width=50))
+
+    res.append("\nLast Used Histogram")
+    last_used_data = filter_n_months(results.get("lastUsed", {}))
+    res.append(histogram_from_dict(last_used_data, indent=4, width=50))
+
+    return "\n".join(res)
+
+def histogram_from_dict(data, indent=0, width=50):
+    """Generate a histogram from a dictionary where keys are months and values are counts."""
+    if not data:
+        return " " * indent + "No data available."
+
+    max_count = max(data.values()) if data else 1
+    res = []
+    for month, count in sorted(data.items()):
+        bar = "*" * int((count / max_count) * width)
+        res.append(" " * indent + f"{month}: {count} {bar}")
+    return "\n".join(res)
+# --------------------------- snip ------------------------------
+
 def process(js, args, afns, rfns):
     results = {}
     # breakpoint()
@@ -17,7 +74,7 @@ def duck(*args):
     return ""
     
 def cfgCount_analyze(results, stat):
-    results.setdefault("numConfigs", []).append(stat["ptxPrint.numberOfConfigurations"])
+    results.setdefault("numConfigs", []).append(stat.get("ptxPrint", {}).get("numberOfConfigurations"))
     
 def cfgCount_results(results):
     res = ["numConfigs"]
@@ -25,15 +82,37 @@ def cfgCount_results(results):
     return "\n".join(res)
     
 def usage_analyze(results, stat):
-    results.setdefault("usage", []).append(stat["ptxPrint.usage"])
+    results.setdefault("usage", []).append(stat.get("ptxPrint", {}).get("usage"))
     
 def usage_results(results):
     res = ["usage"]
     res.append(histogram(results["usage"], indent=4, zoom=(0.01, 0.12), bins=15, width=50))
     return "\n".join(res)
     
+def projectAge_analyze(results, stat):
+    """Extracts project ages based on duration and stores them for histogram plotting."""
+    duration = stat.get("duration")
+    if duration is not None:
+        # Convert duration from milliseconds to years
+        age_in_years = duration / (60 * 60 * 24 * 365)  # Convert seconds → years
+        results.setdefault("projectAges", []).append(age_in_years)
+
+def projectAge_results(results):
+    """Generates a histogram of project ages."""
+    res = ["Project Age Distribution (Years)"]
+    res.append(histogram(results["projectAges"], indent=4, zoom=(0, 1), bins=16, width=50))
+    return "\n".join(res)
+    
+    
+def hasOT_analyze(results, stat):
+    resf = results.setdefault("hasOT", 0)
+    results["hasOT"] = resf + stat["hasOT"]   
+    
+def hasOT_results(results):
+    return (f"Projects with OT: {results['hasOT']}")
+    
 def font_analyze(results, stat):
-    fonts = stat.get("fonts", stat.get("ptxPrint.fonts", []))
+    fonts = stat.get("fonts", stat.get("ptxPrint", {}).get("fonts", []))
     resf = results.setdefault("fonts", {})
     for f in fonts:
         if len(f) < 5:
@@ -56,10 +135,10 @@ def org_analyze(results, stat):
 def org_results(results):
     res = ["ownerName"]
     count = 0 
+    res.append(f"Number of Organisations: {len(results['ownerName'])}")
     for k, v in sorted(results["ownerName"].items(), key=lambda x: (-x[1], x[0])): # [:20]:
         res.append(f"    {k}: {v}")
         count += v
-    res.append(f"Number of Organisations: {len(results['ownerName'])}")
     res.append(f"Projects Total: {count}")
     return "\n".join(res)
         
@@ -76,7 +155,7 @@ def confName_analyze(results, stat):
     if "configurations" not in results:
         results["configurations"] = {}
     reso = results["configurations"]
-    cfgs = set(stat["configurations"])
+    cfgs = set(stat["ptxPrint"]["configurations"])
     for c in cfgs:
         reso[c] = reso.get(c, 0) + 1
         
@@ -130,8 +209,8 @@ def main(argv=None):
     parser = ArgumentParser(prog="something")
     parser.add_argument("infile",help="Input file",default="stats/ptxPrintStats.txt")
     parser.add_argument("-o","--outfile",help="Output file",default="stats/report.txt")
-    parser.add_argument("-f","--find",help="What to report on",action="append")
-    
+    parser.add_argument("-f","--find",help="What to report on",action="append",default=["usage"])
+
     args = parser.parse_args(argv)
 
     afns = [getattr(current_module, f+"_analyze", duck) for f in args.find]

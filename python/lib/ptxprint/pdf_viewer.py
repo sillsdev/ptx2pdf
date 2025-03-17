@@ -308,7 +308,11 @@ class PDFViewer:
             self.spread_mode = False
         else:
             self.spread_mode = self.model.get("c_bkView", False)
-        page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
+        # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
+        if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
+            page = self.parlocs.pnumorder[cpage - 1]
+        else:
+            page = cpage
         # print(f"{self.parlocs.pnums}")
         # print(f"in show_pdf: {cpage=}   {page=}")
         layerfns = []
@@ -361,22 +365,10 @@ class PDFViewer:
                         and pindex <= len(self.parlocs.pnumorder) else pindex
 
             flip = self.rtl_mode  # Reverse logic if RTL mode is enabled
-            
             if self.model.get("c_outerGutter") == ((pnum & 1 == 0) == flip):
                 right += gutter
             else:
                 left += gutter
-            
-            # if self.model.get("c_outerGutter"):
-                # if (pnum & 1 == 0) == flip:  # Even pages (LTR) or Odd pages (RTL)
-                    # right += gutter
-                # else:
-                    # left += gutter
-            # else:
-                # if (pnum & 1 == 0) == flip:  # Even pages (LTR) or Odd pages (RTL)
-                    # left += gutter
-                # else:
-                    # right += gutter
         return (left, right)
 
     def _draw_guides(self, page, pindex, context, zoomlevel):
@@ -387,7 +379,7 @@ class PDFViewer:
 
         pwidth, pheight = page.get_size()
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos,
-                headerlabel, footerlabel) = self.model.getMargins()
+                headerlabel, footerlabel, hfontsizemms) = self.model.getMargins()
         texttop = mm_pts(float(self.model.get("s_topmargin")))
         hdrbot = float(self.model.get("s_headerposition"))
         ftrtop = float(self.model.get("s_footerposition"))
@@ -401,8 +393,8 @@ class PDFViewer:
         innerheight = pheight - texttop - textbot
 
         # header
-        drawline(left, mm_pts(headerpos), pwidth - right - left, 0.5, minorcol)
-        drawline(left, mm_pts(headerpos) + textsize, pwidth - right - left, 0.5, minorcol)
+        drawline(left, mm_pts(headerpos) + mm_pts(hfontsizemms), pwidth - right - left, 0.5, minorcol)
+        drawline(left, mm_pts(headerpos) + 2 * mm_pts(hfontsizemms), pwidth - right - left, 0.5, minorcol)
         drawline(0, texttop - 0.4, pwidth, 0.8, majorcol)       # main top margin
         tstop = pheight - textbot
         tstart = texttop
@@ -453,14 +445,19 @@ class PDFViewer:
         majorthick = float(self.model.get("s_gridMajorThick"))
         minorcol = coltoonemax(self.model.get("col_gridMinor"))
         minorthick = float(self.model.get("s_gridMinorThick"))
+        texttop = mm_pts(float(self.model.get("s_topmargin")))
+        textbot = mm_pts(float(self.model.get("s_bottommargin")))
+        (left, right) = self._get_margins(pnum)
 
         if edge == "page":
             jobs = [((0,0), (pwidth, pheight))]
+        elif edge == "text":
+            jobs = [((left, texttop), (pwidth - right, pheight - textbot))]
         elif edge == "margin":
-            texttop = mm_pts(float(self.model.get("s_topmargin")))
-            textbot = mm_pts(float(self.model.get("s_bottommargin")))
-            (left, right) = self._get_margins(pnum)
-            jobs = [((left, texttop), (right, pheight - textbot))]
+            jobs = [((0, 0), (pwidth, texttop))]
+            jobs.append(((0, pheight - textbot), (pwidth, pheight))) 
+            jobs.append(((0, texttop), (left, pheight - textbot))) 
+            jobs.append(((pwidth - right, texttop), (pwidth, pheight - textbot))) 
         # now we can do multiple jobs for bits outside the margins
         for j in jobs:
             major = 72.27 if units == "in" else mm_pts(10)
@@ -1599,7 +1596,7 @@ class ParRect:
         return self.__str__()
 
     def get_dest(self, x, y, baseline):
-        if self.dests is None:
+        if self.dests is None or baseline is None:
             return None
         ydiff = None
         xdiff = None
@@ -1673,7 +1670,7 @@ class ParlocLinesIterator:
         self.replay = False
 
     def __iter__(self):
-        if os.path.exists(self.fname):
+        if self.fname is not None and os.path.exists(self.fname):
             with open(self.fname, encoding="utf-8") as inf:
                 self.lines = inf.readlines()
         else:
@@ -1728,6 +1725,8 @@ class Paragraphs(list):
         self.pindex = []
         self.pnums = {}
         self.pnumorder = []
+        if fname is None:
+            return
         currp = None
         currr = None
         endpar = True
@@ -1837,7 +1836,7 @@ class Paragraphs(list):
             elif c == "parpicstart":
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None:
-                    return
+                    continue
                 if currr is not None:
                     currr.yend = readpts(p[3])
                     currr.xend = cinfo[3]
@@ -1848,8 +1847,8 @@ class Paragraphs(list):
                 self.append(currpic)
             elif c == "parpicstop":
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or currr is None:
-                    return
+                if cinfo is None or currr is None or currpic is None:
+                    continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
                 #if currps.get(polycol, None) is not None:
@@ -1890,6 +1889,9 @@ class Paragraphs(list):
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
         
+    def isEmpty(self):
+        return not len(self.pindex)
+        
     def findPos(self, pnum, x, y, rtl=False):
         """ returns a page index (not folio) """
         # just iterate over paragraphs on this page
@@ -1903,7 +1905,7 @@ class Paragraphs(list):
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return (p, r.get_dest(x, y, p.baseline))
+                    return (p, r.get_dest(x, y, getattr(p, 'baseline', None)))
         return (None, None)
 
     def getParas(self, pnum, inclast=False):
