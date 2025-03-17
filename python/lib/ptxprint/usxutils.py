@@ -178,7 +178,7 @@ class UsfmCollection:
             return None
         mtime = os.stat(bkfile).st_mtime
         if mtime > self.times.get(bk, 0):
-            self.books[bk] = Usfm.readfile(bkfile, self.grammar)
+            self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
             self.times[bk] = time.time()
         return self.books[bk]
 
@@ -316,11 +316,11 @@ class Usfm:
             if p.tag == "chapter":
                 currc = int(p.get("number", 0))
                 if currc >= len(self.chapters):
-                    self.chapters.extend([i] * (currc - len(self.chapters) + 1))
+                    self.chapters.extend([self.chapters[-1]] * (currc - len(self.chapters) + 1))
                 self.chapters[currc] = i
                 curr = MakeReference(bk, currc, 0)
             elif p.tag == "para":
-                currpi = i
+                currp = p
                 if istype(p.get("style", ""), ('sectionpara', 'title')):
                     sections.append(p)
                 else:
@@ -344,7 +344,7 @@ class Usfm:
                 s = p.get("style")
                 if s == "k":
                     v = p.get("key", p.text.strip())    # there is more to this
-                    self.kpars[v] = currpi
+                    self.kpars[v] = currp
             p.pos = RefPos(p.pos, curr)
         self.chapters.append(i)
         for s in sections:
@@ -662,7 +662,7 @@ class Usfm:
             for i, p in enumerate(list(self.getroot()[pstart:pend]), pstart):
                 for c in p:
                     if c.tag == "verse" and c.get("number") == v:
-                        return i
+                        return p
         elif c == "k" and v in self.kpars:
             return self.kpars[v]
         return None
@@ -677,11 +677,12 @@ class Usfm:
             if a[0] != bk or a[5] == 100:
                 continue
             c, v = a[1].replace(":", ".").split(".")
-            i = self.getcvpara(c, v)
-            if i is None:
+            p = self.getcvpara(c, v)
+            if p is None:
                 continue
-            p = list(self.getroot())[i + a[2] - 1]
+            for i in range(a[2] - 1):
+                p = p.getnext()
             s = p.get("style", "")
-            if "^" not in s:
+            if "^" not in s and p.tag == "para":    # Just in case it isn't a para
                 p.set("style", f"{s}^{a[5]}")
 

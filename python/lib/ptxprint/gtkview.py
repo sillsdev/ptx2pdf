@@ -2127,7 +2127,10 @@ class GtkViewModel(ViewModel):
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes",
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
-        
+
+    def get_adjlist(self, bk, save=True, gtk=None):
+        return super().get_adjlist(bk, save=save, gtk=Gtk)
+
     def onExamineBookChanged(self, cb_examineBook):
         if self.noUpdate == True:
             return
