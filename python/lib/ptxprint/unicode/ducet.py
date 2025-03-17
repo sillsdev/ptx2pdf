@@ -18,7 +18,7 @@ class DUCET(dict):
         if basedict is not None:
             super().__init__(basedict)
         if localfile is None:
-            localfile = os.path.join(pycodedir(), "sfm", "allkeys.txt")
+            localfile = os.path.join(pycodedir(), "unicode", "allkeys.txt")
         self.implicits = []
         self.specials = {   'first tertiary ignorable': (0, 0, 0),
                             'last tertiary ignorable': (0, 0, 0),

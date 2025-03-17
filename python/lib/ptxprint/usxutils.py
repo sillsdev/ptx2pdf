@@ -336,8 +336,9 @@ class Usfm:
                         _addorncv_hierarchy(s, curr)
                     sections = []
             elif p.tag == "verse":
-                currv = p.get("number", curr.last.verse)
-                curr = MakeReference(bk, curr.first.chap, currv)
+                if curr is not None:
+                    currv = p.get("number", curr.last.verse)
+                    curr = MakeReference(bk, curr.first.chap, currv)
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
@@ -439,7 +440,7 @@ class Usfm:
             isactive = False
             if pred(start, rlist):
                 isactive = True
-                if out.tag == "usx" and start.tag != "para":
+                if out.tag == "usx" and start.tag not in ("para", "chapter", "book"):
                     out = self.factory("para", attrib=dict(style=pstyle), parent=out, pos=start.pos)
                 res = self.factory(start.tag, start.attrib, parent=out, pos=start.pos)
                 out.append(res)
@@ -461,7 +462,7 @@ class Usfm:
                 if minref.verse > 0:
                     res.append(self.make_zsetref(minref, None, root, None))
             if len(c[0]) > 2:
-                print(f"chapter too long: {c[0]}")
+                logger.error(f"chapter too long: {c[0]}")
             for chap in range(c[0][0], c[0][-1]):
                 copyrange(d[chap], res, c[1])
         return Usfm(usfmtc.USX(res), parser=self.parser, grammar=self.grammar)
@@ -676,7 +677,7 @@ class Usfm:
             if a[0] != bk or a[5] == 100:
                 continue
             c, v = a[1].replace(":", ".").split(".")
-            i = self.getcvpara(int(c), v)
+            i = self.getcvpara(c, v)
             if i is None:
                 continue
             p = list(self.getroot())[i + a[2] - 1]
