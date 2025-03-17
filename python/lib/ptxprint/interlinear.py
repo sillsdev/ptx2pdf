@@ -1,6 +1,5 @@
 from xml.etree import ElementTree as et
 from ptxprint.usxutils import Usfm
-from ptxprint import sfm
 from hashlib import md5
 from ptxprint.reference import Reference
 from usfmtc.usxmodel import iterusx
@@ -118,43 +117,6 @@ class Interlinear:
         if i < cend and laste is not None:
             laste.tail = t[i-cpos:cend-cpos]
             
-
-    def replaceindoc(self, doc, curref, lexemes, linelengths, mrk="+wit"):
-        lexemes.sort()
-        adj = 0
-        vend = (0, 0)
-        startl = None
-        for e in doc.iterVerse(*curref):
-            if e is None:
-                continue
-            if isinstance(e, sfm.Element):
-                if e.pos.line == vend[0] and e.pos.col == vend[1]:
-                    e.adjust = 1    # Handle where there is no space after verse number in the text but PT presumes it is there
-                if startl is None:   # starting col and line
-                    startl = e.pos.line - 1
-                    startc = e.pos.col - 1
-                    vend = (e.pos.line, e.pos.col + 3 + len(e.args[0]))
-                adj += getattr(e, 'adjust', 0)
-                continue
-            if e.parent is not None and e.parent.name == "fig":
-                continue
-            thisadj = adj - getattr(e.parent, 'adjust', 0)
-            if e.parent is not None:
-                logger.debug(f"{e.parent.name}: {e.parent.meta['StyleType']}")
-            ispara = e.parent is None or e.parent.meta['StyleType'] != 'Character'
-            thismrk = mrk[1:] if ispara else mrk
-            lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc
-            lend = lstart + len(e)
-            i = 0
-            res = []
-            for l in ((lex[0][0]-adj, lex[0][1], lex[1]) for lex in lexemes if lex[0][0] >= lstart and lex[0][0] < lend):
-                if l[0]-lstart >= i:
-                    res.append(e[i:l[0]-lstart])
-                res.append(r"\{0} {1}|{2}\{0}*".format(thismrk, e[l[0]-lstart:l[0]+l[1]-lstart], l[2]))
-                i = l[0] + l[1] - lstart
-            if i < len(e):
-                res.append(e[i:])
-            e.data = str("".join(str(s) for s in res))
 
     def convertBk(self, bkid, doc, mrk="rb", keep_punct=True):
         intname = "Interlinear_{}".format(self.lang)
