@@ -2,8 +2,6 @@
 from ptxprint.utils import cachedData, pycodedir, regex_localiser
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators, BaseBooks
 from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored, get_ces
-from ptxprint.usfmutils import Usfm
-from ptxprint import sfm
 from unicodedata import normalize
 from functools import reduce
 import xml.etree.ElementTree as et
@@ -445,9 +443,6 @@ class StrongsXrefs(XMLXrefs):
         with open(outfile, "w", encoding="utf-8") as outf:
             outf.write("\\id {0} Strong's based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
             outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
-            rag = view.get("s_strongRag", 0)
-            if rag is not None and int(rag) > 0:
-                outf.write("\\zBottomRag {}\n".format(rag))
             wc = view.get("fcb_strongswildcards") 
             for a in ('Hebrew', 'Greek'):
                 if (view.get("c_strongsHeb") and a == 'Hebrew') or (view.get("c_strongsGrk") and a == 'Greek'):

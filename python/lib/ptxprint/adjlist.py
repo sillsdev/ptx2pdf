@@ -135,53 +135,6 @@ class AdjList:
                     line += " % \\{4} {5} {6}".format(*r)
                 outf.write(line + "\n")
 
-    def createChanges(self, fname, diglot=""):
-        # If there are no changes, remove the existing _changes.txt file and return
-        if not len(self.liststore):
-            self.remove_file(fname)
-            return
-        lines_dict = {}  # Dictionary to store lists of changes for each diglot category
-        for r in self.liststore:
-            book_code = r[0][:3]  # Always take the first three characters as book code
-            letter = r[0][3] if len(r[0]) > 3 else ''  # Extract fourth character or default to 'L'
-            if len(r[0]) > 4 and r[0][4] != diglot:
-                continue  # Skip if it's not the expected diglot
-            if not r[5] or r[5] == self.centre:
-                continue  # Skip if there is no valid reference
-            if letter not in lines_dict:
-                lines_dict[letter] = []  # Initialize list for this letter if not already present
-            if r[0].startswith('GLO'):
-                k, w = re.split(r"\.", r[1], 1)
-                change_line = r"at {0} '\\{1}(\s+\\k\s+([^\\]*?\|)?{2}\s*\\k\*)' > '\\{1}^{3}\1'".format(book_code, r[4], w, r[5])
-            else:
-                try:
-                    c, v = re.split(r"[:.]", r[1], 1)
-                    firstv = v.split("-", 1)
-                    v = int(firstv[0]) - (1 if r[2] < 2 else 0)
-                except ValueError:
-                    continue
-                if v < 0:
-                    c = int(c) - 1
-                    v = "end"
-                else:
-                    c = int(c)
-                change_line = "at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(book_code, c, v, r[4], r[5])
-            lines_dict[letter].append(change_line)
-
-        # print(f"{self.diglotView.getAdjListFilename(book_code)}")
-            # adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
-                                # adjlistfile.replace(".adj", "_changes.txt"))            
-            
-        for letter, lines in lines_dict.items():
-            if lines:  # Only create a file if there are changes
-                file_path = fname.replace("_changes.txt", f"{letter}_changes.txt")
-                os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Ensure directory exists
-                with open(file_path, "w", encoding="utf-8") as outf:
-                    outf.write("\n".join(lines))  # Write all changes for this diglot
-            else:
-                # If no lines exist for this category, try deleting the _changes.txt file
-                self.remove_file(fname.replace("_changes.txt", f"{letter}_changes.txt"))
-
     def remove_file(self, fname):
         try:
             os.remove(fname)
@@ -197,7 +150,7 @@ class AdjList:
         # possibly loop through the poly-glot configs here and then call createChanges with 
         # the right diglot letter, L,R,A,B,C and appropriate chfile for the other config.
         chfile = self.adjfile.replace(".adj", "_changes.txt")
-        self.createChanges(chfile)
+        # self.createChanges(chfile)
         res = self.changed
         self.changed = False
         return res

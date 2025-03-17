@@ -517,6 +517,8 @@ def ustr(x):
     return res
 
 def runChanges(changes, bk, dat, errorfn=None):
+    if dat is None:
+        return dat
     def wrap(t, l):
         def proc(m):
             res = m.expand(t) if isinstance(t, str) else t(m)

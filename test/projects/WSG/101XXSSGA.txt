@@ -4,7 +4,6 @@
 \strong-s\*
 \mt1 Strong's Number Index
 \twobody
-\zBottomRag 3
 
 \mt2 Hebrew Words
 \p

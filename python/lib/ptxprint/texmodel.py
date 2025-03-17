@@ -5,9 +5,8 @@ from inspect import signature
 import regex
 from ptxprint.font import TTFont
 from ptxprint.runner import checkoutput
-from ptxprint import sfm
-from ptxprint.sfm import usfm, style, Text
-from ptxprint.usfmutils import Usfm, Sheets, Module
+from ptxprint.usxutils import Usfm, Sheets
+from ptxprint.module import Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath
@@ -187,7 +186,7 @@ class TexModel:
             self.dict['project/id'] = self.prjid
         self._hdrmappings = localhdrmappings()
         if self.printer is not None:
-            self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
+            # self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
             self.update()
 
     def docdir(self):
@@ -822,21 +821,21 @@ class TexModel:
         logger.debug(f"INT file {intfname} processed to {outfname}")
         return outfname
 
-    def flattenModule(self, infpath, outdir, usfm=None):
+    def flattenModule(self, infpath, outdir, text=None):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
         doti = outfpath.rfind(".")
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         try:
-            mod = Module(infpath, usfms, self, usfm=usfm)
-            res = mod.parse(self)
+            mod = Module(infpath, usfms, self, text=text)
+            mod.parse()
+            res = mod.doc
         except SyntaxError as e:
             return (None, e)
-        if usfm is not None:
+        if text is not None:
             return res
-        with open(outfpath, "w", encoding="utf-8") as outf:
-            outf.write(sfm.generate(res))
+        res.xml.outUsfm(outfpath)
         return outfpath
 
     def runConversion(self, infpath, outdir):
@@ -872,13 +871,13 @@ class TexModel:
 
     def _getText(self, data, doc, bk, logmsg=""):
         if doc is not None:
-            data = str(doc)
+            data = doc.asUsfm()
             logger.log(5, logmsg+data)
         return (data, None)
 
     def _getDoc(self, data, doc, bk):
         if data is not None:
-            doc = self._makeUSFM(data.splitlines(True), bk)
+            doc = self._makeUSFM(data, bk)
         return (None if doc else data, doc)
         
     def _changeError(self, txt):
@@ -897,13 +896,13 @@ class TexModel:
                 #cpath = self.printer.configPath(self.printer.configName())
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 self.changes = self.readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk)
-        adjlistfile = printer.getAdjListFilename(bk)
-        if adjlistfile is not None:
-            adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
-                                adjlistfile.replace(".adj", "_changes.txt"))
-            chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
-            for k, v in chs.items():
-                self.changes.setdefault(k, []).extend(v)
+        #adjlistfile = printer.getAdjListFilename(bk)
+        #if adjlistfile is not None:
+        #    adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
+        #                        adjlistfile.replace(".adj", "_changes.txt"))
+        #    chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
+        #    for k, v in chs.items():
+        #        self.changes.setdefault(k, []).extend(v)
         draft = "-" + (printer.cfgid or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
@@ -963,8 +962,7 @@ class TexModel:
             linelengths = [len(x) for x in dat.splitlines(True)]
             (dat, doc) = self._getDoc(dat, doc, bk)
             if doc is not None:
-                doc.calc_PToffsets()
-                self.interlinear.convertBk(bk, doc, linelengths, keep_punct = self.dict.get("project/interpunc", True))
+                self.interlinear.convertBk(bk, doc, keep_punct = self.dict.get("project/interpunc", True))
                 if len(self.interlinear.fails):
                     refs = RefList(self.interlinear.fails)
                     refs.simplify()
@@ -972,16 +970,15 @@ class TexModel:
                                     show=not printer.get("c_quickRun"))
                     self.interlinear.fails = []
         elif bk.lower().startswith("xx"):
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            if doc is not None:
-                doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
+            (dat, doc) = self._getText(dat, doc, bk)
+            doc = self.flattenModule(infpath, outfpath, text=dat)
 
         if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
             dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
-
         if self.dict['project/canonicalise']:
             (dat, doc) = self._getDoc(dat, doc, bk)
+            dat = None
 
         if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -1021,9 +1018,11 @@ class TexModel:
             logger.log(5,self.localChanges)
             dat = runChanges(self.localChanges, bk, dat)
 
-        if 'adjust' in self.changes:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
-            dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+        adjlist = self.printer.get_adjlist(bk)
+        if adjlist is not None:
+            (dat, doc) = self._getDoc(dat, doc, bk)
+            doc.apply_adjlist(bk, adjlist)
+            # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         if 'final' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
@@ -1045,19 +1044,12 @@ class TexModel:
         else:
             return bn
             
-    def _makeUSFM(self, txtlines, bk):
+    def _makeUSFM(self, txt, bk):
         # import pdb; pdb.set_trace()
         syntaxErrors = []
         try:
-            doc = Usfm(txtlines, self.sheets)
-            while len(doc.doc) > 1:
-                if isinstance(doc.doc[0], sfm.Text):
-                    doc.doc.pop(0)
-                else:
-                    break
-            if len(doc.doc) != 1:
-                raise ValueError("Badly formed USFM. Probably missing a \\id line")
-            doc.normalise()
+            doc = Usfm.readfile(txt, grammar=self.printer.usfms.grammar)
+            doc.xml.canonicalise()
         except SyntaxError as e:
             syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
         except Exception as e:

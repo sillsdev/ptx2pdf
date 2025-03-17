@@ -2,7 +2,7 @@
 import re, os
 from struct import pack, unpack
 import pickle, bz2, copy
-from ptxprint.sfm.ucd import normal_ucd
+from ptxprint.unicode.ucd import normal_ucd
 from ptxprint.utils import pycodedir
 
 NONIGNORE = 0

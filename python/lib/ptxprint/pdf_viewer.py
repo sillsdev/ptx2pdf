@@ -523,11 +523,10 @@ class PDFViewer:
             if nbk != bk:
                 adjlist = self.model.get_adjlist(nbk, gtk=Gtk)
                 bk = nbk
-            parnum = getattr(r, 'parnum', 0) or 0
+            parnum = getattr(p, 'parnum', 0) or 0
             parnum = "["+str(parnum)+"]" if parnum > 1 else ""            
             ref = getattr(p, 'ref', (bk or "") + "0.0") + parnum
             info = adjlist.getinfo(ref)
-            # print(f"{ref=} {parnum=} {info=}")
             if not info:
                 continue
             col = None
@@ -1833,7 +1832,7 @@ class Paragraphs(list):
                 if currps[polycol] is not None:
                     currr = ParRect(pnum, cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
-            elif c == "parpicstart":
+            elif c == "parpicstart":     # ref, src (filename or type), x, y
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None:
                     continue
@@ -1845,15 +1844,12 @@ class Paragraphs(list):
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
-            elif c == "parpicstop":
+            elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None or currr is None or currpic is None:
                     continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
-                #if currps.get(polycol, None) is not None:
-                #    r = currps[polycol].rects[-1]
-                #    r.ystart = currr.yend
                 currpic = None
                 if currp is not None:
                     currpr = currr
