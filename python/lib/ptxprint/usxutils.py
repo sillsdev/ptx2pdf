@@ -303,8 +303,10 @@ class Usfm:
         bk = root[0].get('code')
         self.factory = factory
         self.chapters = [0]
+        self.kpars = {}
         sections = []
         i = -1
+        currpi = None
         for x in iterusx(root):
             if x.head is None:
                 continue
@@ -317,9 +319,8 @@ class Usfm:
                     self.chapters.extend([i] * (currc - len(self.chapters) + 1))
                 self.chapters[currc] = i
                 curr = MakeReference(bk, currc, 0)
-            elif curr is None:
-                continue
             elif p.tag == "para":
+                currpi = i
                 if istype(p.get("style", ""), ('sectionpara', 'title')):
                     sections.append(p)
                 else:
@@ -338,6 +339,11 @@ class Usfm:
                 currv = p.get("number", curr.last.verse)
                 curr = MakeReference(bk, curr.first.chap, currv)
                 # add to bridges if a RefRange
+            elif p.tag == "char":
+                s = p.get("style")
+                if s == "k":
+                    v = p.get("key", p.text.strip())    # there is more to this
+                    self.kpars[v] = currpi
             p.pos = RefPos(p.pos, curr)
         self.chapters.append(i)
         for s in sections:
@@ -648,12 +654,16 @@ class Usfm:
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
 
     def getcvpara(self, c, v):
-        pstart = self.chapters[c]
-        pend = self.chapters[c+1]
-        for i, p in enumerate(list(self.getroot()[pstart:pend]), pstart):
-            for c in p:
-                if c.tag == "verse" and c.get("number") == v:
-                    return i
+        if all(x in "0123456789" for x in c):
+            c = int(c)
+            pstart = self.chapters[c]
+            pend = self.chapters[c+1]
+            for i, p in enumerate(list(self.getroot()[pstart:pend]), pstart):
+                for c in p:
+                    if c.tag == "verse" and c.get("number") == v:
+                        return i
+        elif c == "k" and v in self.kpars:
+            return self.kpars[v]
         return None
         
 
