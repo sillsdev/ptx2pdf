@@ -1221,6 +1221,8 @@ class GtkViewModel(ViewModel):
         if ui <= 0 or ui > 6:
             ui = 4
         pgId = self.builder.get_object("nbk_Main").get_current_page()
+        if not self.userconfig.has_section("init"):
+            self.userconfig.add_section("init")
         self.userconfig.set('init', 'userinterface', str(ui))
         self.uilevel = ui
         levels = self.builder.get_object("ls_uiLevel")

@@ -691,7 +691,7 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
 
     def __init__(self, txt, *args):
         if sys.version_info.major > 3 or sys.version_info.minor >= 12:
-            if len(args) and txt.startswith("${"):
+            if len(args) and str(txt).startswith("${"):
                 varlib = self.create_varlib(args[0])
                 k = txt[2:txt.find("}")]
                 txt = str(varlib[k]) + "/" + txt[len(k)+4:]

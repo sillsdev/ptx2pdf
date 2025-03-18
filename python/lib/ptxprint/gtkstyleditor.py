@@ -727,7 +727,7 @@ class StyleEditorView(StyleEditor):
             response = dialog.run()
             if response != Gtk.ResponseType.OK:
                 break
-            key = self.model.get(dialogKeys['Marker']).strip().replace("\\","")
+            key = re.sub(r"\\", "|", re.sub(r"^\\", "", self.model.get(dialogKeys['Marker']).strip()))
             if key == "":
                 break
             for a in ('StyleType', 'TextType', 'OccursUnder'):
