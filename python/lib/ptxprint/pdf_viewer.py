@@ -1772,6 +1772,8 @@ class Paragraphs(list):
                     continue
                 colinfos[polycol] = cinfo
                 if currps.get(polycol, None) is not None:
+                    if currr is not None and currr.yend == 0:
+                        currps[polycol].rects.pop()
                     currr = ParRect(pnum, cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
             elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
@@ -1821,6 +1823,7 @@ class Paragraphs(list):
                 currp.parnum = int(p[1])
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
+                logger.log(5, f"Stopping para {p[0]}")
                 currps[polycol] = None
                 currr = None
             elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode

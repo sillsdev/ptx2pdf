@@ -657,6 +657,9 @@ class Usfm:
     def getcvpara(self, c, v):
         if all(x in "0123456789" for x in c):
             c = int(c)
+            if c >= len(self.chapters) - 1:
+                logger.error(f"Failed to find chapter {c} of {len(self.chapters)}")
+                return None
             pstart = self.chapters[c]
             pend = self.chapters[c+1]
             for i, p in enumerate(list(self.getroot()[pstart:pend]), pstart):
