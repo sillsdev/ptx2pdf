@@ -48,7 +48,7 @@ if sys.platform in ("win32", "cygwin"):
                      'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'Poppler-0.18')] \
               + [(f'{mingwb}\\gspawn-win64-helper.exe', 'ptxprint')] \
               + [(f'{mingwb}\\{x}.dll', '.') for x in
-                    (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', 'libpoppler-cpp-2', 'libcurl-4',
+                    (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', anyver('libpoppler-cpp-', mingwb), 'libcurl-4',
                      'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
                      'libpsl-5', 'libssh2-1', 'libplds4', anyver('libunistring-', mingwb)) if x is not None] 
 #             + [(x,'.') for x in glob('C:\\msys64\\mingw64\\bin\\*.dll')]
