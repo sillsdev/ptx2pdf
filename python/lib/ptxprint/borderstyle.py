@@ -94,7 +94,6 @@ class BorderStyle:
         for k, v in fmap.items():
             val = getattr(self, k, None)
             if val is not None:
-                print(f"_dialogfrommap {k=} {v=} {val=}")
                 view.set(v, val)
             elif v.startswith("c_"):
                 view.set(v, False)
@@ -108,7 +107,6 @@ class BorderStyle:
     def _fromdialogmap(self, dialog, view, fmap):
         for k, v in fmap.items():
             val = view.get(v)
-            print(f"_fromdialogmap {k=} {v=} {val=}")
             setattr(self, k, val)
 
     def fromdialog(self, dialog, view):
@@ -120,7 +118,6 @@ class BorderStyle:
     def _tostylemap(self, tgt, mkr, fmap):
         for k, v in fmap.items():
             val = getattr(self, k, None)
-            print(f"_tostylemap {k=} {v=} {val=}")
             if val is None:
                 continue
             tgt.setval(mkr, k, val)

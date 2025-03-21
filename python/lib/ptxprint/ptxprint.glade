@@ -8914,7 +8914,7 @@ selected books/chapters will show in the glossary.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_pagebreakAllChs">
-                                    <property name="label" translatable="yes">Start Every Chapter on a New Page</property>
+                                    <property name="label" translatable="yes">Start All Other Chapters on a New Page</property>
                                     <property name="name">Start every chapter on a new page</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>

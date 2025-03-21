@@ -309,6 +309,8 @@ class Usfm:
         currpi = None
         for x in iterusx(root):
             if x.head is None:
+                if x.parent.tag == 'para':
+                    currp = x.parent
                 continue
             p = x.head
             if x.parent == root:
@@ -320,7 +322,6 @@ class Usfm:
                 self.chapters[currc] = i
                 curr = MakeReference(bk, currc, 0)
             elif p.tag == "para":
-                currp = p
                 if istype(p.get("style", ""), ('sectionpara', 'title')):
                     sections.append(p)
                 else:

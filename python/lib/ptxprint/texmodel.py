@@ -1270,7 +1270,7 @@ class TexModel:
                 
         # If each chapter needs to start on a new page
         if self.asBool("document/pagebreakallchs"):
-            self.localChanges.append(makeChange(r"\\c ", r"\\pb\n\\c ", flags=regex.S))
+            self.localChanges.append(makeChange(r"\\c (?!1\D)", r"\\pb\n\\c ", flags=regex.S))
             pass
 
         # Throw out the known "nonpublishable" markers and their text (if any)

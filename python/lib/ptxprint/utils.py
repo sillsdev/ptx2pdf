@@ -169,7 +169,7 @@ def refSort(r, info=""):
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
     try:
-        return "x"+"".join("{:02X}".format(int(x)) for x in vals[:3])
+        return "x"+"".join("{:02X}".format(int(float(x))) for x in vals[:3])
     except (ValueError, TypeError):
         return ""
 
