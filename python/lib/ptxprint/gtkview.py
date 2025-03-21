@@ -327,7 +327,7 @@ _sensitivities = {
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
-    "c_ch1pagebreak" :         ["c_pagebreakAllChs"],
+    # "c_ch1pagebreak" :         ["c_pagebreakAllChs"],
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
     "c_parallelRefs" :         ["lb_style_r"],
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_optimizePoetryLayout"],
@@ -6512,27 +6512,6 @@ Thank you,
     def onShowMainDialogClicked(self, btn):
         self.builder.get_object("ptxprint").present()
 
-    def old_get_dialog_geometry(self, dialog):
-        """Retrieve the position, size, and monitor details of a given GTK dialog."""
-        if dialog is None:
-            return None
-
-        # Get position (x, y) and size (width, height)
-        x, y = dialog.get_position()
-        width, height = dialog.get_size()
-
-        # Get the screen and monitor number
-        screen = dialog.get_screen()
-        monitor_num = screen.get_monitor_at_window(dialog.get_window())
-
-        return {
-            "x": x,
-            "y": y,
-            "width": width,
-            "height": height,
-            "monitor": monitor_num
-        }
-
     def get_dialog_geometry(self, dialog):
         """Retrieve the position, size, and monitor details of a given GTK dialog."""
         if dialog is None:
@@ -6595,3 +6574,6 @@ Thank you,
                 dialog.move(x, y)
                 dialog.resize(width, height)
         
+    def onSpinnerClicked(self, btn, foo):
+        print(f"Jump to control for how quickly to refresh display.")
+        self.highlightwidget('s_autoupdatedelay')
