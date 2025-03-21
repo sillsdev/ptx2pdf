@@ -11,7 +11,7 @@ jobs:
     - name: Setup msys2 environment
       uses: msys2/setup-msys2@v2
       with:
-        msystem: UCRT64
+        msystem: MINGW64
         update: false
         release: false
         cache: true
@@ -43,7 +43,7 @@ jobs:
 
     - name: Setup ptprint dependencies
       shell: msys2 {0}
-      run: pip install .[gui]
+      run: "pip install --only-binary=:all: --break-system-packages .[gui]"
 
     - name: Build Windows executable
       shell: cmd
