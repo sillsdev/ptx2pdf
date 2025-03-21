@@ -1300,6 +1300,7 @@ class PDFViewer:
         self.hitPrint()
 
     def on_shrink_text(self, widget, info, parref):
+        print(f"{info=}\n{parref.mrk=} {info[1]=} {info[2]=}\n{parref=}")
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:
                 self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
@@ -1727,6 +1728,7 @@ class Paragraphs(list):
         if fname is None:
             return
         currp = None
+        currpic = None
         currr = None
         endpar = True
         inpage = False

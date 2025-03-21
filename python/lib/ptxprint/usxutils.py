@@ -280,10 +280,10 @@ class Usfm:
         self.cvaddorned = False
 
     @classmethod
-    def readfile(cls, fname, grammar=None, sheet=None):           # can also take the data straight
+    def readfile(cls, fname, grammar=None, sheet=None, elfactory=None):       # can also take the data straight
         if grammar is None:
             grammar = createGrammar(sheet if sheet is not None else [])
-        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar)
+        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar, elfactory=elfactory)
         return cls(usxdoc, usxdoc.parser, grammar=grammar)
 
     def getroot(self):
@@ -309,6 +309,8 @@ class Usfm:
         currpi = None
         for x in iterusx(root):
             if x.head is None:
+                if x.parent.tag == 'para':
+                    currp = x.parent
                 continue
             p = x.head
             if x.parent == root:
@@ -320,7 +322,6 @@ class Usfm:
                 self.chapters[currc] = i
                 curr = MakeReference(bk, currc, 0)
             elif p.tag == "para":
-                currp = p
                 if istype(p.get("style", ""), ('sectionpara', 'title')):
                     sections.append(p)
                 else:
