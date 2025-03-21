@@ -9,6 +9,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Setup msys2 environment
+      id: msys2
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
@@ -47,13 +48,15 @@ jobs:
 
     - name: Build Windows executable
       shell: cmd
+      env:
+        MSYS2: ${{ steps.msys2.outputs.msys2-location }}\${{env.MSYSTEM}}
       run: |
         pyinstaller ptxprint.spec
         mkdir dist\ptxprint\share
-        xcopy /s /i /y /q C:\msys64\mingw64\share\locale dist\ptxprint\share\locale
-        xcopy /s /i /y /q C:\msys64\mingw64\share\fontconfig dist\ptxprint\share\fontconfig
-        xcopy /s /i /y /q C:\msys64\mingw64\share\glib-2.0 dist\ptxprint\share\glib-2.0
-        xcopy /s /i /y /q C:\msys64\mingw64\share\themes dist\ptxprint\share\themes
+        xcopy /s /i /y /q %MSYS2%\share\locale dist\ptxprint\share\locale
+        xcopy /s /i /y /q %MSYS2%\share\fontconfig dist\ptxprint\share\fontconfig
+        xcopy /s /i /y /q %MSYS2%\share\glib-2.0 dist\ptxprint\share\glib-2.0
+        xcopy /s /i /y /q %MSYS2%\share\themes dist\ptxprint\share\themes
         xcopy /s /i /y /q python\lib\ptxprint\mo dist\ptxprint\mo
         xcopy /s /i /y /q python\graphics\icons dist\ptxprint\share\icons
         python python\scripts\getstockicons -f inno -s dist\ptxprint -d "{app}" -i changes-allow -i changes-prevent -i document-print-symbolic -i document-revert -i document-save-as-symbolic -i edit-clear -i edit-clear-rtl -i edit-clear-symbolic-rtl -i emblem-documents -i folder-documents -i folder-download -i folder-music -i folder-new-symbolic -i folder-open -i folder-open-symbolic -i folder-pictures-symbolic -i folder-videos-symbolic -i format-justify-fill -i go-bottom -i go-first-symbolic -i go-previous-symbolic -i go-next-symbolic -i go-last-symbolic -i go-top -i help-about -i list-add -i list-remove -i media-seek-backward-symbolic -i media-seek-forward-symbolic -i object-select -i open-menu -i pan-down -i pan-end -i pan-up -i preferences-system-sharing -i printer -i software-update-available -i system-run -i user-desktop -i user-home -i view-dual -i view-grid -i view-fullscreen-symbolic -i media-seek-backward-symbolic-rtl.symbolic -i media-seek-forward-symbolic-rtl.symbolic -i process-working-symbolic.svg -i emblem-system-symbolic python\lib\ptxprint\ptxprint.glade AdwaitaIcons.txt
