@@ -9,6 +9,9 @@
 *.precommit
 *.picpages
 *.fontusage
+*.egg-info
+.venv
+/dist/**
 NestedStyles*.sty
 __pycache__/
 temp/

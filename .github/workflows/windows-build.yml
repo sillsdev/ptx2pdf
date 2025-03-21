@@ -1,5 +1,8 @@
 name: Windows installer build
-on: workflow_dispatch
+on: 
+  push:
+    branches: [poc-github-actions]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -62,4 +65,3 @@ jobs:
         path: Output/SetupPTXPrint*.exe
         if-no-files-found: error
         retention-days: 7
-        
