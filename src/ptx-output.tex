@@ -352,12 +352,16 @@
     \dimen0=\ht\partial
     \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight? (tob@dy\iftob@dy true\else false\fi)}%
     \ifnum\ifdim\dimen0>\iftob@dy \dimexpr \textheight - 4\baselineskip\relax \else \PageFullFactor\textheight \fi 1\else\iftob@dy\ifPBOnBody 1\else 0\fi\else 0\fi\fi =1
+      \trace{o}{Triggering output}%
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
       \box\partial
-      \ifdim\dimen0>\PageFullFactor\textheight \vfill\penalty-10102%\twocolp@geout
-      \else \holdinginserts=0 \global\output={\savepartialpage}\penalty-10101 %Might there be a small risk that there's extra inserts, etc. on the page? Or is this wasted code?
-        \holdinginserts=1
+      \temptrue \ifPBOnBody\iftob@dy \tempfalse\fi\fi
+      \iftemp
+        \ifdim\dimen0>\PageFullFactor\textheight \vfill\penalty-10102%\twocolp@geout
+        \else \holdinginserts=0 \global\output={\savepartialpage}\penalty-10101 %Might there be a small risk that there's extra inserts, etc. on the page? Or is this wasted code?
+          \holdinginserts=1
+        \fi
       \fi
       \vfill\eject% This should do nothing if the page is already empty
     \fi
