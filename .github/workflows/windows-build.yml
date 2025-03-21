@@ -1,0 +1,65 @@
+name: Windows installer build
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Setup msys2 environment
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: false
+        release: false
+        cache: true
+        pacboy: >-
+          python:p
+          python-pip:p
+          gtksourceview3:p
+          python-pillow:p
+          python-fonttools:p
+          python-regex:p
+          python-cairo:p
+          python-gobject:p
+          gtk3:p
+          glib2:p
+          libffi:p
+          gcc:p
+          glade:p
+          python-pyopenssl:p
+          poppler:p
+          python-numpy:p
+          adwaita-icon-theme:p
+          python-lxml:p
+
+    - name: Setup PyInstaller
+      run: pip install --upgrade pyinstaller
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup ptprint dependencies
+      shell: msys2 {0}
+      run: pip install .[gui]
+
+    - name: Build Windows executable
+      shell: cmd
+      run: call Build4Windows.bat
+    
+    - name: Sign executable
+      uses: sillsdev/codesign/trusted-signing-action@v3
+      with:
+        credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+        files-folder: Output/
+        files-folder-filter: exe
+        description:  'Bible Publication Software'
+        description-url: 'https://software.sil.org/ptxprint/'
+    
+    - name: Upload signed exe
+      uses: actions/upload-artifact@v4
+      with:
+        name: SetupPTXPrint.exe
+        path: Output/SetupPTXPrint*.exe
+        if-no-files-found: error
+        retention-days: 7
+        
