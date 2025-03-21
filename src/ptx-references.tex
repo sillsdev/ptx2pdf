@@ -244,11 +244,11 @@
 }
 
 \def\sethe@ddbl#1#2#3#4{%
-  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\csname #4#1#2left\endcsname}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\csname #4#1#2center\endcsname\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\csname #4#1#2right\endcsname}\rshiftc@lumn{\ifRTL 0\else 1\fi}}%
+  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\hbox{\csname #4#1#2left\endcsname}}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\csname #4#1#2center\endcsname\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\hbox{\csname #4#1#2right\endcsname}}\rshiftc@lumn{\ifRTL 0\else 1\fi}}%
 }
 
 \def\sethe@dsgl#1#2#3#4{%
-  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\the\pageno}\rlap{\csname #4#1#2left\endcsname}\hfil\csname #4#1#2center\endcsname\hfil\llap{\csname #4#1#2right\endcsname}\rshiftc@lumn{\the\pageno}}%
+  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\the\pageno}\rlap{\hbox{\csname #4#1#2left\endcsname}}\hfil\csname #4#1#2center\endcsname\hfil\llap{\hbox{\csname #4#1#2right\endcsname}}\rshiftc@lumn{\the\pageno}}%
 }
 \def\@sethe@d#1{\edef\tmp{#1}%
   \expandafter\@@sethe@d\tmp\relax\relax\relax}
