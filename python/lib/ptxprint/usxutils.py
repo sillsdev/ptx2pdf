@@ -289,8 +289,8 @@ class Usfm:
     def getroot(self):
         return self.xml.getroot()
 
-    def asUsfm(self):
-        return self.xml.outUsfm()
+    def asUsfm(self, grammar=None):
+        return self.xml.outUsfm(grammar=grammar)
 
     def outUsx(self, fname):
         return self.xml.outUsx(fname)

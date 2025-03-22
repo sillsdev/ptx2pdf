@@ -432,7 +432,7 @@ class ViewModel:
             hfont = self.get("bl_fontR")
             if hfont is None:
                 # print("hfont is STILL None")
-                return (0, 0, 0, 0, 0, 0, 0, 0)
+                return (0, 0, 0, 0, 0, 0, 0, 0, 0)
         hfont = hfont.getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         hfontheight = float(hfont.ascent) / hfont.upem

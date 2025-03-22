@@ -870,7 +870,7 @@ class TexModel:
 
     def _getText(self, data, doc, bk, logmsg=""):
         if doc is not None:
-            data = doc.asUsfm()
+            data = doc.asUsfm(grammar=self.printer.usfms.grammar)
             logger.log(5, logmsg+data)
         return (data, None)
 
@@ -1020,6 +1020,7 @@ class TexModel:
         adjlist = self.printer.get_adjlist(bk)
         if adjlist is not None:
             (dat, doc) = self._getDoc(dat, doc, bk)
+            logger.debug("Apply adjlist")
             doc.apply_adjlist(bk, adjlist)
             # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
@@ -1390,7 +1391,7 @@ class TexModel:
             self.localChanges.append(makeChange(r"(\s\S) ", r"\1\u2000", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")))) # Ensure no floating single chars in note text
         
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
-        self.localChanges.append(makeChange(r"(\\(xo|fr) [^\\]+?)\s*\\", r"\1\u00A0\\"))
+        self.localChanges.append(makeChange(r"(\\(xo|fr)\s+[^\\]+?)\s*\\", r"\1\u00A0\\"))
 
         for c in ("fn", "xr"):
             # Force all footnotes/x-refs to be either '+ ' or '- ' rather than '*/#'
