@@ -514,7 +514,7 @@ class Usfm:
         ''' Normalise USFM in place '''
         canonicalise(self.getroot())
 
-    def transform_text(self, *regs, parts):
+    def transform_text(self, *regs, parts=[]):
         """ Given tuples of (lambda, match, replace) tests the lambda against the
             parent of a text node and if matches (or is None) does match and replace. """
         def fn(s, parent=None):
@@ -525,6 +525,8 @@ class Usfm:
                     continue
                 s = r[1].sub(r[2], s)
             return s
+        if not len(parts):
+            parts = [self.getroot()]
         for p in parts:
             modifytext(p, fn)
 
