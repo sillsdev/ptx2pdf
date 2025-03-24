@@ -127,11 +127,11 @@ class Sheets(dict):
         stype = self[mrk].get('styletype', "").lower()
         ttype = self[mrk].get('texttype', "").lower()
         for k, v in _occurstypes.items():
-            if k == "footnotechar":
+            if k in ("footnotechar", "crossreferencechar"):
                 m = all(x in occurs for x in v.split(" "))
             else:
-                m = any(x in occurs for x in v.split(" ")):
-            if m
+                m = any(x in occurs for x in v.split(" "))
+            if m:
                 mtype = k
                 break
         for k, v in _typetypes.items():
