@@ -78,11 +78,9 @@ class Interlinear:
                 return e.tag == "verse" and e.get('number', 0) == curref[1]
         basepos = None
         for eloc in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
-            #if eloc.parent.tag == "para" and eloc.parent.get("style", "") == "s":
-            #    breakpoint()
             if eloc.head is None:       # inside an element use .text
                 if basepos is None:
-                    basepos = eloc.parent.pos
+                    basepos = doc.getroot()[0].pos if curref == (1, "0") else eloc.parent.pos
                 if not eloc.parent.text:
                     continue
                 spos = getattr(eloc.parent, 'textpos', None)
