@@ -6575,5 +6575,9 @@ Thank you,
                 dialog.resize(width, height)
         
     def onSpinnerClicked(self, btn, foo):
-        print(f"Jump to control for how quickly to refresh display.")
         self.highlightwidget('s_autoupdatedelay')
+        self.builder.get_object("ptxprint").present()
+
+    def onPreviewDeleteEvent(self, widget, event): # PDF Preview dialog (X button)
+        widget.hide()  # Hide the dialog instead of destroying it
+        return True    # Returning True prevents the default destroy behavior

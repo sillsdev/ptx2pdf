@@ -3379,8 +3379,8 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">normal</property>
-    <property name="deletable">False</property>
     <property name="gravity">east</property>
+    <signal name="delete-event" handler="onPreviewDeleteEvent" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
