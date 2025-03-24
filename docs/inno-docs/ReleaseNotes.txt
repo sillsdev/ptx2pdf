@@ -1,8 +1,22 @@
 PTXprint 2.7.29 Release Notes
-14 Mar 2025
+24 Mar 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.30 (24 Mar 2025)
+  * Replace underlying USFM parser with a new USX-based parser
+    [Built against usfmtc 0.3.3]
+  * Adjlists (context menu changes) work with indexed paragraphs e.g. q2[2]
+  * GLO word adjustments now working as expected
+  * Modified option to 'Pagebreak on all other chapters'
+  * Allow pagebreak at start of body-text (PBOnBody)
+  * Make BorderColor stick
+  * Fix issue 'failure when using forward slash' #1060 and similar
+  * Get interlinear doing pre chapter headings (1:0)
+  * Fix tending to categorise as footnotechar instead of char
+  * Fix RTL hbox header left/right content
+  * Fix showing PDF overlay on indexed paragraphs
 
 Bug fixes and Improvements in 2.7.29 (14 Mar 2025)
   * parse the whole of parlocs file (don't early return)

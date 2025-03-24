@@ -139,7 +139,7 @@ class Interlinear:
                     elif e.tag == "Lexeme":
                         lid = e.get('Id', '')
                         gid = e.get('GlossId', '')
-                        if lid.startswith('Word:'):
+                        if lid.startswith('Word:'): # or lid.startswith('Phrase:'): # not sure if we want this yet.
                             wd = self.lexicon.get(lid, {}).get(gid, '')
                             lexemes.append((currange, str(wd)))
                     elif e.tag == "AfterText":
