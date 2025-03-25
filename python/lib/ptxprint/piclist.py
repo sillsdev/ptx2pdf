@@ -703,7 +703,8 @@ class Piclist:
         lines = []
         for p in sorted(self.pics.values(), key=lambda x:refSort(x['anchor'], info=['anchor'][3:4])):
             (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media,
-                                          checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs)
+                                          checks=checks, hiderefs=hiderefs,
+                                          picMedia=self.model.picMedia(p.get('src', ''), loc=p.get('loc', '')))
             if k:
                 lines.append("{} {}|{}".format(k, caption, vals))
 

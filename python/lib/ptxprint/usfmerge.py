@@ -934,7 +934,7 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
     config = {}#configparser.ConfigParser()
     flaga = {}
     for k in MergeF:
-      flaga[k.get('style', '')] = k in settings
+      flaga[k.name] = k in settings
     config['FLAGS'] = flaga
     config['DEFAULT'] = {k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
     config['L'] = {'WEIGHT': 51}
