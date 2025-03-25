@@ -920,7 +920,7 @@
   \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
     \pdfsavepos
-    \edef\t@mp{\string \@parpicstart{\c@rref}{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi}}%
+    \edef\t@mp{\string \@parpicstart{\ifdiglot\dc@rref\else\c@rref\fi}{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi}}%
     \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
