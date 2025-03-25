@@ -156,6 +156,10 @@ def createGrammar(sheets):
             v = sheets.mrktype(k)
             if v is not None:
                 grammar.marker_categories[k] = v
+        a = sheets[k].get("attributes", None)
+        if a is not None and k not in grammar.attribmap:
+            attrib = a.split()[0].replace("?", "")
+            grammar.attribmap[k] = attrib
     return grammar
 
 
