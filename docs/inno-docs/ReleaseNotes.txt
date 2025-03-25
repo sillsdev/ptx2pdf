@@ -1,8 +1,15 @@
 PTXprint 2.7.31 Release Notes
-24 Mar 2025
+25 Mar 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.32 (25 Mar 2025)
+  * [Built against usfmtc 0.3.4]
+  * Fix parpicstart in diglot
+  * Add attrib support to usxutils
+  * Fix overfull pages (affecting study Bibles)
+  * Fix notelines, picture problems, scored merging
 
 Bug fixes and Improvements in 2.7.31 (24 Mar 2025)
   * Replace underlying USFM parser with a new USX-based parser
