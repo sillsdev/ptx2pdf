@@ -980,8 +980,8 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
                     comment = _chunkDesc_map[k]
                     if not comment.startswith('(!)'):
                         #cannon=_canonical_order[k] if k in _canonical_order else 9
-                        #configfile.write(f"#{comment} ({cannon})\n{k.get('style', '')} = {v}\n")
-                        configfile.write(f"#{comment}\n{k.get('style', '')} = {v}\n")
+                        #configfile.write(f"#{comment} ({cannon})\n{k.name} = {v}\n")
+                        configfile.write(f"#{comment}\n{k.name} = {v}\n")
                 elif section == "FLAGS":
                     configfile.write(f"# {k} = {v}\n")
                 else:
