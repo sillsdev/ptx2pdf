@@ -74,8 +74,8 @@ class Module:
                     eloc.head.tail = self.localise_re.sub(self.localref, eloc.head.tail)
                 continue
             e = eloc.parent
-            if e.tail is not None:
-                e.tail = self.localise_re.sub(self.localref, e.text)
+            if e.text is not None:
+                e.text = self.localise_re.sub(self.localref, e.text)
             if e.tag == "para":
                 s = e.get("style", None)
             elif e.tag == "ref":

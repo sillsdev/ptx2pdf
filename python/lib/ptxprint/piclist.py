@@ -257,7 +257,7 @@ class Picture:
         else:
             p3p = pos3parms
         mediaval = self.get('media', None)
-        if mediaval is None or mediaval == '' and picMedia is not None:
+        if (mediaval is None or mediaval == '') and picMedia is not None:
             mediaval = picMedia(self.get('src', ""))[0]
         if media is not None and mediaval is not None and media not in mediaval:
             return ("", "", "")
@@ -701,9 +701,10 @@ class Piclist:
             return
         self.rmdups()
         lines = []
+        pMedia = self.model.picMedia if self.model else None
         for p in sorted(self.pics.values(), key=lambda x:refSort(x['anchor'], info=['anchor'][3:4])):
             (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media,
-                                          checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs)
+                                          checks=checks, hiderefs=hiderefs, picMedia=pMedia)
             if k:
                 lines.append("{} {}|{}".format(k, caption, vals))
 

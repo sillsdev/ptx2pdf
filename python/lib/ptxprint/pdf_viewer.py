@@ -1026,6 +1026,7 @@ class PDFViewer:
         elif parref is not None and isinstance(parref, FigInfo):
             showmenu = True
             imgref = parref.ref.strip('-preverse')
+            pic = None
             if m := re.match(r"^(\d?[A-Z]+)(.*)$", imgref):
                 imgref = m.group(1) + " " + m.group(2)
             if not self.model.picinfos:
@@ -1038,79 +1039,81 @@ class PDFViewer:
                 else:
                     showmenu = False
                     self.addMenuItem(menu, mstr['ianf'], None, sensitivity=False)
-            pgpos = pic.get('pgpos', 'tl')
-            curr_frame = pic.get('size', 'col')
-            if curr_frame in ('page', 'full'): # P,Pl,Pr,Pt,Pb,Pct,Pco,
-                pgpos = pgpos.strip("PF")[::-1]
-                
-            if len(pgpos) == 1:
-                curr_vpos = pgpos[:1]
-                curr_hpos = '-'
-            elif len(pgpos) > 1:
-                curr_vpos = pgpos[:1]
-                curr_hpos = next((char for char in reversed(pgpos) if char.isalpha()), None) # pgpos[2:3]
-            else:
-                curr_vpos = 'c'
-                curr_hpos = 'c'
-            if showmenu:
-                self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, (pic, parref))
+            if pic is not None:
+                pgpos = pic.get('pgpos', 'tl')
+                curr_frame = pic.get('size', 'col')
+                if curr_frame in ('page', 'full'): # P,Pl,Pr,Pt,Pb,Pct,Pco,
+                    pgpos = pgpos.strip("PF")[::-1]
+                    
+                if len(pgpos) == 1:
+                    curr_vpos = pgpos[:1]
+                    curr_hpos = '-'
+                elif len(pgpos) > 1:
+                    curr_vpos = pgpos[:1]
+                    curr_hpos = next((char for char in reversed(pgpos) if char.isalpha()), None) # pgpos[2:3]
+                else:
+                    curr_vpos = 'c'
+                    curr_hpos = 'c'
+                if showmenu:
+                    self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, (pic, parref))
 
-                frame_menu = Gtk.Menu()
-                self.clear_menu(frame_menu)
-                for frame_opt in frame.values():
-                    menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f"   {frame_opt}")
-                    if frame_opt == frame[curr_frame]:
-                        menu_item.set_sensitive(False)
-                    menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
-                    menu_item.show()
-                    frame_menu.append(menu_item)
-                self.addSubMenuItem(menu, mstr['frmsz'], frame_menu)
-
-                vpos_menu = Gtk.Menu()
-                self.clear_menu(vpos_menu)
-                for k, vpos_opt in vpos.items():
-                    if k in dsplyOpts[pic['size']][0]:
-                        menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f"   {vpos_opt}")
-                        if vpos_opt == vpos[curr_vpos]:
+                    frame_menu = Gtk.Menu()
+                    self.clear_menu(frame_menu)
+                    for frame_opt in frame.values():
+                        menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f"   {frame_opt}")
+                        if frame_opt == frame[curr_frame]:
                             menu_item.set_sensitive(False)
-                        menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
+                        menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
                         menu_item.show()
-                        vpos_menu.append(menu_item)
-                self.addSubMenuItem(menu, mstr['vpos'], vpos_menu)
+                        frame_menu.append(menu_item)
+                    self.addSubMenuItem(menu, mstr['frmsz'], frame_menu)
 
-                if curr_frame != 'span':
-                    hpos_menu = Gtk.Menu()
-                    self.clear_menu(hpos_menu)
-                    p = pic.get('pgpos', 'o')
-                    for k, hpos_opt in hpos.items():
-                        if k in dsplyOpts[pic['size']][1]:
-                            menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f"   {hpos_opt}")
-                            if hpos_opt == hpos[curr_hpos]:
+                    vpos_menu = Gtk.Menu()
+                    self.clear_menu(vpos_menu)
+                    for k, vpos_opt in vpos.items():
+                        if k in dsplyOpts[pic['size']][0]:
+                            menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f"   {vpos_opt}")
+                            if vpos_opt == vpos[curr_vpos]:
                                 menu_item.set_sensitive(False)
-                            menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
+                            menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
                             menu_item.show()
-                            hpos_menu.append(menu_item)
-                    self.addSubMenuItem(menu, mstr['hpos'], hpos_menu)
+                            vpos_menu.append(menu_item)
+                    self.addSubMenuItem(menu, mstr['vpos'], vpos_menu)
 
-                mirror_menu = Gtk.Menu()
-                self.clear_menu(mirror_menu)
-                curr_mirror = pic.get('mirror', '')
-                for mirror_opt in mirror.values():
-                    menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f"   {mirror_opt}")
-                    if mirror_opt == mirror[curr_mirror]:
-                        menu_item.set_sensitive(False)                    
-                    menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
-                    menu_item.show()
-                    mirror_menu.append(menu_item)
-                self.addSubMenuItem(menu, mstr['mirror'], mirror_menu)
+                    if curr_frame != 'span':
+                        hpos_menu = Gtk.Menu()
+                        self.clear_menu(hpos_menu)
+                        p = pic.get('pgpos', 'o')
+                        for k, hpos_opt in hpos.items():
+                            if k in dsplyOpts[pic['size']][1]:
+                                menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f"   {hpos_opt}")
+                                if hpos_opt == hpos[curr_hpos]:
+                                    menu_item.set_sensitive(False)
+                                menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
+                                menu_item.show()
+                                hpos_menu.append(menu_item)
+                        self.addSubMenuItem(menu, mstr['hpos'], hpos_menu)
 
-                self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref))
-                self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref))
-                self.addMenuItem(menu, None, None)
+                    mirror_menu = Gtk.Menu()
+                    self.clear_menu(mirror_menu)
+                    curr_mirror = pic.get('mirror', '')
+                    for mirror_opt in mirror.values():
+                        menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f"   {mirror_opt}")
+                        if mirror_opt == mirror[curr_mirror]:
+                            menu_item.set_sensitive(False)                    
+                        menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
+                        menu_item.show()
+                        mirror_menu.append(menu_item)
+                    self.addSubMenuItem(menu, mstr['mirror'], mirror_menu)
 
-                self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
-                self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
+                    self.addMenuItem(menu, None, None)
+                    self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref))
+                    self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref))
+                    self.addMenuItem(menu, None, None)
+
+                    self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
+                    self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
+            if showmenu:
                 if sys.platform.startswith("win"):
                     self.addMenuItem(menu, None, None)
                     self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, imgref)
@@ -1300,6 +1303,7 @@ class PDFViewer:
         self.hitPrint()
 
     def on_shrink_text(self, widget, info, parref):
+        print(f"{info=}\n{parref.mrk=} {info[1]=} {info[2]=}\n{parref=}")
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:
                 self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
@@ -1727,6 +1731,7 @@ class Paragraphs(list):
         if fname is None:
             return
         currp = None
+        currpic = None
         currr = None
         endpar = True
         inpage = False
@@ -1772,6 +1777,8 @@ class Paragraphs(list):
                     continue
                 colinfos[polycol] = cinfo
                 if currps.get(polycol, None) is not None:
+                    if currr is not None and currr.yend == 0:
+                        currps[polycol].rects.pop()
                     currr = ParRect(pnum, cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
             elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
@@ -1821,6 +1828,7 @@ class Paragraphs(list):
                 currp.parnum = int(p[1])
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
+                logger.log(5, f"Stopping para {p[0]}")
                 currps[polycol] = None
                 currr = None
             elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode

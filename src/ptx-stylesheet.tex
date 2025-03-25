@@ -175,6 +175,7 @@
 \def \ztexFontGrSpace   #1\relax{\defp@ram{fontgrspace}{#1}}
 \def \ztexFontICSpace   #1\relax{\defp@ram{fonticspace}{#1}} % eventually... font inter-char space
 \def \VerticalAlign     #1\relax{\defp@ram{verticalalign}{#1}} % for table cells
+\def \mrktype			#1\relax{}
 
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}     %(1)
@@ -1303,7 +1304,7 @@
 }
 \def\@@s@tkref#1|\E{%
   \def\thiswh@tstyle{k}\@@init@ttribs
-  \def\@ttributes{#1}% Without the added trailing | now.
+  \edef\@ttributes{\detokenize{#1}}% Without the added trailing | now.
   \x@\let\x@\@ttriblist\csname @ttriblist-k\endcsname
   \parse@ttribs{\@ttributes}% Parse
   \x@\let\x@\kr@f\csname attr:\thisdefault@ttrkey\endcsname

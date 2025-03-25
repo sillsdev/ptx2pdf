@@ -162,27 +162,31 @@
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
   \setbox\s@vedpage=\copy255
+  \fitonpagetrue
   % split the galley to the actual size available
   \ifdim\availht<0pt                                                        %(2)
+    \ifdim \vsize > 2 \baselineskip \divide \vsize 2 \fitonpagefalse
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
-  \fi
+  \fi\fi
   %\setbox\colA=\vsplit255 to \availht
   % Marginal verses (and other things with 0 height vadjusts) need us to split to avail+lastdepth
-  \setbox\colA=\vsplit255 to \dimexpr \availht + \lastdepth\relax
-  \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
-  \setbox\colA\vbox \ifNoGrid to \availht\fi {\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
-  \ifvoid255
-    \ifinendbook
-      \ifnum \outputpenalty=\book@ndpenalty\relax 
-        \endbooktrue
-        \iflastptxfile\lastpagetrue\fi
+  \iffitonpage
+    \setbox\colA=\vsplit255 to \dimexpr \availht + \lastdepth\relax
+    \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
+    \setbox\colA\vbox \ifNoGrid to \availht\fi {\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
+    \ifvoid255
+      \ifinendbook
+        \ifnum \outputpenalty=\book@ndpenalty\relax 
+          \endbooktrue
+          \iflastptxfile\lastpagetrue\fi
+        \fi
       \fi
-    \fi
     \fitonpagetrue
-  \else
-    \endbookfalse\lastpagefalse\fitonpagefalse
+    \else
+      \endbookfalse\lastpagefalse\fitonpagefalse
+    \fi
+    \und@rfill=\availht \decr{\und@rfill}{\colA}%
   \fi
-  \und@rfill=\availht \decr{\und@rfill}{\colA}%
 %-c_onecoltrial_intro
   \iffitonpage
     \dimen3=\ht\colA \advance\dimen3\lastd@pth
@@ -352,12 +356,16 @@
     \dimen0=\ht\partial
     \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight? (tob@dy\iftob@dy true\else false\fi)}%
     \ifnum\ifdim\dimen0>\iftob@dy \dimexpr \textheight - 4\baselineskip\relax \else \PageFullFactor\textheight \fi 1\else\iftob@dy\ifPBOnBody 1\else 0\fi\else 0\fi\fi =1
+      \trace{o}{Triggering output}%
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
       \box\partial
-      \ifdim\dimen0>\PageFullFactor\textheight \vfill\penalty-10102%\twocolp@geout
-      \else \holdinginserts=0 \global\output={\savepartialpage}\penalty-10101 %Might there be a small risk that there's extra inserts, etc. on the page? Or is this wasted code?
-        \holdinginserts=1
+      \temptrue \ifPBOnBody\iftob@dy \tempfalse\fi\fi
+      \iftemp
+        \ifdim\dimen0>\PageFullFactor\textheight \vfill\penalty-10102%\twocolp@geout
+        \else \holdinginserts=0 \global\output={\savepartialpage}\penalty-10101 %Might there be a small risk that there's extra inserts, etc. on the page? Or is this wasted code?
+          \holdinginserts=1
+        \fi
       \fi
       \vfill\eject% This should do nothing if the page is already empty
     \fi
@@ -1539,31 +1547,36 @@
   \r@membermarks %TODO: Check this 
   \trace{o}{c@lcavailht10}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
+  \fitonpagetrue
   \ifdim\availht<0pt
-    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
-  \fi
-  \setbox\s@vedpage=\copy255 %\showbox255
-  \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark, rerunsavepartialpaged\ifrerunsavepartialpaged true\else false\fi\space op=\the\outputpenalty}%
-  \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
-  \rem@indertrue\balanced
-  \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi, ip=\the\insertpenalties, vsz=\the\vsize}
+    \MSG{No space! vsize=\the\vsize}%
+    \ifdim\vsize > 2 \baselineskip \divide\vsize 2 \fitonpagefalse% drastic
+    \else\MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
+  \fi\fi
   \iffitonpage
-    \ifvoid\s@vedpage\else
-      \ifdim\vsize>0pt \fitonpagefalse
-        \trace{o}{s@vedpage non-void, but no space}%
-        %\showbox\s@vedpage
+    \setbox\s@vedpage=\copy255 %\showbox255
+    \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark, rerunsavepartialpaged\ifrerunsavepartialpaged true\else false\fi\space op=\the\outputpenalty}%
+    \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
+    \rem@indertrue\balanced
+    \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi, ip=\the\insertpenalties, vsz=\the\vsize}
+    \iffitonpage
+      \ifvoid\s@vedpage\else
+        \ifdim\vsize>0pt \fitonpagefalse
+          \trace{o}{s@vedpage non-void, but no space}%
+          %\showbox\s@vedpage
+        \fi
       \fi
+    \else\ifdim\vsize <\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
     \fi
-  \else\ifdim\vsize <\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
-  \fi
-  \ifdim\ht\colA=0pt\ifdim\ht\colB=0pt\ifdim\ht\s@vedpage>\availht\ifvoid\partial
-    \message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near \c@rref. Height \the\ht\s@vedpage \space vs \the\availht}%
-    \abortpage
-    \shipout\box\s@vedpage%
-    %\errmessage{!!! THIS IS BAD, cannot bail, cannot print \the\ht\availht+\the\dp\availht \space box. page-parts and contents have been dumped to output!}%
-    \setbox\s@vedpage\box\voidb@x \rerunsavepartialpagedfalse
-    \fitonpagetrue
-  \fi\fi\fi\fi
+    \ifdim\ht\colA=0pt\ifdim\ht\colB=0pt\ifdim\ht\s@vedpage>\availht\ifvoid\partial
+      \ifdim\vsize > 2 \baselineskip \divide\vsize 2 \fitonpagefalse% drastic
+      \else\message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near \c@rref. Height \the\ht\s@vedpage \space vs \the\availht}%
+        \abortpage
+        \shipout\box\s@vedpage%
+      %\errmessage{!!! THIS IS BAD, cannot bail, cannot print \the\ht\availht+\the\dp\availht \space box. page-parts and contents have been dumped to output!}%
+        \setbox\s@vedpage\box\voidb@x \rerunsavepartialpagedfalse
+        \fitonpagetrue
+  \fi\fi\fi\fi\fi\fi
   \trace{o}{twocoltrial: recalculate fitonpage\iffitonpage true\else false\fi}%
 %-c_twocoltrial_intro
 %+c_twocoltrial

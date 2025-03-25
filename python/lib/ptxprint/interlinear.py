@@ -66,19 +66,21 @@ class Interlinear:
     def replaceusx(self, doc, curref, lexemes, linelengths, mrk="wit"):
         lexemes.sort()
         parindex = doc.chapters[curref[0]]
-        def stop(e):
-            #if e.tag == "verse" and e.get("number", "") == "7-8":
-            #    breakpoint()
-            return doc.getroot()[parindex] != e and (e.tag == 'chapter' or (e.tag == 'verse' and vcmp(e.get('number', "0"), curref[1]) > 0))
-        def start(e):
-            return e.tag == "verse" and e.get('number', 0) == curref[1]
+        if curref[1] == "0":
+            def stop(e):
+                return e.tag == 'verse'
+            def start(e):
+                return e.tag == "chapter"
+        else:
+            def stop(e):
+                return doc.getroot()[parindex] != e and (e.tag == 'chapter' or (e.tag == 'verse' and vcmp(e.get('number', "0"), curref[1]) > 0))
+            def start(e):
+                return e.tag == "verse" and e.get('number', 0) == curref[1]
         basepos = None
         for eloc in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
-            #if eloc.parent.tag == "para" and eloc.parent.get("style", "") == "s":
-            #    breakpoint()
             if eloc.head is None:       # inside an element use .text
                 if basepos is None:
-                    basepos = eloc.parent.pos
+                    basepos = doc.getroot()[0].pos if curref == (1, "0") else eloc.parent.pos
                 if not eloc.parent.text:
                     continue
                 spos = getattr(eloc.parent, 'textpos', None)
@@ -137,7 +139,7 @@ class Interlinear:
                     elif e.tag == "Lexeme":
                         lid = e.get('Id', '')
                         gid = e.get('GlossId', '')
-                        if lid.startswith('Word:'):
+                        if lid.startswith('Word:'): # or lid.startswith('Phrase:'): # not sure if we want this yet.
                             wd = self.lexicon.get(lid, {}).get(gid, '')
                             lexemes.append((currange, str(wd)))
                     elif e.tag == "AfterText":

@@ -934,7 +934,7 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
     config = {}#configparser.ConfigParser()
     flaga = {}
     for k in MergeF:
-      flaga[k.get('style', '')] = k in settings
+      flaga[k.name] = k in settings
     config['FLAGS'] = flaga
     config['DEFAULT'] = {k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
     config['L'] = {'WEIGHT': 51}
@@ -980,8 +980,8 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
                     comment = _chunkDesc_map[k]
                     if not comment.startswith('(!)'):
                         #cannon=_canonical_order[k] if k in _canonical_order else 9
-                        #configfile.write(f"#{comment} ({cannon})\n{k.get('style', '')} = {v}\n")
-                        configfile.write(f"#{comment}\n{k.get('style', '')} = {v}\n")
+                        #configfile.write(f"#{comment} ({cannon})\n{k.name} = {v}\n")
+                        configfile.write(f"#{comment}\n{k.name} = {v}\n")
                 elif section == "FLAGS":
                     configfile.write(f"# {k} = {v}\n")
                 else:

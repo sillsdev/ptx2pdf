@@ -36,8 +36,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.7.29"
-GitVersionStr = "2.7.29"
+VersionStr = "2.7.31"
+GitVersionStr = "2.7.31"
 ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -435,7 +435,7 @@ class ViewModel:
             hfont = self.get("bl_fontR")
             if hfont is None:
                 # print("hfont is STILL None")
-                return (0, 0, 0, 0, 0, 0, 0, 0)
+                return (0, 0, 0, 0, 0, 0, 0, 0, 0)
         hfont = hfont.getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         hfontheight = float(hfont.ascent) / hfont.upem

@@ -127,7 +127,11 @@ class Sheets(dict):
         stype = self[mrk].get('styletype', "").lower()
         ttype = self[mrk].get('texttype', "").lower()
         for k, v in _occurstypes.items():
-            if any(x in occurs for x in v.split(" ")):
+            if k in ("footnotechar", "crossreferencechar"):
+                m = all(x in occurs for x in v.split(" "))
+            else:
+                m = any(x in occurs for x in v.split(" "))
+            if m:
                 mtype = k
                 break
         for k, v in _typetypes.items():
@@ -152,6 +156,10 @@ def createGrammar(sheets):
             v = sheets.mrktype(k)
             if v is not None:
                 grammar.marker_categories[k] = v
+        a = sheets[k].get("attributes", None)
+        if a is not None and k not in grammar.attribmap:
+            attrib = a.split()[0].replace("?", "")
+            grammar.attribmap[k] = attrib
     return grammar
 
 
@@ -178,7 +186,7 @@ class UsfmCollection:
             return None
         mtime = os.stat(bkfile).st_mtime
         if mtime > self.times.get(bk, 0):
-            self.books[bk] = Usfm.readfile(bkfile, self.grammar)
+            self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
             self.times[bk] = time.time()
         return self.books[bk]
 
@@ -280,17 +288,17 @@ class Usfm:
         self.cvaddorned = False
 
     @classmethod
-    def readfile(cls, fname, grammar=None, sheet=None):           # can also take the data straight
+    def readfile(cls, fname, grammar=None, sheet=None, elfactory=None):       # can also take the data straight
         if grammar is None:
             grammar = createGrammar(sheet if sheet is not None else [])
-        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar)
+        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar, elfactory=elfactory)
         return cls(usxdoc, usxdoc.parser, grammar=grammar)
 
     def getroot(self):
         return self.xml.getroot()
 
-    def asUsfm(self):
-        return self.xml.outUsfm()
+    def asUsfm(self, grammar=None):
+        return self.xml.outUsfm(grammar=grammar)
 
     def outUsx(self, fname):
         return self.xml.outUsx(fname)
@@ -303,10 +311,14 @@ class Usfm:
         bk = root[0].get('code')
         self.factory = factory
         self.chapters = [0]
+        self.kpars = {}
         sections = []
         i = -1
+        currpi = None
         for x in iterusx(root):
             if x.head is None:
+                if x.parent.tag == 'para':
+                    currp = x.parent
                 continue
             p = x.head
             if x.parent == root:
@@ -314,11 +326,9 @@ class Usfm:
             if p.tag == "chapter":
                 currc = int(p.get("number", 0))
                 if currc >= len(self.chapters):
-                    self.chapters.extend([i] * (currc - len(self.chapters) + 1))
+                    self.chapters.extend([self.chapters[-1]] * (currc - len(self.chapters) + 1))
                 self.chapters[currc] = i
                 curr = MakeReference(bk, currc, 0)
-            elif curr is None:
-                continue
             elif p.tag == "para":
                 if istype(p.get("style", ""), ('sectionpara', 'title')):
                     sections.append(p)
@@ -335,9 +345,15 @@ class Usfm:
                         _addorncv_hierarchy(s, curr)
                     sections = []
             elif p.tag == "verse":
-                currv = p.get("number", curr.last.verse)
-                curr = MakeReference(bk, curr.first.chap, currv)
+                if curr is not None:
+                    currv = p.get("number", curr.last.verse)
+                    curr = MakeReference(bk, curr.first.chap, currv)
                 # add to bridges if a RefRange
+            elif p.tag == "char":
+                s = p.get("style")
+                if s == "k":
+                    v = p.get("key", p.text.strip())    # there is more to this
+                    self.kpars[v] = currp
             p.pos = RefPos(p.pos, curr)
         self.chapters.append(i)
         for s in sections:
@@ -433,7 +449,7 @@ class Usfm:
             isactive = False
             if pred(start, rlist):
                 isactive = True
-                if out.tag == "usx" and start.tag != "para":
+                if out.tag == "usx" and start.tag not in ("para", "chapter", "book"):
                     out = self.factory("para", attrib=dict(style=pstyle), parent=out, pos=start.pos)
                 res = self.factory(start.tag, start.attrib, parent=out, pos=start.pos)
                 out.append(res)
@@ -455,7 +471,7 @@ class Usfm:
                 if minref.verse > 0:
                     res.append(self.make_zsetref(minref, None, root, None))
             if len(c[0]) > 2:
-                print(f"chapter too long: {c[0]}")
+                logger.error(f"chapter too long: {c[0]}")
             for chap in range(c[0][0], c[0][-1]):
                 copyrange(d[chap], res, c[1])
         return Usfm(usfmtc.USX(res), parser=self.parser, grammar=self.grammar)
@@ -502,7 +518,7 @@ class Usfm:
         ''' Normalise USFM in place '''
         canonicalise(self.getroot())
 
-    def transform_text(self, *regs, parts):
+    def transform_text(self, *regs, parts=[]):
         """ Given tuples of (lambda, match, replace) tests the lambda against the
             parent of a text node and if matches (or is None) does match and replace. """
         def fn(s, parent=None):
@@ -513,6 +529,8 @@ class Usfm:
                     continue
                 s = r[1].sub(r[2], s)
             return s
+        if not len(parts):
+            parts = [self.getroot()]
         for p in parts:
             modifytext(p, fn)
 
@@ -648,12 +666,19 @@ class Usfm:
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
 
     def getcvpara(self, c, v):
-        pstart = self.chapters[c]
-        pend = self.chapters[c+1]
-        for i, p in enumerate(list(self.getroot()[pstart:pend]), pstart):
-            for c in p:
-                if c.tag == "verse" and c.get("number") == v:
-                    return i
+        if all(x in "0123456789" for x in c):
+            c = int(c)
+            if c >= len(self.chapters) - 1:
+                logger.error(f"Failed to find chapter {c} of {len(self.chapters)}")
+                return None
+            pstart = self.chapters[c]
+            pend = self.chapters[c+1]
+            for i, p in enumerate(list(self.getroot()[pstart:pend]), pstart):
+                for c in p:
+                    if c.tag == "verse" and c.get("number") == v:
+                        return p
+        elif c == "k" and v in self.kpars:
+            return self.kpars[v]
         return None
         
 
@@ -666,11 +691,12 @@ class Usfm:
             if a[0] != bk or a[5] == 100:
                 continue
             c, v = a[1].replace(":", ".").split(".")
-            i = self.getcvpara(int(c), v)
-            if i is None:
+            p = self.getcvpara(c, v)
+            if p is None:
                 continue
-            p = list(self.getroot())[i + a[2] - 1]
+            for i in range(a[2] - 1):
+                p = p.getnext()
             s = p.get("style", "")
-            if "^" not in s:
+            if "^" not in s and p.tag == "para":    # Just in case it isn't a para
                 p.set("style", f"{s}^{a[5]}")
 

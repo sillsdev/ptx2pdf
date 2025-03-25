@@ -169,7 +169,7 @@ def refSort(r, info=""):
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
     try:
-        return "x"+"".join("{:02X}".format(int(x)) for x in vals[:3])
+        return "x"+"".join("{:02X}".format(int(float(x))) for x in vals[:3])
     except (ValueError, TypeError):
         return ""
 
@@ -691,7 +691,7 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
 
     def __init__(self, txt, *args):
         if sys.version_info.major > 3 or sys.version_info.minor >= 12:
-            if len(args) and txt.startswith("${"):
+            if len(args) and str(txt).startswith("${"):
                 varlib = self.create_varlib(args[0])
                 k = txt[2:txt.find("}")]
                 txt = str(varlib[k]) + "/" + txt[len(k)+4:]

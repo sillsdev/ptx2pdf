@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.7.29</property>
+    <property name="version">Version 2.7.31</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -3379,8 +3379,8 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
     <property name="destroy-with-parent">True</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">normal</property>
-    <property name="deletable">False</property>
     <property name="gravity">east</property>
+    <signal name="delete-event" handler="onPreviewDeleteEvent" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
@@ -3705,13 +3705,23 @@ Mouse Scroll also changes pages</property>
               </packing>
             </child>
             <child>
-              <object class="GtkSpinner" id="spin_preview">
-                <property name="width-request">24</property>
-                <property name="height-request">24</property>
+              <object class="GtkEventBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="valign">center</property>
-                <property name="hexpand">True</property>
+                <property name="tooltip-text" translatable="yes">Click here to change the
+Auto-update delay in
+Advanced &gt; Other options.</property>
+                <signal name="button-release-event" handler="onSpinnerClicked" swapped="no"/>
+                <child>
+                  <object class="GtkSpinner" id="spin_preview">
+                    <property name="width-request">24</property>
+                    <property name="height-request">24</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="valign">center</property>
+                    <property name="hexpand">True</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -8903,59 +8913,44 @@ selected books/chapters will show in the glossary.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkCheckButton" id="c_pagebreakAllChs">
+                                    <property name="label" translatable="yes">Start All Other Chapters on a New Page</property>
+                                    <property name="name">Start every chapter on a new page</property>
                                     <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_ch1pagebreak">
-                                        <property name="label" translatable="yes">Start 1st Chapter on a New Page</property>
-                                        <property name="name">Start new page after introduction</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Use this option to automatically make a page 
-break after a book's introduction section. 
-The break will come right before the \c 1 marker.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_pagebreakAllChs">
-                                        <property name="label" translatable="yes">All Chapters</property>
-                                        <property name="name">Start every chapter on a new page</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Use this option to force a page break before
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Use this option to force a page break before
 every chapter. This is most commonly used
 for testing materials when each chapter needs
 to be printed and given to a different person.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw-indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_ch1pagebreak">
+                                    <property name="label" translatable="yes">Start 1st Chapter on a New Page</property>
+                                    <property name="name">Start new page after introduction</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Use this option to automatically make a page 
+break after a book's introduction section. 
+The break will come right before the \c 1 marker.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="draw-indicator">True</property>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                             </child>

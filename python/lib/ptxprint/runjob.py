@@ -686,10 +686,8 @@ class RunJob:
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
-            print("Gathering pictures...")
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(info, jobs, prjdir, digtexmodel=digtexmodel)
-            print("Finished gathering pictures...")
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
