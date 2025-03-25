@@ -257,7 +257,7 @@ class Picture:
         else:
             p3p = pos3parms
         mediaval = self.get('media', None)
-        if mediaval is None or mediaval == '' and picMedia is not None:
+        if (mediaval is None or mediaval == '') and picMedia is not None:
             mediaval = picMedia(self.get('src', ""))[0]
         if media is not None and mediaval is not None and media not in mediaval:
             return ("", "", "")

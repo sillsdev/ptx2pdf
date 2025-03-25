@@ -1549,6 +1549,7 @@
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \fitonpagetrue
   \ifdim\availht<0pt
+    \MSG{No space! vsize=\the\vsize}%
     \ifdim\vsize > 2 \baselineskip \divide\vsize 2 \fitonpagefalse% drastic
     \else\MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi\fi
@@ -1568,13 +1569,14 @@
     \else\ifdim\vsize <\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
     \fi
     \ifdim\ht\colA=0pt\ifdim\ht\colB=0pt\ifdim\ht\s@vedpage>\availht\ifvoid\partial
-      \message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near \c@rref. Height \the\ht\s@vedpage \space vs \the\availht}%
-      \abortpage
-      \shipout\box\s@vedpage%
+      \ifdim\vsize > 2 \baselineskip \divide\vsize 2 \fitonpagefalse% drastic
+      \else\message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near \c@rref. Height \the\ht\s@vedpage \space vs \the\availht}%
+        \abortpage
+        \shipout\box\s@vedpage%
       %\errmessage{!!! THIS IS BAD, cannot bail, cannot print \the\ht\availht+\the\dp\availht \space box. page-parts and contents have been dumped to output!}%
-      \setbox\s@vedpage\box\voidb@x \rerunsavepartialpagedfalse
-      \fitonpagetrue
-  \fi\fi\fi\fi\fi
+        \setbox\s@vedpage\box\voidb@x \rerunsavepartialpagedfalse
+        \fitonpagetrue
+  \fi\fi\fi\fi\fi\fi
   \trace{o}{twocoltrial: recalculate fitonpage\iffitonpage true\else false\fi}%
 %-c_twocoltrial_intro
 %+c_twocoltrial
