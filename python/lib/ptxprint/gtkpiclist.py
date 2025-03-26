@@ -3,6 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
 from ptxprint.utils import refSort, getlang, _, f2s, pycodedir
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
+from typing import Dict
 from shutil import rmtree
 import os, re
 import logging
@@ -83,7 +84,7 @@ class PicList:
         self.view.set_model(self.model)
         self.builder = builder
         self.parent = parent
-        self.picinfo = None
+        self.picinfo: Optional[Piclist] = None
         self.selection = view.get_selection()
         self.picrect = None
         self.currows = []
@@ -510,7 +511,7 @@ class PicList:
         row = self.get_row_from_items()
         key = "row{}".format(newrowcounter)
         row[_pickeys['key']] = key
-        self.picinfo[key] = dict()
+        self.picinfo[key] = Picture()
         logger.debug(f"{row[_pickeys['key']]}", sorted([k for k, v in self.picinfo.items()]))
         newrowcounter += 1
         self.coremodel.append(row)

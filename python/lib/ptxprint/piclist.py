@@ -5,6 +5,7 @@ import configparser
 import regex, re, logging
 import os, re, random, sys
 import appdirs, traceback
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -376,7 +377,7 @@ class Piclist:
     stripsp_re = re.compile(r"^(\S+\s+\S+)\s+.*$")
 
     def __init__(self, model=None, diglot=False):
-        self.pics = {}
+        self.pics: Dict[str, Picture] = {}
         self.model = model
         self.clear(model)
         self.inthread = False

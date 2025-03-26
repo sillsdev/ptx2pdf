@@ -32,6 +32,7 @@ import json, logging, hashlib
 from shutil import copyfile, copytree, move
 from difflib import Differ
 from base64 import b64encode, b64decode
+from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -659,7 +660,7 @@ class ViewModel:
             self.onNumTabsChanged()
             self.readCopyrights(forced=True)
             self.picChecksView.init(basepath=self.project.srcPath(self.cfgid))
-            self.picinfos = None
+            self.picinfos: Optional[Piclist] = None
             self.loadPics(mustLoad=False, force=True)
             self.hyphenation = None
             self.adjlists = {}
