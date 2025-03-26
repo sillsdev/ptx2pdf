@@ -698,8 +698,6 @@ class Piclist:
                 bks is a list of 3 letter bkids only to include. If empty, include all.
                 skipkey if set will skip a record if there is a non False value associated with skipkey
                 usedest says to use destfile rather than src as the file source in the output'''
-        if not len(self.pics):
-            return
         self.rmdups()
         lines = []
         pMedia = self.model.picMedia if self.model else None

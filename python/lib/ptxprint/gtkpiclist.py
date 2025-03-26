@@ -1,6 +1,6 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.piclist import newBase
+from ptxprint.piclist import newBase, Picture
 from ptxprint.utils import refSort, getlang, _, f2s, pycodedir
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
 from typing import Dict
