@@ -3044,14 +3044,20 @@
           \tempfalse\let\col@do\ck@backgrounds
           \x@\each@col\diglot@list\E% 
         \fi
-        \iftemp\setbox\partial\vbox{\dimen1=\dp\partial\unvbox\partial\kern\dimen1}\fi%avoid clashes with textborder and backgrounds
+        \iftemp\dimen1=\dp\partial
+          \ifdim\dimen1<\baselineskip
+            \setbox\partial\vbox{\unvbox\partial\kern\dimen1}%
+          \else
+            \setbox\partial\vbox{\unvbox\partial}%
+          \fi
+       \fi%avoid clashes with textborder and backgrounds
         %\iftextborder
           %\ifpartialfr@med\else
             %\doTextB@rder{\partial}%
             %\global\partialfr@medtrue
           %\fi
         %\fi
-        \setbox\partial\vbox{%\unvbox\partial
+        \setbox\partial\vbox{\unvbox\partial
           \csname @start@writep@ge@\diglotlayout\endcsname
           \setdiglotN@rmal
           \pickn@xtpartial
