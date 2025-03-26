@@ -19,7 +19,7 @@ requires-python = ">=3.8"
 dynamic = ["version"]
 
 dependencies = [
-"usfmtc >= 0.3.4",
+"usfmtc @ git+https://github.com/usfm-bible/usfmtc",
 "regex",
 "fonttools",
 "appdirs",
