@@ -1,8 +1,15 @@
 PTXprint 2.7.32 Release Notes
-25 Mar 2025
+26 Mar 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.33 (26 Mar 2025)
+  * Picist fix - make sure piclist is deleted when all pics are deleted
+  * Add rectangle overlays to help move them
+  * Switch usfmtc dependency from pypi to github
+  * Fix several minor bugs
+  * Fix adding pictures
 
 Bug fixes and Improvements in 2.7.32 (25 Mar 2025)
   * [Built against usfmtc 0.3.4]
