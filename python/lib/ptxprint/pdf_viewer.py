@@ -142,6 +142,7 @@ class PDFViewer:
         self.piczoom = 85
         self.showguides = False
         self.showgrid = False
+        self.showrects = False
         self.ufCurrIndex = 0
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
@@ -322,6 +323,8 @@ class PDFViewer:
             layerfns.append(self._draw_guides)
         if self.showadjustments:        # draw annotations over the rest
             layerfns.append(self.add_hints)
+        if self.showrects:
+            layerfns.append(self._draw_rectangles)
         
         images = []
         if self.model.isCoverTabOpen():
@@ -484,6 +487,15 @@ class PDFViewer:
                     drawline(v, j[0][1], minorthick, j[1][1] - j[0][1], minorcol)
                     v += minor
                 start += major
+
+    def _draw_rectangles(self, page, pnum, context, zoomlevel):
+        def make_rect(r, width, col=(0.2, 0.2, 0.8, 0.4)):
+            context.set_source_rgba(*col)
+            context.rectangle(r.xstart, self.psize[1] - r.ystart, r.xend - r.xstart, r.ystart - r.yend)
+            context.set_line_width(width)
+            context.stroke()
+        for p, r in self.parlocs.getParas(pnum):
+            make_rect(r, 1)
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):
