@@ -407,9 +407,11 @@ class Collector:
                 ok = (newmode == ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
                 if name not in nestedparas and ((newmode != self.mode and not ok) \
                             or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE, ChunkType.HEADER)):
+                    logger.log(7, f"newchunk because: mode={self.mode}  ok={ok} name in np:{name in nestedparas}")
                     newchunk = True
                 logger.log(7, f"Para:{name} {newmode} {self.chap}:{self.verse} {newchunk} context: {self.oldmode}, {self.mode}")
             if 'diglotsync' in self.text_properties(c):
+                logger.log(7, f"newchunk because diglotsync")
                 newchunk = True
                 try:
                     self.syncp = c.get("syncaddr", "")
@@ -440,6 +442,7 @@ class Collector:
                 self.counts = {}
                 self.currChunk.hasVerse = True
                 if MergeF.ChunkOnVerses in settings:
+                    logger.log(7, f"newchunk because ChunkOnVerses")
                     newchunk = True
                 else:
                     self.currChunk.label(self.chap, self.verse, self.end, 0,'')
@@ -1062,6 +1065,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 raise ValueError("Cannot have reapeated entries in key array! (%c already seen)" %(k))
             scorearr[k] = int(v)
         del tmp
+    logger.debug(f"{type(mode)}, {mode=}")
     logger.debug(f"{type(scorearr)}, {scorearr=}")
     logger.debug(f"{type(keyarr)}, {keyarr=}")
     logger.log(7, f"{stylesheetsa=}, {stylesheetsb=}")
@@ -1108,7 +1112,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     colls={}
     if (mode == "scores") or ("verse"  in syncarr) or ("chapter" in syncarr) : #Score-based splitting may force the break-up of an NB, the others certainly will.
         settings =  settings & (~MergeF.NoSplitNB)
-    if (mode == "scores") or ("verse"  in syncarr):
+    if (mode in ("scores") or ("verse"  in syncarr)):
         settings = settings | MergeF.ChunkOnVerses
     if (mode == "scores"):
         settings = settings & (~MergeF.HeadWithChapter) #  scores needs them initially separated
