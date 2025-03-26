@@ -465,7 +465,7 @@ class Collector:
                 except (ValueError, TypeError):
                     self.chap = 0
                 if currChunk is None:
-                    currChunk=makeChunk(c)
+                    currChunk = self.makeChunk(c)
                 else:
                     currChunk.chap = self.chap
                     currChunk.verse = self.verse

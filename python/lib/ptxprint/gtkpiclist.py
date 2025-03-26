@@ -511,7 +511,7 @@ class PicList:
         key = "row{}".format(newrowcounter)
         row[_pickeys['key']] = key
         self.picinfo[key] = dict()
-        logger.debug(f"{row[_pickeys['key']]}", sorted(self.picinfo.keys()))
+        logger.debug(f"{row[_pickeys['key']]}", sorted([k for k, v in self.picinfo.items()]))
         newrowcounter += 1
         self.coremodel.append(row)
         self.select_row(len(self.model)-1)
