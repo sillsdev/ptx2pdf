@@ -5835,20 +5835,20 @@ or select from the list of preset values.</property>
                                         <property name="has-entry">True</property>
                                         <property name="active-id">0</property>
                                         <items>
-                                          <item translatable="yes">210mm, 297mm (A4)</item>
-                                          <item translatable="yes">148mm, 210mm (A5)</item>
-                                          <item translatable="yes">105mm, 148mm (A6)</item>
-                                          <item translatable="yes">176mm, 250mm (B5)</item>
-                                          <item translatable="yes">125mm, 176mm (B6)</item>
-                                          <item translatable="yes">210mm, 280mm (PA4)</item>
-                                          <item translatable="yes">140mm, 210mm (PA5)</item>
-                                          <item translatable="yes">105mm, 140mm (PA6)</item>
-                                          <item translatable="yes">8.5in, 11in (Letter)</item>
-                                          <item translatable="yes">5.5in, 8.5in (1/2 Letter)</item>
-                                          <item translatable="yes">5.25in, 8.25in (133x210mm)</item>
-                                          <item translatable="yes">5.8in, 8.7in (147x221mm)</item>
-                                          <item translatable="yes">184.6mm, 271.6mm (A4 with cropmarks)</item>
-                                          <item translatable="yes">165mm, 234mm (KBS max page)</item>
+                                          <item>210mm, 297mm (A4)</item>
+                                          <item>148mm, 210mm (A5)</item>
+                                          <item>105mm, 148mm (A6)</item>
+                                          <item>176mm, 250mm (B5)</item>
+                                          <item>125mm, 176mm (B6)</item>
+                                          <item>210mm, 280mm (PA4)</item>
+                                          <item>140mm, 210mm (PA5)</item>
+                                          <item>105mm, 140mm (PA6)</item>
+                                          <item>8.5in, 11in (Letter)</item>
+                                          <item>5.5in, 8.5in (1/2 Letter)</item>
+                                          <item>5.25in, 8.25in (133x210mm)</item>
+                                          <item>5.8in, 8.7in (147x221mm)</item>
+                                          <item>184.6mm, 271.6mm (A4 with cropmarks)</item>
+                                          <item>165mm, 234mm (KBS max page)</item>
                                         </items>
                                         <signal name="changed" handler="onNumTabsChanged" swapped="no"/>
                                         <child internal-child="entry">
