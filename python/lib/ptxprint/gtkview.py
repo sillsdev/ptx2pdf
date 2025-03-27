@@ -2562,7 +2562,7 @@ class GtkViewModel(ViewModel):
                     menu_item.set_tooltip_text(codelet["Description"])
                     menu_item.connect("activate", self.insert_codelet, codelet)
                     submenu.append(menu_item)
-                    self.finddata[codelet["Label"]] = (bname, 1)
+                    self.finddata[codelet["Label"].lower()] = (bname, 1)
             
                 button.connect("clicked", self.showCodeletMenu, submenu)
 
