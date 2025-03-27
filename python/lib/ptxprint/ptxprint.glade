@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.7.33</property>
+    <property name="version">Version 2.7.34</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -5835,20 +5835,20 @@ or select from the list of preset values.</property>
                                         <property name="has-entry">True</property>
                                         <property name="active-id">0</property>
                                         <items>
-                                          <item translatable="yes">210mm, 297mm (A4)</item>
-                                          <item translatable="yes">148mm, 210mm (A5)</item>
-                                          <item translatable="yes">105mm, 148mm (A6)</item>
-                                          <item translatable="yes">176mm, 250mm (B5)</item>
-                                          <item translatable="yes">125mm, 176mm (B6)</item>
-                                          <item translatable="yes">210mm, 280mm (PA4)</item>
-                                          <item translatable="yes">140mm, 210mm (PA5)</item>
-                                          <item translatable="yes">105mm, 140mm (PA6)</item>
-                                          <item translatable="yes">8.5in, 11in (Letter)</item>
-                                          <item translatable="yes">5.5in, 8.5in (1/2 Letter)</item>
-                                          <item translatable="yes">5.25in, 8.25in (133x210mm)</item>
-                                          <item translatable="yes">5.8in, 8.7in (147x221mm)</item>
-                                          <item translatable="yes">184.6mm, 271.6mm (A4 with cropmarks)</item>
-                                          <item translatable="yes">165mm, 234mm (KBS max page)</item>
+                                          <item>210mm, 297mm (A4)</item>
+                                          <item>148mm, 210mm (A5)</item>
+                                          <item>105mm, 148mm (A6)</item>
+                                          <item>176mm, 250mm (B5)</item>
+                                          <item>125mm, 176mm (B6)</item>
+                                          <item>210mm, 280mm (PA4)</item>
+                                          <item>140mm, 210mm (PA5)</item>
+                                          <item>105mm, 140mm (PA6)</item>
+                                          <item>8.5in, 11in (Letter)</item>
+                                          <item>5.5in, 8.5in (1/2 Letter)</item>
+                                          <item>5.25in, 8.25in (133x210mm)</item>
+                                          <item>5.8in, 8.7in (147x221mm)</item>
+                                          <item>184.6mm, 271.6mm (A4 with cropmarks)</item>
+                                          <item>165mm, 234mm (KBS max page)</item>
                                         </items>
                                         <signal name="changed" handler="onNumTabsChanged" swapped="no"/>
                                         <child internal-child="entry">
@@ -23448,7 +23448,7 @@ interlinear (&amp; ruby text) output.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_ViewerEditor">
+                  <object class="GtkBox" id="tb_Viewer">
                     <property name="width-request">700</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -23771,7 +23771,7 @@ Keyboard Shortcuts:
                             <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                             <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_FrontMatter">
+                              <object class="GtkScrolledWindow" id="tb_FrontMatter">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="shadow-type">in</property>
@@ -23788,7 +23788,7 @@ Keyboard Shortcuts:
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_AdjList">
+                              <object class="GtkScrolledWindow" id="tb_AdjList">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23851,7 +23851,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_FinalSFM">
+                              <object class="GtkScrolledWindow" id="tb_FinalSFM">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23878,7 +23878,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_TeXfile">
+                              <object class="GtkScrolledWindow" id="tb_TeXfile">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23904,7 +23904,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_XeTeXlog">
+                              <object class="GtkScrolledWindow" id="tb_XeTeXlog">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23930,7 +23930,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_Settings1">
+                              <object class="GtkScrolledWindow" id="tb_Settings1">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23956,7 +23956,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_Settings2">
+                              <object class="GtkScrolledWindow" id="tb_Settings2">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23982,7 +23982,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_Settings3">
+                              <object class="GtkScrolledWindow" id="tb_Settings3">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="shadow-type">in</property>
@@ -24088,7 +24088,7 @@ various code snippets as required.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_ViewerEditor">
+                  <object class="GtkLabel" id="lb_Viewer">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="tooltip-text" translatable="yes">View and edit various control

@@ -687,9 +687,9 @@ class TexModel:
                     if self.dict["document/ifchaplabels"] == "%" and len(bks):
                         for bk in bks.split(" "):
                             if bk in self.dict['project/bookids']:
-                                res.append((r"\setbookhook{{start}}{{{}}}{{\gdef\BalanceThreshold{{3}}\clubpenalty=50"
+                                res.append((r"\setbookhook{{start}}{{{}}}{{\xdef\lBalThresh{{\BalanceThreshold}}\gdef\BalanceThreshold{{3}}\clubpenalty=50"
                                             + r"\widowpenalty=50}}").format(bk))
-                                res.append((r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000"
+                                res.append((r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{\lBalThresh}}\clubpenalty=10000"
                                             + r"\widowpenalty=10000}}").format(bk))
                 elif l.startswith(r"%\snippets"):
                     for t in self.tablespans:

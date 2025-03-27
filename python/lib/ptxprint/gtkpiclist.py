@@ -245,7 +245,9 @@ class PicList:
             return
         if update and self.currows:
             if not self.currows[-1][_pickeys['anchor']]:
-                self.parent.doError(_("Empty Anchor"), _("You must set an anchor"))
+                w = self.builder.get_object("t_plAnchor")
+                w.get_style_context().add_class("highlighted")
+                self.parent.doError(_("Missing: 'Anchor Ref'"), secondary=_("You must provide a Book Ch.Vs reference as an anchor for the picture. For example: GEN 14.19"))
                 return
             for k, s in ((k, x) for k,x in _form_structure.items() if x.startswith("s_")):
                 w = self.builder.get_object(s)

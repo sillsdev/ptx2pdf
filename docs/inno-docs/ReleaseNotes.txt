@@ -1,8 +1,16 @@
-PTXprint 2.7.33 Release Notes
-26 Mar 2025
+PTXprint 2.7.34 Release Notes
+27 Mar 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.34 (27 Mar 2025)
+  * Prepare to make code snippet searches switch window
+  * Fix poetry special measures to revert correctly
+  * Don't allow Page Size to be translatable
+  * Improve user feedback when Anchor Ref is missing
+  * id in a diglot only resets it own side's chapter number
+  * Synchronise log formats between ptxprint and usfmerge script
 
 Bug fixes and Improvements in 2.7.33 (26 Mar 2025)
   * Picist fix - make sure piclist is deleted when all pics are deleted

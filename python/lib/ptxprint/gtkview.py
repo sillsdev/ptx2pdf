@@ -461,8 +461,8 @@ _horiz = {
     "Outer":    "o",
     "-":        "-"
 }
-_allpgids = ["scroll_FrontMatter", "scroll_AdjList", "scroll_FinalSFM", 
-             "scroll_TeXfile", "scroll_XeTeXlog", "scroll_Settings1", "scroll_Settings2", "scroll_Settings3"]
+_allpgids = ["tb_FrontMatter", "tb_AdjList", "tb_FinalSFM", 
+             "tb_TeXfile", "tb_XeTeXlog", "tb_Settings1", "tb_Settings2", "tb_Settings3"]
 
 _allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media", ]
 
@@ -507,7 +507,7 @@ _signals = {
 }
 
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
-         "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", 
+         "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_Viewer", 
          "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_PoD"]  # "tb_Help"
 
 _dlgtriggers = {
@@ -893,7 +893,7 @@ class GtkViewModel(ViewModel):
                 continue
             self.buf.append(GtkSource.Buffer())
             view = GtkSource.View.new_with_buffer(self.buf[i])
-            scroll = self.builder.get_object("scroll_" + k)
+            scroll = self.builder.get_object("tb_" + k)
             scroll.add(view)
             self.fileViews.append((self.buf[i], view))
             view.set_left_margin(8)
@@ -902,7 +902,7 @@ class GtkViewModel(ViewModel):
             view.set_show_line_numbers(True if i > 1 else False)
             view.set_editable(False if i in [2,3,4] else True)
             view.set_wrap_mode(Gtk.WrapMode.CHAR)
-            view.pageid = "scroll_"+k
+            view.pageid = "tb_"+k
 
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
@@ -918,7 +918,7 @@ class GtkViewModel(ViewModel):
                 view.get_style_context().add_class(f"backsettings{k[-1]}")
 
         self.adjView = AdjListView(self)
-        scroll = self.builder.get_object("scroll_AdjList")
+        scroll = self.builder.get_object("tb_AdjList")
         scroll.add(self.adjView.view)
         logger.debug("Setting project")
         if self.pendingPid is not None:
@@ -1112,6 +1112,7 @@ class GtkViewModel(ViewModel):
         while parent is not None:
             curry += parent.get_allocation().y
             name = Gtk.Buildable.get_name(parent)
+            # print(f"{name=}")
             if name.startswith("tb_"):
                 if highlight:
                     w.get_style_context().add_class("highlighted")
@@ -1149,8 +1150,6 @@ class GtkViewModel(ViewModel):
                 else:
                     w.get_style_context().remove_class("highlighted")
                 break
-            else: # Something needs to be added here to handle dlg_preview items
-                print(f"{name=}")
             parent = parent.get_parent()
         if atfinish is not None:
             Gdk.threads_add_idle(0, atfinish)
@@ -1547,9 +1546,9 @@ class GtkViewModel(ViewModel):
             self.doStatus(_("One of more fonts have not been set yet"))
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
-        if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
+        if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_Viewer":
             pgnum = self.get("nbk_Viewer")
-            if self.notebooks["Viewer"][pgnum] in ("scroll_FrontMatter", "scroll_AdjList", "scroll_Settings1", "scroll_Settings2", "scroll_Settings3"):
+            if self.notebooks["Viewer"][pgnum] in ("tb_FrontMatter", "tb_AdjList", "tb_Settings1", "tb_Settings2", "tb_Settings3"):
                 self.onSaveEdits(None)
         cfgname = self.cfgid
         if cfgname is None:
@@ -2236,7 +2235,7 @@ class GtkViewModel(ViewModel):
         if not len(bks2gen):
             return
         bk = self.get("ecb_examineBook")
-        if pgid == "scroll_FrontMatter":
+        if pgid == "tb_FrontMatter":
             ptFRT = os.path.exists(os.path.join(self.project.path, self.getBookFilename("FRT", self.project.prjid)))
             self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT)
             dialog = self.builder.get_object("dlg_generateFRT")
@@ -2247,7 +2246,7 @@ class GtkViewModel(ViewModel):
                 self.changed()
             dialog.hide()
 
-        if pgid == "scroll_AdjList":
+        if pgid == "tb_AdjList":
             if bk not in bks2gen:
                 self.doError(_("The Book in focus is not within scope"), 
                     secondary=_("To generate an AdjList, the book must be\n"+
@@ -2256,7 +2255,7 @@ class GtkViewModel(ViewModel):
             self.generateAdjList()
             self.changed()
 
-        elif pgid == "scroll_FinalSFM" and bk is not None:
+        elif pgid == "tb_FinalSFM" and bk is not None:
             bk = bk if bk in bks2gen else None
             tmodel = TexModel(self, self._getPtSettings(self.project.prjid), self.project.prjid)
             out = tmodel.convertBook(bk, None, self.project.printPath(self.cfgid), self.project.path)
@@ -2346,7 +2345,7 @@ class GtkViewModel(ViewModel):
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
-        if pgid == "tb_ViewerEditor": # Viewer tab
+        if pgid == "tb_Viewer": # Viewer tab
             self.onRefreshViewerTextClicked(None)
         elif pgid == "tb_TabsBorders":
             self.onThumbColorChange()
@@ -2394,12 +2393,12 @@ class GtkViewModel(ViewModel):
             else:
                 self.builder.get_object(o).set_sensitive(pgid in _allpgids[1:3])
 
-        fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"),
-                  "scroll_FinalSFM" : ("", ""), "scroll_TeXfile" : ("", ".tex"),
-                  "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings1": ("", ""),
-                  "scroll_Settings2": ("", ""), "scroll_Settings3": ("", "")}
+        fndict = {"tb_FrontMatter" : ("", ""), "tb_AdjList" : ("AdjLists", ".adj"),
+                  "tb_FinalSFM" : ("", ""), "tb_TeXfile" : ("", ".tex"),
+                  "tb_XeTeXlog" : ("", ".log"), "tb_Settings1": ("", ""),
+                  "tb_Settings2": ("", ""), "tb_Settings3": ("", "")}
 
-        if pgid == "scroll_FrontMatter":
+        if pgid == "tb_FrontMatter":
             ibtn.set_sensitive(True)
             ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
@@ -2427,7 +2426,7 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("c_autoSave").set_sensitive(False)
                 self.set("c_autoSave", False)
             return
-        elif pgid == "scroll_FinalSFM":
+        elif pgid == "tb_FinalSFM":
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.project.printPath(self.cfgid), fndict[pgid][0], fname)
             genBtn.set_sensitive(True)
@@ -2446,19 +2445,19 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
             self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
-        elif pgid == "scroll_AdjList":
+        elif pgid == "tb_AdjList":
             genBtn.set_sensitive(True)
             fpath = None
             self.builder.get_object("l_codeSnippets").set_visible(False)
             self.builder.get_object("box_codelets").set_visible(False)
 
-        elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
+        elif pgid in ("tb_TeXfile", "tb_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0])+fndict[pgid][1]
             self.builder.get_object("c_autoSave").set_sensitive(False)
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
             self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
-        elif pgid in ("scroll_Settings1", "scroll_Settings2", "scroll_Settings3"): # mulit-purpose View/Edit tabs
+        elif pgid in ("tb_Settings1", "tb_Settings2", "tb_Settings3"): # mulit-purpose View/Edit tabs
             lname = "l_{1}".format(*pgid.split('_'))
             fpath = self.builder.get_object(lname).get_tooltip_text()
             if fpath == None:
@@ -2484,7 +2483,7 @@ class GtkViewModel(ViewModel):
             set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
-                if len(txt) > 60000 and pgid not in ("scroll_AdjList",):
+                if len(txt) > 60000 and pgid not in ("tb_AdjList",):
                     txt = txt[:60000]+_("\n\n------------------------------------- \
                                            \n[File has been truncated for display] \
                                            \nClick on View/Edit... button to see more.")
@@ -2538,6 +2537,7 @@ class GtkViewModel(ViewModel):
         for cat, info in codelets.items():
             vb = Gtk.VBox(daddybox)
             self.codeletVboxes[cat] = vb
+            self.builder.expose_object(f"vb_{cat}", vb)
             daddybox.pack_start(vb, True, False, 6)
             
             # Add categories and buttons
@@ -2545,18 +2545,24 @@ class GtkViewModel(ViewModel):
                 # if category == "Arabic" and self.get('fcb_script') != 'Arab': # FixMe! (this needs to updated when we
                     # print(f"Skipping Arabic")                                 # change projects/configs but it doesn't
                     # continue                                                  # because the menu is already populated
+                bname = f"btn_{cat}_{category}"
                 button = Gtk.Button.new_with_label(category)
+                self.widgetnames[bname] = f"Insert Codelet {cat} {category}"
+                self.builder.expose_object(bname, button)
+                self.allControls.append(bname)
                 button.set_focus_on_click(False)
                 button.set_halign(Gtk.Align.START)
                 button.set_size_request(100, -1)
                 vb.pack_start(button, True, False, 6)
 
                 submenu = Gtk.Menu()
-                for codelet in codeitems:
+                for i, codelet in enumerate(codeitems):
+                    mname = f"codelets_{cat}_{category}_{i}"
                     menu_item = Gtk.MenuItem(label=codelet["Label"])
                     menu_item.set_tooltip_text(codelet["Description"])
                     menu_item.connect("activate", self.insert_codelet, codelet)
                     submenu.append(menu_item)
+                    self.finddata[codelet["Label"].lower()] = (bname, 1)
             
                 button.connect("clicked", self.showCodeletMenu, submenu)
 
@@ -2656,10 +2662,10 @@ class GtkViewModel(ViewModel):
             pg = self.builder.get_object("nbk_Viewer").get_current_page()
             pgid = self.notebooks["Viewer"][pg]
         buf = self.fileViews[pg][0]
-        if pgid == "scroll_AdjList":
+        if pgid == "tb_AdjList":
             self.adjView.adjlist.save()
             fpath = None
-        elif pgid == "scroll_FrontMatter":
+        elif pgid == "tb_FrontMatter":
             fpath = self.configFRT()
         else:
             fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
@@ -2733,8 +2739,8 @@ class GtkViewModel(ViewModel):
         p = Pango.FontDescription(pangostr)
         logger.debug(f"{pangostr=}, {p}")
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", \
-                  "scroll_FinalSFM", "scroll_AdjList", "scroll_FrontMatter", \
-                  "scroll_Settings1", "scroll_Settings2", "scroll_Settings3", \
+                  "tb_FinalSFM", "tb_AdjList", "tb_FrontMatter", \
+                  "tb_Settings1", "tb_Settings2", "tb_Settings3", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
@@ -3263,7 +3269,7 @@ class GtkViewModel(ViewModel):
             self.set(wname, v, mod=False)
             if wname.startswith("c_"): # Making sure that even the unchecked labels get bold applied if not default
                 lbl = obj.get_child()
-                self.changeLabel(wname, lbl)                
+                self.changeLabel(wname, lbl)
             self.allControls.append(wname)
             obj.show()
             expanders[opt.group].show_all()  # Ensure that the expander and its content are shown
@@ -3781,11 +3787,11 @@ class GtkViewModel(ViewModel):
             fpath = os.path.join(loc, file2edit)
         return fpath
 
-    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings1", switch=None): # keep param order
+    def editFile(self, file2edit, loc="wrk", pgid="tb_Settings1", switch=None): # keep param order
         if switch is None:
-            switch = pgid == "scroll_Settings1"
+            switch = pgid == "tb_Settings1"
         pgnum = self.notebooks["Viewer"].index(pgid)
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        mpgnum = self.notebooks["Main"].index("tb_Viewer")
         fpath = self._locFile(file2edit, loc)
         if fpath is None:
             return
@@ -3823,11 +3829,11 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
 
-    def editFileOLDdoNotUse(self, file2edit, loc="wrk", pgid="scroll_Settings1", switch=None): # keep param order
+    def editFileOLDdoNotUse(self, file2edit, loc="wrk", pgid="tb_Settings1", switch=None): # keep param order
         if switch is None:
-            switch = pgid == "scroll_Settings1"
+            switch = pgid == "tb_Settings1"
         pgnum = self.notebooks["Viewer"].index(pgid)
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        mpgnum = self.notebooks["Main"].index("tb_Viewer")
         if switch:
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
@@ -3835,7 +3841,7 @@ class GtkViewModel(ViewModel):
         if fpath is None:
             return
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
-        if pgid == "scroll_Settings1":
+        if pgid == "tb_Settings1":
             currpath = label.get_tooltip_text()
             oldlabel = self.builder.get_object("l_Settings2")
             oldpath = oldlabel.get_tooltip_text()
@@ -3843,7 +3849,7 @@ class GtkViewModel(ViewModel):
                 label = oldlabel
                 pgnum += 1
             elif fpath != currpath:
-                self.onSaveEdits(None, pgid="scroll_Settings2")
+                self.onSaveEdits(None, pgid="tb_Settings2")
                 oldlabel.set_tooltip_text(label.get_tooltip_text())
                 oldlabel.set_text(label.get_text())
                 self.builder.get_object("gr_editableButtons").set_sensitive(True)
@@ -3869,7 +3875,7 @@ class GtkViewModel(ViewModel):
         t = buf.get_iter_at_mark(self.fileViews[pgnum][0].get_insert())
         self.cursors[pgnum] = (t.get_line(), t.get_line_offset())
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        label = self.builder.get_object(_allpgids[pgnum][5:])
+        label = self.builder.get_object("l"+_allpgids[pgnum][2:])
         tt = label.get_tooltip_text()
         if tt is not None and not currentText == self.uneditedText[pgnum]:
             if self.get("c_autoSave"):
@@ -3898,7 +3904,9 @@ class GtkViewModel(ViewModel):
             return
         buf = self.fileViews[pg][0]
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        label = self.builder.get_object(_allpgids[pg][5:])
+        label = self.builder.get_object("l"+_allpgids[pg][2:])
+        if label is None:
+            breakpoint()
         txtcol = " color='crimson'" if not currentText == self.uneditedText[pg] else ""
         label.set_markup("<span{}>".format(txtcol)+label.get_text()+"</span>")
 
@@ -4319,7 +4327,7 @@ class GtkViewModel(ViewModel):
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        mpgnum = self.notebooks["Main"].index("tb_Viewer")
         self.set("nbk_Main", mpgnum, mod=False)
         self.set("nbk_Viewer", pgnum, mod=False)
         self.onViewerChangePage(None,None,pgnum)
@@ -4558,9 +4566,9 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(fn, *args)
 
     def showLogFile(self):
-        mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+        mpgnum = self.notebooks['Main'].index("tb_Viewer")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        vpgnum = self.notebooks['Viewer'].index("scroll_XeTeXlog")
+        vpgnum = self.notebooks['Viewer'].index("tb_XeTeXlog")
         self.builder.get_object("nbk_Viewer").set_current_page(vpgnum)
 
     def onBorderClicked(self, btn):
@@ -5488,7 +5496,7 @@ class GtkViewModel(ViewModel):
             # Switch briefly to the Front Matter tab so that the updated content is activated and
             # gets saved/updated. But then switch back to the Cover tab immediately after so the 
             # view is back to where they clicked on the Generate Cover button to begin with.
-            mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+            mpgnum = self.notebooks['Main'].index("tb_Viewer")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(0)
             mpgnum = self.notebooks['Main'].index("tb_Cover")
@@ -5605,15 +5613,15 @@ class GtkViewModel(ViewModel):
         self.set("c_frontmatter", True)
 
     def editFrontMatterClicked(self, btn):
-        mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+        mpgnum = self.notebooks['Main'].index("tb_Viewer")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        pgnum = self.notebooks["Viewer"].index("scroll_FrontMatter")
+        pgnum = self.notebooks["Viewer"].index("tb_FrontMatter")
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
 
     def rescanFRTvarsClicked(self, btn, autosave=True):
         prjid = self.get("fcb_project")
         if autosave:
-            self.onSaveEdits(None, pgid="scroll_FrontMatter") # make sure that FRTlocal has been saved
+            self.onSaveEdits(None, pgid="tb_FrontMatter") # make sure that FRTlocal has been saved
         fpath = self.configFRT()
         with universalopen(fpath) as inf:
             frtxt = inf.read()
