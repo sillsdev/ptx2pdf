@@ -1357,8 +1357,8 @@
 \let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
 \let\zMarkVerseAgain\m@rkverse
-\def\m@rkverseNml{\mark{\book:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
-\def\m@rkverseDglot{\mark{\book:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
+\def\m@rkverseNml{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
+\def\m@rkverseDglot{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
 
 \def\n@xtparstart{}
 \def\print@bleverse{}
@@ -1413,7 +1413,7 @@
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
         %\tracingassigns=1
         \let\aftergr@b\@h\gr@btomacro}% \h gets stored as the book name (for references)
- \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\x@\let\csname ifOmitChapterNumberRH@##1\endcsname\ifOmitChapterNumberRH\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
  \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \let\aftergr@b\@hh\gr@btomacro}% \h1 gets stored as the book name (for references)
  \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
  \def\bookalt{\csname b@ok1\g@tdstat\endcsname}%
@@ -1917,6 +1917,7 @@
  \trace{d}{PageAlign=\PageAlign, IntroPageAlign=\IntroPageAlign, ifin@ntro\ifin@ntro true\else false\fi, pageno=\the\pageno, totalpages=\the\totalp@ges}%
  \ifnum 1=\ifx\PageAlign\val@odd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi \need@oddpage{\emptyoutput}\fi
  \xdef\ptxst@rtp@ge{\the\pageno}%
+ \ifcsname @@@ifOmitChapterNumber\endcsname \endOneChapBook \let\@@@ifOmitChapterNumber\undefined\fi
  \ifOneChapBook\startOneChapBook\fi
  \let\@@fter\empty
  \ifdigl@tinuse\ifdiglot\else\let\@@fter\diglotfalse \diglottrue\fi\fi
@@ -2107,7 +2108,6 @@
  \else
     \trace{o}{No bookendbox, as the book is empty}%
  \fi
- \ifOneChapBook\endOneChapBook\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
  \ifx\id@@@\n@ID\relax\else\csname bookend-\id@@@\endcsname\relax\fi
  \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookend-all\endcsname\else missing\fi}%

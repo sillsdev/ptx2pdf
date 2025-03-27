@@ -42,11 +42,17 @@
 % Print the first reference from the mark data
 %
 \newif\ifOmitBookRef
-\def\s@tf@rstr@f#1{\edef\t@st{#1}%
+\def\s@tf@rstr@f#1{\traceifset{s@tf@rstr@f}\edef\t@st{#1}%
+ \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH\endcsname
  \let\@@firstref\empty
  \ifx\t@st\empty\else
   \ifx\t@st\t@tle\else\ifx\t@st\intr@\else
-    \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
+    \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax\relax
+    \ifcsname ifOmitChapterNumberRH@\@book\endcsname
+      \x@\let\csname rh@ifOmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH@\@book\endcsname
+    \else 
+      \trace{H}{OmitChapterNumberRH@\@book doesn't exist}%
+    \fi\relax
     \edef\@@firstref{\ifx\@book\empty\else
       \ifOmitBookRef\else\@book\fi
       \ifOmitChapterNumberRH\else\bkchs@p\@chapter\fi
@@ -57,6 +63,8 @@
     \fi}%
   \fi\fi
  \fi
+ \let\ifOmitChapterNumberRH\rh@ifOmitChapterNumberRH
+ \traceifcheck{s@tf@rstr@f}%
 }
 \def\f@rstref#1{\s@tf@rstr@f{#1}\@@firstref}
 
@@ -64,22 +72,45 @@
 % Print the last reference from the mark data
 % (same as above unless there are bridged verses)
 %
-\def\l@stref#1{\edef\t@st{#1}%
+\def\l@stref#1{\traceifset{l@stref}\edef\t@st{#1}%
+ \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH\endcsname
  \ifx\t@st\empty\else\ifx\t@st\t@tle\else\ifx\t@st\intr@\else
-   \x@\extr@ctlast\t@st\relax
+     \x@\extr@ctlast\t@st\relax
      \ifx\@@book\empty\else
+       \ifcsname ifOmitChapterNumberRH\@@book\endcsname
+         \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH\@@book\endcsname
+       \fi
+       \fi
        \ifx\@@book\t@tle\else
-         \ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\bkchs@p\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\bkchs@p\else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
+         \ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\bkchs@p\@@chapter\fi
+         \ifVerseRefs\ifOmitChapterNumberRH\bkchs@p\else\cvs@p\fi\@@verse\fi
+       \fi
+       
+     \fi
+ \fi\fi\fi\traceifcheck{l@stref}%
+ \let\ifOmitChapterNumberRH\rh@ifOmitChapterNumberRH
+}
 
 %
 % Print the range of references from a pair of marks
 %
 \edef\emptym@rk{::}
 \def\r@ngerefs#1#2{%
- %\tracingassigns=1
+ \traceifset{r@ngerefs}%
+ %\tracingassigns=1\tracingifs=1
  \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi\fi
  \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi\fi
  \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
+ \let\rh@ifOmitChapterNumberRH\ifOmitChapterNumberRH
+ \let\if@OmitChapterNumberRH\ifOmitChapterNumberRH % For second book
+ \ifx\@book\relax\else
+   \ifcsname ifOmitChapterNumberRH\@book\endcsname
+     \x@\let\csname ifOmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH\@book\endcsname
+   \fi
+ \fi
+ \ifcsname ifOmitChapterNumberRH\@@book\endcsname
+   \x@\let\csname if@OmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH\@@book\endcsname
+ \fi
  \ifx\@book\empty\else
   \ifOmitBookRef\else\@book\fi
   \ifVerseRefs
@@ -89,10 +120,10 @@
      \ifx\@chapter\@@chapter
       \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
      \else
-      \rangechs@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
+      \rangechs@p\if@OmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse
      \fi
     \else
-     \rangechs@p\ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\bkchs@p\@@chapter\cvs@p\@@verse\fi
+     \rangechs@p\ifOmitBookRef\else\@@book\fi\bkchs@p\if@OmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse
     \fi
    \fi
   \else
@@ -110,7 +141,7 @@
      \fi
     \fi
    \else
-    \ifOmitChapterNumberRH
+    \if@OmitChapterNumberRH
       \rangechs@p \@@book
     \else
       \bkchs@p\@chapter \rangechs@p \@@book \bkchs@p\@@chapter
@@ -118,6 +149,8 @@
    \fi
   \fi
  \fi
+ \traceifcheck{r@ngerefs}%
+ \let\ifOmitChapterNumberRH\rh@ifOmitChapterNumberRH
  %\tracingassigns=0
 }
 \newcount\c@untA \newcount\c@untB

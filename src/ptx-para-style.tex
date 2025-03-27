@@ -980,7 +980,7 @@
     \x@\let\x@\t@mp\csname book\@@side\endcsname
     \ifrefbookmarks\let\t@mp=\id@@@\fi
     \ifx\book\relax \let\t@mp=\id@@@ \fi
-    \pdf@utline{\id@@@\@@side.\ch@pter}{\t@mp\space\ch@pter}{1}%
+    \pdf@utline{\id@@@\@@side\ifOneChapBook\else.\ch@pter\fi}{\t@mp\ifOneChapBook\else\space\ch@pter\fi}{1}%
   \egroup\fi}
 
 \newif\ifrefbookmarks

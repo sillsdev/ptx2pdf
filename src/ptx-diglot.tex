@@ -3048,7 +3048,7 @@
           \ifdim\dimen1<\baselineskip
             \setbox\partial\vbox{\unvbox\partial\kern\dimen1}%
           \else
-            \setbox\partial\vbox{\unvbox\partial}%
+            %\setbox\partial\vbox{\unvbox\partial}%
           \fi
        \fi%avoid clashes with textborder and backgrounds
         %\iftextborder
@@ -3057,6 +3057,7 @@
             %\global\partialfr@medtrue
           %\fi
         %\fi
+        %\ifnum\pageno=117\showbox\partial\fi
         \setbox\partial\vbox{\unvbox\partial
           \csname @start@writep@ge@\diglotlayout\endcsname
           \setdiglotN@rmal
