@@ -1112,7 +1112,7 @@ class GtkViewModel(ViewModel):
         while parent is not None:
             curry += parent.get_allocation().y
             name = Gtk.Buildable.get_name(parent)
-            print(f"{name=}")
+            # print(f"{name=}")
             if name.startswith("tb_"):
                 if highlight:
                     w.get_style_context().add_class("highlighted")
