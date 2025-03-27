@@ -23448,7 +23448,7 @@ interlinear (&amp; ruby text) output.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_ViewerEditor">
+                  <object class="GtkBox" id="tb_Viewer">
                     <property name="width-request">700</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -23771,7 +23771,7 @@ Keyboard Shortcuts:
                             <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                             <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_FrontMatter">
+                              <object class="GtkScrolledWindow" id="tb_FrontMatter">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="shadow-type">in</property>
@@ -23788,7 +23788,7 @@ Keyboard Shortcuts:
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_AdjList">
+                              <object class="GtkScrolledWindow" id="tb_AdjList">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23851,7 +23851,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_FinalSFM">
+                              <object class="GtkScrolledWindow" id="tb_FinalSFM">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23878,7 +23878,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_TeXfile">
+                              <object class="GtkScrolledWindow" id="tb_TeXfile">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23904,7 +23904,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_XeTeXlog">
+                              <object class="GtkScrolledWindow" id="tb_XeTeXlog">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23930,7 +23930,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_Settings1">
+                              <object class="GtkScrolledWindow" id="tb_Settings1">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23956,7 +23956,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_Settings2">
+                              <object class="GtkScrolledWindow" id="tb_Settings2">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="hexpand">False</property>
@@ -23982,7 +23982,7 @@ are likely to have to re-do it all again.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_Settings3">
+                              <object class="GtkScrolledWindow" id="tb_Settings3">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="shadow-type">in</property>
@@ -24088,7 +24088,7 @@ various code snippets as required.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_ViewerEditor">
+                  <object class="GtkLabel" id="lb_Viewer">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="tooltip-text" translatable="yes">View and edit various control
