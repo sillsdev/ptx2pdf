@@ -1350,6 +1350,7 @@
   \x@\global\x@\let\x@\ch@ptert@xt\csname @ch@ptert@xt\g@tdstat\endcsname
   \x@\global\x@\let\x@\v@rse\csname @v@rse\g@tdstat\endcsname
   \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
+  \trace{D}{chapter/verse set to \ch@pter(\ch@ptert@xt)/\v@rse(\m@rknum)}%%
   \setLRspecific %ensure that all the units, etc. are correct.
   \trace{D}{Leadingunit: \the\le@dingunit, stylestack:\styst@k, \mcstack}%
  \ifdim\le@dingunit>0pt %
@@ -3043,14 +3044,21 @@
           \tempfalse\let\col@do\ck@backgrounds
           \x@\each@col\diglot@list\E% 
         \fi
-        \iftemp\setbox\partial\vbox{\dimen1=\dp\partial\unvbox\partial\kern\dimen1}\fi%avoid clashes with textborder and backgrounds
+        \iftemp\dimen1=\dp\partial
+          \ifdim\dimen1<\baselineskip
+            \setbox\partial\vbox{\unvbox\partial\kern\dimen1}%
+          \else
+            %\setbox\partial\vbox{\unvbox\partial}%
+          \fi
+       \fi%avoid clashes with textborder and backgrounds
         %\iftextborder
           %\ifpartialfr@med\else
             %\doTextB@rder{\partial}%
             %\global\partialfr@medtrue
           %\fi
         %\fi
-        \setbox\partial\vbox{%\unvbox\partial
+        %\ifnum\pageno=117\showbox\partial\fi
+        \setbox\partial\vbox{\unvbox\partial
           \csname @start@writep@ge@\diglotlayout\endcsname
           \setdiglotN@rmal
           \pickn@xtpartial

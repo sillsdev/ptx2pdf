@@ -1,8 +1,34 @@
-PTXprint 2.7.31 Release Notes
-24 Mar 2025
+PTXprint 2.7.35 Release Notes
+28 Mar 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.35 (28 Mar 2025)
+  * Make per-book OmitChapterNumberRH booleans, so rangeref etc works properly (#1054)
+  * Ensure latest usfmtc code is being used in build (.33 and .34 used stale code)
+  
+Bug fixes and Improvements in 2.7.34 (27 Mar 2025)
+  * Prepare to make code snippet searches switch window
+  * Fix poetry special measures to revert correctly
+  * Don't allow Page Size to be translatable
+  * Improve user feedback when Anchor Ref is missing
+  * id in a diglot only resets it own side's chapter number
+  * Synchronise log formats between ptxprint and usfmerge script
+
+Bug fixes and Improvements in 2.7.33 (26 Mar 2025)
+  * Picist fix - make sure piclist is deleted when all pics are deleted
+  * Add rectangle overlays to help move them
+  * Switch usfmtc dependency from pypi to github
+  * Fix several minor bugs
+  * Fix adding pictures
+
+Bug fixes and Improvements in 2.7.32 (25 Mar 2025)
+  * [Built against usfmtc 0.3.4]
+  * Fix parpicstart in diglot
+  * Add attrib support to usxutils
+  * Fix overfull pages (affecting study Bibles)
+  * Fix notelines, picture problems, scored merging
 
 Bug fixes and Improvements in 2.7.31 (24 Mar 2025)
   * Replace underlying USFM parser with a new USX-based parser
