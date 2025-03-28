@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 stylemap = {
     'Marker':       ('l_styleTag',          None,               None, None, None),
     'Description':  ('l_styDescription',    None,               None, None, None),
+    'TextCategory': ('fcb_styCategory',     'l_styCategory',    'Paragraph', None, None),
     'TextType':     ('fcb_styTextType',     'l_styTextType',    'Paragraph', None, None),
     'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
     'font':         ('bl_font_styFontName', 'l_styFontName',    None, None, None),
@@ -171,6 +172,7 @@ dialogKeys = {
     "Name":         "t_styName",
     "Description":  "txbf_styDesc",
     "OccursUnder":  "t_styOccursUnder",
+    "TextCategory": "fcb_styCategory",
     "TextType":     "fcb_styTextType",
     "StyleType":    "fcb_styStyleType"
 }

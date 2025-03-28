@@ -2926,6 +2926,44 @@ settings for a similar project.</property>
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="ls_styCategory">
+    <columns>
+      <!-- column-name TextType -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">char</col>
+      </row>
+      <row>
+        <col id="0">header</col>
+      </row>
+      <row>
+        <col id="0">introchar</col>
+      </row>
+      <row>
+        <col id="0">introduction</col>
+      </row>
+      <row>
+        <col id="0">list</col>
+      </row>
+      <row>
+        <col id="0">listchar</col>
+      </row>
+      <row>
+        <col id="0">milestone</col>
+      </row>
+      <row>
+        <col id="0">sectionpara</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">title</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">versepara</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_styJustification">
     <columns>
       <!-- column-name JustificationLocal -->
@@ -26379,15 +26417,15 @@ For example: 203mm, 330mm (Foolscap)</property>
                                     <property name="has-entry">True</property>
                                     <property name="active-id">0</property>
                                     <items>
-                                      <item translatable="yes">420mm, 594mm (A2)</item>
-                                      <item translatable="yes">297mm, 420mm (A3)</item>
-                                      <item translatable="yes">210mm, 297mm (A4)</item>
-                                      <item translatable="yes">17in, 22in (ANSI C)</item>
-                                      <item translatable="yes">11in, 17in (ANSI B)</item>
-                                      <item translatable="yes">8.5in, 11in (Letter)</item>
-                                      <item translatable="yes">353mm, 500mm (B3)</item>
-                                      <item translatable="yes">250mm, 353mm (B4)</item>
-                                      <item translatable="yes">176mm, 250mm (B5)</item>
+                                      <item>420mm, 594mm (A2)</item>
+                                      <item>297mm, 420mm (A3)</item>
+                                      <item>210mm, 297mm (A4)</item>
+                                      <item>17in, 22in (ANSI C)</item>
+                                      <item>11in, 17in (ANSI B)</item>
+                                      <item>8.5in, 11in (Letter)</item>
+                                      <item>353mm, 500mm (B3)</item>
+                                      <item>250mm, 353mm (B4)</item>
+                                      <item>176mm, 250mm (B5)</item>
                                     </items>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
@@ -39106,7 +39144,7 @@ project's Biblical Terms renderings.</property>
           </packing>
         </child>
         <child>
-          <!-- n-columns=5 n-rows=5 -->
+          <!-- n-columns=5 n-rows=6 -->
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -39119,6 +39157,7 @@ project's Biblical Terms renderings.</property>
             <child>
               <object class="GtkLabel" id="l_styTextType">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">[Required] This tells ptxprint how to layout data in this marker. 
 For normal, vernacular body text, use VerseText. If this is part of
@@ -39138,6 +39177,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
               <object class="GtkComboBox" id="fcb_styTextType">
                 <property name="name">Add/Edit marker dialog: Text type</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">False</property>
                 <property name="can-default">True</property>
                 <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint how to layout data in this marker. 
@@ -39267,6 +39307,7 @@ describe the purpose of the style.</property>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">[Required] List markers that this marker may occur under. 
 Without this, the USFM parser may report structural errors 
@@ -39277,7 +39318,7 @@ in your data for this marker.</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">5</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -39285,6 +39326,7 @@ in your data for this marker.</property>
               <object class="GtkEntry" id="t_styOccursUnder">
                 <property name="name">Add/Edit marker dialog: Markers it can occur under</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="tooltip-text" translatable="yes">[Required] List markers that this marker may occur under. 
 Without this, the USFM parser may report structural errors 
@@ -39293,7 +39335,7 @@ in your data for this marker.</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">5</property>
                 <property name="width">3</property>
               </packing>
             </child>
@@ -39390,6 +39432,57 @@ and helps to place the marker in the tree listing all markers.</property>
                 <property name="left-attach">4</property>
                 <property name="top-attach">0</property>
               </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_styCategory">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint what kind of a marker this is.</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">⚠️Category:</property>
+                <property name="justify">right</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">3</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="fcb_styCategory">
+                <property name="name">Add/Edit marker dialog: Text type</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="can-default">True</property>
+                <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint what kind of a marker this is.</property>
+                <property name="halign">start</property>
+                <property name="model">ls_styCategory</property>
+                <property name="wrap-width">1</property>
+                <property name="active">1</property>
+                <property name="has-entry">True</property>
+                <property name="entry-text-column">0</property>
+                <property name="id-column">0</property>
+                <property name="active-id">1</property>
+                <child internal-child="entry">
+                  <object class="GtkEntry">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint how to layout data in this marker. 
+For normal, vernacular body text, use VerseText. If this is part of
+a heading, use Section. If it is part of the title block of a book, 
+use Title. NoteText makes this a kind of footnote, like \x.</property>
+                    <property name="width-chars">20</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">3</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
           <packing>
