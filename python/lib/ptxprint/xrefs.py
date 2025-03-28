@@ -310,7 +310,7 @@ class StrongsXrefs(XMLXrefs):
     def getstrongs(self, ref):
         if ref.first != ref.last and ref not in self.xmldat[ref.first.book] and ref.last.verse < 200:
             self._addranges(self.xmldat[ref.first.book], None, ref=ref)
-        return [x[0] for x in self.xmldat[ref.first.book].get(ref,[])]
+        return [x[0] for x in self.xmldat.get(ref.first.book, {}).get(ref,[])]
 
     def loadinfo(self, lang):
         if lang is None:
