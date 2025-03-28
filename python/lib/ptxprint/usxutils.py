@@ -31,6 +31,7 @@ _typetypes = {      # type: (type, StyleType, TextType, startswith)
     'otherpara': ('versepara', 'paragraph', 'other', None),
     'sectionpara': ('versepara', 'paragraph', 'section', None),
     'title': ('header', 'paragraph', 'other', "m"),
+    'barems': (None, 'Standalone', None, None),
 }
     
 def simple_parse(source, categories=False, keyfield="Marker"):
@@ -334,7 +335,7 @@ class Usfm:
                     sections.append(p)
                 else:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
-                        currv = p[0].get("number", curr.last.verse)
+                        currv = p[0].get("number", curr.last.verse if curr is not None else None)
                         curr = MakeReference(bk, curr.first.chap, currv)
                         if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
                             for r in curr.allrefs():
