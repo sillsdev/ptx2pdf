@@ -26417,15 +26417,15 @@ For example: 203mm, 330mm (Foolscap)</property>
                                     <property name="has-entry">True</property>
                                     <property name="active-id">0</property>
                                     <items>
-                                      <item>420mm, 594mm (A2)</item>
-                                      <item>297mm, 420mm (A3)</item>
-                                      <item>210mm, 297mm (A4)</item>
-                                      <item>17in, 22in (ANSI C)</item>
-                                      <item>11in, 17in (ANSI B)</item>
-                                      <item>8.5in, 11in (Letter)</item>
-                                      <item>353mm, 500mm (B3)</item>
-                                      <item>250mm, 353mm (B4)</item>
-                                      <item>176mm, 250mm (B5)</item>
+                                      <item>420mm, 594mm (A2)</item>									  
+                                      <item>297mm, 420mm (A3)</item>									  
+                                      <item>210mm, 297mm (A4)</item>									  
+                                      <item>17in, 22in (ANSI C)</item>									  
+                                      <item>11in, 17in (ANSI B)</item>									  
+                                      <item>8.5in, 11in (Letter)</item>									  
+                                      <item>353mm, 500mm (B3)</item>									  
+                                      <item>250mm, 353mm (B4)</item>									  
+                                      <item>176mm, 250mm (B5)</item>									  
                                     </items>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
