@@ -142,7 +142,7 @@ class PDFViewer:
         self.piczoom = 85
         self.showguides = False
         self.showgrid = False
-        self.showrects = False
+        self.showrects = True
         self.ufCurrIndex = 0
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
@@ -1837,6 +1837,8 @@ class Paragraphs(list):
                 if currp is None:
                     continue
                 currp.lastref = p[0]
+                if "k." in p[0]:
+                    currp.ref = p[0]
                 currp.parnum = int(p[1])
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
