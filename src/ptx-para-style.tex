@@ -411,7 +411,7 @@
  \let\p@r=\par % end the paragraph
  \ifhmode\unskip % remove any trailing space
    \beginL\pdfsavepos\t@gendfull{P}{id="\adjc@rref[\the\curr@djpar]"}%
-   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parend\x@{\the\l@stparbadness}{\the\pdflastxpos}{\the\pdflastypos}}\endL       %(1)
+   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parend\x@{\the\l@stparbadness}{\the\pdflastxpos}{\the\pdflastypos}{\the\lastdepth}}\endL       %(1)
    \global\l@stparbadness=-1
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
@@ -1077,7 +1077,7 @@
   \csname inp@r-\c@rrdstat true\endcsname
   \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
 
-\def\@parend#1#2#3{%
+\def\@parend#1#2#3#4{%
   \this@y=#3\relax
   \ifnum\this@y=\prev@y 
     \x@\ifdim\x@ 0pt\x@=\csname baselineskip@\c@rrdstat\endcsname
