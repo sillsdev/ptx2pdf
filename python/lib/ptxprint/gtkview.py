@@ -171,7 +171,7 @@ r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
 s_pdfZoomLevel t_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
-c_pdfadjoverlay c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
+c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
 btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
@@ -5901,11 +5901,14 @@ class GtkViewModel(ViewModel):
         if status and self.showPDFmode == "preview":
             self.set("c_bkView", False)
             self.set("c_pdfadjoverlay", False)
+            self.set("c_pdfparabounds", False)
             self.builder.get_object("c_pdfadjoverlay").set_sensitive(False)
+            self.builder.get_object("c_pdfparabounds").set_sensitive(False)
             self.onBookViewClicked(None)
         else:
             self.builder.get_object("c_bkView").set_sensitive(True)
             self.builder.get_object("c_pdfadjoverlay").set_sensitive(True)
+            self.builder.get_object("c_pdfparabounds").set_sensitive(True)
         for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
@@ -6401,6 +6404,9 @@ Thank you,
 
     def onPdfAdjOverlayChanged(self, widget):
         self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))
+        
+    def onPdfParaBoxesChanged(self, widget):
+        self.pdf_viewer.setShowParaBoxes(self.get("c_pdfparabounds"))
         
     def onPrintItClicked(self, widget):
         pages = self.pdf_viewer.numpages
