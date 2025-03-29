@@ -142,7 +142,7 @@ class PDFViewer:
         self.piczoom = 85
         self.showguides = False
         self.showgrid = False
-        self.showrects = False # Todo! Make this user-configurable
+        self.showrects = False # self.model.get("c_pdfadjoverlay", False)
         self.ufCurrIndex = 0
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
@@ -166,6 +166,10 @@ class PDFViewer:
 
     def setShowAdjOverlay(self, val):
         self.showadjustments = val
+        self.show_pdf()
+
+    def setShowParaBoxes(self, val):
+        self.showrects = val
         self.show_pdf()
 
     def create_boxes(self, num):

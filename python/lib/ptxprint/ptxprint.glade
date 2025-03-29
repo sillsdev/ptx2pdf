@@ -4014,6 +4014,24 @@ been stretched/expanded.</property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkCheckButton" id="c_pdfparabounds">
+                    <property name="label" translatable="yes">Paragraph Boxes</property>
+                    <property name="name">Show Paragraph Boxes </property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Draw boxes around the boundaries
+of all adjustable paragraphs.</property>
+                    <property name="draw-indicator">True</property>
+                    <signal name="clicked" handler="onPdfParaBoxesChanged" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkCheckButton" id="c_gridLines">
                     <property name="label" translatable="yes">Guides and Baselines</property>
                     <property name="name">Show guides and baselines</property>
@@ -4030,7 +4048,7 @@ as well as the baselines of the body text.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">5</property>
+                    <property name="position">6</property>
                   </packing>
                 </child>
                 <child>
@@ -4083,7 +4101,7 @@ the text. This may be useful for precise measuring.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">6</property>
+                    <property name="position">7</property>
                   </packing>
                 </child>
                 <child>
@@ -4094,7 +4112,7 @@ the text. This may be useful for precise measuring.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">7</property>
+                    <property name="position">8</property>
                   </packing>
                 </child>
                 <child>
@@ -4108,7 +4126,7 @@ the text. This may be useful for precise measuring.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">8</property>
+                    <property name="position">9</property>
                   </packing>
                 </child>
                 <child>
@@ -4142,7 +4160,7 @@ the text. This may be useful for precise measuring.</property>
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">9</property>
+                    <property name="position">10</property>
                   </packing>
                 </child>
               </object>
@@ -26379,15 +26397,15 @@ For example: 203mm, 330mm (Foolscap)</property>
                                     <property name="has-entry">True</property>
                                     <property name="active-id">0</property>
                                     <items>
-                                      <item>420mm, 594mm (A2)</item>									  
-                                      <item>297mm, 420mm (A3)</item>									  
-                                      <item>210mm, 297mm (A4)</item>									  
-                                      <item>17in, 22in (ANSI C)</item>									  
-                                      <item>11in, 17in (ANSI B)</item>									  
-                                      <item>8.5in, 11in (Letter)</item>									  
-                                      <item>353mm, 500mm (B3)</item>									  
-                                      <item>250mm, 353mm (B4)</item>									  
-                                      <item>176mm, 250mm (B5)</item>									  
+                                      <item>420mm, 594mm (A2)</item>
+                                      <item>297mm, 420mm (A3)</item>
+                                      <item>210mm, 297mm (A4)</item>
+                                      <item>17in, 22in (ANSI C)</item>
+                                      <item>11in, 17in (ANSI B)</item>
+                                      <item>8.5in, 11in (Letter)</item>
+                                      <item>353mm, 500mm (B3)</item>
+                                      <item>250mm, 353mm (B4)</item>
+                                      <item>176mm, 250mm (B5)</item>
                                     </items>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
