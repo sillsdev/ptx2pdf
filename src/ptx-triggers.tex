@@ -161,7 +161,7 @@
     \fi
     \xdef\c@rref{\id@@@#1}% Paragraph number (for triggers) resets on keywords
     \ifversion{4}{%
-      \global\p@rnum=\ifhmode 1\else 0\fi
+	  \global\p@rnum=\ifhmode 0\@dvance@djfalse\ch@ckadjustments\else 0\fi
     }{\global\p@rnum=1}%
 }
 

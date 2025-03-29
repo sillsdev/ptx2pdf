@@ -353,7 +353,7 @@ class Usfm:
             elif p.tag == "char":
                 s = p.get("style")
                 if s == "k":
-                    v = p.get("key", p.text.strip())    # there is more to this
+                    v = p.get("key", p.text.strip().replace(" ", ""))    # there is more to this
                     self.kpars[v] = currp
             p.pos = RefPos(p.pos, curr)
         self.chapters.append(i)
