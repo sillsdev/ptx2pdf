@@ -560,19 +560,24 @@ class Usfm:
 
     def stripEmptyChVs(self, ellipsis=False):
         def hastext(c):
-            if c.tail is not None and c.tail.strip() != "":
+            if c.tail is not None: # and c.tail.strip() != "":
                 return True
-            if c.text is not None and c.text.strip() != "":
+            if c.text is not None: # and c.text.strip() != "":
                 return True
             return False
         def removeslice(e, s, f):
             els = list(e)
+            f = min(f, len(els))
             for i in range(s, f):
                 try:
                     e.remove(els[i])
                 except IndexError:
                     raise IndexError(f"slice bug {i=}, {s=}, {f=}, {len(els)=}")
-            return s-f
+            return (s - f) if f > s else 0
+        def addellipsis(r, s):
+            e = r.__class__("para", attrib = {"style": "p"}, parent = r)
+            e.text = "..."
+            r.insert(s + 1, e)
         root = self.getroot()
         inels = list(root)
         # scan for first chapter
@@ -595,10 +600,11 @@ class Usfm:
                                 startv = j + offset
                                 startve = c
                             isempty = True
-                    elif hastext(c) and isempty and j + offset > startv + 1:
-                        if startve is not None:
-                            startve.tail = "..."
-                        offset += removeslice(e, startv + 1, j + offset)
+                    elif hastext(c): 
+                        if isempty and j + offset > startv + 1:
+                            if startve is not None:
+                                startve.tail = "..." if ellipsis else ""
+                            offset += removeslice(e, startv + 1, j + offset - 1)
                         isempty = False
                 if isempty:
                     if startv == 0:
@@ -606,7 +612,7 @@ class Usfm:
                     else:
                         removeslice(e, startv + 1, len(e))
                         if startve is not None:
-                            startve.tail = "..."
+                            startve.tail = "..." if ellipsis else ""
                             startve = None
                             startv = 0
             elif e.tag != "chapter":
@@ -618,10 +624,18 @@ class Usfm:
         for j, e in enumerate(inels[i:], i):
             if e.tag != "chapter":
                 if j > 0 and i >= 0:
-                    offset += removeslice(root, i, j + offset - 1)
+                    end = j + offset - 1
+                    offset += removeslice(root, i, end)
+                    if ellipsis and i < end:
+                        addellipsis(root, i - 1)
+                        offset += 1
                     i = -1
             elif i < 0:
                 i = j + offset
+        if j > 0 and i >= 0:
+            removeslice(root, i, j + offset + 1)
+            if ellipsis and i < j + offset - 1:
+                addellipsis(root, i - 1)
         return
 
     def addStrongs(self, strongs, showall):
