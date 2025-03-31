@@ -3011,6 +3011,10 @@ settings for a similar project.</property>
         <col id="1">milestone</col>
       </row>
       <row>
+        <col id="0" translatable="yes">Standalone Milestone</col>
+        <col id="1">standalone</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">Other Paragraph</col>
         <col id="1">otherpara</col>
       </row>
@@ -39178,7 +39182,7 @@ describe the purpose of the style.</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
+                <property name="top-attach">3</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -39230,7 +39234,7 @@ describe the purpose of the style.</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
-                <property name="top-attach">2</property>
+                <property name="top-attach">3</property>
                 <property name="width">3</property>
               </packing>
             </child>
@@ -39246,7 +39250,7 @@ and helps to place the marker in the tree listing all markers.</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
+                <property name="top-attach">2</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -39261,7 +39265,7 @@ and helps to place the marker in the tree listing all markers.</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
-                <property name="top-attach">1</property>
+                <property name="top-attach">2</property>
                 <property name="width">3</property>
               </packing>
             </child>
@@ -39303,12 +39307,12 @@ and helps to place the marker in the tree listing all markers.</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">1</property>
                 <property name="width">2</property>
               </packing>
             </child>
             <child>
-              <object class="GtkComboBox" id="fcb_styCategory">
+              <object class="GtkComboBox" id="fcb_styType">
                 <property name="name">Add/Edit marker dialog: Marker type</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -39338,7 +39342,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">1</property>
                 <property name="width">2</property>
               </packing>
             </child>
