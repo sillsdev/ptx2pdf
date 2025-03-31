@@ -622,7 +622,7 @@ class Usfm:
         for j, e in enumerate(inels[i:], i):
             if e.tag != "chapter":
                 if j > 0 and i >= 0:
-                    offset += removeslice(root, i, j + offset)
+                    offset += removeslice(root, i, j + offset - 1)
                     i = -1
             elif i < 0:
                 i = j + offset
