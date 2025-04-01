@@ -175,6 +175,7 @@
 \def \ztexFontGrSpace   #1\relax{\defp@ram{fontgrspace}{#1}}
 \def \ztexFontICSpace   #1\relax{\defp@ram{fonticspace}{#1}} % eventually... font inter-char space
 \def \VerticalAlign     #1\relax{\defp@ram{verticalalign}{#1}} % for table cells
+\def \mrktype			#1\relax{}
 
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}     %(1)
@@ -1303,7 +1304,7 @@
 }
 \def\@@s@tkref#1|\E{%
   \def\thiswh@tstyle{k}\@@init@ttribs
-  \def\@ttributes{#1}% Without the added trailing | now.
+  \edef\@ttributes{\detokenize{#1}}% Without the added trailing | now.
   \x@\let\x@\@ttriblist\csname @ttriblist-k\endcsname
   \parse@ttribs{\@ttributes}% Parse
   \x@\let\x@\kr@f\csname attr:\thisdefault@ttrkey\endcsname
@@ -1356,8 +1357,8 @@
 \let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
 \let\zMarkVerseAgain\m@rkverse
-\def\m@rkverseNml{\mark{\book:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
-\def\m@rkverseDglot{\mark{\book:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
+\def\m@rkverseNml{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
+\def\m@rkverseDglot{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
 
 \def\n@xtparstart{}
 \def\print@bleverse{}
@@ -1412,9 +1413,9 @@
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
         %\tracingassigns=1
         \let\aftergr@b\@h\gr@btomacro}% \h gets stored as the book name (for references)
- \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{H}{Defining ifOmitChapterNumberRH@\detokenize{##1}}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
  \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \let\aftergr@b\@hh\gr@btomacro}% \h1 gets stored as the book name (for references)
- \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\egroup}% store book id in \b@ok1 / b@ok1R
  \def\bookalt{\csname b@ok1\g@tdstat\endcsname}%
  \x@\let\csname h1\endcsname=\h@h
  %
@@ -1480,16 +1481,19 @@
 \endgroup
 \catcode`0=11\def\z@ro{0}\catcode`0=12
 \newif\iftfmp \tfmpfalse
+\def\resetch@pterverse#1{%
+   \global\let\ch@pter\z@ro\global\let\v@rse\@neletter
+   \x@\global\x@\let\csname @ch@pter\@g@tdst@t#1\endcsname\ch@pter
+   \x@\global\x@\let\csname @ch@ptert@xt\@g@tdst@t#1\endcsname\ch@pter
+   \x@\global\x@\let\csname @v@rse\@g@tdst@t#1\endcsname\v@rse
+}
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}% get first 3 chars of the \id
-  \global\let\ch@pter\z@ro\global\let\v@rse\@neletter
+  \trace{d}{@@id for side \c@rrdstat\space diglot\ifdiglot true\else false\fi}%
+  \x@\resetch@pterverse\ifdiglot\c@rrdstat\fi%
   \settrig@refcv\docvhook
   \the\@idhooks
-  \ifdiglot\def\col@do##1{%
-     \x@\global\x@\let\csname @ch@pter##1\endcsname\ch@pter
-     \x@\global\x@\let\csname @ch@ptert@xt##1\endcsname\ch@pter
-     \x@\global\x@\let\csname @v@rse##1\endcsname\v@rse}\x@\each@col\diglot@list\E\col@do{}%
-  \fi}
+}
 \def\ptx@fig #1\fig*{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
     \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
     \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
@@ -1751,9 +1755,12 @@
 \newif\ifsubc@ll \subc@llfalse
 %-csty_stylesheet
 
+% Four flags that determine how the file should process the end of a ptx file file.
 \newif\iflastptxfile
-\newif\iflastpage
-\newif\ifendbook
+\newif\ifinendbook % Is this one of the last few pages of a ptxfile
+\newif\ifendbook % Is this the (very) last page of a ptxfile
+\newif\iflastpage % This is the very last page of the volume (end of last ptxfile) (i.e. it's a combination of lastptxfile and endbook
+
 \newif\ifscripturebook
 \newdimen\origb@selineskip %Save the initial baselineskip here
 \newif\ifinperiph
@@ -1868,6 +1875,7 @@
  \let\\=\bslash
  \m@kedigitsletters
  \inptxfiletrue
+ \endbookfalse
 }
 
 \def\unprepusfm{
@@ -1906,9 +1914,10 @@
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
- \trace{d}{PageAlign=\PageAlign, IntroPageAlign=\IntroPageAlign, ifin@ntro\ifin@ntro true\else false\fi}%
- \ifnum 1=\ifx\PageAlign\val@odd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi \zNeedOddPage\fi
+ \trace{d}{PageAlign=\PageAlign, IntroPageAlign=\IntroPageAlign, ifin@ntro\ifin@ntro true\else false\fi, pageno=\the\pageno, totalpages=\the\totalp@ges}%
+ \ifnum 1=\ifx\PageAlign\val@odd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi \need@oddpage{\emptyoutput}\fi
  \xdef\ptxst@rtp@ge{\the\pageno}%
+ \ifcsname @@@ifOmitChapterNumber\endcsname \endOneChapBook \let\@@@ifOmitChapterNumber\undefined\fi
  \ifOneChapBook\startOneChapBook\fi
  \let\@@fter\empty
  \ifdigl@tinuse\ifdiglot\else\let\@@fter\diglotfalse \diglottrue\fi\fi
@@ -2011,13 +2020,16 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi \ifdoingt@ble doingtable??\fi \c@tegory,\c@tprefix}%
+ \traceifset{ptxfile}%
  \ifhmode\endgraf\fi
  \ifdim\pagetotal>20pt \message{Pagetotal = \the\pagetotal, Trigggring endpage \the\output}\endpage\fi
  \seriesdiglotfalse % Set this so we know it's always valid
- \ifdigl@tinuse\ifdiglot
- \else
-   \seriesdiglottrue
- \fi\fi
+ \ifdigl@tinuse
+  \let\col@do\resetch@pterverse\x@\each@col\diglot@list\E
+   \ifdiglot\else
+     \seriesdiglottrue
+   \fi
+ \fi
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
@@ -2033,15 +2045,19 @@
  \the\st@rtptxhooks
  \ifseriesdiglot\let\c@rrdstat\empty\fi % atn@xtptxfile will set things up if so desired, but cover periphs need loading with c@rrdstat unaffected by setup code.
  \prepusfm
+ \global\inendbookfalse \global\endbookfalse
  \edef\t@st{#1}%
  \ifx\t@st\empty\else %opening empty file causes problems with some paths.
    \trace{d}{\meaning\atn@xtptxfile}%
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
      \else \closein\t@stread \def\n@xt{\atn@xtptxfile \input "\the\PtxFilePath#1"\relax}\fi
-   \n@xt
+   \traceifset{ptxfile-contents}%
+   \n@xt\relax
+   \traceifcheck{ptxfile-contents}%
    \gdef\atn@xtptxfile{}% This can't carry over.
  \fi
+ \traceifcheck{ptxfile}%
  \postptxfile
 }
 \gdef\atn@xtptxfile{}
@@ -2051,22 +2067,47 @@
 \newsp@cialpen{sect@ndpenalty}
 \def\postptxfile{%
  \inptxfilefalse  
- \trace{o}{postptxfile \iflastptxfile LAST ptx file\fi pg=\the\pagegoal, pt=\the\pagetotal}%
+ \trace{o}{postptxfile \iflastptxfile LAST file \fi pg=\the\pagegoal, pt=\the\pagetotal}%
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
  \endt@ble
- %\iflastptxfile \global\lastpagetrue\fi
- %\endbooktrue Now set by output routine.
+ \inendbooktrue 
  \ifdiglot
   \enddigl@t
  \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
- \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else \let\layoutpen@lty\book@ndpenalty\fi\fi
+ \let\layoutpen@lty\book@ndpenalty 
+ \iflastptxfile
+   \setbox\bookendbox\vbox{\hsize=\textwidth \lastbookendrule}%
+ \else
+   \ifnum 1=\ifendbooknoeject 1\else\ifx\PageAlign\val@MULTI 1 \else 0\fi\fi
+     \setbox\bookendbox\vbox{\hsize=\textwidth \bookendrule}%
+   \else
+     \setbox\bookendbox\vbox{}%
+   \fi
+ \fi
  \layoutstylebreak
  \singlecolumn
- \ifOneChapBook\endOneChapBook\fi
+ \tempfalse
+ \iffilehasverses\temptrue\fi
+ \ifnum\pageno=\ptxst@rtp@ge
+    \ifnum\pagetotal>0pt \temptrue\fi
+ \else
+    \temptrue
+ \fi
+ \ifdim\pagetotal=0pt
+   \trace{o}{No bookendbox at the start of a page}%
+   \setbox\bookendbox\box\voidb@x
+ \fi
+ \iftemp
+   \ifnum \ifdim\ht\bookendbox=0pt \ifdim\dp\bookendbox=0pt 0 \else 1 \fi \else 1 \fi =1 
+     \box\bookendbox
+   \fi
+ \else
+    \trace{o}{No bookendbox, as the book is empty}%
+ \fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
  \ifx\id@@@\n@ID\relax\else\csname bookend-\id@@@\endcsname\relax\fi
  \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookend-all\endcsname\else missing\fi}%
@@ -2150,6 +2191,8 @@
 \def\sl@shprint{\char`\/{}% Empty group makes any following spaces behave properly
   %\message{next character after slash: '\meaning\n@xt'}%
 }
+% \let\/\sl@shprint
+
 \catcode`\/=12
 %-csty_slash
 %+csty_category

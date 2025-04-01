@@ -123,6 +123,9 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
         outpdfobj.write()
-        os.remove(opath)
+        try:
+            os.remove(opath)
+        except FileNotFound:
+            pass
     return coverfile
 

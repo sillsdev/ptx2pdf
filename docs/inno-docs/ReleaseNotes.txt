@@ -1,23 +1,214 @@
-PTXprint 2.7.12 Release Notes
-21 Jan 2025
+PTXprint 2.7.35 Release Notes
+28 Mar 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.7.13 (21 Jan 2025)
-  * Happy New Year - it is 2025 - update About... info
+Bug fixes and Improvements in 2.7.35 (28 Mar 2025)
+  * Make per-book OmitChapterNumberRH booleans, so rangeref etc works properly (#1054)
+  * Ensure latest usfmtc code is being used in build (.33 and .34 used stale code)
+  
+Bug fixes and Improvements in 2.7.34 (27 Mar 2025)
+  * Prepare to make code snippet searches switch window
+  * Fix poetry special measures to revert correctly
+  * Don't allow Page Size to be translatable
+  * Improve user feedback when Anchor Ref is missing
+  * id in a diglot only resets it own side's chapter number
+  * Synchronise log formats between ptxprint and usfmerge script
+
+Bug fixes and Improvements in 2.7.33 (26 Mar 2025)
+  * Picist fix - make sure piclist is deleted when all pics are deleted
+  * Add rectangle overlays to help move them
+  * Switch usfmtc dependency from pypi to github
+  * Fix several minor bugs
+  * Fix adding pictures
+
+Bug fixes and Improvements in 2.7.32 (25 Mar 2025)
+  * [Built against usfmtc 0.3.4]
+  * Fix parpicstart in diglot
+  * Add attrib support to usxutils
+  * Fix overfull pages (affecting study Bibles)
+  * Fix notelines, picture problems, scored merging
+
+Bug fixes and Improvements in 2.7.31 (24 Mar 2025)
+  * Replace underlying USFM parser with a new USX-based parser
+    [Built against usfmtc 0.3.3]
+  * Adjlists (context menu changes) work with indexed paragraphs e.g. q2[2]
+  * GLO word adjustments now working as expected
+  * Modified option to 'Pagebreak on all other chapters'
+  * Allow pagebreak at start of body-text (PBOnBody)
+  * Make BorderColor stick
+  * Re-instate the red-X Close button on the PDF Preview dialog
+  * Fix issue 'failure when using forward slash' #1060 and similar
+  * Get interlinear doing pre chapter headings (1:0)
+  * Fix tending to categorise as footnotechar instead of char
+  * Fix RTL hbox header left/right content
+  * Fix showing PDF overlay on indexed paragraphs
+
+Bug fixes and Improvements in 2.7.29 (14 Mar 2025)
+  * parse the whole of parlocs file (don't early return)
+  * Make sure other PDFs don't crash due to lack of parlocs file
+  * Add ptxstats report script
+  * Fix guidelines headers
+  * pdf_viewer resilience
+
+Bug fixes and Improvements in 2.7.28 (12 Mar 2025)
+  * Add width to insert rule codelet
+  * Footnote glossary work-around, and backslashed-slash
+  * Fix - only add to anchormap if 'anchor' key exists in p (PR#1053 n8marti)
+  * Escape any slashes in glossary footnote contents
+  * Improve glossary-entry finding regex
+  * Recover pre-section title (etc) spacing
+  * Add in margin scope gridlines
+  * Add another Grid option for 'In Margin Areas' and rename the Text Area option
+  * Get Guides working for RTL as well
+  * Get left and right pages working for gridding in pdf_viewer
+  * Keep going if no parlocs file
+  * Fix unbalanced gutters
+  * Add gridlines to viewer
+  * Move guidelines to being drawn only in the viewer
+
+Bug fixes and Improvements in 2.7.27 (1 Mar 2025)
+  * Fix missing stylesheets after folder moved (usfm_sb.sty was missing)
+  * Don't stick everything in the internal config of the pdf
+  * Choose a grid line colour that works in B&W
+  * Ensure that full pages encountered by sppb go to onecol for proper handling
+  * Solve bug where a \rem as the last line of a USFM file caused a crash
+  * Update test standards and add more tests
+
+Bug fixes and Improvements in 2.7.26 (26 Feb 2025)
+  * Delete old/redundant ptx2pdf and xetex folders prior to installation (.iss file changed)
+  * Adjusted the venv installation example to have the [gui] optional dependencies #1047
+  * Fix verse numbers in tables (tables are not footnotes, no setting the innote flag)
+  * Fix pnums typo - affecting page navigation
+  * Give friendly error message to docker users, et al.
+  * Add a bunch of common fonts to docker image
+  * Dockerfile must have Unix-style lf line endings
+  * Create docker-image.yml
+  * More docker image shaving (780MB)
+  * Optimise docker image size a bit
+
+Bug fixes and Improvements in 2.7.24 (20 Feb 2025)
+  * Allow scroll wheel beyond edge of page to navigate page numbers
+  * Modify insertion of tatweels to allow multiple locations and longer texts
+  * Perhaps fix windows font caching
+  * Shrink docker image by cleaning up apt cache
+  * Add Dockerfile
+  * Add cache dir logging
+  * Various buglet fixes
+  * Put setup.py back
+
+Bug fixes and Improvements in 2.7.23 (19 Feb 2025)
+  * Add tatweel rule generator dialog
+  * Change tatweel shortcut key Ctrl ` to accelerate.py with other shortcuts
+  * Get Windows build working again after major refactor
+  * Get packaging working again (paths etc.) for windows
+  * Change show_pdf to use page index
+  * Hide 'annot' until we can use it for something helpful
+  * Now show the verse the mouse clicked inside
+  * Make sure that even the unchecked c_ labels get bold applied if not default
+  * Get paths sorted out for pypi and dev. pyinstaller might work
+  * Refactor pyproject packaging to remove need for symlinks
+  * Tidy up TeXpert options which weren't being added to .tex file
+  * Tidy up if grid settings
+  * Perhaps capture xetex run output in debug
+  * Replace Tahoma with Lato
+  * Update standards
+  * Why disable pdf generation for testing?
+  * Fix styleeditor reading floats with comments
+  * Refactor for pypi packaging
+
+Bug fixes and Improvements in 2.7.22 (14 Feb 2025)
+  * Updated information about Ubuntu package as well as steps to install from source
+  * Added missing dependency and removed outdated docstring
+  * Get refs working properly for SpeedSlice
+  * Change name of PDF-asset to: A5 section head border-RTL-taller.pdf
+  * Fix missing paragraph rects before pictures in pdf viewer
+  * Fix tests trying to load visual display
+  * Add missing file for tests
+  * Fix regression on _diff.pdf production
+  * Fix jump to reference in Paratext 
+
+Bug fixes and Improvements in 2.7.20 (8 Feb 2025)
+  * Ensure prev+next undefilled page buttons are active from the start after printing
+  * Resize the main settings window to the same size it was when last closed
+  * Activate SpeedSlice (experimental feature)
+  * Fix RTL PageUp+PageDn going the wrong way
+  * Fix page navigation (again) allowing page number to be typed in
+
+Bug fixes and Improvements in 2.7.19 (7 Feb 2025)
+  * Enhance PDF Preview UI, and save 'Auto-update' and 'Book View' settings in user config
+  * Enhance 'Reset Adjustments' to have more options: Para, Column, Page, or Spread
+  * First attempt at remembering window sizes, positions, and monitors (Win32 only feature)
+  * Improved context menu layout (grouping shrink options, and expand options)
+  * Add Auto-Update delay and Advanced > Other option to modify default val (3sec)
+  * Add button to bring main dialog (settings) to front
+  * Allow digits in any script when adding non breaking spaces
+  * Another attempt to prevent references from breaking away from bookname
+  * Move Rules, Guides and Grid settings to PDF Viewer and TeXpert; Cropmarks to Finishing tab
+  * Get Guides and Baselines and Grids working properly again
+  * Disable default \par in generating graphpaper, notelines
+  * Add SpeedSlice to allow faster updates to PDF when paginating in Preview pane [unreleased]
+  * Fix rects after pictures [MH]
+  * Fix immediately update ref after changing picture anchor to prevent crashing
+  * Fix Fallback font not handling smart quotes
+
+Bug fixes and Improvements in 2.7.18 (3 Feb 2025)
+  * Fix regression with pgpos not working
+  * Prevent Index Errors while navigating in PDF previewer
+
+Bug fixes and Improvements in 2.7.17 (1 Feb 2025)
+  * Allow stretch and shrink (text) in GLO paragraphs
+  * Fix navigation tooltip regression (next/prev/first/last)
+  * Allow selecting and deleting multiple rows in AdjLists
+  
+Bug fixes and Improvements in 2.7.16 (31 Jan 2025)
+  * Allow right-click DEL AdjList rows; and reset Para removes the row as well
+  * Improve RTL UI for prev and next underfilled pages
+  * Swap pg navigation button behaviour and tooltips for RTL PDF with non Arabic UI
+  * Fix page indexing bugs and improve tooltip for prev and next undefilled page
+  * Move btnSensitivity to pdf_viewer, get add_hints working again
+  * Fix xo and fr to be no-break space after
+  * Clean up context menu
+  * Handle pdf page numbers if no parlocs
+  * Put the paragraph number on the context menu
+  * Refactor continuing paragraph after a picture
+  * In pdf viewer introduce current_index to parallel current_page
+  * Fix page number on pdf viewer context menu
+  * Fix handling out of range page indices
+  * Add usfmutils unit tests and fix abarent parlen between pages
+  * Add PTXPRINT_OPTS and --diffdpi
+
+Bug fixes and Improvements in 2.7.15 (24 Jan 2025)
+  * Use right font in Preview contents (index) pane
+  * Get zimagecopyrights working again (by handling ./tmpPics/)
+  * Make Peripheral page numbers start with -1 and count down
+  * Advance pages in pdfviewer by folio number
+  * Handle folio numbers in pdf viewer
+  * Add prev issue button and handle peripheral PDF offsets
+  * Make prev-next issue buttons only active when applicable
+  * Fix startup bug if no MyParatextProjects folder found
+  * Refactor tests to include archive creation
+  * Fix missing icon for find prev issue in Preview pane
+  
+Bug fixes and Improvements in 2.7.13 (22 Jan 2025)
+  * Happy New Year! update About... info to 2025
   * Vastly improved right-click context menu in PDF viewer for text AND pictures
   * Add ability to change anchor ref via context menu
-  * Add right-click option to Send Ref to Paratext, to make it scroll to current para.
+  * Add right-click option to Send Ref to Paratext, to make it scroll to current para
+  * Add auto-update PDF option to preview pane (prints right after context menu change) 
   * Improve page and zoom controls in the PDF viewer
   * Don't enable both contextual spaces and letter spacing
   * Add support for \ib and Allow it to be styleable i.e have different dimension to b
   * Add more @parpicsize output locations
   * Add \slash
+  * Simplify color bars (LHS=shrink, RHS=expand, blue=lines, red=text)
+  * Fix adjustment color bars being offset by a front PDF attachment
   * Fix col initial images not selectable when in continuation paragraph
   * Fix tex macros picsize typos
   * Fix piclists and make it more responsive
-  * Don't check graph paper line thicknesses, as its unlikely to be professionally printed.
+  * Don't check graph paper line thicknesses, as its unlikely to be professionally printed
+  * Move parlocs open to onetimesetup
 
 Bug fixes and Improvements in 2.7.12 (18 Dec 2024)
   * Fit PDF to window size after showing PDF

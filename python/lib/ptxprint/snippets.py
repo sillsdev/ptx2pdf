@@ -205,7 +205,7 @@ class Diglot(Snippet):
 \def\DiglotLFraction{{{document/diglotprifraction}}}
 \addToSideHooks{{{s_}}}{{\RTL{document/ifrtl}}}
 \diglotSwap{document/diglotswapside}
-{diglot/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
+{project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \let\language{s_}=\langund
@@ -243,7 +243,8 @@ class Diglot(Snippet):
 """
 
         res = baseCode.format(s_="L", **model.dict)
-        res += persideCode.format(diglot = {x[7:]: y for x,y in model.dict.items() if x.startswith("diglot/")}, s_="R", **model.dict)
+        diglotmap = {x[7:]: y for x,y in model.dict.items() if x.startswith("diglot/")}
+        res += persideCode.format(diglot=diglotmap, s_="R", **model.dict)
         res += "\n" + r"\def\addInt{" + "\n"
         for a in (("L", "project/intfile"), ("R", "diglot/intfile")):
             res += r"\zglot|{0}\*{1}".format(a[0], model.dict[a[1]]) + "\n"
@@ -463,13 +464,6 @@ class Grid(Snippet):
 """
     takesDiglot = False
 
-class AdjustLabelling(Snippet):
-    processTex = True
-    texCode = r'''
-{paper/ifgrid}\MarkAdjustPointstrue
-\expandafter\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=007f00" at 7pt % AdjustPar
-'''
-
 class ParaLabelling(Snippet):
     processTex = True
     texCode = r'''
@@ -481,6 +475,6 @@ class ParaLabelling(Snippet):
     \advance\pcount by 1
     \d@marginnote{{0}}{{\the\pcount}}{{zpmkr}}{{left}}}}
 }}
-{paper/ifgrid}\addtoeveryparhooks{{\parmkr}}
+\addtoeveryparhooks{{\parmkr}}
 '''
 

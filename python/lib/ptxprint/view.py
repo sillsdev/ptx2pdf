@@ -9,8 +9,8 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
                             zipopentext, xdvigetfonts, calledme
-from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
-from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
+from ptxprint.usxutils import UsfmCollection, Usfm, Sheets, simple_parse, merge_sty, out_sty
+from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
@@ -32,12 +32,13 @@ import json, logging, hashlib
 from shutil import copyfile, copytree, move
 from difflib import Differ
 from base64 import b64encode, b64decode
+from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.7.12"
-GitVersionStr = "2.7.12"
-ConfigVersion = "2.20"
+VersionStr = "2.7.35"
+GitVersionStr = "2.7.35"
+ConfigVersion = "2.23"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -419,7 +420,7 @@ class ViewModel:
     def onNumTabsChanged(self, *a):
         if self.loadingConfig:
             return False
-        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
+        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel, hfontsizemms) = self.getMargins()
         self.set("l_margin2header", "{}mm".format(f2s(headerlabel, 1)))
         self.set("l_footer2edge", "{}mm".format(f2s(footerlabel, 1)))
         return True
@@ -432,7 +433,7 @@ class ViewModel:
             hfont = self.get("bl_fontR")
             if hfont is None:
                 # print("hfont is STILL None")
-                return (0, 0, 0, 0, 0, 0, 0, 0)
+                return (0, 0, 0, 0, 0, 0, 0, 0, 0)
         hfont = hfont.getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         hfontheight = float(hfont.ascent) / hfont.upem
@@ -457,7 +458,7 @@ class ViewModel:
         # print(f"{headerposmms=} {footerposmms=} {headerlabel=} {footerlabel=} ")
         # simply subtract ruler gap from header gap
         rulerposmms = asmm(float(self.get("s_headerposition")) - float(self.get("s_rhruleposition")))
-        return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel)
+        return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel, hfontsizemms)
 
     def updateSavedConfigList(self):
         pass
@@ -659,7 +660,7 @@ class ViewModel:
             self.onNumTabsChanged()
             self.readCopyrights(forced=True)
             self.picChecksView.init(basepath=self.project.srcPath(self.cfgid))
-            self.picinfos = None
+            self.picinfos: Optional[Piclist] = None
             self.loadPics(mustLoad=False, force=True)
             self.hyphenation = None
             self.adjlists = {}
@@ -1045,8 +1046,12 @@ class ViewModel:
             bmargin = config.getfloat("paper", "bottommargin", fallback=10) * 72.27 / 25.4
             lineskip = config.getfloat("paragraph", "linespacing", fallback=12)
             self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos))))
-            self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=False))
             self._configset(config, "document/marginalposn", "left")
+            try:
+                noinkinmargin = config.getboolean("footer", "noinkinmargin", fallback=False)
+            except ValueError:
+                noinkinmargin = False  # Default value if the value is not a valid boolean
+            self._configset(config, "footer/noinkinmargin", not noinkinmargin)            
         if v < 2.12:
             if (x := config.get("document", "diffColor", fallback=None)) is not None:
                 self._configset(config, "document/odiffcolor", x)
@@ -1097,6 +1102,21 @@ class ViewModel:
             self._configset(config, "texpert/bottomrag", rag)
             self._configset(config, "paper/allowunbalanced", True if rag != "0" else False)
 
+        if v < 2.21: # get rid of any erroneously created .adj files in the shared/adjlist folder
+            if cfgpath is not None:
+                adjpath = os.path.join(cfgpath, "adjLists")
+                self.clean_adj_files(adjpath)
+
+        if v < 2.22: # transfer Show/Hide settings to Advanced > texpert
+            self._configset(config, 'texpert/showadjpoints', config.getboolean('snippets', 'adjlabelling', fallback=False))
+            self._configset(config, 'texpert/showusfmcodes', config.getboolean('snippets', 'paralabelling', fallback=False))
+            self._configset(config, 'texpert/showhboxerrorbars', config.getboolean('document', 'ifhidehboxerrors', fallback=False))
+
+        if v < 2.23:
+            if not config.getboolean('paper', 'ifgrid', fallback=False):
+                self._configset(config, 'grid/gridgraph', False)
+                self._configset(config, 'grid/gridlines', False)
+                
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
@@ -1116,6 +1136,31 @@ class ViewModel:
                 with open(styf, "w", encoding="utf-8") as outf:
                     outf.write("# This file left intentionally blank\n")
         return (v, forcerewrite)
+
+    def clean_adj_files(self, folder_path):
+        """
+        Examines all .adj files in the given folder and deletes those that meet the criteria:
+        1. The file size is exactly 168 bytes.
+        2. The first line starts with 'This file doesn't exist yet.'
+        """
+        if not os.path.isdir(folder_path):
+            return
+        
+        for file_name in os.listdir(folder_path):
+            if file_name.endswith(".adj"):  # Check if it's a .adj file
+                file_path = os.path.join(folder_path, file_name)
+                delMe = False
+                try:
+                    if os.path.getsize(file_path) < 200:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            first_line = f.readline().strip()
+                            if first_line.startswith("This file doesn't exist yet."):
+                                delMe = True
+                        if delMe:
+                            logger.info(f"Deleting bogus .adj file: {file_path}")
+                            os.remove(file_path)
+                except Exception as e:
+                    logger.warn(f"Error testing/deleting adj file: {file_path}: {e}")
 
     def localiseConfig(self, config):
         for a in ("header/hdrleft", "header/hdrcenter", "header/hdrright", "footer/ftrcenter"):
@@ -1547,6 +1592,7 @@ class ViewModel:
                 if os.path.exists(fp):
                     res.append(fp)
             res.append(os.path.join(cpath, subdir, "ptxprint.sty"))
+        logger.debug(f"getStyleSheets: {res=}")
         return res
 
     def getallfonts(self):
@@ -1728,7 +1774,7 @@ class ViewModel:
 
     def _getProject(self, prjwname):
         impgui = self.get(prjwname, sub=1)
-        if impgui is None:
+        if impgui is None or not len(impgui):
             impname = self.get(prjwname)
             impprj = self.prjTree.findProject(impname)
         else:
@@ -1754,7 +1800,7 @@ class ViewModel:
             if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
         if digview is None:
-            self.setPrintBtnStatus(2, _("No Config found for Diglot"))
+            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfgid}"))
         else:
             digview.isDiglot = True
             digview.digSuffix = suffix
@@ -1871,7 +1917,7 @@ REM To run this batch script (in Windows) change the extension
 REM from .txt to .bat and then type: runtex.bat <Enter>
 cd local\\ptxprint\\{0}
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
-if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\windows\\xetex.exe
+if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\ptxprint\\xetex\\bin\\windows\\xetex.exe
 set FONTCONFIG_FILE=%cd%\\..\\..\\..\\fonts.conf
 set TEXINPUTS=.;%cd%\\..\\..\\..\\src\\;
 set hyph_size=32749
@@ -1882,6 +1928,8 @@ set stack_size=32768""".format(self.cfgid)
             batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\\..\\..'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.project.prjid), batfile)
 
+    _includeexts = (".cfg", ".txt", ".adj", ".sfm", ".tex", ".sty", ".piclist")
+
     def createSettingsZip(self, outf):
         res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
         sdir = self.project.srcPath(self.cfgid)
@@ -1890,7 +1938,7 @@ set stack_size=32768""".format(self.cfgid)
             if not os.path.exists(ind):
                 continue
             for f in os.listdir(ind):
-                if "_override" in f or f == "_runinfo.txt":
+                if "_override" in f or f == "_runinfo.txt" or os.path.splitext(f)[1].lower() not in self._includeexts:
                     continue
                 fpath = os.path.realpath(os.path.join(ind, f))
                 if os.path.isfile(fpath):

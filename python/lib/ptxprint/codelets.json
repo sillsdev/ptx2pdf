@@ -334,7 +334,7 @@
           "Type": "comment#",
           "Label": "Insert a rule before \\c 1 starts",
           "Description": "Insert a rule after the intro (for all books)",
-          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule\\\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule|width=\".6\"\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
@@ -474,7 +474,15 @@
           "Description": "No-break paragraph: Commonly used in cases where the previous paragraph spans the chapter boundary.",
           "CodeSnippet": "at JHN 16:0 ACT 8:0 1CO 11:0 2CO 2:0,6:0,7:0 COL 2:0,4:0 HEB 10:0 '\\\\p' > '\\\\nb'"
         }
-      ]
+      ],
+      "Arabic": [
+        {
+          "Type": "method",
+          "Label": "Add Tatweels",
+          "Description": "Create rules to add tatweels (kashidas) to words at a specific reference.",
+          "CodeSnippet": "showMakeTatweelRuleDialog"
+        }
+      ]	  
     },
   ".sfm":
     {

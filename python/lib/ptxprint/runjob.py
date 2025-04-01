@@ -308,6 +308,7 @@ class RunJob:
 
     def done_job(self, outfname, pdfname, info):
         # Work out what the resulting PDF was called
+        startname = None
         logger.debug(f"done_job: {outfname}, {pdfname}, {self.res=}")
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
@@ -317,6 +318,7 @@ class RunJob:
         if pdfname is not None:
             print(pdfname)
         self.printer.set("l_statusLine", "")
+        print(f"{self.res=}")
         if self.res == 0:
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
@@ -328,18 +330,18 @@ class RunJob:
                 diffpages = int(self.printer.get("s_diffpages") or 0)
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, basename, color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
+                    diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
+                                color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         self.printer.onShowPDF(None, path=diffname)
-                    else:
-                        self.printer.set("l_statusLine", _("No differences found"))
+                        if diffname == pdfname:
+                            self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if self.printer.isCoverTabOpen():
                     startname = self.coverfile or pdfname
                 else:
                     startname = pdfname
-                self.printer.onShowPDF(None, path=startname)
 
             fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
             logger.debug(f"Testing log file {fname}")
@@ -350,16 +352,6 @@ class RunJob:
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
-                    seekbtn = self.printer.builder.get_object("btn_seekPage2fill")
-                    seekbtn.set_sensitive(len(ufPages))
-                    elipsis = f", ... (of {len(ufPages)})" if len(ufPages) > 5 else ""
-                    if len(ufPages):
-                        pgs = ", ".join(map(str, ufPages[:5]))
-                        print(f'{pgs}')
-                        seekText = _("Show next underfilled page.") + "\n" + pgs + elipsis
-                    else:
-                        seekText = _("No more underfilled pages detected.")
-                    seekbtn.set_tooltip_text(seekText)
                     sl = self.printer.builder.get_object("l_statusLine")
                     sl.set_text("")
                     sl.set_tooltip_text("")
@@ -393,6 +385,8 @@ class RunJob:
                                   _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
+            if not self.noview and startname is not None:
+                    self.printer.onShowPDF(None, path=startname)
 
         elif self.res == 3:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
@@ -421,6 +415,7 @@ class RunJob:
         self.printer.finished(self.res == 0)
         self.busy = False
         if not self.noview and not self.args.print and self.printer.isDisplay:
+            self.printer.builder.get_object("dlg_preview").present()
             spnr = self.printer.builder.get_object("spin_preview")
             if spnr.props.active:  # Check if the spinner is running
                 spnr.stop()                
@@ -690,10 +685,8 @@ class RunJob:
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
-            print("Gathering pictures...")
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(info, jobs, prjdir, digtexmodel=digtexmodel)
-            print("Finished gathering pictures...")
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
@@ -708,24 +701,27 @@ class RunJob:
         os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
         os.putenv("max_print_line", "32767")    # Allow long error messages
         ptxmacrospath = os.path.abspath(self.macrosdir)
+        ptxmacrobase = os.path.join(pycodedir(), 'ptx2pdf')
+        if not os.path.exists(ptxmacrobase):
+            ptxmacrobase = os.path.join(pycodedir(), "..", "..", "..", "src")
         if not os.path.exists(ptxmacrospath) or not os.path.exists(os.path.join(ptxmacrospath, "paratext2.tex")):
-            ptxmacrospath = os.path.abspath(os.path.join(pycodedir(), "..", "..", "..", "src"))
+            ptxmacrospath = os.path.abspath(ptxmacrobase)
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:
                     continue
-                ptxmacrospath = os.path.abspath(os.path.join(b, 'ptx2pdf'))
+                ptxmacrospath = os.path.abspath(ptxmacrobase)
                 if os.path.exists(ptxmacrospath):
                     break
 
-        pathjoiner = (";" if sys.platform=="win32" else ":")
+        pathjoiner = (";" if sys.platform.startswith("win") else ":")
         envtexinputs = os.getenv("TEXINPUTS")
         texinputs = envtexinputs.split(pathjoiner) if envtexinputs is not None and len(envtexinputs) else []
         for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
             if a not in texinputs:
                 texinputs.append(a+"//")
         miscfonts = getfontcache().fontpaths[:]
-        if sys.platform != "win32" and not nosysfonts:
+        if sys.platform.startswith("win") and not nosysfonts:
             a = "/usr/share/ptx2pdf/texmacros"
             if a not in texinputs:
                 texinputs.append(a)
@@ -826,12 +822,15 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                 self.res = runner.returncode
+            elif isinstance(runner, subprocess.CompletedProcess):
+                self.res = runner.returncode
+                logger.debug(f"{runner.stdout.decode('UTF-8')}")
             else:
                 self.res = runner
             print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
             logfname = outfname.replace(".tex", ".log")
             (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
-            info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
+            info.printer.editFile_delayed(logfname, "wrk", "tb_XeTeXlog", False)
             numruns += 1
             self.rerunReasons = []
             tocfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".toc"))
@@ -872,7 +871,7 @@ class RunJob:
             if not rererun:
                 break
 
-        if not self.noview and not self.args.testing and not self.res:
+        if not self.res:
             self.printer.incrementProgress(stage="xp")
             tmppdf = self.procpdfFile(outfname, pdffile, info)
             if info["finishing/extraxdvproc"]:
@@ -894,6 +893,10 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                 self.res = 4 if runner.returncode else 0
+                logger.debug(f"{runner.stdout.decode('UTF-8')}")
+            elif isinstance(runner, subprocess.CompletedProcess):
+                self.res = 4 if runner.returncode else 0
+                logger.debug(f"{runner.stdout}")
             else:
                 self.res = 4 if runner else 0
             self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
@@ -931,9 +934,9 @@ class RunJob:
             return False
         return True
 
-    def createDiff(self, pdfname, basename, **kw):
+    def createDiff(self, pdfname, basename, outname=None, **kw):
         from ptxprint.pdf.pdfdiff import createDiff
-        outname = pdfname[:-4] + "_diff.pdf"
+        outname = pdfname[:-4] + "_diff.pdf" if outname is None else outname
         othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
         logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)

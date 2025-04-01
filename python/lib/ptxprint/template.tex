@@ -42,7 +42,7 @@
 \PaperHeight={paper/height}
 \CropMarks{paper/ifcropmarks}
 \BookOpenLeft{cover/rtlbookbinding}
-{paper/ifgrid}\def\doLines{{{grid/gridgraph}{grid/gridlines}{paper/notelines}}}
+{paper/ifgrid}\def\doLines{{{paper/notelines}}}
 \NoteLines{paper/ifnotelines_}
 \def\NoteLineColMajor{{{majornlcolor_}}} % Colour (R G B)
 
@@ -113,7 +113,7 @@
 {document/ifdiglot}\addToSideHooks{{L}}{{\XeTeXinterchartokenstate={document/letterspace}}}
 
 %%%%% Layout %%%%%
-{document/ifhidehboxerrors}\overfullrule=0pt
+{texpert/showhboxerrorbars}\overfullrule=0pt
 \RTL{document/ifrtl}   % Use right-to-left layout mode?
 \RTL{L_}{document/ifrtl}
 {document/toptobottom}\XeTeXupwardsmode=1     % Top-to-Bottom and Left-to-Right layout
@@ -250,7 +250,8 @@
 
 \PBOnBody{document/ch1pagebreak}
   
-\pageno={document/startpagenum}
+% \pageno={document/startpagenum}
+\pageno=-1
 
 %%%%% Illustration and Adjustment Locations and Lists %%%%%
 \IncludeFigures{document/ifinclfigs}
@@ -324,6 +325,8 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 \BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
+\expandafter\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=007f00" at 7pt % AdjustPar
+
 \NoBodytrue
 {document/iftocleaders}\addtoinithooks{{\relax \tocleaders{document/tocleaderrule}{{{document/tocleaderstyle}}}{{3pt}} \relax}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
@@ -344,6 +347,7 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
+\pageno={document/startpagenum}
 {document/ifdiglot}\diglottrue
 \addtoendptxhooks{{\zautoBookEndDecoration}}
 % job files:

@@ -118,7 +118,10 @@ class AdjList:
     def createAdjlist(self, fname=None):
         if fname is None:
             fname = self.adjfile
-        if fname is None or not len(self.liststore):
+        if fname is None:
+            return
+        if not len(self.liststore):
+            self.remove_file(fname)
             return
         os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
         with open(fname, "w", encoding="utf-8") as outf:
@@ -132,37 +135,22 @@ class AdjList:
                     line += " % \\{4} {5} {6}".format(*r)
                 outf.write(line + "\n")
 
-    def createChanges(self, fname, diglot=""):
-        if not len(self.liststore):
-            return
-        lines = []
-        for r in self.liststore:
-            if not r[5] or r[5] == self.centre:
-                continue
-            if len(r[0]) > 4 and r[0][4] != diglot:
-                continue
-            try:
-                c, v = re.split(r"[:.]", r[1], 1)
-                firstv = v.split("-", 1)
-                v = int(firstv[0]) - (1 if r[2] < 2 else 0)
-            except ValueError:
-                continue
-            if v < 0:
-                c = int(c) - 1
-                v = "end"
-            else:
-                c = int(c)
-            lines.append("at {0} {1}:{2} '\\\\{3}(\s)' > '\\\\{3}^{4}\\1'".format(r[0][:3], c, v, r[4], r[5]))
-        if len(lines):
-            with open(fname, "w", encoding="utf-8") as outf:
-                outf.write("\n".join(lines))
+    def remove_file(self, fname):
+        try:
+            os.remove(fname)
+        except FileNotFoundError:
+            pass  # File does not exist, no action needed
+        except PermissionError:
+            self.model.statusMsg(_(f"Warning! File: {fname} is locked. Could not be deleted."))
 
     def save(self):
         if self.adjfile is None:
             return False
         self.createAdjlist()
+        # possibly loop through the poly-glot configs here and then call createChanges with 
+        # the right diglot letter, L,R,A,B,C and appropriate chfile for the other config.
         chfile = self.adjfile.replace(".adj", "_changes.txt")
-        self.createChanges(chfile)
+        # self.createChanges(chfile)
         res = self.changed
         self.changed = False
         return res

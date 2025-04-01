@@ -5,6 +5,7 @@ import configparser
 import regex, re, logging
 import os, re, random, sys
 import appdirs, traceback
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -257,7 +258,7 @@ class Picture:
         else:
             p3p = pos3parms
         mediaval = self.get('media', None)
-        if mediaval is None or mediaval == '' and picMedia is not None:
+        if (mediaval is None or mediaval == '') and picMedia is not None:
             mediaval = picMedia(self.get('src', ""))[0]
         if media is not None and mediaval is not None and media not in mediaval:
             return ("", "", "")
@@ -330,9 +331,9 @@ class Picture:
         elif getattr(self, 'pgpos', None) is None:
             posns = self.picposns[suffix].get(self.get('size', 'col'), self.picposns[suffix]["col"])
             if randomize:
-                self['gpos'] = random.choice(posns)
+                self['pgpos'] = random.choice(posns)
             else:
-                self['gpos'] = posns[0]
+                self['pgpos'] = posns[0]
 
     def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False):
         if self.get(' crop', False) == cropme and 'destfile' in self:
@@ -376,7 +377,7 @@ class Piclist:
     stripsp_re = re.compile(r"^(\S+\s+\S+)\s+.*$")
 
     def __init__(self, model=None, diglot=False):
-        self.pics = {}
+        self.pics: Dict[str, Picture] = {}
         self.model = model
         self.clear(model)
         self.inthread = False
@@ -407,6 +408,9 @@ class Piclist:
 
     def __delitem__(self, k):
         del self.pics[k]
+
+    def __setitem__(self, k, v):
+        self.pics[k] = v
 
     def remove(self, p):
         if p.key in self.pics:
@@ -595,11 +599,13 @@ class Piclist:
         ''' Makes sure there are not two entries with the same anchor and same image source'''
         anchormap = {}
         for p in self.pics.values():
-            anchormap.setdefault(p['anchor'], []).append(p)
+            if p.get('anchor', None):
+              anchormap.setdefault(p['anchor'], []).append(p)
         for v in [a for a in anchormap.values() if len(a) > 1]:
             dups = {}
             for p in v:
-                dups.setdefault(p['src'], []).append(p)
+                if 'src' in p:
+                    dups.setdefault(p['src'], []).append(p)
             for d in [v for v in dups.values() if len(v) > 1]:
                 for p in d[1:]:
                     self.remove(p)
@@ -692,13 +698,12 @@ class Piclist:
                 bks is a list of 3 letter bkids only to include. If empty, include all.
                 skipkey if set will skip a record if there is a non False value associated with skipkey
                 usedest says to use destfile rather than src as the file source in the output'''
-        if not len(self.pics):
-            return
         self.rmdups()
         lines = []
+        pMedia = self.model.picMedia if self.model else None
         for p in sorted(self.pics.values(), key=lambda x:refSort(x['anchor'], info=['anchor'][3:4])):
             (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media,
-                                          checks=checks, picMedia=self.model.picMedia, hiderefs=hiderefs)
+                                          checks=checks, hiderefs=hiderefs, picMedia=pMedia)
             if k:
                 lines.append("{} {}|{}".format(k, caption, vals))
 

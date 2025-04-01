@@ -49,7 +49,12 @@ class Hyphenation:
         snippet = view.getScriptSnippet()
         scriptregs = snippet.regexes(view)
         c = len(hyphenatedWords)
-        if c >= cls.listlimit or len(scriptregs) or inbooks:
+        if c == 0:
+            self = cls()
+            self.m1 = _("Hyphenation List Empty")
+            self.m2 = _("{} Paratext Project's Hyphenation file does not contain any entries:\n{}").format(prjid, infname)
+            return self
+        elif c >= cls.listlimit or len(scriptregs) or inbooks:
             hyphwords = set([x.replace("-", "") for x in hyphenatedWords])
             acc = {}
             usfms = view.get_usfms()
@@ -132,6 +137,8 @@ class Hyphenation:
         return self.wordlist.get(k, default)
 
     def analyse(self):
+        if not len(self.wordlist):
+            return
         self.calcChars()
         self.has2010 = "\u2010" in self.chars
         self.has2011 = "\u2011" in self.chars

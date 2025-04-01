@@ -76,9 +76,8 @@ oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
 APP = 'ptxprint'
 
-chgsHeader = """# This (changes.txt) file is for configuration-specific changes (which will not affect other saved configurations).
-# Other generic project-wide changes can be specified in PrintDraftChanges.txt).
-# Note that the 'include' statement on the next line imports those (legacy/generic) project-wide changes.
+chgsHeader = """# This (changes.txt) file is for configuration-specific changes (not affecting other configs).
+# More generic project-wide changes can be specified in PrintDraftChanges.txt.
 include "../../../PrintDraftChanges.txt"
 """
 
@@ -170,7 +169,7 @@ def refSort(r, info=""):
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
     try:
-        return "x"+"".join("{:02X}".format(int(x)) for x in vals[:3])
+        return "x"+"".join("{:02X}".format(int(float(x))) for x in vals[:3])
     except (ValueError, TypeError):
         return ""
 
@@ -278,9 +277,9 @@ def print_traceback(f=None):
 
 def startfile(fpath):
     if os.path.exists(fpath):
-        if sys.platform == "win32":
+        if sys.platform.startswith("win"):
             os.startfile(fpath)
-        elif sys.platform == "linux":
+        elif sys.platform.startswith("linux"):
             call(('xdg-open', fpath))
 
 def getPDFconfig(fname):
@@ -320,7 +319,7 @@ if sys.platform == "linux":
         else:
             return res.text
 
-elif sys.platform == "win32":
+elif sys.platform.startswith("win"):
     import winreg
 
     def openkey(path):
@@ -345,7 +344,15 @@ def pycodedir():
     return os.path.abspath(os.path.dirname(__file__))
 
 def pt_bindir():
-    res = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+    basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+    if not os.path.exists(basedir):
+        basedir = os.path.abspath(os.path.dirname(__file__))
+    res = getattr(sys, '_MEIPASS', None)
+    if res is None:
+        res = basedir
+    else:
+        res = os.path.join(res, 'ptxprint')
+    logger.debug(f"pt_bindir= {res}")
     return res
 
 def get_ptsettings():
@@ -354,7 +361,7 @@ def get_ptsettings():
     if ptob is None:
         logger.debug(f"No registry key found for Paratext. Searching for data folder...")
         for v in ('9', '8'):
-            if sys.platform == "win32":
+            if sys.platform.startswith("win"):
                 for d in map(chr, range(ord('C'), ord('Z')+1)):
                     if os.path.exists("{}:\\".format(d)):
                         tempstr = "{}:\\My Paratext {} Projects"
@@ -510,6 +517,8 @@ def ustr(x):
     return res
 
 def runChanges(changes, bk, dat, errorfn=None):
+    if dat is None:
+        return dat
     def wrap(t, l):
         def proc(m):
             res = m.expand(t) if isinstance(t, str) else t(m)
@@ -566,6 +575,7 @@ def cachedData(filepath, fn):
     cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")
     os.makedirs(cfgdir, exist_ok=True)
     cfgfilepath = os.path.join(cfgdir, os.path.basename("{}.pickle_{}.gz".format(filepath, DataVersion)))
+    logger.debug(f"Reading cache file {cfgfilepath}")
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
             return pickle.load(inf)
@@ -573,6 +583,7 @@ def cachedData(filepath, fn):
     for l in os.listdir(cfgdir):
         if l.startswith(testbase):
             os.unlink(os.path.join(cfgdir, l))
+    logger.debug(f"Writing cache file {filepath}")
     with open(filepath, "r", encoding="utf8") as inf:
         res = fn(inf)
     with contextlib.closing(gzip.open(cfgfilepath, "wb")) as outf:
@@ -680,7 +691,7 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
 
     def __init__(self, txt, *args):
         if sys.version_info.major > 3 or sys.version_info.minor >= 12:
-            if len(args) and txt.startswith("${"):
+            if len(args) and str(txt).startswith("${"):
                 varlib = self.create_varlib(args[0])
                 k = txt[2:txt.find("}")]
                 txt = str(varlib[k]) + "/" + txt[len(k)+4:]

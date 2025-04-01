@@ -92,7 +92,9 @@ _map = {
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", "finish", lambda w,v: w.watermarks.as_posix() \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/cropmarks":          ("c_cropmarks", "finish", None),  
-    "paper/ifgrid":             ("c_grid", "finish", lambda w,v :"" if v or w.get("c_noteLines") else "%"),
+    "paper/ifgrid":             (None, "finish", lambda w,v :"" if w.get("c_gridLines") \
+                                                                    or w.get("c_noteLines") \
+                                                                    or w.get("c_gridGraph") else "%"),
     "paper/ifverticalrule":     ("c_verticalrule", "layout", lambda w,v :"true" if v else "false"),
     "paper/margins":            ("s_margins", "layout", lambda w,v: round(float(v) * 100) / 100. if v else "12"),
     "paper/topmargin":          ("s_topmargin", "layout", None),
@@ -114,8 +116,8 @@ _map = {
     "paper/fontfactor":         ("s_fontsize", "fontscript", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
     "paper/lockfont2baseline":  ("c_lockFontSize2Baseline", "fontscript", None),
 
-    "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\\doGridLines" if v and w.get("c_grid") else ""),
-    "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\\doGraphPaper" if v and w.get("c_grid") else ""),
+    "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\\doGridLines" if v else ""),
+    "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\\doGraphPaper" if v else ""),
     "grid/majorcolor":          ("col_gridMajor", "finish", None),
     "majorcolor_":              ("col_gridMajor", "finish", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
     "grid/minorcolor":          ("col_gridMinor", "finish", None),
@@ -229,7 +231,6 @@ _map = {
     "document/introoutline":    ("c_introOutline", "body", None),
     "document/indentunit":      ("s_indentUnit", "body", lambda w,v: round(float(v or "1.0"), 1)),
     "document/firstparaindent": ("c_firstParaIndent", "body", lambda w,v: "true" if v else "false"),
-    "document/ifhidehboxerrors": ("c_showHboxErrorBars", "finish", lambda w,v :"%" if v else ""),
     "document/hidemptyverses":  ("c_hideEmptyVerses", "body", None),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", "body", None),
     "document/ifspacing":       ("c_spacing", "fontscript", lambda w,v :"" if v else "%"),
@@ -279,6 +280,11 @@ _map = {
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
     "document/diffpages":       ("s_diffpages", "finish", None),
     "document/printarchive":    ("c_printArchive", "finish", None),
+    
+    "slice/ref":                ("t_sliceRef", "slice", None),
+    "slice/word":               ("t_sliceWord", "slice", None),
+    "slice/marker":             ("t_sliceMkr", "slice", None),
+    "slice/length":             ("s_sliceLength", "slice", None),
 
     "cover/makecoverpage":      ("c_makeCoverPage", "cover", lambda w,v: "" if v else "%"),
     "cover/rtlbookbinding":     ("c_RTLbookBinding", "cover", lambda w,v: "true" if v else "false"),
@@ -438,8 +444,6 @@ _map = {
     "snippets/pdfoutput":       ("fcb_outputFormat", "finish", None),
     "snippets/diglot":          ("c_diglot", "diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_useOrnaments", "decorate", None),
-    "snippets/adjlabelling":    ("c_markAdjPoints", "finish", None),
-    # "snippets/paralabelling":   ("c_showUSFMcodes", "finish", None), # Don't save this setting so it is OFF by default
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
     

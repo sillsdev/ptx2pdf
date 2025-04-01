@@ -8,6 +8,7 @@
 # conversion applied according to core.autocrlf and core.eol
 * text=auto
 
+Dockerfile text eol=lf
 *.tex    text
 *.sty    text
 *.usfm   text

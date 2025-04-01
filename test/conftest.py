@@ -6,6 +6,10 @@ def updatedata(pytestconfig):
     return pytestconfig.option.update
 
 @pytest.fixture(scope="session")
+def maxSize(pytestconfig):
+    return pytestconfig.option.maxsize
+
+@pytest.fixture(scope="session")
 def logging(pytestconfig):
     return pytestconfig.option.logging
 
@@ -16,6 +20,7 @@ def starttime(pytestconfig):
 def pytest_addoption(parser):
     parser.addoption("--dir", help="Project root directory to test")
     parser.addoption("-U","--update", action="store_true", default=False)
+    parser.addoption("-S","--maxsize", type=float, default=10, help="Auto pass tests with > xMB regression pdf")
     parser.addoption("--logging")
 
 def pytest_generate_tests(metafunc):

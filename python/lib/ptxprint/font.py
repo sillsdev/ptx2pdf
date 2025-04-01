@@ -55,6 +55,8 @@ def writefontsconf(extras, archivedir=None, testsuite=None):
           dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
     dirs.append("../../../shared/fonts")
+    if archivedir:
+        dirs.append("fonts")
     if archivedir is None:
         fdir = os.path.join(os.path.dirname(__file__), '..')
         logger.debug(f'{fdir=}')

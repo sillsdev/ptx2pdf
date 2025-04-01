@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess, traceback, ssl
+import sys, os, re, regex, subprocess, traceback, ssl
+try:
+    import gi
+except ModuleNotFoundError:
+    print("PTXprint is in an environment where it can only run headless. Make sure -P is in the command line options")
+    sys.exit(1)
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
@@ -42,6 +47,7 @@ from ptxprint.hyphen import Hyphenation
 from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
 from ptxprint.pdf_viewer import PDFViewer, Paragraphs
+from ptxprint.tatweel import TatweelDialog
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -58,6 +64,7 @@ logger = logging.getLogger(__name__)
 
 ssl._create_default_https_context = ssl._create_unverified_context
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
+
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
 # but remove everything not in the range 100-499
@@ -164,7 +171,7 @@ r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
 s_pdfZoomLevel t_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
-c_pdfadjoverlay c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
+c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
 btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
@@ -319,10 +326,8 @@ _sensitivities = {
     "c_pagegutter" :           ["s_pagegutter", "c_outerGutter"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition"],
-    "c_grid" :                 ["btn_adjustGrid"],
-    "c_gridGraph" :            ["gr_graphPaper"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
-    "c_ch1pagebreak" :         ["c_pagebreakAllChs"],
+    # "c_ch1pagebreak" :         ["c_pagebreakAllChs"],
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
     "c_parallelRefs" :         ["lb_style_r"],
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_optimizePoetryLayout"],
@@ -456,8 +461,8 @@ _horiz = {
     "Outer":    "o",
     "-":        "-"
 }
-_allpgids = ["scroll_FrontMatter", "scroll_AdjList", "scroll_FinalSFM", 
-             "scroll_TeXfile", "scroll_XeTeXlog", "scroll_Settings1", "scroll_Settings2", "scroll_Settings3"]
+_allpgids = ["tb_FrontMatter", "tb_AdjList", "tb_FinalSFM", 
+             "tb_TeXfile", "tb_XeTeXlog", "tb_Settings1", "tb_Settings2", "tb_Settings3"]
 
 _allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media", ]
 
@@ -502,7 +507,7 @@ _signals = {
 }
 
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
-         "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", 
+         "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_Viewer", 
          "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_PoD"]  # "tb_Help"
 
 _dlgtriggers = {
@@ -514,13 +519,14 @@ _dlgtriggers = {
     "dlg_fontChooser":      "getFontNameFace",
     "dlg_features":         "onFontFeaturesClicked",
     "dlg_multProjSelector": "onChooseTargetProjectsClicked",
-    "dlg_gridsGuides":      "adjustGuideGrid",
+    "dlg_gridsGuides":      "adjustGridSettings",
     "dlg_DBLbundle":        "onDBLbundleClicked",
     "dlg_overlayCredit":    "onOverlayCreditClicked",
     "dlg_sbPosition":       "onSBpositionClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
     "dlg_generateCover":    "onGenerateCoverClicked",
-    "dlg_borders":          "onSBborderClicked"
+    "dlg_borders":          "onSBborderClicked",
+    # "dlg_preview":          "????",
 }
 
 def getPTDir():
@@ -655,6 +661,8 @@ class GtkViewModel(ViewModel):
         self.searchWidget = []
         self.uilevel = int(self.userconfig.get('init', 'userinterface', fallback='4'))
         self.set("c_quickRun", self.userconfig.getboolean('init', 'quickrun', fallback=False))
+        self.set("c_updatePDF", self.userconfig.getboolean('init', 'updatepdf', fallback=True))
+        self.set("c_bkView", self.userconfig.getboolean('init', 'bkview', fallback=True))
         logger.debug(f"Loaded UI level from user config: {self.uilevel}")
         self.painted = set()
         self.locked = set()
@@ -680,7 +688,6 @@ class GtkViewModel(ViewModel):
         self.currCodeletVbox = None
         self.codeletVboxes = {}
         self.ufPages = []
-        self.ufCurrIndex = 0
         self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         llang = self.builder.get_object("ls_interfaceLang")
@@ -765,6 +772,8 @@ class GtkViewModel(ViewModel):
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
 
         self.mw = self.builder.get_object("ptxprint")
+        if sys.platform.startswith("win"):
+            self.restore_window_geometry()
 
         for w in self.allControls:
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
@@ -884,7 +893,7 @@ class GtkViewModel(ViewModel):
                 continue
             self.buf.append(GtkSource.Buffer())
             view = GtkSource.View.new_with_buffer(self.buf[i])
-            scroll = self.builder.get_object("scroll_" + k)
+            scroll = self.builder.get_object("tb_" + k)
             scroll.add(view)
             self.fileViews.append((self.buf[i], view))
             view.set_left_margin(8)
@@ -893,7 +902,7 @@ class GtkViewModel(ViewModel):
             view.set_show_line_numbers(True if i > 1 else False)
             view.set_editable(False if i in [2,3,4] else True)
             view.set_wrap_mode(Gtk.WrapMode.CHAR)
-            view.pageid = "scroll_"+k
+            view.pageid = "tb_"+k
 
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
@@ -909,7 +918,7 @@ class GtkViewModel(ViewModel):
                 view.get_style_context().add_class(f"backsettings{k[-1]}")
 
         self.adjView = AdjListView(self)
-        scroll = self.builder.get_object("scroll_AdjList")
+        scroll = self.builder.get_object("tb_AdjList")
         scroll.add(self.adjView.view)
         logger.debug("Setting project")
         if self.pendingPid is not None:
@@ -927,8 +936,9 @@ class GtkViewModel(ViewModel):
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
 
-        # self.mw.resize(830, 594)
-        self.mw.resize(1005, 665)
+        width = self.userconfig.getint("geometry", f"ptxprint_width", fallback=1005)
+        height = self.userconfig.getint("geometry", f"ptxprint_height", fallback=665)
+        self.mw.resize(width, height)
         self.mw.show_all()
         self.set_uiChangeLevel(self.uilevel)
         GObject.timeout_add(1000, self.monitor)
@@ -1102,6 +1112,7 @@ class GtkViewModel(ViewModel):
         while parent is not None:
             curry += parent.get_allocation().y
             name = Gtk.Buildable.get_name(parent)
+            # print(f"{name=}")
             if name.startswith("tb_"):
                 if highlight:
                     w.get_style_context().add_class("highlighted")
@@ -1209,6 +1220,8 @@ class GtkViewModel(ViewModel):
         if ui <= 0 or ui > 6:
             ui = 4
         pgId = self.builder.get_object("nbk_Main").get_current_page()
+        if not self.userconfig.has_section("init"):
+            self.userconfig.add_section("init")
         self.userconfig.set('init', 'userinterface', str(ui))
         self.uilevel = ui
         levels = self.builder.get_object("ls_uiLevel")
@@ -1254,7 +1267,7 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         self.onRotateTabsChanged()
         self.checkUpdates()
-        self.mw.resize(200, 200)
+        # self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
         return True
 
@@ -1262,7 +1275,6 @@ class GtkViewModel(ViewModel):
         return self.uilevel
 
     def toggleUIdetails(self, w, state):
-        # print(f"{w}")
         if w in _ui_noToggleVisible:
             self.builder.get_object(w).set_sensitive(state)
         else:
@@ -1321,7 +1333,6 @@ class GtkViewModel(ViewModel):
         else:
             partA = url
             partB = ''
-        # print(f"1: {url=}\n{partA=} / {partB=}")
 
         return partA, partB
 
@@ -1535,9 +1546,9 @@ class GtkViewModel(ViewModel):
             self.doStatus(_("One of more fonts have not been set yet"))
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
-        if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
+        if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_Viewer":
             pgnum = self.get("nbk_Viewer")
-            if self.notebooks["Viewer"][pgnum] in ("scroll_FrontMatter", "scroll_AdjList", "scroll_Settings1", "scroll_Settings2", "scroll_Settings3"):
+            if self.notebooks["Viewer"][pgnum] in ("tb_FrontMatter", "tb_AdjList", "tb_Settings1", "tb_Settings2", "tb_Settings3"):
                 self.onSaveEdits(None)
         cfgname = self.cfgid
         if cfgname is None:
@@ -1588,6 +1599,7 @@ class GtkViewModel(ViewModel):
             self.doError(s, copy2clip=True)
             unlockme()
             self.builder.get_object("t_find").set_placeholder_text("Search for settings")
+            
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -1684,8 +1696,12 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "project", self.project.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.userconfig.set("init", "quickrun",   "true" if self.get("c_quickRun")   else "false")
+        self.userconfig.set("init", "updatepdf",  "true" if self.get("c_updatePDF")  else "false")
+        self.userconfig.set("init", "bkview",     "true" if self.get("c_bkView")     else "false")
         self.noInt = self.get("c_noInternet")
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
+        if sys.platform.startswith("win"):
+            self.save_window_geometry()
         if self.cfgid is not None:
             self.userconfig.set("init", "config", self.cfgid)
         self.saveConfig(force=force)
@@ -2112,7 +2128,10 @@ class GtkViewModel(ViewModel):
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes",
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
-        
+
+    def get_adjlist(self, bk, save=True, gtk=None):
+        return super().get_adjlist(bk, save=save, gtk=Gtk)
+
     def onExamineBookChanged(self, cb_examineBook):
         if self.noUpdate == True:
             return
@@ -2216,7 +2235,7 @@ class GtkViewModel(ViewModel):
         if not len(bks2gen):
             return
         bk = self.get("ecb_examineBook")
-        if pgid == "scroll_FrontMatter":
+        if pgid == "tb_FrontMatter":
             ptFRT = os.path.exists(os.path.join(self.project.path, self.getBookFilename("FRT", self.project.prjid)))
             self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT)
             dialog = self.builder.get_object("dlg_generateFRT")
@@ -2227,7 +2246,7 @@ class GtkViewModel(ViewModel):
                 self.changed()
             dialog.hide()
 
-        if pgid == "scroll_AdjList":
+        if pgid == "tb_AdjList":
             if bk not in bks2gen:
                 self.doError(_("The Book in focus is not within scope"), 
                     secondary=_("To generate an AdjList, the book must be\n"+
@@ -2236,7 +2255,7 @@ class GtkViewModel(ViewModel):
             self.generateAdjList()
             self.changed()
 
-        elif pgid == "scroll_FinalSFM" and bk is not None:
+        elif pgid == "tb_FinalSFM" and bk is not None:
             bk = bk if bk in bks2gen else None
             tmodel = TexModel(self, self._getPtSettings(self.project.prjid), self.project.prjid)
             out = tmodel.convertBook(bk, None, self.project.printPath(self.cfgid), self.project.path)
@@ -2326,7 +2345,7 @@ class GtkViewModel(ViewModel):
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
-        if pgid == "tb_ViewerEditor": # Viewer tab
+        if pgid == "tb_Viewer": # Viewer tab
             self.onRefreshViewerTextClicked(None)
         elif pgid == "tb_TabsBorders":
             self.onThumbColorChange()
@@ -2374,12 +2393,12 @@ class GtkViewModel(ViewModel):
             else:
                 self.builder.get_object(o).set_sensitive(pgid in _allpgids[1:3])
 
-        fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"),
-                  "scroll_FinalSFM" : ("", ""), "scroll_TeXfile" : ("", ".tex"),
-                  "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings1": ("", ""),
-                  "scroll_Settings2": ("", ""), "scroll_Settings3": ("", "")}
+        fndict = {"tb_FrontMatter" : ("", ""), "tb_AdjList" : ("AdjLists", ".adj"),
+                  "tb_FinalSFM" : ("", ""), "tb_TeXfile" : ("", ".tex"),
+                  "tb_XeTeXlog" : ("", ".log"), "tb_Settings1": ("", ""),
+                  "tb_Settings2": ("", ""), "tb_Settings3": ("", "")}
 
-        if pgid == "scroll_FrontMatter":
+        if pgid == "tb_FrontMatter":
             ibtn.set_sensitive(True)
             ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
@@ -2407,7 +2426,7 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("c_autoSave").set_sensitive(False)
                 self.set("c_autoSave", False)
             return
-        elif pgid == "scroll_FinalSFM":
+        elif pgid == "tb_FinalSFM":
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.project.printPath(self.cfgid), fndict[pgid][0], fname)
             genBtn.set_sensitive(True)
@@ -2426,28 +2445,29 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
             self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
-        elif pgid == "scroll_AdjList":
+        elif pgid == "tb_AdjList":
             genBtn.set_sensitive(True)
             fpath = None
             self.builder.get_object("l_codeSnippets").set_visible(False)
             self.builder.get_object("box_codelets").set_visible(False)
 
-        elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
+        elif pgid in ("tb_TeXfile", "tb_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0])+fndict[pgid][1]
             self.builder.get_object("c_autoSave").set_sensitive(False)
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
             self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
-        elif pgid in ("scroll_Settings1", "scroll_Settings2", "scroll_Settings3"): # mulit-purpose View/Edit tabs
+        elif pgid in ("tb_Settings1", "tb_Settings2", "tb_Settings3"): # mulit-purpose View/Edit tabs
             lname = "l_{1}".format(*pgid.split('_'))
             fpath = self.builder.get_object(lname).get_tooltip_text()
-            # print(f"{pgid=} | {fpath=}")
             if fpath == None:
                 self.uneditedText[pgnum] = _("Use the 'Advanced' tab to select which settings you want to view or edit.")
                 self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
                 self.builder.get_object(lname).set_text("Settings")
                 self.noUpdate = False
                 return
+            else:
+                self.enableCodelets(pgnum, fpath)
         else:
             self.noUpdate = False
             return
@@ -2463,7 +2483,7 @@ class GtkViewModel(ViewModel):
             set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
-                if len(txt) > 60000 and pgid not in ("scroll_AdjList",):
+                if len(txt) > 60000 and pgid not in ("tb_AdjList",):
                     txt = txt[:60000]+_("\n\n------------------------------------- \
                                            \n[File has been truncated for display] \
                                            \nClick on View/Edit... button to see more.")
@@ -2517,25 +2537,44 @@ class GtkViewModel(ViewModel):
         for cat, info in codelets.items():
             vb = Gtk.VBox(daddybox)
             self.codeletVboxes[cat] = vb
+            self.builder.expose_object(f"vb_{cat}", vb)
             daddybox.pack_start(vb, True, False, 6)
             
             # Add categories and buttons
             for category, codeitems in info.items():
+                # if category == "Arabic" and self.get('fcb_script') != 'Arab': # FixMe! (this needs to updated when we
+                    # print(f"Skipping Arabic")                                 # change projects/configs but it doesn't
+                    # continue                                                  # because the menu is already populated
+                bname = f"btn_{cat}_{category}"
                 button = Gtk.Button.new_with_label(category)
+                self.widgetnames[bname] = f"Insert Codelet {cat} {category}"
+                self.builder.expose_object(bname, button)
+                self.allControls.append(bname)
                 button.set_focus_on_click(False)
                 button.set_halign(Gtk.Align.START)
                 button.set_size_request(100, -1)
                 vb.pack_start(button, True, False, 6)
 
                 submenu = Gtk.Menu()
-                for codelet in codeitems:
+                for i, codelet in enumerate(codeitems):
+                    mname = f"codelets_{cat}_{category}_{i}"
                     menu_item = Gtk.MenuItem(label=codelet["Label"])
                     menu_item.set_tooltip_text(codelet["Description"])
                     menu_item.connect("activate", self.insert_codelet, codelet)
                     submenu.append(menu_item)
+                    self.finddata[codelet["Label"].lower()] = (bname, 1)
             
                 button.connect("clicked", self.showCodeletMenu, submenu)
+
             vb.set_no_show_all(True)
+
+    def showMakeTatweelRuleDialog(self):
+        # Instantiate TatweelDialog and display it
+        if not hasattr(self, 'tatweel_dialog'):
+            font = str(self.get('bl_fontR', None)).split("|")[0]
+            self.dialog = TatweelDialog(self.builder, font)
+        else:
+            self.tatweel_dialog.show_all()
 
     def showCodeletMenu(self, button, menu):
         menu.show_all()
@@ -2579,19 +2618,28 @@ class GtkViewModel(ViewModel):
             self.changed()
             return
 
-        # if ty.startswith('method'):
-            # m = getattr(self, code_codelet, None)
-            # if m is not None:
-                # m()
-
         if ty.startswith('comment'):
             txt = f"{ty[7:]} {codelet['Label']}\n{code_codelet}\n"
             buf.insert(cursor_iter, txt)
+        elif ty.startswith('method'):
+            m = getattr(self, code_codelet, None)
+            if m is not None:
+                m()
         else:
             txt = f"{code_codelet}\n"
             buf.insert(cursor_iter, txt)
             self.changed()
 
+    def on_insert_tatweel_rule(self, button):
+        w = self.builder.get_object("t_tatweelPreview")
+        rule_text = w.get_text()
+        nbk_Viewer = self.builder.get_object("nbk_Viewer")
+        pgnum = nbk_Viewer.get_current_page()
+        buf = self.fileViews[pgnum][0]
+        cursor_iter = buf.get_iter_at_mark(buf.get_insert())
+        buf.insert(cursor_iter, rule_text+'\n')
+        self.changed()        
+        
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
             return
@@ -2602,9 +2650,6 @@ class GtkViewModel(ViewModel):
     def loadPics(self, mustLoad=True, fromdata=True, force=False):
         super().loadPics(mustLoad=mustLoad, fromdata=fromdata, force=force)
         self.updatePicList()
-
-    # def onSavePicListEdits(self, btn):
-        # self.savePics()
 
     def onSaveEdits(self, btn, pgid=None):
         if pgid is not None:
@@ -2617,10 +2662,10 @@ class GtkViewModel(ViewModel):
             pg = self.builder.get_object("nbk_Viewer").get_current_page()
             pgid = self.notebooks["Viewer"][pg]
         buf = self.fileViews[pg][0]
-        if pgid == "scroll_AdjList":
+        if pgid == "tb_AdjList":
             self.adjView.adjlist.save()
             fpath = None
-        elif pgid == "scroll_FrontMatter":
+        elif pgid == "tb_FrontMatter":
             fpath = self.configFRT()
         else:
             fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
@@ -2694,8 +2739,8 @@ class GtkViewModel(ViewModel):
         p = Pango.FontDescription(pangostr)
         logger.debug(f"{pangostr=}, {p}")
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", \
-                  "scroll_FinalSFM", "scroll_AdjList", "scroll_FrontMatter", \
-                  "scroll_Settings1", "scroll_Settings2", "scroll_Settings3", \
+                  "tb_FinalSFM", "tb_AdjList", "tb_FrontMatter", \
+                  "tb_Settings1", "tb_Settings2", "tb_Settings3", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
@@ -2747,11 +2792,8 @@ class GtkViewModel(ViewModel):
         self.changed(changed)
         
     def picPreviewShowHide(self, show=True):
-        for w in ["bx_showImage", "tb_picPreview"]: #, "fr_picPreview", "img_picPreview"]:
+        for w in ["bx_showImage", "tb_picPreview"]:
             self.builder.get_object(w).set_visible(show)
-        # if show and self.picListView is not None:
-            # self.mw.resize(830, 594)
-            # self.picListView.onResized()
             
     def onUseCustomFolderclicked(self, btn):
         status = self.sensiVisible("c_useCustomFolder")
@@ -3126,7 +3168,7 @@ class GtkViewModel(ViewModel):
             'NTS': 'Footnotes, Cross-references, Study Notes',
             'DIG': 'Diglot',
             'PIC': 'Pictures, Figures, Images, Sidebars', 
-            'PDF': 'PDF Options',
+            'PDF': 'PDF Options, Show/Hide',
             'OTH': 'Other Miscellaneous Settings' }
 
         texopts = self.builder.get_object("gr_texoptions")
@@ -3225,6 +3267,9 @@ class GtkViewModel(ViewModel):
             if wname in self.dict:
                 v = self.dict[wname]
             self.set(wname, v, mod=False)
+            if wname.startswith("c_"): # Making sure that even the unchecked labels get bold applied if not default
+                lbl = obj.get_child()
+                self.changeLabel(wname, lbl)
             self.allControls.append(wname)
             obj.show()
             expanders[opt.group].show_all()  # Ensure that the expander and its content are shown
@@ -3614,8 +3659,6 @@ class GtkViewModel(ViewModel):
                 if pdft > cfgt:
                     if isfirst:
                         prvw.set_gravity(Gdk.Gravity.NORTH_EAST)
-                    # prvw.move(prvw.get_screen().width()-prvw.get_size()[0]-prvw.get_position()[0], 0)
-                    # print(f"{prvw.get_position()} {prvw.get_size()}. {self.mw.get_position()} {self.mw.get_size()}")
                     pdfname = self.baseTeXPDFnames()[0]
                     if len(pdfname):
                         plocname = os.path.join(self.project.printPath(self.cfgid), pdfname+".parlocs")
@@ -3744,11 +3787,11 @@ class GtkViewModel(ViewModel):
             fpath = os.path.join(loc, file2edit)
         return fpath
 
-    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings1", switch=None): # keep param order
+    def editFile(self, file2edit, loc="wrk", pgid="tb_Settings1", switch=None): # keep param order
         if switch is None:
-            switch = pgid == "scroll_Settings1"
+            switch = pgid == "tb_Settings1"
         pgnum = self.notebooks["Viewer"].index(pgid)
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        mpgnum = self.notebooks["Main"].index("tb_Viewer")
         fpath = self._locFile(file2edit, loc)
         if fpath is None:
             return
@@ -3786,11 +3829,11 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
 
-    def editFileOLDdoNotUse(self, file2edit, loc="wrk", pgid="scroll_Settings1", switch=None): # keep param order
+    def editFileOLDdoNotUse(self, file2edit, loc="wrk", pgid="tb_Settings1", switch=None): # keep param order
         if switch is None:
-            switch = pgid == "scroll_Settings1"
+            switch = pgid == "tb_Settings1"
         pgnum = self.notebooks["Viewer"].index(pgid)
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        mpgnum = self.notebooks["Main"].index("tb_Viewer")
         if switch:
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
@@ -3798,7 +3841,7 @@ class GtkViewModel(ViewModel):
         if fpath is None:
             return
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
-        if pgid == "scroll_Settings1":
+        if pgid == "tb_Settings1":
             currpath = label.get_tooltip_text()
             oldlabel = self.builder.get_object("l_Settings2")
             oldpath = oldlabel.get_tooltip_text()
@@ -3806,7 +3849,7 @@ class GtkViewModel(ViewModel):
                 label = oldlabel
                 pgnum += 1
             elif fpath != currpath:
-                self.onSaveEdits(None, pgid="scroll_Settings2")
+                self.onSaveEdits(None, pgid="tb_Settings2")
                 oldlabel.set_tooltip_text(label.get_tooltip_text())
                 oldlabel.set_text(label.get_text())
                 self.builder.get_object("gr_editableButtons").set_sensitive(True)
@@ -3832,7 +3875,7 @@ class GtkViewModel(ViewModel):
         t = buf.get_iter_at_mark(self.fileViews[pgnum][0].get_insert())
         self.cursors[pgnum] = (t.get_line(), t.get_line_offset())
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        label = self.builder.get_object(_allpgids[pgnum][5:])
+        label = self.builder.get_object("l"+_allpgids[pgnum][2:])
         tt = label.get_tooltip_text()
         if tt is not None and not currentText == self.uneditedText[pgnum]:
             if self.get("c_autoSave"):
@@ -3861,7 +3904,9 @@ class GtkViewModel(ViewModel):
             return
         buf = self.fileViews[pg][0]
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        label = self.builder.get_object(_allpgids[pg][5:])
+        label = self.builder.get_object("l"+_allpgids[pg][2:])
+        if label is None:
+            breakpoint()
         txtcol = " color='crimson'" if not currentText == self.uneditedText[pg] else ""
         label.set_markup("<span{}>".format(txtcol)+label.get_text()+"</span>")
 
@@ -3929,9 +3974,13 @@ class GtkViewModel(ViewModel):
     def onChangesFileClicked(self, btn):
         self.onExtraFileClicked(btn)
         cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
+        logger.debug(f"in onChangesFileClicked: {self.loadingConfig=} {cfile=}")
         if not os.path.exists(cfile):
-            with open(cfile, "w", encoding="utf-8") as outf:
-                outf.write(chgsHeader)
+            try:
+                with open(cfile, "w", encoding="utf-8") as outf:
+                    outf.write(chgsHeader)
+            except PermissionError:
+                logger.debug(f"Cannot write file (Permission Error): {cfile}")
         self.onRefreshViewerTextClicked(None)
 
     def onMainBodyTextChanged(self, btn):
@@ -4278,7 +4327,7 @@ class GtkViewModel(ViewModel):
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        mpgnum = self.notebooks["Main"].index("tb_Viewer")
         self.set("nbk_Main", mpgnum, mod=False)
         self.set("nbk_Viewer", pgnum, mod=False)
         self.onViewerChangePage(None,None,pgnum)
@@ -4517,9 +4566,9 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(fn, *args)
 
     def showLogFile(self):
-        mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+        mpgnum = self.notebooks['Main'].index("tb_Viewer")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        vpgnum = self.notebooks['Viewer'].index("scroll_XeTeXlog")
+        vpgnum = self.notebooks['Viewer'].index("tb_XeTeXlog")
         self.builder.get_object("nbk_Viewer").set_current_page(vpgnum)
 
     def onBorderClicked(self, btn):
@@ -4866,12 +4915,11 @@ class GtkViewModel(ViewModel):
         lbl = widg.get_child()
         self.changeLabel(ctrl, lbl)
 
-    def adjustGuideGrid(self, btn):
-        # if self.get('c_grid'):
-        dialog = self.builder.get_object("dlg_gridsGuides")
+    def adjustGridSettings(self, btn):
+        dialog = self.builder.get_object("dlg_gridSettings")
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            pass
+            self.showGridClicked(None)
         elif response == Gtk.ResponseType.CANCEL:
             pass
         dialog.hide()
@@ -4883,7 +4931,7 @@ class GtkViewModel(ViewModel):
         self.set("s_gridMajorThick", "0.2")
         self.set("col_gridMajor", "rgb(204,0,0)")
         self.set("s_gridMinorThick", "0.2")
-        self.set("col_gridMinor", "rgb(115,210,22)")
+        self.set("col_gridMinor", "rgb(98,160,234)")
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = 99
@@ -5073,6 +5121,7 @@ class GtkViewModel(ViewModel):
             return
         self.lang = lang
         self.builder.get_object("ptxprint").destroy()
+        self.builder.get_object("dlg_preview").destroy()
         self.onDestroy(None)
         print("Calling i18nize from changeInterfaceLang")
         self.i18nizeURIs()
@@ -5447,7 +5496,7 @@ class GtkViewModel(ViewModel):
             # Switch briefly to the Front Matter tab so that the updated content is activated and
             # gets saved/updated. But then switch back to the Cover tab immediately after so the 
             # view is back to where they clicked on the Generate Cover button to begin with.
-            mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+            mpgnum = self.notebooks['Main'].index("tb_Viewer")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(0)
             mpgnum = self.notebooks['Main'].index("tb_Cover")
@@ -5509,7 +5558,7 @@ class GtkViewModel(ViewModel):
         else:
             logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
             self.lastUpdatetime = time.time()
-        if sys.platform != "win32":
+        if not sys.platform.startswith("win"):
             return
         version = None
         if self.noInt is None or self.noInt:
@@ -5564,15 +5613,15 @@ class GtkViewModel(ViewModel):
         self.set("c_frontmatter", True)
 
     def editFrontMatterClicked(self, btn):
-        mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+        mpgnum = self.notebooks['Main'].index("tb_Viewer")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        pgnum = self.notebooks["Viewer"].index("scroll_FrontMatter")
+        pgnum = self.notebooks["Viewer"].index("tb_FrontMatter")
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
 
     def rescanFRTvarsClicked(self, btn, autosave=True):
         prjid = self.get("fcb_project")
         if autosave:
-            self.onSaveEdits(None, pgid="scroll_FrontMatter") # make sure that FRTlocal has been saved
+            self.onSaveEdits(None, pgid="tb_FrontMatter") # make sure that FRTlocal has been saved
         fpath = self.configFRT()
         with universalopen(fpath) as inf:
             frtxt = inf.read()
@@ -5624,10 +5673,10 @@ class GtkViewModel(ViewModel):
             model.remove(itr)
             self.changed()
 
-    def onPageSizeChanged(self, btn):
-        val = "cropmarks" in self.get("ecb_pagesize")
-        for w in ["c_cropmarks", "c_grid"]:
-            self.set(w, val)
+    # def onPageSizeChanged(self, btn): # was a signal on ecb_pagesize
+        # val = "cropmarks" in self.get("ecb_pagesize")
+        # for w in ["c_cropmarks", "c_grid"]:
+            # self.set(w, val)
 
     def onFootnoteRuleClicked(self, btn):
         status = self.sensiVisible("c_footnoterule")
@@ -5852,11 +5901,14 @@ class GtkViewModel(ViewModel):
         if status and self.showPDFmode == "preview":
             self.set("c_bkView", False)
             self.set("c_pdfadjoverlay", False)
+            self.set("c_pdfparabounds", False)
             self.builder.get_object("c_pdfadjoverlay").set_sensitive(False)
+            self.builder.get_object("c_pdfparabounds").set_sensitive(False)
             self.onBookViewClicked(None)
         else:
             self.builder.get_object("c_bkView").set_sensitive(True)
             self.builder.get_object("c_pdfadjoverlay").set_sensitive(True)
+            self.builder.get_object("c_pdfparabounds").set_sensitive(True)
         for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
@@ -6244,6 +6296,7 @@ Thank you,
         if self.get("c_doublecolumn") \
            and self.get("c_allowUnbalanced") and float(self.get("s_bottomrag")) == 0:
             self.highlightwidget("c_allowUnbalanced")
+            self.set("s_bottomrag", 3.0)
         else: # float(self.get("s_bottomrag")) > 0:
             self.highlightwidget("c_allowUnbalanced", highlight=False)
 
@@ -6280,6 +6333,8 @@ Thank you,
                                           widget=prvw, page=None, isdiglot=self.get("c_diglot"))
             else:
                 self.pdf_viewer.clear(widget=prvw)
+            # print(f"Calling updatePageNavigation from onShowPDF in GtkView.py")
+            # self.pdf_viewer.updatePageNavigation()
         elif os.path.exists(pdffile):
             if action == "sysviewer":
                 startfile(pdffile)
@@ -6287,9 +6342,7 @@ Thank you,
                 startfile(self.project.printPath(None))
 
     def onClosePreview(self, widget):
-        dlg_preview = self.builder.get_object("dlg_preview")
-        self.set("c_previewPDF", False)
-        dlg_preview.hide()
+        self.builder.get_object("dlg_preview").hide()
 
     def set_preview_pages(self, npages, units=None):
         if units:
@@ -6298,7 +6351,18 @@ Thank you,
         if npages is None:
             lpcount.set_label("")
         else:
-            lpcount.set_label(f"/ {str(npages)}")
+            if not self.pdf_viewer.parlocs or not self.pdf_viewer.parlocs.pnums:
+                lpcount.set_label(f"{str(npages)}")  # Default to total pages
+            else:
+                if npages < len(self.pdf_viewer.parlocs.pnums):
+                    lpcount.set_label(f"{str(npages)}")
+                else:
+                    minPg = min(self.pdf_viewer.parlocs.pnums)
+                    last_key = list(self.pdf_viewer.parlocs.pnums.keys())[-1]
+                    if minPg < 1:
+                        lpcount.set_label(f"({str(abs(minPg))})+{str(last_key)}")
+                    else:
+                        lpcount.set_label(f"{str(last_key)}")            
 
     def onBookViewClicked(self, widget):
         window = self.builder.get_object("dlg_preview")
@@ -6316,28 +6380,33 @@ Thank you,
             sz = (x, y)
         window.resize(*sz)
         step_increment = 2 if bkview else 1
-        self.pdf_viewer.set_zoom_fit_to_screen(None)
-        self.onPgNumChanged(None, None)
+        if hasattr(self, 'pdf_viewer'):
+            self.pdf_viewer.set_zoom_fit_to_screen(None)
+            self.onPgNumChanged(None, None)
 
     def getPgNum(self):
-        try:
-            v = self.get("t_pgNum") or "1"
-            pg = int(v)
-        except ValueError:
-            pg = 1  # Fallback to a default value
-            self.set("t_pgNum", str(pg), mod=False)
+        if self.pdf_viewer.parlocs is not None:
+            pg = self.pdf_viewer.parlocs.pnums.get(self.pdf_viewer.current_page, 1)
+        else:
+            pg = 1
         return pg
 
     def onPgNumChanged(self, widget, x):
-        pages = self.pdf_viewer.numpages
-        if not pages:
-            return
-        pg = min(self.getPgNum(), pages)
-        self.set("t_pgNum", str(pg))
-        self.pdf_viewer.show_pdf(pg, self.rtl, setpnum=False)
+        value = self.get("t_pgNum", "1").strip()
+        pg = int(value) if value.isdigit() else 1
+        if self.pdf_viewer.parlocs is not None:
+            available_pnums = self.pdf_viewer.parlocs.pnums.keys()
+            if len(available_pnums) and pg not in available_pnums:
+                pg = min(available_pnums, key=lambda p: abs(p - pg))
+        self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
+        pnum = self.pdf_viewer.parlocs.pnums.get(pg, pg) if self.pdf_viewer.parlocs is not None else pg
+        self.pdf_viewer.show_pdf(pnum, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
         self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))
+        
+    def onPdfParaBoxesChanged(self, widget):
+        self.pdf_viewer.setShowParaBoxes(self.get("c_pdfparabounds"))
         
     def onPrintItClicked(self, widget):
         pages = self.pdf_viewer.numpages
@@ -6355,44 +6424,28 @@ Thank you,
 
     def onZoom100Clicked(self, btn):
         self.pdf_viewer.set_zoom(1.0)
-        
+
     def onSeekPage2fill(self, btn):
-        pages = self.pdf_viewer.numpages
-        if not pages:
-            return
-        pg = min(self.getPgNum(), pages)
-        pg = self.ufPages[min(self.ufCurrIndex, pages)]
-        self.set("t_pgNum", str(pg), mod=False)
-        self.pdf_viewer.show_pdf(pg, self.rtl)
-        self.ufCurrIndex = (self.ufCurrIndex + 1) % len(self.ufPages)
+        direction = Gtk.Buildable.get_name(btn).split("_")[-1]
+        self.pdf_viewer.seekUFpage(direction)
 
     def onNavigatePageClicked(self, btn):
-        pages = self.pdf_viewer.numpages
-        currPg = self.getPgNum()
-        if not pages:
+        if self.loadingConfig:
             return
-        increment = 2 if self.get("c_bkView", True) else 1
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
-        if x == "first":
-            pg = 1
-        elif x == "last":
-            pg = pages
-        elif x == "previous":
-            pg = max(currPg - increment, 1)
-        elif x == "next":
-            pg = min(currPg + increment, pages)
-        self.set("t_pgNum", str(pg), mod=False)
-        self.pdf_viewer.show_pdf(pg, self.rtl)
+        self.pdf_viewer.set_page(x)
+        # print(f"No longer calling updatePageNavigation after set_page in onNavigatePageClicked")
+        # self.pdf_viewer.updatePageNavigation()
+
+    def onEditingPgNum(self, w, x):  # From 'key-release' event on t_pgNum
+        if self.loadingConfig:
+            return
+        if hasattr(self, "pgnum_timer") and self.pgnum_timer:
+            GLib.source_remove(self.pgnum_timer)
+        self.pgnum_timer = GLib.timeout_add(500, self.onPgNumChanged, None, None)
         
-    def updatePgCtrlButtons(self, w):
-        pg = self.getPgNum()
-        self.builder.get_object("btn_page_first").set_sensitive(not pg == 1)
-        self.builder.get_object("btn_page_previous").set_sensitive(not pg == 1)
-        self.builder.get_object("btn_page_last").set_sensitive(not pg == self.pdf_viewer.numpages)
-        self.builder.get_object("btn_page_next").set_sensitive(not pg == self.pdf_viewer.numpages)
-        
-    def onSavePDFasClicked(self, btn):
+    def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",
             parent=self.mw,
@@ -6449,3 +6502,96 @@ Thank you,
         whatsapp_url = f"https://wa.me/?text=Please%20Check%20out%20this%20PDF:%20{pdffilepath}"
         # self.openURL(whatsapp_url)
 
+    def onLocateDigitMappingClicked(self, btn):
+        self.highlightwidget('fcb_fontdigits')
+
+    def showRulesClicked(self, btn):
+        v = self.get("c_gridLines")
+        if self.pdf_viewer is not None:
+            self.pdf_viewer.showguides = v
+            self.pdf_viewer.show_pdf()
+
+    def showGridClicked(self, btn):
+        v = self.get("c_gridGraph")
+        if self.pdf_viewer is not None:
+            self.pdf_viewer.showgrid = v
+            self.pdf_viewer.show_pdf()
+
+    def showRulesOrGridClicked(self, btn):
+        if self.loadingConfig:
+            return
+        if self.get('c_updatePDF', False):
+            self.onOK(None)
+            
+    def onShowMainDialogClicked(self, btn):
+        self.builder.get_object("ptxprint").present()
+
+    def get_dialog_geometry(self, dialog):
+        """Retrieve the position, size, and monitor details of a given GTK dialog."""
+        if dialog is None:
+            return None
+
+        # Ensure the dialog has a valid window before proceeding
+        if not dialog.get_realized():
+            return None
+
+        x, y = dialog.get_position()
+        width, height = dialog.get_size()
+
+        screen = dialog.get_screen()
+        window = dialog.get_window()
+        if window is None:
+            return None
+
+        monitor_num = screen.get_monitor_at_window(window)
+
+        return {
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height,
+            "monitor": monitor_num
+        }
+
+    def save_window_geometry(self):
+        """Save positions and sizes of multiple dialogs to userconfig."""
+        if not self.userconfig.has_section("geometry"):
+            self.userconfig.add_section("geometry")
+        prvw = self.builder.get_object("dlg_preview")
+        _dialogs = {"ptxprint":    self.mw,
+                    "dlg_preview": prvw }
+
+        for name, dialog in _dialogs.items():
+            geom = self.get_dialog_geometry(dialog)
+            if geom:
+                for key in ["x", "y", "width", "height", "monitor"]:
+                    self.userconfig.set("geometry", f"{name}_{key}", str(geom[key]))
+
+        self.saveConfig(force=True)  # Ensure settings are written (not sure we want to do this every time)
+
+    def restore_window_geometry(self):
+        """Restore dialog positions and sizes from userconfig, if the monitor is available."""
+        screen = self.mw.get_screen()  # Get screen info
+        current_monitor_count = screen.get_n_monitors()
+        prvw = self.builder.get_object("dlg_preview")
+        _dialogs = {"ptxprint":    self.mw,
+                    "dlg_preview": prvw }
+
+        for name, dialog in _dialogs.items():
+            x = self.userconfig.getint("geometry", f"{name}_x", fallback=-1)
+            y = self.userconfig.getint("geometry", f"{name}_y", fallback=-1)
+            width = self.userconfig.getint("geometry", f"{name}_width", fallback=800)
+            height = self.userconfig.getint("geometry", f"{name}_height", fallback=600)
+            saved_monitor = self.userconfig.getint("geometry", f"{name}_monitor", fallback=0)
+
+            if saved_monitor < current_monitor_count:
+                dialog.move(x, y)
+                dialog.resize(width, height)
+        
+    def onSpinnerClicked(self, btn, foo):
+        self.highlightwidget('s_autoupdatedelay')
+        self.builder.get_object("ptxprint").present()
+
+    def onPreviewDeleteEvent(self, widget, event): # PDF Preview dialog (X button)
+        widget.hide()  # Hide the dialog instead of destroying it
+        return True    # Returning True prevents the default destroy behavior

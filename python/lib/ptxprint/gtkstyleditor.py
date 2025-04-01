@@ -1,6 +1,5 @@
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.sfm.style import CaselessStr
 from ptxprint.styleditor import StyleEditor, aliases
 from ptxprint.utils import _, coltotex, textocol, asfloat
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
@@ -271,6 +270,7 @@ class StyleEditorView(StyleEditor):
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
+        foundp = False
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             v = self.asStyle(k)
             if v.get('styletype', '') == 'Standalone':
@@ -727,7 +727,7 @@ class StyleEditorView(StyleEditor):
             response = dialog.run()
             if response != Gtk.ResponseType.OK:
                 break
-            key = self.model.get(dialogKeys['Marker']).strip().replace("\\","")
+            key = re.sub(r"\\", "|", re.sub(r"^\\", "", self.model.get(dialogKeys['Marker']).strip()))
             if key == "":
                 break
             for a in ('StyleType', 'TextType', 'OccursUnder'):

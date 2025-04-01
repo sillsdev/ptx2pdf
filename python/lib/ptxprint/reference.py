@@ -71,6 +71,7 @@ class RefSeparators(dict):
 
 def MakeReference(book, chap, verse, subverse=None, mark=None):
     if isinstance(verse, str) and "-" in verse:
+        i = verse.find("-")
         res = RefRange(Reference(book, chap, verse[:i], subverse, mark),
                        Reference(book, chap, verse[i+1:], subverse,mark))
     else:
