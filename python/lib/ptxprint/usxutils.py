@@ -127,7 +127,7 @@ def mrktype(sheet, mrk):
     mtype = sheet.get('mrktype', None)
     if mtype is not None:
         return mtype
-    occurs = set(sheet.get('occursunder', "").split(' '))
+    occurs = set(sheet.get('occursunder', {}))
     stype = sheet.get('styletype', "").lower()
     ttype = sheet.get('texttype', "").lower()
     for k, v in _occurstypes.items():
