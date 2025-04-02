@@ -448,6 +448,7 @@ class PDFViewer:
             context.rectangle(x, y, width, height)
             context.fill()
 
+        haveCrop = self.model.get("c_cropmarks")
         pwidth, pheight = page.get_size()
         units = self.model.get("fcb_gridUnits")
         minordivs = int(self.model.get("s_gridMinorDivisions"))
@@ -456,9 +457,12 @@ class PDFViewer:
         majorthick = float(self.model.get("s_gridMajorThick"))
         minorcol = coltoonemax(self.model.get("col_gridMinor"))
         minorthick = float(self.model.get("s_gridMinorThick"))
-        texttop = mm_pts(float(self.model.get("s_topmargin")))
-        textbot = mm_pts(float(self.model.get("s_bottommargin")))
+        texttop = mm_pts(float(self.model.get("s_topmargin"))) + (36 if haveCrop else 0)
+        textbot = mm_pts(float(self.model.get("s_bottommargin"))) + (36 if haveCrop else 0)
         (left, right) = self._get_margins(pnum)
+        if haveCrop:
+            left += 36
+            right += 36
 
         if edge == "page":
             jobs = [((0,0), (pwidth, pheight))]
