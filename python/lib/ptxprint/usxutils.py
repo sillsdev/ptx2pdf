@@ -123,7 +123,7 @@ class Sheets(dict):
             return None
         return mrktype(sheet, mrk)
 
-def mrktype(sheet, mrk)
+def mrktype(sheet, mrk):
     mtype = sheet.get('mrktype', None)
     if mtype is not None:
         return mtype

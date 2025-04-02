@@ -719,7 +719,11 @@ class StyleEditorView(StyleEditor):
         sheet = self.asStyle(self.marker)
         mrktype(sheet, self.marker)
         for k, v in dialogKeys.items():
-            self.model.set(v, self.getval(self.marker, k, '') or "")
+            if k == "mrktype":
+                val = Grammar.marker_categories.get(self.marker, '')
+            else:
+                val = ""
+            self.model.set(v, self.getval(self.marker, k, val) or "")
             # print(f"setting {self.marker}:{k} = {self.getval(self.marker, k, '')}")
         self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
         wid = self.builder.get_object(dialogKeys['Marker'])
@@ -748,7 +752,8 @@ class StyleEditorView(StyleEditor):
                     continue
                 val = self.model.get(v).replace("\\","")
                 # print(f"{k=} {v=} -> {val=}")
-                self.setval(key, k, val)
+                if k != "mrktype" or val != Grammar.marker_categories.get(k, ''):
+                    self.setval(key, k, val)
             st = self.getStyleType(key)
             if st == 'Character' or st == 'Note':
                 self.setval(key, 'EndMarker', key + "*")
