@@ -726,9 +726,10 @@ class StyleEditorView(StyleEditor):
             self.model.set(v, self.getval(self.marker, k, val) or "")
             # print(f"setting {self.marker}:{k} = {self.getval(self.marker, k, '')}")
         self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
-        wid = self.builder.get_object(dialogKeys['Marker'])
-        if wid is not None:
-            wid.set_sensitive(newkey)
+        for a in ('Marker', 'mrktype'):
+            wid = self.builder.get_object(dialogKeys[a])
+            if wid is not None:
+                wid.set_sensitive(newkey)
         tryme = True    # keep trying until necessary fields filled in
         while tryme:
             response = dialog.run()
@@ -752,7 +753,7 @@ class StyleEditorView(StyleEditor):
                     continue
                 val = self.model.get(v).replace("\\","")
                 # print(f"{k=} {v=} -> {val=}")
-                if k != "mrktype" or val != Grammar.marker_categories.get(k, ''):
+                if k != "mrktype" or Grammar.marker_categories.get(k, '') != '':
                     self.setval(key, k, val)
             st = self.getStyleType(key)
             if st == 'Character' or st == 'Note':
