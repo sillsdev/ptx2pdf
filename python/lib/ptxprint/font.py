@@ -50,8 +50,8 @@ def writefontsconf(extras, archivedir=None, testsuite=None):
         dirs.append(os.path.join(os.getenv("LOCALAPPDATA", "/"), "Microsoft", "Windows", "Fonts"))
         dirs.append(os.path.abspath(os.path.join(os.getenv("WINDIR", "/"), "Fonts")))
         fname = os.path.join(os.getenv("LOCALAPPDATA", "/"), "SIL", "ptxprint", "fonts.conf")
-    elif sys.platform == "darwin":
-        dirs.append(os.path.join("System", "Library", "Fonts"))
+    if sys.platform == "darwin":
+        dirs.append(os.path.join("/System", "Library", "Fonts"))
     if archivedir is not None or not sys.platform.startswith("win"):
         if (not testsuite):
           dirs.append("/usr/share/fonts")
