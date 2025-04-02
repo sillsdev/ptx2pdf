@@ -3039,7 +3039,7 @@ settings for a similar project.</property>
         <col id="1">cell</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Attibute</col>
+        <col id="0" translatable="yes">Attribute</col>
         <col id="1">attrib</col>
       </row>
       <row>
