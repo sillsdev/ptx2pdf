@@ -729,7 +729,7 @@ class StyleEditorView(StyleEditor):
         for a in ('Marker', 'mrktype'):
             wid = self.builder.get_object(dialogKeys[a])
             if wid is not None:
-                wid.set_sensitive(newkey)
+                wid.set_sensitive(newkey or (False if a == "Marker" else Grammar.marker_categories.get(self.marker, None) is None))
         tryme = True    # keep trying until necessary fields filled in
         while tryme:
             response = dialog.run()
