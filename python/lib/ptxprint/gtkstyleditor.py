@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 stylemap = {
     'Marker':       ('l_styleTag',          None,               None, None, None),
     'Description':  ('l_styDescription',    None,               None, None, None),
-    'MarkerType':   ('fcb_styType',         'l_styType',        'Paragraph', None, None),
+    'mrktype':      ('fcb_styType',         'l_styType',        'Paragraph', None, None),
     'font':         ('bl_font_styFontName', 'l_styFontName',    None, None, None),
     'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
     'FontSize':     ('s_styFontSize',       'l_styFontSize',    1, None, None),
@@ -753,7 +753,7 @@ class StyleEditorView(StyleEditor):
                     continue
                 val = self.model.get(v).replace("\\","")
                 # print(f"{k=} {v=} -> {val=}")
-                if k != "mrktype" or Grammar.marker_categories.get(k, '') != '':
+                if k != "mrktype" or Grammar.marker_categories.get(key, '') == '':
                     self.setval(key, k, val)
             st = self.getStyleType(key)
             if st == 'Character' or st == 'Note':
