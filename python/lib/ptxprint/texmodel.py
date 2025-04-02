@@ -874,9 +874,11 @@ class TexModel:
             logger.log(5, logmsg+data)
         return (data, None)
 
-    def _getDoc(self, data, doc, bk):
+    def _getDoc(self, data, doc, bk, logmsg=""):
         if data is not None:
             doc = self._makeUSFM(data, bk)
+            if doc is not None:
+                logger.log(5, logmsg+doc.outUsx(None))
         return (None if doc else data, doc)
         
     def _changeError(self, txt):
@@ -975,6 +977,7 @@ class TexModel:
         if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
             dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+
         if self.dict['project/canonicalise']:
             (dat, doc) = self._getDoc(dat, doc, bk)
             dat = None
