@@ -1,9 +1,11 @@
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.styleditor import StyleEditor, aliases
+from ptxprint.usxutils import mrktype
 from ptxprint.utils import _, coltotex, textocol, asfloat
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
 from ptxprint.borderstyle import borderStyleFromStyle, BorderStyle
+from usfmtc.usfmparser import Grammar
 import re, logging
 
 logger = logging.getLogger(__name__)
@@ -169,7 +171,7 @@ dialogKeys = {
     "EndMarker":    "t_styEndMarker",
     "Name":         "t_styName",
     "Description":  "txbf_styDesc",
-    "MarkerType":   "fcb_styType"
+    "mrktype":      "fcb_styType"
 }
 
 usfmpgname = {
@@ -270,7 +272,7 @@ class StyleEditorView(StyleEditor):
         foundp = False
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             v = self.asStyle(k)
-            if v.get('styletype', '') == 'Standalone':
+            if v.get('styletype', '') == 'Standalone' or v.get('mrktype', '') == "barems":
                 continue
             if 'zderived' in v:
                 self.setval(v['zderived'], ' endMilestone', k)
@@ -389,6 +391,15 @@ class StyleEditorView(StyleEditor):
         #logger.debug(f"{model[it][0]} {path}({len(path)})   {res}")
         return res
 
+    def getStyleType(self, mrk):
+        ''' valid returns are: Character, Milestone, Note, Paragraph '''
+        mtype = self.getval(self.marker, 'mrktype', '')
+        if not mtype:
+            res = self.getval(self.marker, 'StyleType')
+        else:
+            res = Grammar.marker_tags.get('mtype', 'Standalone')
+        return res
+
     def editMarker(self):
         if self.marker is None:
             return
@@ -461,8 +472,8 @@ class StyleEditorView(StyleEditor):
                 # logger.debug(f"{k}: {oldval=}, {val=}")
             self._setFieldVal(k, v, oldval, val)
 
-        stype = self.getval(self.marker, 'StyleType')
-        _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True)}
+        stype = self.getStyleType(self.marker)
+        _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True), 'Stan': (False, False, False)}
         visibles = _showgrid.get(stype[:4] if stype is not None else "",(True, True, False))
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
@@ -705,16 +716,11 @@ class StyleEditorView(StyleEditor):
 
     def mkrDialog(self, newkey=False):
         dialog = self.builder.get_object("dlg_styModsdialog")
+        sheet = self.asStyle(self.marker)
+        mrktype(sheet, self.marker)
         for k, v in dialogKeys.items():
-            if k == "OccursUnder":
-                o = self.getval(self.marker, k, None)
-                if o is not None:
-                    self.model.set(v, " ".join(sorted(str(x) for x in o)))
-                else:
-                    self.model.set(v, "")
-            else:
-                self.model.set(v, self.getval(self.marker, k, '') or "")
-                # print(f"setting {self.marker}:{k} = {self.getval(self.marker, k, '')}")
+            self.model.set(v, self.getval(self.marker, k, '') or "")
+            # print(f"setting {self.marker}:{k} = {self.getval(self.marker, k, '')}")
         self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
         wid = self.builder.get_object(dialogKeys['Marker'])
         if wid is not None:
@@ -727,14 +733,7 @@ class StyleEditorView(StyleEditor):
             key = re.sub(r"\\", "|", re.sub(r"^\\", "", self.model.get(dialogKeys['Marker']).strip()))
             if key == "":
                 break
-            for a in ('StyleType', 'TextType', 'OccursUnder'):
-                if not self.model.get(dialogKeys[a]):
-                    self.model.doError(_("Required element {} is not set. Please set it.").format(a))
-                    break
-            else:
-                tryme = False
-            if tryme:
-                continue
+            tryme = False
             (d, selecti) = self.treeview.get_selection().get_selected()
             name = self.model.get(dialogKeys['Name'], '')
             if key.lower() not in self.sheet:
@@ -749,18 +748,10 @@ class StyleEditorView(StyleEditor):
                     continue
                 val = self.model.get(v).replace("\\","")
                 # print(f"{k=} {v=} -> {val=}")
-                if k.lower() == 'occursunder':
-                    val = {k:v for v,k in enumerate(val.split())}
                 self.setval(key, k, val)
-            st = self.getval(key, 'StyleType', '')
+            st = self.getStyleType(key)
             if st == 'Character' or st == 'Note':
                 self.setval(key, 'EndMarker', key + "*")
-                if st == 'Character':
-                    ou = self.getval(key, 'OccursUnder')
-                    if not isinstance(ou, dict):
-                        ou = {k:v for v,k in enumerate(ou.split())}
-                    ou["NEST"] = len(ou) + 1
-                    self.setval(key, 'OccursUnder', ou)
                 self.resolveEndMarker(key, None)
             elif st == 'Milestone':
                 self.resolveEndMarker(key, self.getval(key, 'EndMarker'))
