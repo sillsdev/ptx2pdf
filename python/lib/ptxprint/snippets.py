@@ -217,39 +217,38 @@ class Diglot(Snippet):
 """
             # DiglotRFraction needs refactoring when we have proper pages and fractions per glot
         persideCode = r"""
-\def\DiglotRFraction{{{document/diglotsecfraction}}}
-\addToSideHooks{{{s_}}}{{\RTL{diglot[ifrtl]}}}
-\def\regular{s_}{{"{diglot[fontregular]}{diglot[docscript]}"}}
-\def\bold{s_}{{"{diglot[fontbold]}"}}
-\def\italic{s_}{{"{diglot[fontitalic]}{diglot[docscript]}"}}
-\def\bolditalic{s_}{{"{diglot[fontbolditalic]}{diglot[docscript]}"}}
-\FontSizeUnit{s_}={diglot[fontfactor]}pt
-\RTL{s_}{diglot[ifrtl]}
-\def\LineSpacingFactor{s_}{{{diglot[linespacingfactor]}}}
-\def\AfterChapterSpaceFactor{s_}{{{diglot[afterchapterspace]}}}
-\def\AfterVerseSpaceFactor{s_}{{{diglot[afterversespace]}}}
-\IndentUnit{s_}={diglot[indentunit]}in
-\newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[letterstretch]:.4f}em minus {diglot[lettershrink]:.4f}em
+\addToSideHooks{{{s_}}}{{\RTL{diglot[document/ifrtl]}}}
+\def\regular{s_}{{"{diglot[document/fontregular]}{diglot[document/script]}"}}
+\def\bold{s_}{{"{diglot[document/fontbold]}"}}
+\def\italic{s_}{{"{diglot[document/fontitalic]}{diglot[document/script]}"}}
+\def\bolditalic{s_}{{"{diglot[document/fontbolditalic]}{diglot[document/script]}"}}
+\FontSizeUnit{s_}={diglot[paper/fontfactor]}pt
+\RTL{s_}{diglot[document/ifrtl]}
+\def\LineSpacingFactor{s_}{{{diglot[paragraph/linespacingfactor]}}}
+\def\AfterChapterSpaceFactor{s_}{{{diglot[texpert/afterchapterspace]}}}
+\def\AfterVerseSpaceFactor{s_}{{{diglot[texpert/afterversespace]}}}
+\IndentUnit{s_}={diglot[document/indentunit]}in
+\newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[document/letterstretch]:.4f}em minus {diglot[document/lettershrink]:.4f}em
 \def\intercharspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
-\addToSideHooks{{{s_}}}{{\XeTeXinterchartokenstate={diglot[letterspace]}}}
-{diglot[ifdiglotcolour_]}\SetDiglotBGColour{{{s_}}}{{{diglot[diglotcolour]}}}{{}}
-{diglot[ifincludefootnotes_]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
-{diglot[ifincludexrefs_]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
+\addToSideHooks{{{s_}}}{{\XeTeXinterchartokenstate={diglot[document/letterspace]}}}
+{diglot[document/ifdiglotcolour]}\SetDiglotBGColour{{{s_}}}{{{diglot[document/diglotcolour]}}}{{}}
+{diglot[notes/includefootnotes]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
+{diglot[notes/includexrefs]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \makeatletter
 \should@xist{{}}{{f{s_}}}
 \should@xist{{}}{{x{s_}}}
 \newlanguage\language{s_} \language\language{s_}
-{diglot[ifhavehyphenate_]}{diglot[ifhyphenate_]}\bgroup\liter@lspecials\input "{diglot[cfgrpath]}/hyphen-{diglot[prjid_]}.tex" \egroup
+{diglot[paragraph/ifhavehyphenate]}{diglot[paragraph/ifhyphenate]}\bgroup\liter@lspecials\input "{diglot[/cfgrpath]}/hyphen-{diglot[project/id]}.tex" \egroup
 \makeatother
 """
 
         res = baseCode.format(s_="L", **model.dict)
-        diglotmap = {x[7:]: y for x,y in model.dict.items() if x.startswith("diglot/")}
-        res += persideCode.format(diglot=diglotmap, s_="R", **model.dict)
-        res += "\n" + r"\def\addInt{" + "\n"
-        for a in (("L", "project/intfile"), ("R", "diglot/intfile")):
-            res += r"\zglot|{0}\*{1}".format(a[0], model.dict[a[1]]) + "\n"
-        res += r"\zglot|\*}" + "\n"
+        for k, v in model.dict["diglots_"].items():
+            res += persideCode.format(diglot=v.dict, s_=k, **model.dict)
+        # res += "\n" + r"\def\addInt{" + "\n"
+        # for a in (("L", "project/intfile"), ("R", "diglot/intfile")):
+            # res += r"\zglot|{0}\*{1}".format(a[0], model.dict[a[1]]) + "\n"
+        # res += r"\zglot|\*}" + "\n"
         return res
 
 class FancyBorders(Snippet):

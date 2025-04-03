@@ -1041,14 +1041,13 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting {synchronise}.")
     return(SyncPoints[{synchronise}])
     
-def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
+def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
     if debug:
       debugPrint = True
       logger.debug("Writing debug files")
     else:
       logger.debug("Not Writing debug files")
-    # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
     tag_escapes = r"[^a-zA-Z0-9]"
     # Check input
     sheets={}
@@ -1068,16 +1067,13 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     logger.debug(f"{type(mode)}, {mode=}")
     logger.debug(f"{type(scorearr)}, {scorearr=}")
     logger.debug(f"{type(keyarr)}, {keyarr=}")
-    logger.log(7, f"{stylesheetsa=}, {stylesheetsb=}")
     if configarr is None:
         configarr = {}
         for k in keyarr:
             configarr[k] = None
         
     # load stylesheets
-    sheets['L'] = Sheets(stylesheetsa)
-    sheets['R'] = Sheets(stylesheetsb)
-    for k, s in stylesheets:
+    for k, s in stylesheets.items():
         sheets[k] = Sheets(s)
     # Set-up potential synch points
     tmp=synchronise.split(",")

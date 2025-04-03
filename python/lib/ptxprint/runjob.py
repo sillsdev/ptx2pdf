@@ -284,8 +284,8 @@ class RunJob:
                 # digcfg = info.dict["document/diglotsecconfig"]
                 digprjdir = dv.project.path
                 digptsettings = ParatextSettings(digprjdir)
-                diginfos[k] = TexModel(dv, digptsettings, digprjid, inArchive=self.inArchive)
-                reasons = diginfo.prePrintChecks()
+                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive)
+                reasons = diginfos[k].prePrintChecks()
                 if len(reasons):
                     self.fail(", ".join(reasons) + " in diglot secondary")
                     return
@@ -563,7 +563,6 @@ class RunJob:
         keyarr = ["L"]
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         for k, diginfo in diginfos.items():
-            digprjdir = dv.project.path
             texfiles = []
             donebooks = []
             digdonebooks = []
@@ -576,8 +575,8 @@ class RunJob:
             diginfo["document/diffcolayout"] = False
             diginfo["snippets/diglot"] = False
             docdir = info["/ptxdocpath"]
-            for k in _digSecSettings:
-                diginfo[k]=info[k]
+            for s in _digSecSettings:
+                diginfo[s]=info[s]
             syntaxErrors = []
 
             # create differential ptxprint.sty
@@ -596,7 +595,7 @@ class RunJob:
             if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
                 texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INTR.SFM"))))
             diginfo["cfgrpath_"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
-            info.setdefault("diglots_", {})[k] = diginfo
+            info.dict.setdefault("diglots_", {})[k] = diginfo
 
         for j in jobs:
             b = j[0][0].first.book if j[1] else j[0]
@@ -604,9 +603,10 @@ class RunJob:
             inputfiles = []
             left = None
             for k, diginfo in diginfos.items():
+                digprjdir = diginfo.printer.project.path
                 try:
                     out = None
-                    if not len(outfiles):
+                    if not len(inputfiles):
                         out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
                         left = os.path.join(self.tmpdir, out)
                         inputfiles.append(left)
@@ -640,7 +640,7 @@ class RunJob:
                 logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=} {mode=} {sync=}")
                 # Do we ask the merge process to write verification files? (use diff -Bws to confirm they are they same as the input)
                 debugmerge = logger.getEffectiveLevel() <= 5 
-                usfmerge2(inputfiles, keyarr, outFile, sheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=info.changes.get("merged", []), book=b)
+                usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=info.changes.get("merged", []), book=b)
                 texfiles += [outFile, logFile]
 
         

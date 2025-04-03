@@ -774,6 +774,7 @@ class GtkViewModel(ViewModel):
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
+        self.tv_polyglot = Gtk.TreeView()
 
         self.mw = self.builder.get_object("ptxprint")
         if sys.platform.startswith("win"):
@@ -1493,6 +1494,7 @@ class GtkViewModel(ViewModel):
         self.set("l_statusLine", txt)
         status = len(self.get("l_statusLine"))
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
+        print(f"Status: {txt}")
         
     def onHideStatusMsgClicked(self, btn):
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(False)
@@ -2537,9 +2539,10 @@ class GtkViewModel(ViewModel):
             
             # Add categories and buttons
             for category, codeitems in info.items():
-                # if category == "Arabic" and self.get('fcb_script') != 'Arab': # FixMe! (this needs to updated when we
+                # if category == "Arabic" and self.get('fcb_script') != 'Arab': # FixMe!MP (this needs to updated when we
                     # print(f"Skipping Arabic")                                 # change projects/configs but it doesn't
-                    # continue                                                  # because the menu is already populated
+                    # continue                                                  # because the menu is already populated.
+                    #                              Need to run loadCodelets whenever project, or config, or script are changed.
                 bname = f"btn_{cat}_{category}"
                 button = Gtk.Button.new_with_label(category)
                 self.widgetnames[bname] = f"Insert Codelet {cat} {category}"
@@ -2729,6 +2732,8 @@ class GtkViewModel(ViewModel):
         fallbacks = ['Source Code Pro']
         if len(self.diglotViews):
             for v in self.diglotViews.values():
+                if v is None:
+                    continue
                 digfontr = v.get("bl_fontR")
                 fallbacks.append(digfontr.name)
         pangostr = fontr.asPango(fallbacks, fsize)
@@ -3640,7 +3645,6 @@ class GtkViewModel(ViewModel):
         self.showmybook(True)
 
     def loadPolyglotSettings(self):
-        self.tv_polyglot = Gtk.TreeView()
         # projects = self.builder.get_object("ls_projects")
         self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
         polyset = self.builder.get_object('bx_polyglot')

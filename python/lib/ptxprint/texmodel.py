@@ -729,11 +729,11 @@ class TexModel:
                     for k, e in (('toctitle', 'document/toctitle'),):
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
                 elif l.startswith(r"%\diglot "):
-                    if self.dict.get("_isDiglot", False):
+                    if diglots:
                         l = l[9:]
-                        for a in ("R", ):
-                            digdict = {x[7:]: y for x, y in self.dict.items() if x.startswith("diglot/")}
-                            res.append(l.strip().format(diglot=digdict, s_=a, **self.dict))
+                        # breakpoint()
+                        for a, digdict in self.dict["diglots_"].items():
+                            res.append(l.strip().format(diglot=digdict.dict, s_=a, **self.dict))
                 else:
                     res.append(l.rstrip().format(**self.dict))
         return "\n".join(res).replace("\\OneChapBookfalse\n\\OneChapBooktrue\n","")
@@ -813,7 +813,7 @@ class TexModel:
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
             dat = runChanges(self.changes.get('periph', self.changes.get('default', [])), "INT", dat)
-            dat = runChanges(self.localChanges, "INT", dat)
+            dat = runChanges(self.localChanges or [], "INT", dat)
             dat = regex.sub(r"(\\periph\s*([^\n|]+))\n", addperiphid, dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)

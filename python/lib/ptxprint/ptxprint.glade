@@ -18434,7 +18434,8 @@ algorithms which may be used to obtain the best overall result:
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="valign">start</property>
-                                    <property name="hexpand">True</property>
+                                    <property name="margin-top">12</property>
+                                    <property name="hexpand">False</property>
                                     <property name="vexpand">True</property>
                                     <property name="label-xalign">0</property>
                                     <child>
@@ -18499,6 +18500,10 @@ comma represents the next page.
 A forward slash / indicates one
 text being under the other on the
 same page.</property>
+                                <property name="halign">start</property>
+                                <property name="max-length">12</property>
+                                <property name="width-chars">12</property>
+                                <property name="xalign">0.5</property>
                                 <property name="placeholder-text" translatable="yes">LR,A/B</property>
                                 <signal name="focus-out-event" handler="onPolyglotLayoutFocusOut" swapped="no"/>
                               </object>
