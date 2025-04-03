@@ -43,15 +43,16 @@
 %
 \newif\ifOmitBookRef
 \def\s@tf@rstr@f#1{\traceifset{s@tf@rstr@f}\edef\t@st{#1}%
+ \trace{H}{s@tf@rstr@f #1}%
  \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH\endcsname
  \let\@@firstref\empty
  \ifx\t@st\empty\else
   \ifx\t@st\t@tle\else\ifx\t@st\intr@\else
     \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax\relax
-    \ifcsname ifOmitChapterNumberRH@\@book\endcsname
-      \x@\let\csname rh@ifOmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH@\@book\endcsname
+    \ifcsname ifOmitChapterNumberRH@\detokenize{\@book}\endcsname
+      \x@\let\csname rh@ifOmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH@\detokenize{\@book}\endcsname
     \else 
-      \trace{H}{OmitChapterNumberRH@\@book doesn't exist}%
+      \trace{H}{OmitChapterNumberRH@\detokenize{\@book} doesn't exist}%
     \fi\relax
     \edef\@@firstref{\ifx\@book\empty\else
       \ifOmitBookRef\else\@book\fi
@@ -73,12 +74,13 @@
 % (same as above unless there are bridged verses)
 %
 \def\l@stref#1{\traceifset{l@stref}\edef\t@st{#1}%
+ \trace{H}{l@stref #1}%
  \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH\endcsname
  \ifx\t@st\empty\else\ifx\t@st\t@tle\else\ifx\t@st\intr@\else
      \x@\extr@ctlast\t@st\relax
      \ifx\@@book\empty\else
-       \ifcsname ifOmitChapterNumberRH\@@book\endcsname
-         \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH\@@book\endcsname
+       \ifcsname ifOmitChapterNumberRH@\detokenize{\@@book}\endcsname
+         \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH@\detokenize{\@@book}\endcsname
        \fi
        \fi
        \ifx\@@book\t@tle\else
@@ -104,12 +106,12 @@
  \let\rh@ifOmitChapterNumberRH\ifOmitChapterNumberRH
  \let\if@OmitChapterNumberRH\ifOmitChapterNumberRH % For second book
  \ifx\@book\relax\else
-   \ifcsname ifOmitChapterNumberRH\@book\endcsname
-     \x@\let\csname ifOmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH\@book\endcsname
+   \ifcsname ifOmitChapterNumberRH@\detokenize{\@book}\endcsname
+     \x@\let\csname ifOmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH@\detokenize{\@book}\endcsname
    \fi
  \fi
- \ifcsname ifOmitChapterNumberRH\@@book\endcsname
-   \x@\let\csname if@OmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH\@@book\endcsname
+ \ifcsname ifOmitChapterNumberRH@\detokenize{\@@book}\endcsname
+   \x@\let\csname if@OmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH@\detokenize{\@@book}\endcsname
  \fi
  \ifx\@book\empty\else
   \ifOmitBookRef\else\@book\fi

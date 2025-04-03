@@ -176,6 +176,7 @@
 \def \ztexFontICSpace   #1\relax{\defp@ram{fonticspace}{#1}} % eventually... font inter-char space
 \def \VerticalAlign     #1\relax{\defp@ram{verticalalign}{#1}} % for table cells
 \def \mrktype			#1\relax{}
+\def \Mrktype			#1\relax{}
 
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}     %(1)
@@ -1413,9 +1414,9 @@
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
         %\tracingassigns=1
         \let\aftergr@b\@h\gr@btomacro}% \h gets stored as the book name (for references)
- \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\x@\let\csname ifOmitChapterNumberRH@##1\endcsname\ifOmitChapterNumberRH\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{H}{Defining ifOmitChapterNumberRH@\detokenize{##1}}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
  \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \let\aftergr@b\@hh\gr@btomacro}% \h1 gets stored as the book name (for references)
- \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\egroup}% store book id in \b@ok1 / b@ok1R
  \def\bookalt{\csname b@ok1\g@tdstat\endcsname}%
  \x@\let\csname h1\endcsname=\h@h
  %

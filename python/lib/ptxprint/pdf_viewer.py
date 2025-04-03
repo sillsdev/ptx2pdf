@@ -142,7 +142,7 @@ class PDFViewer:
         self.piczoom = 85
         self.showguides = False
         self.showgrid = False
-        self.showrects = False
+        self.showrects = False # self.model.get("c_pdfadjoverlay", False)
         self.ufCurrIndex = 0
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
@@ -166,6 +166,10 @@ class PDFViewer:
 
     def setShowAdjOverlay(self, val):
         self.showadjustments = val
+        self.show_pdf()
+
+    def setShowParaBoxes(self, val):
+        self.showrects = val
         self.show_pdf()
 
     def create_boxes(self, num):
@@ -380,13 +384,14 @@ class PDFViewer:
             context.rectangle(x, y, width, height)
             context.fill()
 
+        haveCrop = self.model.get("c_cropmarks")
         pwidth, pheight = page.get_size()
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos,
                 headerlabel, footerlabel, hfontsizemms) = self.model.getMargins()
-        texttop = mm_pts(float(self.model.get("s_topmargin")))
+        texttop = mm_pts(float(self.model.get("s_topmargin"))) + (36 if haveCrop else 0)
         hdrbot = float(self.model.get("s_headerposition"))
         ftrtop = float(self.model.get("s_footerposition"))
-        textbot = mm_pts(float(self.model.get("s_bottommargin")))
+        textbot = mm_pts(float(self.model.get("s_bottommargin"))) + (36 if haveCrop else 0)
         lineheight = float(self.model.get("s_linespacing")) * 72 / 72.27
         textsize = float(self.model.get("s_fontsize"))
         colgutterwidth = mm_pts(float(self.model.get("s_colgutterfactor")))
@@ -394,10 +399,13 @@ class PDFViewer:
         majorcol = (0.8, 0.6, 0.6)
         left, right = self._get_margins(pindex)
         innerheight = pheight - texttop - textbot
+        if haveCrop:
+            left += 36
+            right += 36
 
         # header
-        drawline(left, mm_pts(headerpos) + mm_pts(hfontsizemms), pwidth - right - left, 0.5, minorcol)
-        drawline(left, mm_pts(headerpos) + 2 * mm_pts(hfontsizemms), pwidth - right - left, 0.5, minorcol)
+        drawline(left, mm_pts(headerpos) + (36 if haveCrop else 0), pwidth - right - left, 0.5, minorcol)
+        drawline(left, mm_pts(headerpos) + mm_pts(hfontsizemms) + (36 if haveCrop else 0), pwidth - right - left, 0.5, minorcol)
         drawline(0, texttop - 0.4, pwidth, 0.8, majorcol)       # main top margin
         tstop = pheight - textbot
         tstart = texttop
@@ -407,7 +415,7 @@ class PDFViewer:
         # footer
         drawline(0, pheight - textbot, pwidth, 0.8, majorcol)   # main bottom margin
         drawline(left, pheight - textbot + ftrtop, pwidth - right - left, 0.5, minorcol)
-        drawline(left, pheight - textbot + ftrtop - textsize, pwidth - right - left, 0.5, minorcol)
+        drawline(left, pheight - textbot + ftrtop + textsize, pwidth - right - left, 0.5, minorcol)
 
         # vertical lines
         drawline(left - 0.4, 0, 0.8, pheight, majorcol)         # left margin
@@ -440,6 +448,7 @@ class PDFViewer:
             context.rectangle(x, y, width, height)
             context.fill()
 
+        haveCrop = self.model.get("c_cropmarks")
         pwidth, pheight = page.get_size()
         units = self.model.get("fcb_gridUnits")
         minordivs = int(self.model.get("s_gridMinorDivisions"))
@@ -448,9 +457,12 @@ class PDFViewer:
         majorthick = float(self.model.get("s_gridMajorThick"))
         minorcol = coltoonemax(self.model.get("col_gridMinor"))
         minorthick = float(self.model.get("s_gridMinorThick"))
-        texttop = mm_pts(float(self.model.get("s_topmargin")))
-        textbot = mm_pts(float(self.model.get("s_bottommargin")))
+        texttop = mm_pts(float(self.model.get("s_topmargin"))) + (36 if haveCrop else 0)
+        textbot = mm_pts(float(self.model.get("s_bottommargin"))) + (36 if haveCrop else 0)
         (left, right) = self._get_margins(pnum)
+        if haveCrop:
+            left += 36
+            right += 36
 
         if edge == "page":
             jobs = [((0,0), (pwidth, pheight))]
@@ -1748,6 +1760,7 @@ class Paragraphs(list):
         endpar = True
         inpage = False
         pnum = 0
+        lastyend = 0
         polycol = "L"
         currps = {polycol: None}
         colinfos = {}
@@ -1793,6 +1806,7 @@ class Paragraphs(list):
                         currps[polycol].rects.pop()
                     currr = ParRect(pnum, cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
+                lastyend = 0
             elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
                 if currr is not None:
                     cinfo = colinfos.get(polycol, None)
@@ -1809,7 +1823,8 @@ class Paragraphs(list):
                     continue
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                 currp.rects = []
-                currr = ParRect(pnum, cinfo[3], readpts(p[5]) + currp.baseline)
+                ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
+                currr = ParRect(pnum, cinfo[3], ystart)
                 currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
@@ -1828,6 +1843,9 @@ class Paragraphs(list):
                     currr.yend = readpts(p[2])
                 else:
                     currr.yend = readpts(p[1])
+                if len(p) > 3:
+                    currr.yend -= readpts(p[3])
+                lastyend = currr.yend
                 endpar = True
             elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
                 if not endpar or not inpage:
@@ -1837,6 +1855,8 @@ class Paragraphs(list):
                 if currp is None:
                     continue
                 currp.lastref = p[0]
+                if "k." in p[0]:
+                    currp.ref = p[0]
                 currp.parnum = int(p[1])
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
@@ -1864,6 +1884,7 @@ class Paragraphs(list):
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
+                lastyend = 0
             elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None or currr is None or currpic is None:
@@ -1882,6 +1903,7 @@ class Paragraphs(list):
                         currr.ystart = currpr.yend
                 else:
                     currr = None
+                lastyend = 0
             elif c == "parpicsize":
                 if len(p) < 4:
                     (w, h) = readpts(p[0]), readpts(p[1])

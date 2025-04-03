@@ -31,6 +31,7 @@ _typetypes = {      # type: (type, StyleType, TextType, startswith)
     'otherpara': ('versepara', 'paragraph', 'other', None),
     'sectionpara': ('versepara', 'paragraph', 'section', None),
     'title': ('header', 'paragraph', 'other', "m"),
+    'barems': (None, 'Standalone', None, None),
 }
     
 def simple_parse(source, categories=False, keyfield="Marker"):
@@ -118,36 +119,40 @@ class Sheets(dict):
                     self[newk] = newv
 
     def mrktype(self, mrk):
-        if mrk not in self:
+        sheet = self.get(mrk, None)
+        if sheet is None:
             return None
-        mtype = self[mrk].get('mrktype', None)
-        if mtype is not None:
-            return mtype
-        occurs = set(self[mrk].get('occursunder', "").split(' '))
-        stype = self[mrk].get('styletype', "").lower()
-        ttype = self[mrk].get('texttype', "").lower()
-        for k, v in _occurstypes.items():
-            if k in ("footnotechar", "crossreferencechar"):
-                m = all(x in occurs for x in v.split(" "))
-            else:
-                m = any(x in occurs for x in v.split(" "))
-            if m:
-                mtype = k
-                break
-        for k, v in _typetypes.items():
-            matched = True
-            for i, a in enumerate((mtype, stype, ttype)):
-                if v[i] is not None and v[i] != a:
-                    matched = False
-                    break
-            if v[3] is not None and not mrk.startswith(v[3]):
-                matched = False
-            if matched:
-                mtype = k
-                break
-        if mtype is not None:
-            self[mrk]['mrktype'] = mtype
+        return mrktype(sheet, mrk)
+
+def mrktype(sheet, mrk):
+    mtype = sheet.get('mrktype', None)
+    if mtype is not None:
         return mtype
+    occurs = set(sheet.get('occursunder', {}))
+    stype = sheet.get('styletype', "").lower()
+    ttype = sheet.get('texttype', "").lower()
+    for k, v in _occurstypes.items():
+        if k in ("footnotechar", "crossreferencechar"):
+            m = all(x in occurs for x in v.split(" "))
+        else:
+            m = any(x in occurs for x in v.split(" "))
+        if m:
+            mtype = k
+            break
+    for k, v in _typetypes.items():
+        matched = True
+        for i, a in enumerate((mtype, stype, ttype)):
+            if v[i] is not None and v[i] != a:
+                matched = False
+                break
+        if v[3] is not None and not mrk.startswith(v[3]):
+            matched = False
+        if matched:
+            mtype = k
+            break
+    if mtype is not None:
+        sheet['mrktype'] = mtype
+    return mtype
 
 def createGrammar(sheets):
     grammar = Grammar()
@@ -334,7 +339,7 @@ class Usfm:
                     sections.append(p)
                 else:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
-                        currv = p[0].get("number", curr.last.verse)
+                        currv = p[0].get("number", curr.last.verse if curr is not None else None)
                         curr = MakeReference(bk, curr.first.chap, currv)
                         if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
                             for r in curr.allrefs():
@@ -352,7 +357,7 @@ class Usfm:
             elif p.tag == "char":
                 s = p.get("style")
                 if s == "k":
-                    v = p.get("key", p.text.strip())    # there is more to this
+                    v = p.get("key", p.text.strip().replace(" ", ""))    # there is more to this
                     self.kpars[v] = currp
             p.pos = RefPos(p.pos, curr)
         self.chapters.append(i)
@@ -369,7 +374,7 @@ class Usfm:
                 res[i] = e.text.strip()
         self.tocs = res
 
-    nonvernacular = ('otherpar', 'header', 'attrib')
+    nonvernacular = ('otherpara', 'header', 'attribute')
     def getwords(self, init=None, constrain=None, lowercase=False):
         root = self.getroot()
         wre = regex.compile(r"([\p{L}\p{M}\p{Cf}]+)")
@@ -559,19 +564,24 @@ class Usfm:
 
     def stripEmptyChVs(self, ellipsis=False):
         def hastext(c):
-            if c.tail is not None and c.tail.strip() != "":
+            if c.tail is not None: # and c.tail.strip() != "":
                 return True
-            if c.text is not None and c.text.strip() != "":
+            if c.text is not None: # and c.text.strip() != "":
                 return True
             return False
         def removeslice(e, s, f):
             els = list(e)
+            f = min(f, len(els))
             for i in range(s, f):
                 try:
                     e.remove(els[i])
                 except IndexError:
                     raise IndexError(f"slice bug {i=}, {s=}, {f=}, {len(els)=}")
-            return s-f
+            return (s - f) if f > s else 0
+        def addellipsis(r, s):
+            e = r.__class__("para", attrib = {"style": "p"}, parent = r)
+            e.text = "..."
+            r.insert(s + 1, e)
         root = self.getroot()
         inels = list(root)
         # scan for first chapter
@@ -594,10 +604,11 @@ class Usfm:
                                 startv = j + offset
                                 startve = c
                             isempty = True
-                    elif hastext(c) and isempty and j + offset > startv + 1:
-                        if startve is not None:
-                            startve.tail = "..."
-                        offset += removeslice(e, startv + 1, j + offset)
+                    elif hastext(c): 
+                        if isempty and j + offset > startv + 1:
+                            if startve is not None:
+                                startve.tail = "..." if ellipsis else ""
+                            offset += removeslice(e, startv + 1, j + offset - 1)
                         isempty = False
                 if isempty:
                     if startv == 0:
@@ -605,7 +616,7 @@ class Usfm:
                     else:
                         removeslice(e, startv + 1, len(e))
                         if startve is not None:
-                            startve.tail = "..."
+                            startve.tail = "..." if ellipsis else ""
                             startve = None
                             startv = 0
             elif e.tag != "chapter":
@@ -617,10 +628,18 @@ class Usfm:
         for j, e in enumerate(inels[i:], i):
             if e.tag != "chapter":
                 if j > 0 and i >= 0:
-                    offset += removeslice(root, i, j + offset)
+                    end = j + offset - 1
+                    offset += removeslice(root, i, end)
+                    if ellipsis and i < end:
+                        addellipsis(root, i - 1)
+                        offset += 1
                     i = -1
             elif i < 0:
                 i = j + offset
+        if j > 0 and i >= 0:
+            removeslice(root, i, j + offset + 1)
+            if ellipsis and i < j + offset - 1:
+                addellipsis(root, i - 1)
         return
 
     def addStrongs(self, strongs, showall):

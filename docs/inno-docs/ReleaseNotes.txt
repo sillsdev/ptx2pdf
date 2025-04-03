@@ -1,8 +1,23 @@
-PTXprint 2.7.35 Release Notes
-28 Mar 2025
+PTXprint 2.7.36 Release Notes
+2 Apr 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.7.36 (2 Apr 2025)
+  * Switch from OccursUnder to Mrktype for styles
+  * Add mrktypes to ptx2pdf.sty
+  * Cope with active chars/spaces in running headers
+  * Don't localize paper size settings on finishing tab
+  * Make display of Paragraph Boxes user-configurable in Preview Panel
+  * Include changes file "sections()" in TechRef
+  * Tidy up and add Standalone Milestone
+  * Add Mac fonts list to fonts.conf (work in progress)
+  * Don't remove normal chapter numbers in stripChVs
+  * Extra font config in archives, so that directly running the tex file doesn't moan about missing fonts
+  * Fix grid lines with cropmarks
+  * Fix strip empty ch.vs and ellipsis
+  * Fix paragraph identification when k is not first in para (MH)
 
 Bug fixes and Improvements in 2.7.35 (28 Mar 2025)
   * Make per-book OmitChapterNumberRH booleans, so rangeref etc works properly (#1054)
