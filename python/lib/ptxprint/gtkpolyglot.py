@@ -535,6 +535,12 @@ class PolyglotSetup(Gtk.Box):
                 # self.save_data()
                 self.update_layout_string()
 
+    def set_fraction(self, f):
+        pass
+
+    def get_fraction(self):
+        return 0.45
+
     def distribute_width_evenly(self, widget):
         selected = self.get_selected_row()
         if not selected:

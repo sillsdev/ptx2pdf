@@ -559,21 +559,23 @@ class TexModel:
             self.printer.styleEditor.setval("v", "Position", self.dict["document/marginalposn"])
             self.printer.saveStyles()
 
-    def _doptxfile(self, fname, dname, template, beforelast):
+    def _doptxfile(self, fname, diglots, template, beforelast, bkindex):
         res = []
-        if dname is not None:
+        if diglots:
             res.append(r"\zglot|L\*")
         else:
             res.extend(beforelast)
         res.append(template.format(fname))
-        if dname is not None:
-            res.append(r"\zglot|R\*")
-            res.extend(beforelast)
-            res.append(template.format(dname))
+        if diglots:
+            for k, v in self.dict['diglots_'].items():
+                res.append(r"\zglot|{}\*".format(k))
+                res.extend(beforelast)
+                dname = v.dict['project/books'][bkindex]
+                res.append(template.format(dname))
             res.append(r"\zglot|\*")
         return res
 
-    def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", digtexmodel=None):
+    def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", diglots=False):
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -608,9 +610,7 @@ class TexModel:
                         fname = self.dict['project/books'][i]
                         dname = None
                         beforelast = []
-                        if digtexmodel is not None and f in nonScriptureBooks:
-                            dname = digtexmodel.dict['project/books'][i]
-                        elif extra != "":
+                        if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if isscripture == (f in nonScriptureBooks):
                             isscripture = not isscripture
@@ -618,14 +618,14 @@ class TexModel:
                         if self.dict.get('project/sectintros'):
                             insertnames = self._getinsertname(f)
                             if len(insertnames):
-                                if digtexmodel is not None:
+                                if not diglots:
                                     res.append(r"\diglotfalse")
                                 for ins in insertnames:
-                                    res.extend(self._doptxfile(ins, None if digtexmodel is None else ins, 
+                                    res.extend(self._doptxfile(ins, diglots, 
                                             ("\\intropages{{{}}}" 
                                                 if self.dict['project/periphpagebreak']
-                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), ""))
-                                if digtexmodel is not None:
+                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), "", i))
+                                if diglots:
                                     res.append(r"\diglottrue")
                         if i == len(self.dict['project/bookids']) - 1: 
                             beforelast.append(r"\lastptxfiletrue")
@@ -638,19 +638,18 @@ class TexModel:
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
-                           self.asBool('document/ifshowchapternums', '%') and \
-                           f in oneChbooks:
+                                   self.asBool('document/ifshowchapternums', '%') and f in oneChbooks:
                             res.append(r"\OneChapBooktrue")
-                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
+                            res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\OneChapBookfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
-                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
+                            res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
-                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
+                            res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
                     spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
                                                                             self.dict["paragraph/missingchars"])

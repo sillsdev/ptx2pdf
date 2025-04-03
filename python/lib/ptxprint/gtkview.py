@@ -3784,10 +3784,6 @@ class GtkViewModel(ViewModel):
         elif loc == "cfg":
             cfgname = self.cfgid
             fpath = os.path.join(self.project.srcPath(cfgname), file2edit)
-        # elif loc == "dig": #FixMe! - what to do here with the new polyglot setup in mind?
-            # digprj = self._getProject("fcb_diglotSecProject")
-            # currdigcfg = self.get("ecb_diglotSecConfig")
-            # fpath = os.path.join(digprj.srcPath(currdigcfg), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
         return fpath
@@ -4474,26 +4470,11 @@ class GtkViewModel(ViewModel):
         self.set("r_impTarget", "prjcfg")
         self.setImportButtonOKsensitivity(None)
         
-    def ondiglotSecProjectChanged(self, btn): # FixMe! Polyglot
-        # self.updateDiglotConfigList()
-        self.updateDialogTitle()
-        
     def onCoverFrontBackClicked(self, w):
         status = self.get("c_oth_FrontMatter") or self.get("c_oth_Cover")
         self.builder.get_object("c_oth_OverwriteFrtMatter").set_sensitive(status)
         if not status:
             self.set("c_oth_OverwriteFrtMatter", False)
-        
-    def ondiglotSecConfigChanged(self, btn):
-        if self.loadingConfig:
-            return
-        if self.get("c_diglot"):
-            self.diglotViews['R'] = self.createDiglotView() # FixMe! for polyglot
-        else:
-            self.setPrintBtnStatus(2)
-            self.diglotViews = {}
-        self.loadPics(force=True)
-        self.updateDialogTitle()
         
     def onGenerateHyphenationListClicked(self, btn):
         scrsnpt = self.getScriptSnippet()
@@ -5312,25 +5293,18 @@ class GtkViewModel(ViewModel):
         btn.set_active(True)
         xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         def score(x):
-            # self.set("s_diglotPriFraction", x*100) # FixMe! The fraction will need to be stored/udpdated in the TreeView L+R rows
+            self.gtkpolyglot.set_fraction(x)
             runjob = self.callback(self, maxruns=1, noview=True)
             while runjob.thread.is_alive():
                 Gtk.main_iteration_do(False)
             runres = runjob.res
             return 20000 if runres else xdvigetpages(xdvname)
-        # mid = float(self.get("s_diglotPriFraction")) / 100. # FixMe!
+        m = self.gtkpolyglot.get_fraction()
         res = brent(0., 1., mid, score, 0.001)
-        # self.set("s_diglotPriFraction", res*100) # FixMe!
+        self.gtkpolyglot.set_fraction(res)
         self.isDiglotMeasuring = False
         self.callback(self)
         btn.set_active(False)
-
-    # def onDiglotSwapSideClicked(self, btn):
-        # if self.get("r_hdrLeft") != self.get("r_hdrRight"):
-            # for a in ("r_hdrLeft", "r_hdrRight"):
-                # v = self.get(a)
-                # v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
-                # self.set(a, v)
 
     def onFootnotesClicked(self, btn):
         if not self.sensiVisible("c_includeFootnotes"):
@@ -5690,11 +5664,6 @@ class GtkViewModel(ViewModel):
     def onXrefRuleClicked(self, btn):
         status = self.sensiVisible("c_xrefrule")
         self.builder.get_object("rule_xref").set_visible(status)
-
-    # def diglotPicListSourcesChanged(self, btn): # FixMe!
-        # status = not self.get("fcb_diglotPicListSources") == "bth"
-        # self.builder.get_object("c_diglot2captions").set_sensitive(status)
-        # self.set("c_diglot2captions", status)
 
     def button_release_callback(self, widget, event, data=None):
         # If a user wants to highlight a control (for training or documentation
