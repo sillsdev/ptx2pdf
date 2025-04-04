@@ -1077,8 +1077,12 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     # load stylesheets
     sheets['L'] = Sheets(stylesheetsa)
     sheets['R'] = Sheets(stylesheetsb)
-    for k, s in stylesheets:
+    logger.debug(f"{stylesheets=}")
+    for k,s in stylesheets.items():
         sheets[k] = Sheets(s)
+    for k in keyarr:
+        if k not in sheets:
+          raise ValueError(f"No stylesheet provided for {k}")
     # Set-up potential synch points
     tmp=synchronise.split(",")
     if len(tmp) == 1:
@@ -1170,6 +1174,8 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
+            if (colkey not in sheets):
+              sheets[colkey]=[]
             doc = Usfm.readfile(infile, sheet=sheets[colkey])
             colls[colkey] = Collector(doc=doc, colkey=colkey, primary=(colkey=='L'), fsecondary=fsecondary, stylesheet=sheets[colkey], scores=scorearr[colkey],synchronise=syncarr[colkey],protect=protect)
         chunks[colkey] = {c.ident: c for c in colls[colkey].acc}
