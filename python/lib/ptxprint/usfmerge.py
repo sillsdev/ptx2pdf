@@ -121,6 +121,7 @@ _marker_modes = {
     'sts': ChunkType.HEADER,
     'usfm': ChunkType.HEADER,
     'v': ChunkType.VERSE,
+    'c': ChunkType.CHAPTER,
     'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
     'nb': ChunkType.NB
 }
@@ -262,6 +263,7 @@ class Collector:
         self.oldmode= None
         if (scores==None):
             raise ValueError("Scores can be integer or ChunkType:Score values, but must be supplied!")
+        logger.debug(f"stylesheet is {self.stylesheet=}")
         logger.debug(f"Scores supplied are: {type(scores)}, {scores=}")
         if synchronise in SyncPoints:
             logger.debug(f"Sync points: {synchronise.lower()}")
@@ -305,6 +307,7 @@ class Collector:
         return set(self.stylesheet.get(e.get('style', ''), {}).get('textproperties', '').split())
 
     def texttype(self, e, default=''):
+        logger.debug(f"Texttype lookup for {e} ({e.get('style')}) {self.stylesheet.get(e.get('style'))}")
         return self.stylesheet.get(e.get('style', ''), {}).get('texttype', default)
 
     def pnum(self, c):
@@ -321,6 +324,7 @@ class Collector:
             self.waschap = False
         else:
             name = c.get("style", "")
+            logger.log(8, f'makechunk at {self.chap} {name=}')
             if name == "cl":
                 if self.chap == 0: 
                   mode = ChunkType.TITLE 
@@ -351,6 +355,7 @@ class Collector:
                     mode = ChunkType.VERSE
             else:
                 mode = _marker_modes.get(name, _textype_map.get(self.texttype(c), self.mode))
+                logger.log(8, f'Modecheck: {name=} mm={_marker_modes.get(name,"")} {c=} tt={self.texttype(c)} -> {mode=}')
                 if mode == ChunkType.HEADING:
                     if self.waschap:
                         mode = ChunkType.CHAPTERHEAD
@@ -467,12 +472,12 @@ class Collector:
                     self.chap = int(vc)
                 except (ValueError, TypeError):
                     self.chap = 0
-                if currChunk is None:
-                    currChunk = self.makeChunk(c)
-                else:
-                    currChunk.chap = self.chap
-                    currChunk.verse = self.verse
-                    currChunk.append(c)
+                self.oldmode = self.mode
+                currChunk = self.makeChunk(c)
+                currChunk.chap = self.chap
+                currChunk.verse = self.verse
+                #currChunk.label(self.chap, self.verse, self.end, 0,'')
+                currChunk.append(c)
             else:
                 self.currChunk.append(c)
             #logger.log(7,f'collecting {c.get('style', '')}')
@@ -1074,7 +1079,11 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
         
     # load stylesheets
     for k, s in stylesheets.items():
-        sheets[k] = Sheets(s)
+        logger.debug(f"Loading stylesheet {k=} {s=}")
+        n=Sheets(s)
+        if len(n) == 0:
+          raise IOError(f"Could not find styling data in {s}")
+        sheets[k]=n
     for k in keyarr:
         if k not in sheets:
           raise ValueError(f"No stylesheet provided for {k}")
