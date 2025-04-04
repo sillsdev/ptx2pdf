@@ -1564,10 +1564,11 @@
   \egroup
 }
 
+\def\col@count#1{\advance\count255 by 1}% how many columns are there?
 \def\set@col@widths@simplecols{%
   \trace{d}{set@col@widths@simplecols}%
   \dimen0=\textwidth
-  \def\col@do##1{\advance\count255 by 1}%
+  \let\col@do\col@count
   \count255=0
   \x@\each@col\layout@list\E
   \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax

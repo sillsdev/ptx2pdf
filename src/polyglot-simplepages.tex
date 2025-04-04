@@ -104,7 +104,7 @@
   \let\@ut=\undefined
   \global\let\polyglot@onetime@setup\relax
 } 
-\def\polyglot@eachtime@setup{%
+\def\polyglot@eachtime@setup@simplepages{%
 }
 
 \def\poly@setup@boxaliases#1\E{\x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins} %Make each valid insert type have a page-number suffixed alias
@@ -155,10 +155,10 @@
   \let\d@=\gpiD@\let\gpiD@=\undefined
 }
 
-\def\polyglotpages#1{%comma separated list of concatenated columns to put on different pages (e.g. LR,AB) specifies 2 pages, pg1 shows L+R, pg2 A+B
+\def\polyglotpages@simplepages#1{%comma separated list of concatenated columns to put on different pages (e.g. LR,AB) specifies 2 pages, pg1 shows L+R, pg2 A+B
   \trace{dmp}{polyglotpages #1}%
   \polyglot@onetime@setup
-  \polyglot@eachtime@setup
+  \polyglot@eachtime@setup@simplepages
   \p@lyp@geno=0
   \let\d@=\s@tpolyp@ges
   \cstackdown#1,\E
@@ -169,7 +169,7 @@
     \edef\diglotlayout{simplepages}
   \fi
 }
- 
+\let\polyglotpages\polyglotpages@simplepages 
 %%%% Diglot plugin interface functions.
 
 \let\@prepare@layout@simplepages=\@prepare@layout@simplecols

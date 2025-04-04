@@ -160,7 +160,6 @@ If the processed box is accepted, then at pageout, the remainder becomes the ori
 ### Layout Algorithm
 
 * For each repeated  column, merge old chunk contents with new.
-* determiine 
 * Until chunks are empty:
     * determine max column lengths for each row (maybe without inserts), and hence calculate size for combined page-set. Compare with current space.
     *  if overshoot is long, determine good ratio to initially split all galleys by.
@@ -180,7 +179,7 @@ If the processed box is accepted, then at pageout, the remainder becomes the ori
 ### Processing of the intermediate mapping and Mirrored polyglots 
 As it is by no means unheard of for there to be different translations to
 display, say between OT and NT, it makes sense that 'pseudo' columns should 
-not be chosen from the first unused letter at the start of the alphabet, but from the end.  
+not be chosen from the first unused letter at the start of the alphabet, but from the end. 
 
  If `L2->Z` and `L3->Y`, the intermediate staging can be set up with
 `\def\f@llow@nL{Z} \def\f@llow@nZ{Y}` 
@@ -194,7 +193,7 @@ When all is acceptable, \f@llowingZ is used to fill L.
 For a mirrored diglot, the display-reversal code must use the  mapping
 appropriately. i.e. a book bound for LTR readers (e.g. English-speaking
 audience) might have
-`\polyglotcolumns{LLA/R}`, with L2->Z
+`\polyglotpages{LLA/R}`, with L2->Z
 The forward and back display sequence is then: LZA/R and ALZ/R. For RTL readers,
 the forward and back display sequence will be: ZLA/R and AZL/R.
 

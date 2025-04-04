@@ -1,0 +1,209 @@
+%:strip
+% polyglot-complexpages.tex: multi-page polyglot processing for xetex paratext2.tex
+% Copyright (c) 2025 by SIL International 
+% written by David Gardner
+% 
+% This optional plugin (see ptx-plugins) extends the basic diglot engine to
+% provide complex, multipage polyglot options. There is no synchronisation across pages.
+%
+% Permission is hereby granted, free of charge, to any person obtaining
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\plugin@startif{polyglot-complexpages}
+\plugins@needed{polyglot-simplepages} % 
+
+\def\new@followon#1{%
+  \count255=`Z
+  \edef\s@ffix{#1}%
+  \loop% Get to the last f@llow@n of the parent
+    \tempfalse\ifcsname f@llow@n\s@ffix\endcsname
+      \x@\let\x@\tmp\csname f@llow@n\s@ffix\endcsname\ifx\tmp\undefined\else\ifx\tmp\empty\else
+        \let\s@ffix\tmp
+        \count255=`\s@ffix
+        \temptrue
+      \fi\fi
+    \fi
+  \iftemp\repeat
+  \trace{dmc}{Last in #1 chain is \s@ffix}%
+  \advance\count255 -1
+  \edef\x@fch@r{\char\count255}%
+  \@new@followon{#1}{\s@ffix}%
+} 
+ 
+
+\def\@new@followon#1#2{% source, following-on. x@fch@r provides the character
+  \temptrue
+  \ifcsname \x@fch@r isDiglotColumn\endcsname\tempfalse\fi
+  \ifcsname \x@fch@r isFollowOn\endcsname
+    \def\tmp{#1}%
+    \x@\let\x@\tmpb\csname f@llowing\x@fch@r\endcsname
+    \trace{dmc}{\x@fch@r\space is following \tmpb}% 
+    \ifx\tmp\tmpb
+      \trace{dmc}{Follow-on for \x@fch@r\space is \csname f@llow@n\x@fch@r\endcsname, but it's not in the current chain.}% So we can ignore that fact.
+      %\x@\ifx\csname f@llow@n\x@fch@r\empty\else
+        %\tempfalse
+      %\fi 
+    \else
+      \tempfalse
+    \fi
+  \fi
+  \iftemp
+    \trace{dmc}{Assigning \x@fch@r\space as the follow-on column to #2 (in the #1 chain)}%
+    \x@\xdef\csname f@llowing\x@fch@r\endcsname{#1}\x@\global\x@\let\csname \x@fch@r isFolowOn\endcsname\tr@e
+    \x@\xdef\csname f@llow@n#2\endcsname{\x@fch@r}%
+    \x@\xdef\csname f@llow@n\x@fch@r\endcsname{}%
+    \let\n@xt\sw@llowtwo
+  \else
+    \advance\count255 -1
+    \edef\x@fch@r{\char\count255}%
+    \let\n@xt\@new@followon
+  \fi
+  \n@xt{#1}{#2}%
+}
+\def\cle@rf@llow@ns#1{
+  \x@\let\csname f@llow@n#1\endcsname\empty
+  \x@\global\x@\let\csname layout@#1\endcsname\empty
+  \x@\global\x@\let\csname @max@cols@#1\endcsname\z@ro
+}
+\def\polyglot@eachtime@setup@complexpages{%
+  \ifx\diglot@list\empty\else
+    \let\col@do\cle@rf@llow@ns\x@\each@col\diglot@list\E% Stop all chains.
+  \fi
+}
+
+\newcount\p@lyr@wno
+\catcode47=\tw@lve
+
+  \def\sstackdown#1/#2\E{\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackdown\fi\n@x #2\E}
+  \def\sstackrelax#1\E{}
+    
+  \def\complexs@tpolyp@ges#1\E{%page processing
+    \p@lyr@wno=0
+    \let\tmp@do\d@
+    \let\d@@\@complexs@tpolyp@ges
+    \sstackdown#1/\E
+    \global\advance\p@lyp@geno by 1
+    \let\d@\tmp@do
+  }
+\catcode47=\active
+
+\def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e}% Various 'column codes' are not connected to any input. Use ifcsname to check for them
+\inactive@col@code{-} % A blank column
+\inactive@col@code{=} % Lines
+%\inactive@col@code{+} % Footnote slot?
+%\inactive@col@code{@} % Image / sidebar slot??
+
+\def\col@active@count#1{\ifcsname in@ctive@col@#1\endcsname\else\advance\count255 by 1 \fi}% 
+
+\def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing
+  \count255=0
+  \let\col@do\col@count
+  \x@\each@col#1\E
+  \edef\@cspptotcols{\the\count255}%
+  \count255=0
+  \let\col@do\col@active@count
+  \tracingmacros=1
+  \x@\each@col#1\E
+  \edef\@csppactcols{\the\count255}%
+  \xdef@cseq{p@lyp@gecols\p@lyp@gestring}{}%
+  \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{}%
+  \x@\xdef\csname cols@\p@lyp@gestring\endcsname{\the\count255}% active cols
+  \edef\tmporder{#1}
+  \ifBookOpenLeft % In a book-open-left scenario, we need to process the page contents right-to-left. Easiest way to do that is reorder it from the start.
+    \def\rev@tmp@list{}\def\list@type{tmp}%
+    \let\col@do=\mkrev@list
+    \x@\each@col\tmp
+    \let\tmporder\rev@tmp@list
+  \fi
+  \let\col@do\@@complexs@tpolyp@ges
+  \@x\each@col\tmporder\E
+  \global\advance\p@lyr@wno by 1
+  \let\@cspptotcols\undefined
+  \let\@csppactcols\undefined
+}
+
+\def\p@lyp@gestring{\the\p@lyp@geno-\the\p@lyr@wno}
+\def\p@lyp@gesuffx{@poly@\p@lyp@gestring}
+
+\def\@@complexs@tpolyp@ges#1{%column processing
+  \ifcsname inactive@col@code#1\endcsname\else
+    \let\x@fch@r{#1}% The expanded field char.
+    \x@\let\@@cspptmp\csname @max@cols@#1\endcsname
+    \ifnum\@@cspptmp =0 % This must be the first occurance
+      \ifnum\@csppactcols>1 \x@\let\csname layout@#1\endcsname\gr@dnormal % Normal 
+      \else\x@\let\csname layout@#1\endcsname\gr@dnone \fi % No sync
+    \else
+      \new@followon{#1}%
+      \x@\let\csname layout@#1\endcsname\gr@dnone \fi % No sync
+    \fi
+    \ifnum\@@cspptmp <\@cspptotcols
+      \x@\xdef\csname @max@cols@#1\endcsname{\@cspptotcols}%Used in determining the column width.
+    \fi
+    \x@\let\@@cspptmp\csname @max@cols@#1\endcsname
+    % dermine folowon or basic
+    % set layout style (synced or flow)
+    % record position
+    \x@\xdef\csname p@lyp@gecols\p@lyp@gestring\endcsname
+    \xdef@cseq{\ifBookOpenLeft rev\else\fi p@lyp@gecols\p@lyp@gestring}{\csname p@lyp@gecols\p@lyp@gestring\endcsname\x@fch@r}%
+    \xdef@cseq{\ifBookOpenLeft \else rev\fi p@lyp@gecols\p@lyp@gestring}{\x@fch@r\csname revp@lyp@gecols\p@lyp@gestring\endcsname}%
+  \fi
+}
+
+\def\polyglotpages@complexpages#1{%comma separated list of concatenated columns to put on different pages and rows (e.g. LR/A,B/C) specifies 2 pages, pg1 shows L, R and A, pg2 B and C.
+  \trace{dmc}{polyglotpages #1}%
+  \polyglot@onetime@setup
+  \polyglot@eachtime@setup@complexpages
+  \p@lyp@geno=0
+  \edef\tmp{#1}%
+  \let\d@=\complexs@tpolyp@ges
+  \cstackdown#1,\E
+  \catcode47=\sl@shcode
+  \catcode`\-=\d@shcode
+}
+
+\def\polyglotpages{% Just in case, switch some catcodes.
+  \edef\sl@shcode{\the\catcode47}%
+  \edef\d@shcode{\the\catcode`\-}%
+  \catcode47=\tw@lve % /
+  \catcode`\-=\tw@lve % -
+  \polyglotpages@complexpages
+}
+
+\def\set@col@widths@complexpages{%
+  \trace{d}{set@col@widths@complexpages}%
+  \def\col@do##1{%
+    \ifcsname inactive@col@code##1\endcsname\else
+      \dimen0=\textwidth
+      \count255=\csname @max@cols@##1\endcsname
+      \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
+      \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
+      \trace{dmc}{Set column width for ##1 to be \the\csname column##1width\endcsname}%
+    \fi
+  }
+  \x@\each@col\diglot@list\E
+}
+  
+\plugin@endif
