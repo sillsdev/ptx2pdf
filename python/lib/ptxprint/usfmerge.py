@@ -1075,6 +1075,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
     # load stylesheets
     for k, s in stylesheets.items():
         sheets[k] = Sheets(s)
+    for k in keyarr:
+        if k not in sheets:
+          raise ValueError(f"No stylesheet provided for {k}")
     # Set-up potential synch points
     tmp=synchronise.split(",")
     if len(tmp) == 1:
