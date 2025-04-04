@@ -1138,14 +1138,39 @@ class ViewModel:
             if not config.getboolean('paper', 'ifgrid', fallback=False):
                 self._configset(config, 'grid/gridgraph', False)
                 self._configset(config, 'grid/gridlines', False)
+
+# diglot2captions = True
+# diglotadjcenter = False
+# diglotcolour = rgb(255,255,255)
+# diglotheaders = False
+# diglotjoinvrule = False
+# diglotmergemode = scores-chapter
+# diglotnotesrule = False
+# diglotpicsources = pri
+# diglotprifraction = 50
+# diglotsecconfig = Default
+# diglotsecfraction = 50
+# diglotsecprjguid = abfa13e41e4f378a79ba8e49727cca9100533940
+
+
+# [diglot_R]
+# projectid = WSG
+# projectguid = 9e944fc08f02acf9cc7033f4b006cc335e7ef48f
+# config = Short
+# page = 1
+# fraction = 50
+# captions = false
+# backcolor = #FFFFFF
                 
         if v < 2.24: # support polyglot
             if config.getboolean("snippets", "diglot"):
-                for k, v in {"projectid": "secprj", "projectguid": "secprjguid",
-                             "config": "secconf", "fraction": "secfraction"}.items():
-                    v = config.get("document", f"diglot{v}", fallback=None)
-                    if v is not None:
-                        self._configset(config, f"diglot_R/{k}", v)
+                print(f"{config.getboolean("snippets", "diglot")=}")
+                for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
+                             "config": "secconf", "fraction": "secfraction"}.items(): # add captions +/- colour
+                    val = config.get("document", f"diglot{a}", fallback=None)
+                    print(f"{k=} {val=}")
+                    if val is not None:
+                        self._configset(config, f"diglot_R/{k}", val)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":

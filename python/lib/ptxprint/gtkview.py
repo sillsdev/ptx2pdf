@@ -3646,10 +3646,11 @@ class GtkViewModel(ViewModel):
 
     def loadPolyglotSettings(self):
         # projects = self.builder.get_object("ls_projects")
-        self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
-        polyset = self.builder.get_object('bx_polyglot')
-        polyset.pack_start(self.gtkpolyglot, True, True, 0)
-        polyset.show_all()
+        if self.get("c_diglot"):
+            self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
+            polyset = self.builder.get_object('bx_polyglot')
+            polyset.pack_start(self.gtkpolyglot, True, True, 0)
+            polyset.show_all()
 
     def showmybook(self, isfirst=False):
         if self.initialised and self.showPDFmode == "preview": # preview is on
@@ -4413,6 +4414,7 @@ class GtkViewModel(ViewModel):
         if self.loadingConfig:
             return
         if self.get("c_diglot"):
+            self.loadPolyglotSettings()
             self.diglotViews['R'] = self.createDiglotView()
             self.set("c_doublecolumn", True)
             self.builder.get_object("c_doublecolumn").set_sensitive(False)
@@ -5303,7 +5305,7 @@ class GtkViewModel(ViewModel):
                 Gtk.main_iteration_do(False)
             runres = runjob.res
             return 20000 if runres else xdvigetpages(xdvname)
-        m = self.gtkpolyglot.get_fraction()
+        mid = self.gtkpolyglot.get_fraction()
         res = brent(0., 1., mid, score, 0.001)
         self.gtkpolyglot.set_fraction(res)
         self.isDiglotMeasuring = False

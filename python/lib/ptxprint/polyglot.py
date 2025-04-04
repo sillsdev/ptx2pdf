@@ -20,6 +20,9 @@ class PolyglotConfig:
         self.width = None
         self.captions = None
         self.color = None
+        
+    def __repr__(self):
+        return "polyglot config (" + ", ".join(str(getattr(self, a[0], "None")) for a in configmap.values()) + ")"
 
     def readConfig(self, config, sect):
         for k, v in configmap.items():

@@ -649,7 +649,7 @@ class TexModel:
                             res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
-                            res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
+                            res.extend(self._doptxfile(fname, False, "\\ptxfile{{{}}}", beforelast, i))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
                     spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
                                                                             self.dict["paragraph/missingchars"])
