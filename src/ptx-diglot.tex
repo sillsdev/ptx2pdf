@@ -3128,6 +3128,10 @@
   \ifcsname #1isDiglotColumn\endcsname
     \message{#1 is already a diglot column. You can only define it as one once!}%
   \else
+    \@newPolyglotCol{#1}%
+  \fi
+}
+\def\@newPolyglotCol#1{%
     \message{Defining #1 as an additional polyglot column.}%
     \newcolins@rt{\loc@T#1}% column top insert
     \newcolins@rt{\loc@B#1}% column bottom insert
@@ -3143,7 +3147,7 @@
     \x@\each@col\diglot@list\E% 
     {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
     \global\let\rev@layout@list\rev@diglot@list
-    \x@\csname #1isDiglotColumn\endcsname\empty
+    \x@\let\csname #1isDiglotColumn\endcsname\empty
 %    \x@\newb@x\csname #1discards\endcsname
     \x@\newb@x\csname #1box\endcsname
     \x@\newb@x\csname partial#1\endcsname
@@ -3174,7 +3178,6 @@
 %FIXMEs needing for polyglot processing:
 % UI!
 % The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
-  \fi
 }
 
 \def\extra@insert@alias#1#2{% Assumption: #1 is already in the form \foo, #2 is in the form \csname something\endcsname
