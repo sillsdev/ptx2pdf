@@ -253,16 +253,20 @@ class PolyglotSetup(Gtk.Box):
     def on_text_edited(self, widget, path, new_text, col_id):
         try:
             new_value = float(new_text)      # Convert input to float
-            new_value = round(new_value, 2)  # Keep 2 decimal places
-            # Update the ListStore
-            self.ls_treeview[path][col_id] = new_value
-            if col_id == m.width:
-                self.validate_page_widths() # Validate total widths after any edit
-            row_index = int(path)
-            self.updateRow(row_index)
-            self.update_layout_string()
         except ValueError:
             self.view.doStatus(f"Invalid input: {new_text}")  # Handle non-numeric input gracefully
+            return
+        new_value = round(new_value, 2)  # Keep 2 decimal places
+        # Update the ListStore
+        self.ls_treeview[path][col_id] = new_value
+        if col_id == m.width:
+            self.validate_page_widths() # Validate total widths after any edit
+        row_index = int(path)
+        self.updateRow(row_index)
+        self.update_layout_string()
+        sfx = self.ls_treeview[row_index][m.code]
+        if col_id == m.width:
+            self.view.set("_diglotPriFraction", str(new_value))
 
     def format_width_data_func(self, column, cell, model, iter, col_id):  # Added `data=None`
         value = model.get_value(iter, col_id)

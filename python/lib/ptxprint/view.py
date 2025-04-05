@@ -1869,6 +1869,7 @@ class ViewModel:
         else:
             digview.isDiglot = True
             digview.digSuffix = suffix
+            self.polyglots[suffix].updateView(digview)
             self.digSuffix = "L"
         self.diglotViews[suffix] = digview
         return digview

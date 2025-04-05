@@ -11,6 +11,10 @@ configmap = {
     "backcolor":    ("color", str)
 }
 
+def updateTMfromView(texmodel, view):
+    for k, v in configmap.items():
+        texmodel.dict[f"poly/{k}"] = view.get(f"poly{k}_", "")
+
 class PolyglotConfig:
     def __init__(self):
         self.prj = None
@@ -52,3 +56,8 @@ class PolyglotConfig:
             if not config.has_section(sect):
                 config.add_section(sect)
             config.set(sect, k, nv)
+
+    def updateView(self, view):
+        for k, v in configmap.items():
+            view.set(f"poly{k}_", str(getattr(self, v[0], "")))
+            

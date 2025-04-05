@@ -19,6 +19,7 @@ from ptxprint.pdf.pdfsanitise import sanitise
 from ptxprint.texpert import TeXpert
 from ptxprint.modelmap import ModelMap
 import ptxprint.modelmap as modelmap
+from ptxprint.polyglot import updateTMfromView
 import logging
 
 logger = logging.getLogger(__name__)
@@ -233,6 +234,8 @@ class TexModel:
                     / float(self.dict["texpert/linespacebase"]) / float(self.dict['paper/fontfactor']), dp=8)
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
+        if self.printer.isDiglot:
+            updateTMfromView(self, self.printer)
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
         if self.dict["project/ifusemodssty"] == "":
             modspath = os.path.join(cpath, "ptxprint-mods.sty")

@@ -200,11 +200,10 @@ class FancyIntro(Snippet):
 class Diglot(Snippet):
     processTex = True
 
-# \def\DiglotLFraction{{{document/diglotprifraction}}} # FixMe! 0.5 temporary below
-# \def\DiglotLFraction{{0.5}}  # Assuming this is the default (so leaving it out for now)
 # \diglotSwap{document/diglotswapside}
     def generateTex(self, model, diglotSide=""):
         baseCode = r"""
+\def\DiglotLFraction{{{poly/fraction}}}
 \addToSideHooks{{{s_}}}{{\RTL{document/ifrtl}}}
 {project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
@@ -216,18 +215,20 @@ class Diglot(Snippet):
 \polyglotpages{{{document/diglotlayout}}}
 
 """
-            # DiglotRFraction needs refactoring when we have proper pages and fractions per glot
         persideCode = r"""
 % Setup Diglot {s_}
-\newPolyglotCol {s_}
-\def\Diglot{s_}Fraction{{{diglot[fraction_]}}}
+{diglot[isNotR_]}\newPolyglotCol {s_}
+{diglot[project/ifusecustomsty]}\stylesheet{s_}{{{diglot[/ptxpath]}/custom.sty}}
+\stylesheet{s_}{{{diglot[/cfgrpath]}/ptxprint.sty}} % Right side (secondary) styles
+{diglot[project/ifusemodssty]}\stylesheet{s_}{{{diglot[/cfgrpath]}/ptxprint-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
+\def\Diglot{s_}Fraction{{{diglot[poly/fraction]}}}
 \addToSideHooks{{{s_}}}{{\RTL{diglot[document/ifrtl]}}}
 \def\regular{s_}{{"{diglot[document/fontregular]}{diglot[document/script]}"}}
 \def\bold{s_}{{"{diglot[document/fontbold]}"}}
 \def\italic{s_}{{"{diglot[document/fontitalic]}{diglot[document/script]}"}}
 \def\bolditalic{s_}{{"{diglot[document/fontbolditalic]}{diglot[document/script]}"}}
 \FontSizeUnit{s_}={diglot[paper/fontfactor]}pt
-\RTL{s_}{diglot[document/ifrtl]}
+%\RTL{s_}{diglot[document/ifrtl]}
 \def\LineSpacingFactor{s_}{{{diglot[paragraph/linespacingfactor]}}}
 \def\AfterChapterSpaceFactor{s_}{{{diglot[texpert/afterchapterspace]}}}
 \def\AfterVerseSpaceFactor{s_}{{{diglot[texpert/afterversespace]}}}
@@ -248,6 +249,7 @@ class Diglot(Snippet):
 
         res = baseCode.format(s_="L", **model.dict)
         for k, v in model.dict["diglots_"].items():
+            v.dict["isNotR_"] = "%" if k == "R" else ""
             res += persideCode.format(diglot=v.dict, s_=k, **model.dict)
         # res += "\n" + r"\def\addInt{" + "\n"
         # for a in (("L", "project/intfile"), ("R", "diglot/intfile")):
