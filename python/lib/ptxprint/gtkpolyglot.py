@@ -267,8 +267,8 @@ class PolyglotSetup(Gtk.Box):
         self.updateRow(row_index)
         self.update_layout_string()
         sfx = self.ls_treeview[row_index][m.code]
-        if col_id == m.width:
-            self.view.set("_diglotPriFraction", str(new_value))
+        if col_id == m.width and sfx == "L":
+            self.view.set("_diglotPriFraction", str(new_value / 100))
 
     def format_width_data_func(self, column, cell, model, iter, col_id):  # Added `data=None`
         value = model.get_value(iter, col_id)

@@ -59,5 +59,8 @@ class PolyglotConfig:
 
     def updateView(self, view):
         for k, v in configmap.items():
-            view.set(f"poly{k}_", str(getattr(self, v[0], "")))
+            val = getattr(self, v[0], "")
+            if k == "fraction":
+                val = val / 100
+            view.set(f"poly{k}_", str(val))
             
