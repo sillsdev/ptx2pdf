@@ -2082,7 +2082,7 @@
     \ifdiglotN@rmal%are the sides swapped?
       \x@\each@col\layout@list\E
     \else%
-      \x@\each@col\rev@diglot@list\E
+      \x@\each@col\rev@layout@list\E
     \fi%
   }%
   \trace{f}{Adjusting footnotebox}%
@@ -2846,7 +2846,6 @@
 
 \edef\diglot@list{LR}%
 \edef\layout@list{LR}%
-\edef\rev@diglot@list{RL}%
 \edef\rev@layout@list{RL}%
 \edef\digl@tc@ntentlist{}%
 
@@ -3123,6 +3122,15 @@
 %%%%%%%% This might one day be moved to polyglot-simplecols.tex
 % Below here are pieces of code that extend the basic diglot2 (2 column) layout into more columns.
 %
+\def\polyglotpages#1{% This is overwritten by the copy in polyglot-simplepages if that's loaded. Just does the basic functionality of setting the column order
+  \trace{d}{polyglotpages #1}
+  \xdef\diglot@list{#1}% The list of all columns
+  \xdef\layout@list{#1}% List of columns in normal order
+  \let\col@do=\mkrev@list
+  \def\list@type{layout}%
+  \xdef\rev@layout@list{}% mkrev@list will fill this with the columns in reverse order
+  \x@\each@col\layout@list\E%
+}
 
 \def\newPolyglotCol#1{%
   \ifcsname #1isDiglotColumn\endcsname
@@ -3141,12 +3149,11 @@
     \global\let\diglot@list=\digl@tc@ntentlist
     \global\let\layout@list=\digl@tc@ntentlist % BY default, layout is all columns.
     \let\digl@tc@ntentlist=\old@cts
-    %Now make the reversed list
-    \let\col@do=\mkrev@list\def\list@type{diglot}%
-    \xdef\rev@diglot@list{}
+    %Now make the reversed layout list
+    \let\col@do=\mkrev@list\def\list@type{layout}%
+    \xdef\rev@layout@list{}
     \x@\each@col\diglot@list\E% 
     {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
-    \global\let\rev@layout@list\rev@diglot@list
     \x@\let\csname #1isDiglotColumn\endcsname\empty
 %    \x@\newb@x\csname #1discards\endcsname
     \x@\newb@x\csname #1box\endcsname
