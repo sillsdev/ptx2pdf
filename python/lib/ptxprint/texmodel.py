@@ -198,6 +198,7 @@ class TexModel:
 
     def update(self):
         """ Update model from UI """
+        # breakpoint()
         j = os.path.join
         rel = lambda x, y:saferelpath(x, y).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now

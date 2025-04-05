@@ -304,6 +304,7 @@ class PolyglotSetup(Gtk.Box):
                 self.view.doStatus(_("Duplicate Code not allowed"))
                 return
 
+        prjguid = None
         if col_id == m.prj:  # Project column changed
             prjguid, available_configs = self.get_available_configs(text)
 
@@ -331,8 +332,16 @@ class PolyglotSetup(Gtk.Box):
                 if i != row_index and row[m.prj] == prj and row[m.cfg] == cfg:
                     self.view.doStatus(_("Duplicate Project+Configuration not allowed)"))
                     return
-                    
-        if col_id == m.prj: # Only done AFTER we've checked for duplicates
+            # Only AFTER we've checked for duplicates
+            sfx = self.ls_treeview[row_index][m.code]
+            polyview = self.view.diglotViews.get(sfx, None)
+            if prjguid is None:
+                prjguid = polyview.project.guid
+            if polyview is None:
+                polyview = self.view.createDiglotView(suffix=sfx)
+            polyview.updateProjectSettings(prj, prjguid, configName=cfg)
+
+        if col_id == m.prj:
             self.ls_treeview[row_index][m.prjguid] = prjguid
             self.ls_treeview[row_index][m.cfg] = new_cfg
 
