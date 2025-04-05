@@ -213,10 +213,14 @@ class Diglot(Snippet):
 \should@xist{{}}{{f{s_}}}
 \should@xist{{}}{{x{s_}}}
 \catcode `@=12
+\polyglotpages{{{document/diglotlayout}}}
 
 """
             # DiglotRFraction needs refactoring when we have proper pages and fractions per glot
         persideCode = r"""
+% Setup Diglot {s_}
+\newPolyglotCol {s_}
+\def\Diglot{s_}Fraction{{{diglot[fraction_]}}}
 \addToSideHooks{{{s_}}}{{\RTL{diglot[document/ifrtl]}}}
 \def\regular{s_}{{"{diglot[document/fontregular]}{diglot[document/script]}"}}
 \def\bold{s_}{{"{diglot[document/fontbold]}"}}
