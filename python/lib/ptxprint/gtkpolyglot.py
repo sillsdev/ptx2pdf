@@ -207,6 +207,8 @@ class PolyglotSetup(Gtk.Box):
 
     def get_available_configs(self, project):
         impprj = self.view.prjTree.findProject(project)
+        if impprj is None:
+            return None, []
         prjguid = impprj.guid
         prjobj = self.view.prjTree.getProject(prjguid)
         cfgList = list(prjobj.configs.keys())
@@ -313,19 +315,18 @@ class PolyglotSetup(Gtk.Box):
             prjguid, available_configs = self.get_available_configs(text)
 
             # Update the ListStore for this specific row
-            if 0 <= row_index < len(self.ls_config):  # Ensure row is valid
-                self.ls_config[row_index].clear()
-                list(map(lambda c: self.ls_config[row_index].append([c]), available_configs))
-                # Determine the new config to select
+            if row_index < len(self.ls_config):  # Ensure row is valid
+                lsc = self.ls_config[row_index]
+                lsc.clear()
                 if available_configs:
+                    for c in available_configs:
+                        lsc.append(c)
+                    # Determine the new config to select
                     new_cfg = old_cfg if old_cfg in available_configs else available_configs[0]
-                else:
-                    new_cfg = "Default"
-                
+                    tree_iter = self.ls_config[row_index].get_iter_first()
+                    if tree_iter:
+                        self.ls_config[row_index].set_value(tree_iter, 0, new_cfg)                
                 # Set the selected config
-                tree_iter = self.ls_config[row_index].get_iter_first()
-                if tree_iter:
-                    self.ls_config[row_index].set_value(tree_iter, 0, new_cfg)                
             self.treeview.queue_draw()  # Refresh UI            
 
         # Check for duplicated Project and Configuration names
@@ -343,7 +344,8 @@ class PolyglotSetup(Gtk.Box):
                 prjguid = polyview.project.guid
             if polyview is None:
                 polyview = self.view.createDiglotView(suffix=sfx)
-            polyview.updateProjectSettings(prj, prjguid, configName=cfg)
+            if polyview is not None:
+                polyview.updateProjectSettings(prj, prjguid, configName=cfg)
 
         if col_id == m.prj:
             self.ls_treeview[row_index][m.prjguid] = prjguid
@@ -609,7 +611,8 @@ class PolyglotSetup(Gtk.Box):
         for row in range(len(self.ls_treeview)):
             page = self.ls_treeview[row][m.pg]
             width = self.ls_treeview[row][m.width]
-            page_totals[page] += width  # Accumulate width for each page
+            if page is not None:
+                page_totals[page] += width  # Accumulate width for each page
 
         # Step 2: Apply formatting to **every row** that shares the same `1|2` page value
         for row in range(len(self.ls_treeview)):

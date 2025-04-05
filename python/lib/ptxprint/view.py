@@ -1447,7 +1447,7 @@ class ViewModel:
             for k, v in self.diglotViews.items():
                 self.digbasepics[k] = Piclist(self)
                 self.digbasepics[k].load_files(self)
-                if v.picinfos is None:
+                if v.picinfos is not None:
                     v.picinfos = Piclist(v)
                     v.picinfos.load_files(v)
             res = self.picinfos.load_files(self, base=self.digpasepics[k], suffix=k)

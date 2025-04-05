@@ -217,7 +217,6 @@ class Diglot(Snippet):
 """
         persideCode = r"""
 % Setup Diglot {s_}
-{diglot[isNotR_]}\newPolyglotCol {s_}
 {diglot[project/ifusecustomsty]}\stylesheet{s_}{{{diglot[/ptxpath]}/custom.sty}}
 \stylesheet{s_}{{{diglot[/cfgrpath]}/ptxprint.sty}} % Right side (secondary) styles
 {diglot[project/ifusemodssty]}\stylesheet{s_}{{{diglot[/cfgrpath]}/ptxprint-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
