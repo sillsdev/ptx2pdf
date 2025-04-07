@@ -1167,7 +1167,7 @@ class ViewModel:
                 
         if v < 2.24: # support polyglot
             if config.getboolean("snippets", "diglot"):
-                print(f"{config.getboolean("snippets", "diglot")=}")
+                print(f'{config.getboolean("snippets", "diglot")=}')
                 for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
                              "config": "secconf", "fraction": "secfraction"}.items(): # add captions +/- colour
                     val = config.get("document", f"diglot{a}", fallback=None)

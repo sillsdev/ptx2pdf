@@ -691,6 +691,7 @@ class GtkViewModel(ViewModel):
         self.blInitValue = None
         self.currCodeletVbox = None
         self.codeletVboxes = {}
+        self.gtkpolyglot = None
         self.ufPages = []
         self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
@@ -3645,12 +3646,13 @@ class GtkViewModel(ViewModel):
         self.showmybook(True)
 
     def loadPolyglotSettings(self):
-        # projects = self.builder.get_object("ls_projects")
         if self.get("c_diglot"):
-            self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
-            polyset = self.builder.get_object('bx_polyglot')
-            polyset.pack_start(self.gtkpolyglot, True, True, 0)
-            polyset.show_all()
+            if self.gtkpolyglot is None:
+                self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
+                polyset = self.builder.get_object('bx_polyglot')
+                polyset.pack_start(self.gtkpolyglot, True, True, 0)
+                polyset.show_all()
+            self.gtkpolyglot.load_polyglots_into_treeview()
 
     def showmybook(self, isfirst=False):
         if self.initialised and self.showPDFmode == "preview": # preview is on

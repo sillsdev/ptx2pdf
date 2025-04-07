@@ -203,7 +203,7 @@ class Diglot(Snippet):
 # \diglotSwap{document/diglotswapside}
     def generateTex(self, model, diglotSide=""):
         baseCode = r"""
-\def\DiglotLFraction{{{poly/fraction}}}
+\def\DiglotLFraction{{{poly/fraction1}}}
 \addToSideHooks{{{s_}}}{{\RTL{document/ifrtl}}}
 {project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
@@ -220,7 +220,7 @@ class Diglot(Snippet):
 {diglot[project/ifusecustomsty]}\stylesheet{s_}{{{diglot[/ptxpath]}/custom.sty}}
 \stylesheet{s_}{{{diglot[/cfgrpath]}/ptxprint.sty}} % Right side (secondary) styles
 {diglot[project/ifusemodssty]}\stylesheet{s_}{{{diglot[/cfgrpath]}/ptxprint-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
-\def\Diglot{s_}Fraction{{{diglot[poly/fraction]}}}
+\def\Diglot{s_}Fraction{{{diglot[poly/fraction1]}}}
 \addToSideHooks{{{s_}}}{{\RTL{diglot[document/ifrtl]}}}
 \def\regular{s_}{{"{diglot[document/fontregular]}{diglot[document/script]}"}}
 \def\bold{s_}{{"{diglot[document/fontbold]}"}}

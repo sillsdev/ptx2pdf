@@ -43,10 +43,9 @@ class PolyglotSetup(Gtk.Box):
         self.add_column("% Width", m.width, editable=True, renderer_type="text", align="right", width=60)
 
         self.treeview.connect("button-press-event", self.on_right_click)
-        self.load_polyglots_into_treeview()
 
         # Connect tooltips
-        for col_id in range(0,m.tooltip):
+        for col_id in range(0, m.tooltip):
             self.treeview.set_has_tooltip(True)  # Enable tooltips
             self.treeview.connect("query-tooltip", self.on_query_tooltip)  # Connect event
         self.validate_page_widths() # Make sure % Width gets colored red if invalid (even on loading)
@@ -57,27 +56,34 @@ class PolyglotSetup(Gtk.Box):
         scrolled_window.add(self.treeview)
 
         self.pack_start(scrolled_window, True, True, 0)
-        self.update_layout_string()
-        self.update_layout_preview()
 
     def load_polyglots_into_treeview(self):
         row_index = self.find_or_create_row("L")
+        row_index = self.find_or_create_row("R")
         for sfx in self.codes:
-            if sfx in self.view.polyglots:  # Only process existing polyglots
-                plyglt = self.view.polyglots[sfx]
-                row_index = self.find_or_create_row(sfx)  # Find or add row
-                prjguid, available_configs = self.get_available_configs(getattr(plyglt, 'prj'))
-                self.ls_config[row_index].clear()
-                for c in available_configs:
-                    self.ls_config[row_index].append([c])                
-                for idx, field in enumerate(_modelfields[1:8], start=1):
-                    self.ls_treeview[row_index][idx] = getattr(plyglt, field)
+            if sfx not in self.view.polyglots:  # Only process existing polyglots
+                continue
+            plyglot = self.view.polyglots[sfx]
+            row_index = self.find_or_create_row(sfx)  # Find or add row
+            prjguid, available_configs = self.get_available_configs(getattr(plyglot, 'prj'))
+            plyglot.prjguid = prjguid
+            self.ls_config[row_index].clear()
+            for c in available_configs:
+                self.ls_config[row_index].append([c])                
+            for idx, field in enumerate(_modelfields[1:8], start=1):
+                self.ls_treeview[row_index][idx] = getattr(plyglot, field)
+            if sfx != "L":
                 polyview = self.view.createDiglotView(suffix=sfx)
                 if polyview is None:
                     print(f"ERROR: Skipping over empty polyview!")
                 else:
                     self.ls_treeview[row_index][m.fontsize] = float(polyview.get("s_fontsize", 11.0))
                     self.ls_treeview[row_index][m.baseline] = float(polyview.get("s_linespacing", 15.0))
+            else:
+                polyview = self.view
+            # if polyview is not None:
+            #     plyglot.updateView(polyview)
+        self.update_layout_string()
 
     def find_or_create_row(self, sfx):
         if len(self.ls_treeview) >= 9:
@@ -87,30 +93,22 @@ class PolyglotSetup(Gtk.Box):
         # Check if row already exists
         for i, row in enumerate(self.ls_treeview):
             if row[m.code] == sfx:
-                print(f"returning early with: {sfx}")
                 return i  # Return existing row index
 
         # First row logic: Locked with primary project settings
-        if len(self.ls_treeview) == 0:
+        if len(self.ls_treeview) == 0 and sfx == "L":
             pri_prj, pri_prjguid = self.get_curr_proj()
-            # prjobj = self.view.prjTree.getProject(pri_prjguid)
-            # cfgList = list(prjobj.configs.keys())  # Extract config options
-
-            new_row = ["L", "1", pri_prj, self.view.cfgid, False, 
-                       33.33, "#FFFFFF", pri_prjguid, 11.0, 14.0, "Tooltips", "#000000", 400]
+            cfid = self.view.cfgid
         else:
-            if sfx is None:
-                # Assign next available code automatically
-                available_codes = self.get_available_codes()
-                sfx = str(available_codes[m.code]) if available_codes else "" 
-
-            new_row = [sfx, "1", "(None)", "", False, 
-                       50.0, "#FFFFFF", "", 11.0, 14.0, "Tooltips", "#000000", 400]
-
-        # Append the new row and return its index
+            pri_prj = "(None)"
+            pri_prjguid = ""
+            cfid = ""
+        new_row = [sfx, "1", pri_prj, cfid, False, 50.0, "#FFFFFF", pri_prjguid,
+                   11.0, 14.0, "Tooltips", "#000000", 400]
         self.ls_treeview.append(new_row)
         row_index = len(self.ls_treeview) - 1  
-
+        if cfid != "":
+            self.updateRow(row_index)
         return row_index  # Return the new row index
         
     def get_suffix_from_row(self, row_index):
@@ -316,6 +314,7 @@ class PolyglotSetup(Gtk.Box):
         prjguid = None
         if col_id == m.prj:  # Project column changed
             prjguid, available_configs = self.get_available_configs(text)
+            self.ls_treeview[row_index][m.prjguid] = prjguid
 
             # Update the ListStore for this specific row
             if row_index < len(self.ls_config):  # Ensure row is valid
@@ -342,9 +341,13 @@ class PolyglotSetup(Gtk.Box):
                     return
             # Only AFTER we've checked for duplicates
             sfx = self.ls_treeview[row_index][m.code]
+            polyglot = self.view.polyglots.get(sfx, None)
+            if polyglot is not None:
+                polyglot.prj = prj
+                polyglot.cfg = cfg
             polyview = self.view.diglotViews.get(sfx, None)
             if prjguid is None:
-                prjguid = polyview.project.guid
+                prjguid = self.ls_treeview[row_index][m.prjguid]
             if polyview is None:
                 polyview = self.view.createDiglotView(suffix=sfx)
             if polyview is not None:
@@ -382,13 +385,16 @@ class PolyglotSetup(Gtk.Box):
         if sfx != "L":
             aview = self.view.diglotViews.get(sfx, None)
             if aview is None:
-                aview = self.view.createView(sfx)
+                breakpoint()
+                aview = self.view.createDiglotView(sfx)
         else:
             aview = self.view
+        if aview is None:
+            return None
         for idx, field in enumerate(_modelfields[1:8], start=1):
             val = self.ls_treeview[row_index][idx]
             setattr(plyglt, field, val)
-            aview.set(f"poly{m(idx).name}", val)
+            aview.set(f"poly{m(idx).name}_", val, skipmissing=True)
         return aview
         
     def refresh_code_dropdowns(self):
@@ -637,9 +643,6 @@ class PolyglotSetup(Gtk.Box):
 
     def update_layout_string(self):
         t = self.generate_layout_from_treeview()
-        # w = self.view.get('t_layout')
-        # if not "/" in w.get_text():
-            # w.set_text(t)
         self.view.set('t_layout', t)
         self.update_layout_preview()
 
@@ -648,7 +651,7 @@ class PolyglotSetup(Gtk.Box):
         codes_by_side = {"1": [], "2": []}  # Store codes grouped by page side
         for row in self.ls_treeview:
             code, side = row[m.code], row[m.pg]
-            if code:
+            if code and side:
                 codes_by_side[side].append(code)
 
         # Step 2: Construct the layout string
@@ -778,7 +781,7 @@ class PolyglotSetup(Gtk.Box):
                 # Retrieve the background color from the TreeView
                 color_hex = "#FFFFFF"  # Default to white
                 for row in self.ls_treeview:
-                    if row[m.code] == code:  # Match the code in the liststore
+                    if row[m.code] == code and row[m.color]:  # Match the code in the liststore
                         color_hex = row[m.color]  # Column 6 contains the color
                         break
 

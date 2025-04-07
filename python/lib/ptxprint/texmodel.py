@@ -157,7 +157,7 @@ class TexModel:
     }
         # '|': 'pipe'
 
-    def __init__(self, printer, ptsettings, prjid=None, inArchive=False):
+    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None):
         from ptxprint.view import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
@@ -188,16 +188,18 @@ class TexModel:
         self._hdrmappings = localhdrmappings()
         if self.printer is not None:
             # self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
-            self.update()
+            self.update(diglotbinfo)
 
-    def docdir(self):
+    def docdir(self, base=None):
         #base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
-        base = self.dict["/ptxpath"]
-        docdir = self.dict["/ptxdocpath"]
-        logger.debug(f"TeX model basepaths: {base=}, {docdir=}")
-        return docdir, base
+        if base is None:
+            base = self
+        basedir = base.dict["/ptxpath"]
+        docdir = base.dict["/ptxdocpath"]
+        logger.debug(f"TeX model basepaths: {basedir=}, {docdir=}")
+        return docdir, basedir
 
-    def update(self):
+    def update(self, diglotbinfo):
         """ Update model from UI """
         # breakpoint()
         j = os.path.join
@@ -206,7 +208,7 @@ class TexModel:
         cpath = self.printer.project.srcPath(self.printer.cfgid)
         self.updatefields(ModelMap.keys())
         self.dict['project/id'] = self.printer.project.prjid
-        docdir, base = self.docdir()
+        docdir, base = self.docdir(base=diglotbinfo)
         self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = rel(j(cpath, "AdjLists"), docdir).replace("\\","/") + "/"
         self.dict['project/triggers'] = rel(j(cpath, "triggers"), docdir).replace("\\","/") + "/"
@@ -291,6 +293,10 @@ class TexModel:
         for a in ('project/frontfile', 'project/ptxprintstyfile_', 'diglot/ptxprintstyfile_'):
             if a not in self.dict:
                 self.dict[a] = ''
+
+        # handle diglot fractions
+        if self.dict['poly/fraction']:
+            self.dict['poly/fraction1'] = str(float(self.dict['poly/fraction']) / 100.)
 
         # Any more absolute paths?
         for a in ('diglot/ptxprintstyfile_',):

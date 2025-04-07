@@ -1,6 +1,7 @@
 from ptxprint.utils import f2s
 
 # 'code', 'pg', 'prj', 'cfg', 'captions', 'width', 'color', 'prjguid'
+# poly/k: (attr, type)
 configmap = { 
     "projectid":    ("prj", str),
     "projectguid":  ("prjguid", str),
@@ -13,8 +14,9 @@ configmap = {
 
 def updateTMfromView(texmodel, view):
     for k, v in configmap.items():
-        print(f"{k}={view.get(f"poly{k}_", "")}")
-        texmodel.dict[f"poly/{k}"] = view.get(f"poly{k}_", "")
+        val = view.get(f"poly{k}_", "")
+        # print(f"{k}={val}")
+        texmodel.dict[f"poly/{k}"] = val 
 
 class PolyglotConfig:
     def __init__(self):
@@ -62,6 +64,6 @@ class PolyglotConfig:
         for k, v in configmap.items():
             val = getattr(self, v[0], "")
             if k == "fraction":
-                val = val / 100
-            view.set(f"poly{k}_", str(val))
+                val = (val or 0) / 100
+            view.set(f"poly{k}_", str(val), skipmissing=True)
             
