@@ -13,6 +13,7 @@ configmap = {
 
 def updateTMfromView(texmodel, view):
     for k, v in configmap.items():
+        print(f"{k}={view.get(f"poly{k}_", "")}")
         texmodel.dict[f"poly/{k}"] = view.get(f"poly{k}_", "")
 
 class PolyglotConfig:

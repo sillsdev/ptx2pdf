@@ -797,7 +797,10 @@ class ViewModel:
                     pg = PolyglotConfig()
                     pg.readConfig(config, s)
                     self.polyglots[k] = pg
-                    self.createDiglotView(k)
+                    if k != "L":
+                        self.createDiglotView(k)
+                    else:
+                        pg.updateView(self)
         else:
             self.setPrintBtnStatus(2)
             self.diglotViews = {}
@@ -1171,6 +1174,8 @@ class ViewModel:
                     print(f"{k=} {val=}")
                     if val is not None:
                         self._configset(config, f"diglot_R/{k}", val)
+                val = config.get("document", "diglotprifraction", fallback=50)
+                self._configset(config, f"poly/fraction", val)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
@@ -1870,7 +1875,7 @@ class ViewModel:
             digview.isDiglot = True
             digview.digSuffix = suffix
             self.polyglots[suffix].updateView(digview)
-            self.digSuffix = "L"
+            self.digSuffix = suffix
         self.diglotViews[suffix] = digview
         return digview
 

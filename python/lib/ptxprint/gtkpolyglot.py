@@ -68,7 +68,8 @@ class PolyglotSetup(Gtk.Box):
                 row_index = self.find_or_create_row(sfx)  # Find or add row
                 prjguid, available_configs = self.get_available_configs(getattr(plyglt, 'prj'))
                 self.ls_config[row_index].clear()
-                list(map(lambda c: self.ls_config[row_index].append([c]), available_configs))
+                for c in available_configs:
+                    self.ls_config[row_index].append([c])                
                 for idx, field in enumerate(_modelfields[1:8], start=1):
                     self.ls_treeview[row_index][idx] = getattr(plyglt, field)
                 polyview = self.view.createDiglotView(suffix=sfx)
@@ -111,6 +112,10 @@ class PolyglotSetup(Gtk.Box):
         row_index = len(self.ls_treeview) - 1  
 
         return row_index  # Return the new row index
+        
+    def get_suffix_from_row(self, row_index):
+        res = getattr(self.ls_treeview[row_index], m.code, None)
+        return res
 
     def add_column(self, title, col_id, editable=False, renderer_type="text", options=None, align="left", width=70):
         # Function to disable editing and gray out text for Row 0
@@ -267,8 +272,6 @@ class PolyglotSetup(Gtk.Box):
         self.updateRow(row_index)
         self.update_layout_string()
         sfx = self.ls_treeview[row_index][m.code]
-        if col_id == m.width and sfx == "L":
-            self.view.set("_diglotPriFraction", str(new_value / 100))
 
     def format_width_data_func(self, column, cell, model, iter, col_id):  # Added `data=None`
         value = model.get_value(iter, col_id)
@@ -320,7 +323,7 @@ class PolyglotSetup(Gtk.Box):
                 lsc.clear()
                 if available_configs:
                     for c in available_configs:
-                        lsc.append(c)
+                        lsc.append([c])   
                     # Determine the new config to select
                     new_cfg = old_cfg if old_cfg in available_configs else available_configs[0]
                     tree_iter = self.ls_config[row_index].get_iter_first()
@@ -372,19 +375,21 @@ class PolyglotSetup(Gtk.Box):
 
     def updateRow(self, row_index):
         sfx = self.ls_treeview[row_index][m.code]
-        if sfx == "L":
-            return
         plyglt = self.view.polyglots.get(sfx, None)
         if plyglt is None:
             plyglt = PolyglotConfig()
             self.view.polyglots[sfx] = plyglt
+        if sfx != "L":
+            aview = self.view.diglotViews.get(sfx, None)
+            if aview is None:
+                aview = self.view.createView(sfx)
+        else:
+            aview = self.view
         for idx, field in enumerate(_modelfields[1:8], start=1):
-            setattr(plyglt, field, self.ls_treeview[row_index][idx])
-        
-        polyview = self.view.diglotViews.get(sfx, None)
-        if polyview is None:
-            polyview = self.view.createDiglotView(suffix=sfx)
-        return polyview
+            val = self.ls_treeview[row_index][idx]
+            setattr(plyglt, field, val)
+            aview.set(f"poly{m(idx).name}", val)
+        return aview
         
     def refresh_code_dropdowns(self):
         if hasattr(self, "code_renderer"):  # Ensure renderer exists before updating
@@ -571,11 +576,13 @@ class PolyglotSetup(Gtk.Box):
     def set_fraction(self, f):
         self.ls_treeview[0][m.width] = f * 100
         self.ls_treeview[1][m.width] = (1 - f) * 100
+        self.view.set("polyfraction_", f * 100)
+        self.view.diglotViews["R"].set("polyfraction_", (1 - f) * 100)
         self.updateRow(0)
+        self.updateRow(1)
 
     def get_fraction(self):
         w = self.ls_treeview[0][m.width] / 100
-        print(f"{w=}")
         return w
 
     def distribute_width_evenly(self, widget):

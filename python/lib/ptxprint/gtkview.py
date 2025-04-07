@@ -240,7 +240,7 @@ c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
 """.split()
 # tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
-# l_diglotPriFraction s_diglotPriFraction btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
+# lpolyfraction_ spolyfraction_ btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
 
 _ui_experimental = """
 """.split()
@@ -271,8 +271,8 @@ _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "
                   "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2", "col_noteLines", 
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
                   # "col_dibackcol", "fcb_diglotSecProject", "ecb_diglotSecConfig", "c_diglot2captions", 
-                  # "s_diglotPriFraction", "btn_diglotSwitch", "btn_adjust_diglot", "l_diglotSecProject",
-                  # "l_dibackcol", "l_diglotSecConfig", "l_diglotPriFraction", "tb_diglotSwitch"]  # "c_pdfGridlines" "bx_imageMsgBar", 
+                  # "spolyfraction_", "btn_diglotSwitch", "btn_adjust_diglot", "l_diglotSecProject",
+                  # "l_dibackcol", "l_diglotSecConfig", "lpolyfraction_", "tb_diglotSwitch"]  # "c_pdfGridlines" "bx_imageMsgBar", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -434,7 +434,7 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
-    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"), # "s_diglotPriFraction", 
+    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"), # "spolyfraction_", 
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
@@ -1511,7 +1511,7 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"
+        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "btn_adjust_diglot", "spolyfraction_"
             self.builder.get_object(w).set_sensitive(not self.printReason)
 
     def checkFontsMissing(self):
@@ -5299,6 +5299,7 @@ class GtkViewModel(ViewModel):
         btn.set_active(True)
         xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         def score(x):
+            print(f"{x=}")
             self.gtkpolyglot.set_fraction(x)
             runjob = self.callback(self, maxruns=1, noview=True)
             while runjob.thread.is_alive():
@@ -5306,6 +5307,7 @@ class GtkViewModel(ViewModel):
             runres = runjob.res
             return 20000 if runres else xdvigetpages(xdvname)
         mid = self.gtkpolyglot.get_fraction()
+        print(f"{mid=}")
         res = brent(0., 1., mid, score, 0.001)
         self.gtkpolyglot.set_fraction(res)
         self.isDiglotMeasuring = False
