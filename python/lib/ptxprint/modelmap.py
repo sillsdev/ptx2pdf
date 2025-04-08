@@ -251,7 +251,7 @@ _map = {
 
     "document/ifdiglot":            ("c_diglot", "diglot", lambda w,v : "" if v else "%"),
     "document/ifndiglot":           ("c_diglot", "diglot", lambda w,v : "%" if v else ""),
-    "poly/fraction":                ("polyfraction_", "diglot", lambda w,v: str(float(v) / 100)),
+    "poly/fraction":                ("polyfraction_", "diglot", lambda w,v: str(float(v or 0.) / 100)),
     "document/diglotlayout":        ("t_layout", "diglot", None),
     "document/diglotserialbooks":   ("t_diglotSerialBooks", "diglot", None),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", "diglot", lambda w,v: "true" if v else "false"),
