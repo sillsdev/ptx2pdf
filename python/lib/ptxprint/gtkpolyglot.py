@@ -385,7 +385,7 @@ class PolyglotSetup(Gtk.Box):
         if sfx != "L":
             aview = self.view.diglotViews.get(sfx, None)
             if aview is None:
-                breakpoint()
+                # breakpoint()
                 aview = self.view.createDiglotView(sfx)
         else:
             aview = self.view

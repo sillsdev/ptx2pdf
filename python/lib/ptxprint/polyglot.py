@@ -64,6 +64,6 @@ class PolyglotConfig:
         for k, v in configmap.items():
             val = getattr(self, v[0], "")
             if k == "fraction":
-                val = (val or 0) / 100
+                val = (val or 0) # / 100
             view.set(f"poly{k}_", str(val), skipmissing=True)
             
