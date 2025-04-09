@@ -155,6 +155,14 @@
 \or glue\or  kern\or penalty\or unset\or mathmode%15
 \else UNK\fi\fi}
 
+% we can't turn count255 into a letter with \char, as \char gives the font character.
+\def\@Alph#1{\ifnum #1<0 \error{Number too low}\else \ifcase #1
+@\or A\or B\or C\or D\or E\or F\or G\or H\or I\or J\or 
+K\or L\or M\or N\or O\or P\or Q\or R\or S\or 
+T\or U\or V\or W\or X\or Y\or Z\else \error{Number too high}\fi\fi}
+
+\def\sw@llowtwo#1#2{}
+
 %Defined penalties
 \xdef\sp@cialpen{-10001}
 \def\newsp@cialpen#1{%define a new special penalty {#1}  which gets set as the next special penalty number (assuming all special penalties are registered with this function.
