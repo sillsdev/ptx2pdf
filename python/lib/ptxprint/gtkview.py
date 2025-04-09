@@ -3646,6 +3646,8 @@ class GtkViewModel(ViewModel):
         self.showmybook(True)
 
     def loadPolyglotSettings(self):
+        if self.gtkpolyglot is not None:
+            self.gtkpolyglot.clear_polyglot_treeview()
         if self.get("c_diglot"):
             if self.gtkpolyglot is None:
                 self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
@@ -4430,6 +4432,9 @@ class GtkViewModel(ViewModel):
             self.onUpdatePicCaptionsClicked(None)
 
     # def onDiglotSwitchClicked(self, btn): #FixMe!
+    # This method could be resurrected IF it hides under a button 
+    # that is only sensitive for DIGLOT and not POLYGLOT.
+    # A bit like the auto-adjust width fraction (which is only available on Diglot)
         # oprjid = None
         # oconfig = None
         # if self.otherDiglot is not None:

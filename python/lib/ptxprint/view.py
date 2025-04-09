@@ -790,6 +790,8 @@ class ViewModel:
             self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
+        self.diglotViews = {}
+        self.polyglots = {}
         if self.get("c_diglot") and not self.isDiglot:
             for s in config.sections():
                 if s.startswith("diglot_"):
@@ -803,7 +805,6 @@ class ViewModel:
                         pg.updateView(self)
         else:
             self.setPrintBtnStatus(2)
-            self.diglotViews = {}
         self.loadingConfig = False
         if self.get("bl_fontR", skipmissing=True) is None:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
@@ -1389,6 +1390,11 @@ class ViewModel:
             os.utime(cfgpath, (cfgt, cfgt))
         self.savePics(force=force)
         self.saveStyles(force=force)
+        for k,v in self.diglotViews.items():
+            if v.isChanged:
+                print(f"Saving Diglot config: {k} - YAY!")
+                v.saveConfig()
+                v.changed(False)
 
     def saveAdjlists(self, force=False):
         for bk, adj in self.adjlists.items():
@@ -1455,7 +1461,7 @@ class ViewModel:
                 if v.picinfos is not None:
                     v.picinfos = Piclist(v)
                     v.picinfos.load_files(v)
-            res = self.picinfos.load_files(self, base=self.digpasepics[k], suffix=k)
+            res = self.picinfos.load_files(self, base=self.digbasepics[k], suffix=k)
         if not res and len(self.diglotViews) and len(self.picinfos.get_pics()):
             for k, v in self.diglotViews.items():
                 self.picinfos.merge(v.picinfos, k)
@@ -1858,7 +1864,9 @@ class ViewModel:
         if suffix not in self.polyglots:
             print(f"Returned early from: createDiglotView. {suffix=}")
             return None
-        prj = self.prjTree.getProject(self.polyglots[suffix].prjguid)
+        prjguid = self.polyglots[suffix].prjguid
+        print(f"in view.createDiglotView: {prjguid=}")
+        prj = self.prjTree.getProject(prjguid)
         cfg = self.polyglots[suffix].cfg
         if prj is None or cfg is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))

@@ -973,7 +973,7 @@ class RunJob:
             self.printer.doError(_("Warning: Could not locate decorative PDF(s):"),
                     secondary="\n".join(warnings))
 
-    def gatherIllustrations(self, info, jobs, ptfolder, digtexmodel=None):
+    def gatherIllustrations(self, info, jobs, ptfolder, diglots=False):
         self.printer.incrementProgress(stage="gp")
         logger.debug(f"Gathering illustrations: {self.printer.picinfos}")
         picinfos = self.printer.picinfos
