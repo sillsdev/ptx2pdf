@@ -452,13 +452,9 @@ class PolyglotSetup(Gtk.Box):
         # Find the top-level window (main parent)
         parent_window = self.get_toplevel() if hasattr(self, "get_toplevel") else None
         
-        # Use the custom ColorPickerDialog instead of Gtk.ColorChooserDialog
-        dialog = ColorPickerDialog(parent=parent_window)
-
-        # Set the current color (optional, if you want to highlight it in the dialog)
+        # Set the current color (to highlight it in the dialog)
         current_color = model[path][m.color]  # Hex color format
-        # Note: Our ColorPickerDialog doesn't currently highlight the current color,
-        # but it could be extended to do so if needed.
+        dialog = ColorPickerDialog(parent=parent_window, current_color=current_color)
 
         if dialog.run() == Gtk.ResponseType.OK:
             color_hex = dialog.selected_color  # Get the selected color
@@ -472,40 +468,6 @@ class PolyglotSetup(Gtk.Box):
             
             # Update the model with the selected hex color
             model.set_value(iter, m.color, color_hex)
-            row_index = int(path[0])
-            self.updateRow(row_index)
-            self.update_layout_string()
-
-        dialog.destroy()
-
-    def old_set_color_from_menu(self, widget):
-        selected = self.get_selected_row()
-        if selected:
-            model, iter, path = selected
-            self.on_color_clicked(None, path, model[path][m.color])
-
-    def old_on_color_clicked(self, widget, path, text):
-        model = self.ls_treeview
-        iter = model.get_iter(path)
-        # Find the top-level window (main parent)
-        parent_window = self.get_toplevel() if hasattr(self, "get_toplevel") else None
-        # Create the color picker with a valid parent
-        dialog = Gtk.ColorChooserDialog(title=_("Pick a background color"), parent=parent_window)
-
-        current_color = model[path][m.color]  # Hex color format
-        if current_color:
-            rgba = Gdk.RGBA()
-            rgba.parse(current_color)
-            dialog.set_rgba(rgba)
-
-        if dialog.run() == Gtk.ResponseType.OK:
-            color = dialog.get_rgba()
-            color_hex = "#{:02x}{:02x}{:02x}".format(
-                int(color.red * 255),
-                int(color.green * 255),
-                int(color.blue * 255)
-            )
-            model.set_value(iter, m.color, color_hex)  # Update color in ListStore
             row_index = int(path[0])
             self.updateRow(row_index)
             self.update_layout_string()

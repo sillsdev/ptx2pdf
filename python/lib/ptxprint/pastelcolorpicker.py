@@ -22,28 +22,26 @@ PREDEFINED_COLORS = [
 ]
 
 class ColorPickerDialog(Gtk.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, current_color=None):  # Add current_color parameter
         Gtk.Dialog.__init__(self, title="Choose a Color", transient_for=parent, flags=0)
         self.set_default_size(370, 300)
         self.selected_color = None
+        self.current_color = current_color  # Store the current color
         box = self.get_content_area()
 
         grid = Gtk.Grid(column_spacing=10, row_spacing=10, margin=10)
         box.add(grid)
 
-        # Create color swatches using EventBox and DrawingArea
         for i, (hex_code, color_name) in enumerate(PREDEFINED_COLORS):
             event_box = Gtk.EventBox()
             event_box.set_size_request(80, 80)
             drawing_area = Gtk.DrawingArea()
-            drawing_area.connect("draw", self.draw_color, hex_code)
+            drawing_area.connect("draw", self.draw_color, hex_code, hex_code == current_color)
             event_box.add(drawing_area)
             event_box.connect("button-press-event", self.on_color_chosen, hex_code)
-            # Add tooltip with name and hex code
             event_box.set_tooltip_text(f"{color_name}\n{hex_code}")
             grid.attach(event_box, i % 4, i // 4, 1, 1)
 
-        # Custom color chooser
         custom_button = Gtk.Button(label="Custom...")
         custom_button.set_size_request(80, 40)
         custom_button.connect("clicked", self.on_custom_color)
@@ -51,23 +49,21 @@ class ColorPickerDialog(Gtk.Dialog):
 
         self.show_all()
 
-    def draw_color(self, widget, cr, hex_code):
-        # Parse hex code to RGB
+    def draw_color(self, widget, cr, hex_code, is_current=False):
         r = int(hex_code[1:3], 16) / 255.0
         g = int(hex_code[3:5], 16) / 255.0
         b = int(hex_code[5:7], 16) / 255.0
 
-        # Set the color and fill the rectangle
         cr.set_source_rgb(r, g, b)
         cr.rectangle(0, 0, 80, 80)
         cr.fill()
 
-        # Draw a border
-        cr.set_source_rgb(0.5, 0.5, 0.5)  # Gray border
-        cr.set_line_width(1)
+        # Draw border, thicker if it's the current color
+        cr.set_source_rgb(0.5, 0.5, 0.5)
+        cr.set_line_width(3 if is_current else 1)
         cr.rectangle(0, 0, 80, 80)
         cr.stroke()
-
+        
     def on_color_chosen(self, widget, event, hex_code):
         self.selected_color = hex_code
         self.response(Gtk.ResponseType.OK)
@@ -79,25 +75,3 @@ class ColorPickerDialog(Gtk.Dialog):
             self.selected_color = rgba.to_string()
             self.response(Gtk.ResponseType.OK)
         dialog.destroy()
-
-# Demo window
-def main():
-    win = Gtk.Window(title="Test Color Picker")
-    win.connect("destroy", Gtk.main_quit)
-    win.set_border_width(10)
-
-    def open_dialog(button):
-        dialog = ColorPickerDialog(win)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            print("Chosen color:", dialog.selected_color)
-        dialog.destroy()
-
-    button = Gtk.Button(label="Pick a Color")
-    button.connect("clicked", open_dialog)
-    win.add(button)
-    win.show_all()
-    Gtk.main()
-
-if __name__ == "__main__":
-    main()
