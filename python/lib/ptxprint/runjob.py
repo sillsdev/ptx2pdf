@@ -278,6 +278,10 @@ class RunJob:
         diginfos = {}
         if len(self.printer.diglotViews):
             for k, dv in self.printer.diglotViews.items():
+                if dv is None:
+                    dv = self.printer.createDiglotView(k)
+                if dv is None:
+                    continue
                 dv.loadHyphenation()
                 # digfraction = info.dict["document/diglotprifraction"]
                 # digprjid = info.dict["document/diglotsecprj"]
@@ -565,7 +569,6 @@ class RunJob:
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         for k, diginfo in diginfos.items():
             texfiles = []
-            donebooks = []
             digdonebooks = []
             diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
             diginfo["project/books"] = digdonebooks
@@ -598,9 +601,10 @@ class RunJob:
             diginfo["cfgrpath_"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
             info.dict.setdefault("diglots_", {})[k] = diginfo
 
+        donebooks = []
         for j in jobs:
             b = j[0][0].first.book if j[1] else j[0]
-            logger.debug(f"Diglot[{k}]({b}): f{self.tmpdir} from f{self.prjdir}")
+            # logger.debug(f"Diglot[{k}]({b}): f{self.tmpdir} from f{self.prjdir}") # broken (missing k)
             inputfiles = []
             left = None
             for k, diginfo in diginfos.items():
@@ -625,9 +629,10 @@ class RunJob:
                 if digout is None:
                     continue
                 else:
-                    digdonebooks.append(digout)
+                    diginfo["project/books"].append(digout)
+                    self.books.append(digout)
             
-            if b not in nonScriptureBooks:
+            if left and b not in nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
@@ -645,7 +650,7 @@ class RunJob:
                 texfiles += [outFile, logFile]
 
         
-        if not len(donebooks) or not len(digdonebooks):
+        if not len(donebooks): # or not len(digdonebooks):
             unlockme()
             return []
 
@@ -658,7 +663,6 @@ class RunJob:
 
         info["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
         info["project/books"] = donebooks
-        self.books += digdonebooks
 
         # Pass all the needed parameters for the snippet from diginfo to info
         for k,v in _diglotprinter.items():
