@@ -84,8 +84,9 @@ class PolyglotSetup(Gtk.Box):
             for idx, field in enumerate(_modelfields[1:11], start=1):
                 val = getattr(plyglot, field)
                 self.ls_treeview[row_index][idx] = val
-            # if sfx == "L":
-                # polyview = self.view
+            if sfx == "L":
+                self.updateRow(row_index)
+            # polyview = self.view
             # else:
                 # polyview = self.view.createDiglotView(suffix=sfx)
             # if polyview is not None:
@@ -402,6 +403,9 @@ class PolyglotSetup(Gtk.Box):
         for idx, field in enumerate(_modelfields[1:11], start=1):
             val = self.ls_treeview[row_index][idx]
             setattr(plyglt, field, val)
+        if row_index == 0:
+            for a, b in {"fontsize": "s_fontsize", "baseline" : "s_linespacing", "color": "col_dibackcol"}.items():
+                self.view.set(b, self.ls_treeview[row_index][getattr(m, a)])
         
     def refresh_code_dropdowns(self):
         print(f"refresh_code_dropdowns")

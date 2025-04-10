@@ -229,14 +229,14 @@ class TexModel:
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
         fpath = j(cpath, "ptxprint-premods.tex")
         self.dict['/premodspath'] = rel(fpath, docdir).replace("\\","/")
+        if digcfg is not None:
+            digcfg.updateTM(self)
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
         self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
                     / float(self.dict["texpert/linespacebase"]) / float(self.dict['paper/fontfactor']), dp=8)
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
-        if digcfg is not None:
-            digcfg.updateTM(self)
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
         if self.dict["project/ifusemodssty"] == "":
             modspath = os.path.join(cpath, "ptxprint-mods.sty")

@@ -179,6 +179,8 @@ def coltoonemax(s):
             return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
         elif " " in s:
             return [float(x) for x in s.split(" ")]
+        elif s.startswith("#"):
+            return [float(int(s[i:i+2], 16))/256. for i in range(1, 6, 2)]
         else:
             return [0.8, 0.8, 0.8]
     except (ValueError, TypeError):
