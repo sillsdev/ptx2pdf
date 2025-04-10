@@ -282,9 +282,10 @@ class RunJob:
                 # digfraction = info.dict["document/diglotprifraction"]
                 # digprjid = info.dict["document/diglotsecprj"]
                 # digcfg = info.dict["document/diglotsecconfig"]
+                digcfg = self.printer.polyglots.get(k, None)
                 digprjdir = dv.project.path
                 digptsettings = ParatextSettings(digprjdir)
-                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive, diglotbinfo=info)
+                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive, diglotbinfo=info, digcfg=digcfg)
                 reasons = diginfos[k].prePrintChecks()
                 if len(reasons):
                     self.fail(", ".join(reasons) + " in diglot secondary")

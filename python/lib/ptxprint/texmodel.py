@@ -19,7 +19,6 @@ from ptxprint.pdf.pdfsanitise import sanitise
 from ptxprint.texpert import TeXpert
 from ptxprint.modelmap import ModelMap
 import ptxprint.modelmap as modelmap
-from ptxprint.polyglot import updateTMfromView
 import logging
 
 logger = logging.getLogger(__name__)
@@ -157,7 +156,7 @@ class TexModel:
     }
         # '|': 'pipe'
 
-    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None):
+    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None):
         from ptxprint.view import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
@@ -188,7 +187,7 @@ class TexModel:
         self._hdrmappings = localhdrmappings()
         if self.printer is not None:
             # self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
-            self.update(diglotbinfo)
+            self.update(diglotbinfo, digcfg)
 
     def docdir(self, base=None):
         #base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
@@ -199,7 +198,7 @@ class TexModel:
         logger.debug(f"TeX model basepaths: {basedir=}, {docdir=}")
         return docdir, basedir
 
-    def update(self, diglotbinfo):
+    def update(self, diglotbinfo, digcfg):
         """ Update model from UI """
         # breakpoint()
         j = os.path.join
@@ -236,8 +235,8 @@ class TexModel:
                     / float(self.dict["texpert/linespacebase"]) / float(self.dict['paper/fontfactor']), dp=8)
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
-        if self.printer.isDiglot or len(self.printer.diglotViews):
-            updateTMfromView(self, self.printer)
+        if digcfg is not None:
+            digcfg.updateTM(self)
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
         if self.dict["project/ifusemodssty"] == "":
             modspath = os.path.join(cpath, "ptxprint-mods.sty")
