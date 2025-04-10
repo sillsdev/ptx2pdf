@@ -187,7 +187,7 @@ class TexModel:
         self._hdrmappings = localhdrmappings()
         if self.printer is not None:
             # self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
-            self.update(diglotbinfo, digcfg)
+            self.update(diglotbinfo, digcfg=digcfg)
 
     def docdir(self, base=None):
         #base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
@@ -198,7 +198,7 @@ class TexModel:
         logger.debug(f"TeX model basepaths: {basedir=}, {docdir=}")
         return docdir, basedir
 
-    def update(self, diglotbinfo, digcfg):
+    def update(self, diglotbinfo, digcfg=None):
         """ Update model from UI """
         # breakpoint()
         j = os.path.join
@@ -294,8 +294,8 @@ class TexModel:
                 self.dict[a] = ''
 
         # handle diglot fractions
-        if self.dict['poly/fraction']:
-            self.dict['poly/fraction1'] = str(float(self.dict['poly/fraction']) / 100.)
+        # if self.dict['poly/fraction']:
+            # self.dict['poly/fraction1'] = str(float(self.dict['poly/fraction']) / 100.)
 
         # Any more absolute paths?
         for a in ('diglot/ptxprintstyfile_',):

@@ -801,8 +801,6 @@ class ViewModel:
                     self.polyglots[k] = pg
                     if k != "L":
                         self.createDiglotView(k)
-                    else:
-                        pg.updateView(self)
         else:
             self.setPrintBtnStatus(2)
         self.loadingConfig = False
@@ -1882,7 +1880,6 @@ class ViewModel:
         else:
             digview.isDiglot = True
             digview.digSuffix = suffix
-            self.polyglots[suffix].updateView(digview)
             self.digSuffix = suffix
         self.diglotViews[suffix] = digview
         return digview

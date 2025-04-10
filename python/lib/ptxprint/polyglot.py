@@ -1,22 +1,26 @@
 from ptxprint.utils import f2s
+from ptxprint.modelmap import ModelMap
 
-# 'code', 'pg', 'prj', 'cfg', 'captions', 'width', 'color', 'prjguid'
+# 'code', 'pg', 'prj', 'cfg', 'captions', 'fraction', 'fontsize', 'baseline', 'weight', 'color', 'prjguid'
 # poly/k: (attr, type)
 configmap = { 
-    "projectid":    ("prj", str),
-    "projectguid":  ("prjguid", str),
-    "config":       ("cfg", str),
-    "page":         ("pg", str),
-    "fraction":     ("width", float),
-    "captions":     ("captions", bool),
-    "backcolor":    ("color", str)
+    "projectid":    ("prj", str, None),
+    "projectguid":  ("prjguid", str, None),
+    "config":       ("cfg", str, None),
+    "page":         ("pg", str, None),
+    "fraction":     ("fraction", float, ["poly/fraction"]),
+    "weight":       ("weight", float, None),
+    "fontsize":     ("fontsize", float, ["paper/fontfactor"]),
+    "baseline":     ("baseline", float, ["paragraph/linespacing"]),
+    "captions":     ("captions", bool, ["document/iffigshowcaptions"]),
+    "backcolor":    ("color", str, ["document/diglotcolour", "document/ifdiglotcolour"])
 }
 
-def updateTMfromView(texmodel, view):
-    for k, v in configmap.items():
-        val = view.get(f"poly{k}_", "")
+# def updateTMfromView(texmodel, view):
+    # for k, v in configmap.items():
+        # val = view.get(f"poly{k}_", "")
         # print(f"{k}={val}")
-        texmodel.dict[f"poly/{k}"] = val 
+        # texmodel.dict[f"poly/{k}"] = val 
 
 class PolyglotConfig:
     def __init__(self):
@@ -24,7 +28,10 @@ class PolyglotConfig:
         self.prjguid = None
         self.cfg = None
         self.pg = None
-        self.width = None
+        self.fraction = None
+        self.weight = None
+        self.fontsize = None
+        self.baseline = None
         self.captions = None
         self.color = None
         
@@ -64,6 +71,17 @@ class PolyglotConfig:
         for k, v in configmap.items():
             val = getattr(self, v[0], "")
             if k == "fraction":
-                val = (val or 0) # / 100
+                val = (val or 0)
             view.set(f"poly{k}_", str(val), skipmissing=True)
             
+    def updateTM(self, texmodel):
+        for k, v in configmap.items():
+            if v[2] is None:
+                continue
+            val = getattr(self, v[0], "")
+            for t in v[2]:
+                fn = ModelMap.get(t, None)
+                if fn is not None:
+                    fn = fn.process
+                texmodel.dict[t] = fn(None, val) if fn is not None else val
+        
