@@ -4176,6 +4176,8 @@ the text. This may be useful for precise measuring.</property>
                     <property name="hexpand">False</property>
                     <property name="vexpand">False</property>
                     <property name="shadow-type">in</property>
+                    <property name="min-content-width">150</property>
+                    <property name="max-content-width">200</property>
                     <property name="propagate-natural-width">True</property>
                     <property name="propagate-natural-height">True</property>
                     <child>

@@ -5,6 +5,7 @@ import re, json
 from enum import IntEnum
 from ptxprint.utils import _
 from ptxprint.polyglot import PolyglotConfig
+from ptxprint.pastelcolorpicker import ColorPickerDialog
 
 _modeltypes = (str, str, str, str, bool, float, str, str, float, float, str, str, int)
 _modelfields = ('code', 'pg', 'prj', 'cfg', 'captions', 'width', 'color', 'prjguid', 'fontsize', 'baseline', 'tooltip', 'widcol', 'bold')
@@ -446,6 +447,44 @@ class PolyglotSetup(Gtk.Box):
             self.on_color_clicked(None, path, model[path][m.color])
 
     def on_color_clicked(self, widget, path, text):
+        model = self.ls_treeview
+        iter = model.get_iter(path)
+        # Find the top-level window (main parent)
+        parent_window = self.get_toplevel() if hasattr(self, "get_toplevel") else None
+        
+        # Use the custom ColorPickerDialog instead of Gtk.ColorChooserDialog
+        dialog = ColorPickerDialog(parent=parent_window)
+
+        # Set the current color (optional, if you want to highlight it in the dialog)
+        current_color = model[path][m.color]  # Hex color format
+        # Note: Our ColorPickerDialog doesn't currently highlight the current color,
+        # but it could be extended to do so if needed.
+
+        if dialog.run() == Gtk.ResponseType.OK:
+            color_hex = dialog.selected_color  # Get the selected color
+            
+            # Handle case where custom color returns "rgb(r,g,b)" format
+            if color_hex.startswith("rgb("):
+                # Extract RGB values and convert to hex
+                rgb = color_hex[4:-1].split(",")
+                r, g, b = map(int, rgb)
+                color_hex = "#{:02x}{:02x}{:02x}".format(r, g, b)
+            
+            # Update the model with the selected hex color
+            model.set_value(iter, m.color, color_hex)
+            row_index = int(path[0])
+            self.updateRow(row_index)
+            self.update_layout_string()
+
+        dialog.destroy()
+
+    def old_set_color_from_menu(self, widget):
+        selected = self.get_selected_row()
+        if selected:
+            model, iter, path = selected
+            self.on_color_clicked(None, path, model[path][m.color])
+
+    def old_on_color_clicked(self, widget, path, text):
         model = self.ls_treeview
         iter = model.get_iter(path)
         # Find the top-level window (main parent)
