@@ -2,6 +2,7 @@
 import sys, os, re, io
 from ptxprint.usxutils import Usfm, Sheets
 from usfmtc.usfmgenerate import usx2usfm
+from usfmtc.usfmparser import Grammar
 import argparse, difflib, sys
 from enum import Enum,Flag
 from itertools import groupby
@@ -208,7 +209,7 @@ class Chunk(list):
                     outf.write(f"\n\\{e.get('style', '')} {e.text}")
                     lastel = e
                 else:
-                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else None), lastel=lastel)
+                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else Grammar), lastel=lastel)
             if lastel is not None and lastel.tail:
                 outf.write(lastel.tail)
             res = outf.getvalue() + "\n"
