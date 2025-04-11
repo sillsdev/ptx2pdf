@@ -275,32 +275,39 @@ class RunJob:
         else:
             joblist = [[j] for j in jobs]
 
-        if self.printer.diglotView is not None:
-            self.printer.diglotView.loadHyphenation()
-            digfraction = info.dict["document/diglotprifraction"]
-            digprjid = info.dict["document/diglotsecprj"]
-            digcfg = info.dict["document/diglotsecconfig"]
-            digprjdir = self.printer.diglotView.project.path
-            digptsettings = ParatextSettings(digprjdir)
-            diginfo = TexModel(self.printer.diglotView, digptsettings, digprjid, inArchive=self.inArchive)
-            reasons = diginfo.prePrintChecks()
-            if len(reasons):
-                self.fail(", ".join(reasons) + " in diglot secondary")
-                return
-            digbooks = self.printer.diglotView.getAllBooks()
-            badbooks = set()
-            for j in joblist:
-                allj = set(r[0][0].first.book for r in j if r[1])
-                j[:] = [b for b in j if b[1] and b[0][0].first.book in digbooks]
-                badbooks.update(allj - set(r[0][0].first.book for r in j if r[1]))
-            if len(badbooks):
-                self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
-                                     show=not self.printer.get("c_quickRun"))
-                self.printer.finished(False)
-                self.busy = False
-                unlockme()
-                return
-            self.texfiles += sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
+        diginfos = {}
+        if len(self.printer.diglotViews):
+            for k, dv in self.printer.diglotViews.items():
+                if dv is None:
+                    dv = self.printer.createDiglotView(k)
+                if dv is None:
+                    continue
+                dv.loadHyphenation()
+                # digfraction = info.dict["document/diglotprifraction"]
+                # digprjid = info.dict["document/diglotsecprj"]
+                # digcfg = info.dict["document/diglotsecconfig"]
+                digcfg = self.printer.polyglots.get(k, None)
+                digprjdir = dv.project.path
+                digptsettings = ParatextSettings(digprjdir)
+                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive, diglotbinfo=info, digcfg=digcfg)
+                reasons = diginfos[k].prePrintChecks()
+                if len(reasons):
+                    self.fail(", ".join(reasons) + " in diglot secondary")
+                    return
+                digbooks = dv.getAllBooks()
+                badbooks = set()
+                for j in joblist:
+                    allj = set(r[0][0].first.book for r in j if r[1])
+                    j[:] = [b for b in j if b[1] and b[0][0].first.book in digbooks]
+                    badbooks.update(allj - set(r[0][0].first.book for r in j if r[1]))
+                if len(badbooks):
+                    self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
+                                         show=not self.printer.get("c_quickRun"))
+                    self.printer.finished(False)
+                    self.busy = False
+                    unlockme()
+                    return
+            self.texfiles += sum((self.digdojob(j, info, diginfos) for j in joblist), [])
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
@@ -548,10 +555,7 @@ class RunJob:
             res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
         return [os.path.join(self.tmpdir, out) for out in donebooks] + res
 
-    def digdojob(self, jobs, info, diginfo, digprjid, digprjdir):
-        texfiles = []
-        donebooks = []
-        digdonebooks = []
+    def digdojob(self, jobs, info, diginfos):
         _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
                            "paper/topmarginfactor", "paper/bottommarginfactor",
                            "paper/headerposition", "paper/footerposition", "paper/ruleposition",
@@ -560,58 +564,80 @@ class RunJob:
                            "notes/xrlocation",
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
-        diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
-        diginfo["project/books"] = digdonebooks
-        diginfo["document/ifdiglot"] = "%"
-        diginfo["footer/ftrcenter"] = "-empty-"
-        diginfo["footer/ifftrtitlepagenum"] = "%"
-        diginfo["fancy/pageborder"] = "%"
-        diginfo["document/diffcolayout"] = False
-        diginfo["snippets/diglot"] = False
-        docdir = info["/ptxdocpath"]
-        for k in _digSecSettings:
-            diginfo[k]=info[k]
-        syntaxErrors = []
+        sheets = {}
+        keyarr = ["L"]
+        outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        info.dict.setdefault("diglots_", {})
+        for k, diginfo in diginfos.items():
+            texfiles = []
+            digdonebooks = []
+            diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
+            diginfo["project/books"] = digdonebooks
+            diginfo["document/ifdiglot"] = "%"
+            diginfo["footer/ftrcenter"] = "-empty-"
+            diginfo["footer/ifftrtitlepagenum"] = "%"
+            diginfo["fancy/pageborder"] = "%"
+            diginfo["document/diffcolayout"] = False
+            diginfo["snippets/diglot"] = False
+            docdir = info["/ptxdocpath"]
+            for s in _digSecSettings:
+                diginfo[s]=info[s]
+            syntaxErrors = []
 
-        # create differential ptxprint.sty
-        cfgname = info['config/name']
-        outstyname = os.path.join(self.tmpdir, "diglot.sty")
-        with open(outstyname, "w", encoding="utf-8") as outf:
-            diginfo.printer.styleEditor.output_diffile(outf, basesheet=info.printer.styleEditor.asStyle(None),
-                                                       sheet=diginfo.printer.styleEditor.asStyle(None))
-        diginfo["project/ptxprintstyfile_"] = outstyname.replace("\\", "/")
+            # create differential ptxprint.sty
+            cfgname = info['config/name']
+            outstyname = os.path.join(self.tmpdir, f"diglot_{k}.sty")
+            with open(outstyname, "w", encoding="utf-8") as outf:
+                diginfo.printer.styleEditor.output_diffile(outf, basesheet=info.printer.styleEditor.asStyle(None),
+                                                           sheet=diginfo.printer.styleEditor.asStyle(None))
+            diginfo["project/ptxprintstyfile_"] = outstyname.replace("\\", "/")
 
-        logger.debug('Diglot processing jobs: {}'.format(jobs))
+            logger.debug('Diglot processing jobs: {}'.format(jobs))
+            if k == "R":
+                sheets['L'] = info.printer.getStyleSheets()
+            sheets[k] = diginfo.printer.getStyleSheets()
+            keyarr.append(k)
+            if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
+                texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INTR.SFM"))))
+            diginfo["cfgrpath_"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
+            info.dict["diglots_"][k] = diginfo
+
+        donebooks = []
         for j in jobs:
             b = j[0][0].first.book if j[1] else j[0]
-            logger.debug(f"Diglot({b}): f{self.tmpdir} from f{self.prjdir}")
-            try:
-                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
-                digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1])
-            except FileNotFoundError as e:
-                self.printer.doError(str(e))
-                out = None
-            if out is None:
-                continue
-            else:
-                donebooks.append(out)
-            if digout is None:
-                continue
-            else:
-                digdonebooks.append(digout)
+            # logger.debug(f"Diglot[{k}]({b}): f{self.tmpdir} from f{self.prjdir}") # broken (missing k)
+            inputfiles = []
+            left = None
+            for k, diginfo in diginfos.items():
+                digprjdir = diginfo.printer.project.path
+                try:
+                    out = None
+                    if not len(inputfiles):
+                        out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
+                        left = os.path.join(self.tmpdir, out)
+                        inputfiles.append(left)
+                        texfiles.append(left)
+                    digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1])
+                    right = os.path.join(self.tmpdir, digout)
+                    inputfiles.append(right)
+                    texfiles.append(right)
+                except FileNotFoundError as e:
+                    self.printer.doError(str(e))
+                    out = None
+                    digout = None
+                if out is not None:
+                    donebooks.append(out)
+                if digout is None:
+                    continue
+                else:
+                    diginfo["project/books"].append(digout)
+                    self.books.append(digout)
             
-            left = os.path.join(self.tmpdir, out)
-            right = os.path.join(self.tmpdir, digout)
-            inputfiles=[left,right]
-            keyarr=["L","R"]
-            texfiles += inputfiles
-            if b not in nonScriptureBooks:
+            if left and b not in nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
 
-                sheetsa = info.printer.getStyleSheets()
-                sheetsb = diginfo.printer.getStyleSheets()
                 mode = info["document/diglotmergemode"]
                 if mode in ('True', 'False') or not mode:
                     mode = "doc"
@@ -621,20 +647,11 @@ class RunJob:
                 logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=} {mode=} {sync=}")
                 # Do we ask the merge process to write verification files? (use diff -Bws to confirm they are they same as the input)
                 debugmerge = logger.getEffectiveLevel() <= 5 
-                #try:
-                usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=mode, synchronise=sync, debug=debugmerge, changes=info.changes.get("merged", []), book=b)
-                #except SyntaxError as e:
-                #    syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
-                #except Exception as e:
-                #    syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
-                #    print_traceback()
+                usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=info.changes.get("merged", []), book=b)
                 texfiles += [outFile, logFile]
 
-        outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
-        if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
-            texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INTR.SFM"))))
         
-        if not len(donebooks) or not len(digdonebooks):
+        if not len(donebooks): # or not len(digdonebooks):
             unlockme()
             return []
 
@@ -647,21 +664,16 @@ class RunJob:
 
         info["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
         info["project/books"] = donebooks
-        self.books += digdonebooks
 
         # Pass all the needed parameters for the snippet from diginfo to info
-        for k,v in _diglot.items():
-            info[k]=diginfo[v]
         for k,v in _diglotprinter.items():
             info.printer.set(k, diginfo.printer.get(v))
-        info["diglot/cfgrpath"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
-        info["diglot/prjid_"] = digprjid
         info["_isDiglot"] = True
-        res = self.sharedjob(jobs, info, extra="-diglot", digtexmodel=diginfo)
+        res = self.sharedjob(jobs, info, extra="-diglot", diglots=True)
         texfiles += res
         return texfiles
 
-    def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra="", digtexmodel=None):
+    def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra="", diglots=False):
         logger.debug(f"in runjob sharedjob usesysfonts: {info['texpert/usesysfonts']}")
         nosysfonts = not info['texpert/usesysfonts'] or self.args.nofontcache
         genfiles = []
@@ -675,20 +687,19 @@ class RunJob:
         else:
             cfgname = "-" + cfgname
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
-        info.update()
+        info.update(None)
         if info['project/iffrontmatter'] != '%':
             frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.SFM"))
             info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
         if info["project/sectintros"]:
             genfiles.append(info.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INT.SFM"))))
-        logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
             self.printer.incrementProgress(stage="gp")
-            self.picfiles = self.gatherIllustrations(info, jobs, prjdir, digtexmodel=digtexmodel)
+            self.picfiles = self.gatherIllustrations(info, jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)
+        texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, diglots=diglots)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
@@ -968,7 +979,7 @@ class RunJob:
             self.printer.doError(_("Warning: Could not locate decorative PDF(s):"),
                     secondary="\n".join(warnings))
 
-    def gatherIllustrations(self, info, jobs, ptfolder, digtexmodel=None):
+    def gatherIllustrations(self, info, jobs, ptfolder, diglots=False):
         self.printer.incrementProgress(stage="gp")
         logger.debug(f"Gathering illustrations: {self.printer.picinfos}")
         picinfos = self.printer.picinfos
@@ -1011,13 +1022,15 @@ class RunJob:
                 del localPicInfos[k]
                 continue
             if t := v.get('caption', ''):
-                v['caption'] = runChanges(info.changes, key+'CAP', t)
+                v['caption'] = runChanges(info.changes.get('default', []), key+'CAP', t)
             if t := v.get('ref', ''):
-                v['ref'] = runChanges(info.changes, key+'REF', t)
-            if digtexmodel and (t := v.get('captionR', '')):
-                v['captionR'] = runChanges(digtexmodel.changes, key+'CAP', t)
-            if digtexmodel and (t := v.get('refR', '')):
-                v['refR'] = runChanges(digtexmodel.changes, key+'REF', t)
+                v['ref'] = runChanges(info.changes.get('default', []), key+'REF', t)
+            if diglots:
+                for s, dinfo in info['diglots_'].items():
+                    if (t := v.get(f'caption{s}', '')):
+                        v[f'caption{s}'] = runChanges(dinfo.changes.get('default', []), key+'CAP', t)
+                    if (t := v.get(f'ref{s}', '')):
+                        v[f'ref{s}'] = runChanges(dinfo.changes.get('default', []), key+'REF', t)
         localPicInfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
         res.append(outfname)
         info["document/piclistfile"] = outfname

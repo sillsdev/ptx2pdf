@@ -251,16 +251,10 @@ _map = {
 
     "document/ifdiglot":            ("c_diglot", "diglot", lambda w,v : "" if v else "%"),
     "document/ifndiglot":           ("c_diglot", "diglot", lambda w,v : "%" if v else ""),
-    "document/diglotprifraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
-    "document/diglotsecfraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
-    "document/diglotsecprj":        ("fcb_diglotSecProject", "diglot", None),
-    "document/diglotsecprjguid":    ("fcb_diglotSecProject[1]", "diglot", None),
+    "poly/fraction":                ("polyfraction_", "diglot", lambda w,v: str(float(v or 0.) / 100)),
+    "document/diglotlayout":        ("t_layout", "diglot", None),
     "document/diglotserialbooks":   ("t_diglotSerialBooks", "diglot", None),
-    "document/diglotpicsources":    ("fcb_diglotPicListSources", "diglot", None),
-    "document/diglot2captions": ("c_diglot2captions", "diglot", None),
-    "document/diglotswapside":  ("c_diglotSwapSide", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", "diglot", lambda w,v: "true" if v else "false"),
-    "document/diglotsecconfig": ("ecb_diglotSecConfig", "diglot", None),
     "document/diglotmergemode": ("fcb_diglotMerge", "diglot", None),
     "document/diglotadjcenter": ("c_diglotAdjCenter", "diglot", None),
     "document/diglotheaders":   ("c_diglotHeaders", "diglot", None),
@@ -517,9 +511,7 @@ _map = {
     "import/frontmatter":       ("c_oth_FrontMatter", None, None),
     "import/overwitefrtmatter": ("c_oth_OverwriteFrtMatter", None, None),
     "import/cover":             ("c_oth_Cover", None, None),
-    
 }
-
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}
 
 ImportCategories = {

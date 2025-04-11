@@ -119,36 +119,40 @@ class Sheets(dict):
                     self[newk] = newv
 
     def mrktype(self, mrk):
-        if mrk not in self:
+        sheet = self.get(mrk, None)
+        if sheet is None:
             return None
-        mtype = self[mrk].get('mrktype', None)
-        if mtype is not None:
-            return mtype
-        occurs = set(self[mrk].get('occursunder', "").split(' '))
-        stype = self[mrk].get('styletype', "").lower()
-        ttype = self[mrk].get('texttype', "").lower()
-        for k, v in _occurstypes.items():
-            if k in ("footnotechar", "crossreferencechar"):
-                m = all(x in occurs for x in v.split(" "))
-            else:
-                m = any(x in occurs for x in v.split(" "))
-            if m:
-                mtype = k
-                break
-        for k, v in _typetypes.items():
-            matched = True
-            for i, a in enumerate((mtype, stype, ttype)):
-                if v[i] is not None and v[i] != a:
-                    matched = False
-                    break
-            if v[3] is not None and not mrk.startswith(v[3]):
-                matched = False
-            if matched:
-                mtype = k
-                break
-        if mtype is not None:
-            self[mrk]['mrktype'] = mtype
+        return mrktype(sheet, mrk)
+
+def mrktype(sheet, mrk):
+    mtype = sheet.get('mrktype', None)
+    if mtype is not None:
         return mtype
+    occurs = set(sheet.get('occursunder', {}))
+    stype = sheet.get('styletype', "").lower()
+    ttype = sheet.get('texttype', "").lower()
+    for k, v in _occurstypes.items():
+        if k in ("footnotechar", "crossreferencechar"):
+            m = all(x in occurs for x in v.split(" "))
+        else:
+            m = any(x in occurs for x in v.split(" "))
+        if m:
+            mtype = k
+            break
+    for k, v in _typetypes.items():
+        matched = True
+        for i, a in enumerate((mtype, stype, ttype)):
+            if v[i] is not None and v[i] != a:
+                matched = False
+                break
+        if v[3] is not None and not mrk.startswith(v[3]):
+            matched = False
+        if matched:
+            mtype = k
+            break
+    if mtype is not None:
+        sheet['mrktype'] = mtype
+    return mtype
 
 def createGrammar(sheets):
     grammar = Grammar()
@@ -370,7 +374,7 @@ class Usfm:
                 res[i] = e.text.strip()
         self.tocs = res
 
-    nonvernacular = ('otherpar', 'header', 'attrib')
+    nonvernacular = ('otherpara', 'header', 'attribute')
     def getwords(self, init=None, constrain=None, lowercase=False):
         root = self.getroot()
         wre = regex.compile(r"([\p{L}\p{M}\p{Cf}]+)")

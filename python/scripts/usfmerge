@@ -32,26 +32,33 @@ else:
     keyarr=list(args.keys)
 
 print(keyarr)
-
 sheetsa = args.stylesheet + args.astylesheet
 sheetsb = args.stylesheet + args.bstylesheet
-stylesheets={}
+stylesheets = {}
 for k,sheetfile in args.colstylesheet:
-    if stylesheets.haskey(k):
+    if k in stylesheets:
         stylesheets[k].append(sheetfile)
     else:
-        stylesheets[k]=[sheetfile]
+        stylesheets[k] = args.stylesheet
+        stylesheets[k].append(sheetfile)
+
+for k in keyarr:
+  if k not in stylesheets:
+    stylesheets[k] = args.stylesheet
+
+print(f"{stylesheets=}")
 
 protect={}
 for k,v in args.protect:
-    protect[k]=int(v)
+    protect[k] = int(v)
 
 scorearr={}
 if args.scores:
-    scorearr=args.scores.split(",")
+    scorearr = args.scores.split(",")
 if args.debug:
       parms = {'level': 5, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s.%(msecs)03d %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
       # parms = {'level': 7, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(levelname)s:%(message)s |%(module)s(%(lineno)d)'}
       logging.basicConfig(**parms)
-usfmerge2(args.infile, keyarr, args.outfile, stylesheets=stylesheets, stylesheetsa=sheetsa,stylesheetsb=sheetsb, scorearr=scorearr,
+logging.debug(f"{stylesheets=}")
+usfmerge2(args.infile, keyarr, args.outfile, stylesheets=stylesheets, scorearr=scorearr,
            fsecondary=args.fsecondary, mode=args.mode, synchronise=args.synchronise, debug=args.debug, protect=protect)

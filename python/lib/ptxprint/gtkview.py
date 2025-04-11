@@ -48,6 +48,7 @@ from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
 from ptxprint.pdf_viewer import PDFViewer, Paragraphs
 from ptxprint.tatweel import TatweelDialog
+from ptxprint.gtkpolyglot import PolyglotSetup
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -224,8 +225,6 @@ rule_marginalVerses c_marginalverses l_marginVrsPosn fcb_marginVrsPosn l_columnS
 fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapters l_glossaryMarkupStyle fcb_glossaryMarkupStyle
 tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestionsLang t_txlQuestionsLang
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
-tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
-l_diglotPriFraction s_diglotPriFraction btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
 tb_Peripherals bx_ToC c_autoToC t_tocTitle c_frontmatter
 fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
@@ -240,6 +239,8 @@ gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_ThumbTabs
 c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover 
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
 """.split()
+# tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
+# lpolyfraction_ spolyfraction_ btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
 
 _ui_experimental = """
 """.split()
@@ -268,7 +269,10 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
                   "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2", "col_noteLines", 
-                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "c_pdfGridlines" "bx_imageMsgBar", 
+                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
+                  # "col_dibackcol", "fcb_diglotSecProject", "ecb_diglotSecConfig", "c_diglot2captions", 
+                  # "spolyfraction_", "btn_diglotSwitch", "btn_adjust_diglot", "l_diglotSecProject",
+                  # "l_dibackcol", "l_diglotSecConfig", "lpolyfraction_", "tb_diglotSwitch"]  # "c_pdfGridlines" "bx_imageMsgBar", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -277,7 +281,7 @@ _uiLevels = {
 
 _showActiveTabs = {
     "c_includeillustrations" : ["tb_Pictures"],
-    "c_diglot" :               ["tb_Diglot", "fr_diglot", "btn_diglotSwitch"],
+    "c_diglot" :               ["tb_Diglot", "fr_diglot"], #, "btn_diglotSwitch"],
     "c_thumbtabs" :            ["tb_TabsBorders", "fr_tabs"],
     "c_useOrnaments" :         ["tb_TabsBorders", "fr_borders"],
     "c_inclFrontMatter" :      ["tb_Peripherals", "gr_importFrontPDF"],
@@ -317,8 +321,8 @@ _sensitivities = {
     "c_strongsShowInText" :    ["c_strongsShowAll"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
-    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
-                                "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
+    "c_diglot" :               ["gr_diglot", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
+                                "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"], # "fcb_diglotPicListSources", 
     "c_diglotSeparateNotes" :  ["c_diglotNotesRule", "c_diglotJoinVrule"],
     "c_diglotNotesRule" :      ["c_diglotJoinVrule"],
     "c_useOrnaments" :         ["gr_borders"],
@@ -421,8 +425,8 @@ _nonsensitivities = {
     "c_bdrPadSymmetrical":     ["s_sbBdrPadL", "s_sbBdrPadR", "s_sbBdrPadB"],
 }
 _object_classes = {
-    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate",
-                    "b_reprint", "btn_refreshCaptions"),
+    "printbutton": ("b_print", "btn_refreshFonts", "btn_createZipArchiveXtra", "btn_Generate",
+                    "b_reprint", "btn_refreshCaptions"),  # "btn_adjust_diglot", 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
@@ -430,7 +434,7 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
-    "scale-slider":("s_diglotPriFraction", "s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
+    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"), # "spolyfraction_", 
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
@@ -687,6 +691,7 @@ class GtkViewModel(ViewModel):
         self.blInitValue = None
         self.currCodeletVbox = None
         self.codeletVboxes = {}
+        self.gtkpolyglot = None
         self.ufPages = []
         self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
@@ -702,7 +707,7 @@ class GtkViewModel(ViewModel):
         self.noInt = self.userconfig.getboolean('init', 'nointernet', fallback=None)
         if self.noInt is not None:
             self.set("c_noInternet", self.noInt)
-        for fcb in ("project", "fontdigits", "script", "diglotPicListSources",
+        for fcb in ("project", "fontdigits", "script",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "snHorizPosn", "filterXrefs", "colXRside", "outputFormat", 
@@ -710,7 +715,7 @@ class GtkViewModel(ViewModel):
                     "sbBorderStyle"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
-        self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
+        # self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
         self.ecb_impConfig = self.builder.get_object("ecb_impConfig")
         self.ecb_targetConfig = self.builder.get_object("ecb_targetConfig")
         for k, v in _object_classes.items():
@@ -770,6 +775,7 @@ class GtkViewModel(ViewModel):
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
+        self.tv_polyglot = Gtk.TreeView()
 
         self.mw = self.builder.get_object("ptxprint")
         if sys.platform.startswith("win"):
@@ -796,7 +802,7 @@ class GtkViewModel(ViewModel):
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         # self.builder.get_object("fcb_project").set_wrap_width(1)
         self.builder.get_object("fcb_project").set_wrap_width(wide)
-        self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+        # self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
@@ -806,6 +812,7 @@ class GtkViewModel(ViewModel):
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
         logger.debug("Project list loaded")
+
         return True
 
     def _setup_digits(self):
@@ -1488,6 +1495,7 @@ class GtkViewModel(ViewModel):
         self.set("l_statusLine", txt)
         status = len(self.get("l_statusLine"))
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
+        print(f"Status: {txt}")
         
     def onHideStatusMsgClicked(self, btn):
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(False)
@@ -1504,7 +1512,7 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print4cover", "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"]:
+        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "btn_adjust_diglot", "spolyfraction_"
             self.builder.get_object(w).set_sensitive(not self.printReason)
 
     def checkFontsMissing(self):
@@ -1522,9 +1530,9 @@ class GtkViewModel(ViewModel):
     def onOK(self, btn):
         if btn == self.builder.get_object("b_print2ndDiglotText"):
             pass
-        elif self.otherDiglot is not None:
-            self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
-            return
+        # elif self.otherDiglot is not None:
+            # self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
+            # return
         if isLocked():
             self.doStatus(_("Printing busy"))
             return
@@ -1820,18 +1828,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_configNotes").set_text("")
         self.configNoUpdate = False
 
-    def updateDiglotConfigList(self):
-        currdigcfg = self.get("ecb_diglotSecConfig")
-        self.ecb_diglotSecConfig.remove_all()
-        digprj = self._getProject("fcb_diglotSecProject")
-        if digprj is None:
-            return
-        diglotConfigs = sorted(digprj.configs.keys())
-        if len(diglotConfigs):
-            for cfgName in sorted(diglotConfigs):
-                self.ecb_diglotSecConfig.append_text(cfgName)
-            self.set("ecb_diglotSecConfig", currdigcfg if currdigcfg in diglotConfigs else "Default")
-
     def _fillConfigList(self, prjwname, configlist):
         impprj = self._getProject(prjwname)
         if impprj is None:
@@ -1855,7 +1851,7 @@ class GtkViewModel(ViewModel):
         self.updateSavedConfigList()
         self.updateimpProjectConfigList()
         self.updatetgtProjectConfigList()
-        self.updateDiglotConfigList()
+        # self.updateDiglotConfigList()
     
     def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
@@ -2176,18 +2172,19 @@ class GtkViewModel(ViewModel):
 
     def onUpdatePicCaptionsClicked(self, btn):
         self.picListView.pause()
-        if self.diglotView is not None:
+        if len(self.diglotViews):
             pref = "L"
             self.picinfos = Piclist(self, diglot=True)
-            digpics = Piclist(self.diglotView)
-            digpics.threadUsfms(self.diglotView, nosave=True)
         else:
             pref = ""
         newpics = Piclist(self)
         newpics.threadUsfms(self, nosave=True)
         self.picinfos.merge(newpics, pref, mergeCaptions=True, bkanchors=True)
-        if self.diglotView is not None:
-            self.picinfos.merge(digpics, "R", mergeCaptions=True, bkanchors=True)
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                digpics = Piclist(v)
+                digpics.threadUsfms(v, nosave=True)     # is this safe?
+                self.picinfos.merge(digpics, k, mergeCaptions=True, bkanchors=True)
         self.updatePicList()
         self.picListView.unpause()
         self.doStatus(_("Done! Picture Captions have been updated."))
@@ -2203,7 +2200,7 @@ class GtkViewModel(ViewModel):
         self.set("l_generate_booklist", " ".join(bks))
         # If there is no PicList file for this config, then don't even ask - just generate it
         plpath = os.path.join(self.project.srcPath(self.cfgid),"{}-{}{}.piclist".format(
-                        self.project.prjid, self.cfgid, "-diglot" if self.diglotView is not None else ""))
+                        self.project.prjid, self.cfgid, "-diglot" if len(self.diglotViews) else ""))
         if not os.path.exists(plpath):
             response = Gtk.ResponseType.OK
             self.set("r_generate", "all")
@@ -2228,7 +2225,7 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
 
     def onGenerateClicked(self, btn):
-        priority=self.get("fcb_diglotPicListSources")
+        # priority=self.get("fcb_diglotPicListSources")
         pg = self.get("nbk_Viewer")
         pgid = self.notebooks['Viewer'][pg]
         bks2gen = self.getBooks()
@@ -2271,7 +2268,8 @@ class GtkViewModel(ViewModel):
         prjdir = self.project.path
         usfms = self.get_usfms()
         if diglot:
-            dusfms = self.diglotView.get_usfms()
+            for v in self.diglotViews.values():
+                dusfms = v.get_usfms()
         skipbooks = []
         for bk in booklist:
             fname = self.getAdjListFilename(bk, ext=".adj")
@@ -2542,9 +2540,10 @@ class GtkViewModel(ViewModel):
             
             # Add categories and buttons
             for category, codeitems in info.items():
-                # if category == "Arabic" and self.get('fcb_script') != 'Arab': # FixMe! (this needs to updated when we
+                # if category == "Arabic" and self.get('fcb_script') != 'Arab': # FixMe!MP (this needs to updated when we
                     # print(f"Skipping Arabic")                                 # change projects/configs but it doesn't
-                    # continue                                                  # because the menu is already populated
+                    # continue                                                  # because the menu is already populated.
+                    #                              Need to run loadCodelets whenever project, or config, or script are changed.
                 bname = f"btn_{cat}_{category}"
                 button = Gtk.Button.new_with_label(category)
                 self.widgetnames[bname] = f"Insert Codelet {cat} {category}"
@@ -2732,9 +2731,12 @@ class GtkViewModel(ViewModel):
         if fontr is None:
             return
         fallbacks = ['Source Code Pro']
-        if self.diglotView is not None:
-            digfontr = self.diglotView.get("bl_fontR")
-            fallbacks.append(digfontr.name)
+        if len(self.diglotViews):
+            for v in self.diglotViews.values():
+                if v is None:
+                    continue
+                digfontr = v.get("bl_fontR")
+                fallbacks.append(digfontr.name)
         pangostr = fontr.asPango(fallbacks, fsize)
         p = Pango.FontDescription(pangostr)
         logger.debug(f"{pangostr=}, {p}")
@@ -3633,6 +3635,7 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
+        self.loadPolyglotSettings()
         self.enableTXLoption()
         self.onBodyHeightChanged(None)
         self.checkFontsMissing()
@@ -3641,6 +3644,17 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(0)
         self.changed(False)
         self.showmybook(True)
+
+    def loadPolyglotSettings(self):
+        if self.gtkpolyglot is not None:
+            self.gtkpolyglot.clear_polyglot_treeview()
+        if self.get("c_diglot"):
+            if self.gtkpolyglot is None:
+                self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
+                polyset = self.builder.get_object('bx_polyglot')
+                polyset.pack_start(self.gtkpolyglot, True, True, 0)
+                polyset.show_all()
+            self.gtkpolyglot.load_polyglots_into_treeview()
 
     def showmybook(self, isfirst=False):
         if self.initialised and self.showPDFmode == "preview": # preview is on
@@ -3779,10 +3793,6 @@ class GtkViewModel(ViewModel):
         elif loc == "cfg":
             cfgname = self.cfgid
             fpath = os.path.join(self.project.srcPath(cfgname), file2edit)
-        elif loc == "dig":
-            digprj = self._getProject("fcb_diglotSecProject")
-            currdigcfg = self.get("ecb_diglotSecConfig")
-            fpath = os.path.join(digprj.srcPath(currdigcfg), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
         return fpath
@@ -4408,42 +4418,46 @@ class GtkViewModel(ViewModel):
         if self.loadingConfig:
             return
         if self.get("c_diglot"):
-            self.diglotView = self.createDiglotView()
+            self.loadPolyglotSettings()
+            self.diglotViews['R'] = self.createDiglotView()
             self.set("c_doublecolumn", True)
             self.builder.get_object("c_doublecolumn").set_sensitive(False)
         else:
             self.builder.get_object("c_doublecolumn").set_sensitive(True)
             self.setPrintBtnStatus(2)
-            self.diglotView = None
+            self.diglotViews = {}
         self.updateDialogTitle()
         self.loadPics(mustLoad=False, force=True)
         if self.get("c_includeillustrations"):
             self.onUpdatePicCaptionsClicked(None)
 
-    def onDiglotSwitchClicked(self, btn):
-        oprjid = None
-        oconfig = None
-        if self.otherDiglot is not None:
-            oprjid, oconfig = self.otherDiglot
-            self.otherDiglot = None
-            btn.set_label(_("Switch to Other\nDiglot Project"))
-            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
-            self.changeBtnLabel("b_print", _("Print (Make PDF)"))
-        elif self.get("c_diglot"):
-            oprjid = self.get("fcb_diglotSecProject")
-            oconfig = self.get("ecb_diglotSecConfig")
-            if oprjid is not None and oconfig is not None:
-                self.otherDiglot = (self.project.prjid, self.cfgid)
-                btn.set_label(_("Save & Return to\nDiglot Project"))
-            self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-            self.changeBtnLabel("b_print", _("Return to Primary"))
-        self.onSaveConfig(None)
-        if oprjid is not None and oconfig is not None:
-            self.set("fcb_project", oprjid)
-            self.set("ecb_savedConfig", oconfig)
-        mpgnum = self.notebooks['Main'].index("tb_Diglot")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.updateDialogTitle()
+    # def onDiglotSwitchClicked(self, btn): #FixMe!
+    # This method could be resurrected IF it hides under a button 
+    # that is only sensitive for DIGLOT and not POLYGLOT.
+    # A bit like the auto-adjust width fraction (which is only available on Diglot)
+        # oprjid = None
+        # oconfig = None
+        # if self.otherDiglot is not None:
+            # oprjid, oconfig = self.otherDiglot
+            # self.otherDiglot = None
+            # btn.set_label(_("Switch to Other\nDiglot Project"))
+            # self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            # self.changeBtnLabel("b_print", _("Print (Make PDF)"))
+        # elif self.get("c_diglot"):
+            # oprjid = self.get("fcb_diglotSecProject")
+            # oconfig = self.get("ecb_diglotSecConfig")
+            # if oprjid is not None and oconfig is not None:
+                # self.otherDiglot = (self.project.prjid, self.cfgid)
+                # btn.set_label(_("Save & Return to\nDiglot Project"))
+            # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+            # self.changeBtnLabel("b_print", _("Return to Primary"))
+        # self.onSaveConfig(None)
+        # if oprjid is not None and oconfig is not None:
+            # self.set("fcb_project", oprjid)
+            # self.set("ecb_savedConfig", oconfig)
+        # mpgnum = self.notebooks['Main'].index("tb_Diglot")
+        # self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        # self.updateDialogTitle()
 
     def changeBtnLabel(self, w, lbl):
         b = self.builder.get_object(w)
@@ -4469,26 +4483,11 @@ class GtkViewModel(ViewModel):
         self.set("r_impTarget", "prjcfg")
         self.setImportButtonOKsensitivity(None)
         
-    def ondiglotSecProjectChanged(self, btn):
-        self.updateDiglotConfigList()
-        self.updateDialogTitle()
-        
     def onCoverFrontBackClicked(self, w):
         status = self.get("c_oth_FrontMatter") or self.get("c_oth_Cover")
         self.builder.get_object("c_oth_OverwriteFrtMatter").set_sensitive(status)
         if not status:
             self.set("c_oth_OverwriteFrtMatter", False)
-        
-    def ondiglotSecConfigChanged(self, btn):
-        if self.loadingConfig:
-            return
-        if self.get("c_diglot"):
-            self.diglotView = self.createDiglotView()
-        else:
-            self.setPrintBtnStatus(2)
-            self.diglotView = None
-        self.loadPics(force=True)
-        self.updateDialogTitle()
         
     def onGenerateHyphenationListClicked(self, btn):
         scrsnpt = self.getScriptSnippet()
@@ -5307,25 +5306,20 @@ class GtkViewModel(ViewModel):
         btn.set_active(True)
         xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         def score(x):
-            self.set("s_diglotPriFraction", x*100)
+            print(f"{x=}")
+            self.gtkpolyglot.set_fraction(x)
             runjob = self.callback(self, maxruns=1, noview=True)
             while runjob.thread.is_alive():
                 Gtk.main_iteration_do(False)
             runres = runjob.res
             return 20000 if runres else xdvigetpages(xdvname)
-        mid = float(self.get("s_diglotPriFraction")) / 100.
+        mid = self.gtkpolyglot.get_fraction()
+        print(f"{mid=}")
         res = brent(0., 1., mid, score, 0.001)
-        self.set("s_diglotPriFraction", res*100)
+        self.gtkpolyglot.set_fraction(res)
         self.isDiglotMeasuring = False
         self.callback(self)
         btn.set_active(False)
-
-    def onDiglotSwapSideClicked(self, btn):
-        if self.get("r_hdrLeft") != self.get("r_hdrRight"):
-            for a in ("r_hdrLeft", "r_hdrRight"):
-                v = self.get(a)
-                v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
-                self.set(a, v)
 
     def onFootnotesClicked(self, btn):
         if not self.sensiVisible("c_includeFootnotes"):
@@ -5468,7 +5462,7 @@ class GtkViewModel(ViewModel):
                     # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 1)
 
             if self.get('c_coverOverwritePeriphs'):
-                self.createCoverPeriphs(noDiglot = r'\zglot|\*' if self.diglotView is not None else "")
+                self.createCoverPeriphs(noDiglot = r'\zglot|\*' if len(self.diglotViews) else "")
             self.set("c_frontmatter", True)
 
             dialog.hide()
@@ -5685,11 +5679,6 @@ class GtkViewModel(ViewModel):
     def onXrefRuleClicked(self, btn):
         status = self.sensiVisible("c_xrefrule")
         self.builder.get_object("rule_xref").set_visible(status)
-
-    def diglotPicListSourcesChanged(self, btn):
-        status = not self.get("fcb_diglotPicListSources") == "bth"
-        self.builder.get_object("c_diglot2captions").set_sensitive(status)
-        self.set("c_diglot2captions", status)
 
     def button_release_callback(self, widget, event, data=None):
         # If a user wants to highlight a control (for training or documentation
@@ -6588,6 +6577,9 @@ Thank you,
                 dialog.move(x, y)
                 dialog.resize(width, height)
         
+    def onPolyglotLayoutFocusOut(self, a, b):
+        self.gtkpolyglot.update_layout_preview()
+
     def onSpinnerClicked(self, btn, foo):
         self.highlightwidget('s_autoupdatedelay')
         self.builder.get_object("ptxprint").present()

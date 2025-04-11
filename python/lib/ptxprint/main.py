@@ -40,42 +40,57 @@ class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/ques
         pass
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
-    parser.add_argument('pid',nargs="?",help="Project id or full path to a ptxprint.cfg file")
-    parser.add_argument('-c','--config',help='Configuration path to load')
-    parser.add_argument("-M",'--module',help="Module to print")
-    parser.add_argument('-p','--projects',action='append',default=[],help="Path to a projects directory")
-    parser.add_argument('-d','--directory',help="Directory to store temporary files in")
-    parser.add_argument('-P','--print',action='store_true',help="Hits print")
-    parser.add_argument('-b','--books',help='Reference list to print (as in Choose Books)')
-    parser.add_argument('-Z','--zip',help='Unzip into project directory and delete at end')
-    parser.add_argument('-R','--runs',type=int,default=0,help="limit xetex runs")
-    parser.add_argument('-q','--quiet',action='store_true',help='No splash screen. Limit output')
-    parser.add_argument('-L','--lang',help='Set UI language code')
-    parser.add_argument('-n','--port',type=int,help='Listen on given port')
-    parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
-    parser.add_argument('-N','--nointernet',action="store_true",help="Disable all internet access")
-    parser.add_argument('-l','--logging',help="Logging level [DEBUG, *INFO*, WARN, ERROR, number]")
-    parser.add_argument('--logfile',default='ptxprint.log',help='Set logging file [ptxprint.log] or "none"')
-    parser.add_argument('--timeout',default=1200,type=int,help='xetex runtime timeout')
+
+    # Positional Argument
+    parser.add_argument('pid', nargs="?", help="Project ID or full path to a ptxprint.cfg file")
+
+    # Commonly Used Arguments
+    parser.add_argument('-b', '--books', help="List of books to print")
+    parser.add_argument('-c', '--config', help="Path to a configuration file")
+    parser.add_argument('-R', '--runs', type=int, default=0, help="Limit XeTeX runs")
+    parser.add_argument('-P', '--print', action='store_true', help="Run print operation")
+
+    # Core Configuration
+    parser.add_argument('-p', '--projects', action='append', default=[], help="Path(s) to project directories (repeatable)")
+    parser.add_argument('-d', '--directory', help="Directory to store temporary files")
+    parser.add_argument('-L', '--lang', help="Set UI language code")
+    parser.add_argument('-Z', '--zip', help="Unzip into project directory and delete at end")
+
+    # Execution & Processing
+    parser.add_argument('-A', '--action', help="Perform a specific action instead of printing")
+    parser.add_argument('-m', '--macros', help="Directory containing TeX macros (paratext2.tex)")
+    parser.add_argument('-M', '--module', help="Specify module to print")
     parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
-    parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
-    parser.add_argument('--nofontcache',action="store_true",help="Don't update list of system fonts")
-    parser.add_argument('--testsuite',action="store_true",help="Only use fonts from project and testsuite")
-    parser.add_argument('-A','--action',help="Run view method instead of print")
-    parser.add_argument('-F','--difffile',help='Create difference PDF against PDF file'),
-    parser.add_argument('--diffpages',type=int,default=0,help="Maximum number of pages to insert in diff file")
-    parser.add_argument('--diffoutfile',help="Output filename of difference file")
-    parser.add_argument('--diffdpi',type=int,default=0,help="DPI to use for the differencing")
-    parser.add_argument('-D','--define',action=DictAction,help="set UI component=value. Repeatable")
-    parser.add_argument('--debug',action="store_true",help="Give debug output")
-    parser.add_argument("-C","--capture",help="Capture interaction events to file. Not to be used yet") # help=argparse.SUPPRESS)
-    parser.add_argument("-z","--extras",type=int,default=0,help="Special bit flags: 0-3 - verbosity of xdvipdfmx")
-    parser.add_argument("-V","--pdfversion",type=int,default=14,help="PDF Version to read and write * 10 (default=14)")
-    parser.add_argument("-I","--identify",action="store_true",help="add widget names to tooltips")
-    parser.add_argument("-E","--experimental",type=int,default=0,help="Enable experimental bits: 0 = UI extensions")
-    # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
+    
+    # Performance & Debugging
+    parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
+    parser.add_argument('-l', '--logging', help="Logging level [DEBUG, INFO, WARN, ERROR, number]")
+    parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
+    parser.add_argument('--timeout', type=int, default=1200, help="XeTeX runtime timeout (seconds)")
+    parser.add_argument('--debug', action="store_true", help="Enable debug output")
+    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
+
+    # Font Settings
+    parser.add_argument('-f', '--fontpath', action='append', help="Specify directories containing fonts (repeatable)")
+    parser.add_argument('--nofontcache', action="store_true", help="Disable font cache updates")
+    parser.add_argument('--testsuite', action="store_true", help="Use only fonts from project and test suite")
+
+    # PDF & Output Settings
+    parser.add_argument('-F', '--difffile', help="Generate difference PDF against another file")
+    parser.add_argument('--diffpages', type=int, default=0, help="Max pages to insert in diff file")
+    parser.add_argument('--diffoutfile', help="Output filename for difference PDF")
+    parser.add_argument('--diffdpi', type=int, default=0, help="DPI for PDF differencing")
+    parser.add_argument('-V', '--pdfversion', type=int, default=14, help="PDF version to read/write (default: 14)")
+
+    # Miscellaneous & Experimental
+    parser.add_argument('-N', '--nointernet', action="store_true", help="Disable all internet access")
+    parser.add_argument('-n', '--port', type=int, help="Port to listen on")
+    parser.add_argument('-D', '--define', action=DictAction, help="Set UI component=value (repeatable)")
+    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx)")
+    parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
+    parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
 
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         from ptxprint.gtkutils import HelpTextViewWindow

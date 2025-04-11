@@ -44,7 +44,7 @@ mergedJhn2.usfm: Makefile $(SCRIPTDIR)/polyglot_merge.pl 44JHNOGNT.SFM  44JHNSGA
 	rm merged.out
 
 mergedJhn.usfm: Makefile $(SCRIPTDIR)/usfmerge $(SCRIPTDIR)/../lib/ptxprint/usfmerge.py 44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM
-	$(SCRIPTDIR)/usfmerge --debug -p nb 100 -m scores -S 34,34,70,34,34 -o $@  44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM  > merge.log
+	$(SCRIPTDIR)/usfmerge --debug -p nb 100 -m scores -s usfm.sty -c A usfm_sb.sty -S 34,34,70,34,34 -o $@  44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM  > merge.log
 
 mergedJhn-d.usfm: Makefile $(SCRIPTDIR)/usfmerge $(SCRIPTDIR)/../lib/ptxprint/usfmerge.py 44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM
 	$(SCRIPTDIR)/usfmerge --debug -p nb 100 -m doc  -o $@  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  > merge.log

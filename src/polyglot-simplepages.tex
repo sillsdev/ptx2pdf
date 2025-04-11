@@ -157,6 +157,10 @@
 
 \def\polyglotpages@simplepages#1{%comma separated list of concatenated columns to put on different pages (e.g. LR,AB) specifies 2 pages, pg1 shows L+R, pg2 A+B
   \trace{dmp}{polyglotpages #1}%
+  \xdef\tmp{#1}% The list of all columns
+  \ifx\tmp\empty
+    \errmessage{polyglotpages called with empty argument. That breaks things.}%
+  \fi
   \polyglot@onetime@setup
   \polyglot@eachtime@setup@simplepages
   \p@lyp@geno=0

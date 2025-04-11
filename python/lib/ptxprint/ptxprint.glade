@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.7.35</property>
+    <property name="version">Version 2.7.36</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -1872,7 +1872,7 @@ settings for a similar project.</property>
     <signal name="closed" handler="menu_inner_closed" swapped="no"/>
     <child>
       <object class="GtkTreeView">
-        <property name="height-request">200</property>
+        <property name="height-request">210</property>
         <property name="visible">True</property>
         <property name="can-focus">True</property>
         <property name="model">ls_interfaceLang</property>
@@ -2962,55 +2962,93 @@ settings for a similar project.</property>
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkListStore" id="ls_styStyleType">
+  <object class="GtkListStore" id="ls_styType">
     <columns>
-      <!-- column-name StyleType -->
+      <!-- column-name TypeLabel -->
+      <column type="gchararray"/>
+      <!-- column-name markerType -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
-        <col id="0">Paragraph</col>
+        <col id="0" translatable="yes">Header</col>
+        <col id="1">header</col>
       </row>
       <row>
-        <col id="0">Character</col>
+        <col id="0" translatable="yes">Title</col>
+        <col id="1">title</col>
       </row>
       <row>
-        <col id="0">Note</col>
+        <col id="0" translatable="yes">Introduction</col>
+        <col id="1">introduction</col>
       </row>
       <row>
-        <col id="0">Milestone</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_styTextType">
-    <columns>
-      <!-- column-name TextType -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">VerseText</col>
+        <col id="0" translatable="yes">Introduction Character</col>
+        <col id="1">introchar</col>
       </row>
       <row>
-        <col id="0">BodyText</col>
+        <col id="0" translatable="yes">Section Paragraph</col>
+        <col id="1">sectionpara</col>
       </row>
       <row>
-        <col id="0">Title</col>
+        <col id="0" translatable="yes">Verse Paragraph</col>
+        <col id="1">versepara</col>
       </row>
       <row>
-        <col id="0">Section</col>
+        <col id="0" translatable="yes">Character</col>
+        <col id="1">char</col>
       </row>
       <row>
-        <col id="0">Other</col>
+        <col id="0" translatable="yes">List</col>
+        <col id="1">list</col>
       </row>
       <row>
-        <col id="0">NoteText</col>
+        <col id="0" translatable="yes">List Character</col>
+        <col id="1">listchar</col>
       </row>
       <row>
-        <col id="0">ChapterNumber</col>
+        <col id="0" translatable="yes">Milestone</col>
+        <col id="1">milestone</col>
       </row>
       <row>
-        <col id="0">VerseNumber</col>
+        <col id="0" translatable="yes">Standalone Milestone</col>
+        <col id="1">standalone</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Other Paragraph</col>
+        <col id="1">otherpara</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Cross Reference</col>
+        <col id="1">crossreference</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Cross Reference Character</col>
+        <col id="1">crossreferencechar</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Footnote</col>
+        <col id="1">footnote</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Footnote Character</col>
+        <col id="1">footnotecharacter</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Cell</col>
+        <col id="1">cell</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Attribute</col>
+        <col id="1">attrib</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Identification</col>
+        <col id="1">ident</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Internal</col>
+        <col id="1">internal</col>
       </row>
     </data>
   </object>
@@ -4138,6 +4176,8 @@ the text. This may be useful for precise measuring.</property>
                     <property name="hexpand">False</property>
                     <property name="vexpand">False</property>
                     <property name="shadow-type">in</property>
+                    <property name="min-content-width">150</property>
+                    <property name="max-content-width">200</property>
                     <property name="propagate-natural-width">True</property>
                     <property name="propagate-natural-height">True</property>
                     <child>
@@ -18142,6 +18182,7 @@ to copyrights.</property>
                   <object class="GtkBox" id="tb_Diglot">
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
+                    <property name="valign">start</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
@@ -18153,6 +18194,7 @@ to copyrights.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
+                        <property name="valign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="margin-top">6</property>
@@ -18163,7 +18205,7 @@ to copyrights.</property>
                           <object class="GtkGrid" id="gr_diglot">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="halign">center</property>
+                            <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">4</property>
@@ -18171,131 +18213,6 @@ to copyrights.</property>
                             <property name="hexpand">True</property>
                             <property name="row-spacing">10</property>
                             <property name="column-spacing">6</property>
-                            <child>
-                              <object class="GtkScale" id="s_diglotPriFraction">
-                                <property name="name">Diglot: Proportion to be used by primary text</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="tooltip-text" translatable="yes">If you need the column widths to be different
-for the primary and secondary texts, then adjust
-the proportion here.</property>
-                                <property name="hexpand">True</property>
-                                <property name="adjustment">a_diglotPriFraction</property>
-                                <property name="lower-stepper-sensitivity">on</property>
-                                <property name="upper-stepper-sensitivity">on</property>
-                                <property name="show-fill-level">True</property>
-                                <property name="fill-level">100</property>
-                                <property name="round-digits">1</property>
-                                <property name="value-pos">left</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">2</property>
-                                <property name="width">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_diglotPriFraction">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">If you need the column widths to be different
-for the primary and secondary texts, then adjust
-the proportion here.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Percentage of Page Width to 
-be Used by Primary (Left) Text</property>
-                                <property name="xalign">1</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_diglotSecProject">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Select the project for the other text
-to be printed. This will usually appear
-in the right-hand (or outer) column.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Secondary (other) Project:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_diglotSecConfig">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Use Saved Configuration
-(from Secondary Project):</property>
-                                <property name="xalign">1</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBoxText" id="ecb_diglotSecConfig">
-                                <property name="name">Diglot: Secondary project configuration</property>
-                                <property name="width-request">250</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Select a previously-saved/shared
-configuration to retrieve those settings.
-
-(Leaving this blank will use the default
-settings for the project)</property>
-                                <property name="halign">start</property>
-                                <property name="margin-top">6</property>
-                                <property name="active">0</property>
-                                <property name="active-id">0</property>
-                                <items>
-                                  <item translatable="yes">(None)</item>
-                                </items>
-                                <signal name="changed" handler="ondiglotSecConfigChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">1</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_diglotSecProject">
-                                <property name="name">Diglot: Secondary project name</property>
-                                <property name="width-request">120</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="can-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Select the project for the other text
-to be printed. This will usually appear
-in the right-hand (or outer) column.</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_digprojects</property>
-                                <property name="wrap-width">1</property>
-                                <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
-                                <property name="id-column">0</property>
-                                <signal name="changed" handler="ondiglotSecProjectChanged" swapped="no"/>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="can-focus">True</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">0</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotHeaders">
                                 <property name="label" translatable="yes">Use Default Header Settings for Diglot</property>
@@ -18314,33 +18231,6 @@ and Page Number in (or near) the middle.</property>
                               <packing>
                                 <property name="left-attach">0</property>
                                 <property name="top-attach">6</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_diglotSwapSide">
-                                <property name="label" translatable="yes">Secondary on Left (or Inner)</property>
-                                <property name="name">Diglot: Swap primary and secondary</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">Normally the Primary text is on the Left
-and the Secondary text is positioned on
-the right side of the page.
-
-If you prefer that the Secondary text appears
-on the left (or Inner) side, then check this option. 
-
-This is quite likely required for RTL languages.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="margin-top">6</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onDiglotSwapSideClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">5</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -18367,75 +18257,11 @@ different columns).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="l_diglotPicListSources">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">When generating a PicList for a
-Diglot/DiScript publication, you
-need to decide which images to
-include in the publication.
-
-Note that this control remains
-inactive until Diglot is enabled.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">When Creating a PicList for 
-a Diglot use Pictures from:</property>
-                                <property name="xalign">1</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkToggleButton" id="btn_adjust_diglot">
-                                <property name="name">Auto-calculate optimum widths of diglot columns</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="margin-end">6</property>
-                                <property name="image">icon_adjust_diglot</property>
-                                <property name="always-show-image">True</property>
-                                <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_DBLbundleDiglot2">
-                                <property name="label" translatable="yes">DBL</property>
-                                <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
-available texts to print from. Note that the
-DBL bundle will get unpacked into your 
-regular folder (e.g. My Paratext 9 Projects)
-but will only be used by PTXprint. It cannot
-be viewed or edited in Paratext.</property>
-                                <property name="halign">end</property>
-                                <property name="margin-end">6</property>
-                                <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkFrame" id="fr_diglotSeparateNotes">
                                 <property name="width-request">240</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="margin-end">6</property>
-                                <property name="margin-top">6</property>
                                 <property name="margin-bottom">3</property>
                                 <property name="label-xalign">0.10000000149011612</property>
                                 <child>
@@ -18525,75 +18351,6 @@ leave this option checked ON.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <child>
-                                  <object class="GtkComboBox" id="fcb_diglotPicListSources">
-                                    <property name="name">Diglot: Source of illustrations for PicList creation </property>
-                                    <property name="width-request">90</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">When generating a PicList for a
-Diglot/DiScript publication, you
-need to decide which images to
-include in the publication.
-
-Note that this control remains
-inactive until Diglot is enabled.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="model">ls_diglotPicListSources</property>
-                                    <property name="active">0</property>
-                                    <property name="id-column">1</property>
-                                    <property name="active-id">1</property>
-                                    <signal name="changed" handler="diglotPicListSourcesChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_diglot2captions">
-                                    <property name="label" translatable="yes">Dual Captions</property>
-                                    <property name="name">Diglot: Dual captions</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">When creating the PicList for a diglot,
-if the pictures are set to be used from
-either the Primary OR the Secondary
-(but not both), then Dual Captions (one
-under the other) are shown by default.
-
-If you prefer to only show the captions
-for the Primary or Secondary (but not 
-both), then uncheck this option.
-
-Note that if pictures are drawn from both
-the Primary and Secondary projects, then
-their captions will be independent, and this
-option does not apply at all.</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="active">True</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkSeparator" id="rule_diglotSep">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -18604,17 +18361,6 @@ option does not apply at all.</property>
                                 <property name="left-attach">2</property>
                                 <property name="top-attach">4</property>
                                 <property name="height">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="hexpand">True</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">0</property>
                               </packing>
                             </child>
                             <child>
@@ -18681,30 +18427,180 @@ algorithms which may be used to obtain the best overall result:
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="t_diglotSerialBooks">
-                                <property name="name">List of diglot books not to be merged, to come one after the other</property>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
-                                <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
-in a diglot publication should not be merged to appear
-side-by-side, but instead need to occur one after the other.
-
-Add the 3-letter book codes for any books that should 
-not be merged. These will appear one after the other.</property>
-                                <property name="text" translatable="yes">FRT BAK GLO XXA XXB</property>
-                                <property name="caps-lock-warning">False</property>
-                                <property name="placeholder-text" translatable="yes">e.g. FRT BAK GLO XXA XXB</property>
+                                <property name="spacing">6</property>
+                                <child>
+                                  <object class="GtkFrame">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="valign">start</property>
+                                    <property name="margin-top">12</property>
+                                    <property name="hexpand">False</property>
+                                    <property name="vexpand">True</property>
+                                    <property name="label-xalign">0</property>
+                                    <child>
+                                      <object class="GtkBox" id="bx_polyglot">
+                                        <property name="width-request">550</property>
+                                        <property name="height-request">120</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="valign">start</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label_item">
+                                      <placeholder/>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox" id="bx_layoutPreview">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
-                                <property name="left-attach">1</property>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                                <property name="width">5</property>
+                                <property name="height">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="t_layout">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">The Layout string describes how
+the various texts should appear
+on the page(s).
+
+All of the texts listed in the table
+above must be mentioned. The
+comma represents the next page.
+A forward slash / indicates one
+text being under the other on the
+same page.</property>
+                                <property name="halign">start</property>
+                                <property name="max-length">12</property>
+                                <property name="width-chars">12</property>
+                                <property name="xalign">0.5</property>
+                                <property name="placeholder-text" translatable="yes">LR,A/B</property>
+                                <signal name="focus-out-event" handler="onPolyglotLayoutFocusOut" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">4</property>
                                 <property name="top-attach">3</property>
-                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="spacing">6</property>
+                                <child>
+                                  <object class="GtkButton" id="btn_DBLbundleDiglot2">
+                                    <property name="label" translatable="yes">DBL</property>
+                                    <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
+available texts to print from. Note that the
+DBL bundle will get unpacked into your 
+regular folder (e.g. My Paratext 9 Projects)
+but will only be used by PTXprint. It cannot
+be viewed or edited in Paratext.</property>
+                                    <property name="halign">end</property>
+                                    <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToggleButton" id="btn_adjust_diglot">
+                                    <property name="name">Auto-calculate optimum widths of diglot columns</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="image">icon_adjust_diglot</property>
+                                    <property name="always-show-image">True</property>
+                                    <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">3</property>
+                                <property name="width">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">The Layout string describes how
+the various texts should appear
+on the page(s).
+
+All of the texts listed in the table
+above must be mentioned. The
+comma represents the next page.
+A forward slash / indicates one
+text being under the other on the
+same page.</property>
+                                <property name="halign">end</property>
+                                <property name="margin-left">20</property>
+                                <property name="margin-start">20</property>
+                                <property name="label" translatable="yes">Layout:</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">3</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkLabel" id="l_diglotSerialBooks">
+                                <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
                                 <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
 in a diglot publication should not be merged to appear
 side-by-side, but instead need to occur one after the other.
@@ -18717,14 +18613,28 @@ for These Books:</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">4</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
+                              <object class="GtkEntry" id="t_diglotSerialBooks">
+                                <property name="name">List of diglot books not to be merged, to come one after the other</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
+in a diglot publication should not be merged to appear
+side-by-side, but instead need to occur one after the other.
+
+Add the 3-letter book codes for any books that should 
+not be merged. These will appear one after the other.</property>
+                                <property name="text" translatable="yes">FRT BAK GLO XXA XXB</property>
+                                <property name="caps-lock-warning">False</property>
+                                <property name="placeholder-text" translatable="yes">e.g. FRT BAK GLO XXA XXB</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">4</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
@@ -18736,14 +18646,17 @@ for These Books:</property>
                         </child>
                         <child type="label">
                           <object class="GtkCheckButton" id="c_diglot">
-                            <property name="label" translatable="yes">Diglot or Discript</property>
+                            <property name="label" translatable="yes">Diglot (or Polyglot)</property>
                             <property name="name">Enable diglot or discript publication</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">A Diglot publication contains more than
-one language, or script, or text. Set the
-options here to create a Diglot or Didoc.</property>
+                            <property name="tooltip-text" translatable="yes">A Diglot publication contains two
+languages, or scripts, or texts.
+
+A Polyglot contains more than two.
+Right-click in the table below to
+add other texts to the list.</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onDiglotClicked" swapped="no"/>
@@ -18754,78 +18667,6 @@ options here to create a Diglot or Didoc.</property>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
                         <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox" id="tb_diglotSwitch">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <child>
-                          <object class="GtkLabel" id="l_dibackcol">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="margin-end">3</property>
-                            <property name="label" translatable="yes">Background
-Colour</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="col_dibackcol">
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Primary background colour</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_diglotSwitch">
-                            <property name="label" translatable="yes">Switch to Other
-  Diglot Project</property>
-                            <property name="name">Diglot: Switch to other project</property>
-                            <property name="width-request">150</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="halign">end</property>
-                            <property name="valign">start</property>
-                            <property name="margin-end">6</property>
-                            <signal name="clicked" handler="onDiglotSwitchClicked" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="pack-type">end</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
@@ -39124,7 +38965,7 @@ project's Biblical Terms renderings.</property>
           </packing>
         </child>
         <child>
-          <!-- n-columns=5 n-rows=5 -->
+          <!-- n-columns=5 n-rows=4 -->
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -39134,106 +38975,6 @@ project's Biblical Terms renderings.</property>
             <property name="margin-bottom">6</property>
             <property name="row-spacing">12</property>
             <property name="column-spacing">6</property>
-            <child>
-              <object class="GtkLabel" id="l_styTextType">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">[Required] This tells ptxprint how to layout data in this marker. 
-For normal, vernacular body text, use VerseText. If this is part of
-a heading, use Section. If it is part of the title block of a book, 
-use Title. NoteText makes this a kind of footnote, like \x.</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">⚠️Text Type:</property>
-                <property name="justify">right</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">4</property>
-                <property name="width">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBox" id="fcb_styTextType">
-                <property name="name">Add/Edit marker dialog: Text type</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="can-default">True</property>
-                <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint how to layout data in this marker. 
-For normal, vernacular body text, use VerseText. If this is part of
-a heading, use Section. If it is part of the title block of a book, 
-use Title. NoteText makes this a kind of footnote, like \x.</property>
-                <property name="halign">start</property>
-                <property name="model">ls_styTextType</property>
-                <property name="wrap-width">1</property>
-                <property name="active">1</property>
-                <property name="has-entry">True</property>
-                <property name="entry-text-column">0</property>
-                <property name="id-column">0</property>
-                <property name="active-id">1</property>
-                <child internal-child="entry">
-                  <object class="GtkEntry">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint how to layout data in this marker. 
-For normal, vernacular body text, use VerseText. If this is part of
-a heading, use Section. If it is part of the title block of a book, 
-use Title. NoteText makes this a kind of footnote, like \x.</property>
-                    <property name="width-chars">9</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="left-attach">2</property>
-                <property name="top-attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="l_styStyleType">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">[Required] This describes the nesting level for this marker. 
-Paragraph markers close other paragraphs and character styles, etc.</property>
-                <property name="halign">end</property>
-                <property name="margin-start">20</property>
-                <property name="label" translatable="yes">⚠️Style Type:</property>
-                <property name="justify">right</property>
-              </object>
-              <packing>
-                <property name="left-attach">3</property>
-                <property name="top-attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBox" id="fcb_styStyleType">
-                <property name="name">Add/Edit marker dialog: Style type</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="can-default">True</property>
-                <property name="tooltip-text" translatable="yes">[Required] This describes the nesting level for this marker. 
-Paragraph markers close other paragraphs and character styles, etc.</property>
-                <property name="halign">start</property>
-                <property name="model">ls_styStyleType</property>
-                <property name="wrap-width">1</property>
-                <property name="active">1</property>
-                <property name="has-entry">True</property>
-                <property name="entry-text-column">0</property>
-                <property name="id-column">0</property>
-                <property name="active-id">1</property>
-                <child internal-child="entry">
-                  <object class="GtkEntry">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">[Required] This describes the nesting level for this marker. 
-Paragraph markers close other paragraphs and character styles, etc.</property>
-                    <property name="width-chars">9</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="left-attach">4</property>
-                <property name="top-attach">4</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
@@ -39262,7 +39003,7 @@ describe the purpose of the style.</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
+                <property name="top-attach">3</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -39280,39 +39021,6 @@ describe the purpose of the style.</property>
               <packing>
                 <property name="left-attach">2</property>
                 <property name="top-attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">[Required] List markers that this marker may occur under. 
-Without this, the USFM parser may report structural errors 
-in your data for this marker.</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">⚠️Occurs Under:</property>
-                <property name="justify">right</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
-                <property name="width">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="t_styOccursUnder">
-                <property name="name">Add/Edit marker dialog: Markers it can occur under</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="tooltip-text" translatable="yes">[Required] List markers that this marker may occur under. 
-Without this, the USFM parser may report structural errors 
-in your data for this marker.</property>
-                <property name="placeholder-text">id p m q1 q2</property>
-              </object>
-              <packing>
-                <property name="left-attach">2</property>
-                <property name="top-attach">3</property>
-                <property name="width">3</property>
               </packing>
             </child>
             <child>
@@ -39347,7 +39055,7 @@ describe the purpose of the style.</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
-                <property name="top-attach">2</property>
+                <property name="top-attach">3</property>
                 <property name="width">3</property>
               </packing>
             </child>
@@ -39363,7 +39071,7 @@ and helps to place the marker in the tree listing all markers.</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
+                <property name="top-attach">2</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -39378,7 +39086,7 @@ and helps to place the marker in the tree listing all markers.</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
-                <property name="top-attach">1</property>
+                <property name="top-attach">2</property>
                 <property name="width">3</property>
               </packing>
             </child>
@@ -39408,6 +39116,59 @@ and helps to place the marker in the tree listing all markers.</property>
                 <property name="left-attach">4</property>
                 <property name="top-attach">0</property>
               </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_styType">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint what kind of a marker this is.</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">⚠️Type:</property>
+                <property name="justify">right</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="fcb_styType">
+                <property name="name">Add/Edit marker dialog: Marker type</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="can-default">True</property>
+                <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint what kind of 
+marker this is.
+</property>
+                <property name="halign">start</property>
+                <property name="model">ls_styType</property>
+                <property name="wrap-width">1</property>
+                <property name="active">1</property>
+                <property name="has-entry">True</property>
+                <property name="entry-text-column">0</property>
+                <property name="id-column">1</property>
+                <property name="active-id">1</property>
+                <child internal-child="entry">
+                  <object class="GtkEntry">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint how to layout data in this marker. 
+For normal, vernacular body text, use VerseText. If this is part of
+a heading, use Section. If it is part of the title block of a book, 
+use Title. NoteText makes this a kind of footnote, like \x.</property>
+                    <property name="width-chars">30</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">1</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
           <packing>
