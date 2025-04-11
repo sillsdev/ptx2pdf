@@ -110,7 +110,9 @@
 }
 
 \newcount\p@lyr@wno
+%%%%%%%%%%%%%%%%%%%%%%%%% code that needs slash to not be active.  
 \catcode47=\tw@lve
+
   \def\sstackup#1/#2\E{\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackup\fi\n@x #2\E\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi}                  %(1)
   \def\sstackdown#1/#2\E{\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackdown\fi\n@x #2\E}
   \def\sstackrelax#1\E{}
@@ -127,7 +129,15 @@
     \sstackdown#1/\E
     \global\advance\p@lyp@geno by 1
   }
+  \def\complexcheck@polyp@ges#1\E{
+    \p@lyr@wno=0
+    \let\d@@\@complexcheck@polyp@ges
+    \sstackdown#1/\E
+    \global\advance\p@lyp@geno by 1
+  }
+    
 \catcode47=\active
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e}% Various 'column codes' are not connected to any input. Use ifcsname to check for them
 \inactive@col@code{-} % A blank column
@@ -205,6 +215,17 @@
   \let\@csppactcols\undefined
 }
 
+\def\@complexcheck@polyp@ges#1\E{%Check for Row-of-columns processing
+  \edef\tmp{#1}%
+  \edef\tmpnam{\checkmode p@lyp@gecols\p@lyp@gestring}%
+  \edef\tmpval{\csname \tmpnam\endcsname}
+  \trace{dmc}{\tmpval=\tmp ?}
+  \ifx\tmpval\tmp
+  \else
+    \edef\checkreport{\checkreport\tmpnam\space does not agree (\tmpval!=#1) }%
+  \fi
+  \global\advance\p@lyr@wno by 1
+}
 \def\p@lyp@gestring{\the\p@lyp@geno-\the\p@lyr@wno}
 \def\p@lyp@gesuffx{@poly@\p@lyp@gestring}
 
@@ -239,37 +260,59 @@
     \xdef@cseq{@tmpnum@#1}{\the\count255}%
   \else 
     \ifcsname inactive@col@code#1\endcsname\else
-      \message{!!! #1 is neither an inactive column code nor a diglot(polyglot) column. Define it first.}\error
+      \errmessage{!!! #1 is neither an inactive column code nor a diglot(polyglot) column. Define it first.}%
+      \error%Force stop
     \fi
   \fi
   \traceifcheck{@@cspp}%
 }
+\def\checkpolypages{%
+  \edef\sl@shcode{\the\catcode47}%
+  \catcode47=\tw@lve\relax
+  \@checkpolypages
+}
+\def\@checkpolypages#1#2{
+  \p@lyp@geno=0
+  \def\checkreport{}%
+  \let\d@\complexcheck@polyp@ges
+  \edef\checkmode{}%
+  \edef\checknormal{#1}%
+  \edef\checkrev{#2}%
+  \x@\cstackdown\checknormal,\E
+  \p@lyp@geno=0
+  \edef\checkmode{rev}
+  \x@\cstackdown\checkrev,\E
+  \ifx\checkreport\empty\else
+    \errmessage{\checkreport}%
+  \fi
+  \catcode47=\sl@shcode\relax
+}
 
 \def\trysplit#1{%
-  
-
+}
 
 \def\polyglotpages@complexpages#1{%comma separated list of concatenated columns to put on different pages and rows (e.g. LR/A,B/C) specifies 2 pages, pg1 shows L, R and A, pg2 B and C.
   \trace{dmc}{polyglotpages #1}%
   \polyglot@onetime@setup
   \polyglot@eachtime@setup@complexpages
   \p@lyp@geno=0
-  %\edef\tmp{#1}%
+  \edef\tmp{#1}%
+  \ifx\tmp\empty\errmessage{polyglotpages called with empty argument. That's an error}\fi
   \let\d@=\complexs@tpolyp@ges
   \cstackdown#1,\E
   \reset@colindexes
   \p@lyp@geno=0
   \let\d@=\complexr@vpolyp@ges
   \cstackup#1,\E
-  \catcode47=\sl@shcode
-  \catcode`\-=\d@shcode
+  \catcode47=\sl@shcode\relax
+  \catcode`\-=\d@shcode\relax
 }
 
 \def\polyglotpages{% Just in case, switch some catcodes.
   \edef\sl@shcode{\the\catcode47}%
   \edef\d@shcode{\the\catcode`\-}%
   \catcode47=\tw@lve % /
-  \catcode`\-=\tw@lve % -
+  \catcode`\-=\tw@lve \relax % -
   \polyglotpages@complexpages
 }
 
