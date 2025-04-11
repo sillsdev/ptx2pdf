@@ -1884,14 +1884,25 @@ class Paragraphs(list):
                 currr = ParRect(pnum, cinfo[3], readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
+<<<<<<< Updated upstream
                 lastyend = 0
             elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
+=======
+            elif c == "parpicstop":
+                currpic = None
+>>>>>>> Stashed changes
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None or currr is None or currpic is None:
                     continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
+<<<<<<< Updated upstream
                 currpic = None
+=======
+                #if currps.get(polycol, None) is not None:
+                #    r = currps[polycol].rects[-1]
+                #    r.ystart = currr.yend
+>>>>>>> Stashed changes
                 if currp is not None:
                     currpr = currr
                     if not len(currp.rects) or currp.rects[-1].xend > 0:

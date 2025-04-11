@@ -1915,7 +1915,10 @@ class ViewModel:
         working_dir = self.project.printPath(self.cfgid)
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
-                v._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
+                if v is None:
+                    v = self.createDiglotView(k)
+                if v is not None:
+                    v._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
                     self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
