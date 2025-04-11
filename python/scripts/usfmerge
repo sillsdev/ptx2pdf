@@ -32,9 +32,9 @@ else:
     keyarr=list(args.keys)
 
 print(keyarr)
+sheetsa = args.stylesheet + args.astylesheet
+sheetsb = args.stylesheet + args.bstylesheet
 stylesheets = {}
-stylesheets['L'] = args.stylesheet + args.astylesheet
-stylesheets['R'] = args.stylesheet + args.bstylesheet
 for k,sheetfile in args.colstylesheet:
     if k in stylesheets:
         stylesheets[k].append(sheetfile)

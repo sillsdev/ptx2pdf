@@ -1178,6 +1178,8 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
+            if (colkey not in sheets):
+              sheets[colkey]=[]
             doc = Usfm.readfile(infile, sheet=sheets[colkey])
             colls[colkey] = Collector(doc=doc, colkey=colkey, primary=(colkey=='L'), fsecondary=fsecondary, stylesheet=sheets[colkey], scores=scorearr[colkey],synchronise=syncarr[colkey],protect=protect)
         chunks[colkey] = {c.ident: c for c in colls[colkey].acc}
