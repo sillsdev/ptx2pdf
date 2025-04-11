@@ -1041,7 +1041,7 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting {synchronise}.")
     return(SyncPoints[{synchronise}])
     
-def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
+def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
     if debug:
       debugPrint = True
