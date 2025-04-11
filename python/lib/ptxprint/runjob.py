@@ -567,6 +567,7 @@ class RunJob:
         sheets = {}
         keyarr = ["L"]
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        info.dict.setdefault("diglots_", {})
         for k, diginfo in diginfos.items():
             texfiles = []
             digdonebooks = []
@@ -599,7 +600,7 @@ class RunJob:
             if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
                 texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INTR.SFM"))))
             diginfo["cfgrpath_"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
-            info.dict.setdefault("diglots_", {})[k] = diginfo
+            info.dict["diglots_"][k] = diginfo
 
         donebooks = []
         for j in jobs:

@@ -799,6 +799,7 @@ class ViewModel:
                     pg = PolyglotConfig()
                     pg.readConfig(config, s)
                     self.polyglots[k] = pg
+                    print(f"Polyglot[{k} = {pg}")
                     if k != "L":
                         self.createDiglotView(k)
         else:
@@ -1168,7 +1169,7 @@ class ViewModel:
             if config.getboolean("snippets", "diglot"):
                 print(f'{config.getboolean("snippets", "diglot")=}')
                 for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
-                             "config": "secconf", "fraction": "secfraction"}.items(): # add captions +/- colour
+                             "config": "secconfig", "fraction": "secfraction"}.items(): # add captions +/- colour
                     val = config.get("document", f"diglot{a}", fallback=None)
                     print(f"{k=} {val=}")
                     if val is not None:
@@ -1864,10 +1865,11 @@ class ViewModel:
             return None
         prjguid = self.polyglots[suffix].prjguid
         print(f"in view.createDiglotView: {prjguid=}")
-        prj = self.prjTree.getProject(prjguid)
+        prj = self.prjTree.getProject(prjguid, name=self.polyglots[suffix].prj)
         cfg = self.polyglots[suffix].cfg
         if prj is None or cfg is None:
-            self.setPrintBtnStatus(2, _("No Config found for Diglot"))
+            raise ValueError(f"No Config found for Diglot [{suffix}]")
+            self.setPrintBtnStatus(2, _(f"No Config found for Diglot [{suffix}]"))
             digview = None
         else:
             digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
@@ -1881,7 +1883,7 @@ class ViewModel:
             digview.isDiglot = True
             digview.digSuffix = suffix
             self.digSuffix = suffix
-        self.diglotViews[suffix] = digview
+            self.diglotViews[suffix] = digview
         return digview
 
     def createArchive(self, filename=None):

@@ -246,6 +246,10 @@ class Diglot(Snippet):
 \makeatother
 """
 
+        layout = model.dict["document/diglotlayout"]
+        if layout is None:
+            layout = "L"+"".join(model.dict["diglots_"].keys())
+            model.dict["document/diglotlayout"] = layout
         res = baseCode.format(s_="L", **model.dict)
         for k, v in model.dict["diglots_"].items():
             v.dict["isNotR_"] = "%" if k == "R" else ""
