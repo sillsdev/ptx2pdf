@@ -16,12 +16,6 @@ configmap = {
     "backcolor":    ("color", str, ["document/diglotcolour", "document/ifdiglotcolour"])
 }
 
-# def updateTMfromView(texmodel, view):
-    # for k, v in configmap.items():
-        # val = view.get(f"poly{k}_", "")
-        # print(f"{k}={val}")
-        # texmodel.dict[f"poly/{k}"] = val 
-
 class PolyglotConfig:
     def __init__(self):
         self.prj = None

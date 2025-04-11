@@ -799,7 +799,6 @@ class ViewModel:
                     pg = PolyglotConfig()
                     pg.readConfig(config, s)
                     self.polyglots[k] = pg
-                    print(f"Polyglot[{k} = {pg}")
                     if k != "L":
                         self.createDiglotView(k)
         else:
@@ -1141,42 +1140,36 @@ class ViewModel:
             if not config.getboolean('paper', 'ifgrid', fallback=False):
                 self._configset(config, 'grid/gridgraph', False)
                 self._configset(config, 'grid/gridlines', False)
-
-# diglot2captions = True
-# diglotadjcenter = False
-# diglotcolour = rgb(255,255,255)
-# diglotheaders = False
-# diglotjoinvrule = False
-# diglotmergemode = scores-chapter
-# diglotnotesrule = False
-# diglotpicsources = pri
-# diglotprifraction = 50
-# diglotsecconfig = Default
-# diglotsecfraction = 50
-# diglotsecprjguid = abfa13e41e4f378a79ba8e49727cca9100533940
-
-
-# [diglot_R]
-# projectid = WSG
-# projectguid = 9e944fc08f02acf9cc7033f4b006cc335e7ef48f
-# config = Short
-# page = 1
-# fraction = 50
-# captions = false
-# backcolor = #FFFFFF
                 
-        if v < 2.24: # support polyglot
+        if v < 2.24: # change from simple pri/sec diglot to polyglot
             if config.getboolean("snippets", "diglot"):
-                print(f'{config.getboolean("snippets", "diglot")=}')
                 for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
-                             "config": "secconfig", "fraction": "secfraction"}.items(): # add captions +/- colour
+                             "config": "secconfig", "color": "colour"}.items():
                     val = config.get("document", f"diglot{a}", fallback=None)
-                    print(f"{k=} {val=}")
+                    print(f"{k=} {a=} diglot{a} {val=}")
                     if val is not None:
                         self._configset(config, f"diglot_R/{k}", val)
+                for k,v in {"page": "1", "weight": "50"}.items():
+                    self._configset(config, f"diglot_L/{k}", v)
+                    self._configset(config, f"diglot_R/{k}", v)
                 val = config.get("document", "diglotprifraction", fallback=50)
                 self._configset(config, f"poly/fraction", val)
-
+                self._configset(config, f"diglot_L/fraction", val)
+                self._configset(config, f"diglot_R/fraction", f2s(100 - float(val)))
+                pics = config.get("document", "diglotpicsources", fallback="pri")
+                self._configset(config, f"diglot_L/captions", True if pics in ("pri", "bth") else False)
+                self._configset(config, f"diglot_R/captions", True if pics in ("sec", "bth") else False)
+                prj = config.get("project", "id", fallback=None)
+                self._configset(config, f"diglot_L/projectid", prj)
+                cfg = config.get("config", "name", fallback=None)
+                self._configset(config, f"diglot_L/config", cfg)
+                revrs = config.get("document", "diglotswapside", fallback=False)
+                self._configset(config, f"document/diglotlayout", "RL" if revrs else "LR")
+                fsz = config.get("paper", "fontfactor", fallback=12)
+                self._configset(config, f"diglot_L/fontsize", fsz)
+                lsp = config.get("paragraph", "linespacing", fallback=15)
+                self._configset(config, f"diglot_L/baseline", lsp)
+                
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
@@ -1391,7 +1384,6 @@ class ViewModel:
         self.saveStyles(force=force)
         for k,v in self.diglotViews.items():
             if v.isChanged:
-                print(f"Saving Diglot config: {k} - YAY!")
                 v.saveConfig()
                 v.changed(False)
 
@@ -1858,13 +1850,10 @@ class ViewModel:
         return res
 
     def createDiglotView(self, suffix="R"):
-        # breakpoint()
         self.setPrintBtnStatus(2)
         if suffix not in self.polyglots:
-            print(f"Returned early from: createDiglotView. {suffix=}")
             return None
         prjguid = self.polyglots[suffix].prjguid
-        print(f"in view.createDiglotView: {prjguid=}")
         prj = self.prjTree.getProject(prjguid, name=self.polyglots[suffix].prj)
         cfg = self.polyglots[suffix].cfg
         if prj is None or cfg is None:

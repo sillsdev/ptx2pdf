@@ -1495,7 +1495,6 @@ class GtkViewModel(ViewModel):
         self.set("l_statusLine", txt)
         status = len(self.get("l_statusLine"))
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
-        print(f"Status: {txt}")
         
     def onHideStatusMsgClicked(self, btn):
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(False)
@@ -1512,7 +1511,7 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "btn_adjust_diglot", "spolyfraction_"
+        for w in ["b_print", "b_print4cover", "btn_adjust_diglot"]: # "b_print2ndDiglotText", "spolyfraction_"
             self.builder.get_object(w).set_sensitive(not self.printReason)
 
     def checkFontsMissing(self):
@@ -6587,3 +6586,24 @@ Thank you,
     def onPreviewDeleteEvent(self, widget, event): # PDF Preview dialog (X button)
         widget.hide()  # Hide the dialog instead of destroying it
         return True    # Returning True prevents the default destroy behavior
+
+    def update_diglot_polyglot_UI(self):
+        dglt = True if len(self.gtkpolyglot.ls_treeview) < 3 else False
+        self.builder.get_object("btn_adjust_diglot").set_sensitive(dglt)
+        merge_types = {
+            _("Document based"):   "doc",
+            _("Chapter Verse"):    "simple",
+            _("Scored"):           "scores",
+            _("Scored (Chapter)"): "scores-chapter",
+            _("Scored (Verse)"):   "scores-verse"
+            }
+        mrgtyplist = self.builder.get_object("ls_diglotMerge")
+        mrgtyplist.clear()
+        orig = self.get("fcb_diglotMerge", "scores")
+        for desc, code in merge_types.items():
+            if dglt or code.startswith("scores"):
+                mrgtyplist.append([desc, code])
+        found = any(row[1] == orig for row in mrgtyplist)
+        self.set("fcb_diglotMerge", orig if found else "scores") 
+           
+       

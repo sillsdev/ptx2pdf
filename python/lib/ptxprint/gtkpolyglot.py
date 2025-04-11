@@ -3,7 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 import re, json
 from enum import IntEnum
-from ptxprint.utils import _
+from ptxprint.utils import _, coltoonemax
 from ptxprint.polyglot import PolyglotConfig
 from ptxprint.pastelcolorpicker import ColorPickerDialog
 
@@ -13,7 +13,6 @@ m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
 
 class PolyglotSetup(Gtk.Box):
     def __init__(self, builder, view, tv):
-        print(f"__init__")
         self.builder = builder
         self.view = view
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
@@ -64,7 +63,7 @@ class PolyglotSetup(Gtk.Box):
         if not self.ls_treeview:
             return            
         self.ls_treeview.clear()
-        self.update_layout_string()
+        self.update_layout_string(force=True)
         self.refresh_code_dropdowns()
         self.update_context_menu()
                 
@@ -85,14 +84,25 @@ class PolyglotSetup(Gtk.Box):
                 val = getattr(plyglot, field)
                 self.ls_treeview[row_index][idx] = val
             if sfx == "L":
+                polyview = self.view
+            else:
+                polyview = self.view.createDiglotView(suffix=sfx)
+            if polyview is not None:
+                if self.ls_treeview[row_index][m.fontsize] == 0:
+                    self.ls_treeview[row_index][m.fontsize] = float(polyview.get("s_fontsize", 11.00))
+                if self.ls_treeview[row_index][m.baseline] == 0:
+                    self.ls_treeview[row_index][m.baseline] = float(polyview.get("s_linespacing", 15.00))
+                if self.ls_treeview[row_index][m.color] in ("#FFFFFF", None):
+                    c = polyview.get('_dibackcol', "#FFFFFF")
+                    if c is not None and c.startswith("rgb("):
+                        rgb = coltoonemax(c)
+                        c = "#{0:02x}{1:02x}{2:02x}".format(*[int(x * 255) for x in rgb])      
+                    self.ls_treeview[row_index][m.color] = c
+            if sfx == "L":
                 self.updateRow(row_index)
-            # polyview = self.view
-            # else:
-                # polyview = self.view.createDiglotView(suffix=sfx)
-            # if polyview is not None:
-                # self.ls_treeview[row_index][m.fontsize] = float(polyview.get("s_fontsize", 11.11))
-                # self.ls_treeview[row_index][m.baseline] = float(polyview.get("s_linespacing", 15.15))
+                    
         self.update_layout_string()
+        self.view.update_diglot_polyglot_UI()
 
     def find_or_create_row(self, sfx, save=False):
         if len(self.ls_treeview) >= 9:
@@ -114,8 +124,7 @@ class PolyglotSetup(Gtk.Box):
             cfid = ""
         pg = "1" if sfx in ("LR") else "2"
         new_row = [sfx, pg, pri_prj, cfid, False, 11.0, 14.0, 55.0, 45.0, 
-                   "#fefefe", pri_prjguid, "Tooltips", "#000000", 400]
-        print(f"{new_row=}")
+                   "#FFFFFF", pri_prjguid, "Tooltips", "#000000", 400]
         self.ls_treeview.append(new_row)
         row_index = len(self.ls_treeview) - 1  
         if save and cfid != "":
@@ -220,7 +229,6 @@ class PolyglotSetup(Gtk.Box):
         prjguid = impprj.guid
         prjobj = self.view.prjTree.getProject(prjguid)
         cfgList = list(prjobj.configs.keys())
-        # print(f"get_available_configs: {project}:{prjguid} {cfgList}")
         if not len(cfgList):
             cfgList = ['Default']
         return prjguid, cfgList
@@ -262,7 +270,6 @@ class PolyglotSetup(Gtk.Box):
         return False  # No tooltip found
 
     def on_text_edited(self, widget, path, new_text, col_id):
-        print(f"on_text_edited: {path=} {new_text=} {col_id=}")
         try:
             new_value = float(new_text)      # Convert input to float
         except ValueError:
@@ -295,7 +302,6 @@ class PolyglotSetup(Gtk.Box):
             cell.set_property("text", "")
 
     def get_available_codes(self, exclude_path=None):
-        print(f"get_available_codes: {exclude_path=}")
         used_codes = {row[m.code] for row in self.ls_treeview if row[m.code]}  # Set of used codes
 
         if exclude_path is not None:
@@ -306,7 +312,6 @@ class PolyglotSetup(Gtk.Box):
         return available_codes
 
     def set_combo_options(self, options):
-        print(f"set_combo_options: {options}")
         model = Gtk.ListStore(str)
         if options is not None:
             for option in options:
@@ -314,7 +319,6 @@ class PolyglotSetup(Gtk.Box):
         return model
         
     def on_combo_changed(self, widget, path, text, col_id):
-        print(f"on_combo_changed: {path=} {text=} {col_id=}")
         row_index = int(path)
         old_cfg = self.ls_treeview[row_index][m.cfg] if 0 <= row_index < len(self.ls_treeview) else None
         if row_index == 0 and col_id not in [m.pg, m.fraction]:  # Row 0 should not be editable for these columns
@@ -375,15 +379,18 @@ class PolyglotSetup(Gtk.Box):
             polyview = None
 
         self.ls_treeview[path][col_id] = text
-
-        print(f"About to updateRow: {row_index} {text}")
         self.updateRow(row_index)
         if polyview is not None:
             f = polyview.get('s_fontsize', 11.0)
-            b = polyview.get('s_linespacing', 15.0)
-            c = polyview.get('col_dibackcol', "#FFFFFF")
             self.ls_treeview[row_index][m.fontsize] = float(f)
+
+            b = polyview.get('s_linespacing', 15.0)
             self.ls_treeview[row_index][m.baseline] = float(b)
+
+            c = polyview.get('_dibackcol', "#FFFFFF")
+            if c is not None and c.startswith("rgb("):
+                rgb = coltoonemax(c)
+                c = "#{0:02x}{1:02x}{2:02x}".format(*[int(x * 255) for x in rgb])      
             self.ls_treeview[row_index][m.color] = c
            
         # Refresh dropdowns and other dependencies after updating the combo box
@@ -391,10 +398,10 @@ class PolyglotSetup(Gtk.Box):
             self.refresh_code_dropdowns()
         elif col_id == m.pg:  # Page 1 or 2 changed
             self.validate_page_widths()
+            self.update_layout_string(force=True)
             self.treeview.queue_draw()  # Refresh UI
 
     def updateRow(self, row_index):
-        print(f"updateRow: {row_index}")
         sfx = self.ls_treeview[row_index][m.code]
         plyglt = self.view.polyglots.get(sfx, None)
         if plyglt is None:
@@ -404,11 +411,10 @@ class PolyglotSetup(Gtk.Box):
             val = self.ls_treeview[row_index][idx]
             setattr(plyglt, field, val)
         if row_index == 0:
-            for a, b in {"fontsize": "s_fontsize", "baseline" : "s_linespacing", "color": "col_dibackcol"}.items():
+            for a, b in {"fontsize": "s_fontsize", "baseline" : "s_linespacing", "color": "_dibackcol"}.items():
                 self.view.set(b, self.ls_treeview[row_index][getattr(m, a)])
         
     def refresh_code_dropdowns(self):
-        print(f"refresh_code_dropdowns")
         if hasattr(self, "code_renderer"):  # Ensure renderer exists before updating
             available_codes = self.get_available_codes()
             self.code_renderer.set_property("model", self.set_combo_options(available_codes))
@@ -431,13 +437,8 @@ class PolyglotSetup(Gtk.Box):
 
         if dialog.run() == Gtk.ResponseType.OK:
             color_hex = dialog.selected_color  # Get the selected color
-            
-            # Handle case where custom color returns "rgb(r,g,b)" format
-            if color_hex.startswith("rgb("):
-                # Extract RGB values and convert to hex
-                rgb = color_hex[4:-1].split(",")
-                r, g, b = map(int, rgb)
-                color_hex = "#{:02x}{:02x}{:02x}".format(r, g, b)
+            rgb = coltoonemax(color_hex)
+            color_hex = "#{0:02x}{1:02x}{2:02x}".format(*(int(x * 255) for x in rgb))
             
             # Update the model with the selected hex color
             model.set_value(iter, m.color, color_hex)
@@ -483,12 +484,12 @@ class PolyglotSetup(Gtk.Box):
 
             move_up_item = Gtk.MenuItem(label=_("Move Up"))
             move_up_item.connect("activate", self.move_selected_row, -1)
-            move_up_item.set_sensitive(not is_first_row and not row_index == 1)  # Disable if Row 0
+            move_up_item.set_sensitive(not is_first_row and not row_index == 1)  # Disable if Row 0 + 1
             self.context_menu.append(move_up_item)
 
             move_down_item = Gtk.MenuItem(label=_("Move Down"))
             move_down_item.connect("activate", self.move_selected_row, 1)
-            move_down_item.set_sensitive(not is_first_row)  # Disable if Row 0
+            move_down_item.set_sensitive(not is_first_row and not row_index == 1)  # Disable if Row 0 + 1
             self.context_menu.append(move_down_item)
 
             homogenize_fontsize_item = Gtk.MenuItem(label=_("Copy Font Size to All"))
@@ -505,7 +506,7 @@ class PolyglotSetup(Gtk.Box):
 
             delete_item = Gtk.MenuItem(label=_("Delete Row"))
             delete_item.connect("activate", self.delete_selected_row)
-            delete_item.set_sensitive(not is_first_row)  # Disable if Row 0
+            delete_item.set_sensitive(not is_first_row and not row_index == 1)  # Disable if Row 0 + 1
             self.context_menu.append(delete_item)
 
             change_cfg_settings = Gtk.MenuItem(label=_("Edit Settings..."))
@@ -530,9 +531,10 @@ class PolyglotSetup(Gtk.Box):
             self.view.diglotViews.pop(sfx, None)
             self.view.polyglots.pop(sfx, None)
             model.remove(iter)
-            self.update_layout_string()
+            self.update_layout_string(force=True)
             self.refresh_code_dropdowns()  # Refresh available codes
             self.update_context_menu()     # Refresh menu state
+            self.view.update_diglot_polyglot_UI()
             self.validate_page_widths()    # Refresh color of % width
 
     def update_context_menu(self):
@@ -546,36 +548,29 @@ class PolyglotSetup(Gtk.Box):
                 item.set_sensitive(has_room)  # Enable/disable based on row count
 
     def get_prj_cfg(self):
-        print(f"get_prj_cfg")
         selection = self.treeview.get_selection()
         model, iter = selection.get_selected()
         if iter:
             prj = model.get_value(iter, m.prj)
             cfg = model.get_value(iter, m.cfg)
-            print(f"  {prj=} {cfg=}")
             return prj, cfg
         else:
-            print(f"  Returned None, None")
             return None, None
         
     def edit_other_config(self, menu_item):
-        print(f"edit_other_config")
         prj, cfg = self.get_prj_cfg()
         if prj is not None and cfg is not None:
             self.view.doStatus(_("Opening {}:{} ...").format(prj, cfg))
 
     def get_curr_proj(self):
-        print(f"get_curr_proj")
         w = self.builder.get_object('fcb_project')
         m = w.get_model() # liststore
         aid = w.get_active_iter()
         prjid = m.get_value(aid, 0)
         prjguid = m.get_value(aid, 1)
-        print(f"  {prjid=}  {prjguid=}")
         return prjid, prjguid
 
     def add_row(self, widget):
-        print(f"add_row")
         if len(self.ls_treeview) >= 9:
             self.view.doStatus("Maximum of 9 rows reached. Cannot add more.")
             return  # Stop if the limit is reached
@@ -583,8 +578,9 @@ class PolyglotSetup(Gtk.Box):
         next_code = str(available_codes[m.code]) if available_codes else ""  # Auto-assign next available code
         self.find_or_create_row(next_code, save=True)
         # Perform additional updates
-        self.update_layout_string()
+        self.update_layout_string(force=True)
         self.refresh_code_dropdowns()
+        self.view.update_diglot_polyglot_UI()
         self.validate_page_widths()
         self.update_context_menu()
         
@@ -620,10 +616,8 @@ class PolyglotSetup(Gtk.Box):
         return w
 
     def homogenize_fontsize(self, widget):
-        print(f"homogenize_fontsize")
         selected = self.get_selected_row()
         if not selected:
-            print(f"  !returning prematurely")
             return  # No row selected
 
         model, iter, path = selected
@@ -635,10 +629,8 @@ class PolyglotSetup(Gtk.Box):
             self.updateRow(row)
 
     def homogenize_spacing(self, widget):
-        print(f"homogenize_spacing")
         selected = self.get_selected_row()
         if not selected:
-            print(f"  !returning prematurely")
             return  # No row selected
 
         model, iter, path = selected
@@ -650,10 +642,8 @@ class PolyglotSetup(Gtk.Box):
             self.updateRow(row)
 
     def distribute_width_evenly(self, widget):
-        print(f"distribute_width_evenly")
         selected = self.get_selected_row()
         if not selected:
-            print(f"  !returning prematurely")
             return  # No row selected
 
         model, iter, path = selected
@@ -664,7 +654,6 @@ class PolyglotSetup(Gtk.Box):
         row_count = len(same_page_rows)
 
         if row_count == 0:
-            print(f"  !returning prematurely: row_count==0")
             return  # Avoid division by zero
 
         new_width = round(100.0 / row_count, 2)  # Calculate even width per row
@@ -678,7 +667,6 @@ class PolyglotSetup(Gtk.Box):
         self.validate_page_widths()  # Refresh highlighting
 
     def validate_page_widths(self):
-        print(f"validate_page_widths")
         page_totals = {"1": 0.0, "2": 0.0}  # Track total % width per page
 
         # Step 1: Calculate total widths for each page (1 or 2)
@@ -702,10 +690,11 @@ class PolyglotSetup(Gtk.Box):
 
         self.treeview.queue_draw()  # Refresh UI
 
-    def update_layout_string(self):
-        print(f"update_layout_string")
+    def update_layout_string(self, force=False):
+        ot = self.view.get('t_layout', None)
         t = self.generate_layout_from_treeview()
-        self.view.set('t_layout', t)
+        if len(t) > len(ot) or force:
+            self.view.set('t_layout', t)
         self.update_layout_preview()
 
     def generate_layout_from_treeview(self):

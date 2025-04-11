@@ -1512,6 +1512,36 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_diglotMerge">
+    <columns>
+      <!-- column-name mergeDesc -->
+      <column type="gchararray"/>
+      <!-- column-name mergeCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Description based</col>
+        <col id="1">doc</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Chapter Verse</col>
+        <col id="1">simple</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Scored</col>
+        <col id="1">scores</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Scored (Chapter)</col>
+        <col id="1">scores-chapter</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Scored (Verse)</col>
+        <col id="1">scores-verse</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_diglotPicListSources">
     <columns>
       <!-- column-name DiglotPicSources -->
@@ -18201,7 +18231,7 @@ to copyrights.</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=5 n-rows=8 -->
+                          <!-- n-columns=5 n-rows=7 -->
                           <object class="GtkGrid" id="gr_diglot">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -18230,7 +18260,7 @@ and Page Number in (or near) the middle.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">6</property>
+                                <property name="top-attach">5</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -18252,7 +18282,7 @@ different columns).</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">7</property>
+                                <property name="top-attach">6</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -18360,70 +18390,7 @@ leave this option checked ON.</property>
                               <packing>
                                 <property name="left-attach">2</property>
                                 <property name="top-attach">4</property>
-                                <property name="height">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_diglotMergeMode">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
-algorithms which may be used to obtain the best overall result:
-
-* Document based - attempts to use the document structure to align at 
-  paragraphs as far as possible; but alignment is easily confused when 
-  each text has a very different paragraph structure.
-
-* Chapter Verse - aligns on chapters and verses instead of structure
-
-* Scored - an alternative algorithm using weighted scores which
-  tries to align paragraphs when the verse numbers match
-
-* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
-
-* Scored (Verses) - as a minimum, forces alignment at each verse, which 
-  can result in a lot of breaks!</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Merging mode:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">7</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBoxText" id="fcb_diglotMerge">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
-algorithms which may be used to obtain the best overall result:
-
-* Document based - attempts to use the document structure to align at 
-  paragraphs as far as possible; but alignment is easily confused when 
-  each text has a very different paragraph structure.
-
-* Chapter Verse - aligns on chapters and verses instead of structure
-
-* Scored - an alternative algorithm using weighted scores which
-  tries to align paragraphs when the verse numbers match
-
-* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
-
-* Scored (Verses) - as a minimum, forces alignment at each verse, which 
-  can result in a lot of breaks!</property>
-                                <property name="active">0</property>
-                                <property name="active-id">doc</property>
-                                <items>
-                                  <item id="doc" translatable="yes">Document based</item>
-                                  <item id="simple" translatable="yes">Chapter Verse</item>
-                                  <item id="scores" translatable="yes">Scored</item>
-                                  <item id="scores-chapter" translatable="yes">Scored (Chapter)</item>
-                                  <item id="scores-verse" translatable="yes">Scored (Verse)</item>
-                                </items>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">7</property>
+                                <property name="height">3</property>
                               </packing>
                             </child>
                             <child>
@@ -18561,10 +18528,108 @@ be viewed or edited in Paratext.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="hexpand">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel" id="l_diglotMergeMode">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a very different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!
+
+Note that for polyglots, only the Scored options are available to be used.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Merging mode:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="fcb_diglotMerge">
+                                    <property name="name">Diglot/Polyglot: Merging Mode</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a very different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!
+
+Note that for polyglots, only the Scored options are available to be used.</property>
+                                    <property name="model">ls_diglotMerge</property>
+                                    <property name="active">1</property>
+                                    <property name="has-entry">True</property>
+                                    <property name="entry-text-column">0</property>
+                                    <property name="id-column">1</property>
+                                    <property name="active-id">1</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a very different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!
+
+Note that for polyglots, only the Scored options are available to be used.</property>
+                                        <property name="editable">False</property>
+                                        <property name="width-chars">18</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
@@ -18635,12 +18700,6 @@ not be merged. These will appear one after the other.</property>
                                 <property name="left-attach">1</property>
                                 <property name="top-attach">4</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                           </object>
                         </child>
