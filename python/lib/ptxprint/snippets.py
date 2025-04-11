@@ -247,7 +247,7 @@ class Diglot(Snippet):
 """
 
         layout = model.dict["document/diglotlayout"]
-        if layout is None:
+        if not layout:
             layout = "L"+"".join(model.dict["diglots_"].keys())
             model.dict["document/diglotlayout"] = layout
         res = baseCode.format(s_="L", **model.dict)
