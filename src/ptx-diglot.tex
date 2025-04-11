@@ -335,13 +335,11 @@
 \newif\ifloc@lht % loc@lhttrue when local column height tweaks should apply, false when this is for page full calcns, etc.
 
 % Not the same as \c@lcavailht from paratext2.tex
+\def\ht@adj@all{\ht\partial+\dp\partial+\ht\n@xtpartial+\dp\n@xtpartial}
 \def\dglt@calc@vailht{%
    \trace{D}{dglt@calc@vailht \ifloc@lht loc@lht \else page \fi \c@rrdstat (\number\partial), \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax \space th=\the\textheight, trh=\the\trialheight}%
    \global\availht=\textheight %
-   \global\advance\availht by -\ht\partial\relax %
-   \global\advance\availht by -\dp\partial\relax %
-   \global\advance\availht by -\ht\n@xtpartial\relax %
-   \global\advance\availht by -\dp\n@xtpartial\relax %
+   \global\advance\availht by -\dimexpr \ht@adj@all\relax\relax %
    \trace{Dh}{after part1:\the\availht}%
    \ifcsname @nxtchunkLht\endcsname
      \ifdim\availht=\textheight\relax \else % joint calcs only apply if the page has content!
