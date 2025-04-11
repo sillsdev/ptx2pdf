@@ -3125,6 +3125,9 @@
 \def\polyglotpages#1{% This is overwritten by the copy in polyglot-simplepages if that's loaded. Just does the basic functionality of setting the column order
   \trace{d}{polyglotpages #1}
   \xdef\diglot@list{#1}% The list of all columns
+  \ifx\diglot@list\empty
+    \errmessage{polyglotpages called with empty argument. That breaks things.}%
+  \fi
   \xdef\layout@list{#1}% List of columns in normal order
   \let\col@do=\mkrev@list
   \def\list@type{layout}%
