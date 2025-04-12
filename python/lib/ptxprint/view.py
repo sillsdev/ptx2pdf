@@ -695,9 +695,7 @@ class ViewModel:
         return res
 
     def getDialogTitle(self):
-        # print(f"  > > > In view.py Start of getDialogTitle")
         if self.project is None or self.project.prjid is None:
-            # print(f"<< Returning from getDialogTitle because prjid is None")
             return _("PTXprint {} - Bible Layout for Everyone!").format(VersionStr)
         else:
             prjid = self.project.prjid
@@ -716,12 +714,21 @@ class ViewModel:
             cfg = ":" + self.cfgid
             cfg = ":" + cfg if (not self.get("c_diglot") and self.get("c_doublecolumn", False)) else cfg
             prjcfg = "{}{}".format(prjid, cfg) 
-            # print(f"view.py - in getDialogTitle; {prjid=}, {cfg=}")
+            
             if self.get("c_diglot") and len(self.diglotViews):
-                # cfg2 = ":" + self.diglotViews['R'].cfgid # FixMe! -- fails every time.
-                # prjcfg2 = "{}{}".format(self.diglotViews['R'].project.prjid, cfg2) 
-                prjcfg2 = "Dig:FixMe"
-                prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
+                parts = []
+                for v in self.diglotViews.values():
+                    try:
+                        prjid = v.project.prjid
+                        cfgid = v.cfgid
+                        parts.append(f"{prjid}:{cfgid}")
+                    except Exception as e:
+                        parts.append("???")  # fallback in case of missing data
+
+                prjcfg2 = " | ".join(parts)
+                if len(prjcfg2) > 100:
+                    prjcfg2 = re.sub(r":[^\s\]]+", "", prjcfg2)
+                prjcfg = f"[{prjcfg} | {prjcfg2}]"
             return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
     def readCopyrights(self, forced=False):
@@ -1146,7 +1153,6 @@ class ViewModel:
                 for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
                              "config": "secconfig", "color": "colour"}.items():
                     val = config.get("document", f"diglot{a}", fallback=None)
-                    print(f"{k=} {a=} diglot{a} {val=}")
                     if val is not None:
                         self._configset(config, f"diglot_R/{k}", val)
                 for k,v in {"page": "1", "weight": "50"}.items():
