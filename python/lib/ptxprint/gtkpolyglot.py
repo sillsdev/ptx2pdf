@@ -271,23 +271,34 @@ class PolyglotSetup(Gtk.Box):
 
     def on_text_edited(self, widget, path, new_text, col_id):
         try:
-            new_value = float(new_text)      # Convert input to float
+            new_value = float(new_text)
         except ValueError:
-            self.view.doStatus(f"Invalid input: {new_text}")  # Handle non-numeric input gracefully
+            self.view.doStatus(f"Invalid input: {new_text}")
             return
-        new_value = round(new_value, 2)  # Keep 2 decimal places
-        # Update the ListStore
+
+        new_value = round(new_value, 2)
         self.ls_treeview[path][col_id] = new_value
-        if col_id == m.fraction:
-            self.validate_page_widths() # Validate total widths after any edit
+
         row_index = int(path)
         self.updateRow(row_index)
+
         sfx = self.ls_treeview[row_index][m.code]
-        if col_id == m.fontsize or col_id == m.baseline:
+
+        view_keys = {
+            m.fraction: "polyfraction_",
+            m.fontsize: "s_fontsize",
+            m.baseline: "s_linespacing"
+        }
+
+        if col_id in view_keys:
+            if col_id == m.fraction:
+                self.validate_page_widths()
+
             aview = self.get_view(sfx)
             if aview is not None:
-                aview.set("s_fontsize" if col_id == m.fontsize else "s_linespacing", new_value)
+                aview.set(view_keys[col_id], new_value)
                 aview.changed()
+
         self.update_layout_string()
 
     def format_float_data_func(self, column, cell, model, iter, col_id):  # Added `data=None`
