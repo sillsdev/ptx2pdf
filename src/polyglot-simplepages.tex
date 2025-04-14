@@ -133,7 +133,7 @@
     \fi
 }
 \def\@@s@tpolyp@ge{% 
-    \trace{dmp}{@@s@tpolyp@ge}%
+    \trace{dmp}{@@s@tpolyp@ge \the\p@lyp@geno}%
     \let\spp@d@=\d@
     \let\d@=\poly@rename@inserts    
     %\tracingassigns=1
@@ -196,7 +196,7 @@
 \def\@@do@simplepage@{% iterate through page numbers 
   \s@tctslist@simplepages
   \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
-  \trace{dmp}{\spt@sk\space [\the\p@lyp@geno:\layout@list] \the\ht\partial+\the\dp\partial}%
+  \trace{dmp}{\spt@sk\space p@georderNormal\ifp@georderNormal true\else false\fi\space [\the\p@lyp@geno:\layout@list] \the\ht\partial+\the\dp\partial}%
   %pick correct inserts
   \ifx\layout@list\empty\else
     %make reverse layout list
@@ -213,21 +213,43 @@
   \scol@cmd
   \p@lyp@geno=\sdp@pgno \let\sdp@pgno=\undefined
   %Itterate
-  \ifnum\p@lyp@geno<\p@lyp@ges\relax
-    \advance\p@lyp@geno by 1
-    \let\n@xtlsp=\@@do@simplepage@
+  \ifp@georderNormal
+    \ifnum\p@lyp@geno<\p@lyp@ges\relax
+      \advance\p@lyp@geno by 1
+      \let\n@xtlsp=\@@do@simplepage@
+    \else
+      \let\n@xtlsp=\relax
+    \fi
   \else
-    \let\n@xtlsp=\relax
+    \ifnum\p@lyp@geno>0\relax
+      \advance\p@lyp@geno by -1
+      \let\n@xtlsp=\@@do@simplepage@
+    \else
+      \let\n@xtlsp=\relax
+    \fi
   \fi
   \n@xtlsp
 }
 
+\def\setdiglotN@rmal{%
+  \ifactually@write\else
+    \ifnum \numexpr 1 \ifdiglotInnerOuter \ifodd\numexpr \pageno / \numexpr 1+\p@lyp@ges\relax\relax\else * -1 \fi\fi \ifdiglotSwap * -1\fi\relax >0 
+      \diglotN@rmaltrue
+      \trace{dmp}{Normal page \the\pageno, \p@lyp@ges}%
+    \else 
+      \diglotN@rmalfalse
+      \trace{dmp}{Reversed page \the\pageno, \p@lyp@ges}%
+    \fi
+  \fi
+}
+\newif\ifp@georderNormal
 \def\@add@n@xtpartial@simplepages{%
   \edef\spt@sk{@add@n@xtpartial@simplepages }%
   %\def\pagecontents{Page0 ptl\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
   %\def\pagecontents{page1 ptl\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
   \let\scol@cmd=\@add@n@xtpartial@simplecols
   \let\pre@scol@cmd\relax
+  \p@georderNormaltrue
   \global\p@lyp@geno=0
   \@@do@simplepage@
   %\def\pagecontents{Page0\endgraf \x@\copy\csname partial@poly@0\endcsname}\plainoutput
@@ -241,10 +263,18 @@
   \else
     \let\pre@scol@cmd=\m@rksonpagefalse
   \fi
-  \actually@writetrue
   \let\scol@cmd=\@do@writep@ge@simplecols
-  \global\p@lyp@geno=0 \relax
+  \actually@writefalse
+  \setdiglotN@rmal
+  \actually@writetrue
+  \ifdiglotN@rmal\global\p@georderNormaltrue
+    \global\p@lyp@geno=0
+  \else
+    \global\p@georderNormalfalse
+    \global\p@lyp@geno=\p@lyp@ges
+  \fi
   \@@do@simplepage@
+  \actually@writefalse
 }
 
 \def\@do@layout@simplepages{%
@@ -252,6 +282,7 @@
   \let\scol@cmd=\@do@layout@simplecols
   \let\pre@scol@cmd\relax
   \p@lyp@geno=0 \relax
+  \p@georderNormaltrue
   \@@do@simplepage@
   \edef\spt@sk{@do@layout@simplepages \space0b:\l@gdims{\csname n@xtpartialNrml@poly@0\endcsname}, 1b:\l@gdims{\csname n@xtpartialNrml@poly@1\endcsname} p:\l@gdims{\partial}}%
   \trace{dmp}{\spt@sk}%
@@ -262,6 +293,7 @@
   \edef\spt@sk{@tst@n@xtpartial@simplepages \space0:\l@gdims{\csname partial@poly@0\endcsname}, 1:\l@gdims{\csname partial@poly@1\endcsname} }%
   \p@lyp@geno=0 \let\scol@cmd=\@tst@n@xtpartial@simplecols
   \let\pre@scol@cmd\relax
+  \p@georderNormaltrue
   \@@do@simplepage@
 }
 
@@ -275,6 +307,7 @@
   \let\pre@scol@cmd\relax
   \let\scol@cmd=\@do@balnotes@simplecols
   \p@lyp@geno=0
+  \p@georderNormaltrue
   \@@do@simplepage@
 }%
 \def\@do@unbalnotes@simplepages{%TODO?
@@ -282,6 +315,7 @@
   \let\pre@scol@cmd\relax
   \let\scol@cmd=\@do@unbalnotes@simplecols
   \p@lyp@geno=0
+  \p@georderNormaltrue
   \@@do@simplepage@
 }%
 
