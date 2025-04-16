@@ -140,9 +140,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e}% Various 'column codes' are not connected to any input. Use ifcsname to check for them
-\inactive@col@code{-} % A blank column
+\inactive@col@code{-} % A blank column or page
 \inactive@col@code{=} % Lines
-%\inactive@col@code{+} % Footnote slot?
+\inactive@col@code{+} % Footnote slot(s)
 %\inactive@col@code{@} % Image / sidebar slot??
 
 \def\col@active@count#1{\ifcsname in@ctive@col@#1\endcsname\else\advance\count255 by 1 \fi}% 
