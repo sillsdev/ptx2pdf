@@ -582,6 +582,7 @@ class TexModel:
                 dname = v.dict['project/books'][bkindex]
                 res.append(template.format(dname))
             res.append(r"\zglot|\*")
+            res.append(r"\diglottrue")
         return res
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", diglots=False):
@@ -649,7 +650,7 @@ class TexModel:
                         if not self.asBool('document/ifshow1chbooknum') and \
                                    self.asBool('document/ifshowchapternums', '%') and f in oneChbooks:
                             res.append(r"\OneChapBooktrue")
-                            res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
+                            res.extend(self._doptxfile(fname, False, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\OneChapBookfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
