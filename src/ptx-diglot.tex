@@ -1579,6 +1579,7 @@
   \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
   \def\col@do##1{%
     \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
+    \x@\ifdim \csname column##1width\endcsname<20pt \errmessage{Diglot##1Fraction (\csname Diglot##1Fraction\endcsname) gives \the\csname column##1width\endcsname, which is much too small}\fi
     \traceNum{dP}{Setting column##1width to \the\csname column##1width\endcsname}}%
   \x@\each@col\layout@list\E
   %\columnLwidth=\DiglotLeftFraction\dimen0
