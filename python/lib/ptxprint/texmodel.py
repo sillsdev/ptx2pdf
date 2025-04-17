@@ -592,7 +592,7 @@ class TexModel:
         res = []
         resetPageDone = False
         docdir, docbase = self.docdir()
-        digserialbooks = set(self.dict['document/diglotserialbooks'].split())
+        digserialbooks = set((self.dict['document/diglotserialbooks'] or "").split())
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
                 # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
