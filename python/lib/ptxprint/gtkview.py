@@ -1529,9 +1529,14 @@ class GtkViewModel(ViewModel):
     def onOK(self, btn):
         if btn == self.builder.get_object("b_print2ndDiglotText"):
             pass
-        # elif self.otherDiglot is not None:
-            # self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
-            # return
+        elif self.otherDiglot is not None:
+            # self.updateProjectSettings(self.otherDiglot[0].prjid, self.otherDiglot[0].guid, configName=self.otherDiglot[1], saveCurrConfig=True)
+            self.changeBtnLabel("b_print", _("Print (Make PDF)"))
+            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            self.set("fcb_project", self.otherDiglot[0].prjid)
+            self.set("ecb_savedConfig", self.otherDiglot[1])
+            self.otherDiglot = None
+            return
         if isLocked():
             self.doStatus(_("Printing busy"))
             return
@@ -3657,7 +3662,7 @@ class GtkViewModel(ViewModel):
             self.gtkpolyglot.load_polyglots_into_treeview()
 
     def showmybook(self, isfirst=False):
-        if self.initialised and self.showPDFmode == "preview": # preview is on
+        if self.otherDiglot is None and self.initialised and self.showPDFmode == "preview": # preview is on
             prvw = self.builder.get_object("dlg_preview")
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             logger.debug(f"Trying to show {pdffile} exists={os.path.exists(pdffile)}")
@@ -4435,38 +4440,16 @@ class GtkViewModel(ViewModel):
         dv = self.diglotViews.get(pref, None)
         if dv is None:
             return False
-        dv.onSaveConfig(None)
+        dv.saveConfig()
         dvprj = dv.project
-        self.updateProjectSettings(dvprj.prj, dvprj.prjguid, configName=dv.cfgid)
-        return True
-
-    # def onDiglotSwitchClicked(self, btn): #FixMe!
-    # This method could be resurrected IF it hides under a button 
-    # that is only sensitive for DIGLOT and not POLYGLOT.
-    # A bit like the auto-adjust width fraction (which is only available on Diglot)
-        # oprjid = None
-        # oconfig = None
-        # if self.otherDiglot is not None:
-            # oprjid, oconfig = self.otherDiglot
-            # self.otherDiglot = None
-            # btn.set_label(_("Switch to Other\nDiglot Project"))
-            # self.builder.get_object("b_print2ndDiglotText").set_visible(False)
-            # self.changeBtnLabel("b_print", _("Print (Make PDF)"))
-        # elif self.get("c_diglot"):
-            # oprjid = self.get("fcb_diglotSecProject")
-            # oconfig = self.get("ecb_diglotSecConfig")
-            # if oprjid is not None and oconfig is not None:
-                # self.otherDiglot = (self.project.prjid, self.cfgid)
-                # btn.set_label(_("Save & Return to\nDiglot Project"))
-            # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-            # self.changeBtnLabel("b_print", _("Return to Primary"))
-        # self.onSaveConfig(None)
-        # if oprjid is not None and oconfig is not None:
-            # self.set("fcb_project", oprjid)
-            # self.set("ecb_savedConfig", oconfig)
-        # mpgnum = self.notebooks['Main'].index("tb_Diglot")
-        # self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.otherDiglot = (self.project, self.cfgid)
+        # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+        self.changeBtnLabel("b_print", _("Return to Primary"))
+        self.set("fcb_project", dvprj.prjid)
+        self.set("ecb_savedConfig", dv.cfgid)
+        # self.updateProjectSettings(dvprj.prjid, dvprj.guid, configName=dv.cfgid)
         # self.updateDialogTitle()
+        return True
 
     def changeBtnLabel(self, w, lbl):
         b = self.builder.get_object(w)

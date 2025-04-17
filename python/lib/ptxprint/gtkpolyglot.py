@@ -569,9 +569,11 @@ class PolyglotSetup(Gtk.Box):
             return None, None
         
     def edit_other_config(self, menu_item):
-        prj, cfg = self.get_prj_cfg()
-        if prj is not None and cfg is not None:
-            self.view.doStatus(_("Opening {}:{} ...").format(prj, cfg))
+        selection = self.treeview.get_selection()
+        model, iter = selection.get_selected()
+        if iter:
+            pref = model.get_value(iter, m.code)
+            self.view.switchToDiglot(pref)
 
     def get_curr_proj(self):
         w = self.builder.get_object('fcb_project')
