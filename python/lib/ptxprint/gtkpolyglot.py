@@ -123,7 +123,7 @@ class PolyglotSetup(Gtk.Box):
             pri_prjguid = ""
             cfid = ""
         pg = "1" if sfx in ("LR") else "2"
-        new_row = [sfx, pg, pri_prj, cfid, False, 11.0, 14.0, 55.0, 45.0, 
+        new_row = [sfx, pg, pri_prj, cfid, False, 11.0, 14.0, 50.0, 50.0, 
                    "#FFFFFF", pri_prjguid, "Tooltips", "#000000", 400]
         self.ls_treeview.append(new_row)
         row_index = len(self.ls_treeview) - 1  
