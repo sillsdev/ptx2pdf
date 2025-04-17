@@ -4,9 +4,10 @@ PTXprint 2.7.37 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.7.37 (17 Apr 2025)
+Bug fixes and Improvements in 2.7.38 (17 Apr 2025)
   * Fix some stylesheet-handling errors
   * Fix usfmerge2
+  * Fix template to hide coverpage when not needed
   * Add telemetry to find why fonts sometimes reset to 1
 
 Bug fixes and Improvements in 2.7.36 (2 Apr 2025)
