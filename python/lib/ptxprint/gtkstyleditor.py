@@ -537,7 +537,7 @@ class StyleEditorView(StyleEditor):
     def setFontLabel(self, fref, fsize):
         bfontsize = float(self.model.get("s_fontsize"))
         f = fref.getTtfont() if fref is not None else None
-        self.logger.debug(f"{fsize=}, {fref=}, {bfontsize=}")
+        logger.debug(f"{fsize=}, {fref=}, {bfontsize=}")
         if f is not None:
             asc = f.ascent / f.upem * bfontsize
             des = f.descent / f.upem * bfontsize
