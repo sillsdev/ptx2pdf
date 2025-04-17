@@ -85,9 +85,9 @@ def render_page(page, zoomlevel, imarray, pnum, annotatefns):
     context.set_source_rgb(1, 1, 1)
     context.paint()
     context.scale(zoomlevel, zoomlevel)
+    page.render(context)
     for f in annotatefns:
         f(page, pnum, context, zoomlevel)
-    page.render(context)
 
 def arrayImage(imarray, width, height):
     stride = cairo.Format.ARGB32.stride_for_width(width)
@@ -1828,6 +1828,7 @@ class Paragraphs(list):
                     currr.yend = readpts(p[1])
                     currr = None
                 lines.startreplay()
+                lastyend = 0
             elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
                 if len(p) == 5:
                     p.insert(0, "")

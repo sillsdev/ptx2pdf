@@ -104,7 +104,7 @@ class PolyglotSetup(Gtk.Box):
         self.update_layout_string()
         self.view.update_diglot_polyglot_UI()
 
-    def find_or_create_row(self, sfx, save=False):
+    def find_or_create_row(self, sfx, save=True):
         if len(self.ls_treeview) >= 9:
             self.view.doStatus("Maximum of 9 rows reached. Cannot add more.")
             return -1  # Indicate failure to add a row
@@ -126,7 +126,7 @@ class PolyglotSetup(Gtk.Box):
         new_row = [sfx, pg, pri_prj, cfid, False, 11.0, 14.0, 50.0, 50.0, 
                    "#FFFFFF", pri_prjguid, "Tooltips", "#000000", 400]
         self.ls_treeview.append(new_row)
-        row_index = len(self.ls_treeview) - 1  
+        row_index = len(self.ls_treeview) - 1 
         if save and cfid != "":
             self.updateRow(row_index)
         return row_index  # Return the new row index
