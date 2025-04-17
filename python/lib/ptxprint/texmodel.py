@@ -656,7 +656,7 @@ class TexModel:
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
-                            res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
+                            res.extend(self._doptxfile(fname, False, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
                             res.extend(self._doptxfile(fname, False, "\\ptxfile{{{}}}", beforelast, i))

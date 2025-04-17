@@ -1389,7 +1389,7 @@ class ViewModel:
         self.savePics(force=force)
         self.saveStyles(force=force)
         for k,v in self.diglotViews.items():
-            if v.isChanged:
+            if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
 
