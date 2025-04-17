@@ -1690,6 +1690,7 @@ class GtkViewModel(ViewModel):
         self.showmybook()
         
     def onSaveConfig(self, btn, force=False):
+        """ Save the view """
         if self.project.prjid is None or (not force and self.configLocked()):
             return
         newconfigId = self.getConfigName()
@@ -4429,6 +4430,15 @@ class GtkViewModel(ViewModel):
         self.loadPics(mustLoad=False, force=True)
         if self.get("c_includeillustrations"):
             self.onUpdatePicCaptionsClicked(None)
+
+    def switchToDiglot(self, pref):
+        dv = self.diglotViews.get(pref, None)
+        if dv is None:
+            return False
+        dv.onSaveConfig(None)
+        dvprj = dv.project
+        self.updateProjectSettings(dvprj.prj, dvprj.prjguid, configName=dv.cfgid)
+        return True
 
     # def onDiglotSwitchClicked(self, btn): #FixMe!
     # This method could be resurrected IF it hides under a button 
