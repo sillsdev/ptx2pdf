@@ -1459,6 +1459,8 @@ class ViewModel:
                     v.picinfos = Piclist(v)
                     v.picinfos.load_files(v)
             res = self.picinfos.load_files(self, base=self.digbasepics[k], suffix=k)
+        else:
+            res = self.picinfos.load_files(self, base=None)
         if not res and len(self.diglotViews) and len(self.picinfos.get_pics()):
             for k, v in self.diglotViews.items():
                 self.picinfos.merge(v.picinfos, k)
