@@ -422,8 +422,13 @@ class PolyglotSetup(Gtk.Box):
             val = self.ls_treeview[row_index][idx]
             setattr(plyglt, field, val)
         if row_index == 0:
-            for a, b in {"fontsize": "s_fontsize", "baseline" : "s_linespacing", "color": "_dibackcol"}.items():
+            for a, b in {"fontsize": "s_fontsize", "baseline" : "s_linespacing", "fraction": "polyfraction_", "color": "_dibackcol"}.items():
                 self.view.set(b, self.ls_treeview[row_index][getattr(m, a)])
+                self.view.changed()
+        else:
+            aview = self.get_view(sfx)
+            if aview is not None:
+                aview.changed()
         
     def refresh_code_dropdowns(self):
         if hasattr(self, "code_renderer"):  # Ensure renderer exists before updating
