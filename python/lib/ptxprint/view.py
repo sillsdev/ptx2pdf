@@ -608,6 +608,7 @@ class ViewModel:
         copyfile(srcp, mergep)
 
     def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
+        # breakpoint()
         logger.debug(f"Changing project to {prjid or self.get('fcb_project')} from {getattr(self.project, 'prjid', 'NONE')}, {configName=} from {getcaller(1)}")
         currprjguid = getattr(self.project, 'guid', None)
         currprj = getattr(self.project, 'prjid', None)
@@ -785,6 +786,8 @@ class ViewModel:
         (oldversion, forcerewrite) = self.versionFwdConfig(config, cp)
         self.loadingConfig = True
         self.localiseConfig(config)
+        self.diglotViews = {}
+        self.polyglots = {}
         self.loadConfig(config, updatebklist=updatebklist)
         for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
                                (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
@@ -797,8 +800,6 @@ class ViewModel:
             self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
-        self.diglotViews = {}
-        self.polyglots = {}
         if self.get("c_diglot") and not self.isDiglot:
             for s in config.sections():
                 if s.startswith("diglot_"):

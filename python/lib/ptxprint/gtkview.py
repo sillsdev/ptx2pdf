@@ -1193,6 +1193,7 @@ class GtkViewModel(ViewModel):
         self.resetToInitValues()
 
     def resetToInitValues(self, updatebklist=True):
+        self.loadingConfig = True
         self.rtl = False
         super().resetToInitValues(updatebklist=updatebklist)
         if self.picinfos is not None:
@@ -1203,6 +1204,7 @@ class GtkViewModel(ViewModel):
             if k.startswith("bl_") or v is not None:
                 self.set(k, v)
         self.colorTabs()
+        self.loadingConfig = False
 
     def menu_inner_closed(self, widget):
         mw = self.builder.get_object("menu_main")
@@ -1533,6 +1535,7 @@ class GtkViewModel(ViewModel):
             # self.updateProjectSettings(self.otherDiglot[0].prjid, self.otherDiglot[0].guid, configName=self.otherDiglot[1], saveCurrConfig=True)
             self.changeBtnLabel("b_print", _("Print (Make PDF)"))
             self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            self.builder.get_object("b_reprint").set_sensitive(True)
             self.set("fcb_project", self.otherDiglot[0].prjid)
             self.set("ecb_savedConfig", self.otherDiglot[1])
             self.otherDiglot = None
@@ -4445,6 +4448,7 @@ class GtkViewModel(ViewModel):
         self.otherDiglot = (self.project, self.cfgid)
         # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
         self.changeBtnLabel("b_print", _("Return to Primary"))
+        self.builder.get_object("b_reprint").set_sensitive(False)
         self.set("fcb_project", dvprj.prjid)
         self.set("ecb_savedConfig", dv.cfgid)
         # self.updateProjectSettings(dvprj.prjid, dvprj.guid, configName=dv.cfgid)
