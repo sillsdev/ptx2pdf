@@ -125,7 +125,7 @@
 % These do the looping
 \def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
 \def\l@stSpecific#1\E{}
-\def\pr@cessSpecificAll{\edef\LRs{\LRspecificDef,\LRspecificDim,\LRspecificCount,\LRspecificVarDef}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificAll{\edef\LRs{\LRspecificDef,\LRspecificDim,\LRspecificCount,\LRspecificVarDef}\x@\pr@cessSp@cific \LRs,\E} % ONLY used for saving original values
 \def\pr@cessSpecificDef{\edef\LRs{\LRspecificDef,\LRspecificVarDef}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificVarDef{\edef\LRs{\LRspecificVarDef}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificDim{\edef\LRs{\LRspecificDim}\x@\pr@cessSp@cific \LRs,\E}
@@ -3205,6 +3205,8 @@
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname @numcuts#1\endcsname % Used for parlocs analysis
+    \x@\newc@unt\csname curr@djpar#1\endcsname % Used for adjust-lists
+    \x@\newc@unt\csname p@rnum#1\endcsname % Used for adjust-lists
     \x@\newc@unt\csname dropped@ther@lines#1\endcsname % Used for parlocs analysis
     \x@\gdef\x@\digl@tc@ntent@xcs\x@{\digl@tc@ntent@xcs\csname digl@txcs#1\endcsname}%
     \initcolumndef@ults{#1}%
