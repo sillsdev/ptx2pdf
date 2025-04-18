@@ -19,6 +19,12 @@ exclusionmap = {
     'p': (['fig'], None, False)
 }
 
+_abbrevmodes = {
+    "Abbreviation": "a",
+    "ShortNames": "s",
+    "LongName": "l",
+}
+
 class Module:
 
     #localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+(?::[^)\s]+)?\s*(?:-\s*\d+(?::[^)*\s]+)*)*)\)")
@@ -29,6 +35,11 @@ class Module:
         self.fname = fname
         self.usfms = usfms
         self.model = model
+        ptsettings = self.model._getPtSettings()
+        if ptsettings is None:
+            self.refmode = "a"
+        else:
+            self.refmode = _abbrevmodes.get(ptsettings.get("BookSourceForMarkerR", "Abbreviation"), "a")
         self.usfms.makeBookNames()
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'mrktype': 'otherpara', 'texttype': 'Other', 'endmarker': None, 'styletype': 'Paragraph'}
@@ -55,7 +66,7 @@ class Module:
 
     def localref(self, m):
         rl = RefList.fromStr(m.group(2), context=self.usfms.booknames)
-        loctype = m.group(1) or "a"
+        loctype = m.group(1) or self.refmode
         tocindex = self.localcodes.get(loctype.lower(), 0)
         return rl.str(context=self.usfms.booknames, level=tocindex)
 

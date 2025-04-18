@@ -1862,7 +1862,7 @@ class Paragraphs(list):
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
                 endpar = True
-            elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
+            elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
                 if not endpar or not inpage:
                     continue
                 endpar = False
