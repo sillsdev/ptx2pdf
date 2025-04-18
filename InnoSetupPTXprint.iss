@@ -28,6 +28,9 @@ SetupIconFile=icon\62859-open-book-icon-setup.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+DisableDirPage=yes                  ; Skips the "Choose Install Location" page
+DisableProgramGroupPage=yes         ; Skips the "Create Start Menu Shortcut" page
+DisableReadyPage=yes                ; Skips the "Ready to Install" confirmation page
 
 ; These languages are for the installer (not for PTXprint itself)
 [Languages]

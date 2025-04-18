@@ -92,11 +92,11 @@ class ProjectList:
         self.projects[guid] = p
         return p
 
-    def getProject(self, guid):
+    def getProject(self, guid, name=None):
         p = self.projects.get(guid, None)
         logger.debug(f"Seeking project {guid} found {p}")
         if p is None:
-            return None
+            return self.findProject(name)
         return Project(p)
 
     def projectList(self):

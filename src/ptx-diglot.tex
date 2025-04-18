@@ -558,7 +558,7 @@
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %last galley
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname %source
   \trace{D}{partial\c@rrdstat: \the\ht\p@rtl+\the\dp\p@rtl x\the\wd\p@rtl}% The contents of the galley that went to page last time
-  \trace{D}{excess\c@rrdstat: \the\ht\@xcs+\the\dp\@xcs x\the\wd\@xcs}% Material for this time
+  \trace{D}{excess\c@rrdstat (\csname digl@txcs\c@rrdstat\endcsname): \the\ht\@xcs+\the\dp\@xcs x\the\wd\@xcs}% Material for this time
   \ifnum 1= \ifdiglotDebugFollowContents 1 \else \ifnum\TRACEcount=\diglotDbgJoinboxes 1\else 0\fi\fi
    \showbox\p@rtl
    \showbox\@xcs
@@ -590,6 +590,7 @@
         \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with NoMergeReflow\ifNoMergeReflow false\else true\fi}%
         \ifNoMergeReflow\else
           \global\setbox\@xcs\vbox{\joinboxes{\p@rtl}{\@xcs}{2}{0}}%
+          \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
         \fi
       \fi
       % No need to *save* notes after restoring, because they're already saved.
@@ -622,7 +623,10 @@
     \fi
     {\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
     \global\vsize=\availht}% let grouping undo addition
-    \ifvoid\@xcs\else
+    \ifvoid\@xcs
+      \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{}%
+    \else
+      \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
       \global\setbox\@xcs=\vbox{\vskip\ht3\penalty10000\unvbox\@xcs}% %TeX will not split at glue with a penalty after it.
       \ifdiglotDebugFollowContents
         \trace{D}{Showing xcs after split}%
@@ -732,6 +736,7 @@
       \else
         \x@\global\csname\c@rrdstat boxpenalty\endcsname =\galleypenalty
         \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
+        \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
       \fi
       \global\setbox\galleyexc@ss=\box\voidb@x
       \ifdiglotDebugFollowContents
@@ -754,6 +759,7 @@
   \trace{D}{trial failed (class #1), (end of?) input moved. refilling excess\c@rrdstat - \refl@wlist. \ifp@rtlset partial\c@rrdstat\space was set\fi}%(the start may have been set already
   %Undo the vsplit (all mtl into excessX)
   \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
+  \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
   \ifdiglotDebugFollowContents
     \trace{D}{Showing galley@xcess}%
     \x@\showbox\galleyexc@ss
@@ -1058,7 +1064,7 @@
     \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
   \fi
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
-  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi}%
+  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi [\digl@tc@ntentlist|\digl@tc@ntent@xcs]}%
   \edef\tmp{#2}
   
   \ifdiglotcolh@scontent
@@ -1573,6 +1579,7 @@
   \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
   \def\col@do##1{%
     \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
+    \x@\ifdim \csname column##1width\endcsname<20pt \errmessage{Diglot##1Fraction (\csname Diglot##1Fraction\endcsname) gives \the\csname column##1width\endcsname, which is much too small}\fi
     \traceNum{dP}{Setting column##1width to \the\csname column##1width\endcsname}}%
   \x@\each@col\layout@list\E
   %\columnLwidth=\DiglotLeftFraction\dimen0
@@ -2082,7 +2089,7 @@
     \ifdiglotN@rmal%are the sides swapped?
       \x@\each@col\layout@list\E
     \else%
-      \x@\each@col\rev@diglot@list\E
+      \x@\each@col\rev@layout@list\E
     \fi%
   }%
   \trace{f}{Adjusting footnotebox}%
@@ -2254,7 +2261,7 @@
      %\tracingcommands=3
      %\tracingifs=1
      \iftemp
-       \trace{D}{Applying colour backgrounds}%
+       \trace{d}{Applying colour backgrounds (\ifdiglotN@rmal normal:\layout@list \else reverse:\rev@layout@list\fi)}%
        \ifdiglotSepNotes
          \iftextborder
            \def\bg@fillht{P}% Fill to textheight
@@ -2264,6 +2271,7 @@
        \else
          \def\bg@fillht{P}%
        \fi
+       \ifinendbook\def\bg@fillht{P}\fi
        \let\col@do\ins@backgrounds
        \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
        \vbox to 0pt{\let\l@stcol\empty%
@@ -2719,7 +2727,7 @@
 }
 
 \def\@add@n@xtpartial{% Actually make the page-changes
-  \traceNum{d}{@add@n@xtpartial}%
+  \traceNum{d}{@add@n@xtpartial [\digl@tc@ntentlist|\digl@tc@ntent@xcs]}%
   \tempfalse
   \csname @tst@n@xtpartial@\diglotlayout\endcsname
   \iftemp
@@ -2846,9 +2854,11 @@
 
 \edef\diglot@list{LR}%
 \edef\layout@list{LR}%
-\edef\rev@diglot@list{RL}%
 \edef\rev@layout@list{RL}%
-\edef\digl@tc@ntentlist{}%
+\edef\digl@tc@ntentlist{}% columns that have *UNPROCESSED* content that has been gathered for the next chunk
+\def\digl@txcsL{}% Empty or column ID 
+\def\digl@txcsR{}
+\def\digl@tc@ntent@xcs{\digl@txcsL\digl@txcsR}% columns that have *SEMI-PROCESSED* content (overflow)
 
 
 \def\check@and@update{%Checks each column to see if there is stuff to output
@@ -2911,8 +2921,8 @@
 \def\diglot@run@trials{% for X as L, R, (eventually others)
   %expects: collected input in partialX, excessX empty
   %Process: cycle through chunks  
-  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist) sp=\the\savedpenalty}%
-  \let\tri@llist\diglot@list%
+  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist) sp=\the\savedpenalty}%
+  \let\tri@llist\digl@tc@ntentlist%
   %Before running trials, empty(eventually store?) old galleys
   \empty@partials
   \let\tri@llist\digl@tc@ntentlist% Run trials for things that have contents
@@ -2968,7 +2978,7 @@
   %\check@and@update
 }
 \def\after@after@a@trial{%
-  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  tlc=\the\triall@@pcount, pf:\ifpagefull true\else false\fi}%
+  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  tlc=\the\triall@@pcount, pf:\ifpagefull true\else false\fi [\tri@llist|\digl@tc@ntent@xcs]}%
   % Check if the run failed (or didn't even run), and update page if that's 
   % appropriate.
   \iftrialfailed
@@ -2993,11 +3003,11 @@
     \fi
   \fi
   %\showlists
-  \trace{D}{tri@llist: \tri@llist, tlc=\the\triall@@pcount}%
+  \trace{D}{tri@llist: \tri@llist|\digl@tc@ntent@xcs, tlc=\the\triall@@pcount}%
   \ifx\tri@llist\empty
     \advance\triall@@pcount by 1\relax
     \check@and@update %May trigger a refilling of \tri@llist
-    \trace{D}{after check@and@update, tri@llist: \tri@llist, refl@wlist:\refl@wlist, pagefull\ifpagefull true\else false\fi}%
+    \trace{D}{after check@and@update, tri@llist: \tri@llist, refl@wlist:\refl@wlist, xs:\digl@tc@ntent@xcs, pagefull\ifpagefull true\else false\fi}%
     \ifx\refl@wlist\empty\else
       \trace{d}{Reflowing aborted trials: \refl@wlist}%
       \let\col@do=\reflow@trial
@@ -3017,7 +3027,7 @@
 
 \def\enddigl@t{%
   \endgraf
-  \trace{d}{enddigl@t \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
+  \trace{d}{enddigl@t \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial (\digl@tc@ntentlist|\digl@tc@ntent@xcs)}%
   \ifdiglot\ifx\digl@tc@ntentlist\empty
     \trace{d}{digl@tc@ntentlist empty}%
     \else
@@ -3030,7 +3040,8 @@
       \penalty\dgl@tPenColSwap
       \global\allNeedEmptyingtrue
     \fi
-    \trace{d}{enddigl@t 2nd run \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
+    \x@\ch@ckcontents\diglot@list\E%Sets not@empty if there's stuff to output
+    \trace{d}{enddigl@t 2nd run \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist)}%
     \diglot@run@trials
     \ifnum\interactionmode=2
       \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
@@ -3050,7 +3061,7 @@
           \else
             %\setbox\partial\vbox{\unvbox\partial}%
           \fi
-       \fi%avoid clashes with textborder and backgrounds
+        \fi%avoid clashes with textborder and backgrounds
         %\iftextborder
           %\ifpartialfr@med\else
             %\doTextB@rder{\partial}%
@@ -3058,15 +3069,8 @@
           %\fi
         %\fi
         %\ifnum\pageno=117\showbox\partial\fi
-        \setbox\partial\vbox{\unvbox\partial
-          \csname @start@writep@ge@\diglotlayout\endcsname
-          \setdiglotN@rmal
-          \pickn@xtpartial
-          \csname @prep@writep@ge@\diglotlayout\endcsname
-          \actually@writefalse
-          \csname @do@writep@ge@\diglotlayout\endcsname
-          \pagecontents
-        }%
+        \csname digl@t@endbook@\diglotlayout\endcsname
+        \csname @savepartial@\diglotlayout\endcsname
         \trace{d}{Book end: partial \the\ht\partial+\the\dp\partial}%
       }{\@writep@ge
         \let\col@do=\reset@n@xt
@@ -3081,6 +3085,23 @@
   %Set the 2 columns, put the footnotes up in the air (or not?) and carry on??
 }
 
+\def\digl@t@endbook@simplecols{%
+  \ifdim\availht > \dimexpr\ht\bookendbox + \dp\bookendbox \relax      
+    \setbox\verybottomins\vbox{\box\verybottomins\box\bookendbox}%
+  \fi
+}
+
+\def\@savepartial@simplecols{%
+  \setbox\partial\vbox{\unvbox\partial
+    \csname @start@writep@ge@\diglotlayout\endcsname
+    \setdiglotN@rmal
+    \pickn@xtpartial
+    \csname @prep@writep@ge@\diglotlayout\endcsname
+    \actually@writefalse
+    \csname @do@writep@ge@\diglotlayout\endcsname
+    \pagecontents
+  }%
+}
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
 %rule is #1 hight, #3 deep, and fits in a box #2 high
   \trace{D}{makediglotgutter \the #1,\the #2,\the #3}%
@@ -3123,11 +3144,27 @@
 %%%%%%%% This might one day be moved to polyglot-simplecols.tex
 % Below here are pieces of code that extend the basic diglot2 (2 column) layout into more columns.
 %
+\def\polyglotpages#1{% This is overwritten by the copy in polyglot-simplepages if that's loaded. Just does the basic functionality of setting the column order
+  \trace{d}{polyglotpages #1}
+  \xdef\diglot@list{#1}% The list of all columns
+  \ifx\diglot@list\empty
+    \errmessage{polyglotpages called with empty argument. That breaks things.}%
+  \fi
+  \xdef\layout@list{#1}% List of columns in normal order
+  \let\col@do=\mkrev@list
+  \def\list@type{layout}%
+  \xdef\rev@layout@list{}% mkrev@list will fill this with the columns in reverse order
+  \x@\each@col\layout@list\E%
+}
 
 \def\newPolyglotCol#1{%
   \ifcsname #1isDiglotColumn\endcsname
-    \message{#1 is already a diglot column. You can only define it as one once!}%
+    %\message{#1 is already a diglot column. You can only define it as one once!}%
   \else
+    \@newPolyglotCol{#1}%
+  \fi
+}
+\def\@newPolyglotCol#1{%
     \message{Defining #1 as an additional polyglot column.}%
     \newcolins@rt{\loc@T#1}% column top insert
     \newcolins@rt{\loc@B#1}% column bottom insert
@@ -3137,13 +3174,12 @@
     \global\let\diglot@list=\digl@tc@ntentlist
     \global\let\layout@list=\digl@tc@ntentlist % BY default, layout is all columns.
     \let\digl@tc@ntentlist=\old@cts
-    %Now make the reversed list
-    \let\col@do=\mkrev@list\def\list@type{diglot}%
-    \xdef\rev@diglot@list{}
+    %Now make the reversed layout list
+    \let\col@do=\mkrev@list\def\list@type{layout}%
+    \xdef\rev@layout@list{}
     \x@\each@col\diglot@list\E% 
     {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
-    \global\let\rev@layout@list\rev@diglot@list
-    \x@\csname #1isDiglotColumn\endcsname\empty
+    \x@\let\csname #1isDiglotColumn\endcsname\empty
 %    \x@\newb@x\csname #1discards\endcsname
     \x@\newb@x\csname #1box\endcsname
     \x@\newb@x\csname partial#1\endcsname
@@ -3162,6 +3198,7 @@
     \x@\newdim@n\csname #1ht\endcsname
     \x@\xdef\csname at@ndofthispar#1\endcsname{}%
     \x@\xdef\csname m@rker#1\endcsname{}%
+    \x@\xdef\csname digl@txcs#1\endcsname{}%
     \x@\xdef\csname mcstack#1\endcsname{\mcstack@mpty}%
     \newsp@cialpen{dgl@tPen#1trialEnd}%
     \header@defs{#1}% All the possible header contents
@@ -3169,12 +3206,12 @@
     \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname @numcuts#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname dropped@ther@lines#1\endcsname % Used for parlocs analysis
+    \x@\gdef\x@\digl@tc@ntent@xcs\x@{\digl@tc@ntent@xcs\csname digl@txcs#1\endcsname}%
     \initcolumndef@ults{#1}%
 %TODO:
 %FIXMEs needing for polyglot processing:
 % UI!
 % The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
-  \fi
 }
 
 \def\extra@insert@alias#1#2{% Assumption: #1 is already in the form \foo, #2 is in the form \csname something\endcsname

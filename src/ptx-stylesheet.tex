@@ -2021,6 +2021,7 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi \ifdoingt@ble doingtable??\fi \c@tegory,\c@tprefix}%
+ \global\implicitcl@setrue
  \traceifset{ptxfile}%
  \ifhmode\endgraf\fi
  \ifdim\pagetotal>20pt \message{Pagetotal = \the\pagetotal, Trigggring endpage \the\output}\endpage\fi
@@ -2074,9 +2075,6 @@
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  \inendbooktrue 
- \ifdiglot
-  \enddigl@t
- \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
  \let\layoutpen@lty\book@ndpenalty 

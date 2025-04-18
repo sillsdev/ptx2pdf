@@ -2,6 +2,7 @@
 import sys, os, re, io
 from ptxprint.usxutils import Usfm, Sheets
 from usfmtc.usfmgenerate import usx2usfm
+from usfmtc.usfmparser import Grammar
 import argparse, difflib, sys
 from enum import Enum,Flag
 from itertools import groupby
@@ -121,6 +122,7 @@ _marker_modes = {
     'sts': ChunkType.HEADER,
     'usfm': ChunkType.HEADER,
     'v': ChunkType.VERSE,
+    'c': ChunkType.CHAPTER,
     'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
     'nb': ChunkType.NB
 }
@@ -207,7 +209,7 @@ class Chunk(list):
                     outf.write(f"\n\\{e.get('style', '')} {e.text}")
                     lastel = e
                 else:
-                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else None), lastel=lastel)
+                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else Grammar), lastel=lastel)
             if lastel is not None and lastel.tail:
                 outf.write(lastel.tail)
             res = outf.getvalue() + "\n"
@@ -262,6 +264,7 @@ class Collector:
         self.oldmode= None
         if (scores==None):
             raise ValueError("Scores can be integer or ChunkType:Score values, but must be supplied!")
+        logger.debug(f"stylesheet is {self.stylesheet=}")
         logger.debug(f"Scores supplied are: {type(scores)}, {scores=}")
         if synchronise in SyncPoints:
             logger.debug(f"Sync points: {synchronise.lower()}")
@@ -305,6 +308,7 @@ class Collector:
         return set(self.stylesheet.get(e.get('style', ''), {}).get('textproperties', '').split())
 
     def texttype(self, e, default=''):
+        logger.debug(f"Texttype lookup for {e} ({e.get('style')}) {self.stylesheet.get(e.get('style'))}")
         return self.stylesheet.get(e.get('style', ''), {}).get('texttype', default)
 
     def pnum(self, c):
@@ -321,6 +325,7 @@ class Collector:
             self.waschap = False
         else:
             name = c.get("style", "")
+            logger.log(8, f'makechunk at {self.chap} {name=}')
             if name == "cl":
                 if self.chap == 0: 
                   mode = ChunkType.TITLE 
@@ -351,6 +356,7 @@ class Collector:
                     mode = ChunkType.VERSE
             else:
                 mode = _marker_modes.get(name, _textype_map.get(self.texttype(c), self.mode))
+                logger.log(8, f'Modecheck: {name=} mm={_marker_modes.get(name,"")} {c=} tt={self.texttype(c)} -> {mode=}')
                 if mode == ChunkType.HEADING:
                     if self.waschap:
                         mode = ChunkType.CHAPTERHEAD
@@ -467,12 +473,12 @@ class Collector:
                     self.chap = int(vc)
                 except (ValueError, TypeError):
                     self.chap = 0
-                if currChunk is None:
-                    currChunk = self.makeChunk(c)
-                else:
-                    currChunk.chap = self.chap
-                    currChunk.verse = self.verse
-                    currChunk.append(c)
+                self.oldmode = self.mode
+                currChunk = self.makeChunk(c)
+                currChunk.chap = self.chap
+                currChunk.verse = self.verse
+                #currChunk.label(self.chap, self.verse, self.end, 0,'')
+                currChunk.append(c)
             else:
                 self.currChunk.append(c)
             #logger.log(7,f'collecting {c.get('style', '')}')
@@ -1041,14 +1047,13 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting {synchronise}.")
     return(SyncPoints[{synchronise}])
     
-def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
+def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
     if debug:
       debugPrint = True
       logger.debug("Writing debug files")
     else:
       logger.debug("Not Writing debug files")
-    # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
     tag_escapes = r"[^a-zA-Z0-9]"
     # Check input
     sheets={}
@@ -1068,18 +1073,18 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, stylesheetsa=[], style
     logger.debug(f"{type(mode)}, {mode=}")
     logger.debug(f"{type(scorearr)}, {scorearr=}")
     logger.debug(f"{type(keyarr)}, {keyarr=}")
-    logger.log(7, f"{stylesheetsa=}, {stylesheetsb=}")
     if configarr is None:
         configarr = {}
         for k in keyarr:
             configarr[k] = None
         
     # load stylesheets
-    sheets['L'] = Sheets(stylesheetsa)
-    sheets['R'] = Sheets(stylesheetsb)
-    logger.debug(f"{stylesheets=}")
-    for k,s in stylesheets.items():
-        sheets[k] = Sheets(s)
+    for k, s in stylesheets.items():
+        logger.debug(f"Loading stylesheet {k=} {s=}")
+        n=Sheets(s)
+        if len(n) == 0:
+          raise IOError(f"Could not find styling data in {s}")
+        sheets[k]=n
     for k in keyarr:
         if k not in sheets:
           raise ValueError(f"No stylesheet provided for {k}")

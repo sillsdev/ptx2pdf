@@ -446,8 +446,10 @@ class Piclist:
 
     def load_files(self, parent, force=False, base=None, suffix="L"):
         """ Read pictures from a project either from a piclist file or the SFM files """
+        logger.debug(f"{self.loaded=} {force=}")
         if self.loaded and not force:
             return True
+        logger.debug(f"{self.basedir=}")
         if self.inthread or self.basedir is None or self.prj is None or self.config is None:
             return False
         self.thread = None
@@ -471,6 +473,7 @@ class Piclist:
 
     def read_piclist(self, fname):
         """ Read piclist file """
+        logger.debug(f"{fname=} {self.loaded=}")
         if isinstance(fname, str):
             if not os.path.exists(fname):
                 return
@@ -478,7 +481,6 @@ class Piclist:
                                                         if self.model is not None else 65001)
         else:
             inf = fname
-        logger.debug(f"{fname=} {self.loaded=}")
         # logger.debug("".join(traceback.format_stack()))
         for l in (x.strip() for x in inf.readlines()):
             if not len(l) or l.startswith("%"):

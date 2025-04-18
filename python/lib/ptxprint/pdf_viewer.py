@@ -85,9 +85,9 @@ def render_page(page, zoomlevel, imarray, pnum, annotatefns):
     context.set_source_rgb(1, 1, 1)
     context.paint()
     context.scale(zoomlevel, zoomlevel)
+    page.render(context)
     for f in annotatefns:
         f(page, pnum, context, zoomlevel)
-    page.render(context)
 
 def arrayImage(imarray, width, height):
     stride = cairo.Format.ARGB32.stride_for_width(width)
@@ -144,6 +144,7 @@ class PDFViewer:
         self.showgrid = False
         self.showrects = False # self.model.get("c_pdfadjoverlay", False)
         self.ufCurrIndex = 0
+        self.currpref = None
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
         self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
@@ -996,15 +997,20 @@ class PDFViewer:
 
         logger.debug(f"{parref=} {info=}, {annot=}")
         if len(info) and re.search(r'[.:]', parref.ref) and \
-           self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
-            o = 4 if ref[3:4] in "LRABCDEFG" else 3
+            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
+            if ref[3:4] in "LRABCDEFG":
+                pref = ref[3:4]
+                o = 4
+            else:
+                pref = "L"
+                o = 3
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
             hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"  # ({annot or ''})
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
-            if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
+            if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
                 self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
                 self.addMenuItem(menu, None, None)
 
@@ -1036,7 +1042,7 @@ class PDFViewer:
             self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
             if parref and parref.mrk is not None:
                 self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, parref.mrk)
+                self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None))
             if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
                 self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
@@ -1369,7 +1375,14 @@ class PDFViewer:
         self.model.onOK(None)
         self.updatePageNavigation()
 
-    def edit_style(self, widget, mkr):
+    def edit_style(self, widget, a):
+        (mkr, pref) = a
+        if pref != self.currpref:
+            if self.currpref is not None:
+                self.model.onOK(None)
+            if pref is not None:
+                self.model.switchToDiglot(pref)
+            self.currpref = pref
         if mkr is not None:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
@@ -1789,6 +1802,7 @@ class Paragraphs(list):
                 cinfo = [readpts(x) for x in p[1:4]]
                 if len(cinfo) > 2:
                     colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
+                lastyend = 0
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                 inpage = False
@@ -1814,6 +1828,7 @@ class Paragraphs(list):
                     currr.yend = readpts(p[1])
                     currr = None
                 lines.startreplay()
+                lastyend = 0
             elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
                 if len(p) == 5:
                     p.insert(0, "")
@@ -1886,6 +1901,7 @@ class Paragraphs(list):
                 self.append(currpic)
                 lastyend = 0
             elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
+                currpic = None
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None or currr is None or currpic is None:
                     continue

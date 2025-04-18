@@ -19,6 +19,7 @@
 {document/ifdiglot}\diglotInnerOuter{header/mirrorlayout}
 {document/ifdiglot}\diglotSepNotes{document/diglotsepnotes}
 {document/ifdiglot}{document/ifdiglotcolour}\SetDiglotBGColour{{L}}{{{document/diglotcolour}}}{{}}
+%\diglot \newPolyglotCol {s_}
 
 %%%%% Stylesheets %%%%%
 \stylesheet{{usfm_sb.sty}}
@@ -27,13 +28,10 @@
 \stylesheet{{ptx2pdf.sty}}
 
 {project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/custom.sty}}
-%\diglot {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{s_}{{{/ptxrpath}/../{document/diglotsecprj}/custom.sty}}
 
 \stylesheet{L_}{{{/cfgrpath}/ptxprint.sty}}
-%\diglot {document/ifdiglot}\stylesheet{s_}{{{diglot[cfgrpath]}/ptxprint.sty}} % Right side (secondary) styles
 %{document/ifdiglot}\stylesheet{R_}{{{diglot/ptxprintstyfile_}}}
 
-%\diglot {document/ifdiglot}{ifusediglotmodsty_}\stylesheet{s_}{{{diglot[cfgrpath]}/ptxprint-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
 {project/ifusemodssty}\stylesheet{L_}{{{/cfgrpath}/ptxprint-mods.sty}} % Left-side stylesheet override settings
 
 %%%%% Page Setup %%%%%
@@ -277,7 +275,8 @@
 
 % tweak to enable blank lines
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
-\def\b{{\the\p@rstylehooks \par\bgroup\s@tbaseline{{b}}\vskip\baselineskip\egroup}}
+%\def\b{{\endlastp@rstyle{{b}}\bgroup \getp@ram{{baseline}}{{b}}{{b+\styst@k}}\@@b}}
+%\def\b{{\the\p@rstylehooks \par\bgroup\s@tbaseline{{b}}\vskip\baselineskip\egroup}}
 %%%%% Hyphenation %%%%%
 \newlanguage\langund \language\langund
 \catcode`\@=11

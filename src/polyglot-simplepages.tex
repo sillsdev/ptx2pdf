@@ -92,7 +92,7 @@
   \edef\@ut{\x@\e@tcomma\pageins@rts\E}%
   \let\d@\gen@p@lyins@rts %populates \@ut with insert save names
   \x@\cstackdown \s@veclasses\E
-  \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,\@ut,}%
+  \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,\@ut,}% MUST end with comma
   \trace{dmp}{poly@b@xes defined as: \p@lyb@xes}%
   % Now setup copies of boxes.
   \addtoinithooks{%
@@ -106,7 +106,7 @@
 \def\polyglot@eachtime@setup{%
 }
 
-\def\poly@setup@boxaliases#1\E{\x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins} %Make each valid insert type have a page-number suffixed alias
+\def\poly@setup@boxaliases#1\E{\x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins} %Make each valid insert type / box have a page-number suffixed alias. We use the csname \tmp@ins as most are inserts.
 
 \def\poly@rename@inserts#1\E{%
   \x@\let\x@\tmp@ins\csname #1\p@lyp@gesuffx\endcsname
@@ -114,7 +114,6 @@
 } %Point the normal insert name to the page-numbered version
 
 \def\m@kepolyb@x#1\E{\x@\newb@x\csname #1\p@lyp@gesuffx\endcsname}
-
 \def\switch@polypage#1{%Switch to the relevant page for the column selected.
   \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
   \ifnum\p@lyp@geno=\sp@lynum\relax
@@ -133,7 +132,7 @@
     \fi
 }
 \def\@@s@tpolyp@ge{% 
-    \trace{dmp}{@@s@tpolyp@ge}%
+    \trace{dmp}{@@s@tpolyp@ge \the\p@lyp@geno}%
     \let\spp@d@=\d@
     \let\d@=\poly@rename@inserts    
     %\tracingassigns=1
@@ -156,6 +155,10 @@
 
 \def\polyglotpages#1{%comma separated list of concatenated columns to put on different pages (e.g. LR,AB) specifies 2 pages, pg1 shows L+R, pg2 A+B
   \trace{dmp}{polyglotpages #1}%
+  \xdef\tmp{#1}% The list of all columns
+  \ifx\tmp\empty
+    \errmessage{polyglotpages called with empty argument. That breaks things.}%
+  \fi
   \polyglot@onetime@setup
   \polyglot@eachtime@setup
   \p@lyp@geno=0
@@ -192,7 +195,7 @@
 \def\@@do@simplepage@{% iterate through page numbers 
   \s@tctslist@simplepages
   \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
-  \trace{dmp}{\spt@sk\space [\the\p@lyp@geno:\layout@list] \the\ht\partial+\the\dp\partial}%
+  \trace{dmp}{\spt@sk\space p@georderNormal\ifp@georderNormal true\else false\fi\space [\the\p@lyp@geno:\layout@list] \the\ht\partial+\the\dp\partial}%
   %pick correct inserts
   \ifx\layout@list\empty\else
     %make reverse layout list
@@ -209,21 +212,43 @@
   \scol@cmd
   \p@lyp@geno=\sdp@pgno \let\sdp@pgno=\undefined
   %Itterate
-  \ifnum\p@lyp@geno<\p@lyp@ges\relax
-    \advance\p@lyp@geno by 1
-    \let\n@xtlsp=\@@do@simplepage@
+  \ifp@georderNormal
+    \ifnum\p@lyp@geno<\p@lyp@ges\relax
+      \advance\p@lyp@geno by 1
+      \let\n@xtlsp=\@@do@simplepage@
+    \else
+      \let\n@xtlsp=\relax
+    \fi
   \else
-    \let\n@xtlsp=\relax
+    \ifnum\p@lyp@geno>0\relax
+      \advance\p@lyp@geno by -1
+      \let\n@xtlsp=\@@do@simplepage@
+    \else
+      \let\n@xtlsp=\relax
+    \fi
   \fi
   \n@xtlsp
 }
 
+\def\setdiglotN@rmal{%
+  \ifactually@write\else
+    \ifnum \numexpr 1 \ifdiglotInnerOuter \ifodd\numexpr \pageno / \numexpr 1+\p@lyp@ges\relax\relax\else * -1 \fi\fi \ifdiglotSwap * -1\fi\relax >0 
+      \diglotN@rmaltrue
+      \trace{dmp}{Normal page \the\pageno, \p@lyp@ges}%
+    \else 
+      \diglotN@rmalfalse
+      \trace{dmp}{Reversed page \the\pageno, \p@lyp@ges}%
+    \fi
+  \fi
+}
+\newif\ifp@georderNormal
 \def\@add@n@xtpartial@simplepages{%
   \edef\spt@sk{@add@n@xtpartial@simplepages }%
   %\def\pagecontents{Page0 ptl\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
   %\def\pagecontents{page1 ptl\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
   \let\scol@cmd=\@add@n@xtpartial@simplecols
   \let\pre@scol@cmd\relax
+  \p@georderNormaltrue
   \global\p@lyp@geno=0
   \@@do@simplepage@
   %\def\pagecontents{Page0\endgraf \x@\copy\csname partial@poly@0\endcsname}\plainoutput
@@ -237,10 +262,18 @@
   \else
     \let\pre@scol@cmd=\m@rksonpagefalse
   \fi
-  \actually@writetrue
   \let\scol@cmd=\@do@writep@ge@simplecols
-  \global\p@lyp@geno=0 \relax
+  \actually@writefalse
+  \setdiglotN@rmal
+  \actually@writetrue
+  \ifdiglotN@rmal\global\p@georderNormaltrue
+    \global\p@lyp@geno=0
+  \else
+    \global\p@georderNormalfalse
+    \global\p@lyp@geno=\p@lyp@ges
+  \fi
   \@@do@simplepage@
+  \actually@writefalse
 }
 
 \def\@do@layout@simplepages{%
@@ -248,6 +281,7 @@
   \let\scol@cmd=\@do@layout@simplecols
   \let\pre@scol@cmd\relax
   \p@lyp@geno=0 \relax
+  \p@georderNormaltrue
   \@@do@simplepage@
   \edef\spt@sk{@do@layout@simplepages \space0b:\l@gdims{\csname n@xtpartialNrml@poly@0\endcsname}, 1b:\l@gdims{\csname n@xtpartialNrml@poly@1\endcsname} p:\l@gdims{\partial}}%
   \trace{dmp}{\spt@sk}%
@@ -258,6 +292,7 @@
   \edef\spt@sk{@tst@n@xtpartial@simplepages \space0:\l@gdims{\csname partial@poly@0\endcsname}, 1:\l@gdims{\csname partial@poly@1\endcsname} }%
   \p@lyp@geno=0 \let\scol@cmd=\@tst@n@xtpartial@simplecols
   \let\pre@scol@cmd\relax
+  \p@georderNormaltrue
   \@@do@simplepage@
 }
 
@@ -271,6 +306,7 @@
   \let\pre@scol@cmd\relax
   \let\scol@cmd=\@do@balnotes@simplecols
   \p@lyp@geno=0
+  \p@georderNormaltrue
   \@@do@simplepage@
 }%
 \def\@do@unbalnotes@simplepages{%TODO?
@@ -278,6 +314,7 @@
   \let\pre@scol@cmd\relax
   \let\scol@cmd=\@do@unbalnotes@simplecols
   \p@lyp@geno=0
+  \p@georderNormaltrue
   \@@do@simplepage@
 }%
 
@@ -356,6 +393,19 @@
 }
 
 \let\@after@add@n@xtpartial@simplepages=\@after@add@n@xtpartial@simplecols
+
+\let\digl@t@endbook@simplepages\digl@t@endbook@simplecols
+\def\@savepartial@simplepages{% Can't save into \partial, as this is a multi-page layout!
+    \csname @start@writep@ge@\diglotlayout\endcsname
+    \setdiglotN@rmal
+    \pickn@xtpartial
+    \csname @prep@writep@ge@\diglotlayout\endcsname
+    \actually@writefalse
+    \x@\def\csname @writep@ge@hook@poly@\p@lyp@ges\endcsname{\iflastptxfile\csname bookend-final\endcsname}
+    \csname @do@writep@ge@\diglotlayout\endcsname
+    %\show\pagecontents
+  }%
+
 
 
 \plugin@endif

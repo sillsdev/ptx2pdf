@@ -550,7 +550,8 @@ class PicList:
         setWidgetVal(wid, w, src)
 
     def clearSrcPaths(self):
-        self.picinfo.clearSrcPaths()
+        if self.picinfo is not None:
+            self.picinfo.clearSrcPaths()
 
     def multiSelected(self, ismulti=False):
         pass

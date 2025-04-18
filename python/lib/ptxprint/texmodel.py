@@ -156,7 +156,7 @@ class TexModel:
     }
         # '|': 'pipe'
 
-    def __init__(self, printer, ptsettings, prjid=None, inArchive=False):
+    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None):
         from ptxprint.view import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
@@ -187,24 +187,27 @@ class TexModel:
         self._hdrmappings = localhdrmappings()
         if self.printer is not None:
             # self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
-            self.update()
+            self.update(diglotbinfo, digcfg=digcfg)
 
-    def docdir(self):
+    def docdir(self, base=None):
         #base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
-        base = self.dict["/ptxpath"]
-        docdir = self.dict["/ptxdocpath"]
-        logger.debug(f"TeX model basepaths: {base=}, {docdir=}")
-        return docdir, base
+        if base is None:
+            base = self
+        basedir = base.dict["/ptxpath"]
+        docdir = base.dict["/ptxdocpath"]
+        logger.debug(f"TeX model basepaths: {basedir=}, {docdir=}")
+        return docdir, basedir
 
-    def update(self):
+    def update(self, diglotbinfo, digcfg=None):
         """ Update model from UI """
+        # breakpoint()
         j = os.path.join
         rel = lambda x, y:saferelpath(x, y).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now
         cpath = self.printer.project.srcPath(self.printer.cfgid)
         self.updatefields(ModelMap.keys())
         self.dict['project/id'] = self.printer.project.prjid
-        docdir, base = self.docdir()
+        docdir, base = self.docdir(base=diglotbinfo)
         self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = rel(j(cpath, "AdjLists"), docdir).replace("\\","/") + "/"
         self.dict['project/triggers'] = rel(j(cpath, "triggers"), docdir).replace("\\","/") + "/"
@@ -226,6 +229,8 @@ class TexModel:
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
         fpath = j(cpath, "ptxprint-premods.tex")
         self.dict['/premodspath'] = rel(fpath, docdir).replace("\\","/")
+        if digcfg is not None:
+            digcfg.updateTM(self)
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
         self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
@@ -287,6 +292,10 @@ class TexModel:
         for a in ('project/frontfile', 'project/ptxprintstyfile_', 'diglot/ptxprintstyfile_'):
             if a not in self.dict:
                 self.dict[a] = ''
+
+        # handle diglot fractions
+        # if self.dict['poly/fraction']:
+            # self.dict['poly/fraction1'] = str(float(self.dict['poly/fraction']) / 100.)
 
         # Any more absolute paths?
         for a in ('diglot/ptxprintstyfile_',):
@@ -418,8 +427,9 @@ class TexModel:
         t = self._hdrmappings.get(v, v)
         if diglot:
             t = self._addLR(t, pri)
-            swap = self.dict['document/diglotswapside'] == 'true'
-            ratio = float(self.dict['document/diglotprifraction'])
+            swap = False # FixMe! self.dict['document/diglotswapside'] == 'true'
+            # ratio = float(self.dict['document/diglotprifraction']) # FixMe!
+            ratio = 0.5
             # print(f"{ratio=}")
             if ratio > 0.5:
                 lhfil = "\\ifdiglot\\ifseriesdiglot\\else\\hskip 0pt plus {}fil\\fi\\fi".format(f2s(ratio/(1-ratio)-1))
@@ -558,27 +568,31 @@ class TexModel:
             self.printer.styleEditor.setval("v", "Position", self.dict["document/marginalposn"])
             self.printer.saveStyles()
 
-    def _doptxfile(self, fname, dname, template, beforelast):
+    def _doptxfile(self, fname, diglots, template, beforelast, bkindex):
         res = []
-        if dname is not None:
+        if diglots:
             res.append(r"\zglot|L\*")
         else:
             res.extend(beforelast)
         res.append(template.format(fname))
-        if dname is not None:
-            res.append(r"\zglot|R\*")
-            res.extend(beforelast)
-            res.append(template.format(dname))
+        if diglots:
+            for k, v in self.dict['diglots_'].items():
+                res.append(r"\zglot|{}\*".format(k))
+                res.extend(beforelast)
+                dname = v.dict['project/books'][bkindex]
+                res.append(template.format(dname))
             res.append(r"\zglot|\*")
+            res.append(r"\diglottrue")
         return res
 
-    def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", digtexmodel=None):
+    def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", diglots=False):
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
         resetPageDone = False
         docdir, docbase = self.docdir()
+        digserialbooks = set((self.dict['document/diglotserialbooks'] or "").split())
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
                 # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
@@ -607,9 +621,7 @@ class TexModel:
                         fname = self.dict['project/books'][i]
                         dname = None
                         beforelast = []
-                        if digtexmodel is not None and f in nonScriptureBooks:
-                            dname = digtexmodel.dict['project/books'][i]
-                        elif extra != "":
+                        if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if isscripture == (f in nonScriptureBooks):
                             isscripture = not isscripture
@@ -617,14 +629,14 @@ class TexModel:
                         if self.dict.get('project/sectintros'):
                             insertnames = self._getinsertname(f)
                             if len(insertnames):
-                                if digtexmodel is not None:
+                                if not diglots:
                                     res.append(r"\diglotfalse")
                                 for ins in insertnames:
-                                    res.extend(self._doptxfile(ins, None if digtexmodel is None else ins, 
+                                    res.extend(self._doptxfile(ins, diglots, 
                                             ("\\intropages{{{}}}" 
                                                 if self.dict['project/periphpagebreak']
-                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), ""))
-                                if digtexmodel is not None:
+                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), "", i))
+                                if diglots:
                                     res.append(r"\diglottrue")
                         if i == len(self.dict['project/bookids']) - 1: 
                             beforelast.append(r"\lastptxfiletrue")
@@ -637,19 +649,18 @@ class TexModel:
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
-                           self.asBool('document/ifshowchapternums', '%') and \
-                           f in oneChbooks:
+                                   self.asBool('document/ifshowchapternums', '%') and f in oneChbooks:
                             res.append(r"\OneChapBooktrue")
-                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
+                            res.extend(self._doptxfile(fname, diglots and f in digserialbooks, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\OneChapBookfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
-                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
+                            res.extend(self._doptxfile(fname, diglots and f in digserialbooks, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
-                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
+                            res.extend(self._doptxfile(fname, diglots and f in digserialbooks, "\\ptxfile{{{}}}", beforelast, i))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
                     spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
                                                                             self.dict["paragraph/missingchars"])
@@ -729,11 +740,11 @@ class TexModel:
                     for k, e in (('toctitle', 'document/toctitle'),):
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
                 elif l.startswith(r"%\diglot "):
-                    if self.dict.get("_isDiglot", False):
+                    if diglots:
                         l = l[9:]
-                        for a in ("R", ):
-                            digdict = {x[7:]: y for x, y in self.dict.items() if x.startswith("diglot/")}
-                            res.append(l.strip().format(diglot=digdict, s_=a, **self.dict))
+                        # breakpoint()
+                        for a, digdict in self.dict["diglots_"].items():
+                            res.append(l.strip().format(diglot=digdict.dict, s_=a, **self.dict))
                 else:
                     res.append(l.rstrip().format(**self.dict))
         return "\n".join(res).replace("\\OneChapBookfalse\n\\OneChapBooktrue\n","")
@@ -813,7 +824,7 @@ class TexModel:
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
             dat = runChanges(self.changes.get('periph', self.changes.get('default', [])), "INT", dat)
-            dat = runChanges(self.localChanges, "INT", dat)
+            dat = runChanges(self.localChanges or [], "INT", dat)
             dat = regex.sub(r"(\\periph\s*([^\n|]+))\n", addperiphid, dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)

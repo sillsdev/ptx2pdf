@@ -1,6 +1,6 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
-DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+DIR:=$(shell dirname `find ../../.. \( -name test -prune \) -o  -name paratext2.tex -print`)
 test.pdf:test.tex $(DIR)/*.tex
 	-rm test.delayed
 	TEXINPUTS=.:$(DIR)/:$(DIR)/contrib/ornaments: FONTCONFIG_FILE=~/.config/ptxprint/fonts.conf xetex $< && cp test.pdf test.parlocs test.delayed test.log 1

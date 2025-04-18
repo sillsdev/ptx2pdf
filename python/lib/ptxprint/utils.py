@@ -179,6 +179,8 @@ def coltoonemax(s):
             return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
         elif " " in s:
             return [float(x) for x in s.split(" ")]
+        elif s.startswith("#"):
+            return [float(int(s[i:i+2], 16))/256. for i in range(1, 6, 2)]
         else:
             return [0.8, 0.8, 0.8]
     except (ValueError, TypeError):
@@ -187,7 +189,7 @@ def coltoonemax(s):
 def textocol(s):
     if s is None:
         vals = [0, 0, 0]
-    elif s.startswith("x"):
+    elif s.startswith("x") or s.startswith("#"):
         try:
             vals = [int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16)]
         except (ValueError, TypeError):

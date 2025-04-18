@@ -59,5 +59,6 @@ if args.debug:
       parms = {'level': 5, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s.%(msecs)03d %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
       # parms = {'level': 7, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(levelname)s:%(message)s |%(module)s(%(lineno)d)'}
       logging.basicConfig(**parms)
-usfmerge2(args.infile, keyarr, args.outfile, stylesheets=stylesheets, stylesheetsa=sheetsa,stylesheetsb=sheetsb, scorearr=scorearr,
+logging.debug(f"{stylesheets=}")
+usfmerge2(args.infile, keyarr, args.outfile, stylesheets=stylesheets, scorearr=scorearr,
            fsecondary=args.fsecondary, mode=args.mode, synchronise=args.synchronise, debug=args.debug, protect=protect)
