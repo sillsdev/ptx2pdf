@@ -16,7 +16,14 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 ArchitecturesInstallIn64BitMode=x64 arm64
 ArchitecturesAllowed=x64 arm64
+
+; Skips the "Choose Install Location" page
+DisableDirPage=yes
+; Skips the "Ready to Install" confirmation page
+DisableReadyPage=yes
+; Skips the "Create Start Menu Shortcut" page
 DisableProgramGroupPage=yes
+
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
@@ -28,12 +35,6 @@ SetupIconFile=icon\62859-open-book-icon-setup.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-; Skips the "Choose Install Location" page
-DisableDirPage=yes
-; Skips the "Create Start Menu Shortcut" page
-DisableProgramGroupPage=yes
-; Skips the "Ready to Install" confirmation page
-DisableReadyPage=yes
 
 ; These languages are for the installer (not for PTXprint itself)
 [Languages]
