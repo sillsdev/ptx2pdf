@@ -1,7 +1,16 @@
 PTXprint 2.7.38 Release Notes
-17 Apr 2025
+20 Apr 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 2.8.1 (20 Apr 2025)
+  * New feature: Polyglot (more than 2 texts) is now possible (via the Diglot tab)
+  * pdf_viewer improvements for diglots and polyglots:
+    * Right-click to change styles and settings in any of the project-configs
+    * Option to display Paragraph boxes
+  * Fix 'mirrored' view-swapping in multipage polyglots
+  * Get background colours to work in polyglot	
 _____________________________________________________________
 
 Bug fixes and Improvements in 2.7.38 (17 Apr 2025)
