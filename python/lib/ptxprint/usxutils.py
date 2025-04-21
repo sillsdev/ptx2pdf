@@ -340,7 +340,7 @@ class Usfm:
                 else:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
                         currv = p[0].get("number", curr.last.verse if curr is not None else None)
-                        curr = MakeReference(bk, curr.first.chap, currv)
+                        curr = MakeReference(bk, curr.first.chapter, currv)
                         if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
                             for r in curr.allrefs():
                                 self.bridges[r] = curr
@@ -352,7 +352,7 @@ class Usfm:
             elif p.tag == "verse":
                 if curr is not None:
                     currv = p.get("number", curr.last.verse)
-                    curr = MakeReference(bk, curr.first.chap, currv)
+                    curr = MakeReference(bk, curr.first.chapter, currv)
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
@@ -411,7 +411,7 @@ class Usfm:
         return acc
 
     def make_zsetref(self, ref, book, parent, pos):
-        attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chap), 'verse': str(ref.verse)}
+        attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
         if book is not None:
             attribs['book'] = book
         res = self.factory("ms", attribs, parent=parent)
@@ -426,15 +426,15 @@ class Usfm:
         last = (0, -1)
         chaps = []
         for i, r in enumerate(refranges):
-            if r.first.chap > last[1] or r.first.chap < last[0]:
-                chaps.append((self.chapters[r.first.chap:r.last.chap+2], [i]))
-                last = (r.first.chap, r.last.chap)
-            elif r.first.chap >= last[0] and r.last.chap <= last[1]:
+            if r.first.chapter > last[1] or r.first.chapter < last[0]:
+                chaps.append((self.chapters[r.first.chapter:r.last.chapter+2], [i]))
+                last = (r.first.chapter, r.last.chapter)
+            elif r.first.chapter >= last[0] and r.last.chapter <= last[1]:
                 chaps[-1][1].append(i)
             else:
-                chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chap+1])
+                chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chapter+1])
                 chaps[-1][1].append(i)
-                last = (last[0], r.last.chap)
+                last = (last[0], r.last.chapter)
         def pred(e, rlist):
             if e.parent is None:
                 return True

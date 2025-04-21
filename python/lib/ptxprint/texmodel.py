@@ -961,8 +961,8 @@ class TexModel:
 
         logger.debug(f"Converting {bk} {chaprange=}")
         if chaprange is None or not isbk or not len(chaprange) or \
-            (chaprange[0].first.chap < 2 and len(chaprange) == 1 and \
-                (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
+            (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
+                (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
             doc = None
         else:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -1158,10 +1158,10 @@ class TexModel:
                 if m:
                     atref = RefList.fromStr(m.group(1), context=AnyBooks)
                     for r in atref.allrefs():
-                        if r.chap == 0:
+                        if r.chapter == 0:
                             atcontexts.append((r.book, None))
                         elif r.verse == 0:
-                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chap), flags=regex.S)))
+                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
                         else:
                             v = None
                             if r.first != r.last:
@@ -1174,7 +1174,7 @@ class TexModel:
                                 outv = '{}{}'.format(r.verse, r.subverse or "")
                             else:
                                 outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
-                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chap, outv), flags=regex.S|regex.V1)))
+                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chapter, outv), flags=regex.S|regex.V1)))
                     l = l[m.end():].strip()
                 else:
                     atcontexts = [None]

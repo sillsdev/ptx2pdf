@@ -35,11 +35,14 @@ class Module:
         self.fname = fname
         self.usfms = usfms
         self.model = model
-        ptsettings = self.model._getPtSettings()
-        if ptsettings is None:
-            self.refmode = "a"
+        if self.model is not None:
+            ptsettings = self.model.printer._getPtSettings()
+            if ptsettings is None:
+                self.refmode = "a"
+            else:
+                self.refmode = _abbrevmodes.get(ptsettings.get("BookSourceForMarkerR", "Abbreviation"), "a")
         else:
-            self.refmode = _abbrevmodes.get(ptsettings.get("BookSourceForMarkerR", "Abbreviation"), "a")
+            self.refmode = None
         self.usfms.makeBookNames()
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'mrktype': 'otherpara', 'texttype': 'Other', 'endmarker': None, 'styletype': 'Paragraph'}

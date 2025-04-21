@@ -580,7 +580,10 @@ def cachedData(filepath, fn):
     logger.debug(f"Reading cache file {cfgfilepath}")
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
-            return pickle.load(inf)
+            try:
+                return pickle.load(inf)
+            except:
+                pass        # if the pickle loading fails, rebuild the pickle file
     testbase = os.path.basename("{}.pickle".format(filepath))
     for l in os.listdir(cfgdir):
         if l.startswith(testbase):
