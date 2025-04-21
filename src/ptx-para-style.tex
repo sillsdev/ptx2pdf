@@ -324,7 +324,7 @@
      %\fi
    \fi\fi\fi\fi
    \ifinn@te\else\ifdoingt@ble\else
-     \edef\t@mpp{\string\@parlen{\ifdiglot \dc@rref\else\c@rref\fi}{\lastc@rradj}{\the\prevgraf}{\m@rker}{\the\curr@djpar}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+     \edef\t@mpp{\string\@parlen{\ifdiglot \dc@rref\else\c@rref\fi}{\the\curr@djpar}{\the\prevgraf}{\m@rker}{\lastc@rref}{\lastc@rradj}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
    \cutoutcarryover 
    \ifversion{3}{\do@ndofthispar}{}%
@@ -1089,7 +1089,7 @@
   \csname inp@r-\c@rrdstat false\endcsname
 }
 
-\def\@parlen#1#2#3#4#5{}
+\def\@parlen#1#2#3#4#5#6{}
 \def\@noteid#1#2#3#4#5#6{}
 \def\@parpageend#1#2#3{}
 \def\@parnote#1#2#3{}
