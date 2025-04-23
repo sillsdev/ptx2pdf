@@ -734,10 +734,12 @@ class PolyglotSetup(Gtk.Box):
             return left_side or right_side  # Return whichever side has values
 
     def validate_layout(self, t_layout, liststore):
-        # Rule 2: Ensure there are no spaces
+        # Rule 2: Ensure there are no spaces and don't allow complex layouts (yet)
         if " " in t_layout:
             return False, _("Spaces not allowed")
-
+        if "/" in t_layout or "\\" in t_layout:
+            return False, _("Complex layouts are not yet supported")
+            
         # Extract used codes and their '1|2' values from the ListStore
         used_codes = {}  # Dictionary mapping codes -> '1' or '2'
         for row in liststore:
