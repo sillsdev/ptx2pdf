@@ -609,11 +609,13 @@ class TexModel:
                 self.dict[a[2]] = ""
         if self.dict.get('fancy/enableornaments', "%") != "%":
             self.plugins.add('ornaments')
-        if "/" in self.dict.get('document/diglotlayout', "LR"):
-            self.plugins.add('polyglot-complexpages')
-            self.plugins.discard('polyglot-simplepages')
-        elif "," in self.dict.get('document/diglotlayout', "LR"):
-            self.plugins.add('polyglot-simplepages')
+        lyt = self.dict.get('document/diglotlayout', "LR")
+        if lyt is not None:
+            if "/" in lyt:
+                self.plugins.add('polyglot-complexpages')
+                self.plugins.discard('polyglot-simplepages')
+            elif "," in lyt:
+                self.plugins.add('polyglot-simplepages')
         if self.dict['cover/makecoverpage'] != "%":
             self.plugins.add('cover')
         self.dict['plugins_'] = ",".join(sorted(self.plugins))
