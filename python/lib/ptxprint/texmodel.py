@@ -647,7 +647,6 @@ class TexModel:
                                                 else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), "", None))
                                 if diglots:
                                     res.append(r"\diglottrue")
-                            res.extend(self._doptxfile(fname, diglots and f in digserialbooks, "\\ptxfile{{{}}}", beforelast, i))
                         if i == len(self.dict['project/bookids']) - 1: 
                             beforelast.append(r"\lastptxfiletrue")
                             if self.dict['project/ifcolophon'] == "" and self.dict['project/pgbreakcolophon'] != '%':
