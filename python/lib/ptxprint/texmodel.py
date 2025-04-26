@@ -575,6 +575,8 @@ class TexModel:
         else:
             res.extend(beforelast)
         res.append(template.format(fname))
+        if bkindex is None:
+            return res
         if diglots:
             for k, v in self.dict['diglots_'].items():
                 res.append(r"\zglot|{}\*".format(k))
@@ -642,9 +644,10 @@ class TexModel:
                                     res.extend(self._doptxfile(ins, diglots, 
                                             ("\\intropages{{{}}}" 
                                                 if self.dict['project/periphpagebreak']
-                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), "", i))
+                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), "", None))
                                 if diglots:
                                     res.append(r"\diglottrue")
+                            res.extend(self._doptxfile(fname, diglots and f in digserialbooks, "\\ptxfile{{{}}}", beforelast, i))
                         if i == len(self.dict['project/bookids']) - 1: 
                             beforelast.append(r"\lastptxfiletrue")
                             if self.dict['project/ifcolophon'] == "" and self.dict['project/pgbreakcolophon'] != '%':
