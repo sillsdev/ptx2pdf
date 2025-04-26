@@ -1,8 +1,15 @@
 PTXprint 2.8.2 Release Notes
-22 Apr 2025
+26 Apr 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.3 (26 Apr 2025)
+  * Speed up pdf viewer page switching
+  * Automatically fill in plugin name for polyglot
+  * Don't spit out inter peripheral project books twice
+  * Fix diglots with swapped sides (#1073)
+  * Fix NoneType bug in layout
 
 Bug fixes and Improvements in 2.8.2 (22 Apr 2025)
   * Fix issue with packaging usfmtc module (for \f* issue and other fixes)
