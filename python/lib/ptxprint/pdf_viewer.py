@@ -654,6 +654,7 @@ class PDFViewer:
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
+        self.parlocs.load_dests(self.document)
 
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
@@ -2013,19 +2014,19 @@ class Paragraphs(list):
         else:
             return self.pnumorder[pindex - 1]
 
-    def load_page(self, doc, page, pindex):
+    def load_dests(self, doc):
         dests_tree = doc.create_dests_tree()
-        dests = []
-        def collect_dest(k, v, d):
-            dests.append((str(v.named_dest), v.page_num, (v.left, v.top)))
+        self.dests = {}
         n = dests_tree.node_first()
         while n is not None:
             adest = ctypes.cast(n.value(), ctypes.POINTER(PopplerDest)).contents
             akey = ctypes.cast(n.key(), ctypes.c_char_p).value
-            dests.append(ParDest(str(akey.decode("utf-8").replace(".", " ").replace(":", ".") if akey else ""), adest.page_num, adest.left, adest.top))
+            self.dests.setdefault(adest.page_num, []).append(ParDest(str(akey.decode("utf-8").replace(".", " ").replace(":", ".") if akey else ""), adest.page_num, adest.left, adest.top))
             n = n.next()
         dests_tree.destroy()
-        logger.debug(f"{len(dests)=}")
+        logger.debug(f"{len(self.dests)=}")
+
+    def load_page(self, doc, page, pindex):
         currlast = None
         for p, r in self.getParas(pindex, inclast=True):
             logger.log(5, f"load_page processing {p=} {r=}")
@@ -2039,9 +2040,7 @@ class Paragraphs(list):
                 r.dests = [(currlast.name, (r.xstart, r.ystart))] if currlast is not None else []
             else:
                 continue
-            for a in dests:
-                if a.pagenum != pindex:
-                    continue
+            for a in self.dests.get(pindex, []):
                 if a.x >= r.xstart and a.x <= r.xend and a.y >= r.yend and a.y <= r.ystart:
                     r.dests.append((a.name, (a.x, a.y)))
                     currlast = max(currlast, a) if currlast is not None else a
