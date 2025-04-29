@@ -435,7 +435,6 @@ class RunJob:
                 else:
                     diginfo["project/books"].append(digout)
                     self.books.append(digout)
-            print(f"{b=} {nonScriptureBooks=}")
             if left and b not in nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
