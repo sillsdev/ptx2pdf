@@ -313,203 +313,6 @@ class RunJob:
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
         return self.res
 
-    def done_job(self, outfname, pdfname, info):
-        # Work out what the resulting PDF was called
-        startname = None
-        logger.debug(f"done_job: {outfname}, {pdfname}, {self.res=}")
-        cfgname = info['config/name']
-        if cfgname is not None and cfgname != "":
-            cfgname = "-"+cfgname
-        else:
-            cfgname = ""
-        if pdfname is not None:
-            print(pdfname)
-        self.printer.set("l_statusLine", "")
-        print(f"{self.res=}")
-        if self.res == 0:
-            if self.printer.docreatediff:
-                basename = self.printer.get("btn_selectDiffPDF")
-                if basename == _("Previous PDF (_1)"):
-                    basename = None
-                ndiffcolor = self.printer.get("col_ndiffColor")
-                odiffcolor = self.printer.get("col_odiffColor")
-                onlydiffs = self.printer.get("c_onlyDiffs")
-                diffpages = int(self.printer.get("s_diffpages") or 0)
-                logger.debug(f"diffing from: {basename=} {pdfname=}")
-                if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
-                                color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
-                    if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
-                        self.printer.onShowPDF(None, path=diffname)
-                        if diffname == pdfname:
-                            self.printer.set("l_statusLine", _("No differences found"))
-                self.printer.docreatediff = False
-            elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
-                if self.printer.isCoverTabOpen():
-                    startname = self.coverfile or pdfname
-                else:
-                    startname = pdfname
-
-            fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
-            logger.debug(f"Testing log file {fname}")
-            if os.path.exists(fname):
-                with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                    log = logfile.read()
-                smry, msgList, ufPages = summarizeTexLog(log)
-                if not self.noview and not self.args.print:
-                    self.printer.ufCurrIndex = 0
-                    self.printer.ufPages = ufPages
-                    sl = self.printer.builder.get_object("l_statusLine")
-                    sl.set_text("")
-                    sl.set_tooltip_text("")
-                if smry["E"] + smry["W"] > 0:
-                    summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
-                    msgs = "\n".join(msgList)
-                    print("{}\n{}".format(summaryLine, msgs))
-                    if not self.noview and not self.args.print:
-                        if len(msgList) == 1 and "underfilled" in msgs:
-                            if "," not in msgs and "-" not in msgs:
-                                msgs = re.sub(_("pages"), _("page"), msgs)
-                            sl.set_text(msgs)
-                            sl.set_tooltip_text(msgs)
-                            chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
-                            if "," not in chkmsg and "-" not in chkmsg:
-                                chkmsg = re.sub(_("pages"), _("page"), chkmsg)
-                            self.printer.set("l_statusLine", chkmsg)
-                        else:
-                            sl.set_text(summaryLine)
-                            sl.set_tooltip_text(msgs)
-                            self.printer.set("l_statusLine", summaryLine)
-                    with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
-                        logfile.write(f"\n{summaryLine}\n{msgs}")
-            
-                if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
-                    badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
-                    if len(badpgs):
-                        print(_("Layout problems were encountered on page(s): ") + ", ".join(badpgs))
-                        self.printer.doError(_("PDF was created BUT..."),
-                            secondary=_("Layout problems were encountered on page(s): ") + ",".join(badpgs) + \
-                                  _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
-                            title=_("PTXprint [{}] - Warning!").format(VersionStr),
-                            threaded=True)
-            if not self.noview and startname is not None:
-                    self.printer.onShowPDF(None, path=startname)
-
-        elif self.res == 3:
-            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
-                    secondary=_("Faulty PDF, could not parse"),
-                    title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
-        elif self.res == 4:
-            logpath = os.path.join(self.tmpdir, outfname.replace(".tex", ".xdvi_log"))
-            if os.path.exists(logpath):
-                with open(logpath) as inf:
-                    loglines = inf.readlines()
-                    if "xdvipdfmx:fatal: Invalid font: -1 (0)\n" in loglines:
-                        loglines.append("\n" + _("To fix this error: Use a different font which is not a Variable Font."))
-            else:
-                loglines = [_("Bad xdvi file, probably failed to load a picture or font")]
-            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
-                    secondary="".join(loglines[-12:]),
-                    title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
-        elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
-            finalLogLines = self.parseLogLines()
-            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
-                    secondary="".join(finalLogLines[:30]), title="PTXprint [{}] - Error!".format(VersionStr),
-                    threaded=True, copy2clip=True)
-            self.printer.onIdle(self.printer.showLogFile)
-        if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
-            self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
-        self.printer.finished(self.res == 0)
-        self.busy = False
-        if not self.noview and not self.args.print and self.printer.isDisplay:
-            self.printer.builder.get_object("dlg_preview").present()
-            spnr = self.printer.builder.get_object("spin_preview")
-            if spnr.props.active:  # Check if the spinner is running
-                spnr.stop()                
-        logger.debug("done_job: Finishing thread")
-        unlockme()
-        if not self.noview and not self.args.print:
-            self.printer.builder.get_object("t_find").set_placeholder_text("Search for settings")
-
-    def parselog(self, fname, rerunp=False, lines=20):
-        loglines = []
-        rerunres = False
-        if not os.path.exists(fname):
-            return (loglines, rerunres)
-        try:
-            with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                for i, l in enumerate(logfile.readlines()):
-                    if rerunp and l.startswith("PARLOC: Rerun."):
-                        rerunres = True
-                    loglines.append(l)
-                    if len(loglines) > lines:
-                        loglines.pop(0)
-        except:
-            loglines.append("Logfile missing: "+fname)
-        return (loglines, rerunres)
-
-    def readfile(self, fname):
-        try:
-            with open(fname, "r", encoding="utf-8") as inf:
-                res = "".join(inf.readlines())
-            return res
-        except FileNotFoundError:
-            return ""
-
-    def parseLogLines(self):
-        # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
-        l = len(self.loglines)
-        s = 40 if l > 40 else l
-        e = 0
-        for i in range(1, s):
-            if self.loglines[-i].startswith("Here is how much of TeX's memory you used:"):
-                e = i
-            if self.loglines[-i].startswith("!"):
-                s = i
-        finalLogLines = []
-        for l in self.loglines[-s:-e]:
-            if len(l.strip()):
-                finalLogLines.append(l.replace("   ", " "))
-        foundmsg = False
-        finalLogLines.append("-"*90+"\n")
-        for l in reversed(finalLogLines):
-            # if l[:1] == "!" and not foundmsg:
-            if not foundmsg:
-                for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
-                    if m in l or l.startswith(m):
-                        finalLogLines.append(_errmsghelp[m]+"\n")
-                        foundmsg = True
-                        break
-        if not foundmsg:
-            # Try summarizing Log file:
-            smry, msgList, ufPages = summarizeTexLog('\n'.join(finalLogLines))
-            if smry["E"] > 0:
-                msgs = "\n".join(msgList)
-                finalLogLines.append(msgs)
-            else: # Catch all else kind of message.
-                finalLogLines.append(_errmsghelp["Unknown"])
-        books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
-        if len(books):
-            book = " in {}".format(books[-1])
-        else:
-            book = ""
-        refs = re.findall(r"([1-9]\d{0,2}[.:][1-9]\d{0,2}[^0-9])", "".join(finalLogLines))
-        if len(refs):
-            finalLogLines.append("References to check{}: {}".format(book, " ".join(refs)))
-
-        texmrkrs = [r"\fi", r"\if", r"\ifx", r"\box", r"\hbox", r"\vbox", r"\else", r"\book", r"\par",
-                     r"\edef", r"\gdef", r"\dimen", r"\hsize", r"\relax"]
-        allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
-        mrkrs = [x for x in allmrkrs if x not in texmrkrs]
-        if 0 < len(mrkrs) < 7:
-            if len(set(mrkrs) & set([r"\ef", r"\ex", r"\cat", r"\esb"])):
-                finalLogLines.append(_("There might be a marker issue in the Extended Study Notes"))
-
-        files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
-        if len(files):
-            finalLogLines.append("File(s) to check: {}".format(", ".join(files)))
-        return finalLogLines
-
     def dojob(self, jobs, info):
         donebooks = []
         # import pdb; pdb.set_trace()
@@ -550,7 +353,7 @@ class RunJob:
         self.books += donebooks
         info["project/bookids"] = [r[0][0].first.book if r[1] else "MOD" for r in jobs]
         info["project/books"] = donebooks
-        res = self.sharedjob(jobs, info)
+        res = self.sharedjob(jobs, info, False)
         if info['notes/ifxrexternalist']:
             res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
         return [os.path.join(self.tmpdir, out) for out in donebooks] + res
@@ -694,6 +497,14 @@ class RunJob:
             genfiles.append(frtfname)
         if info["project/sectintros"]:
             genfiles.append(info.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INT.SFM"))))
+            if diglots:
+                addintlist = ["\zglot|L\*"+info["project/intfile"]]
+                for k in self.printer.diglotViews.keys():
+                    diginfo = info.dict.get(f"diglot_{k}",  None)
+                    if diginfo:
+                        genfiles.append(diginfo.addInt(os.path.join(self.tempdir, outfname.replace(".text", f"_INT{k}.SFM"))))
+                        addintlist.append(f"\zglot|{k}\*"+diginfo["project/intfile"])
+                info["project/intfile"] = "".join(addintlist)
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
             self.printer.incrementProgress(stage="gp")
@@ -914,6 +725,203 @@ class RunJob:
             if self.res == 0 and not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
                 self.res = 3
         print("Done")
+
+    def done_job(self, outfname, pdfname, info):
+        # Work out what the resulting PDF was called
+        startname = None
+        logger.debug(f"done_job: {outfname}, {pdfname}, {self.res=}")
+        cfgname = info['config/name']
+        if cfgname is not None and cfgname != "":
+            cfgname = "-"+cfgname
+        else:
+            cfgname = ""
+        if pdfname is not None:
+            print(pdfname)
+        self.printer.set("l_statusLine", "")
+        print(f"{self.res=}")
+        if self.res == 0:
+            if self.printer.docreatediff:
+                basename = self.printer.get("btn_selectDiffPDF")
+                if basename == _("Previous PDF (_1)"):
+                    basename = None
+                ndiffcolor = self.printer.get("col_ndiffColor")
+                odiffcolor = self.printer.get("col_odiffColor")
+                onlydiffs = self.printer.get("c_onlyDiffs")
+                diffpages = int(self.printer.get("s_diffpages") or 0)
+                logger.debug(f"diffing from: {basename=} {pdfname=}")
+                if basename is None or len(basename):
+                    diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
+                                color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
+                    if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
+                        self.printer.onShowPDF(None, path=diffname)
+                        if diffname == pdfname:
+                            self.printer.set("l_statusLine", _("No differences found"))
+                self.printer.docreatediff = False
+            elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
+                if self.printer.isCoverTabOpen():
+                    startname = self.coverfile or pdfname
+                else:
+                    startname = pdfname
+
+            fname = os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".log"))
+            logger.debug(f"Testing log file {fname}")
+            if os.path.exists(fname):
+                with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
+                    log = logfile.read()
+                smry, msgList, ufPages = summarizeTexLog(log)
+                if not self.noview and not self.args.print:
+                    self.printer.ufCurrIndex = 0
+                    self.printer.ufPages = ufPages
+                    sl = self.printer.builder.get_object("l_statusLine")
+                    sl.set_text("")
+                    sl.set_tooltip_text("")
+                if smry["E"] + smry["W"] > 0:
+                    summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
+                    msgs = "\n".join(msgList)
+                    print("{}\n{}".format(summaryLine, msgs))
+                    if not self.noview and not self.args.print:
+                        if len(msgList) == 1 and "underfilled" in msgs:
+                            if "," not in msgs and "-" not in msgs:
+                                msgs = re.sub(_("pages"), _("page"), msgs)
+                            sl.set_text(msgs)
+                            sl.set_tooltip_text(msgs)
+                            chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
+                            if "," not in chkmsg and "-" not in chkmsg:
+                                chkmsg = re.sub(_("pages"), _("page"), chkmsg)
+                            self.printer.set("l_statusLine", chkmsg)
+                        else:
+                            sl.set_text(summaryLine)
+                            sl.set_tooltip_text(msgs)
+                            self.printer.set("l_statusLine", summaryLine)
+                    with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
+                        logfile.write(f"\n{summaryLine}\n{msgs}")
+            
+                if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+                    badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
+                    if len(badpgs):
+                        print(_("Layout problems were encountered on page(s): ") + ", ".join(badpgs))
+                        self.printer.doError(_("PDF was created BUT..."),
+                            secondary=_("Layout problems were encountered on page(s): ") + ",".join(badpgs) + \
+                                  _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
+                            title=_("PTXprint [{}] - Warning!").format(VersionStr),
+                            threaded=True)
+            if not self.noview and startname is not None:
+                    self.printer.onShowPDF(None, path=startname)
+
+        elif self.res == 3:
+            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
+                    secondary=_("Faulty PDF, could not parse"),
+                    title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
+        elif self.res == 4:
+            logpath = os.path.join(self.tmpdir, outfname.replace(".tex", ".xdvi_log"))
+            if os.path.exists(logpath):
+                with open(logpath) as inf:
+                    loglines = inf.readlines()
+                    if "xdvipdfmx:fatal: Invalid font: -1 (0)\n" in loglines:
+                        loglines.append("\n" + _("To fix this error: Use a different font which is not a Variable Font."))
+            else:
+                loglines = [_("Bad xdvi file, probably failed to load a picture or font")]
+            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
+                    secondary="".join(loglines[-12:]),
+                    title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
+        elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+            finalLogLines = self.parseLogLines()
+            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
+                    secondary="".join(finalLogLines[:30]), title="PTXprint [{}] - Error!".format(VersionStr),
+                    threaded=True, copy2clip=True)
+            self.printer.onIdle(self.printer.showLogFile)
+        if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
+            self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
+        self.printer.finished(self.res == 0)
+        self.busy = False
+        if not self.noview and not self.args.print and self.printer.isDisplay:
+            self.printer.builder.get_object("dlg_preview").present()
+            spnr = self.printer.builder.get_object("spin_preview")
+            if spnr.props.active:  # Check if the spinner is running
+                spnr.stop()                
+        logger.debug("done_job: Finishing thread")
+        unlockme()
+        if not self.noview and not self.args.print:
+            self.printer.builder.get_object("t_find").set_placeholder_text("Search for settings")
+
+    def parselog(self, fname, rerunp=False, lines=20):
+        loglines = []
+        rerunres = False
+        if not os.path.exists(fname):
+            return (loglines, rerunres)
+        try:
+            with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
+                for i, l in enumerate(logfile.readlines()):
+                    if rerunp and l.startswith("PARLOC: Rerun."):
+                        rerunres = True
+                    loglines.append(l)
+                    if len(loglines) > lines:
+                        loglines.pop(0)
+        except:
+            loglines.append("Logfile missing: "+fname)
+        return (loglines, rerunres)
+
+    def readfile(self, fname):
+        try:
+            with open(fname, "r", encoding="utf-8") as inf:
+                res = "".join(inf.readlines())
+            return res
+        except FileNotFoundError:
+            return ""
+
+    def parseLogLines(self):
+        # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
+        l = len(self.loglines)
+        s = 40 if l > 40 else l
+        e = 0
+        for i in range(1, s):
+            if self.loglines[-i].startswith("Here is how much of TeX's memory you used:"):
+                e = i
+            if self.loglines[-i].startswith("!"):
+                s = i
+        finalLogLines = []
+        for l in self.loglines[-s:-e]:
+            if len(l.strip()):
+                finalLogLines.append(l.replace("   ", " "))
+        foundmsg = False
+        finalLogLines.append("-"*90+"\n")
+        for l in reversed(finalLogLines):
+            # if l[:1] == "!" and not foundmsg:
+            if not foundmsg:
+                for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
+                    if m in l or l.startswith(m):
+                        finalLogLines.append(_errmsghelp[m]+"\n")
+                        foundmsg = True
+                        break
+        if not foundmsg:
+            # Try summarizing Log file:
+            smry, msgList, ufPages = summarizeTexLog('\n'.join(finalLogLines))
+            if smry["E"] > 0:
+                msgs = "\n".join(msgList)
+                finalLogLines.append(msgs)
+            else: # Catch all else kind of message.
+                finalLogLines.append(_errmsghelp["Unknown"])
+        books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
+        if len(books):
+            book = " in {}".format(books[-1])
+        else:
+            book = ""
+        refs = re.findall(r"([1-9]\d{0,2}[.:][1-9]\d{0,2}[^0-9])", "".join(finalLogLines))
+        if len(refs):
+            finalLogLines.append("References to check{}: {}".format(book, " ".join(refs)))
+
+        texmrkrs = [r"\fi", r"\if", r"\ifx", r"\box", r"\hbox", r"\vbox", r"\else", r"\book", r"\par",
+                     r"\edef", r"\gdef", r"\dimen", r"\hsize", r"\relax"]
+        allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
+        mrkrs = [x for x in allmrkrs if x not in texmrkrs]
+        if 0 < len(mrkrs) < 7:
+            if len(set(mrkrs) & set([r"\ef", r"\ex", r"\cat", r"\esb"])):
+                finalLogLines.append(_("There might be a marker issue in the Extended Study Notes"))
+
+        files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
+        if len(files):
+            finalLogLines.append("File(s) to check: {}".format(", ".join(files)))
+        return finalLogLines
 
     def procpdfFile(self, outfname, pdffile, info):
         opath = outfname.replace(".tex", ".prepress.pdf")
