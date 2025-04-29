@@ -362,10 +362,14 @@
     \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
   \else% This milestone is a named location 
     \ifsuppresstr@gger\else
-      \trace{m}{This is a unique location}%
-      \xdef\c@rref{\id@@@\attr@b}%
-      \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
-       \ch@ckadjustments
+      \ifx\attr@b\relax
+        \trace{m}{This milestone has no location (\thismil@stone \id@@@\attr@b)}%
+      \else
+        \trace{m}{This is a unique location (\id@@@\attr@b)}%
+        \xdef\c@rref{\id@@@\attr@b}%
+        \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
+         \ch@ckadjustments
+        \fi
       \fi
     \fi
   \fi
