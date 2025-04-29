@@ -3943,13 +3943,8 @@ class GtkViewModel(ViewModel):
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        if self.get("c_diglot"):
-            self._editProcFile("PrintDraftChanges.txt", "prj")
-            self._editProcFile("changes.txt", "dig", intro="# Changes.txt file for the Secondary Project of the Diglot")
-            self._editProcFile("changes.txt", "cfg", intro="# Changes.txt file for the Primary Project of the Diglot")
-        else:
-            self._editProcFile("PrintDraftChanges.txt", "prj")
-            self._editProcFile("changes.txt", "cfg")
+        self._editProcFile("PrintDraftChanges.txt", "prj")
+        self._editProcFile("changes.txt", "cfg")
         self.onRefreshViewerTextClicked(None)
         
     def onEditModule(self, btn):

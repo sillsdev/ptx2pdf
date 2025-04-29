@@ -628,6 +628,7 @@ class TexModel:
                     res.append(r"\PtxFilePath={"+saferelpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        print(f"{fname=}")
                         dname = None
                         beforelast = []
                         if extra != "":
