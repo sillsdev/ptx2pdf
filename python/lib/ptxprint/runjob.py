@@ -500,10 +500,9 @@ class RunJob:
             if diglots:
                 addintlist = [r"\zglot|L\*"+info["project/intfile"]]
                 for k in self.printer.diglotViews.keys():
-                    diginfo = info.dict.get(f"diglots_{k}",  None)
-                    if diginfo:
-                        genfiles.append(diginfo.addInt(os.path.join(self.tempdir, outfname.replace(".text", f"_INT{k}.SFM"))))
-                        addintlist.append(f"\\zglot|{k}\\*"+diginfo["project/intfile"])
+                    diginfo = info.dict["diglots_"][k]
+                    genfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", f"_INT{k}.SFM"))))
+                    addintlist.append(f"\\zglot|{k}\\*"+diginfo["project/intfile"])
                 addintlist.append(r"\zglot|\*")
                 info["project/intfile"] = "".join(addintlist)
         info["document/piclistfile"] = ""

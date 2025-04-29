@@ -111,6 +111,7 @@
   \ifst@ringperiph
     \egroup\egroup
     \let\tmp\p@riphlines
+	\trace{per}{save periph contents: periphcontents\c@rrdstat=\periphattr@b}%
     \x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{%
       \x@\kill@PossParamCache\x@\p@sheof\x@\scantokens\x@{\tmp}\endlastp@rstyle{endperiph}\p@peof
       \ifhe@dings\endhe@dings\fi
@@ -172,6 +173,7 @@
     \let\t@mpside\attr@b
   \fi
   \get@ttribute{id}%
+  \trace{per}{getperiph(\g@tperiphid{\t@mpside}{\attr@b})}%
   \ifcsname\g@tperiphid{\t@mpside}{\attr@b}\endcsname
     \let\periph@@@\attr@b
     \@chk@pull{\periph@@@}%
