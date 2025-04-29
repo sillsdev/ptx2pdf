@@ -996,7 +996,6 @@ class PDFViewer:
                     info = self.adjlist.getinfo(ref + parnum, insert=True)
             logger.debug(f"{event.x=},{event.y=}")
 
-        logger.debug(f"{parref=} {info=}, {annot=}")
         if len(info) and re.search(r'[.:]', parref.ref) and \
             self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
             if ref[3:4] in "LRABCDEFG":
@@ -1008,7 +1007,7 @@ class PDFViewer:
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
-            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"  # ({annot or ''})
+            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
             if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc

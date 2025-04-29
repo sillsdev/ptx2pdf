@@ -628,7 +628,6 @@ class TexModel:
                     res.append(r"\PtxFilePath={"+saferelpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
-                        print(f"{fname=}")
                         dname = None
                         beforelast = []
                         if extra != "":
@@ -995,8 +994,9 @@ class TexModel:
                                     show=not printer.get("c_quickRun"))
                     self.interlinear.fails = []
         elif bk.lower().startswith("xx"):
-            (dat, doc) = self._getText(dat, doc, bk)
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="flatten the module")
             doc = self.flattenModule(infpath, outfpath, text=dat)
+            dat = None
 
         if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")

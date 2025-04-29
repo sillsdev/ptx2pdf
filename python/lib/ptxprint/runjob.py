@@ -499,7 +499,7 @@ class RunJob:
         if info["project/sectintros"]:
             genfiles.append(info.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INT.SFM"))))
             if diglots:
-                addintlist = [r"\zglot|L\*"+info["project/intfile"]]
+                addintlist = [r"\diglottrue\zglot|L\*"+info["project/intfile"]]
                 for k in self.printer.diglotViews.keys():
                     diginfo = info.dict["diglots_"][k]
                     genfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", f"_INT{k}.SFM"))))
