@@ -4,6 +4,7 @@ from ptxprint.modelmap import ModelMap
 # 'code', 'pg', 'prj', 'cfg', 'captions', 'fraction', 'fontsize', 'baseline', 'weight', 'color', 'prjguid'
 # poly/k: (attr, type)
 configmap = { 
+    "code":         ("code", str, None),
     "projectid":    ("prj", str, None),
     "projectguid":  ("prjguid", str, None),
     "config":       ("cfg", str, None),
@@ -18,6 +19,7 @@ configmap = {
 
 class PolyglotConfig:
     def __init__(self):
+        self.code = None
         self.prj = None
         self.prjguid = None
         self.cfg = None

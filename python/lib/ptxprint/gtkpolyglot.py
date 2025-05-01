@@ -77,6 +77,7 @@ class PolyglotSetup(Gtk.Box):
             row_index = self.find_or_create_row(sfx)  # Find or add row
             prjguid, available_configs = self.get_available_configs(getattr(plyglot, 'prj'))
             plyglot.prjguid = prjguid
+            plyglot.code = sfx
             self.ls_config[row_index].clear()
             for c in available_configs:
                 self.ls_config[row_index].append([c])                
@@ -330,6 +331,7 @@ class PolyglotSetup(Gtk.Box):
         return model
         
     def on_combo_changed(self, widget, path, text, col_id):
+        # self.model[row_index][col_id] is the the value BEFORE the change and 'text' is the new value !!!
         row_index = int(path)
         old_cfg = self.ls_treeview[row_index][m.cfg] if 0 <= row_index < len(self.ls_treeview) else None
         if row_index == 0 and col_id not in [m.pg, m.fraction]:  # Row 0 should not be editable for these columns
@@ -367,10 +369,12 @@ class PolyglotSetup(Gtk.Box):
             prjguid = self.ls_treeview[row_index][m.prjguid]
 
         if col_id == m.cfg:
-            prj, cfg = self.get_prj_cfg()
+            cfg = text
         else:
             cfg = self.ls_treeview[row_index][m.cfg]
 
+        sfx = self.ls_treeview[row_index][m.code]
+        polyglot = self.view.polyglots.get(sfx, None)
         if col_id == m.prj or col_id == m.cfg:  
             # Check for duplicated Project and Configuration names
             for i, row in enumerate(self.ls_treeview):
@@ -378,14 +382,14 @@ class PolyglotSetup(Gtk.Box):
                     self.view.doStatus(_("Duplicate Project+Configuration not allowed)"))
                     return
 
-            sfx = self.ls_treeview[row_index][m.code]
-            polyglot = self.view.polyglots.get(sfx, None)
             if polyglot is not None:
                 polyglot.prj = prj
                 polyglot.cfg = cfg
             polyview = self.get_view(sfx)
             if polyview is not None:
                 polyview.updateProjectSettings(prj, prjguid, configName=cfg)
+                if sfx != "L":
+                    self.view.reloadDiglotPics(polyview, sfx, sfx)
         else:
             polyview = None
 
@@ -406,17 +410,25 @@ class PolyglotSetup(Gtk.Box):
            
         # Refresh dropdowns and other dependencies after updating the combo box
         if col_id == m.code:    # Unique code changed
-            self.refresh_code_dropdowns()
+            if text != polyglot.code:
+                self.view.moveDiglot(polyglot.code, text)
+                self.refresh_code_dropdowns()
         elif col_id == m.pg:  # Page 1 or 2 changed
             self.validate_page_widths()
             self.update_layout_string(force=True)
             self.treeview.queue_draw()  # Refresh UI
+            
+    def changeConfigName(self, config):
+        if len(self.ls_treeview):
+            self.ls_treeview[0][m.cfg] = config
+            self.updateRow(0)
 
     def updateRow(self, row_index):
         sfx = self.ls_treeview[row_index][m.code]
         plyglt = self.view.polyglots.get(sfx, None)
         if plyglt is None:
             plyglt = PolyglotConfig()
+            plyglt.code = sfx
             self.view.polyglots[sfx] = plyglt
         for idx, field in enumerate(_modelfields[1:11], start=1):
             val = self.ls_treeview[row_index][idx]
@@ -544,8 +556,7 @@ class PolyglotSetup(Gtk.Box):
             model, iter, path = selected
             row_index = int(path[0])
             sfx = self.ls_treeview[row_index][m.code]
-            self.view.diglotViews.pop(sfx, None)
-            self.view.polyglots.pop(sfx, None)
+            self.view.removeDiglotView(sfx)
             model.remove(iter)
             self.update_layout_string(force=True)
             self.refresh_code_dropdowns()  # Refresh available codes

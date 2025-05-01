@@ -238,9 +238,10 @@ bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles
 gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_ThumbTabs 
 c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover 
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
+btn_adjust_diglot
 """.split()
 # tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
-# lpolyfraction_ spolyfraction_ btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
+# lpolyfraction_ spolyfraction_ tb_diglotSwitch btn_diglotSwitch
 
 _ui_experimental = """
 """.split()
@@ -426,7 +427,7 @@ _nonsensitivities = {
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_createZipArchiveXtra", "btn_Generate",
-                    "b_reprint", "btn_refreshCaptions"),  # "btn_adjust_diglot", 
+                    "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot"), 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
@@ -1513,8 +1514,10 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print4cover", "btn_adjust_diglot"]: # "b_print2ndDiglotText", "spolyfraction_"
+        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "spolyfraction_"
             self.builder.get_object(w).set_sensitive(not self.printReason)
+        if self.gtkpolyglot is not None:    
+            self.builder.get_object("btn_adjust_diglot").set_sensitive(not self.printReason and len(self.gtkpolyglot.ls_treeview) == 2)
 
     def checkFontsMissing(self):
         self.setPrintBtnStatus(4, "")
@@ -2801,6 +2804,12 @@ class GtkViewModel(ViewModel):
         self.picPreviewShowHide(pics)
         self.changed(changed)
         
+    def reloadDiglotPics(self, digView, old, new):
+        super().reloadDiglotPics(digView, old, new)
+        pics = self.get("c_includeillustrations")
+        if pics and self.picListView:
+            self.picListView.load(self.picinfos)
+        
     def picPreviewShowHide(self, show=True):
         for w in ["bx_showImage", "tb_picPreview"]:
             self.builder.get_object(w).set_visible(show)
@@ -3710,6 +3719,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)
         configName = self.getConfigName()
+        if self.gtkpolyglot is not None:
+            self.gtkpolyglot.changeConfigName(configName)
         if len(self.get("ecb_savedConfig")):
             if configName != "Default":
                 lockBtn.set_sensitive(True)

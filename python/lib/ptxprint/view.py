@@ -1411,7 +1411,7 @@ class ViewModel:
         return
 
     def mergeCaptions(self, bk):
-        return bk in self.get("s_diglotSerialBooks", "FRT BAK GLO")
+        return bk not in self.get("s_diglotSerialBooks", "FRT BAK GLO")
 
     def generatePicList(self, procbks=None, doclear=True):
         ab = self.getAllBooks()
@@ -1428,7 +1428,7 @@ class ViewModel:
                 if v.picinfos is None:
                     v.picinfos = Piclist(v)
                 v.picinfos.read_books(procbks, v.getAllBooks(), cols=cols, random=rnd, sync=sync)
-                self.picinfos.merge(v.picinfos, k, mergeCaptions=self.mergeCaptions, nonMergedBooks=nonScriptureBooks)
+                self.picinfos.merge(v.picinfos, k, mergeCaptions=self.mergeCaptions)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
@@ -1890,12 +1890,21 @@ class ViewModel:
         if self.picinfos:
             self.picinfos.unmerge(suffix)
         self.diglotViews.pop(suffix, None)
-        self.polyglots.pop(sfx, None)
+        self.polyglots.pop(suffix, None)
 
-    def reloadDiglotPics(self, digView, old, new=None):
+    def moveDiglot(self, old, new):
+        self.diglotViews[new] = self.diglotViews.pop(old, None)
+        self.polyglots[new] = self.polyglots.pop(old, None)
+        self.polyglots[new].code = new
+        self.reloadDiglotPics(self.diglotViews[new], old, new)
+        logger.debug(f"Diglots={self.diglotViews.keys()}, polyglots={self.polyglots.keys()}")
+        
+    def reloadDiglotPics(self, digView, old, new):
         self.picinfos.unmerge(old)
-        if new is not None:
-            self.picinfos.merge(digView, new, mergeCaptions=self.mergeCaptions)
+        if digView.picinfos is None or not digView.picinfos.pics:
+            digView.picinfos = Piclist(digView)
+            digView.picinfos.load_files(digView)
+        self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
 
     def createArchive(self, filename=None):
         if filename is None:
