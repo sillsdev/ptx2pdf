@@ -417,11 +417,13 @@ class PolyglotSetup(Gtk.Box):
             self.validate_page_widths()
             self.update_layout_string(force=True)
             self.treeview.queue_draw()  # Refresh UI
+        self.view.updateDialogTitle()
             
     def changeConfigName(self, config):
         if len(self.ls_treeview):
             self.ls_treeview[0][m.cfg] = config
             self.updateRow(0)
+        self.view.updateDialogTitle()
 
     def updateRow(self, row_index):
         sfx = self.ls_treeview[row_index][m.code]
@@ -563,6 +565,7 @@ class PolyglotSetup(Gtk.Box):
             self.update_context_menu()     # Refresh menu state
             self.view.update_diglot_polyglot_UI()
             self.validate_page_widths()    # Refresh color of % width
+        self.view.updateDialogTitle()
 
     def update_context_menu(self):
         if not len(self.ls_treeview):
@@ -612,6 +615,7 @@ class PolyglotSetup(Gtk.Box):
         self.view.update_diglot_polyglot_UI()
         self.validate_page_widths()
         self.update_context_menu()
+        self.view.updateDialogTitle()
         
     def move_selected_row(self, widget, direction):
         selected = self.get_selected_row()
@@ -630,6 +634,7 @@ class PolyglotSetup(Gtk.Box):
                 selection.select_iter(new_iter)
 
                 self.update_layout_string()
+        self.view.updateDialogTitle()
 
     # This is only needed for auto-adjusting a Diglot [not for polyglot] (and the L-fraction gets returned)
     def set_fraction(self, f):
