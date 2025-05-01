@@ -408,7 +408,7 @@
     \t@xtfragment{fig}{%
       \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
-      \c@ption\unskip
+      \implicitcl@sefalse\x@\scantokens\x@{\c@ption}\unskip
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
     \egroup
   \fi
