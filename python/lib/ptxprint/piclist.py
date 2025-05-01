@@ -728,7 +728,7 @@ class Piclist:
                 if a in v:
                     del v[a]
 
-    def merge(self, pics, suffix, mergeCaptions=None, bkanchors=False, nonMergedBooks=None):
+    def merge(self, pics, suffix, mergeCaptions=None, bkanchors=False):
         ''' Used for merging piclists from monoglot into diglot (self) based on srcref and src image '''
         def stripsuffix(a):
             m = a.split(" ", 1)
@@ -746,9 +746,6 @@ class Piclist:
                 srb = v.get('srcref', '')
                 if newBase(s.get('src', '')) == newBase(v.get('src', '')) \
                             and (sra == '' or srb == '' or sra == srb):
-                    #if nonMergedBooks is None or m[0][:3] in nonMergedBooks:
-                    #    if v['anchor'] != s['anchor'] + suffix:
-                    #        continue
                     if mergeCaptions is not None and mergeCaptions(s['anchor'][:3]):
                         if v.get('caption', '') != '':
                             s['caption'+suffix] = v['caption']
@@ -766,6 +763,13 @@ class Piclist:
             if m[0][3:] == suffix and v.key not in merged:
                 self.remove(v)
         self.rmdups()
+
+    def unmerge(self, suffix):
+        for v in list(self.get_pics()):
+            if 'caption'+suffix in v:
+                del v['caption' + suffix]
+            if v['anchor'][3] == suffix:
+                self.remove(v)
 
     def merge_fields(self, other, fields, extend=False, removeOld=False):
         anchored = {}

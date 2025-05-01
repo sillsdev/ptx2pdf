@@ -1855,7 +1855,7 @@ class ViewModel:
         res.setConfigId(cfgid)
         return res
 
-    def createDiglotView(self, suffix="R"):
+    def createDiglotView(self, suffix="R", inserting=False):
         self.setPrintBtnStatus(2)
         if suffix not in self.polyglots:
             return None
@@ -1879,7 +1879,18 @@ class ViewModel:
             digview.digSuffix = suffix
             self.digSuffix = suffix
             self.diglotViews[suffix] = digview
+            if inserting and self.picinfos:
+                if digView.picinfos is None:
+                    digView.picinfos = PicList(digView)
+                    digView.picinfos.load_files(digView)
+                self.picinfos.merge(v.picinfos, suffix, mergeCaptions=self.mergeCaptions)
         return digview
+
+    def removeDiglotView(self, suffix):
+        if self.picinfos:
+            self.picinfos.unmerge(suffix)
+        self.diglotViews.pop(suffix, None)
+        self.polyglots.pop(sfx, None)
 
     def createArchive(self, filename=None):
         if filename is None:
