@@ -275,9 +275,9 @@ class RunJob:
         else:
             joblist = [[j] for j in jobs]
 
+        captions = []
         diginfos = {}
         if len(self.printer.diglotViews):
-            captions = []
             for k, dv in self.printer.diglotViews.items():
                 if dv is None:
                     dv = self.printer.createDiglotView(k)
@@ -310,8 +310,8 @@ class RunJob:
                     self.busy = False
                     unlockme()
                     return
-            self.texfiles += sum((self.digdojob(j, info, diginfos) for j in joblist), [])
             info["diglotcaptions_"] = "".join(captions)
+            self.texfiles += sum((self.digdojob(j, info, diginfos) for j in joblist), [])
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!

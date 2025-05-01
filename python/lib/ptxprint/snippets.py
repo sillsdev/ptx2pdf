@@ -205,7 +205,6 @@ class Diglot(Snippet):
         baseCode = r"""
 \def\DiglotLFraction{{{poly/fraction}}}
 \addToSideHooks{{{s_}}}{{\RTL{document/ifrtl}}}
-{project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \let\language{s_}=\langund
@@ -214,7 +213,6 @@ class Diglot(Snippet):
 \catcode `@=12
 \polyglotpages{{{document/diglotlayout}}}
 \def\DiglotCaptions{{{diglotcaptions_}}}
-
 """
         persideCode = r"""
 % Setup Diglot {s_}
@@ -236,6 +234,7 @@ class Diglot(Snippet):
 \newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[document/letterstretch]:.4f}em minus {diglot[document/lettershrink]:.4f}em
 \def\intercharspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
 \addToSideHooks{{{s_}}}{{\XeTeXinterchartokenstate={diglot[document/letterspace]}}}
+{diglot[project/interlinear]}\expandafter\def\csname complex-rb\endcsname{{\ruby{diglot[project/ruby]}{{rb}}{{gloss}}}}
 {diglot[document/ifdiglotcolour]}\SetDiglotBGColour{{{s_}}}{{{diglot[document/diglotcolour]}}}{{}}
 {diglot[notes/includefootnotes]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {diglot[notes/includexrefs]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}

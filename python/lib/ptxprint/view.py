@@ -1682,6 +1682,72 @@ class ViewModel:
                 allfonts.add(f.filename)
         return allfonts
 
+    def _getProject(self, prjwname):
+        impgui = self.get(prjwname, sub=1)
+        if impgui is None or not len(impgui):
+            impname = self.get(prjwname)
+            impprj = self.prjTree.findProject(impname)
+        else:
+            impprj = self.prjTree.getProject(impgui)
+        return impprj
+
+    def createView(self, prj, cfgid):
+        res = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
+        res.setPrjid(prj.prjid, prj.guid)
+        res.setConfigId(cfgid)
+        return res
+
+    def createDiglotView(self, suffix="R", inserting=False):
+        self.setPrintBtnStatus(2)
+        if suffix not in self.polyglots:
+            return None
+        prjguid = self.polyglots[suffix].prjguid
+        prj = self.prjTree.getProject(prjguid, name=self.polyglots[suffix].prj)
+        cfg = self.polyglots[suffix].cfg
+        if prj is None or cfg is None:
+            raise ValueError(f"No Config found for Diglot [{suffix}]")
+            self.setPrintBtnStatus(2, _(f"No Config found for Diglot [{suffix}]"))
+            digview = None
+        else:
+            digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
+            digview.isDiglot = True
+            digview.setPrjid(prj.prjid, prj.guid)
+            if cfg is None or cfg == "" or not digview.setConfigId(cfg):
+                digview = None
+        if digview is None:
+            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfg}"))
+        else:
+            digview.isDiglot = True
+            digview.digSuffix = suffix
+            self.digSuffix = suffix
+            self.diglotViews[suffix] = digview
+            if inserting and self.picinfos:
+                if digView.picinfos is None:
+                    digView.picinfos = PicList(digView)
+                    digView.picinfos.load_files(digView)
+                self.picinfos.merge(v.picinfos, suffix, mergeCaptions=self.mergeCaptions)
+        return digview
+
+    def removeDiglotView(self, suffix):
+        if self.picinfos:
+            self.picinfos.unmerge(suffix)
+        self.diglotViews.pop(suffix, None)
+        self.polyglots.pop(suffix, None)
+
+    def moveDiglot(self, old, new):
+        self.diglotViews[new] = self.diglotViews.pop(old, None)
+        self.polyglots[new] = self.polyglots.pop(old, None)
+        self.polyglots[new].code = new
+        self.reloadDiglotPics(self.diglotViews[new], old, new)
+        logger.debug(f"Diglots={self.diglotViews.keys()}, polyglots={self.polyglots.keys()}")
+        
+    def reloadDiglotPics(self, digView, old, new):
+        self.picinfos.unmerge(old)
+        if digView.picinfos is None or not digView.picinfos.pics:
+            digView.picinfos = Piclist(digView)
+            digView.picinfos.load_files(digView)
+        self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
+
     def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
@@ -1718,9 +1784,9 @@ class ViewModel:
             if fname is not None:
                 res[os.path.join(fpath, fname)] = baseprjid + "/" + os.path.basename(fname)
             if interlang is not None:
-                intpath = "{}/Interlinear_{}".format(baseprjid, interlang)
+                intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
-                res[os.path.join(fpath, intpath, intfile)] = os.path.join(intpath, intfile)
+                res[os.path.join(fpath, intpath, intfile)] = os.path.join(baseprjid, intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
             self.picinfos.getFigureSources(exclusive=exclFigsFolder)
@@ -1839,72 +1905,6 @@ class ViewModel:
         for k, v in ptres.items():
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
-
-    def _getProject(self, prjwname):
-        impgui = self.get(prjwname, sub=1)
-        if impgui is None or not len(impgui):
-            impname = self.get(prjwname)
-            impprj = self.prjTree.findProject(impname)
-        else:
-            impprj = self.prjTree.getProject(impgui)
-        return impprj
-
-    def createView(self, prj, cfgid):
-        res = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
-        res.setPrjid(prj.prjid, prj.guid)
-        res.setConfigId(cfgid)
-        return res
-
-    def createDiglotView(self, suffix="R", inserting=False):
-        self.setPrintBtnStatus(2)
-        if suffix not in self.polyglots:
-            return None
-        prjguid = self.polyglots[suffix].prjguid
-        prj = self.prjTree.getProject(prjguid, name=self.polyglots[suffix].prj)
-        cfg = self.polyglots[suffix].cfg
-        if prj is None or cfg is None:
-            raise ValueError(f"No Config found for Diglot [{suffix}]")
-            self.setPrintBtnStatus(2, _(f"No Config found for Diglot [{suffix}]"))
-            digview = None
-        else:
-            digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
-            digview.isDiglot = True
-            digview.setPrjid(prj.prjid, prj.guid)
-            if cfg is None or cfg == "" or not digview.setConfigId(cfg):
-                digview = None
-        if digview is None:
-            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfg}"))
-        else:
-            digview.isDiglot = True
-            digview.digSuffix = suffix
-            self.digSuffix = suffix
-            self.diglotViews[suffix] = digview
-            if inserting and self.picinfos:
-                if digView.picinfos is None:
-                    digView.picinfos = PicList(digView)
-                    digView.picinfos.load_files(digView)
-                self.picinfos.merge(v.picinfos, suffix, mergeCaptions=self.mergeCaptions)
-        return digview
-
-    def removeDiglotView(self, suffix):
-        if self.picinfos:
-            self.picinfos.unmerge(suffix)
-        self.diglotViews.pop(suffix, None)
-        self.polyglots.pop(suffix, None)
-
-    def moveDiglot(self, old, new):
-        self.diglotViews[new] = self.diglotViews.pop(old, None)
-        self.polyglots[new] = self.polyglots.pop(old, None)
-        self.polyglots[new].code = new
-        self.reloadDiglotPics(self.diglotViews[new], old, new)
-        logger.debug(f"Diglots={self.diglotViews.keys()}, polyglots={self.polyglots.keys()}")
-        
-    def reloadDiglotPics(self, digView, old, new):
-        self.picinfos.unmerge(old)
-        if digView.picinfos is None or not digView.picinfos.pics:
-            digView.picinfos = Piclist(digView)
-            digView.picinfos.load_files(digView)
-        self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
 
     def createArchive(self, filename=None):
         if filename is None:
