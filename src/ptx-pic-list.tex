@@ -218,9 +218,12 @@
 \def\ch@ckpiclist{%
   \trace{P}{Start of of checkpic \c@rref}%
   \ifpicslurp
-    \let\p@cref=\c@rref
-    \p@clistsuff=1
-    \ch@ckN@xtPicid
+    % treat unlabelled as L only not both sides
+    \ifnum \ifdiglot\ifx\c@rrdstat\d@glotl 1\else 0\fi\else 1\fi =1
+      \let\p@cref=\c@rref
+      \p@clistsuff=1
+      \ch@ckN@xtPicid
+    \fi
     \ifdiglot
       \let\p@cref=\dc@rref
       \p@clistsuff=1
