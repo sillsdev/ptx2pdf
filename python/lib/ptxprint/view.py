@@ -1892,6 +1892,11 @@ class ViewModel:
         self.diglotViews.pop(suffix, None)
         self.polyglots.pop(sfx, None)
 
+    def reloadDiglotPics(self, digView, old, new=None):
+        self.picinfos.unmerge(old)
+        if new is not None:
+            self.picinfos.merge(digView, new, mergeCaptions=self.mergeCaptions)
+
     def createArchive(self, filename=None):
         if filename is None:
             filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
