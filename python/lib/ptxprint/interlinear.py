@@ -64,8 +64,10 @@ class Interlinear:
             raise SyntaxError("Bad Reference {}".format(s))
 
     def replaceusx(self, doc, curref, lexemes, linelengths, mrk="wit"):
-        lexemes.sort()
+        if curref[0] >= len(doc.chapters):
+            return
         parindex = doc.chapters[curref[0]]
+        lexemes.sort()
         if curref[1] == "0":
             def stop(e):
                 return e.tag == 'verse'

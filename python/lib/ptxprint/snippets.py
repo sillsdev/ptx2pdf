@@ -213,6 +213,7 @@ class Diglot(Snippet):
 \should@xist{{}}{{x{s_}}}
 \catcode `@=12
 \polyglotpages{{{document/diglotlayout}}}
+\def\DiglotCaptions{{{diglotcaptions_}}}
 
 """
         persideCode = r"""

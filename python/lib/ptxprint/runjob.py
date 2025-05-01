@@ -277,6 +277,7 @@ class RunJob:
 
         diginfos = {}
         if len(self.printer.diglotViews):
+            captions = []
             for k, dv in self.printer.diglotViews.items():
                 if dv is None:
                     dv = self.printer.createDiglotView(k)
@@ -287,6 +288,8 @@ class RunJob:
                 # digprjid = info.dict["document/diglotsecprj"]
                 # digcfg = info.dict["document/diglotsecconfig"]
                 digcfg = self.printer.polyglots.get(k, None)
+                if digcfg.captions:
+                    captions.append(k)
                 digprjdir = dv.project.path
                 digptsettings = ParatextSettings(digprjdir)
                 diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive, diglotbinfo=info, digcfg=digcfg)
@@ -308,6 +311,7 @@ class RunJob:
                     unlockme()
                     return
             self.texfiles += sum((self.digdojob(j, info, diginfos) for j in joblist), [])
+            info["diglotcaptions_"] = "".join(captions)
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!

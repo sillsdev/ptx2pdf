@@ -439,7 +439,7 @@
     \ifdiglot
       \bgroup %Alternative captions
         \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
-        \x@\each@col\diglot@list\E
+        \x@\each@col\ifx\DiglotCaptions\empty \diglot@list\else\DiglotCaptions\fi\E
       \egroup
     \fi
     \vskip.5\onel@neunit
