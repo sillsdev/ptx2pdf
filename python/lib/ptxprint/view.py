@@ -1410,6 +1410,9 @@ class ViewModel:
     def updatePicList(self, bks=None, priority="Both", output=False):
         return
 
+    def mergeCaptions(self, bk):
+        return bk in self.get("s_diglotSerialBooks", "FRT BAK GLO")
+
     def generatePicList(self, procbks=None, doclear=True):
         ab = self.getAllBooks()
         if procbks is None:
@@ -1419,14 +1422,13 @@ class ViewModel:
         # mrgCptn = self.get("c_diglot2captions", False) # FixMe!
         mrgCptn = False # FixMe!
         sync = self.get("c_protectPicList", False)
-        if not len(self.diglotViews):
-            self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
-        else:
+        self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
+        if len(self.diglotViews):
             for k, v in self.diglotViews.items():
-                self.digbasepics[k].read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
+                if v.picinfos is None:
+                    v.picinfos = Piclist(v)
                 v.picinfos.read_books(procbks, v.getAllBooks(), cols=cols, random=rnd, sync=sync)
-                self.picinfos.merge(self.digbasepics[k], k, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
-                self.picinfos.merge(v.picinfos, k, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+                self.picinfos.merge(v.picinfos, k, mergeCaptions=self.mergeCaptions, nonMergedBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
@@ -1453,22 +1455,16 @@ class ViewModel:
         if not self.get("c_includeillustrations"):
             return
         res = None
+        if self.picinfos.load_files(self, base=None):
+            return
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
-                self.digbasepics[k] = Piclist(self)
-                self.digbasepics[k].load_files(self)
-                if v.picinfos is not None:
+                # self.digbasepics[k] = Piclist(self)
+                # self.digbasepics[k].load_files(self)
+                if v.picinfos is None:
                     v.picinfos = Piclist(v)
-                    v.picinfos.load_files(v)
-            res = self.picinfos.load_files(self, base=self.digbasepics[k], suffix=k)
-        else:
-            res = self.picinfos.load_files(self, base=None)
-        if not res and len(self.diglotViews) and len(self.picinfos.get_pics()):
-            for k, v in self.diglotViews.items():
-                self.picinfos.merge(v.picinfos, k)
-        if res:
-            pass
-#            self.savePics(fromdata=fromdata)
+                v.picinfos.load_files(v)
+                self.picinfos.merge(v.picinfos, k, mergeCaptions=self.mergeCaptions)
         elif mustLoad:
             self.onGeneratePicListClicked(None)
             

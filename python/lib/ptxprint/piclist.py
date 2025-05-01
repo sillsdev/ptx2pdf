@@ -459,17 +459,15 @@ class Piclist:
             self.read_piclist(preferred)
             self.loaded = True
             return True
-        if self.isdiglot and base is not None:
-            self.merge(base, suffix)
-            self.loaded = True
-            return False    # Tell the parent there is more to do
-        if not self.isdiglot:
-            self.inthread = True
-            self.threadUsfms(parent)
-            self.loaded = True
-            # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
-            return True
-        return True
+        # if self.isdiglot and base is not None:
+        #     self.merge(base, suffix)
+        #     self.loaded = True
+        #     return False    # Tell the parent there is more to do
+        self.inthread = True
+        self.threadUsfms(parent)
+        self.loaded = True
+        # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
+        return False
 
     def read_piclist(self, fname):
         """ Read piclist file """
@@ -730,7 +728,7 @@ class Piclist:
                 if a in v:
                     del v[a]
 
-    def merge(self, pics, suffix, mergeCaptions=True, bkanchors=False, nonMergedBooks=None):
+    def merge(self, pics, suffix, mergeCaptions=None, bkanchors=False, nonMergedBooks=None):
         ''' Used for merging piclists from monoglot into diglot (self) based on srcref and src image '''
         def stripsuffix(a):
             m = a.split(" ", 1)
@@ -748,15 +746,15 @@ class Piclist:
                 srb = v.get('srcref', '')
                 if newBase(s.get('src', '')) == newBase(v.get('src', '')) \
                             and (sra == '' or srb == '' or sra == srb):
-                    if nonMergedBooks is None or m[0][:3] in nonMergedBooks:
-                        if v['anchor'] != s['anchor'] + suffix:
-                            continue
-                    if mergeCaptions:
+                    #if nonMergedBooks is None or m[0][:3] in nonMergedBooks:
+                    #    if v['anchor'] != s['anchor'] + suffix:
+                    #        continue
+                    if mergeCaptions is not None and mergeCaptions(s['anchor'][:3]):
                         if v.get('caption', '') != '':
                             s['caption'+suffix] = v['caption']
                         if v.get('ref', '') != '':
                             s['ref'+suffix] = v['ref']
-                    addme = False
+                        addme = False
                     break
             if addme:
                 sn = v.copy()
