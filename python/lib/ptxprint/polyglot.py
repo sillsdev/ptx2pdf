@@ -80,4 +80,4 @@ class PolyglotConfig:
                 if fn is not None:
                     fn = fn.process
                 texmodel.dict[t] = fn(None, val) if fn is not None else val
-        
+
