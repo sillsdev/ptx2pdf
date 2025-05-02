@@ -1470,7 +1470,7 @@
     \ifcsname m@rknumk\ifdiglot\c@rrdstat\fi\endcsname\else\addnewm@rk{k\ifdiglot\c@rrdstat\fi}\fi%
     \getm@rknum{k\ifdiglot\c@rrdstat\fi}\x@\x@\x@\marks\x@\m@rknum\x@{\thiskmark}%Set (side-dependent) mark for k.
     \r@gurgitatedfalse\p@peof%
-    \runtrigg@rs{\id@@@\ifdiglot\c@rrdstat\fi k.\kr@f}%
+    \runtrigg@rs{\id@@@\ifdiglot\ifx\c@rrdstat\d@glotl\else\c@rrdstat\fi\fi k.\kr@f}%
   }%}
  \def\k{%\k processing
    \deactiv@tecustomch@rs% no CR here

@@ -163,7 +163,7 @@
 \def\ch@ckN@xtPicid{%Check to see if there's one or more pictures for this verse.
   \mkp@cid
   \mkkp@cid
-  \trace{P}{ch@ckN@xtPicid: \p@cid (keepid:\kp@cid) \ifcsname\p@cid\endcsname found\fi}%
+  \trace{P}{ch@ckN@xtPicid(\p@cref): \p@cid (keepid:\kp@cid) \ifcsname\p@cid\endcsname found\fi}%
   \ifcsname\p@cid\endcsname 
     \traceifset{ch@ckN@xtPicid}%
     \x@\let\x@\t@st\csname \p@cid\endcsname
@@ -216,7 +216,7 @@
 }
 
 \def\ch@ckpiclist{%
-  \trace{P}{Start of of checkpic \c@rref}%
+  \trace{P}{Start of checkpic \c@rref, \dc@rref}%
   \ifpicslurp
     % treat unlabelled as L only not both sides
     \ifnum \ifdiglot\ifx\c@rrdstat\d@glotl 1\else 0\fi\else 1\fi =1
@@ -239,7 +239,7 @@
       \fi
     \fi
   \fi
-  \trace{P}{End of checkpic}%
+  \trace{P}{End of checkpic \c@rref, \dc@rref}%
 }
 
 \def\endpiclistch@ck{%
