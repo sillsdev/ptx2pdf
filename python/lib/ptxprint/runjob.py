@@ -442,7 +442,7 @@ class RunJob:
             if left and b not in nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
-                donebooks[0] = os.path.basename(outFile)
+                donebooks[-1] = os.path.basename(outFile)
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
 
                 mode = info["document/diglotmergemode"]
@@ -471,6 +471,7 @@ class RunJob:
 
         info["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
         info["project/books"] = donebooks
+        logger.debug(f"{donebooks=}")
 
         # Pass all the needed parameters for the snippet from diginfo to info
         for k,v in _diglotprinter.items():

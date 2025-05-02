@@ -212,10 +212,10 @@ class PDFViewer:
         self.hbox.grab_focus()
 
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
-        self.shrinkStep = int(self.model.get('s_shrinktextstep'))
-        self.expandStep = int(self.model.get('s_expandtextstep'))
-        self.shrinkLimit = int(self.model.get('s_shrinktextlimit'))
-        self.expandLimit = int(self.model.get('s_expandtextlimit'))
+        self.shrinkStep = int(self.model.get('s_shrinktextstep', 2))
+        self.expandStep = int(self.model.get('s_expandtextstep', 3))
+        self.shrinkLimit = int(self.model.get('s_shrinktextlimit', 90))
+        self.expandLimit = int(self.model.get('s_expandtextlimit', 110))
         
         self.isdiglot = isdiglot
         if pdf_path is None or not os.path.exists(pdf_path):
