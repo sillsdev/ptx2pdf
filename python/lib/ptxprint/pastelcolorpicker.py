@@ -3,8 +3,12 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, cairo
 
 PREDEFINED_COLORS = [
+    ("#F2F0F0", "Light Gray"),
+    ("#ECE5F5", "Soft Lilac"),
+    ("#F1E8F4", "Light Mauve"),
     ("#F4E7F2", "Pastel Pink"),
     ("#F9E4E9", "Pale Rose"),
+    ("#F8ECE8", "Creamy Beige"),
     ("#FCE8D9", "Soft Peach"),
     ("#FFF3E0", "Light Apricot"),
     ("#FDF7D6", "Pale Yellow"),
@@ -12,13 +16,9 @@ PREDEFINED_COLORS = [
     ("#EAF8E3", "Light Mint"),
     ("#E4F6EA", "Pale Green"),
     ("#E2F5F5", "Light Cyan"),
-    ("#E6F3FA", "Baby Blue"),
     ("#E9EEFA", "Pale Lavender"),
-    ("#ECE5F5", "Soft Lilac"),
-    ("#F1E8F4", "Light Mauve"),
-    ("#F5E9F0", "Pale Plum"),
-    ("#F8ECE8", "Creamy Beige"),
-    ("#F2F0F0", "Light Gray"),
+    ("#E6F3FA", "Baby Blue"),
+    ("#FFFFFF", "None"),
 ]
 
 class ColorPickerDialog(Gtk.Dialog):

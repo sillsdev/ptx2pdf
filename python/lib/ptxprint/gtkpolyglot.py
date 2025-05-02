@@ -455,6 +455,12 @@ class PolyglotSetup(Gtk.Box):
             model, iter, path = selected
             self.on_color_clicked(None, path, model[path][m.color])
 
+    def remove_color_shading(self, widget):
+        for i, row in enumerate(self.ls_treeview):
+            row[m.color] = "#FFFFFE"
+            self.updateRow(i)
+        self.update_layout_preview()
+                
     def on_color_clicked(self, widget, path, text):
         model = self.ls_treeview
         iter = model.get_iter(path)
@@ -479,11 +485,14 @@ class PolyglotSetup(Gtk.Box):
         dialog.destroy()
 
     def on_toggle(self, widget, path, col_id):
+        row_index = int(path)
         model = self.ls_treeview
         iter = model.get_iter(path)  # Get the iterator for the row
         current_value = model.get_value(iter, col_id)  # Read current state
-        model.set_value(iter, col_id, not current_value)  # Toggle it
-        row_index = int(path)
+        if row_index == 0:
+            self.view.doStatus(_("You cannot disable captions for the primary 'L' project in a diglot."))
+        else:
+            model.set_value(iter, col_id, not current_value)  # Toggle it
         self.updateRow(row_index)
         self.update_layout_string()
         
@@ -547,6 +556,10 @@ class PolyglotSetup(Gtk.Box):
             color_item = Gtk.MenuItem(label=_("Set Color..."))
             color_item.connect("activate", self.set_color_from_menu)
             self.context_menu.append(color_item)
+
+            remove_color_item = Gtk.MenuItem(label=_("Remove All Colors"))
+            remove_color_item.connect("activate", self.remove_color_shading)
+            self.context_menu.append(remove_color_item)
 
             self.context_menu.show_all()
             self.update_context_menu()  # Apply correct state
