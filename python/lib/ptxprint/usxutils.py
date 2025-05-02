@@ -479,7 +479,7 @@ class Usfm:
                 logger.error(f"chapter too long: {c[0]}")
             for chap in range(c[0][0], c[0][-1]):
                 copyrange(d[chap], res, c[1])
-        return Usfm(usfmtc.USX(res), parser=self.parser, grammar=self.grammar)
+        return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)
 
     def getsubbook(self, refrange, removes={}):
         return self.subdoc(refrange, removes=removes)
