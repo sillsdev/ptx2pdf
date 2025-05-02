@@ -1,8 +1,23 @@
 PTXprint 2.8.4 Release Notes
-29 Apr 2025
+2 May 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.5 (2 May 2025)
+  * Make unlabelled pictures be L in diglots
+  * Improve background color options for polyglot setup
+  * Add support for polyglot caption choice 
+  * Ensure the Dialog Title gets updated when polyglot values change
+  * More diglot picture update code
+  * Handle adding and removing diglot views with regard to pictures
+  * Don't use xdef when storing periphs
+  * Don't try to interlinearise outside doc chapter ranges
+  * Fix missing interlinear folder in archives
+  * Fix polyglot interlinear settings
+  * Fix polyglot piclist changes to code or config
+  * Fix getting pictures in both glots of GLO
+  * Fix Donebooks polyglot issue
 
 Bug fixes and Improvements in 2.8.4 (29 Apr 2025)
   * Dont run paragraph triggers for milestones with blank/lost attributes
