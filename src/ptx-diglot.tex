@@ -1576,10 +1576,16 @@
   \def\col@do##1{\advance\count255 by 1}%
   \count255=0
   \x@\each@col\layout@list\E
-  \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
+  \edef\colc@unt{\the\count255}
+  \advance\dimen0 by -\numexpr \colc@unt - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
   \def\col@do##1{%
-    \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
-    \x@\ifdim \csname column##1width\endcsname<20pt \errmessage{Diglot##1Fraction (\csname Diglot##1Fraction\endcsname) gives \the\csname column##1width\endcsname, which is much too small}\fi
+    \ifcsname  Diglot##1Fraction\endcsname
+      \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
+      \x@\ifdim \csname column##1width\endcsname<20pt \errmessage{Diglot##1Fraction (\csname Diglot##1Fraction\endcsname) gives \the\csname column##1width\endcsname, which is much too small}\fi
+    \else
+      \message{Diglot##1 fraction not supplied. assuming value of 1/\colc@unt}%
+      \csname column##1width\endcsname=\dimen0 \x@\divide \csname column##1width\endcsname by \colc@unt
+    \fi
     \traceNum{dP}{Setting column##1width to \the\csname column##1width\endcsname}}%
   \x@\each@col\layout@list\E
   %\columnLwidth=\DiglotLeftFraction\dimen0
