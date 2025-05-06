@@ -1199,6 +1199,14 @@ class GtkViewModel(ViewModel):
         super().resetToInitValues(updatebklist=updatebklist)
         if self.picinfos is not None:
             self.picinfos.clear(self)
+        self.diglotviews = {}
+        self.polyglots = {}
+        if self.gtkpolyglot is not None:
+            self.gtkpolyglot.clear_polyglot_treeview()
+        self.gtkpolyglot = None
+        # Also reset the Peripheral tab Variables
+        tv = self.builder.get_object("ls_zvarList")
+        tv.clear()
         for k, v in self.initValues.items():
             if not updatebklist and k in self._nonresetcontrols:
                 continue

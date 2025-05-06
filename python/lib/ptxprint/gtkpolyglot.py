@@ -93,8 +93,8 @@ class PolyglotSetup(Gtk.Box):
                     self.ls_treeview[row_index][m.fontsize] = float(polyview.get("s_fontsize", 11.00))
                 if self.ls_treeview[row_index][m.baseline] == 0:
                     self.ls_treeview[row_index][m.baseline] = float(polyview.get("s_linespacing", 15.00))
-                if self.ls_treeview[row_index][m.color] in ("#FFFFFF", None):
-                    c = polyview.get('_dibackcol', "#FFFFFF")
+                if self.ls_treeview[row_index][m.color] in ("#FFFFFE", None):
+                    c = polyview.get('_dibackcol', "#FFFFFE")
                     if c is not None and c.startswith("rgb("):
                         rgb = coltoonemax(c)
                         c = "#{0:02x}{1:02x}{2:02x}".format(*[int(x * 255) for x in rgb])      
@@ -125,7 +125,7 @@ class PolyglotSetup(Gtk.Box):
             cfid = ""
         pg = "1" if sfx in ("LR") else "2"
         new_row = [sfx, pg, pri_prj, cfid, False, 11.0, 14.0, 50.0, 50.0, 
-                   "#FFFFFF", pri_prjguid, "Tooltips", "#000000", 400]
+                   "#FFFFFE", pri_prjguid, "Tooltips", "#000000", 400]
         self.ls_treeview.append(new_row)
         row_index = len(self.ls_treeview) - 1 
         if save and cfid != "":
@@ -402,7 +402,7 @@ class PolyglotSetup(Gtk.Box):
             b = polyview.get('s_linespacing', 15.0)
             self.ls_treeview[row_index][m.baseline] = float(b)
 
-            c = polyview.get('_dibackcol', "#FFFFFF")
+            c = polyview.get('_dibackcol', "#FFFFFE")
             if c is not None and c.startswith("rgb("):
                 rgb = coltoonemax(c)
                 c = "#{0:02x}{1:02x}{2:02x}".format(*[int(x * 255) for x in rgb])      
@@ -879,7 +879,7 @@ class PolyglotSetup(Gtk.Box):
                 frame.set_shadow_type(Gtk.ShadowType.IN)
 
                 # Retrieve the background color from the TreeView
-                color_hex = "#FFFFFF"  # Default to white
+                color_hex = "#FFFFFE"  # Default to white
                 for row in self.ls_treeview:
                     if row[m.code] == code and row[m.color]:  # Match the code in the liststore
                         color_hex = row[m.color]  # Column 6 contains the color
