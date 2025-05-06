@@ -168,7 +168,7 @@ class TexModel:
         self.debug = False
         self.interlinear = None
         self.imageCopyrightLangs = {}
-        self.gloss_remove = None
+        self.found_glosses = None
         self.frontperiphs = None
         self.xrefs = None
         self.inserts = {}
@@ -1022,10 +1022,10 @@ class TexModel:
             if doc is not None:
                 doc.versesToEnd()
 
-        if bk == "GLO" and self.gloss_remove is not None:
+        if bk == "GLO" and self.found_glosses is not None:
             (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Remove filtered gloss entries")
             if doc is not None:
-                doc.removeGlosses(gloss_remove)
+                doc.removeGlosses(self.found_glosses)
 
         if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
                     and self.dict["notes/ifxrexternalist"] and isCanon:
@@ -1079,7 +1079,7 @@ class TexModel:
         # import pdb; pdb.set_trace()
         syntaxErrors = []
         try:
-            doc = Usfm.readfile(txt, grammar=self.printer.usfms.grammar)
+            doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar)
             doc.xml.canonicalise()
         except SyntaxError as e:
             syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
@@ -1566,57 +1566,16 @@ class TexModel:
         prjid = self.dict['project/id']
         prjdir = self.dict["/ptxpath"]
         logger.debug(f"Filter Glossary for {prjid=} {prjdir=}")
+        self.found_glosses = set()
+        def addk(e):
+            kval = e.get("key", None)
+            if kval is None:
+                kval = re.sub(r"[ \t]", "", e.text)
+            if kval:
+                self.found_glosses.add(kval.lower())        # case insensitive matching
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
-                fname = printer.getBookFilename(bk, prjid)
-                fpath = os.path.join(prjdir, fname)
-                if os.path.exists(fpath):
-                    with universalopen(fpath) as inf:
-                        sfmtxt = inf.read()
-                    glossentries.update(re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", sfmtxt))
-        fname = printer.getBookFilename("GLO", prjid)
-        infname = os.path.join(prjdir, fname)
-        if os.path.exists(infname):
-            with universalopen(infname, rewrite=True) as inf:
-                dat = inf.read()
-                ge = re.findall(r"\\k ([^\\]+?)\\k\*", dat) # Finds all glossary entries in GLO book
-                for thisGE in ge:
-                    pattern = glopattern.format(thisGE)
-                    #logger.debug(f"pattern: {pattern}, dat:{dat}")
-                    geText = re.findall(pattern, dat, regex.M) # Find the glossary entry
-                    logger.debug(f"Finding {thisGE}, got {geText}")
-                    glosstext[thisGE] = geText
-        logger.debug(f"{glossentries=}")
-        if (self.dict["document/glossarydepth"]):
-            count = self.dict["document/glossarydepth"]# How deep do we follow the chain of A includes B includes C?
-        else:
-            count = 0 # Default is not to go deeper
-        logger.debug(f"glossarydepth={count}")
-        glossdone=[]
-        while count > 0:
-            count = count - 1
-            xtraglossentries = set()
-            for gte in (x for x in glossentries if x not in glossdone): #entries from te glossary text.
-                logger.debug(f"Checking entry for {gte}")
-                glossdone.append(gte)
-                if gte in glosstext: # Not every glossentry actually occurs
-                    gts = glosstext[gte] # Might there be more than one glossary entry?? Assume that's a possibility
-                    for gt in gts: 
-                        logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
-                        xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", gt)
-                        xtraglossentries.update((x for x in xgl if x not in glossentries))
-            logger.debug(f"Adding {len(xtraglossentries)} extra gloss entries: {xtraglossentries}")
-            if (len(xtraglossentries) == 0): # No more new entries
-                break
-            glossentries.update(xtraglossentries)
-            logger.debug(f"glossarydepth={count}")
-        missings = [ge for ge in glossentries if ge not in glosstext]
-        if len(missings)>0:
-            logger.warn(f"Glossary entries for {','.join(missings)} wanted, but not found in glossary.")
-        else:
-            logger.debug(f"All wanted glossary entries found.")
-        logger.debug(f"{glossentries=}, {ge=}")
-        self.gloss_remove = [x for x in ge if x not in glossentries]
+                bkusfm = self.usfms.get(bk)
         #for delGloEntry in [x for x in ge if x not in glossentries]:
             # logger.debug(f"Building regex for {delGloEntry=}")
         #    self.localChanges.append(makeChange(glopattern.format(delGloEntry), "", flags=regex.M))

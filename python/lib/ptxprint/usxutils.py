@@ -410,6 +410,13 @@ class Usfm:
             self.getmarkers(c, acc)
         return acc
 
+    def visitall(self, fn, root=None):
+        if root is None:
+            root = self.getroot()
+        fn(root)
+        for c in root:
+            self.visitall(c, fn)
+
     def make_zsetref(self, ref, book, parent, pos):
         attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
         if book is not None:
@@ -701,12 +708,14 @@ class Usfm:
         return None
 
     def removeGlosses(self, glosses):
+        killme = False
         root = self.getroot()
-        for i, e in list(root):
+        for e in list(root):
             if e.tag == "para":
                 for ke in e:
                     if ke.tag == "char" and ke.get("style", "") == "k":
-                        killme = ke.text in glosses
+                        kval = ke.get("key", re.sub("[ ]", "", ke.text))
+                        killme = kval.lower() not in glosses
                 if killme:
                     root.remove(e)
 
