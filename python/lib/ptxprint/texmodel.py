@@ -1561,6 +1561,8 @@ class TexModel:
         # Only keep entries that have appeared in this collection of books
         self.found_glosses = set()
         def addk(e):
+            if e.tag != "char" or e.get("style", "") != "k":
+                return
             kval = e.get("key", None)
             if kval is None:
                 kval = re.sub(r"[ \t]", "", e.text)
@@ -1570,7 +1572,8 @@ class TexModel:
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
                 bkusfm = self.printer.usfms.get(bk)
-        logger.debug("Found glossary keys: {self.found_glosses}")
+                bkusfm.visitall(addk)
+        logger.debug(f"Found glossary keys: {self.found_glosses}")
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":
