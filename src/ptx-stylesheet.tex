@@ -1450,7 +1450,7 @@
      \vskip\baselineskip
     \else
       \vskip\p@ram
-    \fi\egroup\prevgraf=1\cutoutcarryover}
+    \fi\egroup\prevgraf=1 \cutoutcarryover}
  \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
@@ -1495,7 +1495,11 @@
   \settrig@refcv\docvhook
   \the\@idhooks
 }
-\def\ptx@fig #1\fig*{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
+
+{\catcode`|=0 \catcode`\\=12
+|gdef|ptx@fig #1\fig*{|@ptx@fig{#1}}
+}
+\def\@ptx@fig#1{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
     \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
     \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
 %-csty_addspecialhooks
@@ -1603,6 +1607,7 @@
 \mcb@rrier{\ss@Para}
 \mcb@rrier{\ss@Note}
 \mcb@rrier{\ss@Sbar}
+\mcb@rrier{\ss@Fig}
 %Are these style modifiers (category or milestone)  or actual styles?
 \def\msm@dfyname#1{#1-is-modifyer}
 \def\msm@difyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\xdef\csname\t@@st\endcsname{Y}}

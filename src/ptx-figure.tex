@@ -406,9 +406,13 @@
     \ifx\cpt@mp\empty\else\setLRspecific\fi
     \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
     \t@xtfragment{fig}{%
+      \mcpush{\ss@Fig}{fig}%
+      \let\styst@k=\empty
+      \s@tstyst@k%
       \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
-      \implicitcl@sefalse\x@\scantokens\x@{\c@ption}\unskip
+      %\implicitcl@sefalse
+      \x@\scantokens\x@{\c@ption}\unskip
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
     \egroup
   \fi

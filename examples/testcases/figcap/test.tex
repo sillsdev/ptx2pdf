@@ -1,0 +1,53 @@
+% Test the 'hook' code.
+%\tracingassigns=1
+%\tracinggroups=1
+\def\pluginlist{ornaments}
+\input "paratext2.tex"
+%\MarkTriggerPointstrue
+%\stylesheet{standardborders.sty}
+\stylesheet{usfm_sb.sty}
+\stylesheet{ptx2pdf.sty}
+\stylesheet{test.sty}
+%\input "usfmTex-ext.tex"
+%\input "hooks.tex"
+%\tracingmacros=1
+%\tracinggroups=1
+%\tracingifs=1
+\tracing{g}
+\tracing{s}
+\tracing{sa}
+\tracing{sC}
+\tracing{sP}
+\tracing{T}
+\tracing{C}
+\tracing{F}
+%\tracing{sa}
+\tracing{h}
+\tracing{pt}
+\tracing{P}
+\tracing{A}
+\tracing{eb}
+\tracing{cov}
+\tracingoutput=1
+% Set added material in desired form
+\def\addmtlquteht{2pt}
+\def\addmtlqutewd{1.5pt}
+\def\addmtlqutelw{0.2pt}
+\csname ColorFontstrue\endcsname
+\def\doLines{\doGridLines}
+\CropMarkstrue
+%\CaptionFirsttrue
+%\hoffset=-1in
+%\voffset=-1in
+%\setCutoutSlop{droppic3}{2}{2}
+\showboxbreadth=20
+\showboxdepth=50
+%\tracinggroups=1
+%\tracingifs=1
+\def\FigCreditPadding{1pt}
+\SkipMissingFigtrue
+\csname usfmthreefigstrue\endcsname
+\XeTeXuseglyphmetrics=0
+\let\zplaceallnotes\relax
+\ptxfile{test.usfm}
+\bye
