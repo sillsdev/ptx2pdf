@@ -1559,13 +1559,6 @@ class TexModel:
 
     def filterGlossary(self, printer):
         # Only keep entries that have appeared in this collection of books
-        glossentries = set()
-        glosstext={}
-        # Note for future debugging... the re.findall below works on the input, the localChanges rule below works after any changes.txt things have taken effect. Allow for random spaces.
-        glopattern=r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)"
-        prjid = self.dict['project/id']
-        prjdir = self.dict["/ptxpath"]
-        logger.debug(f"Filter Glossary for {prjid=} {prjdir=}")
         self.found_glosses = set()
         def addk(e):
             kval = e.get("key", None)
@@ -1573,12 +1566,11 @@ class TexModel:
                 kval = re.sub(r"[ \t]", "", e.text)
             if kval:
                 self.found_glosses.add(kval.lower())        # case insensitive matching
+        self.printer.get_usfms()
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
-                bkusfm = self.usfms.get(bk)
-        #for delGloEntry in [x for x in ge if x not in glossentries]:
-            # logger.debug(f"Building regex for {delGloEntry=}")
-        #    self.localChanges.append(makeChange(glopattern.format(delGloEntry), "", flags=regex.M))
+                bkusfm = self.printer.usfms.get(bk)
+        logger.debug("Found glossary keys: {self.found_glosses}")
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":

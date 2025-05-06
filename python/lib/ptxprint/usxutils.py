@@ -410,9 +410,7 @@ class Usfm:
             self.getmarkers(c, acc)
         return acc
 
-    def visitall(self, fn, root=None):
-        if root is None:
-            root = self.getroot()
+    def visitall(self, fn, root):
         fn(root)
         for c in root:
             self.visitall(c, fn)
