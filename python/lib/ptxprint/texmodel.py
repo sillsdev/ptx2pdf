@@ -168,6 +168,7 @@ class TexModel:
         self.debug = False
         self.interlinear = None
         self.imageCopyrightLangs = {}
+        self.gloss_remove = None
         self.frontperiphs = None
         self.xrefs = None
         self.inserts = {}
@@ -1021,6 +1022,11 @@ class TexModel:
             if doc is not None:
                 doc.versesToEnd()
 
+        if bk == "GLO" and self.gloss_remove is not None:
+            (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Remove filtered gloss entries")
+            if doc is not None:
+                doc.removeGlosses(gloss_remove)
+
         if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
                     and self.dict["notes/ifxrexternalist"] and isCanon:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -1045,7 +1051,8 @@ class TexModel:
         if adjlist is not None:
             (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("Apply adjlist")
-            doc.apply_adjlist(bk, adjlist)
+            if doc is not None:
+                doc.apply_adjlist(bk, adjlist)
             # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         if 'final' in self.changes:
@@ -1609,9 +1616,10 @@ class TexModel:
         else:
             logger.debug(f"All wanted glossary entries found.")
         logger.debug(f"{glossentries=}, {ge=}")
-        for delGloEntry in [x for x in ge if x not in glossentries]:
+        self.gloss_remove = [x for x in ge if x not in glossentries]
+        #for delGloEntry in [x for x in ge if x not in glossentries]:
             # logger.debug(f"Building regex for {delGloEntry=}")
-            self.localChanges.append(makeChange(glopattern.format(delGloEntry), "", flags=regex.M))
+        #    self.localChanges.append(makeChange(glopattern.format(delGloEntry), "", flags=regex.M))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":

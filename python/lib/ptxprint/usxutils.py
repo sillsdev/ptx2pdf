@@ -699,7 +699,16 @@ class Usfm:
         elif c == "k" and v in self.kpars:
             return self.kpars[v]
         return None
-        
+
+    def removeGlosses(self, glosses):
+        root = self.getroot()
+        for i, e in list(root):
+            if e.tag == "para":
+                for ke in e:
+                    if ke.tag == "char" and ke.get("style", "") == "k":
+                        killme = ke.text in glosses
+                if killme:
+                    root.remove(e)
 
     def apply_adjlist(self, bk, adjlist):
         if adjlist is None:
