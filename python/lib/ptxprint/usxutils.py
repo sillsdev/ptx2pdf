@@ -413,7 +413,7 @@ class Usfm:
     def visitall(self, fn, root):
         fn(root)
         for c in root:
-            self.visitall(c, fn)
+            self.visitall(fn, c)
 
     def make_zsetref(self, ref, book, parent, pos):
         attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
