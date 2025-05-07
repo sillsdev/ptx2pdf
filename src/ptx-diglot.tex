@@ -2481,12 +2481,14 @@
   \x@\let\x@\@xcs\csname excess#1\endcsname
   \ifvoid\p@rtl\else
     \global\setbox\@xcs\vtop{\joinboxes{\p@rtl}{\@xcs}{4}{0}}%
+    \let\rdtmp\col@do
     \tempfalse
     \ifx\tri@llist\empty\else
       \edef\test{#1}%
       \let\col@do=\check@dup
       \x@\each@col\tri@llist\E
     \fi
+    \let\col@do\rdtmp
     \iftemp\else
       \xdef\tri@llist{\tri@llist#1}% Add this as a trial to run
     \fi
@@ -3017,7 +3019,7 @@
     \ifx\refl@wlist\empty\else
       \trace{d}{Reflowing aborted trials: \refl@wlist}%
       \let\col@do=\reflow@trial
-      \x@\each@col\refl@wlist\E% 
+      \x@\each@col\refl@wlist\E%
       \global\let\refl@wlist\empty
     \fi
     \ifx\tri@llist\empty
