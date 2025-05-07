@@ -262,15 +262,15 @@ def istype(s, t):
 def textiter(root, invertblocks=False, **kw):
     ''' Iterates the element hiearchy returning all non empty text. Optionally
         it ignores any elements whose style is in the blocked categories passed. '''
-    for this in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
-        yield this.parent.text if this.head is None else this.head.tail
+    for this, isin in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
+        yield this.text if isin else this.tail
 
 def modifytext(root, fn, invertblocks=False, **kw):
-    for this in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
-        if this.head is None:
-            this.parent.text = fn(this.parent.text, this.parent)
+    for this, isin in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
+        if isin:
+            this.text = fn(this.text, this)
         else:
-            this.head.tail = fn(this.head.tail, this.head)
+            this.tail = fn(this.tail, this)
     
 def _addorncv_hierarchy(e, curr):
     e.pos = RefPos(e.pos, curr)
@@ -286,18 +286,23 @@ def allparas(root):
 
 class Usfm:
 
-    def __init__(self, xml, parser=None, grammar=None):
+    def __init__(self, xml, parser=None, grammar=None, book=None):
         self.xml = xml
         self.parser = parser
         self.grammar = grammar
         self.cvaddorned = False
+        self.book = book
 
     @classmethod
     def readfile(cls, fname, grammar=None, sheet=None, elfactory=None):       # can also take the data straight
         if grammar is None:
             grammar = createGrammar(sheet if sheet is not None else [])
         usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar, elfactory=elfactory)
-        return cls(usxdoc, usxdoc.parser, grammar=grammar)
+        book = None
+        bkel = usxdoc.getroot().find(".//book")
+        if bkel is not None:
+            book = bkel.get("code", None)
+        return cls(usxdoc, usxdoc.parser, grammar=grammar, book=book)
 
     def getroot(self):
         return self.xml.getroot()
@@ -320,12 +325,12 @@ class Usfm:
         sections = []
         i = -1
         currpi = None
-        for x in iterusx(root):
-            if x.head is None:
-                if x.parent.tag == 'para':
-                    currp = x.parent
+        for x, isin in iterusx(root):
+            if isin:
+                if x.tag == 'para':
+                    currp = x
                 continue
-            p = x.head
+            p = x
             if x.parent == root:
                 i += 1
             if p.tag == "chapter":
@@ -652,13 +657,13 @@ class Usfm:
         currstate = [None, set()]
         root = self.getroot()
         enters = "cell char versepara".split()
-        for x in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
-            if x.head is None:
-                t = x.parent.text
-                r = x.parent.pos.ref if hasattr(x.parent.pos, 'ref') else None
+        for x, isin in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
+            if isin:
+                t = x.text
+                r = x.pos.ref if hasattr(x.pos, 'ref') else None
             else:
-                t = x.head.tail
-                r = x.head.pos.ref
+                t = x.tail
+                r = x.pos.ref
             if r != currstate[0]:
                 currstate = [r, set(strongs.getstrongs(r))]
             for st in list(currstate[1]):
@@ -673,18 +678,21 @@ class Usfm:
                     raise SyntaxError(f"Faulty regex in {regs}: {e}")
                 b = regre.split(t)
                 if len(b) > 1:
-                    if x.head is None:
-                        x.parent.text = b[0] + "\u200B"
+                    if isin:
+                        x.text = b[0] + "\u200B"
                         i = 0
                     else:
-                        x.head.tail = b[0] + "\u200B"
-                        i = list(x.parent).index(x.head) + 1
+                        x.tail = b[0] + "\u200B"
+                        i = list(x.parent).index(x) + 1
                     for a in range(1, len(b), 2):
                         e = self.factory("char", attrib={"style": "xts", "strong": st.lstrip("GH"), "align": "r"})
                         e.text = "\\nobreak \u200A" + b[a]
                         if a < len(b) - 2:
                             e.tail = b[a+1]
-                        x.parent.insert(i, e)
+                        if isin:
+                            x.insert(i, e)
+                        else:
+                            x.parent.insert(i, e)
                         i += 1
                     matched = True
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
