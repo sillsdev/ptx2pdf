@@ -195,7 +195,7 @@ class ViewModel:
 
     def changed(self, val=True):
         # if val != self.isChanged:
-        #     print(val, calledme(2))
+            # print(val, calledme(2))
         self.isChanged = val
 
     def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):
@@ -608,7 +608,6 @@ class ViewModel:
         copyfile(srcp, mergep)
 
     def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
-        # breakpoint()
         logger.debug(f"Changing project to {prjid or self.get('fcb_project')} from {getattr(self.project, 'prjid', 'NONE')}, {configName=} from {getcaller(1)}")
         currprjguid = getattr(self.project, 'guid', None)
         currprj = getattr(self.project, 'prjid', None)

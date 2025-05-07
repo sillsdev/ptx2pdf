@@ -3586,6 +3586,7 @@ class GtkViewModel(ViewModel):
         prjid = m.get_value(aid, 0)
         guid = m.get_value(aid, 1)
         cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
+        # Q: Why is saveme never used below?
         saveme = self.pendingPid is None and self.pendingConfig is None
         self.updateProjectSettings(prjid, guid, saveCurrConfig=True, configName=cfgname)
         self.updateSavedConfigList()
@@ -4978,7 +4979,7 @@ class GtkViewModel(ViewModel):
                 else:
                     lsp.append(v)
             ui = self.uilevel
-            self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
+            self.resetToInitValues()
             self.set("fcb_project", prj)
             self.set_uiChangeLevel(ui)
         else:
@@ -5316,7 +5317,6 @@ class GtkViewModel(ViewModel):
         btn.set_active(True)
         xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         def score(x):
-            print(f"{x=}")
             self.gtkpolyglot.set_fraction(x)
             runjob = self.callback(self, maxruns=1, noview=True)
             while runjob.thread.is_alive():
@@ -5324,7 +5324,6 @@ class GtkViewModel(ViewModel):
             runres = runjob.res
             return 20000 if runres else xdvigetpages(xdvname)
         mid = self.gtkpolyglot.get_fraction()
-        print(f"{mid=}")
         res = brent(0., 1., mid, score, 0.001)
         self.gtkpolyglot.set_fraction(res)
         self.isDiglotMeasuring = False

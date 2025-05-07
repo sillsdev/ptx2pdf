@@ -83,6 +83,8 @@ class PolyglotSetup(Gtk.Box):
                 self.ls_config[row_index].append([c])                
             for idx, field in enumerate(_modelfields[1:11], start=1):
                 val = getattr(plyglot, field)
+                if sfx == "L" and idx in (m.fontsize, m.baseline):
+                    val = 0
                 self.ls_treeview[row_index][idx] = val
             if sfx == "L":
                 polyview = self.view
