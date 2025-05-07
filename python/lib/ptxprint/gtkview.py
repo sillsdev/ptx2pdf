@@ -5825,24 +5825,35 @@ class GtkViewModel(ViewModel):
     def onBaseFontSizeChanged(self, btn):
         if self.loadingConfig or self.noUpdate:
             return
+        self.noUpdate = True
+        lnsp = -1
         if self.get("c_lockFontSize2Baseline"):
             lnsp = float(self.get("s_fontsize")) / self.font2baselineRatio
-            self.noUpdate = True
             self.set("s_linespacing", lnsp)
-            self.noUpdate = False
         else:
             self.updateFont2BaselineRatio()
+        if self.gtkpolyglot:
+            if lnsp >= 0:
+                self.gtkpolyglot.setbaseline(lnsp)
+            self.gtkpolyglot.setfontsize(self.get("s_fontsize"))
+        self.noUpdate = False
 
     def onBaseLineSpacingChanged(self, btn):
         if self.loadingConfig or self.noUpdate:
             return
+        self.noUpdate = True
+        fntsz = -1
         if self.get("c_lockFontSize2Baseline"):
             fntsz = float(self.get("s_linespacing")) * self.font2baselineRatio
             self.noUpdate = True
             self.set("s_fontsize", fntsz)
-            self.noUpdate = False
         else:
             self.updateFont2BaselineRatio()
+        if self.gtkpolyglot:
+            if fntsz >= 0:
+                self.gtkpolyglot.setfontsize(fntsz)
+            self.gtkpolyglot.setbaseline(self.get("s_linespacing"))
+        self.noUpdate = False
             
     def onLockRatioClicked(self, btn):
         if self.loadingConfig:

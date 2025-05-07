@@ -807,7 +807,10 @@ class ViewModel:
                     pg.readConfig(config, s)
                     self.polyglots[k] = pg
                     if k != "L":
-                        self.createDiglotView(k)
+                        try:
+                            self.createDiglotView(k)
+                        except ValueError:
+                            pass
         else:
             self.setPrintBtnStatus(2)
         self.loadingConfig = False

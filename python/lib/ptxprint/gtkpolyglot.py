@@ -89,7 +89,12 @@ class PolyglotSetup(Gtk.Box):
             if sfx == "L":
                 polyview = self.view
             else:
-                polyview = self.view.createDiglotView(suffix=sfx)
+                try:
+                    polyview = self.view.createDiglotView(suffix=sfx)
+                except ValueError:
+                    listiter = self.ls_treeview.get_iter(row_index)
+                    self.ls_treeview.remove(listiter)
+                    continue
             if polyview is not None:
                 if self.ls_treeview[row_index][m.fontsize] == 0:
                     self.ls_treeview[row_index][m.fontsize] = float(polyview.get("s_fontsize", 11.00))
@@ -437,7 +442,7 @@ class PolyglotSetup(Gtk.Box):
         for idx, field in enumerate(_modelfields[1:11], start=1):
             val = self.ls_treeview[row_index][idx]
             setattr(plyglt, field, val)
-        if row_index == 0:
+        if row_index == 0 and not self.view.noUpdate:
             for a, b in {"fontsize": "s_fontsize", "baseline" : "s_linespacing", "fraction": "polyfraction_", "color": "_dibackcol"}.items():
                 self.view.set(b, self.ls_treeview[row_index][getattr(m, a)])
                 self.view.changed()
@@ -663,6 +668,14 @@ class PolyglotSetup(Gtk.Box):
     def get_fraction(self):
         w = self.ls_treeview[0][m.fraction] / 100
         return w
+
+    def setfontsize(self, size):
+        self.ls_treeview[0][m.fontsize] = float(size)
+        self.updateRow(0)
+
+    def setbaseline(self, spacing):
+        self.ls_treeview[0][m.baseline] = float(spacing)
+        self.updateRow(0)
 
     def homogenize_fontsize(self, widget):
         selected = self.get_selected_row()
