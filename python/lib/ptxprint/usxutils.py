@@ -24,14 +24,14 @@ _occurstypes = {
 }
 
 _typetypes = {      # type: (type, StyleType, TextType, startswith)
-    'footnote': ('char', 'note', None, None),
+    'footnote': ('char', 'note', 'NoteText', None),
     'introduction': ('header', 'paragraph', 'other', "i"),
     'list': ('versepara', 'paragraph', 'other', "l"),
     'milestone': (None, 'milestone', None, None),
     'otherpara': ('versepara', 'paragraph', 'other', None),
     'sectionpara': ('versepara', 'paragraph', 'section', None),
     'title': ('header', 'paragraph', 'other', "m"),
-    'barems': (None, 'Standalone', None, None),
+    'standalone': (None, 'Standalone', None, None),
 }
     
 def simple_parse(source, categories=False, keyfield="Marker"):
@@ -153,6 +153,25 @@ def mrktype(sheet, mrk):
     if mtype is not None:
         sheet['mrktype'] = mtype
     return mtype
+
+def typesFromMrk(mtype):
+    ''' returns StyleType and TextType '''
+    tinfo = _typetypes.get(mtype, None)
+    if tinfo is not None:   # covers: footnote, introduction, list, milestone, otherpara, sectionpara, title
+        return tinfo[1], tinfo[2]
+    elif mtype in ('footnotechar', 'crossreferencechar'):
+        return ('Character', 'NoteText')
+    elif mtype in ('header', ):
+        return ('Paragraph', 'Other')
+    elif mtype in ('introchar',):
+        return ('Character', 'Other')
+    elif mtype in ('char', 'listchar', 'cell'):
+        return ('Character', 'VerseText')
+    elif mtype in ('versepara', ):
+        return ('Paragraph', 'VerseText')
+    elif mtype in ('crossreference', ):
+        return ('Note', 'NoteText')
+    return (None, None)
 
 def createGrammar(sheets):
     grammar = Grammar()
