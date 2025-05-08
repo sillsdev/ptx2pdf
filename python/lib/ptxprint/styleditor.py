@@ -393,7 +393,7 @@ class StyleEditor:
         mtype = self.getval(mrk, 'mrktype', None)
         if mtype is None:
             return
-        (stype, ttype) = typesfromMrk(mtype.lower())
+        (stype, ttype) = typesFromMrk(mtype.lower())
         if stype is not None:
             self.setval(mrk, 'StyleType', stype.title())
         if ttype is not None:
