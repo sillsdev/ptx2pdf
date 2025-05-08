@@ -1,8 +1,19 @@
 PTXprint 2.8.5 Release Notes
-2 May 2025
+8 May 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.6 (8 May 2025)
+  * Restore notes to previous state when there's a rejected chunk
+  * Solve lost text on rejecting a galley
+  * Keep Fontsize and Baseline spacing in sync with Diglot L in polyglot
+  * Prevent polyglot L linespacing and fontsize from corrupting primary settings
+  * Refactor to new usfmtc api
+  * Make sure resetToInitValues clears out polyglot settings and variables
+  * Fix Glossary filtering (removeGlosses by doc)
+  * Update direct tr@ceout call
+  * Make providing DiglotXFraction optional
 
 Bug fixes and Improvements in 2.8.5 (2 May 2025)
   * Make unlabelled pictures be L in diglots
