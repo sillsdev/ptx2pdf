@@ -1,6 +1,6 @@
 
 import re, os
-from ptxprint.usxutils import Sheets
+from ptxprint.usxutils import Sheets, typesFromMrk
 from ptxprint.font import FontRef
 from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path, saferelpath, asfloat
 from copy import deepcopy
@@ -388,6 +388,16 @@ class StyleEditor:
 
     def addMarker(self, mrk, name):
         self.sheet[mrk] = {" deletable": True, "name": name}
+
+    def set_legacy_types(self, mrk):
+        mtype = self.getval(mrk, 'mrktype', None)
+        if mtype is None:
+            return
+        (stype, ttype) = typesFromMrk(mtype.lower())
+        if stype is not None:
+            self.setval(mrk, 'StyleType', stype.title())
+        if ttype is not None:
+            self.setval(mrk, 'TextType', ttype.title())
 
     def get_font(self, mrk, style=""):
         f = self.getval(mrk, " font")

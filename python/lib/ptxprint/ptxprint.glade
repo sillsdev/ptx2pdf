@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.8.5</property>
+    <property name="version">Version 2.8.6</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -1864,36 +1864,60 @@ settings for a similar project.</property>
         <col id="1">zh</col>
       </row>
       <row>
+        <col id="0">Burmese</col>
+        <col id="1">my</col>
+      </row>
+      <row>
         <col id="0">English</col>
         <col id="1">en</col>
+      </row>
+      <row>
+        <col id="0">Español</col>
+        <col id="1">es</col>
       </row>
       <row>
         <col id="0">Français</col>
         <col id="1">fr</col>
       </row>
       <row>
-        <col id="0">Magyar</col>
-        <col id="1">hu</col>
+        <col id="0">Hindi</col>
+        <col id="1">hi</col>
       </row>
       <row>
         <col id="0">Indonesian</col>
         <col id="1">id</col>
       </row>
       <row>
-        <col id="0">Português</col>
-        <col id="1">pt</col>
+        <col id="0">Korean</col>
+        <col id="1">ko</col>
       </row>
       <row>
-        <col id="0">Română</col>
-        <col id="1">ro</col>
+        <col id="0">Magyar</col>
+        <col id="1">hu</col>
+      </row>
+      <row>
+        <col id="0">Malayalam</col>
+        <col id="1">ml</col>
+      </row>
+      <row>
+        <col id="0">Português</col>
+        <col id="1">pt</col>
       </row>
       <row>
         <col id="0">Русский</col>
         <col id="1">ru</col>
       </row>
       <row>
-        <col id="0">Español</col>
-        <col id="1">es</col>
+        <col id="0">Română</col>
+        <col id="1">ro</col>
+      </row>
+      <row>
+        <col id="0">Thai</col>
+        <col id="1">th</col>
+      </row>
+      <row>
+        <col id="0">Tok Pisin</col>
+        <col id="1">tpi</col>
       </row>
     </data>
   </object>

@@ -769,6 +769,7 @@ class StyleEditorView(StyleEditor):
             elif st == 'Milestone':
                 self.resolveEndMarker(key, self.getval(key, 'EndMarker'))
                 self.setval(key, 'EndMarker', None)
+            self.set_legacy_types(key)
             self.marker = key
             self.treeview.get_selection().select_iter(selecti)
             self.selectMarker(key)

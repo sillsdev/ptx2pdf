@@ -1440,7 +1440,7 @@
         \runtrigg@rsother{bookstart}%
         }%
  %
- \def\b{\endlastp@rstyle{b}\bgroup % End previous par before making a gap
+ \def\b{\global\dr@ppednumberfalse\endlastp@rstyle{b}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{b}{b+\styst@k}\@@b}
  \def\ib{\endlastp@rstyle{ib}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{ib}{ib+\styst@k}\@@b}
@@ -1450,7 +1450,7 @@
      \vskip\baselineskip
     \else
       \vskip\p@ram
-    \fi\egroup}
+    \fi\egroup\prevgraf=1\cutoutcarryover}
  \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
@@ -1915,8 +1915,9 @@
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
+ \in@ntrofalse
  \trace{d}{PageAlign=\PageAlign, IntroPageAlign=\IntroPageAlign, ifin@ntro\ifin@ntro true\else false\fi, pageno=\the\pageno, totalpages=\the\totalp@ges}%
- \ifnum 1=\ifx\PageAlign\val@odd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi \need@oddpage{\emptyoutput}\fi
+ \ifnum \ifx\PageAlign\val@dd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi =1 \need@oddpage{\emptyoutput}\fi
  \xdef\ptxst@rtp@ge{\the\pageno}%
  \ifcsname @@@ifOmitChapterNumber\endcsname \endOneChapBook \let\@@@ifOmitChapterNumber\undefined\fi
  \ifOneChapBook\startOneChapBook\fi
