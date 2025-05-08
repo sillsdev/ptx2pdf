@@ -73,7 +73,33 @@
 %
 
 %+cchar_charstyle
-\def\ch@rstyle{\ifimplicitcl@se\let\n@xt\@ch@rstyle\else\let\n@xt\ch@rstylepls\fi\n@xt}
+
+\def\ch@rstyle{\ifimplicitcl@se\let\n@xt\@ch@rstyle\else\ifinn@te\let\n@xt\ch@rstyleinnote\else\let\n@xt\ch@rstylepls\fi\fi\n@xt}
+
+\def\ch@rstyleinnote#1{%USFM3.1 handles note structure markers differently to character styles.
+ \ifcsname n@testruct-#1\endcsname
+    \trace{sa}{Note structure marker}\let\n@xt\@ch@rstyle
+ \else\let\n@xt\ch@rstylepls\fi
+ \n@xt{#1}%
+}
+\def\n@testructmkr#1{\x@\let\csname n@testruct-#1\endcsname\empty}
+\n@testructmkr{ft}
+\n@testructmkr{fq}
+\n@testructmkr{fr}
+\n@testructmkr{fqa}
+\n@testructmkr{fk}
+\n@testructmkr{fl}
+\n@testructmkr{fw}
+\n@testructmkr{fp} % Is this cannonically followed by an ft?
+%\n@testructmkr{fv} % Not structural??
+\n@testructmkr{fdc}
+\n@testructmkr{xo}
+%\n@testructmkr{xop} % not structural
+\n@testructmkr{xk}
+\n@testructmkr{xq}
+\n@testructmkr{xt}
+\n@testructmkr{xta}
+
 \def\@ch@rstyle#1{%
  \trace{sa}{CH@RSTYLE:#1 nesting:(\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
  \edef\newch@rstyle{\detokenize{#1}}% record the name of the style
