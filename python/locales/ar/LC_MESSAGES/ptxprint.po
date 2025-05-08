@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-02 16:13+0700\n"
-"PO-Revision-Date: 2025-05-02 09:13\n"
+"POT-Creation-Date: 2025-05-08 17:09+0700\n"
+"PO-Revision-Date: 2025-05-08 10:09\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -20,19 +20,19 @@ msgstr ""
 #: lib/ptxprint/adjlist.py:144
 #, python-brace-format
 msgid "Warning! File: {fname} is locked. Could not be deleted."
-msgstr ""
+msgstr "تحذير! الملف: {fname} مقفل. لا يمكن حذفه."
 
 #: lib/ptxprint/gtkadjlist.py:27
 msgid "Delete Row(s)"
-msgstr ""
+msgstr "حذف الصف (الصفوف)"
 
 #: lib/ptxprint/gtkpiclist.py:250
 msgid "Missing: 'Anchor Ref'"
-msgstr ""
+msgstr "مفقود: \"مرجع الربط\""
 
 #: lib/ptxprint/gtkpiclist.py:250
 msgid "You must provide a Book Ch.Vs reference as an anchor for the picture. For example: GEN 14.19"
-msgstr ""
+msgstr "يجب أن توفر مرجع كتاب وفصل وآية كنقطة ربط للصورة. على سبيل المثال: GEN 14.19"
 
 #: lib/ptxprint/gtkpiclist.py:360
 msgid "Media permissions unknown\n"
@@ -46,153 +46,156 @@ msgid "Permission for {} series:\n"
 msgstr "إذن لسلسلة {}:\n"
 "{}"
 
-#: lib/ptxprint/gtkpolyglot.py:255
+#: lib/ptxprint/gtkpolyglot.py:262
 msgid "Unique identifier for the text/glot (L, R, A, B, C, ... G)\n"
 "Right-click to change background color."
-msgstr ""
+msgstr "معرف فريد للنص (L، R، A، B، C، ... G)\n"
+"انقر بزر الفأرة الأيمن لتغيير لون الخلفية."
 
-#: lib/ptxprint/gtkpolyglot.py:256
+#: lib/ptxprint/gtkpolyglot.py:263
 msgid "Specify whether the should be on the left (1) or right (2) page."
-msgstr ""
+msgstr "حدد ما إذا كان يجب أن يكون على الصفحة اليسرى (1) أو اليمنى (2)."
 
-#: lib/ptxprint/gtkpolyglot.py:257
+#: lib/ptxprint/gtkpolyglot.py:264
 msgid "The (Paratext) project code."
-msgstr ""
+msgstr "رمز المشروع (Paratext)."
 
-#: lib/ptxprint/gtkpolyglot.py:258
+#: lib/ptxprint/gtkpolyglot.py:265
 msgid "The configuration settings to be applied for the selected project."
-msgstr ""
+msgstr "إعدادات التكوين التي سيتم تطبيقها على المشروع المحدد."
 
-#: lib/ptxprint/gtkpolyglot.py:259
+#: lib/ptxprint/gtkpolyglot.py:266
 msgid "Whether to show captions for this text."
-msgstr ""
+msgstr "ما إذا كان يجب عرض التسميات التوضيحية لهذا النص."
 
-#: lib/ptxprint/gtkpolyglot.py:260
+#: lib/ptxprint/gtkpolyglot.py:267
 msgid "The font size for this text."
-msgstr ""
+msgstr "حجم الخط لهذا النص."
 
-#: lib/ptxprint/gtkpolyglot.py:261
+#: lib/ptxprint/gtkpolyglot.py:268
 msgid "The line spacing (baseline) for this text."
-msgstr ""
+msgstr "التباعد (الخط الأساسي) لهذا النص."
 
-#: lib/ptxprint/gtkpolyglot.py:262
+#: lib/ptxprint/gtkpolyglot.py:269
 msgid "The page width (as %) that this text should occupy.\n"
 "If the values are red, this indicates that the total doesn't\n"
 "add to 100%, so adjust the values.\n"
 "Use right-click menu option to distribute width evenly between columns."
-msgstr ""
+msgstr "عرض الصفحة (كنسبة مئوية) الذي يجب أن يشغله هذا النص.\n"
+"إذا كانت القيم باللون الأحمر، فهذا يشير إلى أن الإجمالي لا يصل إلى 100٪، لذلك يجب تعديل القيم.\n"
+"استخدم خيار قائمة النقر بزر الفأرة الأيمن لتوزيع العرض بالتساوي بين الأعمدة."
 
-#: lib/ptxprint/gtkpolyglot.py:263
+#: lib/ptxprint/gtkpolyglot.py:270
 msgid "The relative weight (as %) of this text when merging with other texts."
-msgstr ""
+msgstr "الوزن النسبي (كنسبة مئوية) لهذا النص عند الدمج مع النصوص الأخرى."
 
-#: lib/ptxprint/gtkpolyglot.py:338
+#: lib/ptxprint/gtkpolyglot.py:345
 msgid "Cannot edit that value for 'L' row"
-msgstr ""
+msgstr "لا يمكن تحرير تلك القيمة لصف 'L'"
 
-#: lib/ptxprint/gtkpolyglot.py:343
+#: lib/ptxprint/gtkpolyglot.py:350
 msgid "Duplicate Code not allowed"
-msgstr ""
+msgstr "رمز مكرر غير مسموح"
 
-#: lib/ptxprint/gtkpolyglot.py:382
+#: lib/ptxprint/gtkpolyglot.py:389
 msgid "Duplicate Project+Configuration not allowed)"
-msgstr ""
+msgstr "مشروع+تكوين مكرر غير مسموح)"
 
-#: lib/ptxprint/gtkpolyglot.py:493
+#: lib/ptxprint/gtkpolyglot.py:500
 msgid "You cannot disable captions for the primary 'L' project in a diglot."
-msgstr ""
+msgstr "لا يمكن تعطيل التسميات التوضيحية للمشروع الرئيسي 'L' في الطباعة المشتركة."
 
-#: lib/ptxprint/gtkpolyglot.py:520
+#: lib/ptxprint/gtkpolyglot.py:527
 msgid "Add a row/text"
-msgstr ""
+msgstr "إضافة صف أو نص"
 
-#: lib/ptxprint/gtkpolyglot.py:524
+#: lib/ptxprint/gtkpolyglot.py:531
 msgid "Move Up"
-msgstr ""
+msgstr "التحريك لأعلى"
 
-#: lib/ptxprint/gtkpolyglot.py:529
+#: lib/ptxprint/gtkpolyglot.py:536
 msgid "Move Down"
-msgstr ""
+msgstr "التحريك لأسفل"
 
-#: lib/ptxprint/gtkpolyglot.py:534
+#: lib/ptxprint/gtkpolyglot.py:541
 msgid "Copy Font Size to All"
-msgstr ""
+msgstr "نسخ حجم الخط للجميع"
 
-#: lib/ptxprint/gtkpolyglot.py:538
+#: lib/ptxprint/gtkpolyglot.py:545
 msgid "Copy Spacing to All"
-msgstr ""
+msgstr "نسخ التباعد للجميع"
 
-#: lib/ptxprint/gtkpolyglot.py:542
+#: lib/ptxprint/gtkpolyglot.py:549
 msgid "Distribute Widths"
-msgstr ""
+msgstr "توزيع العرض"
 
-#: lib/ptxprint/gtkpolyglot.py:546
+#: lib/ptxprint/gtkpolyglot.py:553
 msgid "Delete Row"
-msgstr ""
+msgstr "حذف الصف"
 
-#: lib/ptxprint/gtkpolyglot.py:551
+#: lib/ptxprint/gtkpolyglot.py:558
 msgid "Edit Settings..."
-msgstr ""
+msgstr "تحرير الإعدادات..."
 
-#: lib/ptxprint/gtkpolyglot.py:556
+#: lib/ptxprint/gtkpolyglot.py:563
 msgid "Set Color..."
-msgstr ""
+msgstr "تعيين اللون..."
 
-#: lib/ptxprint/gtkpolyglot.py:560
+#: lib/ptxprint/gtkpolyglot.py:567
 msgid "Remove All Colors"
-msgstr ""
+msgstr "إزالة جميع الألوان"
 
-#: lib/ptxprint/gtkpolyglot.py:768
+#: lib/ptxprint/gtkpolyglot.py:783
 msgid "Spaces not allowed"
-msgstr ""
+msgstr "المساحات غير مسموح بها"
 
-#: lib/ptxprint/gtkpolyglot.py:770
+#: lib/ptxprint/gtkpolyglot.py:785
 msgid "Complex layouts are not yet supported"
-msgstr ""
-
-#: lib/ptxprint/gtkpolyglot.py:793
-msgid "Codes on left must {}be assigned to page '1'"
-msgstr ""
-
-#: lib/ptxprint/gtkpolyglot.py:795
-msgid "Codes on right must {}be assigned to page '2'"
-msgstr ""
-
-#: lib/ptxprint/gtkpolyglot.py:799
-msgid "Invalid position for slash"
-msgstr ""
-
-#: lib/ptxprint/gtkpolyglot.py:803
-msgid "L or R missing"
-msgstr ""
+msgstr "لم يتم دعم التخطيطات المعقدة بعد"
 
 #: lib/ptxprint/gtkpolyglot.py:808
+msgid "Codes on left must {}be assigned to page '1'"
+msgstr "يجب تعيين الأكواد على الصفحة اليسرى '1'"
+
+#: lib/ptxprint/gtkpolyglot.py:810
+msgid "Codes on right must {}be assigned to page '2'"
+msgstr "يجب تعيين الأكواد على الصفحة اليمنى '2'"
+
+#: lib/ptxprint/gtkpolyglot.py:814
+msgid "Invalid position for slash"
+msgstr "الموضع غير صالح للشرطة"
+
+#: lib/ptxprint/gtkpolyglot.py:818
+msgid "L or R missing"
+msgstr "L أو R مفقود"
+
+#: lib/ptxprint/gtkpolyglot.py:823
 msgid "Missing: {}"
-msgstr ""
+msgstr "مفقود: {}"
 
-#: lib/ptxprint/gtkpolyglot.py:813
+#: lib/ptxprint/gtkpolyglot.py:828
 msgid "Invalid characters"
-msgstr ""
+msgstr "محارف غير صالحة"
 
-#: lib/ptxprint/gtkpolyglot.py:817
+#: lib/ptxprint/gtkpolyglot.py:832
 msgid "Invalid codes used"
-msgstr ""
-
-#: lib/ptxprint/gtkpolyglot.py:819
-msgid "Valid layout"
-msgstr ""
+msgstr "رموز غير صالحة استخدمت"
 
 #: lib/ptxprint/gtkpolyglot.py:834
+msgid "Valid layout"
+msgstr "تخطيط صالح"
+
+#: lib/ptxprint/gtkpolyglot.py:849
 msgid "Layout Error"
-msgstr ""
+msgstr "خطأ في التخطيط"
 
-#: lib/ptxprint/gtkpolyglot.py:943
+#: lib/ptxprint/gtkpolyglot.py:958
 msgid "Right Page (2)"
-msgstr ""
+msgstr "الصفحة اليمنى (2)"
 
-#: lib/ptxprint/gtkpolyglot.py:943
+#: lib/ptxprint/gtkpolyglot.py:958
 msgid "Left Page (1)"
-msgstr ""
+msgstr "الصفحة اليسرى (1)"
 
 #: lib/ptxprint/gtkstyleditor.py:51 lib/ptxprint/gtkstyleditor.py:85
 #: lib/ptxprint/gtkstyleditor.py:86 temp.glade:3076
@@ -253,12 +256,12 @@ msgstr "نص خاص"
 msgid "Character Styling"
 msgstr "تصميم الشخصيات"
 
-#: lib/ptxprint/gtkstyleditor.py:63 lib/ptxprint/gtkview.py:1922
+#: lib/ptxprint/gtkstyleditor.py:63 lib/ptxprint/gtkview.py:1930
 #: temp.glade:26186
 msgid "Cover"
 msgstr "يُغطّي"
 
-#: lib/ptxprint/gtkstyleditor.py:64 lib/ptxprint/gtkview.py:1912
+#: lib/ptxprint/gtkstyleditor.py:64 lib/ptxprint/gtkview.py:1920
 #: temp.glade:18744
 msgid "Diglot"
 msgstr "Diglot"
@@ -332,11 +335,11 @@ msgid "Font Scale:"
 msgstr "Font Scale:"
 
 #: lib/ptxprint/gtkstyleditor.py:248 lib/ptxprint/gtkstyleditor.py:572
-#: lib/ptxprint/gtkview.py:3523 temp.glade:21948 temp.glade:29410
+#: lib/ptxprint/gtkview.py:3531 temp.glade:21948 temp.glade:29410
 msgid "Color:"
 msgstr "اللون:"
 
-#: lib/ptxprint/gtkstyleditor.py:497 lib/ptxprint/gtkview.py:1321
+#: lib/ptxprint/gtkstyleditor.py:497 lib/ptxprint/gtkview.py:1329
 #: temp.glade:20342
 msgid "More Info..."
 msgstr "المزيد من المعلومات..."
@@ -388,7 +391,7 @@ msgstr "صنع ملف PDF..."
 msgid "Finishing..."
 msgstr "التشطيب..."
 
-#: lib/ptxprint/gtkview.py:151 lib/ptxprint/gtkview.py:1605
+#: lib/ptxprint/gtkview.py:151 lib/ptxprint/gtkview.py:1613
 msgid "Processing..."
 msgstr "المعالجة..."
 
@@ -414,41 +417,41 @@ msgstr "لم يتم تعيين مشروع"
 msgid "No matches found - try another search term"
 msgstr "لم يتم العثور على مطابقات - حاول مصطلح بحث آخر"
 
-#: lib/ptxprint/gtkview.py:1243
+#: lib/ptxprint/gtkview.py:1251
 msgid "View Level\n"
 "({})"
 msgstr "عرض المستوى\n"
 "({})"
 
-#: lib/ptxprint/gtkview.py:1243 temp.glade:3226
+#: lib/ptxprint/gtkview.py:1251 temp.glade:3226
 msgid "View Level"
 msgstr "عرض المستوى"
 
-#: lib/ptxprint/gtkview.py:1420
+#: lib/ptxprint/gtkview.py:1428
 msgid "Can't set {} in the model"
 msgstr "لا يمكن تعيين {} في النموذج"
 
-#: lib/ptxprint/gtkview.py:1527
+#: lib/ptxprint/gtkview.py:1535
 msgid "Font(s) not set"
 msgstr "لم يتم تعيين الخط(ات)"
 
-#: lib/ptxprint/gtkview.py:1539 temp.glade:28475
+#: lib/ptxprint/gtkview.py:1547 temp.glade:28475
 msgid "Print (Make PDF)"
 msgstr "طباعة (إنشاء ملف PDF)"
 
-#: lib/ptxprint/gtkview.py:1547
+#: lib/ptxprint/gtkview.py:1555
 msgid "Printing busy"
 msgstr "الطباعة مشغولة"
 
-#: lib/ptxprint/gtkview.py:1561 lib/ptxprint/runjob.py:261
+#: lib/ptxprint/gtkview.py:1569 lib/ptxprint/runjob.py:261
 msgid "No books to print"
 msgstr "لا توجد كتب للطباعة"
 
-#: lib/ptxprint/gtkview.py:1564
+#: lib/ptxprint/gtkview.py:1572
 msgid "One of more fonts have not been set yet"
 msgstr "لم يتم تعيين خط واحد من أكثر من خط حتى الآن"
 
-#: lib/ptxprint/gtkview.py:1590
+#: lib/ptxprint/gtkview.py:1598
 msgid "Please close the file in your PDF viewer.                         \n\n"
 "{}\n\n"
 " Note: It is better to use the Preview Pane.                                 \n"
@@ -460,171 +463,171 @@ msgstr "يرجى إغلاق الملف في عارض PDF الخاص بك.       
 " راجع خيارات \"إظهار ملف PDF\" في قائمة PTXprint.                                \n\n"
 "       هل تريد المحاولة مرة أخرى؟"
 
-#: lib/ptxprint/gtkview.py:1594
+#: lib/ptxprint/gtkview.py:1602
 msgid "Cannot update PDF file while it is locked!"
 msgstr "لا يمكن تحديث ملف PDF وهو مغلق!"
 
-#: lib/ptxprint/gtkview.py:1597
+#: lib/ptxprint/gtkview.py:1605
 msgid "Close the old PDF file before you try again."
 msgstr "أغلق ملف PDF القديم قبل المحاولة مرة أخرى."
 
-#: lib/ptxprint/gtkview.py:1612
+#: lib/ptxprint/gtkview.py:1620
 msgid "Failed due to an error in the USFM file."
 msgstr "فشل بسبب خطأ في ملف USFM."
 
-#: lib/ptxprint/gtkview.py:1613
+#: lib/ptxprint/gtkview.py:1621
 msgid "Run the Basic Checks in Paratext and try again."
 msgstr "قم بتشغيل عمليات التحقق الأساسية في Paratext وحاول مرة أخرى."
 
-#: lib/ptxprint/gtkview.py:1627
+#: lib/ptxprint/gtkview.py:1635
 msgid "Note: It may take a while for the PDF to be produced due to including Strong's numbers in the text."
 msgstr "ملاحظة: قد يستغرق إنتاج ملف PDF بعض الوقت بسبب تضمين أرقام سترونج في النص."
 
-#: lib/ptxprint/gtkview.py:1634
+#: lib/ptxprint/gtkview.py:1642
 msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
 msgstr "ملاحظة: قد يستغرق الأمر بعض الوقت بالنسبة للصور لتحويل شكل ناتج PDF المختار ({})."
 
-#: lib/ptxprint/gtkview.py:1646
+#: lib/ptxprint/gtkview.py:1654
 msgid "Thumb tabs set to 'Only Show on Odd Pages' for PDF Output Format ({})."
 msgstr "علامات التبويب الإبهام مضبوطة على \"إظهار الصفحات الفردية فقط\" لتنسيق إخراج PDF ({})."
 
-#: lib/ptxprint/gtkview.py:1754
+#: lib/ptxprint/gtkview.py:1762
 msgid "Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."
 msgstr "ملاحظة: بيان حقوق الطبع والنشر طويل جداً. وقد تم وضعها في بيان حقوق الطبع والنشر (انظر علامة التبويب \"الأطراف\")."
 
-#: lib/ptxprint/gtkview.py:1767
+#: lib/ptxprint/gtkview.py:1775
 msgid "But the 'Default' folder could not be erased completely:"
 msgstr "ولكن لا يمكن مسح المجلد \"الافتراضي\" بالكامل:"
 
-#: lib/ptxprint/gtkview.py:1774
+#: lib/ptxprint/gtkview.py:1782
 msgid "The 'Default' config settings have been reset."
 msgstr "تم إعادة تعيين إعدادات الإعدادات 'الافتراضية'."
 
-#: lib/ptxprint/gtkview.py:1782
+#: lib/ptxprint/gtkview.py:1790
 msgid "Deleted config: {}"
 msgstr "التكوين المحذوف: {}"
 
-#: lib/ptxprint/gtkview.py:1785
+#: lib/ptxprint/gtkview.py:1793
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "حدث خطأ داخلي، محاولة حذف شجرة الدليل"
 
-#: lib/ptxprint/gtkview.py:1785 lib/ptxprint/gtkview.py:1790
-#: lib/ptxprint/gtkview.py:1797
+#: lib/ptxprint/gtkview.py:1793 lib/ptxprint/gtkview.py:1798
+#: lib/ptxprint/gtkview.py:1805
 msgid "Folder: "
 msgstr "مجلد: "
 
-#: lib/ptxprint/gtkview.py:1790 lib/ptxprint/gtkview.py:1797
+#: lib/ptxprint/gtkview.py:1798 lib/ptxprint/gtkview.py:1805
 msgid "Cannot delete folder from disk!"
 msgstr "لا يمكن حذف المجلد من القرص!"
 
-#: lib/ptxprint/gtkview.py:1896 lib/ptxprint/gtkview.py:4334
-#: lib/ptxprint/gtkview.py:4350 lib/ptxprint/runjob.py:749 temp.glade:26562
+#: lib/ptxprint/gtkview.py:1904 lib/ptxprint/gtkview.py:4343
+#: lib/ptxprint/gtkview.py:4359 lib/ptxprint/runjob.py:750 temp.glade:26562
 msgid "Previous PDF (_1)"
 msgstr "PDF السابقة (_1)"
 
-#: lib/ptxprint/gtkview.py:1902
+#: lib/ptxprint/gtkview.py:1910
 msgid "Fonts"
 msgstr "الخطوط"
 
-#: lib/ptxprint/gtkview.py:1902
+#: lib/ptxprint/gtkview.py:1910
 msgid "Scripts"
 msgstr "البرامج النصية"
 
-#: lib/ptxprint/gtkview.py:1906 temp.glade:24979
+#: lib/ptxprint/gtkview.py:1914 temp.glade:24979
 msgid "Peripherals"
 msgstr "محيطات"
 
-#: lib/ptxprint/gtkview.py:1909 temp.glade:18204 temp.glade:35598
+#: lib/ptxprint/gtkview.py:1917 temp.glade:18204 temp.glade:35598
 msgid "Pictures"
 msgstr "صور"
 
-#: lib/ptxprint/gtkview.py:1915 temp.glade:27235
+#: lib/ptxprint/gtkview.py:1923 temp.glade:27235
 msgid "Finishing"
 msgstr "الانتهاء"
 
-#: lib/ptxprint/gtkview.py:1918
+#: lib/ptxprint/gtkview.py:1926
 msgid "Notes+"
 msgstr "ملاحظات +"
 
-#: lib/ptxprint/gtkview.py:1918
+#: lib/ptxprint/gtkview.py:1926
 msgid "Refs"
 msgstr "المراجع:"
 
-#: lib/ptxprint/gtkview.py:1919 temp.glade:12911
+#: lib/ptxprint/gtkview.py:1927 temp.glade:12911
 msgid "Cross-References"
 msgstr "المراجع المتقاطعة"
 
-#: lib/ptxprint/gtkview.py:1926 lib/ptxprint/gtkview.py:1927
+#: lib/ptxprint/gtkview.py:1934 lib/ptxprint/gtkview.py:1935
 msgid "Tabs"
 msgstr "Tabs"
 
-#: lib/ptxprint/gtkview.py:1928 lib/ptxprint/gtkview.py:1929 temp.glade:30181
+#: lib/ptxprint/gtkview.py:1936 lib/ptxprint/gtkview.py:1937 temp.glade:30181
 msgid "Borders"
 msgstr "الحدود"
 
-#: lib/ptxprint/gtkview.py:1940 temp.glade:23360
+#: lib/ptxprint/gtkview.py:1948 temp.glade:23360
 msgid "Advanced"
 msgstr "متقدم"
 
-#: lib/ptxprint/gtkview.py:2080
+#: lib/ptxprint/gtkview.py:2088
 msgid "Use One Column\n"
 "Layout for These Books:"
 msgstr "استخدم تخطيط العمود الواحد\n"
 "لهذه الكتب:"
 
-#: lib/ptxprint/gtkview.py:2082
+#: lib/ptxprint/gtkview.py:2090
 msgid "Use Two Column\n"
 "Layout for These Books:"
 msgstr "استخدم تخطيط العمودين\n"
 "لهذه الكتب:"
 
-#: lib/ptxprint/gtkview.py:2201
+#: lib/ptxprint/gtkview.py:2209
 msgid "Done! Picture Captions have been updated."
 msgstr "تم! تم تحديث تعليقات الصور."
 
-#: lib/ptxprint/gtkview.py:2259
+#: lib/ptxprint/gtkview.py:2267
 msgid "The Book in focus is not within scope"
 msgstr "الكتاب قيد التركيز ليس ضمن النطاق"
 
-#: lib/ptxprint/gtkview.py:2260
+#: lib/ptxprint/gtkview.py:2268
 msgid "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
 msgstr "لإنشاء قائمة تعديل، يجب أن يكون الكتاب\n"
 "في قائمة الكتب المراد طباعتها."
 
-#: lib/ptxprint/gtkview.py:2295
+#: lib/ptxprint/gtkview.py:2303
 msgid "One or more Adjust List(s) already exist!"
 msgstr "قائمة (قوائم) ضبط واحدة أو أكثر موجودة بالفعل!"
 
-#: lib/ptxprint/gtkview.py:2296
+#: lib/ptxprint/gtkview.py:2304
 msgid "Do you want to OVERWRITE the existing list(s)?"
 msgstr "هل تريد الكتابة فوق القائمة (القوائم) الموجودة؟"
 
-#: lib/ptxprint/gtkview.py:2297
+#: lib/ptxprint/gtkview.py:2305
 msgid "Yes - Wipe out existing list(s) and start again"
 msgstr "نعم - امسح القائمة (القوائم) الموجودة وابدأ من جديد"
 
-#: lib/ptxprint/gtkview.py:2298
+#: lib/ptxprint/gtkview.py:2306
 msgid "No - Keep existing list(s) and merge new [safe option]"
 msgstr "لا - الاحتفاظ بالقائمة (القوائم) الحالية ودمج القائمة (القوائم) الجديدة [خيار آمن]"
 
-#: lib/ptxprint/gtkview.py:2299
+#: lib/ptxprint/gtkview.py:2307
 msgid "Cancel - leave Adjust List(s) as they are [do nothing]"
 msgstr "إلغاء - اترك قائمة (قوائم) الضبط كما هي [لا تفعل شيئًا]"
 
-#: lib/ptxprint/gtkview.py:2420
+#: lib/ptxprint/gtkview.py:2428
 msgid "\\rem Click the Generate button (above) to start the process of creating Front Matter..."
 msgstr "\\rم انقر فوق الزر \"إنشاء\" (أعلاه) لبدء عملية إنشاء المادة الأمامية..."
 
-#: lib/ptxprint/gtkview.py:2455 lib/ptxprint/gtkview.py:2467
+#: lib/ptxprint/gtkview.py:2463 lib/ptxprint/gtkview.py:2475
 msgid "View Only..."
 msgstr "عرض فقط..."
 
-#: lib/ptxprint/gtkview.py:2473
+#: lib/ptxprint/gtkview.py:2481
 msgid "Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr "استخدم علامة التبويب \"متقدم\" لتحديد الإعدادات التي تريد عرضها أو تعديلها."
 
-#: lib/ptxprint/gtkview.py:2496
+#: lib/ptxprint/gtkview.py:2504
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -634,7 +637,7 @@ msgstr "\n\n"
 "[تم اقتطاع الملف لعرضه]                                            \n"
 "انقر على زر عرض/تحرير لرؤية المزيد."
 
-#: lib/ptxprint/gtkview.py:2504
+#: lib/ptxprint/gtkview.py:2512
 msgid "This file doesn't exist yet.\n\n"
 "Try clicking...                      \n"
 "   * the 'Generate' button                      \n"
@@ -644,242 +647,242 @@ msgstr "هذا الملف غير موجود بعد.\n\n"
 "   * زر \"إنشاء\"                      \n"
 "   * زر \"طباعة\" لإنشاء ملف PDF أولاً"
 
-#: lib/ptxprint/gtkview.py:3304
+#: lib/ptxprint/gtkview.py:3312
 msgid "PDF settings unpacked. That was easy, wasn't it!"
 msgstr "تم تفريغ إعدادات PDF. كان ذلك سهلاً، أليس كذلك!"
 
-#: lib/ptxprint/gtkview.py:3307
+#: lib/ptxprint/gtkview.py:3315
 msgid "Sorry, that PDF doesn't seem to be a valid PTXprint file with config settings included in it."
 msgstr "عذرًا، لا يبدو أن ملف PDF هذا ملف PTXprint صالح مع إعدادات التكوين المضمنة فيه."
 
-#: lib/ptxprint/gtkview.py:3375
+#: lib/ptxprint/gtkview.py:3383
 msgid "File not found"
 msgstr "الملف غير موجود"
 
-#: lib/ptxprint/gtkview.py:3526
+#: lib/ptxprint/gtkview.py:3534
 msgid "'Enable Colored Text' has now been turned on. (See Fonts+Script tab for details.)"
 msgstr "تم الآن تشغيل \"تمكين النص الملون\". (انظر علامة تبويب الخطوط + النص للتفاصيل)."
 
-#: lib/ptxprint/gtkview.py:3749 lib/ptxprint/gtkview.py:3774 temp.glade:28853
+#: lib/ptxprint/gtkview.py:3758 lib/ptxprint/gtkview.py:3783 temp.glade:28853
 #: temp.glade:31158
 msgid "Do not use spaces or special characters"
 msgstr "لا تستخدم مسافات أو أحرفاً خاصة"
 
-#: lib/ptxprint/gtkview.py:3753
+#: lib/ptxprint/gtkview.py:3762
 msgid "That Configuration already exists.\n"
 "Use another name."
 msgstr "هذا التكوين موجود بالفعل.\n"
 "استخدم اسماً آخر."
 
-#: lib/ptxprint/gtkview.py:3778
+#: lib/ptxprint/gtkview.py:3787
 msgid "That Project already exists.\n"
 "Use another name."
 msgstr "هذا المشروع موجود بالفعل.\n"
 "استخدم اسماً آخر."
 
-#: lib/ptxprint/gtkview.py:3856 lib/ptxprint/gtkview.py:3896
+#: lib/ptxprint/gtkview.py:3865 lib/ptxprint/gtkview.py:3905
 msgid "# This file doesn't exist yet!\n"
 "# Edit here and Click 'Save' to create it."
 msgstr "# هذا الملف غير موجود بعد!\n"
 "# قم بتحريره هنا وانقر فوق \"حفظ\" لإنشائه."
 
-#: lib/ptxprint/gtkview.py:3912
+#: lib/ptxprint/gtkview.py:3921
 msgid "Save changes?"
 msgstr "حفظ التغييرات؟"
 
-#: lib/ptxprint/gtkview.py:3912
+#: lib/ptxprint/gtkview.py:3921
 msgid "Do you wish to save the changes you made?"
 msgstr "هل ترغب في حفظ التغييرات التي أجريتها؟"
 
-#: lib/ptxprint/gtkview.py:3913
+#: lib/ptxprint/gtkview.py:3922
 msgid "File: "
 msgstr "ملف: "
 
-#: lib/ptxprint/gtkview.py:3970
+#: lib/ptxprint/gtkview.py:3979
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% هذا هو ملف .tex المحدد لمشروع {} المستخدم من قبل PTXprint.\n"
 "% اسم التكوين المحفوظ: {}\n"
 
-#: lib/ptxprint/gtkview.py:3978
+#: lib/ptxprint/gtkview.py:3987
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% هذا هو ملف التجهيز المسبق .tex المحدد لمشروع {} المستخدم من قبل PTXprint.\n"
 "% اسم التكوين المحفوظ: {}\n"
 
-#: lib/ptxprint/gtkview.py:4053
+#: lib/ptxprint/gtkview.py:4062
 msgid "Select the location and name for the Archive file"
 msgstr "حدد الموقع والاسم لملف الأرشيف"
 
-#: lib/ptxprint/gtkview.py:4067
+#: lib/ptxprint/gtkview.py:4076
 msgid "No Archive File Created"
 msgstr "لا يوجد ملف أرشيف تم إنشاؤه"
 
-#: lib/ptxprint/gtkview.py:4094
+#: lib/ptxprint/gtkview.py:4103
 msgid "Select the folder containing image files"
 msgstr "حدد المجلد الذي يحتوي على ملفات الصور"
 
-#: lib/ptxprint/gtkview.py:4110
+#: lib/ptxprint/gtkview.py:4119
 msgid "Select a folder to extract the settings into"
 msgstr "حدد مجلدًا لاستخراج الإعدادات فيه"
 
-#: lib/ptxprint/gtkview.py:4247
+#: lib/ptxprint/gtkview.py:4256
 msgid "Exported Settings to: {}"
 msgstr "تم تصدير الإعدادات إلى: {}"
 
-#: lib/ptxprint/gtkview.py:4249
+#: lib/ptxprint/gtkview.py:4258
 msgid "Undefined target folder. Could not export settings!"
 msgstr "المجلد الهدف غير محدد. تعذر تصدير الإعدادات!"
 
-#: lib/ptxprint/gtkview.py:4256
+#: lib/ptxprint/gtkview.py:4265
 msgid "Imported Settings into: {}::{}"
 msgstr "الإعدادات المستوردة إلى: {}::{}"
 
-#: lib/ptxprint/gtkview.py:4271
+#: lib/ptxprint/gtkview.py:4280
 msgid "Select a PDF (or ZIP archive) to import the settings from"
 msgstr "حدد ملف PDF (أو أرشيف ZIP) لاستيراد الإعدادات منه"
 
-#: lib/ptxprint/gtkview.py:4284
+#: lib/ptxprint/gtkview.py:4293
 msgid "PDF/ZIP Import Config Error"
 msgstr "خطأ في تكوين استيراد ملفات PDF/ZIP"
 
-#: lib/ptxprint/gtkview.py:4285
+#: lib/ptxprint/gtkview.py:4294
 msgid "Cannot find any settings to import from the selected file.\n\n"
 msgstr "لا يمكن العثور على أي إعدادات للاستيراد من الملف المحدد.\n\n"
 
-#: lib/ptxprint/gtkview.py:4286
+#: lib/ptxprint/gtkview.py:4295
 msgid "If importing from a PDF (created with PTXprint version 2.3 or later) check "
 msgstr "في حالة الاستيراد من ملف PDF (تم إنشاؤه باستخدام الإصدار 2.3 من PTXprint أو إصدار أحدث) تحقق من "
 
-#: lib/ptxprint/gtkview.py:4287
+#: lib/ptxprint/gtkview.py:4296
 msgid "if it was created with 'Include Config Settings Within PDF' option enabled."
 msgstr "إذا تم إنشاؤه مع تمكين خيار \"تضمين إعدادات التكوين داخل ملف PDF\"."
 
-#: lib/ptxprint/gtkview.py:4298
+#: lib/ptxprint/gtkview.py:4307
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "حدد واحد أو أكثر من PDF(s) للمادة"
 
-#: lib/ptxprint/gtkview.py:4302
+#: lib/ptxprint/gtkview.py:4311
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "حدد واحد أو أكثر من PDF(s) لمواد BACK"
 
-#: lib/ptxprint/gtkview.py:4306
+#: lib/ptxprint/gtkview.py:4315
 msgid "Select Watermark PDF file"
 msgstr "حدد ملف PDF العلامة المائية"
 
-#: lib/ptxprint/gtkview.py:4311
+#: lib/ptxprint/gtkview.py:4320
 msgid "Select Page Border PDF file"
 msgstr "حدد ملف PDF حدود الصفحة"
 
-#: lib/ptxprint/gtkview.py:4316
+#: lib/ptxprint/gtkview.py:4325
 msgid "Select Section Header PDF file"
 msgstr "حدد ملف PDF رأس القسم"
 
-#: lib/ptxprint/gtkview.py:4321
+#: lib/ptxprint/gtkview.py:4330
 msgid "Select End of Book PDF file"
 msgstr "حدد نهاية ملف PDF"
 
-#: lib/ptxprint/gtkview.py:4326
+#: lib/ptxprint/gtkview.py:4335
 msgid "Select Verse Decorator PDF file"
 msgstr "حدد ملف PDF المشكّل الآمر"
 
-#: lib/ptxprint/gtkview.py:4331
+#: lib/ptxprint/gtkview.py:4340
 msgid "Select a PDF file to compare with"
 msgstr "حدد ملف PDF لمقارنته مع"
 
-#: lib/ptxprint/gtkview.py:4456
+#: lib/ptxprint/gtkview.py:4465
 msgid "Return to Primary"
 msgstr "العودة إلى المرحلة الابتدائية"
 
-#: lib/ptxprint/gtkview.py:4522
+#: lib/ptxprint/gtkview.py:4531
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "FYI: الخط العادي يدعم بالفعل جميع الأحرف في النص."
 
-#: lib/ptxprint/gtkview.py:4523
+#: lib/ptxprint/gtkview.py:4532
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "الخط الخلفي غير مطلوب لذلك\n"
 "سيتم تعطيل خيار \"استخدام الخط الخلفي\"."
 
-#: lib/ptxprint/gtkview.py:4563
+#: lib/ptxprint/gtkview.py:4572
 #, python-brace-format
 msgid "Redoing layout {run}..."
 msgstr "إعادة التخطيط {run}..."
 
-#: lib/ptxprint/gtkview.py:4819
+#: lib/ptxprint/gtkview.py:4828
 msgid "USFM syntax error"
 msgstr "خطأ في بناء جملة USFM"
 
-#: lib/ptxprint/gtkview.py:4819
+#: lib/ptxprint/gtkview.py:4828
 msgid "Syntax error: {}"
 msgstr "خطأ في بناء الجملة: {}"
 
-#: lib/ptxprint/gtkview.py:4852 lib/ptxprint/gtkview.py:5774
-#: lib/ptxprint/gtkview.py:5790
+#: lib/ptxprint/gtkview.py:4861 lib/ptxprint/gtkview.py:5781
+#: lib/ptxprint/gtkview.py:5797
 msgid "Choose Image"
 msgstr "اختر صورة"
 
-#: lib/ptxprint/gtkview.py:4996
+#: lib/ptxprint/gtkview.py:5005
 msgid "Downloading Image Set: '{}'   Please wait..."
 msgstr "تنزيل مجموعة الصور: '{}' الرجاء الانتظار..."
 
-#: lib/ptxprint/gtkview.py:5006
+#: lib/ptxprint/gtkview.py:5015
 msgid "ERROR: Downloading Image Set failed. Check internet connection and try again."
 msgstr "خطأ: فشل تنزيل مجموعة الصور. تحقق من الاتصال بالإنترنت وحاول مرة أخرى."
 
-#: lib/ptxprint/gtkview.py:5021
+#: lib/ptxprint/gtkview.py:5030
 msgid "Image Set '{}' removed due to not agreeing to terms and conditions of use."
 msgstr "تمت إزالة مجموعة الصور \"{}\" بسبب عدم الموافقة على شروط وأحكام الاستخدام."
 
-#: lib/ptxprint/gtkview.py:5024
+#: lib/ptxprint/gtkview.py:5033
 msgid "Cannot delete folder from disk! Image Set: {}"
 msgstr "لا يمكن حذف المجلد من القرص! مجموعة الصور: {}"
 
-#: lib/ptxprint/gtkview.py:5038
+#: lib/ptxprint/gtkview.py:5047
 msgid "Installed the downloaded Image Set: {}"
 msgstr "تم تثبيت مجموعة الصور التي تم تنزيلها: {}"
 
-#: lib/ptxprint/gtkview.py:5042
+#: lib/ptxprint/gtkview.py:5051
 msgid "Unzipped images to {}"
 msgstr "فك ضغط الصور إلى {}"
 
-#: lib/ptxprint/gtkview.py:5120
+#: lib/ptxprint/gtkview.py:5129
 msgid "Unsupported Locale"
 msgstr "محلية غير مدعومة"
 
-#: lib/ptxprint/gtkview.py:5121
+#: lib/ptxprint/gtkview.py:5130
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "هذا الإعدادات المحلية غير مدعومة على النظام الخاص بك، قد تحتاج إلى تثبيته"
 
-#: lib/ptxprint/gtkview.py:5350
+#: lib/ptxprint/gtkview.py:5357
 msgid "Strong's Index generated in: {}"
 msgstr "مؤشر القوة الذي تم إنشاؤه في: {}"
 
-#: lib/ptxprint/gtkview.py:5394
+#: lib/ptxprint/gtkview.py:5401
 msgid " \\periphs in Front Matter"
 msgstr " \\الرؤساء في المادة الأمامية"
 
-#: lib/ptxprint/gtkview.py:5398
+#: lib/ptxprint/gtkview.py:5405
 msgid "Overwrite"
 msgstr "استبدال"
 
-#: lib/ptxprint/gtkview.py:5398
+#: lib/ptxprint/gtkview.py:5405
 msgid "Create"
 msgstr "إنشاء"
 
-#: lib/ptxprint/gtkview.py:5485 lib/ptxprint/gtkview.py:6072
+#: lib/ptxprint/gtkview.py:5492 lib/ptxprint/gtkview.py:6090
 msgid "Please fill in any missing <Values> on"
 msgstr "يُرجى ملء أي معلومات ناقصة <Values> على"
 
-#: lib/ptxprint/gtkview.py:5486 lib/ptxprint/gtkview.py:6073
+#: lib/ptxprint/gtkview.py:5493 lib/ptxprint/gtkview.py:6091
 msgid "the Peripherals tab before proceeding."
 msgstr "علامة التبويب الأجهزة الطرفية قبل المتابعة."
 
-#: lib/ptxprint/gtkview.py:5487
+#: lib/ptxprint/gtkview.py:5494
 msgid "Update the ISBN number or delete the entry."
 msgstr "قم بتحديث رقم ISBN أو احذف الإدخال."
 
-#: lib/ptxprint/gtkview.py:5541
+#: lib/ptxprint/gtkview.py:5548
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -887,57 +890,57 @@ msgstr "FYI: خيار الخط الخطي هذا غير متوافق مع\n"
 "'تعديلات المسافة بين الحروف' في صفحة الخط +Script.\n"
 "لذلك تم تعطيل هذا الخيار."
 
-#: lib/ptxprint/gtkview.py:5582
+#: lib/ptxprint/gtkview.py:5589
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "يتوفر إصدار أحدث من PTXprint ({}).\n"
 "انقر لزيارة صفحة التحميل على الموقع."
 
-#: lib/ptxprint/gtkview.py:5603
+#: lib/ptxprint/gtkview.py:5610
 msgid "Internet Access Disabled"
 msgstr "الوصول إلى الإنترنت معطل"
 
-#: lib/ptxprint/gtkview.py:5603
+#: lib/ptxprint/gtkview.py:5610
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "تم تعطيل جميع عناوين الإنترنت \n"
 "باستخدام الخيار على علامة التبويب المتقدمة"
 
-#: lib/ptxprint/gtkview.py:5631
+#: lib/ptxprint/gtkview.py:5638
 msgid "<Type Value Here>"
 msgstr "<Type Value Here>"
 
-#: lib/ptxprint/gtkview.py:5650
+#: lib/ptxprint/gtkview.py:5657
 msgid "Variable Name"
 msgstr "اسم المتغير"
 
-#: lib/ptxprint/gtkview.py:5704
+#: lib/ptxprint/gtkview.py:5711
 msgid "Category Name"
 msgstr "اسم الفئة"
 
-#: lib/ptxprint/gtkview.py:5806
+#: lib/ptxprint/gtkview.py:5813
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "تحذير: لا يمكن حذف\n"
 "بعض المجلدات المؤقتة:"
 
-#: lib/ptxprint/gtkview.py:5908
+#: lib/ptxprint/gtkview.py:5926
 msgid "What did Mary say that God had done?"
 msgstr "ماذا قالت مريم أن الله قد فعل؟"
 
-#: lib/ptxprint/gtkview.py:5911
+#: lib/ptxprint/gtkview.py:5929
 msgid "What does it means to bless someone?"
 msgstr "ماذا يعني أن تبارك شخصاً ما؟"
 
-#: lib/ptxprint/gtkview.py:5912
+#: lib/ptxprint/gtkview.py:5930
 msgid "What do you know about the high priest?"
 msgstr "ماذا تعرف عن رئيس الكهنة؟"
 
-#: lib/ptxprint/gtkview.py:5949 temp.glade:25954
+#: lib/ptxprint/gtkview.py:5967 temp.glade:25954
 msgid "Main Title   -   Subtitle"
 msgstr "العنوان الرئيسي - العنوان الفرعي"
 
-#: lib/ptxprint/gtkview.py:5951
+#: lib/ptxprint/gtkview.py:5969
 msgid "Main\n"
 "Title\n\n"
 "Subtitle"
@@ -945,47 +948,47 @@ msgstr "الرئيسي\n"
 "العنوان\n\n"
 "العنوان العنوان الفرعي"
 
-#: lib/ptxprint/gtkview.py:6034
+#: lib/ptxprint/gtkview.py:6052
 msgid "No illustrations were detected for this configuration."
 msgstr "لم يتم اكتشاف أي رسوم توضيحية لهذا التكوين."
 
-#: lib/ptxprint/gtkview.py:6460
+#: lib/ptxprint/gtkview.py:6478
 msgid "PDF saved as: "
 msgstr "PDF محفوظ كـ: "
 
-#: lib/ptxprint/gtkview.py:6463 lib/ptxprint/gtkview.py:6465
+#: lib/ptxprint/gtkview.py:6481 lib/ptxprint/gtkview.py:6483
 msgid "Error saving PDF: "
 msgstr "خطأ في حفظ ملف PDF: "
 
-#: lib/ptxprint/gtkview.py:6464
+#: lib/ptxprint/gtkview.py:6482
 msgid "Unable to save the PDF in the new location:"
 msgstr "تعذر حفظ ملف PDF في الموقع الجديد:"
 
-#: lib/ptxprint/gtkview.py:6476
+#: lib/ptxprint/gtkview.py:6494
 msgid "Invalid Anchor; use format: JHN 3.16"
 msgstr "مرساة غير صالحة؛ استخدم التنسيق: JHN 3.16"
 
-#: lib/ptxprint/gtkview.py:6482
+#: lib/ptxprint/gtkview.py:6500
 msgid "There is a picture at that verse.{}Choose a different verse as anchor."
 msgstr "هناك صورة في تلك الآية.{} اختر آية أخرى كمرساة."
 
-#: lib/ptxprint/gtkview.py:6597
+#: lib/ptxprint/gtkview.py:6615
 msgid "Document based"
 msgstr "مستند المستند"
 
-#: lib/ptxprint/gtkview.py:6598 temp.glade:1528
+#: lib/ptxprint/gtkview.py:6616 temp.glade:1528
 msgid "Chapter Verse"
 msgstr "فصل في الآية"
 
-#: lib/ptxprint/gtkview.py:6599 temp.glade:1532
+#: lib/ptxprint/gtkview.py:6617 temp.glade:1532
 msgid "Scored"
 msgstr "تم التسجيل"
 
-#: lib/ptxprint/gtkview.py:6600 temp.glade:1536
+#: lib/ptxprint/gtkview.py:6618 temp.glade:1536
 msgid "Scored (Chapter)"
 msgstr "مسجل (الفصل)"
 
-#: lib/ptxprint/gtkview.py:6601 temp.glade:1540
+#: lib/ptxprint/gtkview.py:6619 temp.glade:1540
 msgid "Scored (Verse)"
 msgstr "مسجّل (الآية)"
 
@@ -1001,12 +1004,13 @@ msgstr "{} لم يتم العثور على ملف Hyvination الخاص بمشر
 
 #: lib/ptxprint/hyphen.py:54
 msgid "Hyphenation List Empty"
-msgstr ""
+msgstr "قائمة الهايفن فارغة"
 
 #: lib/ptxprint/hyphen.py:55
 msgid "{} Paratext Project's Hyphenation file does not contain any entries:\n"
 "{}"
-msgstr ""
+msgstr "{} ملف الهايفن الخاص بمشروع Paratext لا يحتوي على أية مدخلات:\n"
+"{}"
 
 #: lib/ptxprint/hyphen.py:73
 msgid "\n\n"
@@ -1056,7 +1060,7 @@ msgstr "لم يتم العثور على أي كلمات صحيحة في قائم
 
 #: lib/ptxprint/pdf_viewer.py:26
 msgid "Paragraph"
-msgstr ""
+msgstr "فقرة"
 
 #: lib/ptxprint/pdf_viewer.py:26 lib/ptxprint/pdf_viewer.py:27
 msgid "Column"
@@ -1068,7 +1072,7 @@ msgstr "الصفحة"
 
 #: lib/ptxprint/pdf_viewer.py:26
 msgid "Spread"
-msgstr ""
+msgstr "انتشار"
 
 #: lib/ptxprint/pdf_viewer.py:27
 msgid "Span"
@@ -1161,23 +1165,23 @@ msgstr "غير محدد"
 
 #: lib/ptxprint/pdf_viewer.py:44
 msgid "SpeedSlice"
-msgstr ""
+msgstr "قص السرعة"
 
 #: lib/ptxprint/pdf_viewer.py:45
 msgid "Yes! Shrink -1 line"
-msgstr ""
+msgstr "نعم! تقليص -1 خط"
 
 #: lib/ptxprint/pdf_viewer.py:46
 msgid "Try Shrink -1 line"
-msgstr ""
+msgstr "حاول تقليص -1 خط"
 
 #: lib/ptxprint/pdf_viewer.py:47
 msgid "Expand +1 line"
-msgstr ""
+msgstr "توسيع +1 خط"
 
 #: lib/ptxprint/pdf_viewer.py:48
 msgid "Reset Adjustments"
-msgstr ""
+msgstr "إعادة ضبط التعديلات"
 
 #: lib/ptxprint/pdf_viewer.py:49
 msgid "Shrink Text"
@@ -1209,7 +1213,7 @@ msgstr "تكبير 100%"
 
 #: lib/ptxprint/pdf_viewer.py:56
 msgid "Anchored at:"
-msgstr ""
+msgstr "مرتبط عند:"
 
 #: lib/ptxprint/pdf_viewer.py:57
 msgid "Image Anchor Not Found"
@@ -1266,7 +1270,7 @@ msgstr "فروق الأسعار:"
 
 #: lib/ptxprint/pdf_viewer.py:859
 msgid "Show {} underfilled page.{}(None identified)"
-msgstr ""
+msgstr "إظهار الصفحة الناقصة {}."
 
 #: lib/ptxprint/pdf_viewer.py:905
 msgid "Show {} underfilled page."
@@ -1286,19 +1290,19 @@ msgstr "في علامة تبويب التشطيب لإعادة تمكين"
 
 #: lib/ptxprint/pdf_viewer.py:1534 lib/ptxprint/pdf_viewer.py:1537
 msgid "first"
-msgstr ""
+msgstr "الأول"
 
 #: lib/ptxprint/pdf_viewer.py:1535 lib/ptxprint/pdf_viewer.py:1536
 msgid "last"
-msgstr ""
+msgstr "الأخير"
 
 #: lib/ptxprint/pdf_viewer.py:1538 lib/ptxprint/pdf_viewer.py:1541
 msgid "next"
-msgstr ""
+msgstr "التالي"
 
 #: lib/ptxprint/pdf_viewer.py:1539 lib/ptxprint/pdf_viewer.py:1540
 msgid "previous"
-msgstr ""
+msgstr "السابق"
 
 #: lib/ptxprint/pdf_viewer.py:1567
 msgid "An error occurred while printing: "
@@ -1467,7 +1471,7 @@ msgstr "وتحقق مما إذا كانت قاعدة خاطئة في PrintDraftC
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "فشل دمج النصوص بسبب خطأ في بناء الصياغة:"
 
-#: lib/ptxprint/runjob.py:468 lib/ptxprint/texmodel.py:1100
+#: lib/ptxprint/runjob.py:468 lib/ptxprint/texmodel.py:1107
 msgid "Run the Basic Checks in Paratext to ensure there are no Marker errors in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well."
 msgstr "قم بتشغيل الفحوص الأساسية في Paratext للتأكد من عدم وجود أخطاء علامات في أي من مشاريع الحفر. إذا استمر هذا الخطأ، حاول تشغيل نظام التحقق في Paratext أيضا."
 
@@ -1475,102 +1479,102 @@ msgstr "قم بتشغيل الفحوص الأساسية في Paratext للتأك
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - خطأ الدمج"
 
-#: lib/ptxprint/runjob.py:625
+#: lib/ptxprint/runjob.py:626
 msgid "table of contents"
 msgstr "جدول المحتويات"
 
-#: lib/ptxprint/runjob.py:626
+#: lib/ptxprint/runjob.py:627
 msgid "image copyrights"
 msgstr "حقوق نسخ الصور"
 
-#: lib/ptxprint/runjob.py:627
+#: lib/ptxprint/runjob.py:628
 msgid "chapter positions"
 msgstr "مناصب الفصل"
 
-#: lib/ptxprint/runjob.py:677
+#: lib/ptxprint/runjob.py:678
 msgid "Rerunning because the {} changed"
 msgstr "رمي لأن {} تغير"
 
-#: lib/ptxprint/runjob.py:686
+#: lib/ptxprint/runjob.py:687
 msgid "Rerunning because the delayed file asked us to"
 msgstr "إعادة التشغيل لأن الملف المؤجل طلب منا"
 
-#: lib/ptxprint/runjob.py:762
+#: lib/ptxprint/runjob.py:763
 msgid "No differences found"
 msgstr "لم يتم العثور على فروق"
 
-#: lib/ptxprint/runjob.py:789 lib/ptxprint/runjob.py:794
+#: lib/ptxprint/runjob.py:790 lib/ptxprint/runjob.py:795
 msgid "pages"
 msgstr "الصفحات"
 
-#: lib/ptxprint/runjob.py:789 lib/ptxprint/runjob.py:794
+#: lib/ptxprint/runjob.py:790 lib/ptxprint/runjob.py:795
 msgid "page"
 msgstr "الصفحة"
 
-#: lib/ptxprint/runjob.py:792
+#: lib/ptxprint/runjob.py:793
 msgid "Check pages:"
 msgstr "راجع الصفحات:"
 
-#: lib/ptxprint/runjob.py:806 lib/ptxprint/runjob.py:808
+#: lib/ptxprint/runjob.py:807 lib/ptxprint/runjob.py:809
 msgid "Layout problems were encountered on page(s): "
 msgstr "تمت مواجهة مشاكل التخطيط في الصفحات: "
 
-#: lib/ptxprint/runjob.py:807
+#: lib/ptxprint/runjob.py:808
 msgid "PDF was created BUT..."
 msgstr "تم إنشاء PDF BUT..."
 
-#: lib/ptxprint/runjob.py:809
+#: lib/ptxprint/runjob.py:810
 msgid "\n\n"
 "Try changing the PicList and/or AdjList settings to solve issues."
 msgstr "\n\n"
 "حاول تغيير إعدادات القائمة و/أو القائمة لحل المشاكل."
 
-#: lib/ptxprint/runjob.py:810
+#: lib/ptxprint/runjob.py:811
 msgid "PTXprint [{}] - Warning!"
 msgstr "PTXprint [{}] - تحذير!"
 
-#: lib/ptxprint/runjob.py:816 lib/ptxprint/runjob.py:828
-#: lib/ptxprint/runjob.py:833
+#: lib/ptxprint/runjob.py:817 lib/ptxprint/runjob.py:829
+#: lib/ptxprint/runjob.py:834
 msgid "Failed to create: "
 msgstr "فشل في الإنشاء: "
 
-#: lib/ptxprint/runjob.py:817
+#: lib/ptxprint/runjob.py:818
 msgid "Faulty PDF, could not parse"
 msgstr "ملف PDF خاطئ، تعذر التحليل"
 
-#: lib/ptxprint/runjob.py:825
+#: lib/ptxprint/runjob.py:826
 msgid "To fix this error: Use a different font which is not a Variable Font."
 msgstr "لإصلاح هذا الخطأ: استخدم خطًا مختلفًا ليس خطًا متغيرًا."
 
-#: lib/ptxprint/runjob.py:827
+#: lib/ptxprint/runjob.py:828
 msgid "Bad xdvi file, probably failed to load a picture or font"
 msgstr "ملف xdvi تالف، ربما فشل في تحميل صورة أو خط"
 
-#: lib/ptxprint/runjob.py:838
+#: lib/ptxprint/runjob.py:839
 msgid "Rerun to fix: "
 msgstr "إعادة إلى الإصلاح: "
 
-#: lib/ptxprint/runjob.py:923
+#: lib/ptxprint/runjob.py:924
 msgid "There might be a marker issue in the Extended Study Notes"
 msgstr "قد تكون هناك مسألة تتعلق بالعلامات في مذكرات الدراسة الموسعة"
 
-#: lib/ptxprint/runjob.py:991
+#: lib/ptxprint/runjob.py:992
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "تحذير: لا يمكن تحديد موقع PDF(ات) الزخرفة:"
 
-#: lib/ptxprint/runjob.py:1052
+#: lib/ptxprint/runjob.py:1053
 msgid "({} Missing)"
 msgstr "({} مفقود)"
 
-#: lib/ptxprint/runjob.py:1053
+#: lib/ptxprint/runjob.py:1054
 msgid "Missing Pictures: {}"
 msgstr "الصور المفقودة {}"
 
-#: lib/ptxprint/runjob.py:1056 temp.glade:16012
+#: lib/ptxprint/runjob.py:1057 temp.glade:16012
 msgid "(0 Missing)"
 msgstr "(0 مفقود)"
 
-#: lib/ptxprint/runjob.py:1182
+#: lib/ptxprint/runjob.py:1183
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "خطأ: غير قادر على نسخ {}\n"
@@ -1588,31 +1592,31 @@ msgstr "إظهار الواصلة"
 msgid "First verse on left"
 msgstr "الآية الأولى على اليسار"
 
-#: lib/ptxprint/texmodel.py:418
+#: lib/ptxprint/texmodel.py:419
 msgid "Missing font ({})"
 msgstr "الخط مفقود ({})"
 
-#: lib/ptxprint/texmodel.py:905
+#: lib/ptxprint/texmodel.py:906
 msgid "If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \\ (e.g. \\\\p and \\\\v) as is required by the latest version."
 msgstr "إذا ظهر هذا الخطأ بعد الترقية، فتحقق مما إذا كانت علامات USFM مثل \\p و \\v المستخدمة في قواعد change.txt قد تم \"الهروب\" منها باستخدام \\\\p و \\v إضافية (على سبيل المثال \\p و \\v) كما هو مطلوب في الإصدار الأخير."
 
-#: lib/ptxprint/texmodel.py:1089
+#: lib/ptxprint/texmodel.py:1096
 msgid "Examine line {} in {} on the 'Final SFM' tab of the View+Edit page to determine the cause of this issue related to marker: {} as found in the markers: {}."
 msgstr "افحص السطر {} في {} في علامة التبويب \"SFM\" النهائية لصفحة \"View+Edit لتحديد سبب هذه المسألة المتصلة بالعلامة: {} كما هو موجود في العلامات: {}."
 
-#: lib/ptxprint/texmodel.py:1092
+#: lib/ptxprint/texmodel.py:1099
 msgid "This warning was triggered due to 'Auto-Correct USFM' being enabled on the Advanced tab but is due to an orphaned marker. It means the marker does not belong in that position, or it is missing a valid parent marker."
 msgstr "وقد بدأ هذا التحذير بسبب تمكين \"تصحيح تلقائي لدولار الولايات المتحدة\" على علامة التبويب المتقدمة، ولكنه يرجع إلى وجود علامة يتيمة. وهذا يعني أن العلامة لا تنتمي إلى تلك الوظيفة، أو أنها لا تنتمي إلى علامة أم صالحة."
 
-#: lib/ptxprint/texmodel.py:1098
+#: lib/ptxprint/texmodel.py:1105
 msgid "And check if a faulty rule in changes.txt has caused the error(s)."
 msgstr "وتحقق مما إذا كانت قاعدة خاطئة في التغييرات.txt قد تسببت في الخطأ."
 
-#: lib/ptxprint/texmodel.py:1099
+#: lib/ptxprint/texmodel.py:1106
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr "فشل في تطبيع النصوص بسبب خطأ في بناء الصياغة: "
 
-#: lib/ptxprint/texmodel.py:1709
+#: lib/ptxprint/texmodel.py:1671
 msgid "\\message{{Warning: No copyright statement found for: {} on pages {}}}"
 msgstr "\\الرسالة \\{{تحذير: لم يتم العثور على بيان حقوق الطبع والنشر لـ: {} على الصفحات {}}}}}"
 
@@ -2187,20 +2191,21 @@ msgstr "تعطيل إخراج الشفافية في PDF"
 
 #: lib/ptxprint/texpert.py:177
 msgid "Show adjust points"
-msgstr ""
+msgstr "إظهار نقاط التعديل"
 
 #: lib/ptxprint/texpert.py:178
 msgid "Show adjust points in the margin of the text."
-msgstr ""
+msgstr "إظهار نقاط التعديل في هامش النص."
 
 #: lib/ptxprint/texpert.py:179
 msgid "Show USFM codes"
-msgstr ""
+msgstr "إظهار رموز USFM"
 
 #: lib/ptxprint/texpert.py:180
 msgid "Show the USFM marker of paragraphs.\n"
 "Note that displaying these                                markers may result in changes to the layout of the text."
-msgstr ""
+msgstr "إظهار علامة USFM في الفقرات.\n"
+"لاحظ أن عرض هذه العلامات قد يؤدي إلى تغييرات في تخطيط النص."
 
 #: lib/ptxprint/texpert.py:182
 msgid "Show Error Bars For Overfull Lines"
@@ -2208,7 +2213,7 @@ msgstr "إظهار أشرطة الخطأ للخطوط الإجمالية"
 
 #: lib/ptxprint/texpert.py:183
 msgid "Enable this option to have TeX make overfull lines stand out."
-msgstr ""
+msgstr "تمكين هذا الخيار لجعل TeX يبرز الخطوط المكتملة."
 
 #: lib/ptxprint/texpert.py:188
 msgid "Underline Spaces"
@@ -2300,11 +2305,11 @@ msgstr "تحديد مقدار النص الذي يمكن توسيعه باستخ
 
 #: lib/ptxprint/texpert.py:211
 msgid "Auto-Update Delay (seconds)"
-msgstr ""
+msgstr "تأخير التحديث التلقائي (بالثواني)"
 
 #: lib/ptxprint/texpert.py:212
 msgid "Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-Update from running."
-msgstr ""
+msgstr "النقر بزر الفأرة الأيمن مرة أخرى على ملف PDF خلال هذه المدة (الإعداد الافتراضي 3 ثوانٍ) سيمنع التحديث التلقائي من التشغيل."
 
 #: lib/ptxprint/utils.py:437 temp.glade:14281 temp.glade:14334 temp.glade:14387
 msgid "First Reference"
@@ -2357,57 +2362,57 @@ msgstr "يجب عدم إدراج تقرير مراجعة الحسابات في �
 msgid "The 'Front Matter' option has now been enabled for you on the Peripherals page and the contents of Paratext's FRT book has been copied to the PTXprint settings location for this publication. It can be edited if needed on the View+Edit page."
 msgstr "تم الآن تمكين خيار \"الأمر الأمامي\" لك في صفحة المحيط، وتم نسخ محتويات كتاب Paratext FRT إلى موقع إعدادات PTXprint لهذا النشر. يمكن تعديله إذا لزم الأمر على صفحة العرض +التحرير."
 
-#: lib/ptxprint/view.py:693
+#: lib/ptxprint/view.py:692
 msgid "Syntax Error Warning"
 msgstr "تحذير من خطأ في بناء الجملة"
 
-#: lib/ptxprint/view.py:700
+#: lib/ptxprint/view.py:699
 msgid "PTXprint {} - Bible Layout for Everyone!"
 msgstr "PTXprint {} - تخطيط الكتاب المقدس للجميع!"
 
-#: lib/ptxprint/view.py:714
+#: lib/ptxprint/view.py:713
 msgid "No book selected!"
 msgstr "لم يتم اختيار كتاب!"
 
-#: lib/ptxprint/view.py:747
+#: lib/ptxprint/view.py:746
 msgid "Json parsing error in {}"
 msgstr "خطأ في تحليل Json في {}"
 
-#: lib/ptxprint/view.py:748
+#: lib/ptxprint/view.py:747
 msgid "{} at line {} col {}"
 msgstr "{} في السطر {} col {}"
 
-#: lib/ptxprint/view.py:1616
+#: lib/ptxprint/view.py:1618
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "الخط الاحتياطي يجب أن يكون شيئا آخر غير الخط العادي."
 
-#: lib/ptxprint/view.py:1617 lib/ptxprint/view.py:1625
+#: lib/ptxprint/view.py:1619 lib/ptxprint/view.py:1627
 msgid "Please select a different Font."
 msgstr "الرجاء تحديد خط مختلف."
 
-#: lib/ptxprint/view.py:1624
+#: lib/ptxprint/view.py:1626
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "خط الرجوع المحدد فقط لا يدعم جميع الأحرف المفقودة المدرجة في القائمة."
 
-#: lib/ptxprint/view.py:1709
+#: lib/ptxprint/view.py:1711
 #, python-brace-format
 msgid "No Config found for Diglot [{suffix}]"
-msgstr ""
+msgstr "لم يتم العثور على تكوين للطباعة المشتركة [{suffix}]"
 
-#: lib/ptxprint/view.py:1718
+#: lib/ptxprint/view.py:1720
 #, python-brace-format
 msgid "No Config found for diglot: {cfg}"
-msgstr ""
+msgstr "لم يتم العثور على تكوين للطباعة المشتركة: {cfg}"
 
-#: lib/ptxprint/view.py:1917
+#: lib/ptxprint/view.py:1919
 msgid "Error: Cannot create Archive!"
 msgstr "خطأ: لا يمكن إنشاء أرشيف!"
 
-#: lib/ptxprint/view.py:1917
+#: lib/ptxprint/view.py:1919
 msgid "The ZIP file seems to be open in another program."
 msgstr "يبدو أن ملف ZIP مفتوح في برنامج آخر."
 
-#: lib/ptxprint/view.py:1962
+#: lib/ptxprint/view.py:1964
 msgid "Warning: The print job failed, and so the archive is incomplete"
 msgstr "تحذير: فشلت مهمة الطباعة، لذا فإن الأرشيف غير مكتمل"
 
@@ -2453,12 +2458,12 @@ msgstr "(قريبًا...)\n"
 
 #: temp.glade:1102 temp.glade:3830
 msgid "Show main PTXprint settings"
-msgstr ""
+msgstr "إظهار الإعدادات الرئيسية لـ PTXprint"
 
 #: temp.glade:1105 temp.glade:3834
 msgid "Show the main PTXprint\n"
 "dialog with all the settings. "
-msgstr ""
+msgstr "إظهار لوحة PTXprint الرئيسية مع جميع الإعدادات."
 
 #: temp.glade:1114 temp.glade:5374
 msgid "A saved configuration can be copied to\n"
@@ -2638,7 +2643,7 @@ msgstr "Burmese"
 
 #: temp.glade:1524
 msgid "Description based"
-msgstr ""
+msgstr "الوصف المبني"
 
 #: temp.glade:1554
 msgid "Pri (Left)"
@@ -2734,19 +2739,19 @@ msgstr "\\أو الحفاظ على \\أو كما هو \\و*"
 
 #: temp.glade:1808
 msgid "Whole Page"
-msgstr ""
+msgstr "الصفحة كاملة"
 
 #: temp.glade:1812
 msgid "In Margin Areas"
-msgstr ""
+msgstr "في مناطق الهامش"
 
 #: temp.glade:1813
 msgid "margin"
-msgstr ""
+msgstr "هامش"
 
 #: temp.glade:1816
 msgid "Only in Text Area"
-msgstr ""
+msgstr "فقط في منطقة النص"
 
 #: temp.glade:1830
 msgid "Centimeters"
@@ -3086,71 +3091,71 @@ msgstr "رأس"
 
 #: temp.glade:3008
 msgid "Title"
-msgstr ""
+msgstr "العنوان"
 
 #: temp.glade:3016
 msgid "Introduction Character"
-msgstr ""
+msgstr "حرف المقدمة"
 
 #: temp.glade:3020
 msgid "Section Paragraph"
-msgstr ""
+msgstr "فقرة القسم"
 
 #: temp.glade:3024
 msgid "Verse Paragraph"
-msgstr ""
+msgstr "فقرة الآية"
 
 #: temp.glade:3028
 msgid "Character"
-msgstr ""
+msgstr "محرف"
 
 #: temp.glade:3032
 msgid "List"
-msgstr ""
+msgstr "قائمة"
 
 #: temp.glade:3036
 msgid "List Character"
-msgstr ""
+msgstr "محرف القائمة"
 
 #: temp.glade:3040
 msgid "Milestone"
-msgstr ""
+msgstr "معلم"
 
 #: temp.glade:3044
 msgid "Standalone Milestone"
-msgstr ""
+msgstr "معلم مستقل"
 
 #: temp.glade:3048
 msgid "Other Paragraph"
-msgstr ""
+msgstr "فقرة أخرى"
 
 #: temp.glade:3052
 msgid "Cross Reference"
-msgstr ""
+msgstr "الإشارة المرجعية"
 
 #: temp.glade:3056
 msgid "Cross Reference Character"
-msgstr ""
+msgstr "محرف الإشارة المرجعية"
 
 #: temp.glade:3060
 msgid "Footnote"
-msgstr ""
+msgstr "حاشية سفلية"
 
 #: temp.glade:3064
 msgid "Footnote Character"
-msgstr ""
+msgstr "محرف الحاشية السفلية"
 
 #: temp.glade:3068
 msgid "Cell"
-msgstr ""
+msgstr "خلية"
 
 #: temp.glade:3072
 msgid "Attribute"
-msgstr ""
+msgstr "إسناد"
 
 #: temp.glade:3080
 msgid "Internal"
-msgstr ""
+msgstr "داخلي"
 
 #: temp.glade:3106
 msgid "Gridded Center"
@@ -3299,7 +3304,7 @@ msgstr "تكبير مناسب للشاشة"
 
 #: temp.glade:3543
 msgid "100%"
-msgstr ""
+msgstr "100%"
 
 #: temp.glade:3544 temp.glade:3548
 msgid "Reset Zoom to 100%"
@@ -3373,7 +3378,7 @@ msgstr "ابحث عن الصفحة التالية ناقصة التعبئة"
 
 #: temp.glade:3737
 msgid "Show previous underfilled page."
-msgstr ""
+msgstr "إظهار الصفحة الناقصة السابقة."
 
 #: temp.glade:3755
 msgid "Show next underfilled page."
@@ -3383,7 +3388,9 @@ msgstr "إظهار الصفحة التالية ناقصة التعبئة."
 msgid "Click here to change the\n"
 "Auto-update delay in\n"
 "Advanced > Other options."
-msgstr ""
+msgstr "اضغط هنا لتغيير\n"
+"تأخير التحديث التلقائي في\n"
+"خيارات متقدمة > خيارات أخرى."
 
 #: temp.glade:3803
 msgid "Print (Update PDF)"
@@ -3393,7 +3400,9 @@ msgstr "طباعة (تحديث PDF)"
 msgid "Update the PDF\n\n"
 "Shortcuts: Ctrl-P or click \n"
 "the middle mouse button"
-msgstr ""
+msgstr "تحديث PDF\n\n"
+"الاختصارات: Ctrl-P أو انقر \n"
+"بالزر الأوسط للفأرة"
 
 #: temp.glade:3897
 msgid "Preview Pane: Open folder containing the PDF"
@@ -3413,7 +3422,7 @@ msgstr "اطبع ملف PDF على الورق"
 
 #: temp.glade:3983
 msgid "Auto-update"
-msgstr ""
+msgstr "التحديث التلقائي"
 
 #: temp.glade:3987
 msgid "When enabled, this re-creates\n"
@@ -3427,7 +3436,12 @@ msgid "When enabled, this re-creates\n"
 "This delay can be adjusted.\n"
 "Refer to: Advanced > Other > \n"
 "Other Miscellaneous Settings."
-msgstr ""
+msgstr "عند التمكين، يقوم بإعادة إنشاء PDF بعد إجراء التغييرات\n"
+"باستخدام خيارات قائمة السياق (النقر بزر الفأرة الأيمن).\n\n"
+"لاحظ أن هناك تأخير قصير يسمح لك بإجراء\n"
+"عدة تعديلات واحداً تلو الآخر قبل بدء التحديث.\n"
+"يمكن تعديل هذا التأخير.\n"
+"يرجى الرجوع إلى: خيارات متقدمة > أخرى > إعدادات مختلفة أخرى."
 
 #: temp.glade:4012
 msgid "Book View"
@@ -3443,15 +3457,15 @@ msgstr "التبديل بين عرض الصفحة الواحدة\n"
 
 #: temp.glade:4039
 msgid "Show:"
-msgstr ""
+msgstr "إظهار:"
 
 #: temp.glade:4049
 msgid "Adjustments"
-msgstr ""
+msgstr "التعديلات"
 
 #: temp.glade:4050
 msgid "Adjustments "
-msgstr ""
+msgstr "التعديلات "
 
 #: temp.glade:4054
 msgid "Show color-coded lines on the left \n"
@@ -3469,42 +3483,58 @@ msgid "Show color-coded lines on the left \n"
 "Interleaved red+blue indicates\n"
 "that both lines and words have\n"
 "been stretched/expanded."
-msgstr ""
+msgstr "عرض خطوط ملونة على الحواف اليسرى\n"
+"واليمنى للفقرات لتوضيح\n"
+"نوع التقلص أو التمدد المُطبّق\n"
+"وكذلك الكمية (سمك الخط).\n\n"
+"هذه التعليقات التوضيحية ليست\n"
+"جزءًا من ملف PDF، ولكن توجد فقط\n"
+"على النص للمساعدة في تحسين التخطيط.\n\n"
+"رمز:\n\n"
+"اليسار=تقليص       اليمين=تمدد\n\n"
+"الأزرق=تقليص/تمدد الخطوط\n"
+"الأحمر=تقليص/تمدد النص\n\n"
+"يُظهر الأحمر+الأزرق المدموج\n"
+"أن الخطوط والكلمات قد تم\n"
+"تمديدها/تقليصها."
 
 #: temp.glade:4086
 msgid "Paragraph Boxes"
-msgstr ""
+msgstr "صناديق الفقرة"
 
 #: temp.glade:4087
 msgid "Show Paragraph Boxes "
-msgstr ""
+msgstr "إظهار صناديق الفقرة "
 
 #: temp.glade:4091
 msgid "Draw boxes around the boundaries\n"
 "of all adjustable paragraphs."
-msgstr ""
+msgstr "رسم مربعات حول حدود\n"
+"جميع الفقرات القابلة للتعديل."
 
 #: temp.glade:4104
 msgid "Guides and Baselines"
-msgstr ""
+msgstr "الخطوط الإرشادية والأساسات"
 
 #: temp.glade:4105
 msgid "Show guides and baselines"
-msgstr ""
+msgstr "إظهار الخطوط الإرشادية والأساسات"
 
 #: temp.glade:4109
 msgid "This option displays various guides \n"
 "(showing margins, headers and footers) \n"
 "as well as the baselines of the body text."
-msgstr ""
+msgstr "يعرض هذا الخيار خطوطًا إرشادية متنوعة\n"
+" (تظهر الهوامش والرؤوس والتذييلات)\n"
+"وكذلك خطوط الأساس للنص الأساسي."
 
 #: temp.glade:4128
 msgid "Grid"
-msgstr ""
+msgstr "شبكة"
 
 #: temp.glade:4129
 msgid "Show grid (graph paper)"
-msgstr ""
+msgstr "عرض الشبكة (ورق مربعات)"
 
 #: temp.glade:4133
 msgid "If the standard Rules and Guides are inadequate\n"
@@ -3516,7 +3546,7 @@ msgstr "إذا كانت القواعد القياسية والدلائل غير 
 
 #: temp.glade:4153
 msgid "Change the gridline settings."
-msgstr ""
+msgstr "تغيير إعدادات خطوط الشبكة."
 
 #: temp.glade:4192
 msgid "Contents:"
@@ -3538,15 +3568,15 @@ msgstr "المرساة المرجع:"
 
 #: temp.glade:4394
 msgid "Enter a new anchor verse"
-msgstr ""
+msgstr "إدخال آية مرسى جديدة"
 
 #: temp.glade:4462
 msgid "PTXprint: SpeedSlice™"
-msgstr ""
+msgstr "PTXprint: SpeedSlice™"
 
 #: temp.glade:4536
 msgid "Slice Dialog: Enter reference to begin SpeedSlice"
-msgstr ""
+msgstr "حوار القطع: إدخال المرجع لبدء قص السرعة"
 
 #: temp.glade:4542 temp.glade:4582
 msgid "Either enter a chapter number\n"
@@ -3555,76 +3585,88 @@ msgid "Either enter a chapter number\n"
 "preceding page (e.g. GEN 3:23)\n"
 "to begin the slice. Previous\n"
 "content will be skipped over."
-msgstr ""
+msgstr "اكتب رقماً للفصل للبدء (مثل يو 4) أو\n"
+"اكتب آخر آية في الصفحة السابقة (مثل تكوين 3:23)\n"
+"لبدء القطع. سيتم تخطي المحتوى السابق."
 
 #: temp.glade:4565
 msgid "Enter a chapter number (e.g. JHN 4)  or \n"
 "last verse of pevious page (e.g. GEN 3:23)"
-msgstr ""
+msgstr "إدخال رقم للفصل (مثل يو 4) أو \n"
+"آخر آية للصفحة السابقة (مثل تكوين 3:23)"
 
 #: temp.glade:4589
 msgid "Reference for\n"
 "Start of Slice:"
-msgstr ""
+msgstr "مرجع لبداية القطعة:"
 
 #: temp.glade:4599
 msgid "Slice Dialog: Enter first word on page"
-msgstr ""
+msgstr "حوار القطع: أدخل الكلمة الأولى على الصفحة"
 
 #: temp.glade:4605 temp.glade:4641
 msgid "Enter the first word\n"
 "on this page (where\n"
 "the Slice will begin)."
-msgstr ""
+msgstr "اكتب الكلمة الأولى\n"
+"على هذه الصفحة (حيث\n"
+"سيبدأ القطع)."
 
 #: temp.glade:4618
 msgid "Slice Dialog: Enter beginning marker"
-msgstr ""
+msgstr "حوار القطع: أدخل العلامة الابتدائية"
 
 #: temp.glade:4624
 msgid "What USFM marker needs to\n"
 "be used at the beginning of\n"
 "the Slice? (almost always \\m)"
-msgstr ""
+msgstr "ما هي العلامة USFM التي يجب أن\n"
+"تستخدم في بداية القطعة؟ (تقريبًا دائمًا \\m)"
 
 #: temp.glade:4629
 msgid "\\m"
-msgstr ""
+msgstr "\\m"
 
 #: temp.glade:4645
 msgid "First Word on \n"
 "This Page:"
-msgstr ""
+msgstr "الكلمة الأولى \n"
+"على هذه الصفحة:"
 
 #: temp.glade:4658
 msgid "What USFM marker needs to\n"
 "be used at the beginning of\n"
 "the Slice? (almost always \\m)\n"
-msgstr ""
+msgstr "ما هي العلامة USFM التي يجب أن\n"
+"تستخدم في بداية القطعة؟ (تقريبًا دائمًا \\m)\n"
 
 #: temp.glade:4663
 msgid "Slice Marker\n"
 "(usually \\m):"
-msgstr ""
+msgstr "علامة القطع\n"
+"(عادةً \\m):"
 
 #: temp.glade:4675
 msgid "Roughly how many chapters\n"
 "should the Slice contain?\n"
-msgstr ""
+msgstr "تقريبًا كم عدد الفصول\n"
+"التي يجب أن تحتويها القطعة؟\n"
 
 #: temp.glade:4679
 msgid "Length of Slice\n"
 "(in chapters):"
-msgstr ""
+msgstr "طول القطعة\n"
+"(بعدد الفصول):"
 
 #: temp.glade:4689
 msgid "Slice Dialog: Length of Slice"
-msgstr ""
+msgstr "حوار القطع: طول القطعة"
 
 #: temp.glade:4692
 msgid "Roughly how many chapters\n"
 "should the Slice contain?"
-msgstr ""
+msgstr "تقريبًا كم عدد الفصول\n"
+"التي يجب أن تحتويها القطعة؟"
 
 #: temp.glade:4823
 msgid "Paratext Project:"
@@ -4300,7 +4342,7 @@ msgstr "المساحة التي يجب أن تكون بها الفقرات\n"
 
 #: temp.glade:6149
 msgid "Base Indent:"
-msgstr ""
+msgstr "المسافة الأساسية:"
 
 #: temp.glade:6168
 msgid "This is the base font size for default paragraph \n"
@@ -4610,7 +4652,15 @@ msgid "Check this option to allow a different\n"
 "setting was set to 0 (rendering this\n"
 "setting inactive), and has now been\n"
 "increased to the default value of 3."
-msgstr ""
+msgstr "تفعيل هذا الخيار للسماح بوجود عدد مختلف من الخطوط في كل عمود. هذا\n"
+"مهم جداً عند استخدام وضع تباعد الخطوط المتغير\n"
+"وعند محاولة ملء الأعمدة.\n\n"
+"لتعديل الحد الأقصى لعدد الخطوط\n"
+"غير المتوازنة في نهاية الصفحة، انتقل إلى الصفحة المتقدمة،\n"
+"اختر علامة التبويب الأخرى، وقم بتوسيع قسم تخطيط الصفحة والتباعد.\n\n"
+"إذا كان هذا الإعداد مميزًا باللون البرتقالي\n"
+"، فهذا يعني أن الإعداد المذكور أعلاه تم تعيينه على 0 (مما يجعل هذا\n"
+"الإعداد غير نشط)، وقد تمت زيادته إلى القيمة الافتراضية 3."
 
 #: temp.glade:6681
 msgid "Thickness\n"
@@ -5075,7 +5125,9 @@ msgstr "تتضمن مواصفات العلامات في أوراق الأنما�
 msgid "To change the script for numbers, click here\n"
 "to locate the Digit Mapping setting at the end\n"
 "of the Font selection dialog."
-msgstr ""
+msgstr "لتغيير نمط الأرقام، انقر هنا\n"
+"لبحث عن إعداد ص_mapping_ رقمية\n"
+"في نهاية مربع اختيار الخط."
 
 #: temp.glade:8013
 msgid "Font Configuration"
@@ -5540,7 +5592,7 @@ msgstr "ja = اليابانية\n"
 #: temp.glade:8808
 msgid "RTL Book\n"
 "Binding"
-msgstr ""
+msgstr "ربط كتاب من اليمين إلى اليسار"
 
 #: temp.glade:8810
 msgid "Set the binding to Right (for RTL publications)"
@@ -5650,7 +5702,7 @@ msgstr "هذا الخيار متاح فقط إذا تم تحديد دفتر GLO\
 
 #: temp.glade:9005
 msgid "Start All Other Chapters on a New Page"
-msgstr ""
+msgstr "ابدأ جميع الفصول الأخرى في صفحة جديدة"
 
 #: temp.glade:9006
 msgid "Start every chapter on a new page"
@@ -9903,11 +9955,17 @@ msgid "The Layout string describes how\n"
 "A forward slash / indicates one\n"
 "text being under the other on the\n"
 "same page."
-msgstr ""
+msgstr "وصف التخطيط يصف كيف\n"
+"يجب أن تظهر النصوص المختلفة\n"
+"على الصفحة (الصفحات).\n\n"
+"جميع النصوص المذكورة في الجدول\n"
+"أعلاه يجب ذكرها. الفاصلة تمثل الصفحة التالية.\n"
+"شرطة مائلة / تعني نصًا واحدًا\n"
+"يظهر تحت الآخر على نفس الصفحة."
 
 #: temp.glade:18476
 msgid "LR,A/B"
-msgstr ""
+msgstr "LR,A/B"
 
 #: temp.glade:18513
 msgid "Auto-calculate optimum widths of diglot columns"
@@ -9930,7 +9988,16 @@ msgid "When the different texts of a diglot are merged, there are various \n"
 "* Scored (Verses) - as a minimum, forces alignment at each verse, which \n"
 "  can result in a lot of breaks!\n\n"
 "Note that for polyglots, only the Scored options are available to be used."
-msgstr ""
+msgstr "عند دمج النصوص المختلفة للطباعة المشتركة، هناك خوارزميات\n"
+"مختلفة يمكن استخدامها للحصول على أفضل نتيجة عامة:\n\n"
+"* المستند المستند - يحاول استخدام هيكل المستند لمطابقة الفقرات قدر الإمكان؛\n"
+"ولكن يصعب التطبيق عندما يكون لكل نص هيكل فقرة مختلف للغاية.\n\n"
+"* الفصل والآية - يطابق على الفصول والآيات بدلاً من الهيكل\n\n"
+"* الوزن - خوارزمية بديلة تستخدم الدرجات الموزونة والتي\n"
+"تحاول مطابقة الفقرات عندما تتطابق الأرقام\n\n"
+"* الوزن (الفصل) - على الأقل، يلزم المطابقة عند حدود الفصول\n\n"
+"* الوزن (الآيات) - على الأقل، يلزم المطابقة عند \n"
+"كل آية."
 
 #: temp.glade:18565
 msgid "Merging mode:"
@@ -9938,11 +10005,11 @@ msgstr "وضع الدمج:"
 
 #: temp.glade:18575
 msgid "Diglot/Polyglot: Merging Mode"
-msgstr ""
+msgstr "طباعة / طباعة مشتركة: وضع الدمج"
 
 #: temp.glade:18658
 msgid "Layout:"
-msgstr ""
+msgstr "تخطيط:"
 
 #: temp.glade:18669 temp.glade:18689
 msgid "Some books (e.g. Introduction, Glossary, Back Matter, etc.)\n"
@@ -9976,7 +10043,7 @@ msgstr "على سبيل المثال FRT BAK GLO XXA XXB"
 
 #: temp.glade:18708
 msgid "Diglot (or Polyglot)"
-msgstr ""
+msgstr "طباعة مشتركة (أو طباعة متعددة)"
 
 #: temp.glade:18709
 msgid "Enable diglot or discript publication"
@@ -9988,7 +10055,9 @@ msgid "A Diglot publication contains two\n"
 "A Polyglot contains more than two.\n"
 "Right-click in the table below to\n"
 "add other texts to the list."
-msgstr ""
+msgstr "تحتوي الطباعة المشتركة على لغتين، أو نصين.\n\n"
+"تحتوي الطباعة المتعددة على أكثر من اثنين.\n"
+"انقر بزر الفأرة الأيمن في الجدول أدناه لإضافة نصوص أخرى إلى القائمة."
 
 #: temp.glade:18741
 msgid "Create a diglot publication by selecting \n"
@@ -15431,7 +15500,7 @@ msgstr "تنزيل نموذج\n"
 
 #: temp.glade:33589
 msgid "PTXprint: Change the Grid Settings"
-msgstr ""
+msgstr "PTXprint: تغيير إعدادات الشبكة"
 
 #: temp.glade:33668
 msgid "Color"
@@ -15501,7 +15570,7 @@ msgstr "اعتماداً على ما تحاول\n"
 
 #: temp.glade:33830
 msgid "Place Grid:"
-msgstr ""
+msgstr "وضع الشبكة:"
 
 #: temp.glade:33839
 msgid "Grid: Reload default values"
@@ -15539,7 +15608,7 @@ msgstr "يمكن أن تبدأ الشبكة عند الزاوية العلوية
 
 #: temp.glade:33917
 msgid "Grid Settings"
-msgstr ""
+msgstr "إعدادات الشبكة"
 
 #: temp.glade:33938
 msgid "Select Images..."
@@ -16133,11 +16202,11 @@ msgstr "استيراد جميع الإعدادات"
 
 #: temp.glade:36217
 msgid "PTXprint: Add Tatweel (kashida) Rules"
-msgstr ""
+msgstr "PTXprint: إضافة قواعد تطويل (كسيدة)"
 
 #: temp.glade:36295
 msgid "Tatweel Dialog: Enter reference"
-msgstr ""
+msgstr "حوار تطويل: إدخال مرجع"
 
 #: temp.glade:36301 temp.glade:36320
 msgid "Enter the verse reference\n"
@@ -16145,15 +16214,19 @@ msgid "Enter the verse reference\n"
 "(Note that the reference is\n"
 "automatically updated from\n"
 "the current Paratext reference.)"
-msgstr ""
+msgstr "أدخل مرجع الآية\n"
+"حيث تقع الكلمة.\n\n"
+"(لاحظ أن المرجع\n"
+"يتم تحديثه تلقائيًا من\n"
+"المرجع الحالي لبرمجة النصوص المتوازية)."
 
 #: temp.glade:36309
 msgid "JHN 3:16"
-msgstr ""
+msgstr "يو 3:16"
 
 #: temp.glade:36337
 msgid "Tatweel Dialog: Enter word or phrase to be lengthened"
-msgstr ""
+msgstr "حوار تطويل: إدخال الكلمة أو العبارة المراد تطويلها"
 
 #: temp.glade:36343 temp.glade:36365
 msgid "Enter the word to be lengthened\n"
@@ -16164,15 +16237,16 @@ msgid "Enter the word to be lengthened\n"
 "(Note that this box is automatically\n"
 "updated from the clipboard if the\n"
 "word/phrase is 60 characters or less)."
-msgstr ""
+msgstr "أدخل الكلمة المراد تمديدها وضع المؤشر في الموقع واستخدم الاختصار Ctrl-` (Ctrl-grave) لإدراج تطويلات. كرر ذلك في الكلمات والمواقع الأخرى. \n\n"
+"(لاحظ أن هذا المربع يتم تحديثه تلقائياً من الحافظة إذا كانت الكلمة/العبارة تتكون من 60 حرفاً أو أقل)."
 
 #: temp.glade:36354
 msgid "text from clipboard"
-msgstr ""
+msgstr "النص من الحافظة"
 
 #: temp.glade:36376
 msgid "Word / Phrase:"
-msgstr ""
+msgstr "كلمة / عبارة:"
 
 #: temp.glade:36388
 msgid "How many Tatweels should\n"
@@ -16182,25 +16256,25 @@ msgstr ""
 
 #: temp.glade:36394
 msgid "Tatweels to insert:"
-msgstr ""
+msgstr "التطويلات الواجب إدراجها:"
 
 #: temp.glade:36403
 msgid "Tatweel Dialog: Number of Tatweels to insert"
-msgstr ""
+msgstr "حوار التطويلات: عدد التطويلات المراد إدراجها"
 
 #: temp.glade:36406
 msgid "Hw many Tatweels should\n"
 "be inserted at the current\n"
 "cursor location?"
-msgstr ""
+msgstr "كم عدد التطويلات التي يجب إدراجها في الموقع الحالي للمؤشر؟"
 
 #: temp.glade:36411
 msgid "3"
-msgstr ""
+msgstr "3"
 
 #: temp.glade:36427
 msgid "The rule to be added to Changes.txt"
-msgstr ""
+msgstr "القانون الذي يجب إضافته إلى Changes.txt"
 
 #: temp.glade:36471
 msgid "Select Books To Export to PDF"
@@ -17019,20 +17093,21 @@ msgstr "إضافة/تعديل مربع حوار العلامات: نهاية ا�
 
 #: temp.glade:39183
 msgid "[Required] This tells PTXprint what kind of a marker this is."
-msgstr ""
+msgstr "[مطلوب] يُخبر PTXprint بنوع العلامة هذه."
 
 #: temp.glade:39185
 msgid "⚠️Type:"
-msgstr ""
+msgstr "⚠️نوع:"
 
 #: temp.glade:39196
 msgid "Add/Edit marker dialog: Marker type"
-msgstr ""
+msgstr "إضافة/تحرير حوار العلامة: نوع العلامة"
 
 #: temp.glade:39200
 msgid "[Required] This tells PTXprint what kind of \n"
 "marker this is.\n"
-msgstr ""
+msgstr "[مطلوب] يُخبر PTXprint بنوع العلامة \n"
+"هذه.\n"
 
 #: temp.glade:39215
 msgid "[Required] This tells PTXprint how to layout data in this marker. \n"
