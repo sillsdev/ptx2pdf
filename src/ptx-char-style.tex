@@ -183,12 +183,12 @@
 \def\endch@rstylen*{%Consume the star..
   \trace{s}{endch@rstylen \newch@rstyle}%
   \def\d@##1+##2\E{\tempfalse\if ##1c\else\if ##1C\else\temptrue\fi\fi}\mctopnoms
-  \iftemp\MSG{Unexpected closing marker for no plus \newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
+  \iftemp\MSG{Unexpected closing marker for no plus \newch@rstyle * on stack \mcstack. Ignoring. implicitcl@se\ifimplicitcl@se true\else false\fi}\else\endch@rstyle*\fi
 }
 \def\endch@rstylepls*{%Consume the star..
   \trace{s}{endch@rstylepls \newch@rstyle}%
   \def\d@##1+##2+##3\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctopnoms
-  \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
+  \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring. (implicitcl@se\ifimplicitcl@se true\else false\fi)}\else\endch@rstyle*\fi
 }
 %-cchar_endstyle
 %+cchar_startcharstyle
