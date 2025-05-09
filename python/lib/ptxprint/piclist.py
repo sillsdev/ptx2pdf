@@ -551,8 +551,11 @@ class Piclist:
                         if b[1]:    # usfm 3
                             labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
                             for l in labelParams:
-                                k,v = l.split("=")
-                                pic[k.strip()] = v.strip('"')
+                                try:
+                                    k,v = l.split("=")
+                                    pic[k.strip()] = v.strip('"')
+                                except ValueError:
+                                    logger.debug(f"Invalid Picture parameter: {l} in {pic} found in {bk}")
                             if 'media' not in pic:
                                 default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
                                 pic['media'] = 'paw' if default is None else default
@@ -595,7 +598,7 @@ class Piclist:
                         key = None
                         self._readpics(s, bk, c, lastv, isperiph, parent, sync=sync, fn=fn)
 
-    def rmdups(self): # MH {checking I understand this right} Does this assume we can't have 2 pics with the same anchor?
+    def rmdups(self):
         ''' Makes sure there are not two entries with the same anchor and same image source'''
         anchormap = {}
         for p in self.pics.values():
