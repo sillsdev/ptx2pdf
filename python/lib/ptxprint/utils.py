@@ -95,7 +95,7 @@ def setup_i18n(i18nlang):
     else:
         lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
     enc = "UTF-8"
-    logger.debug(f"Loading locale for {lang}.{enc}")
+    logger.debug(f"Loading locale for {lang}.{enc} from {localedir}")
     if sys.platform.startswith('win'):
         from ctypes import cdll, windll
         from ctypes.util import find_msvcrt
@@ -110,9 +110,12 @@ def setup_i18n(i18nlang):
         locale.setlocale(locale.LC_ALL, '')
     else:
         locale.setlocale(locale.LC_ALL, (lang, enc))
-        #locale.bindtextdomain(APP, localedir)
-        gettext.bindtextdomain(APP, localedir)
+        locale.bindtextdomain(APP, localedir)
+        os.environ["LANGUAGE"] = lang
+        #gettext.bindtextdomain(APP, localedir)
     # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
+    langs = {x: os.getenv(x, "") for x in ("LANGUAGE", "LC_ALL", "LC_MESSAGES", "LANG")}
+    logger.debug(f"Langs are: {langs}")
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
     if "_" in lang:
