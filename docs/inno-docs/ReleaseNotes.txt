@@ -1,8 +1,20 @@
 PTXprint 2.8.6 Release Notes
-8 May 2025
+9 May 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.9 (9 May 2025)
+  * Add UI languages (AI-drafts) for: Burmese, Hindi, Korean, Malayalam, Thai, Tok Pisin
+  * Added .tex codelet to Other button to start book on an odd page
+  * Prevent crashing due to a bad picture \fig parameter
+  * Clarify some things in technical reference, and document some macros
+  * Add code to differentiate between structural and non-structural char markers in notes
+  * Solve crash with usfm3.1 and nonpublishable notes
+  * Update Crowdin localizations
+  * Fix Start books on odd page typo
+  * Create StyleType and TextType from mrkrtype when creating a new marker
+  * Include blank lines in cutout calculations
 
 Bug fixes and Improvements in 2.8.6 (8 May 2025)
   * Restore notes to previous state when there's a rejected chunk
