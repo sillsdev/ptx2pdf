@@ -1575,22 +1575,34 @@ class TexModel:
 
         def capturek(e, state):
             if e.tag == "char" and e.get("style", "") == "k":
-                state = getk(e, attrib="key").lower() in self.found_glosses
+                nkval=getk(e, attrib="key").lower() 
+                state = (nkval in self.found_glosses and nkval not in self.processed_glosses)
+                if state:
+                  self.processed_glosses.add(nkval)
+                  logger.log(6,f"Checking active entry {nkval}")
             if state and e.tag == "char" and e.get("style", "") == "w":
                 kval = getk(e)
-                self.found_glosses.add(kval.lower())
+                self.new_glosses.add(kval.lower())
+                logger.log(6,f"found glossary entry {kval} in an active entry")
             return state
 
         self.found_glosses = set()
         self.printer.get_usfms()
+        self.processed_glosses=set()
+        self.new_glosses = set()
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
                 bkusfm = self.printer.usfms.get(bk)
                 bkusfm.visitall(addk, bkusfm.getroot())
         count = self.dict.get("document/glossarydepth", 0) or 0
+        logger.debug(f"Looking for chained glossary entries up to {count} deep")
         glousfm = self.printer.usfms.get("GLO")
+      
         while count > 0 and glousfm is not None:
             glousfm.visitall(capturek, glousfm.getroot())
+            logger.debug(f"Found glossary keys: {self.new_glosses}")
+            self.found_glosses.update(self.new_glosses)
+            self.new_glosses.clear()
             count -= 1
         logger.debug(f"Found glossary keys: {self.found_glosses}")
 
