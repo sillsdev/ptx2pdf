@@ -1587,7 +1587,7 @@ class TexModel:
             if bk not in nonScriptureBooks:
                 bkusfm = self.printer.usfms.get(bk)
                 bkusfm.visitall(addk, bkusfm.getroot())
-        count = self.dict.get("document/glossarydepth", 0)
+        count = self.dict.get("document/glossarydepth", 0) or 0
         glousfm = self.printer.usfms.get("GLO")
         while count > 0 and glousfm is not None:
             glousfm.visitall(capturek, glousfm.getroot())
