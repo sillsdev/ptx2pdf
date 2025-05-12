@@ -438,7 +438,7 @@ class Usfm:
         state = fn(root, state)
         for c in root:
             state = self.visitall(fn, c, state=state)
-        return(state)
+        return state
 
     def make_zsetref(self, ref, book, parent, pos):
         attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
