@@ -1559,20 +1559,39 @@ class TexModel:
 
     def filterGlossary(self, printer):
         # Only keep entries that have appeared in this collection of books
-        self.found_glosses = set()
-        def addk(e):
-            if e.tag != "char" or e.get("style", "") != "w":
-                return
+        def getk(e, attrib="lemma"):
             kval = e.get("lemma", None)
             if kval is None:
                 kval = re.sub(r"[ \t]", "", e.text)
+            return kval
+
+        def addk(e, state):
+            if e.tag != "char" or e.get("style", "") != "w":
+                return
+            kval = getk(e)
             if kval:
                 self.found_glosses.add(kval.lower())        # case insensitive matching
+            return state
+
+        def capturek(e, state):
+            if e.tag == "char" and e.get("style", "") == "k":
+                state = getk(e, attrib="key").lower() in self.found_glosses
+            if state and e.tag == "char" and e.get("style", "") == "w":
+                kval = getk(e)
+                self.found_glosses.add(kval.lower())
+            return state
+
+        self.found_glosses = set()
         self.printer.get_usfms()
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
                 bkusfm = self.printer.usfms.get(bk)
                 bkusfm.visitall(addk, bkusfm.getroot())
+        count = self.dict.get("document/glossarydepth", 0)
+        glousfm = self.printer.usfms.get("GLO")
+        while count > 0 and glousfm is not None:
+            glousfm.visitall(capturek, glousfm.getroot())
+            count -= 1
         logger.debug(f"Found glossary keys: {self.found_glosses}")
 
     def analyzeImageCopyrights(self):

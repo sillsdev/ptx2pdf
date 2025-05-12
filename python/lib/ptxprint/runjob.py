@@ -277,6 +277,7 @@ class RunJob:
 
         captions = []
         diginfos = {}
+        info["diglotcaptions_"] = ""
         if len(self.printer.diglotViews):
             for k, dv in self.printer.diglotViews.items():
                 if dv is None:

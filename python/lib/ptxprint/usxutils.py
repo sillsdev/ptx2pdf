@@ -435,9 +435,10 @@ class Usfm:
         return acc
 
     def visitall(self, fn, root):
-        fn(root)
+        state = None
+        state = fn(root, state)
         for c in root:
-            self.visitall(fn, c)
+            state = self.visitall(fn, c, state)
 
     def make_zsetref(self, ref, book, parent, pos):
         attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
