@@ -455,6 +455,7 @@ class Usfm:
             refranges = [refranges]
         last = (0, -1)
         chaps = []
+        minc = 10000
         for i, r in enumerate(refranges):
             if r.first.chapter > last[1] or r.first.chapter < last[0]:
                 chaps.append((self.chapters[r.first.chapter:r.last.chapter+2], [i]))
@@ -465,6 +466,7 @@ class Usfm:
                 chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chapter+1])
                 chaps[-1][1].append(i)
                 last = (last[0], r.last.chapter)
+            minc = min(r.first.chapter, minc)
         def pred(e, rlist):
             if e.parent is None:
                 return True
@@ -504,7 +506,7 @@ class Usfm:
             for e in root:
                 if e.tag == "chapter":
                     break
-                if e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in "header":
+                if minc > 1 and e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in ("header", ):
                     break
                 newe = e.copy(deep=True, parent=res)
                 res.append(newe)
