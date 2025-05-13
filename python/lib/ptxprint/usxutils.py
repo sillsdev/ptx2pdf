@@ -447,7 +447,7 @@ class Usfm:
         res = self.factory("ms", attribs, parent=parent)
         return res
 
-    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True):
+    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True, keepheaders=False):
         ''' Creates a document consisting of only the text covered by the reference
             ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
@@ -500,6 +500,14 @@ class Usfm:
         d = list(root)
         res = self.factory("usx", root.attrib)
         res.text = root.text
+        if keepheaders:
+            for e in root:
+                if e.tag == "chapter":
+                    break
+                if e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in "header":
+                    break
+                newe = e.copy(deep=True, parent=res)
+                res.append(newe)
         for c in chaps:
             if addzsetref:
                 minref = min(refranges[r].first for r in c[1])
@@ -512,7 +520,7 @@ class Usfm:
         return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)
 
     def getsubbook(self, refrange, removes={}):
-        return self.subdoc(refrange, removes=removes)
+        return self.subdoc(refrange, removes=removes, keepheaders=True)
 
     def versesToEnd(self):
         root = self.getroot()
