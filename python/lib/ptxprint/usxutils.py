@@ -447,7 +447,7 @@ class Usfm:
         res = self.factory("ms", attribs, parent=parent)
         return res
 
-    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True):
+    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True, keepheaders=False):
         ''' Creates a document consisting of only the text covered by the reference
             ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
@@ -455,6 +455,7 @@ class Usfm:
             refranges = [refranges]
         last = (0, -1)
         chaps = []
+        minc = 10000
         for i, r in enumerate(refranges):
             if r.first.chapter > last[1] or r.first.chapter < last[0]:
                 chaps.append((self.chapters[r.first.chapter:r.last.chapter+2], [i]))
@@ -465,6 +466,7 @@ class Usfm:
                 chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chapter+1])
                 chaps[-1][1].append(i)
                 last = (last[0], r.last.chapter)
+            minc = min(r.first.chapter, minc)
         def pred(e, rlist):
             if e.parent is None:
                 return True
@@ -500,6 +502,14 @@ class Usfm:
         d = list(root)
         res = self.factory("usx", root.attrib)
         res.text = root.text
+        if keepheaders:
+            for e in root:
+                if e.tag == "chapter":
+                    break
+                if minc > 1 and e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in ("header", ):
+                    break
+                newe = e.copy(deep=True, parent=res)
+                res.append(newe)
         for c in chaps:
             if addzsetref:
                 minref = min(refranges[r].first for r in c[1])
@@ -512,7 +522,7 @@ class Usfm:
         return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)
 
     def getsubbook(self, refrange, removes={}):
-        return self.subdoc(refrange, removes=removes)
+        return self.subdoc(refrange, removes=removes, keepheaders=True)
 
     def versesToEnd(self):
         root = self.getroot()
