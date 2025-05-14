@@ -1836,6 +1836,9 @@ class Paragraphs(list):
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None or len(cinfo) < 4:
                     continue
+                if currr is not None:
+                    currr.xend = cinfo[3]
+                    currr.yend = readpts(p[5])
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                 currp.rects = []
                 ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
@@ -1907,7 +1910,6 @@ class Paragraphs(list):
                     continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
-                currpic = None
                 if currp is not None:
                     currpr = currr
                     if not len(currp.rects) or currp.rects[-1].xend > 0:
