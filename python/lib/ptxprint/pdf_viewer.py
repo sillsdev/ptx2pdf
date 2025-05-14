@@ -1695,7 +1695,7 @@ class FigInfo:
     rects:  InitVar[None] = None
 
     def __str__(self):
-        return f"{self.ref}[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
+        return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
 
     def __repr__(self):
         return self.__str__()
@@ -1903,7 +1903,7 @@ class Paragraphs(list):
             elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
                 currpic = None
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or currr is None or currpic is None:
+                if cinfo is None or currr is None:
                     continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
