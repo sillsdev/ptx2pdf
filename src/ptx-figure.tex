@@ -406,7 +406,6 @@
     \ifx\cpt@mp\empty\else\setLRspecific\fi
     \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
     \t@xtfragment{fig}{%
-      \mcpush{\ss@Fig}{fig}%
       \let\styst@k=\empty
       \s@tstyst@k%
       \s@tfont{fig}{fig}%
@@ -439,6 +438,7 @@
       \hsize=\p@cinswid
     \fi
     \xdef\r@f{\csname figparam-ref\endcsname}% get reference
+    \mcpush{\ss@Fig}{fig}%
     \d@c@ption{}%Normal monoglot caption.
     \ifdiglot
       \bgroup %Alternative captions
@@ -448,6 +448,7 @@
       \egroup
     \fi
     \vskip.5\onel@neunit
+    \end@llpoppedstyles{\ss@Fig*}%
   \fi
  }%
 }
