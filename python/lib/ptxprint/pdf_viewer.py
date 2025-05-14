@@ -1799,9 +1799,9 @@ class Paragraphs(list):
                     pwidth = 0.
                 self.pindex.append(len(self))
                 inpage = True
-                cinfo = [readpts(x) for x in p[1:4]]
-                if len(cinfo) > 2:
-                    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
+                #cinfo = [readpts(x) for x in p[1:4]]
+                #if len(cinfo) > 2:
+                #    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
                 lastyend = 0
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
@@ -1827,6 +1827,7 @@ class Paragraphs(list):
                     currr.xend = cinfo[3] + cinfo[2] if cinfo is not None else readpts(p[0])
                     currr.yend = readpts(p[1])
                     currr = None
+                colinfos[polycol] = None
                 lines.startreplay()
                 lastyend = 0
             elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
@@ -1892,21 +1893,20 @@ class Paragraphs(list):
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None:
-                    continue
+                xstart = readpts(p[2]) if cinfo is None else cinfo[3]
                 if currr is not None:
                     currr.yend = readpts(p[3])
                     currr.xend = cinfo[3]
                 currpic = FigInfo(p[0], p[1], (0, 0), False, False)
                 currpic.rects = []
-                currr = ParRect(pnum, cinfo[3], readpts(p[3]))
+                currr = ParRect(pnum, xstart, readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
                 lastyend = 0
             elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
                 currpic = None
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or currr is None:
+                if currr is None:
                     continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
