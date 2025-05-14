@@ -419,7 +419,7 @@
 %%%%%%%%%%%
 % All penalties
 %
-\newcount\savedpenalty  % The penalty immediately preceeding a side-swap.
+\newcount\savedpenalty  % The penalty immediately preceeding a side-swap. AND ONLY THAT!
 \def\savedLpenalty{0}% just storage.
 \def\savedRpenalty{0}
 
@@ -632,9 +632,14 @@
         \trace{D}{Showing xcs after split}%
         \showbox\@xcs
       \fi
-      \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
-      \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
     \fi
+    % Sadly, there isn't a \splitpenalty. Unwrap split discards and use that to see if there's a penalty there
+    \setbox3\vbox{\count255=\csname partial\c@rrdstat penalty\endcsname\unvbox3 \unskip\unskip\count0=\lastnodetype \ifnum\count0=13 
+        \count255=\lastpenalty \ifnum \count255>9999 \unpenalty\unskip\unskip\count255=\lastpenalty\fi %
+        \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to \the\count255}%
+        \global\csname partial\c@rrdstat penalty\endcsname=\count255 
+      \fi
+    }%
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\global\@ftergalleyskip=\lastskip\unskip\penalty\endtri@lpen@lty}%
     \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip}%
@@ -732,8 +737,16 @@
       \ifvoid\galleyexc@ss
         %\tracingmacros=1\tracingassigns=1
         \TempDim=\availht %Recalc in case there's an issue
-        \x@\global\csname \c@rrdstat boxpenalty\endcsname=\csname saved\c@rrdstat penalty\endcsname
+        \count255=\csname partial\c@rrdstat penalty\endcsname \def\tmp{partial }%
+        \ifnum\count255=-10000 
+          \x@\global\csname partial\c@rrdstat penalty\endcsname=0 
+        \else
+          \count255=\csname saved\c@rrdstat penalty\endcsname \def\tmp{saved }%
+        \fi
+        \trace{D}{\c@rrdstat boxpenalty changed from \the\csname \c@rrdstat boxpenalty\endcsname\space to \tmp value \the\count255}%
+        \x@\global\csname \c@rrdstat boxpenalty\endcsname=\count255
       \else
+        \trace{D}{\c@rrdstat boxpenalty changed from \the\csname \c@rrdstat boxpenalty\endcsname\space to galley value \galleypenalty}%
         \x@\global\csname\c@rrdstat boxpenalty\endcsname =\galleypenalty
         \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
         \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
@@ -1056,7 +1069,7 @@
   \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal}%
   \checkfort@c % as good a place as any
   %\ifnum\outputpenalty=-10000 %User-pagebreak
-  %  \global\savedpenalty=\outputpenalty
+    %\global\savedpenalty=\outputpenalty
   %\fi
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
@@ -1091,6 +1104,8 @@
   \fi
   \ifintrial 
     \message{EEK! Still in trial! on page \the\pageno, somewhere near \c@rref. Expect synchronisation and text loss}%
+    \vskip0pt % some content...
+    \penalty\dgl@tPenColSwap\relax %Trigger collection of text.
   \fi
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
@@ -2386,12 +2401,11 @@
     \errmessage{! ERROR! Improper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
   \fi
   \ifnum\outputpenalty=-10000 %User-pagebreak
-    \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\outputpenalty}%
+    \x@\global\csname partial\c@rrdstat penalty\endcsname=\outputpenalty% Borrow partialXpenalty
   \fi
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
     \trace{D}{Why are we in diglotCollect after a trial?}%
-    \ifintrial\diglot@any@tstored\fi
   \fi
   % tempoarily split and see if there are marks in this text
   \bgroup
@@ -2421,6 +2435,9 @@
     \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
   \global\setbox\csname whole\c@rrdstat\endcsname\copy\destb@x % Save the current input box to avoid need to re-attach things to excessX
+  \ifnum\tmpcount<-10000 \ifnum\tmpcount>\numexpr \sp@cialpen -1\relax 
+    \tmpcount=0
+  \fi\fi
   \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi\ifintrial IN trial??\fi}%
@@ -2549,9 +2566,9 @@
     \diglot@ecolstrue
   \fi
 }
-\def\check@pen#1{%Is the relevant boxpenalty a pagebreak?
-  \x@\ifnum\csname #1boxpenalty\endcsname=-10000
-    \trace{d}{#1boxpenalty is \the\csname #1boxpenalty\endcsname}%
+\def\check@pen#1{%Is the relevant savedpenalty a pagebreak?
+  \trace{d}{saved#1penalty is \csname saved#1penalty\endcsname}%
+  \x@\ifnum\csname saved#1penalty\endcsname=-10000
     \temptrue
   \fi
 }
