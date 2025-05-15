@@ -46,6 +46,7 @@ mstr = {
     'tryminus':   _("Try Shrink -1 line"),
     'plusline':   _("Expand +1 line"),
     'rp':         _("Reset Adjustments"),
+    'shrnkboth':  _("Shrink Text and line"),
     'st':         _("Shrink Text"),
     'et':         _("Expand Text"),
     'es':         _("Edit Style"),
@@ -1010,16 +1011,18 @@ class PDFViewer:
             hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
-            if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
-                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
-                self.addMenuItem(menu, None, None)
 
-            shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
-            self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
+            shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
+            self.addMenuItem(menu, f"{mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", self.on_shrink_both, info, parref, sensitivity=not info[1] <= shrLim)
+            self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
             self.addMenuItem(menu, f"{mstr['st']} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
             self.addMenuItem(menu, None, None)
             
+            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
+            expLim = min(self.expandLimit, info[1]+self.expandStep)
+            self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+
             reset_menu = Gtk.Menu()
             self.clear_menu(reset_menu)
             for k, v in reset.items():
@@ -1037,19 +1040,21 @@ class PDFViewer:
             self.addSubMenuItem(menu, mstr['rp'], reset_menu)            
             self.addMenuItem(menu, None, None)
             
-            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
-            expLim = min(self.expandLimit, info[1]+self.expandStep)
-            self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+            if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
+                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
+
             if parref and parref.mrk is not None:
-                self.addMenuItem(menu, None, None)
+                # self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None))
+
             if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
-                self.addMenuItem(menu, None, None)
+                # self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
-            self.addMenuItem(menu, None, None)
+
+            # self.addMenuItem(menu, None, None)
             self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.set_zoom_fit_to_screen)
             if not self.model.get("c_updatePDF"):
-                self.addMenuItem(menu, None, None)
+                # self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
 
         # New section for image context menu which is a lot more complicated
@@ -1284,8 +1289,24 @@ class PDFViewer:
             textview.modify_font(font_desc)
         response = dialog.run()
         dialog.hide()
-        if not response == Gtk.ResponseType.OK:
+        if response != Gtk.ResponseType.OK:
             self.model.set("t_sliceRef", "", mod=False)
+        self.hitPrint()
+
+    def shrinkBothAmt(self, info):
+        offset = int(0.5 * (self.shrinkLimit - info[1]) - 0.1)
+        if offset > -self.shrinkStep:
+            offset = self.shrinkLimit - info[1]
+        return offset
+
+    def on_shrink_both(self, widget, info, parref):
+        if self.adjlist is not None:
+            if info[1] > self.shrinkLimit:
+                self.adjlist.expand(info[2], self.shrinkBothAmt(info), mrk=parref.mrk)
+            if int(info[0]) >= 0:
+                offset = -(int(info[0]) + 1)
+                self.adjlist.increment(info[2], offset)
+        self.show_pdf()
         self.hitPrint()
 
     def on_shrink_paragraph(self, widget, info, parref):
@@ -1333,7 +1354,6 @@ class PDFViewer:
         self.hitPrint()
 
     def on_shrink_text(self, widget, info, parref):
-        print(f"{info=}\n{parref.mrk=} {info[1]=} {info[2]=}\n{parref=}")
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:
                 self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)

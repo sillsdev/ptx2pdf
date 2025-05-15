@@ -1,10 +1,22 @@
 PTXprint 2.8.7 Release Notes
-9 May 2025
+14 May 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.8.9 (9 May 2025)
+Bug fixes and Improvements in 2.8.8 (14 May 2025)
+  * Replace archive-specific font lookup location
+  * Allow catcode update to process
+  * Better document subsetting for not starting with chapter 1
+  * Include headers in subset documents
+  * Add test cases, make \fig work (outside piclist) solve caption styling issue
+  * Start working on character-styling in captions
+  * Fix caption styling leaking into main text (pop styles)
+  * Ensure glossary-depth entries only get processed in thier own level
+  * Minor fixes to get tests working
+  * Attempt to address issue #1078 (Chained glossary entries broken)
+
+Bug fixes and Improvements in 2.8.7 (9 May 2025)
   * Add UI languages (AI-drafts) for: Burmese, Hindi, Korean, Malayalam, Thai, Tok Pisin
   * Added .tex codelet to Other button to start book on an odd page
   * Prevent crashing due to a bad picture \fig parameter
