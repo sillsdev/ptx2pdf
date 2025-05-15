@@ -364,7 +364,8 @@ class Usfm:
                 else:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
                         currv = p[0].get("number", curr.last.verse if curr is not None else None)
-                        curr = MakeReference(bk, curr.first.chapter, currv)
+                        currc = curr.first.chapter if curr is not None else 0
+                        curr = MakeReference(bk, currc, currv)
                         if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
                             for r in curr.allrefs():
                                 self.bridges[r] = curr
