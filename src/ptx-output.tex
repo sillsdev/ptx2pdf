@@ -767,9 +767,9 @@
 \def\cle@rn@t@cl@ss#1{%
   \ifnum \ifnotst@dynotes\x@\ifx\csname studynotes-#1\endcsname\relax 1\else 0\fi\else 1\fi =1
     \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+    \trace{n}{cle@rn@t@cl@ss{#1}->\the\th@cl@ss}%
+    \global\setbox\th@cl@ss=\box\voidb@x
   \fi
-  \trace{n}{cle@rn@t@cl@ss{#1}->\the\th@cl@ss}%
-  \global\setbox\th@cl@ss=\box\voidb@x
 }
 \def\clearn@tes{\trace{o}{clearn@tes}\let\\=\cle@rn@tecl@ss \the\n@tecl@sses}
 
