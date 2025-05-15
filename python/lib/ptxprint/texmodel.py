@@ -201,7 +201,6 @@ class TexModel:
 
     def update(self, diglotbinfo, digcfg=None):
         """ Update model from UI """
-        # breakpoint()
         j = os.path.join
         rel = lambda x, y:saferelpath(x, y).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now

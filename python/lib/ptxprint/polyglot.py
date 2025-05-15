@@ -72,9 +72,9 @@ class PolyglotConfig:
             
     def updateTM(self, texmodel):
         for k, v in configmap.items():
-            if v[2] is None:
-                continue
             val = getattr(self, v[0], "")
+            if val is None or v[2] is None:
+                continue
             for t in v[2]:
                 fn = ModelMap.get(t, None)
                 if fn is not None:
