@@ -377,7 +377,8 @@ class Usfm:
             elif p.tag == "verse":
                 if curr is not None:
                     currv = p.get("number", curr.last.verse)
-                    curr = MakeReference(bk, curr.first.chapter, currv)
+                    currc = curr.first.chapter if curr is not None else 0
+                    curr = MakeReference(bk, currc, currv)
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
