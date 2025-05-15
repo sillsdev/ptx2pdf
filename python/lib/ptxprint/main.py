@@ -395,8 +395,9 @@ def main():
                     args.lang = mainw.lang
                     print(f"{args.lang}")
                     project = mainw.project
-                    args.pid = project.prjid
-                    args.config = mainw.cfgid
+                    if project is not None:
+                        args.pid = project.prjid
+                        args.config = mainw.cfgid
                     goround = True
             loops += 1
         if loops >= 0:
