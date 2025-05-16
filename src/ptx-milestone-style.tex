@@ -453,7 +453,18 @@
       \m@kenumber{\attr@b}%
       \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}%
     \fi
-    \getp@ram{bordercolour}{zrule}{\styst@k}\let\b@drcol\p@ram
+    \get@ttribute{colour}%A
+    \ifx\attr@b\relax
+      \get@ttribute{color}%A
+      \ifx\attr@b\relax
+        \getp@ram{bordercolour}{zrule}{\styst@k}\let\attr@b\p@ram
+      \fi
+    \fi
+    \ifx\attr@b\relax\else
+      \m@kenumber{\attr@b}%
+      \x@\checkh@x\@@result\end \let\b@drcol\rgb@out
+      \trace{m}{zrule colour  \b@drcol}%
+    \fi
     \get@ttribute{thick}%
     \ifx\attr@b\relax
       \getp@ram{borderwidth}{zrule}{\styst@k}%
