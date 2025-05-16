@@ -481,7 +481,7 @@
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
-    \if@ntro\mark{\intr@}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\intr@}\fi\fi
+    \if@ntro\mark{\intr@}\ifdiglot\x@\marks\csname m@rknum\c@rrdstat\endcsname{\intr@}\fi\fi
     \ifx\spaceafterp@ram\relax \else
       \ifhe@dings\nobreak\fi
       \vskip\spaceafterp@ram\verticalsp@ceunit                                              %(1)
@@ -621,7 +621,7 @@
   \getp@ram{type}{\m@rker}{\m@rker}%
   \let\B@xtype\empty%
   \ifx\p@ram\t@tle
-    \mark{\t@tle}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
+    \mark{\t@tle}\ifdiglot\x@\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
     \ift@tle\else
       \ifhe@dings\endhe@dings\fi
         \let\thisp@rclass\t@tle
