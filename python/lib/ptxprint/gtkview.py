@@ -5123,6 +5123,8 @@ class GtkViewModel(ViewModel):
         self.changeInterfaceLang(lang)
 
     def changeInterfaceLang(self, lang):
+        if lang == self.lang:
+            return
         try:
             setup_i18n(lang)
         except locale.Error:

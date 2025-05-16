@@ -1931,6 +1931,7 @@ settings for a similar project.</property>
         <property name="can-focus">True</property>
         <property name="model">ls_interfaceLang</property>
         <property name="headers-visible">False</property>
+        <property name="enable-search">False</property>
         <property name="activate-on-single-click">True</property>
         <signal name="row-activated" handler="onUILangSelected" swapped="no"/>
         <child internal-child="selection">
@@ -4482,7 +4483,7 @@ reference (e.g. JHN 3.16)</property>
     <property name="height-request">250</property>
     <property name="can-focus">False</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: SpeedSlice™</property>
+    <property name="title" translatable="yes">PTXprint: SpeedSlice</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window-position">center-on-parent</property>
