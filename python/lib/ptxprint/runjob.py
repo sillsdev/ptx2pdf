@@ -869,7 +869,7 @@ class RunJob:
 
     def readfile(self, fname):
         try:
-            with open(fname, "r", encoding="utf-8") as inf:
+            with open(fname, "r", encoding="utf-8", errors="ignore") as inf:
                 res = "".join(inf.readlines())
             return res
         except FileNotFoundError:

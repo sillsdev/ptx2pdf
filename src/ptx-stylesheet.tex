@@ -2449,6 +2449,21 @@
   \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
 
+\def\threecolwidth#1{%
+  \dimen9=\textwidth
+  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
+  \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
+    \advance \dimen9 by -\XrefNotesWidth
+    \advance \dimen9 by -\XrefNotesMargin
+    \advance \dimen9 by -0.5\gutter
+    \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
+  \fi\fi\fi
+  \divide\dimen9 by 3
+  \advance\dimen9 by -\gutter
+  \global #1=\dimen9
+  \trace{o}{setthreecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+}
+
 \newif\ifNoteLines \NoteLinesfalse
 \def\s@tupsizes{
  \trace{s}{s@tupsizes called from book: \id@@@}%

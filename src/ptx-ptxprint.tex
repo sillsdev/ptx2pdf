@@ -68,9 +68,11 @@
 \catcode`\@=12
 \def\onebody{\global\BodyColumns=1}
 \def\twobody{\global\BodyColumns=2}
+\def\threebody{\global\BodyColumns=3}
 \def\IntroPageAlign{page}
 \def\goone{\global\BodyColumns=1\global\notransitionskiptrue\singlecolumn\global\notransitionskipfalse}
 \def\gotwo{\global\BodyColumns=2\global\notransitionskiptrue\doublecolumns\global\notransitionskipfalse}
+\def\gothree{\global\BodyColumns=3\global\notransitionskiptrue\doublecolumns\global\notransitionskipfalse}
 \gdef\pausecharspacing{\global\let\currcharspacing\XeTeXinterchartokenstate \XeTeXinterchartokenstate=0}
 \gdef\unpausecharspacing{\XeTeXinterchartokenstate=\currcharspacing}
 

@@ -897,6 +897,7 @@ class TexModel:
     def _getDoc(self, data, doc, bk, logmsg=""):
         if data is not None:
             doc = self._makeUSFM(data, bk)
+            doc.xml.version="3.1"
             if doc is not None:
                 logger.log(5, logmsg+doc.outUsx(None))
         return (None if doc else data, doc)

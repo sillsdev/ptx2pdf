@@ -64,7 +64,7 @@
   \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
   \ift@mp
     \ifnum\IntroColumns=\c@rrentcols\else
-      \ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi
+      \ifnum\IntroColumns=3 \threecolumns \else\ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi\fi
     \fi
   \fi
   \global\@ntrotrue\global\t@tlefalse\global\b@dyfalse\fi}
@@ -74,7 +74,7 @@
   \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
   \ift@mp
     \ifnum\TitleColumns=\c@rrentcols\else
-      \ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi
+      \ifnum\TitleColumns=3 \threecolumns\else\ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi\fi
     \fi
   \fi
   \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
@@ -84,7 +84,7 @@
 \def\st@rtbody{%\endhe@dings
  % \trace{o}{st@rtbody: b@dy\ifb@dy true\else false\fi}%
  \traceifset{st@rtbody}%
- \ifNoBody\else\ifb@dy\else\trace{o}{st@rtbody by \m@rker,  diglot\ifdiglot true\else false\fi}%
+ \ifNoBody\else\ifb@dy\else\trace{o}{st@rtbody by \m@rker,  diglot\ifdiglot true\else false\fi, BodyColums=\the\BodyColumns, currentcols=\the\c@rrentcols}%
   \t@mptrue
   \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
   \ift@mp
@@ -92,7 +92,7 @@
       \count255=\lastpenalty
       \vskip\baselineskip
     \else
-      \tob@dytrue\ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
+      \tob@dytrue\ifnum\BodyColumns=3 \threecolumns\else\ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi\fi
       \count255=10000
     \fi
     \ifPBOnBody\vfill\eject
@@ -111,7 +111,8 @@
   \tob@dyfalse
   \global\b@dytrue\global\beenb@dytrue\global\@ntrofalse\global\t@tlefalse
   % set up for single column from single column. Empty vbox to say we are not at the start of a page
-  \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi\fi
+  \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi
+  \else\ifnum\BodyColumns=3 \threecolwidth{\hsize}\fi\fi
  \fi\fi
   \traceifcheck{st@rtbody}%
 }
