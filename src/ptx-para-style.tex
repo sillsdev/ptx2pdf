@@ -716,6 +716,7 @@
         \interlinepenalty=10000 % never break column/page between lines
         \XeTeXdashbreakstate=0 % mainly for ranges in \r
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
+        \savingmarks % capture marks to propagate to the top level
         \trace{h}{marker = \m@rker, heading top space = \the\headingtopspace}%
     \fi
     \nobreak
