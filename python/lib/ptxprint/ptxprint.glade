@@ -1047,6 +1047,15 @@ PDF file(s) created for this project.</property>
     <property name="icon-name">go-previous-symbolic</property>
     <property name="icon_size">2</property>
   </object>
+  <object class="GtkImage" id="icon_prvOpen">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="tooltip-text" translatable="yes">Open the PDF in the system's
+default PDF viewer (e.g. Evince,
+Acrobat or SumatraPDF).</property>
+    <property name="icon-name">view-dual-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_prvOpenFolder">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -1070,15 +1079,6 @@ to this device.</property>
     <property name="tooltip-text" translatable="yes">Save a COPY of this PDF with a
 new name and/or different folder.</property>
     <property name="icon-name">document-save-as-symbolic</property>
-    <property name="icon_size">3</property>
-  </object>
-  <object class="GtkImage" id="icon_prvShare">
-    <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="tooltip-text" translatable="yes">(Coming soon...)
-Share this PDF with others 
-via email, or social media.</property>
-    <property name="icon-name">preferences-system-sharing-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
@@ -3955,19 +3955,18 @@ new name and/or different folder.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="btn_prvShare">
-                        <property name="name">Share the PDF with others</property>
+                      <object class="GtkButton" id="btn_prOpen">
+                        <property name="name">Open the PDF in Default PDF Viewer</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">(Coming soon...)
-Share this PDF with others 
-via email, or social media.</property>
+                        <property name="tooltip-text" translatable="yes">Open the PDF in the system's
+default PDF viewer (e.g. Evince,
+Acrobat or SumatraPDF).</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="image">icon_prvShare</property>
-                        <signal name="clicked" handler="onShareItClicked" swapped="no"/>
+                        <property name="image">icon_prvOpen</property>
+                        <signal name="clicked" handler="onOpenItClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>

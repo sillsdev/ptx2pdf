@@ -173,7 +173,7 @@ l_statusLine btn_dismissStatusLine
 l_artStatusLine
 s_pdfZoomLevel t_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
-btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint
+btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
 _ui_enable4diglot2ndary = """
@@ -249,7 +249,7 @@ _ui_experimental = """
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
 c_bkView s_pdfZoomLevel t_pgNum b_reprint fcb_project ecb_savedConfig
-l_menu_level btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint 
+l_menu_level btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint 
 """.split()
 
 # removed from list above: 
@@ -6506,9 +6506,13 @@ Thank you,
     def onAnchorFocusOut(self, btn, *a):
         self.anchorKeypressed = False      
 
-    def onShareItClicked(self, btn):
+    def onOpenItClicked(self, btn):
         pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
-        whatsapp_url = f"https://wa.me/?text=Please%20Check%20out%20this%20PDF:%20{pdffilepath}"
+        startfile(pdffilepath)
+
+    # def onShareItClicked(self, btn):
+        # pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
+        # whatsapp_url = f"https://wa.me/?text=Please%20Check%20out%20this%20PDF:%20{pdffilepath}"
         # self.openURL(whatsapp_url)
 
     def onLocateDigitMappingClicked(self, btn):
