@@ -759,7 +759,7 @@ class RunJob:
                     diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
                                 color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
-                        self.printer.onShowPDF(None, path=diffname)
+                        self.printer.onShowPDF(path=diffname)
                         if diffname == pdfname:
                             self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
@@ -812,7 +812,7 @@ class RunJob:
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
             if not self.noview and startname is not None:
-                    self.printer.onShowPDF(None, path=startname)
+                    self.printer.onShowPDF(path=startname)
 
         elif self.res == 3:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),

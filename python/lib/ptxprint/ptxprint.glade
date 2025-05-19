@@ -1921,36 +1921,6 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
-  <object class="GtkPopover" id="menu_language">
-    <property name="can-focus">False</property>
-    <signal name="closed" handler="menu_inner_closed" swapped="no"/>
-    <child>
-      <object class="GtkTreeView">
-        <property name="height-request">210</property>
-        <property name="visible">True</property>
-        <property name="can-focus">True</property>
-        <property name="model">ls_interfaceLang</property>
-        <property name="headers-visible">False</property>
-        <property name="enable-search">False</property>
-        <property name="activate-on-single-click">True</property>
-        <signal name="row-activated" handler="onUILangSelected" swapped="no"/>
-        <child internal-child="selection">
-          <object class="GtkTreeSelection"/>
-        </child>
-        <child>
-          <object class="GtkTreeViewColumn">
-            <property name="title" translatable="yes">column</property>
-            <child>
-              <object class="GtkCellRendererText"/>
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkListStore" id="ls_leaderStyle">
     <columns>
       <!-- column-name leaderStyle -->
@@ -2781,36 +2751,6 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
-  <object class="GtkPopover" id="menu_showPDF">
-    <property name="can-focus">False</property>
-    <child>
-      <object class="GtkTreeView">
-        <property name="visible">True</property>
-        <property name="can-focus">True</property>
-        <property name="model">ls_showPDF</property>
-        <property name="headers-visible">False</property>
-        <property name="enable-search">False</property>
-        <property name="search-column">0</property>
-        <property name="show-expanders">False</property>
-        <property name="activate-on-single-click">True</property>
-        <signal name="row-activated" handler="onShowPDF" swapped="no"/>
-        <child internal-child="selection">
-          <object class="GtkTreeSelection"/>
-        </child>
-        <child>
-          <object class="GtkTreeViewColumn">
-            <property name="title" translatable="yes">Levels</property>
-            <child>
-              <object class="GtkCellRendererText"/>
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkListStore" id="ls_snruleHorizPosn">
     <columns>
       <!-- column-name HorizPosition -->
@@ -3177,139 +3117,6 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
-  <object class="GtkPopover" id="menu_mode">
-    <property name="can-focus">False</property>
-    <signal name="closed" handler="menu_inner_closed" swapped="no"/>
-    <child>
-      <object class="GtkTreeView">
-        <property name="visible">True</property>
-        <property name="can-focus">True</property>
-        <property name="model">ls_uiLevel</property>
-        <property name="headers-visible">False</property>
-        <property name="enable-search">False</property>
-        <property name="show-expanders">False</property>
-        <property name="activate-on-single-click">True</property>
-        <signal name="row-activated" handler="onUILevelSelected" swapped="no"/>
-        <child internal-child="selection">
-          <object class="GtkTreeSelection"/>
-        </child>
-        <child>
-          <object class="GtkTreeViewColumn">
-            <property name="title" translatable="yes">Levels</property>
-            <child>
-              <object class="GtkCellRendererText"/>
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkPopover" id="menu_main">
-    <property name="can-focus">False</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkMenuButton" id="btn_menu_showPDF">
-            <property name="can-focus">True</property>
-            <property name="focus-on-click">False</property>
-            <property name="receives-default">True</property>
-            <property name="no-show-all">True</property>
-            <property name="direction">right</property>
-            <property name="popover">menu_showPDF</property>
-            <child>
-              <object class="GtkLabel" id="l_menu_showPDF">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Show PDF</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkMenuButton" id="btn_menu_level">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="focus-on-click">False</property>
-            <property name="receives-default">True</property>
-            <property name="direction">right</property>
-            <property name="popover">menu_mode</property>
-            <child>
-              <object class="GtkLabel" id="l_menu_level">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">View Level</property>
-                <property name="justify">center</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkMenuButton" id="btn_menu_lang">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="focus-on-click">False</property>
-            <property name="receives-default">True</property>
-            <property name="direction">right</property>
-            <property name="popover">menu_language</property>
-            <child>
-              <object class="GtkLabel" id="l_menu_uilang">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Language</property>
-                <property name="justify">center</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_menu_feedback">
-            <property name="label" translatable="yes">Give Feedback</property>
-            <property name="name">Link to PTXprint Feedback Form (Google Form)</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
-You could help us make PTXprint better!
-
-The developers of PTXprint would love to know how 
-this tool is being used. What is your favorite feature? 
-Are there any annoyances? Tell us what you like, or 
-don't like. Tell us what you dream for in the future.
-
-Click this button to fill in the Google form or type
-this in a browser: http://tiny.cc/ptxprintfeedback</property>
-            <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkListStore" id="ls_xRefExtListSource">
     <columns>
       <!-- column-name Description -->
@@ -3446,6 +3253,109 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
     <property name="can-focus">False</property>
     <child>
       <placeholder/>
+    </child>
+  </object>
+  <object class="GtkPopover" id="menu_main">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_showPDF">
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="no-show-all">True</property>
+            <property name="direction">right</property>
+            <property name="use-popover">False</property>
+            <child>
+              <object class="GtkLabel" id="l_menu_showPDF">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Show PDF</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_level">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="direction">right</property>
+            <property name="use-popover">False</property>
+            <child>
+              <object class="GtkLabel" id="l_menu_level">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">View Level</property>
+                <property name="justify">center</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_lang">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="direction">right</property>
+            <property name="use-popover">False</property>
+            <child>
+              <object class="GtkLabel" id="l_menu_uilang">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Language</property>
+                <property name="justify">center</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_menu_feedback">
+            <property name="label" translatable="yes">Give Feedback</property>
+            <property name="name">Link to PTXprint Feedback Form (Google Form)</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
+You could help us make PTXprint better!
+
+The developers of PTXprint would love to know how 
+this tool is being used. What is your favorite feature? 
+Are there any annoyances? Tell us what you like, or 
+don't like. Tell us what you dream for in the future.
+
+Click this button to fill in the Google form or type
+this in a browser: http://tiny.cc/ptxprintfeedback</property>
+            <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
     </child>
   </object>
   <object class="GtkFileFilter" id="pdfFiles">
@@ -3956,7 +3866,7 @@ new name and/or different folder.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="btn_prOpen">
+                      <object class="GtkButton" id="btn_prvOpen">
                         <property name="name">Open the PDF in Default PDF Viewer</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>

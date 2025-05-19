@@ -694,14 +694,31 @@ class GtkViewModel(ViewModel):
         self.codeletVboxes = {}
         self.gtkpolyglot = None
         self.ufPages = []
-        self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
+
+        self.initialize_uiLevel_menu()
+        self.updateShowPDFmenu()
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
+
         llang = self.builder.get_object("ls_interfaceLang")
-        for i, r in enumerate(llang):
-            if self.lang.startswith(r[1]):
-                self.set("l_menu_uilang", _("Language\n({})").format(r[0]))
-                break
-        logger.debug(f"UI Language list: {llang}")
+        btn_language = self.builder.get_object("btn_menu_lang")
+        menu = Gtk.Menu()
+        for row in llang:
+            lang_name, lang_code = row[:2]
+            label = Gtk.Label()
+            if self.lang.startswith(lang_code):
+                label.set_markup(f'<span foreground="medium blue"><b>{lang_name}</b></span>')
+                self.set("l_menu_uilang", _("Language\n({})").format(lang_name))
+            else:
+                label.set_text(lang_name)
+            label.set_use_markup(True)
+            label.set_xalign(0)
+            item = Gtk.MenuItem()
+            item.add(label)
+            item.connect("activate", self.changeInterfaceLang, lang_code)
+            menu.append(item)
+        menu.show_all()
+        btn_language.set_popup(menu)
+        logger.debug(f"UI Language list: {[row[:] for row in llang]}")
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
@@ -815,6 +832,53 @@ class GtkViewModel(ViewModel):
         logger.debug("Project list loaded")
 
         return True
+
+    def initialize_uiLevel_menu(self):
+        levels = self.builder.get_object("ls_uiLevel")
+        btn = self.builder.get_object("btn_menu_level")
+        menu = Gtk.Menu()
+        for row in levels:
+            label_text = row[0]  # e.g., "Beginner (1)"
+            level_value = int(row[1])  # e.g., 1
+
+            label = Gtk.Label()
+            if level_value == self.uilevel:
+                label.set_markup(f'<span foreground="#0000CD"><b>{label_text}</b></span>')
+            else:
+                label.set_text(label_text)
+            label.set_use_markup(True)
+            label.set_xalign(0)
+
+            item = Gtk.MenuItem()
+            item.add(label)
+            item.connect("activate", self.setUIlevel, level_value)
+            menu.append(item)
+
+        menu.show_all()
+        btn.set_popup(menu)
+
+    def updateShowPDFmenu(self):
+        self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
+        lst = self.builder.get_object("ls_showPDF")
+        btn = self.builder.get_object("btn_menu_showPDF")
+        menu = Gtk.Menu()
+        for row in lst:
+            label_text = row[0]
+            option_value = row[1]
+            label = Gtk.Label()
+            if option_value == self.showPDFmode:
+                label.set_markup(f'<span foreground="medium blue"><b>{label_text}</b></span>')
+            else:
+                label.set_text(label_text)
+            label.set_use_markup(True)
+            label.set_xalign(0)
+            item = Gtk.MenuItem()
+            item.add(label)
+            item.connect("activate", self.set_showPDFmode, option_value)
+            menu.append(item)
+        menu.show_all()
+        btn.set_popup(menu)
+
 
     def _setup_digits(self):
         digits = self.builder.get_object("ls_digits")
@@ -1215,45 +1279,42 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         self.loadingConfig = False
 
-    def menu_inner_closed(self, widget):
-        mw = self.builder.get_object("menu_main")
-        mw.popdown()
-
-    def onUILevelSelected(self, tv, path, col):
-        ui = int(tv.get_model()[path][1])
-        mw = self.builder.get_object("menu_mode")
-        mw.popdown()
-        self.set_uiChangeLevel(ui)
-
     def onResetPage(self, widget):
         pass
 
+    def setUIlevel(self, menuitem, ui):
+        self.set_uiChangeLevel(ui)
+        
     def set_uiChangeLevel(self, ui):
+        print(f"{ui=}")
         if isinstance(ui, str):
             try:
                 ui = int(ui)
             except ValueError:
-                logger.warn(f"Unexpected ui value of {ui}")
+                logger.warning(f"Unexpected ui value of {ui}")
                 ui = 4
+
         if ui <= 0 or ui > 6:
             ui = 4
+
         pgId = self.builder.get_object("nbk_Main").get_current_page()
+        self.uilevel = ui
         if not self.userconfig.has_section("init"):
             self.userconfig.add_section("init")
         self.userconfig.set('init', 'userinterface', str(ui))
-        self.uilevel = ui
         levels = self.builder.get_object("ls_uiLevel")
         levelname = None
         for r in levels:
             if int(r[1]) == ui:
-                levelname = " ".join(r[0].split(" ")[:-1])
+                levelname = " ".join(r[0].split(" ")[:-1])  # remove (n)
                 break
-        self.set("l_menu_level", _("View Level\n({})").format(levelname) if levelname is not None else _("View Level"))
+        self.set("l_menu_level", _("View Level\n({})").format(levelname) if levelname else _("View Level"))
+        self.initialize_uiLevel_menu()
 
+        # Apply UI filtering logic
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 self.toggleUIdetails(w, False)
-                
             widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
             if self.args.experimental & 1 != 0:
                 widgets += _ui_experimental
@@ -1288,9 +1349,6 @@ class GtkViewModel(ViewModel):
         # self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
         return True
-
-    def get_uiChangeLevel(self):  # Is this method supposed to be doing something more?
-        return self.uilevel
 
     def toggleUIdetails(self, w, state):
         if w in _ui_noToggleVisible:
@@ -1766,7 +1824,7 @@ class GtkViewModel(ViewModel):
         delCfgPath = self.project.srcPath(cfg)
         sec = ""
         if cfg == 'Default':
-            ui = self.get_uiChangeLevel() # Why not just use: ui = self.uilevel  ???
+            ui = self.uilevel
             self.resetToInitValues()
             self.set_uiChangeLevel(ui)
             try:
@@ -5116,13 +5174,13 @@ class GtkViewModel(ViewModel):
             if wid is not None:
                 wid.set_sensitive(status)
 
-    def onUILangSelected(self, tv, path, col):
-        lang = tv.get_model()[path][1]
-        mw = self.builder.get_object("menu_language")
-        mw.popdown()
-        self.changeInterfaceLang(lang)
+    # def onUILangSelected(self, tv, path, col):
+        # lang = tv.get_model()[path][1]
+        # mw = self.builder.get_object("menu_language")
+        # mw.popdown()
+        # self.changeInterfaceLang(lang)
 
-    def changeInterfaceLang(self, lang):
+    def changeInterfaceLang(self, mnu, lang):
         if lang == self.lang:
             return
         try:
@@ -6322,18 +6380,15 @@ Thank you,
             if float(self.get("s_pagegutter",0)) < 30:
                 self.set("s_pagegutter", 40)
 
-    def onShowPDF(self, tv, path=None, col=0):
-        if tv is None:
-            action = self.showPDFmode
-        else:
-            action = tv.get_model()[path][1]
-            self.showPDFmode = action
-            self.userconfig.set('init', 'showPDFmode', action)
-            for a in ("menu_showPDF", "menu_main"):
-                mw = self.builder.get_object(a)
-                mw.popdown()
+    def set_showPDFmode(self, menuitem, option_value):
+        self.showPDFmode = option_value
+        self.userconfig.set('init', 'showPDFmode', option_value)
+        self.updateShowPDFmenu()
+        # self.onShowPDF(None)
+
+    def onShowPDF(self, path=None):
         pdffile = os.path.join(self.project.printPath(None), self.getPDFname()) if path is None else str(path)
-        if action == "preview":
+        if self.showPDFmode == "preview":
             prvw = self.builder.get_object("dlg_preview")
             if os.path.exists(pdffile):
                 if pdffile.endswith(("_cover.pdf", "_diff.pdf")):
@@ -6344,14 +6399,13 @@ Thank you,
                                           widget=prvw, page=None, isdiglot=self.get("c_diglot"))
             else:
                 self.pdf_viewer.clear(widget=prvw)
-            # print(f"Calling updatePageNavigation from onShowPDF in GtkView.py")
-            # self.pdf_viewer.updatePageNavigation()
-        elif os.path.exists(pdffile):
-            if action == "sysviewer":
-                startfile(pdffile)
-            elif action == "openfolder":
-                startfile(self.project.printPath(None))
 
+        elif os.path.exists(pdffile):
+            if self.showPDFmode == "sysviewer":
+                startfile(pdffile)
+            elif self.showPDFmode == "openfolder":
+                startfile(self.project.printPath(None))
+    
     def onClosePreview(self, widget):
         self.builder.get_object("dlg_preview").hide()
 
