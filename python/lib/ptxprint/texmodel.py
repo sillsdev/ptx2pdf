@@ -1080,7 +1080,7 @@ class TexModel:
         syntaxErrors = []
         try:
             doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar)
-            doc.xml.canonicalise()
+            doc.xml.canonicalise(version="3.1")
         except SyntaxError as e:
             syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
         except Exception as e:
