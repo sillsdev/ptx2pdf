@@ -598,6 +598,137 @@ text in a GLO file. Likewise, after the GLO book finishes, we run a macro to
 undefine the header macros.
 
 
+## 3 Column Concordance
+
+This snippet assumes a concordance has been created in the XXS book using
+Concordance Builder (which comes with Paratext).
+
+It is not uncommon to set back of the bible concordances in 3 columns. But note
+that while that means it takes up only half the number of pages a 2 column
+concordance does, the text often needs to be half the size. One way around the
+smaller point size is to generate the concordance with a narrower column width.
+
+There is quite a bit to do in this snippet. First we have to restructure the
+output XXS to something that PTXprint would prefer to work with. Second we have
+to set up the styles and third we have to capture the components of a line to
+lay them out appropriately.
+
+### Implementation
+
+Here is a typical changes.txt that someone might use for a concordance (whether
+2 or 3 column):
+
+```perl
+sections ("initial")
+"//\\t " > "\\pz \\zpa ~ "
+"//" > "\\pz "
+"\\t " > " " 
+
+"\\zpa-xb " > "\\zpa "
+"\\zpa-xb\*"> ""
+"\\zpa-xc\*" > ""
+"\\zpa-xc " > "\\zpb "
+"\\zpa-xv\*" > "\\zpb*\\zpa*"
+"\\zpa-xv " > ""
+
+"\\c .*?[\r\n]" > ""
+
+sections ("default")
+'(\\id.*?\n)' > '\1\\threebody\n'
+# '\\s ' > '\n\\r\n\\zrule|width="1.0" align="c" thick="0.5pt" color="0.5 0.5 0.5"\\*\n\\s '
+'\\ip.*?\n' > '\n'
+
+"\\p " > "\\s2 "
+
+"See Also" > "~\u2003\u2192 "
+```
+
+The first line `sections ("initial")` tells PTXprint to process these changes
+before parsing the USFM into USX. We put these changes here because we want to
+change some of the markers and don't want to have to define the old markers that
+are being changed in our style sheet just so that the USFM parser can be kept
+happy. The output from Concordance Builder (CB) is quirky and each line is
+simply a suggested line break on the previous line. It would be much more
+sensible to have a paragraph for each entry line. So we convert each line to a
+`\pz` paragraph. Notice that if the line starts with a tab (indicated by the
+special marker `\t`) we simply say that this starts the book name entry as a
+space. A reference is held in a `\zpa` character style and the chapter verse
+part in a sub character style (\zpb). Thus for example the first line becomes
+the second in:
+
+```tex
+//\t \zpa-xc 6\zpa-xc*:\zpa-xv 7\zpa-xv*\t vālek būtkun teṇḍsi pūḍle \bd //adikār\bd* sītor.
+
+\pz \zpa ~ \zpb 6:7\zpb*\zpa* vālek būtkun teṇḍsi pūḍle \bd adikār\bd* sītor.
+```
+
+The next lines in the initial section convert the zpa-xb, zpa-xc, and xpa-xv
+marked text into the zpa, zpb structure I have preferred, as can be seen in the
+example above. Finally we remove any chapter markers because who needs those?
+
+The default section is where we do our typesetting. We insert the `\threebody`
+marker to indicate that we want this book typeset in 3 columns. If you want two
+columns, you don't need this line. There is an example if inserting a line
+above headings commented out. We also delete the spurious introductory paragraph
+added by CB. Of course if you put real content there, then you don't need this
+line.
+
+The XXS file uses `\p` to mark the keyword heading for each group of cross
+references. This would be better as a header, so we convert it to '\s2`, but you
+can use whatever subsection marker you want. We also convert the string "See
+Also" into a wide space followed by an arrow which works better across
+languages.
+
+Now we can start typesetting. Bear in mind that some styles (e.g. `\s2` here)
+may need to be styled just for the concordance. This can be done by creating a
+new style with a prefix as in `id:CNC|s2` thus protecting the existing `\s2`
+style that may be used elsewhere. We will also want to use a much smaller text
+size for the '\pz' and '\s2' paragraphs, especially if we are typsetting in 3
+columns.
+
+### TeX
+
+In our example we would like to style the reference with the book on the left
+and the CV on the right. This means that the book stands out and if there is no
+book, the CV has a natural position against the entry text. First some
+TeX:
+
+```tex
+\sethook{start}{zpa}{\hbox to 4.5em\bgroup}
+\sethook{end}{zpa}{\egroup\hskip 0.3em}
+\sethook{start}{zpb}{\hfil}
+
+
+\def\zCNCHeaders{%
+    \gdef\RHnoVevenleft{\trace{ma}{header
+left}\pnum\pagenumber\pnum*\quad\|\quad
+\it\zcustomfirstmark|type="k"\*\space\emdash\space\zcustombotmark|type="k"\*\it*}%
+    \gdef\RHnoVoddright{\it\zcustomfirstmark|type="k"\*\space\emdash\space\zcustombotmark|type="k"\*\it*\quad\|\quad
+\pnum\pagenumber\pnum*}%
+}
+\def\zNoCNCHeaders{\gdef\RHnoVevenleft{}\gdef\RHnoVoddright{}}
+
+% Turn on Glossary headers at start of CNC and turn them off at the very end of
+% the book
+\setbookhook{start}{CNC}{\zCNCHeaders}
+\setbookhook{after}{CNC}{\zNoCNCHeaders}
+```
+
+This snippet does two things. The first three lines position the book and
+reference to the left of the entry text. The first line says to create a box
+4.5em wide and collect the contents of the `\zpa` character style. The value
+4.5em is something you will probably need to change according to the maximum
+width of a reference. We use em as the units here so that the box size is
+somewhat resiliant with respect to overall text size changes. The second line is
+what closes off this box and ensures a suitable gap between the reference and
+the entry text. The third line says that on starting the CV part of the
+reference insert a space filler that pushes the book and CV parts apart.
+
+The second part of the TeX code provides the running header content.  This code
+is identical to that found in the Fancy Headers snippet above with just GLO
+changed to CNC.
+
+
 ## Coloured diacritics
 
 PTXprint includes code to process the generated xdv file between its creation by

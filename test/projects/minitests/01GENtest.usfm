@@ -21,7 +21,7 @@ In eius iste blanditiis impedit qui rem repellendus eos. Mollitia delectus qui a
 \zpostendnoterule
 \p
 The first end-note\x + \xt But not the last\x* was placed above here.
-\v 3 This is verse three. with a link to \xt verse 4|GEN 1:4\xt* and one to \xt vv4-5|GEN 1:4-5\xt*
+\v 3 This is verse three. with a link to \ref verse 4|GEN 1:4\ref* and one to \ref vv4-5|GEN 1:4-5\ref*
 \v 4-5 This is a target for the link
 \c 11 
 \ip This chapter ends with the start of the account of \w Abram\w*.
