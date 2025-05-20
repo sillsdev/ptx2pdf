@@ -17,7 +17,7 @@ from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.procpdf import procpdf
 from ptxprint.pdfrw import PdfReader, PdfWriter
-from ptxprint.pdfrw.errors import PdfError
+from ptxprint.pdfrw.errors import PdfError, log
 from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
@@ -1159,7 +1159,11 @@ class RunJob:
         tmpPicPath = os.path.join(self.printer.project.printPath(self.printer.cfgid), "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         if os.path.splitext(srcpath)[1].lower().startswith(".pdf"):
-            copyfile(srcpath, tgtpath)
+            log.setLevel(logging.CRITICAL)
+            trailer = PdfReader(srcpath)
+            writer = PdfWriter(tgtpath)
+            writer.trailer = trailer
+            writer.write()
             return os.path.basename(tgtpath)
         try:
             im = Image.open(srcpath)

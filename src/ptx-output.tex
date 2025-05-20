@@ -278,6 +278,7 @@
   \mcpush{P}{h}%
   \let\c@tprefix\empty\let\c@tegory\empty\let\f@ntextend\empty\let\mspr@fix\empty
   \s@tfont{h}{h}%
+  \op@ninghooks{before}{h}{h}%
   %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
   \vbox to 0pt{\t@gstartfull{Pagination}{h}{type="Header"}%
@@ -294,6 +295,7 @@
         \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
     \fi\fi}\vss\t@gend{Pagination}}\nointerlineskip
+   \cl@singhooks{after}{h}{h}%
    \mcpop\trace{h}{Stack now: \mcstack}%
 }}
 \newif\ifrhr@le
