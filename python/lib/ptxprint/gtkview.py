@@ -1286,7 +1286,6 @@ class GtkViewModel(ViewModel):
         self.set_uiChangeLevel(ui)
         
     def set_uiChangeLevel(self, ui):
-        print(f"{ui=}")
         if isinstance(ui, str):
             try:
                 ui = int(ui)
@@ -5174,12 +5173,6 @@ class GtkViewModel(ViewModel):
             if wid is not None:
                 wid.set_sensitive(status)
 
-    # def onUILangSelected(self, tv, path, col):
-        # lang = tv.get_model()[path][1]
-        # mw = self.builder.get_object("menu_language")
-        # mw.popdown()
-        # self.changeInterfaceLang(lang)
-
     def changeInterfaceLang(self, mnu, lang):
         if lang == self.lang:
             return
@@ -6384,7 +6377,7 @@ Thank you,
         self.showPDFmode = option_value
         self.userconfig.set('init', 'showPDFmode', option_value)
         self.updateShowPDFmenu()
-        # self.onShowPDF(None)
+        self.onShowPDF(None)
 
     def onShowPDF(self, path=None):
         pdffile = os.path.join(self.project.printPath(None), self.getPDFname()) if path is None else str(path)
