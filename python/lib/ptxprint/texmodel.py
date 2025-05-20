@@ -960,6 +960,7 @@ class TexModel:
         with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
         doc = None
+        logger.debug(f"Converting {bk} {chaprange=} sections{self.changes.keys()}")
 
         if 'initial' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
@@ -1055,8 +1056,9 @@ class TexModel:
                 doc.apply_adjlist(bk, adjlist)
             # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
+        logger.debug("Applying final changes: ")
         if 'final' in self.changes:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes (final)\n")
             dat = runChanges(self.changes['final'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to output\n")
