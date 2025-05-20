@@ -68,6 +68,8 @@ texpertOptions = {
                               _("Hanging verses into a chapter number can result in clashes, depending on the after-chapter space. If so, then turn off hanging verse numbers for the first verse (in poetry only). ")),
     "HangVA":             O("hangva", "CVS", False, None, _("Alternate verse numbers also hang"),
                             _("If there is an alternative verse and the current verse is hanging, does the alternate hang?")),
+    "RefLocLink":             O("userefloc", "CVS", True, None, _("Use loc attrib on ref to make a link"),
+                            _('The ref character style can include an attribute like loc="GEN 1:2". Should this be used to make a clickable link?')),
     "AfterChapterSpaceFactor":  O("afterchapterspace", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), r"\def\{0}{{{1}}}", _("After chapter space factor"),
                             _("This sets the gap between the chapter number and the text following. The setting here is a multiple of the main body text size as specified in layout."),
                             valfn=lambda v: f2s(asfloat(v, 0.25) * 12)),

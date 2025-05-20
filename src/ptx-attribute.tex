@@ -98,12 +98,13 @@
   \def\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
     \x@\let\csname\tmpa\endcsname\relax
   \else
-    \x@\let\csname\tmpa\endcsname\tmp
+    \x@\def\csname\tmpa\endcsname{#3}%
   \fi}
 \def\SetSpeciallAttribs#1#2#3{%\tracingassigns=1\relax%
   \FlagSpecialAttrib{#1}%
   \S@tOneSpecialAttrib{#1}{start}{#2}%
   \S@tOneSpecialAttrib{#1}{end}{#3}\tracingassigns=0\relax}%
+
 
 \def\unset@ttribs{% Remove any current attibute definitions
   \let\d@=\kill@ttrib
@@ -469,6 +470,16 @@
         \hbox to \dimen0{\alignb@x{#1}{0}}}}}
 
 \expandafter\def\csname complex-rb\endcsname{\rubyt{rb}{gloss}} % USFM-3 suggests ruby goes above. 
+\newif\ifRefLocLink\RefLocLinktrue
+\expandafter\def\csname complex-ref\endcsname{%Process loc option by turning it into a GOTO link.
+  \ifRefLocLink
+    \get@ttribute{loc}%
+    \ifx\attr@b\relax\unhbox0\else
+      \pdfGOTO{\attr@b}\unhbox0\special{pdf:eann}%
+    \fi
+  \fi
+}
+%
  
 %usfm 3.0 defaults - now loaded from stylesheet.
 %\setdefaultattrib{qt}{who}

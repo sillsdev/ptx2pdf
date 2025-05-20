@@ -7,4 +7,5 @@ piccredit =
 
 [image]
 approved = false
+picclear = yes
 
