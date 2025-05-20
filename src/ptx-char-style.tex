@@ -219,7 +219,7 @@
 %-cchar_endstyle
 %+cchar_startcharstyle
 \def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle (\stylet@pe)}%
-  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi}{\newch@rstyle}%
+  \mcpush{\ifx\stylet@pe\empty \ss@Char\else\stylet@pe\fi}{\newch@rstyle}%
   \let\styst@k=\empty
   \s@tstyst@k%
   \t@stpublishability{\newch@rstyle}\ifn@npublishable                   %(1)

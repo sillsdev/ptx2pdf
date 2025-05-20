@@ -193,13 +193,13 @@
 }
 %%%%%%%%%
 %
-\def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
+\def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\ifimplicitcl@se\if #1\ss@ChrP  +\fi\fi#2}}
 % make something that swallows everything up to a given end-marker
 \def\s@tend@marker#1{\let\end@marker\relax\let\d@\def@endm@rker\mctop\ifx\end@marker\relax\edef\end@marker{#1}\fi}
 \def\setgr@bname#1{%
   \s@tend@marker{#1}%
   \edef\gr@bname{@attr@grab-\end@marker}%
-  \trace{A}{Grab@name: \gr@bname}%
+  \trace{A}{Grab@name: (for #1) \gr@bname}%
   \x@\ifcsname \gr@bname\endcsname\else
     \trace{A}{New grabber: \gr@bname\space about to be defined, endmarker: \end@marker}%
     \x@\setup@ttr@grab\x@{\csname \end@marker\endcsname}%
