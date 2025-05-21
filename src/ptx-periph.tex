@@ -217,7 +217,7 @@
       \let\@@pdftag\attr@b
       \trace{per}{zmakeinsert tagging periph '\periph@@@' as '\@@pdftag' (\the\pagetotal, \the\pagegoal)}%
       \m@rkpdftag{\@@pdftag}%
-      \showlists
+      %\showlists
       \get@ttribute{nopagecount}%
       \ifx\attr@b\relax\else
         \x@\global\x@\let\csname periph-\@@pdftag-nocount\endcsname\attr@b % Page builder shouldn't increment page count for this.
