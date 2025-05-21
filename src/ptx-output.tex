@@ -868,7 +868,7 @@
     \setbox9=\copy#1
     %\edef\c@ltopmark{\topmarks\m@rknumc@l}%
     \edef\c@ltopmark{\c@lp@gebotmark}%
-    \ifversion{4}{\setbox\colA=\vsplit#1 to \dimexpr \colhtA + \lastdepth}{\setbox\colA=\vsplit#1 to \colhtA}%
+    \ifversion{4}{\setbox\colA=\vsplit#1 to \dimexpr \colhtA + \lastdepth\relax}{\setbox\colA=\vsplit#1 to \colhtA\relax}%
     \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\c@ltopmark\unvbox\colA}\fi
     \edef\c@ltopmark{\splitbotmarks\m@rknumc@l}%
     \setbox9=\copy#1
