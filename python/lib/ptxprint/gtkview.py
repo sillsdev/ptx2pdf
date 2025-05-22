@@ -693,6 +693,7 @@ class GtkViewModel(ViewModel):
         self.currCodeletVbox = None
         self.codeletVboxes = {}
         self.gtkpolyglot = None
+        self.currentPDFpath = None
         self.ufPages = []
 
         self.initialize_uiLevel_menu()
@@ -6556,13 +6557,8 @@ Thank you,
         self.anchorKeypressed = False      
 
     def onOpenItClicked(self, btn):
-        pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
-        startfile(pdffilepath)
-
-    # def onShareItClicked(self, btn):
-        # pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
-        # whatsapp_url = f"https://wa.me/?text=Please%20Check%20out%20this%20PDF:%20{pdffilepath}"
-        # self.openURL(whatsapp_url)
+        if self.currentPDFpath is not None:
+            startfile(self.currentPDFpath)
 
     def onLocateDigitMappingClicked(self, btn):
         self.highlightwidget('fcb_fontdigits')

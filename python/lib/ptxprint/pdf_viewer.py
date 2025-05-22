@@ -605,6 +605,7 @@ class PDFViewer:
         widget.show_all()
         self.set_zoom_fit_to_screen(None)
         self.updatePageNavigation()
+        self.model.currentPDFpath = fname
         return True
 
     def clear(self, widget=None):
