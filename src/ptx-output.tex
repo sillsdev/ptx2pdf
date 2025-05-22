@@ -124,7 +124,7 @@
       \ifnoinkinmargin\ifdim\ht14>0pt \inp@gegap\box14\fi\fi
   }%
 }
-\def\@@onecolp@gects#1{
+\def\@@onecolp@gects#1{%
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{\colA}{A}%
@@ -310,7 +310,7 @@
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue
 \def\makefootbox{%
-  \vbox{
+  \vbox{%
     \mcpush{P}{h}%
     \let\c@tprefix\empty\let\c@tegory\empty\let\f@ntextend\empty\let\mspr@fix\empty
     \s@tfont{zfooter}{zfooter+h}%
@@ -525,7 +525,7 @@
         \box\partial}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \@@onecolp@gects{\unvbox\colA\vfil%\special{"testme2"}%
-       }
+       }%
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \ifMidPageFootnotes
@@ -572,7 +572,7 @@
       \fi
       %\ifnum\outputpenalty < -10000 \relax\temptrue\fi
       \ifnum\book@ndpenalty =\outputpenalty \ifendbooknoeject\else \temptrue \fi\fi
-      \trace{o}{outputpenalty = \the\outputpenalty \space for book@endpenalty=\book@ndpenalty . temp\iftemp true\else false\fi}%
+      \trace{o}{outputpenalty = \the\outputpenalty \space cf book@endpenalty=\book@ndpenalty . temp\iftemp true\else false\fi}%
     \fi
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
       \m@keinp@gegap
@@ -666,7 +666,7 @@
 %-c_reduceavailht
 
 %+c_reduceavailht_para
-\def\reduceavailht@para#1{
+\def\reduceavailht@para#1{%
   \def\cl@sss{#1\g@tndstat}%
   \trace{n}{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
@@ -722,7 +722,7 @@
   \fi\egroup}
 
 %+c_reduceavailhtsep
-\def\reduceavailht@sep#1{
+\def\reduceavailht@sep#1{%
   \def\cl@sss{#1\g@tndstat}%
   \TRACE{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
@@ -832,7 +832,7 @@
 \newif\ifnoteseen \noteseenfalse% A trigger to help alert user that note might have gone missing
 
 %+c_setcolhts
-\def\s@tcolhts#1{
+\def\s@tcolhts#1{%
     \colhtA=#1 \decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
     \colhtB=#1 \decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
     \ifColNotes
@@ -849,7 +849,7 @@
 %-c_setcolhts
 
 %+c_getcolhts
-\def\g@tcolhts{
+\def\g@tcolhts{%
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins}\incr{\colhtA}{\bottomleftins}%
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins}\incr{\colhtB}{\bottomrightins}%
     %\ifColNotes\advance\colhtB by \ht\coln@tebox\fi
@@ -861,7 +861,7 @@
 \newif\ifswapcol
 \newm@rknum{c@l}
 \def\c@lp@gebotmark{}
-\def\spl@tcols#1{
+\def\spl@tcols#1{%
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over, unless there's an initial penalty
     % \trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \splittopskip=\topskip
@@ -991,7 +991,7 @@
   \fi
 }
 
-\def\balanced{
+\def\balanced{%
   \traceifset{balanced}
   \vfuzz=\PaperHeight
   \setbox0=\copy\s@vedpage
@@ -1292,7 +1292,7 @@
   \traceifcheck{c@lcavailht}%
 }
 \newif\ifXrefSideAlign
-\def\doColNotes#1{
+\def\doColNotes#1{%
   % creates column notes in coln@tebox with side effect of perhaps xr@fbox. Uses boxes 0,2,5
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
@@ -1319,7 +1319,7 @@
 %-c_calcavailht
 \newif\ifXrefTopfill \XrefTopfillfalse
 
-\def\s@ttrialheight{
+\def\s@ttrialheight{%
   \trace{o}{s@ttrialheight \the\textheight - \the\ht\partial (\the\t@xttrialheight)}%
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial %\advance\trialheight by -\bmg@p
 }
@@ -1427,7 +1427,7 @@
     % do this after we have the final boxes
     \dimen4=\ht\partial \dimen5=\dp\partial
     \m@keinp@gegap
-    \global\setbox\partial=\vbox{
+    \global\setbox\partial=\vbox{%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
       % bodge the partial box which should really have been properly textually merged
@@ -1505,7 +1505,7 @@
 %+c_makenotebox
 % Make a box of all the notes
 \def\m@kenotebox{%
-  \global\setbox2=\vbox{
+  \global\setbox2=\vbox{%
     \edef\lastn@tewid{0pt}%
     \global\let\l@stnoteclass\empty\let\\=\setl@stnoteclass \the\n@tecl@sses % identify the last note
     \f@rstnotetrue
@@ -1526,7 +1526,7 @@
     \fi}}%\iff@rstnote\else\showbox2\fi}
 %-c_makenotebox
 
-\def\pr@pinserts{
+\def\pr@pinserts{%
   \ifdim\ht\topins>0pt
     \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
     \dimen1=\ht\topins\advance\dimen1\dp\topins \dimen0=\baselineskip
@@ -1793,7 +1793,7 @@
 
 %+c_savepartialpagedbounce
 \xdef\p@gefirstmark{}
-\def\@prepbounce{
+\def\@prepbounce{%
   % These output routines gets the partial galley (input text) before a column transition or final page 
   % so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
   \xdef\@utputpenalty{\ifnum\outputpenalty<-9999\the\outputpenalty\else 0\fi}% Is this eject forced?
@@ -1847,7 +1847,7 @@
 % to switch back to diglot columns, first set the page  so far 
 % and then change the rest.
 
-\def\diglotcolumns{
+\def\diglotcolumns{%
   \trace{o}{DiglotColumns: partial:\the\ht\partial. Pff:  \PageFullFactor\space\the\textheight}%
   \ifx\@netimesetup\relax%Skip ending diglot if there's no possibily we've started.
     \ifdiglot
@@ -1885,7 +1885,7 @@
 \def\twocolp@geout{%This gets used a few times
   \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins : topskip=\the\topskip , \the\splittopskip}%
   \m@keinp@gegap
-  \def\pagecontents{
+  \def\pagecontents{%
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins  : topskip=\the\topskip , \the\splittopskip}%
     \setbox0\vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \trace{et}{Apply border from twocolp@geout (shipout)}%
@@ -1918,7 +1918,7 @@
 
 %+c_singlecolumn
 % to switch back to single column, we reset the page size parameters
-\def\layoutstylebreak@singlecolumn{
+\def\layoutstylebreak@singlecolumn{%
   \trace{o}{LAYOUTSTYLE break (single col) pen=\layoutpen@lty/\csname d@code:\layoutpen@lty\endcsname}%
   \global\outputpenalty=0
   \ifhe@dings\endhe@dings\fi
@@ -2268,7 +2268,7 @@
     % do this after we have the final boxes
     \dimen4=\ht\partial \dimen5=\dp\partial
     \m@keinp@gegap
-    \global\setbox\partial=\vbox{
+    \global\setbox\partial=\vbox{%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
       % bodge the partial box which should really have been properly textually merged
@@ -2374,7 +2374,7 @@
     \trace{o}{s@tcolhts(\the #1): colhtA=\the\colhtA, colhtB=\the\colhtB, colhtC=\the\colhtC, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins), colnotebox=\the\ht\coln@tebox}%
 }
 
-\def\g@tcolhtsT{
+\def\g@tcolhtsT{%
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins}\incr{\colhtA}{\bottomleftins}%
     \colhtB=\ht\colB
     \colhtC=\ht\colC \incr{\colhtC}{\toprightins}\incr{\colhtC}{\bottomrightins}%
@@ -2384,7 +2384,7 @@
 %-c_getcolhts
 
 %+c_splitcols
-\def\spl@tcolsT#1{
+\def\spl@tcolsT#1{%
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over, unless there's an initial penalty
     % \trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \splittopskip=\topskip
@@ -2412,7 +2412,7 @@
     \trace{o}{splitcols A:\the\ht\colA, B:\the\ht\colB, C:\the\ht\colC, \the\ht#1}%
 }
 
-\def\balancet{
+\def\balancet{%
   \traceifset{balancet}
   \vfuzz=\PaperHeight
   \setbox0=\copy\s@vedpage
