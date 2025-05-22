@@ -23918,7 +23918,27 @@ various code snippets as required.</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLinkButton" id="lb_snippets">
+                                <property name="label" translatable="yes">More...</property>
+                                <property name="name">Link to deeper technical help</property>
+                                <property name="can-focus">True</property>
+                                <property name="focus-on-click">False</property>
+                                <property name="receives-default">True</property>
+                                <property name="no-show-all">True</property>
+                                <property name="tooltip-text" translatable="yes">Online documentation on a 
+structured list of code snippets 
+which can be copied and pasted 
+into the appropriate settings files.</property>
+                                <property name="halign">center</property>
+                                <property name="valign">end</property>
+                                <property name="relief">none</property>
+                                <property name="uri">https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/snippets.md</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
                             </child>
                           </object>
                           <packing>

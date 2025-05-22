@@ -2523,8 +2523,8 @@ class GtkViewModel(ViewModel):
         elif pgid == "tb_AdjList":
             genBtn.set_sensitive(True)
             fpath = None
-            self.builder.get_object("l_codeSnippets").set_visible(False)
-            self.builder.get_object("box_codelets").set_visible(False)
+            for w in ["l_codeSnippets", "box_codelets", "lb_snippets"]:
+                self.builder.get_object(w).set_visible(False)
 
         elif pgid in ("tb_TeXfile", "tb_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0])+fndict[pgid][1]
@@ -2587,12 +2587,10 @@ class GtkViewModel(ViewModel):
             self.currCodeletVbox.set_visible(False)
             self.currCodeletVbox = None
         if cat is None:
-            # self.builder.get_object("l_codeSnippets").set_visible(False)
-            # self.builder.get_object("box_codelets").set_visible(False)
             return
         else:
-            self.builder.get_object("l_codeSnippets").set_visible(True)
-            self.builder.get_object("box_codelets").set_visible(True)
+            for w in ["l_codeSnippets", "box_codelets", "lb_snippets"]:
+                self.builder.get_object(w).set_visible(True)
         if cat == 'File':
             cat = os.path.splitext(fpath)[1].lower()  # could be .txt, .tex, or .sty
         if not len(self.codeletVboxes):
