@@ -171,7 +171,8 @@ fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
-s_pdfZoomLevel t_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
+s_pdfZoomLevel btn_page_first btn_page_previous t_pgNum btn_page_next btn_page_last
+b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
 btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint
 """.split() # btn_reloadConfig   btn_imgClearSelection
@@ -238,7 +239,7 @@ bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles
 gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_ThumbTabs 
 c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover 
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
-btn_adjust_diglot
+btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 """.split()
 # tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
 # lpolyfraction_ spolyfraction_ tb_diglotSwitch btn_diglotSwitch

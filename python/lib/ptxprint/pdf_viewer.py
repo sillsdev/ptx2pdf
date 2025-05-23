@@ -46,7 +46,7 @@ mstr = {
     'tryminus':   _("Try Shrink -1 line"),
     'plusline':   _("Expand +1 line"),
     'rp':         _("Reset Adjustments"),
-    'shrnkboth':  _("Shrink Text and line"),
+    'shrnkboth':  _("Shrink -1 line and Text"),
     'st':         _("Shrink Text"),
     'et':         _("Expand Text"),
     'es':         _("Edit Style"),

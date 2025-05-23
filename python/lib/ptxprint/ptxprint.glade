@@ -3696,6 +3696,7 @@ Mouse Scroll also changes pages</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
+                    <property name="no-show-all">True</property>
                     <property name="tooltip-text" translatable="yes">Show previous underfilled page.</property>
                     <property name="halign">start</property>
                     <property name="image">icon_seekPage2fill_prev</property>
@@ -3714,6 +3715,7 @@ Mouse Scroll also changes pages</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
+                    <property name="no-show-all">True</property>
                     <property name="tooltip-text" translatable="yes">Show next underfilled page.</property>
                     <property name="halign">end</property>
                     <property name="image">icon_seekPage2fill_next</property>

@@ -1,8 +1,35 @@
 PTXprint 2.8.8 Release Notes
-14 May 2025
+23 May 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.9 (23 May 2025)
+  * Work around MapCreator pdf generation bug
+  * Swap inactive Share button for an active Open PDF button in preview pane
+  * Don't quit if the (new) UI language is the same as the current value
+  * Improve main menu options to highlight current value
+  * Hide main menu options after an option has been selected
+  * Right-click context menu in Polyglot no longer hangs around after selecting choice
+  * Add Donate button to menu
+  * Add a More... link for codelets (pointing to the online Snippets.md file)
+  * Add 3 column output, sufficient at least for a concordance
+  * Add documentation snippet for 3 column concordance (in Snippets.md)
+  * Solve character-styles in tables issue
+  * Allow colour / color as attribute for zrule
+  * Capture marks to top level in section paras (e.g. for k)
+  * Some changes to endnotes and clearnotes, for better behaviour
+  * Prevent breaking after write{@nontextstop} to parlocs
+  * Open Preview or System Viewer or Folder when selecting menu option
+  * Ensure the Open in System viewer gets the right PDF file, including TechRef or _diff
+  * dimexpr needs a \relax to stop processing
+  * Update TechRef documentation and test results
+  * Layout v4: split column boxes to height + last line depth rather than just height
+  * Add a few more debugging lines to help identify issues with changes sections
+  * Implement loc parsing for ref character style
+  * Fix crash on usfm3.1 attribute grab
+  * Fix 'missing csname' bug
+  * Fix UI level resetting
 
 Bug fixes and Improvements in 2.8.8 (15 May 2025)
   * Replace archive-specific font lookup location
