@@ -154,7 +154,7 @@ _progress = {
 _ui_minimal = """
 btn_menu bx_statusBar t_find
 btn_menu_showPDF l_menu_showPDF
-btn_menu_level btn_menu_lang btn_menu_feedback l_menu_level l_menu_uilang
+btn_menu_level btn_menu_lang btn_menu_feedback  btn_menu_donate l_menu_level l_menu_uilang
 fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
@@ -1286,7 +1286,15 @@ class GtkViewModel(ViewModel):
     def setUIlevel(self, menuitem, ui):
         self.set_uiChangeLevel(ui)
         
+    def popdownMainMenu(self):
+        menu_main = self.builder.get_object("menu_main")
+        if isinstance(menu_main, Gtk.Popover):
+            menu_main.popdown()        
+
     def set_uiChangeLevel(self, ui):
+        if self.loadingConfig:
+            return
+        self.popdownMainMenu()
         if isinstance(ui, str):
             try:
                 ui = int(ui)
@@ -5656,7 +5664,12 @@ class GtkViewModel(ViewModel):
         self.openURL("https://software.sil.org/ptxprint/download")
 
     def onGiveFeedbackClicked(self, btn):
+        self.popdownMainMenu()
         self.openURL(r"http://tiny.cc/ptxprintfeedback")
+                    
+    def onDonateClicked(self, btn):
+        self.popdownMainMenu()
+        self.openURL(r"https://give.sil.org/campaign/597654/donate")
                     
     def deniedInternet(self):
         self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
@@ -6376,6 +6389,7 @@ Thank you,
         self.showPDFmode = option_value
         self.userconfig.set('init', 'showPDFmode', option_value)
         self.updateShowPDFmenu()
+        self.popdownMainMenu()
         self.onShowPDF(None)
 
     def onShowPDF(self, path=None):

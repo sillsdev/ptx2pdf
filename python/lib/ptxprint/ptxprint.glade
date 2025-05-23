@@ -3331,14 +3331,41 @@ settings for a similar project.</property>
           </packing>
         </child>
         <child>
+          <object class="GtkButton" id="btn_menu_donate">
+            <property name="label" translatable="yes">Donate</property>
+            <property name="name">Donate toward PTXprint Development</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-markup" translatable="yes">PTXprint is a tool that is freely available to all
+without any restrictions. Our aim is to help
+people get the Scriptures out to people in 
+formats that work best for their local context.
+
+Click to contribute toward the ongoing 
+development and maintenance of tools 
+by SIL Global's Language Technology 
+Developers so that others can also benefit. 
+
+&lt;a href="https://give.sil.org/campaign/597654/donate"&gt;give.sil.org/campaign/597654/donate&lt;/a&gt;
+</property>
+            <signal name="clicked" handler="onDonateClicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkButton" id="btn_menu_feedback">
             <property name="label" translatable="yes">Give Feedback</property>
             <property name="name">Link to PTXprint Feedback Form (Google Form)</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
-You could help us make PTXprint better!
+            <property name="tooltip-markup" translatable="yes">Psst! Can we have 5 minutes of your time?
+You could help us &lt;b&gt;make PTXprint better!&lt;/b&gt;
 
 The developers of PTXprint would love to know how 
 this tool is being used. What is your favorite feature? 
@@ -3346,13 +3373,13 @@ Are there any annoyances? Tell us what you like, or
 don't like. Tell us what you dream for in the future.
 
 Click this button to fill in the Google form or type
-this in a browser: http://tiny.cc/ptxprintfeedback</property>
+this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxprintfeedback&lt;/a&gt;</property>
             <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>

@@ -44,7 +44,7 @@ class PolyglotSetup(Gtk.Box):
         self.add_column("% Width", m.fraction, editable=True, renderer_type="text", align="right", width=60)
         self.add_column("Weight", m.weight, editable=True, renderer_type="text", align="right", width=60)
 
-        self.treeview.connect("button-press-event", self.on_right_click)
+        self.ensure_right_click_handler()
 
         # Connect tooltips
         for col_id in range(0, m.tooltip):
@@ -52,12 +52,27 @@ class PolyglotSetup(Gtk.Box):
             self.treeview.connect("query-tooltip", self.on_query_tooltip)  # Connect event
         self.validate_page_widths() # Make sure % Width gets colored red if invalid (even on loading)
 
-        # Add TreeView to Layout
+        # Safely reparent the treeview
+        parent = self.treeview.get_parent()
+        if parent is not None:
+            parent.remove(self.treeview)
+
+        # Create a new scrolled window and add the treeview
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
         scrolled_window.add(self.treeview)
 
         self.pack_start(scrolled_window, True, True, 0)
+
+    def ensure_right_click_handler(self):
+        # If a handler exists and is valid, disconnect it
+        if hasattr(self.view, "_right_click_handler_id") and self.view._right_click_handler_id:
+            try:
+                self.treeview.disconnect(self.view._right_click_handler_id)
+            except (TypeError, ValueError) as e:
+                print("Warning: could not disconnect handler:", e)
+        # Ensure only ONE handler is ever active
+        self.view._right_click_handler_id = self.treeview.connect("button-press-event", self.on_right_click)
 
     def clear_polyglot_treeview(self):
         if not self.ls_treeview:
@@ -65,6 +80,7 @@ class PolyglotSetup(Gtk.Box):
         self.ls_treeview.clear()
         self.update_layout_string(force=True)
         self.refresh_code_dropdowns()
+        self.ensure_right_click_handler()
         self.update_context_menu()
                 
     def load_polyglots_into_treeview(self):
@@ -110,6 +126,7 @@ class PolyglotSetup(Gtk.Box):
                 self.updateRow(row_index)
                     
         self.update_layout_string()
+        self.ensure_right_click_handler()
         self.view.update_diglot_polyglot_UI()
 
     def find_or_create_row(self, sfx, save=False):
@@ -512,6 +529,13 @@ class PolyglotSetup(Gtk.Box):
 
     def on_right_click(self, widget, event):
         if event.button == 3:  # Right-click
+
+            # Properly dispose of old context menu
+            if hasattr(self, "context_menu") and self.context_menu:
+                self.context_menu.destroy()
+                self.context_menu = None  # Clear reference
+
+            # Now safely build a new menu            
             self.context_menu = Gtk.Menu()  # Store reference
 
             # Get the row that was right-clicked on
