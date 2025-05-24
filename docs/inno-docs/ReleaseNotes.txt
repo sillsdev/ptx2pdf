@@ -1,10 +1,10 @@
 PTXprint 2.8.9 Release Notes
-23 May 2025
+24 May 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.8.9 (23 May 2025)
+Bug fixes and Improvements in 2.8.10 (24 May 2025)
   * Work around MapCreator pdf generation bug
   * Swap inactive Share button for an active Open PDF button in preview pane
   * Don't quit if the (new) UI language is the same as the current value
