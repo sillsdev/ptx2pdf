@@ -1104,7 +1104,7 @@ new name and/or different folder.</property>
     <property name="can-focus">False</property>
     <property name="tooltip-text" translatable="yes">Show the main PTXprint
 dialog with all the settings. </property>
-    <property name="icon-name">emblem-system-symbolic</property>
+    <property name="icon-name">applications-system-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_targetProj">
