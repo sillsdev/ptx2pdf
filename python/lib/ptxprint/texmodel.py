@@ -1161,7 +1161,7 @@ class TexModel:
                 m = re.match(r"^\s*sections\s*\((.*?)\)", l)
                 if m:
                     ts = m.group(1).split(",")
-                    passes = [t.strip()[1:-1].strip() for t in ts]
+                    passes = [t.strip(' \'"') for t in ts]  # don't require ""
                     for p in passes:
                         if p not in changes:
                             changes[p] = []
