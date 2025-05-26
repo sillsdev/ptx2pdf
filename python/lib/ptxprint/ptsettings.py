@@ -61,7 +61,7 @@ class ParatextSettings:
                 if not os.path.exists(os.path.join(self.prjdir, v)):
                     v = None
             self.versification = v
-        if self.versification is None and os.path.exists(os.path.join(prjdir, "custom.vrs"))
+        if self.versification is None and os.path.exists(os.path.join(self.prjdir, "custom.vrs")):
             self.versification = "custom.vrs"
         return self
 

@@ -1050,7 +1050,7 @@ class TexModel:
             if doc is not None:
                 tgtvrsf = self.printer.ptsettings.versification
                 if tgtvrsf is not None:
-                    tgtvrs = Versification(os.path.join(self.printer.project.prj, tgtvrsf)
+                    tgtvrs = Versification(os.path.join(self.printer.project.prj, tgtvrsf))
                     doc.reversify(tgtvrs, *reversify)
 
         if self.localChanges is not None:
