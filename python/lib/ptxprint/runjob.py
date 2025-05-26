@@ -418,7 +418,7 @@ class RunJob:
             vf = info.printer.ptsettings.versification
             if vf is not None:
                 versification = Versification(os.path.join(info.printer.project.path, vf))
-            reversifyinfo = (versification, info.dict['texpert/shovpvrse'], info.dict['texpert/showvpchap'])
+            reversifyinfo = (versification, info.dict['texpert/showvpvrse'], info.dict['texpert/showvpchap'])
         for j in jobs:
             b = j[0][0].first.book if j[1] else j[0]
             # logger.debug(f"Diglot[{k}]({b}): f{self.tmpdir} from f{self.prjdir}") # broken (missing k)
