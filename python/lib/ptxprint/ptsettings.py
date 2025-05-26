@@ -14,7 +14,7 @@ ptrefsepvals = {
     'range': 'RangeIndicator',
 }
 
-versifications = ["", "org", "lxx", "vul", "eng", "rsc", "rso"]
+versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org
 
 class ParatextSettings:
     def __init__(self, prjdir):

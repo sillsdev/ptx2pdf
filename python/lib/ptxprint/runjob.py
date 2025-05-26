@@ -24,6 +24,7 @@ from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
 from ptxprint.transcel import transcel, outtriggers
 from ptxprint.xdv.colouring import procxdv
+from usfmtc.versification import Versification
 import numpy as np
 from datetime import datetime
 import logging
@@ -411,6 +412,13 @@ class RunJob:
             info.dict["diglots_"][k] = diginfo
 
         donebooks = []
+        versification = None
+        reversifyinfo = None
+        if info.dict['texpert/reversify']:
+            vf = info.printer.ptsettings.versification
+            if vf is not None:
+                versification = Versification(os.path.join(info.printer.project.path, vf))
+            reversifyinfo = (versification, info.dict['texpert/shovpvrse'], info.dict['texpert/showvpchap'])
         for j in jobs:
             b = j[0][0].first.book if j[1] else j[0]
             # logger.debug(f"Diglot[{k}]({b}): f{self.tmpdir} from f{self.prjdir}") # broken (missing k)
@@ -425,7 +433,7 @@ class RunJob:
                         left = os.path.join(self.tmpdir, out)
                         inputfiles.append(left)
                         texfiles.append(left)
-                    digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1])
+                    digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1], reversify=reversifyinfo)
                     right = os.path.join(self.tmpdir, digout)
                     inputfiles.append(right)
                     texfiles.append(right)

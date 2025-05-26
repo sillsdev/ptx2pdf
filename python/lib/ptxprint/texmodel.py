@@ -18,6 +18,7 @@ from ptxprint.xrefs import Xrefs
 from ptxprint.pdf.pdfsanitise import sanitise
 from ptxprint.texpert import TeXpert
 from ptxprint.modelmap import ModelMap
+from usfmtc.versification import Versification
 import ptxprint.modelmap as modelmap
 import logging
 
@@ -906,7 +907,7 @@ class TexModel:
         self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \\ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
         logger.warn(txt)
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0, reversify=None):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
         except ValueError:
@@ -1042,6 +1043,15 @@ class TexModel:
             logger.debug("Insert hyphens manually")
             if doc is not None:
                 doc.hyphenate(printer.hyphenation, self.dict["paragraph/ifnbhyphens"])
+
+        if reversify is not None:
+            (dat, doc) = self._getDoc(dat, doc, bk, "Prepare to reversify")
+            logger.debug("Reversify")
+            if doc is not None:
+                tgtvrsf = self.printer.ptsettings.versification
+                if tgtvrsf is not None:
+                    tgtvrs = Versification(os.path.join(self.printer.project.prj, tgtvrsf)
+                    doc.reversify(tgtvrs, *reversify)
 
         if self.localChanges is not None:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")

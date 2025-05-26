@@ -775,3 +775,7 @@ class Usfm:
             if "^" not in s and p.tag == "para":    # Just in case it isn't a para
                 p.set("style", f"{s}^{a[5]}")
 
+    def reversify(self, tgtvrs, srcvrs, vpvrse, vpchap):
+        if tgtvrs is not None or srcvrs is not None:
+            self.xml.reversify(srcvrs, tgtvrs, keep=vpvrse, chnums=vpchap)
+
