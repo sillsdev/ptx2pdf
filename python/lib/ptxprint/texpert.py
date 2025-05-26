@@ -148,6 +148,12 @@ texpertOptions = {
     "FootnoteMulC":       O("footnotemulc", "NTS", (0, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
 
+    "ReVersify":          O("reversify", "DIG", True, None, _("Adjust Versification of Projects"),
+                            _("If versification differs between projects, adjust diglot/polyglot projects to match the primary (L) project.")),
+    "ShowVPvrse":         O("showvpvrse", "DIG", True, None, _("Keep existing verse numbers (as \\vp)"),
+                            _("When adjusting versification, show the original verse numbers in their new (adjusted) location.")),
+    "ShowVPchap":         O("showvpchap", "DIG", True, None, _("Show old chapter numbers if changed (in \\vp)"),
+                            _("When adjusting versification, show the adjusted chapter numbers (only) if they have changed.")),
     "VisTrace":           O("vistrace", "DIG", False, None, _("Show Diglot Trace Marks"),
                             _("Insert visible trace marks in diglot output")),
     "VisTraceExtra":      O("vistracex", "DIG", False, None, _("Extra Trace Mark Info"),

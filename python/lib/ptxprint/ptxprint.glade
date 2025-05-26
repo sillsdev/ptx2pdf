@@ -8159,10 +8159,15 @@ to ensure that they are displayed properly.</property>
                                         <property name="tooltip-text" translatable="yes">To hyphenate properly you need to first create a 
 Hyphenation List using the button on the left.
 This will create a XeTeX hyphenation list from the
-hyphenation list in Paratext.</property>
+hyphenation list in Paratext.
+
+Note that for Hyphenation to work properly, the
+Spacing Adjustments 'Between Letters' option needs 
+to be disabled.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>

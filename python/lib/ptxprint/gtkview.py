@@ -4585,6 +4585,13 @@ class GtkViewModel(ViewModel):
             self.doError(self.hyphenation.m1, secondary=self.hyphenation.m2)
         dialog.hide()
 
+    def onHyphenateClicked(self, w1):
+        w2 = "c_letterSpacing"
+        if self.get(w2):
+            self.set(w2, False)
+            self.highlightwidget(w2)
+            self.doStatus(_("The Between Letters Spacing Adjustments have been disabled due to Hyphenate being enabled."))
+
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         missing = super(GtkViewModel, self).onFindMissingCharsClicked(btn_findMissingChars)
         missingcodes = " ".join(repr(c.encode('raw_unicode_escape'))[2:-1].replace("\\\\","\\") for c in missing)
