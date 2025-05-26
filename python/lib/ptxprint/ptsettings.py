@@ -49,6 +49,7 @@ class ParatextSettings:
             self.hasLocalBookNames = False
         self.collation = None
         self.refsep = False     # tristate: (False=undef), None, RefSeparator
+        self.set_versification()
         return self
 
     def set_versification(self):

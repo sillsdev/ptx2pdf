@@ -414,6 +414,7 @@ class RunJob:
         donebooks = []
         versification = None
         reversifyinfo = None
+        # breakpoint()
         if info.dict['texpert/reversify']:
             vf = info.printer.ptsettings.versification
             if vf is not None:

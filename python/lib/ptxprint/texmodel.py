@@ -1047,13 +1047,13 @@ class TexModel:
         if reversify is not None:
             (dat, doc) = self._getDoc(dat, doc, bk, "Prepare to reversify")
             if doc is not None:
-                tgtvrsf = self.printer.ptsettings.versification
-                if tgtvrsf is not None:
-                    tgtvrs = Versification(os.path.join(self.printer.project.prj, tgtvrsf))
+                srcvrsf = self.printer.ptsettings.versification
+                if srcvrsf is not None:
+                    srcvrs = Versification(os.path.join(self.printer.project.path, srcvrsf))
                 else:
-                    tgtvrs = None
-                logger.debug(f"Reversify {getattr(reversify[0], 'name', 'unknown')} -> {getattr(tgtvrs, 'name', 'unknown') if tgtvrs else 'unknown'}")
-                doc.reversify(tgtvrs, *reversify)
+                    srcvrs = None
+                logger.debug(f"Reversify {getattr(reversify[0], 'name', 'unknown')} -> {getattr(srcvrs, 'name', 'unknown') if srcvrs else 'unknown'}")
+                doc.reversify(srcvrs, *reversify)
 
         if self.localChanges is not None:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
