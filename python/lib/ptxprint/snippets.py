@@ -243,6 +243,7 @@ class Diglot(Snippet):
 \should@xist{{}}{{x{s_}}}
 \newlanguage\language{s_} \language\language{s_}
 {diglot[paragraph/ifhavehyphenate]}{diglot[paragraph/ifhyphenate]}\bgroup\liter@lspecials\input "{diglot[/cfgrpath]}/hyphen-{diglot[project/id]}.tex" \egroup
+\catcode"FDEE=1 \catcode"FDEF=2
 \def\zcopyright{s_}﷮{diglot[project/copyright]}﷯
 \def\zlicense{s_}﷮{diglot[project/license]}﷯
 \makeatother
