@@ -5,7 +5,7 @@ from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.project import ProjectList
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
-from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
+from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
                             zipopentext, xdvigetfonts, calledme
@@ -28,7 +28,7 @@ from tempfile import NamedTemporaryFile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
 from shutil import rmtree
-import datetime, time, traceback
+import datetime, time
 import json, logging, hashlib
 from shutil import copyfile, copytree, move
 from difflib import Differ

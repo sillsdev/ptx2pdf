@@ -3,7 +3,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
 from ptxprint.utils import _, f2s
 from PIL import Image
-import logging
+import logging, traceback
 from ptxprint.view import GitVersionStr, VersionStr
 
 logger = logging.getLogger(__name__)
@@ -158,7 +158,7 @@ class HelpTextViewWindow(Gtk.Window):
         self.show_all()
         Gtk.main()
 
-def doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", **kw):
+def doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", debuglog=True, **kw):
     logger.error(text)
     if secondary:
         logger.error(secondary)
@@ -199,5 +199,8 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
         print(text)
         if secondary is not None:
             print(secondary)
+    if debuglog:
+        s = traceback.format_tb()
+        logger.debug(s)
 
 
