@@ -1060,7 +1060,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
     if len(keyarr) == 0:
         keyarr = ['L', 'R']
     if (len(keyarr) != len(infilearr)):
-        raise ValueError("Cannot have %d keys and %d files!" % (len(keyarr),len(infilearr)) )
+        raise ValueError(f"Cannot have keys {keyarr} different length from files {infilearr}")
         
     if type(scorearr) == list:
         tmp = zip(keyarr, scorearr)
