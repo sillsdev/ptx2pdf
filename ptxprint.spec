@@ -7,6 +7,7 @@ print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
 from subprocess import call
+import usfmtc           # so we can find its data files
 
 #if 'Analysis' not in dir():
 #    def printme(*a, **kw):
@@ -102,6 +103,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
                       + [('docs/inno-docs/*.txt', 'ptxprint')],
 #                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
 #                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
+                      + [(os.path.dirname(usfmtc.__file__)+"/"+x, f"ptxrint/usfmtc/{x}") for x in ('*.vrs", "*.rng")]
                 # The registry tends not to get included
              hiddenimports = ['_winreg'],
              hookspath = [],
