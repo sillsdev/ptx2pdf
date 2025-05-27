@@ -55,7 +55,7 @@ if sys.platform in ("win32", "cygwin"):
 else:
     binaries = []
 
-a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
+a1 = Analysis(['python/scripts/ptxprint'],
              pathex =   ['python/lib'],
                 # all the binary files from the source tree that are used by the application.
                 # These end up where specified (each entry is a 2 tuple: (source, target dir)

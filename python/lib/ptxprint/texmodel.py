@@ -1047,9 +1047,11 @@ class TexModel:
         if reversify is not None:
             (dat, doc) = self._getDoc(dat, doc, bk, "Prepare to reversify")
             if doc is not None:
+                srcvrsf = None
                 srcvrs = None
                 if self.printer.ptsettings.versification is not None:
                     srcvrsf = os.path.join(self.printer.project.path, self.printer.ptsettings.versification)
+                    logger.debug(f"{srcvrsf=}")
                     if os.path.exists(srcvrsf):
                         srcvrs = Versification(srcvrsf)
                 logger.debug(f"Reversify [{srcvrsf}] {getattr(reversify[0], 'name', 'unknown')} -> {getattr(srcvrs, 'name', 'unknown') if srcvrs else 'unknown'}")
