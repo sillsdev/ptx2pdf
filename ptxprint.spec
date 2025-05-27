@@ -103,7 +103,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
 #                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
 #                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
-                      + [(os.path.dirname(usfmtc.__file__)+"/"+x, f"ptxprint/usfmtc/{x}") for x in ("*.vrs", "*.rng")],
+                      + [(os.path.dirname(usfmtc.__file__)+"/"+x, "usfmtc") for x in ("*.vrs", "*.rng")],
                 # The registry tends not to get included
              hiddenimports = ['_winreg'],
              hookspath = [],
