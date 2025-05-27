@@ -200,7 +200,7 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
         if secondary is not None:
             print(secondary)
     if debuglog:
-        s = traceback.format_tb()
+        s = traceback.format_stack()
         logger.debug(s)
 
 

@@ -563,8 +563,8 @@ def htmlprotect(s):
     return re.sub(sc, lambda m: "&"+_htmlentities[m.group(1)]+";", s)
 
 def texprotect(s):
-    s = re.sub("\\u([0-9A-Fa-f]{4}", lambda m:chr(int(m.group(1), 16)), s)
-    s = re.sub("\\U([0-9A-Fa-f]{8}", lambda m:chr(int(m.group(1), 16)), s)
+    s = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), s)
+    s = re.sub(r"\\U([0-9A-Fa-f]{8})", lambda m:chr(int(m.group(1), 16)), s)
     s = s.replace("://", ":/\\ZWNBSP/")
     return s
 

@@ -9,7 +9,7 @@ from ptxprint.usxutils import Usfm, Sheets
 from ptxprint.module import Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
-                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath
+                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -746,9 +746,9 @@ class TexModel:
                     res.append(TeXpert.generateTeX(self.printer))
                 elif l.startswith(r"%\defzvar"):
                     for k in self.printer.allvars():
-                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))
+                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, texprotect(self.printer.getvar(k))))
                     for k, e in (('toctitle', 'document/toctitle'),):
-                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
+                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, texprotect(self.dict[e])))
                 elif l.startswith(r"%\diglot "):
                     if diglots:
                         l = l[9:]
