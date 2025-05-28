@@ -290,7 +290,7 @@ class XMLXrefs(BaseXrefs):
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):
                     info = {
-                        "colnobook":    reversf(k, vrsf).str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
+                        "colnobook":    revrsf(k, vrsf).str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
                         "refs":         res,
                         "brtl":         r"\beginR" if self.rtl else "",
                         "ertl":         r"\endR" if self.rtl else ""
