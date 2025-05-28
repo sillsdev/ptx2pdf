@@ -2,6 +2,7 @@
 from ptxprint.utils import cachedData, pycodedir, regex_localiser
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators, BaseBooks
 from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored, get_ces
+from usfmtc.versification import cached_versification
 from unicodedata import normalize
 from functools import reduce
 import xml.etree.ElementTree as et
@@ -70,6 +71,24 @@ def usfmmark(ref, txt):
         return r"\+it {}\+it*".format(txt)
     return (ref.mark or "") + txt
 
+engvrs = None
+
+def revrsf(ref, vrsf):
+    global engvrs
+    if vrsf is None:
+        return ref
+    if engvrs is None:
+        engvrs = cached_versification("eng")
+    if isinstance(ref, list):
+        res = RefList()
+        for r in ref:
+            oref = engvrs.remap(ref, reverse=True)
+            res.append(vrsf.remap(oref))
+    else:
+        oref = engvrs.remap(ref, reverse=True)
+        res = vrsf.remap(oref)
+    return res
+
 class BaseXrefs:
     template = "\\x - \\cat strongs\\cat*\\xo {colnobook}\u00A0\\xt {refs}\\x*"
     addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=usfmmark, bksp="\u00A0")
@@ -118,7 +137,7 @@ class XrefFileXrefs(BaseXrefs):
                 results[ra] = acc
                 logger.debug(f"{ra=} {acc=}")
 
-    def process(self, bk, triggers, owner, usfm=None):
+    def process(self, bk, triggers, owner, usfm=None, vrsf=None):
         results = {}
         for k, v in self.xrefdat.get(bk, {}).items():
             outl = v[0]
@@ -134,12 +153,13 @@ class XrefFileXrefs(BaseXrefs):
                 v.simplify()
                 if not len(v):
                     continue
+                kf = revrsf(k.first, vrsf)
                 shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
                 info = {
-                    "colnobook":    k.str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
-                    "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
+                    "colnobook":    revrsf(k, vrsf).str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
+                    "refs":         revrsf(v, vrsf).str(owner.parent.ptsettings, addsep=self.addsep, level=2)
                 }
-                triggers[k.first] = triggers.get(k.first, "") + self.template.format(**info)
+                triggers[kf] = triggers.get(kf, "") + self.template.format(**info)
         return triggers
 
 
@@ -233,7 +253,7 @@ class XMLXrefs(BaseXrefs):
             if len(newdat):
                 dat[ra] = sorted(newdat, key=lambda x:0 if x[0] is None else int(x[0].lstrip("GH")))
 
-    def _procnested(self, xr, baseref):
+    def _procnested(self, xr, baseref, vrsf=None):
         a = []
         for e in sorted(xr, key=lambda n:("", 0, []) if n is None or n[0] is None else (n[0][0], int(n[0][1:]), n)):
             st = e[0]
@@ -245,7 +265,7 @@ class XMLXrefs(BaseXrefs):
                 if self.filters is not None:
                     r.filterBooks(self.filters)
                 r.simplify()
-                rs = r.str(context=self.context, addsep=self.addsep, level=2, this=baseref.last)
+                rs = revrsf(r, vrsf).str(context=self.context, addsep=self.addsep, level=2, this=baseref.last)
                 if len(rs) and e[1] in ('backref', 'crossref'):
                     a.append(s + "\\+xti " + rs + "\\+xti*")
                 elif len(rs):
@@ -257,24 +277,25 @@ class XMLXrefs(BaseXrefs):
                     a.append(s + self._procnested(e[2], baseref))
         return r"\space ".join(a)
 
-    def process(self, bk, triggers, owner, usfm=None):
+    def process(self, bk, triggers, owner, usfm=None, vrsf=None):
         xmldat = self.xmldat.get(bk, {})
         if len(xmldat):
             #import pdb; pdb.set_trace()
             if usfm is not None:
                 self._addranges(xmldat, usfm)
             for k, v in xmldat.items():
-                res = self._procnested(v, k)
-                shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
+                res = self._procnested(v, k, vrsf=vrsf)
+                kf = revrsf(k.first, vrsf)
+                shortref = str(kf.verse) if k.first.verse == k.last.verse else "{}-{}".format(kf.verse, revrsf(k.last.verse, vrsf))
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):
                     info = {
-                        "colnobook":    k.str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
+                        "colnobook":    reversf(k, vrsf).str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
                         "refs":         res,
                         "brtl":         r"\beginR" if self.rtl else "",
                         "ertl":         r"\endR" if self.rtl else ""
                     }
-                    triggers[k.first] = triggers.get(k.first, "") + self.template.format(**info)
+                    triggers[kf] = triggers.get(kf, "") + self.template.format(**info)
         return triggers
 
 
@@ -543,9 +564,13 @@ class Xrefs:
         gc.collect()
 
     def process(self, bk, triggers, usfm=None):
+        if self.parent.ptsettings.versification is not None and self.parent.ptsettings.versification != "eng":
+            vrsf = self.parent.ptsettings.versification
+        else:
+            vrsf = None
         if usfm is not None:
             usfm.addorncv()
         if self.xrefs is not None:
-            return self.xrefs.process(bk, triggers, self, usfm=usfm)
+            return self.xrefs.process(bk, triggers, self, usfm=usfm, vrsf=vrsf)
         return triggers
 
