@@ -217,6 +217,9 @@ class Picture:
         self.key = "p{:03d}".format(self.keycount)
         self.__class__.keycount += 1
 
+    def __str__(self):
+        return ", ".join("{}: {}".format(k, v) for k, v in self.fields.items())
+
     def __getitem__(self, k):
         return self.fields[k]
 
@@ -314,10 +317,10 @@ class Picture:
         return self['anchor']
 
     def clear_src_paths(self):
-        for a in ('srcpath', 'destpath'):
+        for a in ('srcpath', 'destpath', 'destfile'):
             try:
                 del self[a]
-            except AttributeError:
+            except (KeyError, AttributeError):
                 continue
 
     def set_position(self, cols=1, randomize=False, suffix=""):
@@ -679,7 +682,7 @@ class Piclist:
                         continue
                     filepath = os.path.join(subdir, f)
                     for p in newfigs[nB]:
-                        if 'destfile' in p:
+                        if 'destfile' in p and key in p:
                             if mode == self.mode:
                                 continue
                             else:
@@ -693,6 +696,7 @@ class Piclist:
                                 p[key] = filepath
                         else:
                             p[key] = filepath
+                        logger.log(5, f"setsrcpath({mode}=={self.mode}) of {str(p)} to {filepath}")
         self.mode = mode
         return data
 

@@ -1030,6 +1030,7 @@ class RunJob:
         lowres    = self.printer.get("r_pictureRes") == "Low"
         picinfos.srchlist = None
         for j in books:
+            logger.debug(f"getsrc&dest for {j}")
             picinfos.getFigureSources(keys=j, exclusive=exclusive, mode=self.ispdfxa,
                                       figFolder=fldr, imgorder=imgorder, lowres=lowres)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
