@@ -287,6 +287,8 @@ class ThumbnailDialog:
         logger.debug(f"Image grid complete")
 
     def on_thumbnail_toggled(self, button, imageid):
+        if self.langdata is None:
+            return
         bibrefs = self.get_refs(imageid, default=[None])
         bibref = bibrefs[0] if len(bibrefs) else None
         val = (imageid, bibref, self.langdata.get(imageid, {}).get("title", ""))
