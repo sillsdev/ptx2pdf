@@ -36,10 +36,18 @@ def pytest_generate_tests(metafunc):
             if c.startswith(".") or c.startswith("_"):
                 continue
             if c == "ptxprint.cfg":
-                jobs.append((b, None))
-            elif os.path.exists(os.path.join(bbase, c, "ptxprint.cfg")):
-                jobs.append((b, c))
+                c = None
+            elif not os.path.exists(os.path.join(bbase, c, "ptxprint.cfg")):
+                continue
+            sdir = os.path.join(basedir, '..', 'standards', b)
+            size = 0
+            for sfile in os.listdir(sdir):
+                if sfile.startswith(f"{b}_{c}_"):
+                    size = os.stat(os.path.join(sdir, sfile)).st_size
+                    break
+            jobs.append((b, c, size))
     # print("generating tests", basedir, jobs)
+    jobs = [j[:2] for j in sorted(jobs, key=lambda x:(-x[2], x[0], x[1]))]
     metafunc.parametrize("projectsdir", [basedir], scope="module")
     if len(jobs):
         metafunc.parametrize(("project", "config"), jobs, scope="module")

@@ -4,6 +4,7 @@ from ptxprint.modelmap import ModelMap
 # 'code', 'pg', 'prj', 'cfg', 'captions', 'fraction', 'fontsize', 'baseline', 'weight', 'color', 'prjguid'
 # poly/k: (attr, type)
 configmap = { 
+    "code":         ("code", str, None),
     "projectid":    ("prj", str, None),
     "projectguid":  ("prjguid", str, None),
     "config":       ("cfg", str, None),
@@ -16,14 +17,9 @@ configmap = {
     "backcolor":    ("color", str, ["document/diglotcolour", "document/ifdiglotcolour"])
 }
 
-# def updateTMfromView(texmodel, view):
-    # for k, v in configmap.items():
-        # val = view.get(f"poly{k}_", "")
-        # print(f"{k}={val}")
-        # texmodel.dict[f"poly/{k}"] = val 
-
 class PolyglotConfig:
     def __init__(self):
+        self.code = None
         self.prj = None
         self.prjguid = None
         self.cfg = None
@@ -76,12 +72,12 @@ class PolyglotConfig:
             
     def updateTM(self, texmodel):
         for k, v in configmap.items():
-            if v[2] is None:
-                continue
             val = getattr(self, v[0], "")
+            if val is None or v[2] is None:
+                continue
             for t in v[2]:
                 fn = ModelMap.get(t, None)
                 if fn is not None:
                     fn = fn.process
                 texmodel.dict[t] = fn(None, val) if fn is not None else val
-        
+

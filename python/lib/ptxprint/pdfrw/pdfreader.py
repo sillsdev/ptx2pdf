@@ -249,7 +249,8 @@ class PdfReader(PdfDict):
         else:
             source.error("Expected 'endobj'%s token",
                          isdict and " or 'stream'" or '')
-            obj = PdfObject('')
+            # obj = PdfObject('')
+            return obj
 
         obj.indirect = key
         self.indirect_objects[key] = obj

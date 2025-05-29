@@ -24,14 +24,14 @@ _occurstypes = {
 }
 
 _typetypes = {      # type: (type, StyleType, TextType, startswith)
-    'footnote': ('char', 'note', None, None),
+    'footnote': ('char', 'note', 'NoteText', None),
     'introduction': ('header', 'paragraph', 'other', "i"),
     'list': ('versepara', 'paragraph', 'other', "l"),
     'milestone': (None, 'milestone', None, None),
     'otherpara': ('versepara', 'paragraph', 'other', None),
     'sectionpara': ('versepara', 'paragraph', 'section', None),
     'title': ('header', 'paragraph', 'other', "m"),
-    'barems': (None, 'Standalone', None, None),
+    'standalone': (None, 'Standalone', None, None),
 }
     
 def simple_parse(source, categories=False, keyfield="Marker"):
@@ -154,6 +154,25 @@ def mrktype(sheet, mrk):
         sheet['mrktype'] = mtype
     return mtype
 
+def typesFromMrk(mtype):
+    ''' returns StyleType and TextType '''
+    tinfo = _typetypes.get(mtype, None)
+    if tinfo is not None:   # covers: footnote, introduction, list, milestone, otherpara, sectionpara, title
+        return tinfo[1], tinfo[2]
+    elif mtype in ('footnotechar', 'crossreferencechar'):
+        return ('Character', 'NoteText')
+    elif mtype in ('header', ):
+        return ('Paragraph', 'Other')
+    elif mtype in ('introchar',):
+        return ('Character', 'Other')
+    elif mtype in ('char', 'listchar', 'cell'):
+        return ('Character', 'VerseText')
+    elif mtype in ('versepara', ):
+        return ('Paragraph', 'VerseText')
+    elif mtype in ('crossreference', ):
+        return ('Note', 'NoteText')
+    return (None, None)
+
 def createGrammar(sheets):
     grammar = Grammar()
     for k in sheets:
@@ -262,15 +281,15 @@ def istype(s, t):
 def textiter(root, invertblocks=False, **kw):
     ''' Iterates the element hiearchy returning all non empty text. Optionally
         it ignores any elements whose style is in the blocked categories passed. '''
-    for this in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
-        yield this.parent.text if this.head is None else this.head.tail
+    for this, isin in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
+        yield this.text if isin else this.tail
 
 def modifytext(root, fn, invertblocks=False, **kw):
-    for this in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
-        if this.head is None:
-            this.parent.text = fn(this.parent.text, this.parent)
+    for this, isin in iterusx(root, unblocks=invertblocks, filt=[hastext], **kw):
+        if isin:
+            this.text = fn(this.text, this)
         else:
-            this.head.tail = fn(this.head.tail, this.head)
+            this.tail = fn(this.tail, this)
     
 def _addorncv_hierarchy(e, curr):
     e.pos = RefPos(e.pos, curr)
@@ -286,18 +305,23 @@ def allparas(root):
 
 class Usfm:
 
-    def __init__(self, xml, parser=None, grammar=None):
+    def __init__(self, xml, parser=None, grammar=None, book=None):
         self.xml = xml
         self.parser = parser
         self.grammar = grammar
         self.cvaddorned = False
+        self.book = book
 
     @classmethod
     def readfile(cls, fname, grammar=None, sheet=None, elfactory=None):       # can also take the data straight
         if grammar is None:
             grammar = createGrammar(sheet if sheet is not None else [])
         usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar, elfactory=elfactory)
-        return cls(usxdoc, usxdoc.parser, grammar=grammar)
+        book = None
+        bkel = usxdoc.getroot().find(".//book")
+        if bkel is not None:
+            book = bkel.get("code", None)
+        return cls(usxdoc, usxdoc.parser, grammar=grammar, book=book)
 
     def getroot(self):
         return self.xml.getroot()
@@ -320,12 +344,12 @@ class Usfm:
         sections = []
         i = -1
         currpi = None
-        for x in iterusx(root):
-            if x.head is None:
-                if x.parent.tag == 'para':
-                    currp = x.parent
+        for x, isin in iterusx(root):
+            if isin:
+                if x.tag == 'para':
+                    currp = x
                 continue
-            p = x.head
+            p = x
             if x.parent == root:
                 i += 1
             if p.tag == "chapter":
@@ -340,7 +364,8 @@ class Usfm:
                 else:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
                         currv = p[0].get("number", curr.last.verse if curr is not None else None)
-                        curr = MakeReference(bk, curr.first.chap, currv)
+                        currc = curr.first.chapter if curr is not None else 0
+                        curr = MakeReference(bk, currc, currv)
                         if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
                             for r in curr.allrefs():
                                 self.bridges[r] = curr
@@ -352,7 +377,8 @@ class Usfm:
             elif p.tag == "verse":
                 if curr is not None:
                     currv = p.get("number", curr.last.verse)
-                    curr = MakeReference(bk, curr.first.chap, currv)
+                    currc = curr.first.chapter if curr is not None else 0
+                    curr = MakeReference(bk, currc, currv)
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
@@ -410,14 +436,20 @@ class Usfm:
             self.getmarkers(c, acc)
         return acc
 
+    def visitall(self, fn, root, state=None):
+        state = fn(root, state)
+        for c in root:
+            state = self.visitall(fn, c, state=state)
+        return state
+
     def make_zsetref(self, ref, book, parent, pos):
-        attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chap), 'verse': str(ref.verse)}
+        attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
         if book is not None:
             attribs['book'] = book
         res = self.factory("ms", attribs, parent=parent)
         return res
 
-    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True):
+    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True, keepheaders=False):
         ''' Creates a document consisting of only the text covered by the reference
             ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
@@ -425,16 +457,18 @@ class Usfm:
             refranges = [refranges]
         last = (0, -1)
         chaps = []
+        minc = 10000
         for i, r in enumerate(refranges):
-            if r.first.chap > last[1] or r.first.chap < last[0]:
-                chaps.append((self.chapters[r.first.chap:r.last.chap+2], [i]))
-                last = (r.first.chap, r.last.chap)
-            elif r.first.chap >= last[0] and r.last.chap <= last[1]:
+            if r.first.chapter > last[1] or r.first.chapter < last[0]:
+                chaps.append((self.chapters[r.first.chapter:r.last.chapter+2], [i]))
+                last = (r.first.chapter, r.last.chapter)
+            elif r.first.chapter >= last[0] and r.last.chapter <= last[1]:
                 chaps[-1][1].append(i)
             else:
-                chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chap+1])
+                chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chapter+1])
                 chaps[-1][1].append(i)
-                last = (last[0], r.last.chap)
+                last = (last[0], r.last.chapter)
+            minc = min(r.first.chapter, minc)
         def pred(e, rlist):
             if e.parent is None:
                 return True
@@ -470,6 +504,14 @@ class Usfm:
         d = list(root)
         res = self.factory("usx", root.attrib)
         res.text = root.text
+        if keepheaders:
+            for e in root:
+                if e.tag == "chapter":
+                    break
+                if minc > 1 and e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in ("header", ):
+                    break
+                newe = e.copy(deep=True, parent=res)
+                res.append(newe)
         for c in chaps:
             if addzsetref:
                 minref = min(refranges[r].first for r in c[1])
@@ -479,10 +521,10 @@ class Usfm:
                 logger.error(f"chapter too long: {c[0]}")
             for chap in range(c[0][0], c[0][-1]):
                 copyrange(d[chap], res, c[1])
-        return Usfm(usfmtc.USX(res), parser=self.parser, grammar=self.grammar)
+        return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)
 
     def getsubbook(self, refrange, removes={}):
-        return self.subdoc(refrange, removes=removes)
+        return self.subdoc(refrange, removes=removes, keepheaders=True)
 
     def versesToEnd(self):
         root = self.getroot()
@@ -647,13 +689,13 @@ class Usfm:
         currstate = [None, set()]
         root = self.getroot()
         enters = "cell char versepara".split()
-        for x in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
-            if x.head is None:
-                t = x.parent.text
-                r = x.parent.pos.ref if hasattr(x.parent.pos, 'ref') else None
+        for x, isin in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
+            if isin:
+                t = x.text
+                r = x.pos.ref if hasattr(x.pos, 'ref') else None
             else:
-                t = x.head.tail
-                r = x.head.pos.ref
+                t = x.tail
+                r = x.pos.ref
             if r != currstate[0]:
                 currstate = [r, set(strongs.getstrongs(r))]
             for st in list(currstate[1]):
@@ -668,18 +710,21 @@ class Usfm:
                     raise SyntaxError(f"Faulty regex in {regs}: {e}")
                 b = regre.split(t)
                 if len(b) > 1:
-                    if x.head is None:
-                        x.parent.text = b[0] + "\u200B"
+                    if isin:
+                        x.text = b[0] + "\u200B"
                         i = 0
                     else:
-                        x.head.tail = b[0] + "\u200B"
-                        i = list(x.parent).index(x.head) + 1
+                        x.tail = b[0] + "\u200B"
+                        i = list(x.parent).index(x) + 1
                     for a in range(1, len(b), 2):
                         e = self.factory("char", attrib={"style": "xts", "strong": st.lstrip("GH"), "align": "r"})
                         e.text = "\\nobreak \u200A" + b[a]
                         if a < len(b) - 2:
                             e.tail = b[a+1]
-                        x.parent.insert(i, e)
+                        if isin:
+                            x.insert(i, e)
+                        else:
+                            x.parent.insert(i, e)
                         i += 1
                     matched = True
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
@@ -699,7 +744,18 @@ class Usfm:
         elif c == "k" and v in self.kpars:
             return self.kpars[v]
         return None
-        
+
+    def removeGlosses(self, glosses):
+        killme = False
+        root = self.getroot()
+        for e in list(root):
+            if e.tag == "para":
+                for ke in e:
+                    if ke.tag == "char" and ke.get("style", "") == "k":
+                        kval = ke.get("key", re.sub("[ ]", "", ke.text))
+                        killme = kval.lower() not in glosses
+                if killme:
+                    root.remove(e)
 
     def apply_adjlist(self, bk, adjlist):
         if adjlist is None:
@@ -718,4 +774,8 @@ class Usfm:
             s = p.get("style", "")
             if "^" not in s and p.tag == "para":    # Just in case it isn't a para
                 p.set("style", f"{s}^{a[5]}")
+
+    def reversify(self, srcvrs, tgtvrs, vpvrse, vpchap):
+        if tgtvrs is not None or srcvrs is not None:
+            self.xml.reversify(srcvrs, tgtvrs, keep=vpvrse, chnums=vpchap)
 

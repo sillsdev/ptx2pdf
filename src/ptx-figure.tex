@@ -406,9 +406,12 @@
     \ifx\cpt@mp\empty\else\setLRspecific\fi
     \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
     \t@xtfragment{fig}{%
+      \let\styst@k=\empty
+      \s@tstyst@k%
       \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
-      \c@ption\unskip
+      %\implicitcl@sefalse
+      \x@\scantokens\x@{\c@ption}\unskip
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
     \egroup
   \fi
@@ -435,14 +438,17 @@
       \hsize=\p@cinswid
     \fi
     \xdef\r@f{\csname figparam-ref\endcsname}% get reference
+    \mcpush{\ss@Fig}{fig}%
     \d@c@ption{}%Normal monoglot caption.
     \ifdiglot
       \bgroup %Alternative captions
         \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
-        \x@\each@col\diglot@list\E
+		\ifx\DiglotCaptions\undefined \let\tmp=\diglot@list\else \let\tmp=\DiglotCaptions\fi
+        \x@\each@col\tmp\E
       \egroup
     \fi
     \vskip.5\onel@neunit
+    \end@llpoppedstyles{\ss@Fig*}%
   \fi
  }%
 }
@@ -1222,6 +1228,7 @@
     \fi
   \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
   \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
   }%
   \ifvmode \picc@ntents
   \else 

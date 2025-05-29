@@ -64,8 +64,10 @@ class Interlinear:
             raise SyntaxError("Bad Reference {}".format(s))
 
     def replaceusx(self, doc, curref, lexemes, linelengths, mrk="wit"):
-        lexemes.sort()
+        if curref[0] >= len(doc.chapters):
+            return
         parindex = doc.chapters[curref[0]]
+        lexemes.sort()
         if curref[1] == "0":
             def stop(e):
                 return e.tag == 'verse'
@@ -77,40 +79,41 @@ class Interlinear:
             def start(e):
                 return e.tag == "verse" and e.get('number', 0) == curref[1]
         basepos = None
-        for eloc in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
-            if eloc.head is None:       # inside an element use .text
+        for eloc, isin in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
+            if isin:
                 if basepos is None:
                     basepos = doc.getroot()[0].pos if curref == (1, "0") else eloc.parent.pos
-                if not eloc.parent.text:
+                if not eloc.text:
                     continue
-                spos = getattr(eloc.parent, 'textpos', None)
+                spos = getattr(eloc, 'textpos', None)
                 if spos is None:
                     continue
-                self.replacetext(eloc, lexemes, basepos, linelengths, spos, mrk)
+                self.replacetext(eloc, isin, lexemes, basepos, linelengths, spos, mrk)
             else:                       # tail of an element
-                spos = getattr(eloc.head, 'tailpos', None)
+                spos = getattr(eloc, 'tailpos', None)
                 if spos is None:
                     continue
-                self.replacetext(eloc, lexemes, basepos, linelengths, spos, mrk)
+                self.replacetext(eloc, isin, lexemes, basepos, linelengths, spos, mrk)
 
-    def replacetext(self, eloc, lexemes, basepos, linelengths, spos, mrk):
+    def replacetext(self, eloc, isin, lexemes, basepos, linelengths, spos, mrk):
         if basepos is None:
             return
         cpos = sum(linelengths[basepos.l:spos.l]) - basepos.c + spos.c + 1
-        t = eloc.parent.text if eloc.head is None else eloc.head.tail
+        t = eloc.text if isin else eloc.tail
+        parent = eloc if isin else eloc.parent
         cend = cpos + len(t)
         i = cpos
-        laste = eloc.head
+        laste = eloc
         outt = None
         for l in ((lex[0][0], lex[0][1], lex[1]) for lex in lexemes if lex[0][0] >= cpos and lex[0][0] < cend):
             if l[0] >= i:
                 outt = t[i-cpos:l[0]-cpos]
-            newe = eloc.parent.makeelement("char", {'style': mrk, 'gloss': l[2]})
+            newe = parent.makeelement("char", {'style': mrk, 'gloss': l[2]})
             newe.text = t[l[0]-cpos:l[0]+l[1]-cpos]
             i = l[0] + l[1]
             if laste is None:
-                eloc.parent.text = outt
-                eloc.parent.insert(0, newe)
+                parent.text = outt
+                parent.insert(0, newe)
             else:
                 laste.tail = outt
                 laste.addnext(newe)

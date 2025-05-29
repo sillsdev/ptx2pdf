@@ -1,5 +1,5 @@
 import re
-from ptxprint.utils import f2s, coltoonemax, asfloat
+from ptxprint.utils import f2s, coltoonemax, asfloat, texprotect
 from dataclasses import dataclass
 from typing import Callable, Optional
 
@@ -73,9 +73,8 @@ _map = {
     "project/interpunc":        ("c_usePunctuation", "advanced", None),
     "project/ruby":             ("c_ruby", "advanced", lambda w,v : "t" if v else "b"),
     "project/plugins":          ("t_plugins", "advanced", lambda w,v: v or ""),
-    "project/license":          ("ecb_licenseText", "meta", None),
-    "project/copyright":        ("t_copyrightStatement", "meta", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
-                                                                   lambda m: chr(int(m.group(1), 16)), v).replace("//", "\u2028") if v is not None else ""),
+    "project/license":          ("ecb_licenseText", "meta", lambda w,v: texprotect(str(v))),
+    "project/copyright":        ("t_copyrightStatement", "meta", lambda w,v: texprotect(v or "")),
     "project/iffrontmatter":    ("c_frontmatter", "front", lambda w,v: "" if v else "%"),
     "project/inclcoverperiphs": ("c_includeCoverSections", "cover", None),
     "project/periphpagebreak":  ("c_periphPageBreak", "front", None),
@@ -260,8 +259,8 @@ _map = {
     "document/diglotheaders":   ("c_diglotHeaders", "diglot", None),
     "document/diglotnotesrule": ("c_diglotNotesRule", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotjoinvrule": ("c_diglotJoinVrule", "diglot", lambda w,v: "true" if v else "false"),
-    "document/diglotcolour":    ("col_dibackcol", "diglot", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "1.0 1.0 1.0"),
-    "document/ifdiglotcolour":  ("col_dibackcol", "diglot", lambda w,v : "%" if v is None or v == "rgb(255,255,255)" else ""),
+    "document/diglotcolour":    ("_dibackcol", "diglot", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "1.0 1.0 1.0"),
+    "document/ifdiglotcolour":  ("_dibackcol", "diglot", lambda w,v : "%" if v is None or sum(coltoonemax(v)) > 2.95 else ""),
 
     "document/hasnofront_":        ("c_frontmatter", "front", lambda w,v: "%" if v else ""),
     "document/noblankpage":        ("c_periphSuppressPage", "layout", None),

@@ -9,7 +9,7 @@ from ptxprint.usxutils import Usfm, Sheets
 from ptxprint.module import Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
-                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath
+                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -18,6 +18,7 @@ from ptxprint.xrefs import Xrefs
 from ptxprint.pdf.pdfsanitise import sanitise
 from ptxprint.texpert import TeXpert
 from ptxprint.modelmap import ModelMap
+from usfmtc.versification import Versification
 import ptxprint.modelmap as modelmap
 import logging
 
@@ -168,6 +169,7 @@ class TexModel:
         self.debug = False
         self.interlinear = None
         self.imageCopyrightLangs = {}
+        self.found_glosses = None
         self.frontperiphs = None
         self.xrefs = None
         self.inserts = {}
@@ -200,7 +202,6 @@ class TexModel:
 
     def update(self, diglotbinfo, digcfg=None):
         """ Update model from UI """
-        # breakpoint()
         j = os.path.join
         rel = lambda x, y:saferelpath(x, y).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now
@@ -575,6 +576,8 @@ class TexModel:
         else:
             res.extend(beforelast)
         res.append(template.format(fname))
+        if bkindex is None:
+            return res
         if diglots:
             for k, v in self.dict['diglots_'].items():
                 res.append(r"\zglot|{}\*".format(k))
@@ -582,6 +585,7 @@ class TexModel:
                 dname = v.dict['project/books'][bkindex]
                 res.append(template.format(dname))
             res.append(r"\zglot|\*")
+            res.append(r"\diglottrue")
         return res
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", diglots=False):
@@ -591,6 +595,7 @@ class TexModel:
         res = []
         resetPageDone = False
         docdir, docbase = self.docdir()
+        digserialbooks = set((self.dict['document/diglotserialbooks'] or "").split())
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
                 # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
@@ -607,6 +612,13 @@ class TexModel:
                 self.dict[a[2]] = ""
         if self.dict.get('fancy/enableornaments', "%") != "%":
             self.plugins.add('ornaments')
+        lyt = self.dict.get('document/diglotlayout', "LR")
+        if lyt is not None:
+            if "/" in lyt:
+                self.plugins.add('polyglot-complexpages')
+                self.plugins.discard('polyglot-simplepages')
+            elif "," in lyt:
+                self.plugins.add('polyglot-simplepages')
         if self.dict['cover/makecoverpage'] != "%":
             self.plugins.add('cover')
         self.dict['plugins_'] = ",".join(sorted(self.plugins))
@@ -633,7 +645,7 @@ class TexModel:
                                     res.extend(self._doptxfile(ins, diglots, 
                                             ("\\intropages{{{}}}" 
                                                 if self.dict['project/periphpagebreak']
-                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), "", i))
+                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), "", None))
                                 if diglots:
                                     res.append(r"\diglottrue")
                         if i == len(self.dict['project/bookids']) - 1: 
@@ -649,16 +661,16 @@ class TexModel:
                         if not self.asBool('document/ifshow1chbooknum') and \
                                    self.asBool('document/ifshowchapternums', '%') and f in oneChbooks:
                             res.append(r"\OneChapBooktrue")
-                            res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
+                            res.extend(self._doptxfile(fname, diglots and f in digserialbooks, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\OneChapBookfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
-                            res.extend(self._doptxfile(fname, diglots, "\\ptxfile{{{}}}", beforelast, i))
+                            res.extend(self._doptxfile(fname, diglots and f in digserialbooks, "\\ptxfile{{{}}}", beforelast, i))
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
-                            res.extend(self._doptxfile(fname, False, "\\ptxfile{{{}}}", beforelast, i))
+                            res.extend(self._doptxfile(fname, diglots and f in digserialbooks, "\\ptxfile{{{}}}", beforelast, i))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
                     spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
                                                                             self.dict["paragraph/missingchars"])
@@ -734,9 +746,9 @@ class TexModel:
                     res.append(TeXpert.generateTeX(self.printer))
                 elif l.startswith(r"%\defzvar"):
                     for k in self.printer.allvars():
-                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))
+                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, texprotect(self.printer.getvar(k))))
                     for k, e in (('toctitle', 'document/toctitle'),):
-                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
+                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, texprotect(self.dict[e])))
                 elif l.startswith(r"%\diglot "):
                     if diglots:
                         l = l[9:]
@@ -886,6 +898,7 @@ class TexModel:
     def _getDoc(self, data, doc, bk, logmsg=""):
         if data is not None:
             doc = self._makeUSFM(data, bk)
+            doc.xml.version="3.1"
             if doc is not None:
                 logger.log(5, logmsg+doc.outUsx(None))
         return (None if doc else data, doc)
@@ -894,7 +907,7 @@ class TexModel:
         self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \\ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
         logger.warn(txt)
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0, reversify=None):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
         except ValueError:
@@ -948,6 +961,7 @@ class TexModel:
         with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
         doc = None
+        logger.debug(f"Converting {bk} {chaprange=} sections{self.changes.keys()}")
 
         if 'initial' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
@@ -959,8 +973,8 @@ class TexModel:
 
         logger.debug(f"Converting {bk} {chaprange=}")
         if chaprange is None or not isbk or not len(chaprange) or \
-            (chaprange[0].first.chap < 2 and len(chaprange) == 1 and \
-                (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
+            (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
+                (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
             doc = None
         else:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -980,8 +994,9 @@ class TexModel:
                                     show=not printer.get("c_quickRun"))
                     self.interlinear.fails = []
         elif bk.lower().startswith("xx"):
-            (dat, doc) = self._getText(dat, doc, bk)
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="flatten the module")
             doc = self.flattenModule(infpath, outfpath, text=dat)
+            dat = None
 
         if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
@@ -1009,6 +1024,11 @@ class TexModel:
             if doc is not None:
                 doc.versesToEnd()
 
+        if bk == "GLO" and self.found_glosses is not None:
+            (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Remove filtered gloss entries")
+            if doc is not None:
+                doc.removeGlosses(self.found_glosses)
+
         if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
                     and self.dict["notes/ifxrexternalist"] and isCanon:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -1024,6 +1044,19 @@ class TexModel:
             if doc is not None:
                 doc.hyphenate(printer.hyphenation, self.dict["paragraph/ifnbhyphens"])
 
+        if reversify is not None:
+            (dat, doc) = self._getDoc(dat, doc, bk, "Prepare to reversify")
+            if doc is not None:
+                srcvrsf = None
+                srcvrs = None
+                if self.printer.ptsettings.versification is not None:
+                    srcvrsf = os.path.join(self.printer.project.path, self.printer.ptsettings.versification)
+                    logger.debug(f"{srcvrsf=}")
+                    if os.path.exists(srcvrsf):
+                        srcvrs = Versification(srcvrsf)
+                logger.debug(f"Reversify [{srcvrsf}] {getattr(reversify[0], 'name', 'unknown')} -> {getattr(srcvrs, 'name', 'unknown') if srcvrs else 'unknown'}")
+                doc.reversify(srcvrs, *reversify)
+
         if self.localChanges is not None:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
             logger.log(5,self.localChanges)
@@ -1033,11 +1066,13 @@ class TexModel:
         if adjlist is not None:
             (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("Apply adjlist")
-            doc.apply_adjlist(bk, adjlist)
+            if doc is not None:
+                doc.apply_adjlist(bk, adjlist)
             # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
+        logger.debug("Applying final changes: ")
         if 'final' in self.changes:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes (final)\n")
             dat = runChanges(self.changes['final'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to output\n")
@@ -1060,8 +1095,8 @@ class TexModel:
         # import pdb; pdb.set_trace()
         syntaxErrors = []
         try:
-            doc = Usfm.readfile(txt, grammar=self.printer.usfms.grammar)
-            doc.xml.canonicalise()
+            doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar)
+            doc.xml.canonicalise(version="3.1")
         except SyntaxError as e:
             syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
         except Exception as e:
@@ -1140,7 +1175,7 @@ class TexModel:
                 m = re.match(r"^\s*sections\s*\((.*?)\)", l)
                 if m:
                     ts = m.group(1).split(",")
-                    passes = [t.strip()[1:-1].strip() for t in ts]
+                    passes = [t.strip(' \'"') for t in ts]  # don't require ""
                     for p in passes:
                         if p not in changes:
                             changes[p] = []
@@ -1156,10 +1191,10 @@ class TexModel:
                 if m:
                     atref = RefList.fromStr(m.group(1), context=AnyBooks)
                     for r in atref.allrefs():
-                        if r.chap == 0:
+                        if r.chapter == 0:
                             atcontexts.append((r.book, None))
                         elif r.verse == 0:
-                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chap), flags=regex.S)))
+                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
                         else:
                             v = None
                             if r.first != r.last:
@@ -1172,7 +1207,7 @@ class TexModel:
                                 outv = '{}{}'.format(r.verse, r.subverse or "")
                             else:
                                 outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
-                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chap, outv), flags=regex.S|regex.V1)))
+                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chapter, outv), flags=regex.S|regex.V1)))
                     l = l[m.end():].strip()
                 else:
                     atcontexts = [None]
@@ -1540,66 +1575,52 @@ class TexModel:
 
     def filterGlossary(self, printer):
         # Only keep entries that have appeared in this collection of books
-        glossentries = set()
-        glosstext={}
-        # Note for future debugging... the re.findall below works on the input, the localChanges rule below works after any changes.txt things have taken effect. Allow for random spaces.
-        glopattern=r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)"
-        prjid = self.dict['project/id']
-        prjdir = self.dict["/ptxpath"]
-        logger.debug(f"Filter Glossary for {prjid=} {prjdir=}")
+        def getk(e, attrib="lemma"):
+            kval = e.get("lemma", None)
+            if kval is None:
+                kval = re.sub(r"[ \t]", "", e.text)
+            return kval
+
+        def addk(e, state):
+            if e.tag != "char" or e.get("style", "") != "w":
+                return
+            kval = getk(e)
+            if kval:
+                self.found_glosses.add(kval.lower())        # case insensitive matching
+            return state
+
+        new_glosses = set()
+        def capturek(e, state):
+            if e.tag == "char" and e.get("style", "") == "k":
+                nkval=getk(e, attrib="key").lower() 
+                state = (nkval in self.found_glosses and nkval not in self.processed_glosses)
+                if state:
+                  self.processed_glosses.add(nkval)
+                  logger.log(6,f"Checking active entry {nkval}")
+            if state and e.tag == "char" and e.get("style", "") == "w":
+                kval = getk(e)
+                new_glosses.add(kval.lower())
+                logger.log(6,f"found glossary entry {kval} in an active entry")
+            return state
+
+        self.found_glosses = set()
+        self.printer.get_usfms()
+        self.processed_glosses=set()
         for bk in printer.getBooks():
             if bk not in nonScriptureBooks:
-                fname = printer.getBookFilename(bk, prjid)
-                fpath = os.path.join(prjdir, fname)
-                if os.path.exists(fpath):
-                    with universalopen(fpath) as inf:
-                        sfmtxt = inf.read()
-                    glossentries.update(re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", sfmtxt))
-        fname = printer.getBookFilename("GLO", prjid)
-        infname = os.path.join(prjdir, fname)
-        if os.path.exists(infname):
-            with universalopen(infname, rewrite=True) as inf:
-                dat = inf.read()
-                ge = re.findall(r"\\k ([^\\]+?)\\k\*", dat) # Finds all glossary entries in GLO book
-                for thisGE in ge:
-                    pattern = glopattern.format(thisGE)
-                    #logger.debug(f"pattern: {pattern}, dat:{dat}")
-                    geText = re.findall(pattern, dat, regex.M) # Find the glossary entry
-                    logger.debug(f"Finding {thisGE}, got {geText}")
-                    glosstext[thisGE] = geText
-        logger.debug(f"{glossentries=}")
-        if (self.dict["document/glossarydepth"]):
-            count = self.dict["document/glossarydepth"]# How deep do we follow the chain of A includes B includes C?
-        else:
-            count = 0 # Default is not to go deeper
-        logger.debug(f"glossarydepth={count}")
-        glossdone=[]
-        while count > 0:
-            count = count - 1
-            xtraglossentries = set()
-            for gte in (x for x in glossentries if x not in glossdone): #entries from te glossary text.
-                logger.debug(f"Checking entry for {gte}")
-                glossdone.append(gte)
-                if gte in glosstext: # Not every glossentry actually occurs
-                    gts = glosstext[gte] # Might there be more than one glossary entry?? Assume that's a possibility
-                    for gt in gts: 
-                        logger.debug(f"Checking to see if gloss entry '{gte}'=>{gt} calls on other entries")
-                        xgl = re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", gt)
-                        xtraglossentries.update((x for x in xgl if x not in glossentries))
-            logger.debug(f"Adding {len(xtraglossentries)} extra gloss entries: {xtraglossentries}")
-            if (len(xtraglossentries) == 0): # No more new entries
-                break
-            glossentries.update(xtraglossentries)
-            logger.debug(f"glossarydepth={count}")
-        missings = [ge for ge in glossentries if ge not in glosstext]
-        if len(missings)>0:
-            logger.warn(f"Glossary entries for {','.join(missings)} wanted, but not found in glossary.")
-        else:
-            logger.debug(f"All wanted glossary entries found.")
-        logger.debug(f"{glossentries=}, {ge=}")
-        for delGloEntry in [x for x in ge if x not in glossentries]:
-            # logger.debug(f"Building regex for {delGloEntry=}")
-            self.localChanges.append(makeChange(glopattern.format(delGloEntry), "", flags=regex.M))
+                bkusfm = self.printer.usfms.get(bk)
+                bkusfm.visitall(addk, bkusfm.getroot())
+        count = self.dict.get("document/glossarydepth", 0) or 0
+        logger.debug(f"Looking for chained glossary entries up to {count} deep")
+        glousfm = self.printer.usfms.get("GLO")
+      
+        while count > 0 and glousfm is not None:
+            glousfm.visitall(capturek, glousfm.getroot())
+            logger.debug(f"Found glossary keys: {new_glosses}")
+            self.found_glosses.update(new_glosses)
+            new_glosses.clear()
+            count -= 1
+        logger.debug(f"Found glossary keys: {self.found_glosses}")
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":

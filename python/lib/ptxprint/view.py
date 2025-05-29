@@ -5,7 +5,7 @@ from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.project import ProjectList
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
-from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
+from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
                             zipopentext, xdvigetfonts, calledme
@@ -28,7 +28,7 @@ from tempfile import NamedTemporaryFile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
 from shutil import rmtree
-import datetime, time, traceback
+import datetime, time
 import json, logging, hashlib
 from shutil import copyfile, copytree, move
 from difflib import Differ
@@ -37,8 +37,8 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.7.36"
-GitVersionStr = "2.7.36"
+VersionStr = "2.8.11"
+GitVersionStr = "2.8.11"
 ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -195,7 +195,7 @@ class ViewModel:
 
     def changed(self, val=True):
         # if val != self.isChanged:
-        #     print(val, calledme(2))
+            # print(val, calledme(2))
         self.isChanged = val
 
     def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):
@@ -695,9 +695,7 @@ class ViewModel:
         return res
 
     def getDialogTitle(self):
-        # print(f"  > > > In view.py Start of getDialogTitle")
         if self.project is None or self.project.prjid is None:
-            # print(f"<< Returning from getDialogTitle because prjid is None")
             return _("PTXprint {} - Bible Layout for Everyone!").format(VersionStr)
         else:
             prjid = self.project.prjid
@@ -716,12 +714,21 @@ class ViewModel:
             cfg = ":" + self.cfgid
             cfg = ":" + cfg if (not self.get("c_diglot") and self.get("c_doublecolumn", False)) else cfg
             prjcfg = "{}{}".format(prjid, cfg) 
-            # print(f"view.py - in getDialogTitle; {prjid=}, {cfg=}")
+            
             if self.get("c_diglot") and len(self.diglotViews):
-                # cfg2 = ":" + self.diglotViews['R'].cfgid # FixMe! -- fails every time.
-                # prjcfg2 = "{}{}".format(self.diglotViews['R'].project.prjid, cfg2) 
-                prjcfg2 = "Dig:FixMe"
-                prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
+                parts = []
+                for v in self.diglotViews.values():
+                    try:
+                        prjid = v.project.prjid
+                        cfgid = v.cfgid
+                        parts.append(f"{prjid}:{cfgid}")
+                    except Exception as e:
+                        parts.append("???")  # fallback in case of missing data
+
+                prjcfg2 = " | ".join(parts)
+                if len(prjcfg2) > 100:
+                    prjcfg2 = re.sub(r":[^\s\]]+", "", prjcfg2)
+                prjcfg = f"[{prjcfg} | {prjcfg2}]"
             return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
     def readCopyrights(self, forced=False):
@@ -778,6 +785,8 @@ class ViewModel:
         (oldversion, forcerewrite) = self.versionFwdConfig(config, cp)
         self.loadingConfig = True
         self.localiseConfig(config)
+        self.diglotViews = {}
+        self.polyglots = {}
         self.loadConfig(config, updatebklist=updatebklist)
         for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
                                (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
@@ -790,8 +799,6 @@ class ViewModel:
             self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
-        self.diglotViews = {}
-        self.polyglots = {}
         if self.get("c_diglot") and not self.isDiglot:
             for s in config.sections():
                 if s.startswith("diglot_"):
@@ -799,9 +806,11 @@ class ViewModel:
                     pg = PolyglotConfig()
                     pg.readConfig(config, s)
                     self.polyglots[k] = pg
-                    print(f"Polyglot[{k} = {pg}")
                     if k != "L":
-                        self.createDiglotView(k)
+                        try:
+                            self.createDiglotView(k)
+                        except ValueError:
+                            pass
         else:
             self.setPrintBtnStatus(2)
         self.loadingConfig = False
@@ -1141,42 +1150,36 @@ class ViewModel:
             if not config.getboolean('paper', 'ifgrid', fallback=False):
                 self._configset(config, 'grid/gridgraph', False)
                 self._configset(config, 'grid/gridlines', False)
-
-# diglot2captions = True
-# diglotadjcenter = False
-# diglotcolour = rgb(255,255,255)
-# diglotheaders = False
-# diglotjoinvrule = False
-# diglotmergemode = scores-chapter
-# diglotnotesrule = False
-# diglotpicsources = pri
-# diglotprifraction = 50
-# diglotsecconfig = Default
-# diglotsecfraction = 50
-# diglotsecprjguid = abfa13e41e4f378a79ba8e49727cca9100533940
-
-
-# [diglot_R]
-# projectid = WSG
-# projectguid = 9e944fc08f02acf9cc7033f4b006cc335e7ef48f
-# config = Short
-# page = 1
-# fraction = 50
-# captions = false
-# backcolor = #FFFFFF
                 
-        if v < 2.24: # support polyglot
+        if v < 2.24: # change from simple pri/sec diglot to polyglot
             if config.getboolean("snippets", "diglot"):
-                print(f'{config.getboolean("snippets", "diglot")=}')
                 for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
-                             "config": "secconfig", "fraction": "secfraction"}.items(): # add captions +/- colour
+                             "config": "secconfig", "color": "colour"}.items():
                     val = config.get("document", f"diglot{a}", fallback=None)
-                    print(f"{k=} {val=}")
                     if val is not None:
                         self._configset(config, f"diglot_R/{k}", val)
+                for k,v in {"page": "1", "weight": "50"}.items():
+                    self._configset(config, f"diglot_L/{k}", v)
+                    self._configset(config, f"diglot_R/{k}", v)
                 val = config.get("document", "diglotprifraction", fallback=50)
                 self._configset(config, f"poly/fraction", val)
-
+                self._configset(config, f"diglot_L/fraction", val)
+                self._configset(config, f"diglot_R/fraction", f2s(100 - float(val)))
+                pics = config.get("document", "diglotpicsources", fallback="pri")
+                self._configset(config, f"diglot_L/captions", True if pics in ("pri", "bth") else False)
+                self._configset(config, f"diglot_R/captions", True if pics in ("sec", "bth") else False)
+                prj = config.get("project", "id", fallback=None)
+                self._configset(config, f"diglot_L/projectid", prj)
+                cfg = config.get("config", "name", fallback=None)
+                self._configset(config, f"diglot_L/config", cfg)
+                revrs = config.get("document", "diglotswapside", fallback=False)
+                logger.debug(f"{revrs=} ({type(revrs)}")
+                self._configset(config, f"document/diglotlayout", "RL" if revrs == 'True' else "LR")
+                fsz = config.get("paper", "fontfactor", fallback=12)
+                self._configset(config, f"diglot_L/fontsize", fsz)
+                lsp = config.get("paragraph", "linespacing", fallback=15)
+                self._configset(config, f"diglot_L/baseline", lsp)
+                
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
@@ -1390,8 +1393,7 @@ class ViewModel:
         self.savePics(force=force)
         self.saveStyles(force=force)
         for k,v in self.diglotViews.items():
-            if v.isChanged:
-                print(f"Saving Diglot config: {k} - YAY!")
+            if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
 
@@ -1410,6 +1412,9 @@ class ViewModel:
     def updatePicList(self, bks=None, priority="Both", output=False):
         return
 
+    def mergeCaptions(self, bk):
+        return bk not in self.get("s_diglotSerialBooks", "FRT BAK GLO")
+
     def generatePicList(self, procbks=None, doclear=True):
         ab = self.getAllBooks()
         if procbks is None:
@@ -1419,14 +1424,13 @@ class ViewModel:
         # mrgCptn = self.get("c_diglot2captions", False) # FixMe!
         mrgCptn = False # FixMe!
         sync = self.get("c_protectPicList", False)
-        if not len(self.diglotViews):
-            self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
-        else:
+        self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
+        if len(self.diglotViews):
             for k, v in self.diglotViews.items():
-                self.digbasepics[k].read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
+                if v.picinfos is None:
+                    v.picinfos = Piclist(v)
                 v.picinfos.read_books(procbks, v.getAllBooks(), cols=cols, random=rnd, sync=sync)
-                self.picinfos.merge(self.digbasepics[k], k, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
-                self.picinfos.merge(v.picinfos, k, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+                self.picinfos.merge(v.picinfos, k, mergeCaptions=self.mergeCaptions)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
@@ -1453,20 +1457,16 @@ class ViewModel:
         if not self.get("c_includeillustrations"):
             return
         res = None
+        if self.picinfos.load_files(self, base=None):
+            return
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
-                self.digbasepics[k] = Piclist(self)
-                self.digbasepics[k].load_files(self)
-                if v.picinfos is not None:
+                # self.digbasepics[k] = Piclist(self)
+                # self.digbasepics[k].load_files(self)
+                if v.picinfos is None:
                     v.picinfos = Piclist(v)
-                    v.picinfos.load_files(v)
-            res = self.picinfos.load_files(self, base=self.digbasepics[k], suffix=k)
-        if not res and len(self.diglotViews) and len(self.picinfos.get_pics()):
-            for k, v in self.diglotViews.items():
-                self.picinfos.merge(v.picinfos, k)
-        if res:
-            pass
-#            self.savePics(fromdata=fromdata)
+                v.picinfos.load_files(v)
+                self.picinfos.merge(v.picinfos, k, mergeCaptions=self.mergeCaptions)
         elif mustLoad:
             self.onGeneratePicListClicked(None)
             
@@ -1684,6 +1684,72 @@ class ViewModel:
                 allfonts.add(f.filename)
         return allfonts
 
+    def _getProject(self, prjwname):
+        impgui = self.get(prjwname, sub=1)
+        if impgui is None or not len(impgui):
+            impname = self.get(prjwname)
+            impprj = self.prjTree.findProject(impname)
+        else:
+            impprj = self.prjTree.getProject(impgui)
+        return impprj
+
+    def createView(self, prj, cfgid):
+        res = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
+        res.setPrjid(prj.prjid, prj.guid)
+        res.setConfigId(cfgid)
+        return res
+
+    def createDiglotView(self, suffix="R", inserting=False):
+        self.setPrintBtnStatus(2)
+        if suffix not in self.polyglots:
+            return None
+        prjguid = self.polyglots[suffix].prjguid
+        prj = self.prjTree.getProject(prjguid, name=self.polyglots[suffix].prj)
+        cfg = self.polyglots[suffix].cfg
+        if prj is None or cfg is None:
+            raise ValueError(f"No Config found for Diglot [{suffix}]")
+            self.setPrintBtnStatus(2, _(f"No Config found for Diglot [{suffix}]"))
+            digview = None
+        else:
+            digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
+            digview.isDiglot = True
+            digview.setPrjid(prj.prjid, prj.guid)
+            if cfg is None or cfg == "" or not digview.setConfigId(cfg):
+                digview = None
+        if digview is None:
+            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfg}"))
+        else:
+            digview.isDiglot = True
+            digview.digSuffix = suffix
+            self.digSuffix = suffix
+            self.diglotViews[suffix] = digview
+            if inserting and self.picinfos:
+                if digView.picinfos is None:
+                    digView.picinfos = PicList(digView)
+                    digView.picinfos.load_files(digView)
+                self.picinfos.merge(v.picinfos, suffix, mergeCaptions=self.mergeCaptions)
+        return digview
+
+    def removeDiglotView(self, suffix):
+        if self.picinfos:
+            self.picinfos.unmerge(suffix)
+        self.diglotViews.pop(suffix, None)
+        self.polyglots.pop(suffix, None)
+
+    def moveDiglot(self, old, new):
+        self.diglotViews[new] = self.diglotViews.pop(old, None)
+        self.polyglots[new] = self.polyglots.pop(old, None)
+        self.polyglots[new].code = new
+        self.reloadDiglotPics(self.diglotViews[new], old, new)
+        logger.debug(f"Diglots={self.diglotViews.keys()}, polyglots={self.polyglots.keys()}")
+        
+    def reloadDiglotPics(self, digView, old, new):
+        self.picinfos.unmerge(old)
+        if digView.picinfos is None or not digView.picinfos.pics:
+            digView.picinfos = Piclist(digView)
+            digView.picinfos.load_files(digView)
+        self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
+
     def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
@@ -1720,9 +1786,9 @@ class ViewModel:
             if fname is not None:
                 res[os.path.join(fpath, fname)] = baseprjid + "/" + os.path.basename(fname)
             if interlang is not None:
-                intpath = "{}/Interlinear_{}".format(baseprjid, interlang)
+                intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
-                res[os.path.join(fpath, intpath, intfile)] = os.path.join(intpath, intfile)
+                res[os.path.join(fpath, intpath, intfile)] = os.path.join(baseprjid, intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
             self.picinfos.getFigureSources(exclusive=exclFigsFolder)
@@ -1841,50 +1907,6 @@ class ViewModel:
         for k, v in ptres.items():
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
-
-    def _getProject(self, prjwname):
-        impgui = self.get(prjwname, sub=1)
-        if impgui is None or not len(impgui):
-            impname = self.get(prjwname)
-            impprj = self.prjTree.findProject(impname)
-        else:
-            impprj = self.prjTree.getProject(impgui)
-        return impprj
-
-    def createView(self, prj, cfgid):
-        res = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
-        res.setPrjid(prj.prjid, prj.guid)
-        res.setConfigId(cfgid)
-        return res
-
-    def createDiglotView(self, suffix="R"):
-        # breakpoint()
-        self.setPrintBtnStatus(2)
-        if suffix not in self.polyglots:
-            print(f"Returned early from: createDiglotView. {suffix=}")
-            return None
-        prjguid = self.polyglots[suffix].prjguid
-        print(f"in view.createDiglotView: {prjguid=}")
-        prj = self.prjTree.getProject(prjguid, name=self.polyglots[suffix].prj)
-        cfg = self.polyglots[suffix].cfg
-        if prj is None or cfg is None:
-            raise ValueError(f"No Config found for Diglot [{suffix}]")
-            self.setPrintBtnStatus(2, _(f"No Config found for Diglot [{suffix}]"))
-            digview = None
-        else:
-            digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
-            digview.isDiglot = True
-            digview.setPrjid(prj.prjid, prj.guid)
-            if cfg is None or cfg == "" or not digview.setConfigId(cfg):
-                digview = None
-        if digview is None:
-            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfg}"))
-        else:
-            digview.isDiglot = True
-            digview.digSuffix = suffix
-            self.digSuffix = suffix
-            self.diglotViews[suffix] = digview
-        return digview
 
     def createArchive(self, filename=None):
         if filename is None:

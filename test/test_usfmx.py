@@ -24,7 +24,7 @@ class MockStrongs:
     def addregexes(self, st):
         pass
     def getstrongs(self, ref):
-        if ref.first.chap==3 and ref.first.verse==16:
+        if ref.first.chapter==3 and ref.first.verse==16:
             return ["G25"]
         else:
             return []
@@ -84,7 +84,7 @@ class TestUSFMClass(unittest.TestCase):
     def test_transform(self):
         self.usfmdoc.addorncv()
         def testref(e):
-            return e.pos is not None and getattr(e.pos, 'ref', None) is not None and e.pos.ref.first.chap == 3 and e.pos.ref.first.verse == 16
+            return e.pos is not None and getattr(e.pos, 'ref', None) is not None and e.pos.ref.first.chapter == 3 and e.pos.ref.first.verse == 16
         self.usfmdoc.transform_text((testref, re.compile("(the people)"), r"all \1"))
         self.test_subdoc(res="\u201CDue to God loving all the people")
 

@@ -537,6 +537,7 @@ class StyleEditorView(StyleEditor):
     def setFontLabel(self, fref, fsize):
         bfontsize = float(self.model.get("s_fontsize"))
         f = fref.getTtfont() if fref is not None else None
+        logger.debug(f"{fsize=}, {fref=}, {bfontsize=}")
         if f is not None:
             asc = f.ascent / f.upem * bfontsize
             des = f.descent / f.upem * bfontsize
@@ -571,7 +572,10 @@ class StyleEditorView(StyleEditor):
                     self.set("l_styColor", _("Color:")+"\n"+str(val))
             elif k == 'font':
                 newval = val
-                self.setFontLabel(val, float(self.getval(self.marker, "FontSize", "1.")) * float(self.model.get("s_fontsize", "1.")))
+                fsize = float(self.getval(self.marker, "FontSize", "1."))
+                msize = float(self.model.get("s_fontsize", "1."))
+                logger.debug(f"{self.marker}: FontSize={fsize}, model font size={msize}, {val=}")
+                self.setFontLabel(val, fsize * msize)
             else:
                 newval = val
             if newval is None:
@@ -660,7 +664,10 @@ class StyleEditorView(StyleEditor):
                         setattr(fref, "is"+key, val)
                         self.setval(self.marker, 'font', fref, parm=True, mapin=False)
                     # check that defaulting this doesn't cause problems
-                    self.setFontLabel(fref, float(self.getval(self.marker, "FontSize", "1.")) * float(self.model.get("s_fontsize", "1.")))
+                    fsize = float(self.getval(self.marker, "FontSize", "1."))
+                    msize = float(self.model.get("s_fontsize", "1."))
+                    logger.debug(f"{self.marker}: FontSize={fsize}, model font size={msize}")
+                    self.setFontLabel(fref, fsize * msize)
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):
@@ -762,6 +769,7 @@ class StyleEditorView(StyleEditor):
             elif st == 'Milestone':
                 self.resolveEndMarker(key, self.getval(key, 'EndMarker'))
                 self.setval(key, 'EndMarker', None)
+            self.set_legacy_types(key)
             self.marker = key
             self.treeview.get_selection().select_iter(selecti)
             self.selectMarker(key)

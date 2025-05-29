@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.7.36</property>
+    <property name="version">Version 2.8.11</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -1047,6 +1047,15 @@ PDF file(s) created for this project.</property>
     <property name="icon-name">go-previous-symbolic</property>
     <property name="icon_size">2</property>
   </object>
+  <object class="GtkImage" id="icon_prvOpen">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="tooltip-text" translatable="yes">Open the PDF in the system's
+default PDF viewer (e.g. Evince,
+Acrobat or SumatraPDF).</property>
+    <property name="icon-name">view-dual-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_prvOpenFolder">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -1072,15 +1081,6 @@ new name and/or different folder.</property>
     <property name="icon-name">document-save-as-symbolic</property>
     <property name="icon_size">3</property>
   </object>
-  <object class="GtkImage" id="icon_prvShare">
-    <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="tooltip-text" translatable="yes">(Coming soon...)
-Share this PDF with others 
-via email, or social media.</property>
-    <property name="icon-name">preferences-system-sharing-symbolic</property>
-    <property name="icon_size">3</property>
-  </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -1104,7 +1104,7 @@ via email, or social media.</property>
     <property name="can-focus">False</property>
     <property name="tooltip-text" translatable="yes">Show the main PTXprint
 dialog with all the settings. </property>
-    <property name="icon-name">emblem-system-symbolic</property>
+    <property name="icon-name">applications-system-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_targetProj">
@@ -1397,58 +1397,58 @@ settings for a similar project.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Han1</col>
+        <col id="0">Han1</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Han2</col>
+        <col id="0">Han2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Han3</col>
+        <col id="0">Han3</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Han4</col>
+        <col id="0">Han4</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Han5</col>
+        <col id="0">Han5</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Vectorian1</col>
+        <col id="0">Vectorian1</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Vectorian2</col>
+        <col id="0">Vectorian2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Vectorian3</col>
+        <col id="0">Vectorian3</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Vectorian4</col>
+        <col id="0">Vectorian4</col>
       </row>
       <row>
-        <col id="0" translatable="yes">v85</col>
+        <col id="0">v85</col>
       </row>
       <row>
-        <col id="0" translatable="yes">v85r</col>
+        <col id="0">v85r</col>
       </row>
       <row>
-        <col id="0" translatable="yes">v85out</col>
+        <col id="0">v85out</col>
       </row>
       <row>
-        <col id="0" translatable="yes">v86c</col>
+        <col id="0">v86c</col>
       </row>
       <row>
-        <col id="0" translatable="yes">c86out</col>
+        <col id="0">c86out</col>
       </row>
       <row>
-        <col id="0" translatable="yes">v88</col>
+        <col id="0">v88</col>
       </row>
       <row>
-        <col id="0" translatable="yes">v88r</col>
+        <col id="0">v88r</col>
       </row>
       <row>
-        <col id="0" translatable="yes">v88c</col>
+        <col id="0">v88c</col>
       </row>
       <row>
-        <col id="0" translatable="yes">v88out</col>
+        <col id="0">v88out</col>
       </row>
     </data>
   </object>
@@ -1509,6 +1509,36 @@ settings for a similar project.</property>
       <row>
         <col id="0" translatable="yes">Burmese</col>
         <col id="1">myanmar</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_diglotMerge">
+    <columns>
+      <!-- column-name mergeDesc -->
+      <column type="gchararray"/>
+      <!-- column-name mergeCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Description based</col>
+        <col id="1">doc</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Chapter Verse</col>
+        <col id="1">simple</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Scored</col>
+        <col id="1">scores</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Scored (Chapter)</col>
+        <col id="1">scores-chapter</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Scored (Verse)</col>
+        <col id="1">scores-verse</col>
       </row>
     </data>
   </object>
@@ -1834,67 +1864,62 @@ settings for a similar project.</property>
         <col id="1">zh</col>
       </row>
       <row>
+        <col id="0">Burmese</col>
+        <col id="1">my_MM</col>
+      </row>
+      <row>
         <col id="0">English</col>
         <col id="1">en</col>
+      </row>
+      <row>
+        <col id="0">Español</col>
+        <col id="1">es</col>
       </row>
       <row>
         <col id="0">Français</col>
         <col id="1">fr</col>
       </row>
       <row>
-        <col id="0">Magyar</col>
-        <col id="1">hu</col>
+        <col id="0">Hindi</col>
+        <col id="1">hi_IN</col>
       </row>
       <row>
         <col id="0">Indonesian</col>
         <col id="1">id</col>
       </row>
       <row>
-        <col id="0">Português</col>
-        <col id="1">pt</col>
+        <col id="0">Korean</col>
+        <col id="1">ko</col>
       </row>
       <row>
-        <col id="0">Română</col>
-        <col id="1">ro</col>
+        <col id="0">Magyar</col>
+        <col id="1">hu</col>
+      </row>
+      <row>
+        <col id="0">Malayalam</col>
+        <col id="1">ml</col>
+      </row>
+      <row>
+        <col id="0">Português</col>
+        <col id="1">pt_BR</col>
       </row>
       <row>
         <col id="0">Русский</col>
         <col id="1">ru</col>
       </row>
       <row>
-        <col id="0">Español</col>
-        <col id="1">es</col>
+        <col id="0">Română</col>
+        <col id="1">ro</col>
+      </row>
+      <row>
+        <col id="0">Thai</col>
+        <col id="1">th</col>
+      </row>
+      <row>
+        <col id="0">Tok Pisin</col>
+        <col id="1">tpi_PG</col>
       </row>
     </data>
-  </object>
-  <object class="GtkPopover" id="menu_language">
-    <property name="can-focus">False</property>
-    <signal name="closed" handler="menu_inner_closed" swapped="no"/>
-    <child>
-      <object class="GtkTreeView">
-        <property name="height-request">210</property>
-        <property name="visible">True</property>
-        <property name="can-focus">True</property>
-        <property name="model">ls_interfaceLang</property>
-        <property name="headers-visible">False</property>
-        <property name="activate-on-single-click">True</property>
-        <signal name="row-activated" handler="onUILangSelected" swapped="no"/>
-        <child internal-child="selection">
-          <object class="GtkTreeSelection"/>
-        </child>
-        <child>
-          <object class="GtkTreeViewColumn">
-            <property name="title" translatable="yes">column</property>
-            <child>
-              <object class="GtkCellRendererText"/>
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
   </object>
   <object class="GtkListStore" id="ls_leaderStyle">
     <columns>
@@ -2726,36 +2751,6 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
-  <object class="GtkPopover" id="menu_showPDF">
-    <property name="can-focus">False</property>
-    <child>
-      <object class="GtkTreeView">
-        <property name="visible">True</property>
-        <property name="can-focus">True</property>
-        <property name="model">ls_showPDF</property>
-        <property name="headers-visible">False</property>
-        <property name="enable-search">False</property>
-        <property name="search-column">0</property>
-        <property name="show-expanders">False</property>
-        <property name="activate-on-single-click">True</property>
-        <signal name="row-activated" handler="onShowPDF" swapped="no"/>
-        <child internal-child="selection">
-          <object class="GtkTreeSelection"/>
-        </child>
-        <child>
-          <object class="GtkTreeViewColumn">
-            <property name="title" translatable="yes">Levels</property>
-            <child>
-              <object class="GtkCellRendererText"/>
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkListStore" id="ls_snruleHorizPosn">
     <columns>
       <!-- column-name HorizPosition -->
@@ -3122,139 +3117,6 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
-  <object class="GtkPopover" id="menu_mode">
-    <property name="can-focus">False</property>
-    <signal name="closed" handler="menu_inner_closed" swapped="no"/>
-    <child>
-      <object class="GtkTreeView">
-        <property name="visible">True</property>
-        <property name="can-focus">True</property>
-        <property name="model">ls_uiLevel</property>
-        <property name="headers-visible">False</property>
-        <property name="enable-search">False</property>
-        <property name="show-expanders">False</property>
-        <property name="activate-on-single-click">True</property>
-        <signal name="row-activated" handler="onUILevelSelected" swapped="no"/>
-        <child internal-child="selection">
-          <object class="GtkTreeSelection"/>
-        </child>
-        <child>
-          <object class="GtkTreeViewColumn">
-            <property name="title" translatable="yes">Levels</property>
-            <child>
-              <object class="GtkCellRendererText"/>
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkPopover" id="menu_main">
-    <property name="can-focus">False</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkMenuButton" id="btn_menu_showPDF">
-            <property name="can-focus">True</property>
-            <property name="focus-on-click">False</property>
-            <property name="receives-default">True</property>
-            <property name="no-show-all">True</property>
-            <property name="direction">right</property>
-            <property name="popover">menu_showPDF</property>
-            <child>
-              <object class="GtkLabel" id="l_menu_showPDF">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Show PDF</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkMenuButton" id="btn_menu_level">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="focus-on-click">False</property>
-            <property name="receives-default">True</property>
-            <property name="direction">right</property>
-            <property name="popover">menu_mode</property>
-            <child>
-              <object class="GtkLabel" id="l_menu_level">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">View Level</property>
-                <property name="justify">center</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkMenuButton" id="btn_menu_lang">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="focus-on-click">False</property>
-            <property name="receives-default">True</property>
-            <property name="direction">right</property>
-            <property name="popover">menu_language</property>
-            <child>
-              <object class="GtkLabel" id="l_menu_uilang">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Language</property>
-                <property name="justify">center</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_menu_feedback">
-            <property name="label" translatable="yes">Give Feedback</property>
-            <property name="name">Link to PTXprint Feedback Form (Google Form)</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
-You could help us make PTXprint better!
-
-The developers of PTXprint would love to know how 
-this tool is being used. What is your favorite feature? 
-Are there any annoyances? Tell us what you like, or 
-don't like. Tell us what you dream for in the future.
-
-Click this button to fill in the Google form or type
-this in a browser: http://tiny.cc/ptxprintfeedback</property>
-            <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkListStore" id="ls_xRefExtListSource">
     <columns>
       <!-- column-name Description -->
@@ -3391,6 +3253,136 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
     <property name="can-focus">False</property>
     <child>
       <placeholder/>
+    </child>
+  </object>
+  <object class="GtkPopover" id="menu_main">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_showPDF">
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="no-show-all">True</property>
+            <property name="direction">right</property>
+            <property name="use-popover">False</property>
+            <child>
+              <object class="GtkLabel" id="l_menu_showPDF">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Show PDF</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_level">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="direction">right</property>
+            <property name="use-popover">False</property>
+            <child>
+              <object class="GtkLabel" id="l_menu_level">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">View Level</property>
+                <property name="justify">center</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_lang">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="direction">right</property>
+            <property name="use-popover">False</property>
+            <child>
+              <object class="GtkLabel" id="l_menu_uilang">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Language</property>
+                <property name="justify">center</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_menu_donate">
+            <property name="label" translatable="yes">Donate</property>
+            <property name="name">Donate toward PTXprint Development</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-markup" translatable="yes">PTXprint is a tool that is freely available to all
+without any restrictions. Our aim is to help
+people get the Scriptures out to people in 
+formats that work best for their local context.
+
+Click to contribute toward the ongoing 
+development and maintenance of tools 
+by SIL Global's Language Technology 
+Developers so that others can also benefit. 
+
+&lt;a href="https://give.sil.org/campaign/597654/donate"&gt;give.sil.org/campaign/597654/donate&lt;/a&gt;
+</property>
+            <signal name="clicked" handler="onDonateClicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_menu_feedback">
+            <property name="label" translatable="yes">Give Feedback</property>
+            <property name="name">Link to PTXprint Feedback Form (Google Form)</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-markup" translatable="yes">Psst! Can we have 5 minutes of your time?
+You could help us &lt;b&gt;make PTXprint better!&lt;/b&gt;
+
+The developers of PTXprint would love to know how 
+this tool is being used. What is your favorite feature? 
+Are there any annoyances? Tell us what you like, or 
+don't like. Tell us what you dream for in the future.
+
+Click this button to fill in the Google form or type
+this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxprintfeedback&lt;/a&gt;</property>
+            <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+      </object>
     </child>
   </object>
   <object class="GtkFileFilter" id="pdfFiles">
@@ -3704,6 +3696,7 @@ Mouse Scroll also changes pages</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
+                    <property name="no-show-all">True</property>
                     <property name="tooltip-text" translatable="yes">Show previous underfilled page.</property>
                     <property name="halign">start</property>
                     <property name="image">icon_seekPage2fill_prev</property>
@@ -3722,6 +3715,7 @@ Mouse Scroll also changes pages</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
+                    <property name="no-show-all">True</property>
                     <property name="tooltip-text" translatable="yes">Show next underfilled page.</property>
                     <property name="halign">end</property>
                     <property name="image">icon_seekPage2fill_next</property>
@@ -3901,19 +3895,18 @@ new name and/or different folder.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="btn_prvShare">
-                        <property name="name">Share the PDF with others</property>
+                      <object class="GtkButton" id="btn_prvOpen">
+                        <property name="name">Open the PDF in Default PDF Viewer</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">(Coming soon...)
-Share this PDF with others 
-via email, or social media.</property>
+                        <property name="tooltip-text" translatable="yes">Open the PDF in the system's
+default PDF viewer (e.g. Evince,
+Acrobat or SumatraPDF).</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="image">icon_prvShare</property>
-                        <signal name="clicked" handler="onShareItClicked" swapped="no"/>
+                        <property name="image">icon_prvOpen</property>
+                        <signal name="clicked" handler="onOpenItClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -4429,7 +4422,7 @@ reference (e.g. JHN 3.16)</property>
     <property name="height-request">250</property>
     <property name="can-focus">False</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: SpeedSlice™</property>
+    <property name="title" translatable="yes">PTXprint: SpeedSlice</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window-position">center-on-parent</property>
@@ -8166,10 +8159,15 @@ to ensure that they are displayed properly.</property>
                                         <property name="tooltip-text" translatable="yes">To hyphenate properly you need to first create a 
 Hyphenation List using the button on the left.
 This will create a XeTeX hyphenation list from the
-hyphenation list in Paratext.</property>
+hyphenation list in Paratext.
+
+Note that for Hyphenation to work properly, the
+Spacing Adjustments 'Between Letters' option needs 
+to be disabled.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -18201,7 +18199,7 @@ to copyrights.</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=5 n-rows=8 -->
+                          <!-- n-columns=5 n-rows=7 -->
                           <object class="GtkGrid" id="gr_diglot">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -18230,7 +18228,7 @@ and Page Number in (or near) the middle.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">6</property>
+                                <property name="top-attach">5</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -18252,7 +18250,7 @@ different columns).</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">7</property>
+                                <property name="top-attach">6</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -18360,70 +18358,7 @@ leave this option checked ON.</property>
                               <packing>
                                 <property name="left-attach">2</property>
                                 <property name="top-attach">4</property>
-                                <property name="height">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_diglotMergeMode">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
-algorithms which may be used to obtain the best overall result:
-
-* Document based - attempts to use the document structure to align at 
-  paragraphs as far as possible; but alignment is easily confused when 
-  each text has a very different paragraph structure.
-
-* Chapter Verse - aligns on chapters and verses instead of structure
-
-* Scored - an alternative algorithm using weighted scores which
-  tries to align paragraphs when the verse numbers match
-
-* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
-
-* Scored (Verses) - as a minimum, forces alignment at each verse, which 
-  can result in a lot of breaks!</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Merging mode:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">7</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBoxText" id="fcb_diglotMerge">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
-algorithms which may be used to obtain the best overall result:
-
-* Document based - attempts to use the document structure to align at 
-  paragraphs as far as possible; but alignment is easily confused when 
-  each text has a very different paragraph structure.
-
-* Chapter Verse - aligns on chapters and verses instead of structure
-
-* Scored - an alternative algorithm using weighted scores which
-  tries to align paragraphs when the verse numbers match
-
-* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
-
-* Scored (Verses) - as a minimum, forces alignment at each verse, which 
-  can result in a lot of breaks!</property>
-                                <property name="active">0</property>
-                                <property name="active-id">doc</property>
-                                <items>
-                                  <item id="doc" translatable="yes">Document based</item>
-                                  <item id="simple" translatable="yes">Chapter Verse</item>
-                                  <item id="scores" translatable="yes">Scored</item>
-                                  <item id="scores-chapter" translatable="yes">Scored (Chapter)</item>
-                                  <item id="scores-verse" translatable="yes">Scored (Verse)</item>
-                                </items>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">7</property>
+                                <property name="height">3</property>
                               </packing>
                             </child>
                             <child>
@@ -18561,10 +18496,108 @@ be viewed or edited in Paratext.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="hexpand">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel" id="l_diglotMergeMode">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a very different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!
+
+Note that for polyglots, only the Scored options are available to be used.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Merging mode:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="fcb_diglotMerge">
+                                    <property name="name">Diglot/Polyglot: Merging Mode</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a very different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!
+
+Note that for polyglots, only the Scored options are available to be used.</property>
+                                    <property name="model">ls_diglotMerge</property>
+                                    <property name="active">1</property>
+                                    <property name="has-entry">True</property>
+                                    <property name="entry-text-column">0</property>
+                                    <property name="id-column">1</property>
+                                    <property name="active-id">1</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a very different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!
+
+Note that for polyglots, only the Scored options are available to be used.</property>
+                                        <property name="editable">False</property>
+                                        <property name="width-chars">18</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
@@ -18635,12 +18668,6 @@ not be merged. These will appear one after the other.</property>
                                 <property name="left-attach">1</property>
                                 <property name="top-attach">4</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -23925,7 +23952,27 @@ various code snippets as required.</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLinkButton" id="lb_snippets">
+                                <property name="label" translatable="yes">More...</property>
+                                <property name="name">Link to deeper technical help</property>
+                                <property name="can-focus">True</property>
+                                <property name="focus-on-click">False</property>
+                                <property name="receives-default">True</property>
+                                <property name="no-show-all">True</property>
+                                <property name="tooltip-text" translatable="yes">Online documentation on a 
+structured list of code snippets 
+which can be copied and pasted 
+into the appropriate settings files.</property>
+                                <property name="halign">center</property>
+                                <property name="valign">end</property>
+                                <property name="relief">none</property>
+                                <property name="uri">https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/snippets.md</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
                             </child>
                           </object>
                           <packing>
@@ -26772,6 +26819,7 @@ Print (for professional printers, PDF/X-1a:2003)
 
 Note: Digital and Print comply with archive standard PDF/A-1b.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="model">ls_outputFormat</property>
                                 <property name="wrap-width">1</property>
                                 <property name="active">0</property>
@@ -26941,6 +26989,7 @@ which will get converted
 to the closest matching 
 Pantone color code.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="title" translatable="yes">Spot Color Hue</property>
                                 <property name="rgba">rgb(28,113,216)</property>
                               </object>

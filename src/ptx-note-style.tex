@@ -156,6 +156,7 @@
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
     \begingroup
+    \implicitcl@setrue % Char styles in notes implicitly close other ones. 
     \let\aftern@te\relax
     %\ifhe@dings\bgroup\fi
     \setbox0=\vbox\bgroup \skipn@testyletrue \inn@tetrue
@@ -175,6 +176,7 @@
     \else \trace{n}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\def\them@rk{#1}% otherwise the caller is the parameter
     \fi\fi
     \begingroup
+    \implicitcl@setrue % Char styles in notes implicitly close other ones.FIXME: develop testcase for new n@testructmkr tests
     \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
     \resetp@rstyle                                                              %(1)
@@ -427,7 +429,7 @@
 
 %+c_endnotes
 
-\def\NoteAtEnd#1{%Treat the specified note as an end-note.
+\def\NoteAtEnd#1{%Treat the specified note as an end-note. Don't use note-#1, as that gets cleared, etc.
   \x@\newb@x\csname endn@te-#1\endcsname
   \x@\gdef\csname addt@endnote-#1\endcsname{%thanks to afterassignment, this gets put immediately after the start of the vbox
     \checkp@ranotes{#1}%
@@ -480,13 +482,13 @@
 \def\posttextb@rderskip{0pt}
 \plac@ndnotes{\ifhmode\endgraf\fi\endn@terule} % Pre-fill the toklist
 \def\ch@ckendnotes#1{\x@\ifvoid\csname endn@te-#1\endcsname\else\global\@ndnotesfoundtrue\fi}
-\def\zplaceallnotes{\bgroup\setbox0\vbox{\the\plac@ndnotes}\unvbox0\egroup}
+\def\zplaceallnotes{\ifhmode\end@llpoppedstyles{N}\fi\bgroup\setbox0\vbox{\the\plac@ndnotes}\unvbox0\egroup}
 
 \newif\ifnotesEachBook
 \newif\ifEndNotesEarly % When are automatic endnotes inserted?  Before or after
 % the columnswap?   If early, then they occur in 2 column mode and before the
 % bookend- hooks. If late, between bookend-all and bookend-final, and may trigger single column mode, 
-\newif\ifEndNotesSingleCol % Do Endnotes trigger singlecolumn?
+\newif\ifEndNotesSingleCol % Do Endnotes trigger singlecolumn? (If so, they get set full width!)
 \notesEachBooktrue
 \EndNotesEarlytrue
 \EndNotesSingleColfalse
@@ -776,15 +778,17 @@
   \else
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1 \onecolwidth{\n@tewidth}\else
-      \n@tewidth=\ifcsname endn@te-#1\endcsname \hsize \else
-        \ifdiglot\csname column\c@rrdstat width\endcsname
+      \ifcsname endn@te-#1\endcsname 
+        \ifEndNotesSingleCol \onecolwidth{\n@tewidth} \else \n@tewidth=\hsize \fi
+      \else
+        \n@tewidth=\ifdiglot\csname column\c@rrdstat width\endcsname
+          \else\ifColNotes\colwidth\else\textwidth\fi \fi
         \else\ifColNotes\colwidth\else\textwidth\fi
-        \fi
       \fi
     \fi
     %\advance\n@tewidth by -\columnshift
   \fi
-  \trace{f}{setn@tewidth #1: \the\n@tewidth}%
+  \trace{f}{setn@tewidth #1[\c@rrdstat]: \the\n@tewidth}%
 }
 %-c_setnotewidth
 

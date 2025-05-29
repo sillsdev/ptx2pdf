@@ -7,6 +7,7 @@ print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
 from subprocess import call
+import usfmtc           # so we can find its data files
 
 #if 'Analysis' not in dir():
 #    def printme(*a, **kw):
@@ -55,7 +56,7 @@ if sys.platform in ("win32", "cygwin"):
 else:
     binaries = []
 
-a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
+a1 = Analysis(['python/scripts/ptxprint'],
              pathex =   ['python/lib'],
                 # all the binary files from the source tree that are used by the application.
                 # These end up where specified (each entry is a 2 tuple: (source, target dir)
@@ -99,9 +100,10 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('python/lib/ptxprint/unicode/*.txt', 'ptxprint/unicode')]
                       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
 ##                      + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')]
-                      + [('docs/inno-docs/*.txt', 'ptxprint')],
+                      + [('docs/inno-docs/*.txt', 'ptxprint')]
 #                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
 #                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
+                      + [(os.path.dirname(usfmtc.__file__)+"/"+x, "usfmtc") for x in ("*.vrs", "*.rng")],
                 # The registry tends not to get included
              hiddenimports = ['_winreg'],
              hookspath = [],

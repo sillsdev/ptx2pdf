@@ -153,15 +153,17 @@
    \settrig@refcv
  \fi
  \ifdiglot
-   \let\adjc@rref\dc@rref
+   %\let\adjc@rref\dc@rref
    \edef\adjc@rref{\x@\detokenize\x@{\dc@rref}}%
    \edef\prevrefn@me{pr@vref\c@rrdstat}%
    \x@\let\x@\pr@vref\csname\prevrefn@me\endcsname
  \else
    \edef\adjc@rref{\x@\detokenize\x@{\c@rref}}%
  \fi
- \ifx\adjc@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1  \fi
- \else \global\curr@djpar=\ifhmode 1 \else 0 \fi\fi
+ \ifx\adjc@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1 \trace{j}{Advancing curr@djpar to \the\curr@djpar}\else \trace{j}{Not advancing curr@djpar}\fi
+ \else 
+    \trace{j}{New current ref, resetting curr@djpar}%
+    \global\curr@djpar=\ifhmode 1 \else 0 \fi\fi
  \ifMarkAdjustPoints\trigg@rmark{AP}\fi %This makes the page hard to read
  \trace{b}{BALANCE paradj: ref=\adjc@rref: para=\the\curr@djpar: baselineskip=\the\baselineskip}%
  \trace{j}{checkadjustments: curref=\meaning\adjc@rref , prevref=\meaning\pr@vref,  curradjpar=\the\curr@djpar , \ifadjslurp\else adjref=\meaning\@djref , adjparindex=\the\@djparindex \else\ifx\adjc@rref\@djref MATCH FOUND\fi\fi}%
@@ -171,7 +173,7 @@
    \global\let\pr@vref=\adjc@rref
  \fi
  \@ch@ckadjustments
- \global\curr@djpar=\ifhmode 1 \else \curr@djpar \fi
+ %What was this sabotage for??? \global\curr@djpar=\ifhmode 1 \else \curr@djpar \fi
 }
 \def\@ch@ckadjustments{%
  \ifadjslurp

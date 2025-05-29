@@ -218,6 +218,7 @@
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \trace{h}{page \the\pageno (h), first mark=\t@st \space p@geone\ifp@geone true\else false\fi}%
  \global\rhr@letrue
+ \op@ninghooks{start}{h}{h}%
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else\ifx\t@st\intr@\ifp@geone 0\else 1\fi\else 0\fi\fi =1
   \trace{h}{no p@gefirstmark (\t@st). Page 1 is \ifp@geone True\else False\fi}%
     \ifodd\pageno
@@ -241,6 +242,7 @@
     \fi
 %  \fi
  \fi
+ \cl@singhooks{end}{h}{h}%
  \mcpop
 }}
 

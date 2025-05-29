@@ -275,7 +275,7 @@
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
-\def\sh@wstuff{SHOWSTUFF: \c@rref, styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth}
+\def\sh@wstuff{SHOWSTUFF: \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
 \def\SHOWSTUFF{\message{\sh@wstuff}}%
 
 %returns \@@ut
@@ -1440,7 +1440,7 @@
         \runtrigg@rsother{bookstart}%
         }%
  %
- \def\b{\endlastp@rstyle{b}\bgroup % End previous par before making a gap
+ \def\b{\global\dr@ppednumberfalse\endlastp@rstyle{b}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{b}{b+\styst@k}\@@b}
  \def\ib{\endlastp@rstyle{ib}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{ib}{ib+\styst@k}\@@b}
@@ -1450,8 +1450,8 @@
      \vskip\baselineskip
     \else
       \vskip\p@ram
-    \fi\egroup}
- \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
+    \fi\egroup\prevgraf=1 \cutoutcarryover}
+ \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12 \catcode`\:=12 \catcode`\/=12 \catcode`\\=12 \ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
@@ -1469,8 +1469,9 @@
     \x@\x@\x@\@k\x@\scantokens\x@{\kr@ftext\ignorespaces}\endch@rstylen*%
     \ifcsname m@rknumk\ifdiglot\c@rrdstat\fi\endcsname\else\addnewm@rk{k\ifdiglot\c@rrdstat\fi}\fi%
     \getm@rknum{k\ifdiglot\c@rrdstat\fi}\x@\x@\x@\marks\x@\m@rknum\x@{\thiskmark}%Set (side-dependent) mark for k.
+    \trace{ma}{set mark(k)=\m@rknum \space to \thiskmark}%
     \r@gurgitatedfalse\p@peof%
-    \runtrigg@rs{\id@@@\ifdiglot\c@rrdstat\fi k.\kr@f}%
+    \runtrigg@rs{\id@@@\ifdiglot\ifx\c@rrdstat\d@glotl\else\c@rrdstat\fi\fi k.\kr@f}%
   }%}
  \def\k{%\k processing
    \deactiv@tecustomch@rs% no CR here
@@ -1495,7 +1496,11 @@
   \settrig@refcv\docvhook
   \the\@idhooks
 }
-\def\ptx@fig #1\fig*{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
+
+{\catcode`|=0 \catcode`\\=12
+|gdef|ptx@fig #1\fig*{|@ptx@fig{#1}}
+}
+\def\@ptx@fig#1{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
     \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
     \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
 %-csty_addspecialhooks
@@ -1597,12 +1602,16 @@
 \mcp@pCont{\ss@Tbl*}{\ss@Ctgy}
 \mcp@pCont{\ss@Tbl*}{\ss@Para}
 \mcp@pEnd{\ss@Tbl*}{\ss@Tbl}
+\mcp@pCont{\ss@Fig*}{\ss@Char}
+\mcp@pCont{\ss@Fig*}{\ss@ChrP}
+\mcp@pEnd{\ss@Fig*}{\ss@Fig}
 
 %No point going below these for font styling, etc.
 \def\mcb@rrier#1{\x@\let\csname isb@rrier-#1\endcsname\empty}
 \mcb@rrier{\ss@Para}
 \mcb@rrier{\ss@Note}
 \mcb@rrier{\ss@Sbar}
+\mcb@rrier{\ss@Fig}
 %Are these style modifiers (category or milestone)  or actual styles?
 \def\msm@dfyname#1{#1-is-modifyer}
 \def\msm@difyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\xdef\csname\t@@st\endcsname{Y}}
@@ -1915,8 +1924,9 @@
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
+ \in@ntrofalse
  \trace{d}{PageAlign=\PageAlign, IntroPageAlign=\IntroPageAlign, ifin@ntro\ifin@ntro true\else false\fi, pageno=\the\pageno, totalpages=\the\totalp@ges}%
- \ifnum 1=\ifx\PageAlign\val@odd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi \need@oddpage{\emptyoutput}\fi
+ \ifnum \ifx\PageAlign\val@dd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi =1 \need@oddpage{\emptyoutput}\fi
  \xdef\ptxst@rtp@ge{\the\pageno}%
  \ifcsname @@@ifOmitChapterNumber\endcsname \endOneChapBook \let\@@@ifOmitChapterNumber\undefined\fi
  \ifOneChapBook\startOneChapBook\fi
@@ -2021,6 +2031,7 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi \ifdoingt@ble doingtable??\fi \c@tegory,\c@tprefix}%
+ \global\implicitcl@setrue
  \traceifset{ptxfile}%
  \ifhmode\endgraf\fi
  \ifdim\pagetotal>20pt \message{Pagetotal = \the\pagetotal, Trigggring endpage \the\output}\endpage\fi
@@ -2074,9 +2085,6 @@
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  \inendbooktrue 
- \ifdiglot
-  \enddigl@t
- \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
  \let\layoutpen@lty\book@ndpenalty 
@@ -2440,6 +2448,21 @@
   \fi\fi\fi
   \global #1=\dimen9
   \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+}
+
+\def\threecolwidth#1{%
+  \dimen9=\textwidth
+  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
+  \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
+    \advance \dimen9 by -\XrefNotesWidth
+    \advance \dimen9 by -\XrefNotesMargin
+    \advance \dimen9 by -0.5\gutter
+    \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
+  \fi\fi\fi
+  \divide\dimen9 by 3
+  \advance\dimen9 by -\gutter
+  \global #1=\dimen9
+  \trace{o}{setthreecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
 
 \newif\ifNoteLines \NoteLinesfalse

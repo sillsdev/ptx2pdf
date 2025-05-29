@@ -429,6 +429,9 @@ class PicList:
                         fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
                         imgorder  = self.parent.get("t_imageTypeOrder")
                         lowres    = self.parent.get("r_pictureRes") == "Low"
+                        a = currow[_pickeys['anchor']]
+                        for p in self.picinfo.find(anchor=a):
+                            p.clear_src_paths()
                         dat = self.picinfo.getFigureSources(data=[{'src': val}], key='path', exclusive=exclusive,
                                     mode=self.picinfo.mode, figFolder=fldr, imgorder=imgorder, lowres=lowres)
                         fpath = dat[0].get('path', None)
@@ -550,7 +553,8 @@ class PicList:
         setWidgetVal(wid, w, src)
 
     def clearSrcPaths(self):
-        self.picinfo.clearSrcPaths()
+        if self.picinfo is not None:
+            self.picinfo.clearSrcPaths()
 
     def multiSelected(self, ismulti=False):
         pass

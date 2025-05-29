@@ -217,6 +217,9 @@ class Picture:
         self.key = "p{:03d}".format(self.keycount)
         self.__class__.keycount += 1
 
+    def __str__(self):
+        return ", ".join("{}: {}".format(k, v) for k, v in self.fields.items())
+
     def __getitem__(self, k):
         return self.fields[k]
 
@@ -314,10 +317,10 @@ class Picture:
         return self['anchor']
 
     def clear_src_paths(self):
-        for a in ('srcpath', 'destpath'):
+        for a in ('srcpath', 'destpath', 'destfile'):
             try:
                 del self[a]
-            except AttributeError:
+            except (KeyError, AttributeError):
                 continue
 
     def set_position(self, cols=1, randomize=False, suffix=""):
@@ -446,8 +449,10 @@ class Piclist:
 
     def load_files(self, parent, force=False, base=None, suffix="L"):
         """ Read pictures from a project either from a piclist file or the SFM files """
+        logger.debug(f"{self.loaded=} {force=}")
         if self.loaded and not force:
             return True
+        logger.debug(f"{self.basedir=}")
         if self.inthread or self.basedir is None or self.prj is None or self.config is None:
             return False
         self.thread = None
@@ -457,20 +462,19 @@ class Piclist:
             self.read_piclist(preferred)
             self.loaded = True
             return True
-        if self.isdiglot and base is not None:
-            self.merge(base, suffix)
-            self.loaded = True
-            return False    # Tell the parent there is more to do
-        if not self.isdiglot:
-            self.inthread = True
-            self.threadUsfms(parent)
-            self.loaded = True
-            # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
-            return True
-        return True
+        # if self.isdiglot and base is not None:
+        #     self.merge(base, suffix)
+        #     self.loaded = True
+        #     return False    # Tell the parent there is more to do
+        self.inthread = True
+        self.threadUsfms(parent)
+        self.loaded = True
+        # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
+        return False
 
     def read_piclist(self, fname):
         """ Read piclist file """
+        logger.debug(f"{fname=} {self.loaded=}")
         if isinstance(fname, str):
             if not os.path.exists(fname):
                 return
@@ -478,7 +482,6 @@ class Piclist:
                                                         if self.model is not None else 65001)
         else:
             inf = fname
-        logger.debug(f"{fname=} {self.loaded=}")
         # logger.debug("".join(traceback.format_stack()))
         for l in (x.strip() for x in inf.readlines()):
             if not len(l) or l.startswith("%"):
@@ -551,8 +554,11 @@ class Piclist:
                         if b[1]:    # usfm 3
                             labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
                             for l in labelParams:
-                                k,v = l.split("=")
-                                pic[k.strip()] = v.strip('"')
+                                try:
+                                    k,v = l.split("=")
+                                    pic[k.strip()] = v.strip('"')
+                                except ValueError:
+                                    logger.debug(f"Invalid Picture parameter: {l} in {pic} found in {bk}")
                             if 'media' not in pic:
                                 default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
                                 pic['media'] = 'paw' if default is None else default
@@ -595,7 +601,7 @@ class Piclist:
                         key = None
                         self._readpics(s, bk, c, lastv, isperiph, parent, sync=sync, fn=fn)
 
-    def rmdups(self): # MH {checking I understand this right} Does this assume we can't have 2 pics with the same anchor?
+    def rmdups(self):
         ''' Makes sure there are not two entries with the same anchor and same image source'''
         anchormap = {}
         for p in self.pics.values():
@@ -676,7 +682,7 @@ class Piclist:
                         continue
                     filepath = os.path.join(subdir, f)
                     for p in newfigs[nB]:
-                        if 'destfile' in p:
+                        if 'destfile' in p and key in p:
                             if mode == self.mode:
                                 continue
                             else:
@@ -690,6 +696,7 @@ class Piclist:
                                 p[key] = filepath
                         else:
                             p[key] = filepath
+                        logger.log(5, f"setsrcpath({mode}=={self.mode}) of {str(p)} to {filepath}")
         self.mode = mode
         return data
 
@@ -728,7 +735,7 @@ class Piclist:
                 if a in v:
                     del v[a]
 
-    def merge(self, pics, suffix, mergeCaptions=True, bkanchors=False, nonMergedBooks=None):
+    def merge(self, pics, suffix, mergeCaptions=None, bkanchors=False):
         ''' Used for merging piclists from monoglot into diglot (self) based on srcref and src image '''
         def stripsuffix(a):
             m = a.split(" ", 1)
@@ -746,15 +753,12 @@ class Piclist:
                 srb = v.get('srcref', '')
                 if newBase(s.get('src', '')) == newBase(v.get('src', '')) \
                             and (sra == '' or srb == '' or sra == srb):
-                    if nonMergedBooks is None or m[0][:3] in nonMergedBooks:
-                        if v['anchor'] != s['anchor'] + suffix:
-                            continue
-                    if mergeCaptions:
+                    if mergeCaptions is not None and mergeCaptions(s['anchor'][:3]):
                         if v.get('caption', '') != '':
                             s['caption'+suffix] = v['caption']
                         if v.get('ref', '') != '':
                             s['ref'+suffix] = v['ref']
-                    addme = False
+                        addme = False
                     break
             if addme:
                 sn = v.copy()
@@ -766,6 +770,13 @@ class Piclist:
             if m[0][3:] == suffix and v.key not in merged:
                 self.remove(v)
         self.rmdups()
+
+    def unmerge(self, suffix):
+        for v in list(self.get_pics()):
+            if 'caption'+suffix in v:
+                del v['caption' + suffix]
+            if v['anchor'][3] == suffix:
+                self.remove(v)
 
     def merge_fields(self, other, fields, extend=False, removeOld=False):
         anchored = {}

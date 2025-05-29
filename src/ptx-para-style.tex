@@ -64,7 +64,7 @@
   \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
   \ift@mp
     \ifnum\IntroColumns=\c@rrentcols\else
-      \ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi
+      \ifnum\IntroColumns=3 \threecolumns \else\ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi\fi
     \fi
   \fi
   \global\@ntrotrue\global\t@tlefalse\global\b@dyfalse\fi}
@@ -74,7 +74,7 @@
   \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
   \ift@mp
     \ifnum\TitleColumns=\c@rrentcols\else
-      \ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi
+      \ifnum\TitleColumns=3 \threecolumns\else\ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi\fi
     \fi
   \fi
   \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
@@ -84,7 +84,7 @@
 \def\st@rtbody{%\endhe@dings
  % \trace{o}{st@rtbody: b@dy\ifb@dy true\else false\fi}%
  \traceifset{st@rtbody}%
- \ifNoBody\else\ifb@dy\else\trace{o}{st@rtbody by \m@rker,  diglot\ifdiglot true\else false\fi}%
+ \ifNoBody\else\ifb@dy\else\trace{o}{st@rtbody by \m@rker,  diglot\ifdiglot true\else false\fi, BodyColums=\the\BodyColumns, currentcols=\the\c@rrentcols}%
   \t@mptrue
   \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
   \ift@mp
@@ -92,7 +92,7 @@
       \count255=\lastpenalty
       \vskip\baselineskip
     \else
-      \tob@dytrue\ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
+      \tob@dytrue\ifnum\BodyColumns=3 \threecolumns\else\ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi\fi
       \count255=10000
     \fi
     \ifPBOnBody\vfill\eject
@@ -111,7 +111,8 @@
   \tob@dyfalse
   \global\b@dytrue\global\beenb@dytrue\global\@ntrofalse\global\t@tlefalse
   % set up for single column from single column. Empty vbox to say we are not at the start of a page
-  \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi\fi
+  \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi
+  \else\ifnum\BodyColumns=3 \threecolwidth{\hsize}\fi\fi
  \fi\fi
   \traceifcheck{st@rtbody}%
 }
@@ -324,7 +325,7 @@
      %\fi
    \fi\fi\fi\fi
    \ifinn@te\else\ifdoingt@ble\else
-     \edef\t@mpp{\string\@parlen{\ifdiglot \dc@rref\else\c@rref\fi}{\lastc@rradj}{\the\prevgraf}{\m@rker}{\the\curr@djpar}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+     \edef\t@mpp{\string\@parlen{\ifdiglot \dc@rref\else\c@rref\fi}{\the\curr@djpar}{\the\prevgraf}{\m@rker}{\lastc@rref}{\lastc@rradj}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
    \cutoutcarryover 
    \ifversion{3}{\do@ndofthispar}{}%
@@ -480,7 +481,7 @@
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
-    \if@ntro\mark{\intr@}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\intr@}\fi\fi
+    \if@ntro\mark{\intr@}\ifdiglot\x@\marks\csname m@rknum\c@rrdstat\endcsname{\intr@}\fi\fi
     \ifx\spaceafterp@ram\relax \else
       \ifhe@dings\nobreak\fi
       \vskip\spaceafterp@ram\verticalsp@ceunit                                              %(1)
@@ -620,7 +621,7 @@
   \getp@ram{type}{\m@rker}{\m@rker}%
   \let\B@xtype\empty%
   \ifx\p@ram\t@tle
-    \mark{\t@tle}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
+    \mark{\t@tle}\ifdiglot\x@\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
     \ift@tle\else
       \ifhe@dings\endhe@dings\fi
         \let\thisp@rclass\t@tle
@@ -715,6 +716,7 @@
         \interlinepenalty=10000 % never break column/page between lines
         \XeTeXdashbreakstate=0 % mainly for ranges in \r
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
+        \savingmarks % capture marks to propagate to the top level
         \trace{h}{marker = \m@rker, heading top space = \the\headingtopspace}%
     \fi
     \nobreak
@@ -1089,7 +1091,7 @@
   \csname inp@r-\c@rrdstat false\endcsname
 }
 
-\def\@parlen#1#2#3#4#5{}
+\def\@parlen#1#2#3#4#5#6{}
 \def\@noteid#1#2#3#4#5#6{}
 \def\@parpageend#1#2#3{}
 \def\@parnote#1#2#3{}

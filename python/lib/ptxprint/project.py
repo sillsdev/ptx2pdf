@@ -152,6 +152,7 @@ class Project:
         self.path = prjdir.path
         self.guid = prjdir.guid
         self.configs = {}
+        logger.debug(f"Creating Project({self.prjid}) at {self.path} guid={self.guid}")
         self.findConfigs(self.path)
 
     def __repr__(self):

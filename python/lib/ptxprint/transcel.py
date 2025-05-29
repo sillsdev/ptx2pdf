@@ -30,7 +30,7 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
         ev = int(q.get("endVerse", 0))
         # print(f"{ev=}")
         if ev != 0:
-            ref = RefRange(ref, Reference(ref.book, ref.chap, ev))
+            ref = RefRange(ref, Reference(ref.book, ref.chapter, ev))
         # print(f"{ref=}")
         if usfm is not None:
             ref = usfm.bridges.get(ref.first, ref.first)

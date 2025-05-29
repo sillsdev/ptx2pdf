@@ -19,6 +19,12 @@ exclusionmap = {
     'p': (['fig'], None, False)
 }
 
+_abbrevmodes = {
+    "Abbreviation": "a",
+    "ShortNames": "s",
+    "LongName": "l",
+}
+
 class Module:
 
     #localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+(?::[^)\s]+)?\s*(?:-\s*\d+(?::[^)*\s]+)*)*)\)")
@@ -29,6 +35,14 @@ class Module:
         self.fname = fname
         self.usfms = usfms
         self.model = model
+        if self.model is not None:
+            ptsettings = self.model.printer._getPtSettings()
+            if ptsettings is None:
+                self.refmode = "a"
+            else:
+                self.refmode = _abbrevmodes.get(ptsettings.get("BookSourceForMarkerR", "Abbreviation"), "a")
+        else:
+            self.refmode = None
         self.usfms.makeBookNames()
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'mrktype': 'otherpara', 'texttype': 'Other', 'endmarker': None, 'styletype': 'Paragraph'}
@@ -44,18 +58,18 @@ class Module:
 
     def getBookRefs(self):
         books = set()
-        for e in iterusx(self.doc.getroot()):
-            if e.head is not None:
+        for e, isin in iterusx(self.doc.getroot()):
+            if not isin:
                 continue
-            s = e.parent.get("style", None)
+            s = e.get("style", None)
             if s == "ref" or "refnp":       # \ref is not a <ref> it has been reassigned to <para>
-                for r in RefList.fromStr(e.parent.text, context=self.usfms.booknames):
+                for r in RefList.fromStr(e.text, context=self.usfms.booknames):
                     books.add(r.first.book)
         return books
 
     def localref(self, m):
         rl = RefList.fromStr(m.group(2), context=self.usfms.booknames)
-        loctype = m.group(1) or "a"
+        loctype = m.group(1) or self.refmode
         tocindex = self.localcodes.get(loctype.lower(), 0)
         return rl.str(context=self.usfms.booknames, level=tocindex)
 
@@ -65,36 +79,35 @@ class Module:
     def parse(self):
         self.removes = set((sum((e[0] for e in exclusionmap.values() if self.testexclude(e)), [])))
         skipme = 0
-        for eloc in iterusx(self.doc.getroot()):
+        for eloc, isin in iterusx(self.doc.getroot()):
             if skipme > 0:
                 skipme -= 1
                 continue
-            if eloc.head is not None:
-                if eloc.head.tail is not None:
-                    eloc.head.tail = self.localise_re.sub(self.localref, eloc.head.tail)
+            if not isin:
+                if eloc.tail is not None:
+                    eloc.tail = self.localise_re.sub(self.localref, eloc.tail)
                 continue
-            e = eloc.parent
-            if e.text is not None:
-                e.text = self.localise_re.sub(self.localref, e.text)
-            if e.tag == "para":
-                s = e.get("style", None)
-            elif e.tag == "ref":
+            if eloc.text is not None:
+                eloc.text = self.localise_re.sub(self.localref, eloc.text)
+            if eloc.tag == "para":
+                s = eloc.get("style", None)
+            elif eloc.tag == "ref":
                 s = "ref"
             else:
                 continue
             if s == "ref" or s == "refnp":
                 res = []
                 reps = []
-                nc = e.getnext_sibling()
+                nc = eloc.getnext_sibling()
                 if nc is not None and nc.get("style", "") == "rep":
                     m = re.match(r"^\s*(.*?)\s*=>\s*(.*?)\s*$", nc.text, re.M)
                     if m:
                         reps.append((None,
                                 re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),
                                 m.group(2)))
-                    e.parent.remove(nc)
+                    eloc.parent.remove(nc)
                     skipme += 1
-                for r in RefList.fromStr(e.text, context=self.usfms.booknames):
+                for r in RefList.fromStr(eloc.text, context=self.usfms.booknames):
                     if r.first.verse == 1:
                         if not isinstance(r, RefRange):
                             r = RefRange(r.first, r.first.copy())
@@ -103,16 +116,16 @@ class Module:
                     p = self.get_passage(r, removes=self.removes, strippara= s=="refnp")
                     if not len(p):
                         continue
-                    (curri, currp) = e._getindex()
+                    (curri, currp) = eloc._getindex()
                     for pe in reversed(p):
                         pe.parent = currp
                         currp.insert(curri, pe)
-                    currp.remove(e)
+                    currp.remove(eloc)
                     skipme += 1
                     if len(reps):
                         self.doc.transform_text(*reps, parts=p)
             elif s == 'inc':
-                for c in e.text.split():
+                for c in eloc.text.split():
                     einfo = exclusionmap.get(c, ([], None, False))
                     if c == "-":
                         self.removes = set(sum((x[0] for x in exclusionmap.values()), []))
@@ -120,10 +133,10 @@ class Module:
                         self.removes.difference_update(einfo[0])
             elif s == 'mod':
                 dirname = os.path.dirname(self.fname)
-                infpath = os.path.join(dirname, e.text.strip())
+                infpath = os.path.join(dirname, eloc.text.strip())
                 mod = Module(infpath, self.usfms, self.model)
                 mod.parse()
-                curri, currp = e._getindex()
+                curri, currp = eloc._getindex()
                 for p in mod.doc.getroot():
                     p.parent = currp
                     currp.insert(curri, p)

@@ -95,7 +95,7 @@ def setup_i18n(i18nlang):
     else:
         lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
     enc = "UTF-8"
-    logger.debug(f"Loading locale for {lang}.{enc}")
+    logger.debug(f"Loading locale for {lang}.{enc} from {localedir}")
     if sys.platform.startswith('win'):
         from ctypes import cdll, windll
         from ctypes.util import find_msvcrt
@@ -110,9 +110,12 @@ def setup_i18n(i18nlang):
         locale.setlocale(locale.LC_ALL, '')
     else:
         locale.setlocale(locale.LC_ALL, (lang, enc))
-        #locale.bindtextdomain(APP, localedir)
-        gettext.bindtextdomain(APP, localedir)
+        locale.bindtextdomain(APP, localedir)
+        os.environ["LANGUAGE"] = lang
+        #gettext.bindtextdomain(APP, localedir)
     # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
+    langs = {x: os.getenv(x, "") for x in ("LANGUAGE", "LC_ALL", "LC_MESSAGES", "LANG")}
+    logger.debug(f"Langs are: {langs}")
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
     if "_" in lang:
@@ -189,7 +192,7 @@ def coltoonemax(s):
 def textocol(s):
     if s is None:
         vals = [0, 0, 0]
-    elif s.startswith("x"):
+    elif s.startswith("x") or s.startswith("#"):
         try:
             vals = [int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16)]
         except (ValueError, TypeError):
@@ -559,6 +562,12 @@ def htmlprotect(s):
     sc = '([' + "".join(_htmlentities.keys()) + '])'
     return re.sub(sc, lambda m: "&"+_htmlentities[m.group(1)]+";", s)
 
+def texprotect(s):
+    s = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), s)
+    s = re.sub(r"\\U([0-9A-Fa-f]{8})", lambda m:chr(int(m.group(1), 16)), s)
+    s = s.replace("://", ":/\\ZWNBSP/")
+    return s
+
 wfreg = "\\p{L}\\p{M}\\p{Sk}\\-\u200C\u200D"
 special_regexes = {
     'ba': f'(?=[^{wfreg}])',
@@ -580,7 +589,10 @@ def cachedData(filepath, fn):
     logger.debug(f"Reading cache file {cfgfilepath}")
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
-            return pickle.load(inf)
+            try:
+                return pickle.load(inf)
+            except:
+                pass        # if the pickle loading fails, rebuild the pickle file
     testbase = os.path.basename("{}.pickle".format(filepath))
     for l in os.listdir(cfgdir):
         if l.startswith(testbase):

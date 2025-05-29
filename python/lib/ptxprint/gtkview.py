@@ -154,7 +154,7 @@ _progress = {
 _ui_minimal = """
 btn_menu bx_statusBar t_find
 btn_menu_showPDF l_menu_showPDF
-btn_menu_level btn_menu_lang btn_menu_feedback l_menu_level l_menu_uilang
+btn_menu_level btn_menu_lang btn_menu_feedback  btn_menu_donate l_menu_level l_menu_uilang
 fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
@@ -171,9 +171,10 @@ fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
-s_pdfZoomLevel t_pgNum b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
+s_pdfZoomLevel btn_page_first btn_page_previous t_pgNum btn_page_next btn_page_last
+b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
-btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint
+btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
 _ui_enable4diglot2ndary = """
@@ -238,9 +239,10 @@ bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles
 gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_ThumbTabs 
 c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover 
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
+btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 """.split()
 # tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
-# lpolyfraction_ spolyfraction_ btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
+# lpolyfraction_ spolyfraction_ tb_diglotSwitch btn_diglotSwitch
 
 _ui_experimental = """
 """.split()
@@ -248,7 +250,7 @@ _ui_experimental = """
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
 c_bkView s_pdfZoomLevel t_pgNum b_reprint fcb_project ecb_savedConfig
-l_menu_level btn_prvOpenFolder btn_prvSaveAs btn_prvShare btn_prvPrint 
+l_menu_level btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint 
 """.split()
 
 # removed from list above: 
@@ -426,7 +428,7 @@ _nonsensitivities = {
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_createZipArchiveXtra", "btn_Generate",
-                    "b_reprint", "btn_refreshCaptions"),  # "btn_adjust_diglot", 
+                    "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot"), 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
@@ -692,15 +694,33 @@ class GtkViewModel(ViewModel):
         self.currCodeletVbox = None
         self.codeletVboxes = {}
         self.gtkpolyglot = None
+        self.currentPDFpath = None
         self.ufPages = []
-        self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
+
+        self.initialize_uiLevel_menu()
+        self.updateShowPDFmenu()
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
+
         llang = self.builder.get_object("ls_interfaceLang")
-        for i, r in enumerate(llang):
-            if self.lang.startswith(r[1]):
-                self.set("l_menu_uilang", _("Language\n({})").format(r[0]))
-                break
-        logger.debug(f"UI Language list: {llang}")
+        btn_language = self.builder.get_object("btn_menu_lang")
+        menu = Gtk.Menu()
+        for row in llang:
+            lang_name, lang_code = row[:2]
+            label = Gtk.Label()
+            if self.lang.startswith(lang_code):
+                label.set_markup(f'<span foreground="medium blue"><b>{lang_name}</b></span>')
+                self.set("l_menu_uilang", _("Language\n({})").format(lang_name))
+            else:
+                label.set_text(lang_name)
+            label.set_use_markup(True)
+            label.set_xalign(0)
+            item = Gtk.MenuItem()
+            item.add(label)
+            item.connect("activate", self.changeInterfaceLang, lang_code)
+            menu.append(item)
+        menu.show_all()
+        btn_language.set_popup(menu)
+        logger.debug(f"UI Language list: {[row[:] for row in llang]}")
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
@@ -814,6 +834,53 @@ class GtkViewModel(ViewModel):
         logger.debug("Project list loaded")
 
         return True
+
+    def initialize_uiLevel_menu(self):
+        levels = self.builder.get_object("ls_uiLevel")
+        btn = self.builder.get_object("btn_menu_level")
+        menu = Gtk.Menu()
+        for row in levels:
+            label_text = row[0]  # e.g., "Beginner (1)"
+            level_value = int(row[1])  # e.g., 1
+
+            label = Gtk.Label()
+            if level_value == self.uilevel:
+                label.set_markup(f'<span foreground="#0000CD"><b>{label_text}</b></span>')
+            else:
+                label.set_text(label_text)
+            label.set_use_markup(True)
+            label.set_xalign(0)
+
+            item = Gtk.MenuItem()
+            item.add(label)
+            item.connect("activate", self.setUIlevel, level_value)
+            menu.append(item)
+
+        menu.show_all()
+        btn.set_popup(menu)
+
+    def updateShowPDFmenu(self):
+        self.showPDFmode = self.userconfig.get('init', 'showPDFmode', fallback='preview')
+        lst = self.builder.get_object("ls_showPDF")
+        btn = self.builder.get_object("btn_menu_showPDF")
+        menu = Gtk.Menu()
+        for row in lst:
+            label_text = row[0]
+            option_value = row[1]
+            label = Gtk.Label()
+            if option_value == self.showPDFmode:
+                label.set_markup(f'<span foreground="medium blue"><b>{label_text}</b></span>')
+            else:
+                label.set_text(label_text)
+            label.set_use_markup(True)
+            label.set_xalign(0)
+            item = Gtk.MenuItem()
+            item.add(label)
+            item.connect("activate", self.set_showPDFmode, option_value)
+            menu.append(item)
+        menu.show_all()
+        btn.set_popup(menu)
+
 
     def _setup_digits(self):
         digits = self.builder.get_object("ls_digits")
@@ -1193,56 +1260,70 @@ class GtkViewModel(ViewModel):
         self.resetToInitValues()
 
     def resetToInitValues(self, updatebklist=True):
+        self.loadingConfig = True
         self.rtl = False
         super().resetToInitValues(updatebklist=updatebklist)
         if self.picinfos is not None:
             self.picinfos.clear(self)
+        self.diglotviews = {}
+        self.polyglots = {}
+        if self.gtkpolyglot is not None:
+            self.gtkpolyglot.clear_polyglot_treeview()
+        self.gtkpolyglot = None
+        # Also reset the Peripheral tab Variables
+        tv = self.builder.get_object("ls_zvarList")
+        tv.clear()
         for k, v in self.initValues.items():
             if not updatebklist and k in self._nonresetcontrols:
                 continue
             if k.startswith("bl_") or v is not None:
                 self.set(k, v)
         self.colorTabs()
-
-    def menu_inner_closed(self, widget):
-        mw = self.builder.get_object("menu_main")
-        mw.popdown()
-
-    def onUILevelSelected(self, tv, path, col):
-        ui = int(tv.get_model()[path][1])
-        mw = self.builder.get_object("menu_mode")
-        mw.popdown()
-        self.set_uiChangeLevel(ui)
+        self.loadingConfig = False
 
     def onResetPage(self, widget):
         pass
 
+    def setUIlevel(self, menuitem, ui):
+        self.set_uiChangeLevel(ui)
+        
+    def popdownMainMenu(self):
+        menu_main = self.builder.get_object("menu_main")
+        if isinstance(menu_main, Gtk.Popover):
+            menu_main.popdown()        
+
     def set_uiChangeLevel(self, ui):
+        if self.loadingConfig:
+            return
+        self.popdownMainMenu()
         if isinstance(ui, str):
             try:
                 ui = int(ui)
             except ValueError:
-                logger.warn(f"Unexpected ui value of {ui}")
+                logger.warning(f"Unexpected ui value of {ui}")
                 ui = 4
+
         if ui <= 0 or ui > 6:
             ui = 4
+
         pgId = self.builder.get_object("nbk_Main").get_current_page()
+        self.uilevel = ui
         if not self.userconfig.has_section("init"):
             self.userconfig.add_section("init")
         self.userconfig.set('init', 'userinterface', str(ui))
-        self.uilevel = ui
         levels = self.builder.get_object("ls_uiLevel")
         levelname = None
         for r in levels:
             if int(r[1]) == ui:
-                levelname = " ".join(r[0].split(" ")[:-1])
+                levelname = " ".join(r[0].split(" ")[:-1])  # remove (n)
                 break
-        self.set("l_menu_level", _("View Level\n({})").format(levelname) if levelname is not None else _("View Level"))
+        self.set("l_menu_level", _("View Level\n({})").format(levelname) if levelname else _("View Level"))
+        self.initialize_uiLevel_menu()
 
+        # Apply UI filtering logic
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 self.toggleUIdetails(w, False)
-                
             widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
             if self.args.experimental & 1 != 0:
                 widgets += _ui_experimental
@@ -1277,9 +1358,6 @@ class GtkViewModel(ViewModel):
         # self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
         return True
-
-    def get_uiChangeLevel(self):  # Is this method supposed to be doing something more?
-        return self.uilevel
 
     def toggleUIdetails(self, w, state):
         if w in _ui_noToggleVisible:
@@ -1495,7 +1573,6 @@ class GtkViewModel(ViewModel):
         self.set("l_statusLine", txt)
         status = len(self.get("l_statusLine"))
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
-        print(f"Status: {txt}")
         
     def onHideStatusMsgClicked(self, btn):
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(False)
@@ -1512,8 +1589,10 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "btn_adjust_diglot", "spolyfraction_"
+        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "spolyfraction_"
             self.builder.get_object(w).set_sensitive(not self.printReason)
+        if self.gtkpolyglot is not None:    
+            self.builder.get_object("btn_adjust_diglot").set_sensitive(not self.printReason and len(self.gtkpolyglot.ls_treeview) == 2)
 
     def checkFontsMissing(self):
         self.setPrintBtnStatus(4, "")
@@ -1530,9 +1609,15 @@ class GtkViewModel(ViewModel):
     def onOK(self, btn):
         if btn == self.builder.get_object("b_print2ndDiglotText"):
             pass
-        # elif self.otherDiglot is not None:
-            # self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
-            # return
+        elif self.otherDiglot is not None:
+            # self.updateProjectSettings(self.otherDiglot[0].prjid, self.otherDiglot[0].guid, configName=self.otherDiglot[1], saveCurrConfig=True)
+            self.changeBtnLabel("b_print", _("Print (Make PDF)"))
+            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            self.builder.get_object("b_reprint").set_sensitive(True)
+            self.set("fcb_project", self.otherDiglot[0].prjid)
+            self.set("ecb_savedConfig", self.otherDiglot[1])
+            self.otherDiglot = None
+            return
         if isLocked():
             self.doStatus(_("Printing busy"))
             return
@@ -1691,6 +1776,7 @@ class GtkViewModel(ViewModel):
         self.showmybook()
         
     def onSaveConfig(self, btn, force=False):
+        """ Save the view """
         if self.project.prjid is None or (not force and self.configLocked()):
             return
         newconfigId = self.getConfigName()
@@ -1747,7 +1833,7 @@ class GtkViewModel(ViewModel):
         delCfgPath = self.project.srcPath(cfg)
         sec = ""
         if cfg == 'Default':
-            ui = self.get_uiChangeLevel() # Why not just use: ui = self.uilevel  ???
+            ui = self.uilevel
             self.resetToInitValues()
             self.set_uiChangeLevel(ui)
             try:
@@ -2446,8 +2532,8 @@ class GtkViewModel(ViewModel):
         elif pgid == "tb_AdjList":
             genBtn.set_sensitive(True)
             fpath = None
-            self.builder.get_object("l_codeSnippets").set_visible(False)
-            self.builder.get_object("box_codelets").set_visible(False)
+            for w in ["l_codeSnippets", "box_codelets", "lb_snippets"]:
+                self.builder.get_object(w).set_visible(False)
 
         elif pgid in ("tb_TeXfile", "tb_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0])+fndict[pgid][1]
@@ -2510,12 +2596,10 @@ class GtkViewModel(ViewModel):
             self.currCodeletVbox.set_visible(False)
             self.currCodeletVbox = None
         if cat is None:
-            # self.builder.get_object("l_codeSnippets").set_visible(False)
-            # self.builder.get_object("box_codelets").set_visible(False)
             return
         else:
-            self.builder.get_object("l_codeSnippets").set_visible(True)
-            self.builder.get_object("box_codelets").set_visible(True)
+            for w in ["l_codeSnippets", "box_codelets", "lb_snippets"]:
+                self.builder.get_object(w).set_visible(True)
         if cat == 'File':
             cat = os.path.splitext(fpath)[1].lower()  # could be .txt, .tex, or .sty
         if not len(self.codeletVboxes):
@@ -2792,6 +2876,12 @@ class GtkViewModel(ViewModel):
         self.onPicRescan(None)
         self.picPreviewShowHide(pics)
         self.changed(changed)
+        
+    def reloadDiglotPics(self, digView, old, new):
+        super().reloadDiglotPics(digView, old, new)
+        pics = self.get("c_includeillustrations")
+        if pics and self.picListView:
+            self.picListView.load(self.picinfos)
         
     def picPreviewShowHide(self, show=True):
         for w in ["bx_showImage", "tb_picPreview"]:
@@ -3561,6 +3651,7 @@ class GtkViewModel(ViewModel):
         prjid = m.get_value(aid, 0)
         guid = m.get_value(aid, 1)
         cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
+        # Q: Why is saveme never used below?
         saveme = self.pendingPid is None and self.pendingConfig is None
         self.updateProjectSettings(prjid, guid, saveCurrConfig=True, configName=cfgname)
         self.updateSavedConfigList()
@@ -3657,7 +3748,7 @@ class GtkViewModel(ViewModel):
             self.gtkpolyglot.load_polyglots_into_treeview()
 
     def showmybook(self, isfirst=False):
-        if self.initialised and self.showPDFmode == "preview": # preview is on
+        if self.otherDiglot is None and self.initialised and self.showPDFmode == "preview": # preview is on
             prvw = self.builder.get_object("dlg_preview")
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
             logger.debug(f"Trying to show {pdffile} exists={os.path.exists(pdffile)}")
@@ -3702,6 +3793,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)
         configName = self.getConfigName()
+        if self.gtkpolyglot is not None:
+            self.gtkpolyglot.changeConfigName(configName)
         if len(self.get("ecb_savedConfig")):
             if configName != "Default":
                 lockBtn.set_sensitive(True)
@@ -3935,13 +4028,8 @@ class GtkViewModel(ViewModel):
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        if self.get("c_diglot"):
-            self._editProcFile("PrintDraftChanges.txt", "prj")
-            self._editProcFile("changes.txt", "dig", intro="# Changes.txt file for the Secondary Project of the Diglot")
-            self._editProcFile("changes.txt", "cfg", intro="# Changes.txt file for the Primary Project of the Diglot")
-        else:
-            self._editProcFile("PrintDraftChanges.txt", "prj")
-            self._editProcFile("changes.txt", "cfg")
+        self._editProcFile("PrintDraftChanges.txt", "prj")
+        self._editProcFile("changes.txt", "cfg")
         self.onRefreshViewerTextClicked(None)
         
     def onEditModule(self, btn):
@@ -4431,33 +4519,21 @@ class GtkViewModel(ViewModel):
         if self.get("c_includeillustrations"):
             self.onUpdatePicCaptionsClicked(None)
 
-    # def onDiglotSwitchClicked(self, btn): #FixMe!
-    # This method could be resurrected IF it hides under a button 
-    # that is only sensitive for DIGLOT and not POLYGLOT.
-    # A bit like the auto-adjust width fraction (which is only available on Diglot)
-        # oprjid = None
-        # oconfig = None
-        # if self.otherDiglot is not None:
-            # oprjid, oconfig = self.otherDiglot
-            # self.otherDiglot = None
-            # btn.set_label(_("Switch to Other\nDiglot Project"))
-            # self.builder.get_object("b_print2ndDiglotText").set_visible(False)
-            # self.changeBtnLabel("b_print", _("Print (Make PDF)"))
-        # elif self.get("c_diglot"):
-            # oprjid = self.get("fcb_diglotSecProject")
-            # oconfig = self.get("ecb_diglotSecConfig")
-            # if oprjid is not None and oconfig is not None:
-                # self.otherDiglot = (self.project.prjid, self.cfgid)
-                # btn.set_label(_("Save & Return to\nDiglot Project"))
-            # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-            # self.changeBtnLabel("b_print", _("Return to Primary"))
-        # self.onSaveConfig(None)
-        # if oprjid is not None and oconfig is not None:
-            # self.set("fcb_project", oprjid)
-            # self.set("ecb_savedConfig", oconfig)
-        # mpgnum = self.notebooks['Main'].index("tb_Diglot")
-        # self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+    def switchToDiglot(self, pref):
+        dv = self.diglotViews.get(pref, None)
+        if dv is None:
+            return False
+        dv.saveConfig()
+        dvprj = dv.project
+        self.otherDiglot = (self.project, self.cfgid)
+        # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+        self.changeBtnLabel("b_print", _("Return to Primary"))
+        self.builder.get_object("b_reprint").set_sensitive(False)
+        self.set("fcb_project", dvprj.prjid)
+        self.set("ecb_savedConfig", dv.cfgid)
+        # self.updateProjectSettings(dvprj.prjid, dvprj.guid, configName=dv.cfgid)
         # self.updateDialogTitle()
+        return True
 
     def changeBtnLabel(self, w, lbl):
         b = self.builder.get_object(w)
@@ -4508,6 +4584,13 @@ class GtkViewModel(ViewModel):
                                             hyphen="\u2011" if self.get('c_nonBreakingHyphens') else "\u2010")
             self.doError(self.hyphenation.m1, secondary=self.hyphenation.m2)
         dialog.hide()
+
+    def onHyphenateClicked(self, w1):
+        w2 = "c_letterSpacing"
+        if self.get(w2):
+            self.set(w2, False)
+            self.highlightwidget(w2)
+            self.doStatus(_("The Between Letters Spacing Adjustments have been disabled due to Hyphenate being enabled."))
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         missing = super(GtkViewModel, self).onFindMissingCharsClicked(btn_findMissingChars)
@@ -4968,7 +5051,7 @@ class GtkViewModel(ViewModel):
                 else:
                     lsp.append(v)
             ui = self.uilevel
-            self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
+            self.resetToInitValues()
             self.set("fcb_project", prj)
             self.set_uiChangeLevel(ui)
         else:
@@ -5105,13 +5188,9 @@ class GtkViewModel(ViewModel):
             if wid is not None:
                 wid.set_sensitive(status)
 
-    def onUILangSelected(self, tv, path, col):
-        lang = tv.get_model()[path][1]
-        mw = self.builder.get_object("menu_language")
-        mw.popdown()
-        self.changeInterfaceLang(lang)
-
-    def changeInterfaceLang(self, lang):
+    def changeInterfaceLang(self, mnu, lang):
+        if lang == self.lang:
+            return
         try:
             setup_i18n(lang)
         except locale.Error:
@@ -5306,7 +5385,6 @@ class GtkViewModel(ViewModel):
         btn.set_active(True)
         xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         def score(x):
-            print(f"{x=}")
             self.gtkpolyglot.set_fraction(x)
             runjob = self.callback(self, maxruns=1, noview=True)
             while runjob.thread.is_alive():
@@ -5314,7 +5392,6 @@ class GtkViewModel(ViewModel):
             runres = runjob.res
             return 20000 if runres else xdvigetpages(xdvname)
         mid = self.gtkpolyglot.get_fraction()
-        print(f"{mid=}")
         res = brent(0., 1., mid, score, 0.001)
         self.gtkpolyglot.set_fraction(res)
         self.isDiglotMeasuring = False
@@ -5595,7 +5672,12 @@ class GtkViewModel(ViewModel):
         self.openURL("https://software.sil.org/ptxprint/download")
 
     def onGiveFeedbackClicked(self, btn):
+        self.popdownMainMenu()
         self.openURL(r"http://tiny.cc/ptxprintfeedback")
+                    
+    def onDonateClicked(self, btn):
+        self.popdownMainMenu()
+        self.openURL(r"https://give.sil.org/campaign/597654/donate")
                     
     def deniedInternet(self):
         self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
@@ -5816,24 +5898,35 @@ class GtkViewModel(ViewModel):
     def onBaseFontSizeChanged(self, btn):
         if self.loadingConfig or self.noUpdate:
             return
+        self.noUpdate = True
+        lnsp = -1
         if self.get("c_lockFontSize2Baseline"):
             lnsp = float(self.get("s_fontsize")) / self.font2baselineRatio
-            self.noUpdate = True
             self.set("s_linespacing", lnsp)
-            self.noUpdate = False
         else:
             self.updateFont2BaselineRatio()
+        if self.gtkpolyglot:
+            if lnsp >= 0:
+                self.gtkpolyglot.setbaseline(lnsp)
+            self.gtkpolyglot.setfontsize(self.get("s_fontsize"))
+        self.noUpdate = False
 
     def onBaseLineSpacingChanged(self, btn):
         if self.loadingConfig or self.noUpdate:
             return
+        self.noUpdate = True
+        fntsz = -1
         if self.get("c_lockFontSize2Baseline"):
             fntsz = float(self.get("s_linespacing")) * self.font2baselineRatio
             self.noUpdate = True
             self.set("s_fontsize", fntsz)
-            self.noUpdate = False
         else:
             self.updateFont2BaselineRatio()
+        if self.gtkpolyglot:
+            if fntsz >= 0:
+                self.gtkpolyglot.setfontsize(fntsz)
+            self.gtkpolyglot.setbaseline(self.get("s_linespacing"))
+        self.noUpdate = False
             
     def onLockRatioClicked(self, btn):
         if self.loadingConfig:
@@ -6300,18 +6393,16 @@ Thank you,
             if float(self.get("s_pagegutter",0)) < 30:
                 self.set("s_pagegutter", 40)
 
-    def onShowPDF(self, tv, path=None, col=0):
-        if tv is None:
-            action = self.showPDFmode
-        else:
-            action = tv.get_model()[path][1]
-            self.showPDFmode = action
-            self.userconfig.set('init', 'showPDFmode', action)
-            for a in ("menu_showPDF", "menu_main"):
-                mw = self.builder.get_object(a)
-                mw.popdown()
+    def set_showPDFmode(self, menuitem, option_value):
+        self.showPDFmode = option_value
+        self.userconfig.set('init', 'showPDFmode', option_value)
+        self.updateShowPDFmenu()
+        self.popdownMainMenu()
+        self.onShowPDF(None)
+
+    def onShowPDF(self, path=None):
         pdffile = os.path.join(self.project.printPath(None), self.getPDFname()) if path is None else str(path)
-        if action == "preview":
+        if self.showPDFmode == "preview":
             prvw = self.builder.get_object("dlg_preview")
             if os.path.exists(pdffile):
                 if pdffile.endswith(("_cover.pdf", "_diff.pdf")):
@@ -6322,14 +6413,13 @@ Thank you,
                                           widget=prvw, page=None, isdiglot=self.get("c_diglot"))
             else:
                 self.pdf_viewer.clear(widget=prvw)
-            # print(f"Calling updatePageNavigation from onShowPDF in GtkView.py")
-            # self.pdf_viewer.updatePageNavigation()
-        elif os.path.exists(pdffile):
-            if action == "sysviewer":
-                startfile(pdffile)
-            elif action == "openfolder":
-                startfile(self.project.printPath(None))
 
+        elif os.path.exists(pdffile):
+            if self.showPDFmode == "sysviewer":
+                startfile(pdffile)
+            elif self.showPDFmode == "openfolder":
+                startfile(self.project.printPath(None))
+    
     def onClosePreview(self, widget):
         self.builder.get_object("dlg_preview").hide()
 
@@ -6486,10 +6576,9 @@ Thank you,
     def onAnchorFocusOut(self, btn, *a):
         self.anchorKeypressed = False      
 
-    def onShareItClicked(self, btn):
-        pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
-        whatsapp_url = f"https://wa.me/?text=Please%20Check%20out%20this%20PDF:%20{pdffilepath}"
-        # self.openURL(whatsapp_url)
+    def onOpenItClicked(self, btn):
+        if self.currentPDFpath is not None:
+            startfile(self.currentPDFpath)
 
     def onLocateDigitMappingClicked(self, btn):
         self.highlightwidget('fcb_fontdigits')
@@ -6587,3 +6676,24 @@ Thank you,
     def onPreviewDeleteEvent(self, widget, event): # PDF Preview dialog (X button)
         widget.hide()  # Hide the dialog instead of destroying it
         return True    # Returning True prevents the default destroy behavior
+
+    def update_diglot_polyglot_UI(self):
+        dglt = True if len(self.gtkpolyglot.ls_treeview) < 3 else False
+        self.builder.get_object("btn_adjust_diglot").set_sensitive(dglt)
+        merge_types = {
+            _("Document based"):   "doc",
+            _("Chapter Verse"):    "simple",
+            _("Scored"):           "scores",
+            _("Scored (Chapter)"): "scores-chapter",
+            _("Scored (Verse)"):   "scores-verse"
+            }
+        mrgtyplist = self.builder.get_object("ls_diglotMerge")
+        mrgtyplist.clear()
+        orig = self.get("fcb_diglotMerge", "scores")
+        for desc, code in merge_types.items():
+            if dglt or code.startswith("scores"):
+                mrgtyplist.append([desc, code])
+        found = any(row[1] == orig for row in mrgtyplist)
+        self.set("fcb_diglotMerge", orig if found else "scores") 
+           
+       

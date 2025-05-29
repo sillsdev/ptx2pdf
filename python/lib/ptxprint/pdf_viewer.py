@@ -46,6 +46,7 @@ mstr = {
     'tryminus':   _("Try Shrink -1 line"),
     'plusline':   _("Expand +1 line"),
     'rp':         _("Reset Adjustments"),
+    'shrnkboth':  _("Shrink -1 line and Text"),
     'st':         _("Shrink Text"),
     'et':         _("Expand Text"),
     'es':         _("Edit Style"),
@@ -85,9 +86,9 @@ def render_page(page, zoomlevel, imarray, pnum, annotatefns):
     context.set_source_rgb(1, 1, 1)
     context.paint()
     context.scale(zoomlevel, zoomlevel)
+    page.render(context)
     for f in annotatefns:
         f(page, pnum, context, zoomlevel)
-    page.render(context)
 
 def arrayImage(imarray, width, height):
     stride = cairo.Format.ARGB32.stride_for_width(width)
@@ -144,6 +145,7 @@ class PDFViewer:
         self.showgrid = False
         self.showrects = False # self.model.get("c_pdfadjoverlay", False)
         self.ufCurrIndex = 0
+        self.currpref = None
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
         self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
@@ -211,10 +213,10 @@ class PDFViewer:
         self.hbox.grab_focus()
 
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
-        self.shrinkStep = int(self.model.get('s_shrinktextstep'))
-        self.expandStep = int(self.model.get('s_expandtextstep'))
-        self.shrinkLimit = int(self.model.get('s_shrinktextlimit'))
-        self.expandLimit = int(self.model.get('s_expandtextlimit'))
+        self.shrinkStep = int(self.model.get('s_shrinktextstep', 2))
+        self.expandStep = int(self.model.get('s_expandtextstep', 3))
+        self.shrinkLimit = int(self.model.get('s_shrinktextlimit', 90))
+        self.expandLimit = int(self.model.get('s_expandtextlimit', 110))
         
         self.isdiglot = isdiglot
         if pdf_path is None or not os.path.exists(pdf_path):
@@ -603,6 +605,7 @@ class PDFViewer:
         widget.show_all()
         self.set_zoom_fit_to_screen(None)
         self.updatePageNavigation()
+        self.model.currentPDFpath = fname
         return True
 
     def clear(self, widget=None):
@@ -653,6 +656,7 @@ class PDFViewer:
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
+        self.parlocs.load_dests(self.document)
 
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
@@ -994,26 +998,32 @@ class PDFViewer:
                     info = self.adjlist.getinfo(ref + parnum, insert=True)
             logger.debug(f"{event.x=},{event.y=}")
 
-        logger.debug(f"{parref=} {info=}, {annot=}")
         if len(info) and re.search(r'[.:]', parref.ref) and \
-           self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
-            o = 4 if ref[3:4] in "LRABCDEFG" else 3
+            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
+            if ref[3:4] in "LRABCDEFG":
+                pref = ref[3:4]
+                o = 4
+            else:
+                pref = "L"
+                o = 3
             l = info[0]
             if l[0] not in '+-':
                 l = '+' + l
-            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"  # ({annot or ''})
+            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
             self.addMenuItem(menu, hdr, None, info, sensitivity=False)
             self.addMenuItem(menu, None, None)
-            if parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
-                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
-                self.addMenuItem(menu, None, None)
 
-            shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
-            self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
             shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
+            shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
+            self.addMenuItem(menu, f"{mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", self.on_shrink_both, info, parref, sensitivity=not info[1] <= shrLim)
+            self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
             self.addMenuItem(menu, f"{mstr['st']} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
             self.addMenuItem(menu, None, None)
             
+            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
+            expLim = min(self.expandLimit, info[1]+self.expandStep)
+            self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+
             reset_menu = Gtk.Menu()
             self.clear_menu(reset_menu)
             for k, v in reset.items():
@@ -1031,19 +1041,21 @@ class PDFViewer:
             self.addSubMenuItem(menu, mstr['rp'], reset_menu)            
             self.addMenuItem(menu, None, None)
             
-            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
-            expLim = min(self.expandLimit, info[1]+self.expandStep)
-            self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+            if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
+                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
+
             if parref and parref.mrk is not None:
-                self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, parref.mrk)
+                # self.addMenuItem(menu, None, None)
+                self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None))
+
             if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
-                self.addMenuItem(menu, None, None)
+                # self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
-            self.addMenuItem(menu, None, None)
+
+            # self.addMenuItem(menu, None, None)
             self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.set_zoom_fit_to_screen)
             if not self.model.get("c_updatePDF"):
-                self.addMenuItem(menu, None, None)
+                # self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
 
         # New section for image context menu which is a lot more complicated
@@ -1278,8 +1290,24 @@ class PDFViewer:
             textview.modify_font(font_desc)
         response = dialog.run()
         dialog.hide()
-        if not response == Gtk.ResponseType.OK:
+        if response != Gtk.ResponseType.OK:
             self.model.set("t_sliceRef", "", mod=False)
+        self.hitPrint()
+
+    def shrinkBothAmt(self, info):
+        offset = int(0.5 * (self.shrinkLimit - info[1]) - 0.1)
+        if offset > -self.shrinkStep:
+            offset = self.shrinkLimit - info[1]
+        return offset
+
+    def on_shrink_both(self, widget, info, parref):
+        if self.adjlist is not None:
+            if info[1] > self.shrinkLimit:
+                self.adjlist.expand(info[2], self.shrinkBothAmt(info), mrk=parref.mrk)
+            if int(info[0]) >= 0:
+                offset = -(int(info[0]) + 1)
+                self.adjlist.increment(info[2], offset)
+        self.show_pdf()
         self.hitPrint()
 
     def on_shrink_paragraph(self, widget, info, parref):
@@ -1327,7 +1355,6 @@ class PDFViewer:
         self.hitPrint()
 
     def on_shrink_text(self, widget, info, parref):
-        print(f"{info=}\n{parref.mrk=} {info[1]=} {info[2]=}\n{parref=}")
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:
                 self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
@@ -1369,7 +1396,14 @@ class PDFViewer:
         self.model.onOK(None)
         self.updatePageNavigation()
 
-    def edit_style(self, widget, mkr):
+    def edit_style(self, widget, a):
+        (mkr, pref) = a
+        if pref != self.currpref:
+            if self.currpref is not None:
+                self.model.onOK(None)
+            if pref is not None:
+                self.model.switchToDiglot(pref)
+            self.currpref = pref
         if mkr is not None:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
@@ -1682,7 +1716,7 @@ class FigInfo:
     rects:  InitVar[None] = None
 
     def __str__(self):
-        return f"{self.ref}[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
+        return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
 
     def __repr__(self):
         return self.__str__()
@@ -1786,9 +1820,10 @@ class Paragraphs(list):
                     pwidth = 0.
                 self.pindex.append(len(self))
                 inpage = True
-                cinfo = [readpts(x) for x in p[1:4]]
-                if len(cinfo) > 2:
-                    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
+                #cinfo = [readpts(x) for x in p[1:4]]
+                #if len(cinfo) > 2:
+                #    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
+                lastyend = 0
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                 inpage = False
@@ -1813,7 +1848,9 @@ class Paragraphs(list):
                     currr.xend = cinfo[3] + cinfo[2] if cinfo is not None else readpts(p[0])
                     currr.yend = readpts(p[1])
                     currr = None
+                colinfos[polycol] = None
                 lines.startreplay()
+                lastyend = 0
             elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
                 if len(p) == 5:
                     p.insert(0, "")
@@ -1821,6 +1858,9 @@ class Paragraphs(list):
                 cinfo = colinfos.get(polycol, None)
                 if cinfo is None or len(cinfo) < 4:
                     continue
+                if currr is not None:
+                    currr.xend = cinfo[3]
+                    currr.yend = readpts(p[5])
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                 currp.rects = []
                 ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
@@ -1847,7 +1887,7 @@ class Paragraphs(list):
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
                 endpar = True
-            elif c == "parlen":         # ref, stretch, numlines, marker, adjustment
+            elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
                 if not endpar or not inpage:
                     continue
                 endpar = False
@@ -1874,25 +1914,23 @@ class Paragraphs(list):
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None:
-                    continue
+                xstart = readpts(p[2]) if cinfo is None else cinfo[3]
                 if currr is not None:
                     currr.yend = readpts(p[3])
                     currr.xend = cinfo[3]
                 currpic = FigInfo(p[0], p[1], (0, 0), False, False)
                 currpic.rects = []
-                currr = ParRect(pnum, cinfo[3], readpts(p[3]))
+                currr = ParRect(pnum, xstart, readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
                 lastyend = 0
             elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
                 currpic = None
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or currr is None or currpic is None:
+                if currr is None:
                     continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
-                currpic = None
                 if currp is not None:
                     currpr = currr
                     if not len(currp.rects) or currp.rects[-1].xend > 0:
@@ -1998,19 +2036,19 @@ class Paragraphs(list):
         else:
             return self.pnumorder[pindex - 1]
 
-    def load_page(self, doc, page, pindex):
+    def load_dests(self, doc):
         dests_tree = doc.create_dests_tree()
-        dests = []
-        def collect_dest(k, v, d):
-            dests.append((str(v.named_dest), v.page_num, (v.left, v.top)))
+        self.dests = {}
         n = dests_tree.node_first()
         while n is not None:
             adest = ctypes.cast(n.value(), ctypes.POINTER(PopplerDest)).contents
             akey = ctypes.cast(n.key(), ctypes.c_char_p).value
-            dests.append(ParDest(str(akey.decode("utf-8").replace(".", " ").replace(":", ".") if akey else ""), adest.page_num, adest.left, adest.top))
+            self.dests.setdefault(adest.page_num, []).append(ParDest(str(akey.decode("utf-8").replace(".", " ").replace(":", ".") if akey else ""), adest.page_num, adest.left, adest.top))
             n = n.next()
         dests_tree.destroy()
-        logger.debug(f"{len(dests)=}")
+        logger.debug(f"{len(self.dests)=}")
+
+    def load_page(self, doc, page, pindex):
         currlast = None
         for p, r in self.getParas(pindex, inclast=True):
             logger.log(5, f"load_page processing {p=} {r=}")
@@ -2024,9 +2062,7 @@ class Paragraphs(list):
                 r.dests = [(currlast.name, (r.xstart, r.ystart))] if currlast is not None else []
             else:
                 continue
-            for a in dests:
-                if a.pagenum != pindex:
-                    continue
+            for a in self.dests.get(pindex, []):
                 if a.x >= r.xstart and a.x <= r.xend and a.y >= r.yend and a.y <= r.ystart:
                     r.dests.append((a.name, (a.x, a.y)))
                     currlast = max(currlast, a) if currlast is not None else a

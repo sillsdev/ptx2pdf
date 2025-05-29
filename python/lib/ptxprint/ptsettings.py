@@ -14,6 +14,8 @@ ptrefsepvals = {
     'range': 'RangeIndicator',
 }
 
+_versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org
+
 class ParatextSettings:
     def __init__(self, prjdir):
         self.dict = {}
@@ -47,6 +49,21 @@ class ParatextSettings:
             self.hasLocalBookNames = False
         self.collation = None
         self.refsep = False     # tristate: (False=undef), None, RefSeparator
+        self.set_versification()
+        return self
+
+    def set_versification(self):
+        self.versification = None
+        if 'Versification' in self.dict:
+            v = self.dict['Versification']
+            if v in "012345":
+                v = _versifications[int(v)]
+                v += ".vrs"
+                if not os.path.exists(os.path.join(self.prjdir, v)):
+                    v = None
+            self.versification = v
+        if self.versification is None and os.path.exists(os.path.join(self.prjdir, "custom.vrs")):
+            self.versification = "custom.vrs"
         return self
 
     def read_ldml(self):
@@ -156,6 +173,7 @@ class ParatextSettings:
             self.calcbookspresent(inferred=forced)
         if 'Guid' not in self.dict:
             self.createGuid()
+        self.set_versification()
 
     def createGuid(self):
         res = "{:X}".format(uuid.uuid1().int)

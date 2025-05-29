@@ -5,6 +5,7 @@ picreverse = OK
 piccreditbox = 
 piccredit = 
 
-[cn01656]
+[image]
 approved = false
+picclear = yes
 
