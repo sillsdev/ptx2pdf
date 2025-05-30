@@ -2,11 +2,13 @@
 import logging, os
 import xml.etree.ElementTree as et
 
+# DEBUG is informational
+# INFO is something that could fail, passed
 loglabels = ["\u00A0", "\u00A0", "\u00A0", "W", "E", "F", "C"]
-logcolors = ["white", "white", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
+logcolors = ["white", "lightskyblue", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
 
 class ReportEntry:
-    def __init__(self, msg, severity=logging.INFO, order=0):
+    def __init__(self, msg, severity=logging.DEBUG, order=0):
         self.msg = msg
         self.severity = severity
         self.order = order
@@ -28,7 +30,7 @@ class Report:
     def __init__(self):
         self.sections = {}
 
-    def add(self, section, msg, severity=logging.INFO, order=0):
+    def add(self, section, msg, severity=logging.DEBUG, order=0):
         """ section is a hierarchy of sections separated by / in the string """
         self.sections.setdefault(section, []).append(ReportEntry(msg, severity=severity, order=order))
 
