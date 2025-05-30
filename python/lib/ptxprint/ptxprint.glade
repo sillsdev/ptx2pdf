@@ -27418,7 +27418,7 @@ output with a previous PDF.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=7 n-rows=12 -->
+                              <!-- n-columns=7 n-rows=13 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -27704,7 +27704,7 @@ Email the ZIPped archive file to:
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">11</property>
+                                    <property name="top-attach">12</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27763,7 +27763,7 @@ interact with other PTXprint users and the developers.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">6</property>
-                                    <property name="top-attach">11</property>
+                                    <property name="top-attach">12</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27787,7 +27787,7 @@ by deleting unneeded files.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">5</property>
-                                    <property name="top-attach">11</property>
+                                    <property name="top-attach">12</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27920,16 +27920,17 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_reportBugs1">
+                                  <object class="GtkLabel" id="l_generateReport">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-markup" translatable="yes">Before contacting support, make sure that
-it is possible to replicate the issue. Then use
-the "Create Archive..." button to make a ZIP
-file which needs to be emailed to:
-&lt;a href="mailto:ptxprint_support@sil.org"&gt;ptxprint_support@sil.org&lt;/a&gt;</property>
+                                    <property name="tooltip-markup" translatable="yes">Generate a summary report with
+details about the PDF produced.
+This contains informational,
+warning and error mesaages 
+about fonts, styles, layout and
+so on.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes"> Technical Support:</property>
+                                    <property name="label" translatable="yes">Typesetting Report:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28027,6 +28028,58 @@ document. (For advanced users only). </property>
                                     <property name="top-attach">6</property>
                                     <property name="width">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_techSupport1">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-markup" translatable="yes">Before contacting support, make sure that
+it is possible to replicate the issue. Then use
+the "Create Archive..." button to make a ZIP
+file which needs to be emailed to:
+&lt;a href="mailto:ptxprint_support@sil.org"&gt;ptxprint_support@sil.org&lt;/a&gt;</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes"> Technical Support:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">12</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_generateReport">
+                                    <property name="label" translatable="yes">Create Report...</property>
+                                    <property name="name">Create Report...</property>
+                                    <property name="width-request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-markup" translatable="yes">Generate a summary report with
+details about the PDF produced.
+This contains informational,
+warning and error mesaages 
+about fonts, styles, layout and
+so on.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">16</property>
+                                    <signal name="clicked" handler="onGenerateReportClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">11</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
