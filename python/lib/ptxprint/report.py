@@ -56,7 +56,20 @@ class Report:
             outf.write(et.tostring(doc, method="html", encoding="unicode"))
 
     def run_view(self, view):
-        pass
+        self.get_fonts(view)
+
+    def get_fonts(self, view):
+        results = {}
+        mrkrset = view.get_usfms().get_markers(view.getBooks())
+        for s in view.styleEditor.allStyles():
+            if (f := view.styleEditor.getval(s, 'fontname', None, includebase=True)) is None:
+                continue
+            results.setdefault(f, []).append(s)
+        for k, v in sorted(results.items()):
+            line = "{}: {}".format(k, " ".join(["<em>{}</em>".format(m) if m in mrkrset else m for m in sorted(v)]))
+            self.add("Fonts/usage", line)
+        self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)))
+        
 
 def test():
     import sys

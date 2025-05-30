@@ -24,6 +24,7 @@ from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
 from ptxprint.transcel import transcel, outtriggers
 from ptxprint.xdv.colouring import procxdv
+from ptxprint.report import Report
 from usfmtc.versification import Versification
 import numpy as np
 from datetime import datetime
@@ -854,7 +855,10 @@ class RunJob:
             self.printer.builder.get_object("dlg_preview").present()
             spnr = self.printer.builder.get_object("spin_preview")
             if spnr.props.active:  # Check if the spinner is running
-                spnr.stop()                
+                spnr.stop()
+        r = Report()
+        r.run_view(self.printer)
+        r.generate_html(os.path.join(self.tmpdir, os.path.basename(outfname).replace(".tex", ".html")), info.dict)
         logger.debug("done_job: Finishing thread")
         unlockme()
         if not self.noview and not self.args.print:

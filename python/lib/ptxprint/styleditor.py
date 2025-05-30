@@ -351,12 +351,12 @@ class StyleEditor:
             res.update({k:v for k, v in self.sheet.get(m, {}).items()})
         return res
 
-    def getval(self, mrk, key, default=None, baseonly=False):
-        if mrk not in self.sheet:
+    def getval(self, mrk, key, default=None, baseonly=False, includebase=False):
+        if not includebase and mrk not in self.sheet:
             return default
-        res = self.sheet[mrk].get(key.lower(), None) if not baseonly else None
+        res = self.sheet.get(mrk, {}).get(key.lower(), None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
-            res = self.basesheet[mrk].get(key.lower(), default) if mrk in self.basesheet else default
+            res = self.basesheet.get(mrk, {}).get(key.lower(), default) if mrk in self.basesheet else default
         logger.log(8, f"Getting {mrk=} {key=} {res=}")
         return res
 
