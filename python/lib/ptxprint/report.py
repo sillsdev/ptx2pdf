@@ -2,6 +2,8 @@
 import logging, os
 import xml.etree.ElementTree as et
 
+loglabels = ["", "", "", "W", "E", "F", "C"]
+
 class ReportEntry:
     def __init__(self, msg, severity=logging.INFO, order=0):
         self.msg = msg
@@ -30,6 +32,8 @@ class Report:
         self.sections.setdefault(section, []).append(ReportEntry(msg, severity=severity, order=order))
 
     def generate_html(self, fname, texmodel):
+        def gettree(t):
+            return et.fromstring("<node>"+t+"</node>")
         doc = et.fromstring(html_template.format(css=os.path.join(os.path.dirname(__file__), "sakura.css"), **texmodel))
         body = doc.find("body")
         lasts = []
@@ -48,9 +52,12 @@ class Report:
             for m in sorted(t, key=lambda x:(x.order, x.severity, x.msg)):
                 tr = et.SubElement(table, "tr")
                 score = et.SubElement(tr, "td")
-                score.text = str(m.severity)
+                score.text = loglabels[m.severity // 10]
                 msg = et.SubElement(tr, "td")
-                msg.text = m.msg
+                msge = gettree(m.msg)
+                msg.text = msge.text
+                for c in msge:
+                    msg.append(c)
             lasts = nexts
         with open(fname, "w", encoding="utf-8") as outf:
             outf.write(et.tostring(doc, method="html", encoding="unicode"))
@@ -65,9 +72,16 @@ class Report:
             if (f := view.styleEditor.getval(s, 'fontname', None, includebase=True)) is None:
                 continue
             results.setdefault(f, []).append(s)
+        mainfonts = set()
+        for a in ("R", "B", "I", "BI", "ExtraR"):
+            f = view.get("bl_font"+a, skipmissing=True)
+            if f is not None:
+                mainfonts.add(f.name)
+                results.setdefault(f.name, [])
         for k, v in sorted(results.items()):
-            line = "{}: {}".format(k, " ".join(["<em>{}</em>".format(m) if m in mrkrset else m for m in sorted(v)]))
-            self.add("Fonts/usage", line)
+            line = "{}: {}".format("<b>{}</b>".format(k) if k in mainfonts else k,
+                                   " ".join(["<b>{}</b>".format(m) if m in mrkrset else m for m in sorted(v)]))
+            self.add("Fonts/Usage", line)
         self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)))
         
 
