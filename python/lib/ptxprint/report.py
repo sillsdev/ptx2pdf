@@ -4,7 +4,7 @@ import xml.etree.ElementTree as et
 
 # DEBUG is informational
 # INFO is something that could fail, passed
-loglabels = ["\u00A0", "\u00A0", "\u00A0", "W", "E", "F", "C"]
+loglabels = ["\u00A0", "\u00A0", "\u2714", "W", "E", "F", "C"]
 logcolors = ["white", "lightskyblue", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
 
 class ReportEntry:
@@ -67,6 +67,17 @@ class Report:
 
     def run_view(self, view):
         self.get_fonts(view)
+        self.get_layout(view)
+        
+    def get_layout(self, view):
+        if len(view.ufPages):
+            self.add("Layout", f"Underfilled pages <b>({len(view.ufPages)})<\b>: "+ " ".join([str(x) for x in view.ufPages]), severity=logging.WARN)
+        textheight, linespacing = view._calcBodyHeight()
+        lines = textheight / linespacing
+        if abs(lines - int(lines + 0.5)) > 0.05:
+            self.add("Layout", f"Lines on page (suboptimal): {lines:.1f}", severity=logging.WARN)
+        else:
+            self.add("Layout", f"Lines on page (optimized): {int(lines + 0.5)}", severity=logging.INFO)
 
     def get_fonts(self, view):
         results = {}
