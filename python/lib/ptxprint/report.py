@@ -66,23 +66,26 @@ class Report:
             outf.write(et.tostring(doc, method="html", encoding="unicode"))
 
     def run_view(self, view):
-        self.get_fonts(view)
+        self.get_styles(view)
         self.get_layout(view)
-        
+
     def get_layout(self, view):
-        if len(view.ufPages):
+        if hasattr(view, 'ufPages') and len(view.ufPages):
             self.add("Layout", f"Underfilled pages <b>({len(view.ufPages)})<\b>: "+ " ".join([str(x) for x in view.ufPages]), severity=logging.WARN)
-        textheight, linespacing = view._calcBodyHeight()
+        textheight, linespacing = view.calcBodyHeight()
         lines = textheight / linespacing
         if abs(lines - int(lines + 0.5)) > 0.05:
             self.add("Layout", f"Lines on page (suboptimal): {lines:.1f}", severity=logging.WARN)
         else:
             self.add("Layout", f"Lines on page (optimized): {int(lines + 0.5)}", severity=logging.INFO)
 
-    def get_fonts(self, view):
+    def get_styles(self, view):
         results = {}
+        modified = []
         mrkrset = view.get_usfms().get_markers(view.getBooks())
         for s in view.styleEditor.allStyles():
+            if s in view.styleEditor.sheet:
+                modified.append(s)
             if (f := view.styleEditor.getval(s, 'fontname', None, includebase=True)) is None:
                 continue
             results.setdefault(f, []).append(s)
@@ -97,7 +100,7 @@ class Report:
                                    " ".join(["<b>{}</b>".format(m) if m in mrkrset else m for m in sorted(v)]))
             self.add("Fonts/Usage", line)
         self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)))
-        
+        self.add("USFM", "Modified markers: " + " ".join(sorted(modified)))
 
 def test():
     import sys

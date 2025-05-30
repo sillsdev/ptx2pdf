@@ -428,6 +428,24 @@ class ViewModel:
         self.set("l_footer2edge", "{}mm".format(f2s(footerlabel, 1)))
         return True
 
+    def calcBodyHeight(self):
+        linespacing = float(self.get("s_linespacing")) * 25.4 / 72.27
+        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+        m = re.match(r"^.*?[,xX]\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        if m:
+            pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
+        else:
+            pageheight = 210
+        bottommargin = float(self.get("s_bottommargin"))
+        topmargin = float(self.get("s_topmargin"))
+        font = self.get("bl_fontR")
+        if font is not None:
+            tt = font.getTtfont()
+            if tt is not None:
+                ttadj = tt.descent / tt.upem * float(self.get("s_fontsize")) * 25.4 / 72.27
+                bottommargin -= ttadj
+        return (pageheight - bottommargin - topmargin, linespacing)
+
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27
         hfont = self.styleEditor.getval("h", "font")

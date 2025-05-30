@@ -5210,26 +5210,8 @@ class GtkViewModel(ViewModel):
         for w in ["l_rhruleposition", "s_rhruleposition"]:
             self.builder.get_object(w).set_sensitive(status)
 
-    def _calcBodyHeight(self):
-        linespacing = float(self.get("s_linespacing")) * 25.4 / 72.27
-        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        m = re.match(r"^.*?[,xX]\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
-        if m:
-            pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
-        else:
-            pageheight = 210
-        bottommargin = float(self.get("s_bottommargin"))
-        topmargin = float(self.get("s_topmargin"))
-        font = self.get("bl_fontR")
-        if font is not None:
-            tt = font.getTtfont()
-            if tt is not None:
-                ttadj = tt.descent / tt.upem * float(self.get("s_fontsize")) * 25.4 / 72.27
-                bottommargin -= ttadj
-        return (pageheight - bottommargin - topmargin, linespacing)
-
     def onBodyHeightChanged(self, btn):
-        textheight, linespacing = self._calcBodyHeight()
+        textheight, linespacing = self.calcBodyHeight()
         lines = textheight / linespacing
         self.set("l_linesOnPage", "{:.1f}".format(lines))
         self.colorLinesOnPage()
@@ -5249,7 +5231,7 @@ class GtkViewModel(ViewModel):
 
     def onMagicAdjustClicked(self, btn):
         param = Gtk.Buildable.get_name(btn).split("_")[-1]
-        textheight, linespacing = self._calcBodyHeight()
+        textheight, linespacing = self.calcBodyHeight()
         lines = textheight / linespacing
         extra = int(lines) - lines
         if extra < -0.5:
