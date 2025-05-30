@@ -144,7 +144,7 @@ class ProjectList:
 
 class Project:
     shareddir = "shared/ptxprint"
-    localdir = "local/shared/ptxprint"
+    localdir = "local/ptxprint"
     printdir = "local/ptxprint"
 
     def __init__(self, prjdir):

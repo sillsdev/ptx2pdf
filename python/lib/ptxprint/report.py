@@ -8,10 +8,20 @@ loglabels = ["\u00A0", "\u00A0", "\u2714", "W", "E", "F", "C"]
 logcolors = ["white", "lightskyblue", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
 
 class ReportEntry:
-    def __init__(self, msg, severity=logging.DEBUG, order=0):
+    def __init__(self, msg, severity=logging.DEBUG, order=0, txttype="html"):
         self.msg = msg
         self.severity = severity
         self.order = order
+        self.txttype = txttype
+
+    def ashtml(self):
+        if self.txttype == "html":
+            return et.fromstring("<node>"+ self.msg +"</node>")
+        elif self.txttype == "text":
+            e = et.Element("node")
+            pre = et.SubElement(e, "pre")
+            pre.text = self.msg
+            return e
 
 html_template = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -30,13 +40,11 @@ class Report:
     def __init__(self):
         self.sections = {}
 
-    def add(self, section, msg, severity=logging.DEBUG, order=0):
+    def add(self, section, msg, **kw):
         """ section is a hierarchy of sections separated by / in the string """
-        self.sections.setdefault(section, []).append(ReportEntry(msg, severity=severity, order=order))
+        self.sections.setdefault(section, []).append(ReportEntry(msg, **kw))
 
     def generate_html(self, fname, texmodel):
-        def gettree(t):
-            return et.fromstring("<node>"+t+"</node>")
         doc = et.fromstring(html_template.format(css=os.path.join(os.path.dirname(__file__), "sakura.css"), **texmodel))
         body = doc.find("body")
         lasts = []
@@ -57,7 +65,7 @@ class Report:
                 score = et.SubElement(tr, "td", style="background-color:"+logcolors[m.severity // 10])
                 score.text = loglabels[m.severity // 10]
                 msg = et.SubElement(tr, "td")
-                msge = gettree(m.msg)
+                msge = m.ashtml()
                 msg.text = msge.text
                 for c in msge:
                     msg.append(c)
@@ -68,6 +76,7 @@ class Report:
     def run_view(self, view):
         self.get_styles(view)
         self.get_layout(view)
+        self.get_files(view)
 
     def get_layout(self, view):
         if hasattr(view, 'ufPages') and len(view.ufPages):
@@ -101,6 +110,15 @@ class Report:
             self.add("Fonts/Usage", line)
         self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)))
         self.add("USFM", "Modified markers: " + " ".join(sorted(modified)))
+
+    def get_files(self, view):
+        for a in (("changes.txt", "c_usePrintDraftChanges"),
+                  ("ptxprint-mods.tex", "c_useModsTex")):
+            if view.get(a[1]):
+                f = os.path.join(view.project.srcPath(view.cfgid), a[0])
+                with open(f, encoding="utf-8") as inf:
+                    data = inf.read()
+                self.add("ZFiles/"+a[0], data, severity=logging.NOTSET, txttype="text")
 
 def test():
     import sys
