@@ -2,7 +2,8 @@
 import logging, os
 import xml.etree.ElementTree as et
 
-loglabels = ["", "", "", "W", "E", "F", "C"]
+loglabels = ["\u00A0", "\u00A0", "\u00A0", "W", "E", "F", "C"]
+logcolors = ["white", "white", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
 
 class ReportEntry:
     def __init__(self, msg, severity=logging.INFO, order=0):
@@ -49,9 +50,9 @@ class Report:
                     h.text = p
                     done = False
             table = et.SubElement(body, "table")
-            for m in sorted(t, key=lambda x:(x.order, x.severity, x.msg)):
+            for m in sorted(t, key=lambda x:(-x.order, -x.severity, x.msg)):
                 tr = et.SubElement(table, "tr")
-                score = et.SubElement(tr, "td")
+                score = et.SubElement(tr, "td", style="background-color:"+logcolors[m.severity // 10])
                 score.text = loglabels[m.severity // 10]
                 msg = et.SubElement(tr, "td")
                 msge = gettree(m.msg)
@@ -79,7 +80,7 @@ class Report:
                 mainfonts.add(f.name)
                 results.setdefault(f.name, [])
         for k, v in sorted(results.items()):
-            line = "{}: {}".format("<b>{}</b>".format(k) if k in mainfonts else k,
+            line = "{}: {}".format("<b>{}</b>".format(k) if k in mainfonts or any(m in mrkrset for m in v) else k,
                                    " ".join(["<b>{}</b>".format(m) if m in mrkrset else m for m in sorted(v)]))
             self.add("Fonts/Usage", line)
         self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)))
