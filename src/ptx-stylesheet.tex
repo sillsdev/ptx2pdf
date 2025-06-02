@@ -986,9 +986,9 @@
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \newif\ifNoHangVerseNumberOne\NoHangVerseNumberOnetrue
 \newif\ifHangVA\HangVAfalse
-
 \newif\iffilehasverses % Usercode (e.g. book end marks) might want to know this
 \newif\ifrotateVerse \rotateVersefalse
+\def\everyfirstverse#1#2#3{}% Arguments are book ID (e.g. GEN), Book name (e.g. Genesis) and chapter
 \def\@ddcvhooks{
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
@@ -1004,7 +1004,9 @@
   \ifnum\spacefactor=\n@wchaptersf \ifNoHangVerseNumberOne \kern0sp \hangingversefalse\fi\relax % override \hangversenumber here
    \ifOmitVerseNumberOne \ifdr@ppednumber\c@ncelfirstversetrue % v1
                          \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
-  \fi\fi
+   \fi
+   \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+  \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
   % Otherwise make ll@p do nothing.
