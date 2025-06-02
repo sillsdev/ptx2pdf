@@ -62,6 +62,7 @@
       \fi
       \QRcode%
       \trace{m}{QR code is \the\wd\QRcodebox x\the\ht\QRcodebox, req \the\QRbounding/\the\QRinside}%
+      \xdef\QR@inside{\the\QRinside}%
       \dimen0=0.5\QRinside
       \global\setbox\QRcodebox\hbox{\kern-\dimen0\box\QRcodebox\kern\dimen0}%
     \egroup
@@ -80,9 +81,16 @@
     \else
       \m@kenumber{\attr@b}\let\sp@cebeside\@@result
     \fi
-    \get@ttribute{pgpos}%
+    \get@ttribute{nohpadding}%
+    \ifx\attr@b\tr@e 
+      \trace{m}{QR box adjustment by \the\QRbounding - \QR@inside\space as requested}%
+      \dimen0=\QRbounding
+      \advance\dimen0 -\QR@inside
+      \divide\dimen0 by 2
+      \setbox\QRcodebox\hbox{\kern -\dimen0\box\QRcodebox\kern-\dimen0}%
+    \fi
     \dimen0=\QRbounding
-    %\advance\dimen0 -\QRinside
+    \get@ttribute{pgpos}%
     \ifx\attr@b\relax \box\QRcodebox\else
       \m@kenumberns{\attr@b}\edef\attr@b{\@@result}%
       \ifx\attr@b\loc@InText\box\QRcodebox
