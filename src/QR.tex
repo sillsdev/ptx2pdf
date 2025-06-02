@@ -81,9 +81,14 @@
     \else
       \m@kenumber{\attr@b}\let\sp@cebeside\@@result
     \fi
+    \get@ttribute{novpadding}%
+    \ifx\attr@b\tr@e 
+      \trace{m}{QR vbox adjustment to \QR@inside as requested}%
+      \setbox\QRcodebox\vbox to \QR@inside{\vss\box\QRcodebox\vss}%
+    \fi
     \get@ttribute{nohpadding}%
     \ifx\attr@b\tr@e 
-      \trace{m}{QR box adjustment by \the\QRbounding - \QR@inside\space as requested}%
+      \trace{m}{QR hbox adjustment by \the\QRbounding - \QR@inside\space as requested}%
       \dimen0=\QRbounding
       \advance\dimen0 -\QR@inside
       \divide\dimen0 by 2
