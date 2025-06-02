@@ -1,6 +1,6 @@
 # Complex polyglot layouts
 At present, the XeTeX code allows for vertical alignment of multiple columns. 
-The column arrangement can (for polyglots) be defined as a series of letters (`L` - originally the Left colunm. `R` - originally the Right column, and then `A`, `B`, `C` etc.) The  column order is  set as a string, `LRA` for a default triglot, (becomming `ARL` on mirrored pages),  and if the `polyglot-simplepages` is loaded, the column order might be `LR,AB` for a quad-glot over two pages. This string is interpreted by the layout code to presentation determine order and where the different translations are on which pages. Currently, an entirely blank page is specified by `-`. Eventually, this could be extended so that `-` indicates  a page or section with note lines. 
+The column arrangement can (for polyglots) be defined as a series of letters (`L` - originally the Left column. `R` - originally the Right column, and then `A`, `B`, `C` etc.) The  column order is  set as a string, `LRA` for a default triglot, (becoming `ARL` on mirrored pages),  and if the `polyglot-simplepages` is loaded, the column order might be `LR,AB` for a quad-glot over two pages. This string is interpreted by the layout code to presentation determine order and where the different translations are on which pages. Currently, an entirely blank page is specified by `-`. Eventually, this could be extended so that `-` indicates  a page or section with note lines. 
 
 There have been some requests for up/down diglots, where one translation 
 is displayed below another.
@@ -156,6 +156,13 @@ If the processed box is accepted, then at pageout, the remainder becomes the ori
     
 ## Algorithm 2. Repeated columns may exist 
 ### Notes
+Use source  identifiers as display identifiers, as at present. 
+
+   * per source: box: original galley and excess
+   * per source: last cut length 
+   * per output box: Cut text (sub-galley) and remainder
+   * per output box: processed text
+   * per row: box: page content, accepted content.
 
 ### Layout Algorithm
 
@@ -229,3 +236,13 @@ Starting on a page with avail left, `htL+max(ht(L),ht(R)) > avail`.
 *    **Verses, loose parallel**: If `ht(R)` and `ht(A)` don't agree very well, allow their botmarks to get out of sync by, say, 3 verses.
 *    **Verses, min whitespace**:  if `ht(R)` and `ht(A)` don't agree, then try to make it that they do, pushing all R/A imbalance to the  end of the chunk.
 
+# Necessary routines
+* Process layout string and reversal string [DONE]  [TESTED]
+     *  add/remove follow-on connections and create relevant boxes / dims
+     * self-check routine
+* Identify which inputs end up in repeated columns.
+* Determine total galley lengths
+* Determine initial split lengths
+* Split into sub-galleys, with chaining through follow-ons
+* ?? Something to determine possible split heights?? 
+* 
