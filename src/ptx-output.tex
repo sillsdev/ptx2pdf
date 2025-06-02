@@ -234,14 +234,14 @@
   \fi
   \traceifcheck{onecoltrial}%
 }
-
+\newsp@cialpen{b@ckuppenalty}% What penalty do we emit when backing up? Something unique, to help diagnose issues!
 \def\d@backingup{%
   \ifnum\insertpenalties>0
     \trace{o}{d@backingup}%
     \global\output={\clearthenbackup}%
     \xdef\b@ckupvsize{\the\vsize}%
     \global\vsize=0pt%
-    \penalty-10000\relax
+    \penalty\b@ckuppenalty\relax
   \else
     \global\output={\backingup}%
     \b@foreb@ckup\relax
@@ -410,7 +410,9 @@
 \newif\ifMidPageFootnotes % Should footnotes go before a single-double column transition
 \MidPageFootnotesfalse
 
-\def\@@eject{\trace{o}{@@eject with op=\the\outputpenalty, @p=\@utputpenalty}\par\ifnum\@utputpenalty<-10000 \penalty\@utputpenalty\else\penalty-11220\fi}
+\def\@@eject{\trace{o}{@@eject with op=\the\outputpenalty, @p=\@utputpenalty\space \csname d@code:\@utputpenalty\endcsname}\par
+  \ifversion{5}{\def\t@mp{-9999 }}{\def\t@mp{-10000 }}%
+  \ifnum\@utputpenalty < \t@mp \trace{o}{<\t@mp, value kept}\penalty\@utputpenalty\else\penalty-11220\trace{o}{>=\t@mp value not kept}\fi}
 
 \def\reheightcolnotess#1{%
   \trace{i}{height=\the\dimen3, xr@fbox=\the\ht\xr@fbox, baselineskip=\the\baselineskip}%\tracingassigns=1\tracingmacros=1\tracingifs=1
@@ -1816,7 +1818,8 @@
   \@prepbounce %saves galley etc, Sets hIns to 0  and trialheight
   \vsize=\availht
   \advance\vsize by \baselineskip
-  \ifnum\the\outputpenalty>-10000
+  \ifversion{5}{\def\t@mp{-10001 }}{\def\t@mp{-10000 }}%
+  \ifnum\the\outputpenalty>\t@mp 
     \trace{o}{Unexpected output penalty at partialpagebounce. redirecting to onecoltrial.}%
     \global\output={\onecoltrial}%
     \def\n@xt{\unvbox255\@@eject}%
@@ -2349,7 +2352,8 @@
   \advance\vsize by \baselineskip
   \global\output={\savepartialpaget}%
   \trace{o}{sppdb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op=\the\outputpenalty/\@utputpenalty \csname d@code:\@utputpenalty\endcsname}%
-  \unvbox255\ifnum\the\outputpenalty>-10000
+  \ifversion{5}{\def\t@mp{-10001 }}{\def\t@mp{-10000 }}%
+  \unvbox255\ifnum\the\outputpenalty>\t@mp
     \trace{o}{Unexpected output penalty at partialpagedbounce. Not adding fill & eject.}%
     %\showlists
   \else
