@@ -1207,7 +1207,10 @@
   \ifhmode \edef\curmode{\curmode, in HMODE}\fi %Can't test for these inside a write
   \ifvmode \edef\curmode{\curmode, in VMODE}\fi
   \trace{g}{\w@tsit\space is inline, \the\hsize \curmode \ifpicNarrow, narrow\fi. Penalties: \pr@penalty,\p@stpenalty}%
-  \ifpicNarrow
+  \tempfalse
+  \ifpicNarrow\temptrue\else
+    \iffigh@scaption\else\temptrue\fi\fi
+  \iftemp
     \@lignpic{#1}%
   \fi
   %\splittopskip\baselineskip
@@ -1255,13 +1258,16 @@
     %\showbox\picb@@x
   \earlyeotpskipfalse
   \prepwr@teparstop{#1}%
-  \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
+  \ifvbox0 \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}\fi%
   \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
       \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
       \gridp@ctrue% TRUE. Out of band like a floating image.
       \prevdepth=0pt
       \headingtopspace=0pt
-      \ifpicNarrow
+      \tempfalse
+      \ifpicNarrow\temptrue\else
+        \iffigh@scaption\else \temptrue\fi\fi
+      \iftemp
         \@lignpic{#1}%
       \fi
       \gridb@x#1%
