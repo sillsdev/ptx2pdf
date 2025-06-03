@@ -99,11 +99,16 @@ class Interlinear:
         if basepos is None:
             return
         cpos = sum(linelengths[basepos.l:spos.l]) - basepos.c + spos.c + 1
-        t = eloc.text if isin else eloc.tail
-        parent = eloc if isin else eloc.parent
+        if isin:
+            t = eloc.text
+            parent = eloc
+            laste = eloc[0] if len(eloc) else None
+        else:
+            t = eloc.tail
+            parent = eloc.parent
+            last = eloc
         cend = cpos + len(t)
         i = cpos
-        laste = eloc
         outt = None
         for l in ((lex[0][0], lex[0][1], lex[1]) for lex in lexemes if lex[0][0] >= cpos and lex[0][0] < cend):
             if l[0] >= i:
