@@ -124,6 +124,8 @@ class Report:
                   ("ptxprint-mods.tex", "c_useModsTex")):
             if view.get(a[1]):
                 f = os.path.join(view.project.srcPath(view.cfgid), a[0])
+                if not os.path.exists(f):
+                    continue
                 with open(f, encoding="utf-8") as inf:
                     data = inf.read()
                 self.add("ZFiles/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
