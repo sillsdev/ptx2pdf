@@ -85,7 +85,7 @@ def revrsf(ref, vrsf):
             oref = engvrs.remap(ref, reverse=True)
             res.append(vrsf.remap(oref))
     else:
-        oref = engvrs.remap(ref, reverse=True)
+        oref = engvrs.remap(ref, None, reverse=True)
         res = vrsf.remap(oref)
     return res
 
