@@ -82,11 +82,11 @@ def revrsf(ref, vrsf):
     if isinstance(ref, list):
         res = RefList()
         for r in ref:
-            oref = engvrs.remap(ref, reverse=True)
-            res.append(vrsf.remap(oref))
+            oref = engvrs.remap(ref, None, reverse=True)
+            res.append(vrsf.remap(oref, None))
     else:
         oref = engvrs.remap(ref, None, reverse=True)
-        res = vrsf.remap(oref)
+        res = vrsf.remap(oref, None)
     return res
 
 class BaseXrefs:

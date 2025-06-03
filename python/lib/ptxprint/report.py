@@ -115,7 +115,7 @@ class Report:
         for k, v in sorted(results.items()):
             line = "{}: {}".format("<b>{}</b>".format(k) if k in mainfonts or any(m in mrkrset for m in v) else k,
                                    " ".join(["<b>{}</b>".format(m) if m in mrkrset else m for m in sorted(v)]))
-            self.add("Fonts/Usage", line, txttype="text")
+            self.add("Fonts/Usage", line, txttype="html")
         self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)), txttype="text")
         self.add("USFM", "Modified markers: " + " ".join(modified), txttype="html")
 
