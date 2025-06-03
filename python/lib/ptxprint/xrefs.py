@@ -79,6 +79,7 @@ def revrsf(ref, vrsf):
         return ref
     if engvrs is None:
         engvrs = cached_versification("eng")
+    vrs = cached_versification(vrsf)
     if isinstance(ref, list):
         res = RefList()
         for r in ref:
@@ -565,7 +566,7 @@ class Xrefs:
 
     def process(self, bk, triggers, usfm=None):
         if self.parent.ptsettings.versification is not None and self.parent.ptsettings.versification != "eng":
-            vrsf = self.parent.ptsettings.versification
+            vrsf = os.path.join(self.parent.project.prjdir, self.parent.ptsettings.versification)
         else:
             vrsf = None
         if usfm is not None:

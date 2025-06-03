@@ -1914,10 +1914,12 @@ class Paragraphs(list):
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
                 cinfo = colinfos.get(polycol, None)
+                if len(cinfo) < 4:
+                    cinfo = None
                 xstart = readpts(p[2]) if cinfo is None else cinfo[3]
                 if currr is not None:
                     currr.yend = readpts(p[3])
-                    currr.xend = cinfo[3]
+                    currr.xend = xstart
                 currpic = FigInfo(p[0], p[1], (0, 0), False, False)
                 currpic.rects = []
                 currr = ParRect(pnum, xstart, readpts(p[3]))
