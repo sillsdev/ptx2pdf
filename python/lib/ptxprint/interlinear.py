@@ -64,6 +64,7 @@ class Interlinear:
             raise SyntaxError("Bad Reference {}".format(s))
 
     def replaceusx(self, doc, curref, lexemes, linelengths, mrk="wit"):
+        # breakpoint()
         if curref[0] >= len(doc.chapters):
             return
         parindex = doc.chapters[curref[0]]
@@ -82,7 +83,7 @@ class Interlinear:
         for eloc, isin in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
             if isin:
                 if basepos is None:
-                    basepos = doc.getroot()[0].pos if curref == (1, "0") else eloc.parent.pos
+                    basepos = doc.getroot()[0].pos if curref == (1, "0") else eloc.pos
                 if not eloc.text:
                     continue
                 spos = getattr(eloc, 'textpos', None)
@@ -106,7 +107,7 @@ class Interlinear:
         else:
             t = eloc.tail
             parent = eloc.parent
-            last = eloc
+            laste = eloc
         cend = cpos + len(t)
         i = cpos
         outt = None
