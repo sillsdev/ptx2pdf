@@ -437,6 +437,9 @@ class RefRange:
         res.last.verse = verse
         return res
 
+    def copy(self):
+        return self.__class__(self.first, self.last)
+
 class AnyBooks:
     @classmethod
     def getBook(cls, s):
