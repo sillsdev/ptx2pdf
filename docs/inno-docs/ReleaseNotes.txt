@@ -1,8 +1,24 @@
 PTXprint 2.8.11 Release Notes
-27 May 2025
+3 Jun 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.12 (3 Jun 2025)
+  * Add (re-)versification to xrefs
+  * Add new code for a hook every first verse in a chapter. e.g. for QR links
+  * Add new novpadding parameter to QR generator.
+  * Add new nohpadding option to QR generator, making horizontal paddig the users problem
+  * Add key files to the report, more to come
+  * Add the start of a report generator via Create Report... button on Help tab
+  * Don't crash in picselection if there is no description
+  * Fix QR code alignment if positioned centrally
+  * Fix interlinear minor bug with big effects
+  * Fix report output if not available
+  * Fix xrefs and versification
+  * Fix #1082 styles editor pane issue.
+  * Fix manual pagebreaks
+  * Fix changing picture src not printing
 
 Bug fixes and Improvements in 2.8.11 (27 May 2025)
   * Integrate reversification (to align diglot texts)
