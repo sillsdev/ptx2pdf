@@ -16,11 +16,19 @@ class ReportEntry:
 
     def ashtml(self):
         if self.txttype == "html":
-            return et.fromstring("<node>"+ self.msg +"</node>")
-        elif self.txttype == "text":
+            try:
+                return et.fromstring("<node>"+ self.msg +"</node>")
+            except et.ParseError as e:
+                e.add_note("text: "+self.msg)
+                raise e
+        elif self.txttype == "pretext":
             e = et.Element("node")
             pre = et.SubElement(e, "pre")
             pre.text = self.msg
+            return e
+        elif self.txttype == "text":
+            e = et.Element("node")
+            e.text = self.msg
             return e
 
 html_template = """
@@ -80,7 +88,7 @@ class Report:
 
     def get_layout(self, view):
         if hasattr(view, 'ufPages') and len(view.ufPages):
-            self.add("Layout", f"Underfilled pages <b>({len(view.ufPages)})<\b>: "+ " ".join([str(x) for x in view.ufPages]), severity=logging.WARN)
+            self.add("Layout", f"Underfilled pages <b>({len(view.ufPages)})</b>: "+ " ".join([str(x) for x in view.ufPages]), severity=logging.WARN)
         textheight, linespacing = view.calcBodyHeight()
         lines = textheight / linespacing
         if abs(lines - int(lines + 0.5)) > 0.05:
@@ -107,9 +115,9 @@ class Report:
         for k, v in sorted(results.items()):
             line = "{}: {}".format("<b>{}</b>".format(k) if k in mainfonts or any(m in mrkrset for m in v) else k,
                                    " ".join(["<b>{}</b>".format(m) if m in mrkrset else m for m in sorted(v)]))
-            self.add("Fonts/Usage", line)
-        self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)))
-        self.add("USFM", "Modified markers: " + " ".join(sorted(modified)))
+            self.add("Fonts/Usage", line, txttype="text")
+        self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)), txttype="text")
+        self.add("USFM", "Modified markers: " + " ".join(sorted(modified)), txttype="text")
 
     def get_files(self, view):
         for a in (("changes.txt", "c_usePrintDraftChanges"),
@@ -118,7 +126,7 @@ class Report:
                 f = os.path.join(view.project.srcPath(view.cfgid), a[0])
                 with open(f, encoding="utf-8") as inf:
                     data = inf.read()
-                self.add("ZFiles/"+a[0], data, severity=logging.NOTSET, txttype="text")
+                self.add("ZFiles/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
 
 def test():
     import sys

@@ -117,7 +117,7 @@
 \def\TPILB{}
 \def\tp@lbout{\def\pagecontents{\everypar{}\bgroup\vfill\TPILB\egroup}\plainoutput\let\pagecontents\empty}
 \def\zEmptyPage{\outemptyp@ge{\tp@lbout}}
-\def\outemptyp@ge#1{\message{Blank page for \the\pageno}\ifp@geone\temptrue\else\tempfalse\fi\bgroup\m@rksonpagefalse #1 \egroup\iftemp\global\p@geonetrue\fi}
+\def\outemptyp@ge#1{\message{Blank page for \the\totalp@ges}\ifp@geone\temptrue\else\tempfalse\fi\bgroup\m@rksonpagefalse #1 \egroup\iftemp\global\p@geonetrue\fi}
 \def\need@oddpage#1{\endgraf\ifodd\totalp@ges \outemptyp@ge{#1}\fi}
 \def\need@evenpage#1{\endgraf\ifodd\totalp@ges\else\outemptyp@ge{#1}\fi}
 \def\need@quadpage#1{\endgraf\ifodd\totalp@ges\else\outemptyp@ge{#1}\need@quadpage\fi \ifodd\numexpr \XeTeXpdfpagecount/2\relax \outemptyp@ge{#1}\outemptyp@ge{#1}\fi}
