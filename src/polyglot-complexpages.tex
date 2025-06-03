@@ -184,6 +184,9 @@
   \advance\p@lyr@wno by 1 
 }
 \def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing
+  \edef\this@p@lyp@gestring{\p@lyp@gestring}% Expand once and cache
+  \x@\def\csname cts@\this@p@lyp@gestring\endcsname{#1}% What columns are in this row?
+  \x@\edef\x@\p@gestrings\x@{\p@gestrings,#1}% % What is the complete list of sections?
   \count255=0
   \let\col@do\col@count
   \x@\each@col#1\E
@@ -193,9 +196,12 @@
   %\tracingmacros=1
   \x@\each@col#1\E
   \edef\@csppactcols{\the\count255}%
-  \trace{dmc}{blank \ifBookOpenLeft rev\fi p@lyp@gecols\p@lyp@gestring}%
-  \xdef@cseq{\ifBookOpenLeft rev\fi p@lyp@gecols\p@lyp@gestring}{}%
-  \x@\xdef\csname cols@\p@lyp@gestring\endcsname{\the\count255}% active cols
+  \trace{dmc}{blank \ifBookOpenLeft rev\fi p@lyp@gecols\this@p@lyp@gestring}%
+  \xdef@cseq{\ifBookOpenLeft rev\fi p@lyp@gecols\this@p@lyp@gestring}{}%
+  \x@\xdef\csname cols@\this@p@lyp@gestring\endcsname{\the\count255}% active cols in row p@lyp@gestring
+  \ifcsname \this@p@lyp@gestring @ht\endcsname\else
+    \x@\newdim@n\csname \this@p@lyp@gestring @ht\endcsname % Height for this bit of page.
+  \fi  
   \edef\tmporder{#1}%
   \ifBookOpenLeft % In a book-open-left scenario, we need to process the page contents right-to-left. Easiest way to do that is reorder it from the start.
     \def\rev@tmp@list{}\def\list@type{tmp}%
@@ -206,9 +212,9 @@
   \let\col@do\@@complexs@tpolyp@ges
   \x@\each@col\tmporder\E
   \ifBookOpenLeft
-    \trace{dmc}{revp@lyp@gecols\p@lyp@gestring\space is \csname revp@lyp@gecols\p@lyp@gestring\endcsname}%
+    \trace{dmc}{revp@lyp@gecols\this@p@lyp@gestring\space is \csname revp@lyp@gecols\this@p@lyp@gestring\endcsname}%
   \else
-    \trace{dmc}{p@lyp@gecols\p@lyp@gestring\space is \csname p@lyp@gecols\p@lyp@gestring\endcsname}%
+    \trace{dmc}{p@lyp@gecols\this@p@lyp@gestring\space is \csname p@lyp@gecols\this@p@lyp@gestring\endcsname}%
   \fi
   \global\advance\p@lyr@wno by 1
   \let\@cspptotcols\undefined
@@ -244,7 +250,7 @@
       \x@\let\csname layout@#1\endcsname\gr@dnone % No sync
     \fi
     \ifnum\@@cspptmp <\@cspptotcols
-      \x@\xdef\csname @max@cols@#1\endcsname{\@cspptotcols}%Used in determining the column width.
+      \x@\xdef\csname @max@cols@#1\endcsname{\@cspptotcols}%Used in determining the column width: Actual column widths get reduced by inter-column gaps, and so chunk that co-occurs in a tripple pane will be smaller than if it occured only in a double-pane. This is a pain. 
     \fi
     \x@\let\x@\@@cspptmp\csname @max@cols@#1\endcsname
     \ifBookOpenLeft
@@ -288,8 +294,6 @@
   \catcode47=\sl@shcode\relax
 }
 
-\def\trysplit#1{%
-}
 
 \def\polyglotpages@complexpages#1{%comma separated list of concatenated columns to put on different pages and rows (e.g. LR/A,B/C) specifies 2 pages, pg1 shows L, R and A, pg2 B and C.
   \trace{dmc}{polyglotpages #1}%
@@ -328,6 +332,10 @@
     \fi
   }%
   \x@\each@col\diglot@list\E
+}
+
+\@cplx@measure{%Measure the size of current chunks
+  
 }
   
 \plugin@endif

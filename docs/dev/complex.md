@@ -192,7 +192,7 @@ not be chosen from the first unused letter at the start of the alphabet, but fro
 `\def\f@llow@nL{Z} \def\f@llow@nZ{Y}` 
 `\def\f@llowingZ{L} \def\f@llowingY{L}`
 
-The existance or not of `\f@llow@nL` is then used to populate the 'original
+The existence or not of `\f@llow@nL` is then used to populate the 'original
 galley' for Z and then in turn Y as the respective remainder box is emptied.  
 When all is acceptable, \f@llowingZ is used to fill L.
 \f@llow@nL (etc) can also be used to identify columns that must be re-worked in the case a column needs shortening.
@@ -203,7 +203,7 @@ audience) might have
 `\polyglotpages{LLA/R}`, with L2->Z
 The forward and back display sequence is then: LZA/R and ALZ/R. For RTL readers,
 the forward and back display sequence will be: ZLA/R and AZL/R.
-
+kj
 ## Footnotes and repeated columns
 It is worth considering what to do with footnotes. If the repeated
 columns are on  separate pages, then it would make sense for the note to be 
