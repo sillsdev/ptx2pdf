@@ -83,11 +83,11 @@ def revrsf(ref, vrsf):
     if isinstance(ref, list):
         res = RefList()
         for r in ref:
-            oref = engvrs.remap(ref, None, reverse=True)
-            res.append(vrsf.remap(oref, None))
+            oref = engvrs.remap(r, None, reverse=True)
+            res.append(vrs.remap(oref, None))
     else:
         oref = engvrs.remap(ref, None, reverse=True)
-        res = vrsf.remap(oref, None)
+        res = vrs.remap(oref, None)
     return res
 
 class BaseXrefs:
@@ -566,7 +566,7 @@ class Xrefs:
 
     def process(self, bk, triggers, usfm=None):
         if self.parent.ptsettings.versification is not None and self.parent.ptsettings.versification != "eng":
-            vrsf = os.path.join(self.parent.project.prjdir, self.parent.ptsettings.versification)
+            vrsf = os.path.join(self.parent.printer.project.path, self.parent.ptsettings.versification)
         else:
             vrsf = None
         if usfm is not None:
