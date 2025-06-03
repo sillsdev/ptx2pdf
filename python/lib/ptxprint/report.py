@@ -100,9 +100,9 @@ class Report:
         results = {}
         modified = []
         mrkrset = view.get_usfms().get_markers(view.getBooks())
-        for s in view.styleEditor.allStyles():
-            if s in view.styleEditor.sheet:
-                modified.append(s)
+        for s in sorted(view.styleEditor.allStyles()):
+            if view.styleEditor.haschanged(s, styleonly=True):
+                modified.append("<b>"+s+"</b>" if s in mrkrset else s)
             if (f := view.styleEditor.getval(s, 'fontname', None, includebase=True)) is None:
                 continue
             results.setdefault(f, []).append(s)
@@ -117,7 +117,7 @@ class Report:
                                    " ".join(["<b>{}</b>".format(m) if m in mrkrset else m for m in sorted(v)]))
             self.add("Fonts/Usage", line, txttype="text")
         self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)), txttype="text")
-        self.add("USFM", "Modified markers: " + " ".join(sorted(modified)), txttype="text")
+        self.add("USFM", "Modified markers: " + " ".join(modified), txttype="html")
 
     def get_files(self, view):
         for a in (("changes.txt", "c_usePrintDraftChanges"),

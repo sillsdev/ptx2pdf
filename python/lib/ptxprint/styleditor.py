@@ -533,6 +533,19 @@ class StyleEditor:
                 if nv != bv:
                     self.setval(m, k, nv)
 
+    def haschanged(self, mrk, styleonly=False):
+        keys = self.allValueKeys(mrk)
+        if styleonly:
+            keys.difference_update(set("name description occursunder rank textproperties".split()))
+        bs = self.basesheet.get(mrk, {})
+        ss = self.sheet.get(mrk, {})
+        for k in keys:
+            vb = bs.get(k, None)
+            vs = ss.get(k, None)
+            if vb != vs and vs is not None:
+                return True
+        return False
+
     def mergein(self, newse, force=False, exclfields=None):
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
