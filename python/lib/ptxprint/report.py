@@ -133,17 +133,25 @@ class Report:
 
     def get_usfms(self, view):
         usfms = view.get_usfms()
+        passed = []
         for bk in view.getBooks():
             doc = usfms.get(bk)
             if doc is None:
                 self.add("USFMs", f"No USFM for {bk}", severity=logging.WARN)
                 continue
-            self.get_usfm(view, doc, bk)
+            if self.get_usfm(view, doc, bk):
+                passed.append(bk)
+        if len(passed)
+            self.add("USFMs", "USFM books tests all passed for {' '.join(passed)}", severity=logging.INFO)
 
     def get_usfm(self, view, doc, bk):
-        head = doc.getroot().find('.//para[@style="h"]')
-        if head is None:
-            self.add("USFMs", f"{bk} is missing header", severity=logging.ERROR)
+        r = doc.getroot()
+        essentials = "h toc1 toc2 toc3".split()
+        missing = [a for a in essentials if r.find(f'.//para[@style="{a}"]') is None]
+        if len(missing):
+            self.add("USFMs", f'{bk} is missing the following essential markers: {" ".join(missing)}', severity=logging.ERROR)
+            return False
+        return True
 
 def test():
     import sys

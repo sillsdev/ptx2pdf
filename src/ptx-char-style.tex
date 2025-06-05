@@ -831,6 +831,11 @@
     \x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (page \the\pageno)}%
   \fi
   \xdef\f@ntlist{\f@ntlist,\f@ntstyle}%
+  \x@\ifcsname \typef@ce _spacefactor\endcsname
+    \dimen0=\x@\csname \typef@ce _spacefactor\endcsname \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
+    \trace{F}{\typef@ce _spacefactor = \the\dimen0}%
+    \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname=\dimen0
+  \fi
   \ifx\SpaceStretchFactor\empty\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
     \x@\x@\fontdimen3\csname font<\f@ntstyle>\endcsname=\dimen0
