@@ -85,6 +85,7 @@ class Report:
         self.get_styles(view)
         self.get_layout(view)
         self.get_files(view)
+        self.get_usfms(view)
 
     def get_layout(self, view):
         if hasattr(view, 'ufPages') and len(view.ufPages):
@@ -129,6 +130,20 @@ class Report:
                 with open(f, encoding="utf-8") as inf:
                     data = inf.read()
                 self.add("ZFiles/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
+
+    def get_usfms(self, view):
+        usfms = view.get_usfms()
+        for bk in view.getBooks():
+            doc = usfms.get(bk)
+            if doc is None:
+                self.add("USFMs", f"No USFM for {bk}", severity=logging.WARN)
+                continue
+            self.get_usfm(view, doc, bk)
+
+    def get_usfm(self, view, doc, bk):
+        head = doc.getroot().find('.//para[@style="h"]')
+        if head is None:
+            self.add("USFMs", f"{bk} is missing header", severity=logging.ERROR)
 
 def test():
     import sys
