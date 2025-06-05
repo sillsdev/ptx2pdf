@@ -4,6 +4,7 @@ import regex, logging
 from ptxprint.utils import allbooks, books, bookcodes, chaps
 from ptxprint.unicode.UnicodeSets import flatten
 from ptxprint.reference import RefSeparators
+from usfmtc.reference import Environment
 
 logger = logging.getLogger(__name__)
 
@@ -282,3 +283,27 @@ class ParatextSettings:
         n.tail = "\n"
         with open(fname, "wb") as outf:
             outf.write(et.tostring(settings, encoding="utf-8"))
+
+
+class PTEnvironment(Environment):
+
+    def __init__(self):
+        self.booknames = {}
+        self.level = 2
+
+    def setBookNames(self, booknames, bookstrings):
+        self.booknames = booknames
+        self.bookstrings = bookstrings
+
+    def localbook(self, bk):
+        res = self.booknames.get(bk, None)
+        if res is None or self.level >= len(res):
+            return bk
+        else:
+            return res[self.level]
+
+    def parsebook(self, bk):
+        res = self.bookstrings.get(bk.lower(), None)
+        if res is None:
+            return super().parsebook(bk)
+        return res

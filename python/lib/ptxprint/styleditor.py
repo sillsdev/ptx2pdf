@@ -534,7 +534,7 @@ class StyleEditor:
                     self.setval(m, k, nv)
 
     def haschanged(self, mrk, styleonly=False):
-        keys = self.allValueKeys(mrk)
+        keys = set([x for x in self.allValueKeys(mrk) if not x.startswith(" ")])
         if styleonly:
             keys.difference_update(set("name description occursunder rank textproperties".split()))
         bs = self.basesheet.get(mrk, {})

@@ -1814,8 +1814,9 @@ class ViewModel:
             cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'src path'
-        for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
-                res[f] = prjid + "/local/figures/"+os.path.basename(f)
+        if self.picinfos is not None:
+            for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
+                    res[f] = prjid + "/local/figures/"+os.path.basename(f)
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
             res[xrfile] = baseprjid + "/" + os.path.basename(xrfile)
@@ -1944,7 +1945,7 @@ class ViewModel:
         found = False
         # TODO: include burst pdfs
         xdvfile = None
-        for a in (".pdf", ):
+        for a in (".pdf", ".html"):
             for d in ('', '..'):
                 for x in self.tempFiles:
                     if x.endswith(".xdv"):

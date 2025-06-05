@@ -1826,12 +1826,14 @@
  \fi
  \origb@selineskip=\baselineskip
  \ifmarginalVerseIsMargin
-   \ifx\colshiftmode\l@ft
-     \ruleshift=-\columnshift
-   \else \ifx\colshiftmode\r@ght
-      \ruleshift=\columnshift
-   \fi\fi
-   \columnshift=0pt
+   \dimen0=0.5 \gutter
+   \ifdim\dimen0 > \columnshift \dimen0=\columnshift\fi
+   \advance\columnshift by -\dimen0
+%   \ifx\colshiftmode\l@ft
+%     \ruleshift=-\dimen0
+%   \else \ifx\colshiftmode\r@ght
+%      \ruleshift=\dimen0
+%   \fi\fi
  \fi
  \s@tupsizes
  \global\let\id@@@\n@ID

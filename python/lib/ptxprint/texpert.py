@@ -59,9 +59,9 @@ texpertOptions = {
     # "NoteLineMajorDiv":   O("notelinediv", "LAY", (0, 0, 100, 1, 5, 0), r"\def{0}{{{1}}}", _("Noteline subdivisions"), 
                             # _("Major noteline happens at the start then every this many lines after.")),
 
-    "versehyphen":        O("vhyphen", "CVS", True, "", _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
-    "versehyphenup":      O("vhyphenup", "CVS", False, "", _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
-    "marginalVerseIsMargin": O("mverseismargin", "CVS", False, None, _("No column space reduction for marginal verses"), _("If false, the space for marginal verses is taken from the column. If true, the space for marginal verses is taken from the margins or rule gutter")),
+    "versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
+    "versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
+    "marginalVerseIsMargin": O("mverseismargin", "CVS", False, None, _("Gutter space reduction for marginal verses"), _("If false, the space for marginal verses is taken from the column. If true, some space for marginal verses is taken from the margins or rule gutter")),
     "CalcChapSize":       O("calcchapsize", "CVS", True, None, _("Auto Calc Optimum Chapter Size"),
                             _("Attempt to automatically calculate drop chapter number size")),
     "NoHangVerseNumberOne": O("nohangvone", "CVS", True, None, _("Don't hang verse one beside a chapter (in poetry)"),
