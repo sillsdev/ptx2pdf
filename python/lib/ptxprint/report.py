@@ -141,7 +141,7 @@ class Report:
                 continue
             if self.get_usfm(view, doc, bk):
                 passed.append(bk)
-        if len(passed)
+        if len(passed):
             self.add("USFMs", "USFM books tests all passed for {' '.join(passed)}", severity=logging.INFO)
 
     def get_usfm(self, view, doc, bk):
