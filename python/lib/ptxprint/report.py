@@ -155,37 +155,32 @@ class Report:
         return True
 
     def get_peripherals(self, view):
+
+        def myhackylambda(view, widget):
+            return ("", None)
+
         widget_map = {
-            "Front Matter PDF(s)": "c_inclFrontMatter",  # lb_inclFrontMatter
-            "Table of Contents":   "c_autoToC",
-            "Front Matter":        "c_frontmatter",
-            "Colophon":            "c_colophon",
-            "Back Matter PDF(s)":  "c_inclBackMatter"   # lb_inclBackMatter
+            "Front Matter PDF(s)": ("Peripheral/Components", "c_inclFrontMatter", lambda v,w: (view.get("lb"+w[1:], "").strip("."), None)),
+            "Table of Contents":   ("Peripheral/Components", "c_autoToC", myhackylambda),
+            "Front Matter":        ("Peripheral/Components", "c_frontmatter", lambda v,w: ("", logging.WARN if v.get(w, False) else logging.INFO))
+            "Colophon":            ("Peripheral/Components", "c_colophon", lambda v,w: ("", logging.WARN if v.get(w, False) else logging.INFO))
+            "Back Matter PDF(s)":  ("Peripheral/Components", "c_inclBackMatter", lambda v,w: (view.get("lb"+w[1:], "").strip("."), None)),
         }
         
-        section = "Peripheral/Components"
         check_order = 100  # Not used, consider removing or integrating
         
-        for title, widget_id in widget_map.items():
+        for title, (section, widget_id, widget_fn) in widget_map.items():
             if not view.get(widget_id, False):
                 continue
 
-            # Determine severity
-            if widget_id in {"c_colophon", "c_frontmatter"} and \
-               view.get("c_colophon", False) and view.get("c_frontmatter", False):
-                severity_level = logging.WARN
+            if widget_fn is None:
+                extra = ""
+                severity = None
             else:
-                severity_level = logging.INFO
-
-            # Append extra info for included files
-            extra = ""
-            if widget_id.startswith("c_incl"):
-                label_key = "lb" + widget_id[1:]
-                filename = view.get(label_key, "")
-                if len(filename.strip(".")) > 0:  # More than just '.'
-                    extra = f": {filename}"
-
-            self.add(section, f"{title}{extra}", severity=severity_level, txttype="html")
+                (extra, severity) = widget_fn(view, widget_id)
+            if len(extra):
+                extra = ": " + extra
+            self.add(section, f"{title}{extra}", severity=severity, txttype="html")
 
 def test():
     import sys

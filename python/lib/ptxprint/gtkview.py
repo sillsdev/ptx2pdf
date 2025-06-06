@@ -2791,12 +2791,13 @@ class GtkViewModel(ViewModel):
             if wid is not None:
                 wid.set_sensitive(state)
 
-        if script not in _cjkLangs.keys():
-            self.set("t_linebreaklocale", "")
-            self.set("c_linebreakon", False)
-        else:
-            self.set("t_linebreaklocale", _cjkLangs[script])
-            self.set("c_linebreakon", True)
+        if not self.loadingConfig:
+            if script not in _cjkLangs.keys():
+                self.set("t_linebreaklocale", "")
+                self.set("c_linebreakon", False)
+            else:
+                self.set("t_linebreaklocale", _cjkLangs[script])
+                self.set("c_linebreakon", True)
 
     def onFontChanged(self, fbtn):
         # traceback.print_stack(limit=3)
