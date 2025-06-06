@@ -57,7 +57,8 @@ class Report:
         body = doc.find("body")
         lasts = []
         curr = body
-        for s, t in sorted(self.sections.items()):
+        # for s, t in sorted(self.sections.items()):
+        for s, t in self.sections.items():
             if not len(t):
                 continue
             nexts = s.split("/")
@@ -84,9 +85,9 @@ class Report:
     def run_view(self, view):
         self.get_styles(view)
         self.get_layout(view)
-        self.get_files(view)
         self.get_usfms(view)
-        self.get_peripherals(view)
+        self.get_general_info(view)
+        self.get_files(view)
 
     def get_layout(self, view):
         if hasattr(view, 'ufPages') and len(view.ufPages):
@@ -143,7 +144,7 @@ class Report:
             if self.get_usfm(view, doc, bk):
                 passed.append(bk)
         if len(passed):
-            self.add("USFMs", "USFM books tests all passed for {' '.join(passed)}", severity=logging.INFO)
+            self.add("USFMs", f"USFM books tests all passed for {' '.join(passed)}", severity=logging.INFO)
 
     def get_usfm(self, view, doc, bk):
         r = doc.getroot()
@@ -154,17 +155,44 @@ class Report:
             return False
         return True
 
-    def get_peripherals(self, view):
-
         def myhackylambda(view, widget):
-            return ("", None)
+            return ("", logging.INFO)
 
+    def get_general_info(self, view):
         widget_map = {
-            "Front Matter PDF(s)": ("Peripheral/Components", "c_inclFrontMatter", lambda v,w: (view.get("lb"+w[1:], "").strip("."), None)),
-            "Table of Contents":   ("Peripheral/Components", "c_autoToC", myhackylambda),
-            "Front Matter":        ("Peripheral/Components", "c_frontmatter", lambda v,w: ("", logging.WARN if v.get(w, False) else logging.INFO))
-            "Colophon":            ("Peripheral/Components", "c_colophon", lambda v,w: ("", logging.WARN if v.get(w, False) else logging.INFO))
-            "Back Matter PDF(s)":  ("Peripheral/Components", "c_inclBackMatter", lambda v,w: (view.get("lb"+w[1:], "").strip("."), None)),
+            "Project Name":               ("Project/Overview", "l_projectFullName", \
+                                            lambda v,w: (view.get("l_projectFullName", ""), logging.INFO)),
+            "Copyright":                  ("Project/Overview", "t_copyrightStatement", \
+                                            lambda v,w: (view.get("t_copyrightStatement", ""), logging.INFO)),
+            "License":                    ("Project/Overview", "ecb_licenseText", \
+                                            lambda v,w: (view.get("ecb_licenseText", ""), logging.INFO)),
+            "Script":                     ("Project/Overview", "fcb_script", \
+                                            lambda v,w: (view.get("fcb_script", ""), logging.INFO)),
+            "Diglot Configuration":       ("Diglot/Setup", "c_diglot", None),
+            "Page Size":                  ("Layout", "ecb_pagesize", None),
+            "Two Column Layout":          ("Layout", "c_doublecolumn", None),
+            "Mirrored Headers":           ("Layout", "c_mirrorpages", None),
+            "Borders":                    ("Layout", "c_inclPageBorder", None),
+            "Ornamental Features":        ("Layout", "c_useOrnaments", None),
+            "Thumb Tabs":                 ("Layout", "c_thumbtabs", None),
+            "Interlinear":                ("Interlinear", "c_interlinear", None),
+            "Interlinear language code":  ("Interlinear", "t_interlinearLang", None),
+            "Study/Extended Notes":             ("Notes and Refs", "c_extendedFnotes", None),
+            "Footnotes":                        ("Notes and Refs", "c_includeFootnotes", None),
+            "Cross-References (from Project)":  ("Notes and Refs", "c_includeXrefs", None),
+            "Cross-References (External List)": ("Notes and Refs", "c_useXrefList", None),
+            "Missing PicList Images":     ("Illustrations", "l_missingPictureString", None),
+            "Only Placeholders":          ("Illustrations", "c_figplaceholders", None),
+            "PDF Version PDF/X-1a":       ("Output Format", "c_printArchive", None),
+            "Front Matter PDF(s)":        ("Peripheral Components", "c_inclFrontMatter", \
+                                            lambda v,w: (view.get("lb"+w[1:], "").strip("."), logging.INFO)),
+            "Table of Contents":          ("Peripheral Components", "c_autoToC", None),
+            "Front Matter":               ("Peripheral Components", "c_frontmatter", \
+                                            lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_colophon", False) else logging.INFO)),
+            "Colophon":                   ("Peripheral Components", "c_colophon", \
+                                            lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_frontmatter", False) else logging.INFO)),
+            "Back Matter PDF(s)":         ("Peripheral Components", "c_inclBackMatter", \
+                                            lambda v,w: (view.get("lb"+w[1:], "").strip("."), logging.INFO)),
         }
         
         check_order = 100  # Not used, consider removing or integrating
@@ -175,7 +203,7 @@ class Report:
 
             if widget_fn is None:
                 extra = ""
-                severity = None
+                severity = logging.INFO
             else:
                 (extra, severity) = widget_fn(view, widget_id)
             if len(extra):
