@@ -1,4 +1,4 @@
-
+import html # Added for html.escape
 import logging, os
 import xml.etree.ElementTree as et
 
@@ -86,6 +86,7 @@ class Report:
         self.get_layout(view)
         self.get_files(view)
         self.get_usfms(view)
+        self.get_peripherals(view)
 
     def get_layout(self, view):
         if hasattr(view, 'ufPages') and len(view.ufPages):
@@ -146,12 +147,45 @@ class Report:
 
     def get_usfm(self, view, doc, bk):
         r = doc.getroot()
-        essentials = "h toc1 toc2 toc3".split()
+        essentials = "h toc1 toc2 toc3 p".split() # How do we check for other non-para USFM's?  c v etc.
         missing = [a for a in essentials if r.find(f'.//para[@style="{a}"]') is None]
         if len(missing):
             self.add("USFMs", f'{bk} is missing the following essential markers: {" ".join(missing)}', severity=logging.ERROR)
             return False
         return True
+
+    def get_peripherals(self, view):
+        widget_map = {
+            "Front Matter PDF(s)": "c_inclFrontMatter",  # lb_inclFrontMatter
+            "Table of Contents":   "c_autoToC",
+            "Front Matter":        "c_frontmatter",
+            "Colophon":            "c_colophon",
+            "Back Matter PDF(s)":  "c_inclBackMatter"   # lb_inclBackMatter
+        }
+        
+        section = "Peripheral/Components"
+        check_order = 100  # Not used, consider removing or integrating
+        
+        for title, widget_id in widget_map.items():
+            if not view.get(widget_id, False):
+                continue
+
+            # Determine severity
+            if widget_id in {"c_colophon", "c_frontmatter"} and \
+               view.get("c_colophon", False) and view.get("c_frontmatter", False):
+                severity_level = logging.WARN
+            else:
+                severity_level = logging.INFO
+
+            # Append extra info for included files
+            extra = ""
+            if widget_id.startswith("c_incl"):
+                label_key = "lb" + widget_id[1:]
+                filename = view.get(label_key, "")
+                if len(filename.strip(".")) > 0:  # More than just '.'
+                    extra = f": {filename}"
+
+            self.add(section, f"{title}{extra}", severity=severity_level, txttype="html")
 
 def test():
     import sys
