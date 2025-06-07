@@ -771,6 +771,8 @@ class Usfm:
                 continue
             for i in range(a[2] - 1):
                 p = p.getnext()
+                if p.get("style" "") == "b":
+                    p = p.getnext()
             s = p.get("style", "")
             if "^" not in s and p.tag == "para":    # Just in case it isn't a para
                 p.set("style", f"{s}^{a[5]}")
