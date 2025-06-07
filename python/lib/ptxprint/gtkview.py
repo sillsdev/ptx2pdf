@@ -5602,7 +5602,7 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
         self.changed()
 
-    def _checkUpdate(self, wid):
+    def _checkUpdate(self, wid, timediff):
         try:
             logger.debug(f"Trying to access URL to see if updates are available")
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
@@ -5616,6 +5616,7 @@ class GtkViewModel(ViewModel):
             return
         newv = [int(x) for x in version.split('.')]
         currv = [int(x) for x in VersionStr.split('.')]
+        # To Do: Calculate and set color based on severity to blue, orange, red depending on how old the current version
         logger.debug(f"{newv=}, {currv=}")
         def enabledownload():
             tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
@@ -5639,20 +5640,21 @@ class GtkViewModel(ViewModel):
             logger.debug("Check for updates didn't run as it hasn't been 5 mins since startup")
             return
         elif lastchecked != 0 and time.time() - lastchecked < 24*3600: # i.e. checked less than an hour ago
-            logger.debug("Check for updates didn't run as it hasn't been an hour since the last check")
+            logger.debug("Check for updates didn't run as it hasn't been 24 hours since the last check")
             return
         else:
-            logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
+            logger.debug(f"Check for updates at {getcaller()}. OS is {sys.platform}")
             self.lastUpdatetime = time.time()
             self.userconfig.set("init", "checkedupdate", str(self.lastUpdatetime))
+        timediff = 0 # To Do: current time minus time of .exe file
         if not sys.platform.startswith("win"):
             return
         version = None
         if self.noInt is None or self.noInt:
             logger.debug(f"Returning because {self.noInt=}.")
             return
-        self.thread = Thread(target=self._checkUpdate, args=(wid))
-
+        self.thread = Thread(target=self._checkUpdate, args=(wid, timediff))
+        self.thread.start()
 
     def openURL(self, url):
         if self.noInt is None or self.noInt:
