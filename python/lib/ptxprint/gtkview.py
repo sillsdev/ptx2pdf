@@ -5617,22 +5617,24 @@ class GtkViewModel(ViewModel):
         newv = [int(x) for x in version.split('.')]
         currv = [int(x) for x in VersionStr.split('.')]
         logger.debug(f"{newv=}, {currv=}")
-        if newv <= currv:
-            wid.set_visible(False)
-            return
         def enabledownload():
             tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
             wid.set_tooltip_text(tip)
             wid.set_visible(True)
             self.thread = None
+        def disabledownload():
+            wid.set_visible(False)
+            self.thread = None
         if background:
-            GLib.idle_add(enabledownload)
-        else:
+            GLib.idle_add(enabledownload if newv > currv else disabledownload)
+        elif newv > currv:
             enabledownload()
+        else:
+            disabledownload()
 
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
-        lastchecked = self.userconfig.getint("init", "checkedupdate", fallback=0)
+        lastchecked = self.userconfig.getfloat("init", "checkedupdate", fallback=0)
         if time.time() - self.startedtime < 300: # i.e. started less than 5 mins ago
             logger.debug("Check for updates didn't run as it hasn't been 5 mins since startup")
             return
