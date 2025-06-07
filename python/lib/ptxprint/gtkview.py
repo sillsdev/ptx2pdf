@@ -5602,23 +5602,7 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
         self.changed()
 
-    def checkUpdates(self, background=True):
-        wid = self.builder.get_object("btn_download_update")
-        if time.time() - self.startedtime < 300: # i.e. started less than 5 mins ago
-            logger.debug("Check for updates didn't run as it hasn't been 5 mins since startup")
-            return
-        elif time.time() - self.lastUpdatetime < 3600: # i.e. checked less than an hour ago
-            logger.debug("Check for updates didn't run as it hasn't been an hour since the last check")
-            return
-        else:
-            logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
-            self.lastUpdatetime = time.time()
-        if not sys.platform.startswith("win"):
-            return
-        version = None
-        if self.noInt is None or self.noInt:
-            logger.debug(f"Returning because {self.noInt=}.")
-            return
+    def _checkUpdate(self, wid):
         try:
             logger.debug(f"Trying to access URL to see if updates are available")
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
@@ -5627,7 +5611,6 @@ class GtkViewModel(ViewModel):
         except (OSError, KeyError, ValueError) as e:
             logger.debug(f"{e=}")
             pass
-        logger.debug(f"{version=}")
         if version is None:
             logger.debug(f"Returning because version is None.")
             return
@@ -5641,10 +5624,33 @@ class GtkViewModel(ViewModel):
             tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
             wid.set_tooltip_text(tip)
             wid.set_visible(True)
+            self.thread = None
         if background:
             GLib.idle_add(enabledownload)
         else:
             enabledownload()
+
+    def checkUpdates(self, background=True):
+        wid = self.builder.get_object("btn_download_update")
+        lastchecked = self.userconfig.getint("init", "checkedupdate", fallback=0)
+        if time.time() - self.startedtime < 300: # i.e. started less than 5 mins ago
+            logger.debug("Check for updates didn't run as it hasn't been 5 mins since startup")
+            return
+        elif lastchecked != 0 and time.time() - lastchecked < 24*3600: # i.e. checked less than an hour ago
+            logger.debug("Check for updates didn't run as it hasn't been an hour since the last check")
+            return
+        else:
+            logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
+            self.lastUpdatetime = time.time()
+            self.userconfig.set("init", "checkedupdate", str(self.lastUpdatetime))
+        if not sys.platform.startswith("win"):
+            return
+        version = None
+        if self.noInt is None or self.noInt:
+            logger.debug(f"Returning because {self.noInt=}.")
+            return
+        self.thread = Thread(target=self._checkUpdate, args=(wid))
+
 
     def openURL(self, url):
         if self.noInt is None or self.noInt:
