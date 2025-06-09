@@ -106,6 +106,7 @@ class Report:
         self.get_styles(view)
         self.get_writingSystems(view)
         self.get_layout(view)
+        self.get_layout_preview(view)
         self.get_usfms(view)
         self.get_general_info(view)
         self.get_files(view)
@@ -119,6 +120,18 @@ class Report:
             self.add("Layout", f"Lines on page (suboptimal): {lines:.1f}", severity=logging.WARN)
         else:
             self.add("Layout", f"Lines on page (optimized): {int(lines + 0.5)}", severity=logging.INFO)
+        # Line Spacing (Fixed|Variable=c_noGrid): [1.2] s_fontsize / s_linespacing = X.XX pt  
+        # (Fixed on grid: 1.18, or Variable minimum: 1.10 (min and max))
+        fntsz = float(view.get("s_fontsize", 11.0))
+        lnspc = float(view.get("s_linespacing", 14.0))
+        ratio = lnspc / fntsz
+        varls = view.get("c_noGrid", False)
+        self.add("Layout", f"Base font size: {fntsz:.2f}pt", severity=logging.DEBUG)
+        self.add("Layout", f"Base linespacing ({"variable" if varls else "fixed"}): {lnspc:.2f}pt", severity=logging.WARN if varls else logging.DEBUG)
+        self.add("Layout", f"Linespacing Ratio: {ratio:.2f}", severity=logging.WARN if ratio < 1.0 or ratio > 1.5 else logging.DEBUG)
+        # Could we also calculate all the derived font sizes from the styles to work out what 
+        #   * the LARGEST font size used (and in which marker) 
+        # and the smallest (in ? marker:)
 
     def get_styles(self, view):
         results = {}
@@ -270,6 +283,193 @@ class Report:
             
         # to do: add other Additional Script Settings (snippet settings for the script)
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
+
+    def _render_single_page_html_for_spread(self, page_side, 
+                                             scaled_page_w_px, scaled_page_h_px,
+                                             scaled_m_top_px, scaled_m_bottom_px,
+                                             scaled_physical_left_margin_px, 
+                                             scaled_physical_right_margin_px,
+                                             margin_labels_mm, 
+                                             page_num_text,
+                                             num_columns, scaled_column_gap_px,
+                                             label_font_size_px):
+        
+        text_block_content_text = "Single<br/>Column<br/>Text Block" if num_columns == 1 else "Double<br/>Column<br/>Text Block"
+
+        scaled_text_block_w_px = scaled_page_w_px - scaled_physical_left_margin_px - scaled_physical_right_margin_px
+        scaled_text_block_h_px = scaled_page_h_px - scaled_m_top_px - scaled_m_bottom_px
+        if scaled_text_block_w_px < 0: scaled_text_block_w_px = 0
+        if scaled_text_block_h_px < 0: scaled_text_block_h_px = 0
+
+        column_divider_html = ""
+        if num_columns == 2:
+            column_divider_html = f"""
+            <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+                        width: 1px; height: 100%; background-color: #aaa;"></div>"""
+
+        page_num_style = f"position: absolute; top: 5px; font-size: {label_font_size_px*1.2:.0f}px; color: #555;"
+        if page_side == 'left': page_num_style += "left: 5px;"
+        else: page_num_style += "right: 5px;"
+        
+        page_html = f"""
+        <div class="page-dummy" style="
+            width: {scaled_page_w_px:.2f}px; height: {scaled_page_h_px:.2f}px;
+            padding-top: {scaled_m_top_px:.2f}px;
+            padding-left: {scaled_physical_left_margin_px:.2f}px;
+            padding-right: {scaled_physical_right_margin_px:.2f}px;
+            padding-bottom: {scaled_m_bottom_px:.2f}px;
+            background-color: #e0e8ff; border: 1px solid #333;
+            box-sizing: border-box; position: relative;">
+            <div style="{page_num_style}">{page_num_text}</div>
+            <div class="text-block-area" style="
+                width: 100%; height: 100%; background-color: white;
+                border: 1px dashed #666; box-sizing: border-box;
+                display: flex; flex-direction: column; align-items: center; justify-content: center;
+                font-size: {max(8, scaled_page_h_px / 18):.0f}px; color: #444;
+                position: relative; text-align: center; line-height: 1.1;">
+                {text_block_content_text}
+                {column_divider_html if num_columns == 2 else ""}
+            </div>
+            <div title="Top Margin: {margin_labels_mm['top']:.1f}mm" style="position: absolute; text-align:center; width:{scaled_text_block_w_px:.2f}px; top: {scaled_m_top_px/2 - label_font_size_px/2 -1:.2f}px; left: {scaled_physical_left_margin_px:.2f}px; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['top']:.0f}mm</div>
+            <div title="Bottom Margin: {margin_labels_mm['bottom']:.1f}mm" style="position: absolute; text-align:center; width:{scaled_text_block_w_px:.2f}px; bottom: {scaled_m_bottom_px/2 - label_font_size_px/2 -1:.2f}px; left: {scaled_physical_left_margin_px:.2f}px; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['bottom']:.0f}mm</div>
+            <div title="Left Margin: {margin_labels_mm['left']:.1f}mm" style="position: absolute; text-align:center; height:{scaled_text_block_h_px:.2f}px; left: {(scaled_physical_left_margin_px/2 - label_font_size_px*1.2/2):.2f}px; top: {scaled_m_top_px:.2f}px; writing-mode: tb-rl; transform: rotate(-180deg); display:flex; align-items:center; justify-content:center; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['left']:.0f}mm</div>
+            <div title="Right Margin: {margin_labels_mm['right']:.1f}mm" style="position: absolute; text-align:center; height:{scaled_text_block_h_px:.2f}px; right: {(scaled_physical_right_margin_px/2 - label_font_size_px*1.2/2):.2f}px; top: {scaled_m_top_px:.2f}px; writing-mode: tb-rl; transform: rotate(-180deg); display:flex; align-items:center; justify-content:center; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['right']:.0f}mm</div>
+        </div>"""
+        return page_html
+
+    def _generate_page_spread_visualization_html(self, page_data, margin_data, layout_options, max_page_height_px=150):
+        if not all([page_data, margin_data, layout_options]):
+            return "<p><em>Page, margin, or layout option data not available for visualization.</em></p>"
+        try:
+            page_w_mm = float(page_data['width_mm']); page_h_mm = float(page_data['height_mm'])
+            page_name_html = html.escape(str(page_data.get('name', 'N/A')))
+            m_top_mm = float(margin_data['top_mm']); m_bottom_mm = float(margin_data['bottom_mm'])
+            m_side_mm = float(margin_data['side_margin_mm']); m_gutter_mm = float(margin_data['binding_gutter_mm'])
+            num_columns = int(layout_options.get('num_columns', 1))
+            binding_dir = layout_options.get('binding_direction', 'LTR').upper()
+            apply_gutter_to_outer = bool(layout_options.get('apply_gutter_to_outer_edge', False))
+            col_gap_mm = float(layout_options.get('column_gap_mm', 4.0 if num_columns == 2 else 0.0))
+        except (ValueError, TypeError, KeyError) as e:
+            return f"<p><em>Invalid data for spread visualization: {html.escape(str(e))}</em></p>"
+
+        if page_w_mm <= 0 or page_h_mm <= 0: return "<p><em>Page dimensions must be positive.</em></p>"
+        scale = max_page_height_px / page_h_mm
+        scaled_page_w = page_w_mm * scale; scaled_page_h = page_h_mm * scale
+        scaled_m_top = m_top_mm * scale; scaled_m_bottom = m_bottom_mm * scale
+        # scaled_side_margin = m_side_mm * scale; scaled_gutter = m_gutter_mm * scale # Not used directly after this
+        scaled_col_gap = col_gap_mm * scale
+        label_font_size = max(6, min(9, scaled_page_h / 20)) 
+
+        true_inner_mm = m_side_mm + m_gutter_mm if not apply_gutter_to_outer else m_side_mm
+        true_outer_mm = m_side_mm if not apply_gutter_to_outer else m_side_mm + m_gutter_mm
+        
+        page_num_left_visual, page_num_right_visual = ("4", "5") if binding_dir == 'LTR' else ("7", "6")
+        
+        # Physical margins for the page dummy on the LEFT of the spread
+        left_dummy_physical_left_margin_mm = true_outer_mm if binding_dir == 'LTR' else true_inner_mm
+        left_dummy_physical_right_margin_mm = true_inner_mm if binding_dir == 'LTR' else true_outer_mm
+        
+        # Physical margins for the page dummy on the RIGHT of the spread
+        right_dummy_physical_left_margin_mm = true_inner_mm if binding_dir == 'LTR' else true_outer_mm
+        right_dummy_physical_right_margin_mm = true_outer_mm if binding_dir == 'LTR' else true_inner_mm
+
+        left_page_html_content = self._render_single_page_html_for_spread(
+            'left', scaled_page_w, scaled_page_h, scaled_m_top, scaled_m_bottom,
+            left_dummy_physical_left_margin_mm * scale, left_dummy_physical_right_margin_mm * scale,
+            {'top': m_top_mm, 'bottom': m_bottom_mm, 
+             'left': left_dummy_physical_left_margin_mm, 
+             'right': left_dummy_physical_right_margin_mm},
+            page_num_left_visual, num_columns, scaled_col_gap, label_font_size, binding_dir)
+
+        right_page_html_content = self._render_single_page_html_for_spread(
+            'right', scaled_page_w, scaled_page_h, scaled_m_top, scaled_m_bottom,
+            right_dummy_physical_left_margin_mm * scale, right_dummy_physical_right_margin_mm * scale,
+            {'top': m_top_mm, 'bottom': m_bottom_mm, 
+             'left': right_dummy_physical_left_margin_mm, 
+             'right': right_dummy_physical_right_margin_mm},
+            page_num_right_visual, num_columns, scaled_col_gap, label_font_size, binding_dir)
+        
+        scaled_spine_gap_px = max(2, scaled_page_w / 40) 
+        text_block_w_mm_summary = page_w_mm - true_inner_mm - true_outer_mm 
+        text_block_h_mm_summary = page_h_mm - m_top_mm - m_bottom_mm
+        gutter_desc = "Outer Edge" if apply_gutter_to_outer else "Spine/Inner Edge"
+
+        html_output = f"""
+        <div class="page-spread-visualization" style="text-align: center; padding: 10px 5px 5px 5px; margin-top:10px; border: 1px solid #eee; background-color:#f9f9f9;">
+            <div style="font-size: 0.9em; margin-bottom: 10px;">
+                Page Type: {page_name_html} ({page_w_mm:.1f}mm x {page_h_mm:.1f}mm) | Text Area (per page): {text_block_w_mm_summary:.1f}mm x {text_block_h_mm_summary:.1f}mm | Binding: {binding_dir} | Gutter added to: {gutter_desc} | Columns: {num_columns}
+            </div>
+            <div class="spread-container" style="display: flex; justify-content: center; align-items: flex-start; gap: {scaled_spine_gap_px:.2f}px;">
+                {left_page_html_content}
+                {right_page_html_content}
+            </div>
+        </div>"""
+        return html_output.replace("\n", "")
+
+    def get_layout_preview(self, view, scenario_title=None, scenario_order=None):
+        """Generates a layout preview spread.
+        If scenario_title is provided, it's used as a sub-section name."""
+        
+        base_section = "Layout/Page Spread Preview"
+        section_path = f"{base_section}/{scenario_title}" if scenario_title else base_section
+        item_order = scenario_order if scenario_order is not None else self._get_next_order_val()
+
+        # Fetch data using specific methods from view if available for scenarios,
+        # otherwise use default getters.
+        if hasattr(view, 'current_page_data') and view.current_page_data:
+            page_data = view.current_page_data
+        else:
+            page_data = view.get_page_size_data()
+        
+        if hasattr(view, 'current_margins_data') and view.current_margins_data:
+            margin_data = view.current_margins_data
+        else:
+            margin_data = view.get_margins_for_preview() # Expects new specific method
+
+        if hasattr(view, 'current_layout_options') and view.current_layout_options:
+            layout_options = view.current_layout_options
+        else:
+            layout_options = view.get_layout_options_for_preview() # Expects new specific method
+        
+        page_layout_summary_parts = []
+        if page_data:
+            page_name_html = html.escape(str(page_data.get('name', 'N/A')))
+            width_html = html.escape(str(page_data.get('width_mm','?')))
+            height_html = html.escape(str(page_data.get('height_mm','?')))
+            page_layout_summary_parts.append(f"<b>Page Size (per page):</b> {page_name_html} ({width_html}mm x {height_html}mm)")
+        else:
+            page_layout_summary_parts.append("<b>Page Size:</b> Data not available")
+
+        if margin_data and layout_options: # Need layout_options to describe gutter application
+            top_html = html.escape(str(margin_data.get('top_mm','?')))
+            bottom_html = html.escape(str(margin_data.get('bottom_mm','?')))
+            side_html = html.escape(str(margin_data.get('side_margin_mm','?')))
+            gutter_html = html.escape(str(margin_data.get('binding_gutter_mm','?')))
+            apply_gutter_to_outer = bool(layout_options.get('apply_gutter_to_outer_edge', False))
+            
+            try:
+                side_val = float(margin_data.get('side_margin_mm',0))
+                gutter_val = float(margin_data.get('binding_gutter_mm',0))
+                true_inner_mm_val = side_val + gutter_val if not apply_gutter_to_outer else side_val
+                true_outer_mm_val = side_val if not apply_gutter_to_outer else side_val + gutter_val
+                margin_desc = f"Top: {top_html}, Bottom: {bottom_html}, Side: {side_html}, Gutter: {gutter_html}. Effective Inner: {true_inner_mm_val:.1f}, Effective Outer: {true_outer_mm_val:.1f}"
+            except ValueError:
+                margin_desc = f"Top: {top_html}, Bottom: {bottom_html}, Side: {side_html}, Gutter: {gutter_html}"
+            
+            page_layout_summary_parts.append(f"<b>Margins (mm):</b> {margin_desc}")
+        else:
+            page_layout_summary_parts.append("<b>Margins (mm):</b> Data not available")
+        
+        visualization_html = ""
+        if page_data and margin_data and layout_options:
+            try:
+                visualization_html = self._generate_page_spread_visualization_html(page_data, margin_data, layout_options, max_page_height_px=150)
+            except Exception as e:
+                logging.error(f"Error during page spread visualization generation: {e}", exc_info=True)
+                visualization_html = f"<p style='color:red;'><i>Error generating page layout visualization: {html.escape(str(e))}</i></p>"
+        
+        full_page_layout_msg = "<br/>".join(page_layout_summary_parts) + visualization_html
+        self.add(section_path, full_page_layout_msg, order=item_order, txttype="html")
 
 def test():
     import sys
