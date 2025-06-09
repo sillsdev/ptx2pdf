@@ -101,14 +101,11 @@ class Report:
             self.add("Layout", f"Lines on page (suboptimal): {lines:.1f}", severity=logging.WARN)
         else:
             self.add("Layout", f"Lines on page (optimized): {int(lines + 0.5)}", severity=logging.INFO)
-        # Line Spacing (Fixed|Variable=c_noGrid): [1.2] s_fontsize / s_linespacing = X.XX pt  
-        # (Fixed on grid: 1.18, or Variable minimum: 1.10 (min and max))
         fntsz = float(view.get("s_fontsize", 11.0))
         lnspc = float(view.get("s_linespacing", 14.0))
         ratio = lnspc / fntsz
         varls = view.get("c_noGrid", False)
-        self.add("Layout", f"Base font size: {fntsz:.2f}pt", severity=logging.DEBUG)
-        self.add("Layout", f"Base linespacing ({"variable" if varls else "fixed"}): {lnspc:.2f}pt", severity=logging.WARN if varls else logging.DEBUG)
+        self.add("Layout", f"Font Size/Line Spacing: {fntsz:.2f}pt/{lnspc:.2f}pt ({'<b>variable</b>' if varls else 'on grid'})", severity=logging.WARN if varls else logging.DEBUG)
         self.add("Layout", f"Linespacing Ratio: {ratio:.2f}", severity=logging.WARN if ratio < 1.0 or ratio > 1.5 else logging.DEBUG)
         # Could we also calculate all the derived font sizes from the styles to work out what 
         #   * the LARGEST font size used (and in which marker) 
@@ -152,9 +149,8 @@ class Report:
         usfms = view.get_usfms()
         passed = []
         failed = []
-        # self.add("USFMs", f"Books in Publication: {' '.join(view.getBooks())}", severity=logging.INFO)
+        # self.add("USFM Checks", f"Books in Publication: {' '.join(view.getBooks())}", severity=logging.INFO)
         for bk in view.getBooks():
-            print(f"{bk}")
             doc = usfms.get(bk)
             if doc is None:
                 self.add("USFM Checks", f"No USFM for {bk}", severity=logging.WARN)
@@ -183,7 +179,7 @@ class Report:
         essentials = "h toc1 toc2 toc3 p".split() # How do we check for other non-para USFM's?  c v etc.
         missing = [a for a in essentials if r.find(f'.//para[@style="{a}"]') is None]
         if len(missing):
-            self.add("USFMs", f'{bk} is missing the following essential markers: {" ".join(missing)}', severity=logging.ERROR)
+            self.add("USFM Checks", f'{bk} is missing the following essential markers: {" ".join(missing)}', severity=logging.ERROR)
             return False
         return True
 
@@ -275,15 +271,9 @@ class Report:
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
 
-    def _render_single_page_html_for_spread(self, page_side, 
-                                             scaled_page_w_px, scaled_page_h_px,
-                                             scaled_m_top_px, scaled_m_bottom_px,
-                                             scaled_physical_left_margin_px, 
-                                             scaled_physical_right_margin_px,
-                                             margin_labels_mm, 
-                                             page_num_text,
-                                             num_columns, scaled_column_gap_px,
-                                             label_font_size_px, binding_dir):
+    def renderSinglePage(self, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
+                         scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
+                         page_num_text, num_columns, scaled_column_gap_px, label_font_size_px, binding_dir):
         
         text_block_content_text = "Single<br/>Column<br/>Text Block" if num_columns == 1 else "Double<br/>Column<br/>Text Block"
 
@@ -328,7 +318,7 @@ class Report:
         </div>"""
         return page_html
 
-    def _generate_page_spread_visualization_html(self, page_data, margin_data, layout_options, max_page_height_px=150):
+    def generatePageSpreadVisualization(self, page_data, margin_data, layout_options, max_page_height_px=150):
         if not all([page_data, margin_data, layout_options]):
             return "<p><em>Page, margin, or layout option data not available for visualization.</em></p>"
         try:
@@ -363,7 +353,7 @@ class Report:
         right_dummy_physical_left_margin_mm = true_inner_mm if binding_dir == 'LTR' else true_outer_mm
         right_dummy_physical_right_margin_mm = true_outer_mm if binding_dir == 'LTR' else true_inner_mm
 
-        left_page_html_content = self._render_single_page_html_for_spread(
+        left_page_html_content = self.renderSinglePage(
             'left', scaled_page_w, scaled_page_h, scaled_m_top, scaled_m_bottom,
             left_dummy_physical_left_margin_mm * scale, left_dummy_physical_right_margin_mm * scale,
             {'top': m_top_mm, 'bottom': m_bottom_mm, 
@@ -371,7 +361,7 @@ class Report:
              'right': left_dummy_physical_right_margin_mm},
             page_num_left_visual, num_columns, scaled_col_gap, label_font_size, binding_dir)
 
-        right_page_html_content = self._render_single_page_html_for_spread(
+        right_page_html_content = self.renderSinglePage(
             'right', scaled_page_w, scaled_page_h, scaled_m_top, scaled_m_bottom,
             right_dummy_physical_left_margin_mm * scale, right_dummy_physical_right_margin_mm * scale,
             {'top': m_top_mm, 'bottom': m_bottom_mm, 
@@ -384,9 +374,6 @@ class Report:
         text_block_h_mm_summary = page_h_mm - m_top_mm - m_bottom_mm
         gutter_desc = "Outer Edge" if apply_gutter_to_outer else "Spine/Inner Edge"
 
-            # <div style="font-size: 0.9em; margin-bottom: 10px;">
-                # Page Type: ({page_w_mm:.1f}mm x {page_h_mm:.1f}mm) | Text Area (per page): {text_block_w_mm_summary:.1f}mm x {text_block_h_mm_summary:.1f}mm | Binding: {binding_dir} | Gutter added to: {gutter_desc} | Columns: {num_columns}
-            # </div>
         html_output = f"""
         <div class="page-spread-visualization" style="text-align: center; padding: 10px 5px 5px 5px; margin-top:10px; border: 1px solid #eee; background-color:#f9f9f9;">
             <div class="spread-container" style="display: flex; justify-content: center; align-items: flex-start; gap: {scaled_spine_gap_px:.2f}px;">
@@ -406,8 +393,10 @@ class Report:
         width, height = view.calcPageSize()
         page_data =   {'width_mm': width, 'height_mm': height}
         marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel, hfontsizemms = view.getMargins()
+        # print(f"{topmarginmms=}\n{bottommarginmms=}\n{headerposmms=}\n{footerposmms=}\n{rulerposmms=}\n{headerlabel=}\n{footerlabel=}\n{hfontsizemms=}")
         gutter = float(view.get("s_pagegutter")) if view.get("c_pagegutter", False) else 0
-        margin_data = {'top_mm': topmarginmms, 'bottom_mm': bottommarginmms, 
+        # margin_data = {'top_mm': topmarginmms, 'bottom_mm': bottommarginmms, 
+        margin_data = {'top_mm': headerlabel, 'bottom_mm': footerlabel, 
                        'side_margin_mm': marginmms, 'binding_gutter_mm': gutter}
         cols = 2 if view.get("c_doublecolumn", False) else 1
         bb = "RTL" if view.get("c_RTLbookBinding", False) else "LTR"
@@ -436,7 +425,7 @@ class Report:
                 gutter_val = float(margin_data.get('binding_gutter_mm',0))
                 true_inner_mm_val = side_val + gutter_val if not apply_gutter_to_outer else side_val
                 true_outer_mm_val = side_val if not apply_gutter_to_outer else side_val + gutter_val
-                margin_desc = f"Top: {top_html}, Bottom: {bottom_html}, Side: {side_html}, Gutter: {gutter_html}. Effective Inner: {true_inner_mm_val:.1f}, Effective Outer: {true_outer_mm_val:.1f}"
+                margin_desc = f"Top: {float(top_html):.1f}, Bottom: {bottom_html}, Side: {side_html}, Gutter: {gutter_html} (Effective Inner: {true_inner_mm_val:.1f}, Effective Outer: {true_outer_mm_val:.1f})"
             except ValueError:
                 margin_desc = f"Top: {top_html}, Bottom: {bottom_html}, Side: {side_html}, Gutter: {gutter_html}"
             
@@ -446,8 +435,8 @@ class Report:
         
         visualization_html = ""
         if page_data and margin_data and layout_options:
-            try:
-                visualization_html = self._generate_page_spread_visualization_html(page_data, margin_data, layout_options, max_page_height_px=250)
+            try: # This is where to change the size of the visualization
+                visualization_html = self.generatePageSpreadVisualization(page_data, margin_data, layout_options, max_page_height_px=300)
             except Exception as e:
                 logging.error(f"Error during page spread visualization generation: {e}", exc_info=True)
                 visualization_html = f"<p style='color:red;'><i>Error generating page layout visualization: {html.escape(str(e))}</i></p>"
