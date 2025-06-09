@@ -284,6 +284,18 @@ class Report:
         # to do: add other Additional Script Settings (snippet settings for the script)
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
+    # For Layout Preview
+    def get_page_size_data(self): 
+        return {'width_mm': 148, 'height_mm': 210, 'name': 'A5'}
+    
+    def get_margins_for_preview(self, top_mm=20, bottom_mm=25, side_margin_mm=15, binding_gutter_mm=10): 
+        return {'top_mm': top_mm, 'bottom_mm': bottom_mm, 
+                'side_margin_mm': side_margin_mm, 'binding_gutter_mm': binding_gutter_mm}
+    
+    def get_layout_options_for_preview(self, num_columns=1, binding_direction='LTR', column_gap_mm=4, apply_gutter_to_outer_edge=False):
+        return {'num_columns': num_columns, 'binding_direction': binding_direction, 
+                'column_gap_mm': column_gap_mm, 'apply_gutter_to_outer_edge': apply_gutter_to_outer_edge}
+
     def _render_single_page_html_for_spread(self, page_side, 
                                              scaled_page_w_px, scaled_page_h_px,
                                              scaled_m_top_px, scaled_m_bottom_px,
@@ -292,7 +304,7 @@ class Report:
                                              margin_labels_mm, 
                                              page_num_text,
                                              num_columns, scaled_column_gap_px,
-                                             label_font_size_px):
+                                             label_font_size_px, binding_dir):
         
         text_block_content_text = "Single<br/>Column<br/>Text Block" if num_columns == 1 else "Double<br/>Column<br/>Text Block"
 
@@ -412,24 +424,11 @@ class Report:
         
         base_section = "Layout/Page Spread Preview"
         section_path = f"{base_section}/{scenario_title}" if scenario_title else base_section
-        item_order = scenario_order if scenario_order is not None else self._get_next_order_val()
+        item_order = 100
 
-        # Fetch data using specific methods from view if available for scenarios,
-        # otherwise use default getters.
-        if hasattr(view, 'current_page_data') and view.current_page_data:
-            page_data = view.current_page_data
-        else:
-            page_data = view.get_page_size_data()
-        
-        if hasattr(view, 'current_margins_data') and view.current_margins_data:
-            margin_data = view.current_margins_data
-        else:
-            margin_data = view.get_margins_for_preview() # Expects new specific method
-
-        if hasattr(view, 'current_layout_options') and view.current_layout_options:
-            layout_options = view.current_layout_options
-        else:
-            layout_options = view.get_layout_options_for_preview() # Expects new specific method
+        page_data = self.get_page_size_data()
+        margin_data = self.get_margins_for_preview()
+        layout_options = self.get_layout_options_for_preview()
         
         page_layout_summary_parts = []
         if page_data:
