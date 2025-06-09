@@ -7,6 +7,26 @@ import xml.etree.ElementTree as et
 loglabels = ["\u00A0", "\u00A0", "\u2714", "W", "E", "F", "C"]
 logcolors = ["white", "lightskyblue", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
 
+_rtlScripts = {
+    "Arab",  # Arabic
+    "Armi",  # Imperial Aramaic
+    "Avst",  # Avestan
+    "Hebr",  # Hebrew
+    "Mand",  # Mandaic, Mandaean
+    "Mani",  # Manichaean
+    "Nkoo",  # N’Ko
+    "Phli",  # Inscriptional Pahlavi
+    "Phlp",  # Psalter Pahlavi
+    "Phnx",  # Phoenician
+    "Prti",  # Inscriptional Parthian
+    "Samr",  # Samaritan
+    "Sarb",  # Old South Arabian
+    "Sogd",  # Sogdian
+    "Sogo",  # Old Sogdian
+    "Syrc",  # Syriac
+    "Thaa",  # Thaana
+    "Yezi"   # Yezidi
+}
 class ReportEntry:
     def __init__(self, msg, severity=logging.DEBUG, order=0, txttype="html"):
         self.msg = msg
@@ -84,6 +104,7 @@ class Report:
 
     def run_view(self, view):
         self.get_styles(view)
+        self.get_writingSystems(view)
         self.get_layout(view)
         self.get_usfms(view)
         self.get_general_info(view)
@@ -110,7 +131,7 @@ class Report:
                 continue
             results.setdefault(f, []).append(s)
         mainfonts = set()
-        for a in ("R", "B", "I", "BI", "ExtraR"):
+        for a in ("R", "B", "I", "BI", "ExtraR"): # To do: flag the (fallback) font
             f = view.get("bl_font"+a, skipmissing=True)
             if f is not None:
                 mainfonts.add(f.name)
@@ -131,20 +152,28 @@ class Report:
                     continue
                 with open(f, encoding="utf-8") as inf:
                     data = inf.read()
-                self.add("ZFiles/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
+                self.add("Files/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
 
     def get_usfms(self, view):
         usfms = view.get_usfms()
         passed = []
+        # self.add("USFMs", f"Books in Publication: {' '.join(view.getBooks())}", severity=logging.INFO)
         for bk in view.getBooks():
             doc = usfms.get(bk)
             if doc is None:
                 self.add("USFMs", f"No USFM for {bk}", severity=logging.WARN)
                 continue
             if self.get_usfm(view, doc, bk):
-                passed.append(bk)
+                if bk != "ISA":        # for testing only - remove this line later
+                    passed.append(bk)  # for testing only - fix indentation
         if len(passed):
-            self.add("USFMs", f"USFM books tests all passed for {' '.join(passed)}", severity=logging.INFO)
+            self.add("USFM Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
+        if len(passed) != len(view.getBooks()):
+            self.add("USFM Checks", f"Books <b>failed</b>: {' '.join(set(view.getBooks()) - set(passed))}", severity=logging.WARN)
+        if "GLO" in view.getBooks():
+            fltr = "Filtered" if view.get("c_filterGlossary", False) else "Unfiltered"
+            asfn = "As Footnotes" if view.get("c_glossaryFootnotes", False) else ""
+            self.add("Peripheral Components", f"Glossary: {fltr} {asfn}", severity=logging.DEBUG)
 
     def get_usfm(self, view, doc, bk):
         r = doc.getroot()
@@ -156,59 +185,91 @@ class Report:
         return True
 
         def myhackylambda(view, widget):
-            return ("", logging.INFO)
+            return ("", logging.DEBUG)
 
     def get_general_info(self, view):
         widget_map = {
-            "Project Name":               ("Project/Overview", "l_projectFullName", \
-                                            lambda v,w: (view.get("l_projectFullName", ""), logging.INFO)),
-            "Copyright":                  ("Project/Overview", "t_copyrightStatement", \
-                                            lambda v,w: (view.get("t_copyrightStatement", ""), logging.INFO)),
-            "License":                    ("Project/Overview", "ecb_licenseText", \
-                                            lambda v,w: (view.get("ecb_licenseText", ""), logging.INFO)),
-            "Script":                     ("Project/Overview", "fcb_script", \
-                                            lambda v,w: (view.get("fcb_script", ""), logging.INFO)),
-            "Diglot Configuration":       ("Diglot/Setup", "c_diglot", None),
-            "Page Size":                  ("Layout", "ecb_pagesize", None),
-            "Two Column Layout":          ("Layout", "c_doublecolumn", None),
-            "Mirrored Headers":           ("Layout", "c_mirrorpages", None),
-            "Borders":                    ("Layout", "c_inclPageBorder", None),
-            "Ornamental Features":        ("Layout", "c_useOrnaments", None),
-            "Thumb Tabs":                 ("Layout", "c_thumbtabs", None),
-            "Interlinear":                ("Interlinear", "c_interlinear", None),
-            "Interlinear language code":  ("Interlinear", "t_interlinearLang", None),
-            "Study/Extended Notes":             ("Notes and Refs", "c_extendedFnotes", None),
-            "Footnotes":                        ("Notes and Refs", "c_includeFootnotes", None),
-            "Cross-References (from Project)":  ("Notes and Refs", "c_includeXrefs", None),
-            "Cross-References (External List)": ("Notes and Refs", "c_useXrefList", None),
-            "Missing PicList Images":     ("Illustrations", "l_missingPictureString", None),
-            "Only Placeholders":          ("Illustrations", "c_figplaceholders", None),
-            "PDF Version PDF/X-1a":       ("Output Format", "c_printArchive", None),
-            "Front Matter PDF(s)":        ("Peripheral Components", "c_inclFrontMatter", \
-                                            lambda v,w: (view.get("lb"+w[1:], "").strip("."), logging.INFO)),
-            "Table of Contents":          ("Peripheral Components", "c_autoToC", None),
-            "Front Matter":               ("Peripheral Components", "c_frontmatter", \
-                                            lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_colophon", False) else logging.INFO)),
-            "Colophon":                   ("Peripheral Components", "c_colophon", \
-                                            lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_frontmatter", False) else logging.INFO)),
-            "Back Matter PDF(s)":         ("Peripheral Components", "c_inclBackMatter", \
-                                            lambda v,w: (view.get("lb"+w[1:], "").strip("."), logging.INFO)),
+            "Project Name":               ("Project/Overview", "l_projectFullName", 100, \
+                                            lambda v,w: (v.get("l_projectFullName", ""), logging.DEBUG)),
+            "Copyright":                  ("Project/Overview", "t_copyrightStatement", 80, \
+                                            lambda v,w: (v.get("t_copyrightStatement", ""), logging.DEBUG)),
+            "License":                    ("Project/Overview", "ecb_licenseText", 60, \
+                                            lambda v,w: (v.get("ecb_licenseText", ""), logging.DEBUG)),
+                                                         
+            "Diglot Configuration":       ("Diglot/Setup", "c_diglot", 0, None), # More details to be added for this
+            "Page Size":                  ("Layout", "ecb_pagesize", 0, None),
+            "Two Column Layout":          ("Layout", "c_doublecolumn", 0, None),
+            "Mirrored Headers":           ("Layout", "c_mirrorpages", 0, None),
+            "Decorative Border":          ("Layout", "c_inclPageBorder", 0, \
+                                            lambda v,w: (v.get("r_border").upper() if v.get("c_useOrnaments", False) else "ON, but Ornamental Decorations are <b>Off</b>", \
+                                            logging.DEBUG if v.get("c_useOrnaments", False) else logging.WARN)),
+            "Ornamental Features":        ("Layout", "c_useOrnaments", 0, None),
+            "Thumb Tabs":                 ("Layout", "c_thumbtabs", 0, None),
+            "Interlinear":                ("Writing System", "c_interlinear", 0, \
+                                            lambda v,w: ("Language Code: " + (v.get("t_interlinearLang") or "<b>Missing!</b>"), \
+                                            logging.WARN if len(v.get("t_interlinearLang")) != 2 else logging.DEBUG)),
+            "Study Bible/Extended Notes": ("Notes and Refs", "c_extendedFnotes", 0, None), # how to count how many there are?
+            "Footnotes":                  ("Notes and Refs", "c_includeFootnotes", 0, None),
+            "Cross-References":           ("Notes and Refs", "c_includeXrefs", 0, None),
+            "Cross-Refs (other)":         ("Notes and Refs", "c_useXrefList", 0, \
+                                            lambda v,w: ("External List: " + (v.get("fcb_xRefExtListSource") or "<b>Unknown!</b>"), logging.DEBUG)),
+            "Pictures Enabled":           ("Illustrations", "c_includeillustrations", 0, None),
+            "Missing Images":             ("Illustrations", "l_missingPictureString", 0, \
+                                            lambda v,w: (v.get("l_missingPictureString", "")[18:], logging.WARN)),
+            "Only Placeholders":          ("Illustrations", "c_figplaceholders", 0, \
+                                            lambda v,w: ("", logging.WARN if v.get(w, False) else logging.DEBUG)),
+            "PDF Version PDF/X-1a":       ("Output Format", "c_printArchive", 100, None),
+            "Crop Marks":                 ("Output Format", "c_cropmarks", 200, None),
+            "Watermark":                  ("Output Format", "c_applyWatermark", 50, \
+                                            lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
+            "Booklet Pagination":         ("Output Format", "fcb_pagesPerSpread", 30, \
+                                            lambda v,w: (v.get(w, "")+"-up", logging.DEBUG)),
+            "Front Matter PDF(s)":        ("Peripheral Components", "c_inclFrontMatter", 0, \
+                                            lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
+            "Table of Contents":          ("Peripheral Components", "c_autoToC", 0, None),
+            "Thumb Tabs":                 ("Peripheral Components", "c_thumbtabs", 0, None),
+            "Front Matter":               ("Peripheral Components", "c_frontmatter", 0, \
+                                            lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_colophon", False) else logging.DEBUG)),
+            "Colophon":                   ("Peripheral Components", "c_colophon", 0, \
+                                            lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_frontmatter", False) else logging.DEBUG)),
+            "Back Matter PDF(s)":         ("Peripheral Components", "c_inclBackMatter", 0, \
+                                            lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
         }
         
         check_order = 100  # Not used, consider removing or integrating
         
-        for title, (section, widget_id, widget_fn) in widget_map.items():
+        for title, (section, widget_id, order, widget_fn) in widget_map.items():
             if not view.get(widget_id, False):
                 continue
 
             if widget_fn is None:
                 extra = ""
-                severity = logging.INFO
+                severity = logging.DEBUG
             else:
                 (extra, severity) = widget_fn(view, widget_id)
             if len(extra):
                 extra = ": " + extra
-            self.add(section, f"{title}{extra}", severity=severity, txttype="html")
+            self.add(section, f"{title}{extra}", severity=severity, order=order, txttype="html")
+
+    def get_writingSystems(self, view):  # to do: use the actual script name from a _allscripts lookup instead of just the code
+        s = view.get("fcb_script") or "Zyyy"
+        s = "Default/Unknown" if s == "Zyyy" else s
+        self.add("Writing System", f"Script Code: {s}", severity=logging.WARN if len(s) > 4 else logging.DEBUG, order=100, txttype="html")
+
+        d = (view.get("fcb_textDirection") or "ltr").upper()
+        rtl = s in _rtlScripts
+        sev = logging.WARN if (d == "RTL" and not rtl) or (d == "LTR" and rtl) or (d == "TTB" and s != "Mong") else logging.DEBUG
+        suffix = " - <b>unexpected!</b>" if sev == logging.WARN else ""
+        self.add("Writing System", f"Text Direction: {d}{suffix}", severity=sev, txttype="html")
+        
+        bb = view.get("c_RTLbookBinding", False)
+        sev = logging.WARN  if (bb and d != "RTL" and not rtl) or (not bb and (d == "RTL" or rtl)) else logging.DEBUG
+        if bb or sev == logging.WARN:
+            suffix = " - <b>unexpected!</b>" if sev == logging.WARN else ""
+            self.add("Writing System", f"RTL Book Binding: {bb}{suffix}", severity=sev, txttype="html")
+            
+        # to do: add other Additional Script Settings (snippet settings for the script)
+        #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
 def test():
     import sys

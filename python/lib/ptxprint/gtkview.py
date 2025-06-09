@@ -120,6 +120,7 @@ _allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Aghb" : "Caucasian Albani
     "Yezi" : "Yezidi", "Yiii" : "Yi",
     "Zanb" : "Zanabazar Square", "Zzzz" : "Uncoded script"
 }
+
 _cjkLangs = {
     "Hang" : "zh",  # "Hangul (Hangŭl, Hangeul)",
     "Hani" : "zh",  # "Han (Hanzi, Kanji, Hanja)",
@@ -3403,6 +3404,7 @@ class GtkViewModel(ViewModel):
             self.set("ecb_booklist", " ".join(b for b in booklist), mod=False)
         if not self.loadingConfig and self.get("r_book") in ("single", "multiple"):
             self.set("r_book", "multiple" if len(booklist) else "single", mod=False)
+        self.doBookListChange()
         self.updateDialogTitle()
         self.updateExamineBook()
         self.updatePicList()
