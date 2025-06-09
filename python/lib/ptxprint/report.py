@@ -58,8 +58,8 @@ class Report:
         body = doc.find("body")
         lasts = []
         curr = body
-        # for s, t in sorted(self.sections.items()):
-        for s, t in self.sections.items():
+        for s, t in sorted(self.sections.items()):
+        # for s, t in self.sections.items():
             if not len(t):
                 continue
             nexts = s.split("/")
@@ -89,28 +89,32 @@ class Report:
         self.get_layout(view)
         self.get_layout_preview(view)
         self.get_usfms(view)
-        self.get_general_info(view)
         self.get_files(view)
+        self.get_general_info(view)
 
     def get_layout(self, view):
         if hasattr(view, 'ufPages') and len(view.ufPages):
-            self.add("Layout", f"Underfilled pages <b>({len(view.ufPages)})</b>: "+ " ".join([str(x) for x in view.ufPages]), severity=logging.WARN)
+            self.add("2. Layout", f"Underfilled pages <b>({len(view.ufPages)})</b>: "+ " ".join([str(x) for x in view.ufPages]), severity=logging.WARN)
         textheight, linespacing = view.calcBodyHeight()
         lines = textheight / linespacing
         if abs(lines - int(lines + 0.5)) > 0.05:
-            self.add("Layout", f"Lines on page (suboptimal): {lines:.1f}", severity=logging.WARN)
+            self.add("2. Layout", f"Lines on page (suboptimal): {lines:.1f}", severity=logging.WARN)
         else:
-            self.add("Layout", f"Lines on page (optimized): {int(lines + 0.5)}", severity=logging.INFO)
-        fntsz = float(view.get("s_fontsize", 11.0))
-        lnspc = float(view.get("s_linespacing", 14.0))
+            self.add("2. Layout", f"Lines on page (optimized): {int(lines + 0.5)}", severity=logging.INFO)
+        fntsz, lnspc = self.getSizeSpacing(view)
         ratio = lnspc / fntsz
         varls = view.get("c_noGrid", False)
-        self.add("Layout", f"Font Size/Line Spacing: {fntsz:.2f}pt/{lnspc:.2f}pt ({'<b>variable</b>' if varls else 'on grid'})", severity=logging.WARN if varls else logging.DEBUG)
-        self.add("Layout", f"Linespacing Ratio: {ratio:.2f}", severity=logging.WARN if ratio < 1.0 or ratio > 1.5 else logging.DEBUG)
+        self.add("2. Layout", f"Font Size/Line Spacing: {fntsz:.2f}pt/{lnspc:.2f}pt ({'<b>variable</b>' if varls else 'on grid'})", severity=logging.WARN if varls else logging.DEBUG)
+        self.add("2. Layout", f"Linespacing Ratio: {ratio:.2f}", severity=logging.WARN if ratio < 1.0 or ratio > 1.5 else logging.DEBUG)
         # Could we also calculate all the derived font sizes from the styles to work out what 
         #   * the LARGEST font size used (and in which marker) 
         # and the smallest (in ? marker:)
 
+    def getSizeSpacing(self, view):
+        fntsz = float(view.get("s_fontsize", 11.0))
+        lnspc = float(view.get("s_linespacing", 14.0))
+        return fntsz, lnspc
+        
     def get_styles(self, view):
         results = {}
         modified = []
@@ -122,7 +126,7 @@ class Report:
                 continue
             results.setdefault(f, []).append(s)
         mainfonts = set()
-        for a in ("R", "B", "I", "BI", "ExtraR"): # To do: flag the (fallback) font
+        for a in ("R", "B", "I", "BI"):
             f = view.get("bl_font"+a, skipmissing=True)
             if f is not None:
                 mainfonts.add(f.name)
@@ -130,9 +134,17 @@ class Report:
         for k, v in sorted(results.items()):
             line = "{}: {}".format("<b>{}</b>".format(k) if k in mainfonts or any(m in mrkrset for m in v) else k,
                                    " ".join(["<b>{}</b>".format(m) if m in mrkrset else m for m in sorted(v)]))
-            self.add("Fonts/Usage", line, txttype="html")
-        self.add("USFM", "Markers used: "+" ".join(sorted(mrkrset)), txttype="text")
-        self.add("USFM", "Modified markers: " + " ".join(modified), txttype="html")
+            self.add("4. Fonts/Usage", line, txttype="html")
+        fb = view.get("bl_fontExtraR", skipmissing=True)
+        if fb is not None:
+            if view.get("c_useFallbackFont", False):
+                line = f"<b>{fb.name}</b>: Active Fallback Font"
+            else:
+                line = f"{fb.name}: <b>Inactive</b> Fallback Font"
+            self.add("4. Fonts/Usage", line, txttype="html")
+            
+        self.add("3. USFM/Markers", "Markers used: "+" ".join(sorted(mrkrset)), txttype="text")
+        self.add("3. USFM/Markers", "Modified markers: " + " ".join(modified), txttype="html")
 
     def get_files(self, view):
         for a in (("changes.txt", "c_usePrintDraftChanges"),
@@ -143,17 +155,17 @@ class Report:
                     continue
                 with open(f, encoding="utf-8") as inf:
                     data = inf.read()
-                self.add("Files/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
+                self.add("9. Files/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
 
     def get_usfms(self, view):
         usfms = view.get_usfms()
         passed = []
         failed = []
-        # self.add("USFM Checks", f"Books in Publication: {' '.join(view.getBooks())}", severity=logging.INFO)
+        # self.add("3. USFM/Checks", f"Books in Publication: {' '.join(view.getBooks())}", severity=logging.INFO)
         for bk in view.getBooks():
             doc = usfms.get(bk)
             if doc is None:
-                self.add("USFM Checks", f"No USFM for {bk}", severity=logging.WARN)
+                self.add("3. USFM/Checks", f"No USFM for {bk}", severity=logging.WARN)
                 continue
             
             if doc.xml.errors is None or not len(doc.xml.errors):
@@ -164,22 +176,22 @@ class Report:
                     emsg = f"{ref} {msg} at line {pos.l}, char {pos.c}"
                     failed.setdefault(bk, []).append(emsg)
         if len(passed):
-            self.add("USFM Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
+            self.add("3. USFM/Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
         if len(failed):
             for bk, elist in failed.items():
                 for m in elist:
-                    self.add(f"USFM Checks/{bk}", m, severity=logging.WARN)
+                    self.add(f"3. USFM Checks/{bk}", m, severity=logging.WARN)
         if "GLO" in view.getBooks():
             fltr = "Filtered" if view.get("c_filterGlossary", False) else "Unfiltered"
             asfn = "As Footnotes" if view.get("c_glossaryFootnotes", False) else ""
-            self.add("Peripheral Components", f"Glossary: {fltr} {asfn}", severity=logging.DEBUG)
+            self.add("7. Peripheral Components", f"Glossary: {fltr} {asfn}", severity=logging.DEBUG)
 
     def get_usfm(self, view, doc, bk):
         r = doc.getroot()
         essentials = "h toc1 toc2 toc3 p".split() # How do we check for other non-para USFM's?  c v etc.
         missing = [a for a in essentials if r.find(f'.//para[@style="{a}"]') is None]
         if len(missing):
-            self.add("USFM Checks", f'{bk} is missing the following essential markers: {" ".join(missing)}', severity=logging.ERROR)
+            self.add("3. USFM/Checks", f'{bk} is missing the following essential markers: {" ".join(missing)}', severity=logging.ERROR)
             return False
         return True
 
@@ -188,50 +200,49 @@ class Report:
 
     def get_general_info(self, view):
         widget_map = {
-            "Project Name":               ("Project/Overview", "l_projectFullName", 100, \
+            "Project Name":               ("1. Project/Overview", "l_projectFullName", 1100, \
                                             lambda v,w: (v.get("l_projectFullName", ""), logging.DEBUG)),
-            "Copyright":                  ("Project/Overview", "t_copyrightStatement", 80, \
+            "Copyright":                  ("1. Project/Overview", "t_copyrightStatement", 1080, \
                                             lambda v,w: (v.get("t_copyrightStatement", ""), logging.DEBUG)),
-            "License":                    ("Project/Overview", "ecb_licenseText", 60, \
+            "License":                    ("1. Project/Overview", "ecb_licenseText", 1060, \
                                             lambda v,w: (v.get("ecb_licenseText", ""), logging.DEBUG)),
                                                          
-            "Diglot Configuration":       ("Diglot/Setup", "c_diglot", 0, None), # More details to be added for this
-            "Page Size":                  ("Layout", "ecb_pagesize", 0, None),
-            "Two Column Layout":          ("Layout", "c_doublecolumn", 0, None),
-            "Mirrored Headers":           ("Layout", "c_mirrorpages", 0, None),
-            "Decorative Border":          ("Layout", "c_inclPageBorder", 0, \
+            "Diglot Configuration":       ("2. Layout/Diglot", "c_diglot", 0, None), # More details to be added for this
+            "Two Column Layout":          ("2. Layout", "c_doublecolumn", 0, None),
+            "Mirrored Headers":           ("2. Layout", "c_mirrorpages", 0, None),
+            "Decorative Border":          ("6. Features", "c_inclPageBorder", 0, \
                                             lambda v,w: (v.get("r_border").upper() if v.get("c_useOrnaments", False) else "ON, but Ornamental Decorations are <b>Off</b>", \
                                             logging.DEBUG if v.get("c_useOrnaments", False) else logging.WARN)),
-            "Ornamental Features":        ("Layout", "c_useOrnaments", 0, None),
-            "Thumb Tabs":                 ("Layout", "c_thumbtabs", 0, None),
-            "Interlinear":                ("Writing System", "c_interlinear", 0, \
+            "Ornamental Features":        ("6. Features", "c_useOrnaments", 0, None),
+            "Thumb Tabs":                 ("6. Features", "c_thumbtabs", 0, None),
+            "Interlinear":                ("6. Features", "c_interlinear", 0, \
                                             lambda v,w: ("Language Code: " + (v.get("t_interlinearLang") or "<b>Missing!</b>"), \
                                             logging.WARN if len(v.get("t_interlinearLang")) != 2 else logging.DEBUG)),
-            "Study Bible/Extended Notes": ("Notes and Refs", "c_extendedFnotes", 0, None), # how to count how many there are?
-            "Footnotes":                  ("Notes and Refs", "c_includeFootnotes", 0, None),
-            "Cross-References":           ("Notes and Refs", "c_includeXrefs", 0, None),
-            "Cross-Refs (other)":         ("Notes and Refs", "c_useXrefList", 0, \
+            "Study Bible/Extended Notes": ("2. Layout/Notes and Refs", "c_extendedFnotes", 0, None), # how to count how many there are?
+            "Footnotes":                  ("2. Layout/Notes and Refs", "c_includeFootnotes", 0, None),
+            "Cross-References":           ("2. Layout/Notes and Refs", "c_includeXrefs", 0, None),
+            "Cross-Refs (other)":         ("2. Layout/Notes and Refs", "c_useXrefList", 0, \
                                             lambda v,w: ("External List: " + (v.get("fcb_xRefExtListSource") or "<b>Unknown!</b>"), logging.DEBUG)),
-            "Pictures Enabled":           ("Illustrations", "c_includeillustrations", 0, None),
-            "Missing Images":             ("Illustrations", "l_missingPictureString", 0, \
+            "Pictures Enabled":           ("2. Layout/Illustrations", "c_includeillustrations", 0, None),
+            "Missing Images":             ("2. Layout/Illustrations", "l_missingPictureString", 0, \
                                             lambda v,w: (v.get("l_missingPictureString", "")[18:], logging.WARN)),
-            "Only Placeholders":          ("Illustrations", "c_figplaceholders", 0, \
+            "Only Placeholders":          ("2. Layout/Illustrations", "c_figplaceholders", 0, \
                                             lambda v,w: ("", logging.WARN if v.get(w, False) else logging.DEBUG)),
-            "PDF Version PDF/X-1a":       ("Output Format", "c_printArchive", 100, None),
-            "Crop Marks":                 ("Output Format", "c_cropmarks", 200, None),
-            "Watermark":                  ("Output Format", "c_applyWatermark", 50, \
+            "PDF Version PDF/X-1a":       ("8. Output Format", "c_printArchive", 100, None),
+            "Crop Marks":                 ("8. Output Format", "c_cropmarks", 200, None),
+            "Watermark":                  ("8. Output Format", "c_applyWatermark", 50, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
-            "Booklet Pagination":         ("Output Format", "fcb_pagesPerSpread", 30, \
+            "Booklet Pagination":         ("8. Output Format", "fcb_pagesPerSpread", 30, \
                                             lambda v,w: (v.get(w, "")+"-up", logging.DEBUG)),
-            "Front Matter PDF(s)":        ("Peripheral Components", "c_inclFrontMatter", 0, \
+            "Front Matter PDF(s)":        ("7. Peripheral Components", "c_inclFrontMatter", 0, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
-            "Table of Contents":          ("Peripheral Components", "c_autoToC", 0, None),
-            "Thumb Tabs":                 ("Peripheral Components", "c_thumbtabs", 0, None),
-            "Front Matter":               ("Peripheral Components", "c_frontmatter", 0, \
+            "Table of Contents":          ("7. Peripheral Components", "c_autoToC", 0, None),
+            "Thumb Tabs":                 ("6. Features", "c_thumbtabs", 0, None),
+            "Front Matter":               ("7. Peripheral Components", "c_frontmatter", 0, \
                                             lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_colophon", False) else logging.DEBUG)),
-            "Colophon":                   ("Peripheral Components", "c_colophon", 0, \
+            "Colophon":                   ("7. Peripheral Components", "c_colophon", 0, \
                                             lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_frontmatter", False) else logging.DEBUG)),
-            "Back Matter PDF(s)":         ("Peripheral Components", "c_inclBackMatter", 0, \
+            "Back Matter PDF(s)":         ("7. Peripheral Components", "c_inclBackMatter", 0, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
         }
         
@@ -253,29 +264,31 @@ class Report:
     def get_writingSystems(self, view):  # to do: use the actual script name from a _allscripts lookup instead of just the code
         s = view.get("fcb_script") or "Zyyy"
         s = "Default/Unknown" if s == "Zyyy" else s
-        self.add("Writing System", f"Script Code: {s}", severity=logging.WARN if len(s) > 4 else logging.DEBUG, order=100, txttype="html")
+        self.add("5. Writing System", f"Script Code: {s}", severity=logging.WARN if len(s) > 4 else logging.DEBUG, order=100, txttype="html")
 
         d = (view.get("fcb_textDirection") or "ltr").upper()
         rtl = s in rtlScripts
         sev = logging.WARN if (d == "RTL" and not rtl) or (d == "LTR" and rtl) or (d == "TTB" and s != "Mong") else logging.DEBUG
         suffix = " - <b>unexpected!</b>" if sev == logging.WARN else ""
-        self.add("Writing System", f"Text Direction: {d}{suffix}", severity=sev, txttype="html")
+        self.add("5. Writing System", f"Text Direction: {d}{suffix}", severity=sev, txttype="html")
         
         bb = view.get("c_RTLbookBinding", False)
         sev = logging.WARN  if (bb and d != "RTL" and not rtl) or (not bb and (d == "RTL" or rtl)) else logging.DEBUG
         if bb or sev == logging.WARN:
             suffix = " - <b>unexpected!</b>" if sev == logging.WARN else ""
-            self.add("Writing System", f"RTL Book Binding: {bb}{suffix}", severity=sev, txttype="html")
+            self.add("5. Writing System", f"RTL Book Binding: {bb}{suffix}", severity=sev, txttype="html")
             
         # to do: add other Additional Script Settings (snippet settings for the script)
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
 
-    def renderSinglePage(self, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
+    def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
                          page_num_text, num_columns, scaled_column_gap_px, label_font_size_px, binding_dir):
-        
-        text_block_content_text = "Single<br/>Column<br/>Text Block" if num_columns == 1 else "Double<br/>Column<br/>Text Block"
+
+        fntsz, lnspc = self.getSizeSpacing(view)
+        text_block_content_text = f"Single<br/>Column<br/>Text Block<br/><br/>{fntsz:.2f}pt/{lnspc:.2f}pt" if num_columns == 1 \
+                             else f"Double<br/>Column<br/>Text Block<br/><br/>{fntsz:.2f}pt/{lnspc:.2f}pt"
 
         scaled_text_block_w_px = scaled_page_w_px - scaled_physical_left_margin_px - scaled_physical_right_margin_px
         scaled_text_block_h_px = scaled_page_h_px - scaled_m_top_px - scaled_m_bottom_px
@@ -318,7 +331,7 @@ class Report:
         </div>"""
         return page_html
 
-    def generatePageSpreadVisualization(self, page_data, margin_data, layout_options, max_page_height_px=150):
+    def generatePageSpreadVisualization(self, view, page_data, margin_data, layout_options, max_page_height_px=150):
         if not all([page_data, margin_data, layout_options]):
             return "<p><em>Page, margin, or layout option data not available for visualization.</em></p>"
         try:
@@ -336,7 +349,6 @@ class Report:
         scale = max_page_height_px / page_h_mm
         scaled_page_w = page_w_mm * scale; scaled_page_h = page_h_mm * scale
         scaled_m_top = m_top_mm * scale; scaled_m_bottom = m_bottom_mm * scale
-        # scaled_side_margin = m_side_mm * scale; scaled_gutter = m_gutter_mm * scale # Not used directly after this
         scaled_col_gap = col_gap_mm * scale
         label_font_size = max(7, min(11, scaled_page_h / 20)) 
 
@@ -344,29 +356,21 @@ class Report:
         true_outer_mm = m_side_mm if not apply_gutter_to_outer else m_side_mm + m_gutter_mm
         
         page_num_left_visual, page_num_right_visual = ("4", "5") if binding_dir == 'LTR' else ("7", "6")
-        
-        # Physical margins for the page dummy on the LEFT of the spread
-        left_dummy_physical_left_margin_mm = true_outer_mm if binding_dir == 'LTR' else true_inner_mm
-        left_dummy_physical_right_margin_mm = true_inner_mm if binding_dir == 'LTR' else true_outer_mm
-        
-        # Physical margins for the page dummy on the RIGHT of the spread
-        right_dummy_physical_left_margin_mm = true_inner_mm if binding_dir == 'LTR' else true_outer_mm
-        right_dummy_physical_right_margin_mm = true_outer_mm if binding_dir == 'LTR' else true_inner_mm
 
-        left_page_html_content = self.renderSinglePage(
+        left_page_html_content = self.renderSinglePage(view,
             'left', scaled_page_w, scaled_page_h, scaled_m_top, scaled_m_bottom,
-            left_dummy_physical_left_margin_mm * scale, left_dummy_physical_right_margin_mm * scale,
+            true_outer_mm * scale, true_inner_mm * scale,
             {'top': m_top_mm, 'bottom': m_bottom_mm, 
-             'left': left_dummy_physical_left_margin_mm, 
-             'right': left_dummy_physical_right_margin_mm},
+             'left': true_outer_mm, 
+             'right': true_inner_mm},
             page_num_left_visual, num_columns, scaled_col_gap, label_font_size, binding_dir)
 
-        right_page_html_content = self.renderSinglePage(
+        right_page_html_content = self.renderSinglePage(view,
             'right', scaled_page_w, scaled_page_h, scaled_m_top, scaled_m_bottom,
-            right_dummy_physical_left_margin_mm * scale, right_dummy_physical_right_margin_mm * scale,
+            true_inner_mm * scale, true_outer_mm * scale,
             {'top': m_top_mm, 'bottom': m_bottom_mm, 
-             'left': right_dummy_physical_left_margin_mm, 
-             'right': right_dummy_physical_right_margin_mm},
+             'left': true_inner_mm, 
+             'right': true_outer_mm},
             page_num_right_visual, num_columns, scaled_col_gap, label_font_size, binding_dir)
         
         scaled_spine_gap_px = max(2, scaled_page_w / 40) 
@@ -387,7 +391,7 @@ class Report:
         """Generates a layout preview spread.
         If scenario_title is provided, it's used as a sub-section name."""
         
-        base_section = "Layout/Page Spread Preview"
+        base_section = "2. Layout/ Page Spread Preview"
         section_path = f"{base_section}/{scenario_title}" if scenario_title else base_section
         item_order = 100
         width, height = view.calcPageSize()
@@ -395,7 +399,7 @@ class Report:
         marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel, hfontsizemms = view.getMargins()
         # print(f"{topmarginmms=}\n{bottommarginmms=}\n{headerposmms=}\n{footerposmms=}\n{rulerposmms=}\n{headerlabel=}\n{footerlabel=}\n{hfontsizemms=}")
         gutter = float(view.get("s_pagegutter")) if view.get("c_pagegutter", False) else 0
-        # margin_data = {'top_mm': topmarginmms, 'bottom_mm': bottommarginmms, 
+        # margin_data = {'top_mm': topmarginmms, 'bottom_mm': bottommarginmms, # To discuss: whether we want to display top of text or top of header
         margin_data = {'top_mm': headerlabel, 'bottom_mm': footerlabel, 
                        'side_margin_mm': marginmms, 'binding_gutter_mm': gutter}
         cols = 2 if view.get("c_doublecolumn", False) else 1
@@ -409,7 +413,7 @@ class Report:
         if page_data:
             width_html = html.escape(str(page_data.get('width_mm','?')))
             height_html = html.escape(str(page_data.get('height_mm','?')))
-            page_layout_summary_parts.append(f"<b>Page Size (per page):</b> ({width_html}mm x {height_html}mm)")
+            page_layout_summary_parts.append(f"<b>Page Size (per page):</b> {float(width_html):.2f}mm x {float(height_html):.2f}mm")
         else:
             page_layout_summary_parts.append("<b>Page Size:</b> Data not available")
 
@@ -436,7 +440,7 @@ class Report:
         visualization_html = ""
         if page_data and margin_data and layout_options:
             try: # This is where to change the size of the visualization
-                visualization_html = self.generatePageSpreadVisualization(page_data, margin_data, layout_options, max_page_height_px=300)
+                visualization_html = self.generatePageSpreadVisualization(view, page_data, margin_data, layout_options, max_page_height_px=300)
             except Exception as e:
                 logging.error(f"Error during page spread visualization generation: {e}", exc_info=True)
                 visualization_html = f"<p style='color:red;'><i>Error generating page layout visualization: {html.escape(str(e))}</i></p>"
