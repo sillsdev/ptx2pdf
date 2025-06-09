@@ -55,6 +55,8 @@ _allbooks = ["FRT", "INT",
 
 nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
 
+rtlScripts = "Arab Armi Avst Hebr Mand Mani Nkoo Phli Phlp Phnx Prti Samr Sarb Sogd Sogo Syrc Thaa Yezi".split()
+
 def booknum(bookcode):
     if len(bookcode):
         if bookcode[0] in "ABC":

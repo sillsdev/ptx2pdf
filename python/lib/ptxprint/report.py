@@ -1,32 +1,13 @@
 import html # Added for html.escape
 import logging, os
 import xml.etree.ElementTree as et
+from ptxprint.utils import rtlScripts
 
 # DEBUG is informational
 # INFO is something that could fail, passed
 loglabels = ["\u00A0", "\u00A0", "\u2714", "W", "E", "F", "C"]
 logcolors = ["white", "lightskyblue", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
 
-_rtlScripts = {
-    "Arab",  # Arabic
-    "Armi",  # Imperial Aramaic
-    "Avst",  # Avestan
-    "Hebr",  # Hebrew
-    "Mand",  # Mandaic, Mandaean
-    "Mani",  # Manichaean
-    "Nkoo",  # N’Ko
-    "Phli",  # Inscriptional Pahlavi
-    "Phlp",  # Psalter Pahlavi
-    "Phnx",  # Phoenician
-    "Prti",  # Inscriptional Parthian
-    "Samr",  # Samaritan
-    "Sarb",  # Old South Arabian
-    "Sogd",  # Sogdian
-    "Sogo",  # Old Sogdian
-    "Syrc",  # Syriac
-    "Thaa",  # Thaana
-    "Yezi"   # Yezidi
-}
 class ReportEntry:
     def __init__(self, msg, severity=logging.DEBUG, order=0, txttype="html"):
         self.msg = msg
@@ -58,7 +39,7 @@ html_template = """
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <head>
     <title>PTXprint report on {project/id}/{config/name}</title>
-    <link rel="stylesheet" href="{css}/sakura.css" type="text/css" />
+    <link rel="stylesheet" href="{css}" type="text/css" />
 </head>
 <body>
 </body></html>
@@ -170,19 +151,28 @@ class Report:
     def get_usfms(self, view):
         usfms = view.get_usfms()
         passed = []
+        failed = []
         # self.add("USFMs", f"Books in Publication: {' '.join(view.getBooks())}", severity=logging.INFO)
         for bk in view.getBooks():
+            print(f"{bk}")
             doc = usfms.get(bk)
             if doc is None:
-                self.add("USFMs", f"No USFM for {bk}", severity=logging.WARN)
+                self.add("USFM Checks", f"No USFM for {bk}", severity=logging.WARN)
                 continue
-            if self.get_usfm(view, doc, bk):
-                if bk != "ISA":        # for testing only - remove this line later
-                    passed.append(bk)  # for testing only - fix indentation
+            
+            if doc.xml.errors is None or not len(doc.xml.errors):
+                passed.append(bk)
+            else:
+                for e in doc.xml.errors:
+                    (msg, pos, ref) = e #pos.l, pos.c = char num
+                    emsg = f"{ref} {msg} at line {pos.l}, char {pos.c}"
+                    failed.setdefault(bk, []).append(emsg)
         if len(passed):
             self.add("USFM Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
-        if len(passed) != len(view.getBooks()):
-            self.add("USFM Checks", f"Books <b>failed</b>: {' '.join(set(view.getBooks()) - set(passed))}", severity=logging.WARN)
+        if len(failed):
+            for bk, elist in failed.items():
+                for m in elist:
+                    self.add(f"USFM Checks/{bk}", m, severity=logging.WARN)
         if "GLO" in view.getBooks():
             fltr = "Filtered" if view.get("c_filterGlossary", False) else "Unfiltered"
             asfn = "As Footnotes" if view.get("c_glossaryFootnotes", False) else ""
@@ -270,7 +260,7 @@ class Report:
         self.add("Writing System", f"Script Code: {s}", severity=logging.WARN if len(s) > 4 else logging.DEBUG, order=100, txttype="html")
 
         d = (view.get("fcb_textDirection") or "ltr").upper()
-        rtl = s in _rtlScripts
+        rtl = s in rtlScripts
         sev = logging.WARN if (d == "RTL" and not rtl) or (d == "LTR" and rtl) or (d == "TTB" and s != "Mong") else logging.DEBUG
         suffix = " - <b>unexpected!</b>" if sev == logging.WARN else ""
         self.add("Writing System", f"Text Direction: {d}{suffix}", severity=sev, txttype="html")
@@ -284,17 +274,6 @@ class Report:
         # to do: add other Additional Script Settings (snippet settings for the script)
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
-    # For Layout Preview
-    def get_page_size_data(self): 
-        return {'width_mm': 148, 'height_mm': 210, 'name': 'A5'}
-    
-    def get_margins_for_preview(self, top_mm=20, bottom_mm=25, side_margin_mm=15, binding_gutter_mm=10): 
-        return {'top_mm': top_mm, 'bottom_mm': bottom_mm, 
-                'side_margin_mm': side_margin_mm, 'binding_gutter_mm': binding_gutter_mm}
-    
-    def get_layout_options_for_preview(self, num_columns=1, binding_direction='LTR', column_gap_mm=4, apply_gutter_to_outer_edge=False):
-        return {'num_columns': num_columns, 'binding_direction': binding_direction, 
-                'column_gap_mm': column_gap_mm, 'apply_gutter_to_outer_edge': apply_gutter_to_outer_edge}
 
     def _render_single_page_html_for_spread(self, page_side, 
                                              scaled_page_w_px, scaled_page_h_px,
@@ -342,10 +321,10 @@ class Report:
                 {text_block_content_text}
                 {column_divider_html if num_columns == 2 else ""}
             </div>
-            <div title="Top Margin: {margin_labels_mm['top']:.1f}mm" style="position: absolute; text-align:center; width:{scaled_text_block_w_px:.2f}px; top: {scaled_m_top_px/2 - label_font_size_px/2 -1:.2f}px; left: {scaled_physical_left_margin_px:.2f}px; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['top']:.0f}mm</div>
-            <div title="Bottom Margin: {margin_labels_mm['bottom']:.1f}mm" style="position: absolute; text-align:center; width:{scaled_text_block_w_px:.2f}px; bottom: {scaled_m_bottom_px/2 - label_font_size_px/2 -1:.2f}px; left: {scaled_physical_left_margin_px:.2f}px; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['bottom']:.0f}mm</div>
-            <div title="Left Margin: {margin_labels_mm['left']:.1f}mm" style="position: absolute; text-align:center; height:{scaled_text_block_h_px:.2f}px; left: {(scaled_physical_left_margin_px/2 - label_font_size_px*1.2/2):.2f}px; top: {scaled_m_top_px:.2f}px; writing-mode: tb-rl; transform: rotate(-180deg); display:flex; align-items:center; justify-content:center; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['left']:.0f}mm</div>
-            <div title="Right Margin: {margin_labels_mm['right']:.1f}mm" style="position: absolute; text-align:center; height:{scaled_text_block_h_px:.2f}px; right: {(scaled_physical_right_margin_px/2 - label_font_size_px*1.2/2):.2f}px; top: {scaled_m_top_px:.2f}px; writing-mode: tb-rl; transform: rotate(-180deg); display:flex; align-items:center; justify-content:center; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['right']:.0f}mm</div>
+            <div title="Top Margin: {margin_labels_mm['top']:.1f}mm" style="position: absolute; text-align:center; width:{scaled_text_block_w_px:.2f}px; top: {scaled_m_top_px/2 - label_font_size_px/2 -1:.2f}px; left: {scaled_physical_left_margin_px:.2f}px; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['top']:.1f}mm</div>
+            <div title="Bottom Margin: {margin_labels_mm['bottom']:.1f}mm" style="position: absolute; text-align:center; width:{scaled_text_block_w_px:.2f}px; bottom: {scaled_m_bottom_px/2 - label_font_size_px/2 -1:.2f}px; left: {scaled_physical_left_margin_px:.2f}px; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['bottom']:.1f}mm</div>
+            <div title="Left Margin: {margin_labels_mm['left']:.1f}mm" style="position: absolute; text-align:center; height:{scaled_text_block_h_px:.2f}px; left: {(scaled_physical_left_margin_px/2 - label_font_size_px*1.2/2):.2f}px; top: {scaled_m_top_px:.2f}px; writing-mode: tb-rl; transform: rotate(-180deg); display:flex; align-items:center; justify-content:center; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['left']:.1f}mm</div>
+            <div title="Right Margin: {margin_labels_mm['right']:.1f}mm" style="position: absolute; text-align:center; height:{scaled_text_block_h_px:.2f}px; right: {(scaled_physical_right_margin_px/2 - label_font_size_px*1.2/2):.2f}px; top: {scaled_m_top_px:.2f}px; writing-mode: tb-rl; transform: rotate(-180deg); display:flex; align-items:center; justify-content:center; font-size:{label_font_size_px:.0f}px; color: #36c; overflow:hidden; white-space:nowrap;">{margin_labels_mm['right']:.1f}mm</div>
         </div>"""
         return page_html
 
@@ -354,7 +333,6 @@ class Report:
             return "<p><em>Page, margin, or layout option data not available for visualization.</em></p>"
         try:
             page_w_mm = float(page_data['width_mm']); page_h_mm = float(page_data['height_mm'])
-            page_name_html = html.escape(str(page_data.get('name', 'N/A')))
             m_top_mm = float(margin_data['top_mm']); m_bottom_mm = float(margin_data['bottom_mm'])
             m_side_mm = float(margin_data['side_margin_mm']); m_gutter_mm = float(margin_data['binding_gutter_mm'])
             num_columns = int(layout_options.get('num_columns', 1))
@@ -370,7 +348,7 @@ class Report:
         scaled_m_top = m_top_mm * scale; scaled_m_bottom = m_bottom_mm * scale
         # scaled_side_margin = m_side_mm * scale; scaled_gutter = m_gutter_mm * scale # Not used directly after this
         scaled_col_gap = col_gap_mm * scale
-        label_font_size = max(6, min(9, scaled_page_h / 20)) 
+        label_font_size = max(7, min(11, scaled_page_h / 20)) 
 
         true_inner_mm = m_side_mm + m_gutter_mm if not apply_gutter_to_outer else m_side_mm
         true_outer_mm = m_side_mm if not apply_gutter_to_outer else m_side_mm + m_gutter_mm
@@ -406,11 +384,11 @@ class Report:
         text_block_h_mm_summary = page_h_mm - m_top_mm - m_bottom_mm
         gutter_desc = "Outer Edge" if apply_gutter_to_outer else "Spine/Inner Edge"
 
+            # <div style="font-size: 0.9em; margin-bottom: 10px;">
+                # Page Type: ({page_w_mm:.1f}mm x {page_h_mm:.1f}mm) | Text Area (per page): {text_block_w_mm_summary:.1f}mm x {text_block_h_mm_summary:.1f}mm | Binding: {binding_dir} | Gutter added to: {gutter_desc} | Columns: {num_columns}
+            # </div>
         html_output = f"""
         <div class="page-spread-visualization" style="text-align: center; padding: 10px 5px 5px 5px; margin-top:10px; border: 1px solid #eee; background-color:#f9f9f9;">
-            <div style="font-size: 0.9em; margin-bottom: 10px;">
-                Page Type: {page_name_html} ({page_w_mm:.1f}mm x {page_h_mm:.1f}mm) | Text Area (per page): {text_block_w_mm_summary:.1f}mm x {text_block_h_mm_summary:.1f}mm | Binding: {binding_dir} | Gutter added to: {gutter_desc} | Columns: {num_columns}
-            </div>
             <div class="spread-container" style="display: flex; justify-content: center; align-items: flex-start; gap: {scaled_spine_gap_px:.2f}px;">
                 {left_page_html_content}
                 {right_page_html_content}
@@ -425,17 +403,24 @@ class Report:
         base_section = "Layout/Page Spread Preview"
         section_path = f"{base_section}/{scenario_title}" if scenario_title else base_section
         item_order = 100
-
-        page_data = self.get_page_size_data()
-        margin_data = self.get_margins_for_preview()
-        layout_options = self.get_layout_options_for_preview()
+        width, height = view.calcPageSize()
+        page_data =   {'width_mm': width, 'height_mm': height}
+        marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel, hfontsizemms = view.getMargins()
+        gutter = float(view.get("s_pagegutter")) if view.get("c_pagegutter", False) else 0
+        margin_data = {'top_mm': topmarginmms, 'bottom_mm': bottommarginmms, 
+                       'side_margin_mm': marginmms, 'binding_gutter_mm': gutter}
+        cols = 2 if view.get("c_doublecolumn", False) else 1
+        bb = "RTL" if view.get("c_RTLbookBinding", False) else "LTR"
+        colgap = float(view.get("s_colgutterfactor", 4))
+        outgut = view.get("c_outerGutter", False)
+        layout_options = {'num_columns': cols, 'binding_direction': bb, 
+                          'column_gap_mm': colgap, 'apply_gutter_to_outer_edge': outgut}
         
         page_layout_summary_parts = []
         if page_data:
-            page_name_html = html.escape(str(page_data.get('name', 'N/A')))
             width_html = html.escape(str(page_data.get('width_mm','?')))
             height_html = html.escape(str(page_data.get('height_mm','?')))
-            page_layout_summary_parts.append(f"<b>Page Size (per page):</b> {page_name_html} ({width_html}mm x {height_html}mm)")
+            page_layout_summary_parts.append(f"<b>Page Size (per page):</b> ({width_html}mm x {height_html}mm)")
         else:
             page_layout_summary_parts.append("<b>Page Size:</b> Data not available")
 
@@ -462,7 +447,7 @@ class Report:
         visualization_html = ""
         if page_data and margin_data and layout_options:
             try:
-                visualization_html = self._generate_page_spread_visualization_html(page_data, margin_data, layout_options, max_page_height_px=150)
+                visualization_html = self._generate_page_spread_visualization_html(page_data, margin_data, layout_options, max_page_height_px=250)
             except Exception as e:
                 logging.error(f"Error during page spread visualization generation: {e}", exc_info=True)
                 visualization_html = f"<p style='color:red;'><i>Error generating page layout visualization: {html.escape(str(e))}</i></p>"

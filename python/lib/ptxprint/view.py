@@ -428,14 +428,20 @@ class ViewModel:
         self.set("l_footer2edge", "{}mm".format(f2s(footerlabel, 1)))
         return True
 
+    def calcPageSize(self):
+        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        if m:
+            pagewidth  = float(m.group(1)) * unitConv.get(m.group(2), 1)
+            pageheight = float(m.group(3)) * unitConv.get(m.group(4), 1)
+        else:
+            pagewidth  = 148
+            pageheight = 210
+        return pagewidth, pageheight
+
     def calcBodyHeight(self):
         linespacing = float(self.get("s_linespacing")) * 25.4 / 72.27
-        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        m = re.match(r"^.*?[,xX]\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
-        if m:
-            pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
-        else:
-            pageheight = 210
+        pagewidth, pageheight = self.calcPageSize()
         bottommargin = float(self.get("s_bottommargin"))
         topmargin = float(self.get("s_topmargin"))
         font = self.get("bl_fontR")
