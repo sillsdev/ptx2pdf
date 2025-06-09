@@ -5602,7 +5602,7 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
         self.changed()
 
-    def _checkUpdate(self, wid, timediff):
+    def _checkUpdate(self, wid, timediff, background):
         try:
             logger.debug(f"Trying to access URL to see if updates are available")
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
@@ -5626,14 +5626,9 @@ class GtkViewModel(ViewModel):
         def disabledownload():
             wid.set_visible(False)
             self.thread = None
-        if background:
-            GLib.idle_add(enabledownload if newv > currv else disabledownload)
-        elif newv > currv:
-            enabledownload()
-        else:
-            disabledownload()
+        GLib.idle_add(enabledownload if newv > currv else disabledownload)
 
-    def checkUpdates(self, background=True):
+    def checkUpdates(self):
         wid = self.builder.get_object("btn_download_update")
         lastchecked = self.userconfig.getfloat("init", "checkedupdate", fallback=0)
         if time.time() - self.startedtime < 300: # i.e. started less than 5 mins ago
