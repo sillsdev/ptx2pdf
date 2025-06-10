@@ -6,8 +6,9 @@ import numpy as np
 class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, diffable = False):
         super().__init__(fname, diffable)
-        self.lines = [[]] # numpy array of lines 
+        self.lines = np.empty([205,15]) # numpy array of lines 
         self.currline = 0 # index of current line
+        self.currindex = 0 # index of current item in line
         
 
     def currpos(self):
@@ -18,33 +19,53 @@ class SpacingOddities(XDViPositionedReader):
     def parmop(self, opcode, parm, data):
         prev_pos = self.currpos()
         super().parmop(opcode, parm, data)
-        # value change of v indicites a new line
+
+        # value change of h indicates new glyph / space
+        if self.h != prev_pos[0]:
+            # add the width of item to current line
+            self.add_item(prev_pos)
+            
+        # value change of v indicates a new line
         if self.v != prev_pos[1]:
-            # save the end position of the previous line
-            self.lines[self.currline].append(prev_pos)
-            # add new line
-            self.add_line(self.currpos())
+            # save the width of the previous line
+            self.lines[self.currline, 2] = prev_pos[0] - self.lines[self.currline, 0]
+            
+            # add new line with starting positions
+            self.add_line()
 
         
     def simple(self, opcode, parm, data):
         prev_pos = self.currpos()
         super().simple(opcode, parm, data)
+        # value change of h indicates new glyph / space
+        if self.h != prev_pos[0]:
+            # add the width of item to current line
+            self.add_item(prev_pos)
         if self.v  != prev_pos[1]:
-            # save endpos of previous line
-            self.lines[self.currline].append(prev_pos)
+            self.lines[self.currline, 2] = prev_pos[0] - self.lines[self.currline, 0] # width of line
             # add new line
-            self.add_line(self.currpos())
+            self.add_line()
 
-    # TODO check what push does with v since it includes positions
+    # TODO: check what push does with v since it includes positions
     
-    # TODO check what pop does with v since it includes positions
+    # TODO: check what pop does with v since it includes positions
     
-    # TODO check what bop does with psitions 
+    # TODO: check what bop does with positions 
 
-    def add_line(self, startpos):
-        self.lines.append([startpos])
-        self.currline = len(self.lines) - 1
-        # TODO: handle size problems of np array, resize if necessary.
+    # FIXME: is the topt method of positioned reader actually used?
+
+    def add_line(self):
+        self.currline += 1
+        self.lines[self.currline,0] = self.h
+        self.lines[self.currline,1] = self.v
+        self.currindex = 3
+        # FIXME: handle size problems of np array, resize if necessary.
+    
+    def add_item(self, prev_pos):
+        # add width of item at current position
+        self.lines[self.currline, self.currindex] = self.h - prev_pos[0]
+        self.currindex += 1
+        # FIXME: handle outofbound error of np array, resize if necessary.
 
 
 
@@ -72,10 +93,8 @@ def main():
             break
         pass
     # if pageno gets to x, stop. to avoid overload haha.
-    for l in reader.lines:
-        print(l)
-    print(f"Dimensions of array are {len(reader.lines)}")
-    print(f"coordinate is a {type(reader.v)}")
+    #for l in reader.lines:
+     #   print(l)
     
 
 if __name__ == "__main__":
