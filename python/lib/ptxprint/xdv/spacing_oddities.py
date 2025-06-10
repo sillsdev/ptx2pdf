@@ -105,6 +105,8 @@ class SpacingOddities(XDViPositionedReader):
             return 0
         ratio = glyph / space
         return ratio 
+    
+    
 
     # todo: when it's the time, the output of xxx method in og class gives the book + verse.
 
@@ -132,23 +134,29 @@ def main():
     #if len(sys.argv) < 3:
      #   print("Don't really know what is happening but it looks cool.")
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
-    for (opcode, data) in reader.parse():
-        if reader.pageno>1:
-            break
-        pass
-    # if pageno gets to x, stop. to avoid overload haha.
-    ratios = []
-    for l in reader.lines:
-        ratios.append(reader.glyph_space_ratio(l))
+    
+    pgn = 1
+    ratio_stats = []
+    while pgn <10:
+        for (opcode, data) in reader.parse():
+            if reader.pageno > pgn:
+                break
+            pass
+        # calculate glyph/space ratio per line
+        ratios = []
+        for l in reader.lines:
+            ratios.append(reader.glyph_space_ratio(l))
+        filt_ratios = [i for i in ratios if i != 0 and i != 1]
+        ratios_series = pd.Series(filt_ratios)
+        ratio_stats.append(ratios_series.describe())
+        pgn +=1
+        print(f"Starting to calculate up to page number {pgn} now...")
 
-    print(ratios)
-    print(f"Length is {len(ratios)}")
-    rat = [i for i in ratios if i != 0]
-    rat2 = [i for i in rat if i != 1]
-    testje = pd.Series(ratios)
-    print(testje.describe())
-    test2 = pd.Series(rat2)
-    print(test2.describe())
+    ratios_frame = pd.concat(ratio_stats, axis=1)
+    ratios_frame.columns = ['1','2','3','4','5','6','7','8','9']
+    print(ratios_frame) 
+    #with open('stats.txt', 'w') as f:
+     #   f.write(ratios_frame.to_string())
 
 if __name__ == "__main__":
     main()
