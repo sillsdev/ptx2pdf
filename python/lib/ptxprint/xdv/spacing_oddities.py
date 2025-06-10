@@ -2,6 +2,7 @@ from xdv import XDViPositionedReader
 import numpy as np
 import math
 import pandas as pd
+import matplotlib.pyplot as plt
 
 itypes = {0: 'h', 1: 'v', 2: 'width', 3: 'glyph', 4: 'space'}
 class SpacingOddities(XDViPositionedReader):
@@ -157,6 +158,10 @@ def main():
     print(ratios_frame) 
     #with open('stats.txt', 'w') as f:
      #   f.write(ratios_frame.to_string())
+    print(ratios_frame.index)
+    new_frame = ratios_frame.drop(['count'])
+    new_frame.plot(kind = 'box')
+    plt.show()
 
 if __name__ == "__main__":
     main()
