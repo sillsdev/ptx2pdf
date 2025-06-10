@@ -1,6 +1,7 @@
 from xdv import XDViPositionedReader 
 import numpy as np
 import math
+import pandas as pd
 
 itypes = {0: 'h', 1: 'v', 2: 'width', 3: 'glyph', 4: 'space'}
 class SpacingOddities(XDViPositionedReader):
@@ -55,7 +56,7 @@ class SpacingOddities(XDViPositionedReader):
     def add_line(self, prev_pos):
         # add the width of the previous line in position 2
         self.lines[self.currline, 2, 0] = 2
-        self.lines[self.currline, 2, 1] = prev_pos[0] - self.lines[self.currline, 0, 0]    
+        self.lines[self.currline, 2, 1] = abs(prev_pos[0] - self.lines[self.currline, 0, 0])    
         self.currline += 1
         if self.currline >= self.lines.shape[0]:
             nlines, nitems, nwidths = self.lines.shape
@@ -75,22 +76,48 @@ class SpacingOddities(XDViPositionedReader):
             self.lines = np.concatenate((self.lines, temp_array), axis = 1)
         # add item with its type to the line
         self.lines[self.currline, self.currindex, 0] = itype
-        self.lines[self.currline, self.currindex, 1] = self.h - prev_pos[0]
+        self.lines[self.currline, self.currindex, 1] = abs(self.h - prev_pos[0])
         self.currindex += 1
+    
+    def multiparm(self, opcode, parm, data):
+        prev_pos = self.currpos()
+        super().multiparm(opcode, parm, data)
+        if self.currpos() != prev_pos:
+            print("Multiparm changes values")
 
-    # TODO: check if xxx changes position in any way
-    # TODO: check what changes when multiparm is used.
-    # TODO: add set_char, since this changes h with the width of the glyph printed. (not called??)
-    # TODO: doublecheck if there's any other way in which the cursor moves
+    def glyph_space_ratio(self, line):
+        # line is a row of an array, in itself a 2d array with items along y and type + width along z
+        # all widths are positive since we took abs of differences.
+        # fixme: there's a bunch of lines with either glyphspace = 0 or space = 0, why?
+        glyph = 0
+        space = 0
+        for itype, width in line:
+            match itype:
+                case 2:
+                    line_width = width
+                case 3:
+                    glyph += width
+                case 4:
+                    space += width
+        if space == 0:
+            return 1
+        elif glyph == 0:
+            return 0
+        ratio = glyph / space
+        return ratio 
+
+    # todo: when it's the time, the output of xxx method in og class gives the book + verse.
 
     # NEXT: Perform statistics on the lines: ratio, average etc.
     
     # FIXME: is the topt method of positioned reader actually used? Are we measuring in pt now?
 
+    # NOTE: op argument is never lower than 128, so set_char is not called and is not overwritten.
+    # NOTE: multiparm does not change positions, so not overwritten.
+    # note: xxx method also doesn't change spacing.
+
 class Spaces:
     def __init__(self, x, y, z):
-
-       
         self.book = str()
         self.chapter = str()
         self.verse = str()
@@ -101,22 +128,27 @@ class Spaces:
 
 
 def main():
-   # import sys
+    #import sys
     #if len(sys.argv) < 3:
      #   print("Don't really know what is happening but it looks cool.")
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
     for (opcode, data) in reader.parse():
-        if reader.pageno>10:
+        if reader.pageno>1:
             break
         pass
     # if pageno gets to x, stop. to avoid overload haha.
-   # for l in reader.lines:
-    #    print(l)
-    print(reader.lines.shape)
-    #print(reader.lines[25, 0, 1])
-    #print(reader.lines[25, 1, 0])
+    ratios = []
+    for l in reader.lines:
+        ratios.append(reader.glyph_space_ratio(l))
+
+    print(ratios)
+    print(f"Length is {len(ratios)}")
+    rat = [i for i in ratios if i != 0]
+    rat2 = [i for i in rat if i != 1]
+    testje = pd.Series(ratios)
+    print(testje.describe())
+    test2 = pd.Series(rat2)
+    print(test2.describe())
 
 if __name__ == "__main__":
     main()
-    
-   
