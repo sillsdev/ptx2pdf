@@ -994,7 +994,7 @@
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
- \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
+ \def\@v@ ##1 {\let\oldv@rse\v@rse\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
   \ifdiglot\edef\dc@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\else\edef\c@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\fi
   \leavevmode % ensure we are in horizontal mode to build paragraph. This may output a chapter number
   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
@@ -1007,6 +1007,11 @@
                          \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
    \fi
    \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+  \else
+    \message{verse was \meaning\oldv@rse}%
+    \ifx \oldv@rse\empty
+     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+    \fi
   \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
