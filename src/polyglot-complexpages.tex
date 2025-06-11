@@ -117,10 +117,11 @@
   \def\sstackdown#1/#2\E{\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackdown\fi\n@x #2\E}
   \def\sstackrelax#1\E{}
     
-  \def\complexs@tpolyp@ges#1\E{%page processing
+  \def\complexs@tpolyp@ges#1\E{%page processing (#1 is a page
     \p@lyr@wno=0
     \let\d@@\@complexs@tpolyp@ges
     \sstackdown#1/\E
+    \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
     \global\advance\p@lyp@geno by 1
   }
   \def\complexr@vpolyp@ges#1\E{%reverse processing
@@ -183,7 +184,7 @@
   \fi
   \advance\p@lyr@wno by 1 
 }
-\def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing
+\def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing (#1 describes a row)
   \edef\this@p@lyp@gestring{\p@lyp@gestring}% Expand once and cache
   \x@\def\csname cts@\this@p@lyp@gestring\endcsname{#1}% What columns are in this row?
   \x@\edef\x@\p@gestrings\x@{\p@gestrings,#1}% % What is the complete list of sections?
@@ -304,6 +305,7 @@
   \ifx\tmp\empty\errmessage{polyglotpages called with empty argument. That's an error}\fi
   \let\d@=\complexs@tpolyp@ges
   \cstackdown#1,\E
+  \x@\xdef\csname p@lypgcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
   \reset@colindexes
   \p@lyp@geno=0
   \let\d@=\complexr@vpolyp@ges
@@ -334,8 +336,18 @@
   \x@\each@col\diglot@list\E
 }
 
-\@cplx@measure{%Measure the size of current chunks
-  
+
+\@@cplx@measure#1\E{%Measure the current row height of the row #1 
+  \let\col@do\max@boxsz\def\v@lpfx{}\def\v@lsfx{box}\dimen1=0pt
+  \x@\let\x@\tmp\csname cts@#1\endcsname
+  \x@\each@col\tmp\E
+  \csname #1@ht\endcsname=\dimen1
+  \advance\dimen0 by \dimen1
+}
+\@cplx@measure{%Measure the current page sizes of the assigned chunks
+  \dimen0=0pt
+  \let\d@\@@cplx@measure
+  \x@\cstackdown\p@gestrings\E
 }
   
 \plugin@endif
