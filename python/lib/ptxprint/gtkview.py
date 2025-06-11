@@ -82,8 +82,8 @@ _allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Aghb" : "Caucasian Albani
     "Elba" : "Elbasan", "Elym" : "Elymiac", "Ethi" : "Ethiopic (Geʻez)",
     "Geor" : "Georgian (Mkhedruli)", "Glag" : "Glagolitic", "Gong" : "Gunjala-Gondi", "Gonm" : "Masaram-Gondi",
     "Goth" : "Gothic", "Gran" : "Grantha", "Grek" : "Greek", "Gujr" : "Gujarati", "Guru" : "Gurmukhi",
-    "Hang" : "Hangul (Hangŭl, Hangeul)",
-    "Hano" : "Hanunoo (Hanunóo)", "Hatr" : "Hatran", "Hebr" : "Hebrew",
+    "Hang" : "Hangul (Hangŭl, Hangeul)", "Hano" : "Hanunoo (Hanunóo)", 
+    "Hans" : "Han (Simplified)", "Hant" : "Han (Traditional)", "Hatr" : "Hatran", "Hebr" : "Hebrew",
     "Hira" : "Hiragana", "Hmng" : "Pahawh-Hmong",
     "Hung" : "Old Hungarian (Runic)",
     "Ital" : "Old Italic (Etruscan, Oscan)",
@@ -1570,13 +1570,23 @@ class GtkViewModel(ViewModel):
         else:
             doError(txt, **kw)
 
-    def doStatus(self, txt=""):
+    def doStatus(self, txt=""): 
+        btn = self.builder.get_object("btn_dismissStatusLine")
+        if txt.startswith(r"\u"): # i.e. the results of an Alt-X (show unicode chars)
+            btn.set_label(_(" Copy to Clipboard "))
+        else:
+            btn.set_label("Dismiss")
         sl = self.builder.get_object("l_statusLine")
         self.set("l_statusLine", txt)
         status = len(self.get("l_statusLine"))
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
         
     def onHideStatusMsgClicked(self, btn):
+        t = self.builder.get_object("l_statusLine").get_label() 
+        if t.startswith(r"\u"): # If the status message contains the results of an Alt-X (show unicode chars)
+            clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+            clipboard.set_text(t, -1)
+            clipboard.store()
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(False)
 
     def waitThread(self, thread):
@@ -3935,43 +3945,6 @@ class GtkViewModel(ViewModel):
         if switch:
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-
-    def editFileOLDdoNotUse(self, file2edit, loc="wrk", pgid="tb_Settings1", switch=None): # keep param order
-        if switch is None:
-            switch = pgid == "tb_Settings1"
-        pgnum = self.notebooks["Viewer"].index(pgid)
-        mpgnum = self.notebooks["Main"].index("tb_Viewer")
-        if switch:
-            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-        fpath = self._locFile(file2edit, loc)
-        if fpath is None:
-            return
-        label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
-        if pgid == "tb_Settings1":
-            currpath = label.get_tooltip_text()
-            oldlabel = self.builder.get_object("l_Settings2")
-            oldpath = oldlabel.get_tooltip_text()
-            if fpath == oldpath:
-                label = oldlabel
-                pgnum += 1
-            elif fpath != currpath:
-                self.onSaveEdits(None, pgid="tb_Settings2")
-                oldlabel.set_tooltip_text(label.get_tooltip_text())
-                oldlabel.set_text(label.get_text())
-                self.builder.get_object("gr_editableButtons").set_sensitive(True)
-                label.set_text(file2edit)
-                buf = self.fileViews[pgnum][0]
-                text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-                self.fileViews[pgnum+1][0].set_text(text2save)
-        label.set_tooltip_text(fpath)
-        if os.path.exists(fpath):
-            with open(fpath, "r", encoding="utf-8") as inf:
-                txt = inf.read()
-            self.fileViews[pgnum][0].set_text(txt)
-            self.onViewerFocus(self.fileViews[pgnum][1], None)
-        else:
-            self.fileViews[pgnum][0].set_text(_("# This file doesn't exist yet!\n# Edit here and Click 'Save' to create it."))
 
     def editFile_delayed(self, *a):
         GLib.idle_add(self.editFile, *a)
