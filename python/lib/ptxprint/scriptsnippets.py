@@ -1,11 +1,11 @@
-import re, traceback
+import regex, traceback
 from ptxprint.minidialog import MiniCheckButton
 from ptxprint.reference import RefSeparators
 from ptxprint.utils import _
 
 def makeChange(pattern, to, flags=0, context=None):
     frame =  traceback.extract_stack(limit=2)[0]
-    return (context, re.compile(pattern, flags), to, f"{frame.filename} line {frame.lineno}")
+    return (context, regex.compile(pattern, flags), to, f"{frame.filename} line {frame.lineno}")
 
 class ScriptSnippet:
     dialogstruct = None
@@ -60,7 +60,7 @@ nonbodymarkers = ("id", "h", "h1")    # keep in toc to allow wrapping
 def onlybody(fn, bj, dat):
     res = []
     for l in dat.split("\n"):
-        m = re.match(r"^\\(\S+) ", l)
+        m = regex.match(r"^\\(\S+) ", l)
         if m:
             if m.group(1) in nonbodymarkers:
                 res.append(l)
@@ -71,7 +71,7 @@ def onlybody(fn, bj, dat):
 def nonbody(fn, bj, dat):
     res = []
     for l in dat.split("\n"):
-        m = re.match(r"^\\(\S+) ", l)
+        m = regex.match(r"^\\(\S+) ", l)
         if m:
             if m.group(1) not in nonbodymarkers:
                 res.append(l)
@@ -82,7 +82,7 @@ def nonbody(fn, bj, dat):
 def notattrib(fn, bj, dat):
     #if "/" in dat:
     #    import pdb; pdb.set_trace()
-    b = re.split(r"((?<!\\)\|.*?\\[a-z*])", dat)
+    b = regex.split(r"((?<!\\)\|.*?\\[a-z*])", dat)
     for i, w in enumerate(b[0::2]):
         b[2*i] = fn(w)
     return "".join(b)
@@ -109,9 +109,9 @@ class mymr(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
         res = [makeChange(r'(\s)/', r'\1'),
-               makeChange('([\u00AB\u2018\u201B\u201C\u201F\u2039\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20])/', r'\1', re.S),
-               makeChange('/([\u00BB\u2019\u201D\u203A\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21])', r'\1', re.S),
-               makeChange('/([\\s\u104A\u104B])', r'\1', re.S),
+               makeChange('([\u00AB\u2018\u201B\u201C\u201F\u2039\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20])/', r'\1', regex.S),
+               makeChange('/([\u00BB\u2019\u201D\u203A\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21])', r'\1', regex.S),
+               makeChange('/([\\s\u104A\u104B])', r'\1', regex.S),
                makeChange(r'/', "\u200B", context=notattrib),
                makeChange('\u200B', "", context=nonbody)]
         if view.get("c_scrmymrSyllable"):
@@ -283,4 +283,23 @@ class beng(ScriptSnippet):
                        "[\u09C7-\u09CC][^\\\\\\s]*?)(?=\\s)", "\uFDEC\\1\uFDED")
             ]
         return res
+
+class hans(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrcjkgrid", _("Enabling horizontal gridding"))
+    ]
+    @classmethod
+    def regexes(cls, view):
+        res = []
+        if view.get("c_scrcjkgrid", False):
+            res.append(makeChange(r"(?<!\\\S+)\s+(?=\\v\s)", ""))
+        return res
+
+    @classmethod
+    def tex(cls, view):
+        res = []
+        res.append("% Hans script snippet")
+        if view.get("c_scrcjkgrid", False):
+            res.append(r"\cjkgridchapterbox")
+        return "\n".join(res)
 
