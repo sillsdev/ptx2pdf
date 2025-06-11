@@ -399,8 +399,8 @@ class Report:
         marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel, hfontsizemms = view.getMargins()
         # print(f"{topmarginmms=}\n{bottommarginmms=}\n{headerposmms=}\n{footerposmms=}\n{rulerposmms=}\n{headerlabel=}\n{footerlabel=}\n{hfontsizemms=}")
         gutter = float(view.get("s_pagegutter")) if view.get("c_pagegutter", False) else 0
-        # margin_data = {'top_mm': topmarginmms, 'bottom_mm': bottommarginmms, # To discuss: whether we want to display top of text or top of header
-        margin_data = {'top_mm': headerlabel, 'bottom_mm': footerlabel, 
+        # margin_data = {'top_mm': headerlabel, 'bottom_mm': footerlabel,  # To discuss: whether we want to display top of text or top of header
+        margin_data = {'top_mm': topmarginmms, 'bottom_mm': bottommarginmms,
                        'side_margin_mm': marginmms, 'binding_gutter_mm': gutter}
         cols = 2 if view.get("c_doublecolumn", False) else 1
         bb = "RTL" if view.get("c_RTLbookBinding", False) else "LTR"
