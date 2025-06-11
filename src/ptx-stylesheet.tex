@@ -984,6 +984,7 @@
 
 \newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
+\newif\ifOmitAllVerses \OmitAllVersesfalse
 \newif\ifNoHangVerseNumberOne\NoHangVerseNumberOnetrue
 \newif\ifHangVA\HangVAfalse
 \newif\iffilehasverses % Usercode (e.g. book end marks) might want to know this
@@ -1012,9 +1013,8 @@
   % Otherwise make ll@p do nothing.
   \ifdim\lastkern=-1sp \hangingversetrue\fi
   \ifversion{4}{\ifMarginalVerses\let\printverse\defaultprintverse
-                  \else\ifVerseRefs
+                  \else\ifOmitAllVerses\let\printverse=\noprintv@rse\else
                     \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
-                    \else\let\printverse=\noprintv@rse
                 \fi\fi}{\ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi}%
   %\trace{hv}{lastkern \the\dimen0}%
   \bgroup
@@ -1039,8 +1039,9 @@
      \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
      \kern\AfterVerseSpaceFactor\FontSizeUnit
    \else
-    \ifreftooltip\ch@ptooltipstart\fi\printverse\ifreftooltip\ch@ptooltipend\fi
-    %\printverse
+    \ifreftooltip\ch@ptooltipstart\fi
+    \printverse
+    \ifreftooltip\ch@ptooltipend\fi
    \fi
   \fi
   \egroup
