@@ -1011,7 +1011,11 @@
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
   % Otherwise make ll@p do nothing.
   \ifdim\lastkern=-1sp \hangingversetrue\fi
-  \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+  \ifversion{4}{\ifMarginalVerses\let\printverse\defaultprintverse
+                  \else\ifVerseRefs
+                    \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+                    \else\let\printverse=\noprintv@rse
+                \fi\fi}{\ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi}%
   %\trace{hv}{lastkern \the\dimen0}%
   \bgroup
   \ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
@@ -1245,6 +1249,7 @@
     \cstyle{va}{\altern@teverse}\NBSP%
   \fi
 }
+\def\noprintv@rse{}
 \newif\ifSeparateVerseAdornments \SeparateVerseAdornmentstrue
 \newif\ifadorningrange
 
@@ -1814,6 +1819,7 @@
 
 %+csty_onetime
 \newif\ifmarginalVerseIsMargin \marginalVerseIsMarginfalse
+\newif\ifMarginalVerses \MarginalVersesfalse
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but (just) before processing the first USFM file
  \inheritb@rders % Process border-parameter inheritance
