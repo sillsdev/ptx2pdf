@@ -8,9 +8,9 @@ itypes = {0: 'h', 1: 'v', 2: 'width', 3: 'glyph', 4: 'space'}
 class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, diffable = False):
         super().__init__(fname, diffable)
-        self.lines = np.empty([200, 10, 2]) # numpy array of lines, items, width/type
+        self.lines = np.zeros([200, 10, 2]) # numpy array of lines, items, width/type
         self.currline = 0 # index of current line, np array row
-        self.currindex = 0 # index of current item in line, np array column
+        self.currindex = 3 # index of current item in line, np array column
         
     def currpos(self):
         # Returns a tuple of the coordinates of the current position: h,v,w,x,y,z
@@ -71,14 +71,14 @@ class SpacingOddities(XDViPositionedReader):
     def add_line(self, prev_pos):
         # fixme: this is not a foolproof method since np empty initializes with random values
         # Check if previous line is empty, otherwise re-use space.
-        if self.currindex == 3:
+        if self.currindex != 3:
             self.lines[self.currline, 2, 0] = 2
             self.lines[self.currline, 2, 1] = abs(prev_pos[0] - self.lines[self.currline, 0, 0])    
             self.currline += 1
         # resize array if out of bounds
         if self.currline >= self.lines.shape[0]:
             nlines, nitems, nwidths = self.lines.shape
-            temp_array = np.empty([math.ceil(1.5*nlines), nitems, nwidths])
+            temp_array = np.zeros([math.ceil(1.5*nlines), nitems, nwidths])
             self.lines = np.concatenate((self.lines, temp_array))            
         # add starting v of new line
         self.lines[self.currline,1,0] = 1
@@ -88,12 +88,13 @@ class SpacingOddities(XDViPositionedReader):
     def add_item(self, prev_pos, itype):
         # If first item in line, save starting h of line.
         if self.currindex == 3:
+            # note: this compares float to int i think, but it does work
             self.lines[self.currline, 0, 0] = 0
             self.lines[self.currline, 0, 1] = prev_pos[0]
         # resize array if out of bounds
         if self.currindex >= self.lines.shape[1]:
             nlines, nitems, nwidths = self.lines.shape
-            temp_array = np.empty([nlines, math.ceil(1.5*nitems), nwidths])
+            temp_array = np.zeros([nlines, math.ceil(1.5*nitems), nwidths])
             self.lines = np.concatenate((self.lines, temp_array), axis = 1)
         # add item with its type to the line
         self.lines[self.currline, self.currindex, 0] = itype
@@ -105,6 +106,12 @@ class SpacingOddities(XDViPositionedReader):
         super().multiparm(opcode, parm, data)
         if self.currpos() != prev_pos:
             print("Multiparm changes values")
+
+    def remove_empty_lines(self):
+        for l in self.lines:
+            for a,b in l:
+                if a ==0 and b == 0:
+                    return 0
 
     def glyph_space_ratio(self, line):
         # line is a row of an array, in itself a 2d array with items along y and type + width along z
@@ -127,19 +134,26 @@ class SpacingOddities(XDViPositionedReader):
         ratio = glyph / space
         return ratio 
     
-    def get_spaces(self, line):
-        spaces = 0
-        count = 0
-        width = line[2,1]
+    def glyph_space_stats(self, line):
+        s_count = 0
+        g_count = 0
+        s_width = 0
+        g_width = 0
+        l_width = line[2,1]
+        if l_width < 1:
+            print(f"width of line is only {l_width}")
         for itype, width in line:
+            if itype == 3:
+                g_count += 1
+                g_width += width
             if itype == 4:
-                spaces += width
-                count +=1
+                s_count += 1
+                s_width += width
+        if s_count == 0 and g_count == 0:
+            print("This line has 0 spaces and 0 glyphs")
+        return [l_width, s_count, g_count, s_width, g_width]
+    
 
-        return spaces, count, width
-    
-    
-    # todo: extract the glyphs and get stats on htem.s
 
     # todo: when it's the time, the output of xxx method in og class gives the book + verse.
     # todo: flag any lines that touch each other. for this, font is necessary cuz need glyph boxes.
@@ -174,11 +188,15 @@ def main():
         if reader.pageno > 10:
             break
         pass
-    space_lines = []
+    print(reader.lines[150:200])
+
+    line_stats = []
     for l in reader.lines:
-        s,c,w = reader.get_spaces(l)
-        space_lines.append([s,c,w])
-    space_df = pd.DataFrame(space_lines, columns = ['Space width', 'Space count', 'Line width'])
+        # don't take empty lines into account
+        if l[2,0] != 2:
+            break
+        line_stats.append(reader.glyph_space_stats(l))
+    space_df = pd.DataFrame(line_stats, columns = ['line width', 'space count', 'glyph count', 'space width', 'glyph width'])
     #space_filt = [space_df['Line width']==0]
     #space_filt2 = space_filt[space_filt['Space width']==0]
     print(space_df.describe())
