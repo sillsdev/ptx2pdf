@@ -1392,6 +1392,8 @@
 \newdimen\ch@pterwd
 \newbox\ch@pterbox
 \newbox\ch@pternote
+\def\beforechapternum#1#2#3{}
+\def\afterchapternum#1#2#3{}
 \def\AfterChapterSpaceFactor{3}
 \def\m@kechapterbox{%
  \trace{sP}{m@kechapterbox for \ch@ptert@xt, reftooltip\ifreftooltip true\else false\fi}%
@@ -1407,11 +1409,14 @@
  \getp@ram{justification}{c}{c}%
  \setbox\ch@pterbox=\hbox{%
     \ifx\p@ram\r@ght
+      {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
       \s@tfont{c}{c}\printchapter%
     \else
       \ifx\ch@pterlmargin\relax\else\kern \ch@pterlmargin\IndentUnit\fi
+      {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
       \s@tfont{c}{c}\printchapter%
     \fi
+    {\afterchapternum{\id@@@}{\book}{\ch@pter}}%
  }%
  \ifx\p@ram\r@ght
    \ifx\ch@pterrmargin\relax\let\ch@pterrmargin\ch@pterlmargin\fi
