@@ -543,6 +543,26 @@
           "CodeSnippet": "\\def\\RHtitleevenleft{\\pagenumber}\n\\let\\RHtitleoddright=\\RHtitleevenleft\n"
         }
       ],
+      "Chapters": [
+        {
+          "Type": "comment%",
+          "Label": "Nudge chapter number down at specific \\nb chapters",
+          "Description": "The Burmese digit 6 rises rather high and crashes into the previous line when an \\nb (no-break para) is used after a \\c chapter. This snippet demonstrates how to lower the \\nb chapter number by a smidgen for the given references (in this example: JHN 16, 2CO 6, HEB 6).",
+          "CodeSnippet": "\\expandafter\\def\\csname raise-chapter.JHN16.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.2CO6.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.HEB6.0\\endcsname{-0.3}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Adjust width of chapter numbers (for Chinese)",
+          "Description": "It is preferable to align all characters in a grid pattern for Chinese texts. Use this codelet to ensure the width of the dropcap chapter number adjusts to keep the text vertically aligned.",
+          "CodeSnippet": "\\catcode`\\@=11\n\\let\\ptxm@kechapbox=\\m@kechapterbox\n\\def\\m@kechapterbox{\\ptxm@kechapbox\n\\dimen0=12 \\FontSizeUnit \\dimen1=\\ch@pterwd\n\\m@d \\advance\\ch@pterwd\\dimen0}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Add QR Codes to Chapter Number",
+          "Description": "To create a rich and more interactive experience for readers, QR codes can be inserted before the chapter number pointing to an online resource for that book and chapter. If using this feature, update the example and make sure to use a URL which is as short as possible.",
+          "CodeSnippet": "\\def\\everyfirstverse#1#2#3{\\zqrcode|pgpos=\"cl\" size=\"0.78\\dropnumbersize\" novpadding=\"T\" nohpadding=\"T\" spacebeside=\"3pt\" data=\"website.org/bible/#1.#3\"\\*}"
+        }
+      ],
       "Verses": [
         {
           "Type": "comment%",
@@ -614,12 +634,6 @@
         }
       ],
       "Tweaks": [
-        {
-          "Type": "comment%",
-          "Label": "Nudge chapter number down at specific \\nb chapters",
-          "Description": "The Burmese digit 6 rises rather high and crashes into the previous line when an \\nb (no-break para) is used after a \\c chapter. This snippet demonstrates how to lower the \\nb chapter number by a smidgen for the given references (in this example: JHN 16, 2CO 6, HEB 6).",
-          "CodeSnippet": "\\expandafter\\def\\csname raise-chapter.JHN16.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.2CO6.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.HEB6.0\\endcsname{-0.3}"
-        },
         {
           "Type": "comment%",
           "Label": "Forces better calculation of the number of lines",
