@@ -1057,11 +1057,6 @@ class TexModel:
                 logger.debug(f"Reversify [{srcvrsf}] {getattr(reversify[0], 'name', 'unknown')} -> {getattr(srcvrs, 'name', 'unknown') if srcvrs else 'unknown'}")
                 doc.reversify(srcvrs, *reversify)
 
-        if self.localChanges is not None:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
-            logger.log(5,self.localChanges)
-            dat = runChanges(self.localChanges, bk, dat)
-
         adjlist = self.printer.get_adjlist(bk)
         if adjlist is not None:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -1069,6 +1064,11 @@ class TexModel:
             if doc is not None:
                 doc.apply_adjlist(bk, adjlist)
             # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+
+        if self.localChanges is not None:
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
+            logger.log(5,self.localChanges)
+            dat = runChanges(self.localChanges, bk, dat)
 
         logger.debug("Applying final changes: ")
         if 'final' in self.changes:

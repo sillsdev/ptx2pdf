@@ -286,13 +286,20 @@ class beng(ScriptSnippet):
 
 class hans(ScriptSnippet):
     dialogstruct = [
-        MiniCheckButton("c_scrcjkgrid", _("Enabling horizontal gridding"))
+        MiniCheckButton("c_scrcjkgrid", _("Enabling horizontal gridding")),
+        MiniCheckButton("c_scrcjkhalfpunc", _("Automatic halfwidth punctuation pairs"))
     ]
     @classmethod
     def regexes(cls, view):
         res = []
         if view.get("c_scrcjkgrid", False):
             res.append(makeChange(r"(?<!\\\S+)\s+(?=\\v\s)", ""))
+        if view.get("c_scrcjkhalfpunc", False):
+            res.append(makeChange(r"([\p{Po}\p{Pe}\p{Pf}--[*\\]])(\\f\s(?:.(?!\\f\*))*.\\f\*)([\p{Po}\p{Pe}\p{Pf}--[*\\]])", r"\1\3\2", flags=regex.V1))
+            res.append(makeChange(r"([\p{Pe}\p{Pf}\p{Po}--[*\\]])([\p{Ps}\p{Pi}])", r"\\cjksqm\1\2", flags=regex.V1))
+            res.append(makeChange(r"([\p{Ps}\p{Pi}])([\p{Ps}\p{Po}\p{Pi}--[*\\]])", r"\\cjksq\1\2", flags=regex.V1))
+            res.append(makeChange(r"([\p{Pe}\p{Pf}])([\p{Pe}\p{Pf}\p{Po}--[*\\]])", r"\\cjksq\1\2", flags=regex.V1))
+            res.append(makeChange(r"([\p{Po}--[*\\]])([\p{Pe}\p{Pf}])", r"\\cjksq\1\2", flags=regex.V1))
         return res
 
     @classmethod
@@ -301,5 +308,8 @@ class hans(ScriptSnippet):
         res.append("% Hans script snippet")
         if view.get("c_scrcjkgrid", False):
             res.append(r"\cjkgridchapterbox")
+        if view.get("c_scrcjkhalfpunc", False):
+            res.append(r"\def\cjksq#1#2{#1\kern-.5em #2\kern-.5em}")
+            res.append(r"\def\cjksqm#1#2{#1\kern-1em #2}")
         return "\n".join(res)
 
