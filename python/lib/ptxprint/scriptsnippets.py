@@ -286,8 +286,10 @@ class beng(ScriptSnippet):
 
 class hans(ScriptSnippet):
     dialogstruct = [
-        MiniCheckButton("c_scrcjkgrid", _("Enabling horizontal gridding")),
-        MiniCheckButton("c_scrcjkhalfpunc", _("Automatic halfwidth punctuation pairs"))
+        MiniCheckButton("c_scrcjkgrid", _("Enabling horizontal gridding"),
+                tip=_("Align chapter numbers with grid and remove spaces before verses")),
+        MiniCheckButton("c_scrcjkhalfpunc", _("Automatic halfwidth punctuation pairs"),
+                tip=_("Adjust spacing of punctuation pairs so they take up a single full width character"))
     ]
     @classmethod
     def regexes(cls, view):
@@ -305,11 +307,14 @@ class hans(ScriptSnippet):
     @classmethod
     def tex(cls, view):
         res = []
-        res.append("% Hans script snippet")
         if view.get("c_scrcjkgrid", False):
             res.append(r"\cjkgridchapterbox")
         if view.get("c_scrcjkhalfpunc", False):
             res.append(r"\def\cjksq#1#2{#1\kern-.5em #2\kern-.5em}")
             res.append(r"\def\cjksqm#1#2{#1\kern-1em #2}")
         return "\n".join(res)
+
+class hant(hans):
+    pass
+
 
