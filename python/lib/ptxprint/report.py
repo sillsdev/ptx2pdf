@@ -160,7 +160,7 @@ class Report:
     def get_usfms(self, view):
         usfms = view.get_usfms()
         passed = []
-        failed = []
+        failed = {}
         # self.add("3. USFM/Checks", f"Books in Publication: {' '.join(view.getBooks())}", severity=logging.INFO)
         for bk in view.getBooks():
             doc = usfms.get(bk)
