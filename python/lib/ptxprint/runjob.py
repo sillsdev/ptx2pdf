@@ -21,7 +21,7 @@ from ptxprint.pdfrw.errors import PdfError, log
 from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
-from ptxprint.reference import RefList
+from usfmtc.reference import RefList
 from ptxprint.transcel import transcel, outtriggers
 from ptxprint.xdv.colouring import procxdv
 from ptxprint.report import Report

@@ -1,9 +1,10 @@
 import re, regex, logging, os, time
-from ptxprint.reference import MakeReference, BookNames
 import usfmtc
+from usfmtc.reference import Ref, RefList
 from usfmtc.usfmparser import Grammar
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
+from ptxprint.ptsettings import PTEnvironment
 from copy import deepcopy
 
 logger = logging.getLogger(__name__)
@@ -217,13 +218,13 @@ class UsfmCollection:
     def makeBookNames(self):
         if self.booknames is not None:
             return
-        self.booknames = BookNames()
+        self.booknames = PTEnvironment()
         bknamesp = os.path.join(self.basedir, "BookNames.xml")
         if os.path.exists(bknamesp):
            self.booknames.readBookNames(bknamesp)
         else:
             tocre = re.compile(r"^\\toc(\d)\s+(.*)\s*$")
-            for bk in list(self.booknames.bookStrs.keys()):
+            for bk in list(self.booknames.bookstrings.keys()):
                 tocs = [""] * 3
                 bkfile = self.bkmapper(bk)
                 if bkfile is None or not len(bkfile):
@@ -337,7 +338,7 @@ class Usfm:
             return
         root = self.getroot()
         self.bridges = {}
-        bk = root[0].get('code')
+        bk = root[0].get('code') or "UNK"
         self.factory = factory
         self.chapters = [0]
         self.kpars = {}
@@ -357,7 +358,7 @@ class Usfm:
                 if currc >= len(self.chapters):
                     self.chapters.extend([self.chapters[-1]] * (currc - len(self.chapters) + 1))
                 self.chapters[currc] = i
-                curr = MakeReference(bk, currc, 0)
+                curr = Ref(book=bk, chapter=currc, verse=0)
             elif p.tag == "para":
                 if istype(p.get("style", ""), ('sectionpara', 'title')):
                     sections.append(p)
@@ -365,9 +366,9 @@ class Usfm:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
                         currv = p[0].get("number", curr.last.verse if curr is not None else None)
                         currc = curr.first.chapter if curr is not None else 0
-                        curr = MakeReference(bk, currc, currv)
+                        curr = Ref(f"{bk} {currc}:{currv}")
                         if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
-                            for r in curr.allrefs():
+                            for r in curr:
                                 self.bridges[r] = curr
                         # add to bridges if a RefRange
                     _addorncv_hierarchy(p, curr)
@@ -378,7 +379,7 @@ class Usfm:
                 if curr is not None:
                     currv = p.get("number", curr.last.verse)
                     currc = curr.first.chapter if curr is not None else 0
-                    curr = MakeReference(bk, currc, currv)
+                    curr = Ref(f"{bk} {currc}:{currv}")
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
@@ -453,7 +454,7 @@ class Usfm:
         ''' Creates a document consisting of only the text covered by the reference
             ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
-        if not isinstance(refranges, list):
+        if not isinstance(refranges, (list, RefList)):
             refranges = [refranges]
         last = (0, -1)
         chaps = []
@@ -532,7 +533,7 @@ class Usfm:
         for el in root.findall('verse[eid=""]'):
             el.parent.remove(el)
         for el in root.findall('verse'):
-            ref = RefList.fromStr(el.get('eid'))[0]
+            ref = RefList(el.get('eid'))[0]
             el.set('number', str(ref.verse) + (ref.subverse or ""))
             del el.attrib['eid']
 

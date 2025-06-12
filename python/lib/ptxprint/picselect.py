@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from ptxprint.utils import _, extraDataDir
-from ptxprint.reference import RefList
+from usfmtc.reference import RefList
 
 def unpackImageset(filename, prjdir):
     with zipfile.ZipFile(filename) as zf:
@@ -193,7 +193,7 @@ class ThumbnailDialog:
 
     def update_reflist(self):
         if self.reftext is not None and len(self.reftext):
-            self.reflist = RefList.fromStr(self.reftext)
+            self.reflist = RefList(self.reftext)
         else:
             self.reflist = []
         # logger.debug(f"reflist from {s} to {self.reflist}")
@@ -202,7 +202,7 @@ class ThumbnailDialog:
         if self.imagedata is None:
             return default
         # logger.debug(f"{imgid}: {self.imagedata['images'].get(imgid,{}).get('refs')}")
-        return [RefList.fromStr(r)[0] for r in self.imagedata['images'].get(imgid, {}).get('refs', [])]
+        return [RefList(r)[0] for r in self.imagedata['images'].get(imgid, {}).get('refs', [])]
 
     def get_imgdir(self):
         imagesetdir = extraDataDir("imagesets", self.imageset)

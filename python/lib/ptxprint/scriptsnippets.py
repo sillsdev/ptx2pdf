@@ -1,6 +1,6 @@
 import regex, traceback
 from ptxprint.minidialog import MiniCheckButton
-from ptxprint.reference import RefSeparators
+from usfmtc.reference import Environment
 from ptxprint.utils import _
 
 def makeChange(pattern, to, flags=0, context=None):
@@ -9,7 +9,7 @@ def makeChange(pattern, to, flags=0, context=None):
 
 class ScriptSnippet:
     dialogstruct = None
-    refseparators = RefSeparators()
+    refenv = Environment
 
     @classmethod
     def regexes(cls, view):
@@ -20,8 +20,8 @@ class ScriptSnippet:
         return ""
 
     @classmethod
-    def getrefseps(cls, view):
-        return cls.refseparators
+    def getrefenv(cls, view):
+        return cls.refenv
 
     @classmethod
     def isSyllableBreaking(cls, view):
@@ -170,8 +170,8 @@ class arab(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrarabrefs", _("First verse on left"))
     ]
-    refseparators = (RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "),
-                     RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "))
+    refseparators = (Environment(rangemk="\u200F-", cvsep="\u200F:", versesep="\u060C ", chapsep="\u061B "),
+                     Environment(rangemk="\u200F-", cvsep="\u200F:", versesep="\u060C ", chapsep="\u061B "))
 
     @classmethod
     def getrefseps(cls, view):

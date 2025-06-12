@@ -59,7 +59,7 @@ from io import BytesIO
 from dataclasses import asdict
 # import zipfile
 from zipfile import ZipFile, BadZipFile, ZIP_DEFLATED
-from ptxprint.reference import RefSeparators, Reference
+from usfmtc.reference import Ref, Environment
 from collections import defaultdict
 
 logger = logging.getLogger(__name__)
@@ -6262,11 +6262,11 @@ Thank you,
             for p in res:
                 ref = p[1]
                 if ref is None:
-                    ref = Reference("UNK", 0, 0)
+                    ref = Ref("UNK 0:0")
                 if ref.verse == 0:
                     ref.verse = ref.numverses() // 2 + 1
-                self.picinfos.addpic(suffix=self.digSuffix, anchor=p[1].str(addsep=RefSeparators(cv='.')), src=p[0]+'.jpg',
-                        ref=p[1].str(addsep=self.getRefSeparators(nobook=True)), alt=p[2], size='col', pgpos='tl')
+                self.picinfos.addpic(suffix=self.digSuffix, anchor=p[1].str(env=Environment(cvsep='.')), src=p[0]+'.jpg',
+                        ref=p[1].str(env=self.getRefEnv(nobook=True)), alt=p[2], size='col', pgpos='tl')
             self.picListView.load(self.picinfos)
 
     def onArtistToggled(self, btn, path):

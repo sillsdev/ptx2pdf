@@ -1,6 +1,6 @@
 import re
 from ptxprint.usxutils import Usfm
-from ptxprint.reference import RefList, RefRange
+from usfmtc.reference import RefList, RefRange
 from usfmtc.usxmodel import iterusx
 
 def read_module(inf, sheets):
@@ -63,15 +63,15 @@ class Module:
                 continue
             s = e.get("style", None)
             if s == "ref" or "refnp":       # \ref is not a <ref> it has been reassigned to <para>
-                for r in RefList.fromStr(e.text, context=self.usfms.booknames):
+                for r in RefList(e.text, booknames=self.usfms.booknames):
                     books.add(r.first.book)
         return books
 
     def localref(self, m):
-        rl = RefList.fromStr(m.group(2), context=self.usfms.booknames)
+        rl = RefList(m.group(2), booknames=self.usfms.booknames)
         loctype = m.group(1) or self.refmode
         tocindex = self.localcodes.get(loctype.lower(), 0)
-        return rl.str(context=self.usfms.booknames, level=tocindex)
+        return rl.str(env=self.usfms.booknames, level=tocindex)
 
     def testexclude(self, einfo):
         return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))
@@ -107,7 +107,7 @@ class Module:
                                 m.group(2)))
                     eloc.parent.remove(nc)
                     skipme += 1
-                for r in RefList.fromStr(eloc.text, context=self.usfms.booknames):
+                for r in RefList(eloc.text, booknames=self.usfms.booknames):
                     if r.first.verse == 1:
                         if not isinstance(r, RefRange):
                             r = RefRange(r.first, r.first.copy())

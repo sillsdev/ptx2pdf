@@ -13,7 +13,7 @@ from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multst
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
-from ptxprint.reference import Reference, RefRange, RefList, RefSeparators, AnyBooks
+from usfmtc.reference import Ref, RefRange, RefList
 from ptxprint.xrefs import Xrefs
 from ptxprint.pdf.pdfsanitise import sanitise
 from ptxprint.texpert import TeXpert
@@ -968,11 +968,11 @@ class TexModel:
             dat = runChanges(self.changes['initial'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         if chaprange is None and self.dict["project/bookscope"] == "single":
-            chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
-                                 Reference(bk, int(float(self.dict["document/chapto"])), 200)), ))
+            chaprange = RefList((RefRange(Ref(book=bk, chapter=int(float(self.dict["document/chapfrom"])), verse=0),
+                                 Ref(book=bk, chapter=int(float(self.dict["document/chapto"])), verse=200)), ))
 
-        logger.debug(f"Converting {bk} {chaprange=}")
-        if chaprange is None or not isbk or not len(chaprange) or \
+        if chaprange is None or not isbk or not len(chaprange) or chaprange[0].first.chapter is None \
+            or chaprange[0].last.chapter is None or \
             (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
                 (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
             doc = None
@@ -1189,7 +1189,7 @@ class TexModel:
                 # test for "at" command
                 m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
                 if m:
-                    atref = RefList.fromStr(m.group(1), context=AnyBooks)
+                    atref = RefList(m.group(1))
                     for r in atref.allrefs():
                         if r.chapter == 0:
                             atcontexts.append((r.book, None))

@@ -14,7 +14,7 @@ from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
-from ptxprint.reference import RefList, RefRange, Reference
+from usfmtc.reference import RefList, RefRange, Ref
 from ptxprint.texpert import TeXpert
 from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
@@ -289,7 +289,7 @@ class ViewModel:
             return [res] if files and res else []
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
-        bl = RefList.fromStr(self.get("ecb_booklist", ""))
+        bl = RefList(self.get("ecb_booklist", ""), sep=" ")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
@@ -297,7 +297,7 @@ class ViewModel:
                 if bname is not None and os.path.exists(os.path.join(self.project.path, bname)):
                     fromchap = round(float(self.get("t_chapfrom") or "0"))
                     tochap = round(float(self.get("t_chapto") or "200"))
-                    res = RefList((RefRange(Reference(bk, fromchap, 0), Reference(bk, tochap, 200)), ))
+                    res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
                     return self._bookrefsBooks(res, local)
             return []
         elif scope == "multiple":
@@ -320,14 +320,14 @@ class ViewModel:
             # return self.booklist
             return []
 
-    def getRefSeparators(self, **kw):
+    def getRefEnv(self, **kw):
         if self.get("fcb_textDirection", "") == "rtl":
             res = None
         else:
             pts = self._getPtSettings()
-            res = pts.getRefSeparators()
+            res = pts.getRefEnvironment()
         if res is None:
-            res = self.getScriptSnippet().getrefseps(self)
+            res = self.getScriptSnippet().getrefenv(self)
         if len(kw):
             res = res.copy(**kw)
         return res
@@ -2324,8 +2324,8 @@ set stack_size=32768""".format(self.cfgid)
         localfile = os.path.join(self.project.path, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
-        seps = self.getRefSeparators().copy()
-        seps['verseonly'] = self.getvar('verseident') or "v"
+        env = self.getRefEnv().copy()
+        env.verseid = self.getvar('verseident') or "v"
         ptsettings = self._getPtSettings()
         wanal = None
         if ptsettings.get('MatchBaseOnStems', 'F') == 'T':
@@ -2333,7 +2333,7 @@ set stack_size=32768""".format(self.cfgid)
             if not os.path.exists(wanal):
                 wanal = None
         self.strongs = StrongsXrefs(os.path.join(pycodedir(), "xrefs", "strongs.xml"), 
-                    None, localfile=localfile, ptsettings=ptsettings, separators=seps,
+                    None, localfile=localfile, ptsettings=ptsettings, env=env,
                     context=ptsettings, shownums=self.get("c_strongsShowNums"),
                     rtl=self.get("fcb_textDirection") == "rtl", shortrefs=self.get("c_xoVerseOnly"),
                     wanal=wanal)
