@@ -2,10 +2,13 @@ from xdv import XDViPositionedReader
 import math
 class SpacingOddities(XDViPositionedReader):
     # todo: add optional parameter for max and min space.
-    def __init__(self, fname, diffable = False):
+    def __init__(self, fname, diffable = False, slimits = (2,4)):
         super().__init__(fname, diffable)
         self.lines = [] 
         self.currline = Line([0,0]) # fixme: add right positions for the first line.
+        # perhaps convert to pt depending on input type
+        self.smin = slimits[0]
+        self.smax = slimits[1]
         
     def currpos(self):
         # fixme: do we really need to save all, or just h and v enough?
@@ -16,20 +19,14 @@ class SpacingOddities(XDViPositionedReader):
         prev_pos = self.currpos()
         super().parmop(opcode, parm, data) 
         self.check_changes(prev_pos, opcode)
-        if opcode <= 142:
-            itype = 3 #glyph
-        else:
-            itype = 4 # space=
 
     def simple(self, opcode, parm, data):
         prev_pos = self.currpos()
-        itype = 4 # FIXME: is this really always a space?
         super().simple(opcode, parm, data)
         self.check_changes(prev_pos, opcode)
 
     def xglyphs(self, opcode, parm, data):
         prev_pos = self.currpos()
-        itype = 3     # glyph
         super().xglyphs(opcode, parm, data)
         self.check_changes(prev_pos, opcode)
 
@@ -40,22 +37,29 @@ class SpacingOddities(XDViPositionedReader):
                 self.currline.finish(self.currpos())
                 self.lines.append(self.currline)
             self.currline = Line(self.currpos())
-
         if self.h != prevpos[0]:
-            # fixme: should i pass opcode or decide here whether it is glyph or space?
             self.currline.add_item(prevpos, self.currpos(), opcode)
+
+    def get_badspaces(self):
+        badspace_lines = []
+        for l in self.lines:
+            l.find_badspaces((self.smin, self.smax))
+            if len(l.badspaces) >0:
+                badspace_lines.append(l)
+        return badspace_lines
+
 class Line:
-    # fixme: should this be a subclass of list?
     def __init__(self, startpos):
         self.starth = 0
         self.startv = startpos[1]
         self.width = 0
         self.order = [] # glyph, space widths
-        self.ref = 0
         self.glyphs = []
+        self_gcount = 0
         self.gstart = 0 # start h-pos of glyph
         self.prevline = None # keep track of previous line
-        
+        self.ref = 0
+        self.badspaces = []
 
     def isEmpty(self):
         if len(self.order) >0:
@@ -78,6 +82,13 @@ class Line:
     def finish(self, endpos):
         self.width = abs(endpos[0] - self.starth)
 
+    def find_badspaces(self, slimits):
+        for i in range(1, len(self.order), 2):
+            if slimits[0] <= self.order[i] <= slimits[1]:
+                pass
+            else:
+                # get startpos of space by startpos line + sum of item widths up to space
+                self.badspaces.append((self.starth + sum(self.order[:i-1]), self.order[i]))
 
 def main():
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
@@ -86,7 +97,11 @@ def main():
             break
         pass
     print(len(reader.lines))
-
+    print(reader.smin)
+    print(reader.smax)
+    bspace_lines = reader.get_badspaces()
+    for l in bspace_lines:
+        print(f"Reference {l.ref} contains badspaces at locations {[loc for (loc, w) in l.badspaces]}")
 
 
 if __name__ == "__main__":
