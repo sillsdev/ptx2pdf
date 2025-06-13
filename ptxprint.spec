@@ -70,7 +70,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
                              '5.8x8.7-Draft.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
-                             'picLocationPreviews.png',
+                             'picLocationPreviews.png', 'sakura.css',
                              'FRTtemplateBasic.txt', 'FRTtemplateAdvanced.txt',
                              'top1col.png', 'top2col.png', 'topblue.png', 'topgreen.png', 'topgrid.png', 
                              'tophrule.png', 'toporange.png', 'toppurple.png', 'topred.png', 'topvrule.png',
