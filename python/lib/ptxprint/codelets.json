@@ -265,32 +265,6 @@
     },
   ".txt":
     {
-      "Adjust": [
-        {
-          "Type": "insert",
-          "Label": "Shrink text to 95% width ('\\p' > '\\p^95')",
-          "Description": "Shrink one or more paragraphs by 5%\n(remember to reference the PREVIOUS verse).",
-          "CodeSnippet": "at MRK 1:46; 2:29; 14:73; LUK 2:53 '\\\\p(\\s)' > '\\\\p^95\\1'"
-        },
-        {
-          "Type": "insert",
-          "Label": "Shrink text to 97% width ('\\p' > '\\p^97')",
-          "Description": "Shrink one or more paragraphs by 3%\n(remember to reference the PREVIOUS verse).",
-          "CodeSnippet": "at ROM 4:26; 5:22; 1CO 2:17 '\\\\p(\\s)' > '\\\\p^97\\1'"
-        },
-        {
-          "Type": "insert",
-          "Label": "Stretch text to 103% width ('\\p' > '\\p^103')",
-          "Description": "Stretch one or more paragraphs by 3%\n(remember to reference the PREVIOUS verse).",
-          "CodeSnippet": "at JHN 14:32; ACT 3:27 '\\\\p(\\s)' > '\\\\p^103\\1'"
-        },
-        {
-          "Type": "insert",
-          "Label": "Stretch text to 105% width ('\\p' > '\\p^105')",
-          "Description": "Stretch one or more paragraphs by 5%\n(remember to reference the PREVIOUS verse).",
-          "CodeSnippet": "at GAL 1:25; EPH 4:33 '\\\\p(\\s)' > '\\\\p^105\\1'"
-        }
-      ],
       "Change": [
         {
           "Type": "insert",
@@ -553,8 +527,8 @@
         {
           "Type": "comment%",
           "Label": "Add QR codes before all chapter numbers",
-          "Description": "To create a rich and more interactive experience for readers, QR codes can be inserted before the chapter number pointing to an online resource for that book and chapter. If using this feature, update the example and make sure to use a URL which is as short as possible.",
-          "CodeSnippet": "\\def\\beforechapternum#1#2#3{\\zqrcode|pgpos=\"H\" size=\"0.75\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"0pt\" data=\"website.org/bible/#1.#3\"\\*}"
+          "Description": "To create a rich and more interactive experience for readers, QR codes can be inserted before the chapter number pointing to an online resource for that book and chapter. If using this feature, update the example and make sure to use a URL which is as short as possible, and if you limit the URL to only use alphanumeric characters (0–9, only upper case A–Z, space, $, %, *, +, -, ., /, :) it will produce a more compact QR code.",
+          "CodeSnippet": "\\def\\beforechapternum#1#2#3{\\zqrcode|pgpos=\"H\" size=\"0.75\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"6pt\" data=\"WEBSITE.ORG/BIBLE/#1.#3\"\\*\\xdef\\lastQRchap{#3}}\n\\def\\everyfirstverse#1#2#3{\\edef\\tmp{#3}\\ifx\\tmp\\lastQRchap\\else\\zqrcode|pgpos=\"cl\" size=\"0.78\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"6pt\" autoquietzone=\"false\" data=\"WEBSITE.ORG/BIBLE/#1.#3\"\\*\\fi\\global\\let\\lastQRchap\\empty}"
         }
       ],
       "Verses": [

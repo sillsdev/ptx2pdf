@@ -126,6 +126,7 @@ class XrefFileXrefs(BaseXrefs):
                 if not d.strip():
                     continue
                 v.extend(RefList(d.replace(" ", ";").replace(".", " "), marks="+", strict=False))
+            k = v.pop(0)
             xrefdat.setdefault(k.first.book, {})[k] = v
         return xrefdat
 
@@ -143,7 +144,7 @@ class XrefFileXrefs(BaseXrefs):
     def process(self, bk, triggers, owner, usfm=None, vrsf=None):
         results = {}
         for k, v in self.xrefdat.get(bk, {}).items():
-            outl = v[0]
+            outl = RefList(v[0])
             if len(v) > 1 and self.xrlistsize > 1:
                 outl = sum(v[0:self.xrlistsize], RefList())
             results[k] = outl
