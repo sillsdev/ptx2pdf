@@ -232,7 +232,7 @@ class Report:
             "Crop Marks":                 ("8. Output Format", "c_cropmarks", 200, None),
             "Watermark":                  ("8. Output Format", "c_applyWatermark", 50, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
-            "Booklet Pagination":         ("8. Output Format", "fcb_pagesPerSpread", 30, \
+            "Pagination":                 ("8. Output Format", "fcb_pagesPerSpread", 30, \
                                             lambda v,w: (v.get(w, "")+"-up", logging.DEBUG)),
             "Front Matter PDF(s)":        ("7. Peripheral Components", "c_inclFrontMatter", 0, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),

@@ -1575,7 +1575,7 @@ class GtkViewModel(ViewModel):
         if txt.startswith(r"\u"): # i.e. the results of an Alt-X (show unicode chars)
             btn.set_label(_(" Copy to Clipboard "))
         else:
-            btn.set_label("Dismiss")
+            btn.set_label(_("Dismiss"))
         sl = self.builder.get_object("l_statusLine")
         self.set("l_statusLine", txt)
         status = len(self.get("l_statusLine"))
