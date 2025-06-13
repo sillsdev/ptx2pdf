@@ -185,10 +185,12 @@
   \fi
   \advance\p@lyr@wno by 1 
 }
+\def\mkn@wht#1\E{\newdim@n#1}
 \def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing (#1 describes a row)
+  \trace{dmc}{@complexs@tpolyp@ges #1}%
   \edef\this@p@lyp@gestring{\p@lyp@gestring}% Expand once and cache
   \x@\def\csname cts@\this@p@lyp@gestring\endcsname{#1}% What columns are in this row?
-  \x@\edef\x@\p@gestrings\x@{\p@gestrings,#1}% % What is the complete list of sections?
+  \x@\xdef\x@\p@gestrings\x@{\p@gestrings,#1}% % What is the complete list of sections?
   \count255=0
   \let\col@do\col@count
   \x@\each@col#1\E
@@ -202,8 +204,10 @@
   \xdef@cseq{\ifBookOpenLeft rev\fi p@lyp@gecols\this@p@lyp@gestring}{}%
   \x@\xdef\csname cols@\this@p@lyp@gestring\endcsname{\the\count255}% active cols in row p@lyp@gestring
   \ifcsname \this@p@lyp@gestring @ht\endcsname\else
-    \x@\newdim@n\csname \this@p@lyp@gestring @ht\endcsname % Height for this bit of page.
-  \fi  
+    \edef\tmp{\this@p@lyp@gestring @ht}%
+    \x@\mkn@wht\csname \tmp\endcsname\E % Height for this bit of page.
+  \fi 
+  \x@\x@\x@\def\x@\x@\x@\pg@hts\x@\x@\x@{\x@\pg@hts\x@+\x@\csname \this@p@lyp@gestring @ht\endcsname}%
   \edef\tmporder{#1}%
   \ifBookOpenLeft % In a book-open-left scenario, we need to process the page contents right-to-left. Easiest way to do that is reorder it from the start.
     \def\rev@tmp@list{}\def\list@type{tmp}%
@@ -304,9 +308,13 @@
   \p@lyp@geno=0
   \edef\tmp{#1}%
   \ifx\tmp\empty\errmessage{polyglotpages called with empty argument. That's an error}\fi
+  \def\pg@hts{0pt}%
+  \def\p@gestrings{}%
   \let\d@=\complexs@tpolyp@ges
   \cstackdown#1,\E
   \x@\xdef\csname p@lypgcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
+  \x@\gdef\csname p@lypght-\the\p@lyp@geno\x@\endcsname{\x@\dimexpr\pg@hts\relax}%
+  \trace{dmc}{page \the\p@lyp@geno \space height is \csname p@lypght-\the\p@lyp@geno\endcsname}%
   \reset@colindexes
   \p@lyp@geno=0
   \let\d@=\complexr@vpolyp@ges
