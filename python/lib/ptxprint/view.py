@@ -14,7 +14,7 @@ from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
-from ptxprint.reference import RefList, RefRange, Reference
+from usfmtc.reference import RefList, RefRange, Ref
 from ptxprint.texpert import TeXpert
 from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
@@ -289,7 +289,7 @@ class ViewModel:
             return [res] if files and res else []
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
-        bl = RefList.fromStr(self.get("ecb_booklist", ""))
+        bl = RefList(self.get("ecb_booklist", ""), sep=" ")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
@@ -297,7 +297,7 @@ class ViewModel:
                 if bname is not None and os.path.exists(os.path.join(self.project.path, bname)):
                     fromchap = round(float(self.get("t_chapfrom") or "0"))
                     tochap = round(float(self.get("t_chapto") or "200"))
-                    res = RefList((RefRange(Reference(bk, fromchap, 0), Reference(bk, tochap, 200)), ))
+                    res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
                     return self._bookrefsBooks(res, local)
             return []
         elif scope == "multiple":
@@ -320,14 +320,14 @@ class ViewModel:
             # return self.booklist
             return []
 
-    def getRefSeparators(self, **kw):
+    def getRefEnv(self, **kw):
         if self.get("fcb_textDirection", "") == "rtl":
             res = None
         else:
             pts = self._getPtSettings()
-            res = pts.getRefSeparators()
+            res = pts.getRefEnvironment()
         if res is None:
-            res = self.getScriptSnippet().getrefseps(self)
+            res = self.getScriptSnippet().getrefenv(self)
         if len(kw):
             res = res.copy(**kw)
         return res
@@ -428,14 +428,20 @@ class ViewModel:
         self.set("l_footer2edge", "{}mm".format(f2s(footerlabel, 1)))
         return True
 
+    def calcPageSize(self):
+        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        if m:
+            pagewidth  = float(m.group(1)) * unitConv.get(m.group(2), 1)
+            pageheight = float(m.group(3)) * unitConv.get(m.group(4), 1)
+        else:
+            pagewidth  = 148
+            pageheight = 210
+        return pagewidth, pageheight
+
     def calcBodyHeight(self):
         linespacing = float(self.get("s_linespacing")) * 25.4 / 72.27
-        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        m = re.match(r"^.*?[,xX]\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
-        if m:
-            pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
-        else:
-            pageheight = 210
+        pagewidth, pageheight = self.calcPageSize()
         bottommargin = float(self.get("s_bottommargin"))
         topmargin = float(self.get("s_topmargin"))
         font = self.get("bl_fontR")
@@ -2318,8 +2324,8 @@ set stack_size=32768""".format(self.cfgid)
         localfile = os.path.join(self.project.path, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
-        seps = self.getRefSeparators().copy()
-        seps['verseonly'] = self.getvar('verseident') or "v"
+        env = self.getRefEnv().copy()
+        env.verseid = self.getvar('verseident') or "v"
         ptsettings = self._getPtSettings()
         wanal = None
         if ptsettings.get('MatchBaseOnStems', 'F') == 'T':
@@ -2327,7 +2333,7 @@ set stack_size=32768""".format(self.cfgid)
             if not os.path.exists(wanal):
                 wanal = None
         self.strongs = StrongsXrefs(os.path.join(pycodedir(), "xrefs", "strongs.xml"), 
-                    None, localfile=localfile, ptsettings=ptsettings, separators=seps,
+                    None, localfile=localfile, ptsettings=ptsettings, env=env,
                     context=ptsettings, shownums=self.get("c_strongsShowNums"),
                     rtl=self.get("fcb_textDirection") == "rtl", shortrefs=self.get("c_xoVerseOnly"),
                     wanal=wanal)

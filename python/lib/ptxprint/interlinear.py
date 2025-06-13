@@ -1,7 +1,7 @@
 from xml.etree import ElementTree as et
 from ptxprint.usxutils import Usfm
 from hashlib import md5
-from ptxprint.reference import Reference
+from usfmtc.reference import Ref
 from usfmtc.usxmodel import iterusx
 import re, os
 import logging
@@ -174,6 +174,6 @@ class Interlinear:
                                 notdones.add((curref[0], v))
                 elif event == "end" and e.tag == skipping:
                     skipping = None
-        self.fails.extend([Reference(bkid, a[0], a[1]) for a in notdones if a not in dones])
+        self.fails.extend([Ref(book=bkid, chapter=a[0], verse=a[1]) for a in notdones if a not in dones])
 
 

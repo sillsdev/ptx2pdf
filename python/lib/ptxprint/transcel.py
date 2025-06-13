@@ -1,7 +1,7 @@
 
 import os
 import xml.etree.ElementTree as et
-from ptxprint.reference import Reference, RefRange, RefSeparators
+from usfmtc.reference import Ref, RefRange, Environment
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,11 +26,11 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
         ovqs = q.get("overview", "") == "true"
         if not overview and ovqs:
             continue
-        ref = Reference(bk, int(q.get("startChapter", 0)), int(q.get("startVerse", 0)))
+        ref = Ref(book=bk, chapter=int(q.get("startChapter", 0)), verse=int(q.get("startVerse", 0)))
         ev = int(q.get("endVerse", 0))
         # print(f"{ev=}")
         if ev != 0:
-            ref = RefRange(ref, Reference(ref.book, ref.chapter, ev))
+            ref = RefRange(ref, Ref(book=ref.book, chapter=ref.chapter, verse=ev))
         # print(f"{ref=}")
         if usfm is not None:
             ref = usfm.bridges.get(ref.first, ref.first)
@@ -52,7 +52,7 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
     return triggers
 
 def outtriggers(triggers, bk, outpath):
-    dotsep = RefSeparators(cv=".", onechap=True)
+    dotsep = Environment(cvsep=".", nochap=True)
     with open(outpath, "w", encoding="utf-8") as outf:
         for k, v in [x for x in sorted(triggers.items()) if x[0].first.book == bk]:
-            outf.write("\n\\AddTrigger {}{}\n{}\n\\EndTrigger\n".format(k.first.book, k.str(context=NoBook, addsep=dotsep), v))
+            outf.write("\n\\AddTrigger {}{}\n{}\n\\EndTrigger\n".format(k.first.book, k.str(env=dotsep), v))

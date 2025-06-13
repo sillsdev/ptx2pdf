@@ -984,6 +984,7 @@
 
 \newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
+\newif\ifOmitAllVerses \OmitAllVersesfalse
 \newif\ifNoHangVerseNumberOne\NoHangVerseNumberOnetrue
 \newif\ifHangVA\HangVAfalse
 \newif\iffilehasverses % Usercode (e.g. book end marks) might want to know this
@@ -993,7 +994,7 @@
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
- \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
+ \def\@v@ ##1 {\let\oldv@rse\v@rse\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
   \ifdiglot\edef\dc@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\else\edef\c@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\fi
   \leavevmode % ensure we are in horizontal mode to build paragraph. This may output a chapter number
   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
@@ -1006,12 +1007,20 @@
                          \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
    \fi
    \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+  \else
+    \message{verse was \meaning\oldv@rse}%
+    \ifx \oldv@rse\empty
+     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+    \fi
   \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
   % Otherwise make ll@p do nothing.
   \ifdim\lastkern=-1sp \hangingversetrue\fi
-  \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+  \ifversion{4}{\ifMarginalVerses\let\printverse\defaultprintverse
+                  \else\ifOmitAllVerses\let\printverse=\noprintv@rse\else
+                    \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+                \fi\fi}{\ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi}%
   %\trace{hv}{lastkern \the\dimen0}%
   \bgroup
   \ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
@@ -1035,8 +1044,9 @@
      \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
      \kern\AfterVerseSpaceFactor\FontSizeUnit
    \else
-    \ifreftooltip\ch@ptooltipstart\fi\printverse\ifreftooltip\ch@ptooltipend\fi
-    %\printverse
+    \ifreftooltip\ch@ptooltipstart\fi
+    \printverse
+    \ifreftooltip\ch@ptooltipend\fi
    \fi
   \fi
   \egroup
@@ -1245,6 +1255,7 @@
     \cstyle{va}{\altern@teverse}\NBSP%
   \fi
 }
+\def\noprintv@rse{}
 \newif\ifSeparateVerseAdornments \SeparateVerseAdornmentstrue
 \newif\ifadorningrange
 
@@ -1814,6 +1825,7 @@
 
 %+csty_onetime
 \newif\ifmarginalVerseIsMargin \marginalVerseIsMarginfalse
+\newif\ifMarginalVerses \MarginalVersesfalse
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but (just) before processing the first USFM file
  \inheritb@rders % Process border-parameter inheritance

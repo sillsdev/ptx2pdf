@@ -1073,6 +1073,14 @@ to this device.</property>
     <property name="icon-name">document-print-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="icon_prvReport">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="tooltip-text" translatable="yes">Display a report on the
+current configuration.</property>
+    <property name="icon-name">help-about-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_prvSaveAs">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -3932,6 +3940,25 @@ to this device.</property>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
                         <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_prvReport">
+                        <property name="name">Show Report Information</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Display a report on the
+current configuration.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="image">icon_prvReport</property>
+                        <signal name="clicked" handler="onGenerateReportClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                   </object>
@@ -28211,6 +28238,7 @@ from XeTeX processing.</property>
                 <property name="margin-top">2</property>
                 <property name="label"> This is where status messages go to alert the user.</property>
                 <property name="justify">center</property>
+                <property name="selectable">True</property>
                 <property name="single-line-mode">True</property>
                 <property name="track-visited-links">False</property>
                 <property name="xalign">0.5</property>

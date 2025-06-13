@@ -456,6 +456,8 @@ _map = {
     "scripts/arab/lrcolon":     ("c_scrarabrefs", "fontscript", None),
     "scripts/indic/syllables":  ("c_scrindicSyllable", "fontscript", None),
     "scripts/indic/showhyphen": ("c_scrindicshowhyphen", "fontscript", None),
+    "scripts/cjk/grid":         ("c_scrcjkgrid", "fontscript", None),
+    "scripts/cjk/halfpunc":     ("c_scrcjkhalfpunc", "fontscript", None),
 
     "strongsndx/showintext":    ("c_strongsShowInText", "strongs", None),
     "strongsndx/showall":       ("c_strongsShowAll", "strongs", None),

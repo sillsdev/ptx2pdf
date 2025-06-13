@@ -2,7 +2,7 @@
 
 # Reads xdvi files and outputs a version that can be diffed.
 
-import argparse, os
+import argparse, os, sys
 from struct import unpack
 from ptxprint.font import TTFont
 

@@ -3,16 +3,15 @@ import xml.etree.ElementTree as et
 import regex, logging
 from ptxprint.utils import allbooks, books, bookcodes, chaps
 from ptxprint.unicode.UnicodeSets import flatten
-from ptxprint.reference import RefSeparators
 from usfmtc.reference import Environment
 
 logger = logging.getLogger(__name__)
 
 ptrefsepvals = {
-    'books': 'BookSequenceSeparator',
-    'chaps': 'ChapterNumberSeparator',
-    'cv': 'ChapterVerseSeparator',
-    'range': 'RangeIndicator',
+    'booksep': 'BookSequenceSeparator',
+    'chapsep': 'ChapterNumberSeparator',
+    'cvsep': 'ChapterVerseSeparator',
+    'rangemk': 'RangeIndicator',
 }
 
 _versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org
@@ -49,7 +48,7 @@ class ParatextSettings:
             self.default_bookNames()
             self.hasLocalBookNames = False
         self.collation = None
-        self.refsep = False     # tristate: (False=undef), None, RefSeparator
+        self.refenv = False     # tristate: (False=undef), None, PTEnvironment
         self.set_versification()
         return self
 
@@ -254,22 +253,19 @@ class ParatextSettings:
         res = list(flatten(s))
         return res
 
-    def getRefSeparators(self):
-        if self.refsep is not False:
-            return self.refsep
+    def getRefEnvironment(self):
+        if self.refenv is not False:
+            return self.refenv
         foundsetting = False
         vals = {}
+        self.refenv = PTEnvironment()
         for k, v in ptrefsepvals.items():
             if v in self.dict:
                 foundsetting = True
-                vals[k] = re.sub(r"^(.*?)(\|.*)?$", r"\1", self.dict[v])
-        if not foundsetting:
-            self.refsep = None
-        else:
-            if self.dict.get('NoSpaceBetweenBookAndChapter', False):
-                vals['bkc'] = ''
-            self.refsep = RefSeparators(**vals)
-        return self.refsep
+                setattr(self.refenv, k, re.sub(r"^(.*?)(\|.*)?$", r"\1", self.dict[v]))
+        if self.dict.get('NoSpaceBetweenBookAndChapter', False):
+            self.refenv.bookspace = ''
+        return self.refenv
 
     def saveAs(self, fname):
         import xml.etree.ElementTree as et
@@ -290,14 +286,17 @@ class PTEnvironment(Environment):
     def __init__(self):
         self.booknames = {}
         self.level = 2
+        self.bookstrings = {}
 
     def setBookNames(self, booknames, bookstrings):
         self.booknames = booknames
         self.bookstrings = bookstrings
 
-    def localbook(self, bk):
+    def localbook(self, bk, level=-1):
+        if level == -1:
+            level = self.level
         res = self.booknames.get(bk, None)
-        if res is None or self.level >= len(res):
+        if res is None or level >= len(res):
             return bk
         else:
             return res[self.level]
@@ -307,3 +306,30 @@ class PTEnvironment(Environment):
         if res is None:
             return super().parsebook(bk)
         return res
+
+    def readBookNames(self, fpath):
+        from xml.etree import ElementTree as et
+        doc = et.parse(fpath)
+        for b in doc.findall(".//book"):
+            bkid = b.get("code")
+            strs = [b.get(a) for a in ("abbr", "short", "long")]
+            self.addBookName(bkid, *strs)
+
+    def addBookName(self, bkid, *strs):
+        self.booknames[bkid] = bkid
+        self.bookstrings[bkid] = strs
+        bkstrs = {}
+        for s in strs:
+            for i in range(len(s)):
+                if s[i] is None or s[i] == " ":
+                    break
+                bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
+                self.booknames.update({k:v for k,v in bkstrs.items() if v != ""})
+
+
+    def copy(self, **kw):
+        res = super().copy(**kw)
+        for a in "booknames bookstrings level".split():
+            setattr(res, a, getattr(self, a))
+        return res
+
