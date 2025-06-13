@@ -118,13 +118,15 @@ class XrefFileXrefs(BaseXrefs):
         for l in inf.readlines():
             if '=' in l:
                 (k, v) = l.split("=", maxsplit=1)
-                if k.strip() == "attribution":
+                if k.strip().lower in ("attribution", "copyright"):
                     self.xrefcopyright = v.strip()
+                continue
             v = RefList()
-            for d in re.sub(r"[{}]", "", l).split():
-                v.extend(RefList(d.replace(".", " "), marks="+"))
-            k = v.pop(0)
-            xrefdat.setdefault(k.first.book, {})[k] = [v]
+            for d in re.sub(r"[{}]+", "", l).split():
+                if not d.strip():
+                    continue
+                v.extend(RefList(d.replace(" ", ";").replace(".", " "), marks="+", strict=False))
+            xrefdat.setdefault(k.first.book, {})[k] = v
         return xrefdat
 
     def _addranges(self, results, usfm):
@@ -141,7 +143,7 @@ class XrefFileXrefs(BaseXrefs):
     def process(self, bk, triggers, owner, usfm=None, vrsf=None):
         results = {}
         for k, v in self.xrefdat.get(bk, {}).items():
-            outl = [v[0]]
+            outl = v[0]
             if len(v) > 1 and self.xrlistsize > 1:
                 outl = sum(v[0:self.xrlistsize], RefList())
             results[k] = outl
@@ -171,7 +173,7 @@ class StandardXrefs(XrefFileXrefs):
         results = {}
         for l in inf.readlines():
             d = l.split("|")
-            v = [RefList(s) for s in d]
+            v = [RefList(s, strict=False) for s in d]
             results.setdefault(v[0][0].first.book, {})[v[0][0]] = v[1:]
         return results
 
@@ -194,7 +196,7 @@ class XMLXrefs(BaseXrefs):
         for e in xr:
             st = e.get('strongs', None)
             if e.tag == "ref" and e.text is not None:
-                r = RefList(e.text, marks=("+", "\u203A"))
+                r = RefList(e.text, marks=("+", "\u203A"), strict=False)
                 a.append((st, e.get('style', None), r))
             elif e.tag == "refgroup":
                 a.append((st, None, RefGroup(self._unpackxml(e))))
@@ -547,7 +549,7 @@ class Xrefs:
             self.xrefs = getattr(parent.printer, 'strongs', None)
             if self.xrefs is None:
                 self.xrefs = StrongsXrefs(os.path.join(pycodedir(), 'xrefs', "strongs.xml"), filters,
-                        localfile, env=env, context=parent.ptsettings,
+                        localfile, env=self.env, context=parent.ptsettings,
                         shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
         else:
             testf = os.path.join(pycodedir(), 'xrefs', source) if xrfile is None else xrfile
