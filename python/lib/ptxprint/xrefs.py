@@ -149,8 +149,10 @@ class XrefFileXrefs(BaseXrefs):
             self._addranges(results, usfm)
         if len(results):
             for k, v in sorted(results.items()):
+                if isinstance(v, list):
+                    v = RefList(v)
                 if self.filters is not None:
-                    v.filterBooks(self.filters)
+                    v[:] = [r for r in v if r.first.book in self.filters]
                 v.simplify()
                 if not len(v):
                     continue

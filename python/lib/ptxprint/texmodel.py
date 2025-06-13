@@ -1189,7 +1189,7 @@ class TexModel:
                 # test for "at" command
                 m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
                 if m:
-                    atref = RefList(m.group(1))
+                    atref = RefList(m.group(1), strict=False)
                     for r in atref.allrefs():
                         if r.chapter == 0:
                             atcontexts.append((r.book, None))

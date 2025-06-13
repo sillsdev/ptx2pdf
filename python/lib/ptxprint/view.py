@@ -289,7 +289,7 @@ class ViewModel:
             return [res] if files and res else []
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
-        bl = RefList(self.get("ecb_booklist", ""), sep=" ")
+        bl = RefList(self.get("ecb_booklist", ""), sep=" ", strict=False)
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
