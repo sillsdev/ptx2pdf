@@ -649,7 +649,7 @@ class TTFont:
         if k not in TTFont.cache:
             TTFont.cache[k] = self
 
-    def readfont(self):
+    def readfont(self, withglyphs=False):
         self.dict = {}
         if self.filename == "":
             return
@@ -670,6 +670,8 @@ class TTFont:
             self.readOTLangs(inf)
             self.readhhea(inf)
             self.readhead(inf)
+            if withglyphs:
+                self.readglyf(inf)
         self.isGraphite = 'Silf' in self.dict
         return True
 
@@ -826,9 +828,40 @@ class TTFont:
         self.ascent, self.descent = struct.unpack(b">Hh", data[4:])
 
     def readhead(self, inf):
+        if hasattr(self, 'upem'):
+            return
         inf.seek(self.dict['head'][0])
-        data = inf.read(20)
-        self.upem = struct.unpack(b">H", data[18:])[0]
+        data = inf.read(52)
+        fields = struct.unpack(">17H", data[18:])
+        for n,i in {'upem':0, 'xmin':9, 'ymin':10, 'xmax':11, 'ymax':12, 'locatype':16}.items():
+            setattr(self, n, fields[i])
+
+    def readmaxp(self, inf):
+        if hasattr(self, 'numglyphs'):
+            return
+        inf.seek(self.dict['maxp'][0])
+        data = inf.read(6)
+        self.numglyphs = struct.unpack(b">H", data[4:])
+
+    def readglyf(self, inf):
+        if hasattr(self, 'glyphs'):
+            return
+        self.readhead(inf)
+        self.readmaxp(inf)
+        inf.seek(self.dict['loca'][0])
+        if self.locatype == 0:      # short format
+            data = inf.read(self.numglyphs * 2 + 2)
+            ls = struct.unpack(">"+str(self.numglyphs+1)+"H", data)
+        else:
+            data = inf.read(self.numglyphs * 4 + 4)
+            ls = struct.unpack(">"+str(self.numglyphs+1)+"L", data)
+        locas = [(z[0], z[1]-z[0]) for z in zip(ls, ls[1:])]
+        self.glyphs = []
+        for i in range(self.numglyphs):
+            inf.seek(self.dict['glyf'][0] + locas[i][0])
+            data = inf.read(10)
+            self.glyphs.append(struct.unpack(">4H", data[2:]))  # xMin, yMin, xMax, yMax
+
 
     # def style2str(self, style):
     #     return pango_styles.get(style, str(style))
