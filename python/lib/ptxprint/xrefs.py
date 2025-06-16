@@ -146,7 +146,7 @@ class XrefFileXrefs(BaseXrefs):
         for k, v in self.xrefdat.get(bk, {}).items():
             outl = RefList(v[0])
             if len(v) > 1 and self.xrlistsize > 1:
-                outl = sum(v[0:self.xrlistsize], RefList())
+                outl = sum(v[1:self.xrlistsize], outl)
             results[k] = outl
         if usfm is not None:
             self._addranges(results, usfm)
@@ -173,9 +173,9 @@ class StandardXrefs(XrefFileXrefs):
     def readdat(self, inf):
         results = {}
         for l in inf.readlines():
-            d = l.split("|")
+            d = l.strip().split("|")
             v = [RefList(s, strict=False) for s in d]
-            results.setdefault(v[0][0].first.book, {})[v[0][0]] = v[1:]
+            results.setdefault(v[0][0].first.book, {})[v[0][0]] = RefList(v[1:])
         return results
 
 

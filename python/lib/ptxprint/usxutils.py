@@ -516,7 +516,7 @@ class Usfm:
         for c in chaps:
             if addzsetref:
                 minref = min(refranges[r].first for r in c[1])
-                if minref.verse > 0:
+                if (minref.verse or 0) > 0:
                     res.append(self.make_zsetref(minref, None, root, None))
             if len(c[0]) > 2:
                 logger.error(f"chapter too long: {c[0]}")

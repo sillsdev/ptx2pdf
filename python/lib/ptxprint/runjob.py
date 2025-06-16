@@ -243,16 +243,17 @@ class RunJob:
         os.makedirs(self.tmpdir, exist_ok=True)
         bks = self.printer.getBooks(files=True)
         jobs = []       # [(bkid/module_path, False) or (RefList, True)] 
-        if self.printer.bookrefs is None:
-            jobs = [(b, False) for b in bks]
-        else:
-            lastbook = None
+        logger.debug(f"{self.printer.bookrefs=}")
+        lastbook = None
+        if self.printer.bookrefs is not None:
             for r in self.printer.bookrefs:
                 if r.first.book != lastbook:
                     jobs.append((RefList((r, )), True))
                     lastbook = r.first.book
-                else:
+                elif len(jobs):
                     jobs[-1][0].append(r)
+        if not len(jobs):
+            jobs = [(b, False) for b in bks]
 
         logger.debug(f"{jobs=}")
         reasons = info.prePrintChecks()

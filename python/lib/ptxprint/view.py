@@ -243,10 +243,12 @@ class ViewModel:
             return [""]
         elif len(bks) > 1:
             components['bks'] = "{}-{}".format(bks[0], bks[-1])
-        elif '.' in bks[0]:
+        elif len(bks) and bks[0] is not None and len(bks[0]) and '.' in bks[0]:
             components['bks'] = os.path.splitext(os.path.basename(bks[0]))[0]
-        else:
+        elif len(bks):
             components['bks'] = bks[0]
+        else:
+            components['bks'] = ""
         cfgname = self.cfgid
         if cfgname is None:
             cfgname = ""
@@ -727,7 +729,7 @@ class ViewModel:
             if len(bks) == 2:
                 bks = bks[0] + "," + bks[1]
             elif len(bks) <= 4:
-                bks = ",".join(bks)
+                bks = ",".join([b for b in bks if b])
             elif len(bks) > 4:
                 bks = bks[0] + "," + bks[1] + "..." + bks[-2] + "," + bks[-1]
             else:
