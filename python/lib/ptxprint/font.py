@@ -169,7 +169,7 @@ class TTFontCache:
                 continue
             try:
                 (path, full) = f.strip().split(": ")
-                if path[-4:].lower() not in (".ttf", ".otf"):
+                if path[-4:].lower() not in (".ttf", ".otf", ".ttc"):
                     continue
                 if ":style=" in full:
                     (name, style) = full.split(':style=')
@@ -217,7 +217,7 @@ class TTFontCache:
             logger.debug(f"Add font path: {path}")
             self.fontpaths.append(path)
         for fname in os.listdir(path):
-            if fname.lower().endswith(".ttf"):
+            if fname.lower()[-4:] in (".ttf", ".ttc"):
                 fpath = os.path.join(path, fname)
                 f = TTFont(None, filename=fpath)
                 f.usepath = True
@@ -649,13 +649,20 @@ class TTFont:
         if k not in TTFont.cache:
             TTFont.cache[k] = self
 
-    def readfont(self, withglyphs=False):
+    def readfont(self, withglyphs=False, ttcindex=0):
         self.dict = {}
         if self.filename == "":
             return
         with open(self.filename, "rb") as inf:
             dat = inf.read(12)
-            (_, numtables) = struct.unpack(">4sH", dat[:6])
+            (fid, numtables) = struct.unpack(">4sH", dat[:6])
+            if fid == "ttcf":
+                numc = struct.unpack(">L", dat[8:])
+                dat = inf.read(numc * 4)
+                offset = struct.unpack(">L", dat[4 * ttcindex : 4 * (ttcindex+1)])
+                inf.seek(offset)
+                dat = inf.read(12)
+                numtables = struct.unpack(">H", dat[4:6])
             dat = inf.read(numtables * 16)
             for i in range(numtables):
                 (tag, csum, offset, length) = struct.unpack(">4sLLL", dat[i * 16: (i+1) * 16])
@@ -1112,9 +1119,10 @@ class FontRef:
                 if 'slant' in res.feats:
                     del res.feats['slant']
                 return res
-        f = fontcache.get(self.name)
-        if f is None:
-            return None
+        #logger.debug(f"Seeking font {self.name}")
+        #f = fontcache.get(self.name)
+        #if f is None:
+        #    return None
         res.style = None
         if bold and 'embolden' not in res.feats:
             res.feats['embolden'] = 2
