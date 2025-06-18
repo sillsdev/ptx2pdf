@@ -6,11 +6,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class NoBook:
-    @classmethod
-    def getLocalBook(cls, s, level=0):
-        return ""
-
 def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRefs, usfm=None):
     tfile = os.path.join(prjdir, "pluginData", "Transcelerator", "Transcelerator",
                          "Translated Checking Questions for {}.xml".format(bk))
@@ -22,6 +17,7 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
         usfm.addorncv()
     tdoc = et.parse(tfile)
     n = 0
+    nobook = Environment(nobook = True)
     for q in tdoc.findall('.//Question'):
         ovqs = q.get("overview", "") == "true"
         if not overview and ovqs:
@@ -39,7 +35,7 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
         if txt is not None and len(txt):
             n += 1
             # txt = "\\bd " + txt + "\\bd*" if ovqs and boldover else txt
-            r = ref.str(context=NoBook) 
+            r = ref.str(env=nobook) 
             fr = ""
             if numberedQs and showRefs:
                 fr = f"\\fr {n}. ({r}) "

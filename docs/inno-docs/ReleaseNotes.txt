@@ -1,22 +1,24 @@
 PTXprint 2.8.12 Release Notes
-13 Jun 2025
+18 Jun 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.8.13 (13 Jun 2025)
+Bug fixes and Improvements in 2.8.13 (18 Jun 2025)
   * Add feature to generate a publication report with pertinent details
     * Fix changed markers in report
-    * Added page layout visualization to report
+    * Added page layout visualization
   * Add Hans script support
     * for Chinese vertical alignment (not yet vertical text flow)
     * Add tooltips to CJK script snippet minidialog
     * Move local changes after adjlist for cjk scriptsnippet \cjksp
   * QR code generation for chapters:
-    * Chapter number QRcodes can now also go inside the chapter number box.
+    * Chapter number QRcodes can now also go inside the chapter number box
     * Update documentation; make sure that everyfirstverse gets called for \nb chapters too
+    * Add Chapter codelet (.tex) for inserting QR codes
   * Refactor checking for updates to be threaded and only every 24hrs
-  * Add Alt-X keyboard shortcut on View+Edit tab to show unicode values of selected text 
+  * Add Alt-X keyboard shortcut on View+Edit tab to show unicode values of selected text
+  * Add TTC (True Type Collection) font support at least for font 0
   * Explicitly mark to omit verses
   * Don't insert afterversespace in the text when no verses or marginal verses
   * Add codelets for chapter number adjustments - exp. QR code next 
@@ -25,6 +27,8 @@ Bug fixes and Improvements in 2.8.13 (13 Jun 2025)
   * Add missing \h check
   * Get marginal verse hyphenup working
   * Refactor pdf_viewer to pull out parlocs
+  * Allow PTXprint to be hooked
+  * Fix xrefs and dependency bugs
 
 Bug fixes and Improvements in 2.8.12 (3 Jun 2025)
   * Add (re-)versification to xrefs

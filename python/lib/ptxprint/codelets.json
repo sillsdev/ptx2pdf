@@ -528,7 +528,7 @@
           "Type": "comment%",
           "Label": "Add QR codes before all chapter numbers",
           "Description": "To create a rich and more interactive experience for readers, QR codes can be inserted before the chapter number pointing to an online resource for that book and chapter. If using this feature, update the example and make sure to use a URL which is as short as possible, and if you limit the URL to only use alphanumeric characters (0–9, only upper case A–Z, space, $, %, *, +, -, ., /, :) it will produce a more compact QR code.",
-          "CodeSnippet": "\\def\\beforechapternum#1#2#3{\\zqrcode|pgpos=\"H\" size=\"0.75\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"6pt\" data=\"WEBSITE.ORG/BIBLE/#1.#3\"\\*\\xdef\\lastQRchap{#3}}\n\\def\\everyfirstverse#1#2#3{\\edef\\tmp{#3}\\ifx\\tmp\\lastQRchap\\else\\zqrcode|pgpos=\"cl\" size=\"0.78\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"6pt\" autoquietzone=\"false\" data=\"WEBSITE.ORG/BIBLE/#1.#3\"\\*\\fi\\global\\let\\lastQRchap\\empty}"
+          "CodeSnippet": "\\def\\beforechapternum#1#2#3{\\zqrcode|pgpos=\"H\" size=\"0.78\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"6pt\" data=\"WEBSITE.ORG/BIBLE/#1.#3\"\\*\\xdef\\lastQRchap{#3}}\n\\def\\everyfirstverse#1#2#3{\\edef\\tmp{#3}\\ifx\\tmp\\lastQRchap\\else\\zqrcode|pgpos=\"cl\" size=\"0.78\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"6pt\" data=\"WEBSITE.ORG/BIBLE/#1.#3\"\\*\\fi\\global\\let\\lastQRchap\\empty}"
         }
       ],
       "Verses": [

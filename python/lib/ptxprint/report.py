@@ -173,6 +173,8 @@ class Report:
             else:
                 for e in doc.xml.errors:
                     (msg, pos, ref) = e #pos.l, pos.c = char num
+                    if pos is None:
+                        continue
                     emsg = f"{ref} {msg} at line {pos.l}, char {pos.c}"
                     failed.setdefault(bk, []).append(emsg)
         if len(passed):
