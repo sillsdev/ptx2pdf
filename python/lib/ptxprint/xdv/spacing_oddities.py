@@ -5,7 +5,7 @@ import re
 class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, diffable = False):
         super().__init__(fname, diffable)
-        self.curr_ref = None # reference of where we're at
+        self.curr_ref = None # reference of where we're at, string
         self.lines = [] # list of Line objects 
 
     def curr_hv(self):
@@ -32,23 +32,25 @@ class SpacingOddities(XDViPositionedReader):
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         if self.h != prev_pos[0]: # todo: think about a minimum h difference, min width of glyphs
             glyphs_width = self.topt(width)
-            self.lines[-1].add_glyphs(prev_pos, glyphs_width)
+            if len(self.lines) == 0:
+                self.lines.append(Line(prev_pos[1], self.curr_ref))
+            self.lines[-1].add_glyphs(prev_pos[0], glyphs_width)
         return (parm, width, pos, glyphs, txt)
 
     def xxx(self, opcode, parm, data):
         (txt,) = super().xxx(opcode, parm, data)
-        if re.search(r'pdf\: dest', txt):
-            self.curr_ref = re.findall(r'\((.*?)\)', txt)
-            print(f"reference is now {self.curr_ref}")
+        if re.search(r'pdf:dest', txt):
+            self.curr_ref = re.findall(r'\((.*?)\)', txt)[0]
         return (txt,)
         # todo: make into sensible string
 
     def xfontdef(self, opcode, parm, data):
-        (k, points, flags) = data
         (k, font) = super().xfontdef(opcode, parm, data)
         # font is an xdv Font object. Has .name (filename) and .points (size)
         # for bad spaces, we only need the size. 
         font_size = self.topt(font.points)
+        if len(self.lines) == 0:
+            self.lines.append(Line(self.v, self.curr_ref))
         self.lines[-1].change_font(self.h, font_size)
         # todo: for line collision, check if k is already in font cache
         # todo: if not, create TTFont as attribute of the xdv-font
@@ -61,22 +63,28 @@ class SpacingOddities(XDViPositionedReader):
     def vchange(self):
         # todo: handle empty lines. should we add gc now or later?
         newline = Line(self.v, self.curr_ref)
-        self.lines.append(newline)
+        # fixme: find more elegant way to do this.
+        if len(self.lines) != 0:
+            if len(self.lines[-1].gcs) == 0:
+                self.lines[-1] = newline
+            else:
+                self.lines.append(newline)
+        elif len(self.lines) == 0:
+            self.lines.append(newline)
 class Line: 
     def __init__(self, v, ref):
         self.ref = ref
         self.gcs = [] # list of GlyphContent objects, index -1 contains current gc
         self.v_start = v
-        self.prev_glyph_h = 0 # to determine spaces
-        print("new line")
 
     def change_font(self, h, fontsize):
         self.add_gc(h, fontsize)
 
-    def needs_new_gc(self, prev_h, width):
-        if self.prev_glyph_h + width + 1 < prev_h + width:
-            # this is a space
+    def needs_new_gc(self, prev_h):
+        if len(self.gcs) == 0:
             return True
+        elif abs(prev_h - (self.gcs[-1].h_start + self.gcs[-1].width)) >1:
+            return True 
         return False
     
     def add_gc(self, h, fontsize):
@@ -84,29 +92,27 @@ class Line:
         self.gcs.append(gc)
         # todo: make sure that spaces between gc blocks are in the font of the previous block.
 
-    def add_glyphs(self, prevpos, width): # in points
+    def add_glyphs(self, prev_h, width): # in points
         # check if there's a space before the glyphs.
-        if abs(prevpos[0] - self.prev_glyph_h) > 1:
-            print(f"Length of gcs is now {len(self.gcs)}")
-            if len(self.gcs) !=0:
-                self.add_gc(prevpos[0], self.gcs[-1].font_size)
-            else:
-                self.add_gc(prevpos[0], None)
+        if self.needs_new_gc(prev_h):
+            self.add_gc(prev_h, self.gcs[-1].font_size if len(self.gcs)!= 0 else None)
+        # if there is no space between current gc and new glyphs: add glyphs to current gc.
         self.gcs[-1].width += width 
-        self.prev_glyph_h = prevpos[0] + width
-        # question: better way to calculate this?
 
     def has_badspace(self):
-        for i in range (0, len(self.gcs)-1):
-            if abs(self.gcs[i+1].start_h - (self.gcs[i].start_h + self.gcs[i].width)) > 4:
-                return True
+        # question: should we take lines with only 1 gc into account? 
+        # if so, need to save the start and end h of the line (or start h and width) so we can determine space on both ends of gc.            
+        if len(self.gcs) > 1:
+            for i in range (0, len(self.gcs)-1):
+                # question: why are we not getting index out of bound error for len(gcs) == 1 and i = 0? 
+                if abs(self.gcs[i+1].h_start - (self.gcs[i].h_start + self.gcs[i].width)) > 6:
+                    return True
         return False
 
 class GlyphContent:
-    # todo: just represents black from h to h, or width.
     def __init__(self, h, fontsize):
-        self.start_h = h
-        self.font_size = fontsize 
+        self.h_start = h
+        self.font_size = fontsize # in points
         self.width = 0
 
     def add_glyph(self, g_no, g_pos):
@@ -126,9 +132,20 @@ class GlyphContent:
 def main():
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
     for (opcode, data) in reader.parse():
-        if reader.pageno > 3:
+        if reader.pageno > 10:
             break
         pass
+    count =0
+    for l in reader.lines:
+        if l.has_badspace():
+            print(f"Ref = {l.ref}, amount of gcs = {len(l.gcs)}, line starts at v = {l.v_start}.")
+            count +=1
+
+    print(f"{count} out of {len(reader.lines)} contain bad spaces")
 
 if __name__ == "__main__":
     main()
+
+    # question: I see consecutive lines with for example v_start = 1692.16529... and v_start = 1692.16548...
+    # But they are registered as separate lines, should this happen? They would be interfering right?
+    
