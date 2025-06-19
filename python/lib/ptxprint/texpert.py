@@ -98,7 +98,7 @@ texpertOptions = {
                                _("PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths. Font metrics gives more consistent results."),
                                valfn = lambda v:"%" if v else ""),
     "usesysfonts":        O("usesysfonts", "FNT", True, "", _("Use system fonts"),
-                            _("Use fonts from your system as well as your project")),
+                            _("Use fonts from your system as well as your project. Note that you need to restart PTXprint for this setting to take effect.")),
     "underlineThickness": O("underlinethickness", "FNT", (0.05,  0.01, 0.5, 0.01, 0.01, 2), r"\def{0}{{{1}}}", _("Underline thickness (em)"),
                             _("This sets the thickness of the text underline, (measured in ems)."),
                             valfn=lambda v: f2s(float(v or "0.05"))),

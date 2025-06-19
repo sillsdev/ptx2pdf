@@ -268,7 +268,7 @@ class TTFontCache:
             return f
         if style is None or len(style) == 0:
             style = "Regular"
-        res = f.get(style.lower(), None)
+        res = f.get(style, None) or f.get(style.lower(), None)
         if res is None and "Oblique" in style:
             res = f.get(style.replace("Oblique", "Italic").lower(), None)
         return res
@@ -858,7 +858,7 @@ class TTFont:
         self.ascent, self.descent = struct.unpack(b">Hh", data[4:])
 
     def readhead(self, inf):
-        if hasattr(self, 'upem'):
+        if self.upem != 1:
             return
         inf.seek(self.dict['head'][0])
         data = inf.read(52)

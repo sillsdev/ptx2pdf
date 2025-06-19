@@ -3989,8 +3989,6 @@ class GtkViewModel(ViewModel):
         buf = self.fileViews[pg][0]
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         label = self.builder.get_object("l"+_allpgids[pg][2:])
-        if label is None:
-            breakpoint()
         txtcol = " color='crimson'" if not currentText == self.uneditedText[pg] else ""
         label.set_markup("<span{}>".format(txtcol)+label.get_text()+"</span>")
 
