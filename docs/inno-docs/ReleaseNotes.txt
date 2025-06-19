@@ -1,8 +1,17 @@
 PTXprint 2.8.13 Release Notes
-18 Jun 2025
+19 Jun 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.14 (19 Jun 2025)
+  * Add FRT and INT to picture active books, if enabled. Add importing custom script
+  * Freshen up DBL import
+  * XDVPositionedReader sets font size in points
+  * First step to moving texmf-dist to texmf_dist etc.
+  * mv texmf- to texmf_ to make pyproject linux build happy
+  * Fix minor font bug where case on Bold or bold makes a difference
+  * Fix missing/empty bks
 
 Bug fixes and Improvements in 2.8.13 (18 Jun 2025)
   * Add feature to generate a publication report with pertinent details
