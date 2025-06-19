@@ -40,7 +40,7 @@ from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel
 from ptxprint.modelmap import ModelMap
 from ptxprint.minidialog import MiniDialog
-from ptxprint.dbl import UnpackDBL
+from ptxprint.dbl import UnpackDBL, GetDBLName
 from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
 from ptxprint.hyphen import Hyphenation
@@ -5135,7 +5135,8 @@ class GtkViewModel(ViewModel):
             # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
             self.DBLfile = DBLfile[0]
             self.builder.get_object("lb_DBLbundleFilename").set_label(os.path.basename(DBLfile[0]))
-            self.set("t_DBLprojName", os.path.basename(DBLfile[0])[:8], mod=False)
+            dblname = GetDBLName(self.DBLfile)
+            self.set("t_DBLprojName", dblname, mod=False)
             self.builder.get_object("btn_locateDBLbundle").set_tooltip_text(str(DBLfile[0]))
         else:
             self.builder.get_object("lb_DBLbundleFilename").set_label("")

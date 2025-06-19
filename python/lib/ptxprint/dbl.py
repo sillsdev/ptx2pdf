@@ -4,6 +4,7 @@ import re, os, shutil
 from zipfile import ZipFile
 from ptxprint.ptsettings import books, allbooks
 from ptxprint.utils import get_ptsettings
+import usfmtc
 
 def proc_start_ms(el, tag, pref, emit, ws):
     if "style" not in el.attrib:
@@ -184,6 +185,20 @@ def innertext(root, path):
         res.append("".join(s.strip() for s in e.itertext()))
     return res
 
+def GetDBLName(dblfile):
+    with ZipFile(dblfile) as inzip:
+        for name in inzip.namelist():
+            if not name.endswith("metadata.xml"):
+                continue
+            with inzip.open(name) as inf:
+                metadoc = et.parse(inf)
+            ltag = metadoc.findtext("./language/ldml") or metadoc.findtext("./language/iso")
+            if "-" in ltag:
+                ltag = ltag[:ltag.find("-")]
+            prjcode = metadoc.findtext("./identification/abbreviation")
+            return ltag + prjcode
+    return None
+
 def UnpackDBL(dblfile, prjid, prjdir):
     info = {'prjid': prjid}
     bookshere = [0] * len(allbooks)
@@ -228,8 +243,8 @@ def UnpackDBL(dblfile, prjid, prjdir):
             outfname = "{:02}{}{}.USFM".format(bkindex, bkid, prjid)
             outpath = os.path.join(prjpath, outfname)
             with inzip.open(subFolder + infname) as inf:
-                with open(outpath, "w", encoding="utf-8") as outf:
-                    usx2usfm(inf, outf)
+                indoc = usfmtc.readFile(inf, informat="usx")
+                indoc.saveAs(outpath)
 
         metacontents = meta.find('publications/publication[@default="true"]/structure')
         if metacontents is not None:

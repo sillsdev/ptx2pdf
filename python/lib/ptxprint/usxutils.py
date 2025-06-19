@@ -252,8 +252,12 @@ class UsfmCollection:
         ''' returns a list of all markers used in the corpus '''
         res = set()
         for bk in bks:
-            mkrs = self.get(bk).getmarkers()
-            res.update(mkrs)
+            usfm = self.get(bk)
+            if usfm is not None:
+                mkrs = usfm.getmarkers()
+                res.update(mkrs)
+            else:
+                logger.warn(f"{bk} usfm not found to extract markers")
         return res
 
 class RefPos:
