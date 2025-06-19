@@ -2229,12 +2229,31 @@ set stack_size=32768""".format(self.cfgid)
                     continue
                 localmod = os.path.join(view.project.srcPath(view.cfgid), a[1])
                 mode = "a" if view.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
+                view.set(ModelMap[a[0]].widget, True)
                 with open(localmod, mode, encoding="utf-8") as outf:
                     if fzip.filename is not None:
                         outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
                     dat = zipmod.read()
                     outf.write(dat)
                 zipmod.close()
+
+            # handle the script
+            if config.getboolean("project", "processscript", fallback=False):
+                fname = config.get("project", "selectscript", fallback=None)
+                try:
+                    zipscript = zipopentext(fzip, fname, prefix=prefix)
+                except (KeyError, FileNotFoundError):
+                    logger.warn(f"Missing script {fname} in imported archive")
+                    zipscript = None
+                if zipscript is not None:
+                    localscript = os.path.join(view.project.srcPath(view.cfgid), os.path.basename(fname))
+                    with open(localscript, "w", encoding="utf-8") as outf:
+                        dat = zipscript.read()
+                        outf.write(dat)
+                    view.set(ModelMap["project/processscript"].widget, True)
+                    view.set(ModelMap["project/selectscript"].widget, localscript)
+                    view.set(ModelMap["project/whentoprocessscript"].widget,
+                            config.getboolean("project", "whentoprocessscript", fallback=False))
 
         # merge cover and import has cover
         if (impAll or self.get("c_oth_Cover")) and config.getboolean("cover", "makecoverpage", fallback=False):

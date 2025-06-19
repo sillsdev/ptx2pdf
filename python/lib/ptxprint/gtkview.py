@@ -2252,6 +2252,10 @@ class GtkViewModel(ViewModel):
         filtered = self.get("c_filterPicList")
         if bks is None and filtered:
             bks = self.getBooks()
+        if self.get('c_frontmatter'):
+            bks.append("FRT")
+        if self.get('c_useSectIntros'):
+            bks.append("INT")
         self.picinfos.updateView(self.picListView, bks, filtered=filtered)
 
     def updatePicChecks(self, src):
