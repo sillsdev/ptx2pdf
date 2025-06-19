@@ -40,8 +40,8 @@ zip-safe = false
 [tool.setuptools.package-dir]
 "ptxprint" = "python/lib/ptxprint"
 "ptxprint.ptx2pdf" = "src"
-"ptxprint.xetex.texmf-var" = "xetex/texmf-var"
-"ptxprint.xetex.texmf-dist" = "xetex/texmf-dist"
+"ptxprint.xetex.texmf-var" = "xetex/texmf_var"
+"ptxprint.xetex.texmf-dist" = "xetex/texmf_dist"
 
 [tool.setuptools.package-data]
 "ptxprint.ptx2pdf" = ["*"]

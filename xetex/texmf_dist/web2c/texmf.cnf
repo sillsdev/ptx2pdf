@@ -65,7 +65,7 @@ TEXMFROOT = $SELFAUTOPARENT
 % They must must all have the TDS directory structure (https://tug.org/tds).
 
 % The main tree of distributed packages and programs:
-TEXMFDIST = $TEXMFROOT/texmf-dist
+TEXMFDIST = $TEXMFROOT/texmf_dist
 
 % We used to have a separate /texmf tree with some core programs and files.
 % Keep the variable name.
@@ -75,7 +75,7 @@ TEXMFMAIN = $TEXMFDIST
 TEXMFLOCAL = $SELFAUTOGRANDPARENT/texmf-local
 
 % TEXMFSYSVAR, where *-sys store cached runtime data.
-TEXMFSYSVAR = $TEXMFROOT/texmf-var
+TEXMFSYSVAR = $TEXMFROOT/texmf_var
 
 % TEXMFSYSCONFIG, where *-sys store configuration data.
 TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
@@ -577,28 +577,28 @@ RUBYINPUTS   = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/ruby//
 TEXMFCNF = {\
 $SELFAUTOLOC,\
 $SELFAUTOLOC/share/texmf-local/web2c,\
-$SELFAUTOLOC/share/texmf-dist/web2c,\
+$SELFAUTOLOC/share/texmf_dist/web2c,\
 $SELFAUTOLOC/share/texmf/web2c,\
 $SELFAUTOLOC/texmf-local/web2c,\
-$SELFAUTOLOC/texmf-dist/web2c,\
+$SELFAUTOLOC/texmf_dist/web2c,\
 $SELFAUTOLOC/texmf/web2c,\
 \
 $SELFAUTODIR,\
 $SELFAUTODIR/share/texmf-local/web2c,\
-$SELFAUTODIR/share/texmf-dist/web2c,\
+$SELFAUTODIR/share/texmf_dist/web2c,\
 $SELFAUTODIR/share/texmf/web2c,\
 $SELFAUTODIR/texmf-local/web2c,\
-$SELFAUTODIR/texmf-dist/web2c,\
+$SELFAUTODIR/texmf_dist/web2c,\
 $SELFAUTODIR/texmf/web2c,\
 \
 $SELFAUTOGRANDPARENT/texmf-local/web2c,\
 $SELFAUTOPARENT,\
 \
 $SELFAUTOPARENT/share/texmf-local/web2c,\
-$SELFAUTOPARENT/share/texmf-dist/web2c,\
+$SELFAUTOPARENT/share/texmf_dist/web2c,\
 $SELFAUTOPARENT/share/texmf/web2c,\
 $SELFAUTOPARENT/texmf-local/web2c,\
-$SELFAUTOPARENT/texmf-dist/web2c,\
+$SELFAUTOPARENT/texmf_dist/web2c,\
 $SELFAUTOPARENT/texmf/web2c\
 }
 %
