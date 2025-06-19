@@ -503,17 +503,29 @@
     },
   ".tex":
     {
-      "Page Nums": [
+      "Headers": [
+        {
+          "Type": "comment%",
+          "Label": "Diglot Headers",
+          "Description": "Modify the example as needed by choosing (one|option) in each segment. Note that the uppercase letters L and R refer to the primary (L) and secondary (R) texts in the diglot. For polyglot publications, L,R,A,B,C,D,E,F,G refer to each of the texts. The resulting line(s) of code should look something like this:\n  \\def\\RHevenleft{\\rangerefL}\n  \\def\\RHoddright{\\referenceR}\n\n- RH means running header, \n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header.\n\n",
+          "CodeSnippet": "% \\def\\RH(odd|even)(left|center|right){(\\empty|\\pagenumber|\\(firstref|lastref|rangeref)(L|R|A...G)}\n% Working from left to right in sequence across the spread:\n\\def\\RHevenleft{\\rangerefL}\n\\def\\RHevencenter{\\pagenumber}\n\\def\\RHevenright{\\empty}\n\n\\def\\RHoddleft{\\empty}\n\\def\\RHoddcenter{\\pagenumber}\n\\def\\RHoddright{\\rangerefR}"
+        },
         {
           "Type": "comment%",
           "Label": "Set custom page numbers (Header/Footer)",
-          "Description": "PTXprint makes it easy to set the Running Header (RH) and Running Footer (RF) for most common uses. However there are many more options that can be used if needed. Modify the inserted snippet as needed by choosing (one|options) in each segment. The resulting line(s) of code should look something like this:\n  \\def\\RFevenleft{\\pagenumber}\n  \\def\\RFoddright{\\pagenumber}\n\n- RH means running header, RF running footer,\n- noV means pages with no scripture verses, title means the title page, and nothing in that slot means normal pages,\n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header/footer.\n\n",
+          "Description": "PTXprint makes it easy to set the Running Header (RH) and Running Footer (RF) for most common uses. However there are many more options that can be used if needed. Modify the example as needed by choosing (one|option) in each segment. The resulting line(s) of code should look something like this:\n  \\def\\RFevenleft{\\pagenumber}\n  \\def\\RFoddright{\\pagenumber}\n\n- RH means running header, RF running footer,\n- noV means pages with no scripture verses, title means the title page, and nothing in that slot means normal pages,\n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header/footer.\n\n",
           "CodeSnippet": "% \\def\\R(H|F)(|noV|title)(odd|even)(left|center|right){(\\empty|\\pagenumber|\\(first|last|range)ref|\\(us|uk|iso)date|\\hrsmins)}\n\\def\\RFevenleft{\\pagenumber}\n\\def\\RFoddright{\\pagenumber}\n"
         },
         {
           "Type": "comment%",
           "Label": "Page numbers on title page of a book (Header/Footer)",
           "Description": "It is intentional that book title pages do not have page numbers showing in the header. However if needed, these can be inserted on the outer edge header.",
+          "CodeSnippet": "\\def\\RHtitleevenleft{\\pagenumber}\n\\let\\RHtitleoddright=\\RHtitleevenleft\n"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Set custom Footers",
+          "Description": "Regular scripture publications do not use the footer area as that is used for notes and cross-references. However, it is possible to set these as well.",
           "CodeSnippet": "\\def\\RHtitleevenleft{\\pagenumber}\n\\let\\RHtitleoddright=\\RHtitleevenleft\n"
         }
       ],
@@ -708,6 +720,12 @@
       "Tracing": [
         {
           "Type": "insert",
+          "Label": "Debug tracing",
+          "Description": "Enable tracing output",
+          "CodeSnippet": "\\showboxdepth=300\n\\showboxbreadth=300\n\\tracingoutput=1"
+        },
+        {
+          "Type": "insert",
           "Label": "B - Balancing",
           "Description": "\\tracing{B}\n(alerts you of any unfilled or unbalanced pages which will be listed as a Warning status message)",
           "CodeSnippet": "\\tracing{B}"
@@ -758,12 +776,6 @@
           "Label": "T - triggers",
           "Description": "\\tracing{T}",
           "CodeSnippet": "\\tracing{T}"
-        },
-        {
-          "Type": "insert",
-          "Label": "Debug tracing",
-          "Description": "Enable tracing output",
-          "CodeSnippet": "\\showboxdepth=300\n\\showboxbreadth=300\n\\tracingoutput=1"
         }
       ]
     }
