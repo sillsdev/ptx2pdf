@@ -11,7 +11,7 @@ from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
-        saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile
+        saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
@@ -585,6 +585,7 @@ class RunJob:
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
+        #os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf-dist", "web2c"))
         os.chdir(self.tmpdir)
         outpath = os.path.join(self.tmpdir, '..', outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
