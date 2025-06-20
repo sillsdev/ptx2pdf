@@ -6,15 +6,18 @@ build-backend = "setuptools.build_meta"
 name = "ptxprint"
 authors = [{name = "SIL", email = "fonts@sil.org"}]
 readme = "README.md"
-# I wish they would make up their minds on this:
-license = {"file": "python/LICENSE.txt"}
-#license = "MIT"
+# Remove license with a plague on all their houses until all support PEP 639
+# Since that will take until 24.04 is end of life, that means 2029. Well done
+# PYPA!
+#license = {"file": "python/LICENSE.txt"}
+#license = "MIT"        # and remove License classifier
 #license-files = ["python/LICENSE.txt"]
 description = "USFM based Bible typesetting (Xe)TeX based application"
 classifiers = [
    "Environment :: X11 Applications :: GTK",
    "Programming Language :: Python :: 3.8",
    "Intended Audience :: End Users/Desktop",
+   "License :: OSI Approved :: MIT License",
    "Topic :: Text Processing :: General"
    ]
 requires-python = ">=3.8"
