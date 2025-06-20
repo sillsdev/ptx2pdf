@@ -6,13 +6,13 @@ build-backend = "setuptools.build_meta"
 name = "ptxprint"
 authors = [{name = "SIL", email = "fonts@sil.org"}]
 readme = "README.md"
-license = {file = "python/LICENSE.txt"}
+license = "MIT"
+license-files = ["python/LICENSE.txt"]
 description = "USFM based Bible typesetting (Xe)TeX based application"
 classifiers = [
    "Environment :: X11 Applications :: GTK",
    "Programming Language :: Python :: 3.8",
    "Intended Audience :: End Users/Desktop",
-   "License :: OSI Approved :: MIT License",
    "Topic :: Text Processing :: General"
    ]
 requires-python = ">=3.8"
@@ -36,15 +36,17 @@ Home-Page = "https://github.com/sillsdev/ptx2pdf"
 
 [tool.setuptools]
 zip-safe = false
+include-package-data = true     # implicit
+
+[tool.setuptools.packages.find]
+where = ["python/lib"]
+namespaces = true       # implicit
 
 [tool.setuptools.package-dir]
-"ptxprint" = "python/lib/ptxprint"
-"ptxprint.ptx2pdf" = "src"
-"ptxprint.xetex.texmf-var" = "xetex/texmf_var"
-"ptxprint.xetex.texmf-dist" = "xetex/texmf_dist"
+"" = "python/lib"
 
 [tool.setuptools.package-data]
-"ptxprint.ptx2pdf" = ["*"]
+"ptxprint" = ["ptx2pdf/**/*", "xetex/**/*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "ptxprint.view.VersionStr"}

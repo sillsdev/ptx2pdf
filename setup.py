@@ -1,26 +1,21 @@
 #!/usr/bin/python3
 
-from glob import glob
-from setuptools import setup, find_packages
+from setuptools import setup
+from setuptools.command.build_py import build_py
+import os, shutil
+
+class CustomBuild(build_py):
+    def run(self):
+
+        super().run()
+        for a in (("src", "ptx2pdf"), ("xetex", "xetex")):
+            src = os.path.abspath(a[0])
+            tgt = os.path.join(self.build_lib, "ptxprint", a[1])
+            if os.path.exists(tgt):
+                shutil.rmtree(tgt)
+            shutil.copytree(src, tgt)
 
 setup(
-    name="PTXprint",
-    version="2.8.14",
-    description="Typesetting using (Xe)TeX for Paratext",
-    url="https://software.sil.org/ptxprint",
-    author="SIL International",
-    packages=find_packages('python/lib'),  # include all packages under lib
-    package_dir={'': 'python/lib'},  # indicate packages are under lib
-    include_package_data=True,  # include everything in MANIFEST.in
-    package_data={'ptxprint': ['*.*']},
-    scripts=["python/scripts/ptxprint", "python/scripts/xdvitype", "python/scripts/pdfdiff"],
-    install_requires=["regex", "pygobject", "fonttools", "pycairo", "appdirs", "Pillow", "numpy"], #, "ssl"],
-    zip_safe=False,
-    license="MIT",
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "Environment :: X11 Applications :: GTK",
-        "Topic :: Text Editors :: Text Processing",
-        "License :: OSI Approved :: MIT License",
-    ]
+    cmdclass = {'build_py': CustomBuild}
 )
+
