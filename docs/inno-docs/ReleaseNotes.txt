@@ -4,6 +4,10 @@ PTXprint 2.8.15 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
+Bug fixes and Improvements in 2.8.16 (20 Jun 2025)
+  * Flip flop the licensing information to make launchpad happy
+  * Fix bug with book codes starting with a digit not printing
+
 Bug fixes and Improvements in 2.8.15 (20 Jun 2025)
   * Ensure that changing the page size recalculates the lines per page
   * Add FRT and INT to picture active books, if enabled. Add importing custom script

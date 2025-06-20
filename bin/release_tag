@@ -85,7 +85,7 @@ replacefile("python/lib/ptxprint/ptxprint.glade", r'(property name=\"version\">V
 replacefile("python/lib/ptxprint/splash.glade", r'(property name=\"label\">PTXprint \().*?(\))', r'\g<1>'+args.version+r'\g<2>')
 replacefile("python/lib/ptxprint/view.py", r'^\s*(VersionStr = ").*?"', r'\g<1>'+args.version+'"')
 replacefile("python/lib/ptxprint/view.py", r'^\s*(GitVersionStr = ").*?"', r'\g<1>'+args.version+'"')
-replacefile("docs/inno-docs/ReleaseNotes.txt", r'(PTXprint )\S+( Release Notes)', r'\g<1>'+args.version+'\g<2>')
+replacefile("docs/inno-docs/ReleaseNotes.txt", r'(PTXprint )\S+( Release Notes)', r'\g<1>'+args.version+r'\g<2>')
 
 branches = get_branches()
 
