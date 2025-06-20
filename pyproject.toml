@@ -6,8 +6,10 @@ build-backend = "setuptools.build_meta"
 name = "ptxprint"
 authors = [{name = "SIL", email = "fonts@sil.org"}]
 readme = "README.md"
-license = "MIT"
-license-files = ["python/LICENSE.txt"]
+# I wish they would make up their minds on this:
+license = {"file": "python/LICENSE.txt"}
+#license = "MIT"
+#license-files = ["python/LICENSE.txt"]
 description = "USFM based Bible typesetting (Xe)TeX based application"
 classifiers = [
    "Environment :: X11 Applications :: GTK",
