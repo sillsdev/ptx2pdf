@@ -37,11 +37,11 @@
 \newwrite\m@rginnotes
 \plugin@startif{marginnotes}
 
-\def\@marginnote#1#2#3#4#5#6#7#8{%
-% #1 = reference, #2 = marker, #3 = side, #4 = distance from text, #5 = width,
-% #6 = height, #7 = x-shift, #8 = y-shift
-  \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#7}%
-  \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#8}%
+\def\@marginnote#1#2#3#4#5#6#7#8#9{%
+% #1 = reference, #2 = marker, #3 = side, #4 = valign, #5 = distance from text,
+% #6 = width, #7 = height, #8 = x-shift, #9 = y-shift
+  \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#8}%
+  \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#9}%
   \@m@rginnote{#1}{#2}%
 }
 
@@ -55,18 +55,20 @@
   \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1 (smf=\SideMarginFactor x\the\MarginUnit, tw=\the\textwidth, bg=\the\BindingGutter)}%
 }
 
-\def\pl@cemnote#1#2#3#4#5{%
-% #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
-  \edef\t@mp{#2}%
+\def\pl@cemnote#1#2#3#4#5#6{%
+% #1 = vbox, #2 = side, #3 = valign, #4 = distance from text, #5 = x-shift, #6 = y-shift
+  \edef\t@mp{#2}\edef\t@mpv{#3}%
   \dimen9=\ht#1
-  \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#4, y-shift=\the#5, text = \the#3, side = #2, ht=\the\dimen9}%
-  \setbox0=\vbox to 0pt{\begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}\let\par=\endgraf\vss
-    \ifx\t@mp\l@ft\llap{\box #1\kern #4\kern #3}%
-    \else\noindent\hfill\rlap{\kern #4\kern #3\box #1}%
+  \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6, text = \the#4, side = #2, valign = #3, ht=\the\dimen9}%
+  \setbox0=\vbox to 0pt{\begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}\let\par=\endgraf
+    \ifx\t@mpv\@bottom\else\vss\fi
+    \ifx\t@mp\l@ft\llap{\box #1\kern #5\kern #4}%
+    \else\noindent\hfill\rlap{\kern #5\kern #4\box #1}%
     \fi
+    \ifx\t@mpv\@top\else\vss\fi
     \endgroup}%
   % \ifx\t@mp\l@ft\showbox0
-  \dp0=0pt\vadjust {\kern -\dimen9\kern #5\box0\kern-#5\kern\dimen9}%
+  \dp0=0pt\vadjust {\kern -\dimen9\kern #6\box0\kern-#6\kern\dimen9}%
 }
 
 \def\finishm@rginnotes "#1"{\immediate\closeout\m@rginnotes\m@rginnotesopenfalse}
@@ -83,16 +85,16 @@
 }
 
 \m@rginnotesopenfalse
-\def\writem@rginnote#1#2#3#4#5#6#7{%
-% #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
-% #6 = reference, #7 = marker
+\def\writem@rginnote#1#2#3#4#5#6#7#8{%
+% #1 = vbox, #2 = side, #3 = valign, #4 = distance from text, #5 = x-shift, #6 = y-shift
+% #7 = reference, #8 = marker
   \pdfsavepos
-  \edef\t@mp{\string\@marginnote{#6}{#7}{#2}{#3}{\the\wd#1}{\the\ht#1}{#4}{#5}}%
+  \edef\t@mp{\string\@marginnote{#7}{#8}{#2}{#3}{#4}{\the\wd#1}{\the\ht#1}{#5}{#6}}%
   \x@\write\x@\m@rginnotes\x@{\t@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
 }
 
-\def\d@marginnote#1#2#3#4{%
-% #1 = vbox, #2 = reference, #3 = marker #4 = side
+\def\d@marginnote#1#2#3#4#5{%
+% #1 = vbox, #2 = reference, #3 = marker #4 = side #5 = valign
   \edef\p@s{#4}%
   \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
   \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else
@@ -107,8 +109,8 @@
   %\dimen0=0pt
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
   \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
-  \writem@rginnote{#1}{\p@s}{\the\dimen0}{\the\dimen1}{\the\dimen2}{#2}{#3}%
-  \pl@cemnote{#1}{\s@de}{\dimen0}{\dimen1}{\dimen2}%
+  \writem@rginnote{#1}{\p@s}{#5}{\the\dimen0}{\the\dimen1}{\the\dimen2}{#2}{#3}%
+  \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%
 }
 
 \plugin@endif
