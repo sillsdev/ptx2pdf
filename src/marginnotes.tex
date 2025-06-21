@@ -58,18 +58,15 @@
 \def\pl@cemnote#1#2#3#4#5{%
 % #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
   \edef\t@mp{#2}%
-  \trace{M}{kerns: pstrut=\the\dp\pstr@t, y-shift=\the#5, text = \the#3, side = #2}%
   \dimen9=\ht#1
+  \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#4, y-shift=\the#5, text = \the#3, side = #2, ht=\the\dimen9}%
   \setbox0=\vbox to 0pt{\begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}\let\par=\endgraf\vss
     \ifx\t@mp\l@ft\llap{\box #1\kern #4\kern #3}%
     \else\noindent\hfill\rlap{\kern #4\kern #3\box #1}%
     \fi
-    \vss\endgroup}%
+    \endgroup}%
   % \ifx\t@mp\l@ft\showbox0
-  \dp0=0pt\indent\vadjust {%
-    \kern -\dimen9
-    \kern #5\box0
-    \kern-#5 \kern \dimen9}%
+  \dp0=0pt\vadjust {\kern -\dimen9\kern #5\box0\kern-#5\kern\dimen9}%
 }
 
 \def\finishm@rginnotes "#1"{\immediate\closeout\m@rginnotes\m@rginnotesopenfalse}
@@ -104,10 +101,10 @@
   \ifx\p@s\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
   \else\ifx\p@s\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
-  \trace{M}{marginnote #2 #3, pageno=\p@geno, side=\s@de, was #4, col=\csname marginnote-#2@#3:colno\endcsname}%
-  \getp@ram{leftmargin}{#3}{\styst@k}%
-  %\ifx\p@ram\relax\dimen0=1pt\else\dimen0=-\p@ram\IndentUnit\fi
-  \dimen0=0pt
+  \getp@ram{spacebefore}{#3}{#3+\styst@k}%
+  \ifx\p@ram\relax \dimen0=1pt\else\dimen0=\p@ram\IndentUnit \divide\dimen0 by 12\fi
+  \trace{M}{marginnote(#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, offset=\the\dimen0, stystack=\styst@k}%
+  %\dimen0=0pt
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
   \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
   \writem@rginnote{#1}{\p@s}{\the\dimen0}{\the\dimen1}{\the\dimen2}{#2}{#3}%

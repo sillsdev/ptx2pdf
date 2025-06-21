@@ -1139,6 +1139,7 @@
 %+csty_dropchap
  \ifdim\dropnumbersize=0pt
    \calcdr@psize
+ \else\edef\dr@psize{\the\dropnumbersize}
  \fi
  \def\m@rker{c}\def\@mkr{c\c@rrdstat}\defp@ram{fontsize}{\dr@psize}%
  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased

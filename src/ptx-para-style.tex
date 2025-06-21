@@ -129,6 +129,7 @@
 \newif\ifnormalhe@dings \normalhe@dingstrue
 \newskip\headingtopspace
 \newskip\headingmidspace
+\def\endheadingshook{}
 \newbox\he@dingbox
 \def\endhe@dings{\ifhe@dings\trace{h}{+endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi}%
   \makecutouts \endgraf
@@ -147,30 +148,33 @@
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
   \trace{h}{ht=\the\ht\he@dingbox , dp=\the\dp\he@dingbox, useglyph=\the\XeTeXuseglyphmetrics}%
-  \ift@plevel@utobox
-    \ifdim\dimexpr \ht\he@dingbox+ \dp\he@dingbox\relax>0pt 
-      \box\he@dingbox
-      \he@dingsfalse
-      \endlastp@rstyle{end\B@xtype}\penalty10000
-      \@sbe
-      %\showlists
-      \let\B@xtype\empty
-      \t@plevel@utoboxfalse
-      \toplevelp@rtrue % Is this always correct? Alternative is re-check the mcstack.
+  \endheadingshook
+  \ifhe@dings
+    \ift@plevel@utobox
+      \ifdim\dimexpr \ht\he@dingbox + \dp\he@dingbox\relax>0pt 
+        \box\he@dingbox
+        \he@dingsfalse
+        \endlastp@rstyle{end\B@xtype}\penalty10000
+        \@sbe
+        %\showlists
+        \let\B@xtype\empty
+        \t@plevel@utoboxfalse
+        \toplevelp@rtrue % Is this always correct? Alternative is re-check the mcstack.
+      \fi
+    \else
+      \ifinextended\trace{e}{sb@rgrid: \sb@rgrid, lpc:\lastp@rclass,tpc:\thisp@rclass}%
+        \x@\ifx\csname @gr@d@\sb@rgrid\endcsname\false
+          \unvbox\he@dingbox
+          %\showboxbreadth=99\showlists
+      \fi\fi % Disable gridding of headings box if no gridding here
+      \ifdim\ht\he@dingbox>0pt 
+        \setbox\he@dingbox\vbox{\t@gstart{H}{heading}\unvbox\he@dingbox\t@gend{H}}%
+        \gridb@x\he@dingbox
+        \ifinextended\sb@rsavegriddims\fi
+      \fi%
     \fi
-  \else
-    \ifinextended\trace{e}{sb@rgrid: \sb@rgrid, lpc:\lastp@rclass,tpc:\thisp@rclass}%
-      \x@\ifx\csname @gr@d@\sb@rgrid\endcsname\false
-        \unvbox\he@dingbox
-        %\showboxbreadth=99\showlists
-    \fi\fi % Disable gridding of headings box if no gridding here
-    \ifdim\ht\he@dingbox>0pt 
-      \setbox\he@dingbox\vbox{\t@gstart{H}{heading}\unvbox\he@dingbox\t@gend{H}}%
-      \gridb@x\he@dingbox
-      \ifinextended\sb@rsavegriddims\fi
-    \fi%
+    \let\lastp@rclass\tmppcl@ss%
   \fi
-  \let\lastp@rclass\tmppcl@ss%
   \ifvoid\he@dingnotes
     \ifnormalhe@dings\else\penalty10\fi
     \trace{h}{\oldm@rker: Outputting \ifnormalhe@dings normal \fi end-headings penalty}%
@@ -178,8 +182,8 @@
     \unvbox\he@dingnotes
     \ifnormalhe@dings\penalty10000 \else\penalty10 \fi
   \fi
+    \global\first@fterheadingtrue
   \global\he@dingsfalse
-  \global\first@fterheadingtrue
   \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
  \fi
 }

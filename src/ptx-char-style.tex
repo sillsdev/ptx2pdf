@@ -247,7 +247,7 @@
     \ifx\ch@rfontextend\empty\else
      \m@kenumber{\ch@rfontextend}%
       \ifx\f@ntextend\empty\let\f@ntextend\@@result
-      \else 
+      \else
         \bgroup\dimen0=\f@ntextend pt\xdef\tmpv@l{\strip@pt{\dimexpr \@@result \dimen0\relax}}%
         \egroup
         \let\f@ntextend\tmpv@l
