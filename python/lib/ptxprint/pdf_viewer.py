@@ -9,7 +9,7 @@ from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.utils import _, f2s, coltoonemax
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
-from ptxprint.parlocs import Paragraphs, ParInfo
+from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
 from pathlib import Path
 from threading import Timer
 import logging

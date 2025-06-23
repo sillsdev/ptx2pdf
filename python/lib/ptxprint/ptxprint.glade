@@ -27751,7 +27751,7 @@ Email the ZIPped archive file to:
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">5</property>
-                                    <property name="width">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28098,6 +28098,25 @@ so on.</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">11</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_chatBot">
+                                    <property name="label" translatable="yes">NEW! Chatbot Support</property>
+                                    <property name="name">Use the PTXprint Support ChatBot to answer your questions instantly</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://ptxprintsupport-55742.chipp.ai/w/chat/</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">5</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
