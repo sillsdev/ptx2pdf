@@ -831,6 +831,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
         self.builder.get_object("scr_previewPDF").set_visible(False)
         self.getInitValues(addtooltips=self.args.identify)
+        self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
         logger.debug("Project list loaded")
@@ -1632,6 +1633,7 @@ class GtkViewModel(ViewModel):
             return
 
         self.builder.get_object("spin_preview").start()
+        self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
         print_count_str = self.get("_printcount", "")
         if print_count_str:
             print_count = int(print_count_str)

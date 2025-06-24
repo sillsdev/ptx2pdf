@@ -3969,12 +3969,16 @@ current configuration.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="c_updatePDF">
-                    <property name="label" translatable="yes">Auto-update</property>
+                  <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">When enabled, this re-creates
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkCheckButton" id="c_updatePDF">
+                        <property name="label" translatable="yes">Auto-update</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">When enabled, this re-creates
 the PDF after making changes
 using the (right-click) context
 menu options.
@@ -3983,13 +3987,73 @@ Note that there is a short delay
 enabling you to make several
 adjustments one after the other
 before the update is triggered.
-This delay can be adjusted.
-Refer to: Advanced &gt; Other &gt; 
+This delay can be adjusted by
+clicking on the value shown here
+or refer to: Advanced &gt; Other &gt; 
 Other Miscellaneous Settings.</property>
-                    <property name="margin-top">20</property>
-                    <property name="active">True</property>
-                    <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                        <property name="margin-top">20</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEventBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">When enabled, this re-creates
+the PDF after making changes
+using the (right-click) context
+menu options.
+
+Note that there is a short delay 
+enabling you to make several
+adjustments one after the other
+before the update is triggered.
+This delay can be adjusted by
+clicking on the value shown here
+or refer to: Advanced &gt; Other &gt; 
+Other Miscellaneous Settings.</property>
+                        <property name="valign">end</property>
+                        <signal name="button-release-event" handler="onSpinnerClicked" swapped="no"/>
+                        <child>
+                          <object class="GtkLabel" id="l_updateDelay">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">When enabled, this re-creates
+the PDF after making changes
+using the (right-click) context
+menu options.
+
+Note that there is a short delay 
+enabling you to make several
+adjustments one after the other
+before the update is triggered.
+This delay can be adjusted by
+clicking on the value shown here
+or refer to: Advanced &gt; Other &gt; 
+Other Miscellaneous Settings.</property>
+                            <property name="valign">end</property>
+                            <property name="margin-bottom">2</property>
+                            <property name="label" translatable="yes">(3.0s delay)</property>
+                            <attributes>
+                              <attribute name="underline" value="True"/>
+                              <attribute name="foreground" value="#1c1c7171d8d8"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>

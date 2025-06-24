@@ -217,8 +217,8 @@ texpertOptions = {
                             _("Step Value to expand text using right-click context menu adjustment.")),
     "ExpandTextLimit":    O("expandtextlimit", "OTH", (110, 105, 125, 1, 1, 0), "", _("Maximum Text Expand (%)"),
                             _("Limit how much text can expand to using right-click context menu adjustment.")),
-    "autoUpdateDelay":    O("autoupdatedelay", "OTH", (3, 0.0, 120.0, 0.1, 1.0, 1), "", _("Auto-Update Delay (seconds)"),
-                            _("Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-Update from running.")),
+    "autoUpdateDelay":    O("autoupdatedelay", "OTH", (3, 0.0, 120.0, 0.1, 1.0, 1), "", _("Auto-update Delay (seconds)"),
+                            _("Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-update from running.")),
 }                          # (default, lower, upper, stepIncr, pageIncr, decPlaces)
 
 def widgetName(opt):
