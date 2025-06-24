@@ -755,9 +755,9 @@
 \def\ch@pterc@tnum{}
 %\newtoks\Flag
 \def\p@rstyle@everypar#1{%
-  \trace{sP}{Redefined everypar}%
+  \trace{sP}{Redefined everypar (#1)}%
   \everypar={%
-   \trace{sP}{everypar! n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
+   \trace{sP}{everypar! (#1) n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
@@ -779,6 +779,20 @@
    \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
    \trace{o}{paragraph #1, hsize=\the\hsize}%
    \allowp@rindenttrue
+   \def\t@st{0}%
+   \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \ifdr@ppednumber \def\t@st{2}\fi\else \def\t@st{1}\fi
+   \ifnum 0=\t@st \else
+     \ifversion{5}{%
+       \ifIndentAtChapter\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterchap}\fi
+       \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterheading}\fi\fi
+     }{%
+       \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \trace{C}{\ptxversion v<5 afterheading}\fi\fi
+       \ifnum 1=\t@st
+         \ifIndentAtChapter\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterchap}\fi
+       \fi
+     }%
+     \trace{C}{allowp@rindent \ifallowp@rindent true\else false\fi \space\t@st, (\iffirst@fterheading fah,\fi\ifIndentAfterHeading IAH,\fi\ifIndentAtChapter IAC,\fi)}%
+   \fi
    %
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
@@ -794,30 +808,47 @@
     \ifx\p@ram\v@rsetext
      \t@stpublishability{c}\ifn@npublishable
      \else
+      % Before version 4->5 fix: Chapter numbers moved with indent.
+      % Version 4 IndentAtChapter applied only to line1, par starting on line 2 had indent stacked on cutout.
+      % Version 5 Indent at Chapter applies to line2 as well. No stacking.
       \m@kechapterbox
       \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
       \xdef\ch@pterc@tnum{}%
       \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
+      \ifx\f@rstindent\relax\else\ifx\p@ram\relax
+        \def\p@ram{0}% Can't use simple case if firstindent is defined
+      \fi\fi
       \ifx\p@ram\relax % simple case - no left indent
         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
         \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
       \else % probably \q or something like that;                               %(1)
             % need to compare cutout width with leftindent
         \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
-        \ifx\f@rstindent\relax \else \advance\dimen0 by \f@rstindent\IndentUnit \fi
-        % now \dimen0 is the real indent of the 1st line
-        \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
+        \ifallowp@rindent
+          \ifversion{5}{}{\ifdim\dimen3>0pt \advance \dimen3 by \ch@pterwd\fi}%
+          \advance\dimen0 by \dimen3
+          \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
+        \else
+          \dimen4=\wd\ch@pterbox
+          \advance\dimen0 by \dimen3
+          \ifdim\dimen2>0pt 
+            \advance\dimen4 -\dimen2
+          \fi
+        \fi
+        \trace{C}{Dropchap cutout is naturally \the\wd\ch@pterbox. Indent on line 1 is \the\dimen0/\the\dimen4/\the\dimen2}%
         \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
           \x@\c@tcmd\x@{\the\dimen4}{0}{1}% create extra indent
-          \dimen4=\ch@pterwd \advance\dimen4 by -\dimen2 % and for wrap if needed
-          \ifdim\dimen4>0pt \x@\c@tcmd\x@{\the\dimen4}{1}{1}\fi
-          \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
         \else % the indent is already big enough, so just use it as is
+          \trace{C}{Dropchap box set to \the\dimen0, so it's properly aligned.}%
           \setbox\ch@pterbox=\hbox to \dimen0{\box\ch@pterbox\hfil}%
         \fi
+        \dimen4=\ch@pterwd \advance\dimen4 by -\dimen2 % and for wrap if needed
+        \ifdim\dimen4>0pt 
+          \trace{C}{Dropchap cutout for 2nd line set to \the\dimen4}%
+          \x@\c@tcmd\x@{\the\dimen4}{1}{1}\fi
+        \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
       \fi
       \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
-      \ifIndentAtChapter\else \allowp@rindentfalse \fi
       \dr@ppednumbertrue
      \fi
      % generate second-level PDF bookmark for the chapter
@@ -827,9 +858,15 @@
 %+cpar_parstyle_drop
    \else
     \ifdr@ppednumber % second line of chapter number, need to check indent/cutout
+     \trace{C}{dr@ppednumbertrue, line2 of chapter number}%
      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
      \trace{C}{leftmargin? '\p@ram', \styst@kfirst, \styst@k}%
+     \ifversion{5}{%
+        \ifx\f@rstindent\relax\else\ifx\p@ram\relax
+          \def\p@ram{0}% Can't use simple case if firstindent is defined
+       \fi\fi
+     }{}%
      \ifx\p@ram\relax % simple case - no left indent
        \ifx\ch@pterc@tnum\empty
          \trace{C}{New cutout needed}%
@@ -839,12 +876,12 @@
          \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
        \fi
      \else % probably \q or something like that;
-           % need to compare cutout width with leftindent
+           % need to compare cutout width with leftindent and 1stline indent
        \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
-       \ifx\f@rstindent\relax \else \advance\dimen0 by \f@rstindent\IndentUnit \fi
-       % now \dimen0 is the real indent of the 1st line
+       \advance\dimen0 by \dimen3
+       % now \dimen0 is the real (target) indent of the 1st line
        \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0 \relax
-       \trace{C}{Modified cutout needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd, \the\dimen4}%
+       \trace{C}{Modified cutout (maybe) needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd, \the\dimen4}%
        \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
          \ifx\ch@pterc@tnum\empty
            \trace{C}{New cutout needed (\ch@pterc@tnum)}%
@@ -854,11 +891,13 @@
            \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
            %\Flag{\MSG{FLAG!}M\Flag{}}%
          \fi
+         %\advance\dimen3 by -\ch@pterwd
        \else % the indent is already big enough, so just use it as is
-        \ifversion{3}{\dimen5=0pt \ifcsname cut@width\the\@numcuts\endcsname \x@\dimen5 \csname cut@width\the\@numcuts\endcsname\fi
-            \ifdim\dimen4 > -1pt \advance\dimen3 by -\dimen5\fi}{}%
+        \dimen5=0pt \ifcsname cut@width\the\@numcuts\endcsname \x@\dimen5 \csname cut@width\the\@numcuts\endcsname\fi
+        \trace{sP}{Indent is sufficient: \the\dimen3, \the\dimen4, \the\dimen5}%
+        \ifversion{5}{\advance\dimen3 by -\dimen5}{%
+          \ifversion{3}{\ifdim\dimen4 > -1pt \advance\dimen3 by -\dimen5\fi}{}}%
        \fi
-      \ifIndentAtChapter\else \allowp@rindentfalse \fi
      \fi
      \dr@ppednumberfalse
      \trace{hv}{Setting new chapter spacefactor (ep1)}%
@@ -871,7 +910,7 @@
 %+cpar_parstyle_final
    \ifx\f@rstindent\relax \else
     \ifdim\dimen3 < 0pt
-     \allowp@rindenttrue % redundant
+     \allowp@rindenttrue %
     \else
      \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
     \fi
