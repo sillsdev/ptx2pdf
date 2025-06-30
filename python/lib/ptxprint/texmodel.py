@@ -1198,7 +1198,7 @@ class TexModel:
                             if cr.first.verse == 0:
                                 atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
                             else:
-                                for cv in cr:
+                                for cv in r:
                                     v = None
                                     if cv.first != cv.last:
                                         v = cv

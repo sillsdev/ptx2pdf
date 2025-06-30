@@ -209,7 +209,7 @@ class Chunk(list):
                     outf.write(f"\n\\{e.get('style', '')} {e.text}")
                     lastel = e
                 else:
-                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else Grammar), lastel=lastel)
+                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else Grammar), lastel=lastel, version=[3, 1])
             if lastel is not None and lastel.tail:
                 outf.write(lastel.tail)
             res = outf.getvalue() + "\n"
