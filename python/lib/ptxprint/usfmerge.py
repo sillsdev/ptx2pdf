@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import sys, os, re, io
 from ptxprint.usxutils import Usfm, Sheets
+from ptxprint.utils import runChanges
 from usfmtc.usfmgenerate import usx2usfm
 from usfmtc.usfmparser import Grammar
 import argparse, difflib, sys
@@ -1236,8 +1237,8 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                     outf.write("\\p\n")
             outf.write("\\polyglotendcols\n")
     if len(changes):
-        text = out.getvalue()
-        out.close()
+        text = outf.getvalue()
+        outf.close()
         text = runChanges(changes, book, text)
         if outfile is not None:
             with open(outfile, "w", encoding="utf-8") as outf:
