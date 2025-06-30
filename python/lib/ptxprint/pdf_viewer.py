@@ -879,7 +879,8 @@ class PDFViewer:
                     # --- If there are fewer than 7 pages, show all without ellipses ---
                     if total_count <= 7:
                         formatted_pages = list(map(str, ufPages))
-                        formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
+                        if curr_pos < len(formatted_pages):
+                            formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
                         pgs = "  ".join(formatted_pages)
                         elipsis = ""  # No "(of X)" when all numbers are shown
                     else:

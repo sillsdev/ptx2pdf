@@ -294,7 +294,9 @@ class ViewModel:
             return [res] if files and res else []
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
+        # This is where it is broken - it isn't coming back from RefList
         bl = RefList(self.get("ecb_booklist", ""), sep=" ", strict=False)
+        # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
@@ -2169,7 +2171,7 @@ set stack_size=32768""".format(self.cfgid)
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile, prefix=prefix) as inf:
-                    otherpics.read_piclist(inf, "B")
+                    otherpics.read_piclist(inf, "B") # This is broken (26/6/2025)
             except (KeyError, FileNotFoundError) as e:
                 pass
             if impAll or self.get("r_impPics") == "entire":
