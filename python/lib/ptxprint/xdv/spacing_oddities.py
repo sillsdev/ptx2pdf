@@ -5,7 +5,7 @@ import re
 class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, diffable = False):
         super().__init__(fname, diffable)
-        self.curr_ref = None # reference of where we're at, string
+        self.curr_ref = None # reference of where we're at, str
         self.lines = [] # list of Line objects 
 
     def curr_hv(self):
@@ -13,18 +13,18 @@ class SpacingOddities(XDViPositionedReader):
         return curr_pos
 
     def parmop(self, opcode, parm, data):
+        # note: parmop never contanis opcode <=142 thus no glyphs 
         prev_pos = self.curr_hv()
         result = super().parmop(opcode, parm, data)
-        # question: does h change need to be handled here? It cannot be a glyph right? 
         if self.v != prev_pos[1]:
-            self.vchange()
+            self.vchange(prev_pos)
         return result
 
     def simple(self, opcode, parm, data):
         prev_pos = self.curr_hv()
         result = super().simple(opcode, parm, data)
-        if self.v!= prev_pos[1]:
-            self.vchange()
+        if self.v != prev_pos[1]:
+            self.vchange(prev_pos)
         return result
 
     def xglyphs(self, opcode, parm, data):
@@ -33,7 +33,7 @@ class SpacingOddities(XDViPositionedReader):
         if self.h != prev_pos[0]: # todo: think about a minimum h difference, min width of glyphs
             glyphs_width = self.topt(width)
             if len(self.lines) == 0:
-                self.lines.append(Line(prev_pos[1], self.curr_ref))
+                self.lines.append(Line(prev_pos, self.curr_ref)) 
             self.lines[-1].add_glyphs(prev_pos[0], glyphs_width)
         return (parm, width, pos, glyphs, txt)
 
@@ -42,7 +42,6 @@ class SpacingOddities(XDViPositionedReader):
         if re.search(r'pdf:dest', txt):
             self.curr_ref = re.findall(r'\((.*?)\)', txt)[0]
         return (txt,)
-        # todo: make into sensible string
 
     def xfontdef(self, opcode, parm, data):
         (k, font) = super().xfontdef(opcode, parm, data)
@@ -50,7 +49,7 @@ class SpacingOddities(XDViPositionedReader):
         # for bad spaces, we only need the size. 
         font_size = self.topt(font.points)
         if len(self.lines) == 0:
-            self.lines.append(Line(self.v, self.curr_ref))
+            self.lines.append(Line(self.curr_hv(), self.curr_ref))
         self.lines[-1].change_font(self.h, font_size)
         # todo: for line collision, check if k is already in font cache
         # todo: if not, create TTFont as attribute of the xdv-font
@@ -60,9 +59,9 @@ class SpacingOddities(XDViPositionedReader):
         # but it adds properties of the font to it in the __init__, so it contains multiiple fonts?
         return (k, font)
 
-    def vchange(self):
-        # todo: handle empty lines. should we add gc now or later?
-        newline = Line(self.v, self.curr_ref)
+    def vchange(self, prevpos):
+        # question: should we have a minimum vchange?
+        newline = Line(prevpos, self.curr_ref)
         # fixme: find more elegant way to do this.
         if len(self.lines) != 0:
             if len(self.lines[-1].gcs) == 0:
@@ -72,10 +71,11 @@ class SpacingOddities(XDViPositionedReader):
         elif len(self.lines) == 0:
             self.lines.append(newline)
 class Line: 
-    def __init__(self, v, ref):
+    def __init__(self, prevpos, ref):
         self.ref = ref
         self.gcs = [] # list of GlyphContent objects, index -1 contains current gc
-        self.v_start = v
+        self.v_start = prevpos[1]
+        self.h_start = prevpos[0]
 
     def change_font(self, h, fontsize):
         self.add_gc(h, fontsize)
@@ -99,13 +99,11 @@ class Line:
         # if there is no space between current gc and new glyphs: add glyphs to current gc.
         self.gcs[-1].width += width 
 
-    def has_badspace(self):
-        # question: should we take lines with only 1 gc into account? 
-        # if so, need to save the start and end h of the line (or start h and width) so we can determine space on both ends of gc.            
-        if len(self.gcs) > 1:
+    def has_badspace(self, threshold = 4):
+        # We don't count spaces at the start or end of a line.
+        if len(self.gcs) >1:
             for i in range (0, len(self.gcs)-1):
-                # question: why are we not getting index out of bound error for len(gcs) == 1 and i = 0? 
-                if abs(self.gcs[i+1].h_start - (self.gcs[i].h_start + self.gcs[i].width)) > 6:
+                if abs(self.gcs[i+1].h_start - (self.gcs[i].h_start + self.gcs[i].width)) > threshold:
                     return True
         return False
 
@@ -130,18 +128,24 @@ class GlyphContent:
         #self.starts.append(pos)    
 
 def main():
-    reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
+    #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
+    reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
     for (opcode, data) in reader.parse():
-        if reader.pageno > 10:
-            break
-        pass
+        if reader.pageno > 3:
+            break  
+    
     count =0
     for l in reader.lines:
-        if l.has_badspace():
+        if l.has_badspace(threshold = 100):
             print(f"Ref = {l.ref}, amount of gcs = {len(l.gcs)}, line starts at v = {l.v_start}.")
             count +=1
 
     print(f"{count} out of {len(reader.lines)} contain bad spaces")
+
+    for l in reader.lines[200:210]:
+        print(f"Line starts at {l.v_start} and has {len(l.gcs)} gcs")
+        for g in l.gcs:
+            print(f"Gc starts at {g.h_start} and has width {g.width}")
 
 if __name__ == "__main__":
     main()
@@ -149,3 +153,6 @@ if __name__ == "__main__":
     # question: I see consecutive lines with for example v_start = 1692.16529... and v_start = 1692.16548...
     # But they are registered as separate lines, should this happen? They would be interfering right?
     
+# question: we determine bad spaces based on the width of gc blocks. This is the width of xglyphs, converted to points
+# does this width already take into account the font? Is the amount of points a different absolute size depending on the font? 
+# no, right?
