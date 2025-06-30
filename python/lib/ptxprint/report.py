@@ -8,6 +8,16 @@ from ptxprint.utils import rtlScripts
 loglabels = ["\u00A0", "\u00A0", "\u2714", "W", "E", "F", "C"]
 logcolors = ["white", "lightskyblue", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
 
+class ReportLoggingHandler(logging.Handler):
+    def __init__(self, report):
+        super().__init__(logging.INFO)
+        self.report = report
+        self.setFormatter(logging.Formatter('%(message)s', datefmt=''))
+
+    def emit(self, record):
+        print(self.format(record))
+        self.report.add("1. Runtime", self.format(record), severity=record.levelno, txttype="text")
+
 class ReportEntry:
     def __init__(self, msg, severity=logging.DEBUG, order=0, txttype="html"):
         self.msg = msg
@@ -47,6 +57,11 @@ html_template = """
 
 class Report:
     def __init__(self):
+        self.sections = {}
+        self.reporthandler =  ReportLoggingHandler(self)
+        logging.getLogger().addHandler(self.reporthandler)
+
+    def clear(self):
         self.sections = {}
 
     def add(self, section, msg, **kw):

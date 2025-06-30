@@ -6665,9 +6665,6 @@ Thank you,
         self.set("fcb_diglotMerge", orig if found else "scores") 
            
     def onGenerateReportClicked(self, btn):
-        r = Report()
-        r.run_view(self)
-        fpath = os.path.join(self.project.path, self.project.printdir, os.path.basename(self.getPDFname()).replace(".pdf", ".html"))
-        tm = {"project/id": self.project.prjid, "config/name": self.cfgid}
-        r.generate_html(fpath, tm)
-        startfile(fpath)
+        fpath = self.runReport()
+        if fpath is not None:
+            startfile(fpath)

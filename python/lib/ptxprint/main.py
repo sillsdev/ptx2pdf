@@ -354,7 +354,7 @@ def main(doitfn=None):
             else:
                 res = 0
         if args.action:
-            getattr(mainw, args.action)()
+            print(getattr(mainw, args.action)())
         print(f"{res=}")
         sys.exit(res)
     else:

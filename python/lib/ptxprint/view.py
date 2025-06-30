@@ -20,6 +20,7 @@ from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
 from ptxprint.polyglot import PolyglotConfig
+from ptxprint.report import Report
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -141,12 +142,14 @@ class ViewModel:
         self.spine = 0
         self.periphs = {}
         self.hyphenation = None
+        self.report = Report()
 
         # private to this implementation
         self.dict = {}
 
     def setup_ini(self):
         self.setDate()
+        self.report.clear()
 
     def setDate(self):
         t = datetime.datetime.now()
@@ -2362,3 +2365,10 @@ set stack_size=32768""".format(self.cfgid)
 
     def isCoverTabOpen(self):
         return False
+
+    def runReport(self):
+        self.report.run_view(self)
+        fpath = os.path.join(self.project.path, self.project.printdir, os.path.basename(self.getPDFname()).replace(".pdf", ".html"))
+        tm = {"project/id": self.project.prjid, "config/name": self.cfgid}
+        self.report.generate_html(fpath, tm)
+        return fpath
