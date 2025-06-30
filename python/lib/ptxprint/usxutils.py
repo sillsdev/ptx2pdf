@@ -461,7 +461,7 @@ class Usfm:
         if not isinstance(refranges, (list, RefList)):
             refranges = [refranges]
         last = (0, -1)
-        chaps = []
+        chaps = []      # a list of 2 element tuples. 0: list of first paragraphs, 1: indices in refranges
         minc = 10000
         for i, r in enumerate(refranges):
             if r.first.chapter > last[1] or r.first.chapter < last[0]:
@@ -505,28 +505,26 @@ class Usfm:
                 res.tail = start.tail
             return endactive
 
-            root = self.getroot()
-            d = list(root)
-            res = self.factory("usx", root.attrib)
-            res.text = root.text
-            if keepheaders:
-                for e in root:
-                    if e.tag == "chapter":
-                        break
-                    if minc > 1 and e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in ("header", ):
-                        break
-                    newe = e.copy(deep=True, parent=res)
-                    res.append(newe)
-            for c in chaps:
-                if addzsetref:
-                    minref = min(refranges[r].first for r in c[1])
-                    if (minref.verse or 0) > 0:
-                        res.append(self.make_zsetref(minref, None, root, None))
-                if len(c[0]) > 2:
-                    logger.error(f"chapter too long: {c[0]}")
-                for chap in range(c[0][0], c[0][-1]):
-                    copyrange(d[chap], res, c[1])
-            return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)
+        root = self.getroot()
+        d = list(root)
+        res = self.factory("usx", root.attrib)
+        res.text = root.text
+        if keepheaders:
+            for e in root:
+                if e.tag == "chapter":
+                    break
+                if minc > 1 and e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in ("header", ):
+                    break
+                newe = e.copy(deep=True, parent=res)
+                res.append(newe)
+        for c in chaps:
+            if addzsetref:
+                minref = min(refranges[r].first for r in c[1])
+                if (minref.verse or 0) > 0:
+                    res.append(self.make_zsetref(minref, None, root, None))
+            for chap in range(c[0][0], c[0][-1]):
+                copyrange(d[chap], res, c[1])
+        return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)
 
     def getsubbook(self, refrange, removes={}):
         return self.subdoc(refrange, removes=removes, keepheaders=True)
