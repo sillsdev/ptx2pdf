@@ -1190,24 +1190,26 @@ class TexModel:
                 m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
                 if m:
                     atref = RefList(m.group(1), strict=False)
-                    for r in atref.allrefs():
-                        if r.chapter == 0:
+                    for r in atref:
+                        if getattr(r.first, 'chapter', None) in (None, 0):
                             atcontexts.append((r.book, None))
-                        elif r.verse == 0:
-                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
-                        else:
-                            v = None
-                            if r.first != r.last:
-                                v = r
-                            elif usfm is not None:
-                                v = usfm.bridges.get(r, r)
-                                if v.first == v.last:
-                                    v = None
-                            if v is None:
-                                outv = '{}{}'.format(r.verse, r.subverse or "")
+                            continue
+                        for cr in r.allchaps():
+                            if cr.verse == 0:
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
                             else:
-                                outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
-                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chapter, outv), flags=regex.S|regex.V1)))
+                                v = None
+                                if cr.first != cr.last:
+                                    v = cr
+                                elif usfm is not None:
+                                    v = usfm.bridges.get(cr, cr)
+                                    if v.first == v.last:
+                                        v = None
+                                if v is None:
+                                    outv = '{}{}'.format(cr.verse, cr.subverse or "")
+                                else:
+                                    outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
+                                atcontexts.append((cr.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(cr.chapter, outv), flags=regex.S|regex.V1)))
                     l = l[m.end():].strip()
                 else:
                     atcontexts = [None]
