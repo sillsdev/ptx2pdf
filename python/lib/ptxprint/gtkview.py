@@ -3470,7 +3470,7 @@ class GtkViewModel(ViewModel):
     def updateExamineBook(self):
         try:
             bks = self.getBooks()
-        except SyntaxError:     # mid typing the reflist may be bad
+        except (SyntaxError, ValueError):     # mid typing the reflist may be bad
             return
         if len(bks):
             self.builder.get_object("ecb_examineBook").set_active_id(bks[0])

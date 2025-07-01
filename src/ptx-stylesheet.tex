@@ -1121,14 +1121,17 @@
      % if chapter label not present, set \ch@pter[X]waiting to cause chapter number to be printed
      % at start of first text paragraph.
      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
-     \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
-       \trace{c}{No chapter label in use : \ch@pter}%
-     \else % if \cl present, output chapter label here
-       \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-       \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
-       \pdfb@@kmark \pdfch@ptermark
-       \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
-       \spacefactor=\n@wchaptersf % prevent hanging verse number here
+     \ifcsname hookchapter\g@tdstat\endcsname\csname hookchapter\g@tdstat\endcsname\ch@pter
+     \else
+       \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+         \trace{c}{No chapter label in use : \ch@pter}%
+       \else % if \cl present, output chapter label here
+         \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
+         \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+         \pdfb@@kmark \pdfch@ptermark
+         \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
+         \spacefactor=\n@wchaptersf % prevent hanging verse number here
+       \fi
      \fi
    \fi}
  %

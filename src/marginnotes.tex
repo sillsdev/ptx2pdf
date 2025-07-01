@@ -37,22 +37,22 @@
 \newwrite\m@rginnotes
 \plugin@startif{marginnotes}
 
-\def\@marginnote#1#2#3#4#5#6#7#8#9{%
+\def\@marginnote#1#2#3#4#5#6#7#8{%
 % #1 = reference, #2 = marker, #3 = side, #4 = valign, #5 = distance from text,
-% #6 = width, #7 = height, #8 = x-shift, #9 = y-shift
-  \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#8}%
-  \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#9}%
+% #6 = width, #7 = height, #8 = depth, #9 = x-shift, #10 = y-shift
   \@m@rginnote{#1}{#2}%
 }
 
-\def\@m@rginnote#1#2#3#4#5{%
-% #1 = reference, #2 = marker, #3 = pageno, #4 = xpos, #5 = ypos
-  \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#3}%
+\def\@m@rginnote#1#2#3#4#5#6#7{%
+% #1 = reference, #2 = marker, #3 = x-shift, #4 = y-shift, #5 = pageno, #6 = xpos, #7 = ypos
+  \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#3}%
+  \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#4}%
+  \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#5}%
   \dimen0=#4 sp \adjustpdfXsavepos \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
-  \ifBindingGutter\ifodd #3\else\advance\dimen1 \BindingGutter\fi\fi
+  \ifBindingGutter\ifodd #5\else\advance\dimen1 \BindingGutter\fi\fi
   \ifdim\dimen0 > \dimen1 \ifRTL\edef\c@l{0}\else\edef\c@l{1}\fi\else\ifRTL\edef\c@l{1}\else\edef\c@l{0}\fi\fi
   \x@\xdef\csname marginnote-#1@#2:colno\endcsname{\c@l}%
-  \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1 (smf=\SideMarginFactor x\the\MarginUnit, tw=\the\textwidth, bg=\the\BindingGutter)}%
+  \trace{M}{defining marginnote-#1@#2:pageno = #5, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1 (smf=\SideMarginFactor x\the\MarginUnit, tw=\the\textwidth, bg=\the\BindingGutter)}%
 }
 
 \def\pl@cemnote#1#2#3#4#5#6{%
@@ -89,7 +89,7 @@
 % #1 = vbox, #2 = side, #3 = valign, #4 = distance from text, #5 = x-shift, #6 = y-shift
 % #7 = reference, #8 = marker
   \pdfsavepos
-  \edef\t@mp{\string\@marginnote{#7}{#8}{#2}{#3}{#4}{\the\wd#1}{\the\ht#1}{#5}{#6}}%
+  \edef\t@mp{\string\@marginnote{#7}{#8}{#2}{#3}{#4}{\the\wd#1}{\the\ht#1}{\the\dp#1}{#5}{#6}}%
   \x@\write\x@\m@rginnotes\x@{\t@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
 }
 
