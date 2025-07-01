@@ -54,8 +54,11 @@ class SpacingOddities(XDViPositionedReader):
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         if not math.isclose(prev_pos[0], self.h, abs_tol =self.ctol): # todo: think about a minimum h difference, min width of glyphs
             glyphs_width = self.topt(width)
+            if not math.isclose(self.v, self.lines[-1].v_start, abs_tol = self.ctol):
+                print("Glyphs are added at a different v than the line starts at.")
             if len(self.lines) == 0:
                 self.lines.append(Line(self.curr_hv(), self.curr_ref)) 
+            # glyphs start at prev_pos[0] and have width in points glyphs_width
             self.lines[-1].add_glyphs(prev_pos[0], glyphs_width)
         return (parm, width, pos, glyphs, txt)
 
@@ -82,11 +85,19 @@ class SpacingOddities(XDViPositionedReader):
         return (k, font)
 
     def vchange(self, prevpos):
+        # todo: handle negative v-change
         vdiff = self.v - prevpos[1]
-        print(f"{vdiff} from {prevpos[1]} to {self.v}")
-        # if lines is empty, start the first line
+
+        # todo: find elegant way for this if-maze
         if len(self.lines) == 0:
             self.lines.append(Line(self.curr_hv(), self.curr_ref))
+        elif len(self.lines[-1].gcs) == 0:
+            # current line has no content, so overwrite it
+            self.lines[-1] = Line(self.curr_hv(), self.curr_ref)
+        else:
+            self.lines.append(Line(self.curr_hv(), self.curr_ref))
+
+        
            # return
         #vdiff = self.v - prevpos[1]
         # a diff larger than -100 represents new page
@@ -96,10 +107,7 @@ class SpacingOddities(XDViPositionedReader):
         #elif vdiff == self.lines[-1].v_up:
          #   print("Change equal to move up")
         # either new page or normal line change                   
-        elif len(self.lines[-1].gcs) == 0:
-            self.lines[-1] = Line(self.curr_hv(), self.curr_ref)
-        else:
-            self.lines.append(Line(self.curr_hv(), self.curr_ref))
+     
         
 class Line: 
     def __init__(self, currpos, ref):
@@ -115,7 +123,7 @@ class Line:
     def needs_new_gc(self, prev_h):
         if len(self.gcs) == 0:
             return True
-        elif abs(prev_h - (self.gcs[-1].h_start + self.gcs[-1].width)) >1:
+        elif prev_h - (self.gcs[-1].h_start + self.gcs[-1].width) >1:
             return True 
         return False
     
@@ -132,10 +140,10 @@ class Line:
         self.gcs[-1].width += width 
 
     def has_badspace(self, threshold = 4):
-        # We don't count spaces at the start or end of a line.
+        # We don't count spaces at the start or end of a line.yes 
         if len(self.gcs) >1:
             for i in range (0, len(self.gcs)-1):
-                if abs(self.gcs[i+1].h_start - (self.gcs[i].h_start + self.gcs[i].width)) > threshold:
+                if self.gcs[i+1].h_start - (self.gcs[i].h_start + self.gcs[i].width) > threshold:
                     return True
         return False
 
@@ -163,12 +171,28 @@ def main():
     for (opcode, data) in reader.parse():
         if reader.pageno > 5:
             break  
-    count =0
+    count = 0
     for l in reader.lines:
         if l.has_badspace(threshold = 4):
             #print(f"Ref = {l.ref}, line starts at v = {l.v_start}")
             count +=1
     print(f"{count} out of {len(reader.lines)} contain bad spaces")
+
+    consecutive =0
+    lines_diff = 0
+    min_count =0
+    for i in range(0, len(reader.lines) -1):
+        if reader.lines[i+1].v_start > reader.lines[i].v_start:
+            consecutive +=1
+        else:
+            l_diff = abs(reader.lines[i+1].v_start - reader.lines[i].v_start)
+            if l_diff < 200:
+                lines_diff += l_diff
+                min_count +=1
+    print(f"We have {consecutive} lines that are below the previous line on the page")
+    print(f"There are {len(reader.lines)} lines in total")
+    print(f"For the lines moving up, the average negative distance is {lines_diff/min_count}, page/column changes excluded")
+
 
 if __name__ == "__main__":
     main()
