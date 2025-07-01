@@ -1376,6 +1376,7 @@
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
 \let\zMarkVerseAgain\m@rkverse
 \def\m@rkverseNml{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
+\let\cur@ds\empty
 \def\m@rkverseDglot{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
 
 \def\n@xtparstart{}
