@@ -6,7 +6,8 @@ class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, diffable = False):
         super().__init__(fname, diffable)
         self.curr_ref = None # reference of where we're at, str
-        self.lines = [] # list of Line objects 
+        self.lines = [] # list of Line objects
+        self.ctol = 0.005 # the absolut difference tolerated to consider v change a difference 
 
     def curr_hv(self):
         curr_pos = (self.h,self.v)
@@ -16,24 +17,45 @@ class SpacingOddities(XDViPositionedReader):
         # note: parmop never contanis opcode <=142 thus no glyphs 
         prev_pos = self.curr_hv()
         result = super().parmop(opcode, parm, data)
-        if self.v != prev_pos[1]:
+        if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
             self.vchange(prev_pos)
         return result
 
     def simple(self, opcode, parm, data):
         prev_pos = self.curr_hv()
         result = super().simple(opcode, parm, data)
-        if self.v != prev_pos[1]:
+        if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
             self.vchange(prev_pos)
         return result
+    
+    def push(self, opcode, parm, data):
+        prev_pos = self.curr_hv()
+        result = super().push(opcode, parm, data)
+        if not math.isclose(prev_pos[1],self.v, abs_tol =self.ctol):
+            self.vchange(prev_pos)
+        return result
+
+    def pop(self, opcode, parm, data):
+        prev_pos = self.curr_hv()
+        result = super().pop(opcode, parm, data)
+        if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
+            self.vchange(prev_pos)
+        return result
+    
+    def bop(self, opcode, parm, data):
+        prev_pos = self.curr_hv()
+        result = super().bop(opcode, parm, data)
+        if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
+            self.vchange(prev_pos)
+        return result 
 
     def xglyphs(self, opcode, parm, data):
         prev_pos = self.curr_hv()
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
-        if self.h != prev_pos[0]: # todo: think about a minimum h difference, min width of glyphs
+        if not math.isclose(prev_pos[0], self.h, abs_tol =self.ctol): # todo: think about a minimum h difference, min width of glyphs
             glyphs_width = self.topt(width)
             if len(self.lines) == 0:
-                self.lines.append(Line(prev_pos, self.curr_ref)) 
+                self.lines.append(Line(self.curr_hv(), self.curr_ref)) 
             self.lines[-1].add_glyphs(prev_pos[0], glyphs_width)
         return (parm, width, pos, glyphs, txt)
 
@@ -60,22 +82,32 @@ class SpacingOddities(XDViPositionedReader):
         return (k, font)
 
     def vchange(self, prevpos):
-        # question: should we have a minimum vchange?
-        newline = Line(prevpos, self.curr_ref)
-        # fixme: find more elegant way to do this.
-        if len(self.lines) != 0:
-            if len(self.lines[-1].gcs) == 0:
-                self.lines[-1] = newline
-            else:
-                self.lines.append(newline)
-        elif len(self.lines) == 0:
-            self.lines.append(newline)
+        vdiff = self.v - prevpos[1]
+        print(f"{vdiff} from {prevpos[1]} to {self.v}")
+        # if lines is empty, start the first line
+        if len(self.lines) == 0:
+            self.lines.append(Line(self.curr_hv(), self.curr_ref))
+           # return
+        #vdiff = self.v - prevpos[1]
+        # a diff larger than -100 represents new page
+        #if -70 < vdiff < 0:
+         #   self.lines[-1].v_up = vdiff
+          #  return
+        #elif vdiff == self.lines[-1].v_up:
+         #   print("Change equal to move up")
+        # either new page or normal line change                   
+        elif len(self.lines[-1].gcs) == 0:
+            self.lines[-1] = Line(self.curr_hv(), self.curr_ref)
+        else:
+            self.lines.append(Line(self.curr_hv(), self.curr_ref))
+        
 class Line: 
-    def __init__(self, prevpos, ref):
+    def __init__(self, currpos, ref):
         self.ref = ref
         self.gcs = [] # list of GlyphContent objects, index -1 contains current gc
-        self.v_start = prevpos[1]
-        self.h_start = prevpos[0]
+        self.v_start = currpos[1]
+        self.h_start = currpos[0]
+        self.v_up =0
 
     def change_font(self, h, fontsize):
         self.add_gc(h, fontsize)
@@ -114,15 +146,13 @@ class GlyphContent:
         self.width = 0
 
     def add_glyph(self, g_no, g_pos):
-        # note: this method is not in use rn
+        # note: to be implemented still
         # todo: for every glyph, find what x&y cooridnat is relative to start of line, resolve to actual position.
-        #todo: need the y of every glyph, for calculating when things change. top of line is ymax + the offset. 
+        # todo: need the y of every glyph, for calculating when things change. top of line is ymax + the offset. 
         # size of glyph won't change, but the boundary box will.
         # fixme: method incomplete.
         #g_no and g_pos are lists of res. numbers and 2-tuples (h,v)
         glyph = self.font.readfont(withglyphs = True)
-        # can ask 
-        # get 
         # todo: check max en min x en y, update gc vrange
         self.glyphs.append(glyph)
         #self.starts.append(pos)    
@@ -131,28 +161,14 @@ def main():
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
     for (opcode, data) in reader.parse():
-        if reader.pageno > 3:
+        if reader.pageno > 5:
             break  
-    
     count =0
     for l in reader.lines:
-        if l.has_badspace(threshold = 100):
-            print(f"Ref = {l.ref}, amount of gcs = {len(l.gcs)}, line starts at v = {l.v_start}.")
+        if l.has_badspace(threshold = 4):
+            #print(f"Ref = {l.ref}, line starts at v = {l.v_start}")
             count +=1
-
     print(f"{count} out of {len(reader.lines)} contain bad spaces")
-
-    for l in reader.lines[200:210]:
-        print(f"Line starts at {l.v_start} and has {len(l.gcs)} gcs")
-        for g in l.gcs:
-            print(f"Gc starts at {g.h_start} and has width {g.width}")
 
 if __name__ == "__main__":
     main()
-
-    # question: I see consecutive lines with for example v_start = 1692.16529... and v_start = 1692.16548...
-    # But they are registered as separate lines, should this happen? They would be interfering right?
-    
-# question: we determine bad spaces based on the width of gc blocks. This is the width of xglyphs, converted to points
-# does this width already take into account the font? Is the amount of points a different absolute size depending on the font? 
-# no, right?
