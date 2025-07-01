@@ -1195,7 +1195,9 @@ class TexModel:
                             atcontexts.append((r.book, None))
                             continue
                         for cr in r.allchaps():
-                            if cr.first.verse == 0:
+                            if cr.first.verse is None:
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?-$|\\c\s)".format(r.chapter), flags=regex.S)))
+                            elif cr.first.verse == 0:
                                 atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
                             else:
                                 for cv in r:
