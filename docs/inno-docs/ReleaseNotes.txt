@@ -1,8 +1,22 @@
 PTXprint 2.8.17 Release Notes
-24 Jun 2025
+1 Jul 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.18 (1 Jul 2025)
+  * Add some hooks to the tech ref
+  * Avoid some diglot crashes, and set old paragraph style (or something) on column switch, in case no par style is used.
+  * Add merged changes sections to tech ref
+  * Add chapter range to at changes
+  * Add support for marginal chapters, notes and headings
+  * Fix merged changes section
+  * Minor fix for pdf_viewer index error
+  * Get rid of chapters too long error
+  * Fix at changes and version 3.1 output
+  * Get at changes for verse ranges working
+  * Add logger INFO and above to report
+  * Try to handle 'at' changes more succinctly
 
 Bug fixes and Improvements in 2.8.17 (24 Jun 2025)
   * Add link to auto-update delay settings
