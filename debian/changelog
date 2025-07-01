@@ -1,3 +1,9 @@
+ptxprint (2.8.18-1ubuntu1) bionic; urgency=medium
+
+  * Bumped release to 2.8.18
+
+ -- Martin Hosken <martin_hosken@sil.org>  Wed, 02 Jul 2025 00:56:35 +1200
+
 ptxprint (2.8.17-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 2.8.17
