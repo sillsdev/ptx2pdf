@@ -13,40 +13,19 @@ class SpacingOddities(XDViPositionedReader):
         curr_pos = (self.h,self.v)
         return curr_pos
 
-    def parmop(self, opcode, parm, data):
-        # note: parmop never contanis opcode <=142 thus no glyphs 
-        prev_pos = self.curr_hv()
-        result = super().parmop(opcode, parm, data)
-        if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
-            self.vchange(prev_pos)
-        return result
-
-    def simple(self, opcode, parm, data):
-        prev_pos = self.curr_hv()
-        result = super().simple(opcode, parm, data)
-        if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
-            self.vchange(prev_pos)
-        return result
-    
-    def push(self, opcode, parm, data):
-        prev_pos = self.curr_hv()
-        result = super().push(opcode, parm, data)
-        if not math.isclose(prev_pos[1],self.v, abs_tol =self.ctol):
-            self.vchange(prev_pos)
-        return result
-
     def pop(self, opcode, parm, data):
         prev_pos = self.curr_hv()
+        top = self.stack[-1]
         result = super().pop(opcode, parm, data)
-        if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
-            self.vchange(prev_pos)
+        # self.v is equal to top[1]
+        self.vchange(self.curr_hv())
         return result
     
     def bop(self, opcode, parm, data):
         prev_pos = self.curr_hv()
         result = super().bop(opcode, parm, data)
-        if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
-            self.vchange(prev_pos)
+        # if not math.isclose(prev_pos[1], self.v, abs_tol =self.ctol):
+        #     self.vchange(prev_pos)
         return result 
 
     def xglyphs(self, opcode, parm, data):
@@ -54,8 +33,8 @@ class SpacingOddities(XDViPositionedReader):
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         if not math.isclose(prev_pos[0], self.h, abs_tol =self.ctol): # todo: think about a minimum h difference, min width of glyphs
             glyphs_width = self.topt(width)
-            if not math.isclose(self.v, self.lines[-1].v_start, abs_tol = self.ctol):
-                print("Glyphs are added at a different v than the line starts at.")
+            #if not math.isclose(self.v, self.lines[-1].v_start, abs_tol = self.ctol):
+                #print("Glyphs are added at a different v than the line starts at.")
             if len(self.lines) == 0:
                 self.lines.append(Line(self.curr_hv(), self.curr_ref)) 
             # glyphs start at prev_pos[0] and have width in points glyphs_width
