@@ -110,7 +110,7 @@ class MarginNotes:
             lastn = n
         # now position within each track
         for t in tracks:
-            t.sort(key=lambda n:(-n.ymax, -n.ymin))
+            # t.sort(key=lambda n:(-n.ymax, -n.ymin))
             maxup = 0
             i = 0
             curry = 0

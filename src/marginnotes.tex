@@ -59,7 +59,7 @@
 \def\pl@cemnote#1#2#3#4#5#6{%
 % #1 = vbox, #2 = side, #3 = valign, #4 = distance from text, #5 = x-shift, #6 = y-shift
   \edef\t@mp{#2}\edef\t@mpv{#3}%
-  \dimen9=\ht#1%
+  \dimen9=\ht#1
   \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6, text = \the#4, side = #2, valign = #3, ht=\the\dimen9}%
   \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
   \setbox0=\vbox to 0pt{\let\par=\endgraf
@@ -78,7 +78,7 @@
 \def\openm@rginnotes "#1"{
   \ifm@rginnotesopen\else
     \trace{M}{reading #1}
-    \catcode`\@=11%
+    \catcode`\@=11
     \includeifpresent{#1}
     \openout\m@rginnotes="#1"
     \m@rginnotesopentrue
