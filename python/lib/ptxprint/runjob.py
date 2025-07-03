@@ -20,6 +20,7 @@ from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.errors import PdfError, log
 from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
 from ptxprint.toc import TOC, generateTex
+from ptxprint.marginnotes import tidymarginnotes
 from ptxprint.unicode.ducet import tailored
 from usfmtc.reference import RefList
 from ptxprint.transcel import transcel, outtriggers
@@ -676,6 +677,7 @@ class RunJob:
             numruns += 1
             self.rerunReasons = []
             tocfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".toc"))
+            marginnotesfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".marginnotes"))
             if self.res > 0:
                 rerun = False
                 if os.path.exists(tocfname):
@@ -710,6 +712,8 @@ class RunJob:
                 newtoc = generateTex(toc.createtocvariants(bklist, ducet=ducet))
                 with open(tocfname, "w", encoding="utf-8") as outf:
                     outf.write(newtoc)
+            if os.path.exists(marginnotesfname):
+                rererun = rererun or tidymarginnotes(marginnotesfname)
             if not rererun:
                 break
 
