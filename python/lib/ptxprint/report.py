@@ -1,12 +1,14 @@
 import html # Added for html.escape
 import logging, os
 import xml.etree.ElementTree as et
+from datetime import datetime
 from ptxprint.utils import rtlScripts
 
 # DEBUG is informational
 # INFO is something that could fail, passed
-loglabels = ["\u00A0", "\u00A0", "\u2714", "W", "E", "F", "C"]
-logcolors = ["white", "lightskyblue", "palegreen", "orange", "orangered", "fuchsia", "Aqua"]
+#            Not set   Debug           Info=Pass    Warn      Error        Fatal      Critical
+loglabels = ["\u00A0", "\u00A0",       "\u2714",    "W",      "E",         "F",       "C"]
+logcolors = ["white",  "lightskyblue", "palegreen", "orange", "orangered", "fuchsia", "red"]
 
 class ReportLoggingHandler(logging.Handler):
     def __init__(self, report):
@@ -71,10 +73,46 @@ class Report:
     def generate_html(self, fname, texmodel):
         doc = et.fromstring(html_template.format(css=os.path.join(os.path.dirname(__file__), "sakura.css"), **texmodel))
         body = doc.find("body")
+        timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        summary_html_str = self._generate_summary_html()
+        summary_container = et.fromstring(f"<div>{summary_html_str}</div>")
+        summary_elements_to_insert = list(summary_container)
+
+        def insert_summary_line(parent_element, timestamp):
+            """
+            Helper function to insert a single, compact summary line with title,
+            links, and timestamp.
+            """
+            # Create a single flex container for the entire line.
+            # 'align-items: center' vertically centers all items on the line.
+            line_container = et.SubElement(parent_element, "div", {
+                'style': 'display: flex; justify-content: space-between; align-items: center; margin: 10px 0;'
+            })
+
+            # --- Left side: Title and clickable blocks ---
+            left_group = et.SubElement(line_container, "div", {
+                'style': 'display: flex; align-items: center; gap: 10px;'
+            })
+            
+            # 1. The title "Section Links:"
+            title = et.SubElement(left_group, "span", {'style': 'font-weight: bold;'})
+            title.text = "Section Links:"
+            
+            # 2. The clickable summary blocks
+            for element in summary_elements_to_insert:
+                left_group.append(element)
+            
+            # --- Right side: The timestamp ---
+            timestamp_el = et.SubElement(line_container, "span", {
+                'style': 'font-size: 0.9em; color: #555; font-family: monospace; white-space: nowrap;'
+            })
+            timestamp_el.text = timestamp
+
+        insert_summary_line(body, timestamp_str)
+        et.SubElement(body, "hr")
+
         lasts = []
-        curr = body
         for s, t in sorted(self.sections.items()):
-        # for s, t in self.sections.items():
             if not len(t):
                 continue
             nexts = s.split("/")
@@ -83,7 +121,14 @@ class Report:
                 if not done or i >= len(lasts) or lasts[i] != p:
                     h = et.SubElement(body, "h{}".format(i+1))
                     h.text = p
+                    if i == 0:
+                        try:
+                            main_section_num = s.split('.')[0]
+                            h.set('id', f'section-{main_section_num}')
+                        except (ValueError, IndexError):
+                            pass
                     done = False
+
             table = et.SubElement(body, "table")
             for m in sorted(t, key=lambda x:(-x.order, -x.severity, x.msg)):
                 tr = et.SubElement(table, "tr")
@@ -95,10 +140,14 @@ class Report:
                 for c in msge:
                     msg.append(c)
             lasts = nexts
+        et.SubElement(body, "hr")
+        insert_summary_line(body, timestamp_str)
+
         with open(fname, "w", encoding="utf-8") as outf:
             outf.write(et.tostring(doc, method="html", encoding="unicode"))
 
     def run_view(self, view):
+        self.sections = {k:v for k, v in self.sections.items() if k in ("1. Runtime",)}
         self.get_styles(view)
         self.get_writingSystems(view)
         self.get_layout(view)
@@ -464,6 +513,46 @@ class Report:
         
         full_page_layout_msg = "<br/>".join(page_layout_summary_parts) + visualization_html
         self.add(section_path, full_page_layout_msg, order=item_order, txttype="html")
+
+    def _generate_summary_html(self):
+        """
+        Calculates the max severity for each main section and generates an HTML summary line
+        with clickable blocks.
+        """
+        max_severities = {i: logging.NOTSET for i in range(1, 10)}
+        for section_key, entries in self.sections.items():
+            if not entries:
+                continue
+            # Extract the main section number (e.g., '3' from '3. USFM/Checks')
+            try:
+                main_section_num = int(section_key.split('.')[0])
+                if main_section_num not in max_severities:
+                    continue
+            except (ValueError, IndexError):
+                continue # Skip section keys that don't start with a number
+            current_max_severity = max(e.severity for e in entries)
+            if current_max_severity > max_severities[main_section_num]:
+                max_severities[main_section_num] = current_max_severity
+
+        summary_blocks = []
+        for i in range(1, 10):
+            severity = max_severities[i]
+            color_index = severity // 10
+            color = logcolors[color_index]
+            # Create the HTML for one block, now wrapped in a link (<a> tag)
+            block_html = (
+                f'<a href="#section-{i}" style="text-decoration: none;" title="Go to Section {i}: {logging.getLevelName(severity)}">'
+                f'<span style="display: inline-block; background-color: {color}; '
+                'color: black; font-weight: bold; width: 25px; height: 25px; '
+                'text-align: center; line-height: 25px; margin-right: 5px; '
+                'border-radius: 4px; border: 1px solid grey;">'
+                f'{i}'
+                '</span>'
+                '</a>'
+            )
+            summary_blocks.append(block_html)
+            
+        return "".join(summary_blocks)
 
 def test():
     import sys
