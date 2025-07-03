@@ -1,6 +1,6 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
-DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+DIR:=$(shell dirname `find ../../..  \( -name test -prune \) -o -name paratext2.tex -print` )
 .tex.pdf:
 	-mkdir 1 2 3 4
 	TEXINPUTS=.:$(DIR) xetex $<
@@ -8,7 +8,7 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 	#if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 2; else rm  -f 2/* ; fi 
 	#if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 3;  else rm  -f 3/* ; fi 
 	#if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 4; else rm  -f 4/* ; fi 
-	
+#	
 
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm test.usfm.piclist
 
