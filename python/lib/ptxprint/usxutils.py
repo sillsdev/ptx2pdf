@@ -4,6 +4,7 @@ from usfmtc.reference import Ref, RefList
 from usfmtc.usfmparser import Grammar
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
+from ptxprint.changes import readChanges
 from ptxprint.ptsettings import PTEnvironment
 from copy import deepcopy
 
@@ -189,7 +190,7 @@ def createGrammar(sheets):
 
 
 class UsfmCollection:
-    def __init__(self, bkmapper, basedir, sheets):
+    def __init__(self, bkmapper, basedir, sheets, changes=None):
         self.bkmapper = bkmapper
         self.basedir = basedir
         self.sheets = sheets
@@ -198,6 +199,17 @@ class UsfmCollection:
         self.tocs = []
         self.booknames = None
         self.setgrammar()
+        self.reload(changes)
+
+    def reload(self, cfile):
+        if os.path.exists(cfile):
+            allchanges = readChanges(cfile, None)
+            self.changes = allchanges.get('initial', None)
+        else:
+            self.changes = None
+        if self.changes is not None:
+            self.books = {}
+            self.times = {}
 
     def setgrammar(self):
         self.grammar = createGrammar(self.sheets)
@@ -211,7 +223,13 @@ class UsfmCollection:
             return None
         mtime = os.stat(bkfile).st_mtime
         if mtime > self.times.get(bk, 0):
-            self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
+            if self.changes is not None:
+                with universalopen(bkfile) as inf:
+                    bkdat = inf.read()
+                bkdat = runChanges(self.changes, bk, bkdat)
+                self.books[bk] = Usfm.readfile(bkdat, informat="usfm", grammar=self.grammar, elfactory=ParentElement)
+            else:
+                self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
             self.times[bk] = time.time()
         return self.books[bk]
 

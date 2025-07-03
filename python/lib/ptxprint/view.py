@@ -710,8 +710,9 @@ class ViewModel:
 
     def get_usfms(self):
         if self.usfms is None:
+            cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
             self.usfms = UsfmCollection(self.getBookFilename, self.project.path,
-                            Sheets(self.getStyleSheets()))
+                            Sheets(self.getStyleSheets()), changes=cfile)
         return self.usfms
 
     def get_usfm(self, bk, silent=False):

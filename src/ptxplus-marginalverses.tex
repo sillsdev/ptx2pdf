@@ -17,7 +17,7 @@
     \trace{v}{from marginnote-\t@mp @v:\t@mpa no, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
   \else\trace{v}{no marginnote-\t@mp @v:\t@mpa no, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
   \trace{v}{pagenumber is \ift@mp odd\else even\fi, and side is \colshiftmode, value=\the\count10, mcstack=\mcstack}%
-  \ifnum \ifx\colshiftmode\@nner\ift@mp 0\else 1\fi\else\ifx\colshiftmode\@uter\ift@mp 1\else 0\fi\else\ifx\colshiftmode\r@ght 1\else 0\fi\fi\fi =0
+  \ifnum \ifx\colshiftmode\@nner\ift@mp 0\else 1\fi\else\ifx\colshiftmode\@uter\ift@mp 1\else 0\fi\else\ifx\colshiftmode\r@ght 1\else 0\fi\fi\fi =0%
     \rsh@fttrue\else\rsh@ftfalse
   \fi
   \ifx\v@rsefrom\v@rseto\setbox2=\vtop{\everypar={}\hbox to \VerseBoxWidth{%
@@ -31,7 +31,7 @@
     \trace{v}{leftskip=\the\leftskip, rightskip=\the\rightskip}%
     \myh@ngprintv@rse{2}%
     \setbox2=\vtop{\everypar={}\hbox to \VerseBoxWidth{%
-        \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\box2
+        \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\box2%
         \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
     \def\t@@mp{top}%
   \fi
@@ -48,7 +48,7 @@
 \newif\ifversehyphenup \versehyphenupfalse
 \def\myh@ngprintv@rse#1{%
     \p@sheof
-    \setbox1=\hbox{\p@sheof\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}
+    \setbox1=\hbox{\p@sheof\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}%
         \global\c@untA=0\tmp \xdef\tmp{\x@\scantokens\x@{\v@rseto\noexpand}} \global\c@untB=0\tmp \p@peof}%\advance\c@untA by 1
     \ifversehyphenup
       \setbox1=\hbox{\cstyle{v}{\adornv{\v@rsefrom}\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi}}%

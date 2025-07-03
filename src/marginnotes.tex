@@ -59,9 +59,9 @@
 \def\pl@cemnote#1#2#3#4#5#6{%
 % #1 = vbox, #2 = side, #3 = valign, #4 = distance from text, #5 = x-shift, #6 = y-shift
   \edef\t@mp{#2}\edef\t@mpv{#3}%
-  \dimen9=\ht#1
+  \dimen9=\ht#1%
   \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6, text = \the#4, side = #2, valign = #3, ht=\the\dimen9}%
-  \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}
+  \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
   \setbox0=\vbox to 0pt{\let\par=\endgraf
     \ifx\t@mpv\@bottom\else\vss\fi
     \ifx\t@mp\l@ft\llap{\box #1\kern #5\kern #4}%
@@ -78,7 +78,7 @@
 \def\openm@rginnotes "#1"{
   \ifm@rginnotesopen\else
     \trace{M}{reading #1}
-    \catcode`\@=11
+    \catcode`\@=11%
     \includeifpresent{#1}
     \openout\m@rginnotes="#1"
     \m@rginnotesopentrue
@@ -87,7 +87,7 @@
 }
 
 \m@rginnotesopenfalse
-\def\writem@rginnote{
+\def\writem@rginnote{%
   \pdfsavepos
   \x@\write\x@\m@rginnotes\x@{\wr@tet@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
 }
@@ -109,7 +109,7 @@
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
   \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
   \xdef\wr@tet@mp{\string\@marginnote{#2}{#3}{\p@s}{#5}{\the\dimen0}{\the\wd#1}{\the\ht#1}{\the\dp#1}{\the\dimen1}{\the\dimen2}}%
-  \advance\dimen2 by #6
+  \advance\dimen2 by #6%
   %\ifx#3s \showbox#1\fi
   \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%
 }
