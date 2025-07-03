@@ -31,11 +31,11 @@ class MarginNote:
 
     @property
     def ymin(self):
-        return self.ypos - self.depth - self.yoffset
+        return self.ypos - self.depth # - self.yoffset
 
     @property
     def ymax(self):
-        return self.ypos + self.height - self.yoffset
+        return self.ypos + self.height # - self.yoffset
 
     @property
     def xmin(self):
@@ -118,13 +118,14 @@ class MarginNotes:
             currw = 0
             start = 0
             gap = 0
-            while i < len(t):
-                w = weights.get(t[i].marker, 1)
-                if curry == 0:
+            while i < len(t) + 1:
+                if i < len(t):
+                    w = weights.get(t[i].marker, 1)
+                if i < len(t) and curry == 0:
                     curry = t[i].ymin
                     i += 1
                     continue
-                if t[i].ymax > curry:
+                if i < len(t) and t[i].ymax > curry:
                     shift = t[i].ymax - curry
                     t[i].yshift -= shift
                     currc += w * shift
@@ -134,11 +135,14 @@ class MarginNotes:
                         currw += weights.get(t[start].marker, 1)
                         shift = currc / currw
                         shift = min(shift, self.pheight - t[start].ymax - t[start].yshift)
+                        if t[i-1].ymin + t[i-1].yshift + shift < 0:
+                            shift = -(t[i-1].ymin + t[i-1].yshift)
                         for j in range(start, i):
                             t[j].yshift += shift
                     currs = 0
                     start = i
-                curry = t[i].ymin + t[i].yshift
+                if i < len(t):
+                    curry = t[i].ymin + t[i].yshift
                 i += 1
 
     def processpages(self, weights=None):

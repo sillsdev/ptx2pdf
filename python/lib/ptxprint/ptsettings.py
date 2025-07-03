@@ -259,6 +259,7 @@ class ParatextSettings:
         foundsetting = False
         vals = {}
         self.refenv = PTEnvironment()
+        self.refenv.setBookNames(self.bookStrs, self.bkNames)
         for k, v in ptrefsepvals.items():
             if v in self.dict:
                 foundsetting = True
