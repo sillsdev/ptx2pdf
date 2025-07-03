@@ -883,6 +883,7 @@
        \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0 \relax
        \trace{C}{Modified cutout (maybe) needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd, \the\dimen4}%
        \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
+         \trace{sP}{Indent is insufficient: \the\dimen4, \the\dimen5}%
          \ifx\ch@pterc@tnum\empty
            \trace{C}{New cutout needed (\ch@pterc@tnum)}%
            \x@\c@tcmd\x@{\the\dimen4}{0}{1}% No pre-existing cutout
@@ -891,6 +892,7 @@
            \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
            %\Flag{\MSG{FLAG!}M\Flag{}}%
          \fi
+         \dimen3=0pt
          %\advance\dimen3 by -\ch@pterwd
        \else % the indent is already big enough, so just use it as is
         \dimen5=0pt \ifcsname cut@width\the\@numcuts\endcsname \x@\dimen5 \csname cut@width\the\@numcuts\endcsname\fi
