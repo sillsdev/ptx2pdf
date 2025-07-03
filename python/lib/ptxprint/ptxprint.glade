@@ -4539,7 +4539,7 @@ reference (e.g. JHN 3.16)</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_slice_ok">
-                <property name="label">OK</property>
+                <property name="label">Enable</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
@@ -4554,7 +4554,7 @@ reference (e.g. JHN 3.16)</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_slice_cancel">
-                <property name="label">Cancel</property>
+                <property name="label">Disable</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
