@@ -144,6 +144,7 @@ class MarginNotes:
                 if i < len(t):
                     curry = t[i].ymin + t[i].yshift
                 i += 1
+        return
 
     def processpages(self, weights=None):
         for i in range(len(self.pages)):

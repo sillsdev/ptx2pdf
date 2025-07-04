@@ -1,8 +1,27 @@
 PTXprint 2.8.18 Release Notes
-1 Jul 2025
+4 Jul 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.19 (4 Jul 2025)
+  * Change labels of buttons in SpeedSlice to Enable and Disable
+  * Add Section Links and date-time with summary at top and bottom of HTML report
+  * Add support for marginal notes adjustment
+  * Add sections(piclist) support
+  * Remove xyzREF and xyzCAP changes feature
+  * Remove marginnotes file at start of run
+  * Stop addorncv raising errors
+  * Improve USFM error reports
+  * Don't process for adjlist if the adjlist is empty
+  * Fix xo outputting book, bad at references in changes
+  * Cross reference xo should have no book
+  * Small (1st line) indents at chapters now behave the same in 1st and 2nd lines
+  * Fix ancient bug with dropcaps and firstline / paragraph indents
+  * Over zealous with the line ending %
+  * Refactor to separate changes.py
+  * Fix localising xrefs, shifting the bottom cluster of marginal notes
+  * Adjusted the manual installation steps just a tiny bit
 
 Bug fixes and Improvements in 2.8.18 (1 Jul 2025)
   * Add some hooks to the tech ref
