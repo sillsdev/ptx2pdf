@@ -51,6 +51,9 @@ class AdjList:
     def clear(self):
         self.liststore.clear()
 
+    def __len__(self):
+        return len(self.liststore)
+
     def find(self, *k):
         for i, r in enumerate(self.liststore):
             if r[:len(k)] == k:

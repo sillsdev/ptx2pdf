@@ -1060,7 +1060,7 @@ class TexModel:
                 doc.reversify(srcvrs, *reversify)
 
         adjlist = self.printer.get_adjlist(bk)
-        if adjlist is not None:
+        if adjlist is not None and len(adjlist):
             (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("Apply adjlist")
             if doc is not None:

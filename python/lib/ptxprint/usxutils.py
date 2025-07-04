@@ -401,7 +401,10 @@ class Usfm:
                 if curr is not None:
                     currv = p.get("number", curr.last.verse)
                     currc = curr.first.chapter if curr is not None else 0
-                    curr = Ref(f"{bk} {currc}:{currv}")
+                    try:
+                        curr = Ref(f"{bk} {currc}:{currv}")
+                    except SyntaxError as e:
+                        raise SyntaxError(f"{e} at {bk} {currc}:{currv}")
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
