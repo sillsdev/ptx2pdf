@@ -376,7 +376,10 @@ class Usfm:
             if x.parent == root:
                 i += 1
             if p.tag == "chapter":
-                currc = int(p.get("number", 0))
+                try:
+                    currc = int(p.get("number", 0))
+                except ValueError:
+                    raise SyntaxError(f"Bad chapter number: {p.get('number', '')}")
                 if currc >= len(self.chapters):
                     self.chapters.extend([self.chapters[-1]] * (currc - len(self.chapters) + 1))
                 self.chapters[currc] = i
