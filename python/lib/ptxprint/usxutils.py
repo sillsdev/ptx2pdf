@@ -358,6 +358,21 @@ class Usfm:
     def addorncv(self, curr=None, factory=ParentElement):
         if self.cvaddorned:
             return
+
+        def getref(bk, currc, currv):
+            try:
+                curr = Ref(f"{bk} {currc}:{currv}")
+            except SyntaxError:
+                currv = re.sub(r"\D", "", currv)
+                if not len(currv):
+                    currv = "0"
+                try:
+                    curr = Ref(f"{bk} {currc}:{currv}")
+                except SyntaxError:
+                    currv = "0"
+                    curr = Ref(f"{bk} {currc}:{currv}")
+            return curr
+
         root = self.getroot()
         self.bridges = {}
         bk = root[0].get('code') or "UNK"
@@ -392,7 +407,7 @@ class Usfm:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
                         currv = p[0].get("number", curr.last.verse if curr is not None else None)
                         currc = curr.first.chapter if curr is not None else 0
-                        curr = Ref(f"{bk} {currc}:{currv}")
+                        curr = get_ref(bk, currc, currv)
                         if curr.first != curr.last and curr.last.verse is not None and curr.last.verse < 200 and curr.first not in self.bridges:
                             for r in curr:
                                 self.bridges[r] = curr
@@ -405,17 +420,7 @@ class Usfm:
                 if curr is not None:
                     currv = p.get("number", curr.last.verse)
                     currc = curr.first.chapter if curr is not None else 0
-                    try:
-                        curr = Ref(f"{bk} {currc}:{currv}")
-                    except SyntaxError:
-                        currv = re.sub(r"\D", "", currv)
-                        if not len(currv):
-                            currv = "0"
-                        try:
-                            curr = Ref(f"{bk} {currc}:{currv}")
-                        except SyntaxError:
-                            currv = "0"
-                            curr = Ref(f"{bk} {currc}:{currv}")
+                    curr = get_ref(bk, currc, currv)
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
