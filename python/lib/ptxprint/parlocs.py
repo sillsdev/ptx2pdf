@@ -167,6 +167,7 @@ class Paragraphs(list):
         self.pindex = []
         self.pnums = {}
         self.pnumorder = []
+        self.pheights = []
         self.dests = {}
         if fname is None:
             return
@@ -198,9 +199,12 @@ class Paragraphs(list):
                 self.pnumorder.append(npnum)
                 if len(p) > 3:
                     pwidth = readpts(p[2])
+                    pheight = readpts(p[3])
                 else:
                     pwidth = 0.
+                    pheight = 0.
                 self.pindex.append(len(self))
+                self.pheights.append(pheight)
                 inpage = True
                 #cinfo = [readpts(x) for x in p[1:4]]
                 #if len(cinfo) > 2:
@@ -357,7 +361,7 @@ class Paragraphs(list):
         """ Given page index (not folio) returns (ParDest, ParRect) covering the given x, y """
         # just iterate over paragraphs on this page
         if pnum > len(self.pindex): # need some other test here 
-            return (None, None)
+            return (None, None, None)
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
@@ -366,8 +370,8 @@ class Paragraphs(list):
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
                 if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return (p, r.get_dest(x, y, getattr(p, 'baseline', None)))
-        return (None, None)
+                    return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
+        return (None, None, None)
 
     def getParas(self, pnum, inclast=False):
         ''' Iterates all ParDest, ParRect on page with given index '''
@@ -453,12 +457,22 @@ class Paragraphs(list):
                     r.dests.append((a.name, (a.x, a.y)))
                     currlast = max(currlast, a) if currlast is not None else a
 
-    def addxdvline(self, pindex, line, x, y):
-        inpar, inrect = self.findpos(pnum, x, y)
+    def addxdvline(self, line, pindex, x, y):
+        pheight = self.pheights[pindex - 1] if pindex <= len(self.pheights) else self.pheights[-1]
+        inpar, inrect, _ = self.findPos(pindex, x, pheight - y)
         if inrect is None:
+            # print(f"{pindex}@({x},{pheight-y})")
             return
         if inrect.xdvlines is None:
             inrect.xdvlines = []
         inrect.xdvlines.append(line)
+
+    def allxdvlines(self):
+        for p in self:
+            for r in p.rects:
+                if r.xdvlines is not None:
+                    for l in r.xdvlines:
+                        yield l
+
 
 

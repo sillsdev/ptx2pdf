@@ -21,7 +21,7 @@ class SpacingOddities(XDViPositionedReader):
         if self.new_line_needed(start_pos):
             self.prev_line = self.line
             self.line = Line(start_pos[1], self.ref, self.fontsize)
-            self.pass_line(self.x, self.y)
+            self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
         self.line.add_glyphs(start_pos[0], glyphs_width)
         self.cursor = (self.h, self.v)
         return (parm, width, pos, glyphs, txt)
@@ -34,40 +34,30 @@ class SpacingOddities(XDViPositionedReader):
 
     def xfontdef(self, opcode, parm, data):
         (k, font) = super().xfontdef(opcode, parm, data)
-        self.fontsize = self.topt(font.points)
+        self.fontsize = font.points
         if self.new_line_needed((self.h, self.v)):
             self.prev_line = self.line
             self.line = Line(self.v, self.ref, self.fontsize)
-            self.pass_line(self.x, self.y)
+            self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
         else:
             self.line.change_font(self.h, self.fontsize)
         self.cursor = (self.h,self.v)
         return (k, font)
 
+    def bop(self, opcode, parm, data):
+        self.page_index += 1
+        return super().bop(opcode, parm, data)
+
     def new_line_needed(self, startpos):
-        if self.pageno > (self.page_index + self.pagediff):
-            self.page_index = self.pageno - self.pagediff
         if len(self.line.glyph_clusters) == 0:
             self.line = Line(startpos[1], self.ref, self.fontsize)
-            self.pass_line(self.x, self.y)
+            self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
             return False
         if (self.cursor[1]-startpos[1]) < self.v_line_treshold:
             if (self.cursor[1] - self.line.v_start) < self.v_line_treshold:
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return False
         return True          
-
-    def pass_line(self, x, y):
-        line_info = {"line" : self.line,
-                    "page_index" : self.page_index,
-                    "x" : x,
-                    "y" : y}
-        #print("passline")
-        # if self.line_callback:
-        #     #self.line_callback(line_info)
-        #     # sys.stdout.write(line_info)
-        #     # print("yaya")
-        # pass
 
 class Line: 
     def __init__(self, v, ref, fontsize):

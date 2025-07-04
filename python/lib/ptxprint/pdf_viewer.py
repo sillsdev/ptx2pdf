@@ -10,6 +10,7 @@ from ptxprint.utils import _, f2s, coltoonemax
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
 from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
+from ptxprint.xdv.spacing_oddities import SpacingOddities
 from pathlib import Path
 from threading import Timer
 import logging
@@ -658,7 +659,11 @@ class PDFViewer:
         self.parlocs.readParlocs(fname, rtl=rtl)
         self.parlocs.load_dests(self.document)
         if self.model and (self.model.args.experimental & 2) == 2:
-            pass
+            xdvname = fname.replace(".parlocs", ".xdv")
+            print(f"Reading {xdvname}")
+            xdvreader = SpacingOddities(xdvname, parent=self.parlocs)
+            for (opcode, data) in xdvreader.parse():
+                pass
 
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
@@ -951,7 +956,7 @@ class PDFViewer:
         a = self.hbox.get_allocation()
 
         if self.parlocs is not None:
-            p, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
+            p, r, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
         return p, pnum, a
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None):

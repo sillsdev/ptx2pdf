@@ -155,6 +155,7 @@ class Report:
         self.get_usfms(view)
         self.get_files(view)
         self.get_general_info(view)
+        self.get_layoutinfo(view)
 
     def get_layout(self, view):
         if hasattr(view, 'ufPages') and len(view.ufPages):
@@ -347,6 +348,19 @@ class Report:
         # to do: add other Additional Script Settings (snippet settings for the script)
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
+    def get_layoutinfo(self, view):
+        threshold = 4
+        if getattr(view, 'pdf_viewer', None) is None:
+            return
+        badlist = []
+        count = 0
+        plocs = view.pdf_viewer.parlocs
+        for l in plocs.allxdvlines():
+            count += 1
+            if l.has_badspace(threshold):
+                badlist.append(l.ref)
+        if len(badlist):
+            self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join(badlist), severity=logging.WARN, txttype="text")
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
@@ -533,7 +547,6 @@ class Report:
             current_max_severity = max(e.severity for e in entries)
             if current_max_severity > max_severities[main_section_num]:
                 max_severities[main_section_num] = current_max_severity
-
         summary_blocks = []
         for i in range(1, 10):
             severity = max_severities[i]
@@ -551,7 +564,6 @@ class Report:
                 '</a>'
             )
             summary_blocks.append(block_html)
-            
         return "".join(summary_blocks)
 
 def test():
