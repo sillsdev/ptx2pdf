@@ -1,67 +1,73 @@
 from ptxprint.xdv.xdv import XDViPositionedReader
 import re
+import sys
 class SpacingOddities(XDViPositionedReader):
-    def __init__(self, fname, diffable = False, line_callback = None):
-        super().__init__(fname, diffable)
-        self.curr_ref = None # reference of where we're at, str
-        self.lines = [Line(self.v, self.curr_ref, None)] # list of Line objects
+    def __init__(self, fname, parent = None):
+        super().__init__(fname)
+        self.ref = None # reference of where we're at, str
         self.cursor = (self.h, self.v) # location of last printed glyph
-        self.curr_fontsize = None # in points
+        self.fontsize = None # in points
         self.v_line_treshold = 4 # vdiff of verse numbers and *s, less than line diff
-        self.curr_page_index = 0 
+        self.page_index = 0 
         self.pagediff = self.pageno 
-        self.line_callback = line_callback
+        self.parent = parent
+        self.prev_line = None
+        self.line = Line(self.v, self.ref, self.fontsize)
 
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v)       
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         glyphs_width = self.topt(width)
         if self.new_line_needed(start_pos):
-            self.lines.append(Line(start_pos[1],self.curr_ref, self.curr_fontsize))
+            self.prev_line = self.line
+            self.line = Line(start_pos[1], self.ref, self.fontsize)
             self.pass_line(self.x, self.y)
-        self.lines[-1].add_glyphs(start_pos[0], glyphs_width)
+        self.line.add_glyphs(start_pos[0], glyphs_width)
         self.cursor = (self.h, self.v)
         return (parm, width, pos, glyphs, txt)
 
     def xxx(self, opcode, parm, data):
         (txt,) = super().xxx(opcode, parm, data)
         if re.search(r'pdf:dest', txt):
-            self.curr_ref = re.findall(r'\((.*?)\)', txt)[0]
+            self.ref = re.findall(r'\((.*?)\)', txt)[0]
         return (txt,)
 
     def xfontdef(self, opcode, parm, data):
         (k, font) = super().xfontdef(opcode, parm, data)
-        self.curr_fontsize = self.topt(font.points)
+        self.fontsize = self.topt(font.points)
         if self.new_line_needed((self.h, self.v)):
-            self.lines.append(Line(self.v, self.curr_ref, self.curr_fontsize)) 
+            self.prev_line = self.line
+            self.line = Line(self.v, self.ref, self.fontsize)
             self.pass_line(self.x, self.y)
         else:
-            self.lines[-1].change_font(self.h, self.curr_fontsize)
+            self.line.change_font(self.h, self.fontsize)
         self.cursor = (self.h,self.v)
         return (k, font)
 
     def new_line_needed(self, startpos):
-        if self.pageno > (self.curr_page_index + self.pagediff):
-            self.curr_page_index = self.pageno - self.pagediff
-        if len(self.lines[-1].glyph_clusters) == 0:
-            self.lines[-1] = Line(startpos[1], self.curr_ref, self.curr_fontsize)
+        if self.pageno > (self.page_index + self.pagediff):
+            self.page_index = self.pageno - self.pagediff
+        if len(self.line.glyph_clusters) == 0:
+            self.line = Line(startpos[1], self.ref, self.fontsize)
             self.pass_line(self.x, self.y)
             return False
         if (self.cursor[1]-startpos[1]) < self.v_line_treshold:
-            if (self.cursor[1] - self.lines[-1].v_start) < self.v_line_treshold:
+            if (self.cursor[1] - self.line.v_start) < self.v_line_treshold:
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return False
         return True          
 
     def pass_line(self, x, y):
-        line_info = {"line" : self.lines[-1],
-                    "page_index" : self.curr_page_index,
+        line_info = {"line" : self.line,
+                    "page_index" : self.page_index,
                     "x" : x,
                     "y" : y}
-        if self.line_callback:
-            #self.line_callback(line_info)
-            print("Works")
-        pass
+        #print("passline")
+        # if self.line_callback:
+        #     #self.line_callback(line_info)
+        #     # sys.stdout.write(line_info)
+        #     # print("yaya")
+        # pass
 
 class Line: 
     def __init__(self, v, ref, fontsize):
@@ -102,26 +108,19 @@ class GlyphCluster:
         self.font_size = fontsize # in points
         self.width = 0
 
-class line_callback:
-    def __init__(self)
-
 def main():
-    import sys
-    line_function = None
-    if sys.argv[2]:
-        line_function = "hi"
-    reader = SpacingOddities(sys.argv[1], line_function)
-    reader.parse() 
-
-    # add option to pass vertical threshold
-    # option to pass horizontal threshold
-    # option to pass badspacing in ems threshold.
+    # import sys
+    # line_function = None
+    # if len(sys.argv) >1:
+    #     line_function = "hi"
+    # reader = SpacingOddities(sys.argv[1], 'hi')
+    # reader.parse() 
 
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
-    # reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
-    # for (opcode, data) in reader.parse():
-    #     if reader.pageno > 5:
-    #         break
+    reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
+    for (opcode, data) in reader.parse():
+        if reader.pageno > 5:
+            break
 
     # badlines = 0
     # for l in reader.lines:
