@@ -239,14 +239,14 @@ class Report:
                     (msg, pos, ref) = e #pos.l, pos.c = char num
                     if pos is None:
                         continue
-                    emsg = f"{ref} {msg} at line {pos.l}, char {pos.c}"
+                    emsg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
                     failed.setdefault(bk, []).append(emsg)
         if len(passed):
             self.add("3. USFM/Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
         if len(failed):
             for bk, elist in failed.items():
                 for m in elist:
-                    self.add(f"3. USFM Checks/{bk}", m, severity=logging.WARN)
+                    self.add(f"3. USFM Checks/{bk}", m, severity=logging.ERROR)
         if "GLO" in view.getBooks():
             fltr = "Filtered" if view.get("c_filterGlossary", False) else "Unfiltered"
             asfn = "As Footnotes" if view.get("c_glossaryFootnotes", False) else ""
