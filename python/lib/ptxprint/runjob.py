@@ -11,7 +11,7 @@ from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
-        saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir
+        saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, runChanges
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
@@ -1067,7 +1067,13 @@ class RunJob:
                         v[f'caption{s}'] = runChanges(dinfo.changes.get('default', []), key+'CAP', t)
                     if (t := v.get(f'ref{s}', '')):
                         v[f'ref{s}'] = runChanges(dinfo.changes.get('default', []), key+'REF', t)
-        localPicInfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
+        piclines = localPicInfos.out(None, bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
+        picdat = "\n".join(piclines)+"\n"
+        changes = info.changes.get("piclist", [])
+        if len(changes):
+            runChanges(changes, "PIC", picdat)
+        with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as outf:
+            outf.write(picdat)
         res.append(outfname)
         info["document/piclistfile"] = outfname
 

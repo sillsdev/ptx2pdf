@@ -714,7 +714,9 @@ class Piclist:
             if k:
                 lines.append("{} {}|{}".format(k, caption, vals))
 
-        if len(lines):
+        if fpath is None:
+            return lines
+        elif len(lines):
             logger.debug(f"Saving pics to {fpath} with {len(lines)} lines")
             dat = "\n".join(lines)+"\n"
             with open(fpath, "w", encoding="utf-8") as outf:

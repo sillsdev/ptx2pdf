@@ -359,7 +359,7 @@ class Usfm:
         if self.cvaddorned:
             return
 
-        def getref(bk, currc, currv):
+        def get_ref(bk, currc, currv):
             try:
                 curr = Ref(f"{bk} {currc}:{currv}")
             except SyntaxError:
