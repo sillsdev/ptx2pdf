@@ -40,7 +40,7 @@ from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel
 from ptxprint.modelmap import ModelMap
 from ptxprint.minidialog import MiniDialog
-from ptxprint.dbl import UnpackDBL
+from ptxprint.dbl import UnpackDBL, GetDBLName
 from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
 from ptxprint.hyphen import Hyphenation
@@ -831,6 +831,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
         self.builder.get_object("scr_previewPDF").set_visible(False)
         self.getInitValues(addtooltips=self.args.identify)
+        self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
         logger.debug("Project list loaded")
@@ -1374,10 +1375,7 @@ class GtkViewModel(ViewModel):
         else:
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
-        for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
-                   "l_homePage",  "l_community", "l_trainingVideos", "l_reportBugs", "lb_trainingOnVimeo",
-                  "lb_homePage", "lb_community", "lb_trainingOnPTsite", "lb_reportBugs", "lb_techFAQ", "lb_learnHowTo",
-                  "l_giveFeedback", "lb_giveFeeback", "btn_about"]:
+        for w in "l_url_usfm lb_DBLdownloads lb_openBible l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split():
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
@@ -1575,7 +1573,7 @@ class GtkViewModel(ViewModel):
         if txt.startswith(r"\u"): # i.e. the results of an Alt-X (show unicode chars)
             btn.set_label(_(" Copy to Clipboard "))
         else:
-            btn.set_label("Dismiss")
+            btn.set_label(_("Dismiss"))
         sl = self.builder.get_object("l_statusLine")
         self.set("l_statusLine", txt)
         status = len(self.get("l_statusLine"))
@@ -1635,6 +1633,7 @@ class GtkViewModel(ViewModel):
             return
 
         self.builder.get_object("spin_preview").start()
+        self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
         print_count_str = self.get("_printcount", "")
         if print_count_str:
             print_count = int(print_count_str)
@@ -2252,6 +2251,12 @@ class GtkViewModel(ViewModel):
         filtered = self.get("c_filterPicList")
         if bks is None and filtered:
             bks = self.getBooks()
+        if bks is None:
+            bks = []
+        if self.get('c_frontmatter'):
+            bks.append("FRT")
+        if self.get('c_useSectIntros'):
+            bks.append("INT")
         self.picinfos.updateView(self.picListView, bks, filtered=filtered)
 
     def updatePicChecks(self, src):
@@ -3465,7 +3470,7 @@ class GtkViewModel(ViewModel):
     def updateExamineBook(self):
         try:
             bks = self.getBooks()
-        except SyntaxError:     # mid typing the reflist may be bad
+        except (SyntaxError, ValueError):     # mid typing the reflist may be bad
             return
         if len(bks):
             self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
@@ -3985,8 +3990,6 @@ class GtkViewModel(ViewModel):
         buf = self.fileViews[pg][0]
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         label = self.builder.get_object("l"+_allpgids[pg][2:])
-        if label is None:
-            breakpoint()
         txtcol = " color='crimson'" if not currentText == self.uneditedText[pg] else ""
         label.set_markup("<span{}>".format(txtcol)+label.get_text()+"</span>")
 
@@ -5135,7 +5138,8 @@ class GtkViewModel(ViewModel):
             # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
             self.DBLfile = DBLfile[0]
             self.builder.get_object("lb_DBLbundleFilename").set_label(os.path.basename(DBLfile[0]))
-            self.set("t_DBLprojName", os.path.basename(DBLfile[0])[:8], mod=False)
+            dblname = GetDBLName(self.DBLfile)
+            self.set("t_DBLprojName", dblname, mod=False)
             self.builder.get_object("btn_locateDBLbundle").set_tooltip_text(str(DBLfile[0]))
         else:
             self.builder.get_object("lb_DBLbundleFilename").set_label("")
@@ -6661,9 +6665,6 @@ Thank you,
         self.set("fcb_diglotMerge", orig if found else "scores") 
            
     def onGenerateReportClicked(self, btn):
-        r = Report()
-        r.run_view(self)
-        fpath = os.path.join(self.project.path, self.project.printdir, os.path.basename(self.getPDFname()).replace(".pdf", ".html"))
-        tm = {"project/id": self.project.prjid, "config/name": self.cfgid}
-        r.generate_html(fpath, tm)
-        startfile(fpath)
+        fpath = self.runReport()
+        if fpath is not None:
+            startfile(fpath)

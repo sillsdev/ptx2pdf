@@ -920,7 +920,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.8.12</property>
+    <property name="version">Version 2.8.19</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -3969,12 +3969,16 @@ current configuration.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="c_updatePDF">
-                    <property name="label" translatable="yes">Auto-update</property>
+                  <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">When enabled, this re-creates
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkCheckButton" id="c_updatePDF">
+                        <property name="label" translatable="yes">Auto-update</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">When enabled, this re-creates
 the PDF after making changes
 using the (right-click) context
 menu options.
@@ -3983,13 +3987,73 @@ Note that there is a short delay
 enabling you to make several
 adjustments one after the other
 before the update is triggered.
-This delay can be adjusted.
-Refer to: Advanced &gt; Other &gt; 
+This delay can be adjusted by
+clicking on the value shown here
+or refer to: Advanced &gt; Other &gt; 
 Other Miscellaneous Settings.</property>
-                    <property name="margin-top">20</property>
-                    <property name="active">True</property>
-                    <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                        <property name="margin-top">20</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEventBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">When enabled, this re-creates
+the PDF after making changes
+using the (right-click) context
+menu options.
+
+Note that there is a short delay 
+enabling you to make several
+adjustments one after the other
+before the update is triggered.
+This delay can be adjusted by
+clicking on the value shown here
+or refer to: Advanced &gt; Other &gt; 
+Other Miscellaneous Settings.</property>
+                        <property name="valign">end</property>
+                        <signal name="button-release-event" handler="onSpinnerClicked" swapped="no"/>
+                        <child>
+                          <object class="GtkLabel" id="l_updateDelay">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">When enabled, this re-creates
+the PDF after making changes
+using the (right-click) context
+menu options.
+
+Note that there is a short delay 
+enabling you to make several
+adjustments one after the other
+before the update is triggered.
+This delay can be adjusted by
+clicking on the value shown here
+or refer to: Advanced &gt; Other &gt; 
+Other Miscellaneous Settings.</property>
+                            <property name="valign">end</property>
+                            <property name="margin-bottom">2</property>
+                            <property name="label" translatable="yes">(3.0s delay)</property>
+                            <attributes>
+                              <attribute name="underline" value="True"/>
+                              <attribute name="foreground" value="#1c1c7171d8d8"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -4475,7 +4539,7 @@ reference (e.g. JHN 3.16)</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_slice_ok">
-                <property name="label">OK</property>
+                <property name="label">Enable</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
@@ -4490,7 +4554,7 @@ reference (e.g. JHN 3.16)</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_slice_cancel">
-                <property name="label">Cancel</property>
+                <property name="label">Disable</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
@@ -5928,6 +5992,7 @@ or select from the list of preset values.</property>
                                           <item>184.6mm, 271.6mm (A4 with cropmarks)</item>
                                           <item>165mm, 234mm (KBS max page)</item>
                                         </items>
+                                        <signal name="changed" handler="onBodyHeightChanged" swapped="no"/>
                                         <signal name="changed" handler="onNumTabsChanged" swapped="no"/>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -23954,7 +24019,7 @@ various code snippets as required.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
                                 <property name="margin-start">6</property>
-                                <property name="margin-top">20</property>
+                                <property name="margin-top">12</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <placeholder/>
@@ -23974,7 +24039,7 @@ various code snippets as required.</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
+                                <property name="fill">False</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -27750,7 +27815,7 @@ Email the ZIPped archive file to:
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">5</property>
-                                    <property name="width">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28097,6 +28162,25 @@ so on.</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">11</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_chatBot">
+                                    <property name="label" translatable="yes">NEW! Chatbot Support</property>
+                                    <property name="name">Use the PTXprint Support ChatBot to answer your questions instantly</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://ptxprintsupport-55742.chipp.ai/w/chat/</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">5</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>

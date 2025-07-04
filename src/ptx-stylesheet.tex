@@ -275,7 +275,7 @@
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
-\def\sh@wstuff{SHOWSTUFF: \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
+\def\sh@wstuff{SHOWSTUFF:[v:\csname ptxversion\endcsname] \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
 \def\SHOWSTUFF{\message{\sh@wstuff}}%
 
 %returns \@@ut
@@ -989,6 +989,8 @@
 \newif\ifHangVA\HangVAfalse
 \newif\iffilehasverses % Usercode (e.g. book end marks) might want to know this
 \newif\ifrotateVerse \rotateVersefalse
+\newif\ifversehyphen \versehyphentrue
+\newif\ifversehyphenup \versehyphenupfalse
 \def\everyfirstverse#1#2#3{}% Arguments are book ID (e.g. GEN), Book name (e.g. Genesis) and chapter
 \def\@ddcvhooks{
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
@@ -1008,7 +1010,7 @@
    \fi
    \everyfirstverse{\id@@@}{\book}{\ch@pter}%
   \else
-    \message{verse was \meaning\oldv@rse}%
+    %\message{verse was \meaning\oldv@rse}%
     \ifx \oldv@rse\empty
      \everyfirstverse{\id@@@}{\book}{\ch@pter}%
     \fi
@@ -1121,14 +1123,17 @@
      % if chapter label not present, set \ch@pter[X]waiting to cause chapter number to be printed
      % at start of first text paragraph.
      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
-     \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
-       \trace{c}{No chapter label in use : \ch@pter}%
-     \else % if \cl present, output chapter label here
-       \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-       \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
-       \pdfb@@kmark \pdfch@ptermark
-       \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
-       \spacefactor=\n@wchaptersf % prevent hanging verse number here
+     \ifcsname hookchapter\g@tdstat\endcsname\csname hookchapter\g@tdstat\endcsname\ch@pter
+     \else
+       \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+         \trace{c}{No chapter label in use : \ch@pter}%
+       \else % if \cl present, output chapter label here
+         \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
+         \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+         \pdfb@@kmark \pdfch@ptermark
+         \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
+         \spacefactor=\n@wchaptersf % prevent hanging verse number here
+       \fi
      \fi
    \fi}
  %
@@ -1139,6 +1144,7 @@
 %+csty_dropchap
  \ifdim\dropnumbersize=0pt
    \calcdr@psize
+ \else\edef\dr@psize{\the\dropnumbersize}
  \fi
  \def\m@rker{c}\def\@mkr{c\c@rrdstat}\defp@ram{fontsize}{\dr@psize}%
  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
@@ -1372,6 +1378,7 @@
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
 \let\zMarkVerseAgain\m@rkverse
 \def\m@rkverseNml{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
+\let\cur@ds\empty
 \def\m@rkverseDglot{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
 
 \def\n@xtparstart{}

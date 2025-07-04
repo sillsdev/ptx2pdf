@@ -98,7 +98,7 @@ texpertOptions = {
                                _("PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths. Font metrics gives more consistent results."),
                                valfn = lambda v:"%" if v else ""),
     "usesysfonts":        O("usesysfonts", "FNT", True, "", _("Use system fonts"),
-                            _("Use fonts from your system as well as your project")),
+                            _("Use fonts from your system as well as your project. Note that you need to restart PTXprint for this setting to take effect.")),
     "underlineThickness": O("underlinethickness", "FNT", (0.05,  0.01, 0.5, 0.01, 0.01, 2), r"\def{0}{{{1}}}", _("Underline thickness (em)"),
                             _("This sets the thickness of the text underline, (measured in ems)."),
                             valfn=lambda v: f2s(float(v or "0.05"))),
@@ -217,8 +217,8 @@ texpertOptions = {
                             _("Step Value to expand text using right-click context menu adjustment.")),
     "ExpandTextLimit":    O("expandtextlimit", "OTH", (110, 105, 125, 1, 1, 0), "", _("Maximum Text Expand (%)"),
                             _("Limit how much text can expand to using right-click context menu adjustment.")),
-    "autoUpdateDelay":    O("autoupdatedelay", "OTH", (3, 0.0, 120.0, 0.1, 1.0, 1), "", _("Auto-Update Delay (seconds)"),
-                            _("Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-Update from running.")),
+    "autoUpdateDelay":    O("autoupdatedelay", "OTH", (3, 0.0, 120.0, 0.1, 1.0, 1), "", _("Auto-update Delay (seconds)"),
+                            _("Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-update from running.")),
 }                          # (default, lower, upper, stepIncr, pageIncr, decPlaces)
 
 def widgetName(opt):

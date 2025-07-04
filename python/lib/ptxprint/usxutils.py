@@ -4,6 +4,7 @@ from usfmtc.reference import Ref, RefList
 from usfmtc.usfmparser import Grammar
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
+from ptxprint.changes import readChanges
 from ptxprint.ptsettings import PTEnvironment
 from copy import deepcopy
 
@@ -189,7 +190,7 @@ def createGrammar(sheets):
 
 
 class UsfmCollection:
-    def __init__(self, bkmapper, basedir, sheets):
+    def __init__(self, bkmapper, basedir, sheets, changes=None):
         self.bkmapper = bkmapper
         self.basedir = basedir
         self.sheets = sheets
@@ -198,6 +199,17 @@ class UsfmCollection:
         self.tocs = []
         self.booknames = None
         self.setgrammar()
+        self.reload(changes)
+
+    def reload(self, cfile):
+        if os.path.exists(cfile):
+            allchanges = readChanges(cfile, None)
+            self.changes = allchanges.get('initial', None)
+        else:
+            self.changes = None
+        if self.changes is not None:
+            self.books = {}
+            self.times = {}
 
     def setgrammar(self):
         self.grammar = createGrammar(self.sheets)
@@ -211,7 +223,13 @@ class UsfmCollection:
             return None
         mtime = os.stat(bkfile).st_mtime
         if mtime > self.times.get(bk, 0):
-            self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
+            if self.changes is not None:
+                with universalopen(bkfile) as inf:
+                    bkdat = inf.read()
+                bkdat = runChanges(self.changes, bk, bkdat)
+                self.books[bk] = Usfm.readfile(bkdat, informat="usfm", grammar=self.grammar, elfactory=ParentElement)
+            else:
+                self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
             self.times[bk] = time.time()
         return self.books[bk]
 
@@ -252,8 +270,12 @@ class UsfmCollection:
         ''' returns a list of all markers used in the corpus '''
         res = set()
         for bk in bks:
-            mkrs = self.get(bk).getmarkers()
-            res.update(mkrs)
+            usfm = self.get(bk)
+            if usfm is not None:
+                mkrs = usfm.getmarkers()
+                res.update(mkrs)
+            else:
+                logger.warn(f"{bk} usfm not found to extract markers")
         return res
 
 class RefPos:
@@ -336,6 +358,21 @@ class Usfm:
     def addorncv(self, curr=None, factory=ParentElement):
         if self.cvaddorned:
             return
+
+        def get_ref(bk, currc, currv):
+            try:
+                curr = Ref(f"{bk} {currc}:{currv}")
+            except SyntaxError:
+                currv = re.sub(r"\D", "", currv)
+                if not len(currv):
+                    currv = "0"
+                try:
+                    curr = Ref(f"{bk} {currc}:{currv}")
+                except SyntaxError:
+                    currv = "0"
+                    curr = Ref(f"{bk} {currc}:{currv}")
+            return curr
+
         root = self.getroot()
         self.bridges = {}
         bk = root[0].get('code') or "UNK"
@@ -354,7 +391,11 @@ class Usfm:
             if x.parent == root:
                 i += 1
             if p.tag == "chapter":
-                currc = int(p.get("number", 0))
+                try:
+                    currc = int(p.get("number", 0))
+                except ValueError:
+                    currc = re.sub(r"\D", "", p.get("number", "0"))
+                    currc = int(currc) if len(currc) else 0
                 if currc >= len(self.chapters):
                     self.chapters.extend([self.chapters[-1]] * (currc - len(self.chapters) + 1))
                 self.chapters[currc] = i
@@ -366,8 +407,8 @@ class Usfm:
                     if isempty(p.text) and len(p) and p[0].tag == "verse":
                         currv = p[0].get("number", curr.last.verse if curr is not None else None)
                         currc = curr.first.chapter if curr is not None else 0
-                        curr = Ref(f"{bk} {currc}:{currv}")
-                        if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
+                        curr = get_ref(bk, currc, currv)
+                        if curr.first != curr.last and curr.last.verse is not None and curr.last.verse < 200 and curr.first not in self.bridges:
                             for r in curr:
                                 self.bridges[r] = curr
                         # add to bridges if a RefRange
@@ -379,7 +420,7 @@ class Usfm:
                 if curr is not None:
                     currv = p.get("number", curr.last.verse)
                     currc = curr.first.chapter if curr is not None else 0
-                    curr = Ref(f"{bk} {currc}:{currv}")
+                    curr = get_ref(bk, currc, currv)
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
@@ -457,7 +498,7 @@ class Usfm:
         if not isinstance(refranges, (list, RefList)):
             refranges = [refranges]
         last = (0, -1)
-        chaps = []
+        chaps = []      # a list of 2 element tuples. 0: list of first paragraphs, 1: indices in refranges
         minc = 10000
         for i, r in enumerate(refranges):
             if r.first.chapter > last[1] or r.first.chapter < last[0]:
@@ -516,10 +557,8 @@ class Usfm:
         for c in chaps:
             if addzsetref:
                 minref = min(refranges[r].first for r in c[1])
-                if minref.verse > 0:
+                if (minref.verse or 0) > 0:
                     res.append(self.make_zsetref(minref, None, root, None))
-            if len(c[0]) > 2:
-                logger.error(f"chapter too long: {c[0]}")
             for chap in range(c[0][0], c[0][-1]):
                 copyrange(d[chap], res, c[1])
         return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)

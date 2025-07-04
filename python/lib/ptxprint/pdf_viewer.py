@@ -9,7 +9,7 @@ from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.utils import _, f2s, coltoonemax
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
-from ptxprint.parlocs import Paragraphs, ParInfo
+from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
 from pathlib import Path
 from threading import Timer
 import logging
@@ -111,7 +111,7 @@ def arrayImage(imarray, width, height):
 class PDFViewer:
     def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
-        self.model = model
+        self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
         self.sw.connect("button-press-event", self.on_button_press)
         self.sw.connect("button-release-event", self.on_button_release)
@@ -657,6 +657,8 @@ class PDFViewer:
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
         self.parlocs.load_dests(self.document)
+        if self.model and (self.model.args.experimental & 2) == 2:
+            pass
 
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
@@ -879,7 +881,8 @@ class PDFViewer:
                     # --- If there are fewer than 7 pages, show all without ellipses ---
                     if total_count <= 7:
                         formatted_pages = list(map(str, ufPages))
-                        formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
+                        if curr_pos < len(formatted_pages):
+                            formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
                         pgs = "  ".join(formatted_pages)
                         elipsis = ""  # No "(of X)" when all numbers are shown
                     else:

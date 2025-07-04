@@ -265,32 +265,6 @@
     },
   ".txt":
     {
-      "Adjust": [
-        {
-          "Type": "insert",
-          "Label": "Shrink text to 95% width ('\\p' > '\\p^95')",
-          "Description": "Shrink one or more paragraphs by 5%\n(remember to reference the PREVIOUS verse).",
-          "CodeSnippet": "at MRK 1:46; 2:29; 14:73; LUK 2:53 '\\\\p(\\s)' > '\\\\p^95\\1'"
-        },
-        {
-          "Type": "insert",
-          "Label": "Shrink text to 97% width ('\\p' > '\\p^97')",
-          "Description": "Shrink one or more paragraphs by 3%\n(remember to reference the PREVIOUS verse).",
-          "CodeSnippet": "at ROM 4:26; 5:22; 1CO 2:17 '\\\\p(\\s)' > '\\\\p^97\\1'"
-        },
-        {
-          "Type": "insert",
-          "Label": "Stretch text to 103% width ('\\p' > '\\p^103')",
-          "Description": "Stretch one or more paragraphs by 3%\n(remember to reference the PREVIOUS verse).",
-          "CodeSnippet": "at JHN 14:32; ACT 3:27 '\\\\p(\\s)' > '\\\\p^103\\1'"
-        },
-        {
-          "Type": "insert",
-          "Label": "Stretch text to 105% width ('\\p' > '\\p^105')",
-          "Description": "Stretch one or more paragraphs by 5%\n(remember to reference the PREVIOUS verse).",
-          "CodeSnippet": "at GAL 1:25; EPH 4:33 '\\\\p(\\s)' > '\\\\p^105\\1'"
-        }
-      ],
       "Change": [
         {
           "Type": "insert",
@@ -529,17 +503,29 @@
     },
   ".tex":
     {
-      "Page Nums": [
+      "Headers": [
+        {
+          "Type": "comment%",
+          "Label": "Diglot Headers",
+          "Description": "Modify the example as needed by choosing (one|option) in each segment. Note that the uppercase letters L and R refer to the primary (L) and secondary (R) texts in the diglot. For polyglot publications, L,R,A,B,C,D,E,F,G refer to each of the texts. The resulting line(s) of code should look something like this:\n  \\def\\RHevenleft{\\rangerefL}\n  \\def\\RHoddright{\\referenceR}\n\n- RH means running header, \n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header.\n\n",
+          "CodeSnippet": "% \\def\\RH(odd|even)(left|center|right){(\\empty|\\pagenumber|\\(firstref|lastref|rangeref)(L|R|A...G)}\n% Working from left to right in sequence across the spread:\n\\def\\RHevenleft{\\rangerefL}\n\\def\\RHevencenter{\\pagenumber}\n\\def\\RHevenright{\\empty}\n\n\\def\\RHoddleft{\\empty}\n\\def\\RHoddcenter{\\pagenumber}\n\\def\\RHoddright{\\rangerefR}"
+        },
         {
           "Type": "comment%",
           "Label": "Set custom page numbers (Header/Footer)",
-          "Description": "PTXprint makes it easy to set the Running Header (RH) and Running Footer (RF) for most common uses. However there are many more options that can be used if needed. Modify the inserted snippet as needed by choosing (one|options) in each segment. The resulting line(s) of code should look something like this:\n  \\def\\RFevenleft{\\pagenumber}\n  \\def\\RFoddright{\\pagenumber}\n\n- RH means running header, RF running footer,\n- noV means pages with no scripture verses, title means the title page, and nothing in that slot means normal pages,\n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header/footer.\n\n",
+          "Description": "PTXprint makes it easy to set the Running Header (RH) and Running Footer (RF) for most common uses. However there are many more options that can be used if needed. Modify the example as needed by choosing (one|option) in each segment. The resulting line(s) of code should look something like this:\n  \\def\\RFevenleft{\\pagenumber}\n  \\def\\RFoddright{\\pagenumber}\n\n- RH means running header, RF running footer,\n- noV means pages with no scripture verses, title means the title page, and nothing in that slot means normal pages,\n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header/footer.\n\n",
           "CodeSnippet": "% \\def\\R(H|F)(|noV|title)(odd|even)(left|center|right){(\\empty|\\pagenumber|\\(first|last|range)ref|\\(us|uk|iso)date|\\hrsmins)}\n\\def\\RFevenleft{\\pagenumber}\n\\def\\RFoddright{\\pagenumber}\n"
         },
         {
           "Type": "comment%",
           "Label": "Page numbers on title page of a book (Header/Footer)",
           "Description": "It is intentional that book title pages do not have page numbers showing in the header. However if needed, these can be inserted on the outer edge header.",
+          "CodeSnippet": "\\def\\RHtitleevenleft{\\pagenumber}\n\\let\\RHtitleoddright=\\RHtitleevenleft\n"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Set custom Footers",
+          "Description": "Regular scripture publications do not use the footer area as that is used for notes and cross-references. However, it is possible to set these as well.",
           "CodeSnippet": "\\def\\RHtitleevenleft{\\pagenumber}\n\\let\\RHtitleoddright=\\RHtitleevenleft\n"
         }
       ],
@@ -553,8 +539,8 @@
         {
           "Type": "comment%",
           "Label": "Add QR codes before all chapter numbers",
-          "Description": "To create a rich and more interactive experience for readers, QR codes can be inserted before the chapter number pointing to an online resource for that book and chapter. If using this feature, update the example and make sure to use a URL which is as short as possible.",
-          "CodeSnippet": "\\def\\beforechapternum#1#2#3{\\zqrcode|pgpos=\"H\" size=\"0.75\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"0pt\" data=\"website.org/bible/#1.#3\"\\*}"
+          "Description": "To create a rich and more interactive experience for readers, QR codes can be inserted before the chapter number pointing to an online resource for that book and chapter. If using this feature, update the example and make sure to use a URL which is as short as possible, and if you limit the URL to only use alphanumeric characters (0–9, only upper case A–Z, space, $, %, *, +, -, ., /, :) it will produce a more compact QR code.",
+          "CodeSnippet": "\\def\\beforechapternum#1#2#3{\\zqrcode|pgpos=\"H\" size=\"0.78\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"6pt\" data=\"WEBSITE.ORG/BIBLE/#1.#3\"\\*\\xdef\\lastQRchap{#3}}\n\\def\\everyfirstverse#1#2#3{\\edef\\tmp{#3}\\ifx\\tmp\\lastQRchap\\else\\zqrcode|pgpos=\"cl\" size=\"0.78\\dropnumbersize\" novpadding=\"T\" nohpadding=\"l\" spacebeside=\"6pt\" data=\"WEBSITE.ORG/BIBLE/#1.#3\"\\*\\fi\\global\\let\\lastQRchap\\empty}"
         }
       ],
       "Verses": [
@@ -734,6 +720,12 @@
       "Tracing": [
         {
           "Type": "insert",
+          "Label": "Debug tracing",
+          "Description": "Enable tracing output",
+          "CodeSnippet": "\\showboxdepth=300\n\\showboxbreadth=300\n\\tracingoutput=1"
+        },
+        {
+          "Type": "insert",
           "Label": "B - Balancing",
           "Description": "\\tracing{B}\n(alerts you of any unfilled or unbalanced pages which will be listed as a Warning status message)",
           "CodeSnippet": "\\tracing{B}"
@@ -784,12 +776,6 @@
           "Label": "T - triggers",
           "Description": "\\tracing{T}",
           "CodeSnippet": "\\tracing{T}"
-        },
-        {
-          "Type": "insert",
-          "Label": "Debug tracing",
-          "Description": "Enable tracing output",
-          "CodeSnippet": "\\showboxdepth=300\n\\showboxbreadth=300\n\\tracingoutput=1"
         }
       ]
     }

@@ -169,7 +169,7 @@ class TTFontCache:
                 continue
             try:
                 (path, full) = f.strip().split(": ")
-                if path[-4:].lower() not in (".ttf", ".otf"):
+                if path[-4:].lower() not in (".ttf", ".otf", ".ttc"):
                     continue
                 if ":style=" in full:
                     (name, style) = full.split(':style=')
@@ -217,7 +217,7 @@ class TTFontCache:
             logger.debug(f"Add font path: {path}")
             self.fontpaths.append(path)
         for fname in os.listdir(path):
-            if fname.lower().endswith(".ttf"):
+            if fname.lower()[-4:] in (".ttf", ".ttc"):
                 fpath = os.path.join(path, fname)
                 f = TTFont(None, filename=fpath)
                 f.usepath = True
@@ -268,9 +268,9 @@ class TTFontCache:
             return f
         if style is None or len(style) == 0:
             style = "Regular"
-        res = f.get(style, None)
+        res = f.get(style, None) or f.get(style.lower(), None)
         if res is None and "Oblique" in style:
-            res = f.get(style.replace("Oblique", "Italic"), None)
+            res = f.get(style.replace("Oblique", "Italic").lower(), None)
         return res
 
     def iscore(self, name, style=None):
@@ -649,21 +649,48 @@ class TTFont:
         if k not in TTFont.cache:
             TTFont.cache[k] = self
 
-    def readfont(self, withglyphs=False):
+    def _read_dir(self, inf, numtables):
+        res = {}
+        dat = inf.read(numtables * 16)
+        for i in range(numtables):
+            (tag, csum, offset, length) = struct.unpack(">4sLLL", dat[i * 16: (i+1) * 16])
+            try:
+                res[tag.decode("ascii")] = [offset, length]
+            except UnicodeDecodeError:      # messed up tag
+                pass
+        return res
+
+    def readfont(self, withglyphs=False, ttcindex=None):
         self.dict = {}
         if self.filename == "":
             return
         with open(self.filename, "rb") as inf:
             dat = inf.read(12)
-            (_, numtables) = struct.unpack(">4sH", dat[:6])
-            dat = inf.read(numtables * 16)
-            for i in range(numtables):
-                (tag, csum, offset, length) = struct.unpack(">4sLLL", dat[i * 16: (i+1) * 16])
-                try:
-                    self.dict[tag.decode("ascii")] = [offset, length]
-                except UnicodeDecodeError:      # messed up tag
-                    return False
-            self.readNames(inf)
+            (fid, numtables) = struct.unpack(">4sH", dat[:6])
+            if fid == b"ttcf":
+                numc = struct.unpack(">L", dat[8:])[0]
+                ttcdat = inf.read(numc * 4)
+                if ttcindex is None:
+                    for i in range(numc):
+                        offset = struct.unpack(">L", ttcdat[4*i:4*(i+1)])[0]
+                        inf.seek(offset)
+                        dat = inf.read(12)
+                        numtables = struct.unpack(">H", dat[4:6])[0]
+                        thisdir = self._read_dir(inf, numtables)
+                        thisnames = self.readNames(inf, dirdic=thisdir)
+                        if thisnames[1] == self.family:
+                            self.dict = thisdir
+                            ttcindex = i
+                            break
+                else:
+                    offset = struct.unpack(">L", ttcdat[4*ttcindex:4*(ttcindex+1)])[0]
+                    inf.seek(offset)
+                    dat = inf.read(12)
+                    numtables = struct.unpack(">H", dat[4:6])[0]
+                    self.dict = self.read_dir(inf, numtables)
+            else:
+                self.dict = self._read_dir(inf, numtables)
+            self.names = self.readNames(inf)
             self.readFeat(inf)
             self.readSill(inf)
             self.readOTFeats(inf)
@@ -805,12 +832,14 @@ class TTFont:
                     for l in OTToLangs.get(tag, ["hbot-"+tag]):
                         self.otLangs[l] = l
             
-    def readNames(self, inf):
-        self.names = {}
-        if 'name' not in self.dict:
+    def readNames(self, inf, dirdic=None):
+        names = {}
+        if dirdic is None:
+            dirdic = self.dict
+        if 'name' not in dirdic:
             return
-        inf.seek(self.dict['name'][0])
-        data = inf.read(self.dict['name'][1])
+        inf.seek(dirdic['name'][0])
+        data = inf.read(dirdic['name'][1])
         fmt, n, stringOffset = struct.unpack(b">HHH", data[:6])
         stringData = data[stringOffset:]
         data = data[6:]
@@ -820,7 +849,8 @@ class TTFont:
             (pid, eid, lid, nid, length, offset) = struct.unpack(b">HHHHHH", data[12*i:12*(i+1)])
             # only get unicode strings (US English)
             if (pid == 0 and lid == 0) or (pid == 3 and (eid < 2 or eid == 10) and lid == 1033):
-                self.names[nid] = stringData[offset:offset+length].decode("utf_16_be")
+                names[nid] = stringData[offset:offset+length].decode("utf_16_be")
+        return names
 
     def readhhea(self, inf):
         inf.seek(self.dict['hhea'][0])
@@ -828,7 +858,7 @@ class TTFont:
         self.ascent, self.descent = struct.unpack(b">Hh", data[4:])
 
     def readhead(self, inf):
-        if hasattr(self, 'upem'):
+        if self.upem != 1:
             return
         inf.seek(self.dict['head'][0])
         data = inf.read(52)
@@ -1112,8 +1142,9 @@ class FontRef:
                 if 'slant' in res.feats:
                     del res.feats['slant']
                 return res
+        logger.debug(f"Seeking font {self.name}")
         f = fontcache.get(self.name)
-        if f is None:
+        if f is None:           # base font not in the cache so don't return a derivative
             return None
         res.style = None
         if bold and 'embolden' not in res.feats:

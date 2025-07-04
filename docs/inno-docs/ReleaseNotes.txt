@@ -1,8 +1,91 @@
-PTXprint 2.8.12 Release Notes
-3 Jun 2025
+PTXprint 2.8.19 Release Notes
+4 Jul 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.19 (4 Jul 2025)
+  * Change labels of buttons in SpeedSlice to Enable and Disable
+  * Add Section Links and date-time with summary at top and bottom of HTML report
+  * Add support for marginal notes adjustment
+  * Add sections(piclist) support
+  * Remove xyzREF and xyzCAP changes feature
+  * Remove marginnotes file at start of run
+  * Stop addorncv raising errors
+  * Improve USFM error reports
+  * Don't process for adjlist if the adjlist is empty
+  * Fix xo outputting book, bad at references in changes
+  * Cross reference xo should have no book
+  * Small (1st line) indents at chapters now behave the same in 1st and 2nd lines
+  * Fix ancient bug with dropcaps and firstline / paragraph indents
+  * Over zealous with the line ending %
+  * Refactor to separate changes.py
+  * Fix localising xrefs, shifting the bottom cluster of marginal notes
+  * Adjusted the manual installation steps just a tiny bit
+
+Bug fixes and Improvements in 2.8.18 (1 Jul 2025)
+  * Add some hooks to the tech ref
+  * Avoid some diglot crashes, and set old paragraph style (or something) on column switch, in case no par style is used.
+  * Add merged changes sections to tech ref
+  * Add chapter range to at changes
+  * Add support for marginal chapters, notes and headings
+  * Fix merged changes section
+  * Minor fix for pdf_viewer index error
+  * Get rid of chapters too long error
+  * Fix at changes and version 3.1 output
+  * Get at changes for verse ranges working
+  * Add logger INFO and above to report
+  * Try to handle 'at' changes more succinctly
+
+Bug fixes and Improvements in 2.8.17 (24 Jun 2025)
+  * Add link to auto-update delay settings
+  * Add link to PTXprint Support chatbot
+  * Add capabilities for marginal section heads
+  * Add vertical alignment to marginnotes (work in progress)
+  * Fix missing FigInfo import in pdf_viewer
+
+Bug fixes and Improvements in 2.8.16 (20 Jun 2025)
+  * Flip flop the licensing information to make launchpad happy
+  * Fix bug with book codes starting with a digit not printing
+
+Bug fixes and Improvements in 2.8.15 (20 Jun 2025)
+  * Ensure that changing the page size recalculates the lines per page
+  * Add FRT and INT to picture active books, if enabled
+  * Add importing custom script
+  * Freshen up DBL import
+  * XDVPositionedReader sets font size in points
+  * First step to moving texmf-dist to texmf_dist etc.
+  * mv texmf- to texmf_ to make pyproject linux build happy
+  * Don't include xetex/bin since pyproject is only for linux/mac packaging
+  * Refactor python packaging and put texmf-dist back
+  * Fix minor font bug where case on Bold or bold makes a difference
+  * Fix missing/empty bks
+
+Bug fixes and Improvements in 2.8.13 (18 Jun 2025)
+  * Add feature to generate a publication report with pertinent details
+    * Fix changed markers in report
+    * Added page layout visualization
+  * Add Hans script support
+    * for Chinese vertical alignment (not yet vertical text flow)
+    * Add tooltips to CJK script snippet minidialog
+    * Move local changes after adjlist for cjk scriptsnippet \cjksp
+  * QR code generation for chapters:
+    * Chapter number QRcodes can now also go inside the chapter number box
+    * Update documentation; make sure that everyfirstverse gets called for \nb chapters too
+    * Add Chapter codelet (.tex) for inserting QR codes
+  * Refactor checking for updates to be threaded and only every 24hrs
+  * Add Alt-X keyboard shortcut on View+Edit tab to show unicode values of selected text
+  * Add TTC (True Type Collection) font support at least for font 0
+  * Explicitly mark to omit verses
+  * Don't insert afterversespace in the text when no verses or marginal verses
+  * Add codelets for chapter number adjustments - exp. QR code next 
+  * Adjlist now ignores \b
+  * Add support for \csname \typef@ce _spacefactor to multiply the space in a font. e.g. to make it thinner
+  * Add missing \h check
+  * Get marginal verse hyphenup working
+  * Refactor pdf_viewer to pull out parlocs
+  * Allow PTXprint to be hooked
+  * Fix xrefs and dependency bugs
 
 Bug fixes and Improvements in 2.8.12 (3 Jun 2025)
   * Add (re-)versification to xrefs

@@ -118,13 +118,16 @@ class XrefFileXrefs(BaseXrefs):
         for l in inf.readlines():
             if '=' in l:
                 (k, v) = l.split("=", maxsplit=1)
-                if k.strip() == "attribution":
+                if k.strip().lower in ("attribution", "copyright"):
                     self.xrefcopyright = v.strip()
+                continue
             v = RefList()
-            for d in re.sub(r"[{}]", "", l).split():
-                v.extend(RefList(d.replace(".", " "), marks="+"))
+            for d in re.sub(r"[{}]+", "", l).split():
+                if not d.strip():
+                    continue
+                v.extend(RefList(d.replace(" ", ";").replace(".", " "), marks="+", strict=False))
             k = v.pop(0)
-            xrefdat.setdefault(k.first.book, {})[k] = [v]
+            xrefdat.setdefault(k.first.book, {})[k] = v
         return xrefdat
 
     def _addranges(self, results, usfm):
@@ -141,23 +144,26 @@ class XrefFileXrefs(BaseXrefs):
     def process(self, bk, triggers, owner, usfm=None, vrsf=None):
         results = {}
         for k, v in self.xrefdat.get(bk, {}).items():
-            outl = [v[0]]
+            outl = RefList(v[0])
             if len(v) > 1 and self.xrlistsize > 1:
-                outl = sum(v[0:self.xrlistsize], RefList())
+                outl = sum(v[1:self.xrlistsize], outl)
             results[k] = outl
         if usfm is not None:
             self._addranges(results, usfm)
         if len(results):
+            nbenv = self.env.copy(nobook=True)
             for k, v in sorted(results.items()):
+                if isinstance(v, list):
+                    v = RefList(v)
                 if self.filters is not None:
-                    v.filterBooks(self.filters)
+                    v[:] = [r for r in v if r.first.book in self.filters]
                 v.simplify()
                 if not len(v):
                     continue
                 kf = revrsf(k.first, vrsf)
                 shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
                 info = {
-                    "colnobook":    revrsf(k, vrsf).str(env=self.env) if not self.shortrefs else shortref,
+                    "colnobook":    revrsf(k, vrsf).str(env=nbenv) if not self.shortrefs else shortref,
                     "refs":         revrsf(v, vrsf).str(env=self.env, level=2)
                 }
                 triggers[kf] = triggers.get(kf, "") + self.template.format(**info)
@@ -168,9 +174,9 @@ class StandardXrefs(XrefFileXrefs):
     def readdat(self, inf):
         results = {}
         for l in inf.readlines():
-            d = l.split("|")
-            v = [RefList(s) for s in d]
-            results.setdefault(v[0][0].first.book, {})[v[0][0]] = v[1:]
+            d = l.strip().split("|")
+            v = [RefList(s, strict=False) for s in d]
+            results.setdefault(v[0][0].first.book, {})[v[0][0]] = RefList(v[1:])
         return results
 
 
@@ -192,7 +198,7 @@ class XMLXrefs(BaseXrefs):
         for e in xr:
             st = e.get('strongs', None)
             if e.tag == "ref" and e.text is not None:
-                r = RefList(e.text, marks=("+", "\u203A"))
+                r = RefList(e.text, marks=("+", "\u203A"), strict=False)
                 a.append((st, e.get('style', None), r))
             elif e.tag == "refgroup":
                 a.append((st, None, RefGroup(self._unpackxml(e))))
@@ -284,6 +290,7 @@ class XMLXrefs(BaseXrefs):
             #import pdb; pdb.set_trace()
             if usfm is not None:
                 self._addranges(xmldat, usfm)
+            nbkenv = self.env.copy(nobook=True)
             for k, v in xmldat.items():
                 res = self._procnested(v, k, vrsf=vrsf)
                 kf = revrsf(k.first, vrsf)
@@ -291,7 +298,7 @@ class XMLXrefs(BaseXrefs):
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):
                     info = {
-                        "colnobook":    revrsf(k, vrsf).str(context=NoBook, env=self.env) if not self.shortrefs else shortref,
+                        "colnobook":    revrsf(k, vrsf).str(env=nbkenv) if not self.shortrefs else shortref,
                         "refs":         res,
                         "brtl":         r"\beginR" if self.rtl else "",
                         "ertl":         r"\endR" if self.rtl else ""
@@ -545,7 +552,7 @@ class Xrefs:
             self.xrefs = getattr(parent.printer, 'strongs', None)
             if self.xrefs is None:
                 self.xrefs = StrongsXrefs(os.path.join(pycodedir(), 'xrefs', "strongs.xml"), filters,
-                        localfile, env=env, context=parent.ptsettings,
+                        localfile, env=self.env, context=parent.ptsettings,
                         shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
         else:
             testf = os.path.join(pycodedir(), 'xrefs', source) if xrfile is None else xrfile

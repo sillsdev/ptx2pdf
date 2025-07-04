@@ -11,7 +11,7 @@ from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
-        saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile
+        saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, runChanges
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
@@ -20,6 +20,7 @@ from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.errors import PdfError, log
 from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
 from ptxprint.toc import TOC, generateTex
+from ptxprint.marginnotes import tidymarginnotes
 from ptxprint.unicode.ducet import tailored
 from usfmtc.reference import RefList
 from ptxprint.transcel import transcel, outtriggers
@@ -243,16 +244,17 @@ class RunJob:
         os.makedirs(self.tmpdir, exist_ok=True)
         bks = self.printer.getBooks(files=True)
         jobs = []       # [(bkid/module_path, False) or (RefList, True)] 
-        if self.printer.bookrefs is None:
-            jobs = [(b, False) for b in bks]
-        else:
-            lastbook = None
+        logger.debug(f"{self.printer.bookrefs=}")
+        lastbook = None
+        if self.printer.bookrefs is not None:
             for r in self.printer.bookrefs:
                 if r.first.book != lastbook:
                     jobs.append((RefList((r, )), True))
                     lastbook = r.first.book
-                else:
+                elif len(jobs):
                     jobs[-1][0].append(r)
+        if not len(jobs):
+            jobs = [(b, False) for b in bks]
 
         logger.debug(f"{jobs=}")
         reasons = info.prePrintChecks()
@@ -584,6 +586,8 @@ class RunJob:
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
+        # if os.system == "win32":
+        #     os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
         os.chdir(self.tmpdir)
         outpath = os.path.join(self.tmpdir, '..', outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
@@ -638,6 +642,9 @@ class RunJob:
         cacheexts = {"toc":     (_("table of contents"), True), 
                     "picpages": (_("image copyrights"), False), 
                     "parlocs":  (_("chapter positions"), True)}
+        marginnotesfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".marginnotes"))
+        if os.path.exists(marginnotesfname):
+            os.unlink(marginnotesfname)
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", "."+a)))
         while numruns < self.maxRuns:
@@ -707,6 +714,8 @@ class RunJob:
                 newtoc = generateTex(toc.createtocvariants(bklist, ducet=ducet))
                 with open(tocfname, "w", encoding="utf-8") as outf:
                     outf.write(newtoc)
+            if os.path.exists(marginnotesfname):
+                rererun = rererun or tidymarginnotes(marginnotesfname)
             if not rererun:
                 break
 
@@ -1050,17 +1059,13 @@ class RunJob:
             if m and 'p' not in m:
                 del localPicInfos[k]
                 continue
-            if t := v.get('caption', ''):
-                v['caption'] = runChanges(info.changes.get('default', []), key+'CAP', t)
-            if t := v.get('ref', ''):
-                v['ref'] = runChanges(info.changes.get('default', []), key+'REF', t)
-            if diglots:
-                for s, dinfo in info['diglots_'].items():
-                    if (t := v.get(f'caption{s}', '')):
-                        v[f'caption{s}'] = runChanges(dinfo.changes.get('default', []), key+'CAP', t)
-                    if (t := v.get(f'ref{s}', '')):
-                        v[f'ref{s}'] = runChanges(dinfo.changes.get('default', []), key+'REF', t)
-        localPicInfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
+        piclines = localPicInfos.out(None, bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
+        picdat = "\n".join(piclines)+"\n"
+        changes = info.changes.get("piclist", [])
+        if len(changes):
+            picdat = runChanges(changes, "PIC", picdat)
+        with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as outf:
+            outf.write(picdat)
         res.append(outfname)
         info["document/piclistfile"] = outfname
 

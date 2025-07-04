@@ -20,6 +20,7 @@ from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
 from ptxprint.polyglot import PolyglotConfig
+from ptxprint.report import Report
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -37,8 +38,8 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.8.12"
-GitVersionStr = "2.8.12"
+VersionStr = "2.8.19"
+GitVersionStr = "2.8.19"
 ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -141,12 +142,14 @@ class ViewModel:
         self.spine = 0
         self.periphs = {}
         self.hyphenation = None
+        self.report = Report()
 
         # private to this implementation
         self.dict = {}
 
     def setup_ini(self):
         self.setDate()
+        self.report.clear()
 
     def setDate(self):
         t = datetime.datetime.now()
@@ -243,10 +246,12 @@ class ViewModel:
             return [""]
         elif len(bks) > 1:
             components['bks'] = "{}-{}".format(bks[0], bks[-1])
-        elif '.' in bks[0]:
+        elif len(bks) and bks[0] is not None and len(bks[0]) and '.' in bks[0]:
             components['bks'] = os.path.splitext(os.path.basename(bks[0]))[0]
-        else:
+        elif len(bks):
             components['bks'] = bks[0]
+        else:
+            components['bks'] = ""
         cfgname = self.cfgid
         if cfgname is None:
             cfgname = ""
@@ -289,7 +294,9 @@ class ViewModel:
             return [res] if files and res else []
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
-        bl = RefList(self.get("ecb_booklist", ""), sep=" ")
+        # This is where it is broken - it isn't coming back from RefList
+        bl = RefList(self.get("ecb_booklist", ""), sep=" ", strict=False)
+        # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
@@ -703,8 +710,9 @@ class ViewModel:
 
     def get_usfms(self):
         if self.usfms is None:
+            cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
             self.usfms = UsfmCollection(self.getBookFilename, self.project.path,
-                            Sheets(self.getStyleSheets()))
+                            Sheets(self.getStyleSheets()), changes=cfile)
         return self.usfms
 
     def get_usfm(self, bk, silent=False):
@@ -727,7 +735,7 @@ class ViewModel:
             if len(bks) == 2:
                 bks = bks[0] + "," + bks[1]
             elif len(bks) <= 4:
-                bks = ",".join(bks)
+                bks = ",".join([b for b in bks if b])
             elif len(bks) > 4:
                 bks = bks[0] + "," + bks[1] + "..." + bks[-2] + "," + bks[-1]
             else:
@@ -2164,7 +2172,7 @@ set stack_size=32768""".format(self.cfgid)
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile, prefix=prefix) as inf:
-                    otherpics.read_piclist(inf, "B")
+                    otherpics.read_piclist(inf, "B") # This is broken (26/6/2025)
             except (KeyError, FileNotFoundError) as e:
                 pass
             if impAll or self.get("r_impPics") == "entire":
@@ -2227,12 +2235,31 @@ set stack_size=32768""".format(self.cfgid)
                     continue
                 localmod = os.path.join(view.project.srcPath(view.cfgid), a[1])
                 mode = "a" if view.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
+                view.set(ModelMap[a[0]].widget, True)
                 with open(localmod, mode, encoding="utf-8") as outf:
                     if fzip.filename is not None:
                         outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
                     dat = zipmod.read()
                     outf.write(dat)
                 zipmod.close()
+
+            # handle the script
+            if config.getboolean("project", "processscript", fallback=False):
+                fname = config.get("project", "selectscript", fallback=None)
+                try:
+                    zipscript = zipopentext(fzip, fname, prefix=prefix)
+                except (KeyError, FileNotFoundError):
+                    logger.warn(f"Missing script {fname} in imported archive")
+                    zipscript = None
+                if zipscript is not None:
+                    localscript = os.path.join(view.project.srcPath(view.cfgid), os.path.basename(fname))
+                    with open(localscript, "w", encoding="utf-8") as outf:
+                        dat = zipscript.read()
+                        outf.write(dat)
+                    view.set(ModelMap["project/processscript"].widget, True)
+                    view.set(ModelMap["project/selectscript"].widget, localscript)
+                    view.set(ModelMap["project/whentoprocessscript"].widget,
+                            config.getboolean("project", "whentoprocessscript", fallback=False))
 
         # merge cover and import has cover
         if (impAll or self.get("c_oth_Cover")) and config.getboolean("cover", "makecoverpage", fallback=False):
@@ -2341,3 +2368,10 @@ set stack_size=32768""".format(self.cfgid)
 
     def isCoverTabOpen(self):
         return False
+
+    def runReport(self):
+        self.report.run_view(self)
+        fpath = os.path.join(self.project.path, self.project.printdir, os.path.basename(self.getPDFname()).replace(".pdf", ".html"))
+        tm = {"project/id": self.project.prjid, "config/name": self.cfgid}
+        self.report.generate_html(fpath, tm)
+        return fpath

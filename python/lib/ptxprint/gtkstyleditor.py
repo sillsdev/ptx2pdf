@@ -515,11 +515,11 @@ class StyleEditorView(StyleEditor):
                     site = "{}.translate.goog/{}?_x_tr_sl=en&_x_tr_tl={}&_x_tr_hl=en&_x_tr_pto=wapp&_x_tr_hist=true".format(partA, partB, tl)
                 w.set_uri(f'{site}')
             
-        self.isLoading = oldisLoading
         # Sensitize font size, line spacing, etc. for \paragraphs
         for w in ["s_styFontSize", "s_styLineSpacing", "c_styAbsoluteLineSpacing"]:
             widget = self.builder.get_object(w)
             widget.set_sensitive(self.marker != "p")
+        self.isLoading = oldisLoading
 
     def splitURL(self, url):
         # Find the index of the first '/' after the initial '//'

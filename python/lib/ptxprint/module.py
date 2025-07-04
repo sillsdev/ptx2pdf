@@ -62,9 +62,10 @@ class Module:
             if not isin:
                 continue
             s = e.get("style", None)
-            if s == "ref" or "refnp":       # \ref is not a <ref> it has been reassigned to <para>
-                for r in RefList(e.text, booknames=self.usfms.booknames):
-                    books.add(r.first.book)
+            if s in ("ref", "refnp"):       # \ref is not a <ref> it has been reassigned to <para>
+                if e.text:
+                    for r in RefList(e.text, booknames=self.usfms.booknames):
+                        books.add(r.first.book)
         return books
 
     def localref(self, m):
