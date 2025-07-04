@@ -151,6 +151,7 @@ class XrefFileXrefs(BaseXrefs):
         if usfm is not None:
             self._addranges(results, usfm)
         if len(results):
+            nbenv = self.env.copy(nobook=True)
             for k, v in sorted(results.items()):
                 if isinstance(v, list):
                     v = RefList(v)
@@ -162,7 +163,7 @@ class XrefFileXrefs(BaseXrefs):
                 kf = revrsf(k.first, vrsf)
                 shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
                 info = {
-                    "colnobook":    revrsf(k, vrsf).str(env=self.env) if not self.shortrefs else shortref,
+                    "colnobook":    revrsf(k, vrsf).str(env=nbenv) if not self.shortrefs else shortref,
                     "refs":         revrsf(v, vrsf).str(env=self.env, level=2)
                 }
                 triggers[kf] = triggers.get(kf, "") + self.template.format(**info)
@@ -297,7 +298,7 @@ class XMLXrefs(BaseXrefs):
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):
                     info = {
-                        "colnobook":    revrsf(k, vrsf).str(env=self.env) if not self.shortrefs else shortref,
+                        "colnobook":    revrsf(k, vrsf).str(env=nbkenv) if not self.shortrefs else shortref,
                         "refs":         res,
                         "brtl":         r"\beginR" if self.rtl else "",
                         "ertl":         r"\endR" if self.rtl else ""

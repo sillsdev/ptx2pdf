@@ -23,12 +23,13 @@ def readpts(s):
 class ParRect:
     pagenum:    int
     xstart:     float
-    ystart:     float       # Usually > yend
+    ystart:     float       # top of paragraph, 0 is bottom of page. Usually > yend
     xend:       float = 0.
-    yend:       float = 0.
+    yend:       float = 0.  # bottom of paragraph
     dests:      InitVar[None] = None
     lastdest:   InitVar[None] = None
     firstdest:  InitVar[None] = None
+    xdvlines:   InitVar[None] = None
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
@@ -451,4 +452,13 @@ class Paragraphs(list):
                 if a.x >= r.xstart and a.x <= r.xend and a.y >= r.yend and a.y <= r.ystart:
                     r.dests.append((a.name, (a.x, a.y)))
                     currlast = max(currlast, a) if currlast is not None else a
+
+    def addxdvline(self, pindex, line, x, y):
+        inpar, inrect = self.findpos(pnum, x, y)
+        if inrect is None:
+            return
+        if inrect.xdvlines is None:
+            inrect.xdvlines = []
+        inrect.xdvlines.append(line)
+
 
