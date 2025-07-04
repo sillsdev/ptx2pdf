@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 # Parses xdv
-
 from struct import unpack, pack
-
+import math
 class Font:
     def __init__(self, fname):
         self.name = fname
@@ -23,8 +22,8 @@ opcodes += [
     ("simple", [], "nop"),
     ("bop", [4]*11, "bop"),
     ("simple", [], "eop"),       # code 140
-    ("simple", [], "push"),
-    ("simple", [], "pop"),
+    ("push", [], "push"),
+    ("pop", [], "pop"),
     ("parmop", [-1], "right"),
     ("parmop", [-2], "right"),
     ("parmop", [-3], "right"),
@@ -127,10 +126,11 @@ class XDViReader:
             selfopen = True
             self.__enter__()
         for (op, opc, data) in self:
-            res = getattr(self, opc[0])(op, opc[2], data)
+            res = getattr(self, opc[0])(op, opc[2], data) 
             yield (op, res)
             if opc[2] == "postpost":
                 break
+
         if selfopen:
             self.__exit__(None, None, None)
             self.file = None
@@ -153,6 +153,12 @@ class XDViReader:
 
     def simple(self, opcode, parm, data):
         return (parm,)
+    
+    def push(self, opcode, parm, data):
+        return parm, data
+
+    def pop(self, opcode, parm, data):
+        return parm, data
 
     def bop(self, opcode, parm, data):
         self.pageno = data[0]
@@ -241,11 +247,12 @@ class XDViPositionedReader(XDViReader):
         return value * self.dviratio
 
     def pre(self, opcode, parm, data):
-        (i, n, d, m, x) = super()(opcode, parm, data)
+        (i, n, d, m, x) = super().pre(opcode, parm, data)
         self.dviratio = m * n / d / 1000. / 10000 / 25.4 * 72.27      # map to pt not .0001mm
         return (i, n, d, m, x)
 
     def parmop(self, opcode, parm, data):
+        prev_v = self.v
         if parm in "wxyz":
             setattr(self, parm, self.topt(data[0]))
         acc = None
@@ -255,33 +262,35 @@ class XDViPositionedReader(XDViReader):
             acc = 'v'
         if acc is not None:
             setattr(self, acc, getattr(self, acc) + self.topt(data[0]))
-        return super()(opcode, parm, data)
+        return super().parmop(opcode, parm, data)
 
     def simple(self, opcode, parm, data):
+        prev_v = self.v
         if parm in "wx":
             self.h += self.topt(getattr(self, parm))
-        elif parm in "yz":
-            self.v += self.topt(getattr(self, parm))
-        return super()(opcode, parm, data)
+        elif parm in "yz":            
+            self.v += getattr(self, parm)
+            # fixme: this is the problem!!! it converts y to points, but y is already in points.
+        return super().simple(opcode, parm, data)
 
     def push(self, opcode, parm, data):
         self.stack.append([getattr(self, x) for x in "hvwxyz"])
-        return super()(opcode, parm, data)
+        return super().push(opcode, parm, data)
 
     def pop(self, opcode, parm, data):
         vs = self.stack.pop(-1)
         desc = []
         for i,x in enumerate("hvwxyz"):
             setattr(self, x, vs[i])
-        return super()(opcode, parm, data)
+        return super().pop(opcode, parm, data)
 
     def bop(self, opcode, parm, data):
         for a in "hvwxyz":
             setattr(self, a, 0)
-        return super()(opcode, parm, data)
+        return super().bop(opcode, parm, data)
 
     def xglyphs(self, opcode, parm, data):
-        (parm, width, pos, glyphs, txt) = super()(opcode, parm, data)
+        (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         self.h += self.topt(width)
         return (parm, width, pos, glyphs, txt)
 

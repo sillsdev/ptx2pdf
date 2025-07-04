@@ -6,26 +6,23 @@ class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, diffable = False):
         super().__init__(fname, diffable)
         self.curr_ref = None # reference of where we're at, str
-        self.lines = [Line((self.h, self.v), self.curr_ref)] # list of Line objects
-        self.cursor = (0,0) # location of last printed glyph
-        self.ctol = 0.0001 # the absolut difference tolerated to consider v change a difference 
-    
+        self.lines = [Line(self.v, self.curr_ref)] # list of Line objects
+        self.cursor = (self.h, self.v) # location of last printed glyph
+        self.ctol = 0.01 # the absolut difference tolerated to consider v change a difference
+
     def bop(self, opcode, parm, data):
         result = super().bop(opcode, parm, data)
         return result 
 
     def xglyphs(self, opcode, parm, data):
-        prev_pos = (self.h, self.v)
+        prev_pos = (self.h, self.v)        
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
-        
-            
-        if self.new_line_needed(prev_pos):
-            self.lines.append(Line(prev_pos, self.curr_ref))
-       # else:
-        #    if not math.isclose(prev_pos[1], self.cursor[1], abs_tol = self.ctol):
-         #       print(f"No new line added for change of {prev_pos[1]- self.cursor[1]}, self v is {self.v}")
-        glyphs_width = self.topt(width)               
-        self.lines[-1].add_glyphs(prev_pos[0], glyphs_width)
+        if not math.isclose((self.h-prev_pos[0]), 0, abs_tol = self.ctol):
+            # glyphs have some width
+            glyphs_width = self.topt(width)
+            if self.new_line_needed(prev_pos):
+                self.lines.append(Line(prev_pos[1],self.curr_ref))
+            self.lines[-1].add_glyphs(prev_pos, glyphs_width)
         self.cursor = (self.h, self.v)
         return (parm, width, pos, glyphs, txt)
 
@@ -40,54 +37,65 @@ class SpacingOddities(XDViPositionedReader):
         (k, font) = super().xfontdef(opcode, parm, data)
         font_size = self.topt(font.points)
         if self.new_line_needed((self.h, self.v)):
-            self.lines.append(Line((self.h, self.v), self.curr_ref))
-        self.lines[-1].change_font(self.h, font_size)
-        self.cursor = (self.h, self.v)
-
+            self.lines.append(Line(self.v, self.curr_ref))        
+        self.lines[-1].change_font((self.h, self.v), font_size)
+        self.cursor = (self.h,self.v)
+        return (k, font)
         # todo: for line collision, check if k is already in font cache
         # todo: if not, create TTFont as attribute of the xdv-font
-        # todo: readfont() and add to font cache
-        #font.ttfont = TTFont(None, filename = font.name)
-        # question: what does the cache in TTFont class do? Since it is within the class, I thought it was an attribute of font object
-        # but it adds properties of the font to it in the __init__, so it contains multiiple fonts?
-        return (k, font)
+        # todo: readfont() and add to font cache font.ttfont = TTFont(None, filename = font.name)
+        # question: what does the cache in TTFont class do? Since it is within the class, I thought it was an attribute of font object but it adds properties of the font to it in the __init__, so it contains multiiple fonts?
 
     def new_line_needed(self, startpos):
-        if not math.isclose(startpos[0], self.cursor[0], abs_tol = self.ctol):
-            # h changed 
-            if startpos[0] < self.cursor[0]:
-                #h moved backward
-                if not math.isclose(startpos[1], self.cursor[1], abs_tol = self.ctol) and startpos[1] > self.cursor[1]:
-                    # v changed and got bigger, moved down on page
-                    return True
-            elif startpos[0] > self.cursor[0]:
-                # h moved forward
-                if not math.isclose(startpos[1], self.cursor[1], abs_tol = self.ctol) and (self.cursor[1] - startpos[1]) > 20:
-                    # v moved up the page by min. 20 points.
-                    return True
-        elif math.isclose(startpos[0], self.cursor[0], abs_tol = self.ctol):
-            print(f"h stayed the same {startpos[0]-self.cursor[0]} and v moved {startpos[1] - self.cursor[1]}")
-        return False                   
+        if len(self.lines[-1].gcs) == 0:
+            # overwrite current line if it was empty.
+            self.lines[-1] = Line(startpos[1], self.curr_ref)
+            return False
+        if math.isclose(self.cursor[1], startpos[1], abs_tol = self.ctol):
+            if math.isclose(self.cursor[1], self.lines[-1].v_start, abs_tol = self.ctol):
+                # cursor is at glyph start position and at current line v. No need for new line.
+                return False
+        return True
+
+        # if not math.isclose(startpos[1], self.cursor[1], abs_tol = self.ctol):
+        #     vdiff = self.cursor[1] - startpos[1]
+        #     if vdiff < 0:
+        #         if not math.isclose(startpos[0], self.cursor[0], abs_tol = self.ctol) and self.cursor[0] > startpos[0]:
+        #             # v higher, h smaller: new pos move cursor down and left on page
+        #             return True
+        #     if vdiff > 12:
+        #         #if not math.isclose(startpos[0], self.cursor[0], abs_tol = self.ctol) and self.cursor[0] < startpos[0]:
+        #             # v smaller, h bigger: new pos move cursor up and right on page
+        #         return True
+        # if not math.isclose(self.lines[-1].v_start, self.cursor[1], abs_tol = self.ctol):
+        #     linediff = abs(self.cursor[1] - self.lines[-1].v_start)
+        #     print(f"Line and cursor mismatch by {linediff}")
+        #     if linediff >4:
+        #         return True
+        # return False                   
 class Line: 
-    def __init__(self, pos, ref):
+    def __init__(self, v, ref):
         self.ref = ref
         self.gcs = [] # list of GlyphContent objects, index -1 contains current gc
-        self.startpos = pos[:2]
+        self.v_start = v
+        self.curr_font = 0
 
-    def change_font(self, h, fontsize):
-        self.gcs.append(GlyphContent(h, fontsize))
+    def change_font(self, pos, fontsize):
+        self.gcs.append(GlyphContent(pos, fontsize))
+        self.curr_font = fontsize
 
-    def add_glyphs(self, prev_h, w): # in points
+    def add_glyphs(self, prevpos, w): # in points
         if len(self.gcs) == 0:
-            self.gcs.append(GlyphContent(prev_h, None))
-            # can we use if or above? or will it give error since out of bounds.
-        elif prev_h - (self.gcs[-1].h_start + self.gcs[-1].width) >1:
+            self.gcs.append(GlyphContent(prevpos, self.curr_font))
+        elif prevpos[0] - (self.gcs[-1].h_start + self.gcs[-1].width) >1:
             # make new gc block if there is space between glyphs this block and the previous one.
-            self.gcs.append(GlyphContent(prev_h, self.gcs[-1].font_size))
+            self.gcs.append(GlyphContent(prevpos, self.curr_font))
         self.gcs[-1].width += w
 
     def has_badspace(self, threshold = 4):
-        # We don't count spaces at the start or end of a line.yes 
+        # We don't count spaces at the start or end of a line
+        # todo: define space boundary based on fontsize of blocks, spaces take size of preceding block.
+        # todo: return start and width of space 
         if len(self.gcs) >1:
             for i in range (0, len(self.gcs)-1):
                 if self.gcs[i+1].h_start - (self.gcs[i].h_start + self.gcs[i].width) > threshold:
@@ -95,8 +103,8 @@ class Line:
         return False
 
 class GlyphContent:
-    def __init__(self, h, fontsize):
-        self.h_start = h
+    def __init__(self, pos, fontsize):
+        self.h_start = pos[0]
         self.font_size = fontsize # in points
         self.width = 0
 
@@ -112,23 +120,13 @@ def main():
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
     for (opcode, data) in reader.parse():
-        if reader.pageno > 5:
+        if reader.pageno > 1:
             break  
-
-    print(f"There are {len(reader.lines)} lines.")
-
-    #for l in reader.lines:
-     #   print(f"{l.ref} at {l.startpos} has {len(l.gcs)} gcs")
-
-
     
-    # count = 0
-    # for l in reader.lines:
-    #     if l.has_badspace(threshold = 4):
-            
-    #         print(f"Ref = {l.ref}, line starts at v = {l.startpos}")
-    #         count +=1
-    # print(f"{count} out of {len(reader.lines)} contain bad spaces")
+    for l in reader.lines:
+        print(f"Start line: {l.v_start}")
+    print(f"There are {len(reader.lines)} lines in total.")  
+
 
 if __name__ == "__main__":
     main()
