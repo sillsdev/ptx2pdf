@@ -73,7 +73,12 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
             # test for "at" command
             m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
             if m:
-                atref = RefList(m.group(1), strict=False)
+                try:
+                    atref = RefList(m.group(1), strict=False)
+                except SyntaxError as e:
+                    atref = []
+                    atcontexts = [None]
+                    doError("at reference error: {} in changes file at line {}".format(str(e), i+1))
                 for r in atref:
                     if getattr(r.first, 'chapter', None) in (None, 0):
                         atcontexts.append((r.book, None))

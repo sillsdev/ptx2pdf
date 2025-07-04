@@ -389,7 +389,7 @@ class Usfm:
                         currv = p[0].get("number", curr.last.verse if curr is not None else None)
                         currc = curr.first.chapter if curr is not None else 0
                         curr = Ref(f"{bk} {currc}:{currv}")
-                        if curr.first != curr.last and curr.last.verse < 200 and curr.first not in self.bridges:
+                        if curr.first != curr.last and curr.last.verse is not None and curr.last.verse < 200 and curr.first not in self.bridges:
                             for r in curr:
                                 self.bridges[r] = curr
                         # add to bridges if a RefRange
