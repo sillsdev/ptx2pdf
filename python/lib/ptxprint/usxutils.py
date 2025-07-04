@@ -379,7 +379,8 @@ class Usfm:
                 try:
                     currc = int(p.get("number", 0))
                 except ValueError:
-                    raise SyntaxError(f"Bad chapter number: {p.get('number', '')}")
+                    currc = re.sub(r"\D", "", p.get("number", "0"))
+                    currc = int(currc) if len(currc) else 0
                 if currc >= len(self.chapters):
                     self.chapters.extend([self.chapters[-1]] * (currc - len(self.chapters) + 1))
                 self.chapters[currc] = i
@@ -406,8 +407,15 @@ class Usfm:
                     currc = curr.first.chapter if curr is not None else 0
                     try:
                         curr = Ref(f"{bk} {currc}:{currv}")
-                    except SyntaxError as e:
-                        raise SyntaxError(f"{e} at {bk} {currc}:{currv}")
+                    except SyntaxError:
+                        currv = re.sub(r"\D", "", currv)
+                        if not len(currv):
+                            currv = "0"
+                        try:
+                            curr = Ref(f"{bk} {currc}:{currv}")
+                        except SyntaxError:
+                            currv = "0"
+                            curr = Ref(f"{bk} {currc}:{currv}")
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
