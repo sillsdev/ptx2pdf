@@ -111,7 +111,7 @@ def arrayImage(imarray, width, height):
 class PDFViewer:
     def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
-        self.model = model
+        self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
         self.sw.connect("button-press-event", self.on_button_press)
         self.sw.connect("button-release-event", self.on_button_release)
@@ -657,6 +657,8 @@ class PDFViewer:
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
         self.parlocs.load_dests(self.document)
+        if self.model and (self.model.args.experimental & 2) == 2:
+            pass
 
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK

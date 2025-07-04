@@ -642,6 +642,9 @@ class RunJob:
         cacheexts = {"toc":     (_("table of contents"), True), 
                     "picpages": (_("image copyrights"), False), 
                     "parlocs":  (_("chapter positions"), True)}
+        marginnotesfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".marginnotes"))
+        if os.path.exists(marginnotesfname):
+            os.unlink(marginnotesfname)
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", "."+a)))
         while numruns < self.maxRuns:
@@ -677,7 +680,6 @@ class RunJob:
             numruns += 1
             self.rerunReasons = []
             tocfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".toc"))
-            marginnotesfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".marginnotes"))
             if self.res > 0:
                 rerun = False
                 if os.path.exists(tocfname):

@@ -989,6 +989,8 @@
 \newif\ifHangVA\HangVAfalse
 \newif\iffilehasverses % Usercode (e.g. book end marks) might want to know this
 \newif\ifrotateVerse \rotateVersefalse
+\newif\ifversehyphen \versehyphentrue
+\newif\ifversehyphenup \versehyphenupfalse
 \def\everyfirstverse#1#2#3{}% Arguments are book ID (e.g. GEN), Book name (e.g. Genesis) and chapter
 \def\@ddcvhooks{
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
