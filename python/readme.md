@@ -39,10 +39,12 @@ There is also a desktop menu entry, search in your menu for "ptxprint".
 
 ### Source installation
 
-in the checked-out repository: 
+in the checked-out repository:
+(if you haven't done so yet: 
+git clone --depth=1 https://github.com/sillsdev/ptx2pdf.git)
 
 ```
-sudo apt install libgirepository1.0-dev libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0 texlive-xetex python3-setuptools gir1.2-poppler-0.18 gir1.2-gtksource-3.0 python3-numpy python3-gi gobject-introspection gir1.2-gtk-3.0 libgtk-3-0 gir1.2-gtksource-3.0 python3-cairo python3-regex python3-pil python3-venv fonts-sil-charis
+sudo apt install libgirepository-2.0-dev libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0 texlive-xetex python3-setuptools gir1.2-poppler-0.18 gir1.2-gtksource-3.0 python3-numpy python3-gi gobject-introspection gir1.2-gtk-3.0 libgtk-3-0 gir1.2-gtksource-3.0 python3-cairo python3-regex python3-pil python3-venv
 
 python3 -m venv venv
 source venv/bin/activate

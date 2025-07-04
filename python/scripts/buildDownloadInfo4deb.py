@@ -6,8 +6,9 @@ from glob import glob
 
 def parse_filename(filename):
     print(filename)
-    # C:\Users\Mark\Downloads\python3-ptxprint_2.3.32-0~202308011027~ubuntu22.04.1_all.deb
-    pattern = r'(?P<path>.+)\\(?P<name>.+)_(?P<version>\d+(\.\d+)+)-\d+~(?P<date>\d{8})\d{4}~(?P<platform>.+)(?P<edition>\d\d\.\d\d)\.\d_.+?\.(?P<extension>.+)'
+    # C:\Users\Mark\Downloads\python3-ptxprint_2.3.32-0~202308011027~ubuntu22.04.1_all.deb  # old
+                            # python3-ptxprint_2.8.17-0~20250624~ubuntu24.10.1_all.deb      # new
+    pattern = r'(?P<path>.+)\\(?P<name>.+)_(?P<version>\d+(\.\d+)+)-\d+~(?P<date>\d{8})~(?P<platform>.+)(?P<edition>\d\d\.\d\d)\.\d_.+?\.(?P<extension>.+)'
     match = re.match(pattern, filename)
     if match:
         groups = match.groupdict()

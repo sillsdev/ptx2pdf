@@ -39,7 +39,7 @@ class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/ques
     def flush(self):
         pass
 
-def main():
+def main(doitfn=None):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
 
@@ -272,20 +272,24 @@ def main():
     elif not getattr(sys, 'frozen', False) and not os.path.exists(macrosdir):
         macrosdir = os.path.join(scriptsdir, "..", "..", "..", "src")
 
-    def doit(printer, maxruns=0, noview=False, nothreads=False, forcedlooseness=None):
-        if not isLocked():
-            if maxruns > 0:
-                oldruns = args.runs
-                args.runs = maxruns
-            runjob = RunJob(printer, scriptsdir, macrosdir, args)
-            runjob.nothreads = nothreads
-            runjob.forcedlooseness = forcedlooseness
-            runjob.doit(noview=noview)
-            if maxruns > 0:
-                args.runs = oldruns
-            return runjob
-        else:
-            return None
+    if doitfn is None:
+        def doit(printer, maxruns=0, noview=False, nothreads=False, forcedlooseness=None):
+            if not isLocked():
+                if maxruns > 0:
+                    oldruns = args.runs
+                    args.runs = maxruns
+                runjob = RunJob(printer, scriptsdir, macrosdir, args)
+                runjob.nothreads = nothreads
+                runjob.forcedlooseness = forcedlooseness
+                runjob.doit(noview=noview)
+                if maxruns > 0:
+                    args.runs = oldruns
+                return runjob
+            else:
+                return None
+    else:
+        def doit(printer, **kw):
+            return doitfn(printer, scriptsdir, macrosdir, args, **kw)
 
     if args.fontpath is not None:
         for p in args.fontpath:
@@ -350,7 +354,7 @@ def main():
             else:
                 res = 0
         if args.action:
-            getattr(mainw, args.action)()
+            print(getattr(mainw, args.action)())
         print(f"{res=}")
         sys.exit(res)
     else:

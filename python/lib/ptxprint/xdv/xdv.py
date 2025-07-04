@@ -284,8 +284,12 @@ class XDViPositionedReader(XDViReader):
 
     def bop(self, opcode, parm, data):
         for a in "hvwxyz":
-            setattr(self, a, 0)
-        return super().bop(opcode, parm, data)
+            setattr(self, a, 72.27 if a in "hv" else 0.)
+        return super()(opcode, parm, data)
+
+    def xfontdef(self, opcode, parm, data):
+        k, font = super().xfontdef(opcode, parm, data)
+        font.points = self.topt(font.points)
 
     def xglyphs(self, opcode, parm, data):
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
