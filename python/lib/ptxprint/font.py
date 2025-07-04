@@ -671,7 +671,7 @@ class TTFont:
             self.readhhea(inf)
             self.readhead(inf)
             if withglyphs:
-                self.readglyf(inf)
+                self.readglyf(inf) 
         self.isGraphite = 'Silf' in self.dict
         return True
 

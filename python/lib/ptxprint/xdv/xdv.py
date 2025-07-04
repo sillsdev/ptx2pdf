@@ -2,7 +2,6 @@
 
 # Parses xdv
 from struct import unpack, pack
-import math
 class Font:
     def __init__(self, fname):
         self.name = fname
@@ -130,7 +129,6 @@ class XDViReader:
             yield (op, res)
             if opc[2] == "postpost":
                 break
-
         if selfopen:
             self.__exit__(None, None, None)
             self.file = None
@@ -270,7 +268,7 @@ class XDViPositionedReader(XDViReader):
             self.h += self.topt(getattr(self, parm))
         elif parm in "yz":            
             self.v += getattr(self, parm)
-            # fixme: this is the problem!!! it converts y to points, but y is already in points.
+            # note: this was the problem, it converted self.y to points before adding (y is already in points)
         return super().simple(opcode, parm, data)
 
     def push(self, opcode, parm, data):

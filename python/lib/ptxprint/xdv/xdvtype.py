@@ -178,7 +178,7 @@ class XDviType:
         for i,x in enumerate("hvwxyz"):
             setattr(self, x, vs[i])
             desc.append("{}({}={})".format(x, vs[i], self.asdimen(vs[i])))
-        self.out("{}: ".format(parm) + " ".join(desc))
+        self.out("{}({}): ".format(parm, opcode) + " ".join(desc))
 
     def bop(self, opcode, parm, data):
         self.pageno = data[0]
