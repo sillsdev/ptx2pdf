@@ -1057,21 +1057,11 @@ class RunJob:
             if m and 'p' not in m:
                 del localPicInfos[k]
                 continue
-            if t := v.get('caption', ''):
-                v['caption'] = runChanges(info.changes.get('default', []), key+'CAP', t)
-            if t := v.get('ref', ''):
-                v['ref'] = runChanges(info.changes.get('default', []), key+'REF', t)
-            if diglots:
-                for s, dinfo in info['diglots_'].items():
-                    if (t := v.get(f'caption{s}', '')):
-                        v[f'caption{s}'] = runChanges(dinfo.changes.get('default', []), key+'CAP', t)
-                    if (t := v.get(f'ref{s}', '')):
-                        v[f'ref{s}'] = runChanges(dinfo.changes.get('default', []), key+'REF', t)
         piclines = localPicInfos.out(None, bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
         picdat = "\n".join(piclines)+"\n"
         changes = info.changes.get("piclist", [])
         if len(changes):
-            runChanges(changes, "PIC", picdat)
+            picdat = runChanges(changes, "PIC", picdat)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as outf:
             outf.write(picdat)
         res.append(outfname)
