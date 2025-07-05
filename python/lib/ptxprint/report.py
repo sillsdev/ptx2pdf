@@ -347,6 +347,19 @@ class Report:
         # to do: add other Additional Script Settings (snippet settings for the script)
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
+    def get_layoutinfo(self, view):
+        threshold = 2
+        if getattr(view, 'pdf_viewer', None) is None:
+            return
+        badlist = []
+        count = 0
+        plocs = view.pdf_viewer.parlocs
+        for l in plocs.allxdvlines():
+            count += 1
+            if l.has_badspace(threshold):
+                badlist.append(l.ref)
+        if len(badlist):
+            self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join(badlist), severity=logging.WARN, txttype="text")
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
