@@ -349,7 +349,7 @@ class Report:
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
     def get_layoutinfo(self, view):
-        threshold = 4
+        threshold = 1
         if getattr(view, 'pdf_viewer', None) is None:
             return
         badlist = []
@@ -357,7 +357,7 @@ class Report:
         plocs = view.pdf_viewer.parlocs
         for l in plocs.allxdvlines():
             count += 1
-            if l.has_badspace(threshold):
+            if (result := l.has_badspace(threshold)):
                 badlist.append(l.ref)
         if len(badlist):
             self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join(badlist), severity=logging.WARN, txttype="text")

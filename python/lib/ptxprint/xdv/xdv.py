@@ -296,9 +296,6 @@ class XDViPositionedReader(XDViReader):
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         self.h += self.topt(width)
         return (parm, width, pos, glyphs, txt)
-
-
-
 class XDViWriter:
     def __init__(self, fname):
         self.fname = fname

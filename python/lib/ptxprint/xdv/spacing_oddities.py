@@ -1,6 +1,5 @@
 from ptxprint.xdv.xdv import XDViPositionedReader
 import re
-import sys
 class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, parent = None):
         super().__init__(fname)
@@ -82,6 +81,7 @@ class Line:
     def has_badspace(self, threshold = 4):
         # threshold in ems
         if len(self.glyph_clusters) > 1:
+            bad_spaces = []
             fontsize = self.glyph_clusters[0].font_size
             maxspace = fontsize*threshold
             for i in range(0, len(self.glyph_clusters)-1):
@@ -89,8 +89,10 @@ class Line:
                     fontsize = self.glyph_clusters[0].font_size
                     maxspace = fontsize*threshold
                 if (self.glyph_clusters[i+1].h_start - (self.glyph_clusters[i].h_start + self.glyph_clusters[i].width)) > maxspace:
-                    return True
-        return False
+                    bad_spaces.append([(self.glyph_clusters[i].h_start + self.glyph_clusters[i].width, self.v_start), self.glyph_clusters[i+1].h_start - (self.glyph_clusters[i].h_start + self.glyph_clusters[i].width)])
+            if bad_spaces:
+                return bad_spaces
+        return None 
 
 class GlyphCluster:
     def __init__(self, h, fontsize):
@@ -99,26 +101,11 @@ class GlyphCluster:
         self.width = 0
 
 def main():
-    # import sys
-    # line_function = None
-    # if len(sys.argv) >1:
-    #     line_function = "hi"
-    # reader = SpacingOddities(sys.argv[1], 'hi')
-    # reader.parse() 
-
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
     for (opcode, data) in reader.parse():
         if reader.pageno > 5:
             break
-
-    # badlines = 0
-    # for l in reader.lines:
-    #     if l.has_badspace(1):
-    #         print(f"Ref {l.ref} at v={l.v_start} contains a badspace.")
-    #         badlines += 1
-    # print(f"{badlines} out of {len(reader.lines)} lines contain a bad space.")  
-
 
 if __name__ == "__main__":
     main()
