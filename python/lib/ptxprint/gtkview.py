@@ -698,6 +698,7 @@ class GtkViewModel(ViewModel):
         self.gtkpolyglot = None
         self.currentPDFpath = None
         self.ufPages = []
+        self.picrect = None
 
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
@@ -4381,6 +4382,7 @@ class GtkViewModel(ViewModel):
                 os.path.join(pycodedir(), "PDFassets", "border-art"),
                 "inclVerseDecorator", "versedecorator", btn_selectVerseDecoratorPDF)
 
+
     def onSelectDiffPDFclicked(self, btn_selectDiffPDF):
         self._onPDFClicked(_("Select a PDF file to compare with"), True,
                 os.path.join(self.project.printPath(None)), "diffPDF", "diffPDF", btn_selectDiffPDF, False)
@@ -6668,3 +6670,67 @@ Thank you,
         fpath = self.runReport()
         if fpath is not None:
             startfile(fpath)
+
+    def addMapsClicked(self, btn):
+        dialog = self.builder.get_object("dlg_addMap")
+        response = dialog.run()
+        dialog.hide()
+        if response == Gtk.ResponseType.OK: # and self.builder.get_object("btn_locateDBLbundle").get_sensitive:
+            mapfile = self.get("lb_mapFilename")
+            caption = self.get("t_mapCaption")
+
+    def onSelectMapClicked(self, btn_selectMap):
+        picroot = self.project.path
+        for a in ("figures", "Figures", "FIGURES"):
+            picdir = os.path.join(picroot, a)
+            if os.path.exists(picdir):
+                break
+        else:
+            picdir = picroot
+        def update_preview(dialog):
+            picpath = dialog.get_preview_filename()
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(picpath, 200, 300)
+            except Exception as e:
+                pixbuf = None
+
+            return pixbuf
+        mapfile = self.fileChooser(_("Choose Map Image"),
+                                  filters={"Images": {"patterns": ['*.tif', '*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
+                                   multiple=False, basedir=picdir, preview=update_preview)
+        if mapfile is not None:
+            print(f"{mapfile=}")
+            # img_mapPreview
+            self.set("nbk_PicList", 1)
+            self.picListView.add_row()
+            # for w in ["t_mapFilename", "t_mapCaption"]:
+                # print(f"{w=}")
+                # self.set(w, "", mod=False)
+            # self.picListView.set_src(os.path.basename(mapfile[0]))
+            fpath = str(mapfile[0])
+            self.builder.get_object("lb_mapFilename").set_label(fpath)
+            if fpath is not None and os.path.exists(fpath):
+                if self.picrect is None:
+                    picframe = self.builder.get_object("fr_mapPreview")
+                    self.picrect = picframe.get_allocation()
+                if self.picrect.width > 10 and self.picrect.height > 10:
+                    try:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                    except GLib.GError:
+                        pixbuf = None
+                    self.setPreview(pixbuf, tooltip=fpath)
+                else:
+                    self.setPreview(None)
+            else:
+                self.setPreview(None)
+
+    def setPreview(self, pixbuf, tooltip=None):
+        pic = self.builder.get_object("img_mapPreview")
+        if pixbuf is None:
+            pic.clear()
+            tooltip = ""
+        else:
+            pic.set_from_pixbuf(pixbuf)
+        if tooltip is not None:
+            pic.set_tooltip_text(tooltip)
+            self.builder.get_object("img_mapPreview").set_tooltip_text(tooltip)
