@@ -2,7 +2,8 @@ import re, regex, logging, os, time
 import usfmtc
 from usfmtc.reference import Ref, RefList
 from usfmtc.usfmparser import Grammar
-from usfmtc.xmlutils import ParentElement, hastext, isempty, universalopen
+from ptxprint.utils import universalopen
+from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
 from ptxprint.changes import readChanges
 from ptxprint.ptsettings import PTEnvironment
