@@ -3,6 +3,8 @@ import logging, os
 import xml.etree.ElementTree as et
 from datetime import datetime
 from ptxprint.utils import rtlScripts
+from ptxprint.parlocs import BadSpace
+from usfmtc.reference import Ref
 
 # DEBUG is informational
 # INFO is something that could fail, passed
@@ -349,18 +351,25 @@ class Report:
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
     def get_layoutinfo(self, view):
-        threshold = 1
+        threshold = float(view.get("s_spaceEms"))
         if getattr(view, 'pdf_viewer', None) is None:
             return
-        badlist = []
-        count = 0
-        plocs = view.pdf_viewer.parlocs
-        for l in plocs.allxdvlines():
-            count += 1
-            if (result := l.has_badspace(threshold)):
-                badlist.append(l.ref)
+        if threshold == 0:
+            badlist = view.pdf_viewer.parlocs.getnbadspaces()
+            threshold = badlist[0].widthem
+            count = len(badlist)
+        else:
+            badlist = []
+            count = 0
+            plocs = view.pdf_viewer.parlocs
+            for l, p, r in plocs.allxdvlines():
+                count += 1
+                if (result := l.has_badspace(threshold)):
+                    for b in result:
+                        badlist.append(BadSpace(r.pagenum, l, *b)) 
         if len(badlist):
-            self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join(badlist), severity=logging.WARN, txttype="text")
+            bads = set([Ref(x.line.ref.replace(".", " ")) for x in badlist])
+        self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 

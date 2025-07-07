@@ -1,7 +1,9 @@
-import os, re, ctypes
+import os, re, ctypes, math, heapq
 import logging
 from dataclasses import dataclass, InitVar, field
 from ptxprint.utils import refSort
+from ptxprint.xdv.spacing_oddities import Line
+from typing import Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +106,17 @@ class FigInfo:
 
     def sortKey(self):
         return (self.rects[-1].pagenum, refSort(self.ref), 0)       # must sort with ParInfo
+
+@dataclass
+class BadSpace:
+    pnum:   int
+    line:   Line
+    pos:    Tuple[float, float]
+    width:  float
+    widthem:    float
+
+    def __lt__(self, other):
+        return self.width < other.width
 
 class ParlocLinesIterator:
     def __init__(self, fname):
@@ -472,7 +485,37 @@ class Paragraphs(list):
             for r in p.rects:
                 if r.xdvlines is not None:
                     for l in r.xdvlines:
-                        yield l
+                        yield (l, p, r)
+
+    def getnbadspaces(self, n=0):
+        if n == 0:
+            n = int(math.sqrt(len(self))) * 4
+        curr = 1        # don't go below 1em
+        res = []
+        for l, p, r in self.allxdvlines():
+            # [[pnum, pos(x,y), width]]
+            spaces = sorted([BadSpace(r.pagenum, l, *b) for b in l.has_badspace(curr)], key=lambda s:s.width, reverse=True)
+            for s in spaces:
+                if not len(res):
+                    res.append(s)
+                elif res[0] < s:
+                    if len(res) >= n:
+                        heapq.heapreplace(res, s)
+                    else:
+                        heapq.heappush(res, s)
+        return res
+
+    def getbadspaces(self, pnum, threshold):
+        for p, r in self.getParas(pnum):
+            if r.xdvlines is None:
+                continue
+            for l in r.xdvlines:
+                spaces = l.has_badspace(threshold)
+                for s in spaces:
+                    yield BadSpace(r.pagenum, l, *s)
+            
+
+
 
 
 

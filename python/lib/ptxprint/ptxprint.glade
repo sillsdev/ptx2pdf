@@ -4200,6 +4200,7 @@ of unwanted whitespace).</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onPdfAnalysisChanged" swapped="no"/>
                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                       </object>
                       <packing>
@@ -4226,6 +4227,7 @@ before being flagged as an issue.</property>
                         <property name="climb-rate">0.10</property>
                         <property name="digits">1</property>
                         <property name="value">3</property>
+                        <signal name="value-changed" handler="onPdfAnalysisChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>

@@ -80,19 +80,18 @@ class Line:
 
     def has_badspace(self, threshold = 4):
         # threshold in ems
+        bad_spaces = []
         if len(self.glyph_clusters) > 1:
-            bad_spaces = []
             fontsize = self.glyph_clusters[0].font_size
             maxspace = fontsize*threshold
             for i in range(0, len(self.glyph_clusters)-1):
                 if self.glyph_clusters[i].font_size != fontsize:
                     fontsize = self.glyph_clusters[0].font_size
                     maxspace = fontsize*threshold
-                if (self.glyph_clusters[i+1].h_start - (self.glyph_clusters[i].h_start + self.glyph_clusters[i].width)) > maxspace:
-                    bad_spaces.append([(self.glyph_clusters[i].h_start + self.glyph_clusters[i].width, self.v_start), self.glyph_clusters[i+1].h_start - (self.glyph_clusters[i].h_start + self.glyph_clusters[i].width)])
-            if bad_spaces:
-                return bad_spaces
-        return None 
+                width = self.glyph_clusters[i+1].h_start - (self.glyph_clusters[i].h_start + self.glyph_clusters[i].width)
+                if width > maxspace:
+                    bad_spaces.append([(self.glyph_clusters[i].h_start + self.glyph_clusters[i].width, self.v_start), width, width/fontsize])
+        return bad_spaces
 
 class GlyphCluster:
     def __init__(self, h, fontsize):

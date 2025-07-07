@@ -145,6 +145,8 @@ class PDFViewer:
         self.showguides = False
         self.showgrid = False
         self.showrects = False # self.model.get("c_pdfadjoverlay", False)
+        self.showanalysis = False
+        self.spacethreshold = 0
         self.ufCurrIndex = 0
         self.currpref = None
         self.timer_id = None  # Stores the timer reference
@@ -173,6 +175,11 @@ class PDFViewer:
 
     def setShowParaBoxes(self, val):
         self.showrects = val
+        self.show_pdf()
+
+    def setShowAnalysis(self, val, threshold):
+        self.showanalysis = val
+        self.spacethreshold = threshold
         self.show_pdf()
 
     def create_boxes(self, num):
@@ -332,6 +339,8 @@ class PDFViewer:
             layerfns.append(self.add_hints)
         if self.showrects:
             layerfns.append(self._draw_rectangles)
+        if self.showanalysis:
+            layerfns.append(self._draw_spaces)
         
         images = []
         if self.model.isCoverTabOpen():
@@ -512,6 +521,20 @@ class PDFViewer:
         for p, r in self.parlocs.getParas(pnum):
             make_rect(r, 1)
 
+    def _draw_spaces(self, page, pnum, context, zoomlevel):
+        def make_rect(x, y, width, col=(0.2, 0.7, 0.8, 0.5), height=6):
+            context.set_source_rgba(*col)
+            context.rectangle(x, y - height, width, height)
+            context.fill()
+        threshold = self.spacethreshold
+        if threshold == 0:
+            for s in self.badspaces:
+                if s.pnum == pnum:
+                    make_rect(*s.pos, s.width)
+        else:
+            for s in self.parlocs.getbadspaces(pnum, threshold):
+                make_rect(*s.pos, s.width)
+
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):
         """ page is a page index"""
@@ -658,13 +681,16 @@ class PDFViewer:
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
         self.parlocs.load_dests(self.document)
-        if self.model and (self.model.args.experimental & 2) == 2:
+        if self.showanalysis:
             xdvname = fname.replace(".parlocs", ".xdv")
             print(f"Reading {xdvname}")
             xdvreader = SpacingOddities(xdvname, parent=self.parlocs)
             for (opcode, data) in xdvreader.parse():
                 pass
-
+            if self.showanalysis and self.spacethreshold == 0:
+                self.badspaces = self.parlocs.getnbadspaces()
+                if len(self.badspaces):
+                    self.model.set("s_spaceEms", self.badspaces[0].widthem)
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         if ctrl_pressed:

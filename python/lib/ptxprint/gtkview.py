@@ -6455,6 +6455,9 @@ Thank you,
         
     def onPdfParaBoxesChanged(self, widget):
         self.pdf_viewer.setShowParaBoxes(self.get("c_pdfparabounds"))
+
+    def onPdfAnalysisChanged(self, widget):
+        self.pdf_viewer.setShowAnalysis(self.get("c_layoutAnalysis"), float(self.get("s_spaceEms")))
         
     def onPrintItClicked(self, widget):
         pages = self.pdf_viewer.numpages
