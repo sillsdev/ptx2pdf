@@ -439,6 +439,8 @@ _map = {
     "snippets/fancyborders":    ("c_useOrnaments", "decorate", None),
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
+    "viewer/layoutanalysis":    ("c_layoutAnalysis", None, None),
+    "viewer/spacetoobig":       ("s_spaceEms", None, None),
     
     "thumbtabs/ifthumbtabs":    ("c_thumbtabs", "tabsborders", None),
     "thumbtabs/numtabs":        ("s_thumbtabs", "tabsborders", None),

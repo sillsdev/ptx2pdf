@@ -680,6 +680,12 @@ THE SOFTWARE.
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_spaceEms">
+    <property name="upper">5</property>
+    <property name="value">3</property>
+    <property name="step-increment">0.10</property>
+    <property name="page-increment">0.10</property>
+  </object>
   <object class="GtkAdjustment" id="a_spineOverlapBack">
     <property name="lower">-50</property>
     <property name="upper">50</property>
@@ -4125,6 +4131,7 @@ red=shrink/expand text
 Interleaved red+blue indicates
 that both lines and words have
 been stretched/expanded.</property>
+                    <property name="valign">center</property>
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onPdfAdjOverlayChanged" swapped="no"/>
@@ -4144,6 +4151,7 @@ been stretched/expanded.</property>
                     <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">Draw boxes around the boundaries
 of all adjustable paragraphs.</property>
+                    <property name="valign">center</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onPdfParaBoxesChanged" swapped="no"/>
                   </object>
@@ -4164,6 +4172,7 @@ of all adjustable paragraphs.</property>
 (showing margins, headers and footers) 
 as well as the baselines of the body text.</property>
                     <property name="halign">start</property>
+                    <property name="valign">center</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="showRulesClicked" swapped="no"/>
                   </object>
@@ -4171,6 +4180,64 @@ as well as the baselines of the body text.</property>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkCheckButton" id="c_layoutAnalysis">
+                        <property name="label" translatable="yes">Layout Analysis</property>
+                        <property name="name">Perform Layout Analysis of the text to highlight spacing issues</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">This option analyzes the horizontal
+and vertical spaces within the text
+to highlight anomalies (large gaps
+of unwanted whitespace).</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_spaceEms">
+                        <property name="name">Layout Analysis minimum Ems to flag as issue</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Set this to 0 if you just want to
+highlight the worst N items in
+the text.
+
+Otherwise set this to how many
+Ems wide the space needs to be
+before being flagged as an issue.</property>
+                        <property name="margin-start">3</property>
+                        <property name="margin-end">3</property>
+                        <property name="adjustment">a_spaceEms</property>
+                        <property name="climb-rate">0.10</property>
+                        <property name="digits">1</property>
+                        <property name="value">3</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">7</property>
                   </packing>
                 </child>
                 <child>
@@ -4187,6 +4254,7 @@ as well as the baselines of the body text.</property>
                         <property name="tooltip-text" translatable="yes">If the standard Rules and Guides are inadequate
 you can generate a graph-paper-like grid behind
 the text. This may be useful for precise measuring.</property>
+                        <property name="valign">center</property>
                         <property name="margin-bottom">10</property>
                         <property name="draw-indicator">True</property>
                         <signal name="clicked" handler="showGridClicked" swapped="no"/>
@@ -4223,7 +4291,7 @@ the text. This may be useful for precise measuring.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">7</property>
+                    <property name="position">8</property>
                   </packing>
                 </child>
                 <child>
@@ -4234,7 +4302,7 @@ the text. This may be useful for precise measuring.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">8</property>
+                    <property name="position">9</property>
                   </packing>
                 </child>
                 <child>
@@ -4248,7 +4316,7 @@ the text. This may be useful for precise measuring.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">9</property>
+                    <property name="position">10</property>
                   </packing>
                 </child>
                 <child>
@@ -4284,7 +4352,7 @@ the text. This may be useful for precise measuring.</property>
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">10</property>
+                    <property name="position">11</property>
                   </packing>
                 </child>
               </object>
