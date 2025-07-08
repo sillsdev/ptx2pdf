@@ -5141,6 +5141,12 @@ class GtkViewModel(ViewModel):
             self.DBLfile = DBLfile[0]
             self.builder.get_object("lb_DBLbundleFilename").set_label(os.path.basename(DBLfile[0]))
             dblname = GetDBLName(self.DBLfile)
+            while True:
+                pdir = self.prjTree.findProject(dblname)
+                if pdir is None:
+                    break
+                if dblname[-1].isdigit():
+                    dblname = dblname[:-1] + str(int(dblname[-1]) + 1)
             self.set("t_DBLprojName", dblname, mod=False)
             self.builder.get_object("btn_locateDBLbundle").set_tooltip_text(str(DBLfile[0]))
         else:

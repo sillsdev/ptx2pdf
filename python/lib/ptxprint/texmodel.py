@@ -1095,7 +1095,7 @@ class TexModel:
     def _makeUSFM(self, txt, bk, reason=""):
         # import pdb; pdb.set_trace()
         syntaxErrors = []
-        doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar)
+        doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar, informat="usfm")
         doc.xml.canonicalise(version="3.1")
         if doc.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
