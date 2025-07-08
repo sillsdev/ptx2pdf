@@ -1097,9 +1097,9 @@ class TexModel:
         syntaxErrors = []
         doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar, informat="usfm")
         doc.xml.canonicalise(version="3.1")
-        if doc.errors:      # (msg, pos, ref)
+        if doc.xml.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
-            errors = "\n".join([f_("{msg} at line {pos.l} char {pos.c} in {ref}") for msg, pos, ref in doc.errors])
+            errors = "\n".join([f_("{msg} at line {pos.l} char {pos.c} in {ref}") for msg, pos, ref in doc.xml.errors])
             secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
             # print(syntaxErrors[0])
             # logger.info(syntaxErrors[0])

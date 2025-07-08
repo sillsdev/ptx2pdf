@@ -5147,6 +5147,8 @@ class GtkViewModel(ViewModel):
                     break
                 if dblname[-1].isdigit():
                     dblname = dblname[:-1] + str(int(dblname[-1]) + 1)
+                else:
+                    dblname += "1"
             self.set("t_DBLprojName", dblname, mod=False)
             self.builder.get_object("btn_locateDBLbundle").set_tooltip_text(str(DBLfile[0]))
         else:
@@ -6679,13 +6681,15 @@ Thank you,
             startfile(fpath)
 
     def addMapsClicked(self, btn):
+        self.mapcntr = 0
+        self.mapusfm = []
         dialog = self.builder.get_object("dlg_addMap")
         response = dialog.run()
         dialog.hide()
-        if response == Gtk.ResponseType.OK: # and self.builder.get_object("btn_locateDBLbundle").get_sensitive:
-            mapfile = self.get("lb_mapFilename")
-            caption = self.get("t_mapCaption")
-
+        if response == Gtk.ResponseType.OK and not self.builder.get_object("lb_mapFilename").get_label().startswith("<"):
+            self.addAnotherMapClicked(None)
+            print("\n".join(self.mapusfm))
+            
     def onSelectMapClicked(self, btn_selectMap):
         picroot = self.project.path
         for a in ("figures", "Figures", "FIGURES"):
@@ -6706,14 +6710,7 @@ Thank you,
                                   filters={"Images": {"patterns": ['*.tif', '*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picdir, preview=update_preview)
         if mapfile is not None:
-            print(f"{mapfile=}")
-            # img_mapPreview
-            self.set("nbk_PicList", 1)
-            # self.picListView.add_row()
-            # for w in ["t_mapFilename", "t_mapCaption"]:
-                # print(f"{w=}")
-                # self.set(w, "", mod=False)
-            # self.picListView.set_src(os.path.basename(mapfile[0]))
+
             fpath = str(mapfile[0])
             self.builder.get_object("lb_mapFilename").set_label(fpath)
             if fpath is not None and os.path.exists(fpath):
@@ -6741,3 +6738,25 @@ Thank you,
         if tooltip is not None:
             pic.set_tooltip_text(tooltip)
             self.builder.get_object("img_mapPreview").set_tooltip_text(tooltip)
+
+    def addAnotherMapClicked(self, btn):
+        mapfile = self.get("lb_mapFilename")
+        caption = self.get("t_mapCaption")
+        mapbk = self.get("fcb_ptxMapBook")
+        print(f"{mapfile}={caption}")
+        if os.path.exists(mapfile):
+            self.mapcntr += 1
+            print(f"{mapfile=}")
+            self.set("nbk_PicList", 1)
+            self.picListView.add_row()
+            self.set("t_plAnchor", f"{mapbk} map0{self.mapcntr}", mod=False)
+            self.set("t_plCaption", caption, mod=False)
+            for w in ["t_plRef", "t_plAltText", "t_plCopyright"]: 
+                self.set(w, "", mod=False)
+            self.set("t_plFilename", mapfile, mod=False)
+            self.picListView.set_src(os.path.basename(mapfile))
+            self.mapusfm.append(f'\\pb\n\\zfiga map0{self.mapcntr}|rem="{caption}"\\*')
+        
+        self.builder.get_object("lb_mapFilename").set_label(_("<== Select an image file of the map to be added (.png, .jpg, .pdf, .tif)"))
+        self.builder.get_object("t_mapCaption").set_text("")
+        self.setPreview(None)
