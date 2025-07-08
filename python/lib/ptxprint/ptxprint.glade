@@ -1966,6 +1966,26 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_mapBorder">
+    <columns>
+      <!-- column-name Action -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+      </row>
+      <row>
+        <col id="0">Han3</col>
+      </row>
+      <row>
+        <col id="0">Map Edge A</col>
+      </row>
+      <row>
+        <col id="0">Map Edge B</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_marginVrsPosn">
     <columns>
       <!-- column-name Heading -->
@@ -2325,7 +2345,7 @@ settings for a similar project.</property>
     <property name="can-focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: Cover Wizard</property>
+    <property name="title" translatable="yes">PTXprint: Add Map</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window-position">center-always</property>
@@ -2449,18 +2469,18 @@ of the various Ornamental Borders (pgs 4-7).</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">6</property>
-                    <property name="row-spacing">2</property>
+                    <property name="row-spacing">6</property>
                     <property name="column-spacing">6</property>
                     <child>
                       <object class="GtkSpinButton" id="s_mapScale">
                         <property name="name">Scale Map Size</property>
+                        <property name="width-request">137</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="width-chars">6</property>
                         <property name="text">1.70</property>
-                        <property name="xalign">1</property>
                         <property name="input-purpose">number</property>
                         <property name="adjustment">a_mapScale</property>
                         <property name="climb-rate">0.10</property>
@@ -2471,7 +2491,7 @@ of the various Ornamental Borders (pgs 4-7).</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -2484,12 +2504,13 @@ of the various Ornamental Borders (pgs 4-7).</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkComboBox" id="fcb_coordBorder">
                         <property name="name">Generate cover: Select Ornamental Border</property>
+                        <property name="width-request">137</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="can-default">True</property>
@@ -2498,29 +2519,30 @@ to choose from, or a custom-made border may
 be applied to the front cover page.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="model">ls_coverBorder</property>
+                        <property name="model">ls_mapBorder</property>
                         <property name="wrap-width">1</property>
                         <property name="active">0</property>
                         <property name="has-entry">True</property>
                         <property name="entry-text-column">0</property>
                         <property name="id-column">0</property>
-                        <property name="active-id">Han1</property>
+                        <property name="active-id">None</property>
                         <child internal-child="entry">
                           <object class="GtkEntry">
                             <property name="can-focus">True</property>
-                            <property name="width-chars">12</property>
+                            <property name="width-chars">14</property>
                           </object>
                         </child>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">4</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkButton" id="btn_selectMap">
                         <property name="label" translatable="yes">Select Map...</property>
                         <property name="name">Generate cover: Select Background Picure (or Image)</property>
+                        <property name="width-request">130</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
@@ -2554,65 +2576,6 @@ be applied to the front cover page.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="fcb_coverImageSize1">
-                        <property name="name">Generate cover: Select Scale Picture To Area</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="can-default">True</property>
-                        <property name="tooltip-text" translatable="yes">Select where the image should extend to.</property>
-                        <property name="valign">center</property>
-                        <property name="model">ls_coverImageSize</property>
-                        <property name="wrap-width">1</property>
-                        <property name="has-entry">True</property>
-                        <property name="entry-text-column">0</property>
-                        <property name="id-column">1</property>
-                        <property name="active-id">inner</property>
-                        <child internal-child="entry">
-                          <object class="GtkEntry">
-                            <property name="can-focus">True</property>
-                            <property name="width-chars">10</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left-attach">1</property>
-                        <property name="top-attach">6</property>
-                        <property name="width">3</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_coordBorder">
-                        <property name="label" translatable="yes">Coordinate Border:</property>
-                        <property name="name">Generate cover: Enable Ornamental Border</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available
-to choose from, or a custom-made border may
-be applied to the front cover page.</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="draw-indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="l_mapScaleTo">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">end</property>
-                        <property name="valign">center</property>
-                        <property name="label" translatable="yes">Scale Map To:</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">6</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkComboBox" id="fcb_ptxMapBook">
                         <property name="name">Maps: Book code to be used to store map details</property>
                         <property name="width-request">80</property>
@@ -2637,9 +2600,8 @@ whatever is in that book without prior warning.</property>
                         <property name="active-id">XXM</property>
                       </object>
                       <packing>
-                        <property name="left-attach">1</property>
-                        <property name="top-attach">3</property>
-                        <property name="width">2</property>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">6</property>
                       </packing>
                     </child>
                     <child>
@@ -2660,8 +2622,8 @@ whatever is in that book without prior warning.</property>
 in Paratext Book:</property>
                       </object>
                       <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">3</property>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">6</property>
                       </packing>
                     </child>
                     <child>
@@ -2673,7 +2635,7 @@ in Paratext Book:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">4</property>
+                        <property name="top-attach">5</property>
                       </packing>
                     </child>
                     <child>
@@ -2693,19 +2655,20 @@ changes specified in the PrintDraftChanges.txt file.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">4</property>
+                        <property name="top-attach">5</property>
                         <property name="width">3</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_mapPreview">
+                        <property name="width-request">165</property>
+                        <property name="height-request">165</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="hexpand">False</property>
                         <property name="vexpand">False</property>
                         <property name="label-xalign">0</property>
                         <property name="label-yalign">0</property>
-                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -2734,14 +2697,94 @@ changes specified in the PrintDraftChanges.txt file.</property>
                         <property name="left-attach">2</property>
                         <property name="top-attach">1</property>
                         <property name="width">2</property>
-                        <property name="height">3</property>
+                        <property name="height">4</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkComboBox" id="fcb_mapRotate">
+                        <property name="name">Image credit dialog: Rotation of text</property>
+                        <property name="width-request">137</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Sometimes the credit text needs
+to be rotated. 
+</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="model">ls_plCreditRotate</property>
+                        <property name="wrap-width">1</property>
+                        <property name="has-entry">True</property>
+                        <property name="entry-text-column">0</property>
+                        <property name="id-column">1</property>
+                        <property name="active-id">0</property>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="halign">start</property>
+                            <property name="width-chars">14</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
+                      </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Rotation:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_mapBorder">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Border:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_mapSizePosition">
+                        <property name="label" translatable="yes">Size and Position...</property>
+                        <property name="width-request">130</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <signal name="clicked" handler="onSBpositionClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="t_mapPgPos">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="width-chars">7</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                      </packing>
                     </child>
                     <child>
                       <placeholder/>
@@ -2755,7 +2798,7 @@ changes specified in the PrintDraftChanges.txt file.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">Add A Map</property>
+                    <property name="label" translatable="yes">Add Map</property>
                   </object>
                 </child>
               </object>
@@ -16212,6 +16255,21 @@ the PicList details just for *that* book.</property>
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkButton" id="btn_addMaps2">
+                                    <property name="label" translatable="yes">Add Maps...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="valign">center</property>
+                                    <signal name="clicked" handler="addMapsClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkButton" id="btn_downloadPics">
                                     <property name="label" translatable="yes">Download/Install Pics...</property>
                                     <property name="name">Download Image Set (or install High Resolution images)</property>
@@ -16226,22 +16284,8 @@ for trial publications may be downloaded.
 Or if you have already downloaded a set
 of images, you can install them in an
 appropriate location using this feature.</property>
-                                    <property name="valign">end</property>
+                                    <property name="valign">center</property>
                                     <signal name="clicked" handler="onImageSetClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_addMaps2">
-                                    <property name="label" translatable="yes">Add Maps...</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <signal name="clicked" handler="addMapsClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -38337,7 +38381,7 @@ saved configuration.</property>
   </object>
   <object class="GtkDialog" id="dlg_sbPosition">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Sidebar Size and Position Settings</property>
+    <property name="title" translatable="yes">Size and Position Settings</property>
     <property name="type-hint">dialog</property>
     <property name="transient-for">ptxprint</property>
     <child internal-child="vbox">

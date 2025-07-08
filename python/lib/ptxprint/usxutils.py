@@ -2,7 +2,7 @@ import re, regex, logging, os, time
 import usfmtc
 from usfmtc.reference import Ref, RefList
 from usfmtc.usfmparser import Grammar
-from ptxprint.utils import universalopen
+from ptxprint.utils import universalopen, runChanges
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
 from ptxprint.changes import readChanges
@@ -228,7 +228,7 @@ class UsfmCollection:
                 with universalopen(bkfile) as inf:
                     bkdat = inf.read()
                 bkdat = runChanges(self.changes, bk, bkdat)
-                self.books[bk] = Usfm.readfile(bkdat, informat="usfm", grammar=self.grammar, elfactory=ParentElement)
+                self.books[bk] = Usfm.readfile(bkdat, grammar=self.grammar, elfactory=ParentElement) # informat="usfm", 
             else:
                 self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
             self.times[bk] = time.time()
@@ -340,7 +340,7 @@ class Usfm:
     def readfile(cls, fname, grammar=None, sheet=None, elfactory=None):       # can also take the data straight
         if grammar is None:
             grammar = createGrammar(sheet if sheet is not None else [])
-        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar, elfactory=elfactory)
+        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory) # informat="usfm", 
         book = None
         bkel = usxdoc.getroot().find(".//book")
         if bkel is not None:

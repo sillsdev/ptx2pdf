@@ -433,7 +433,7 @@ _object_classes = {
                     "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot"), 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
-                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
+                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun", "btn_addMaps2"),
     "tinybutton":  ("col_noteLines",),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
@@ -735,7 +735,7 @@ class GtkViewModel(ViewModel):
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "snHorizPosn", "filterXrefs", "colXRside", "outputFormat", 
                     "stytcVpos", "strongsMajorLg", "strongswildcards", "strongsNdxBookId", "xRefExtListSource",
-                    "sbBorderStyle"):
+                    "sbBorderStyle", "ptxMapBook"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         # self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -5287,8 +5287,9 @@ class GtkViewModel(ViewModel):
         dialog.hide()
 
     def onSBpositionClicked(self, btn):
+        reswid = "t_mapPgPos" if btn == self.builder.get_object("btn_mapSizePosition") else "t_sbPgPos"
         dialog = self.builder.get_object("dlg_sbPosition")
-        sbParams = self.get("t_sbPgPos")
+        sbParams = self.get(reswid)
         sbParams = "t" if not len(sbParams) else sbParams
         sbParams = re.sub(r'^([PF])([lcrio])([tcbf])', r'\1\3\2', sbParams)
         m = re.match(r"^([PF]?)([tcbf])([lrcio]?)([\d\.\-]*)", sbParams)
@@ -5304,7 +5305,7 @@ class GtkViewModel(ViewModel):
         self.updatePosnPreview()
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.set("t_sbPgPos", self.get("l_sbPosition"))
+            self.set(reswid, self.get("l_sbPosition"))
         elif response == Gtk.ResponseType.CANCEL:
             pass
         else:
@@ -6702,7 +6703,7 @@ Thank you,
             print(f"{mapfile=}")
             # img_mapPreview
             self.set("nbk_PicList", 1)
-            self.picListView.add_row()
+            # self.picListView.add_row()
             # for w in ["t_mapFilename", "t_mapCaption"]:
                 # print(f"{w=}")
                 # self.set(w, "", mod=False)
