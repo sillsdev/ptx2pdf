@@ -2537,7 +2537,7 @@ class GtkViewModel(ViewModel):
                 if self.get("c_diglot"):
                     fpath = fpath[:doti] + "-" + (self.cfgid or "Default") + "-diglot" + fpath[doti:] + fndict[pgid][1]
                 else:
-                    if self.get("r_book") == "module" and modname is not None:
+                    if self.get("r_book") == "module":
                         modname = os.path.basename(self.moduleFile)
                         doti = modname.rfind(".")
                         fpath = os.path.join(self.project.printPath(self.cfgid), modname[:doti] + "-flat" + modname[doti:])
