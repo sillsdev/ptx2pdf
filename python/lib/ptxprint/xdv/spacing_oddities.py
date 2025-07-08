@@ -20,7 +20,7 @@ class SpacingOddities(XDViPositionedReader):
         if self.new_line_needed(start_pos):
             self.prev_line = self.line
             self.line = Line(start_pos[1], self.ref, self.fontsize)
-            self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
+            #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
         self.line.add_glyphs(start_pos[0], glyphs_width)
         self.cursor = (self.h, self.v)
         return (parm, width, pos, glyphs, txt)
@@ -30,17 +30,33 @@ class SpacingOddities(XDViPositionedReader):
         if re.search(r'pdf:dest', txt):
             self.ref = re.findall(r'\((.*?)\)', txt)[0]
         return (txt,)
-
-    def xfontdef(self, opcode, parm, data):
-        (k, font) = super().xfontdef(opcode, parm, data)
-        self.fontsize = font.points
+    
+    def font(self, opcode, parm, data):
+        if parm is not None:
+            data = [parm]
+        self.currfont = data[0]
+        # size is self.fonts[k].points
+        self.fontsize = self.fonts[self.currfont].points
         if self.new_line_needed((self.h, self.v)):
             self.prev_line = self.line
             self.line = Line(self.v, self.ref, self.fontsize)
-            self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
+            #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
         else:
             self.line.change_font(self.h, self.fontsize)
         self.cursor = (self.h,self.v)
+        return (data[0],)
+
+    def xfontdef(self, opcode, parm, data):
+        # fixme: current font is set in font, not xfontdef.
+        (k, font) = super().xfontdef(opcode, parm, data)
+        # self.fontsize = font.points
+        # if self.new_line_needed((self.h, self.v)):
+        #     self.prev_line = self.line
+        #     self.line = Line(self.v, self.ref, self.fontsize)
+        #     #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
+        # else:
+        #     self.line.change_font(self.h, self.fontsize)
+        # self.cursor = (self.h,self.v)
         return (k, font)
 
     def bop(self, opcode, parm, data):
@@ -50,7 +66,7 @@ class SpacingOddities(XDViPositionedReader):
     def new_line_needed(self, startpos):
         if len(self.line.glyph_clusters) == 0:
             self.line = Line(startpos[1], self.ref, self.fontsize)
-            self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
+            #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
             return False
         if (self.cursor[1]-startpos[1]) < self.v_line_treshold:
             if (self.cursor[1] - self.line.v_start) < self.v_line_treshold:
