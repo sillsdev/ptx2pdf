@@ -897,9 +897,8 @@ class TexModel:
 
     def _getDoc(self, data, doc, bk, logmsg=""):
         if data is not None:
-            doc = self._makeUSFM(data, bk)
+            doc = self._makeUSFM(data, bk, reason=logmsg)
             if doc is not None:
-                doc.xml.version="3.1"
                 logger.log(5, logmsg+doc.outUsx(None))
         return (None if doc else data, doc)
         
@@ -1093,42 +1092,19 @@ class TexModel:
         else:
             return bn
             
-    def _makeUSFM(self, txt, bk):
+    def _makeUSFM(self, txt, bk, reason=""):
         # import pdb; pdb.set_trace()
         syntaxErrors = []
-        try:
-            doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar)
-            doc.xml.canonicalise(version="3.1")
-        except SyntaxError as e:
-            syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
-        except Exception as e:
-            syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
-            traceback.print_exc()
-        if len(syntaxErrors):
-            dlgtitle = "PTXprint [{}] - USFM Text Error!".format(self.VersionStr)
+        doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar)
+        doc.xml.canonicalise(version="3.1")
+        if doc.errors:      # (msg, pos, ref)
+            dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
+            errors = "\n".join([f_("{msg} at line {pos.l} char {pos.c} in {ref}") for msg, pos, ref in doc.errors])
+            secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for")+reason) if reason else ".")
             # print(syntaxErrors[0])
             # logger.info(syntaxErrors[0])
-            errbits = re.match(r"(\S+) (...) line: (\d+),\d+\s*\[(.*?)\]: orphan marker (\\.+?)", syntaxErrors[0])
-            if errbits is not None:
-                self.printer.doError("Syntax Error warning: ",        
-                    secondary=_("Examine line {} in {} on the 'Final SFM' tab of the View+Edit " + \
-                        "page to determine the cause of this issue related to marker: {} as found in the markers: {}.").format(
-                                errbits[3], errbits[2], errbits[5], errbits[4]) + \
-                        "\n\n"+_("This warning was triggered due to 'Auto-Correct USFM' being " + \
-                        "enabled on the Advanced tab but is due to an orphaned marker. " + \
-                        "It means the marker does not belong in that position, or it " + \
-                        "is missing a valid parent marker."), title=dlgtitle,
-                        show=not self.printer.get("c_quickRun"))
-            else:
-                prtDrft = _("And check if a faulty rule in changes.txt has caused the error(s).") if self.asBool("project/usechangesfile") else ""
-                self.printer.doError(_("Failed to normalize texts due to a Syntax Error: "),        
-                    secondary="\n".join(syntaxErrors)+"\n\n"+_("Run the Basic Checks in Paratext to ensure there are no Marker errors "+ \
-                    "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
-                    title=dlgtitle, show=not self.printer.get("c_quickRun"))
-                    
-            return None
-        else:
-            return doc  
+            self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
+        return doc  
 
     def makelocalChanges(self, printer, bk, chaprange=None):
         #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
