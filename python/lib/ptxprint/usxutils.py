@@ -228,7 +228,7 @@ class UsfmCollection:
                 with universalopen(bkfile) as inf:
                     bkdat = inf.read()
                 bkdat = runChanges(self.changes, bk, bkdat)
-                self.books[bk] = Usfm.readfile(bkdat, grammar=self.grammar, elfactory=ParentElement) # informat="usfm", 
+                self.books[bk] = Usfm.readfile(bkdat, grammar=self.grammar, elfactory=ParentElement, informat="usfm")
             else:
                 self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
             self.times[bk] = time.time()
@@ -337,10 +337,12 @@ class Usfm:
         self.book = book
 
     @classmethod
-    def readfile(cls, fname, grammar=None, sheet=None, elfactory=None):       # can also take the data straight
+    def readfile(cls, fname, grammar=None, sheet=None, elfactory=None, **kw):       # can also take the data straight
         if grammar is None:
             grammar = createGrammar(sheet if sheet is not None else [])
-        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory) # informat="usfm", 
+        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, **kw)
+        if usxdoc is None:
+            return None
         book = None
         bkel = usxdoc.getroot().find(".//book")
         if bkel is not None:

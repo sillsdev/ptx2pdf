@@ -1100,7 +1100,7 @@ class TexModel:
         if doc.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
             errors = "\n".join([f_("{msg} at line {pos.l} char {pos.c} in {ref}") for msg, pos, ref in doc.errors])
-            secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for")+reason) if reason else ".")
+            secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
             # print(syntaxErrors[0])
             # logger.info(syntaxErrors[0])
             self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
