@@ -35,6 +35,8 @@ _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "
                   "disabled", "cleardest", "key", "media", "x-xetex"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
+_sizekeys = {"P": "page", "F": "full", "c": "col", "s": "span"}
+
 _comblist = ['pgpos', 'hpos', 'nlines']
 _comblistcr = ['crVpos', 'crHpos']
 
@@ -276,13 +278,13 @@ class PicList:
         if not currow[_pickeys['pgpos']]:
             pgpos = ""
         else:
-            pgpos = re.sub(r'^([PF])([lcrio])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
+            pgpos = re.sub(r'^([PF])([lcrio])([tfb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         # self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             # print(j, k, v)
             if k == 'pgpos':
-                val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
+                val = pgpos[1:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
                 if currow[_pickeys['size']] == "span":
                     val = "-"
@@ -306,6 +308,9 @@ class PicList:
                 status = True if len(re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?", figname)) else False
                 self.builder.get_object('l_autoCopyAttrib').set_visible(status)
                 self.builder.get_object(v).set_visible(not status)
+            elif k == 'size':
+                val = pgpos[0:1] if pgpos[0:1] in "PF" else ("c" if any(x in pgpos for x in "rl") else "s")
+                val = _sizekeys.get(val, "span")
             else:
                 try:
                     val = currow[j]

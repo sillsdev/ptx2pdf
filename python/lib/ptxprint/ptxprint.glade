@@ -2170,6 +2170,10 @@ settings for a similar project.</property>
         <col id="0" translatable="yes">Bottom</col>
         <col id="1">b</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">Fill</col>
+        <col id="1">f</col>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_plHoriz">
@@ -15632,6 +15636,7 @@ settings will remain unchanged.</property>
                                       <object class="GtkButton" id="btn_addMaps2">
                                         <property name="label" translatable="yes">Add Maps...</property>
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
                                         <property name="valign">center</property>
@@ -25119,6 +25124,7 @@ file is selected, then these will appear in alphabetical order.</property>
                           <object class="GtkButton" id="btn_addMaps1">
                             <property name="label" translatable="yes">Add Maps...</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <signal name="clicked" handler="addMapsClicked" swapped="no"/>

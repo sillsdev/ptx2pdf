@@ -4766,6 +4766,7 @@ class GtkViewModel(ViewModel):
         fcb = self.builder.get_object("fcb_{}PgPos".format(plsb))
         lsp.clear()
         if size in ["page", "full"]:
+            # Note: "Fill" is only applicable if in a Sidebar (but not in a normal picture)
             options = ["Top", "Center", "Bottom"] if plsb == 'pl' else ["Top", "Center", "Fill", "Bottom"]
             for posn in options:
                 lsp.append([posn, "{}{}".format(size[:1].upper(), posn[:1].lower())])
@@ -6688,7 +6689,12 @@ Thank you,
         dialog.hide()
         if response == Gtk.ResponseType.OK and not self.builder.get_object("lb_mapFilename").get_label().startswith("<"):
             self.addAnotherMapClicked(None)
-            print("\n".join(self.mapusfm))
+            mapbkid = self.get("fcb_ptxMapBook") 
+            outfile = os.path.join(self.project.path, self.getBookFilename(mapbkid))
+            title = "Maps (currently experimental)"
+            with open(outfile, "w", encoding="utf-8") as outf:
+                outf.write("\\id {0} Maps index\n\\h {1}\n\\mt1 {1}\n".format(mapbkid, title))
+                outf.write("\n".join(self.mapusfm))
             
     def onSelectMapClicked(self, btn_selectMap):
         picroot = self.project.path
@@ -6745,7 +6751,6 @@ Thank you,
         posn = self.get("t_mapPgPos")
         scale = self.get("s_mapScale")
         mapbk = self.get("fcb_ptxMapBook")
-        print(f"{mapfile}={caption}")
         mapcntr = 1
         if os.path.exists(mapfile):
             while True:
@@ -6753,20 +6758,14 @@ Thank you,
                 if not self.picinfos.find(anchor=anchor):
                     break
                 mapcntr += 1
-                
-            print(f"{anchor} = {mapfile}")
             p = self.picinfos.addpic(anchor=anchor, caption=caption, srcfile=mapfile, 
                                      src=os.path.basename(mapfile), pgpos=posn, scale=scale, sync=True)
             self.set("nbk_PicList", 1)
             self.picListView.add_row(p)
-            # self.set("t_plAnchor", anchor, mod=False)
-            # self.set("t_plCaption", caption, mod=False)
-            # for w in ["t_plRef", "t_plAltText", "t_plCopyright"]: 
-                # self.set(w, "", mod=False)
-            # self.set("t_plFilename", mapfile, mod=False)
-            # self.picListView.set_src(os.path.basename(mapfile))
-            self.mapusfm.append(f'\\pb\n\\zfiga {anchor[4:]}|rem="{caption}"\\*')  # fixme for polyglot
-        
+            # \zfiga |id="rabbit123\*
+            self.mapusfm.append(f'\\pb\n\\zfiga |id="{anchor[4:]}" rem="{caption}"\\*') # fixme for polyglot
+
+        # Clear the form, ready for the next map to be selected
         self.builder.get_object("lb_mapFilename").set_label(_("<== Select an image file of the map to be added (.png, .jpg, .pdf, .tif)"))
         self.builder.get_object("t_mapCaption").set_text("")
         self.setPreview(None)

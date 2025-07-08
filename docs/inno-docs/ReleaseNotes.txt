@@ -1,8 +1,17 @@
 PTXprint 2.8.19 Release Notes
-4 Jul 2025
+8 Jul 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.20 (8 Jul 2025)
+  * Refactor model filling in gtkpiclist
+  * Don't give existing project name to DBL expander
+  * Minor usfm reading fixes
+  * Fix minor modname bug
+  * Refactor converting to usx model in texmodel convertBook
+  * Add some UI for Adding Maps [work in progress]
+  * Add missing dependency for universalopen in utils
 
 Bug fixes and Improvements in 2.8.19 (4 Jul 2025)
   * Change labels of buttons in SpeedSlice to Enable and Disable
