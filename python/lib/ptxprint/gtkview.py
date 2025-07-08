@@ -6742,20 +6742,30 @@ Thank you,
     def addAnotherMapClicked(self, btn):
         mapfile = self.get("lb_mapFilename")
         caption = self.get("t_mapCaption")
+        posn = self.get("t_mapPgPos")
+        scale = self.get("s_mapScale")
         mapbk = self.get("fcb_ptxMapBook")
         print(f"{mapfile}={caption}")
+        mapcntr = 1
         if os.path.exists(mapfile):
-            self.mapcntr += 1
-            print(f"{mapfile=}")
+            while True:
+                anchor = f"{mapbk} map{mapcntr:02d}"
+                if not self.picinfos.find(anchor=anchor):
+                    break
+                mapcntr += 1
+                
+            print(f"{anchor} = {mapfile}")
+            p = self.picinfos.addpic(anchor=anchor, caption=caption, srcfile=mapfile, 
+                                     src=os.path.basename(mapfile), pgpos=posn, scale=scale, sync=True)
             self.set("nbk_PicList", 1)
-            self.picListView.add_row()
-            self.set("t_plAnchor", f"{mapbk} map0{self.mapcntr}", mod=False)
-            self.set("t_plCaption", caption, mod=False)
-            for w in ["t_plRef", "t_plAltText", "t_plCopyright"]: 
-                self.set(w, "", mod=False)
-            self.set("t_plFilename", mapfile, mod=False)
-            self.picListView.set_src(os.path.basename(mapfile))
-            self.mapusfm.append(f'\\pb\n\\zfiga map0{self.mapcntr}|rem="{caption}"\\*')
+            self.picListView.add_row(p)
+            # self.set("t_plAnchor", anchor, mod=False)
+            # self.set("t_plCaption", caption, mod=False)
+            # for w in ["t_plRef", "t_plAltText", "t_plCopyright"]: 
+                # self.set(w, "", mod=False)
+            # self.set("t_plFilename", mapfile, mod=False)
+            # self.picListView.set_src(os.path.basename(mapfile))
+            self.mapusfm.append(f'\\pb\n\\zfiga {anchor[4:]}|rem="{caption}"\\*')  # fixme for polyglot
         
         self.builder.get_object("lb_mapFilename").set_label(_("<== Select an image file of the map to be added (.png, .jpg, .pdf, .tif)"))
         self.builder.get_object("t_mapCaption").set_text("")

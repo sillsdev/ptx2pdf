@@ -505,7 +505,7 @@ class PicList:
         row[_piclistfields.index('pgpos')] = self.get_pgpos()
         return row
 
-    def add_row(self):
+    def add_row(self, pic=None):
         global newrowcounter
         model, sel = self.selection.get_selected_rows()
         #if sel is not None and len(sel):
@@ -514,11 +514,15 @@ class PicList:
         #    row = self.model[self.model.get_iter(sel)][:]
         #else:
         row = self.get_row_from_items()
-        key = "row{}".format(newrowcounter)
+        if pic is None:
+            key = "row{}".format(newrowcounter)
+            newrowcounter += 1
+        else:
+            key = pic.key
+        print(f"Add row: {key=}")
         row[_pickeys['key']] = key
-        self.picinfo[key] = Picture()
-        logger.debug(f"{row[_pickeys['key']]}", sorted([k for k, v in self.picinfo.items()]))
-        newrowcounter += 1
+        self.picinfo[key] = pic or Picture()
+        logger.debug(f"{row[_pickeys['key']]}"+", ".join(sorted([k for k, v in self.picinfo.items()])))
         self.coremodel.append(row)
         self.select_row(len(self.model)-1)
         self.row_select(self.selection)
