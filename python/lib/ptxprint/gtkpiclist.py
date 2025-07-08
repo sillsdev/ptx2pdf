@@ -145,6 +145,37 @@ class PicList:
         self.view.set_model(self.model)
         self.model.refilter()
 
+    def _loadrow(self, pic):
+        row = []
+        #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
+        defaultmedia = self.parent.readCopyrights().get(pic.get('src', '')[:2].lower(),
+            { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
+        for e in _piclistfields:
+            if e == 'key':
+                val = pic.key
+            elif e == "scale":
+                try:
+                    val = float(pic.get(e, 1)) * 100
+                except (ValueError, TypeError):
+                    val = 100.
+            elif e == 'cleardest':
+                val = False
+            elif e == "disabled":
+                val = pic.get(e, False)
+            elif e == 'captionR':
+                val = pic.get(e, pic.get('captionL', ""))
+            elif e == "media":
+                val = pic.get(e, None)
+                if val is None:
+                    val = self.parent.picMedia(pic.get('src', ''))[0]
+                else:
+                    limit = self.parent.picMedia(pic.get('src',''))[1]
+                    val = "".join(x for x in val if x in limit)
+            else:
+                val = pic.get(e, "")
+            row.append(val)
+        return row
+
     def load(self, picinfo, bks=None):
         self.loading = True
         self.picinfo = picinfo
@@ -156,34 +187,7 @@ class PicList:
             for v in sorted(picinfo.get_pics(), key=lambda x:refSort(x['anchor'])):
                 if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
-                row = []
-                #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
-                defaultmedia = self.parent.readCopyrights().get(v.get('src', '')[:2].lower(),
-                    { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
-                for e in _piclistfields:
-                    if e == 'key':
-                        val = v.key
-                    elif e == "scale":
-                        try:
-                            val = float(v.get(e, 1)) * 100
-                        except (ValueError, TypeError):
-                            val = 100.
-                    elif e == 'cleardest':
-                        val = False
-                    elif e == "disabled":
-                        val = v.get(e, False)
-                    elif e == 'captionR':
-                        val = v.get(e, v.get('captionL', ""))
-                    elif e == "media":
-                        val = v.get(e, None)
-                        if val is None:
-                            val = self.parent.picMedia(v.get('src', ''))[0]
-                        else:
-                            limit = self.parent.picMedia(v.get('src',''))[1]
-                            val = "".join(x for x in val if x in limit)
-                    else:
-                        val = v.get(e, "")
-                    row.append(val)
+                row = self._loadrow(v)
                 self.coremodel.append(row)
         #self.view.set_model(self.model)
         self.loading = False
@@ -513,13 +517,13 @@ class PicList:
         #if sel is not None and len(self.model) > 0:
         #    row = self.model[self.model.get_iter(sel)][:]
         #else:
-        row = self.get_row_from_items()
         if pic is None:
             key = "row{}".format(newrowcounter)
             newrowcounter += 1
+            row = self.get_row_from_items()
         else:
             key = pic.key
-        print(f"Add row: {key=}")
+            row = self._loadrow(pic)
         row[_pickeys['key']] = key
         self.picinfo[key] = pic or Picture()
         logger.debug(f"{row[_pickeys['key']]}"+", ".join(sorted([k for k, v in self.picinfo.items()])))
