@@ -811,22 +811,59 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
 
         logger.debug("Static controls initialized")
+
+        # 1. Get all projects and their last-modified times
+        all_projects = self.prjTree.projectList()
+        projects_with_time = []
+        for p in all_projects:
+            config_file_path = os.path.join(p.path, "unique.id")
+            try:
+                mtime = os.path.getmtime(config_file_path)
+            except FileNotFoundError:
+                mtime = 0 # Projects without a unique.id file will be considered "oldest"
+            projects_with_time.append({'p': p, 'mtime': mtime})
+
+        # 2. If more than 10 projects, identify the most recent 10% (max of 10) of project IDs to be highlighted
+        recent_project_ids = {}
+        if len(all_projects) > 10:
+            topTenPcnt = min(int(len(all_projects)/10), 10)
+            print(f"{topTenPcnt=}")
+            projects_with_time.sort(key=lambda x: x['mtime'], reverse=True)
+            recent_project_ids = {d['p'].prjid for d in projects_with_time[:topTenPcnt] if d['mtime'] > 0}
+
+        # 3. Get models and clear them
         projects = self.builder.get_object("ls_projects")
         digprojects = self.builder.get_object("ls_digprojects")
         strngsfbprojects = self.builder.get_object("ls_strongsfallbackprojects")
         projects.clear()
         digprojects.clear()
         strngsfbprojects.clear()
-        # strngsfbprojects.append(["None", "0000"])
-        for p in self.prjTree.projectList():
-            v = [getattr(p, a) for a in ['prjid', 'guid']]
-            projects.append(v)
-            digprojects.append(v)
+
+        # 4. Populate models with styling information
+        # Sort projects alphabetically (case-insensitive) for the final display order
+        all_projects.sort(key=lambda p: p.prjid.lower()) 
+        for p in all_projects:
+            prjid = p.prjid
+            guid = p.guid
+            
+            # Determine style based on whether the project is in our "recent" set
+            is_recent = prjid in recent_project_ids
+            weight = Pango.Weight.BOLD if is_recent else Pango.Weight.NORMAL
+            color = "#00008B" if is_recent else "#000000" # blue if recent
+
+            # Append to all relevant models, adding style info to the main one
+            projects.append([prjid, guid, weight, color]) 
+            digprojects.append([prjid, guid]) # Other models don't need styling
             if os.path.exists(os.path.join(p.path, 'TermRenderings.xml')):
-                strngsfbprojects.append(v)
+                strngsfbprojects.append([prjid, guid])
+
+        # 5. Connect the styling function to the ComboBox renderer
+        combo = self.builder.get_object("fcb_project")
+        renderer = combo.get_cells()[0] 
+        combo.set_cell_data_func(renderer, self.set_project_style)
+
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
-        # self.builder.get_object("fcb_project").set_wrap_width(1)
-        self.builder.get_object("fcb_project").set_wrap_width(wide)
+        combo.set_wrap_width(wide)
         # self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
@@ -841,6 +878,20 @@ class GtkViewModel(ViewModel):
 
         return True
 
+    def set_project_style(self, cell_layout, cell, model, tree_iter, data=None):
+        """
+        Applies font weight and color to the ComboBox renderer based on the model.
+        This is a cell data function.
+        """
+        # Column index 2 holds the font weight (an integer)
+        # Column index 3 holds the foreground color (a string)
+        font_weight = model.get_value(tree_iter, 2)
+        fg_color = model.get_value(tree_iter, 3)
+        
+        # Apply the properties to the cell renderer
+        cell.set_property('weight', font_weight)
+        cell.set_property('foreground', fg_color)
+        
     def initialize_uiLevel_menu(self):
         levels = self.builder.get_object("ls_uiLevel")
         btn = self.builder.get_object("btn_menu_level")
@@ -1908,6 +1959,7 @@ class GtkViewModel(ViewModel):
                 # if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
                 lsbooks.append([b])
         cbbook.set_model(lsbooks)
+        # cbbook.set_wrap_width(13)
         self.noUpdate = False
 
     def updateSavedConfigList(self):

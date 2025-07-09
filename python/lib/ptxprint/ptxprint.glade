@@ -2318,11 +2318,17 @@ settings for a similar project.</property>
       <column type="gchararray"/>
       <!-- column-name guid -->
       <column type="gchararray"/>
+      <!-- column-name font_weight -->
+      <column type="gint"/>
+      <!-- column-name foreground_color -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0">Unknown</col>
         <col id="1" translatable="yes">0000</col>
+        <col id="2">0</col>
+        <col id="3" translatable="yes"/>
       </row>
     </data>
   </object>

@@ -379,7 +379,7 @@ class Usfm:
         root = self.getroot()
         self.bridges = {}
         if not len(root):
-            logger.warn(f"{bk} is empty!")
+            logger.warn(f"root is empty!")
             return
         bk = root[0].get('code') or "UNK"
         self.factory = factory
