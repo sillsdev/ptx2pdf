@@ -12,7 +12,7 @@ class SpacingOddities(XDViPositionedReader):
         self.parent = parent
         self.prev_line = None
         self.curr_font = None # TTFont object
-        self.line = Line(self.v, self.ref, 1)
+        self.line = Line(self.v, self.ref, self.curr_font)
 
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v)       
@@ -20,7 +20,7 @@ class SpacingOddities(XDViPositionedReader):
         glyphs_width = self.topt(width)
         if self.new_line_needed(start_pos):
             self.prev_line = self.line
-            self.line = Line(start_pos[1], self.ref, self.curr_font.points)
+            self.line = Line(start_pos[1], self.ref, self.curr_font)
             #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
         self.line.add_glyphs(start_pos[0], glyphs_width)
         self.cursor = (self.h, self.v)
@@ -37,17 +37,17 @@ class SpacingOddities(XDViPositionedReader):
         self.curr_font = self.fonts[k]
         if self.new_line_needed((self.h, self.v)):
             self.prev_line = self.line
-            self.line = Line(self.v, self.ref, self.curr_font.points)
+            self.line = Line(self.v, self.ref, self.curr_font)
             #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
         else:
-            self.line.change_font(self.h, self.curr_font.points)
+            self.line.change_font(self.h, self.curr_font)
         self.cursor = (self.h,self.v)
         return (k,)
 
     def xfontdef(self, opcode, parm, data):
         (k, font) = super().xfontdef(opcode, parm, data)
         self.fonts[k].ttfont = TTFont(font.name)
-        self.curr_font = self.fonts[k]   
+        # Make TTFont object for the font
         return (k, font)
 
     def bop(self, opcode, parm, data):
@@ -56,7 +56,7 @@ class SpacingOddities(XDViPositionedReader):
 
     def new_line_needed(self, startpos):
         if len(self.line.glyph_clusters) == 0:
-            self.line = Line(startpos[1], self.ref, self.curr_font.points)
+            self.line = Line(startpos[1], self.ref, self.curr_font)
             #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
             return False
         if (self.cursor[1]-startpos[1]) < self.v_line_treshold:
@@ -66,34 +66,34 @@ class SpacingOddities(XDViPositionedReader):
         return True          
 
 class Line: 
-    def __init__(self, v, ref, fontsize):
+    def __init__(self, v, ref, font):
         self.ref = ref
         self.glyph_clusters = [] # list of GlyphCluster objects
         self.v_start = v # v of first glyph
-        self.curr_fontsize = fontsize
+        self.curr_font = font
         self.h_gc_threshold = 1 # space threshold to add glyph to current gc or start new gc
 
-    def change_font(self, h, fontsize):
-        self.curr_fontsize = fontsize
-        self.glyph_clusters.append(GlyphCluster(h, self.curr_fontsize))
+    def change_font(self, h, font):
+        self.curr_font = font
+        self.glyph_clusters.append(GlyphCluster(h, self.curr_font))
 
     def add_glyphs(self, starth, w): # in points
         if len(self.glyph_clusters) == 0:
-            self.glyph_clusters.append(GlyphCluster(starth, self.curr_fontsize))
+            self.glyph_clusters.append(GlyphCluster(starth, self.curr_font))
         elif starth - (self.glyph_clusters[-1].h_start + self.glyph_clusters[-1].width) > self.h_gc_threshold:
             # make new gc block if there is space between glyphs this block and the previous one.
-            self.glyph_clusters.append(GlyphCluster(starth, self.curr_fontsize))
+            self.glyph_clusters.append(GlyphCluster(starth, self.curr_font))
         self.glyph_clusters[-1].width += w
 
     def has_badspace(self, threshold = 4):
         # threshold in ems
         bad_spaces = []
         if len(self.glyph_clusters) > 1:
-            fontsize = self.glyph_clusters[0].font_size
+            fontsize = self.glyph_clusters[0].font.points
             maxspace = fontsize*threshold
             for i in range(0, len(self.glyph_clusters)-1):
-                if self.glyph_clusters[i].font_size != fontsize:
-                    fontsize = self.glyph_clusters[0].font_size
+                if self.glyph_clusters[i].font.points != fontsize:
+                    fontsize = self.glyph_clusters[0].font.points
                     maxspace = fontsize*threshold
                 width = self.glyph_clusters[i+1].h_start - (self.glyph_clusters[i].h_start + self.glyph_clusters[i].width)
                 if width > maxspace:
@@ -101,9 +101,9 @@ class Line:
         return bad_spaces
 
 class GlyphCluster:
-    def __init__(self, h, fontsize):
+    def __init__(self, h, font):
         self.h_start = h
-        self.font_size = fontsize # in points
+        self.font = font # in points
         self.width = 0
 
 def main():
