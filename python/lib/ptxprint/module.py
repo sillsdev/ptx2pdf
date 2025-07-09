@@ -55,17 +55,16 @@ class Module:
         else:
             self.refmode = None
         self.usfms.makeBookNames()
-        self.sheets = self.usfms.sheets.copy()
-        modinfo = { 'mrktype': 'otherpara', 'texttype': 'Other', 'endmarker': None, 'styletype': 'Paragraph'}
+        grammar = self.usfms.grammar.copy()
         for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod'):
-            self.sheets[k].update(modinfo)
+            grammar.marker_categories[k] = "otherpara"
         if usfm is not None:
             self.doc = usfm
         else:
             if text is None and self.fname is not None:
                 with open(self.fname, encoding="utf-8") as inf:
                     text = inf.read()
-            self.doc = Usfm.readfile(text if text is not None else fname, sheet=self.sheets, informat="usfm")
+            self.doc = Usfm.readfile(text if text is not None else fname, grammar=grammar, informat="usfm")
 
     def getBookRefs(self):
         books = set()
@@ -119,7 +118,11 @@ class Module:
                                 m.group(2)))
                     eloc.parent.remove(nc)
                     skipme += 1
-                for r in getreflist(eloc.text, booknames=self.usfms.booknames):
+                try:
+                    refs = RefList(eloc.text, booknames=self.usfms.booknames)
+                except SyntaxError as e:
+                    raise SyntaxError(f"{e} at {s} at line {eloc.pos.l} char {eloc.pos.c}")
+                for r in refs:
                     if r.first.verse == 1:
                         if not isinstance(r, RefRange):
                             r = RefRange(r.first, r.first.copy())

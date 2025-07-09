@@ -854,7 +854,7 @@ class TexModel:
         mod = Module(infpath, usfms, self, text=text)
         mod.parse()
         res = mod.doc
-        if res.xml.errors():
+        if res.xml.errors:
             self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         if text is not None:
             return res

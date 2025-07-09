@@ -4915,7 +4915,7 @@ class GtkViewModel(ViewModel):
         gclass = getattr(scriptsnippets, script.lower(), None)
         if gclass is None or gclass.dialogstruct is None:
             return
-        d = MiniDialog(self, gclass.dialogstruct, f_("{script} Script Settings"))
+        d = MiniDialog(self, gclass.dialogstruct, _(f"{script} Script Settings"))
         response = d.run()
         d.destroy()
         
