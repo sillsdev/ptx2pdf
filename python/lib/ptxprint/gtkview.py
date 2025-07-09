@@ -6794,11 +6794,18 @@ Thank you,
             self.addAnotherMapClicked(None)
             mapbkid = self.get("fcb_ptxMapBook") 
             outfile = os.path.join(self.project.path, self.getBookFilename(mapbkid))
-            title = "Maps (currently experimental)"
-            with open(outfile, "w", encoding="utf-8") as outf:
-                outf.write("\\id {0} Maps index\n\\h {1}\n\\mt1 {1}\n".format(mapbkid, title))
-                outf.write("\n".join(self.mapusfm))
-            
+            new_map_usfm = "\n".join(self.mapusfm)
+            # 1. If the file already exists, open in append mode ("a") and just add the new content
+            if os.path.exists(outfile):
+                with open(outfile, "a", encoding="utf-8") as outf:
+                    outf.write("\n" + new_map_usfm)
+            else:
+                # 2. If it does not exist, create it
+                title = "Maps (currently experimental)"
+                with open(outfile, "w", encoding="utf-8") as outf:
+                    outf.write("\\id {0} Maps index\n\\h {1}\n\\mt1 {1}\n".format(mapbkid, title))
+                    outf.write(new_map_usfm)
+
     def onSelectMapClicked(self, btn_selectMap):
         picroot = self.project.path
         for a in ("figures", "Figures", "FIGURES"):
@@ -6865,7 +6872,6 @@ Thank you,
                                      src=os.path.basename(mapfile), pgpos=posn, scale=scale, sync=True)
             self.set("nbk_PicList", 1)
             self.picListView.add_row(p)
-            # \zfiga |id="rabbit123\*
             self.mapusfm.append(f'\\pb\n\\zfiga |id="{anchor[4:]}" rem="{caption}"\\*') # fixme for polyglot
 
         # Clear the form, ready for the next map to be selected

@@ -15658,7 +15658,6 @@ settings will remain unchanged.</property>
                                       <object class="GtkButton" id="btn_addMaps2">
                                         <property name="label" translatable="yes">Add Maps...</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
                                         <property name="valign">center</property>
@@ -25146,7 +25145,6 @@ file is selected, then these will appear in alphabetical order.</property>
                           <object class="GtkButton" id="btn_addMaps1">
                             <property name="label" translatable="yes">Add Maps...</property>
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <signal name="clicked" handler="addMapsClicked" swapped="no"/>

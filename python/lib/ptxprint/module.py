@@ -1,4 +1,4 @@
-import re
+import re, traceback
 from ptxprint.usxutils import Usfm
 from usfmtc.reference import RefList, RefRange
 from usfmtc.usxmodel import iterusx
@@ -32,7 +32,7 @@ def getreflist(r, **kw):
     try:
         return RefList(r, **kw)
     except SyntaxError as e:
-        s = "".join(traceback.format_exception(e))
+        s = "".join(traceback.format_stack())
         logger.warn(s)
     return RefList([])
 
@@ -119,7 +119,7 @@ class Module:
                     eloc.parent.remove(nc)
                     skipme += 1
                 try:
-                    refs = RefList(eloc.text, booknames=self.usfms.booknames)
+                    refs = RefList(eloc.text.strip(), booknames=self.usfms.booknames)
                 except SyntaxError as e:
                     raise SyntaxError(f"{e} at {s} at line {eloc.pos.l} char {eloc.pos.c}")
                 for r in refs:
