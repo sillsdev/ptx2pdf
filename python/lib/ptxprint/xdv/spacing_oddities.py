@@ -1,17 +1,18 @@
 from ptxprint.xdv.xdv import XDViPositionedReader
+from ptxprint.font import TTFont
 import re
 class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, parent = None):
         super().__init__(fname)
         self.ref = None # reference of where we're at, str
         self.cursor = (self.h, self.v) # location of last printed glyph
-        self.fontsize = None # in points
         self.v_line_treshold = 4 # vdiff of verse numbers and *s, less than line diff
         self.page_index = 0 
         self.pagediff = self.pageno 
         self.parent = parent
         self.prev_line = None
-        self.line = Line(self.v, self.ref, self.fontsize)
+        self.curr_font = None # TTFont object
+        self.line = Line(self.v, self.ref, 1)
 
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v)       
@@ -19,7 +20,7 @@ class SpacingOddities(XDViPositionedReader):
         glyphs_width = self.topt(width)
         if self.new_line_needed(start_pos):
             self.prev_line = self.line
-            self.line = Line(start_pos[1], self.ref, self.fontsize)
+            self.line = Line(start_pos[1], self.ref, self.curr_font.points)
             #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
         self.line.add_glyphs(start_pos[0], glyphs_width)
         self.cursor = (self.h, self.v)
@@ -32,31 +33,21 @@ class SpacingOddities(XDViPositionedReader):
         return (txt,)
     
     def font(self, opcode, parm, data):
-        if parm is not None:
-            data = [parm]
-        self.currfont = data[0]
-        # size is self.fonts[k].points
-        self.fontsize = self.fonts[self.currfont].points
+        (k, ) = super().font(opcode, parm, data)
+        self.curr_font = self.fonts[k]
         if self.new_line_needed((self.h, self.v)):
             self.prev_line = self.line
-            self.line = Line(self.v, self.ref, self.fontsize)
+            self.line = Line(self.v, self.ref, self.curr_font.points)
             #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
         else:
-            self.line.change_font(self.h, self.fontsize)
+            self.line.change_font(self.h, self.curr_font.points)
         self.cursor = (self.h,self.v)
-        return (data[0],)
+        return (k,)
 
     def xfontdef(self, opcode, parm, data):
-        # fixme: current font is set in font, not xfontdef.
         (k, font) = super().xfontdef(opcode, parm, data)
-        # self.fontsize = font.points
-        # if self.new_line_needed((self.h, self.v)):
-        #     self.prev_line = self.line
-        #     self.line = Line(self.v, self.ref, self.fontsize)
-        #     #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
-        # else:
-        #     self.line.change_font(self.h, self.fontsize)
-        # self.cursor = (self.h,self.v)
+        self.fonts[k].ttfont = TTFont(font.name)
+        self.curr_font = self.fonts[k]   
         return (k, font)
 
     def bop(self, opcode, parm, data):
@@ -65,7 +56,7 @@ class SpacingOddities(XDViPositionedReader):
 
     def new_line_needed(self, startpos):
         if len(self.line.glyph_clusters) == 0:
-            self.line = Line(startpos[1], self.ref, self.fontsize)
+            self.line = Line(startpos[1], self.ref, self.curr_font.points)
             #self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
             return False
         if (self.cursor[1]-startpos[1]) < self.v_line_treshold:
@@ -119,7 +110,7 @@ def main():
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
     for (opcode, data) in reader.parse():
-        if reader.pageno > 5:
+        if reader.pageno > 2:
             break
 
 if __name__ == "__main__":
