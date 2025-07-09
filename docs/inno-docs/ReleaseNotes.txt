@@ -1,17 +1,26 @@
 PTXprint 2.8.19 Release Notes
-8 Jul 2025
+9 Jul 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.8.20 (8 Jul 2025)
+Bug fixes and Improvements in 2.8.20 (9 Jul 2025)
+  * Add tex standalones to parser and assume files are usfm
+  * Add daggers to glossary options
+  * Add colors to book chooser
+  * Add some UI for Adding Maps [work in progress]
+  * Add missing dependency for universalopen in utils
+  * Highlight recently used projects
+  * Treat file= as src= in localChanges
+  * Refactor module learning for usfm3.1
+  * Refactor modules to give better errors
+  * Refactor module parsing
+  * Warn not crash on empty book in addorncv
   * Refactor model filling in gtkpiclist
   * Don't give existing project name to DBL expander
   * Minor usfm reading fixes
   * Fix minor modname bug
   * Refactor converting to usx model in texmodel convertBook
-  * Add some UI for Adding Maps [work in progress]
-  * Add missing dependency for universalopen in utils
 
 Bug fixes and Improvements in 2.8.19 (4 Jul 2025)
   * Change labels of buttons in SpeedSlice to Enable and Disable
