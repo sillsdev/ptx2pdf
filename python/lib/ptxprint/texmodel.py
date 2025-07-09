@@ -1230,8 +1230,8 @@ class TexModel:
                     return ""
                 return r"\zfiga|{}\*".format(ref)
             logger.debug(self.printer.picinfos)
-            self.localChanges.append(makeChange(r'\\fig.*?src="([^"]+?)".*?\\fig\*', figtozfiga, flags=regex.M))
-            self.localChanges.append(makeChange(r'\\fig(?: .*?)?\|(.*?)\|.*?\\fig\*', figtozfiga, flags=regex.M))
+            self.localChanges.append(makeChange(r'\\fig.*?(?:src|file)="([^"]+?)".*?\\fig\*', figtozfiga, flags=regex.M))
+            self.localChanges.append(makeChange(r'\\fig(?: .*?)?\|((?:.(?!\\fig))*?)\|.*?\\fig\*', figtozfiga, flags=regex.M))
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append(makeChange(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", r"\1\3", flags=regex.M))   # USFM2

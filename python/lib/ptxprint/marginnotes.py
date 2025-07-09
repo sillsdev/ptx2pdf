@@ -14,7 +14,7 @@ mnotelinere = re.compile(r"\\@marginnote" + "".join(r"\{{(?P<{}>.*?)\}}".format(
 
 def simplex_method(c, A, b, fixed):
     """
-    Solves a linear programming problem using the simplex method.
+    Solves a linear programming minimization problem using the simplex method.
 
     Args:
         c: Coefficients of the objective function (numpy array).
@@ -46,11 +46,12 @@ def simplex_method(c, A, b, fixed):
         ratios = tableau[:-1, -1] / tableau[:-1, pivot_column_index]
         ratios[tableau[:-1, pivot_column_index] <= 0] = np.inf
         # insert other bounds constraints (fixed row indices) here
-        ratios[tableau[fixed, pivot_column_index] != 0] = np.inf
+        # ratios[tableau[fixed, pivot_column_index] != 0] = np.inf
         pivot_row_index = np.argmin(ratios)
 
         # Check for unbounded solution
-        if np.all(tableau[:-1, pivot_column_index] <= 0):
+        # if np.all(tableau[:-1, pivot_column_index] <= 0):
+        if np.all(ratios == np.info):
             return "Unbounded solution", None
 
         # Perform pivoting (Gauss-Jordan elimination)
@@ -65,9 +66,13 @@ def simplex_method(c, A, b, fixed):
     optimal_value = tableau[-1, -1]
     solution = np.zeros(num_vars)
     for i in range(num_vars):
-        if any(tableau[:-1, i] == 1) and all(tableau[:-1, i] == 0):
-             solution[i] = tableau[np.where(tableau[:-1, i] == 1)[0][0], -1]
-        return optimal_value, solution
+        col = tableau[:-1, i]
+        if np.count_nonzero(col) == 1 and np.max(col) == 1:
+            r = np.argmax(col)
+            solution[i] = tableau[r, -1]
+        #if any(tableau[:-1, i] == 1) and all(tableau[:-1, i] == 0):
+        #     solution[i] = tableau[np.where(tableau[:-1, i] == 1)[0][0], -1]
+    return optimal_value, solution[:num_vars]
 
 
 @dataclass
@@ -176,7 +181,7 @@ class MarginNotes:
         tracks, self.pheight = self.get_tracks(pnum)
         # now position within each track
         for t in tracks:
-            # t.sort(key=lambda n:(-n.ymax, -n.ymin))
+            t.sort(key=lambda n:(-n.ymax, -n.ymin))
             maxup = 0
             i = 0
             curry = 0
@@ -184,6 +189,7 @@ class MarginNotes:
             currw = 0
             start = 0
             gap = 0
+            # refactor to include fixed blocks with local regions between
             while i < len(t) + 1:
                 if i < len(t):
                     w = weights.get(t[i].marker, 1)
@@ -201,10 +207,16 @@ class MarginNotes:
                         currw += weights.get(t[start].marker, 1)
                         shift = currc / currw
                         shift = min(shift, self.pheight - t[start].ymax - t[start].yshift)
+                        # rather than don't bump, include the previous ones we are picking up
+                        # recalculate weighted shift
                         if t[i-1].ymin + t[i-1].yshift + shift < 0:
                             shift = -(t[i-1].ymin + t[i-1].yshift)
                         for j in range(start, i):
-                            t[j].yshift += shift
+                            if -t[j].yshift < shift:
+                                shift = -t[j].yshift
+                                t[j].yshift = 0
+                            else:
+                                t[j].yshift += shift
                     currs = 0
                     start = i
                 if i < len(t):
@@ -216,8 +228,9 @@ class MarginNotes:
         if weights is None:
             weights = default_weights
         tracks, pheight = self.get_tracks(pnum)
+        breakpoint()
         for t in tracks:
-            cs = [weights.get(n.marker, 1) for n in t]
+            cs = [-weights.get(n.marker, 1) for n in t]
             c = np.array(cs + cs)
             N = len(t)
             As = []
@@ -225,15 +238,16 @@ class MarginNotes:
             bs = []
             fixeds = []
             for i, n in enumerate(t):
+                mult = -1 if n.ymax > laste else 1
                 fixeds.append(1 if weights.get(n.marker, 1) > 1e10 else 0)
                 constraints = [0] * 2 * N
-                constraints[i] = -1
-                constraints[i+N] = 1
+                constraints[i] = -mult
+                constraints[i+N] = mult
                 if i > 0:
-                    constraints[i-1] = 1
-                    constraints[i-1+n] = -1
+                    constraints[i-1] = mult
+                    constraints[i-1+N] = -mult
                 As.append(constraints)
-                bs.append(laste - n.ymax)
+                bs.append(mult * (laste - n.ymax))
                 laste = n.ymin
             A = np.array(As)
             b = np.array(bs)
