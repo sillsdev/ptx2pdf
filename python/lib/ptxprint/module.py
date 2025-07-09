@@ -54,7 +54,7 @@ class Module:
             if text is None and self.fname is not None:
                 with open(self.fname, encoding="utf-8") as inf:
                     text = inf.read()
-            self.doc = Usfm.readfile(text if text is not None else fname, sheet=self.sheets)
+            self.doc = Usfm.readfile(text if text is not None else fname, sheet=self.sheets, informat="usfm")
 
     def getBookRefs(self):
         books = set()

@@ -2,6 +2,7 @@
 from ptxprint.utils import universalopen
 from ptxprint.parlocs import readpts
 from dataclasses import dataclass, asdict
+import numpy as np
 import re
 import logging
 
@@ -10,6 +11,64 @@ logger = logging.getLogger(__name__)
 default_weights = {"f": 1, "x": 1, "s": 10, "c": 100, "v": 1000}
 allfields = "ref marker hpos vpos gap width height depth xoffset yoffset pnum xpos ypos".split()
 mnotelinere = re.compile(r"\\@marginnote" + "".join(r"\{{(?P<{}>.*?)\}}".format(a) for a in allfields))
+
+def simplex_method(c, A, b, fixed):
+    """
+    Solves a linear programming problem using the simplex method.
+
+    Args:
+        c: Coefficients of the objective function (numpy array).
+        A: Coefficients of the constraints (numpy array).
+        b: Right-hand side values of the constraints (numpy array).
+
+    Returns:
+        A tuple containing:
+            - The optimal objective function value (float).
+            - The optimal solution vector (numpy array).
+    """
+    num_vars = len(c)
+    num_constraints = len(b)
+
+    # Convert inequalities to equations by adding slack variables
+    A = np.hstack((A, np.eye(num_constraints)))
+    c = np.hstack((c, np.zeros(num_constraints)))
+
+    # Initialize tableau
+    tableau = np.vstack((np.hstack((A, b.reshape(-1, 1))),
+                         np.hstack((c.reshape(1, -1), np.array([[0]])))))
+    while True:
+        # Find pivot column (most negative entry in the last row)
+        pivot_column_index = np.argmin(tableau[-1, :-1])
+        if tableau[-1, pivot_column_index] >= 0:
+            break  # Optimal solution found
+
+        # Find pivot row (minimum non-negative ratio)
+        ratios = tableau[:-1, -1] / tableau[:-1, pivot_column_index]
+        ratios[tableau[:-1, pivot_column_index] <= 0] = np.inf
+        # insert other bounds constraints (fixed row indices) here
+        ratios[tableau[fixed, pivot_column_index] != 0] = np.inf
+        pivot_row_index = np.argmin(ratios)
+
+        # Check for unbounded solution
+        if np.all(tableau[:-1, pivot_column_index] <= 0):
+            return "Unbounded solution", None
+
+        # Perform pivoting (Gauss-Jordan elimination)
+        pivot_value = tableau[pivot_row_index, pivot_column_index]
+        tableau[pivot_row_index, :] /= pivot_value
+        for i in range(tableau.shape[0]):
+            if i != pivot_row_index:
+                multiplier = tableau[i, pivot_column_index]
+                tableau[i, :] -= multiplier * tableau[pivot_row_index, :]
+
+    # Extract solution
+    optimal_value = tableau[-1, -1]
+    solution = np.zeros(num_vars)
+    for i in range(num_vars):
+        if any(tableau[:-1, i] == 1) and all(tableau[:-1, i] == 0):
+             solution[i] = tableau[np.where(tableau[:-1, i] == 1)[0][0], -1]
+        return optimal_value, solution
+
 
 @dataclass
 class MarginNote:
@@ -91,13 +150,13 @@ class MarginNotes:
                     self.pages.extend([[]] * (note.pnum - len(self.pages) + 1))
                 self.pages[note.pnum].append(note)
 
-    def processpage(self, pnum, weights=None):
-        # co-ordinates are from bottom left of page
-        if weights is None:
-            weights = default_weights
+    def get_tracks(self, pnum):
+        ''' Returns a list of noninteracting list of notes, the max height
+            position of a note '''
         tracks = []
+        pheight = 0
         for n in self.pages[pnum]:
-            self.pheight = max(self.pheight, n.ymax)
+            pheight = max(pheight, n.ymax)
             n.side = getside(pnum, n.hpos)
             for t in tracks:
                 if t.test(n):
@@ -108,6 +167,13 @@ class MarginNotes:
                 tracks.append(t)
                 t.append(n)
             lastn = n
+        return (tracks, pheight)
+
+    def processpage(self, pnum, weights=None):
+        # co-ordinates are from bottom left of page
+        if weights is None:
+            weights = default_weights
+        tracks, self.pheight = self.get_tracks(pnum)
         # now position within each track
         for t in tracks:
             # t.sort(key=lambda n:(-n.ymax, -n.ymin))
@@ -146,9 +212,40 @@ class MarginNotes:
                 i += 1
         return
 
+    def simplexpage(self, pnum, weights=None):
+        if weights is None:
+            weights = default_weights
+        tracks, pheight = self.get_tracks(pnum)
+        for t in tracks:
+            cs = [weights.get(n.marker, 1) for n in t]
+            c = np.array(cs + cs)
+            N = len(t)
+            As = []
+            laste = pheight
+            bs = []
+            fixeds = []
+            for i, n in enumerate(t):
+                fixeds.append(1 if weights.get(n.marker, 1) > 1e10 else 0)
+                constraints = [0] * 2 * N
+                constraints[i] = -1
+                constraints[i+N] = 1
+                if i > 0:
+                    constraints[i-1] = 1
+                    constraints[i-1+n] = -1
+                As.append(constraints)
+                bs.append(laste - n.ymax)
+                laste = n.ymin
+            A = np.array(As)
+            b = np.array(bs)
+            fixed = np.array(fixeds)
+            val, sol = simplex_method(c, A, b, fixed)
+            for i, n in enumerate(t):
+                n.yshift = sol[i] - sol[i+N]
+
     def processpages(self, weights=None):
         for i in range(len(self.pages)):
             self.processpage(i, weights)
+            # self.simplexpage(i, weights)
 
     def outfile(self, fname):
         changed = False
@@ -166,6 +263,7 @@ class MarginNotes:
                         s[a] = "{:.5f}pt".format(s[a])
                     outf.write("\\@marginnote" + "".join(["{{{}}}".format(s[a]) for a in allfields]) + "\n") 
         return changed
+
 def tidymarginnotes(fpath):
     m = MarginNotes(fpath)
     m.processpages()

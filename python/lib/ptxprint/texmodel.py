@@ -851,12 +851,11 @@ class TexModel:
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
-        try:
-            mod = Module(infpath, usfms, self, text=text)
-            mod.parse()
-            res = mod.doc
-        except SyntaxError as e:
-            return (None, e)
+        mod = Module(infpath, usfms, self, text=text)
+        mod.parse()
+        res = mod.doc
+        if res.xml.errors():
+            self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         if text is not None:
             return res
         res.xml.outUsfm(outfpath, version=[3, 1])

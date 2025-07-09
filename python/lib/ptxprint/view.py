@@ -507,9 +507,9 @@ class ViewModel:
         pass
 
     def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True):
-        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig)
+        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=True)
 
-    def setConfigId(self, configid, saveCurrConfig=False, force=False, loadConfig=True):
+    def setConfigId(self, configid, saveCurrConfig=False, force=True, loadConfig=True):
         return self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
     def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None, nobase=False):
@@ -638,7 +638,7 @@ class ViewModel:
             outf.write("".join(res))
         copyfile(srcp, mergep)
 
-    def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
+    def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None, quickload=False):
         logger.debug(f"Changing project to {prjid or self.get('fcb_project')} from {getattr(self.project, 'prjid', 'NONE')}, {configName=} from {getcaller(1)}")
         currprjguid = getattr(self.project, 'guid', None)
         currprj = getattr(self.project, 'prjid', None)
@@ -687,6 +687,8 @@ class ViewModel:
             if float(oldVersion) >= 0 or forceConfig:
                 logger.debug(f"Switching config from {self.cfgid} to {configName}")
                 self.cfgid = configName
+            if quickload:
+                return
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
