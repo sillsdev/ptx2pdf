@@ -2,6 +2,9 @@ import re
 from ptxprint.usxutils import Usfm
 from usfmtc.reference import RefList, RefRange
 from usfmtc.usxmodel import iterusx
+import logging
+
+logger = logging.getLogger(__name__)
 
 def read_module(inf, sheets):
     lines = inf.readlines()
@@ -24,6 +27,14 @@ _abbrevmodes = {
     "ShortNames": "s",
     "LongName": "l",
 }
+
+def getreflist(r, **kw):
+    try:
+        return RefList(r, **kw)
+    except SyntaxError as e:
+        s = "".join(traceback.format_exception(e))
+        logger.warn(s)
+    return RefList([])
 
 class Module:
 
@@ -64,12 +75,12 @@ class Module:
             s = e.get("style", None)
             if s in ("ref", "refnp"):       # \ref is not a <ref> it has been reassigned to <para>
                 if e.text:
-                    for r in RefList(e.text, booknames=self.usfms.booknames):
+                    for r in getreflist(e.text, booknames=self.usfms.booknames):
                         books.add(r.first.book)
         return books
 
     def localref(self, m):
-        rl = RefList(m.group(2), booknames=self.usfms.booknames)
+        rl = getreflist(m.group(2), booknames=self.usfms.booknames)
         loctype = m.group(1) or self.refmode
         tocindex = self.localcodes.get(loctype.lower(), 0)
         return rl.str(env=self.usfms.booknames, level=tocindex)
@@ -108,7 +119,7 @@ class Module:
                                 m.group(2)))
                     eloc.parent.remove(nc)
                     skipme += 1
-                for r in RefList(eloc.text, booknames=self.usfms.booknames):
+                for r in getreflist(eloc.text, booknames=self.usfms.booknames):
                     if r.first.verse == 1:
                         if not isinstance(r, RefRange):
                             r = RefRange(r.first, r.first.copy())
