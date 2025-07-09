@@ -1219,7 +1219,7 @@ class TexModel:
         if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
-                self.localChanges.append(makeChange(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', '', flags=regex.M))  # USFM2
+                #self.localChanges.append(makeChange(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', '', flags=regex.M))  # USFM2
                 self.localChanges.append(makeChange(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', '', flags=regex.M))    # USFM3
             def figtozfiga(m):
                 a = self.printer.picinfos.getAnchor(m.group(1), bk + (self.printer.digSuffix or ""))
@@ -1231,7 +1231,7 @@ class TexModel:
                 return r"\zfiga|{}\*".format(ref)
             logger.debug(self.printer.picinfos)
             self.localChanges.append(makeChange(r'\\fig.*?(?:src|file)="([^"]+?)".*?\\fig\*', figtozfiga, flags=regex.M))
-            self.localChanges.append(makeChange(r'\\fig(?: .*?)?\|((?:.(?!\\fig))*?)\|.*?\\fig\*', figtozfiga, flags=regex.M))
+            #self.localChanges.append(makeChange(r'\\fig(?: .*?)?\|((?:.(?!\\fig))*?)\|.*?\\fig\*', figtozfiga, flags=regex.M))
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append(makeChange(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", r"\1\3", flags=regex.M))   # USFM2

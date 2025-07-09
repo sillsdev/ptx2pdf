@@ -176,6 +176,8 @@ def typesFromMrk(mtype):
         return ('Note', 'NoteText')
     return (None, None)
 
+texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody zBottomRag zfiga zvar"""
+
 def createGrammar(sheets):
     grammar = Grammar()
     for k in sheets:
@@ -187,6 +189,8 @@ def createGrammar(sheets):
         if a is not None and k not in grammar.attribmap:
             attrib = a.split()[0].replace("?", "")
             grammar.attribmap[k] = attrib
+    for k in texcmds.split():
+        grammar.marker_categories[k] = "standalone"
     return grammar
 
 
@@ -230,7 +234,7 @@ class UsfmCollection:
                 bkdat = runChanges(self.changes, bk, bkdat)
                 self.books[bk] = Usfm.readfile(bkdat, grammar=self.grammar, elfactory=ParentElement, informat="usfm")
             else:
-                self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
+                self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement, informat="usfm")
             self.times[bk] = time.time()
         return self.books[bk]
 
