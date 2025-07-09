@@ -30,7 +30,8 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton, doError
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
+            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
+            _categoryColors, _bookToCategory
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -618,6 +619,7 @@ class GtkViewModel(ViewModel):
         self.btnControls = set()
         self.finddata = {}
         self.widgetnames = {}
+        self.setup_book_button_styles()
         nid = None
         for node in tree.iter():
             if 'translatable' in node.attrib:
@@ -3398,6 +3400,50 @@ class GtkViewModel(ViewModel):
         except BadZipFile as e:
             self.doStatus(_("Sorry, that PDF doesn't seem to be a valid PTXprint file with config settings included in it."))
 
+    def setup_book_button_styles(self):
+        """Generates and applies CSS for book button coloring. Call once at init."""
+        css_style = ""
+        for category_key, colors in _categoryColors.items():
+            normal_bg = colors["normal"]
+            checked_bg = colors["checked"]
+            text_color = colors["text"]
+            try:
+                gdk_rgba_normal = Gdk.RGBA()
+                gdk_rgba_normal.parse(normal_bg)
+                gdk_rgba_normal_darker = Gdk.RGBA(
+                    red=max(0, gdk_rgba_normal.red - 0.05),
+                    green=max(0, gdk_rgba_normal.green - 0.05),
+                    blue=max(0, gdk_rgba_normal.blue - 0.05),
+                    alpha=gdk_rgba_normal.alpha
+                )
+                hover_bg = gdk_rgba_normal_darker.to_string()
+            except:
+                hover_bg = normal_bg
+            css_class_name = f"category-{category_key.lower().replace('_', '-')}-button"
+            css_style += f"""
+            .book-toggle-button.{css_class_name} {{
+                background-image: none;
+                background-color: {normal_bg};
+                color: {text_color};
+                border: 1px solid #D0D0D0; /* Lighter border for subtler look */
+                border-radius: 3px;
+            }}
+            .book-toggle-button.{css_class_name}:checked {{
+                background-color: {checked_bg};
+                color: {text_color};
+                border: 1px solid #909090;
+                font-weight: bold; /* This line is new! */
+            }}
+            .book-toggle-button.{css_class_name}:hover {{
+                background-color: {hover_bg};
+            }}
+            """
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(css_style.encode('utf-8'))
+        screen = Gdk.Screen.get_default()
+        if screen:
+            Gtk.StyleContext.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
         mbs_grid = self.builder.get_object("mbs_grid")
@@ -3405,10 +3451,15 @@ class GtkViewModel(ViewModel):
         lsbooks = self.builder.get_object("ls_books")
         bl = self.getBooks(scope="multiple", local=True)
         self.alltoggles = []
-        for i, b in enumerate(lsbooks):
-            tbox = Gtk.ToggleButton(b[0])
+        for i, b_row in enumerate(lsbooks):
+            book_id = b_row[0]
+            tbox = Gtk.ToggleButton(label=book_id)
+            tbox.get_style_context().add_class("book-toggle-button")
+            category = _bookToCategory.get(book_id, "Default")
+            css_class_name = f"category-{category.lower().replace('_', '-')}-button"
+            tbox.get_style_context().add_class(css_class_name)
             tbox.show()
-            if tbox.get_label() in bl:
+            if book_id in bl:
                 tbox.set_active(True)
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)

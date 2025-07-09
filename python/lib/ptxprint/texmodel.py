@@ -118,10 +118,14 @@ class TexModel:
         "fb": r"\\+zglm \u2E24\\+zglm*\1\\+zglm \u2E25\\+zglm*",    # "with ⸤floor⸥ brackets":   
         "fc": r"\\+zglm \u230a\\+zglm*\1\\+zglm \u230b\\+zglm*",    # "with ⌊floor⌋ characters": 
         "cc": r"\\+zglm \u231e\\+zglm*\1\\+zglm \u231f\\+zglm*",    # "with ⌞corner⌟ characters":
-        "sb": r"*\1",               # "star *before word":       
-        "sa": r"\1*",               # "star after* word":        
+        "sb": r"*\1",               # "star *before word":
+        "sa": r"\1*",               # "star after* word":
         "cb": r"^\1",               # "circumflex ^before word": 
-        "ca":  r"\1^"               # "circumflex after^ word":  
+        "ca":  r"\1^",              # "circumflex after^ word":  
+        "gb": r"\u2020\1",               # "dagger †before word":
+        "ga": r"\1\u2020",               # "dagger after† word":
+        "db": r"\u2021\1",               # "double (dagger) †before word":
+        "da": r"\1\u2021",               # "double (dagger) after† word":
     }
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", None, FancyIntro),
@@ -1098,7 +1102,7 @@ class TexModel:
         doc.xml.canonicalise(version="3.1")
         if doc.xml.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
-            errors = "\n".join([f_("{msg} at line {pos.l} char {pos.c} in {ref}") for msg, pos, ref in doc.xml.errors])
+            errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors])
             secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
             self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
         return doc  

@@ -56,6 +56,47 @@ _allbooks = ["FRT", "INT",
 nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", 
             "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS", "XXM"]
 
+_bookCategories = {
+    "Pentateuch": ["GEN", "EXO", "LEV", "NUM", "DEU"],
+    "OT_Historical": ["JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST"],
+    "Wisdom": ["JOB", "PSA", "PRO", "ECC", "SNG"],
+    "Major_Prophets": ["ISA", "JER", "LAM", "EZK", "DAN"],
+    "Minor_Prophets": ["HOS", "JOL", "AMO", "OBA", "JON", "MIC", "NAM", "HAB", "ZEP", "HAG", "ZEC", "MAL"],
+    "Gospels": ["MAT", "MRK", "LUK", "JHN"],
+    "Acts": ["ACT"],
+    "Pauline_Epistles": ["ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT", "PHM"],
+    "General_Epistles": ["HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD"],
+    "Apocalyptic": ["REV"],
+    "Deuterocanon": ["TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", 
+                     "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",],
+    "Extra_Material": ["FRT", "INT", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "BAK", "OTH", "CNC", "GLO", "TDX", "NDX"],
+    "Unique_Extras": ["XXS", "XXM"],
+}
+
+_bookToCategory = {
+    book_code: category
+    for category, books in _bookCategories.items()
+    for book_code in books
+}
+
+_categoryColors = {
+    # Category:           {"normal": "lighter_bg", "checked": "darker_bg_for_checked", "text": "text_color"}
+    "Pentateuch":         {"normal": "#E3F2FD", "checked": "#BBDEFB", "text": "#000000"}, # Very Light Blue
+    "OT_Historical":      {"normal": "#E8F5E9", "checked": "#C8E6C9", "text": "#000000"}, # Very Light Green
+    "Wisdom":             {"normal": "#FFFDE7", "checked": "#FFF9C4", "text": "#000000"}, # Very Light Yellow
+    "Major_Prophets":     {"normal": "#FFEBEE", "checked": "#FFCDD2", "text": "#000000"}, # Very Light Red
+    "Minor_Prophets":     {"normal": "#F3E5F5", "checked": "#E1BEE7", "text": "#000000"}, # Very Light Purple
+    "Gospels":            {"normal": "#FFF8E1", "checked": "#FFECB3", "text": "#000000"}, # Very Light Amber
+    "Acts":               {"normal": "#E0F7FA", "checked": "#B2EBF2", "text": "#000000"}, # Very Light Cyan
+    "Pauline_Epistles":   {"normal": "#FCE4EC", "checked": "#F8BBD0", "text": "#000000"}, # Very Light Pink
+    "General_Epistles":   {"normal": "#EDE7F6", "checked": "#D1C4E9", "text": "#000000"}, # Very Light Deep Purple
+    "Apocalyptic":        {"normal": "#F5F5F5", "checked": "#E0E0E0", "text": "#000000"}, # Almost White/Grey
+    "Deuterocanon":       {"normal": "#FBE9E7", "checked": "#FFCCBC", "text": "#000000"}, # Very Light Deep Orange
+    "Extra_Material":     {"normal": "#FAFAFA", "checked": "#F0F0F0", "text": "#000000"}, # Neutral Grey
+    "Unique_Extras":      {"normal": "#E0F2F1", "checked": "#B2DFDB", "text": "#000000"}, # Very Light Teal
+    "Default":            {"normal": "#FAFAFA", "checked": "#EAEAEA", "text": "#000000"}
+}
+
 rtlScripts = "Arab Armi Avst Hebr Mand Mani Nkoo Phli Phlp Phnx Prti Samr Sarb Sogd Sogo Syrc Thaa Yezi".split()
 
 def booknum(bookcode):
