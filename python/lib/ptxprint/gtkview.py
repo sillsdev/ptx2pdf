@@ -3740,6 +3740,7 @@ class GtkViewModel(ViewModel):
             self.doConfigNameChange(cfg)
             self.changed()
             self.onSaveConfig(None)
+            self.updateConfigIdentity(cfg)
         dialog.hide()
 
     def setPrjid(self, prjid, saveCurrConfig=False):
@@ -3859,7 +3860,11 @@ class GtkViewModel(ViewModel):
         self.changed(False)
         self.showmybook(True)
 
-    def loadPolyglotSettings(self):
+    def updateConfigIdentity(self, cfg):
+        self.cfgid = cfg
+        self.loadPolyglotSettings(cfg)
+
+    def loadPolyglotSettings(self, config=None):
         if self.gtkpolyglot is not None:
             self.gtkpolyglot.clear_polyglot_treeview()
         if self.get("c_diglot"):
@@ -3868,7 +3873,10 @@ class GtkViewModel(ViewModel):
                 polyset = self.builder.get_object('bx_polyglot')
                 polyset.pack_start(self.gtkpolyglot, True, True, 0)
                 polyset.show_all()
+            if config is not None:
+                self.polyglots["L"].cfg = config
             self.gtkpolyglot.load_polyglots_into_treeview()
+                
 
     def showmybook(self, isfirst=False):
         if self.otherDiglot is None and self.initialised and self.showPDFmode == "preview": # preview is on

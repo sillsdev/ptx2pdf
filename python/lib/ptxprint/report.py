@@ -182,14 +182,26 @@ class Report:
     def get_styles(self, view):
         results = {}
         modified = []
+        changedMkrs = {}
         mrkrset = view.get_usfms().get_markers(view.getBooks())
         for s in sorted(view.styleEditor.allStyles()):
             diffs = view.styleEditor.haschanged(s, styleonly=True)
             if len(diffs):
-                modified.append(("<b>"+s+"</b>" if s in mrkrset else s) + "[" + ", ".join(diffs) + "]")
+                changedMkrs[s] = diffs
+                # modified.append(("<b>"+s+"</b>" if s in mrkrset else s) + "[" + ", ".join(diffs) + "]")
             if (f := view.styleEditor.getval(s, 'fontname', None, includebase=True)) is None:
                 continue
             results.setdefault(f, []).append(s)
+        changedStr = []
+        changedStr.append('<table style="width:100%">')
+        for a in (True, False):
+            for k,v in sorted(changedMkrs.items(), key=lambda x:list(reversed(x[0].split('|')))): # sort on mkr before cat:toc| etc
+                if (k in mrkrset) != a:
+                    continue
+                changedStr.append('<tr><td></td><td style="width:15%">{0}{1}{2}</td><td>{3}</td></tr>'.format("<b>" if a else "", k, "</b>" if a else "", " ".join(sorted(v))))
+        changedStr.append("</table>")
+        self.add("3. USFM/Markers", "Modified markers: " + " ".join(changedStr), txttype="html")
+                
         mainfonts = set()
         for a in ("R", "B", "I", "BI"):
             f = view.get("bl_font"+a, skipmissing=True)
@@ -209,7 +221,6 @@ class Report:
             self.add("4. Fonts/Usage", line, txttype="html")
             
         self.add("3. USFM/Markers", "Markers used: "+" ".join(sorted(mrkrset)), txttype="text")
-        self.add("3. USFM/Markers", "Modified markers: " + " ".join(modified), txttype="html")
 
     def get_files(self, view):
         for a in (("changes.txt", "c_usePrintDraftChanges"),

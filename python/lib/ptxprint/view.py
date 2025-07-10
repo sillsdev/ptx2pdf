@@ -2174,7 +2174,7 @@ set stack_size=32768""".format(self.cfgid)
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile, prefix=prefix) as inf:
-                    otherpics.read_piclist(inf, "B") # This is broken (26/6/2025)
+                    otherpics.read_piclist(inf)
             except (KeyError, FileNotFoundError) as e:
                 pass
             if impAll or self.get("r_impPics") == "entire":
@@ -2377,3 +2377,4 @@ set stack_size=32768""".format(self.cfgid)
         tm = {"project/id": self.project.prjid, "config/name": self.cfgid}
         self.report.generate_html(fpath, tm)
         return fpath
+
