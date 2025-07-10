@@ -155,6 +155,18 @@ class Report:
         self.get_usfms(view)
         self.get_files(view)
         self.get_general_info(view)
+        log_content = self.get_log_file_content(view)
+        if log_content is not None:
+            self.get_log_analysis(view, log_content)
+
+    def get_log_file_content(self, view):
+        logfile = os.path.join(view.project.printPath(view.cfgid), view.baseTeXPDFnames()[0] + ".log")
+        if os.path.exists(logfile):
+            try:
+                with open(logfile, 'r', encoding='utf-8', errors='ignore') as f:
+                    return f.read()
+            except Exception as e: return f"Error reading log file {logfile}: {e}"
+        return None
 
     def get_layout(self, view):
         if hasattr(view, 'ufPages') and len(view.ufPages):
@@ -258,20 +270,19 @@ class Report:
         if len(failed):
             for bk, elist in failed.items():
                 for m in elist:
-                    self.add(f"3. USFM Checks/{bk}", m, severity=logging.ERROR)
+                    self.add(f"3. USFM/Checks/{bk}", m, severity=logging.ERROR)
         if "GLO" in view.getBooks():
             fltr = "Filtered" if view.get("c_filterGlossary", False) else "Unfiltered"
             asfn = "As Footnotes" if view.get("c_glossaryFootnotes", False) else ""
             self.add("7. Peripheral Components", f"Glossary: {fltr} {asfn}", severity=logging.DEBUG)
         logfile = os.path.join(view.project.printPath(view.cfgid), view.baseTeXPDFnames()[0] + ".log")
-        print(f"Reading {logfile}")
         toccols = []
         if os.path.exists(logfile):
             with open(logfile, encoding="utf-8") as inf:
                 for l in inf.readlines():
                     if (m := re.match(r"^TOC\[(.*?)\]\s+col\s+(\d+)\s+(\S+)\s*$", l)) is not None:
                         toccols.append(m.group(3))
-            self.add("3. USFM/Checks", f"Table of Contents markers: " + ", ".join(toccols))
+            self.add("3. USFM/Markers", f"Markers for Table of Contents: " + ", ".join(toccols))
 
     def get_usfm(self, view, doc, bk):
         r = doc.getroot()
@@ -346,7 +357,7 @@ class Report:
                 (extra, severity) = widget_fn(view, widget_id)
             if len(extra):
                 extra = ": " + extra
-            self.add(section, f"{title}{extra}", severity=severity, order=order, txttype="text")
+            self.add(section, f"{title}{extra}", severity=severity, order=order, txttype="html")
 
     def get_writingSystems(self, view):  # to do: use the actual script name from a _allscripts lookup instead of just the code
         s = view.get("fcb_script") or "Zyyy"
@@ -587,6 +598,97 @@ class Report:
             summary_blocks.append(block_html)
             
         return "".join(summary_blocks)
+        
+    def _analyze_log_file_content(self, log_content):
+        findings = {
+            'errors': [], 'warnings': [], 'overfull_boxes': [], 'underfilled_pages': [],
+            'missing_images': [], 'missing_fonts': [], 'info': [], 'tex_version': None,
+            'total_pages': None, 'log_summary_counts': None, 'ptxprint_specific_issues': []
+        }
+        re_tex_version = re.compile(r"This is XeTeX, Version (.*?) \(TeX Live (.*?)\)")
+        re_output_written = re.compile(r"Output written on .*? \((\d+) pages, .*? bytes\)\.")
+        re_page_number = re.compile(r"^\[(\d+)\]")
+        re_tex_error = re.compile(r"^! (.*)$")
+        re_missing_image_err = re.compile(r"MISSING IMAGE: \"(.*?)\"")
+        re_missing_number_err = re.compile(r"! Missing number, treated as zero.")
+        re_rare_condition = re.compile(r"\+\+\+RARE CONDITION MET\. (.*)")
+        re_overfull_vbox = re.compile(r"Overfull \\vbox \((.*?) too high\)(?: has occurred while \\output is active| detected at line (\d+))?")
+        re_overfull_hbox = re.compile(r"Overfull \\hbox \((.*?) too wide\) (?:in paragraph at lines (\d+--\d+)|detected at line (\d+))?")
+        re_underfill = re.compile(r"Underfill\[([A-Z]?)\]: \[(-\d+|\d+)\] ([\d.]+)pt ([\d.]+)pt")
+        re_undefined_style_parent = re.compile(r"! Parent style \"(.*?)\" referenced for borders by \"(.*?)\" does not exist!")
+        re_figures_changed = re.compile(r"\*\*\* Figures have changed\. (.*)")
+        re_mismatch_lines_cutouts = re.compile(r"\*\*\* Mismatch between calculated \((\d+)\) and reported \((\d+)\) lines on page (\d+)\. for Cutouts (.*)")
+        re_font_taller_than_baseline = re.compile(r"Paragraph font for (\S+) including a verse number claims it is taller \((.*?)\) than baseline \((.*?)\)")
+        re_baselineskip_undefined = re.compile(r"Baselineskip for (\S+) was undefined, now set to (.*?)\((.*?)\)")
+        re_column_deltas = re.compile(r"Column deltas for book:\s*(.*)")
+        re_log_summary = re.compile(r"XeTeX Log Summary: Info: (\d+)\s+Warn: (\d+)\s+Error: (\d+)")
+        re_processing_file = re.compile(r"ptxfile\s+(.*?)\s+(diglot|monoglot)")
+        current_page = "N/A"; current_input_file = "N/A"
+        for line_num, line in enumerate(log_content.splitlines()):
+            line_strip = line.strip()
+            if not line_strip: continue
+            if (m := re_page_number.match(line_strip)): current_page = m.group(1)
+            if (m := re_processing_file.search(line)): current_input_file = m.group(1).split('/')[-1]
+            if re_missing_number_err.search(line_strip): findings['errors'].append(f"TeX Error: Missing number, treated as zero. Context (line {line_num+1}): {line_strip}")
+            elif (m := re_missing_image_err.search(line_strip)): findings['missing_images'].append(f"File: {html.escape(current_input_file)}, Page: {current_page} - Missing Image: {html.escape(m.group(1))}")
+            elif (m := re_rare_condition.search(line_strip)): findings['ptxprint_specific_issues'].append(f"PTXprint Alert: {html.escape(m.group(1))}")
+            elif (m := re_tex_error.match(line_strip)) and "Parent style" not in line_strip and "Missing number" not in line_strip: findings['errors'].append(f"TeX Error (line {line_num+1}): {html.escape(line_strip)}")
+            elif (m := re_overfull_vbox.search(line_strip)): findings['overfull_boxes'].append(f"Overfull \\vbox (too high by {html.escape(m.group(1))}) on page {current_page} (input: {html.escape(current_input_file)}), {'at TeX line '+m.group(2) if m.group(2) else 'during output'}.")
+            elif (m := re_overfull_hbox.search(line_strip)): findings['overfull_boxes'].append(f"Overfull \\hbox (too wide by {html.escape(m.group(1))}) on page {current_page} (input: {html.escape(current_input_file)}), {'in paragraph at lines '+m.group(2) if m.group(2) else ('detected at line '+m.group(3) if m.group(3) else 'context unknown')}.")
+            elif (m := re_underfill.search(line_strip)):
+                if int(m.group(2)) > 0 or float(m.group(3)) > 50 : findings['underfilled_pages'].append(f"Underfilled Page/Column: Page {m.group(2)}, Col: {m.group(1) if m.group(1) else 'Main'}, Amount1: {m.group(3)}pt, Amount2: {m.group(4)}pt (input: {html.escape(current_input_file)})")
+            elif (m := re_undefined_style_parent.search(line_strip)): findings['warnings'].append(f"Stylesheet Warning: Parent style '{html.escape(m.group(1))}' not found (referenced by '{html.escape(m.group(2))}')")
+            elif (m := re_figures_changed.search(line_strip)): findings['ptxprint_specific_issues'].append(f"PTXprint Info: Figures changed - {html.escape(m.group(1))}")
+            elif (m := re_mismatch_lines_cutouts.search(line_strip)): findings['warnings'].append(f"Layout Warning (Cutouts): Page {m.group(3)}, Mismatch calculated ({m.group(1)}) vs. reported ({m.group(2)}) lines. Details: {html.escape(m.group(4))}")
+            elif (m := re_font_taller_than_baseline.search(line_strip)): findings['warnings'].append(f"Font Layout Warning: For '{html.escape(m.group(1))}', font height ({html.escape(m.group(2))}) > baseline ({html.escape(m.group(3))}) (input: {html.escape(current_input_file)})")
+            elif (m := re_tex_version.match(line_strip)) and not findings['tex_version']: findings['tex_version'] = f"XeTeX Version {html.escape(m.group(1))}, TeX Live {html.escape(m.group(2))}"
+            elif (m := re_output_written.search(line_strip)): findings['total_pages'] = m.group(1)
+            elif (m := re_baselineskip_undefined.search(line_strip)): findings['info'].append(f"Style Info: Baselineskip for '{html.escape(m.group(1))}' was undefined, set to {html.escape(m.group(2))} (orig: {html.escape(m.group(3))}) (input: {html.escape(current_input_file)})")
+            elif (m := re_column_deltas.search(line_strip)): findings['info'].append(f"Diglot/Polyglot Column Deltas: {html.escape(m.group(1))} (Page: {current_page}, File: {html.escape(current_input_file)})")
+            elif (m := re_log_summary.search(line_strip)): findings['log_summary_counts'] = {'info': m.group(1), 'warn': m.group(2), 'error': m.group(3)}
+        return findings
+
+    def get_log_analysis(self, view, log_content_string):
+        section_base = "Log File Analysis"
+        if not log_content_string or not log_content_string.strip():
+            self.add(section_base, "Log file content not available or empty.", severity=logging.WARN); return
+        findings = self._analyze_log_file_content(log_content_string)
+        order_main = 200; summary_section = f"{section_base}/A. Summary"
+        if findings['tex_version']: self.add(summary_section, f"<b>TeX Engine:</b> {findings['tex_version']}", order=order_main)
+        if findings['total_pages']: self.add(summary_section, f"<b>Total Pages Output:</b> {findings['total_pages']}", order=order_main-1)
+        if findings['log_summary_counts']:
+            s = findings['log_summary_counts']; summary_msg = f"<b>XeTeX Log Summary:</b> Info: {s['info']}, Warnings: {s['warn']}, Errors: {s['error']}"
+            sev = logging.INFO; 
+            if int(s['error']) > 0: sev = logging.CRITICAL 
+            elif int(s['warn']) > 0: sev = logging.WARNING
+            self.add(summary_section, summary_msg, severity=sev, order=order_main-2)
+        else:
+            err_count = len(findings['errors']); warn_count = len(findings['warnings']) + len(findings['overfull_boxes']) + len(findings['underfilled_pages']) + len(findings['missing_images'])
+            summary_msg = f"<b>Parsed Log Summary:</b> Errors: {err_count}, Warnings/Layout Issues: {warn_count}"
+            sev = logging.INFO; 
+            if err_count > 0: sev = logging.CRITICAL 
+            elif warn_count > 0: sev = logging.WARNING
+            self.add(summary_section, summary_msg, severity=sev, order=order_main-3)
+        order_detail = 100
+        def add_findings_list(sub_section_name, items_list, default_severity, item_prefix=""):
+            nonlocal order_detail; sub_section_path = f"{section_base}/{sub_section_name}"
+            if items_list:
+                for i, item_html_content in enumerate(items_list): 
+                    prfx = f"{item_prefix}{i+1}. " if len(item_prefix) else ""
+                    self.add(sub_section_path, f"{prfx}{item_html_content}", severity=default_severity, order=order_detail-i, txttype="html")
+                order_detail -= (len(items_list) + 5)
+            else: self.add(sub_section_path, "None detected.", severity=logging.INFO, order=order_detail); order_detail -= 5
+        add_findings_list("B. Critical Errors", findings['errors'], logging.CRITICAL)
+        add_findings_list("C. Warnings", findings['warnings'], logging.WARNING)
+        add_findings_list("D. Missing Images", findings['missing_images'], logging.ERROR) 
+        ofb = len(findings['overfull_boxes'])
+        ofbmsg = [f"{ofb} issue(s) found."] if ofb > 0 else []
+        add_findings_list("E. Overfull Boxes", ofbmsg, logging.WARN)
+        ufp = len(findings['underfilled_pages'])
+        ufpmsg = [f"{ufp} issue(s) found."] if ufp > 0 else []
+        add_findings_list("F. Underfilled Pages", ufpmsg, logging.WARN)
+        add_findings_list("G. PTXprint Specific Messages", findings['ptxprint_specific_issues'], logging.WARN, "PTXprint ")
+        add_findings_list("H. Other Information", findings['info'], logging.DEBUG, "Info ")        
 
 def test():
     import sys
