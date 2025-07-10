@@ -534,6 +534,7 @@ class StyleEditor:
                     self.setval(m, k, nv)
 
     def haschanged(self, mrk, styleonly=False):
+        res = []
         keys = set([x for x in self.allValueKeys(mrk) if not x.startswith(" ")])
         if styleonly:
             keys.difference_update(set("name description occursunder rank textproperties".split()))
@@ -543,8 +544,8 @@ class StyleEditor:
             vb = bs.get(k, None)
             vs = ss.get(k, None)
             if vb != vs and vs is not None:
-                return True
-        return False
+                res.append(k)
+        return res
 
     def mergein(self, newse, force=False, exclfields=None):
         allstyles = self.allStyles()

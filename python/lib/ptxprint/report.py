@@ -184,8 +184,9 @@ class Report:
         modified = []
         mrkrset = view.get_usfms().get_markers(view.getBooks())
         for s in sorted(view.styleEditor.allStyles()):
-            if view.styleEditor.haschanged(s, styleonly=True):
-                modified.append("<b>"+s+"</b>" if s in mrkrset else s)
+            diffs = view.styleEditor.haschanged(s, styleonly=True)
+            if len(diffs):
+                modified.append(("<b>"+s+"</b>" if s in mrkrset else s)+ str(diffs))
             if (f := view.styleEditor.getval(s, 'fontname', None, includebase=True)) is None:
                 continue
             results.setdefault(f, []).append(s)
