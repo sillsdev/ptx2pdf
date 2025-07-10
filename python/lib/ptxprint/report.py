@@ -1,5 +1,5 @@
 import html # Added for html.escape
-import logging, os
+import logging, os, re
 import xml.etree.ElementTree as et
 from datetime import datetime
 from ptxprint.utils import rtlScripts
@@ -186,7 +186,7 @@ class Report:
         for s in sorted(view.styleEditor.allStyles()):
             diffs = view.styleEditor.haschanged(s, styleonly=True)
             if len(diffs):
-                modified.append(("<b>"+s+"</b>" if s in mrkrset else s)+ str(diffs))
+                modified.append(("<b>"+s+"</b>" if s in mrkrset else s) + "[" + ", ".join(diffs) + "]")
             if (f := view.styleEditor.getval(s, 'fontname', None, includebase=True)) is None:
                 continue
             results.setdefault(f, []).append(s)
@@ -252,6 +252,15 @@ class Report:
             fltr = "Filtered" if view.get("c_filterGlossary", False) else "Unfiltered"
             asfn = "As Footnotes" if view.get("c_glossaryFootnotes", False) else ""
             self.add("7. Peripheral Components", f"Glossary: {fltr} {asfn}", severity=logging.DEBUG)
+        logfile = os.path.join(view.project.printPath(view.cfgid), view.baseTeXPDFnames()[0] + ".log")
+        print(f"Reading {logfile}")
+        toccols = []
+        if os.path.exists(logfile):
+            with open(logfile, encoding="utf-8") as inf:
+                for l in inf.readlines():
+                    if (m := re.match(r"^TOC\[(.*?)\]\s+col\s+(\d+)\s+(\S+)\s*$", l)) is not None:
+                        toccols.append(m.group(3))
+            self.add("3. USFM/Checks", f"Table of Contents markers: " + ", ".join(toccols))
 
     def get_usfm(self, view, doc, bk):
         r = doc.getroot()
