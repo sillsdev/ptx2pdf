@@ -12,7 +12,7 @@ default_weights = {"f": 1, "x": 1, "s": 10, "c": 100, "v": 1000}
 allfields = "ref marker hpos vpos gap width height depth xoffset yoffset pnum xpos ypos".split()
 mnotelinere = re.compile(r"\\@marginnote" + "".join(r"\{{(?P<{}>.*?)\}}".format(a) for a in allfields))
 
-def simplex_method(c, A, b, fixed):
+def simplex_method(c, A, b):
     """
     Solves a linear programming minimization problem using the simplex method.
 
@@ -26,6 +26,9 @@ def simplex_method(c, A, b, fixed):
             - The optimal objective function value (float).
             - The optimal solution vector (numpy array).
     """
+    c = c.astype(float)
+    A = A.astype(float)
+    b = b.astype(float)
     num_vars = len(c)
     num_constraints = len(b)
 
@@ -224,37 +227,75 @@ class MarginNotes:
                 i += 1
         return
 
-    def simplexpage(self, pnum, weights=None):
+    def simplexpage(self, pnum, weights=None, min_spacing = 1):
+        """ Express the collision problem as a linear programming problem:
+            Minimize \sum w_i \dot t_i
+            Subject to -s_i \lteq t_i , s_i \lteq t_i
+            Let L_i = ymax + s_i ; R_i = ymin + s_i
+            We require L_i \gteq R_j + \delta OR L_j \gteq R_i + \delta
+            Refactoring to remove the OR requires a large value M and z_{ij} \elementof \{0, 1\}
+                L_i \gteq R_j + \delta - M \dot z_{ij}
+                L_j \gteq R_i + \delta - M \dot (1 - z_{ij})
+            For fixed node j we also say
+                L_i \lteq L_j - \epsilon  or   L_i \gteq R_j + \epsilon
+        """
         if weights is None:
             weights = default_weights
         tracks, pheight = self.get_tracks(pnum)
-        breakpoint()
         for t in tracks:
-            cs = [-weights.get(n.marker, 1) for n in t]
-            c = np.array(cs + cs)
             N = len(t)
-            As = []
-            laste = pheight
-            bs = []
-            fixeds = []
+            def s(i): return i
+            def st(i): return i + N
+            def sd(i): return i + 2 * N
+
+            c = np.zeros(N * 3)
             for i, n in enumerate(t):
-                mult = -1 if n.ymax > laste else 1
-                fixeds.append(1 if weights.get(n.marker, 1) > 1e10 else 0)
-                constraints = [0] * 2 * N
-                constraints[i] = -mult
-                constraints[i+N] = mult
-                if i > 0:
-                    constraints[i-1] = mult
-                    constraints[i-1+N] = -mult
-                As.append(constraints)
-                bs.append(mult * (laste - n.ymax))
-                laste = n.ymin
-            A = np.array(As)
-            b = np.array(bs)
-            fixed = np.array(fixeds)
-            val, sol = simplex_method(c, A, b, fixed)
+                c[st(i)] = weights.get(n.marker, 1)
+
+            A = []
+            b = []
+            # 1. |s_i| ≤ t_i → s_i - t_i ≤ 0 and -s_i - t_i ≤ 0
             for i, n in enumerate(t):
-                n.yshift = sol[i] - sol[i+N]
+                row1 = np.zeros(N * 3)
+                row1[s(i)] = 1
+                row1[st(i)] = -1
+                A.append(row1)
+                b.append(0)
+
+                row2 = np.zeros(N * 3)
+                row2[s(i)] = -1
+                row2[st(i)] = -1
+                A.append(row2)
+                b.append(0)
+
+            # 2. Fixed constraints: s_i = 0 → s_i ≤ 0 and -s_i ≤ 0
+            for i, n in enumerate(t):
+                if c[st(i)] > 10000:
+                    row1 = np.zeros(N * 3)
+                    row1[s(i)] = 1
+                    A.append(row1)
+                    b.append(0)
+
+                    row2 = np.zeros(N * 3)
+                    row2[s(i)] = -1
+                    A.append(row2)
+                    b.append(0)
+
+            # 3. Non-overlap constraints
+            for i in range(N):
+                for j in range(i+1, N):
+                    row = np.zeros(N * 3)
+                    row[s(i)] = 1
+                    row[s(j)] = -1
+                    rhs = t[i].ymin - t[j].ymax - min_spacing
+                    A.append(row)
+                    b.append(rhs)
+
+            A = np.array(A)
+            b = np.array(b)
+            val, sol = simplex_method(c, A, b)
+            for i, n in enumerate(t):
+                n.yshift = sol[i]
 
     def processpages(self, weights=None):
         for i in range(len(self.pages)):

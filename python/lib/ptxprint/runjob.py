@@ -902,7 +902,7 @@ class RunJob:
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
         l = len(self.loglines)
         s = 40 if l > 40 else l
-        e = 0
+        e = 1
         for i in range(1, s):
             if self.loglines[-i].startswith("Here is how much of TeX's memory you used:"):
                 e = i

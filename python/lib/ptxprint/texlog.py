@@ -117,7 +117,9 @@ messages = [
     ("W","S", r'converted sidebar placement \".+?\" to \".+?\" in single-column layout'),
     ("W","A", r'\*\* WARNING: adjustlist entries should not contain space.+'),
     # ("E","F", r"xdvipdfmx:fatal: Invalid font:"),
-    ("W","U", r"WARNING: p\..+?:.+? used in text when .+? is a footnote, not an endnote\.")]
+    ("W","U", r"WARNING: p\..+?:.+? used in text when .+? is a footnote, not an endnote\."),
+    ("E","E", r"(?s)Illegal unit of measure.+?Paper(Height|Width)")
+]
 
 # These (below) have not been added to the list above (yet) as they seems to require some further knowledge as to how to 'fish' for them.
 
