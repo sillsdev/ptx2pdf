@@ -3,7 +3,7 @@ from ptxprint.utils import universalopen
 from ptxprint.parlocs import readpts
 from dataclasses import dataclass, asdict
 import numpy as np
-import re
+import re, math
 import logging
 
 logger = logging.getLogger(__name__)
@@ -91,18 +91,18 @@ class MarginNote:
     xoffset: float
     yoffset: float
     pnum: int
-    xpos: float
-    ypos: float
+    xpos: float         
+    ypos: float         # position of the top of the box
     yshift: float = 0
     side: str = ""
 
     @property
     def ymin(self):
-        return self.ypos - self.depth # - self.yoffset
+        return self.ypos - self.depth - self.height # - self.yoffset
 
     @property
     def ymax(self):
-        return self.ypos + self.height # - self.yoffset
+        return self.ypos   # - self.yoffset
 
     @property
     def xmin(self):
@@ -137,9 +137,11 @@ def getside(pnum, side):
 
 class MarginNotes:
 
-    def __init__(self, fpath=None):
+    def __init__(self, fpath=None, psize=597.5, top=28.5, bot=28.5):
         self.pages = []
-        self.pheight = 0
+        self.psize = psize
+        self.top = top
+        self.bot = bot
         if fpath is not None:
             self.readFile(fpath)
 
@@ -154,17 +156,15 @@ class MarginNotes:
                     data[a] = readpts(data[a])
                 data["pnum"] = int(data["pnum"]) - 1
                 note = MarginNote(**data)
-                if note.pnum >= len(self.pages):
-                    self.pages.extend([[]] * (note.pnum - len(self.pages) + 1))
+                while note.pnum >= len(self.pages):
+                    self.pages.append([])
                 self.pages[note.pnum].append(note)
 
     def get_tracks(self, pnum):
         ''' Returns a list of noninteracting list of notes, the max height
             position of a note '''
         tracks = []
-        pheight = 0
         for n in self.pages[pnum]:
-            pheight = max(pheight, n.ymax)
             n.side = getside(pnum, n.hpos)
             for t in tracks:
                 if t.test(n):
@@ -175,13 +175,13 @@ class MarginNotes:
                 tracks.append(t)
                 t.append(n)
             lastn = n
-        return (tracks, pheight)
+        return tracks
 
-    def processpage(self, pnum, weights=None):
+    def processpage(self, pnum, weights=None, maxshift=1000):
         # co-ordinates are from bottom left of page
         if weights is None:
             weights = default_weights
-        tracks, self.pheight = self.get_tracks(pnum)
+        tracks = self.get_tracks(pnum)
         # now position within each track
         for t in tracks:
             t.sort(key=lambda n:(-n.ymax, -n.ymin))
@@ -198,6 +198,7 @@ class MarginNotes:
                     w = weights.get(t[i].marker, 1)
                 if i < len(t) and curry == 0:
                     curry = t[i].ymin
+                    start = i
                     i += 1
                     continue
                 if i < len(t) and t[i].ymax > curry:
@@ -209,21 +210,45 @@ class MarginNotes:
                     if i > start + 1:
                         currw += weights.get(t[start].marker, 1)
                         shift = currc / currw
-                        shift = min(shift, self.pheight - t[start].ymax - t[start].yshift)
+                        shift = min(shift, self.top - t[start].ymax - t[start].yshift)
                         # rather than don't bump, include the previous ones we are picking up
                         # recalculate weighted shift
-                        if t[i-1].ymin + t[i-1].yshift + shift < 0:
-                            shift = -(t[i-1].ymin + t[i-1].yshift)
-                        for j in range(start, i):
-                            if -t[j].yshift < shift:
+                        if t[i-1].ymin + t[i-1].yshift + shift < self.bot:
+                            shift = self.bot - t[i-1].ymin - t[i-1].yshift
+                            if math.fabs(shift) > maxshift:
+                                logger.error(f"Shift {shift} out of bounds on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
+                        currt = t[start].ymax + t[start].yshift + shift
+                        k = start - 1
+                        tshift = 0
+                        while k >= 0 and t[k].ymin + t[k].yshift + tshift < currt:
+                            tshift = t[k].ymin + t[k].yshift - currt     # tshift upwards
+                            currt = t[k].ymin + t[k].yshift + tshift
+                            t[k].yshift += tshift
+                            w = weights.get(t[k].marker, 1)
+                            currw += w
+                            currc -= w * tshift
+                            k -= 1
+                        if k < start - 1:       # did some shifting. recalc shift
+                            shift = min(shift, currc / currw)
+                            shift = min(shift, self.top - t[start].ymax - t[start].yshift)
+                            if t[i-1].ymin + t[i-1].yshift + shift < self.bot:
+                                shift = self.bot - t[i-1].ymin - t[i-1].yshift
+                                if math.fabs(shift) > maxshift:
+                                    logger.error(f"Shift {shift} out of bounds on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
+                        islast = True
+                        for j in range(i-1, k, -1):
+                            if islast and -t[j].yshift < shift:
                                 shift = -t[j].yshift
-                                t[j].yshift = 0
                             else:
-                                t[j].yshift += shift
+                                islast = False
+                            t[j].yshift += shift
                     currs = 0
                     start = i
                 if i < len(t):
                     curry = t[i].ymin + t[i].yshift
+                if curry < 0:
+                    logger.error(f"Page {t[i].pnum} with {len(t)} at {i}({t[i].ref}) too full to fit everything")
+                    break
                 i += 1
         return
 
@@ -308,18 +333,21 @@ class MarginNotes:
             for i, p in enumerate(self.pages):
                 for n in p:
                     s = asdict(n)
-                    s['yoffset'] += -s['yshift']  # + s['yoffset']
+                    s['yoffset'] += -s['yshift']  # + s['yoffset']  # amount of push down
                     s['pnum'] += 1
                     if s['yshift'] != 0:
                         changed = True
                     for a in ("xpos", "ypos"):
                         s[a] = str(int(s[a] * 65536))
                     for a in ("gap", "width", "height", "depth", "xoffset", "yoffset"):
+                        if math.fabs(s[a]) > 32766:
+                            logger.error(f"Dimension [{a}] on page {i} of {s[a]}pt too large in {s['ref']}")
+                            s[a] = 0
                         s[a] = "{:.5f}pt".format(s[a])
                     outf.write("\\@marginnote" + "".join(["{{{}}}".format(s[a]) for a in allfields]) + "\n") 
         return changed
 
-def tidymarginnotes(fpath):
-    m = MarginNotes(fpath)
+def tidymarginnotes(fpath, **kw):
+    m = MarginNotes(fpath, **kw)
     m.processpages()
     return m.outfile(fpath)

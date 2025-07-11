@@ -715,7 +715,10 @@ class RunJob:
                 with open(tocfname, "w", encoding="utf-8") as outf:
                     outf.write(newtoc)
             if os.path.exists(marginnotesfname):
-                rererun = rererun or tidymarginnotes(marginnotesfname)
+                (tsize, ttop, tbot) = info.getTextBlockSize()
+                rererun = tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot) or rererun
+                if rererun and self.maxRuns == 1:
+                    self.maxRuns = 2
             if not rererun:
                 break
 

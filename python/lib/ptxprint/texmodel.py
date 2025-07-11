@@ -526,7 +526,19 @@ class TexModel:
         self.dict["paper/headerposition"] = f2s(headerposmms / marginmms)
         self.dict["paper/footerposition"] = f2s(footerposmms / marginmms)
         self.dict["paper/ruleposition"] = f2s(ruleposmms * 72.27 / 25.4)
+
+    def getTextBlockSize(self):
+        unitConv = {'mm':2.8453, 'cm':28.453, 'in':72.27, '"':72.27, "pt": 1}
+        m = re.match("(-?[\d.]+)(\D+)", self.dict["paper/height"])
+        if m:
+            pheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
+        else:
+            pheight = 210 / unitConv["mm"]
+        top = pheight - float(self.dict["paper/topmargin"]) * unitConv["mm"]
+        bottom = float(self.dict["paper/bottommargin"]) * unitConv["mm"]
+        return (pheight, top, bottom)
         
+
     def texfix(self, path):
         return path.replace(" ", r"\ ")
 
