@@ -270,7 +270,7 @@ class XMLXrefs(BaseXrefs):
             if isinstance(e[2], RefList):
                 r = e[2]
                 if self.filters is not None:
-                    r.filterBooks(self.filters)
+                    r = RefList([f for f in r if f.first.book in self.filters])
                 r.simplify()
                 rs = revrsf(r, vrsf).str(env=self.env, level=2, context=baseref.last)
                 if len(rs) and e[1] in ('backref', 'crossref'):
