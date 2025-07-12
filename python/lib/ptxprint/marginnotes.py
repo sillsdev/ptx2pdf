@@ -209,7 +209,7 @@ class MarginNotes:
                 else:
                     if i > start + 1:
                         currw += weights.get(t[start].marker, 1)
-                        shift = currc / currw
+                        shift = float(currc / currw)
                         shift = min(shift, self.top - t[start].ymax - t[start].yshift)
                         # rather than don't bump, include the previous ones we are picking up
                         # recalculate weighted shift
@@ -217,31 +217,40 @@ class MarginNotes:
                             shift = self.bot - t[i-1].ymin - t[i-1].yshift
                             if math.fabs(shift) > maxshift:
                                 logger.error(f"Shift {shift} out of bounds on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
-                        currt = t[start].ymax + t[start].yshift + shift
-                        k = start - 1
-                        tshift = 0
-                        while k >= 0 and t[k].ymin + t[k].yshift + tshift < currt:
-                            tshift = t[k].ymin + t[k].yshift - currt     # tshift upwards
-                            currt = t[k].ymin + t[k].yshift + tshift
-                            t[k].yshift += tshift
-                            w = weights.get(t[k].marker, 1)
-                            currw += w
-                            currc -= w * tshift
-                            k -= 1
-                        if k < start - 1:       # did some shifting. recalc shift
-                            shift = min(shift, currc / currw)
-                            shift = min(shift, self.top - t[start].ymax - t[start].yshift)
-                            if t[i-1].ymin + t[i-1].yshift + shift < self.bot:
-                                shift = self.bot - t[i-1].ymin - t[i-1].yshift
-                                if math.fabs(shift) > maxshift:
-                                    logger.error(f"Shift {shift} out of bounds on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
                         islast = True
-                        for j in range(i-1, k, -1):
+                        for j in range(i-1, start-1, -1):
                             if islast and -t[j].yshift < shift:
-                                shift = -t[j].yshift
+                                shift = max(0, -t[j].yshift)
                             else:
                                 islast = False
                             t[j].yshift += shift
+
+                        if start > 0 and t[start].ymax + t[start].yshift > t[start-1].ymin + t[start-1].yshift:
+                            currt = t[start].ymax + t[start].yshift
+                            k = start - 1
+                            shiftu = 0
+                            currc = 0
+                            currw = 0
+                            while k >= 0 and currt > t[k].ymin + t[k].yshift:
+                                shiftu = currt - t[k].ymin - t[k].yshift
+                                t[k].yshift += shiftu
+                                currt = t[k].ymax + t[k].yshift
+                                k -= 1
+                            for j in range(i-1, k-1, -1):
+                                w = weights.get(t[j].marker, 1)
+                                currw += w
+                                currc += shiftu * w
+                            shift = -float(currc / currw)
+                            shift = max(shift, self.bot - t[i-1].ymin - t[i-1].yshift)
+                            if k >= 0 and t[k].ymax + t[k].yshift + shift > self.top:
+                                shift = self.top - t[k].ymax - t[k].yshift
+                            islast = True
+                            for j in range(k, i):
+                                if islast and -t[j].yshift > shift:
+                                    shift = min(0, -t[j].yshift)
+                                else:
+                                    islast = False
+                                t[j].yshift += shift
                     currs = 0
                     start = i
                 if i < len(t):
