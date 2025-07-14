@@ -871,7 +871,7 @@ class TTFont:
             return
         inf.seek(self.dict['maxp'][0])
         data = inf.read(6)
-        self.numglyphs = struct.unpack(b">H", data[4:])
+        self.numglyphs = struct.unpack(b">H", data[4:])[0]
 
     def readglyf(self, inf):
         if hasattr(self, 'glyphs'):
