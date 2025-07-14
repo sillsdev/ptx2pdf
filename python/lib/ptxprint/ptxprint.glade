@@ -3045,6 +3045,14 @@ settings for a similar project.</property>
         <col id="0" translatable="yes">Right</col>
         <col id="1">Right</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">Inner</col>
+        <col id="1">Inner</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Outer</col>
+        <col id="1">Outer</col>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_styNoteCallerStyle">
@@ -21049,6 +21057,23 @@ ital= slant value (faux italics)</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">False</property>
                                                         <property name="can-default">True</property>
+                                                        <property name="tooltip-text" translatable="yes">If text is justified but Justify Paragraphs is turned off on the
+Body tab then an alignment of Justified here is treated as 
+Left, (and maybe swapped if Right-to-Left).
+
+When the Writing system text flow direction is Right-to-Left
+the interpretation of Left and Right is swapped. Top-to-Bottom
+flow is treated as Left-to-Right.
+
+Inner vs Outer (used for Marginal Notes, Xrefs or Headings)
+  Inner = closer to the center:
+    In a 2-column layout: closer to the space between columns.
+    In a 1-column layout: closer to the spine of the page spread.
+  Outer = further from the center:
+    In a 2-column layout: closer to the outer edge of the page.
+    In a 1-column layout: closer to the outer edge of the page spread.
+  Note: Marginal notes cannot switch sides mid-paragraph 
+             if the page or column changes.</property>
                                                         <property name="model">ls_styJustification</property>
                                                         <property name="wrap-width">1</property>
                                                         <property name="has-entry">True</property>
@@ -21250,7 +21275,17 @@ Left, (and maybe swapped if Right-to-Left).
 
 When the Writing system text flow direction is Right-to-Left
 the interpretation of Left and Right is swapped. Top-to-Bottom
-flow is treated as Left-to-Right.</property>
+flow is treated as Left-to-Right.
+
+Inner vs Outer (used for Marginal Notes, Xrefs or Headings)
+  Inner = closer to the center:
+    In a 2-column layout: closer to the space between columns.
+    In a 1-column layout: closer to the spine of the page spread.
+  Outer = further from the center:
+    In a 2-column layout: closer to the outer edge of the page.
+    In a 1-column layout: closer to the outer edge of the page spread.
+  Note: Marginal notes cannot switch sides mid-paragraph 
+             if the page or column changes.</property>
                                                             <property name="label" translatable="yes">Alignment:</property>
                                                             <property name="xalign">1</property>
                                                           </object>
@@ -28531,9 +28566,6 @@ Click to visit download page on the website.</property>
                 <property name="margin-bottom">3</property>
                 <property name="image">icon_download</property>
                 <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
-                <style>
-                  <class name="attention"/>
-                </style>
               </object>
               <packing>
                 <property name="expand">False</property>

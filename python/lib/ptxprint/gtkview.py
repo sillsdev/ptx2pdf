@@ -985,6 +985,11 @@ class GtkViewModel(ViewModel):
             .backsettings2 text {background-color: #fff0f0;}
             .backsettings3 text {background-color: #f0fff0;}
             
+            .update-blue   {color: #3498db; /* A nice, friendly blue = update available*/}
+            .update-orange {color: #f39c12; /* A noticeable orange = warning! out of date*/}
+            .update-red    {color: #e74c3c; /* A strong, urgent red =majorly out of date */}
+            button {transition: color 0.3s ease-in-out; /* Transition for a smooth color change */}
+            
             .highlighted {background-color: peachpuff; background: peachpuff}
             .yellowlighted {background-color: rgb(255,255,102); background: rgb(255,255,102)}
             .attention {background-color: lightblue; background: lightblue}
@@ -5704,53 +5709,124 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
         self.changed()
 
-    def _checkUpdate(self, wid, timediff, background):
+    def _checkUpdate(self, wid, file_age_seconds, background):
+        version = None
         try:
             logger.debug(f"Trying to access URL to see if updates are available")
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
                 info = json.load(inf)
-                version = info['version']
+                version = info.get('version')
         except (OSError, KeyError, ValueError) as e:
-            logger.debug(f"{e=}")
-            pass
+            logger.debug(f"Update check failed: {e}")
+            return # Exit silently on any error
+
+        # version = "3.0.0" # useful for testing - set a hypothetical (new) version number
         if version is None:
             logger.debug(f"Returning because version is None.")
             return
-        newv = [int(x) for x in version.split('.')]
-        currv = [int(x) for x in VersionStr.split('.')]
-        # To Do: Calculate and set color based on severity to blue, orange, red depending on how old the current version
-        logger.debug(f"{newv=}, {currv=}")
-        def enabledownload():
-            tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
-            wid.set_tooltip_text(tip)
+
+        newv_str = version.split('.')
+        currv_str = VersionStr.split('.')
+        
+        # Ensure version lists are of equal length for safe comparison by padding with 0
+        max_len = max(len(newv_str), len(currv_str))
+        newv = [int(x) for x in newv_str] + [0] * (max_len - len(newv_str))
+        currv = [int(x) for x in currv_str] + [0] * (max_len - len(currv_str))
+
+        logger.debug(f"Available version: {newv}, Current version: {currv}")
+
+        # Determine update severity if a new version is available
+        severity_color = None
+        # file_age_seconds = 190 * 24 * 3600 # 36000 # useful for testing - set a hypothetical age of the executable
+        if newv > currv:
+            already2monthsOld = file_age_seconds > 60 * 24 * 3600 
+            already6monthsOld = file_age_seconds > 180 * 24 * 3600 
+
+            # Default to blue for any update
+            severity_color = "blue" # Patch version change (e.g., 2.8.15 -> 2.8.17)
+            if newv[0] == currv[0] and newv[1] == currv[1]:
+                extraMsg = _("FYI: Minor patch version change.")
+            else:
+                extraMsg = _("Recent major version change.")
+
+            # Promote to orange for a minor version change
+            if newv[0] == currv[0] and newv[1] > currv[1] or (already2monthsOld and not already6monthsOld):
+                severity_color = "orange" # Minor version change (e.g., 2.7.x -> 2.8.x)
+                extraMsg = _("You are using an outdated version!")
+                if already2monthsOld:
+                    logger.debug(f"Update is ORANGE because installation is 2+ months old.")
+                    
+            # Promote to red for a major version change > 2 months ago OR if the app is > 6 months old
+            elif (newv[0] > currv[0] and already2monthsOld) or already6monthsOld:
+                severity_color = "red" # Major version change (e.g., 1.x -> 2.x) or very old
+                extraMsg = _("WARNING: This is a very old version!")
+                if already6monthsOld:
+                    logger.debug(f"Update is RED because installation is very old.")
+
+        def enabledownload(extraMsg):
+            tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.").format(version)
+            wid.set_tooltip_text(f"{extraMsg}\n{tip}")
+
+            # Apply color via CSS classes
+            style_context = wid.get_style_context()
+            # First, remove any existing color classes to reset the state
+            style_context.remove_class("update-blue")
+            style_context.remove_class("update-orange")
+            style_context.remove_class("update-red")
+            
+            # Add the class for the current severity
+            if severity_color:
+                style_context.add_class(f"update-{severity_color}")
+                logger.debug(f"Setting update icon color to {severity_color}")
+
             wid.set_visible(True)
             self.thread = None
+
         def disabledownload():
             wid.set_visible(False)
             self.thread = None
-        GLib.idle_add(enabledownload if newv > currv else disabledownload)
+
+        # Schedule the UI update on the main GTK thread
+        if severity_color:
+            GLib.idle_add(enabledownload, extraMsg)
+        else:
+            GLib.idle_add(disabledownload)
 
     def checkUpdates(self):
         wid = self.builder.get_object("btn_download_update")
         lastchecked = self.userconfig.getfloat("init", "checkedupdate", fallback=0)
         if time.time() - self.startedtime < 300: # i.e. started less than 5 mins ago
             logger.debug("Check for updates didn't run as it hasn't been 5 mins since startup")
+            # pass - enable for testing
             return
-        elif lastchecked != 0 and time.time() - lastchecked < 24*3600: # i.e. checked less than an hour ago
+        elif lastchecked != 0 and time.time() - lastchecked < 24*3600: # i.e. checked less than 24 hours ago
             logger.debug("Check for updates didn't run as it hasn't been 24 hours since the last check")
+            # pass - enable for testing
             return
         else:
-            logger.debug(f"Check for updates at {getcaller()}. OS is {sys.platform}")
+            logger.debug(f"Check for updates. OS is {sys.platform}")
             self.lastUpdatetime = time.time()
             self.userconfig.set("init", "checkedupdate", str(self.lastUpdatetime))
-        timediff = 0 # To Do: current time minus time of .exe file
+
         if not sys.platform.startswith("win"):
             return
+
+        # Calculate the age of the running executable
+        file_age_seconds = 0
+        try:
+            # sys.executable points to ptxprint.exe in a frozen build
+            exe_mtime = os.path.getmtime(sys.executable)
+            file_age_seconds = time.time() - exe_mtime
+            logger.debug(f"Current PTXprint installation is {file_age_seconds / (24*3600):.1f} days old.")
+        except OSError as e:
+            logger.warning(f"Could not determine executable modification time: {e}")
+
         version = None
         if self.noInt is None or self.noInt:
-            logger.debug(f"Returning because {self.noInt=}.")
+            logger.debug(f"Returning because no Internet connection is available.")
             return
-        self.thread = Thread(target=self._checkUpdate, args=(wid, timediff))
+            
+        self.thread = Thread(target=self._checkUpdate, args=(wid, file_age_seconds, True))
         self.thread.start()
 
     def openURL(self, url):
