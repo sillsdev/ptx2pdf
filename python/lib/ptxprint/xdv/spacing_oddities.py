@@ -64,15 +64,13 @@ class SpacingOddities(XDViPositionedReader):
         return True 
 
     def add_line(self, v):
-        # check vertical collision of lines
+        # check vertical line collision
         if self.prev_line.maxpos[1] > self.line.minpos[1]:
-            # check if collision actually occurs
+            # check if collision occurs in same horizontal space
             if (max(0, min(self.prev_line.maxpos[2], self.line.minpos[2]) - max(self.prev_line.maxpos[0], self.line.minpos[0]))) >0:
                 print(f"Collision detected: {self.prev_line.maxpos[1]} > {self.line.minpos[1]} at ref {self.ref}")
         self.prev_line = self.line
         self.line = Line(v, self.ref, self.curr_font)
-
-
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
@@ -95,8 +93,8 @@ class Line:
             self.glyph_clusters.append(GlyphCluster(startpos[0], self.curr_font))
         self.glyph_clusters[-1].width += w
         for i in range(len(glyphs)-1):
-            g_vmin = startpos[1] - ((self.curr_font.ttfont.glyphs[i][1] /self.curr_font.ttfont.upem) * self.curr_font.points)
-            g_vmax = startpos[1] + ((self.curr_font.ttfont.glyphs[i][3] /self.curr_font.ttfont.upem) * self.curr_font.points)
+            g_vmin = startpos[1] - ((self.curr_font.ttfont.glyphs[i][3] /self.curr_font.ttfont.upem) * self.curr_font.points)
+            g_vmax = startpos[1] + ((self.curr_font.ttfont.glyphs[i][1] /self.curr_font.ttfont.upem) * self.curr_font.points)
             # compare glyph bounds to line bounds and update line values if necessary
             if g_vmin < self.minpos[1]:
                 # get hmin and max
@@ -132,7 +130,8 @@ class GlyphCluster:
     # def add_glyph
 
 def main():
-    #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")
+    #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/my_judson/local/ptxprint/Default/my_judson_Default_ROM_ptxp.xdv")
+    #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")    
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
     for (opcode, data) in reader.parse():
         if reader.pageno > 1:
