@@ -639,9 +639,10 @@ class RunJob:
     def run_xetex(self, outfname, pdffile, info):
         numruns = 0
         cachedata = {}
-        cacheexts = {"toc":     (_("table of contents"), True), 
-                    "picpages": (_("image copyrights"), False), 
-                    "parlocs":  (_("chapter positions"), True)}
+        cacheexts = {"toc":         (_("table of contents"), True), 
+                    "picpages":     (_("image copyrights"), False), 
+                    "parlocs":      (_("chapter positions"), True),
+                    "marginnotes":  (_("margin note positions"), True)}
         marginnotesfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".marginnotes"))
         if os.path.exists(marginnotesfname):
             os.unlink(marginnotesfname)
@@ -686,6 +687,12 @@ class RunJob:
                     os.remove(tocfname)
                 break
             rererun = rerun
+            if os.path.exists(marginnotesfname):
+                (tsize, ttop, tbot) = info.getTextBlockSize()
+                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot):
+                    rererun = True
+                    if self.maxRuns == 1:
+                        self.maxRuns = 2
             for a in cacheexts.keys():
                 testdata = cachedata[a]
                 fpath = os.path.join(self.tmpdir, outfname.replace(".tex", "."+a))
@@ -714,11 +721,6 @@ class RunJob:
                 newtoc = generateTex(toc.createtocvariants(bklist, ducet=ducet))
                 with open(tocfname, "w", encoding="utf-8") as outf:
                     outf.write(newtoc)
-            if os.path.exists(marginnotesfname):
-                (tsize, ttop, tbot) = info.getTextBlockSize()
-                rererun = tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot) or rererun
-                if rererun and self.maxRuns == 1:
-                    self.maxRuns = 2
             if not rererun:
                 break
 

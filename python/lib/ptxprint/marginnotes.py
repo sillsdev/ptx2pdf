@@ -96,13 +96,21 @@ class MarginNote:
     yshift: float = 0
     side: str = ""
 
+    def boxshift(self, istop):
+        if self.vpos == "bottom":
+            return 0. if istop else self.depth + self.height
+        elif self.vpos == "top":
+            return self.height if istop else self.depth
+        elif self.vpos == "center":
+            return (self.height + self.depth) / 2.
+
     @property
     def ymin(self):
-        return self.ypos - self.depth - self.height # - self.yoffset
+        return self.ypos - self.boxshift(False) # - self.yoffset
 
     @property
     def ymax(self):
-        return self.ypos   # - self.yoffset
+        return self.ypos + self.boxshift(True)  # - self.yoffset
 
     @property
     def xmin(self):
@@ -193,58 +201,60 @@ class MarginNotes:
             start = 0
             gap = 0
             # refactor to include fixed blocks with local regions between
-            while i < len(t) + 1:
+            while i < len(t) + 1:                       # work top of page to bottom
                 if i < len(t):
                     w = weights.get(t[i].marker, 1)
                 if i < len(t) and curry == 0:
-                    curry = t[i].ymin
-                    start = i
+                    curry = t[i].ymin                   # track current bottom
+                    start = i                           # new block
                     i += 1
                     continue
-                if i < len(t) and t[i].ymax > curry:
-                    shift = t[i].ymax - curry
+                if i < len(t) and t[i].ymax > curry:    # in a block
+                    shift = t[i].ymax - curry           # shift us to not collide
                     t[i].yshift -= shift
-                    currc += w * shift
+                    currc += w * shift                  # track weighted cost
                     currw += w
-                else:
+                else:                                   # end of block. Now shift the block back up based on weighted costs
                     if i > start + 1:
                         currw += weights.get(t[start].marker, 1)
-                        shift = float(currc / currw)
-                        shift = min(shift, self.top - t[start].ymax - t[start].yshift)
-                        # rather than don't bump, include the previous ones we are picking up
-                        # recalculate weighted shift
-                        if t[i-1].ymin + t[i-1].yshift + shift < self.bot:
-                            shift = self.bot - t[i-1].ymin - t[i-1].yshift
+                        shift = float(currc / currw)            # the heavier the weight the more the corrective shift back
+                        shift = min(shift, self.top - t[start].ymax - t[start].yshift)  # don't shift off the top of the page
+                        if t[i-1].ymin + t[i-1].yshift + shift < self.bot:              # if shift would result in stuff off the bottom
+                            shift = self.bot - t[i-1].ymin - t[i-1].yshift                  # increase shift
                             if math.fabs(shift) > maxshift:
                                 logger.error(f"Shift {shift} out of bounds on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
                         islast = True
                         for j in range(i-1, start-1, -1):
-                            if islast and -t[j].yshift < shift:
-                                shift = max(0, -t[j].yshift)
-                            else:
+                            if islast and -t[j].yshift < shift:     # if we can hit original position, do it
+                                shift = max(0, -t[j].yshift)        # don't make matters worse (more shifting away)
+                            else:                                   # can't do this inside the block otherwise we hit the line below
                                 islast = False
                             t[j].yshift += shift
 
+                        # Now scan up the page to see what we need to push up. Basically the same algorithm inverted
                         if start > 0 and t[start].ymax + t[start].yshift > t[start-1].ymin + t[start-1].yshift:
                             currt = t[start].ymax + t[start].yshift
                             k = start - 1
                             shiftu = 0
                             currc = 0
                             currw = 0
+                            # identify which notes need to move up and shift them up
                             while k >= 0 and currt > t[k].ymin + t[k].yshift:
                                 shiftu = currt - t[k].ymin - t[k].yshift
                                 t[k].yshift += shiftu
                                 currt = t[k].ymax + t[k].yshift
                                 k -= 1
+                            # now calculate weighted cost and so shift for the whole block from bottom to top
                             for j in range(i-1, k-1, -1):
                                 w = weights.get(t[j].marker, 1)
                                 currw += w
-                                currc += shiftu * w
+                                currc += t[j].yshift * w
                             shift = -float(currc / currw)
-                            shift = max(shift, self.bot - t[i-1].ymin - t[i-1].yshift)
-                            if k >= 0 and t[k].ymax + t[k].yshift + shift > self.top:
-                                shift = self.top - t[k].ymax - t[k].yshift
+                            shift = max(shift, self.bot - t[i-1].ymin - t[i-1].yshift)      # don't shift off the bottom of the page
+                            if k >= 0 and t[k].ymax + t[k].yshift + shift > self.top:       # if upward shift would push us over the top
+                                shift = self.top - t[k].ymax - t[k].yshift                      # increase downward shift to match
                             islast = True
+                            # now apply updated shift to the whole block top to bottom (since bottom is tight from last shifts)
                             for j in range(k, i):
                                 if islast and -t[j].yshift > shift:
                                     shift = min(0, -t[j].yshift)
