@@ -26,7 +26,7 @@
     \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ifrsh@ft left\else right\fi, pad to \the\VerseBoxWidth}%
     \def\t@@mp{bottom}%
   \else
-    \s@tsideskips{v}%
+    \s@tsideskips{v}{-1pt}%
     \ifrsh@ft \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
     \trace{v}{leftskip=\the\leftskip, rightskip=\the\rightskip}%
     \myh@ngprintv@rse{2}%

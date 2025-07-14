@@ -447,7 +447,7 @@
     \ifx\attr@b\relax\else\x@\s@tc@tprefix\x@{\attr@b}\fi
     \get@ttribute{width}%A
     \ifx\attr@b\relax
-      \s@tsideskips{zrule}%
+      \s@tsideskips{zrule}{-1pt}%
       \edef\rule@wid{\the\dimexpr \hsize - \leftskip - \rightskip\relax}%
     \else
       \m@kenumber{\attr@b}%

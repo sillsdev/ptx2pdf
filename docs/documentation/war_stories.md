@@ -1,7 +1,10 @@
 # War Stories
 
 This file contains stories of subtle user errors that one would not expect a
-user to spot immediately.
+user to spot immediately. It differs from (snippets.md) in problems people have
+had with their projects rather than discussing new features and capabilities.
+See here for troubleshooting type stories and warnings and ways around such
+problems.
 
 ## Processing FRT
 
