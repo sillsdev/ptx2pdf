@@ -64,13 +64,15 @@ class SpacingOddities(XDViPositionedReader):
         return True 
 
     def add_line(self, v):
-        # check vertical line collision
-        if self.prev_line.maxpos[1] > self.line.minpos[1]:
-            # check if collision occurs in same horizontal space
-            if (max(0, min(self.prev_line.maxpos[2], self.line.minpos[2]) - max(self.prev_line.maxpos[0], self.line.minpos[0]))) >0:
-                print(f"Collision detected: {self.prev_line.maxpos[1]} > {self.line.minpos[1]} at ref {self.ref}")
+        self.check_collision()
         self.prev_line = self.line
         self.line = Line(v, self.ref, self.curr_font)
+
+    def check_collision(self):
+        if self.prev_line.maxpos[1] > self.line.minpos[1]:
+            if max(0, min(self.prev_line.maxpos[2], self.line.minpos[2]) - max(self.prev_line.maxpos[0], self.line.minpos[0])) >0:
+                self.line.collision = [max(self.prev_line.maxpos[0], self.line.minpos[0]), self.line.minpos[1], min(self.prev_line.maxpos[2], self.line.minpos[2]), self.prev_line.maxpos[1]]
+                
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
@@ -80,6 +82,7 @@ class Line:
         self.h_gc_threshold = 1 # space threshold to add glyph to current gc or start new gc
         self.minpos = [0,v,0] # [hmin, vmin, hmax]
         self.maxpos = [0,v,0] # [hmin, vmax, hmax]
+        collision = None 
 
     def change_font(self, h, font):
         self.curr_font = font
@@ -94,17 +97,17 @@ class Line:
         self.glyph_clusters[-1].width += w
         for i in range(len(glyphs)-1):
             g_vmin = startpos[1] - ((self.curr_font.ttfont.glyphs[i][3] /self.curr_font.ttfont.upem) * self.curr_font.points)
-            g_vmax = startpos[1] + ((self.curr_font.ttfont.glyphs[i][1] /self.curr_font.ttfont.upem) * self.curr_font.points)
+            g_vmax = startpos[1]  + ((self.curr_font.ttfont.glyphs[i][1] /self.curr_font.ttfont.upem) * self.curr_font.points)
             # compare glyph bounds to line bounds and update line values if necessary
             if g_vmin < self.minpos[1]:
                 # get hmin and max
-                self.minpos[0] = startpos[0] - ((self.curr_font.ttfont.glyphs[i][0]/ self.curr_font.ttfont.upem) * self.curr_font.points)
+                self.minpos[0] = startpos [0] + pos[i][0] - ((self.curr_font.ttfont.glyphs[i][0]/ self.curr_font.ttfont.upem) * self.curr_font.points)
                 self.minpos[1] = g_vmin
-                self.minpos[2] = startpos[0] + ((self.curr_font.ttfont.glyphs[i][2] / self.curr_font.ttfont.upem)* self.curr_font.points)
+                self.minpos[2] = startpos[0] + pos[i][0] + ((self.curr_font.ttfont.glyphs[i][2] / self.curr_font.ttfont.upem)* self.curr_font.points)
             if g_vmax > self.maxpos[1]:
-                self.maxpos[0] = startpos[0] - ((self.curr_font.ttfont.glyphs[i][0]/ self.curr_font.ttfont.upem) * self.curr_font.points)
+                self.maxpos[0] = startpos[0] + pos[i][0] - ((self.curr_font.ttfont.glyphs[i][0]/ self.curr_font.ttfont.upem) * self.curr_font.points)
                 self.maxpos[1] = g_vmax
-                self.maxpos[2] = startpos[0] + ((self.curr_font.ttfont.glyphs[i][2] / self.curr_font.ttfont.upem)* self.curr_font.points)
+                self.maxpos[2] = startpos[0] + pos[i][0] + ((self.curr_font.ttfont.glyphs[i][2] / self.curr_font.ttfont.upem)* self.curr_font.points)
 
     def has_badspace(self, threshold = 4):
         # threshold in ems
@@ -120,19 +123,22 @@ class Line:
                 if width > maxspace:
                     bad_spaces.append([(self.glyph_clusters[i].h_start + self.glyph_clusters[i].width, self.v_start), width, width/fontsize])
         return bad_spaces
+    
+    def has_collision(self):
+        return self.collision
 
 class GlyphCluster:
     def __init__(self, h, font):
         self.h_start = h
-        self.font = font # in points
+        self.font = font 
         self.width = 0
 
     # def add_glyph
 
 def main():
-    #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/my_judson/local/ptxprint/Default/my_judson_Default_ROM_ptxp.xdv")
+    reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSG1/local/ptxprint/Default/WSG1_Default_GEN_ptxp.xdv")
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")    
-    reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
+    #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
     for (opcode, data) in reader.parse():
         if reader.pageno > 1:
             break
