@@ -505,17 +505,22 @@ class Paragraphs(list):
                         heapq.heappush(res, s)
         return res
 
-    def getbadspaces(self, pnum, threshold):
+    def _getlines(self, pnum):
         for p, r in self.getParas(pnum):
             if r.xdvlines is None:
                 continue
-            for l in r.xdvlines:
-                spaces = l.has_badspace(threshold)
-                for s in spaces:
-                    yield BadSpace(r.pagenum, l, *s)
+            yield from r.xdvlines
+
+    def getbadspaces(self, pnum, threshold):
+        for l in self._getlines(pnum):
+            spaces = l.has_badspace(threshold)
+            for s in spaces:
+                yield BadSpace(pnum, l, *s)
             
-
-
-
-
+    def getcollisions(self, pnum):
+        for l in self._getlines(pnum):
+            collisions = l.has_collision()
+            for c in collisions:
+                print(c)
+                yield c
 

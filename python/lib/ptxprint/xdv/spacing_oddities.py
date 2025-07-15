@@ -75,7 +75,7 @@ class Line:
         self.h_gc_threshold = 1 # space threshold to add glyph to current gc or start new gc
         self.vmin = v
         self.vmax = v
-        self.collisions = [] # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
+        self.self.collisions = [] # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
 
     def change_font(self, h, font):
         self.curr_font = font
