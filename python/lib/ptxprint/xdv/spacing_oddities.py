@@ -57,30 +57,15 @@ class SpacingOddities(XDViPositionedReader):
             if (self.cursor[1] - self.line.vstart) < self.v_line_treshold:
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return
-        self.check_collision()
+        self.line_collision()
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
         self.parent.addxdvline(self.line, self.page_index, self.h, self.v)
 
-    def check_collision(self):
+    def line_collision(self):
         if self.prev_line.vmax >= self.line.vmin:
             # collision on line level, check gc level
-            i = 0
-            j = 0
-            while i< len(self.prev_line.glyph_clusters) and j < len(self.line.glyph_clusters):
-                
-                if self.prev_line.glyph_clusters[i].vmax >= self.line.glyph_clusters[j].vmin:
-                    # collision on gc level
-                    #self.line.check_collision(self.prev_line.glyph_clusters[i], i)
-                    #self.check_glyph_collision(self.prev_line.glyph_clusters[i], self.line.glyph_clusters[j])
-                    self.line.collisions.append([min(self.prev_line.glyph_clusters[i].hstart + self.prev_line.glyph_clusters[i].width, self.line.glyph_clusters[j].hstart + self.line.glyph_clusters[j].width),
-                                                min(self.prev_line.glyph_clusters[i].vmin, self.line.glyph_clusters[j].vmin),
-                                                max(self.prev_line.glyph_clusters[i].hstart, self.line.glyph_clusters[j].hstart),                                                 
-                                                max(self.prev_line.glyph_clusters[i].vmax, self.line.glyph_clusters[j].vmax)])
-                if (self.prev_line.glyph_clusters[i].hstart +self.prev_line.glyph_clusters[i].width)< (self.line.glyph_clusters[j].hstart + self.line.glyph_clusters[j].width):
-                    i += 1
-                else:
-                    j += 1
+            self.line.gc_collision(self.prev_line.glyph_clusters)
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
@@ -128,6 +113,18 @@ class Line:
     def has_collision(self):
         # check collision with glyphclusters
         return self.collisions
+    
+    def gc_collision(self, prev_gcs):
+            i = 0
+            j = 0
+            while i< len(prev_gcs) and j < len(self.glyph_clusters):
+                if prev_gcs[i].vmax >= self.glyph_clusters[j].vmin:
+                    # collision on gc level
+                    self.collisions.append(cols if (cols := self.glyph_clusters[j].glyph_collision(prev_gcs[i])) else None)
+                if (prev_gcs[i].hstart +prev_gcs[i].width) < (self.glyph_clusters[j].hstart + self.glyph_clusters[j].width):
+                    i += 1
+                else:
+                    j += 1
 
 class GlyphCluster:
     def __init__(self, h, font):
@@ -145,11 +142,28 @@ class GlyphCluster:
         hmax = pos[0] + self.glyph_topt(g, 2)
         self.vmin = min(self.vmin, vmin)
         self.vmax = max(self.vmax, vmax)
-        self.glyphs.append([vmin, hmin, vmax, hmax])
+        self.glyphs.append([hmin, vmin, hmax, vmax])
 
     def glyph_topt(self, no, i):
         return self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points
-
+    
+    def glyph_collision(self, other):
+        collisions = []
+        i = 0
+        j= 0
+        while i < len(self.glyphs) and j < len(other.glyphs):
+            if self.glyphs[i][3] >= other.glyphs[j][1]:
+                # collision of glyphs
+                collisions.append([min(self.glyphs[i][0], other.glyphs[j][0]),
+                                min(self.glyphs[i][1], other.glyphs[j][1]),
+                                max(self.glyphs[i][2], other.glyphs[j][2]),
+                                max(self.glyphs[i][3], other.glyphs[j][3])])
+            if self.glyphs[i][2] < other.glyphs[j][2]:
+                i += 1
+            else:
+                j+=1
+        return collisions
+    
 def main():
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSG1/local/ptxprint/Default/WSG1_Default_GEN_ptxp.xdv")
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")    
