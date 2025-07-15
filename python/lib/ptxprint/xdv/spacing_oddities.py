@@ -87,26 +87,26 @@ class Line:
         self.curr_font = font
         self.glyph_clusters.append(GlyphCluster(h, self.curr_font))
 
-    def add_glyphs(self, startpos, w, pos, glyphs): # in points
+    def add_glyphs(self, startpos, w, pos, g): # in points
         if len(self.glyph_clusters) == 0:
             self.glyph_clusters.append(GlyphCluster(startpos[0], self.curr_font))
         elif startpos[0] - (self.glyph_clusters[-1].h_start + self.glyph_clusters[-1].width) > self.h_gc_threshold:
             # make new gc block only if there is space between glyphs this block and the previous one.
             self.glyph_clusters.append(GlyphCluster(startpos[0], self.curr_font))
         self.glyph_clusters[-1].width += w
-        for i in range(len(glyphs)-1):
-            g_vmin = startpos[1] - ((self.curr_font.ttfont.glyphs[i][3] /self.curr_font.ttfont.upem) * self.curr_font.points)
-            g_vmax = startpos[1]  + ((self.curr_font.ttfont.glyphs[i][1] /self.curr_font.ttfont.upem) * self.curr_font.points)
+        for i in range(len(g)):
+            g_vmin = startpos[1] - ((self.curr_font.ttfont.glyphs[g[i]][3] /self.curr_font.ttfont.upem) * self.curr_font.points)
+            g_vmax = startpos[1]  + ((self.curr_font.ttfont.glyphs[g[i]][1] /self.curr_font.ttfont.upem) * self.curr_font.points)
             # compare glyph bounds to line bounds and update line values if necessary
             if g_vmin < self.minpos[1]:
                 # get hmin and max
-                self.minpos[0] = startpos [0] + pos[i][0] - ((self.curr_font.ttfont.glyphs[i][0]/ self.curr_font.ttfont.upem) * self.curr_font.points)
+                self.minpos[0] = startpos [0] + pos[i][0] - ((self.curr_font.ttfont.glyphs[g[i]][0]/ self.curr_font.ttfont.upem) * self.curr_font.points)
                 self.minpos[1] = g_vmin
-                self.minpos[2] = startpos[0] + pos[i][0] + ((self.curr_font.ttfont.glyphs[i][2] / self.curr_font.ttfont.upem)* self.curr_font.points)
+                self.minpos[2] = startpos[0] + pos[i][0] + ((self.curr_font.ttfont.glyphs[g[i]][2] / self.curr_font.ttfont.upem)* self.curr_font.points)
             if g_vmax > self.maxpos[1]:
-                self.maxpos[0] = startpos[0] + pos[i][0] - ((self.curr_font.ttfont.glyphs[i][0]/ self.curr_font.ttfont.upem) * self.curr_font.points)
+                self.maxpos[0] = startpos[0] + pos[i][0] - ((self.curr_font.ttfont.glyphs[g[i]][0]/ self.curr_font.ttfont.upem) * self.curr_font.points)
                 self.maxpos[1] = g_vmax
-                self.maxpos[2] = startpos[0] + pos[i][0] + ((self.curr_font.ttfont.glyphs[i][2] / self.curr_font.ttfont.upem)* self.curr_font.points)
+                self.maxpos[2] = startpos[0] + pos[i][0] + ((self.curr_font.ttfont.glyphs[g[i]][2] / self.curr_font.ttfont.upem)* self.curr_font.points)
 
     def has_badspace(self, threshold = 4):
         # threshold in ems
@@ -131,6 +131,7 @@ class GlyphCluster:
         self.h_start = h
         self.font = font 
         self.width = 0
+        self.glyphs = [] # list of [vmin, hmin, vmax, hmax] for each glyph
 
     # def add_glyph
 
@@ -141,6 +142,8 @@ def main():
     for (opcode, data) in reader.parse():
         if reader.pageno > 1:
             break
+
+
 
 if __name__ == "__main__":
     main()
