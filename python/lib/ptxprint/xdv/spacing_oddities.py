@@ -72,7 +72,6 @@ class SpacingOddities(XDViPositionedReader):
         if self.prev_line.maxpos[1] > self.line.minpos[1]:
             if max(0, min(self.prev_line.maxpos[2], self.line.minpos[2]) - max(self.prev_line.maxpos[0], self.line.minpos[0])) >0:
                 self.line.collisions.append([max(self.prev_line.maxpos[0], self.line.minpos[0]), self.line.minpos[1], min(self.prev_line.maxpos[2], self.line.minpos[2]), self.prev_line.maxpos[1]])
-                
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
@@ -82,7 +81,7 @@ class Line:
         self.h_gc_threshold = 1 # space threshold to add glyph to current gc or start new gc
         self.minpos = [0,v,0] # [hmin, vmin, hmax]
         self.maxpos = [0,v,0] # [hmin, vmax, hmax]
-        collisions = [] # [xmin, ymin, xmax, ymax] if exists. ymin is top, ymax is bottom.
+        self.collisions = [] # [xmin, ymin, xmax, ymax] if exists. ymin is top, ymax is bottom.
 
     def change_font(self, h, font):
         self.curr_font = font
@@ -121,7 +120,7 @@ class Line:
                     maxspace = fontsize*threshold
                 width = self.glyph_clusters[i+1].h_start - (self.glyph_clusters[i].h_start + self.glyph_clusters[i].width)
                 if width > maxspace:
-                    bad_spaces.append([(self.glyph_clusters[i].h_start + self.glyph_clusters[i].width, self.v_start), width, width/fontsize])
+                    bad_spaces.append([(self.glyph_clusters[i].h_start + self.glyph_clusters[i].width, self.vstart), width, width/fontsize])
         return bad_spaces
     
     def has_collision(self):
