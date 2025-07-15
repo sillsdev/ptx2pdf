@@ -75,7 +75,7 @@ class Line:
         self.h_gc_threshold = 1 # space threshold to add glyph to current gc or start new gc
         self.vmin = v
         self.vmax = v
-        self.self.collisions = [] # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
+        self.collisions = [] # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
 
     def change_font(self, h, font):
         self.curr_font = font
@@ -120,7 +120,10 @@ class Line:
             while i< len(prev_gcs) and j < len(self.glyph_clusters):
                 if prev_gcs[i].vmax >= self.glyph_clusters[j].vmin:
                     # collision on gc level
-                    self.collisions.append(cols if (cols := self.glyph_clusters[j].glyph_collision(prev_gcs[i])) else None)
+                    cols = self.glyph_clusters[j].glyph_collision(prev_gcs[i])
+                    if len(cols) > 0:
+                        for c in cols:
+                            self.collisions.append(c)
                 if (prev_gcs[i].hstart +prev_gcs[i].width) < (self.glyph_clusters[j].hstart + self.glyph_clusters[j].width):
                     i += 1
                 else:
@@ -154,10 +157,16 @@ class GlyphCluster:
         while i < len(self.glyphs) and j < len(other.glyphs):
             if self.glyphs[i][3] >= other.glyphs[j][1]:
                 # collision of glyphs
-                collisions.append([min(self.glyphs[i][0], other.glyphs[j][0]),
-                                min(self.glyphs[i][1], other.glyphs[j][1]),
-                                max(self.glyphs[i][2], other.glyphs[j][2]),
-                                max(self.glyphs[i][3], other.glyphs[j][3])])
+                # format for rectangle drawing: [xtopleft, ytopleft, width, height]
+                x_topleft = min(self.glyphs[i][0], other.glyphs[j][0])
+                y_topleft = min(self.glyphs[i][1], other.glyphs[j][1])
+                width = max(self.glyphs[i][2], other.glyphs[j][2]) - x_topleft
+                height = max(self.glyphs[i][3], other.glyphs[j][3]) - y_topleft
+                collisions.append([x_topleft, y_topleft, width, height])
+                # collisions.append([min(self.glyphs[i][0], other.glyphs[j][0]),
+                #                 min(self.glyphs[i][1], other.glyphs[j][1]),
+                #                 max(self.glyphs[i][2], other.glyphs[j][2]),
+                #                 max(self.glyphs[i][3], other.glyphs[j][3])])
             if self.glyphs[i][2] < other.glyphs[j][2]:
                 i += 1
             else:
