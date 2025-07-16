@@ -1,5 +1,6 @@
 import re, regex, logging, os, time
 import usfmtc
+from usfmtc import _filetypes
 from usfmtc.reference import Ref, RefList
 from usfmtc.usfmparser import Grammar
 from ptxprint.utils import universalopen, runChanges
@@ -341,10 +342,14 @@ class Usfm:
         self.book = book
 
     @classmethod
-    def readfile(cls, fname, grammar=None, sheet=None, elfactory=None, **kw):       # can also take the data straight
+    def readfile(cls, fname, grammar=None, sheet=None, elfactory=None, informat=None, **kw):       # can also take the data straight
         if grammar is None:
             grammar = createGrammar(sheet if sheet is not None else [])
-        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, **kw)
+        if informat is None and os.path.exists(fname):
+            (_, ext) = os.path.splitext(fname)
+            if ext not in _filetypes:
+                informat = "usfm"
+        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, **kw)
         if usxdoc is None:
             return None
         book = None
