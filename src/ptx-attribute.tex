@@ -295,6 +295,7 @@
 \def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="the crowd"
 \def\save@ttribute#1="#2" #3\E{%
   \trace{A}{save@ttribute '#1'="#2" #3}%
+  \attrspecialfalse
   \lowercase{\edef\attr@key{#1}}\edef\attr@val{#2}%
   \ifx\attr@val\relaxval
     \ifx\thisdefault@ttrkey\empty
@@ -366,9 +367,10 @@
 }
 
 \def\set@ttribute#1#2{%
-  \CheckSpecial{#1}\ifattrspecial\ifcsname boxed-\thiswh@tstyle\endcsname\else %
-    \MSG{A special attribute (#1) was used for \thiswh@tstyle\space but it was not listed as an attribute in the stylesheet}%
-  \fi\fi
+  \ifmst@nestyle\else% No check for milestones, it's irrelevant.
+   \CheckSpecial{#1}\ifattrspecial\ifcsname boxed-\thiswh@tstyle\endcsname\else %
+     \MSG{A special attribute (#1) was used for \thiswh@tstyle[\stylet@pe]\space but it was not listed as an attribute in the stylesheet}%
+  \fi\fi\fi
   \x@\xdef\csname attr:#1\endcsname{#2}%
   \xdef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.
 }

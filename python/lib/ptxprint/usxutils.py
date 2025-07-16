@@ -396,6 +396,7 @@ class Usfm:
             if isin:
                 if x.tag == 'para':
                     currp = x
+            else:
                 continue
             p = x
             if x.parent == root:
@@ -437,7 +438,8 @@ class Usfm:
                 if s == "k":
                     v = p.get("key", p.text.strip().replace(" ", ""))    # there is more to this
                     self.kpars[v] = currp
-            p.pos = RefPos(p.pos, curr)
+            if curr is not None:
+                p.pos = RefPos(p.pos, curr)
         self.chapters.append(i)
         for s in sections:
             _addorncv_hierarchy(s, curr)
@@ -734,28 +736,31 @@ class Usfm:
                 addellipsis(root, i - 1)
         return
 
-    def addStrongs(self, strongs, showall):
+    def addStrongs(self, strongs, showall, script=None):
         self.addorncv()
         currstate = [None, set()]
         root = self.getroot()
         enters = "cell char versepara".split()
+        found = {}
         for x, isin in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
+            if x.tag == "ms" and x.get('style', '') == "xts":
+                continue
             if isin:
                 t = x.text
-                r = x.pos.ref if hasattr(x.pos, 'ref') else None
             else:
                 t = x.tail
-                r = x.pos.ref
-            if r != currstate[0]:
+            r = x.pos.ref if hasattr(x.pos, 'ref') else None
+            if r is not None and r != currstate[0]:
                 currstate = [r, set(strongs.getstrongs(r))]
+                found = {}
             for st in list(currstate[1]):
-                regs = strongs.regexes[st] if st in strongs.regexes else strongs.addregexes(st)
+                regs = strongs.regexes[st] if st in strongs.regexes else strongs.addregexes(st, script=script)
                 if not len(regs):
                     currstate[1].remove(st)
                     continue
                 matched = False
                 try:
-                    regre = regex.compile(("(?<!\u200A?)" if not showall else "") + regs, regex.I | regex.F)
+                    regre = regex.compile(regs, regex.I | regex.F)
                 except regex._regex_core.error as e:
                     raise SyntaxError(f"Faulty regex in {regs}: {e}")
                 b = regre.split(t)
@@ -765,17 +770,27 @@ class Usfm:
                         i = 0
                     else:
                         x.tail = b[0] + "\u200B"
+                        if x.parent is None:
+                            breakpoint()
                         i = list(x.parent).index(x) + 1
+                    lastw = x
                     for a in range(1, len(b), 2):
-                        e = self.factory("char", attrib={"style": "xts", "strong": st.lstrip("GH"), "align": "r"})
-                        e.text = "\\nobreak \u200A" + b[a]
-                        if a < len(b) - 2:
-                            e.tail = b[a+1]
-                        if isin:
-                            x.insert(i, e)
+                        if showall or st not in found.get(b[a], []):
+                            e = self.factory("ms", parent=x, attrib={"style": "xts", "strongs": st.lstrip("GH"), "align": "r"})
+                            e.tail = "\u2064\u200A" + b[a]
+                            found.setdefault(b[a], []).append(st)
+                            if a < len(b) - 1:
+                                e.tail += b[a+1]
+                            if isin:
+                                x.insert(i, e)
+                            else:
+                                x.parent.insert(i, e)
+                            i += 1
+                            lastw = e
+                        elif isin and i == 0:
+                            x.text += b[a] + (b[a+1] if a < len(b) - 2 else "")
                         else:
-                            x.parent.insert(i, e)
-                        i += 1
+                            lastw.tail += b[a] + (b[a+1] if a < len(b) - 2 else "")
                     matched = True
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
 

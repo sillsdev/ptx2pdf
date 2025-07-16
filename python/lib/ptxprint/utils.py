@@ -98,6 +98,7 @@ _categoryColors = {
 }
 
 rtlScripts = "Arab Armi Avst Hebr Mand Mani Nkoo Phli Phlp Phnx Prti Samr Sarb Sogd Sogo Syrc Thaa Yezi".split()
+nonSpacingScripts = "Khmr Laoo Mymr Thai".split()
 
 def booknum(bookcode):
     if len(bookcode):
@@ -614,15 +615,15 @@ def texprotect(s):
 
 wfreg = "\\p{L}\\p{M}\\p{Sk}\\-\u200C\u200D"
 special_regexes = {
-    'ba': f'(?=[^{wfreg}])',
-    'BA': f'(?=[{wfreg})',
-    'bb': f'(?<=[^{wfreg}])',
-    'BB': f'(?<=[{wfreg}])',
+    'ba': f'(?=$|[^{wfreg}])',
+    'BA': f'(?=$|[{wfreg})',
+    'bb': f'(?<=^|[^{wfreg}])',
+    'BB': f'(?<=^|[{wfreg}])',
     'w': f'[{wfreg}]',
     'W': f'[^{wfreg}]'
 }
 
-def regex_localiser(r):
+def regex_localiser(r, script=None):
     specials = "|".join(special_regexes.keys())
     return re.sub(r"\\({})".format(specials), lambda m:special_regexes.get(m.group(1), "\\"+m.group(1)), r)
 

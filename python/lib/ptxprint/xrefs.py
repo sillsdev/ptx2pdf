@@ -1,11 +1,12 @@
 
-from ptxprint.utils import cachedData, pycodedir, regex_localiser
+from ptxprint.utils import cachedData, pycodedir, regex_localiser, nonSpacingScripts
 from usfmtc.reference import RefList, RefRange, Ref
 from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored, get_ces
 from usfmtc.versification import cached_versification
 from unicodedata import normalize
 from functools import reduce
 import xml.etree.ElementTree as et
+import regex
 import re, os, gc
 import logging
 
@@ -266,13 +267,13 @@ class XMLXrefs(BaseXrefs):
             st = e[0]
             if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
                 continue
-            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("GH")) if st is not None and self.shownums else ""
+            s = '\\xts|strongs="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("GH")) if st is not None and self.shownums else ""
             if isinstance(e[2], RefList):
                 r = e[2]
                 if self.filters is not None:
                     r = RefList([f for f in r if f.first.book in self.filters])
                 r.simplify()
-                rs = revrsf(r, vrsf).str(env=self.env, level=2, context=baseref.last)
+                rs = revrsf(r, vrsf).str(env=self.env, level=2, context=baseref.last, start="verse")
                 if len(rs) and e[1] in ('backref', 'crossref'):
                     a.append(s + "\\+xti " + rs + "\\+xti*")
                 elif len(rs):
@@ -287,14 +288,13 @@ class XMLXrefs(BaseXrefs):
     def process(self, bk, triggers, owner, usfm=None, vrsf=None):
         xmldat = self.xmldat.get(bk, {})
         if len(xmldat):
-            #import pdb; pdb.set_trace()
             if usfm is not None:
                 self._addranges(xmldat, usfm)
             nbkenv = self.env.copy(nobook=True)
             for k, v in xmldat.items():
                 res = self._procnested(v, k, vrsf=vrsf)
                 kf = revrsf(k.first, vrsf)
-                shortref = str(kf.verse) if k.first.verse == k.last.verse else "{}-{}".format(kf.verse, revrsf(k.last.verse, vrsf))
+                shortref = str(kf.verse) if k.first.verse == k.last.verse else "{}-{}".format(kf.verse, revrsf(k.last.verse, vrsf).str(kf, env=nbkenv))
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):
                     info = {
@@ -410,7 +410,7 @@ class StrongsXrefs(XMLXrefs):
         if wordanalysisfile is not None:
             self._readWordAnalysis(wordanalysisfile)
 
-    def addregexes(self, st):
+    def addregexes(self, st, script=None):
         if self.strongs is None:
             return ""
         wds = self.strongs.get(st,{}).get('local', [])
@@ -436,6 +436,12 @@ class StrongsXrefs(XMLXrefs):
                     p = r"\ba"
                 else:
                     t = t[:-1]
+                if script in nonSpacingScripts and "\u200B" not in t:
+                    y = regex.split(r"((?=\p{{sc={}}})\p{{L}}\p{{M}}*)".format(script), t)
+                    for i in range(2, len(y)-2, 2):
+                        if y[i] == "":
+                            y[i] = "[\u200B]?"
+                    t = "".join(y)
                 if "/" in t:            # allows two words in either order
                     (a, b) = t.split("/")
                     t = a
@@ -453,7 +459,7 @@ class StrongsXrefs(XMLXrefs):
                 pending += r + s + p
             reg.append(pending)
         res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
-        res = regex_localiser(res)
+        res = regex_localiser(res, script=script)
         logger.debug(f"strongs regexes {st} = {res}")
         self.regexes[st] = res
         return res

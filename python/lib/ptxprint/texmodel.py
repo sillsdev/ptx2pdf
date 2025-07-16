@@ -1049,8 +1049,9 @@ class TexModel:
                     and self.dict["notes/ifxrexternalist"] and isCanon:
             (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("Add strongs numbers to text")
+            script = (printer.get("fcb_script") or "").title()
             try:
-                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"])
+                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
             except SyntaxError as e:
                 self.printer.doError("Processing Strongs", secondary=str(e))
 
