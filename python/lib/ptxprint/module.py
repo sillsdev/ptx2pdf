@@ -82,7 +82,7 @@ class Module:
         rl = getreflist(m.group(2), booknames=self.usfms.booknames)
         loctype = m.group(1) or self.refmode
         tocindex = self.localcodes.get(loctype.lower(), 0)
-        return rl.str(env=self.usfms.booknames, level=tocindex)
+        return rl.str(env=self.model.printer.getRefEnv(), level=tocindex)
 
     def testexclude(self, einfo):
         return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))
@@ -123,11 +123,6 @@ class Module:
                 except SyntaxError as e:
                     raise SyntaxError(f"{e} at {s} at line {eloc.pos.l} char {eloc.pos.c}")
                 for r in refs:
-                    if r.first.verse == 1:
-                        if not isinstance(r, RefRange):
-                            r = RefRange(r.first, r.first.copy())
-                            r.last.verse = 1
-                        r.first.verse = 0
                     p = self.get_passage(r, removes=self.removes, strippara= s=="refnp")
                     if not len(p):
                         continue
@@ -165,9 +160,5 @@ class Module:
             book = None
         if book is None:
             return []
-        res = book.subdoc(ref, removes=removes, strippara=strippara, addzsetref=False).getroot()
-        #zsetref = book.make_zsetref(ref.first, self.usfms.booknames.getLocalBook(ref.first.book, 1), res[0].parent, res[0].pos)
-        if not len(res):
-            return res
-        zsetref = book.make_zsetref(ref.first, None, res[0].parent, res[0].pos)
-        return [zsetref] + list(res)
+        res = book.xml.getrefs(ref, headers=True)
+        return res.getroot()
