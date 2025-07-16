@@ -294,7 +294,7 @@ class XMLXrefs(BaseXrefs):
             for k, v in xmldat.items():
                 res = self._procnested(v, k, vrsf=vrsf)
                 kf = revrsf(k.first, vrsf)
-                shortref = str(kf.verse) if k.first.verse == k.last.verse else "{}-{}".format(kf.verse, revrsf(k.last.verse, vrsf).str(kf, env=nbkenv))
+                shortref = str(kf.verse) if k.first.verse == k.last.verse else "{}-{}".format(kf.verse, revrsf(k.last, vrsf).str(kf, env=nbkenv))
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):
                     info = {

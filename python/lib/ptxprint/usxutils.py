@@ -533,7 +533,7 @@ class Usfm:
                 return True
             if e.parent.get('style', e.tag) in removes:
                 return False
-            if any(e.pos.ref in refranges[i] for i in rlist) \
+            if any(getattr(e.pos, 'ref', None) in refranges[i] for i in rlist) \
                     and (e.pos.ref.first.verse != 0 or refranges[i].first.verse == 0 or e.get('style', e.tag) == "c"):
                 if strippara and e.tag == "para":
                     return False
