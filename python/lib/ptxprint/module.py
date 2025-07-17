@@ -1,5 +1,6 @@
 import re, traceback
 from ptxprint.usxutils import Usfm
+from ptxprint.utils import runChanges
 from usfmtc.reference import RefList, RefRange
 from usfmtc.usxmodel import iterusx
 import logging
@@ -14,11 +15,11 @@ def read_module(inf, sheets):
 
 #    e: ([mkrs], modelmap entry, invert_test)
 exclusionmap = {
-    'v': (None, "document/ifshowversenums", False, 'verse'),    # opposite use of %
+#    'v': (None, "document/ifshowversenums", False, 'verse'),    # opposite use of %
     'x': (('x',), None, False, 'note'),
     'f': (('f',), "notes/includefootnotes", True, 'note'),
     's': (('s', 's1', 's2', 'r'), "document/sectionheads", True, 'para'),
-    'c': (None, 'document/ifshowchapternums', True, 'chapter'),
+#    'c': (None, 'document/ifshowchapternums', True, 'chapter'),
     'p': (None, None, False, 'figure')
 }
 
@@ -42,7 +43,7 @@ class Module:
     localise_re = re.compile(r"\$([asl]?)\((.*?)\)")
     localcodes = {'a': 0, 's': 1, 'l': 2}
 
-    def __init__(self, fname, usfms, model, usfm=None, text=None):
+    def __init__(self, fname, usfms, model, usfm=None, text=None, changes=[]):
         self.fname = fname
         self.usfms = usfms
         self.model = model
@@ -64,6 +65,8 @@ class Module:
             if text is None and self.fname is not None:
                 with open(self.fname, encoding="utf-8") as inf:
                     text = inf.read()
+            if len(changes):
+                text = runChanges(changes, None, text, self.model._changeError)
             self.doc = Usfm.readfile(text if text is not None else fname, grammar=grammar, informat="usfm")
 
     def getBookRefs(self):

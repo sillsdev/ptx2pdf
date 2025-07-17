@@ -863,7 +863,7 @@ class TexModel:
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
-        mod = Module(infpath, usfms, self, text=text)
+        mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
         mod.parse()
         res = mod.doc
         if res.xml.errors:
