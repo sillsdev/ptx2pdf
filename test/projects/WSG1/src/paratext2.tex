@@ -1,0 +1,440 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Paratext formatting macros, spanning footnotes version
+
+%+c_pt_intro
+% Here we declare generic useful stuff. Including log output routines.
+\TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
+\catcode`\@=11
+\count11=20 \count14=20 % need more temporary dimens and boxes
+\let\x@=\expandafter
+\newif\iftemp \tempfalse
+\def\stripqu@tes#1"#2"#3\relax{#2}% Strip quotes if present
+\edef\t@mp{\jobname}%
+\xdef\j@bname{\x@\x@\x@\stripqu@tes\x@\t@mp\x@"\t@mp"\relax}
+
+%There is no equivalent definition to maxdimen for counts
+\def\m@xcount{2147483647}
+\def\m@ncount{-2147483647} % Technically ...8, but TeX moans about athat.
+
+\def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
+\def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
+
+% Version .999992 (? or 3) changed pdfsavepos page position (+cur_h_offset) to use pdftex's definition (+473628)
+\def\XeTeXvcheck#1.#2\E{\message{This is xetex "#1" "#2"}\ifnum #2 > 999991
+    \global\let\adjustpdfXsavepos\empty\else
+    \gdef\adjustpdfXsavepos{\advance\dimen0 1in}%
+    \gdef\adjustpdfYsavepos{\advance\dimen1 1in}%
+  \fi
+}
+\x@\x@\x@\XeTeXvcheck\x@\the\x@\XeTeXversion\XeTeXrevision\E
+
+
+% This lot has to be early
+\newif\ifinn@te\inn@tefalse
+\newif\ifm@rksonpage % Try to keep track of marks, so we can kill them in end-sections. 
+\newif\ifm@rksinchunk % Try to keep track of marks, so we know what needs a textborder
+\m@rksonpagefalse
+%-c_pt_intro
+
+%+c_define-hooks
+% `\addtoendhooks` collects macros to be executed at the end of the job
+\def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks#1}}
+\def\addtoendhookstr#1#2{\addtoendhooks{\trace{x}{Hook:#2 (}#1}\trace{x}{)}}
+\def\addtoendptxhooks#1{\x@\global\x@\@ndptxhooks\x@{\the\@ndptxhooks #1}}
+\def\addtostartptxhooks#1{\x@\global\x@\st@rtptxhooks\x@{\the\st@rtptxhooks #1}}
+\newtoks\@ndhooks
+\newtoks\st@rtptxhooks
+\newtoks\@ndptxhooks
+\let\s@ve@nd=\end
+\def\end{\ifsk@pping\egroup\fi\par\vfill\supereject\ifvoid\partial\else\box\partial\eject\fi \the\@ndhooks \s@ve@nd}
+
+%: `\addtoinithooks` is for stuff we do during one-time-setup before the first PTX file
+\def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
+\newtoks\@nithooks
+
+%: `\addtoidhooks` is for stuff we do at an id or a periph
+\def\addtoidhooks#1{\x@\global\x@\@idhooks\x@{\the\@idhooks #1}}
+\newtoks\@idhooks
+
+%: `\addtoeveryparhooks` is for the start of every paragraph
+\def\addtoeveryparhooks#1{\x@\global\x@\@veryparhooks\x@{\the\@veryparhooks #1}}
+\newtoks\@veryparhooks
+
+\def\addtoeveryparstarthooks#1{\x@\global\x@\@veryparstarthooks\x@{\the\@veryparstarthooks #1}}
+\newtoks\@veryparstarthooks
+
+%: `\addtoparstylehooks` is for stuff to do at each new parstyle marker
+\def\addtoparstylehooks#1{\x@\global\x@\p@rstylehooks\x@{\the\p@rstylehooks #1}}
+\newtoks\p@rstylehooks
+%-c_define-hooks
+
+%+c_timestamp
+% initialize a \timestamp macro for the cropmarks etc to use
+\edef\timestamp{\number\year.% print the date and time of the run
+  \ifnum\month<10 0\fi \number\month.%
+  \ifnum\day<10 0\fi \number\day\space :: }%
+\count255=\time \divide\count255 by 60
+\edef\hrsmins{\ifnum\count255<10 0\fi \number\count255:}%
+\multiply\count255 by 60 \advance\count255 by -\time
+\count255=-\count255
+\edef\hrsmins{\hrsmins
+  \ifnum\count255<10 0\fi \number\count255}%
+\edef\timestamp{\timestamp \hrsmins}
+
+%-c_timestamp
+
+%+c_evenpage
+% Some things need to start on an odd-numbered page, others on an even numbered page
+\def\TPILB{}
+\def\tp@lbout{\def\pagecontents{\everypar{}\bgroup\vfill\TPILB\egroup}\plainoutput\let\pagecontents\empty}
+\def\zEmptyPage{\outemptyp@ge{\tp@lbout}}
+\def\outemptyp@ge#1{\message{Blank page for \the\totalp@ges}\ifp@geone\temptrue\else\tempfalse\fi\bgroup\m@rksonpagefalse #1 \egroup\iftemp\global\p@geonetrue\fi}
+\def\need@oddpage#1{\endgraf\ifodd\totalp@ges \outemptyp@ge{#1}\fi}
+\def\need@evenpage#1{\endgraf\ifodd\totalp@ges\else\outemptyp@ge{#1}\fi}
+\def\need@quadpage#1{\endgraf\ifodd\totalp@ges\else\outemptyp@ge{#1}\need@quadpage\fi \ifodd\numexpr \XeTeXpdfpagecount/2\relax \outemptyp@ge{#1}\outemptyp@ge{#1}\fi}
+\def\zNeedEvenPage{\message{Even page wanted on \the\pageno}\need@evenpage{\tp@lbout}}
+\def\zNeedOddPage{\message{Odd page wanted on \the\pageno}\need@oddpage{\tp@lbout}}
+\def\zNeedQuadPage{\message{Quad page wanted on \the\pageno}\need@quadpage{\tp@lbout}}
+%-c_evenpage
+\def\ptxversion{0}
+\def\ifversion#1#2#3{\ifnum\ptxversion=0\relax #2\else
+    \ifnum\ptxversion < #1\relax #3\else #2\fi\fi}
+
+%+c_imports
+\input ptx-constants.tex
+\input ptx-utility.tex
+\input ptx-tracing.tex
+\input ptx-diglot.tex
+\input ptx-para-style.tex
+\input ptx-char-style.tex
+\input ptx-milestone-style.tex
+\input ptx-note-style.tex
+\input ptx-stylesheet.tex % must come after the ptx-*-style.tex macros
+\input ptx-periph.tex % 
+\input ptx-attribute.tex %Must come after ptx-stylesheet
+\input ptx-references.tex
+\input ptx-cropmarks.tex
+\input ptx-toc.tex
+\input ptx-tables.tex
+\input ptx-triggers.tex % must come before adj-list and pic-list
+\input ptx-adj-list.tex % must come after ptx-stylesheet.tex
+\input ptx-pic-list.tex % must come after ptx-stylesheet.tex
+\input ptx-cutouts.tex
+\input ptx-callers.tex % must come after ptx-note-style.tex
+\input ptx-figure.tex % figure-handling
+% Additional modules that are not part of the normal ptx2pdf module
+\input ptxplus-character-kerning.tex
+\input ptx-unicode.tex
+% We want to import this module here, but it has to come after the stylesheet is loaded.
+%\input ptxplus-marginalverses.tex
+\input ptx-extended.tex % \esb and friends.
+\input ptx-borders.tex % Borders for esb etc
+\input ptx-labels.tex % \zlabel and friends
+\input ptx-output.tex % output routines
+\input ptx-plugins.tex % Load optional plugins based on contents of \pluginlist, if defined
+\input marginnotes
+%-c_imports
+
+%+c_fonts-basic
+% default font names (override in setup file)
+\ifx\regular\undefined   \def\regular{"Times New Roman"}      \fi
+\ifx\bold\undefined      \def\bold{"Times New Roman/B"}       \fi
+\ifx\italic\undefined    \def\italic{"Times New Roman/I"}     \fi
+\ifx\bolditalic\undefined\def\bolditalic{"Times New Roman/BI"}\fi
+%-c_fonts-basic
+
+\let\newb@x=\newbox
+\let\newc@unt=\newcount
+\let\newt@ks=\newtoks
+\let\newdim@n=\newdimen
+\let\newins@rt=\newinsert
+\let\n@wif=\newif
+
+% set baseline appropriately for the given style (may be using much smaller font than body)
+% baselineskip = leading
+\def\s@tbaseline#1#2{% Setbaseline-normal
+  \trace{F}{s@tbaseline #1\c@rrdstat /\noexpand#2=#2}%
+  \def\s@urce{no data}%
+  \def\f@ntstyle{#1\c@rrdstat}%
+  \@s@tbaseline{#1}{#2}%
+}
+
+\def\s@tbaseline@#1#2{% Setting-Side specific already, without looking in the tree
+  \trace{F}{s@tbaseline@ #1#2}%
+  \def\s@urce{no data}%
+  \def\f@ntstyle{#1#2}%
+  \@s@tbaseline{#1#2}{#1#2}%
+}
+
+\def\@s@tbaseline#1#2{%
+  \getp@ram{baseline}{#1}{#2}\ifx\p@ram\relax
+    \getp@ram{fontsize}{#1}{#2}\ifx\p@ram\relax\else
+      \def\s@urce{calcn:\f@ntstyle}%
+      \dimen0=\p@ram\le@dingunit
+      \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
+      \trace{F}{baseline [\f@ntstyle] (#1,#2) = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
+      \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0
+      \should@xist{}{\f@ntstyle}%
+    \fi
+  \else
+    \def\s@urce{store:\f@ntstyle}%
+    \baselineskip=\p@ram\fi
+  \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
+
+\def\n@ffin#1{} %  Utility function
+
+\def\includeifpresent#1{%
+  \openin\t@mpfile="#1"
+  \ifeof\t@mpfile\closein\t@mpfile
+    \immediate\write-1{Optional file "#1" Cannot be found}%
+    \let\n@xt\relax
+  \else
+    \closein\t@mpfile
+    \immediate\write-1{Reading optional file "#1"}%
+    \def\n@xt{\traceifset{#1}\input "#1"\traceifcheck{#1}}%
+  \fi
+  \n@xt}
+
+\def\@pdffile#1#2{}
+\def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet
+  \ifx\XeTeXpdfpagecount\undefined
+    \MSG{*** sorry, \string\includepdf\space requires XeTeX 0.997 or later}%
+    \let\n@xt\relax
+  \else \let\n@xt\incl@depdf \fi
+  \n@xt}
+\def\incl@depdf{\begingroup
+  \m@kedigitsother \catcode`\[=12 \catcode`\]=12
+  \futurelet\n@xt\t@stincl@de@ptions}
+\def\t@stincl@de@ptions{\ifx\n@xt[\let\n@xt\incl@de@ptions
+  \else\let\n@xt\incl@deno@ptions\fi\n@xt}
+\def\incl@deno@ptions#1{\incl@de@ptions[]{#1}}
+\def\incl@de@ptions[#1]#2{%
+  \pdfp@ges=\XeTeXpdfpagecount "#2"\relax
+  \whichp@ge=0
+  \msg{includepdf #2 pages=\the\pdfp@ges}
+  \edef\tmp{\string\@pdffile\string{\the\pdfp@ges\string}\string{#2\string}}%
+  \x@\immediate\x@\write\x@\p@rlocs\x@{\tmp}%
+  \loop \ifnum\whichp@ge<\pdfp@ges
+    \advance\whichp@ge by 1
+    \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{"#2"}{page \whichp@ge #1}}%
+    \ifdim\wd0>\pdfpagewidth
+      \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{"#2"}{page \whichp@ge #1 width \pdfpagewidth}}%
+    \fi
+    \ifdim\ht0>\pdfpageheight
+      \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{"#2"}{page \whichp@ge #1 height \pdfpageheight}}%
+    \fi
+    {\def\c@rrID{#2 #1 page \number\whichp@ge}% for lower crop-mark info, if requested
+      \shipcompletep@gewithcr@pmarks{\vbox{\box0}}}%
+    \ifholdpageno\else\advancepageno\fi
+    \repeat
+  \endgroup % begun in \incl@depdf
+}
+\newcount\pdfp@ges %Pages in the pdf
+\newcount\whichp@ge
+\newcount\im@gecount
+\newcount\totalp@ges % Page count for this entire job, (excluding cover)
+\totalp@ges=0
+\newif\ifendbooknoeject \endbooknoejectfalse
+\newif\iflastbooknoeject \lastbooknoejectfalse
+\def\pagebreak{\leavevmode\message{pagebreak}\endp@ge} %A pagebreak that forces a blank page to be output if there's nothing on the page yet.
+\def\endpage{\message{endpage}\endp@ge} %A pagebreak that doesn't force a blank page to be output
+\def\endp@ge{\ifhmode\par\fi
+  \ifsk@pping \egroup \fi%
+  \ifhe@dings\endhe@dings\fi%
+  \ifdiglot \vbox to 0pt{}\fi%
+  \vfill\eject%
+}
+\def\bookendpagebreak{
+  \trace{o}{bookendpagebreak endbooknoeject\ifendbooknoeject true\else false\fi}%
+  \ifsk@pping \egroup \fi
+  \ifhe@dings\endhe@dings\fi
+  \ifendbooknoeject
+      \trace{o}{NOT Ejecting page}%
+  \else\ifx\PageAlign\val@MULTI
+      \trace{o}{NOT Ejecting page (align=\PageAlign)}%
+    \else
+      \trace{o}{Ejecting page}%
+      \vfill\eject\fi\fi
+}
+
+\def\columnbreak{\vfill\eject}
+
+\newcount\badspacepenalty \badspacepenalty=100
+\tolerance=9000
+\hbadness=10000
+% how much space to happily insert before allowing overfull lines. Must be >27pt for emergencypass to run
+\emergencystretch=1in
+\vbadness=10000
+\vfuzz=2pt
+\maxdepth=\maxdimen
+\frenchspacing
+
+\XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
+
+%% various Unicode characters that we handle in TeX... and protect in TOC and PDF bookmarks
+\def\intercharspace{\hskip0pt}
+\def\SFTHYPHEN{\-}
+\def\NBSP{\nobreak\space} % make Unicode NO-BREAK SPACE into a no-break space
+\def\ZWSP{\penalty0\intercharspace\relax} % ZERO WIDTH SPACE is a possible break
+\def\WJ{\leavevmode\nobreak} % WORD JOINER
+\def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
+\def\NQUAD{\BADBREAK\relax\space} % subvert Unicode En-Quad as BAD BREAKING SPACE
+\def\MQUAD{\BADBREAK\hskip 1em plus .2em minus .2em}
+\def\MSPACE{\hskip 1em} % Fixed width
+\def\NSPACE{\hbox{\space}} % Fixed width
+\def\THREEPEREMSPACE{\hskip .333em}
+\def\FOURPEREMSPACE{\hskip .25em}
+\def\SIXPEREMSPACE{\hskip .1666em}
+\def\THINSPACE{\hskip .2em plus .1em minus .1em}
+\def\HAIRSPACE{\nobreak\hskip 0.042em\nobreak\intercharspace} % 1/24 em
+\def\HYPHEN{\char"2010\discretionary{}{}{}}% Contrastive hyphen with hyphen break
+\def\LINESEP{\break}
+\def\GOODBREAK{\penalty-\OptionalBreakPenalty}
+\def\BADBREAK{\penalty\the\badspacepenalty}
+\def\emdash{\char"2014\relax}
+\chardef\|"7C
+\chardef\bslash"5C%
+\chardef\tilde"7E%
+%endash defined in ptx-references.tex
+
+\let\pr@tect=\relax
+\def\pr@tectspecials{%
+  \let\SFTHYPHEN=\relax
+  \let\NBSP=\relax
+  \let\ZWSP=\relax
+  \let\ZWNBSP=\relax
+  \let\WJ=\relax
+  \let\NBHYPH=\relax
+  \let\NQUAD=\relax
+  \let\MQUAD=\relax
+  \let\MSPACE=\relax
+  \let\NSPACE=\relax
+  \let\THREEPEREMSPACE=\relax
+  \let\FOURPEREMSPACE=\relax
+  \let\SIXPEREMSPACE=\relax
+  \let\THINSPACE=\relax
+  \let\HAIRSPACE=\relax
+  \let\HYPHEN=\relax
+  \let\LINESEP=\relax
+  \let\GOODBREAK=\relax
+  \let\BADBREAK=\relax
+}
+
+\catcode"A0=12
+\catcode"AD=12
+\catcode"200B=12
+\catcode"2060=12
+\catcode"FEFF=12
+\catcode"2000=12
+\catcode"2001=12
+\catcode"2002=12
+\catcode"2003=12
+\catcode"2004=12
+\catcode"2005=12
+\catcode"2006=12
+\catcode"2009=12
+\catcode"200A=12
+\catcode"2010=12
+\catcode"2063=12
+\catcode"2064=12
+\catcode"202A=12
+\catcode"202B=12
+\catcode"202C=12
+\def\liter@lspecials{%
+  \def\pr@tect{}%
+  \def\NBSP{^^a0}%
+  \def\SFTHYPHEN{^^ad}%
+  \def\ZWSP{^^^^200b}%
+  \def\WJ{^^^^2060}%
+  \def\ZWNBSP{^^^^feff}%
+  \def\NQUAD{^^^^2000}%
+  \def\MQUAD{^^^^2001}%
+  \def\NSPACE{^^^^2002}%
+  \def\MSPACE{^^^^2003}%
+  \def\THREEPEREMSPACE{^^^^2004}%
+  \def\FOURPEREMSPACE{^^^^2005}%
+  \def\SIXPEREMSPACE{^^^^2006}%
+  \def\THINSPACE{^^^^2009}%
+  \def\HAIRSPACE{^^^^200a}%
+  \def\HYPHEN{^^^^2010}%
+  \def\LINESEP{^^^^2028}%
+  \def\GOODBREAK{^^^^2063}%
+  \def\BADBREAK{^^^^2064}%
+}
+
+\catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
+\catcode"AD=\active   \def^^ad{\pr@tect\SFTHYPHEN}
+\catcode"200B=\active \def^^^^200b{\pr@tect\ZWSP}
+\catcode"2060=\active \def^^^^2060{\pr@tect\WJ}
+\catcode"FEFF=\active \def^^^^feff{\pr@tect\ZWNBSP}
+\catcode"2000=\active \def^^^^2000{\pr@tect\NQUAD}
+\catcode"2001=\active \def^^^^2001{\pr@tect\MQUAD}
+\catcode"2002=\active \def^^^^2002{\pr@tect\NSPACE}
+\catcode"2003=\active \def^^^^2003{\pr@tect\MSPACE}
+\catcode"2004=\active \def^^^^2004{\pr@tect\THREEPEREMSPACE}
+\catcode"2005=\active \def^^^^2005{\pr@tect\FOURPEREMSPACE}
+\catcode"2006=\active \def^^^^2006{\pr@tect\SIXPEREMSPACE}
+\catcode"2009=\active \def^^^^2009{\pr@tect\THINSPACE}
+\catcode"200A=\active \def^^^^200a{\pr@tect\HAIRSPACE}
+\catcode"2010=\active \def^^^^2010{\pr@tect\HYPHEN}
+\catcode"2063=\active \def^^^^2063{\pr@tect\GOODBREAK}
+\catcode"2064=\active \def^^^^2064{\pr@tect\BADBREAK}
+% Default lowercases for hyphenation
+\lccode"2010="2010
+\lccode"2011="2011
+\catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
+\catcode`\@=12
+
+
+\def\asterisk{*}
+\catcode`\%=12 \def\percent{%}\catcode`\%=14
+\catcode`\$=12 \def\dollar{$}   %$ keep editor syntax highlight happy
+\catcode`\#=12 \def\hash{#}\catcode`\#=6
+\catcode`\&=12 \def\ampersand{&}\catcode`\&=4
+\catcode`\^=12 \def\circumflex{^}\catcode`\^=7
+\catcode`\|=12 \def\pipe{^^7c}
+
+\parskip=0pt
+\lineskip=0pt
+% NOTE: The baselineskip is set negative here. Later on it will
+% be set to the default of 14pt unless the user has specified
+% another setting. If that is the case, that setting will be
+% used and text can then move off the baseline which makes
+% balancing easier but causes text to move off the grid in
+% some instances.
+\baselineskip=-14pt
+
+\widowpenalty=10000
+\clubpenalty=10000
+\brokenpenalty=50
+\savingvdiscards=1
+\endinput

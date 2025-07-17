@@ -1,0 +1,563 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007-2008 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ptx-tables.tex
+% support for USFM table markup
+
+\addtoinithooks{\set@ptablemarkers}
+
+\def\@settablemark#1#2{\x@\def\csname #1\endcsname{\t@blecell{#1}{#2}}\structm@rker{#1}}
+
+\m@kedigitsletters
+\def\set@ptablemarkers{% redefine the markers from usfm.sty
+  \@settablemark{th1}{l}
+  \@settablemark{th2}{l}
+  \@settablemark{th3}{l}
+  \@settablemark{th4}{l}
+  \@settablemark{th5}{l}
+  \@settablemark{th6}{l}
+  \@settablemark{th7}{l}
+  \@settablemark{th8}{l}
+  \@settablemark{th9}{l}
+  \@settablemark{thc1}{c}
+  \@settablemark{thc2}{c}
+  \@settablemark{thc3}{c}
+  \@settablemark{thc4}{c}
+  \@settablemark{thc5}{c}
+  \@settablemark{thc6}{c}
+  \@settablemark{thc7}{c}
+  \@settablemark{thc8}{c}
+  \@settablemark{thc9}{c}
+  \@settablemark{thr1}{r}
+  \@settablemark{thr2}{r}
+  \@settablemark{thr3}{r}
+  \@settablemark{thr4}{r}
+  \@settablemark{thr5}{r}
+  \@settablemark{thr6}{r}
+  \@settablemark{thr7}{r}
+  \@settablemark{thr8}{r}
+  \@settablemark{thr9}{r}
+  \@settablemark{tc1}{l}
+  \@settablemark{tc2}{l}
+  \@settablemark{tc3}{l}
+  \@settablemark{tc4}{l}
+  \@settablemark{tc5}{l}
+  \@settablemark{tc6}{l}
+  \@settablemark{tc7}{l}
+  \@settablemark{tc8}{l}
+  \@settablemark{tc9}{l}
+  \@settablemark{tcc1}{c}
+  \@settablemark{tcc2}{c}
+  \@settablemark{tcc3}{c}
+  \@settablemark{tcc4}{c}
+  \@settablemark{tcc5}{c}
+  \@settablemark{tcc6}{c}
+  \@settablemark{tcc7}{c}
+  \@settablemark{tcc8}{c}
+  \@settablemark{tcc9}{c}
+  \@settablemark{tcr1}{r}
+  \@settablemark{tcr2}{r}
+  \@settablemark{tcr3}{r}
+  \@settablemark{tcr4}{r}
+  \@settablemark{tcr5}{r}
+  \@settablemark{tcr6}{r}
+  \@settablemark{tcr7}{r}
+  \@settablemark{tcr8}{r}
+  \@settablemark{tcr9}{r}
+  \let\@TR=\tr
+  \let\tr=\t@blerow
+}
+\m@kedigitsother
+
+\def\t@blerow{%
+  \startt@ble
+  \@ndcell
+  \@ndrow
+  \global\advance\tabler@ws by 1
+  \tablec@l=0
+  \@tablerowtrue      
+   %\@TR 
+   %\p@rstyle{tr}%
+  
+   \s@tbaseline{\m@rker}{\styst@k}%
+   \global\startparatrue
+   \resetp@rstyle
+   \p@rstyle@everypar{tr}%
+   %\mcpop
+   %\s@tstyst@k
+  \@tablerowfalse
+  \@rowtrue\trace{t}{rows=\the\tabler@ws}%
+  \ignorespaces}
+
+\addtoparstylehooks{\if@tablerow\else\endt@ble\fi}
+\newif\if@tablerow
+\newif\if@row
+\newif\ifsp@ncols
+\newbox\t@bleinserts
+
+\def\@ndrow{%
+  \if@row
+    \loop \ifnum\tablec@l<\maxtablec@l
+      \advance\tablec@l by 1
+      \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
+      \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\hbox{}\unvbox\c@rrentcolbox}%
+      \repeat
+    \@rowfalse
+    % store inserts in reverse row order for easy extraction later
+    % most inserts are in 0ht vboxes so use 1sp is a flag for empty
+    \setbox\t@bleinserts=\vbox{\parfillskip=0pt\ifvoid\t@blenotes\vbox to 1sp{}\else\box\t@blenotes\fi\unvbox\t@bleinserts}%
+  \fi}
+
+\catcode`\~=12 \lccode`\~=32
+\lowercase{%
+  \def\t@blecell#1#2{%
+    \@ndcell
+    \st@rtcell
+    \xdef\mytmp{#2}%
+    \getp@ram{justification}{#1\ifdiglot \c@rrdstat\fi}{#1+tr}%
+    \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
+    \s@ttc@lign
+    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = \mytmp\space in style #1}%
+    \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
+    \ch@rstyle{#1}~\ignorespaces}%
+
+  \def\sp@ncell#1#2#3#4{%#1-format, #2=justification, #3=start cell #4=end cell
+    \@ndcell
+    \let\@ndcell\@@ndspan
+    \sp@ncolstrue
+    \st@rtcell%\st@rtsp@n{#3}{#4}%
+    \xdef\mytmp{#2}%default justification
+    \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
+    \getp@ram{justification}{#1}{#1+#1+tr}%
+    \s@ttc@lign
+    \trace{t}{Define spanning cell [\the\tabler@ws, \the\tablec@l - #4] = \mytmp\space in style #1}%
+    \m@kenumber{#4}\x@\xdef\csname span-\the\tabler@ws-\the\tablec@l\endcsname{\@@result}%
+    \ifnum\@@result>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
+    \ch@rstyle{#1}~\ignorespaces}%
+}
+\def\s@ttc@lign{%
+    \ifx\p@ram\c@nter \edef\mytmp{c}\else
+    \ifx\p@ram\l@ftb@l \edef\mytmp{l}\else
+    \ifx\p@ram\l@ft \edef\mytmp{l}\else
+    \ifx\p@ram\r@ght \edef\mytmp{r}%
+    \fi\fi\fi\fi
+    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{\mytmp}%
+}
+
+\newtoks\s@vedm@rks
+\let\origm@rk\mark
+\let\origm@rks\marks
+\newcount\s@vedmarkcount
+\s@vedm@rks{}
+\def\savingmarks{%
+    \global\advance\s@vedmarkcount by 1
+    \def\mark##1{\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rk{##1}}}%
+    \def\marks##1##2{\trace{t}{marks ##1, ##2}\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rks##1{##2}}}%
+    \aftergroup\dos@vedm@rk%
+}
+\newdimen\t@blehsize \t@blehsize=0pt
+\def\st@rtcell{%
+  \advance\tablec@l by 1
+  \ifnum\tablec@l>\allocatedtablec@ls \@llocnewc@l \fi
+  \setbox\cellb@x=\vbox\bgroup
+    \savingmarks
+    \t@blehsize=\hsize \hsize=\maxdimen
+    \resetp@rstyle \everypar={}\noindent
+    %\ifRTL\beginR\fi
+    \dimen255=0pt
+    \edef\tc@ll{tc\the\tablec@l}%
+    \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
+    \ifx\p@ram\relax \else \trace{t}{leftmargin of \tc@ll is \p@ram *\the\IndentUnit}\advance\dimen255 \p@ram\IndentUnit \fi
+    \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
+    \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
+    \trace{t}{Kern for start of \the\tablec@l, \the\dimen255, firstindent=\p@ram}% 
+    \ifdim\dimen255=0pt\else\kern\dimen255\fi
+    \s@tfont{tc\the\tablec@l}{\tc@ll+\styst@k}%
+    \global\advance\p@ranesting by 1
+    \@celltrue}
+\def\dos@vedm@rk{%
+  \trace{ma}{Recovering \the\s@vedmarkcount marks,  gt:\the\currentgrouptype, gd:\the\currentgrouplevel}%
+  \s@vedmarkcount=0
+  \the\s@vedm@rks\relax\s@vedm@rks{}%
+}
+
+\def\@@@ndcell{%
+    \unskip
+    \getp@ram{rightmargin}{tc\the\tablec@l}{tc\the\tablec@l}%
+    \global\let\p@r@m\p@ram %preserve against endgroups
+    \end@llpoppedstyles{tc*}%
+    \let\p@ram\p@r@m
+    \ifx\p@ram\relax\else\ifx\p@ram\z@ero\else
+      \trace{t}{rightkern(tc\the\tablec@l) \p@ram, from tc\the\tablec@l}\kern\p@ram\IndentUnit
+    \fi\fi
+    \parfillskip=0pt
+    \egroup
+    \setbox0=\vbox{\parfillskip=0pt\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
+    \global\setbox\cellb@x=\hbox{\unhbox\cellb@x \unskip\unskip\unpenalty}%
+    \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
+}
+\def\@@@ddcell{
+    \ifvoid\c@rrentcolbox % adding a column, may need to add empty cells above
+      \count255=1
+      \loop \ifnum\count255<\tabler@ws \advance\count255 by 1
+        \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\hbox{}\unvbox\c@rrentcolbox}%
+        \repeat
+    \fi
+    \trace{t}{Add cell width \the\wd\cellb@x, to row \the\tabler@ws, col \the\tablec@l, width=\the\wd\c@rrentcolbox}%
+    \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\box\cellb@x\unvbox\c@rrentcolbox}%
+      % note that this stacks the cells upwards! they'll be reversed later
+}
+\def\@@ndcell{%
+  \if@cell
+    \@@@ndcell
+    \@@@ddcell
+  \fi}
+
+\def\@@ndspan{%
+  \if@cell
+    \@@@ndcell
+    \wd\cellb@x=0pt
+    \@@@ddcell
+  \fi
+  \x@\let\x@\sp@nend\csname span-\the\tabler@ws-\the\tablec@l\endcsname
+  \loop
+    \advance\tablec@l by 1
+    \ifnum\tablec@l>\allocatedtablec@ls \@llocnewc@l \fi
+    \ifnum\tablec@l<\sp@nend\repeat
+  \global\let\@ndcell\@@ndcell
+}
+
+\let\@ndcell\@@ndcell
+\def\spanningcell#1#2#3#4{\x@\def\csname #1#2#3-#4\endcsname{\sp@ncell{#1#2#3-#4}{#2}{#3}{#4}}}
+\let\spanningcols\spanningcell
+
+\newif\if@cell
+\newbox\cellb@x
+\def\tablecategory{}
+
+%\tracinggroups=1
+%\tracingassigns=1
+\def\startt@ble{%
+  \ifdoingt@ble \else
+    \ifhe@dings\endhe@dings\fi
+    \endlastp@rstyle{tr}%
+    \trace{t}{starting table from \m@rker}%
+    \op@ninghooks{between-\m@rker}{tr}{tr\ifx\styst@k\empty\else+\styst@k\fi}% Run any between old par an current
+    \let\stylet@pe\ss@Tbl
+    \mcpush{\stylet@pe}{tr}%
+    \s@tstyst@k
+    \bgroup
+    \sp@ncolsfalse % (so far) no column-spanning cells
+    \tabler@ws=0
+    \tablec@l=0
+    \global\maxtablec@l=0
+    \doingt@bletrue
+    \message{starting table cat:\tablecategory \c@tegory}%
+    \ifx\tablecategory\empty\else\global\doc@t{\tablecategory}\fi
+  \fi}
+\newdimen\t@talwidth
+\def\endt@ble{%
+  \ifdoingt@ble
+    \trace{t}{endt@ble-\mcstack}%
+    \@ndcell\@ndrow
+    \t@talwidth=0pt
+    \f@reachcol{\edef\tc@l{tc\the\@col}\getp@ram{\ifRTL leftmargin\else rightmargin\fi}{\tc@l}{\tc@l+\styst@k}\ifx\p@ram\relax \else
+        \trace{t}{oldcolwidth \the\@col \space is \the\wd\c@rrentcolbox + \p@ram * \the\IndentUnit}%
+        \dimen0=\wd\c@rrentcolbox\advance\dimen0 \p@ram\IndentUnit\wd\c@rrentcolbox=\dimen0
+      \fi\trace{t}{colwidth \the\@col \space is \the\wd\c@rrentcolbox}\advance\t@talwidth by \wd\c@rrentcolbox}%
+    \endt@blewrap
+    \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
+    \end@llpoppedstyles{\ss@Tbl*}%
+    \doingt@blefalse
+    \egroup
+    \let\tablecategory\empty
+  \fi}
+
+\let\zendtable\endt@ble
+
+\newdimen\trmargin \trmargin=0pt
+\def\endt@blewrap{%
+  \trace{t}{endt@blewrap cols=\the\maxtablec@l, rows=\the\tabler@ws, hsize=\the\hsize, tw=\the\t@talwidth}%
+  % calculate column widths as:
+  % (a) any column whose max is < \hsize / numcols gets its natural width
+  % (b) calculate exc@ss width of the remaining columns
+  % (c) calculate sp@re width available from the narrow ones
+  % (d) distribute this in proportion to the relative exc@ss of each
+  \sp@re=0pt \exc@ss=0pt
+  \thr@shold=\hsize
+  \getp@ram{leftmargin}{tr}{\styst@k}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
+  \getp@ram{rightmargin}{tr}{\styst@k}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
+  \divide\thr@shold by \maxtablec@l
+  \trace{t}{thr@shold=\the\thr@shold, hsize=\the\hsize, textwidth=\the\textwidth, max:\the\maxtablec@l}%
+  \f@reachcol{%
+    \edef\tc@l{tc\the\@col}%
+    \getp@ram{spacebefore}{\tc@l}{\tc@l+\styst@k}% abuse spacebefore as fixed column width
+    \ifx\p@ram\relax\c@rrentcolwidth=-1sp \else\ifdim\p@ram\textwidth=0pt \c@rrentcolwidth=-1sp \else\c@rrentcolwidth=\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi\fi
+    \ifdim\wd\c@rrentcolbox>\thr@shold
+      \trace{t}{Adding \the\wd\c@rrentcolbox \space to excess (\the\exc@ss)}%
+      \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
+    \else
+      \ifdim \c@rrentcolwidth=-1sp\relax
+        \c@rrentcolwidth=\wd\c@rrentcolbox
+        \edef\tc@ll{tc\the\@col}%
+        \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
+        \ifx\p@ram\relax \else \advance \c@rrentcolwidth\p@ram \IndentUnit\fi
+        \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
+        \ifx\p@ram\relax \else \advance \c@rrentcolwidth\p@ram \IndentUnit\fi
+      \else
+        \bgroup\count255=\c@rrentcolwidth \trace{t}{c@rrentcolwidth is \the\count255 sp}\egroup%
+      \fi
+      \trace{t}{Adding \the\thr@shold - \the\c@rrentcolwidth (\the\wd\c@rrentcolbox) \space to spare (\the\sp@re)}%
+      \advance\sp@re by \thr@shold \advance\sp@re by -\c@rrentcolwidth
+    \fi
+  }%
+  \trace{t}{thr@shold=\the\thr@shold, exc@ss=\the\exc@ss, sp@re=\the\sp@re}%
+  \f@reachcol{%
+    \ifdim\c@rrentcolwidth=-1sp
+      \ifdim\exc@ss>\sp@re % we have to wrap at least one column
+        \c@rrentcolwidth=\wd\c@rrentcolbox \advance\c@rrentcolwidth by -\thr@shold
+        \ifdim\c@rrentcolwidth>1638pt \tempfalse\message{Table column overflow, reducing resolution}\else\temptrue\fi
+        \iftemp\multiply\c@rrentcolwidth by 20\fi
+        \divide\c@rrentcolwidth by \exc@ss
+        \multiply\c@rrentcolwidth by \sp@re
+        \iftemp\divide\c@rrentcolwidth by 20\fi
+        \advance\c@rrentcolwidth by \thr@shold
+      \else % there was enough sp@re, just give columns their desired width
+        \c@rrentcolwidth=\wd\c@rrentcolbox
+      \fi
+    \fi
+    \trace{t}{Table col width for \the\@col: \the\c@rrentcolwidth}%
+  }%
+%  \f@reachcol{%
+%    \MSG{column \the\@col: width=\the\c@rrentcolwidth\space
+%      \ifdim\c@rrentcolwidth<\wd\c@rrentcolbox
+%        (wrapped, natural was \the\wd\c@rrentcolbox)\fi}%
+%  }%
+  \getp@ram{justification}{tr}{\styst@k}%
+  \ifx\p@ram\r@ght
+    \ifRTL\RTLfalse\else\RTLtrue\fi
+  \fi
+  \f@reachcol{\wr@pcolumn}%Wrap the cells in each columns.
+  \dimen0=0pt \trmargin=0pt
+  \getp@ram{leftmargin}{tr}{\styst@k}%
+  \ifx\p@ram\relax\else\advance\ifRTL\trmargin\else\dimen0\fi by \p@ram\IndentUnit\fi
+  \getp@ram{rightmargin}{tr}{\styst@k}%
+  \ifx\p@ram\relax\else\advance\ifRTL\dimen0\else\trmargin\fi by \p@ram\IndentUnit\fi
+  \trace{t}{Row margins: left=\the\dimen0, right=\the\trmargin}%
+  \f@reachrow{%
+    \ifnum\@row=2 \nobreak \fi
+    \ifnum\@row=\tabler@ws \nobreak \fi
+    \linec@unt=0
+    \f@reachcol{\extractl@stcell \updatelinec@unt}%
+    \trace{t}{outputting table (\the\tabler@ws, \the\linec@unt)}%
+    \nth@line=0
+    \@@LOOP \ifnum\nth@line<\linec@unt
+      \advance\nth@line by 1
+      \line{\hskip\dimen0
+        \ifRTL
+          \hfil\lochcaer@f{\csname \c@tprefix tc\the\@col :fill\endcsname\getnth@line}\hfil
+        \else
+          \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil
+        \fi
+        \hskip\trmargin}%
+      \ifnum\nth@line<\linec@unt \nobreak \fi
+    \@@REPEAT
+    \setbox\t@bleinserts=\vbox{\parfillskip=0pt\unvbox\t@bleinserts \global\setbox0=\lastbox}%
+    \ifdim\ht0=1sp \else\unvbox0\fi
+  }%
+}
+\newcount\linec@unt \newcount\lct@mp
+\newdimen\sp@re \newdimen\exc@ss \newdimen\thr@shold
+
+\def\@LOOP #1\@REPEAT{\gdef\@BODY{#1}\@ITERATE}
+\def\@ITERATE{\@BODY \global\let\@NEXT\@ITERATE
+ \else \global\let\@NEXT\relax \fi \@NEXT}
+\let\@REPEAT\fi
+% more copies of plain.tex loop macros (see also ptx-char-style)
+\def\@@LOOP #1\@@REPEAT{\gdef\@@BODY{#1}\@@ITERATE}
+\def\@@ITERATE{\@@BODY \global\let\@@NEXT\@@ITERATE
+ \else \global\let\@@NEXT\relax \fi \@@NEXT}
+\let\@@REPEAT\fi
+
+\def\@@@LOOP #1\@@@REPEAT{\gdef\@@@BODY{#1}\@@@ITERATE}
+\def\@@@ITERATE{\@@@BODY \global\let\@@@NEXT\@@@ITERATE
+ \else \global\let\@@@NEXT\relax \fi \@@@NEXT}
+\let\@@@REPEAT\fi
+
+\def\s@tspansize{%
+  \trace{t}{Spanning cell, orig hsize  \the\hsize}%
+  \lct@mp=\csname span-\the\@row-\the\@col\endcsname
+  \let\@@@nxt\@s@tspansize\@@@nxt
+  \trace{t}{Spanning cell, hsize now \the\hsize}}%
+\def\@s@tspansize{\ifnum \@col<\lct@mp 
+    \advance\hsize by \csname colwidth-\the\lct@mp\endcsname
+    \advance\lct@mp by -1
+  \else\let\@@@nxt\relax\fi
+  \@@@nxt}
+  
+  
+\def\wr@pcolumn{\@row=1\setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\unvbox\c@rrentcolbox \wr@pboxes}}
+\def\wr@pboxes{% line-wrap a list of \hboxes
+  \setbox0=\lastbox 
+  \ifhbox0 {\advance\@row by 1 \wr@pboxes}\fi
+  \setbox0=\vbox{\hsize=\c@rrentcolwidth
+    \ifcsname span-\the\@row-\the\@col\endcsname \s@tspansize\fi
+    \everypar={}\resetp@rstyle\noindent
+    \leftskip=0pt\rightskip=0pt
+    \ifRTL\dimen2=0pt \beginR\fi
+    %\edef\tc@ll{tc\the\@col}%
+    %\getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
+    %\ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
+    %\getp@ram{firstindent}{\tc@ll}{\tc@ll}%
+    %\ifx\p@ram\relax\else \dimen3=\p@ram \IndentUnit
+    %  \ifRTL \dimen2=\dimen3 \else\ifdim\dimen3=0pt\else\kern \dimen3\fi\fi
+    %\fi
+    %\getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
+    %\ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
+    \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
+    \trace{t}{Pre(\c@tprefix \tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    \edef\l@drsl{}\edef\l@drsr{}%
+    \ifx\the@lign\cell@r
+      \parfillskip=0pt
+      \ifRTL \let\n@xt=\rightskip \edef\l@drsl{r}\else
+        \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
+        \let\n@xt=\leftskip \edef\l@drsl{r}%
+      \fi
+    \else\ifx\the@lign\cell@c
+      \parfillskip=0pt
+      \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
+     \else
+      \parfillskip=0pt
+      \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
+        \let\n@xt=\leftskip \edef\l@drsr{r}% \parfillskip=0pt
+      \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\def\l@drsr{r}\fi
+    \fi\fi
+    \trace{t}{r=\l@drsr, l=\l@drsl, \c@tprefix =\c@ttoc}%
+    \advance\n@xt by 0pt plus 1fil
+    \edef\mytmp{\c@tprefix leaders-tc\l@drsr\the\@col}%
+    \ifcsname \mytmp\endcsname \nobreak\csname \mytmp\endcsname\hfil\fi%
+    \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders:\mytmp . leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    %\hskip\skip1   % we already added that to the contents of the cell
+    \unhbox0
+    \edef\mytmp{\c@tprefix leaders-tc\l@drsl\the\@col}%
+    \ifcsname \mytmp\endcsname
+      \trace{t}{Remove space for leaders}%
+      \parfillskip=0pt% \hskip\rightskip \rightskip=0pt
+      \nobreak\csname \mytmp\endcsname \hfil
+      \trace{t}{Final... \mytmp}\def\f@nish{\unskip\unskip}%
+    \else \def\f@nish{}\fi
+    \ifRTL\endR\fi\par\f@nish}% remove parfillskip and rightskip
+  \wd0=\c@rrentcolwidth
+  \box0}
+\def\extractl@stcell{% delete last cell from box \c@rrentcolbox and return it in \c@rrentcell
+  \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\unvbox\c@rrentcolbox \unskip\unpenalty
+    \global\setbox\c@rrentcell=\lastbox}}
+\def\updatelinec@unt{% count lines in \c@rrentcell, update \linec@unt if more than current value
+  \global\lct@mp=0
+  \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell \c@untlines}%
+  \ifnum\lct@mp>\linec@unt \global\linec@unt=\lct@mp \fi}
+\def\c@untlines{\setbox0=\lastbox
+  \ifhbox0 \global\advance\lct@mp by 1 \unskip\unpenalty\c@untlines\fi}
+
+\newif\ifh@lfrow
+\def\getnth@line{% return content of line nth@line from box \c@rrentcell
+  \getp@ram{verticalalign}{tc\the\@col}{tc\the\@col+\styst@k}%
+  \ifx\p@ram\relax\let\p@ram\@lignTop\fi
+  \lct@mp=0
+  \h@lfrowfalse
+  \bgroup %protect nth@line and count255
+    \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell \c@untlines}% count lines into \lct@mp
+    \count255=0
+    \ifx\p@ram\@lignTop\else
+      \count255=\numexpr \linec@unt - \lct@mp \relax
+      \ifx\p@ram\@lignBot\else
+        \ifx\p@ram\@lignGCent \else
+          \ifodd\count255 \global\h@lfrowtrue\fi
+        \fi
+        \divide\count255 by 2
+      \fi
+    \fi
+    \trace{t}{column \the\@col[\p@ram]. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
+    \advance \nth@line by -\count255
+    \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
+      \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell
+        \@@@LOOP \ifnum\nth@line<\lct@mp
+          \setbox0=\lastbox \unskip\unpenalty
+          \advance\lct@mp by -1 \@@@REPEAT
+        \global\setbox1=\lastbox}%
+    \fi
+  \egroup
+  \trace{t}{bls:\the\baselineskip,  width=\the\wd1}%
+  \ifsp@ncols\wd1=\csname colwidth-\the\@col\endcsname \fi
+  \ifh@lfrow\lower 0.5\baselineskip\fi
+  \box1%
+}
+\newcount\nth@line
+
+\def\f@reachcol#1{%
+  \@col=0 \loop \ifnum\@col<\maxtablec@l
+    \advance\@col by 1
+    \x@\let\x@\c@rrentcolbox\csname tablecol-\the\@col\endcsname
+    \x@\let\x@\c@rrentcolwidth\csname colwidth-\the\@col\endcsname
+    \x@\let\x@\c@rrentcell\csname cell-\the\@col\endcsname
+    #1\repeat}
+
+\def\lochcaer@f#1{%
+  \@col=\maxtablec@l \loop \ifnum\@col>0
+    \x@\let\x@\c@rrentcolbox\csname tablecol-\the\@col\endcsname
+    \x@\let\x@\c@rrentcolwidth\csname colwidth-\the\@col\endcsname
+    \x@\let\x@\c@rrentcell\csname cell-\the\@col\endcsname
+    #1%
+    \advance\@col by -1
+    \repeat}
+
+\def\f@reachrow#1{%
+  \@row=0 \@LOOP \ifnum\@row<\tabler@ws
+    \advance\@row by 1
+    #1\@REPEAT}
+
+\newcount\tabler@ws
+\newcount\maxtablec@l
+\newcount\tablec@l
+\newcount\@col \newcount\@row
+\newcount\allocatedtablec@ls
+
+\def\@llocnewc@l{%
+  \advance\allocatedtablec@ls by 1
+  \x@\n@wbox\csname tablecol-\the\allocatedtablec@ls\endcsname
+  \x@\n@wbox\csname cell-\the\allocatedtablec@ls\endcsname
+  \x@\n@wdimen\csname colwidth-\the\allocatedtablec@ls\endcsname
+}
+\let\n@wbox=\newbox
+\let\n@wdimen=\newdimen
+\bgroup \catcode`\^=7\obeylines
+\gdef\ztablecategory{\bgroup\unc@tcodespecials\catcode`\ =10\obeylines\zt@blecategory}
+\gdef\zt@blecategory #1^^M{\stripspace#1\end/ \end/\relax{#1}\xdef\tablecategory{\p@ram}\egroup\trace{t}{table category="\tablecategory"}}
+\egroup

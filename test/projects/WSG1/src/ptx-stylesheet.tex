@@ -1,0 +1,2571 @@
+%:strip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007-2020 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Macros to read Paratext stylesheets and define TeX control sequences
+%% for all markers present in the file
+
+%
+% Macros to process each marker used in a Paratext stylesheet,
+% either ignoring it or saving the parameter as appropriate
+%
+%+csty_definition_setup
+\def\ds@ffix{} % diglot suffix (L/R)
+\def\m@rker{} % The currently being defined \Marker
+\let\prev@rsemode\empty
+\def\remember@xists#1{\x@\xdef\csname m@rkerexists-#1\endcsname{t}}
+\def\rememberhook@xists#1#2{\x@\let\x@\tmp\csname h@@kexists-#2\endcsname\ifx\tmp\relax\let\tmp\empty\else\edef\tmp{\tmp,}\fi\x@\xdef\csname h@@kexists-#2\endcsname{\tmp#1}\trace{sh}{h@@kexists-#2 -> \csname h@@kexists-#2\endcsname}}
+\def\csfilt@rout#1\E{\ifx\cstack@tmp\tmp\else\cs@pushout{#1}\fi} % driven by cstack down (or up}, which defines cstack@tmp
+\def\csfilt@rall#1\E{\s@tt@mp{#1}\ift@mp\cs@pushout{#1}\fi} % driven by cstack down (or up}, s@tt@mp must set ift@mp
+
+\def\forgethook@xists#1#2{%
+  \x@\let\x@\t@mp\csname h@@kexists-#2\endcsname
+  \trace{sh}{forgetting h@@kexists: '#2' entry '#1': '\t@mp'}%
+  \ifx\t@mp\empty
+  \else
+    %Need to (possibly)remove entries from the list
+    \edef\tmp{#1}\let\@ut\empty
+    \let\d@\csfilt@rout
+    \x@\cstackdown \t@mp,\E
+    \trace{sh}{forgethook@xists: #2 exit: '\@ut'}%
+    \x@\ifx\@ut\empty
+      \x@\global\x@\let\csname h@@kexists-#2\ds@ffix\endcsname\undefined
+    \else
+      \x@\global\x@\let\csname h@@kexists-#2\endcsname\@ut
+    \fi
+  \fi
+}
+\def\testm@rkerexists#1{\tempfalse\ifcsname m@rkerexists-#1\endcsname\temptrue\else\ifcsname m@rkerexists-#1\ds@ffix\endcsname\temptrue\fi\fi}
+\def\should@xist#1#2{\ifcsname m@rkerexists-#1#2\endcsname\else
+    \trace{sC}{Remembering that #1#2 exists as a marker}%
+    \remember@xists{#1#2}%
+  \fi
+  \edef\s@etmp{#1}\ifx\s@etmp\empty\else
+    \ifcsname m@rkerexists-#2\endcsname
+    \else
+      \remember@xists{#2}% Unprefixed version should also exist
+    \fi
+    \trace{sC}{Resetting cache  for  #1#2}%
+    \setpp@name{#1#2}\x@\global\x@\let\csname \pp@name\endcsname\undefined%Invalidate old cache for prefixed version
+  \fi
+  \trace{sC}{Resetting cache  for  #2}%
+  \setpp@name{#2}\x@\global\x@\let\csname \pp@name\endcsname\undefined%Invalidate old cache for simple version
+}
+
+
+% Remember the name of the marker currently being defined
+\def \Marker         #1\relax{
+  \m@kedigitsletters%
+  \xdef\m@rker{\scantokens{#1\noexpand}}%
+  \x@\@set@mkr\m@rker++\E % This is the form with \ds@ffix included
+  \lowercase{\message{[|\@mkr}}%
+  \m@kedigitsother
+  \remember@xists{\m@rker}% store name of marker currently being defined
+  \ifx\ds@ffix\empty\else
+    \remember@xists{\@mkr}% store name of marker currently being define
+  \fi
+  \ifx\c@tprefix\empty\else
+    \remember@xists{\c@tprefix\@mkr}% store name of marker currently being define
+  \fi
+  \expandafter\let\csname font<\m@rker>\endcsname\relax}
+  %\expandafter\let\csname extrafont<#1>\endcsname\relax}
+%-csty_definition_setup
+
+%+csty_definitions
+% Make sure we list everything that can occur in a .sty file. If a .sty file contains a
+% missing sfm marker, then processing for that and all subsequent stylesheets will stop
+% at that point.
+% Ignore stylesheet markers that do not affect formatting
+\def \Name           #1\relax{}
+\def \Description    #1\relax{}
+\def \OccursUnder    #1\relax{}
+\let \Occursunder\OccursUnder
+\def \Rank           #1\relax{}
+\def \NotRepeatable  #1\relax{}
+\let \Notrepeatable\NotRepeatable
+\def \Color          #1\relax{\defp@ram{color}{#1}}
+\def \Background     #1\relax{\x@\checkh@x #1\end\edefp@ram{background}{\rgb@out}} %Store as r g b triplet
+\let \color\Color
+\let \colour\Color
+\let \Colour\Color
+\def \ColorName      #1\relax{}
+
+% For each property that affects formatting, define a macro to store the value
+% of this field, these will be accessed via getp@ram.
+% Constructs a macro name \<marker>:<parameter> to hold the value
+\def \Endmarker      #1\relax{\defp@ram{endmarker}{#1}} % endmarker is not currently checked except for milestones
+\def \TextType       #1\relax{\lowercase{\defp@ram{type}{#1}}}
+\let \Texttype\TextType
+\def \TextProperties #1\relax{\lowercase{\defp@ram{properties}{#1}}}
+\let \Textproperties\TextProperties
+\def \FontSize       #1\relax{\edef\t@mp{#1}\ifx\t@mp\empty\else\clearp@ram{fontscale}\defp@ram{fontsize}{#1}\fi}
+\let \Fontsize\FontSize
+\def \FontScale      #1\relax{\clearp@ram{fontsize}\defp@ram{fontscale}{#1}}
+\let \Fontscale\FontScale
+\def \FontFactor     #1\relax{\defp@ram{fontfactor}{#1}}
+\def \FontName       #1\relax{\defp@ram{fontname}{#1}}
+\let \Fontname\FontName
+\def \FirstLineIndent #1\relax{\defp@ram{firstindent}{#1}}
+\let \Firstlineindent\FirstLineIndent
+\def \LeftMargin     #1\relax{\defp@ram{leftmargin}{#1}}
+\let \Leftmargin\LeftMargin
+\def \RightMargin    #1\relax{\defp@ram{rightmargin}{#1}}
+\let \Rightmargin\RightMargin
+\def \Italic         #1\relax{\defbinp@ram{italic}{#1}}
+\def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
+\def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{fontfactor}{1}}}
+\def \Raise          #1\relax{\defp@ram{raise}{#1}}
+\def \Underline      #1\relax{\deftrip@ram{underline}{#1}}
+\let \underline\Underline
+\def \underch@r      #1\relax{\edefp@ram{underchar}{\scantokens{#1\noexpand}}\catcode`\~=13 }
+\def \UnderChar      {\catcode`\~=11 \underch@r}
+\def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
+\let \superscript\Superscript
+\def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
+\def \SpaceBetween    #1\relax{\defp@ram{spacebetween}{#1}}
+\def \Shadow    #1\relax{\defp@ram{shadow}{#1}} % X Y (ratios to fontsize)
+\def \Outline    #1\relax{\defp@ram{outline}{#1}} % Thickness (fontsizeunits)
+\def \ShadowColour #1\relax{\x@\checkh@x #1\end\edefp@ram{shadowcol}{\rgb@out}}
+\let\ShadowColor\ShadowColour
+\def \OutlineColour #1\relax{\x@\checkh@x #1\end\edefp@ram{outlinecol}{\rgb@out}}
+\let\OutlineColor\OutlineColour
+\let \Spacebefore\SpaceBefore
+\def \SpaceAfter     #1\relax{\defp@ram{spaceafter}{#1}}
+\let \Spaceafter\SpaceAfter
+\def \Justification  #1\relax{\lowercase{\defp@ram{justification}{#1}}}
+\def \NonJustifiedFill #1\relax{\defp@ram{glue}{#1}} % ptx2pdf extension, glue portion of leftskip/rightskip (as fraction of hsize)
+\def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}} % ptx2pdf extension
+\def \CallerRaise    #1\relax{\defp@ram{callerraise}{#1}}
+\def \NoteCallerStyle    #1\relax{\defp@ram{notecallerstyle}{#1}} % ptx2pdf extension
+\def \NoteCallerRaise    #1\relax{\defp@ram{notecallerraise}{#1}}
+\def \NoteBlendInto      #1\relax{\defp@ram{notebase}{#1}}
+\def \TEStyleName    #1\relax{} % Translation Editor extension
+\def \SmallCaps      #1\relax{\defbinp@ram{smallcaps}{#1}}
+\let \Smallcaps\SmallCaps
+\def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
+\def \LineSpacing    #1\relax{\defp@ram{baseline}{#1\onel@neunit}}
+\def \ztexFontFeatures  #1\relax{\defp@ram{fontfeatures}{#1}}
+\def \ztexFontGrSpace   #1\relax{\defp@ram{fontgrspace}{#1}}
+\def \ztexFontICSpace   #1\relax{\defp@ram{fonticspace}{#1}} % eventually... font inter-char space
+\def \VerticalAlign     #1\relax{\defp@ram{verticalalign}{#1}} % for table cells
+\def \mrktype			#1\relax{}
+\def \Mrktype			#1\relax{}
+
+% Make a TeX macro based on the StyleType
+\def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}     %(1)
+\let \Styletype=\StyleType
+% New extras that PTX supports
+\def \XMLTag         #1\relax{}
+\def \Encoding       #1\relax{}
+\def \Rank           #1\relax{}
+\def \TEStyleName    #1\relax{}
+\def \NotRepeatble   #1\relax{}
+\def \Attributes     #1\relax{}
+%-csty_definitions
+
+%+csty_defparam
+%:
+% \defp@ram: store the value of a parameter from the .sty file
+% p | description
+% --|------
+% #1|name of parameter to store
+% #2|value
+% --|------
+% Constructs a macro name \_<marker>_:_<parameter>_ to hold the value.
+% `csname` is required here in order to build a macro name containing a colon and possibly a number.
+%
+
+\def\clearp@ram#1{\global\x@\let\csname\c@tprefix\@mkr:#1\endcsname=\relax}
+\def\defp@ram#1#2{\x@\def\csname\c@tprefix\@mkr:#1\endcsname{#2}\trace{sa}{def \c@tprefix\@mkr:#1 -> #2}}
+\def\edefp@ram#1#2{\x@\edef\csname\c@tprefix\@mkr:#1\endcsname{#2}\trace{sa}{def \c@tprefix\@mkr:#1 -> #2}}
+\def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
+\def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
+\def\deftrip@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\ifx\t@mp\tw@\defp@ram{#1}{#2}\else\defp@ram{#1}{true}\fi\fi}
+\def\@set@mkr#1+#2+#3\E{\edef\ctxsp@c{#2}\ifx\ctxsp@c\empty\else\edef\ctxsp@c{+#2}\fi\edef\@mkr{#1\ds@ffix\ctxsp@c}}%
+
+%\def\setp@ram#1#2#3{
+%  \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{sa}{set \c@tprefix#2\ds@ffix:#1 -> #3}
+%  \should@xist{#2\ds@ffix}%Ensure that the marker is in the exists list
+%  \ifx\c@tprefix\empty\else\should@xist{\c@tprefix#2\ds@ffix}\fi
+%} % expand now, not later
+
+\def\setp@ram#1#2#3{\relax\edef\@mkr{\x@\cstackpeek #2,\E}% Potentialy we have a fake stack. Save as uppermost
+  \ifx\ds@ffix\empty\x@\@set@mkr\@mkr++\E\fi
+  \trace{sC}{Setting parameter for #1/\c@tprefix#2/#3}%
+  \x@\xdef\csname\c@tprefix\@mkr:#1\endcsname{#3}\trace{sa}{set \c@tprefix\@mkr:#1 -> #3}%
+  \ifx\c@tprefix\empty\else\should@xist{\c@tprefix}{\@mkr}\fi%Ensure that the marker is in the exists list
+}
+ % expand now, not later
+%-csty_defparam
+
+%+csty_getparam
+%:
+% \getp@aram: fetch the value of a style parameter into \p@ram
+% --|------
+% #1|name of parameter to fetch
+% #2|name of marker
+% --|------
+% Sets temporary macro \p@ram to the value
+% The macro was once just diglot aware, allowing all parameters to have L Left/Right variant or use
+% default. (e.g when asked for paramter for v, check for vL|vR, default to v). Now it (potentially) needs to
+% take into account: diglot, categories and milestones.
+% Rather than attempt to code \ifs for all possible 8 (16? more?) options, it
+% now subcontracts s@tpossParams to build a comma-separated list of them,
+% and then finds the first match. This results in cleaner code.
+
+\newif\ifnotracestacks \notracestacksfalse
+\def\tracestack{,}
+\def\pushtracing{\xdef\tracestack{\the\tracingmacros,\tracestack}\tracingmacros=0}
+\def\poptracing{\tracingmacros=\x@\cstackpeek\tracestack\E\xdef\tracestack{\x@\cstackpop\tracestack\E}}
+\def\stystacksplit#1+#2\E{\edef\t@mp{#2}\let\tmpstyst@kbody\empty\edef\tmpstyst@kfirst{#1}\ifx\t@mp\empty\else\styst@cksplit#2\E\fi\trace{sk}{styst@ksplit: '\tmpstyst@kfirst' , '\tmpstyst@kbody'}}
+\def\styst@cksplit#1+\E{\edef\tmpstyst@kbody{#1}}
+\def\stystack@pts#1+#2\E{%Given an style stack, recurse down it, turning it into an option stack, going a maximum of count255 levels deep
+% If \AttrMilestoneMatchesUnattrtrue, then the option list should be as follows:
+%   nd+Fred|qt-s+p -> (nd+Fred|qt-s+p, nd+qt-s+p, nd+Fred|qt-s, nd+qt-s, nd)
+% If 2 milestones are active, then only the inner-most will be affected by this flag,
+% outer ones must be fully specified.
+  \trace{sk}{stystack@pts '#1' + '#2' (out:\@ut)}%
+  \ifAttrMilestoneMatchesUnattr
+    \if@ttrMilestone
+      \edef\t@mp{#1}%
+      \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
+        \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
+        \trace{sko}{Adding \thismil@stone\space to possible params}%
+        \edef\mini@stackB{\mini@stackB+\thismil@stone}%
+      \else
+        \edef\mini@stackB{\mini@stackB+#1}%
+      \fi
+    \fi
+  \fi
+  \edef\mini@stack{\mini@stack+#1}%
+  \trace{sko}{'#1' -> \mini@stack\space(\mini@stackB)}%
+  \ifx\mini@stackB\empty\else
+    \xdef\@ut{\mini@stackB,\@ut}%
+  \fi
+  \xdef\@ut{\mini@stack,\@ut}%
+  \edef\t@mp{#2}\advance\count255 by -1 
+  \ifx\t@mp\empty\count255=-1 \relax\fi %signal end of list before (or at) truncation point.
+  \trace{sko}{'#2',\the\count255---> \@ut}%
+  \ifnum\count255>0 \x@\stystack@pts#2\E\fi
+}
+\def\sh@wstuff{SHOWSTUFF:[v:\csname ptxversion\endcsname] \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
+\def\SHOWSTUFF{\message{\sh@wstuff}}%
+
+%returns \@@ut
+\def\fullstack@xpand#1|#2|#3\E{%Parameters: complexity|depth|style stack
+  \trace{sk}{fullstack@xpand (#2)}%
+  \edef\exp@stystak{#3}%
+  \ifx\exp@stystak\empty\else
+    \x@\stystacksplit\exp@stystak+\E% Cut off the head entry of the stylestack
+    \ifdiglot
+       \edef\p@ssParams{\tmpstyst@kfirst\c@rrdstat,\tmpstyst@kfirst}%
+    \else
+       \edef\p@ssParams{\tmpstyst@kfirst}%
+    \fi
+    \trace{sko}{#1::(\p@ssParams)+\tmpstyst@kbody}%
+    \ifx\styst@kfirst\empty
+      \let\styst@kfirst\tmpstyst@kfirst
+      \let\styst@kbody\tmpstyst@kbody
+    \fi
+    \let\mini@stack\empty
+    \let\mini@stackB\empty
+    \ifx\tmpstyst@kbody\empty
+      \edef\@xtra{\p@ssParams}%
+      \ifx\c@tprefix\empty\else % Prefix anything that ought to go before the bottom level here.
+        \edef\@lso{\c@tprefix}%
+        \trace{sko}{1.#2: \@lso / \@@ut: expanding list: \p@ssParams}%
+        \let\@ut\empty
+        \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E
+        \trace{sko}{now: \@xtra}%
+        \trace{sko}{type of \tmpstyst@kfirst\space is '\csname stylet@pe-\tmpstyst@kfirst\endcsname'}%
+        \x@\ifx\csname stylet@pe-\tmpstyst@kfirst\endcsname\ss@Para
+          \edef\@xtra{\@ut,\c@tprefix*,\p@ssParams}%
+        \else
+          \edef\@xtra{\@ut,\p@ssParams}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+        \fi
+      \fi
+      \trace{sko}{no body...appending \@xtra (onto: \@@ut) }%
+      %\let\@ut\empty
+      %\let\d@\cs@ppend
+      %\x@\cstackdown \p@ssParams,\E
+      %\trace{sk}{:\@ut ->(\@@ut)}%
+      \ifx\@@ut\empty
+        \global\let\@@ut\@xtra
+      \else
+       \xdef\@@ut{\@@ut,\@xtra}%
+      \fi
+      \trace{sko}{fullstack@xpand #1|#2|#3 : \@@ut. No more}%
+    \else
+      \count255=#1% Limit for the options
+      \def\@ut{}%
+      \x@\stystack@pts\tmpstyst@kbody+\E%
+      \let\@in\@ut
+      \let\@ut\empty
+      \ifnum\count255<0\else
+        \edef\@in{+\tmpstyst@kbody,\@in}%  still allow full-stack definitions, even if the list is normally truncated
+      \fi
+      %\tracingmacros=1
+      %\tracingassigns=1
+      \def\d@##1\E{\trace{sko}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
+        \let\@ut=\empty
+        \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
+        \trace{sko}{:\@ut (\@@ut) pp:\p@ssParams}%
+        \let\d@\d@c\xdef\@@ut{\ifx\@@ut\empty\else\@@ut,\fi\@ut}}%
+      \x@\cstackdown \@in,\E
+      \ifx\c@tprefix\empty\else %prefix catetgories
+        \edef\@lso{\c@tprefix}%
+        \trace{sko}{1.#2: \@lso / \@@ut: expanding list: \p@ssParams}%
+        \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \@@ut,\p@ssParams,\E
+        \edef\@@ut{\@ut,\@@ut}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+      \fi
+      \xdef\@@ut{\@@ut,\p@ssParams}%
+      \trace{sko}{fullstack@xpand #1|#2|#3 : \@@ut. Continue (\tmpstyst@kbody)}%
+      \edef\tmpa{#1|\the\numexpr #2+1\relax|\tmpstyst@kbody}% Fully expand arguments
+      \trace{sko}{args:\tmpa}%
+      \x@\fullstack@xpand\tmpa\E %Recurse
+    \fi
+  \fi
+}
+
+\def\StackComplexity{3}
+\def\this@stystak{}
+
+\def\s@tpossParams#1#2{\trace{sa}{s@tpossParams {#1}{#2}\m@rker (\styst@kfirst / \styst@k)}%
+  \ifdiglot
+     \edef\p@ssParams{#1\c@rrdstat,#1}%
+  \else
+     \edef\p@ssParams{#1}%
+  \fi
+  \edef\tmp{#1}% #1 is the main marker
+  \edef\this@stystak{#2}%#2 is the stystack to be used for *this* call (normally \styst@k, but not *ALWAYS*). The stystack supplied should always include the present marker.
+  \ifx\tmp\this@stystak
+    \trace{sk}{No stack}%
+    \ifx\c@tprefix\empty\else
+      \edef\@lso{\c@tprefix}%
+      \trace{sko}{1.- \@lso / - :  expanding list: \p@ssParams}%
+      \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E
+      \x@\ifx\csname stylet@pe-\tmpstyst@kfirst\endcsname\ss@Para
+        \edef\p@ssParams{\@ut,\c@tprefix*,\p@ssParams}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+      \else
+        \edef\p@ssParams{\@ut,\p@ssParams}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+      \fi
+      \trace{sko}{now: \p@ssParams}%
+    \fi
+  \else % Assuming there's is a real stack to expand...
+    \let\@@ut\empty
+    \let\@ut\empty
+    \x@\fullstack@xpand\x@\StackComplexity\x@|\x@ 0\x@|\this@stystak\E%
+    \let\p@ssParams\@@ut
+  \fi
+  \trace{sk}{1. Checking list: \p@ssParams}%
+  \ifx\mspr@fix\empty\else
+     %If we expand our prefix list for special styling of milestone+marker, (rather than just relying on the stack) then:
+     %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
+  \fi
+  \let\tmpd@=\d@
+  \ifx\empty\periph@@@\else
+    \edef\@lso{periph:\periph@@@|}%
+    \trace{sk}{1c. Checking list (\@lso): \p@ssParams}%
+    \let\@ut=\empty\let\d@=\cs@lsolist
+    \x@\cstackdown \p@ssParams,\E
+    \edef\p@ssParams{\@ut}%
+  \fi
+  \edef\@lso{id:\id@@@|}%
+  \trace{sk}{1d. Checking list (\@lso): \p@ssParams}%
+  \let\@ut=\empty\let\d@=\cs@lsolist
+  \x@\cstackdown \p@ssParams,\E
+  \edef\p@ssParams{\@ut}%
+  \trace{sk}{2. Checking list: \p@ssParams}%
+  \let\@ut\empty
+  \let\d@=\cscheckHook@xist\x@\cstackdown \p@ssParams,\E
+  \global\let\p@ssHooks=\@ut
+  \trace{sk}{3a. Hook list: \p@ssHooks}%
+  \let\@ut\empty
+  \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
+  \global\let\p@ssParams=\@ut
+  \let\d@=\tmpd@
+  \trace{sk}{3b. Shrunk list: \p@ssParams}%
+}
+
+% Should a milestone with a defined attribute (e.g. \qt-s|Jesus\*) match the
+% main stylesheet entry for the milestone? (without a defined attribute).
+\newif\ifAttrMilestoneMatchesUnattr
+\newif\if@ttrMilestone
+\AttrMilestoneMatchesUnattrtrue% Default: yes.
+\@ttrMilestonefalse
+
+\def\kill@font#1\E{\x@\let\csname font<#1>\endcsname\relax}
+
+\def\ClearCachedFonts{%Force font redefinition.
+  \ifx\f@ntlist\empty\else
+    \let\d@\kill@font
+    \x@\cstackdown\f@ntlist,\E
+  \fi
+  \global\let\f@ntlist\empty
+}
+
+\def\kill@cache #1\E{%Remove listed item
+   \trace{sa}{Killing #1}%
+   \x@\global\x@\let\csname #1\endcsname\relax}
+
+\def\p@ssParamCached{}
+
+\def\kill@PossParamCache{\ifx\p@ssParamCached\empty\else% kill cached possParam-\m@rker values
+    \let\d@kill@PossParamCache=\d@
+    \let\d@=\kill@cache
+    \x@\cstackdown\p@ssParamCached,\E
+    \global\let\p@ssParamCached\empty
+    \let\d@=\d@kill@PossParamCache
+    \trace{sC}{Emptied p@ssParamCached}%
+  \fi
+}
+
+\def\s@tph@name#1{%
+   \xdef\ph@name{pHook-\c@tprefix\mspr@fix#1}%
+}
+\def\setph@name#1{%
+   \s@tph@name{#1\ifdiglot\c@rrdstat\fi}%
+}
+\def\s@tpp@name#1{%
+   \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1\ifx\f@ntextend\empty\else @\f@ntextend\fi}%
+}
+\def\setpp@name#1{%
+   \s@tpp@name{#1\ifdiglot\c@rrdstat\fi}%
+}
+
+\def\setpossParams#1#2{%
+  \setpp@name{#2}%
+  \setph@name{#2}%
+  \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
+  \ifx\g@tp@tmp\relax
+    \s@tpossParams{#1}{#2}\x@\global\x@\let\csname \pp@name\endcsname\p@ssParams
+    \x@\global\x@\let\csname \ph@name\endcsname\p@ssHooks
+    \ifx\p@ssParamCached\empty
+      \xdef\p@ssParamCached{\pp@name}%
+    \else
+      \xdef\p@ssParamCached{\p@ssParamCached,\pp@name}%
+    \fi
+    \trace{sC}{\pp@name\space defined (\p@ssParamCached) as '\p@ssParams'}%
+    \trace{sh}{\ph@name\space defined as '\p@ssHooks'}%
+  \else
+    \global\let\p@ssParams\g@tp@tmp
+    \x@\let\x@\g@th@tmp\csname \ph@name\endcsname
+    \global\let\p@ssHooks\g@th@tmp
+    \trace{sC}{\pp@name\space exists: '\p@ssParams'}%
+    \trace{sh}{\ph@name\space exists: '\p@ssHooks'}%
+  \fi
+}
+
+\newif\ifg@ttingspecificparam
+\def\getp@ram#1#2#3{\trace{s}{getp@ram #2:#1 [#3](\mcstack)}\ifnotracestacks\pushtracing\fi
+ \let\p@ram\relax
+ \def\gp@test{#1}%
+ \xdef\tmpstyst@k{#3}%
+ \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
+   \setpossParams{#2}{#3}%
+   {%protect outer version of \d@, etc.
+   %\tracingassigns=1
+   %\tracingmacros=1
+  % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
+   \ifcsname getthep@ram-#1\endcsname %call a parameter-specific routine. e.g. for fontsize.
+     \trace{sa}{Specific 'getpar@m-#1'}%
+     %\tracingmacros=0
+     %\tracingassigns=1
+     %\tracingifs=1
+     \ifg@ttingspecificparam % Avoid lookup loops.
+       \trace{sa}{No recursion}%
+       \gettop@param{#1}%
+     \else
+       \g@ttingspecificparamtrue
+       \csname getthep@ram-#1\endcsname{#1}%
+       \g@ttingspecificparamfalse
+     \fi
+     %\tracingifs=0
+     %\tracingassigns=0
+     %\tracingmacros=0
+   \else
+     \gettop@param{#1}%
+   \fi
+   \global\let\p@@r@m=\p@ram % Need to return outside the brackets
+   }%
+   \let\p@ram=\p@@r@m
+ \fi
+ \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\c@rrdstat)\fi :#1 is \p@ram}%
+ \ifnotracestacks\poptracing\fi
+}
+
+\def\gettop@param#1{%Check list of acceptable parameters and return the first one found.
+   \edef\p@ramcheck{#1}%
+   \ifx\p@ramcheck\empty\else
+     \trace{sa}{Checking for #1 in \p@ssParams}%
+     \let\d@gettopp@ram=\d@
+     \let\d@=\stackg@tp@ram
+     \x@\cstackdown \p@ssParams,\E
+     \let\d@=\d@gettopp@ram
+   \fi
+}
+
+\def\stackg@tp@ram#1\E{%\trace{sa}{tgp #1}%
+  \getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
+
+\def\getp@r@m#1#2{\let\p@ram\relax\ifcsname #2:#1\endcsname \x@\let\x@\p@ram\csname#2:#1\endcsname\fi \ifx\p@ram\relax\trace{spv}{#2:#1 undefined}\else\trace{sa}{#2:#1 found: \p@ram}\fi}
+\def\dgetp@r@m#1#2{% Half-way house between a full getp@ram and raw getp@ram
+  \let\p@ram\relax
+  \ifcsname #2\c@rrdstat:#1\endcsname
+    \x@\let\x@\p@ram\csname#2\c@rrdstat:#1\endcsname
+  \fi
+  \ifx\p@ram\relax
+    \trace{spv}{#2\c@rrdstat:#1 undefined}
+    \ifcsname #2:#1\endcsname
+      \x@\let\x@\p@ram\csname#2:#1\endcsname
+    \fi
+  \fi
+  \ifx\p@ram\relax
+    \trace{spv}{#2(\c@rrdstat):#1 undefined}\else\trace{sa}{#2:#1 found: \p@ram}%
+  \fi}
+  
+% build a list of results
+\def\cs@pushout#1{\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi}
+% prepend \@lso to #1 and build comma separated list of results
+\def\cspr@pend#1\E{\ifx\@ut\empty\xdef\@ut{\@lso#1}\else\xdef\@ut{\@ut,\@lso#1}\fi}
+% apply function do@it to #1, and build comma-separated list of results
+\def\cs@apply#1\E{\ifx\@ut\empty\xdef\@ut{\do@it{#1}}\else\xdef\@ut{\@ut,\do@it{#1}}\fi}
+% like cspr@pend, but also record unprepended item.
+\def\cs@lsolist#1\E{\trace{sa}{expanding #1->\@lso#1,#1}\ifx\@ut\empty\xdef\@ut{\@lso#1,#1}\else\xdef\@ut{\@ut,\@lso#1,#1}\fi}
+\def\cs@ppend#1\E{\ifx\@ut\empty\xdef\@ut{#1\@lso}\else\xdef\@ut{\@ut,#1\@lso}\fi}
+\def\cscheck@xist#1\E{\ifcsname m@rkerexists-#1\endcsname\cs@pushout{#1}\fi}
+\def\cscheckHook@xist#1\E{\ifcsname h@@kexists-#1\endcsname\cs@pushout{#1}\fi}
+% Check a comma separated list for existing hooks, and append into \afterh@@ks:
+\def\csex@cHook#1\E{\ifcsname \@lso-#1\endcsname
+    \x@\x@\x@\global\x@\x@\x@\afterh@@ks\x@\x@\x@{\x@\the\x@\afterh@@ks\x@\csname \@lso-#1\endcsname}%
+ \fi}
+%-csty_getparam
+
+%+csty_getmcparam
+%Main utility function for font parameters, stacking-styles aware
+%\def\getmcp@ram#1{\trace{sa}{getmcp #1}\let\r@s=\relax\ifnotracestacks\pushtracing\fi
+%  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\ifx\tmp\empty\else\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
+%    \getp@ram{#1}{\tmp}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi\fi}%
+%  \mcup\global\let\p@ram\r@s\traceNum{s}{param #1 for \mcstack\space is \p@ram}\ifnotracestacks\poptracing\fi}    %(1)
+%\def\getmcp@ramR#1{\trace{sa}{getmcpR #1}\let\r@s\relax\ifnotracestacks\pushtracing\fi
+%  \def\d@##1+##2+##3\E{%
+%    \trace{sa}{inside getmcp@ramR ##2 currently res=\r@s}%
+%    \d@code{##1}{##2}%
+%    \ifx\tmp\empty\else\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
+%    \getp@ram{regular}{\tmp}{\tmp}\ifx\p@ram\relax\getp@ram{#1}{\tmp}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi
+%                           \else\global\let\r@s\relax\fi\fi}%
+%  \mcup\global\let\p@ram\r@s\traceNum{s}{paramR #1 for \mcstack\space is \p@ram}\ifnotracestacks\poptracing\fi}
+
+\def\getthep@ramObeyRegular#1{%Called with p@ssParams set up. work up through possParam list, obeying \Regular in the stylesheet
+  \let\d@gettheparam=\d@
+  \trace{sa}{getthep@ramObeyRegular{#1}}%
+  \let\r@s\relax\ifnotracestacks\pushtracing\fi
+  %\tracingassigns=1
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{sa}{inside getthep@ramObeyRegular ##1 currently res=\r@s}%
+  \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\r@s\p@ram\fi
+       \else\global\let\r@s\relax\let\t@preset\tmpstylen@me\fi}%
+  \x@\cstackup\p@ssParams,\E
+  %\tracingassigns=1
+  \let\d@\d@gettheparam
+  \let\p@ram\r@s
+}
+
+\def\getthep@ramObeyRegularTop#1{%Called with p@ssParams set up. work down through possParam list, stopping on value or \Regular in the stylesheet
+  \let\d@gettheparam=\d@
+  \trace{sa}{getthep@ramObeyRegularTop{#1}}%
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{sa}{inside getthep@raObeyRegularTop ##1}%
+    \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\d@\cstackrelax\fi\else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax\fi}%
+  \x@\cstackdown\p@ssParams,\E
+  \let\d@\d@gettheparam
+}
+
+\def\getthep@ramObeyRegularTopChar#1{%Called with p@ssParams set up. work down through possParam list, stopping on value or \Regular in the stylesheet, and not decending from char to paragaph style
+  \let\d@gettheparam=\d@
+  \let\@@metC\relax
+  \trace{sa}{getthep@ramObeyRegularTopChar{#1}}%
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{sa}{inside getthep@raObeyRegularTopChar ##1 \@@metC}%
+    \x@\let\x@\tmpstyt@pe\csname stylet@pe-##1\endcsname\ifx\tmpstyt@pe\ss@Para\ifx\@@metC\relax\else\let\d@\cstackrelax\let\p@ram\relax\fi\else\ifx\tmpstyt@pe\ss@Char\let\@@metC\tr@e\fi\fi
+    \ifx\d@\cstackrelax\else
+      \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\d@\cstackrelax\fi\else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax\fi
+    \fi}%
+  \x@\cstackdown\p@ssParams,\E
+  \let\d@\d@gettheparam
+}
+
+\def\r@setparam{=[]}
+\let\f@ntextend\empty
+\def\st@rtswithsl@sh#1#2\E{\if#1/\temptrue\else\tempfalse\fi}
+\x@\def\csname getthep@ram-fontfeatures\endcsname#1{%
+  \trace{sa}{getthep@ram-fontfeatures}%
+  \let\d@gettheparam=\d@
+  \let\r@s\empty
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}%
+    \ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}%
+      \ifx\p@ram\relax\else
+        \ifx\p@ram\r@setparam
+          \let\d@\cstackrelax
+        \else
+          \ifx\p@ram\empty\else
+            % Param might be in stacking (issue #575) [foo,bar] format or older :foo:bar
+            % Reprocess to stacking format:
+            %\x@\ch@ckfontfeatures\p@ram\E % Initial colon test
+            \x@\ch@ckfontfeaturesbrk\p@ram[]\E % Lack of square brackets test.
+            \xdef\r@s{\p@ram\space\r@s\space}%Processed left to right, so top level (overrides) go *LAST*
+          \fi
+        \fi
+      \fi
+    \else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax
+    \fi}%
+    \x@\cstackdown\p@ssParams,\E
+  \ifx\f@ntextend\empty\else
+    \trace{sa}{Fontextend set! =\f@ntextend}%
+    \xdef\r@s{\r@s\space+[extend=\f@ntextend]\space}%%Processed left to right, so top level (overrides) go *LAST*
+  \fi
+  \ifx\r@s\empty
+    \let\p@ram\relax
+  \else
+    \trace{sa}{Found fontfeatures: '\r@s'}%
+    \let\f@atureset\cstackempty
+    \let\f@aturen@xt\n@xt
+    \trace{sa}{Merging options}%
+    \x@\fe@turemaths\r@s[] \E
+    \trace{sa}{Final feature list:\f@atureset}%
+    % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
+    \let\r@s\empty % MUST start with empy list!
+    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\x@\st@rtswithsl@sh\t@st\E\edef\r@s{\ifx\r@s\empty\iftemp\t@st\else:\t@st\fi\else\iftemp\t@st\r@s\else\r@s:\t@st\fi\fi}\x@\let\csname ##1\endcsname\relax\fi}%
+    \x@\cstackdown\f@atureset,\E
+    \let\n@xt\f@aturen@xt
+    \let\p@ram\r@s
+  \fi
+  \let\d@\d@gettheparam
+}
+
+\def\ch@ckfontfeatures#1#2\E{% Check for an initial colon
+  \def\t@st{#1}%
+  \ifx\t@st\c@lon
+    \let\p@ram\empty
+    \m@dernisefontfeatures#2:\E
+    \ifx\p@ram\empty\else
+      \edef\p@ram{=[\p@ram]}%
+    \fi
+  \fi
+}
+
+\def\ch@ckfontfeaturesbrk#1[#2]#3\E{% Check for nothing in brackets
+  \def\t@st{#2#3}%
+  \ifx\t@st\empty
+    \let\p@ram\empty
+    \m@dernisefontfeatures#1:\E
+    \ifx\p@ram\empty\else
+      \edef\p@ram{=[\p@ram]}%
+    \fi
+  \fi
+}
+
+\def\m@dernisefontfeatures#1:#2\E{%
+  \def\t@st{#2}%
+  \let\n@xtmff\m@dernisefontfeatures
+  \ifx\t@st\empty
+    \let\n@xtmff\endf@aturemaths
+  \fi
+  \def\t@st{#1}%
+  \ifx\t@st\empty\else
+    \ifx\p@ram\empty
+      \edef\p@ram{#1}%
+    \else
+      \edef\p@ram{\p@ram,#1}%
+    \fi
+  \fi
+  \n@xtmff #2\E
+}
+
+\def\endf@aturemaths#1\E{}
+\def\fe@turemaths #1[#2] #3\E{%
+  \trace{sa}{Feature maths #1.#2.#3}%
+  \let\n@xt\fe@turemaths
+  \edef\t@st{#2}\ifx\t@st\empty
+    \let\n@xt\endf@aturemaths
+    \trace{sa}{No more features #2}%
+  \else
+    \edef\t@st{\zap@space #1 \empty}\ifx\t@st\empty\let\t@st\pl@s\fi
+    \if\t@st\m@nusLtr\relax
+      \let\d@\rmf@ature
+      \trace{sa}{Removing font features #2}%
+    \else
+      \let\d@\addf@ature
+      \if\t@st\equ@ls
+        \trace{sa}{Exact font features #2}%
+        \ifx\f@atureset\cstackempty\else
+          \trace{sa}{Deleting prior features \f@atureset}%
+          %\tracingassigns=1
+          \def\d@##1\E{\x@\let\csname ##1\endcsname\undefined}%
+          \x@\cstackdown \f@atureset,\E
+          %\tracingassigns=0
+          \let\d@\addf@ature
+          \let\f@atureset\cstackempty
+        \fi
+      \else\if\t@st\pl@sLtr\relax\else
+          \message{Unrecognised control flag '\x@\meaning\t@st' \x@\the\x@\catcode\x@`\t@st  in fontfeature definition #1[#2], processing like '+' (valid: +/-/=)}%
+        \fi
+        \trace{sa}{Adding font features #2}%
+      \fi
+    \fi
+    \x@\cstackdown #2,\E
+  \fi
+  \edef\t@st{#3}\ifx\t@st\empty
+    \let\n@xt\endf@aturemaths
+  \fi
+  \n@xt #3 []\E
+}
+
+\def\rmf@ature#1\E{%
+  \x@\decodeff@ature #1==\E
+  \x@\let\csname \@ffname\endcsname\undefined
+}
+\def\addf@ature#1\E{%
+  \x@\decodeff@ature #1==\E
+  \trace{sa}{\@ffname\space defined as \@ffvalue}%
+  \x@\edef\csname \@ffname\endcsname{\@ffvalue}%
+  \edef\f@atureset{\@ffname,\f@atureset}% Duplicate values don't matter, as we'll unset values as the list is generated.
+}
+
+\def\decodeff@ature#1#2=#3=#4\E{% [+foo] or [foo] adds '+foo' [-foo] removes '+foo',   [foo=bar] adds foo=bar
+  \edef\t@st{#3}\ifx\t@st\empty
+    \if#1+\edef\@ffname{@@ffname-#2}\edef\@ffvalue{+#2}%
+    \else
+      \if#1-\edef\@ffname{@@ffname-#2}\edef\@ffvalue{}%
+      \else\if#1/\edef\@ffname{@@ffname/#2}\def\@ffvalue{#1#2}%
+        \else\edef\@ffname{@@ffname-#1#2}\edef\@ffvalue{+#1#2}\fi
+      \fi
+    \fi
+  \else
+    \edef\@ffname{@@ffname-#1#2}%
+    \ifcsname @@fmtype-#1#2\endcsname
+      \ifcsname\@ffname\endcsname
+        \csname @@fmtype-#1#2\endcsname{#1#2}{#3}%
+      \else
+        \edef\@ffvalue{#1#2=#3}%
+      \fi
+    \else
+      \edef\@ffvalue{#1#2=#3}%
+    \fi
+  \fi
+}
+
+\def\@multiply@feature#1#2{%
+  {%
+    \trace{sa}{Multiplying \csname \@ffname\endcsname by #2}%
+    \x@\let\x@\tmp\csname\@ffname\endcsname
+    \def\@tmpc#1=##1\E{\m@kenumber{##1}\dimen0=\@@result pt}%Extract value from parameter=value
+    \x@\@tmpc\tmp\E
+    \m@kenumber{#2}\x@\dimen1\x@=\@@result\dimen0
+    \xdef\@@mfresult{\strip@pt{\dimen1}}%
+  }\edef\@ffvalue{#1=\@@mfresult}%
+  \trace{sa}{result is \@@mfresult}%
+}
+  
+\x@\let\csname  @@fmtype-extend\endcsname\@multiply@feature
+
+%Which parameters need to obey the \Regular reset?
+\x@\let\csname getthep@ram-raise\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-underline\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-bold\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-italic\endcsname\getthep@ramObeyRegularTop
+%\x@\let\csname getthep@ram-fontfeatures\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-smallcaps\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-fontfactor\endcsname\getthep@ramObeyRegularTop
+% If a paragraph setting exists for the following parameters, don't fall back to it from a char style
+\x@\let\csname getthep@ram-shadow\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-outline\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-shadowcol\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-outlinecol\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-underline\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-background\endcsname\getthep@ramObeyRegularTopChar
+
+\def\getmcp@ram#1{\getp@ram{#1}{\styst@kfirst}{\styst@k}}
+\def\getmcp@ramR#1{\getp@ram{#1}{\styst@kfirst}{\styst@k}}
+
+\def\getFp@ram#1#2#3{%\ifnotracestacks\pushtracing\fi
+  \let\p@ram\relax
+  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}{#2}\fi}%
+  \mctop\ifnotracestacks\poptracing\fi}
+\def\getFp@ramR#1#2#3{\ifnotracestacks\pushtracing\fi
+  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ramR{#1}\else\getp@ram{#1}{#2}{#2}\fi}%
+  \mctop\ifnotracestacks\poptracing\fi}
+%-csty_getmcparam
+
+%+csty_getmcfontsize
+%\def\getmcfonts@ze{\ifnotracestacks\pushtracing\fi
+%  \getp@ram{fontsize}{p}{p}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
+%  \trace{sa}{getmcfonts@ze starting with \ps@ze}%
+%  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\ifx\tmp\empty\else
+%      \let\tmpstylen@me\tmp
+%      \dimen0=\c@rrfontsize pt
+%      \ifnum\if##1\ss@Para 1\else\if##1\ss@Note 1\else0\fi\fi =1
+%        \getp@ram{fontsize}{\tmpstylen@me}{\tmpstylen@me}\dimen0=\ifx\p@ram\relax 12\else\p@ram\fi pt%
+%      \else\getp@ram{fontscale}{\tmpstylen@me}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
+%        \ifx\p@ram\relax\edef\sc@le{1}\getp@ram{fontsize}{\tmpstylen@me}{\tmpstylen@me}%
+%          \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
+%            \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi \else\dimen0=\sc@le\dimen0                                                  %(2)
+%    \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\fi\trace{sa}{\space working c@rrfontsize from ##2 is \c@rrfontsize}}%
+%  \mcup\trace{sa}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}\ifnotracestacks\poptracing\fi}             %(3)
+
+\x@\def\csname getthep@ram-fontsize\endcsname#1{%Called with p@ssParams set up. work up through possParam list
+  \let\savep@ssParams\p@ssParams\let\savestyst@k\tmpstyst@k
+  \getp@r@m{fontsize}{p}%
+  \ifx\p@ram\relax \edef\ps@ze{12}\edef\tmpfr@m{default}\else \edef\ps@ze{\p@ram}\edef\tmpfr@m{p}\fi
+  \trace{sa}{getthep@ram-fontsize starting with \ps@ze\space from \tmpfr@m}%
+  \def\d@##1\E{\getp@r@m{fontsize}{##1}\ifx\p@ram\relax\else\edef\tmpfr@m{##1}\let\ps@ze\p@ram\fi}\cstackbottom\p@ssParams,\E
+  \let\p@ssParams\savep@ssParams\let\tmpstyst@k\savestyst@k
+  \trace{sa}{getthep@ram-fontsize found \ps@ze\space from \tmpfr@m}%
+    \dimen0=\ps@ze pt 
+  \xdef\c@rrfontsize{\strip@pt{\dimen0}}%
+  \def\d@##1\E{\edef\tmpstylen@me{##1}%
+    \getp@r@m{fontscale}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
+    \ifx\p@ram\relax\edef\sc@le{1}\getp@r@m{fontsize}{\tmpstylen@me}%
+      \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
+        %\dimen0=\sc@le\dimen0 % If this is reached, sc@le is 1, so it does nothing
+      \else
+        \dimen0=\p@ram pt%
+        \trace{sa}{Setting to \the\dimen0}%
+        \let\tmpfr@m\tmpstylen@me
+      \fi
+    \else
+      \trace{sa}{Scaling \the\dimen0 by \sc@le}%
+      \dimen0=\sc@le\dimen0                                                  %(2)
+      \let\tmpfr@m\tmpstylen@me
+    \fi
+    \xdef\c@rrfontsize{\strip@pt{\dimen0}}%
+    \trace{sa}{\space working c@rrfontsize from ##1 is \c@rrfontsize \space based on \the\dimen0}}%
+  \x@\cstackup\p@ssParams,\E
+  \edef\p@ram{\c@rrfontsize}%
+  \trace{sa}{set c@rrfontsize for \tmpstyst@k\space from \tmpfr@m\space is \c@rrfontsize}%
+}
+
+%-csty_getmcfontsize
+
+%+csty_makestyle
+
+
+\def\m@kestyle{%
+ \ch@cktypecs{\m@rker}%
+ \ifx\ch@ck@result\oth@r\message{! Cannot redefine reserved marker \m@rker, it clashes with a TeX primitive}%
+ \else
+   \ifx\ch@ck@result\dt@marker\else
+    \ifx\ch@ck@result\dt@undefined\else
+      \ifx\styl@type\St@lone\else %We don't care that the stylesheet is listing something as a standalone, as that doesn't change the definition
+        \MSG{* Warning: stylesheet redefines preexisting \ch@ck@result\space\m@rker}\fi\fi\fi
+   \x@\let\csname font<\m@rker>\endcsname=\relax
+   \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
+   \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
+   \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
+   \else\ifx\styl@type\MSt@ne \x@\defmst@nestyle\m@rker\E
+   \else\ifx\styl@type\St@lone\else \message{unknown style type '\styl@type'}\fi
+ \fi\fi\fi\fi\fi\message{]}}
+
+%:
+% \def*style: define a USFM marker as a paragraph, character or note style marker
+% which will expand to \p@rstyle, \ch@rstyle or \n@testyle, with the marker name
+% as its parameter
+%
+% \csname...\endcsname is used because the marker may contain numbers as well as letters
+%
+\def\defp@rstyle#1{\x@\def\csname#1\endcsname{\trace{M}{ParMarker: #1}\p@rstyle{#1}}\x@\global\x@\let\csname stylet@pe-#1\endcsname\ss@Para}
+\edef\pl@scatcode{\the\catcode`+}
+\catcode`+=11
+\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\trace{M}{CharMarker: #1}\ch@rstyle{#1}}\x@\def\csname +#1\endcsname{\ch@rstylepls{#1}}\x@\global\x@\let\csname stylet@pe-#1\endcsname\ss@Char}
+\catcode`+=\pl@scatcode
+\def\defn@testyle#1{\x@\def\csname#1\endcsname{\trace{M}{NoteMarker: #1}\n@testyle{#1}}\m@ken@tecl@ss{#1}\x@\global\x@\let\csname stylet@pe-#1\endcsname\ss@Note}
+%Make a milestone marker if there isn't a character style with the same prefix
+\def\defmst@nestyle#1\E{\trace{M}{MilestoneMarker: #1}\x@\let\x@\tmp\csname #1\endcsname\x@\global\x@\let\csname stylet@pe-#1\endcsname\ss@Mstn
+  \ifx\tmp\relax
+    \getp@r@m{endmarker}{\m@rker}%
+    \ifx\p@ram\relax
+      \x@\def\csname#1\endcsname{\def\milestoneOp{}\mst@nestyle{#1}}%
+    \else
+      \x@\def\csname\p@ram\endcsname{\def\milestoneOp{e}\mst@nestyle{#1}}%
+      \x@\def\csname#1\endcsname{\def\milestoneOp{s}\mst@nestyle{#1}}%
+    \fi
+  \fi}
+%-csty_makestyle
+
+%+csty_sethook
+% Allow "hooking" custom TeX code at the beginning or ending of specific styles.
+% e.g. `\sethook{start}{s1}{-}` put a hyphen at the start of every section heading
+\def\sethook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{#1}{#2}\else\rememberhook@xists{#1}{#2}\fi \x@\gdef\csname #1-#2\endcsname{#3}}
+\def\setbookhook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{book#1}{#2}\else\rememberhook@xists{book#1}{#2}\fi \x@\gdef\csname book#1-#2\endcsname{#3}}
+% A betweek hook triggers at the mid-point in the transition between the specified paragraph types.
+\def\setbetweenhook#1#2#3{\sethook{between-#1}{#2}{#3}}
+% A CV hook is executed only for a particular CV when the verse milestone occurs.
+\def\setcvhook#1#2{\x@\gdef\csname cv-#1\endcsname{#2}}
+% Allow the above to be extended. This is risky for complex hooks
+\def\addtohook#1#2#3{\x@\gdef\csname #1-#2\x@\x@\x@\endcsname\x@\x@\x@{\csname #1-#2\endcsname#3}}
+\def\addtobetweenhook#1#2#3{\addtohook{between-#1}{#2}{#3}}
+\def\addtobookhook#1#2#3{\addtohook{book#1}{#2}{#3}}
+\def\addtocvhook#1#2{\addtohook{cv}{#1}{#2}}
+\def\prefixhook#1#2#3{\x@\gdef\csname #1-#2\x@\x@\x@\endcsname\x@\x@\x@{\x@\x@\x@#3\csname #1-#2\endcsname}}
+\def\prefixbetweenhook#1#2#3{\prefixhook{between-#1}{#2}{#3}}
+\def\prefixbookhook#1#2#3{\prefixhook{book#1}{#2}{#3}}
+\def\prefixcvhook#1#2{\prefixhook{cv}{#1}{#2}}
+
+%-csty_sethook
+
+%+csty_testpublishability
+% All types of marker use this to check for the "nonpublishable" property
+\def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
+ \getp@ram{properties}{#1}{#1}%Should not decend, but can have specific version
+ \x@\t@stnonpub\p@ram nonpublishable!}
+\def\@@t@stpublishability#1#2{\n@npublishablefalse % Some things may need a descending version
+ \getp@ram{properties}{#1}{#2}%
+ \x@\t@stnonpub\p@ram nonpublishable!}
+\def\t@stnonpub #1nonpublishable#2!{%
+ \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}
+\newif\ifn@npublishable
+%-csty_testpublishability
+
+% Patch in special handling for \c and \v.
+%+csty_defv
+\newif\ifhangingverse
+\newif\ifnoparstartmvm \noparstartmvmtrue
+
+\newif\ifkeepmarginversemarker
+\def\marginversemarker{}
+\def\outputmvmkr{%Output a marker at the spot where a marginal verse comes from
+  \let\tmp\marginversemarker
+  \ifnoparstartmvm
+    \ifx\prev@rsemode\empty\else % prev@rsemode is empty mid-paragraph
+      \let\tmp\empty
+    \fi
+  \fi
+  \ifx\tmp\empty\else
+    \cstyle{zmvm}{\marginversemarker}%
+  \fi
+}
+
+\catcode`-=11
+\def\setPrintVerse #1 #2.{\gdef\print@bleverse{#1-#2}}
+\def\noPrintVerse{\global\c@ncelfirstversetrue\global\keepmarginversemarkertrue}
+\def\spl@tprintableverse{\x@\spl@tverses\print@bleverse --\relax}
+\catcode`-=12
+\def\pdfv@rsemark{%TODO: Not every verse.
+  \special{pdf:dest (\id@@@\c@rrdstat.\ch@pter:\v@rsefrom) [@thispage /XYZ @xpos @ypos null]}%
+  \ifx\v@rsefrom\v@rseto\else\special{pdf:dest (\id@@@\c@rrdstat.\ch@pter:\v@rsefrom-\v@rseto) [@thispage /XYZ @xpos @ypos null]}\fi%
+}%
+
+\def\MakeChapterLabel#1#2{#1\ #2}
+\def\reference{\ch@pter\ChapterVerseSeparator\v@rse}%
+
+\newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
+\newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
+\newif\ifOmitAllVerses \OmitAllVersesfalse
+\newif\ifNoHangVerseNumberOne\NoHangVerseNumberOnetrue
+\newif\ifHangVA\HangVAfalse
+\newif\iffilehasverses % Usercode (e.g. book end marks) might want to know this
+\newif\ifrotateVerse \rotateVersefalse
+\newif\ifversehyphen \versehyphentrue
+\newif\ifversehyphenup \versehyphenupfalse
+\def\everyfirstverse#1#2#3{}% Arguments are book ID (e.g. GEN), Book name (e.g. Genesis) and chapter
+\def\@ddcvhooks{
+ % called after \c and \v have been processed in stylesheet at beginning of typesetting file
+ \let\@V=\v% remember \v defn for (A) below
+ % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
+ \def\@v@ ##1 {\let\oldv@rse\v@rse\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
+  \ifdiglot\edef\dc@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\else\edef\c@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\fi
+  \leavevmode % ensure we are in horizontal mode to build paragraph. This may output a chapter number
+  % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
+  % and the user has requested omission of the first verse number in a chapter
+  \c@ncelfirstversefalse
+  \dimen0=\lastkern
+  {\count1=\spacefactor\trace{hv}{spacefactor:\the\count1 NoHV1:\ifNoHangVerseNumberOne true\else \false\fi}}%
+  \ifnum\spacefactor=\n@wchaptersf \ifNoHangVerseNumberOne \kern0sp \hangingversefalse\fi\relax % override \hangversenumber here
+   \ifOmitVerseNumberOne \ifdr@ppednumber\c@ncelfirstversetrue % v1
+                         \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
+   \fi
+   \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+  \else
+    %\message{verse was \meaning\oldv@rse}%
+    \ifx \oldv@rse\empty
+     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+    \fi
+  \fi
+  % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
+  % When this happens we make ll@p use llap to right justify the verse number at the current position.
+  % Otherwise make ll@p do nothing.
+  \ifdim\lastkern=-1sp \hangingversetrue\fi
+  \ifversion{4}{\ifMarginalVerses\let\printverse\defaultprintverse
+                  \else\ifOmitAllVerses\let\printverse=\noprintv@rse\else
+                    \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+                \fi\fi}{\ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi}%
+  %\trace{hv}{lastkern \the\dimen0}%
+  \bgroup
+  \ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
+ % If the next token IS vp, then call relevant code to interpret before dropping 
+ \def\@V@{%
+  \let\nxt\@@V@@
+  \ifhangingverse\ifHangVA\ifx\mayb@vp\va\let\nxt\@@VA@@\fi\fi\fi
+  \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
+ \def\@@VP@@\vp ##1\vp*{\xdef\print@bleverse{##1}\futurelet\mayb@vp\@V@}
+ \def\@@VA@@\va ##1\va*{\xdef\altern@teverse{##1}\futurelet\mayb@vp\@V@}
+ \def\@@V@@{%
+  \the\prev@rsehooks
+  \spl@tprintableverse
+  \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
+  %\ if not cancelling first verse, output verse number
+  \ifc@ncelfirstverse\trace{V}{Cancelling \ch@pter:\v@rse}\ifkeepmarginversemarker\outputmvmkr\global\keepmarginversemarkerfalse\fi\else
+   \ifrotateVerse
+    \setbox0=\hbox{\printverse}\dimen0=\wd0%
+    \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
+    \setbox0=\hbox{\lower\dimen2\hbox to \dimen1{\kern\ht0\special{x:gsave}\special{x:rotate 90}%
+     \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
+     \kern\AfterVerseSpaceFactor\FontSizeUnit
+   \else
+    \ifreftooltip\ch@ptooltipstart\fi
+    \printverse
+    \ifreftooltip\ch@ptooltipend\fi
+   \fi
+  \fi
+  \egroup
+  \m@rkverse % generate a milestone for running headers
+  % run the hooks for picture insertion, paragraph adjustments, etc.
+  % these hooks were added via \addtoversehooks
+  \the\v@rsehooks
+  % remember current chapter:verse, not currently used. Could potentially be used
+  % to insert chapter:verse in footnotes.
+  \nobreak\hskip0.5sp\relax% let \x detect that there's "space" (or maybe drop-chapter) here
+  \ifhangingverse
+    \trace{hv}{End of hanging verse \ch@pter:\v@rse }%
+    \hangingversefalse
+    \ignorespaces
+  \fi
+ }
+ \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
+ \let\cat\c@t
+ \let\usfm\@usfm
+%-csty_defv
+ % define handling for usfm \v marker
+%+csty_verse
+ \def\v{%
+  \ifvmode\xdef\prev@rsemode{\m@rker}\else
+    \ifhangingverse 
+      \trace{hv}{Horiz Mode:cancel hangingverse}%
+      \hangingversefalse % Cancel
+    \fi
+    \global\let\prev@rsemode\empty
+  \fi
+  \ifinn@te \MSG{Verse marker found in note style (\newn@testyle), after \c@rref. End notes properly, notes including verse numbers must uses fv.}\endn@testyle*\fi
+  \@v@}%
+   %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
+ % remember chapter macro for later
+%-csty_verse
+%+csty_chapdef
+ \let\@C=\c
+ % Define a macro to process space delimited chapter number
+ % ## is necessary because this is a nested macro definition
+ \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
+   \ifx\ch@pter\z@ro
+     \message{First chapter for \id@@@}\op@ninghooks{first}{c}{c+\styst@k}%
+   \fi
+   \gdef\ch@pter{##1}% remember chapter number
+   \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
+   \gdef\v@rse{}% clear verse number
+   \ifdiglot
+     \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
+     \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
+     \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
+     \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
+   \fi
+   \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
+   \edef\tmp{cv-all\ifdiglot\c@rrdstat\fi\ch@pter.0}%
+   \ifcsname \tmp\endcsname \csname\tmp\endcsname\fi
+   \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
+   \ifcsname cv-\c@rref\endcsname\csname cv-\c@rref\endcsname\fi
+   \global\let\print@bleverse=\v@rse
+   \op@ninghooks{start}{c}{\styst@k}%
+   \m@kedigitsletters
+    % If omitting chapter number, skip this.
+    % We would have to set \OmitChapterNumbertrue on a book by book basis
+    % in the configuration file in order to omit chapter numbers for single chapter books.
+   \ifhmode\unskip\fi % since a chapter effectively starts a new paragraph, clear out paragraph final whitespace
+   \ifOmitChapterNumber
+     \trace{c}{Chapter numbers ommitted}%
+     % If we are mid paragraph remove the space caused by the \n before the \c.
+     % Not sure why the damage is already done (e.g. end of ior*)
+     %\ifhmode\unskip\fi
+     \pdfb@@kmark \pdfch@ptermark
+   \else
+     % if chapter label not present, set \ch@pter[X]waiting to cause chapter number to be printed
+     % at start of first text paragraph.
+     \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
+     \ifcsname hookchapter\g@tdstat\endcsname\csname hookchapter\g@tdstat\endcsname\ch@pter
+     \else
+       \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+         \trace{c}{No chapter label in use : \ch@pter}%
+       \else % if \cl present, output chapter label here
+         \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
+         \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+         \pdfb@@kmark \pdfch@ptermark
+         \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
+         \spacefactor=\n@wchaptersf % prevent hanging verse number here
+       \fi
+     \fi
+   \fi}
+ %
+ \def\c{\m@kedigitsother\@c@}
+ \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
+%-csty_chapdef
+ % set default value for drop cap chapter number size if not already set
+%+csty_dropchap
+ \ifdim\dropnumbersize=0pt
+   \calcdr@psize
+ \else\edef\dr@psize{\the\dropnumbersize}
+ \fi
+ \def\m@rker{c}\def\@mkr{c\c@rrdstat}\defp@ram{fontsize}{\dr@psize}%
+ \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
+}
+%-csty_dropchap
+\def\bridgeVerses #1.#2-#3.{
+  \addtrigger{#1.#2-preverse}{\setPrintVerse #2 #3.}
+  \addtrigger{#1.#3-preverse}{\noPrintVerse}
+}
+
+\newbox\pstr@t
+\newif\ifCalcChapSize \CalcChapSizetrue
+\def\calcdr@psize{%
+  \should@xist{}{c}%
+  \ifdiglot
+    \trace{d}{Calculating drop: \c@rrdstat}%
+    \should@xist{}{c\c@rrdstat}%
+    \s@tbaseline@{p}{\c@rrdstat}%
+  \else
+    \s@tbaseline{p}{p}%
+  \fi
+  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
+  \s@tfont{p}{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
+  \mkstr@t\setbox\pstr@t=\copy\str@tbox
+  \XeTeXuseglyphmetrics=0\relax\setbox1=\hbox{0}% get font metrics          %(1)
+  \XeTeXuseglyphmetrics=3\s@tfont{c}{c}\relax\setbox0=\hbox{0123456789}% set a box at the size specified by the \c marker
+  \XeTeXuseglyphmetrics=\@seglyphmetrics% \tracingcommands=0\MSG{useglyphmetrics=\the\XeTeXuseglyphmetrics}
+  \getp@ram{fontsize}{c}{c}\dropnumbersize=\ifx\p@ram\relax 0pt\else\p@ram\FontSizeUnit\fi \relax % C in following
+  \getp@ram{fontsize}{p}{p}\dimen255=\p@ram\FontSizeUnit
+  \advance\dimen255 by 0.5\dimen255
+  \advance\dimen255 by 2sp
+	% if font size specified for chapter number stylesheet is less than 1.5*paragraph font size ...
+    %\ifdim\dropnumbersize<\dimen255
+    \trace{c}{CalcChapSize: \the\dropnumbersize <  \the\dimen255}%
+    \ifCalcChapSize\ifdim\dropnumbersize<\dimen255
+      \ifdim\dropnumbersize<1pt
+        \dropnumbersize=\baselineskip
+      \fi
+	  %clear font<c> so that it will get rebuilt on next setfont for \c (after we have figured out real size)
+      \x@\let\csname font<c>\endcsname=\relax
+	  % Calculate drop cap height = base line height + (lower case) x height
+      % get x height (appendix F) 5 is x-height of font X=x + baselineskip
+      \s@tfont{p}{p}\dimen0=\fontdimen5\font\advance\dimen0\baselineskip           %(2)
+      \dimen1=\dimen0 \multiply\dimen1 by 128 \divide\dimen1 by \dropnumbersize % X/C * 128
+      \dimen2=\ht1 \advance\dimen2 by \dp1 \advance\dimen2 by \baselineskip % total height available: T
+      \dimen3=128\dimen0 \divide\dimen3 by \dimen2 \multiply\dimen3 by \dropnumbersize \divide\dimen3 by 128 % CX/T
+      \dimen4=\dp1 \multiply\dimen4 by \dimen1 \advance\dimen4 64sp\divide\dimen4 by 128 % scaled available
+      \trace{h}{dimen0=\the\dimen0, dimen1=\the\dimen1, dimen2=\the\dimen2, dimen3=\the\dimen3,
+                dimen4=\the\dimen4, dp0=\the\dp0, ht0=\the\ht0, dp1=\the\dp1, ht1=\the\ht1,
+                FontSizeUnit=\the\FontSizeUnit, dropnumbersize=\the\dropnumbersize}%
+      \ifdim\dimen3<\ht0 \dimen2=\dimen3\else\ifdim\dimen4<\dp0\dimen2=\dimen3\else\dimen2\ht0\fi\fi % min(CX/T, ht(0))
+      \trace{h}{starting height=\the\dimen2}%
+      % The following calculations are scaled by 128 in order to get better accuracy even though calculations are integer values
+	  % divide desired height by current height
+      \multiply\dimen0 by 128                                                   %(3)
+      \divide\dimen0 by \dimen2
+	  % multiply by original size from \c marker in stylesheet
+      \trace{h}{font x-height \x@\the\fontdimen5\font, ht of digits \the\ht0, dp of digits \the\dp0, baselineskip \the\baselineskip, for dropcaps \the\dimen0\space multiply by \the\dropnumbersize}%
+      \dimen3=\dimen0 % depth scale factor * 128
+      \multiply\dimen0 by \dropnumbersize
+      \dropnumbersize=\dimen0
+      % divide by the \FontSizeUnit to get value for fontsize param of marker \c
+      \divide\dropnumbersize by \FontSizeUnit
+      \multiply\dropnumbersize by 512 % (2^16 / 128)
+      \multiply\dimen3 by \dp0  % new depth
+      \advance\dimen3 64sp\divide\dimen3 by 128
+      \trace{h}{dropnumbersize=\the\dropnumbersize, dimen1=\the\dimen1, dimen3=\the\dimen3}%
+      \ifdim\dimen3>\dp1 % would overflow downwards. Need to shift              %(4)
+        \advance\dimen3 by -\dp1% \divide\dropnumberraise by 2
+        \setp@ram{raise}{c\ifdiglot\c@rrdstat\fi}{\the\dimen3}%
+      \fi
+      \trace{h}{dropnumbersize = \the\dropnumbersize, dropnumberraise = \the\dropnumberraise}%
+    \fi\fi
+    \edef\dr@psize{\strip@pt\dropnumbersize}%
+}
+
+\def\repeatsetdropc@p{%The above code is in \lowercase which  breaks L and R
+  \message{Setting \c@rrdstat drop-cap size to \dr@psize}%
+  \setp@ram{fontsize}{c\c@rrdstat}{\dr@psize}%
+  \g@tfontname{c}{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
+  \let\d@neit\c@rrdstat
+  \def\col@do##1{
+    \setc@rdstat{##1}%
+    \ifx\c@rrdstat\d@neit\else% Avoid double-processing
+      \setLRspecific
+      \dropnumbersize=0pt
+      \calcdr@psize
+      \g@tfontname{c}{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
+      \message{ Setting drop-cap size to \dr@psize}%
+      \setp@ram{fontsize}{c##1}{\dr@psize}%
+    \fi
+  }%i
+  \x@\each@col\diglot@list\E
+  %\x@\let\csname font<cL>\endcsname=\relax %
+  %\x@\let\csname font<cR>\endcsname=\relax %
+}
+%-csty_dropchap
+
+%+csty_strippt
+\let\E=\empty
+{\catcode`P=12 \catcode`T=12 \lowercase{\gdef\@strip@pt#1PT#2\E{#1} \xdef\@pt{PT}}}
+\def\strip@pt#1{\x@\x@\x@\@strip@pt\x@\the\x@ #1\@pt\E}
+%-csty_strippt
+
+%+csty_hangverse
+\def\AfterVerseSpaceFactor{2}
+\newif\ifOmitChapterNumber
+\newif\ifc@ncelfirstverse
+\catcode`\~=12 \lccode`\~=32 \lowercase{\gdef\cstyle#1#2{\x@\ch@rstylepls\x@{#1}~#2\ch@rstylepls{#1}*}}
+\let\altern@teverse\empty
+
+\def\simpleprintv@rse{\trace{v}{simpleprintv@rse}\cstyle{v}{\plainv@rse}\kern\AfterVerseSpaceFactor\FontSizeUnit
+  \ifx\altern@teverse\empty\else
+    \cstyle{va}{\altern@teverse}\NBSP%
+  \fi
+}
+\def\noprintv@rse{}
+\newif\ifSeparateVerseAdornments \SeparateVerseAdornmentstrue
+\newif\ifadorningrange
+
+\def\plainv@rse{\ifx\v@rsefrom\v@rseto\adorningrangefalse
+  \AdornVerseNumber{\v@rsefrom}%                                        (2)
+  \else
+    \ifversion{4}{\let\br@dgeverse\ranges@p}{\let\br@dgeverse\RangeChar}%
+    \ifSeparateVerseAdornments
+      \adorningrangefalse
+      \AdornVerseNumber{\v@rsefrom}\br@dgeverse\AdornVerseNumber{\v@rseto}%
+    \else
+      \adorningrangetrue
+      \AdornVerseNumber{\v@rsefrom \br@dgeverse \v@rseto}%
+    \fi
+  \fi
+}
+
+\def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\defaultprintverse
+    \else {\s@tsideskips{v}{-1pt} \h@ngprintv@rse{0}}\box0\kern\AfterVerseSpaceFactor\FontSizeUnit\fi
+}
+\def\hangprintverse{\trace{hv}{hangprintverse  \v@rse}\llap{\defaultprintverse}}
+\def\adornv#1{\AdornVerseNumber{#1}}
+\def\ssf{\SuperscriptFactor}
+\def\h@ngprintv@rse#1{%
+    \s@tbaseline{v}{\styst@k}%
+    %\getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
+    \dimen0=\ssf\baselineskip \advance\dimen0 by -\baselineskip
+    \setbox1=\hbox{\cstyle{v}{\adornv{\v@rseto}}}%
+    \ifversion{4}{\let\br@dgeverse\ranges@p}{\let\br@dgeverse\RangeChar}%
+    \global\setbox#1=\vbox to \ht1{\s@tbaseline{v}{v}\vtop{\rightskip=0pt\leftskip=0pt\hbox{\llap{\cstyle{v}{\br@dgeverse}}%
+                                 \vbox{\hbox to \wd1{\hskip\leftskip\cstyle{v}{\adornv{\v@rsefrom}}\hskip\rightskip}%
+                                       %\kern\dimen0
+                                        \box1}}}}%
+    \trace{v}{h@ngprintverse height=\the\ht#1, width=\the\wd#1}}
+\let\defaultprintverse=\simpleprintv@rse
+\let\printverse=\defaultprintverse                                               %(1)
+\def\@ne{1}
+\def\AdornVerseNumber#1{#1}                                                     %(3)
+
+% put \hangversenumber into the <start> hook for a style such as \q1
+% in order to 'hang' verse numbers into the paragraph indent of the style
+\def\hangversenumber{\hangingversetrue\kern-1sp\relax}
+%-csty_hangverse
+
+% size to use for drop-cap style numbers; automatically calculated if not set
+\newdimen\dropnumbersize
+\newdimen\dropnumberraise
+
+% recognise and process reference id if supplied in \k
+\def\@s@tkref#1|#2\E{%\tracingassigns=1
+  \def\tmp{#2}%
+  \edef\kr@f{\detokenize{#1}}%
+  \let\kr@ftext\kr@f
+  \ifx\tmp\empty
+    \x@\setkr@f\x@{\kr@f}%
+  \else
+    \@@s@tkref#2\E
+  \fi
+  %\tracingassigns=0
+}
+\def\@@s@tkref#1|\E{%
+  \def\thiswh@tstyle{k}\@@init@ttribs
+  \edef\@ttributes{\detokenize{#1}}% Without the added trailing | now.
+  \x@\let\x@\@ttriblist\csname @ttriblist-k\endcsname
+  \parse@ttribs{\@ttributes}% Parse
+  \x@\let\x@\kr@f\csname attr:\thisdefault@ttrkey\endcsname
+  \trace{A}{Keyword with explicit key '\kr@f'}%
+}
+
+%+csty_define-hooks
+% other modules can use \addtoversehooks to insert macros that will be executed at each verse
+\def\addtoversehooks#1{\x@\global\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
+\def\addtopreversehooks#1{\x@\global\x@\prev@rsehooks\x@{\the\prev@rsehooks #1}}
+\newtoks\v@rsehooks
+\newtoks\prev@rsehooks
+\def\lastc@rref{}\def\lastc@rradj{1}
+{\catcode`\1=11\xdef\@neletter{1}}
+\def\docvhook{\edef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.\v@rse}\csname cv-\c@rref\endcsname
+  %\trace{v}{verse: \v@rse, catcodes:\x@\getcatcodes\v@rse\E, and of one:\x@\getcatcodes\@neletter\E}%
+  \ifnum\ifnum\lastc@rradj>1 1\else\ifx\v@rse\@neletter 1\else 0\fi\fi =1
+    \xdef\lastc@rradj{1}\ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\c@rref}\fi\fi
+}
+\addtoversehooks{\docvhook}
+%-csty_define-hooks
+
+\def\ch@plabel{}
+
+% macros to switch digits between "letter" and "other" category; must be "letter" when reading USFM data,
+% but "other" when we want to read numeric values
+%+csty_fndigits
+\def\m@kedigitsletters{\catcode`0=\el@ven \catcode`1=\el@ven \catcode`2=\el@ven \catcode`3=\el@ven
+ \catcode`4=\el@ven \catcode`5=\el@ven \catcode`6=\el@ven \catcode`7=\el@ven
+ \catcode`8=\el@ven \catcode`9=\el@ven \catcode`-=\el@ven \relax}
+\def\m@kedigitsother{\catcode`0=\tw@lve \catcode`1=\tw@lve \catcode`2=\tw@lve \catcode`3=\tw@lve
+ \catcode`4=\tw@lve \catcode`5=\tw@lve \catcode`6=\tw@lve \catcode`7=\tw@lve
+ \catcode`8=\tw@lve \catcode`9=\tw@lve \catcode`-=\tw@lve \relax}
+\def\makeatletter{\catcode`\@=\el@ven\relax}
+\def\makeatother{\catcode`\@=\tw@lve\relax}
+\def\m@keplusletter{\catcode`+=\el@ven\relax}
+\def\m@keplusother{\catcode`+=\tw@lve\relax}
+\def\makepctletter{\catcode`\%=\tw@lve\relax}
+\def\makepctcomment{\catcode`\%=\f@urteen\relax}
+%-csty_fndigits
+
+\let\book\relax
+\def\b@okShort{}%
+\def\ch@pter{}
+\def\v@rse{}
+\def\m@rknum{1}
+\let\@ch@pter=\ch@pter
+\let\@ch@pterR=\ch@pter
+\let\@v@rse=\v@rse
+\let\@v@rseR=\v@rse
+\def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
+\let\zMarkVerseAgain\m@rkverse
+\def\m@rkverseNml{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
+\let\cur@ds\empty
+\def\m@rkverseDglot{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
+
+\def\n@xtparstart{}
+\def\print@bleverse{}
+%+csty_addspecialhooks
+\newif\ifr@gurgitated % \k processing and maybe some other things end up with 'regurgitating' markers. This can mess up space detection.
+
+\newif\ifn@tcs
+\newif\ifgr@bbedspace
+\newif\ifgr@bbing
+\newtoks\gr@btoks
+\def\gr@bcodes{\obeyspaces\obeylines}
+\def\egr@bcodes{\catcode32=10 }
+\long\def\gr@btomacro#1{%
+  \def\tmp{#1}\ifgr@bbing\else\gr@bcodes\gr@bbingtrue\fi
+  \ifx\tmp\@gr@bs\gr@bbedspacetrue\let\@nxxt=\gr@btomacro\else
+    \ifx\tmp\@gr@bp\gr@bbedspacetrue\m@kedigitsletters% Reset numbers to letters at the line break.
+      \let\@nxxt=\gr@btomacro\else
+      %\gt@addsp@ce % Add a space if we saw one earlier
+      \t@stifcs{#1}\ifn@tcs
+        \gt@addsp@ce
+        \expandafter\gr@btoks\expandafter{\the\gr@btoks#1}%
+        \let\@nxxt\gr@btomacro
+      \else% Some kind of cs
+        \endgr@b \let\@nxxt#1%
+      \fi
+    \fi
+  \fi\@nxxt}
+% This cryptic mess seems to determine if the argument ends up as a  single character when prefixed with \string. control sequences don't do that. #1 must be collected with obeyspaces active.
+\long\def\t@stifcs#1{\ifcat$\expandafter\n@ffin\string#1$\relax \n@tcstrue\else\n@tcsfalse\fi}
+
+\def\endgr@b{\trace{H}{grabbed:"\the\gr@btoks"}\egr@bcodes\endgr@@b}
+\def\endgr@@b{\gr@bbedspacefalse\x@\aftergr@b\x@{\the\gr@btoks}}
+\def\@fp{\futurelet\n@xt\@@fp}
+\def\@@fp@s*{}
+\def\@@fp{\ifx\n@xt\@@st@risk\let\n@xt\@@fp@s\else\let\n@xt\relax
+  \par\kern 1sp 
+  \ifp@ranotes \@ch@ckadjustments \fi
+  \advance\currn@tetparnum by 1 \relax
+  \ifp@ranotes
+  \ifnewparnotes \kern -2sp \@ch@ckadjustments\fi
+  \else \leavevmode\@ch@ckadjustments%\kern\n@tefli
+  \fi \fi\n@xt}
+\begingroup
+\obeylines%
+{\obeyspaces\gdef\@gr@bs{ }\gdef\@gr@bp{
+}\gdef\gt@addsp@ce{\ifgr@bbedspace\expandafter\gr@btoks\expandafter{\the\gr@btoks }\fi\gr@bbedspacefalse}%
+}%
+\gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
+ \let\pb=\pagebreak %pb isn't a paragraph style, 
+ \let\fp\@fp
+ \let\@H=\h%
+ \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
+        %\tracingassigns=1
+        \let\aftergr@b\@h\gr@btomacro}% \h gets stored as the book name (for references)
+ \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{H}{Defining ifOmitChapterNumberRH@\detokenize{##1}}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \let\aftergr@b\@hh\gr@btomacro}% \h1 gets stored as the book name (for references)
+ \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\bookalt{\csname b@ok1\g@tdstat\endcsname}%
+ \x@\let\csname h1\endcsname=\h@h
+ %
+ \let\@CL=\cl%
+ \def\do@CL{\x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax\gdef\n@xtparstart{\pdfch@ptermark}\@CL \addtopreeotp{\ifvoid\ch@pternote\else\raise\dimexpr \baselineskip -\onel@neunit\relax\box\ch@pternote\fi}}%
+ \def\cl{\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \let\n@xt=\st@recl\else\let\n@xt=\do@CL\fi \n@xt}%
+ \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
+ \def\@cl ##1^^M{\x@\gdef\csname ch@plabel\g@tdstat\endcsname{##1}\egroup}%
+ %
+ \let\@ID=\id%
+ \def\id{\bgroup\obeylines%\unc@tcodespecials
+   \m@kedigitsother
+   %\tracingassigns=1
+   \catcode32=10 \let\aftergr@b\@id\gr@btomacro}% \id gets stored, printed in the margin with cropmarks, and used in lots of places.
+ \def\@id##1{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup
+        \gdef\b@okShort{}%Prevent roll-over of short-form book name
+        \trace{oh}{hook for bookstart-all \ifcsname bookstart-all\endcsname exists\else missing\fi}%
+        \csname bookstart-all\endcsname
+        \trace{oh}{hook for bookstart-\id@@@ \ifcsname bookstart-\id@@@\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
+        \csname bookstart-\id@@@\endcsname
+        \runtrigg@rsother{bookstart}%
+        }%
+ %
+ \def\b{\global\dr@ppednumberfalse\endlastp@rstyle{b}\bgroup % End previous par before making a gap
+   \getp@ram{baseline}{b}{b+\styst@k}\@@b}
+ \def\ib{\endlastp@rstyle{ib}\bgroup % End previous par before making a gap
+   \getp@ram{baseline}{ib}{ib+\styst@k}\@@b}
+ \def\@@b{%Bottom half of \b, \ib 
+  \ifx\p@ram\relax
+     \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
+     \vskip\baselineskip
+    \else
+      \vskip\p@ram
+    \fi\egroup\prevgraf=1 \cutoutcarryover}
+ \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12 \catcode`\:=12 \catcode`\/=12 \catcode`\\=12 \ptx@fig}% \fig has its own special macro to parse the fields
+ %
+ \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
+ \global\let\@k=\k
+ \def\tr@ceT{\trace{T}}
+ \def\setkr@f##1{\edef\kr@f{\zap@space ##1 \empty}\x@\deslash\x@{\kr@f}\let\kr@f\tmp}
+ %\catcode`\~=12 \lccode`\~=32\lowercase{
+ \def\@@k##1\k*{%\k processing 2nd half. NO CRs!
+    \let\v@rse=\empty % Normally verses and keywords don't co-occur
+    \x@\@s@tkref##1|\E%
+    \let\thiskmark\kr@ftext%
+    \tr@ceT{keyword: \kr@f}%
+    \runtrigg@rsother{k.\kr@f}%
+    \activ@tecustomch@rs%
+    \p@sheof\r@gurgitatedtrue%
+    \x@\x@\x@\@k\x@\scantokens\x@{\kr@ftext\ignorespaces}\endch@rstylen*%
+    \ifcsname m@rknumk\ifdiglot\c@rrdstat\fi\endcsname\else\addnewm@rk{k\ifdiglot\c@rrdstat\fi}\fi%
+    \getm@rknum{k\ifdiglot\c@rrdstat\fi}\x@\x@\x@\marks\x@\m@rknum\x@{\thiskmark}%Set (side-dependent) mark for k.
+    \trace{ma}{set mark(k)=\m@rknum \space to \thiskmark}%
+    \r@gurgitatedfalse\p@peof%
+    \runtrigg@rs{\id@@@\ifdiglot\ifx\c@rrdstat\d@glotl\else\c@rrdstat\fi\fi k.\kr@f}%
+  }%}
+ \def\k{%\k processing
+   \deactiv@tecustomch@rs% no CR here
+   \catcode`\|=12 %
+   \@@k}
+}%
+
+
+\endgroup
+\catcode`0=11\def\z@ro{0}\catcode`0=12
+\newif\iftfmp \tfmpfalse
+\def\resetch@pterverse#1{%
+   \global\let\ch@pter\z@ro\global\let\v@rse\@neletter
+   \x@\global\x@\let\csname @ch@pter\@g@tdst@t#1\endcsname\ch@pter
+   \x@\global\x@\let\csname @ch@ptert@xt\@g@tdst@t#1\endcsname\ch@pter
+   \x@\global\x@\let\csname @v@rse\@g@tdst@t#1\endcsname\v@rse
+}
+\def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
+\def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}% get first 3 chars of the \id
+  \trace{d}{@@id for side \c@rrdstat\space diglot\ifdiglot true\else false\fi}%
+  \x@\resetch@pterverse\ifdiglot\c@rrdstat\fi%
+  \settrig@refcv\docvhook
+  \the\@idhooks
+}
+
+{\catcode`|=0 \catcode`\\=12
+|gdef|ptx@fig #1\fig*{|@ptx@fig{#1}}
+}
+\def\@ptx@fig#1{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
+    \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
+    \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
+%-csty_addspecialhooks
+
+%+csty_stack
+% Comma Separated stack
+\def\E{}
+\def\cstackpop#1,#2\E{#2}
+\def\cstackpush#1#2{#2,#1}
+\def\cstackpeek#1,#2\E{#1}
+\def\cstackup#1,#2\E{\edef\cstack@tmp{#2}\ifx\cstack@tmp\empty\let\n@x=\cstackrelax\else\let\n@x=\cstackup\fi\n@x #2\E\edef\cstack@tmp{#1}\ifx\cstack@tmp\empty\else\d@ #1\E\fi}                  %(1)
+\def\cstackbottom#1,#2\E{\edef\cstack@tmp{#2}\ifx\cstack@tmp\empty\d@ #1\E\let\n@x=\cstackrelax\else\let\n@x=\cstackbottom\fi\n@x #2\E}                  %(1)
+\def\cstackdown#1,#2\E{\edef\cstack@tmp{#1}\ifx\cstack@tmp\empty\else\d@ #1\E\fi\edef\cstack@tmp{#2}\ifx\cstack@tmp\empty\let\n@x=\cstackrelax\else\let\n@x=\cstackdown\fi\n@x #2\E}
+\def\cstacktop#1,#2\E{\edef\temp{#1}\ifx\temp\empty\else\d@ #1\E\fi}
+\def\cstackrelax#1\E{}
+%-csty_stack
+
+%+csty_mstack
+% marker (comma) stack operations (mcstack)
+\let\mcstack\mcstack@mpty
+\def\mcpopsimple{\traceNum{s}{popsimple stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi\ifp@pping\else\s@tstyst@k\fi}
+\def\mcpush#1#2{%
+  \ifcsname isb@rrier-#1\endcsname%stop here?
+    \let\tmpstyst@k=\empty
+  \else
+    \gett@psty
+  \fi
+  \d@code{#1}{#2}\ifx\tmp\h@phen % Not evertying appears in the styst@k e.g. cat should not
+    \xdef\styst@k{\tmpstyst@k}%
+  \else
+    \xdef\styst@k{\tmp\ifx\empty\tmpstyst@k\else+\tmpstyst@k\fi}%
+  \fi
+  \mcp@sh{#1+#2+\styst@k}}
+\def\mcpushE#1+#2\E{\trace{sa}{mcpushE '#1'+'#2'}\if #1\relax\relax\else\mcpush{#1}{#2}\fi}
+\def\mcp@sh#1{\traceNum{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
+\def\mcup{\x@\cstackup\mcstack\E}
+\def\mcdown{\x@\cstackdown\mcstack\E}
+\def\mctop{\x@\cstacktop\mcstack\E}
+\def\mctopnoms{\let\d@a=\d@\gdef\d@##1+##2\E{\if ##1m\else\d@a ##1+##2\E\let\d@=\cstackrelax\fi}\mcdown}
+\def\mcstackdown#1,#2\E{\let\n@x=\mcstackdown\edef\tmp{#1}%Iftemp, then rebulild mcstack with the modified/saved portion (msst@ck) on top, then any insertion (inst@ck) and  the unprocesed parts of the stack, and stop
+    \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{#2}\rebuild@mcstack{\msst@ck\inst@ck}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
+
+    
+\def\rebuild@mcstack#1{\trace{sa}{rebuild@mcstack '#1' (on \mcstack)}\ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi\s@tstyst@k}
+\def\doB@pop@nonms#1+#2+#3\E{\if #1m\xdef\msst@ck{#1+#2,\msst@ck}\else\global\temptrue\fi}% For mcstackdown. Push milestones onto msst@ck. lose the 1st non-ms
+\def\doB@save@ms#1+#2+#3\E{\trace{sa}{[#1+#2+#3] (\msst@ck)}\if #1\relax\relax\xdef\inst@ck{\inst@ck\mcstack@mpty}\temptrue\else\if #1m\relax\xdef\msst@ck{#1+#2,\msst@ck}\else\xdef\inst@ck{\inst@ck#1+#2,}\global\temptrue\fi\fi}% For mcstackdown. Push milestones onto msstack. bail out on 1st non-ms, saving it.
+
+\def\mcpop{\traceNum{s}{mcpop stack: '\mcstack'}\global\tempfalse\xdef\inst@ck{}\xdef\msst@ck{}% Pop the first non-milestone
+    \let\d@b=\doB@pop@nonms
+    \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi}
+
+\def\mcpushunderms#1#2{\traceNum{s}{mcpushunder stack(#1+#2+...): \mcstack}\global\tempfalse\edef\msst@ck{}\xdef\inst@ck{#1+#2,}% push #1 above the first non-milestone
+    \let\d@b=\doB@save@ms
+    \x@\mcstackdown\mcstack\E\trace{sa}{->\msst@ck [\iftemp t\else f\fi], '\mcstack'}%
+    \iftemp % It's been dealt with
+    \else\rebuild@mcstack{\inst@ck}\fi
+    \trace{sa}{Stack now \mcstack}}
+
+\def\s@ttmpsty#1+#2+#3\E{\xdef\tmpstyst@k{#3}}
+\def\gett@psty{\ifx\mcstack\empty\let\tmpstyst@k\empty\else{\let\d@\s@ttmpsty\mctop}\fi}
+\def\d@code#1#2{\edef\tmp{#2}\ifx\tmp\empty\else\csname d@code-#1\endcsname\fi}
+% milestone stack (MScstack)
+%\gdef\MScstack{+,}
+%\let\MScstack@mpty\MScstack
+%\def\MScup{\x@\cstackup\MScstack\E}
+%\def\MScdown{\x@\cstackdown\MScstack\E}
+%\def\MScpush#1{\traceNum{s}{push #1 onto milestone stack \MScstack}\xdef\MScstack{#1,\MScstack}}
+
+% Test to see if a new THING pops other things.
+\def\mct@stname#1#2{#1-mcp@ps-#2}
+\def\mcp@pCont#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{Y}} % Pop and continue
+\def\mcp@pEnd#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{P}} % Pop and end.
+\def\mcnp@pSt@re#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{S}} % no pop, Store and continue
+%defs for comparison purposes  Now in ptx-constants
+
+\mcp@pCont{\ss@Para}{\ss@Para}% new P pops P
+\mcp@pCont{\ss@Para}{\ss@ChrP}% new P pops c (\+char)
+\mcp@pCont{\ss@Para}{\ss@Char}% new P pops C (\char)
+\mcp@pCont{\ss@Char}{\ss@ChrP}% new C pops c
+\mcp@pCont{\ss@Char}{\ss@Char}% new C pops C
+\mcp@pCont{\ss@Sbar}{\ss@Char}% Side bars pop character styles.
+\mcp@pCont{\ss@Sbar}{\ss@ChrP}% Side bars pop character styles.
+\mcp@pCont{\ss@Ctgy}{\ss@Ctgy}% new cat pops old cat
+\mcp@pCont{\ss@Para}{\ss@ParCtgy}% new paragraph pops old parcat
+\mcnp@pSt@re{*}{\ss@Mstn}% Milestones are always stored.
+%Style end pops:
+\mcp@pCont{\ss@Sbar*}{\ss@Ctgy}% sidebar end pops caT
+\mcp@pCont{\ss@Sbar*}{\ss@Para}% sidebar end pops Paragraph
+\mcp@pCont{\ss@Sbar*}{\ss@ChrP}% sidebar end pops embedded charstyle
+\mcp@pCont{\ss@Sbar*}{\ss@Char}% sidebar end pops Charstyle
+\mcp@pEnd{\ss@Sbar*}{\ss@Sbar}% sidebar end pops ONE sidebar, then finish
+\mcp@pEnd{\ss@Ctgy*}{\ss@Ctgy}% cat end pops one old cat, then finish
+\mcp@pEnd{\ss@Ctgy*}{\ss@ParCtgy}% cat end pops one old cat, then finish
+\mcp@pCont{\ss@Note*}{\ss@ChrP}% Ending Note pops c
+\mcp@pCont{\ss@Note*}{\ss@Char}% Ending Note pops C
+\mcp@pCont{\ss@Note*}{\ss@Para}% Ending Note pops P
+\mcp@pCont{tc*}{\ss@Char}% Ending table cell pops C (\char)
+\mcp@pCont{tc*}{\ss@ChrP}% Ending table cell pops c (\+char)
+\mcp@pCont{\ss@Tbl*}{\ss@Ctgy}
+\mcp@pCont{\ss@Tbl*}{\ss@Para}
+\mcp@pEnd{\ss@Tbl*}{\ss@Tbl}
+\mcp@pCont{\ss@Fig*}{\ss@Char}
+\mcp@pCont{\ss@Fig*}{\ss@ChrP}
+\mcp@pEnd{\ss@Fig*}{\ss@Fig}
+
+%No point going below these for font styling, etc.
+\def\mcb@rrier#1{\x@\let\csname isb@rrier-#1\endcsname\empty}
+\mcb@rrier{\ss@Para}
+\mcb@rrier{\ss@Note}
+\mcb@rrier{\ss@Sbar}
+\mcb@rrier{\ss@Fig}
+%Are these style modifiers (category or milestone)  or actual styles?
+\def\msm@dfyname#1{#1-is-modifyer}
+\def\msm@difyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\xdef\csname\t@@st\endcsname{Y}}
+\def\g@tmodifyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\let\x@\t@stme\csname\t@@st\endcsname}
+\msm@difyer{\ss@Ctgy}
+\msm@difyer{\ss@MstnS}
+\msm@difyer{\ss@Mstn}
+
+\newif\ifp@pping
+\p@ppingfalse
+\def\last@popped@parstyle{}
+\def\itp@psstore{}
+\def\endit@c{\endch@rstylepls*}
+\def\endit@C{\endch@rstyle*}
+\def\endit@T{\cl@singhooks{end}{cat}{\styst@k}\par\mcpopsimple\egroup\@ndc@t\s@tc@tpr@fix} %Must call closing hooks before end of group, Must call mcpopsimple.
+\def\endit@t{\cl@singhooks{end}{cat}{\styst@k}\mcpopsimple\s@tc@tpr@fix}
+
+\def\whileitp@ps#1+#2+#3\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
+  \global\p@ppingtrue
+  \global\let\wip@do=\d@
+  \trace{s}{whileitp@ps:\mcch@cking:#1+#2+#3 (\mcstack) [\itp@psstore]}%
+  \x@\let\x@\tmp\csname\mct@stname{\mcch@cking}{#1}\endcsname
+  \ifx\tmp\relax %No specific style pop, is there a generic?
+    \x@\let\x@\tmp\csname\mct@stname{*}{#1}\endcsname
+  \fi
+  \trace{sa}{whileitp@ps result:\tmp}%
+  \if S\tmp\relax % Store it?
+     \xdef\itp@psstore{#1+#2,\itp@psstore}%only store the marker and type, restacking will recaclulate the styst@k
+     \mcpopsimple
+  \else
+    \if Y\tmp\relax  %end it and pop it
+      \if #1\ss@Para\relax\xdef\last@popped@parstyle{#2}\fi
+      \ifcsname endit@#1\endcsname
+        \trace{sa}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop
+        \csname endit@#1\endcsname
+      \else
+        \trace{sa}{Simple pop sufficient}%
+        \mcpopsimple
+      \fi
+    \else
+      \let\wip@do=\cstackrelax %stop here
+      \if P\tmp\relax % ....but end it and pop first
+        \ifcsname endit@#1\endcsname
+          \trace{sa}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop
+          \csname endit@#1\endcsname
+	    \else
+          \trace{sa}{Simple pop sufficient}%
+          \mcpopsimple
+        \fi
+      \fi
+    \fi
+  \fi
+  \trace{sa}{whileitp@ps END:\mcch@cking:#1+#2+#3 (\mcstack) [\itp@psstore]}%
+  \global\p@ppingfalse
+  \let\d@=\wip@do
+}
+\def\end@llpoppedstyles#1{\trace{sa}{end@llpoppedstyles #1 \ifp@pping WHILE already popping??\fi}%
+  \global\let\itp@psstore\empty\xdef\mcch@cking{#1}\let\d@=\whileitp@ps
+  \mcdown\ifx\itp@psstore\empty\else\x@\rebuild@mcstack\x@{\itp@psstore}\fi
+  \s@tstyst@k
+  \trace{sa}{end@llpoppedstyles END: \mcstack}}
+
+\def\s@tstyst@k{%Get a + separated list of styles that ought to uniquely define a font/etc.
+  %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
+  %defines \styst@kfirst to first value.
+  \xdef\styst@k{\empty}%
+  \xdef\styst@kfirst{\empty}%
+  \def\d@##1+##2+##3\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
+    \xdef\styst@k{##3}% The real one
+    \xdef\tmpstyst@k{##3}% This will get over-ridden if there are other calls.
+    \d@code{##1}{##2}%
+    \ifx\tmp\h@phen
+    \else
+      \xdef\styst@kfirst{\tmp}%
+      \let\d@=\cstackrelax
+    \fi
+  }\mcdown
+  \global\let\tmpstyst@k\styst@k
+  \global\let\tmpstyst@kfirst\styst@kfirst
+  \trace{sa}{styst@k -> (\styst@kfirst/\styst@k)}%
+}
+\let\styst@kfirst\empty
+\let\styst@k\empty
+\let\tmpstyst@k\empty
+%-csty_mstack
+
+%+csty_stylesheet
+% \stylesheet{...} reads a Paratext stylesheet line by line
+%
+{% Horrible piece of parsing to ignore everything after # except when there's #! at the start of a line.
+  \catcode`\~=6
+  \catcode`\#=12
+  \gdef\styl@sheetline~1{%
+     \x@\styl@sh@@tline ~1#!#\relax
+  }
+  \gdef\styl@sh@@tline~1#~2!~3#~4\relax{%
+     %\trace{sa}{\detokenize{ReadLine '~1' # '~2' ! '~3'}}%
+     \catcode`\~=13
+     \catcode`\#=6
+     \def\tmpa{~1}\def\tmpb{~3}%
+     \def\tmpc{~1~2}%
+     \ifx\tmpc\empty%There's a line-start #!
+       \ifx\tmpb\empty\else % and the line isn't empty
+         ~3\relax
+       \fi
+     \else %A normal line
+       \ifx\tmpa\empty\else %that's not empty
+         ~1\relax
+       \fi
+     \fi
+  }
+}
+\newif\ifc@ntinue
+\def\c@tegory{}
+\newread\styl@sheet
+\newif\ifdigl@tinuse % Have any styles been loaded with diglottrue?
+\digl@tinusefalse
+
+\def\stylesheet#1{
+ \ifdiglot\global\digl@tinusetrue\fi
+ \let\oldc@tegory=\c@tegory
+ \m@kedigitsother
+ \let\save@regular=\regular \let\regular=\Regular
+ \let\save@bold=\bold \let\bold=\Bold
+ \let\save@italic=\italic \let\italic=\Italic
+ \openin\styl@sheet="#1" \c@ntinuetrue                      %(1)
+ \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
+   \trace{sa}{New Stylesheet: clearing fonts: \f@ntlist}%
+   \ClearCachedFonts
+   \message{Reading Paratext stylesheet "#1" (\c@tegory)...}%
+   \endlinechar=-1
+   %\catcode`\#=5 % paratext comment char
+   \catcode`\(=12
+   \loop
+    \catcode`\#=12
+    \read\styl@sheet to \th@line                            %(2)
+    \styl@sheetline{\th@line}
+   % \th@line \relax
+    \ifeof\styl@sheet \c@ntinuefalse \fi
+    \ifc@ntinue\repeat
+   \endlinechar=13
+   \closein\styl@sheet
+   \catcode`\#=6 % restore default TeX catcode
+ \fi
+ \let\regular=\save@regular
+ \let\bold=\save@bold
+ \let\italic=\save@italic
+ \ifx\oldc@tegory\c@tegory\else\ifsubc@ll\else\message{Error in stylesheet: Stylesheet changed category from '\oldc@tegory' to '\c@tegory'. Resetting to '\oldc@tegory'}\global\let\c@tegory=\oldc@tegory\s@tc@tpr@fix\fi\fi%
+ \global\let\c@tegory=\oldc@tegory
+}
+\newif\ifsubc@ll \subc@llfalse
+%-csty_stylesheet
+
+% Four flags that determine how the file should process the end of a ptx file file.
+\newif\iflastptxfile
+\newif\ifinendbook % Is this one of the last few pages of a ptxfile
+\newif\ifendbook % Is this the (very) last page of a ptxfile
+\newif\iflastpage % This is the very last page of the volume (end of last ptxfile) (i.e. it's a combination of lastptxfile and endbook
+
+\newif\ifscripturebook
+\newdimen\origb@selineskip %Save the initial baselineskip here
+\newif\ifinperiph
+\newif\ifst@ringperiph
+\def\codesforperiphgr@b{% Turn off everything
+  \catcode13=12 %cr
+  \catcode92=12 %bkslash
+  \catcode`\/=12 
+  \catcode`\|=12
+  \catcode`\~=12
+  \catcode"2000=12
+  \catcode"2001=12
+  \catcode"2002=12
+  \catcode"2003=12
+  \catcode"2004=12
+  \catcode"2005=12
+  \catcode"2006=12
+  \catcode"2009=12
+  \catcode"200A=12
+  \catcode"200B=12
+  \catcode"2010=12
+  \catcode"2011=12
+  \catcode"2018=12
+  \catcode"2019=12
+  \catcode"201C=12
+  \catcode"201D=12
+  \catcode"2028=12
+  \catcode"202A=12
+  \catcode"202B=12
+  \catcode"202C=12
+  \catcode"2060=12
+  \catcode"2063=12
+  \catcode"2064=12
+  \catcode"A0=12
+  \catcode"AD=12
+  \catcode"FEFF=12
+  \deactiv@tecustomch@rs
+} 
+
+%+csty_onetime
+\newif\ifmarginalVerseIsMargin \marginalVerseIsMarginfalse
+\newif\ifMarginalVerses \MarginalVersesfalse
+\def\@netimesetup{
+ % stuff to execute after loading all stylesheets but (just) before processing the first USFM file
+ \inheritb@rders % Process border-parameter inheritance
+ \ifdiglot
+  \trace{d}{Onetimesetup, (\c@rrdstat)}%
+ \else
+%   \ifRTL
+%     \BookOpenLefttrue
+%   \fi
+ \fi
+ \origb@selineskip=\baselineskip
+ \ifmarginalVerseIsMargin
+   \dimen0=0.5 \gutter
+   \ifdim\dimen0 > \columnshift \dimen0=\columnshift\fi
+   \advance\columnshift by -\dimen0
+%   \ifx\colshiftmode\l@ft
+%     \ruleshift=-\dimen0
+%   \else \ifx\colshiftmode\r@ght
+%      \ruleshift=\dimen0
+%   \fi\fi
+ \fi
+ \s@tupsizes
+ \global\let\id@@@\n@ID
+ \defineheads
+ \ifnum 1=\ifVisTrace 1 \else \ifVisTraceExtra 1 \else 0\fi\fi 
+   \font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
+ \ifdiglot\setc@rdstat{L}%
+ \fi
+ \let\@@realrem\rem
+ \let\rem\@@rem
+ \let\@@realperiph\periph
+ \let\periph\@periph
+ %\global\lastptxfiletrue
+ \ifLogFonts
+   \immediate\openout\f@ntl@g="\j@bname.fontusage"
+ \fi
+ % open the parlocs file to record paragraph and no-break-chapter locations
+ \immediate\openout\p@rlocs="\j@bname.parlocs"
+ \opentriglist "\j@bname.triggers"
+ \let\@netimesetup=\relax}                                                      %(1)
+
+\def\@netimesetuplater{
+ \@ddcvhooks
+ \@ddspecialhooks
+ \the\@nithooks
+ \let\@netimesetuplater=\relax}                                                      %(1)
+%-csty_onetime
+
+\newif\iftildenbsp
+\tildenbsptrue
+%\def\~{\char"7E}%
+\chardef\tilde "7E
+\let\~\tilde
+
+\def\prepusfm{%
+ %\catcode`\$=12
+ \catcode`\^=12 % make these printable
+ \catcode`\&=12
+ \iftildenbsp
+  \catcode`\~=13 %Normal value
+ \else
+  \catcode`\~=12 %printable
+ \fi
+ \catcode`\#=12
+ \catcode`\{=12 \catcode`\}=12
+ \catcode`\_=11 % treat as letter for TE custom styles
+ \catcode`\/=\active
+ \catcode13=10
+ \catcode`+=11 % treat as letter
+ \activ@tecustomch@rs
+ % The last comment on all matters
+ \catcode`\%=12
+ \let\\=\bslash
+ \m@kedigitsletters
+ \inptxfiletrue
+ \endbookfalse
+}
+
+\def\unprepusfm{
+ \inptxfilefalse
+ \m@kedigitsother
+ \deactiv@tecustomch@rs
+ \catcode13=5
+ \catcode`\/=12
+ \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
+ \catcode`\{=1 \catcode`\}=2
+ \catcode`+=\pl@scatcode % don't treat as letter any more
+}
+
+% Read the files associated with this book: usfm, adjustment list, picture list
+%+csty_ptxfile_intro
+\def\ptxst@rtp@ge{1}
+
+\def\startOneChapBook{%
+  \global\let\@@@ifOmitChapterNumber=\ifOmitChapterNumber
+  \global\let\@@@ifOmitChapterNumberRH=\ifOmitChapterNumberRH
+  \OmitChapterNumbertrue
+  \OmitChapterNumberRHtrue
+}
+\def\endOneChapBook{%
+  \global\let\ifOmitChapterNumber=\@@@ifOmitChapterNumber
+  \global\let\ifOmitChapterNumberRH=\@@@ifOmitChapterNumberRH
+}
+
+\def\PageAlign{page}
+\def\IntroPageAlign{page}
+\newif\ifin@ntro \in@ntrofalse
+\newif\ifNoGrid \NoGridfalse
+\def\preptxfile{
+ \outputpenalty=0
+ \filehasversesfalse\gdef\fileh@sverses{\global\filehasversestrue\global\let\fileh@sverses\relax}% Set filehasverses once then done, no need to repeat it every single verse.
+ \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
+ \kill@PossParamCache
+ \global\intr@donefalse
+ \in@ntrofalse
+ \trace{d}{PageAlign=\PageAlign, IntroPageAlign=\IntroPageAlign, ifin@ntro\ifin@ntro true\else false\fi, pageno=\the\pageno, totalpages=\the\totalp@ges}%
+ \ifnum \ifx\PageAlign\val@dd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi =1 \need@oddpage{\emptyoutput}\fi
+ \xdef\ptxst@rtp@ge{\the\pageno}%
+ \ifcsname @@@ifOmitChapterNumber\endcsname \endOneChapBook \let\@@@ifOmitChapterNumber\undefined\fi
+ \ifOneChapBook\startOneChapBook\fi
+ \let\@@fter\empty
+ \ifdigl@tinuse\ifdiglot\else\let\@@fter\diglotfalse \diglottrue\fi\fi
+ \ifdiglot
+    \trace{d}{New ptxfile}%
+    \gdef\c@rrdstat{L}%
+    \ifvoid\partial\else
+      \trace{d}{Saving partial contents as top insert}%
+      \insert\topins{\box\partial}\fi
+    \setLRspecific% \@netimesetup needs actual values, in a diglot there might not be any use of generic FontSizeUnit, etc.
+ \fi
+ \ifcsname KeepMyBrokenAdjList\endcsname
+  \global\let\LRspecificCount\LRspecificCountBroken %Use old broken paragraph numbering
+ \else
+  \global\let\LRspecificCount\LRspecificCountFixed %Properly track paragraph numbers in diglots.
+ \fi
+ \@netimesetup
+ \global\let\periph@@@\empty
+ \ifdigl@tinuse\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
+   \ifx\PDFBookMarkColumn\relax
+     \def\col@do##1{\xdef\PDFBookMarkColumn{##1}}%Very crude... set PDFBookMarkColumn to last column
+     \x@\each@col\diglot@list\E
+   \fi
+   %\gdef\atn@xtptxfile{}% This can't carry over.
+   \diglots@tup
+   \global\topskip=2\baselineskip % try to Avoid problems from chars hitting the top.
+   \global\splittopskip=0pt
+   \message{Setting up column-specific values for columns: \diglot@list}%
+   \global\baselineDelta=-\maxdimen
+   \xdef\@minb@seline{\the\baselineskip}%
+   \def\col@do##1{% Per-column setup
+     \setc@rdstat{##1}%
+     \showLRspecific
+     \setLRspecific\s@tb@dyb@seline{##1}%
+     \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
+     \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
+       \global\baselineDelta=\csname baselineDelta##1\endcsname
+     \fi
+     \ifdim\baselineskip<\@minb@seline
+       {\dimen1=\baselineskip \xdef\@minb@seline{\the\dimen1}}% Remove glue
+     \fi
+     \trace{d}{##1: bl:\the\baselineskip, mb:\@minb@seline, bld##1:\the\csname baselineDelta##1\endcsname}%
+     \saveLRspecificSide{##1}%
+     \bgroup
+       \let\mcstack\mcstack@mpty
+       \s@tfont{p}{p}%
+       \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0\hbox{\char32}\s@tfont{v}{v+p}\getp@r@m{raise}{v}\setbox0\hbox{\char32}
+            \ifx\p@ram\relax\else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0 \fi
+       \hss}%
+       %\showbox\f@@tstrut
+       \trace{d}{Saving font ascent for ##1 as \the\ht\f@@tstrut}%
+       \x@\xdef\csname gridding@scent##1\endcsname{\the\ht\f@@tstrut}%
+       \ifdim\ht\f@@tstrut > \baselineskip
+         \message{Paragraph font for ##1 including a verse number claims it is taller (\the\ht\f@@tstrut) than baseline (\the\baselineskip)}%
+       \fi
+       \egroup
+     }%
+     \trace{d}{DiglotSides = \diglot@list}%
+     \x@\each@col\diglot@list\E
+   \egroup
+ \fi
+ % Check supplied line thicknesses (user might change them, e.g. after FRT):
+ \let\thinlinest@ndard\tls@black\let\thinlin@type\tlt@R % Plain boring black lines
+ \thinlinecheck{\EndNoteRuleThickness}{}{End Notes}{}%
+ \thinlinecheck{\StudyNoteRuleThickness}{}{Study Notes}{}%
+ \thinlinecheck{\FootNoteRuleThickness}{}{Footnotes}{}%
+ \thinlinecheck{\UnderlineThickness}{}{Underlines}{}%
+ \thinlinecheck{\RuleThickness}{\space}{Below header and separating columns}{}%
+ \thinlinecheck{\PlaceHolderRule}{\space}{Missing/skipped figure placeholder}{}%
+ %%\x@\chk@colortype\GraphPaperColMajor\E
+ %\thinlinecheck{\GraphPaperLineMajor}{\space}{Graphpaper major line}{}%
+ %\x@\chk@colortype\GraphPaperColMinor\E
+ %\thinlinecheck{\GraphPaperLineMinor}{\space}{Graphpaper minor line}{}%
+ \x@\chk@colortype\NoteLineColMajor\E
+ \thinlinecheck{\NoteLineLineMajor}{\space}{Note space major line}{}%
+ \x@\chk@colortype\NoteLineColMinor\E
+ \thinlinecheck{\NoteLineLineMinor}{\space}{Note space minor line}{}%
+ \@@fter % reset ifdiglot, if a serial diglot
+ \ifdiglot
+   \global\let\gridb@x\diglotgr@db@x
+ \else
+   \ifsquashgridbox\global\let\gridb@x\gr@db@@x\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
+   \ifNoGrid\global\let\gridb@x\ungr@db@x\fi
+ \fi
+ \@netimesetuplater
+ \gdef\ch@plabel{}
+ \gdef\ch@plabelR{}
+ \x@\def\csname b@ok1L\endcsname{}%
+ \x@\def\csname b@ok1R\endcsname{}%
+ \x@\def\csname b@ok1\endcsname{}%
+ \global\let\pagenumberL=\folio\global\let\pagenumberR=\folio\global\let\pagenumber=\folio
+ \initp@rastyles
+ \initn@testyles
+ \gdef\p@climit{\string\@parpicsize\string{\string}\string{\string}}
+ \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else\p@geonetrue\fi\fi
+ \endbookfalse
+}
+%-csty_ptxfile_intro
+%+csty_ptxfile_start
+\newif\ifinptxfile
+\def\ptxfile#1{
+ \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi \ifdoingt@ble doingtable??\fi \c@tegory,\c@tprefix}%
+ \global\implicitcl@setrue
+ \traceifset{ptxfile}%
+ \ifhmode\endgraf\fi
+ \ifdim\pagetotal>20pt \message{Pagetotal = \the\pagetotal, Trigggring endpage \the\output}\endpage\fi
+ \seriesdiglotfalse % Set this so we know it's always valid
+ \ifdigl@tinuse
+  \let\col@do\resetch@pterverse\x@\each@col\diglot@list\E
+   \ifdiglot\else
+     \seriesdiglottrue
+   \fi
+ \fi
+ \preptxfile
+ \openadjlist "\the\AdjListPath#1.adj"
+ \openpiclist "\the\PicListPath#1.piclist"
+ \opentriglist "#1.triggers"
+ \edef\tmp{\the\TrigListPath}\ifx\tmp\empty % Avoid opening same file twice
+ \else
+   \opentriglist "\the\TrigListPath#1.triggers"
+ \fi
+ \multitriglists "\the\TrigListPath#1"
+ \openpicpages "\j@bname.picpages"
+ \ifcsname ifm@rginnotesopen\endcsname\openm@rginnotes "\j@bname.marginnotes"\fi
+ \lastpagefalse\endbookfalse
+ \the\st@rtptxhooks
+ \ifseriesdiglot\let\c@rrdstat\empty\fi % atn@xtptxfile will set things up if so desired, but cover periphs need loading with c@rrdstat unaffected by setup code.
+ \prepusfm
+ \global\inendbookfalse \global\endbookfalse
+ \edef\t@st{#1}%
+ \ifx\t@st\empty\else %opening empty file causes problems with some paths.
+   \trace{d}{\meaning\atn@xtptxfile}%
+   \openin\t@stread="\the\PtxFilePath#1"
+     \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
+     \else \closein\t@stread \def\n@xt{\atn@xtptxfile \input "\the\PtxFilePath#1"\relax}\fi
+   \traceifset{ptxfile-contents}%
+   \n@xt\relax
+   \traceifcheck{ptxfile-contents}%
+   \gdef\atn@xtptxfile{}% This can't carry over.
+ \fi
+ \traceifcheck{ptxfile}%
+ \postptxfile
+}
+\gdef\atn@xtptxfile{}
+%-csty_ptxfile_start
+%+csty_ptxfile_end
+\newsp@cialpen{book@ndpenalty}
+\newsp@cialpen{sect@ndpenalty}
+\def\postptxfile{%
+ \inptxfilefalse  
+ \trace{o}{postptxfile \iflastptxfile LAST file \fi pg=\the\pagegoal, pt=\the\pagetotal}%
+ \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
+ \ifsk@pping\egroup\fi
+ \ifhe@dings\endhe@dings\fi
+ \endt@ble
+ \inendbooktrue 
+ \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
+ \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
+ \let\layoutpen@lty\book@ndpenalty 
+ \iflastptxfile
+   \setbox\bookendbox\vbox{\hsize=\textwidth \lastbookendrule}%
+ \else
+   \ifnum 1=\ifendbooknoeject 1\else\ifx\PageAlign\val@MULTI 1 \else 0\fi\fi
+     \setbox\bookendbox\vbox{\hsize=\textwidth \bookendrule}%
+   \else
+     \setbox\bookendbox\vbox{}%
+   \fi
+ \fi
+ \layoutstylebreak
+ \singlecolumn
+ \tempfalse
+ \iffilehasverses\temptrue\fi
+ \ifnum\pageno=\ptxst@rtp@ge
+    \ifnum\pagetotal>0pt \temptrue\fi
+ \else
+    \temptrue
+ \fi
+ \ifdim\pagetotal=0pt
+   \trace{o}{No bookendbox at the start of a page}%
+   \setbox\bookendbox\box\voidb@x
+ \fi
+ \iftemp
+   \ifnum \ifdim\ht\bookendbox=0pt \ifdim\dp\bookendbox=0pt 0 \else 1 \fi \else 1 \fi =1 
+     \box\bookendbox
+   \fi
+ \else
+    \trace{o}{No bookendbox, as the book is empty}%
+ \fi
+ \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
+ \ifx\id@@@\n@ID\relax\else\csname bookend-\id@@@\endcsname\relax\fi
+ \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookend-all\endcsname\else missing\fi}%
+ \csname bookend-all\endcsname
+ \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly\else \ifEndNotesSingleCol \singlecolumn\fi \zplaceallnotes\fi\fi
+ \the\@ndptxhooks
+ \unprepusfm
+ \trace{oh}{hook for bookend-final \ifcsname bookend-final\endcsname exists \x@\meaning\csname bookend-final\endcsname\else missing\fi. This is \iflastptxfile\else not\fi the last book.}%
+ \iflastptxfile \trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
+ \ifd@nesw@p\else\singlecolumn \fi% must come after bookend-final, as that might include 2col content (as long as .
+ \bookendpagebreak
+ \global\output={\onecol}
+ \trace{o}{end of book with \the\ht\partial+\the\dp\partial \space used}
+ \ifnum 1=\ifendbooknoeject 1 \else\ifx\PageAlign\val@MULTI 1\else 0\fi\fi
+    \iflastptxfile\iflastbooknoeject\else
+      \trace{o}{forcing pagebreak as this is the last file}%
+      \noindent\eject
+    \fi\fi
+ \fi
+ \ifendbooknoeject\else\ifx\PageAlign\val@MULTI\else
+  \trace{o}{Ejecting page}
+  \ifdim\dimexpr \ht\partial+\dp\partial\relax>0pt
+    % If box255 is empty then partial box keeps its contents but has ht=0 !
+    {\everypar={}\ZWSP\baselineskip=0pt\noindent}\eject\fi%\noindent\eject\fi
+  \iflastptxfile\closepiclist\fi
+  \closeadjlist
+  \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse
+ \fi\fi
+ \trace{oh}{hook for bookafter-\id@@@ \ifcsname bookafter-\id@@@\endcsname exists \x@\meaning\csname bookafter-\id@@@\endcsname\else missing\fi}%
+ \ifx\id@@@\n@ID\else\csname bookafter-\id@@@\endcsname\relax\fi
+ \trace{oh}{hook for bookafter-all \ifcsname bookafter-all\endcsname exists \x@\meaning\csname bookafter-all\endcsname\else missing\fi}%
+ \csname bookafter-all\endcsname
+ \iflastptxfile \trace{o}{running bookafter-final}\csname bookafter-final\endcsname\fi
+ \global\let\id@@@\n@ID
+ \let\layoutpen@lty\sect@ndpenalty % reset to normal
+}
+%-csty_ptxfile_end
+\newread\t@stread
+\newtoks\AdjListPath % path to look for adjustment files
+\newtoks\PicListPath % path to look for picture list files
+\newtoks\TrigListPath % path to look for trigger list files
+\newtoks\PtxFilePath % path to look for main ptx input files
+
+% mechanism to define active chars within the ptx files
+\catcode`\~=\active
+\def\DefineActiveChar#1#2{\count255=`#1
+  \trace{ch}{DefineActiveChar: \the\count255}%
+  \do@ctive=\x@\x@\x@{\x@\the\x@\do@ctive
+    \x@\d@something\the\count255 }%
+  \lccode`\~=\count255
+  \def\t@mp{\noexpand#2} \lowercase{\edef~{\relax\t@mp}}}
+\newtoks\do@ctive
+
+\def\@ctivate{\ifcsname save-cat-\the\count255\endcsname\else \x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}\fi%Only define the old value once
+  \catcode\the\count255=\active\relax}
+\def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
+
+\def\activ@tecustomch@rs{% activate all the chars configured with \DefineActiveChar
+ \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
+\def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
+ \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
+\def\pr@tectch{\lccode`\~=\count255\lowercase{\let~\relax}}
+\def\pr@tectcustomch@rs{% Make customchars non-expanding on write
+ \def\d@something{\afterassignment\pr@tectch \count255=}\the\do@ctive \lccode`\~=`\\}  
+
+\m@kedigitsother
+% use numbers to allow sequences to work in \fig .. \fig*
+\def\openbracket{\char 91\ignorespaces}
+\def\openparen{\char 40\ignorespaces}
+\tracing{ch}
+\DefineActiveChar{[}{\openbracket} % make these skip following spaces
+\DefineActiveChar{(}{\openparen}   % (useful at end-of-line before new verse)
+
+%+csty_slash
+\catcode`\/=\active
+\def/{\futurelet\n@xt\sl@sh}
+\def\sl@sh{\ifx\n@xt/\let\n@@xt\sl@shbreak\else\let\n@@xt\sl@shprint\fi\n@@xt}
+\def\OptionalBreakPenalty{300}
+\let\oldlinepenalty\relax
+\def\sl@shbreak/{\ifx\oldlinepenalty\relax\edef\oldlinepenalty{\the\linepenalty}\fi\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
+\def\sl@shprint{\char`\/{}% Empty group makes any following spaces behave properly
+  %\message{next character after slash: '\meaning\n@xt'}%
+}
+% \let\/\sl@shprint
+
+\catcode`\/=12
+%-csty_slash
+%+csty_category
+% Define the current category
+\def\s@tc@tprefix#1{%
+  \def\c@tegory{#1}%global or NOT global? No apparent issue with either, so stick with local, as that allows nesting. Which we need.
+  \s@tc@tpr@fix
+}
+\def\s@tc@tpr@fix{%
+  \trace{sc}{c@tegory is '\meaning\c@tegory' empty is '\meaning\empty'}%
+  \ifx\c@tegory\empty
+    \let\c@tprefix\empty
+  \else
+    \edef\c@tprefix{cat:\c@tegory|}% See above...
+  \fi
+  \trace{sc}{Stylesheet prefix for '\c@tegory': '\c@tprefix'}%
+}
+\newif\ifn@npublishablec@t
+\def\endc@tmarker{t*}
+\def\@ndc@t{%
+  \trace{sc}{@ndc@t(\c@tegory) \ifp@pping[popping]\fi}%
+  \global\let\h@@kstyst@k\styst@k
+  \ifx\c@tegory\empty
+    \trace{sc}{@ndc@t called with empty category. Eh?}%
+  \else
+      \ifp@pping\else
+        \end@llpoppedstyles{\endc@tmarker}%pop any styles closed by an end of t
+      \fi
+      %\n@npublishablefalse\getmcp@ram{properties}%
+      \ifn@npublishable\temptrue\else\tempfalse\fi
+      \n@npublishablefalse\getp@ram{properties}{\styst@kfirst}{\styst@kfirst}%
+      \trace{sc}{cat '\c@tegory', properties=\p@ram, from \styst@kfirst}%
+      \x@\t@stnonpub\p@ram nonpublishable!
+      \ifn@npublishable\global\n@npublishablec@ttrue\else\global\n@npublishablec@tfalse\fi
+      \iftemp\n@npublishabletrue\else\n@npublishablefalse\fi
+      \endgroup %End the group started between the cat groups     %(3)
+      \cl@singhooks{after}{cat}{\h@@kstyst@k}%
+      \s@tc@tprefix{}%
+      \the\afterh@@ks
+      \egroup % End the group from the containing code.             %(4)
+  \fi
+}
+% remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
+\def\nofin@lspace #1 #2\E{#1}%Eat a final space
+\def\c@t #1\cat*{\doc@t{#1}}
+\def\doc@t#1{% Called to start categorry from all sorts of places, including footnotes. No extra parargaphs please!
+  \trace{sc}{Starting category #1, with stylet@pe=\stylet@pe, mcstack=\mcstack}%
+  \ifx\c@tegory\empty\else                                      %(5)
+    \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
+    \end@llpoppedstyles{\ss@Ctgy}%pop styles closed by a start of t, in case this IS 2 cat commands
+    % Assume nesting and don't run any endhooks. Otherwise we'd do this:
+    %\op@ninghooks{end}{cat}{\styst@k}% 
+    %\endgroup %End the group started between the cat groups  
+    %\cl@singhooks{after}{cat}{\styst@k}%
+  \fi
+  \ifx\stylet@pe\ss@Para
+    %NOTE To potential vandals: This bit of code should ONLY be reached from a 
+    % normal parargraph style. If you are trying to solve something else, fix
+    % the something else, maybe stylet@pe is incorrectly set.
+    \bgroup% DO NOT COMMENT THIS OUT! There is no containing group, so NEED to provide one.
+    \let\stylet@pe\ss@ParCtgy
+  \else 
+    \let\stylet@pe\ss@Ctgy
+  \fi
+  \edef\tmp{\nofin@lspace #1 \E}%Ensure full expansion 
+  \x@\s@tc@tprefix\x@{\tmp}%
+  \the\c@th@@ks% Run anythingthe enclosing code wants
+  \op@ninghooks{before}{cat}{cat\ifx\styst@k\empty\else+\styst@k\fi}% 
+  \begingroup % This group will be closed between the end and after hooks of @ndc@t %(1)
+  \trace{sk}{docat '#1': Pushing '\c@tegory' onto \mcstack}%
+  \mcpush{\stylet@pe}{\c@tegory}%
+  \op@ninghooks{start}{cat}{\styst@k}%
+  \let\styst@k=\empty
+  \s@tstyst@k%
+  %\n@npublishablefalse\getmcp@ram{properties}%
+  %\x@\t@stnonpub\p@ram nonpublishable!
+  \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)
+  %I.e. we're borrowing the egroup from other bits of code.  
+  \ifx\stylet@pe\ss@Ctgy
+    \aftergroup\@ndc@t %
+  \fi
+}
+\global\let\c@tprefix\empty % category-specific prefix
+\global\let\mspr@fix\empty % Milestone-specific prefix
+%-csty_category
+%+csty_usfm
+\newif\ifimplicitcl@se \implicitcl@setrue % Does USFM<3.1.1 implicit closure of char styles apply?
+\newcount\usfm@major
+\newcount\usfm@minor
+\bgroup\obeylines%
+ \gdef\@@usfm #1^^M{\egroup\m@kedigitsletters\expandafter\@@@usfm #1...\E}%
+\egroup 
+% \usfm accepts a version matching /\d+\.\d+(\.\d+)?/   Max number in TeX is
+% 2,147,483,647  We probably could assume that the major version won't go above
+% 21, and minor versions won't take more than 4 digits, but someone will one day
+% probably enter 310 meaning 3.1.0, or similar, and I want to avoid crashes.
+\def\@usfm{\bgroup\obeylines\m@kedigitsother\@@usfm}
+\def\@@@usfm#1.#2.#3.#4\E{\global\usfm@minor=0#2\relax\global\multiply\usfm@minor by 100000\relax\global\advance\usfm@minor by 0#3\relax
+  \global\usfm@major=#1\relax
+  \temptrue
+  \ifnum\usfm@minor=0 \ifnum\usfm@major>100 \tempfalse \ifnum\usfm@major<999 \temptrue
+    \global\divide\usfm@major by 100 \count255=\numexpr #1 - 100*\usfm@major\relax
+    \divide \count255 by 10\relax\global\usfm@minor=\numexpr 100000 * \count255 + (#1 - 100*\usfm@major - 10*\count255)\relax
+  \fi\fi\fi
+  \iftemp\else\MSG{Unable to make sense of USFM version #1.#2.#3}\fi%
+  \ifnum\usfm@minor<2 \else %
+    \ifnum\usfm@minor<100000 \else %3.1 or greater:
+      \global\implicitcl@sefalse%
+    \fi%
+  \fi%
+  \trace{s}{USFM version code \the\usfm@major.\the\usfm@minor}%
+}
+%-csty_usfm
+
+\def\mapinput "#1"{%
+  \message{INPUTFILE: #1}%
+  \input "#1"
+}
+
+\def\mapimagefile#1#2#3{%
+% #1 command to load the file, #2 file, #3 rest of modifiers, etc.
+  \message{INPUTFILE: #2}%
+  #1 #2 #3\relax
+}
+
+\def\mapinputfile#1{\noexpand #1}
+
+%+csty_hooks
+%Hook-runners for paragraph and character styles
+\def\op@ninghooks#1#2#3{% for <start> and <before> hooks
+   \trace{sh}{op@ninghooks '#1' '#2' '#3'}%
+   \@@fillhooks{#1}{#2}{#3}{\cstacktop}%
+   \the\afterh@@ks
+   \global\afterh@@ks{}%
+}
+\newtoks\c@th@@ks
+\newtoks\afterh@@ks
+\def\cl@singhooks#1#2#3{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
+  \trace{sh}{cl@singhooks #1 #2 (#3)}%
+  \@@fillhooks{#1}{#2}{#3}{\cstacktop}%
+  \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\global\afterh@@ks{}}% Notice the self-clearing %(1)
+  \edef\@@@a{#1}%                                                  %(2)
+  \ifx\@@@a\@fter\else\the\afterh@@ks\fi
+}
+\edef\@fter{after}
+
+\def\s@tupstringf@lter#1{\edef\f@lterval{#1}\x@\@s@tupstringf@lter\x@{\tmp}}\def\@s@tupstringf@lter#1{%
+  % Define a piece of code that matches ft in: id:GEN|cat:foo|ft or ft+f  or b+ft  or b+ft+f
+  \gdef\s@tt@mp##1{\trace{sh}{Comparing ##1 with #1}\t@mpfalse\ifx\f@lterval\cstack@tmp\t@mptrue\else \@s@tt@mp##1|\E \@@s@tt@mp##1+\E\fi}%
+  \gdef\@s@tt@mp##1|##2\E{\edef\tmp{##1}\trace{sh}{\meaning\tmp=\meaning\f@lterval?}\ifx\f@lterval\tmp\trace{sh}{yes}\t@mptrue\else\ifx\tmp\empty\else\@s@tt@mp ##2|\E\fi\fi}%
+  \gdef\@@s@tt@mp##1+##2\E{\edef\tmp{##2}\ifx\f@lterval\tmp\t@mptrue\else\@s@tt@mp##1|\E \if\tmp\empty\else\@@s@tt@mp ##2+\E\fi\fi}%
+}
+\def\@@fillhooks#1#2#3#4{%
+   \trace{sh}{@@fillhooks: #2 \styst@k, \csname stylet@pe-#2\endcsname}%
+  % * Filtering: 
+  % * only run hooks that include the #2 marker get included!
+  % * only run the most specific 
+   \setpossParams{#2}{#3}%
+   \global\afterh@@ks{}%
+   \ifx\p@ssHooks\empty
+     \trace{sh}{possiblehooks:none}%
+   \else
+     \let\@ut\empty
+     \trace{sh}{possiblehooks:\p@ssHooks}%
+     %\tracingmacros=1 \tracingassigns=1
+     \edef\tmp{#2}\ifx\tmp\empty\else
+       \s@tupstringf@lter{#2}%
+       \let\d@\csfilt@rall
+       \x@\cstackdown\p@ssHooks,\E
+       \let\p@ssHooks\@ut
+     \fi
+     %\tracingmacros=0 \tracingassigns=0
+     \let\@ut\empty
+     \trace{sh}{relevant hooks:\p@ssHooks}%
+     %\tracingassigns=2\tracingrestores=1\tracingmacros=1
+     \def\@lso{#1}%
+     \let\d@\csex@cHook
+     \x@#4\p@ssHooks,\E
+     %\tracingassigns=0\tracingrestores=0\tracingmacros=0
+   \fi
+}
+
+%-csty_hooks
+% Create registers to hold configuration information, set defaults
+\newdimen\FontSizeUnit		\FontSizeUnit=1bp % units for font sizes in Paratext stylesheet
+\newdimen\IndentUnit		\IndentUnit=1in % units for indents
+\newdimen\PaperWidth		\PaperWidth=210mm
+\newdimen\PaperHeight		\PaperHeight=297mm
+\newdimen\MarginUnit		\MarginUnit=1in % units for margins
+\newdimen\BindingGutter		\BindingGutter=5mm
+\def\LineSpacingFactor{1.0} % scale factor used for line spacing
+\def\VerticalSpaceFactor{1.0} % scaling factor applied to space before/after styles
+\def\TopMarginFactor{1.0}
+\def\BottomMarginFactor{\TopMarginFactor}
+\def\SideMarginFactor{1.0}
+\def\ColumnGutterFactor{15} % relative to FontSizeUnit
+\def\HeaderPosition{0.5} % pos of baseline from top of page, relative to MarginUnit
+\def\FooterPosition{0.5} % pos of baseline from bottom of page, relative to MarginUnit
+\def\DiglotLeftFraction{0.5} % In case texts fit better with unequal columns
+\def\DiglotRightFraction{0.5} %
+
+\newcount\TitleColumns \TitleColumns=1
+\newcount\IntroColumns \IntroColumns=1
+\newcount\BodyColumns  \BodyColumns=1
+\def\mainBodyColumns{1}
+
+\newif\ifBindingGutter % \BindingGutter won't be used unless this is set to true
+\newif\ifDoubleSided \DoubleSidedtrue % binding gutter on alternate sides; use odd/even headers
+\def\debugBL{\MSG{\f@ntstyle, Baseline: \the\baselineskip}} % for scattering in usfm as desired.
+% calculate various dimensions based on the factors, units, etc that have been defined
+%+csty_setupsizewas s
+\def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
+ \baselineskip=\origb@selineskip
+ \global\le@dingunit=\LineSpacingFactor\FontSizeUnit
+ \onel@neunit=\LineSpaceBase\le@dingunit
+ \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
+ \if \relax#1\relax\else
+    \global\csname le@dingunit#1\endcsname=\le@dingunit
+    \global\csname onel@neunit#1\endcsname=\onel@neunit
+    \global\csname verticalsp@ceunit#1\endcsname=\verticalsp@ceunit
+ \fi
+ \trace{F}{le@dingunit(\the\le@dingunit)=\LineSpacingFactor * \the\FontSizeUnit, onel@neunit(\the\onel@neunit)=\LineSpaceBase * \the\le@dingunit}
+ \dimen0 = \baselineskip
+ \ifdim\dimen0 < 1pt \baselineskip=\onel@neunit\fi % If the baselineskip has been specifically
+                                                           % set it will remain. Otherwise, the default
+                                                           % of 14 will be applied here and set text will
+                                                           % hold to the grid.
+ \getp@r@m{baseline}{p#1}\ifx\p@ram\relax
+   \s@tbaseline@{p}{#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
+   \MSG{Baselineskip for p#1 was undefined, now set to \the\baselineskip (\the\onel@neunit)}%
+ \else
+   \MSG{Baselineskip for p#1 was \p@ram (orig: \the\origb@selineskip). now defined as \the\baselineskip}%
+ \fi
+ \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
+}
+\def\onecolwidth#1{%
+  \dimen9=\textwidth
+  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
+  \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
+    \advance \dimen9 by -\XrefNotesWidth
+    \advance \dimen9 by -\XrefNotesMargin
+    \advance \dimen9 by -0.5\gutter
+    \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
+  \fi\fi\fi
+  \global #1=\dimen9
+  \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+}
+
+\def\threecolwidth#1{%
+  \dimen9=\textwidth
+  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
+  \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
+    \advance \dimen9 by -\XrefNotesWidth
+    \advance \dimen9 by -\XrefNotesMargin
+    \advance \dimen9 by -0.5\gutter
+    \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
+  \fi\fi\fi
+  \divide\dimen9 by 3
+  \advance\dimen9 by -\gutter
+  \global #1=\dimen9
+  \trace{o}{setthreecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+}
+
+\newif\ifNoteLines \NoteLinesfalse
+\def\s@tupsizes{
+ \trace{s}{s@tupsizes called from book: \id@@@}%
+ \s@tb@dyb@seline{}%
+ %\tracingifs=1
+ \ifdim\lineskiplimit<0pt\else\lineskiplimit=-9\le@dingunit\fi
+ \message{lineskiplimit=\the\lineskiplimit}%
+ \lineskip=0pt
+ \s@tbaseline{p}{p}%
+ {\s@tfont{p}{p}\global\setbox\pstr@t=\hbox to 0pt{{\XeTeXuseglyphmetrics=0 \char32 \hss}}}%
+ \xdef\lastn@tewid{\the\hsize}%
+ \NoteCallerWidth=1.1ex %Something sane?
+ \global\topskip=\baselineskip %\ifdiglot 2\fi\baselineskip
+ \global\splittopskip=0pt
+ \MSG{\baselineskip=\the\baselineskip,  topskip=\the\topskip}
+ \gutter=\ColumnGutterFactor\FontSizeUnit
+ \dimen0=\PaperWidth \dimen2=\SideMarginFactor\MarginUnit
+ \advance\dimen0 by -2\dimen2
+ \ifBindingGutter \advance\dimen0 by -\BindingGutter \fi
+ \advance\dimen0 by -1\ExtraRMargin
+ \textwidth=\dimen0
+ \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
+ \advance\colwidth by -0.5\XrefNotesWidth
+ \advance\colwidth by -\XrefNotesMargin
+% Diglot dimensions
+ \ifcsname DiglotLFraction\endcsname\else
+    \let\DiglotLFraction=\DiglotLeftFraction
+ \fi
+ \ifcsname DiglotRFraction\endcsname\else
+    \let\DiglotRFraction=\DiglotRightFraction
+ \fi
+ \csname set@col@widths@\diglotlayout\endcsname
+%
+ \xdef\NoteLineLength{\the\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit-\NoteLineXoffset-\NoteLineXmargin\relax} % length of lines
+ %\onecolwidth{\hsize}%
+ \hsize=\textwidth
+ \ifNoteLines\advance\hsize by -\NoteLineLength\fi
+ \trace{o}{hsize=\the\hsize, notes width=\the\XrefNotesWidth, margin=\XrefNotesMargin}%
+ \topm@rgin=\TopMarginFactor\MarginUnit
+ \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
+ \bottomm@rgin=\BottomMarginFactor\MarginUnit
+ \dimen0=\PaperHeight
+ \advance\dimen0 by -\topm@rgin
+ \advance\dimen0 by -\bottomm@rgin
+ \textheight=\dimen0
+ \advance\dimen0 by -\topskip
+ \dimen1=\dimen0 \dimen0=\baselineskip \m@d
+ \bmg@p=\baselineskip \advance\bmg@p-\dimen0
+ \vsize=\textheight
+ \iffalse % Code for testing breakable inserts. It breaks things!
+   \dimen\topins=\textheight
+   \dimen\bottomins=\textheight
+   \dimen\topleftins=0.7\textheight
+   \dimen\toprightins=0.7\textheight
+   \dimen\bottomleftins=0.7\textheight
+   \dimen\bottomrightins=0.7\textheight
+   \dimen\bottomins=\textheight
+   \dimen\verybottomins=\textheight
+ \fi
+ \ifrotate\pdfpagewidth=\PaperHeight \pdfpageheight=\PaperWidth\else
+ \pdfpagewidth=\PaperWidth \pdfpageheight=\PaperHeight\fi
+ \trace{p}{setupsizes: \the\pdfpagewidth, \the\pdfpageheight}
+ \resetvsize
+}
+
+%-csty_setupsizes
+\def\LineSpaceBase{14}
+\newdimen\le@dingunit
+\newdimen\onel@neunit
+\newdimen\verticalsp@ceunit
+\newdimen\topm@rgin
+\newdimen\bottomm@rgin
+\newdimen\bmg@p     % gap between last baseline and bottom margin
+\newdimen\textwidth
+\newdimen\textheight
+\newdimen\colwidth
+\newdimen\ExtraRMargin \ExtraRMargin=0pt
+\newdimen\gutter \gutter=20pt
+\newdimen\XrefNotesWidth \XrefNotesWidth=0pt
+\newdimen\XrefNotesMargin \XrefNotesMargin=1pt
+\endinput

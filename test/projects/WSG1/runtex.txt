@@ -1,0 +1,12 @@
+@echo off
+REM To run this batch script (in Windows) change the extension 
+REM from .txt to .bat and then type: runtex.bat <Enter>
+cd local\\ptxprint\\Default
+for %%i in (xetex.exe) do set truetex=%%~$PATH:i
+if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\ptxprint\\xetex\\bin\\windows\\xetex.exe
+set FONTCONFIG_FILE=%cd%\\..\\..\\..\\fonts.conf
+set TEXINPUTS=.;%cd%\\..\\..\\..\\src\\;
+set hyph_size=32749
+set stack_size=32768
+if exist "%truetex%" "%truetex%" WSG_Default_GEN_ptxp.tex
+cd ..\..\..

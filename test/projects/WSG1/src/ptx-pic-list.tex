@@ -1,0 +1,259 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% picture-list support for the ptx2pdf package
+
+% Format of lines in pic-list file:
+%     BBB C.V desc|file|size|loc|copyright|caption|ref
+% where BBB is the book code, C.V is the chapter/verse reference,
+% and the remaining data corresponds to USFM's \fig marker fields
+%
+% eg:
+% MRK 1.16 |hk00207b.png|span|b||fishermen...catching fish with a net.|1.16
+
+% Compare ptx-adj-list.tex for comments on the code.
+
+%+cpic_parse
+\newcount\p@clistsuff \p@clistsuff=1
+\newcount\p@clistentries \p@clistentries=0 % Count of how many entries defined
+\newcount\p@clistused \p@clistused=0 %Count of how many entries USED.
+\newtoks\p@cusecheck % Make a list of defined pictures, then empty their contents as they are used.
+\xdef\l@stpicref{}
+\def\picchecklist{}
+\def\updatep@cusecheck#1{\x@\global\x@\p@cusecheck\x@{\the\p@cusecheck #1}}
+
+\def\mkp@cid{\xdef\p@cid{piclist-\p@cref|\the\p@clistsuff}}
+\def\keepp@cprefix{keeppicl-}
+\def\@mkkp@cid#1#2{\xdef\kp@cid{\keepp@cprefix#1|#2}}
+\def\mkkp@cid{\@mkkp@cid{\p@cref}{\the\p@clistsuff}}
+\def\KeepFigure#1#2#3{\@mkkp@cid{#1#2-preverse}{#3}%
+  \trace{P}{Marking '\kp@cid' for keeping}%
+  \x@\global\x@\let\csname \kp@cid\endcsname\empty}
+
+\def\mkp@cref#1#2{%format the reference for book,chapter.verse that piclist (and anything wanting to trigger piclist entries) should use
+#1#2-preverse}
+\def\parsep@cline #1#2\endpicline{%
+  \def\t@st{#1}\ifx\t@st\h@sh
+    \trace{P}{Ignoring comment line #1#2}%
+  \else
+    \x@\@parsep@cline #1#2\endpicline 
+  \fi
+}
+\def\@parsep@cline #1 #2 #3\endpicline{%
+  \uppercase{\def\piclstb@@kref{#1}}%
+  \tempfalse
+  \xdef\t@st{#2\TriggerP@rSep}%
+  \x@\ch@kparref\t@st\E
+  \iftemp
+    \xdef\p@cref{\mkp@cref{\piclstb@@kref}{#2}}%Append -preverse because inline pics should be before the verse number
+  \else
+    \xdef\p@cref{\piclstb@@kref#2}% But paragraph-based refs should not be suffixed.
+  \fi
+  \gdef\p@cspec{#3}
+  \ifpicslurp
+    \ifx\l@stpicref\p@cref\else\p@clistsuff=1\fi
+    \loop
+      \mkp@cid
+      \x@\let\x@\t@st\csname \p@cid\endcsname
+        \ifx\t@st\relax 
+        \tempfalse
+      \else 
+        %\message{picid:\p@cid already exists}%
+        \advance\p@clistsuff by 1\temptrue
+      \fi
+    \iftemp\repeat
+    \x@\global\x@\let\csname \p@cid\endcsname\p@cspec
+    % Track defined pictures, so we can make a list of unused ones for error reporting
+    \edef\humanp@cref{\piclstb@@kref\space #2\ifnum\p@clistsuff>1 (\the\p@clistsuff)\fi, }%
+    %\tracingassigns=1
+    \x@\global\x@\let\csname used\p@cid\endcsname\humanp@cref
+    \gdef\picchecklist{\csname used\p@cid\endcsname\picchecklist}%
+    \x@\updatep@cusecheck\x@{\csname used\p@cid\endcsname}%
+    %\tracingassigns=0
+    % Keep track of how many used.
+    \global\advance\p@clistentries by 1
+    \trace{P}{defined picid:\p@cid}%
+  \fi
+}
+
+\newif\ifpicslurp \picslurptrue %If true, this uses some extra memory (remembering the entire piclist) for the benefit of the piclist no longer needing to be sorted. 
+\newif\ifPiclistLitPct % If true, then % is treated as a letter in the piclist. Else (historic) it is a comment character
+\newif\ifKeepAllFigures 
+\KeepAllFiguresfalse
+
+\def\readnextp@c{%
+  \let\r@peat\relax
+  \ifeof\p@clist
+    \global\let\p@cref\empty
+  \else
+    \begingroup
+      \catcode`0=12 \catcode`1=12 \catcode`2=12 \catcode`3=12 \catcode`4=12
+      \catcode`5=12 \catcode`6=12 \catcode`7=12 \catcode`8=12 \catcode`9=12
+      \catcode`.=12  \catcode`\/=12 %\catcode"201D=12 \catcode"201C=12 
+      \catcode`\&=12 \catcode`\#=12
+      \catcode`\\=12
+      \ifPiclistLitPct \catcode`\%=12 \else \catcode`\%=5 \fi
+      \endlinechar=-1
+      \read\p@clist to \p@cline
+      \ifx\p@cline\P@R\readnextp@c\else
+        \ifx\p@cline\empty\readnextp@c\else
+          \trace{P}{Read piclist line: \p@cline}%
+          \expandafter\parsep@cline\p@cline\endpicline
+        \fi
+      \fi
+    \endgroup
+    \ifpicslurp
+      \let\r@peat\readnextp@c
+    \fi
+  \fi
+  \r@peat
+}
+\def\P@R{\par}
+%-cpic_parse
+
+%+cpic_read
+\newread\p@clist
+\def\openpiclist "#1" {%
+  \closein\p@clist
+%  \immediate\write-1{(opening piclist "#1")}%
+  \openin\p@clist="#1"
+  \ifeof\p@clist \immediate\write-1{(no picture list "#1" found)}%
+  \else \immediate\write16{(\ifIncludeFigures using\else skipping\fi
+    \space pictures from list "#1")}\fi
+  \readnextp@c
+}
+\def\closepiclist{%
+  \ifeof\p@clist\else \errmessage{Did not use all pictures in list. Waiting for \p@cref}\fi
+  \closein\p@clist
+}
+%-cpic_read
+
+%+cpic_check
+\def\dop@c{%Traditional found-a-match piclist processing
+  \x@\d@figure\x@{\p@cspec}%
+  \readnextp@c
+  \ch@ckpiclist%Repeat?
+}
+\def\ch@ckN@xtPicid{%Check to see if there's one or more pictures for this verse.
+  \mkp@cid
+  \mkkp@cid
+  \trace{P}{ch@ckN@xtPicid(\p@cref): \p@cid (keepid:\kp@cid) \ifcsname\p@cid\endcsname found\fi}%
+  \ifcsname\p@cid\endcsname 
+    \traceifset{ch@ckN@xtPicid}%
+    \x@\let\x@\t@st\csname \p@cid\endcsname
+    \ifx\t@st\relax
+      \trace{P}{No real piclist entry found for \p@cid}%
+      \let\cnpicr@pe@t\ch@ckN@xtPicid
+    \else
+      \x@\ifx\csname used\p@cid\endcsname\empty\else %Avoid overcounting
+        \global\advance\p@clistused by 1
+      \fi
+      \x@\global\x@\let\csname used\p@cid\endcsname\empty% mark picture as done
+      \trace{P}{Piclist entry found for \p@cid (\the\p@clistused/\the\p@clistentries)}%
+      \ifcsname \kp@cid\endcsname
+        \temptrue
+      \else
+        \tempfalse
+      \fi
+      \ifKeepAllFigures 
+        \temptrue
+      \fi
+      \ifcsname \keepp@cprefix\p@cref|\endcsname
+        \temptrue
+      \fi
+      \iftemp
+        \trace{P}{Preserving entry}%
+        {\loop\tempfalse\ifnum\p@clistsuff>1
+          \advance\p@clistsuff by -1
+          \mkp@cid
+          \ifcsname\p@cid\endcsname\else
+            \trace{P}{Reactivating image \p@cid as null, so our kept image is spotted}%
+            \x@\global\x@\let\csname\p@cid\endcsname\relax
+            \temptrue
+          \fi
+        \fi\iftemp\repeat
+        }%  
+      \else
+        \trace{P}{No request to keep \p@cref or \kp@cid}%
+        \x@\global\x@\let\csname\p@cid\endcsname\undefined% Undefine pics on use
+      \fi
+      \let\p@cspec\t@st
+      {\x@\d@figure\x@{\p@cspec}}% In a group so that paragraph counts don't get broken.
+      \let\cnpicr@pe@t\ch@ckN@xtPicid
+    \fi
+    \traceifcheck{ch@ckN@xtPicid}%
+  \else
+    \let\cnpicr@pe@t\relax
+  \fi
+  \advance\p@clistsuff by 1
+  \cnpicr@pe@t
+}
+
+\def\ch@ckpiclist{%
+  \trace{P}{Start of checkpic \c@rref, \dc@rref}%
+  \ifpicslurp
+    % treat unlabelled as L only not both sides
+    \ifnum \ifdiglot\ifx\c@rrdstat\d@glotl 1\else 0\fi\else 1\fi =1
+      \let\p@cref=\c@rref
+      \p@clistsuff=1
+      \ch@ckN@xtPicid
+    \fi
+    \ifdiglot
+      \let\p@cref=\dc@rref
+      \p@clistsuff=1
+      \ch@ckN@xtPicid
+    \fi
+  \else
+    \trace{P}{\p@cref =\c@rref?}%
+    \ifx\c@rref\p@cref \dop@c
+    \else
+      \ifdiglot
+        \trace{P}{\p@cref =\dc@rref?}%
+        \ifx\dc@rref\p@cref \dop@c\fi
+      \fi
+    \fi
+  \fi
+  \trace{P}{End of checkpic \c@rref, \dc@rref}%
+}
+
+\def\endpiclistch@ck{%
+  \ifpicslurp 
+    \edef\unus@d{\the\p@cusecheck}%
+    \ifnum\p@clistentries>\p@clistused
+      \message{** Only \the\p@clistused\space pictures were used out of \the\p@clistentries\space defined. Piclist may have errors or perhaps contain references for other books. Unused references: \unus@d}%
+    \fi
+  \fi
+}
+
+\addtotrigg@rchecks{\ch@ckpiclist}                                              %(1)
+\addtoendhooks{\endpiclistch@ck}
+%-cpic_check
+
+\endinput

@@ -1,0 +1,220 @@
+% pgflibraryvectorian.code.tex (utf8 encoding)
+% Copyright 2020  Alain Matthes
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status “maintained”.
+% 
+% The Current Maintainer of this work is Alain Matthes.
+% Original idea of  F Fradin and H Voss  
+\typeout{2020/04/06 1.1  pgflibraryvectorian.code.tex} 
+\makeatletter
+% dimensions des motifs
+\def\@pgfornamentDim#1{% dim en bp
+\ifcase#1\relax%
+\or\def\@pgfornamentX{136}\def\@pgfornamentY{107}% 1
+\or\def\@pgfornamentX{134}\def\@pgfornamentY{48}%  2
+\or\def\@pgfornamentX{130}\def\@pgfornamentY{65}%  3
+\or\def\@pgfornamentX{133}\def\@pgfornamentY{133}% 4
+\or\def\@pgfornamentX{129}\def\@pgfornamentY{146}% 5
+\or\def\@pgfornamentX{134}\def\@pgfornamentY{148}% 6
+\or\def\@pgfornamentX{136}\def\@pgfornamentY{135}% 7
+\or\def\@pgfornamentX{134}\def\@pgfornamentY{134}% 8
+\or\def\@pgfornamentX{79}\def\@pgfornamentY{105}% 9
+\or\def\@pgfornamentX{80}\def\@pgfornamentY{99}%  10
+\or\def\@pgfornamentX{123}\def\@pgfornamentY{67}%  11
+\or\def\@pgfornamentX{136}\def\@pgfornamentY{136}% 12
+\or\def\@pgfornamentX{136}\def\@pgfornamentY{236}% 13
+\or\def\@pgfornamentX{123}\def\@pgfornamentY{67}%  14
+\or\def\@pgfornamentX{103}\def\@pgfornamentY{52}%  15
+\or\def\@pgfornamentX{103}\def\@pgfornamentY{52}%  16
+\or\def\@pgfornamentX{74}\def\@pgfornamentY{59}%  17
+\or\def\@pgfornamentX{74}\def\@pgfornamentY{59}%  18
+\or\def\@pgfornamentX{81}\def\@pgfornamentY{81}%  19
+\or\def\@pgfornamentX{81}\def\@pgfornamentY{81}%  20
+\or\def\@pgfornamentX{70}\def\@pgfornamentY{58}%  21
+\or\def\@pgfornamentX{34}\def\@pgfornamentY{61}%  22
+\or\def\@pgfornamentX{68}\def\@pgfornamentY{55}%  23
+\or\def\@pgfornamentX{79}\def\@pgfornamentY{76}%  24
+\or\def\@pgfornamentX{80}\def\@pgfornamentY{88}%  25
+\or\def\@pgfornamentX{59}\def\@pgfornamentY{120}% 26
+\or\def\@pgfornamentX{101}\def\@pgfornamentY{98}% 27
+\or\def\@pgfornamentX{52}\def\@pgfornamentY{102}% 28
+\or\def\@pgfornamentX{65}\def\@pgfornamentY{65}%  29
+\or\def\@pgfornamentX{63}\def\@pgfornamentY{64}%  30
+\or\def\@pgfornamentX{48}\def\@pgfornamentY{48}%  31
+\or\def\@pgfornamentX{48}\def\@pgfornamentY{48}%  32
+\or\def\@pgfornamentX{85}\def\@pgfornamentY{85}%  33
+\or\def\@pgfornamentX{85}\def\@pgfornamentY{85}%  34
+\or\def\@pgfornamentX{97}\def\@pgfornamentY{97}%  35
+\or\def\@pgfornamentX{97}\def\@pgfornamentY{97}%  36
+\or\def\@pgfornamentX{105}\def\@pgfornamentY{104}% 37
+\or\def\@pgfornamentX{105}\def\@pgfornamentY{104}% 38
+\or\def\@pgfornamentX{112}\def\@pgfornamentY{112}% 39
+\or\def\@pgfornamentX{112}\def\@pgfornamentY{112}% 40
+\or\def\@pgfornamentX{111}\def\@pgfornamentY{113}% 41
+\or\def\@pgfornamentX{111}\def\@pgfornamentY{113}% 42
+\or\def\@pgfornamentX{123}\def\@pgfornamentY{63}%  43
+\or\def\@pgfornamentX{123}\def\@pgfornamentY{63}%  44
+\or\def\@pgfornamentX{385}\def\@pgfornamentY{64}%  45
+\or\def\@pgfornamentX{453}\def\@pgfornamentY{97}%  46
+\or\def\@pgfornamentX{114}\def\@pgfornamentY{32}%  47
+\or\def\@pgfornamentX{114}\def\@pgfornamentY{32}%  48
+\or\def\@pgfornamentX{163}\def\@pgfornamentY{61}%  49
+\or\def\@pgfornamentX{164}\def\@pgfornamentY{125}% 50
+\or\def\@pgfornamentX{164}\def\@pgfornamentY{125}% 51
+\or\def\@pgfornamentX{248}\def\@pgfornamentY{197}% 52
+\or\def\@pgfornamentX{134}\def\@pgfornamentY{134}% 53
+\or\def\@pgfornamentX{134}\def\@pgfornamentY{134}% 54
+\or\def\@pgfornamentX{269}\def\@pgfornamentY{116}% 55
+\or\def\@pgfornamentX{269}\def\@pgfornamentY{116}% 56
+\or\def\@pgfornamentX{207}\def\@pgfornamentY{103}% 57
+\or\def\@pgfornamentX{228}\def\@pgfornamentY{116}% 58
+\or\def\@pgfornamentX{204}\def\@pgfornamentY{102}% 59
+\or\def\@pgfornamentX{451}\def\@pgfornamentY{189}% 60
+\or\def\@pgfornamentX{205}\def\@pgfornamentY{205}% 61
+\or\def\@pgfornamentX{205}\def\@pgfornamentY{205}% 62
+\or\def\@pgfornamentX{212}\def\@pgfornamentY{212}% 63
+\or\def\@pgfornamentX{212}\def\@pgfornamentY{212}% 64
+\or\def\@pgfornamentX{132}\def\@pgfornamentY{166}% 65
+\or\def\@pgfornamentX{177}\def\@pgfornamentY{175}% 66
+\or\def\@pgfornamentX{80}\def\@pgfornamentY{155}% 67
+\or\def\@pgfornamentX{361}\def\@pgfornamentY{154}% 68
+\or\def\@pgfornamentX{448}\def\@pgfornamentY{227}% 69
+\or\def\@pgfornamentX{226}\def\@pgfornamentY{79}%  70
+\or\def\@pgfornamentX{443}\def\@pgfornamentY{81}%  71
+\or\def\@pgfornamentX{216}\def\@pgfornamentY{58}%  72
+\or\def\@pgfornamentX{216}\def\@pgfornamentY{58}%  73
+\or\def\@pgfornamentX{308}\def\@pgfornamentY{93}%  74
+\or\def\@pgfornamentX{373}\def\@pgfornamentY{120}% 75
+\or\def\@pgfornamentX{308}\def\@pgfornamentY{93}%  76
+\or\def\@pgfornamentX{207}\def\@pgfornamentY{89}%  77
+\or\def\@pgfornamentX{207}\def\@pgfornamentY{132}% 78
+\or\def\@pgfornamentX{249}\def\@pgfornamentY{122}% 79
+\or\def\@pgfornamentX{454}\def\@pgfornamentY{31}%  80
+\or\def\@pgfornamentX{176}\def\@pgfornamentY{45}%  81
+\or\def\@pgfornamentX{454}\def\@pgfornamentY{24}%  82
+\or\def\@pgfornamentX{449}\def\@pgfornamentY{20}%  83
+\or\def\@pgfornamentX{290}\def\@pgfornamentY{57}%  84
+\or\def\@pgfornamentX{453}\def\@pgfornamentY{22}%  85
+\or\def\@pgfornamentX{454}\def\@pgfornamentY{17}%  86
+\or\def\@pgfornamentX{360}\def\@pgfornamentY{44}%  87
+\or\def\@pgfornamentX{454}\def\@pgfornamentY{15}%  88
+\or\def\@pgfornamentX{454}\def\@pgfornamentY{10}%  89
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{30}%  90
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%   91
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{29}%   92
+\or\def\@pgfornamentX{59}\def\@pgfornamentY{29}%   93
+\or\def\@pgfornamentX{59}\def\@pgfornamentY{29}%   94
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{29}%   95
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{15}%   96
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{14}%   97
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{14}%   98
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{15}%   99
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{30}%   100
+\or\def\@pgfornamentX{132}\def\@pgfornamentY{30}%  101
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{29}%102
+\or\def\@pgfornamentX{42}\def\@pgfornamentY{30}%103
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%104
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{30}%105
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{30}%106
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%107
+\or\def\@pgfornamentX{59}\def\@pgfornamentY{29}%108
+\or\def\@pgfornamentX{72}\def\@pgfornamentY{29}%109
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{15}%110
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{28}%111
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{59}%112
+\or\def\@pgfornamentX{57}\def\@pgfornamentY{28}%113
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%114
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{29}%115
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{29}%116
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{29}%117
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{29}%118
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%119
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{44}%120
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{44}%121
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%122
+\or\def\@pgfornamentX{59}\def\@pgfornamentY{29}%123
+\or\def\@pgfornamentX{58}\def\@pgfornamentY{59}%124
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{44}%125
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{43}%126
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{28}%127
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{29}%128
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%129
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{29}%130
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{44}%131
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{44}%132
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{15}%133
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{15}%134
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{14}%135
+\or\def\@pgfornamentX{72}\def\@pgfornamentY{44}%136
+\or\def\@pgfornamentX{149}\def\@pgfornamentY{74}%137
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{7}%138
+\or\def\@pgfornamentX{73}\def\@pgfornamentY{37}%139
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{15}%140
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{15}%141
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{30}%142
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{30}%143
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{30}%144
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{15}%145
+\or\def\@pgfornamentX{15}\def\@pgfornamentY{15}%146
+\or\def\@pgfornamentX{31}\def\@pgfornamentY{29}%147
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{44}%148
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{28}%149
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{44}%150
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{29}%151
+\or\def\@pgfornamentX{57}\def\@pgfornamentY{28}%152
+\or\def\@pgfornamentX{57}\def\@pgfornamentY{28}%153
+\or\def\@pgfornamentX{34}\def\@pgfornamentY{17}%154
+\or\def\@pgfornamentX{34}\def\@pgfornamentY{17}%155
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{28}%156
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%157
+\or\def\@pgfornamentX{58}\def\@pgfornamentY{29}%158
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{29}%159
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{30}%160
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%161
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{44}%162
+\or\def\@pgfornamentX{46}\def\@pgfornamentY{29}%163
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{44}%164
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{26}%165
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%166
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%167
+\or\def\@pgfornamentX{59}\def\@pgfornamentY{30}%168
+\or\def\@pgfornamentX{58}\def\@pgfornamentY{29}%169
+\or\def\@pgfornamentX{59}\def\@pgfornamentY{30}%170
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{29}%171
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{15}%172
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{44}%173
+\or\def\@pgfornamentX{28}\def\@pgfornamentY{44}%174
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{42}%175
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{43}%176
+\or\def\@pgfornamentX{31}\def\@pgfornamentY{44}%177
+\or\def\@pgfornamentX{28}\def\@pgfornamentY{44}%178
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{44}%179
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{45}%180
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{30}%181
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{29}%182
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{27}%183
+\or\def\@pgfornamentX{42}\def\@pgfornamentY{29}%184
+\or\def\@pgfornamentX{45}\def\@pgfornamentY{29}%185
+\or\def\@pgfornamentX{43}\def\@pgfornamentY{14}%186
+\or\def\@pgfornamentX{28}\def\@pgfornamentY{29}%187
+\or\def\@pgfornamentX{30}\def\@pgfornamentY{30}%188
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%189
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{29}%190
+\or\def\@pgfornamentX{73}\def\@pgfornamentY{58}%191
+\or\def\@pgfornamentX{29}\def\@pgfornamentY{44}%192
+\or\def\@pgfornamentX{44}\def\@pgfornamentY{14}%193
+\or\def\@pgfornamentX{90}\def\@pgfornamentY{90}%194
+\or\def\@pgfornamentX{90}\def\@pgfornamentY{90}%195
+\or\def\@pgfornamentX{148}\def\@pgfornamentY{30}%196
+
+\fi%
+}%
+\makeatother
+\endinput

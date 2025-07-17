@@ -1,0 +1,488 @@
+%:strip
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2020 by SIL International
+% written by David Gardner 
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newif\ifin@ttrib
+
+
+
+%\tracingall=1
+
+\catcode`\|=\active
+\def\use@ttrSlash{%
+    \let|=\@ttrSlash %this one is easy (for use with milestones)
+}
+\def\use@ttrGrab{%
+    \let|=\start@ttributegrab %have to build attributes char-by-char, sadly.
+}
+\def\use@ttrSpecific{%
+   %\tracingmacros=1
+   %\tracingassigns=1
+   \setgr@bname{\thiswh@tstyle}%
+   \trace{A}{grabname set to \gr@bname}%
+   \x@\let\x@|\csname \gr@bname\endcsname
+}
+\catcode`\|=12
+\def\kill@ttrib #1\E{%
+  \trace{A}{removing (old) attribute '#1'}%
+  \x@\global\x@\let\csname attr:#1\endcsname=\undefined
+}
+\def\apply@attr@specials #1\E{% Apply 'simple' attribute features - one feature=one atribute. markers that need multiple attributes should probably define \csname complex-foo\endcsname, like rb does.
+  \x@\let\x@\tmpa\csname \Spec@lAttribName{#1}{start}\endcsname
+  \x@\let\x@\tmpb\csname \Spec@lAttribName{#1}{end}\endcsname
+  \temptrue
+  \ifx\tmpa\relax
+    \ifx\tmpb\relax\tempfalse
+    \fi
+  \fi
+  \iftemp
+    \get@ttribute{#1}%
+    \trace{A}{Special '#1':'\attr@b'}%
+    %\tracingmacros=1
+    %\tracingassigns=1
+    \let\exptmp\relax\let\tmp\relax
+    \setbox0\hbox{%
+        \begingroup% Ensure there are no nesting errors
+        %\trace{A}{>>>}%
+	\ifx\tmpa\relax\else
+          \edef\exptmp{\tmpa}\exptmp\fi
+        \relax
+	\unhbox0
+	\ifx\tmpb\relax\else
+          \edef\exptmp{\tmpb}\exptmp\fi
+        \relax
+        %\trace{A}{<<<}%
+        \endgroup
+      }%
+    %\tracingassigns=0
+    %\tracingmacros=0
+  \fi
+}
+\def\Spec@lAttribName#1#2{attr-spec-#1-#2}
+\newif\ifattrspecial
+\def\FlagSpecialAttrib#1{%The given attribute uses special handling, and thus charstyles with it box their values
+  \x@\global\x@\let\csname attr-spec-#1\endcsname\tr@e
+}
+\def\CheckSpecial#1{\ifcsname attr-spec-#1\endcsname\attrspecialtrue\fi}
+\def\SetOneSpecialAttrib#1#2#3{%
+  \FlagSpecialAttrib{#1}%
+  \S@tOneSpecialAttrib{#1}{#2}{#3}}
+
+\def\S@tOneSpecialAttrib#1#2#3{%
+  \def\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
+    \x@\let\csname\tmpa\endcsname\relax
+  \else
+    \x@\def\csname\tmpa\endcsname{#3}%
+  \fi}
+\def\SetSpeciallAttribs#1#2#3{%\tracingassigns=1\relax%
+  \FlagSpecialAttrib{#1}%
+  \S@tOneSpecialAttrib{#1}{start}{#2}%
+  \S@tOneSpecialAttrib{#1}{end}{#3}\tracingassigns=0\relax}%
+
+
+\def\unset@ttribs{% Remove any current attibute definitions
+  \let\d@=\kill@ttrib
+  \x@\cstackdown \attribsus@d,\E
+  \xdef\attribsus@d{}%
+  \xdef\@ttributes{}%
+  \relax\relax
+  \trace{A}{attributes list reset}%
+}
+\def\init@ttribs{%Attribute pre-setupcode, defines grabber, etc. 
+  %\tracingassigns=1
+  \edef\thiswh@tstyle{\ifmst@nestyle\thismil@stone\else\thisch@rstyle\fi}%
+  \@@init@ttribs % Processing config. Might be used without this wrapper when attributes are have been grabbed already.
+  \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
+  \catcode`\|=\active
+  \ifmst@nestyle
+    \use@ttrSlash
+  \else
+    \use@ttrSpecific % based on style
+    %\use@ttrGrab % char-by-char 
+  \fi
+  \in@ttribfalse
+  \xdef\@ttributes{}%
+}
+
+\def\@@init@ttribs{%Most generic-case attribute initialisiation. 
+  \trace{A}{InitAttribs \thiswh@tstyle (\csname thisch@rstyle\endcsname,\csname thismil@stone\endcsname)}%
+  \ifx\attribsus@d\empty\else
+    \unset@ttribs% Clear any old attributes.
+  \fi
+  \let\attrkey\relax
+  %\x@\let\x@\attrkey\csname defaultattrkey-\thisch@rstyle\endcsname
+  \x@\let\x@\t@st\csname thiswh@tstyle\endcsname
+  \ifx\t@st\relax\else
+%
+    \x@\let\x@\attrkey\csname defaultattrkey-\thiswh@tstyle\endcsname
+  \fi
+  \ifx\attrkey\relax
+    \let\thisdefault@ttrkey=\default@ttrkey
+  \else
+    \let\thisdefault@ttrkey=\attrkey
+    \trace{A}{Attributes with no keyname will be \attrkey}%
+  \fi
+}
+\def\GOTOLinkBorderstyle{/S/U/W 1} % Underline
+\def\URLLinkBorderstyle{/S/U/W 1} % Underline
+\def\GOTOLinkBorderCol{.9 .5 .5}% pale red
+\def\URLLinkBorderCol{.5 .5 .5}% Gry
+
+%\def\LinkBorderstyle{}
+
+\def\pdfURL#1{\trace{A}{Appyling PDFurl}\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\URLLinkBorderstyle\empty\else/BS<<\URLLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
+
+\edef\h@shcatcode{\the\catcode`\#}
+\catcode`\#=12
+\def\h@sh{#}
+\catcode`\#=\h@shcatcode
+
+\def\pdfG@T@#1#2 #3\E{\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#3}\ifx\tmp\empty\edef\tmp{#1#2}\else\edef\tmp{\zap@space #1#2.#3 \empty}\fi\fi
+  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\GOTOLinkBorderstyle\empty\else/BS<<\GOTOLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\GOTOLinkBorderCol]\fi\ifActions/A<</S/GoTo/D(\tmp)>>\fi>>}%
+  \trace{A}{link is GOTO to '\tmp'}%
+}
+\def\pdfGOTO#1{\x@\pdfG@T@#1 \E}
+\def\pdfURLorGOTO#1:#2\end{\lowercase{\edef\tmp{#1:schema}}\x@\ifcsname\tmp\endcsname\csname\tmp\endcsname{\attr@b}\else\pdfGOTO{\attr@b}\fi}
+\def\pdfPRJ#1{}
+
+\x@\let\csname http:schema\endcsname\pdfURL
+\x@\let\csname https:schema\endcsname\pdfURL
+\x@\let\csname prj:schema\endcsname\pdfPRJ
+
+\def\PDFposfromattr{\ifActions\dimen0=\baselineskip\raise\the\dimen0\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos 1.4]}}\fi}
+\SetSpeciallAttribs{link-id}{\noexpand\maybePDFp@sfromattr\noexpand\makelabelfromattr}{}
+\SetSpeciallAttribs{link-href}{\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi}{\ifx\attr@b\empty\else\special{pdf:eann}\fi}
+\SetSpeciallAttribs{outline-entry}{\noexpand\m@keoutlinefromattr{\attr@b}}{}
+\SetSpeciallAttribs{link-title}{\noexpand\maybem@keoutlinefromattr{\attr@b}}{}
+\def\maybem@keoutlinefromattr#1{\testt@ttrn@me{link-href}\if@ttrexists\else\m@keoutlinefromattr{#1}}
+\def\maybePDFp@sfromattr#1{\testt@ttrn@me{outline-entry}\if@ttrexists\else\PDFposfromattr\fi}
+
+\def\m@keoutlinefromattr#1{\get@ttribute{link-id}\ifx\attr@b\relax
+    \message{Unable to make outline entry for #1, no link-id field specified}
+  \else
+    \PDFposfromattr
+    \let\tmpattrb\attr@b
+    \get@ttribute{outline-level}\ifx\attr@b\relax \def\attr@b{2}\fi% Outline level:0:book, 1:chapter
+    \special{pdf:outline \attr@b\space << /Title (#1) /A << /S /GoTo /D (\tmpattrb) >> >>}%
+  \fi
+}
+%%%%%%%%%
+%
+\def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\ifimplicitcl@se\if #1\ss@ChrP  +\fi\fi#2}}
+% make something that swallows everything up to a given end-marker
+\def\s@tend@marker#1{\let\end@marker\relax\let\d@\def@endm@rker\mctop\ifx\end@marker\relax\edef\end@marker{#1}\fi}
+\def\setgr@bname#1{%
+  \s@tend@marker{#1}%
+  \edef\gr@bname{@attr@grab-\end@marker}%
+  \trace{A}{Grab@name: (for #1) \gr@bname}%
+  \x@\ifcsname \gr@bname\endcsname\else
+    \trace{A}{New grabber: \gr@bname\space about to be defined, endmarker: \end@marker}%
+    \x@\setup@ttr@grab\x@{\csname \end@marker\endcsname}%
+  \fi
+}
+
+\def\setup@ttr@grab#1{%
+  \x@\xdef\csname \gr@bname\endcsname{\catcode`\/=12\relax % FIXME other active chars too?
+    \csname @@\gr@bname\endcsname}%
+  \x@\gdef\csname @@\gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}#1}}
+
+\def\proc@ttribs{%
+  \trace{A}{Processing attributes (\ifin@ttrib true\else false\fi)}%
+  \ifin@ttrib
+    \trace{A}{Attributes specified:\attrib@rgs}%
+    \parse@ttribs{\attrib@rgs}%
+    \in@ttribfalse
+  \fi
+  \catcode`\|=12
+  \catcode`\/=\active
+  \activ@tecustomch@rs
+  }
+
+
+\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\xdef\csname defaultattrkey-#1\endcsname{#2}%
+  \edef\@ttrlistname{@ttriblist-#1}%
+  \x@\xdef\csname \@ttrlistname\endcsname{#2}%
+  \CheckSpecial{#1}\ifattrspecial\x@\let\csname boxed-\thiswh@tstyle\endcsname\tr@e\fi
+}
+
+\x@\def\csname nostore-attrib-eid\endcsname{}
+\x@\def\csname nostore-attrib-sid\endcsname{}
+\def\extend@ttriblist#1#2{%
+  \edef\tmpa{#2}%
+  \edef\@ttrlistname{@ttriblist-#1}%
+  \x@\let\x@\tmp\csname\@ttrlistname\endcsname
+  \ifx\tmp\relax
+    \x@\let\x@\tmp\csname defaultattrkey-#1\endcsname
+  \fi
+  \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}%
+}
+
+\edef\p@stattribcmd{}% Parse the attributes, run any code.
+
+%\def\foo#1{Thatsit "#1"}
+
+\def\oddc@tcodes{\xdef\sl@shcode{\the\catcode`\/}\catcode`"=11 \catcode`==11
+\catcode`\ =11 \catcode`|=0\catcode`\/=12\catcode`\\=12}
+\def\normalc@tcodes{\catcode`"=12 \catcode`==12
+\catcode`\ =10\catcode`\\=0\catcode`\/=\sl@shcode\catcode`\|=12}
+\trace{A}{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
+
+
+\xdef\attribsus@d{}% List of used attributes.
+
+%%%%%%%%%%%%
+%
+% Grabbing attribute values char-by-char 
+%
+\def\start@ttributegrab{\let\c@ntinue\isitslash\oddc@tcodes\futurelet\nxt\c@ntinue}
+\def\end@ttributegrab{%
+  \xdef\@ttributes{\x@\noexpand\x@{\@ttributes}}% Make it all strings.
+  \trace{A}{Now executing \p@stattribcmd}%
+  \csname\p@stattribcmd\endcsname}% 
+
+\def\store@ttributes#1{\def\newbit{#1}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}
+\def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
+\def\storep@stattribcmd#1{\def\newbit{#1}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}
+\lccode`\~=32
+\lowercase{
+ \gdef\isitcmd{%
+        \let\c@ntinue\storep@stattribcmd
+        \ifcat a\nxt\else%\ifcat=\nxt \else
+	\let\c@ntinue\end@ttributegrab\fi%\fi
+	\c@ntinue}%
+}
+\oddc@tcodes%NO SPACES until |normalc@tcodes is called.
+|gdef|isitslash{|let|c@ntinue|store@ttributes|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes|fi|c@ntinue}%
+|def|zap@slash#1\#2{#1|ifx#2|empty|else|expandafter|zap@slash|fi#2}%
+|def|deslash#1{|edef|tmp{|zap@slash#1\|empty}}%
+|normalc@tcodes%
+%
+%
+%
+%%%%%%%%%%%%
+
+%Parse key="value" or value.
+\def\default@ttrkey{} % What unnamed attributes get saved 
+\def\thisdefault@ttrkey{} % What do unnamed attributes get saved as?
+\def\spaceval{ }
+\def\s@tattr@val #1 #2\E{\edef\test{#2}\ifx\test\empty\else\edef\attr@val{\ifx\attr@val\empty\else\attr@val\space\fi#1}\x@\s@tattr@val \test\E\fi}% Remove trailing space(s)
+\def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="the crowd"
+\def\save@ttribute#1="#2" #3\E{%
+  \trace{A}{save@ttribute '#1'="#2" #3}%
+  \lowercase{\edef\attr@key{#1}}\edef\attr@val{#2}%
+  \ifx\attr@val\relaxval
+    \ifx\thisdefault@ttrkey\empty
+      \edef\thisdefault@ttrkey{UnNamed}%
+    \fi
+    \ifx\attr@key\spaceval\else
+      \ifx\attr@key\empty\else
+      \get@ttribute{\thisdefault@ttrkey}%
+      \edef\attr@val{}%
+        \ifx\attr@b\relax
+          \s@tattr@val #1 \E
+        \else
+          \ifmst@nestyle
+            \s@tattr@val \attr@b\milestoneJoinChar#1 \E% Join words with milestoneJoinChar instead of space.
+          \else
+            \s@tattr@val \attr@b\space #1 \E% Join words with a space.
+          \fi 
+        \fi
+        \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute '#1' -> '\attr@val'}%
+        \set@ttribute{\thisdefault@ttrkey}{\attr@val}%
+      \fi
+    \fi
+  \else
+    \edef\t@st{\zap@space #1 \empty}%
+    \ifx\attr@key\t@st
+      \trace{A}{Got named attribute \attr@key="\attr@val"}%
+      \set@ttribute{\attr@key}{\attr@val}%
+    \else
+      \trace{A}{Got unnamed AND named attributes '#1'}%
+      \x@\spl@tonspace #1\E
+      \trace{A}{Got unnamed(\thisdefault@ttrkey) -> '\f@rstitem'}%
+      \set@ttribute{\thisdefault@ttrkey}{\f@rstitem}%
+      \trace{A}{Got named attribute \s@conditem="\attr@val"}%
+      \set@ttribute{\s@conditem}{\attr@val}%
+    \fi
+  \fi
+  \def\t@st{#3}%
+  \ifx\t@st\empty\else
+    \ifx\t@st\spaceval\else
+      \save@ttribute #3\E
+    \fi
+  \fi
+}
+
+
+\def\@checkzvar#1#2::#3::#4\E{%if the value saves is zvar::something, then return that zvar
+  \trace{A}{@checkzvar '#1' '#2' '#3'}%
+  \edef\tmp{#2}\ifx\tmp\zv@r
+    \edef#1{\csname ms:zvar=#3\endcsname}%
+    \trace{A}{attrib '#1' is '\attr@b'}%
+  \fi
+}
+\newif\if@ttrexists
+\def\testt@ttrn@me#1{\ifcsname attr:#1\endcsname\@ttrexiststrue\else\@ttrexistsfalse\fi}%
+\def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib '#1' is '\attr@b'}%
+  \x@\@checkzvar\x@{\x@\attr@b\x@}\attr@b ::::\E} %simple access function
+
+\def\get@ttributedef#1#2#3{%Gets a (potentially numeric) atttribute, with a default. #1 attribute; #2 csname ; #3 default if not defined
+  \get@ttribute{#1}\ifx\attr@b\relax
+    \ifx#2\undefined 
+      \edef#2{#3}%
+    \else\ifx#2\relax 
+        \edef#2{#3}%
+    \fi\fi
+  \else
+    \m@kenumber{\attr@b}%
+    \let#2\@@result
+  \fi
+}
+
+\def\set@ttribute#1#2{%
+  \CheckSpecial{#1}\ifattrspecial\ifcsname boxed-\thiswh@tstyle\endcsname\else %
+    \MSG{A special attribute (#1) was used for \thiswh@tstyle\space but it was not listed as an attribute in the stylesheet}%
+  \fi\fi
+  \x@\xdef\csname attr:#1\endcsname{#2}%
+  \xdef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.
+}
+
+% Parse a space-separated list.
+\def\relax@tem#1\E{}
+
+\def\zap@space#1 #2{%borrowed from latex.ltx. Eats all spaces in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@space\fi
+  #2}
+\def\zap@plus#1+#2{%borrowed from latex.ltx. Eats all pluses in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@plus\fi
+  #2}
+\def\zap@comma#1,#2{%borrowed from latex.ltx. Eats all commas in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@comma\fi
+  #2}
+
+
+\def\geton@item #1 #2\E{% Parse space separated list
+  \edef\it@m{#1}%
+  \edef\it@mtwo{\zap@space #2 \empty}%
+  \trace{A}{getone pair (#1) (#2) -> (\it@m) (\it@mtwo)}%
+  \ifx\it@m\empty\ifx\it@mtwo\empty\let\nxt@tem=\relax@tem\fi\else
+    \D@first{#1}%
+  \fi
+  \nxt@tem #2 \E
+}
+
+
+% Parse an attribute="value" from the USFM code. May be wrapped in {}
+\def\parse@ttribs#1{% Expand again to solve brackets
+   \x@\@parse@ttribs #1 \E
+}
+\def\@parse@ttribs#1 \E{%
+   \x@\save@ttribute #1 ="\relax" \E
+}
+
+%\def\parse@ttribs#1{%
+  %\let\nxt@tem=\geton@item
+  %\let\D@first=\s@ve@ttribute
+  %\x@\geton@item #1 \E
+%}
+
+% Parse list of attributes from style file to read the default attribute
+% and the complete list(comma separated).
+\def\Attributes#1\relax{% Override empty \Attributes from ptx-stylesheets
+  \trace{A}{Loading attr list for \m@rker (#1)}%
+  \let\nxt@tem=\geton@item %only need the first one.
+  \let\D@first=\interpr@tfirstattrib
+  \let\save@ttrib=\setdefaultattrib
+  \let\@ttrlistname\relax
+  \x@\geton@item #1 \E
+  \ifx\@ttrlistname\relax\else 
+    \trace{A}{Attribute list for \m@rker\space is \csname\@ttrlistname\endcsname}%
+  \fi
+}
+\def\spl@tonspace#1 #2\E{\trace{A}{Spl@tonspace{#1}{#2}}\edef\f@rstitem{#1}\edef\s@conditem{#2}}
+
+\def\interpr@tfirstattrib#1{%
+  \x@\interpr@t@ttrib #1??\E
+  \let\D@first=\interpr@tother@ttrib
+  \let\save@ttrib=\extend@ttriblist
+}
+\def\interpr@tother@ttrib#1{%
+  \x@\interpr@t@ttrib #1??\E
+}
+\def\store@nattrib#1-#2|#3\E{%Ignore - in milestone markers
+  \save@ttrib{#1}{#3}%
+}
+
+
+\def\interpr@t@ttrib#1?#2?#3\E{% There may be a preceding ? mark. Also setdefaultattrib needs to not have the -s / -e for milestones. 
+  \def\tmp{#1}%
+  \ifx\tmp\empty
+     \trace{A}{Attribute '#2' is optional (#1,#2,#3)}%
+     \x@\store@nattrib\m@rker-|#2\E
+  \else
+     \trace{A}{Attribute '#1' is officially required (#1,#2,#3)}%
+     \x@\store@nattrib\m@rker-|#1\E
+  \fi
+}
+
+\def\alignb@x#1#2{\getp@ram{justification}{#1}{#1+\styst@k}% Do we want a third parameter here?
+    \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\r@ght\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi
+    \box#2%
+    \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\l@ftb@l\hfil\else\ifx\p@ram\l@ft\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi\fi}
+\def\rubyb#1#2{\trace{A}{rubyb}\setbox1=\hbox{\s@tfont{#2|#1}{#2|#1+\styst@k}\op@ninghooks{start}{#2|#1}{#2|#1+}%
+  \get@ttribute{#2}\attr@b\cl@singhooks{end}{#2|#1}{#2|#1+}}%
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \setbox0=\hbox{\vtop{\s@tbaseline{#1}{\styst@k}\hbox to \dimen0{\alignb@x{#1}{0}}%
+        \hbox to \dimen0{\alignb@x{#2|#1}{1}}}}}
+\def\rubyt#1#2{\trace{A}{rubyt}\setbox1=\hbox{\s@tfont{#2|#1}{#2|#1+\styst@k}\op@ninghooks{start}{#2|#1}{#2|#1+}%
+  \get@ttribute{#2}\attr@b\cl@singhooks{end}{#2|#1}{#2|#1+}}%
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}{#2|#1+\styst@k}\hbox to \dimen0{\alignb@x{#2|#1}{1}}%
+        \hbox to \dimen0{\alignb@x{#1}{0}}}}}
+
+\expandafter\def\csname complex-rb\endcsname{\rubyt{rb}{gloss}} % USFM-3 suggests ruby goes above. 
+\newif\ifRefLocLink\RefLocLinktrue
+\expandafter\def\csname complex-ref\endcsname{%Process loc option by turning it into a GOTO link.
+  \ifRefLocLink
+    \get@ttribute{loc}%
+    \ifx\attr@b\relax\unhbox0\else
+      \pdfGOTO{\attr@b}\unhbox0\special{pdf:eann}%
+    \fi
+  \fi
+}
+%
+ 
+%usfm 3.0 defaults - now loaded from stylesheet.
+%\setdefaultattrib{qt}{who}
+%\setdefaultattrib{rb}{gloss}
+%\setdefaultattrib{w}{lemma}
+

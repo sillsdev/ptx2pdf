@@ -1,0 +1,46 @@
+% hanging-punctuation.tex
+
+% Hanging Punctuation
+
+% By Dennis Drescher (dennis_drescher@sil.org)
+
+% Set punctuation in text just into the marginal to allow for
+% a more optically pleasing right margin. This is for L/R Latin
+% text but might work on some NR texts as well.
+
+% The idea and most of the code below was taken from page 395,
+% Appendix D "Dirty Tricks" of The TEXbook by Donald E. Knuth.
+
+% History:
+%   04 Oct 2013 - Intial draft
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Create some override macros for places where there are conflicts
+\def\odquote{“}         \def\cdquote{”}     \def\pnt{.}
+
+% Define the individual punctuation macro spacing
+\newdimen\commahang     \setbox0=\hbox{,}    \commahang=\wd0
+%\newdimen\periodhang    \setbox0=\hbox{.}    \periodhang=\wd0
+\newdimen\osquotehang   \setbox0=\hbox{‘}    \osquotehang=\wd0
+\newdimen\csquotehang   \setbox0=\hbox{’}    \csquotehang=\wd0
+\newdimen\odquotehang   \setbox0=\hbox{“}    \odquotehang=\wd0
+\newdimen\cdquotehang   \setbox0=\hbox{”}    \cdquotehang=\wd0
+\newdimen\colonhang     \setbox0=\hbox{:}    \colonhang=\wd0
+\newdimen\semicolonhang \setbox0=\hbox{;}    \semicolonhang=\wd0
+% more ...
+
+% Define punctuation macros
+\def\comma{,\kern-\commahang\kern\commahang}
+%\def\period{.\kern-\periodhang\kern\periodhang}
+\def\colon{:\kern-\colonhang\kern\colonhang}
+\def\semicolon{;\kern-\semicolonhang\kern\semicolonhang}
+
+% Make the punctuation characters active
+\catcode`,=\active      \let,=\comma
+%\catcode`.=\active      \let.=\period
+\catcode`:=\active      \let:=\colon
+\catcode`;=\active      \let;=\semicolon
+
+
+

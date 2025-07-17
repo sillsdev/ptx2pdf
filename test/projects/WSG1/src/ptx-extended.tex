@@ -1,0 +1,1349 @@
+%:skip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%+c_ext_intro
+% Declare things we need.
+
+\newbox\extb@x % Box in which extended study matter is placed
+\newbox\extchunkb@x % Box in which extended study matter is placed
+\newbox\sid@barnotes % Box in which notes are placed in a sidebar
+\newtoks\old@bx %store old definition of \everyhbox
+\def\c@tegory{}
+\let\DebugBorderCat\undefined %  Set this to showbox the specified category just after the border is added
+\newif\ifBoxLikeBorder\BoxLikeBordertrue % Set to false for old behaviour: the box does not affect the spacing of boxes.
+
+\def\S@tCat#1{\trace{sc}{Started Category #1}%
+  \edef\c@tegory{#1}%
+  \s@tc@tpr@fix%
+}
+\gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
+
+\def\setsbp@ram#1#2{\trace{sc}{Styling \m@rker:#1 #2}\setp@ram{#1}{\m@rker}{#2}}
+\def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
+\def\getsbp@ramNoInh#1{\edef\d@sf{\g@tdstat}%
+  \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}{\c@tprefix\sb@rmarker}\fi
+  \let\cp@ram\p@ram
+  \ifx\cp@ram\empty\global\let\cp@ram\relax\fi
+  \ifx\cp@ram\relax
+    \trace{sc}{No result for \c@tprefix\sb@rmarker:#1}\else
+    \trace{sc}{Got result for \c@tprefix\sb@rmarker:#1: \cp@ram}%
+  \fi
+}
+%\setsbp@ram{hascol}{T}
+%\setsbp@ram{bgcolour}{0 1 0}
+%\setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
+\def\m@rker{esb}
+\setsbp@ram{bgfigscale}{1}%
+\setsbp@ram{fgfigsize}{box}%What is image scaled to?
+\setsbp@ram{fgfigscale}{0.2}%
+\setsbp@ram{fgfigscaleto}{text}%
+\setsbp@ram{fgfigpos}{cl}%Default is cutout left
+\setsbp@ram{bgfigscale}{1}%Full size
+\setsbp@ram{bgfigscaleto}{text}%
+\setsbp@ram{bgfigpos}{pc}%Horizontally centred
+\setsbp@ram{hascol}{F}%No default colour.
+\setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
+%\setsbp@ram{borderwidth}{0.5}% in pt
+\setsbp@ram{posn}{b}
+\setsbp@ram{fgfigspec}{}%Normally no picture.
+\setsbp@ram{bgfigspec}{}%Normally no picture.
+\setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
+\setsbp@ram{bgfigcolour}{0 0 0}%Normally black
+%\setsbp@ram{borderfillcolour}{NONE} % For double. (Should match fill@none)
+\def\m@rker{textborder}
+\setsbp@ram{properties}{nonpublishable}
+% These should all be inherited from stdborders, normally.
+%\setsbp@ram{borderlinewidth}{0.05}
+%\setsbp@ram{borderwidth}{8}
+%\setsbp@ram{borderrpadding}{2}
+%\setsbp@ram{borderlpadding}{2}
+%\setsbp@ram{bordertpadding}{2}
+%\setsbp@ram{borderbpadding}{2}
+%\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
+%\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
+%\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
+\setsbp@ram{sbargrid}{\gr@dorig}
+\S@tCat{}
+\let\c@tegory\empty
+\def\fb@dfltpad{1}%Default
+\edef\fb@lpadding{\fb@dfltpad pt}%Added left of feintbox content
+\edef\fb@rpadding{\fb@dfltpad pt}%Added right of feintbox content
+\edef\fb@tpadding{\fb@dfltpad pt}%added above and below feintbox content
+\edef\fb@bpadding{\fb@dfltpad pt}%added above and below feintbox content
+\newif\ifNoTransparency
+\NoTransparencyfalse
+\newcount\feintb@xnum
+\feintb@xnum=1
+\def\remove@transpancy#1 #2 #3|#4\E{\@lphacalc{#4}{#1} \@lphacalc{#4}{#2} \@lphacalc{#4}{#3}}
+\def\@lphacalc#1#2{\strip@pt{\dimexpr #2\dimexpr #1 pt \relax + 1pt -\dimexpr #1 pt \relax\relax} }
+
+\addtoendhookstr{\ifinextended\errmessage{Reached end of book without finding \string\esbe.}\fi}{esbe check}
+\def\f@intthing#1#2#3{%
+  % 1 - alpha
+  % 2 - colour (r g b)
+  % 3 - item to set
+  \trace{e}{f@intthing #1 #2}%
+  \edef\thisalpha{#1}%
+  \edef\thisRGB{#2}%
+  \ifNoTransparency
+    \ifdim 1pt = #1 pt \relax\else
+      \edef\thisRGB{\x@\remove@transpancy\thisRGB|\thisalpha\noexpand\E }%
+      \edef\thisalpha{1}%
+      \MSG{* Transparency is disabled, anything behind transparent item will be hidden. #2 -> \thisRGB}%
+    \fi
+  \fi
+  \ifdim 1pt = \thisalpha pt \relax %Not feint
+    \x@\special\x@{pdf:code q \thisRGB\space rg}%
+  \else 
+    \edef\thisalpha{#1 }% Important space
+    \x@\special\x@{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca \thisalpha /AIS false >>  >> >>}%
+    \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs \thisRGB\space rg}%
+    \global\advance\feintb@xnum by 1
+  \fi
+  #3%
+  \special{pdf:code Q}%
+}%
+
+\newif\ifble@d
+\def\feintb@x#1#2#3#4#5{%
+  % 1 - alpha
+  % 2 - colour (r g b)
+  % 3 4 5 height, depth, width of colour block
+  \trace{e}{feintbox #1 #2 #3, #4, #5}%
+  \traceifset{feintb@x}%
+  \bgroup
+  \hbox to 0pt{%
+    \dimen0=#3\advance\dimen0 by \fb@tpadding
+    \dimen1=#4\advance\dimen1 by \fb@bpadding
+    \dimen2=#5\dimen3=\fb@lpadding
+    \advance\dimen2 by \fb@rpadding
+    \ifble@d 
+      \advance \dimen2 by \rble@d 
+      \advance \dimen3 by \lble@d 
+      \advance \dimen0 by \tble@d 
+      \advance \dimen1 by \bble@d 
+    \fi
+    \advance\dimen2 by \dimen3
+    \trace{e}{Feint box dims: \the\dimen0 +\the\dimen1 *\the\dimen2 , \the\dimen3, skip:\fb@tskip}%
+    \hskip -\dimen3 % Backup so the expanded box is centred properly
+    \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2 }%should be possible to get this working in pdf code, but this works.
+    \f@intthing{#1}{#2}{\c@de}%
+    \hss
+  }%
+  \egroup
+  \traceifcheck{feintb@x}%
+}
+\def\fb@htadjust{0pt}
+\def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
+  \kern-\fb@tskip %Relative positioning of box and border
+  \setbox0#3%
+  \trace{e}{pre-feintb@x, ht=\the\ht0 - \fb@htadjust, dp=\the\dp0}%
+  \setbox0\hbox{\feintb@x{#1}{#2}{\the\dimexpr \ht0 - \fb@htadjust\relax}{\the\dp0}{\the\wd0}\box0}%
+  \trace{e}{post-feintb@x, ht=\the\ht0, dp=\the\dp0}%
+  \box0
+  }
+
+\def\minip@rs@two#1#2\end{%
+   \edef\tempc{#1}\edef\tempd{#2}}%
+\def\minip@rsepos#1#2\mid#3\end{%Parse just enough of the FgImagePos and pos parameters to determine the \hsize
+   \edef\tempa{#1}\edef\tempb{#2}%
+   \x@\minip@rs@two#3\end
+   \trace{e}{parsed: \tempa(\tempb), \tempc(\tempd)}%
+}
+
+\def\p@rseBorder#1 #2\relax{%
+  \let\n@xtB=\p@rseBorder
+  \def\t@st{#1}%
+  \trace{e}{Parsing border parameter '#1' '#2'}%
+  \ifx\t@st\empty
+    \let\n@xtB\endP@rseBorder
+  \else
+    \uppercase{\def\uc@ption{#1}}%
+    \x@\let\x@\t@st\csname B@rder\uc@ption\endcsname
+    \ifx\t@st\relax
+      \message{Could not parse Border #1}%
+    \else
+      \t@st \relax
+    \fi
+  \fi
+  \def\t@st{#2}%
+  \ifx\t@st\empty
+    \let\n@xtB\endP@rseBorder
+  \fi
+  \n@xtB#2 \relax
+}
+
+\def\endP@rseBorder#1 \relax{%
+  \trace{e}{Finished parsing border}% 
+}
+\def\sb@leftedge{}\def\sb@rightedge{}% Contents of left/right edge boxes
+\edef\sb@leftshift{0pt}\edef\sb@rightshift{0pt}%
+\def\fig@lskip{0pt}\def\fig@rskip{0pt}%
+\newif\ifsbar@rotated
+\newdimen\sb@rwidth
+\def\@@setsbp@cinswid{% get the width of the insert (or column) that the figure will go into
+  \def\fig@lskip{0pt}\def\fig@rskip{0pt}%
+  \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
+  \trace{sc}{sb@rinswidth (\the\c@rrentcols) \the\dimen1}%
+  %we need to distingiush between things like c,p,h which have sub-specifications and t, tl, tr, etc (which don't)
+  \x@\let\csname sb@onlypure-t\endcsname\tr@e
+  \x@\let\csname sb@onlypure-b\endcsname\tr@e
+  \let\@t@st\tempc
+  \ifcsname sb@onlypure-\tempc\endcsname
+    \x@\ifx\csname sb@onlypure-\tempc\endcsname\tr@e
+      \ifx\relax\tempd\else
+        \edef\@t@st{\tempc\tempd}%
+      \fi
+    \fi
+  \fi
+  \trace{sc}{Initial width set to \the\dimen1 '\@t@st' (\tempd)}%
+  \x@\let\csname sb@height-t\endcsname\textheight
+  \x@\let\csname sb@height-b\endcsname\textheight
+  \x@\let\csname sb@height-B\endcsname\textheight
+  \x@\let\csname sb@height-P\endcsname\textheight
+  \x@\let\csname sb@height-F\endcsname\PaperHeight %Good luck with that!
+  \x@\let\csname sb@width-t\endcsname\textwidth
+  \x@\let\csname sb@width-b\endcsname\textwidth
+  \x@\let\csname sb@width-B\endcsname\textwidth
+  \x@\let\csname sb@width-P\endcsname\textwidth
+  \x@\let\csname sb@width-F\endcsname\PaperWidth %Good luck with that!
+  \ifcsname sb@width-\@t@st\endcsname
+    \x@\let\x@\sb@height\csname sb@height-\@t@st\endcsname
+    \x@\dimen1\csname sb@width-\@t@st\endcsname
+    \trace{sc}{Revised width to \the\dimen1}%
+  \else
+    \let\sb@height\textheight
+    \temptrue
+    \ifnum\c@rrentcols>1\else
+      \tempfalse
+    \fi
+    \iftemp
+      \if\tempc t\relax\dimen1=\colwidth\else
+        \if\tempc b\relax\dimen1=\colwidth
+      \fi\fi
+    \fi
+  \fi
+  %\ifsbar@rotated
+    %\p@cinswid=\sb@height
+    %\edef\sb@height{\the\dimen1}%
+  %\else
+    \p@cinswid=\dimen1
+  %\fi
+}
+\def\ch@ckr@tation{%
+  \getsbp@ram{sbarrotation}\ifx\cp@ram\relax\else
+    \trace{e}{Side bar rotation is '\cp@ram'}%
+    \ifcsname geom@xform@\cp@ram\endcsname
+      \setgeomtransform{\cp@ram}%
+      \ifnum \pdf@aa=0 
+	\sbar@rotatedtrue
+	\trace{e}{Side bar is rotated}%
+      \fi
+    \fi
+  \fi
+}
+\def\getwh@chpage{
+  \ifcsname fig\sb@rnum p@ge\endcsname
+    \x@\let\x@\pgn@\csname fig\sb@rnum p@ge\endcsname
+  \else
+    \let\pgn@\relax
+  \fi
+  \ifx\pgn@\relax
+    \whichp@ge=\pageno
+    \trace{e}{Sidebar \sb@rnum\space may not be aligned properly}%
+  \else
+    \whichp@ge=\pgn@
+    \trace{e}{Sidebar \sb@rnum\space was on page \pgn@ last time. [\the\pageno]}%
+  \fi
+}
+\def\defaultBorderWidth{0}
+\def\s@tsb@rwidth{%Set default / specific width of esb box
+  %h*,c*,p* take the current page width as their base
+  %tX,bX take the column width 
+  %t,b,B take the text width
+  %F* takes the whole paper.
+  %F* and P* might need to fill the vertical dimension.
+  \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \c@tprefix\m@rker}%
+  \sbar@rotatedfalse
+  \ch@ckr@tation
+  \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
+  \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
+  \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
+  \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
+  \getwh@chpage % Necessary for accurate border measurements
+  \@get@Hborder@style@params
+  \@get@Vborder@style@params
+  \getsbp@ram{posn}%
+  \ifx\cp@ram\relax
+    \gdef\sb@rpos{b}%
+    \setsbp@ram{posn}{\sb@rpos}%
+  \else
+    \global\let\sb@rpos\cp@ram
+  \fi
+  \let\localsb@rpos\sb@rpos
+  \getsbp@ram{fgfigpos}\let\fgfigp@s\cp@ram
+  \getsbp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
+  \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
+  \global\let\fgfig@cutout\false
+  \ifx\cp@ram\relax
+    \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end% sets up temp[abcd] 
+    \@@setsbp@cinswid% sets p@cinswid
+    % Now apply scale..
+    \edef\sb@rrefwid{\the\dimen1}%
+    \getsbp@ram{scale}\ifx\cp@ram\relax\else
+      \dimen1=\cp@ram\dimen1
+      \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
+      \edef\sb@rrefwid{\the\dimen1}%
+    \fi
+    \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+    \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+    \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
+    % And shrink further if s has been specified for the fg picture
+    \ifx\fgfigsp@c\relax\else
+      \prepb@rderdims
+      \set@ref@dims
+      \p@rsefigscale{fg}%
+      \dimen0=\fgfig@dim@wd
+      \edef\fgfigsp@c{\fgfigsp@c \fgfig@scale@wd}%
+      %\getsbp@ram{fgfigscale}%
+      %$\ifx\cp@ram\relax
+        %$\dimen0=0.2\dimen1
+      %$\else
+        %$\dimen0=\cp@ram\dimen1
+      %$\fi
+      \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
+      \ifx\tempa \pos@Side
+        \trace{e}{Forground picture will be \fgfigsp@c}%
+        \advance\dimen1 by -\dimen0
+        \ifx\tempb\empty\message{No side defined for foreground image in sidebar class '\c@tegory'. Assuming outer.}%
+          \let\tempb\@lignOuter
+        \fi
+        \def\t@pedge{\vfil}%
+        \def\b@tedge{\vfil}%
+        \ifx\l@cspec@b\@lignLeft
+          \ifx\l@cspec@c\@lignTop\def\t@pedge{}\fi
+          \ifx\l@cspec@c\@lignBot\def\b@tedge{}\fi
+          \xdef\sb@leftedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |0pt|0pt\noexpand\E\noexpand\let\noexpand\sb@leftedge\noexpand\empty\b@tedge}%
+          \trace{e}{leftedge defined to sb@ins@rtpic\fgfigsp@c...}%
+          \advance\dimen0 by \fb@lpadding
+          \xdef\sb@leftshift{\the\dimen0}%
+        \else
+          \ifx\l@cspec@c\@lignTop\def\t@pedge{}\fi
+          \ifx\l@cspec@c\@lignBot\def\b@tedge{}\fi
+          \xdef\sb@rightedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |\fig@lskip|\fig@rskip\noexpand\E\noexpand\let\noexpand\sb@rightedge\noexpand\empty\b@tedge}%
+          \trace{e}{right edge:\meaning\sb@rightedge}%
+          \advance\dimen0 by \fb@rpadding
+          \xdef\sb@rightshift{\the\dimen0}%
+        \fi
+        \let\fgfigsp@c\empty
+      \else% tempa!=s
+        \def\l@ftedge{\hfil}%
+        \ifx\l@cspec@b\@lignLeft
+          \def\l@ftedge{}%
+          \def\fig@rskip{0pt plus 1fill}%
+          \ifx\tempa\loc@Cut
+            \def\fig@lskip{0pt plus 1fill}%
+            \p@chshift=-\the\dimexpr  \csname @@\scale@ref @ofs\endcsname\relax%
+          \fi
+        \else
+          \ifx\l@cspec@b\@lignRight
+            \def\l@ftedge{\hfill}%
+            \def\fig@lskip{0pt plus 1fill}%
+            \ifx\tempa\loc@Cut
+              \def\fig@rskip{0pt plus 1fill}%
+              \p@chshift=-\the\dimexpr  \csname @@\scale@ref @ofsR\endcsname\relax%
+            \fi
+          \fi
+        \fi
+        \ifx\tempa\@lignTop
+          \xdef\sb@rtopedge{\hbox to \hsize{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |\fig@lskip|\fig@rskip\noexpand\E\hfil}}%
+        \fi
+        \ifx\tempa\@lignBot
+          \xdef\sb@rbotedge{\noexpand\@@sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |\fig@lskip|\fig@rskip\noexpand\E\hfil}}%
+        \fi
+        \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
+        \ifx\tempa\loc@Cut
+          \prevdepth=-1000pt % Ignore the presence of the figure
+          \let\w@tsit\gr@phic
+          \def\w@tsit{graphicInSidebar}%
+          \trace{e}{Cutout for esb category '\c@tegory' (\tempa\tempb) will be: \fgfigsp@c}%
+          \xdef\sb@rboxname{\w@tsit|\c@tegory}%
+          \x@\let\x@\this@pic\csname\sb@rboxname\endcsname
+          \ifx\this@pic\relax
+            \trace{e}{Creating a new box}% 
+            \g@nbox{\sb@rboxname}%
+          \fi
+          \x@\let\x@\this@pic\csname\sb@rboxname\endcsname
+          \global\setbox\this@pic\hbox{\x@\sb@ins@rtpic\fgfigsp@c|\the\dimen0|\fig@lskip|\fig@rskip \E}%
+          \trace{e}{Saved box \the\wd\this@pic x\the\ht\this@pic top:\b@drtop}%
+          \global\let\fgfig@cutout\tr@e
+          \xdef\l@cspec{\l@cspec@b}%
+          \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
+          \let\oc@tskip\c@tskip
+          \x@\xdef\x@\c@tskip{\strip@pt{\dimexpr \c@tskip pt + 1 pt \relax}}% floating pt addition
+          \x@\c@tskipparse\c@tskip..\E
+          \trace{e}{Adjusted c@tskip \c@tskip (\c@tskipfrac)}%
+          \gdef\sb@rtopedge{%
+            \dimen0=\ht\this@pic \advance\dimen0 by \dp\this@pic %
+            \trace{e}{D0=\the\dimen0}%
+            \advance\dimen0 by \oc@tskip\baselineskip% space for adjusting/alignment changes
+            \trace{e}{D0=\the\dimen0}%
+            \count255=\dimen0
+            \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
+            \divide\count255 by \baselineskip
+            \advance\count255 by 1
+            \trace{e}{Cutout should be \the\count255 lines}%
+            \def\thisw@tsitslop{{0}{0}}%
+            \immediatefiguretrue
+            \kern 0.3\baselineskip
+            \d@figureCut\this@pic\unvbox\voidb@x
+            \kern -0.3\baselineskip
+            \immediatefigurefalse
+          }%
+        \fi
+      \fi
+    \fi
+    \@@sb@width@calcs
+    \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
+      \if p\tempc\relax\else
+        \if c\tempc\relax\else
+          \ifx\c@tprefix\empty\else\setsbp@ram{w@dth}{\the\dimen1}\fi%
+        \fi
+      \fi
+    \fi
+    \let\t@mploc\tempc % Will be overwriting tempc soon
+    \ifx\tempd\empty\else
+      \tempfalse
+      \ifx\t@mploc\loc@Full\temptrue\else
+        \ifx\t@mploc\loc@Page\temptrue\fi
+      \fi
+      \iftemp
+        \x@\minip@rs@two\tempd\end
+        \if f\tempd\relax
+          \setsbp@ram{outerh@ight}{\sb@height}%
+        \fi
+      \fi
+    \fi  
+  \else
+   \dimen1=\cp@ram
+  \fi
+  \sb@rwidth=\dimen1
+  \trace{e}{text box width is \the\sb@rwidth}%
+  \hsize=\sb@rwidth
+}
+\def\@@sb@width@calcs{%
+    \advance\dimen1 by -\dimexpr \fb@lpadding + \fb@rpadding\relax
+    \ifx\b@drleft\tr@e\ifdim \border@lpadding>-\b@drwidth pt
+        \advance\dimen1 by -\b@drwidth pt 
+        \advance\dimen1 by -\border@lpadding
+    \fi\fi
+    \ifx\b@drright\tr@e\ifdim \border@rpadding>-\b@drwidth pt   
+        \advance\dimen1 by -\b@drwidth pt 
+        \advance\dimen1 by -\border@rpadding
+    \fi\fi
+}
+% Sidebar 
+\def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
+  \@@sbar{esb}%
+}
+
+\newif\ifble@dthisbar
+\def\@@sbar#1{%
+  \trace{e}{Starting side bar (#1/\sb@rmarker) from \m@rker, \the\lastdepth}%
+  \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
+  \ble@dthisbarfalse
+  %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. NO, because we might be triggered from a verse
+  \ifsk@pping \egroup 
+    \endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. 
+  \fi % if we were skipping nonpublishable text, end that mode
+  \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
+  \xdef\stylet@pe{\ss@Sbar}%                                                                   %(2)
+  \ifhe@dings\endhe@dings\fi% Sidebars should close a heading section.
+  \ifdoingt@ble\endt@ble\fi% Sidebars should close a table, too
+  % kill cached possParam-\m@rker values  
+  \kill@PossParamCache
+  \edef\hs@ze{\the\hsize}% Size of outer content
+  \let\c@tegory\empty
+  \s@tc@tpr@fix
+  \edef\sb@numcuts{\the\@numcuts}%
+  \trace{e}{Saving cutouts: \sb@numcuts}%
+  \ifnum\sb@numcuts>0
+    \save@cutouts{esb}%
+  \fi
+  \mcpush{\ss@Sbar}{#1}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
+    \edef\sb@rnum{\the\im@gecount}%
+    \edef\sb@rfirstskip{0pt}% If the sidebar starts with a heading, how much skip did it have?
+    \let\thisp@rclass\empty % Signal to gridbox that there's nothing above this.
+    \let\lastp@rclass\empty % Signal to gridbox that there's nothing above this.
+    \edef\sb@rmarker{#1}%
+    \let\m@rker\sb@rmarker
+    \s@tsb@rwidth\inextendedtrue
+    \ifble@d\ble@dfalse\ble@dthisbartrue\fi
+    \mcpush{\ss@Para}{\if@ntro ip\else p\fi}%
+    \textwidth=\hsize
+    \sb@rchunkh@ight=\maxdimen
+    \prevdepth=-1000pt
+    \c@th@@ks{\st@rtsb@r}%
+    \let\sb@rgrid\gr@dorig
+}
+\newdimen\sb@rchunkh@ight
+\newdimen\sb@rus@dheightl
+\newdimen\sb@rus@dheightr
+\let\sb@rgrid\relax
+\def\st@rtsb@r{%Gets run by \cat..\cat*, if one is used. 
+  \c@th@@ks{}%Once per box is enough!
+  \getsbp@ram{sbargrid}\let\sb@rgrid\cp@ram
+  \ifx\sb@rgrid\relax\let\sb@rgrid\gr@dorig\fi
+  \ifble@dthisbar
+    \ble@dtrue
+    \s@tsb@rwidth
+    \ble@dfalse
+  \else
+    \s@tsb@rwidth
+  \fi
+  \trace{e}{startESB \the\sb@rwidth,\the\hsize (ble@dthisbar\ifble@dthisbar true\else false\fi)}%
+  \kill@PossParamCache
+  \sb@rchunkh@ight=\maxdimen
+  \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
+   \trace{e}{break:\cp@ram}%
+   \ifx\cp@ram\tr@e
+     \sb@rchunkh@ight=0.2\textheight
+   \else
+     \sb@rchunkh@ight=\cp@ram\textheight\relax
+   \fi
+   \floatingpenalty=500\insertpenalties=0
+  \fi\fi
+  %\egroup\setbox\extb@x\vbox\bgroup
+  \sb@rtopedge%\ifhmode\endgraf\fi
+  \ifvmode \prevdepth=-1000pt\fi
+  \trace{e}{sidebar really starting \the\hsize, \the\textwidth, \the\sb@rwidth}%
+}
+\newif\ifdoIntskip % Skip should be applied in the text area, not 
+
+\def\@@sb@rbotedge#1{\bgroup
+  \setbox0\hbox to \hsize{#1}\p@cheight=\ht0
+  \loop 
+    \advance\p@cheight by -\baselineskip 
+  \ifdim\p@cheight>0pt \repeat
+ % \advance\p@cheight by \baselineskip
+  \vskip-\p@cheight
+  \vskip 0pt
+  \box0
+  \egroup}
+
+
+\def\@p@rsef@gsc@le#1|#2|#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
+  \edef\tmp{#2}\ifx\tmp\empty
+    \getsbp@ram{\v@lpfx figscaleto}%
+    \ifx\cp@ram\relax 
+      \x@\edef\csname \v@lpfx @scale@ref\endcsname{text}%
+    \else
+      \trace{e}{Figure will be scaled relative to \v@lpfx}%
+      \lowercase{\x@\edef\csname \v@lpfx @scale@ref\endcsname{\cp@ram}}%
+    \fi
+    \p@rsef@gsc@le #1xx\E
+  \else
+    \trace{e}{Figure will be scaled relative to (deprecated usage) #1. Use \v@lpfx FigScaleTo}%
+    \lowercase{\x@\edef\csname \v@lpfx @scale@ref\endcsname{#1}}%
+    \p@rsef@gsc@le #2xx\E
+  \fi
+}
+
+\def\fg@scale@ref{text} % Defaults
+\def\bg@scale@ref{text}
+
+\def\f@grefdim#1{%
+  \traceifset{@f@grefdim}%
+  \traceifcheck{@f@grefdim}%
+  \x@\let\x@\scale@ref\csname #1@scale@ref\endcsname
+  \ifcsname \scale@ref @ref@w@dth\endcsname
+    \trace{e}{Scaling #1 image to \scale@ref}%
+    \x@\let\x@\scale@height\csname\scale@ref @ref@h@ight\endcsname
+    \x@\let\x@\scale@width\csname\scale@ref @ref@w@dth\endcsname
+  \else
+    \message{Supplied scale reference for (\c@tprefix esb) #1 image ('\scale@ref')  not recognised!}%
+    \x@\let\x@\scale@height\csname text@ref@h@ight\endcsname
+    \x@\let\x@\scale@width\csname text@ref@w@dth\endcsname
+  \fi
+  \trace{e}{Scale size: \scale@width x\scale@height}%
+  \ifcsname @@\scale@ref @ofs\endcsname
+    \edef\fig@tmp{#1}\edef\fig@tmpb{fg}%
+    \x@\edef\x@\fig@lskip{\the\dimexpr -\csname @@\scale@ref @ofs\endcsname \relax plus 1 fil \ifble@d minus \lble@d\fi}%
+    \ifx\fig@tmp\fig@tmpb
+      \x@\edef\x@\fig@rskip{\the\dimexpr -\csname @@\scale@ref @ofsR\endcsname \relax plus 1 fil \ifble@d minus \rble@d\fi}%
+    \else 
+      \x@\edef\x@\fig@rskip{\the\dimexpr \csname @@\scale@ref @ofs\endcsname \relax plus 1 fil \ifble@d minus \rble@d\fi}%
+    \fi
+    \trace{e}{Set skips for #1 (\scale@ref) image to <\fig@lskip|\fig@rskip>}%
+  \else
+    \ifcsname @@text@ofs\endcsname
+      \x@\edef\x@\fig@lskip{\the\dimexpr -\@@text@ofs\relax plus 1 fil}%
+      \x@\edef\x@\fig@rskip{\the\dimexpr \@@text@ofs\relax plus 1 fil}%
+    \else
+      \x@\edef\x@\fig@lskip{0pt plus 1 fil}%
+      \x@\edef\x@\fig@rskip{0pt plus 1 fil}%
+    \fi
+    \trace{e}{Set skips for #1 (unknown:\scale@ref) image to <\fig@lskip|\fig@rskip>}%
+  \fi
+}
+% ch@ckfigdim needs defining. It gets called after the image trial load with dimen3=\wd figure box, dimen4=\ht figurebox
+% (set by sb@ins@rtpic) 
+%This p@rsef@gsc@le gets called with dimen1=\wd sidebar , \dimen0=scratch, \dimen2=scratch.
+% f@grefdim should do something more sane
+\def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
+  \f@grefdim{\v@lpfx}%
+  \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
+  \trace{e}{p@rsef@gscale:#1,#2,#3}%
+  \ifdim\ht\extb@x=0pt
+    \def\fig@v@dim{}% 
+  \fi
+  \def\ch@ckfigdim{\tempfalse}%
+  \ifx\fig@v@dim\empty
+    \x@\def\csname \v@lpfx fig@scale@ht\endcsname{}%
+    \def\ch@ckfigdim{\trace{e}{Checking image height \the\dimen4 <\scale@height?}\ifdim\dimen4>\scale@height \def\resc@le{ height \scale@height}\temptrue\fi}%
+  \else
+    \dimen0=\fig@v@dim\dimexpr \scale@height \relax
+    \x@\edef\csname \v@lpfx fig@scale@ht\endcsname{ height \the\dimen0}%
+    \trace{e}{Set \v@lpfx fig@scale@ht to \the\dimen0}%
+  \fi
+  \ifx\fig@h@dim\empty
+    \x@\def\csname \v@lpfx fig@scale@wd\endcsname{}%
+    \x@\edef\csname \v@lpfx fig@dim@wd\endcsname{\scale@width}%
+    \def\ch@ckfigdim{\trace{e}{Checking width \the\dimen3 <\scale@width?}\ifdim\dimen3>\scale@width \def\resc@le{ width \scale@width}\temptrue\fi}%
+  \else
+    \dimen0=\fig@h@dim\dimexpr \scale@width\relax
+    \x@\edef\csname \v@lpfx fig@scale@wd\endcsname{ width \the\dimen0}%
+    \x@\edef\csname \v@lpfx fig@dim@wd\endcsname{\the\dimen0}%
+    \trace{e}{Set \v@lpfx fig@scale@wd to \the\dimen0}%
+  \fi
+}
+
+\def\p@rsefigscale#1{%interpret bacground figure scale
+  \ifdim\wd\extb@x>0pt
+    \dimen1=\wd\extb@x
+  \fi
+  \getsbp@ram{#1figscale}%
+  \edef\v@lpfx{#1}%
+  \x@\@p@rsef@gsc@le\cp@ram ||\E
+  \trace{e}{parsed figure scale: \csname #1fig@scale@wd\endcsname \csname #1fig@scale@ht\endcsname}%
+}
+
+\x@\def\csname \sb@rb@x @warning\endcsname#1#2{\msg{converted sidebar placement "#1" to "#2" in single-column layout}}
+
+\def\localsb@rpos{}
+\edef\sb@lastpen{0}
+\def\@sbe{%
+  \trace{e}{@sbe: \c@tprefix\sb@rmarker(\localsb@rpos,\sb@rgrid)}%
+  \endlastp@rstyle{esbe}% Fire any triggers, etc.
+  \xdef\sb@lastpen{\the\lastpenalty}%
+  \trace{e}{@sbe: ld:\the\lastdepth, lp:\sb@lastpen}%
+  \let\m@rker\sb@rmarker
+  \global\let\sb@rpos\localsb@rpos
+  \ifhe@dings\endhe@dings\fi
+  \ifdoingt@ble\endt@ble\fi% Sidebar end should close a table, too
+  \let\@fter@sbe\relax
+  \ifinextended
+    \let\@fter@sbe\@@sbe
+  \else
+    \let\c@t@gory=\empty \trace{e}{ebse called without esb}%
+  \fi
+  \@fter@sbe
+}
+
+\newif\ifsb@rfillpage
+
+\def\figbleed{5pt}
+\def\set@ref@dims{%Set reference dimensions
+  \def\@@box@ofs{\fb@lpadding}%
+  \def\@@border@ofs{\b@dr@left@pad}%
+  \def\@@iborder@ofs{\the\dimexpr \b@dr@right@pad  \ifx\b@drleft\tr@e -\b@drwidth pt\fi\relax}%
+  \def\@@outer@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi\relax}%
+  \def\@@colbleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \lble@d\relax}%
+  \def\@@bleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \flble@d\relax}%
+  \def\@@box@ofsR{\fb@rpadding}%
+  \def\@@border@ofsR{\b@dr@right@pad}%
+  \def\@@iborder@ofsR{\the\dimexpr \b@dr@right@pad  \ifx\b@drright\tr@e -\b@drwidth pt\fi\relax}%
+  \def\@@outer@ofsR{\the\dimexpr \ifdim \fb@rpadding < \b@dr@right@pad \b@dr@right@pad \else \fb@rpadding\fi\relax}%
+  \def\@@colbleed@ofsR{\the\dimexpr \ifdim \fb@rpadding < \b@dr@right@pad \b@dr@right@pad \else \fb@rpadding\fi + \rble@d\relax}%
+  \def\@@bleed@ofsR{\the\dimexpr \ifdim \fb@rpadding < \b@dr@right@pad \b@dr@right@pad \else \fb@rpadding\fi + \frble@d\relax}%
+  \ifdim\wd\extb@x>0pt 
+    \edef\text@ref@w@dth{\the\wd\extb@x}%
+    \edef\inner@ref@w@dth{\the\wd\extb@x}%
+    \edef\border@ref@w@dth{\the\dimexpr\wd\extb@x + \b@dr@left@pad + \b@dr@right@pad\relax}%
+    \edef\iborder@ref@w@dth{\the\dimexpr\border@ref@w@dth - \b@drwidth pt * \b@drhsides\relax}%
+    \edef\box@ref@w@dth{\the\dimexpr \wd\extb@x + \fb@lpadding + \fb@rpadding\relax}%
+    \trace{e}{reference text width from extb@x: \text@ref@w@dth}%
+  \else%
+    \edef\outer@ref@w@dth{\sb@rrefwid}%
+    \edef\text@ref@w@dth{\the\dimexpr\sb@rrefwid - \@@outer@ofs - \@@outer@ofsR\relax}%
+    \edef\inner@ref@w@dth{\text@ref@w@dth}%
+    \edef\border@ref@w@dth{\the\dimexpr\text@ref@w@dth + \b@dr@left@pad + \b@dr@right@pad\relax}%
+    \edef\iborder@ref@w@dth{\the\dimexpr\border@ref@w@dth - \b@drwidth pt * \b@drhsides\relax}%
+    \edef\box@ref@w@dth{\the\dimexpr \text@ref@w@dth + \fb@lpadding + \fb@rpadding\relax}%
+    \trace{e}{reference text width from sb@rrefwid (\sb@rrefwid): \text@ref@w@dth}%
+  \fi
+  \edef\text@ref@h@ight{\the\dimexpr \ht\extb@x + \dp\extb@x\relax}%
+  \edef\text@ref@lskip{0pt plus 1fil minus 1fil}%
+  \edef\text@ref@rskip{0pt plus 1fil minus 1fil}%
+  % Fall back to text lskip/rskip for inner
+  \edef\outer@ref@w@dth{\the\dimexpr \p@cinswid\relax}%
+  \def\@@text@ofs{0pt}%
+  \def\@@text@ofsR{0pt}%
+  %\edef\bleed@ref@rskip{\the\dimexpr - \outer@ref@lskip - \lble@d\relax plus 1 fil}%
+}
+\newif\ifsm@rtgrid %true if smart gridding means the box should be treated gridstyle none.
+\def\@@sbe{%The real meat of an esbe
+   \traceifset{esbe}%
+   \getsbp@ram{posn}%
+   \gdef\pic@lign{c}% How does the sidebar align within the box?
+   \gdef\picV@lign{c}% How does the sidebar align vertically on the page (Page/Full only)
+   \global\let\t@st\false
+   \end@llpoppedstyles{\ss@Sbar*}% May also close groups
+   \trace{e}{(post-\c@tegory) Stack now \mcstack}%
+   \kill@PossParamCache
+   \ifhmode\par\fi
+   \ifx\sb@rbotedge\empty\else
+     \ifdim\prevdepth<\baselineskip
+       \ifdim\prevdepth>0pt
+         \vskip-\prevdepth
+       \fi
+     \fi
+     \trace{e}{emitting botedge}%
+     \sb@rbotedge\ifhmode\endgraf\fi
+   \fi
+   %Pass some values out of the group (which won't affect enclosing side-bars)
+   \trace{e}{Ending group. hsz=\the\hsize , \the\sb@rwidth}%
+   \gdef\@fteresb{}%
+   \ifdim\hsize>\sb@rwidth
+     \message{**  WARNING: something has changed the text width in the sidebar to be larger than the value calculated earlier}%  
+   \fi
+   \global\edef\sb@rchunkheight{\the\sb@rchunkh@ight}%
+   \global\p@ppingtrue%suppress another end@llpoppedstyles
+   \global\let\c@t@gory=\c@tegory
+   \global\let\@@sb@rfirstskip\sb@rfirstskip
+   \global\let\@@sb@rgrid\sb@rgrid
+   %\getwh@chpage % Needed?
+   \xdef\@@whichp@ge{\the\whichp@ge}%
+   \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
+   \x@\writefigp@gelog\x@{\l@gstring}%
+   \egroup 
+  \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
+  % ^^^ END OF GROUP! ^^^
+  %
+  \whichp@ge=\@@whichp@ge
+  \global\sm@rtgridfalse
+  \ifx\@@sb@rgrid\gr@dsmart
+    \bgroup\dimen1=\ht\extb@x\dimen0=\onel@neunit\m@d %\m@d makes dimen3 the offset
+      \ifdim\dimen3=0pt % Box is on grid
+      \else
+        \global\sm@rtgridtrue % It keeps the logic nicer if we delay the swap to gr@dnone
+      \fi
+      \global\let\@@sb@rgrid\gr@dnormal
+      \trace{e}{Smart gridding. Delta is \the\dimen3 -> \@@sb@rgrid}% 
+    \egroup
+  \fi
+  \global\p@ppingfalse%
+  \trace{e}{ESBE, chunking every \sb@rchunkheight}%
+  \ch@ckr@tation
+  \ifx\fgfig@cutout\tr@e
+    \cancelcutouts
+  \fi
+  \let\p@stpenalty=\sb@lastpen %recover value from group
+  \def\prepenalty{10}%recover value from group
+  \let\c@tegory=\c@t@gory %recover value from group, without making global changes.
+  \s@tc@tpr@fix
+  \x@\minip@rs@two\sb@rpos\end % Parse the location, ready to get the size of this sidebar's container
+  \@@setsbp@cinswid 
+  \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x) in \sb@rpos: wd=\the\p@cinswid, \the\sb@rwidth}%
+  %\showbox\extb@x
+  %\inextendedfalse
+  \let\os@vedtpadding=\fb@tpadding%%Preserve old value
+  \let\os@vedbpadding=\fb@bpadding%%Preserve old value
+  \let\os@vedlpadding=\fb@lpadding%
+  \let\os@vedrpadding=\fb@rpadding%
+  \get@border@style@params
+  \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
+  \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
+  \getsbp@ram{hascol}\let\h@scol\cp@ram%
+  \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
+  \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
+  \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
+  \let\s@vedtpadding=\fb@tpadding%%Preserve old value
+  \let\s@vedbpadding=\fb@bpadding%%Preserve old value
+  \prepb@rderdims
+  \tempfalse
+  \trace{e}{= \bgf@gsp@c}%
+  %Does the box have a defined size? 
+  %
+  % Reference dimensions
+  \edef\flble@d{\ifdim \lble@d > \figbleed \figbleed\else\lble@d\fi}% Figure bleeds
+  \edef\frble@d{\ifdim \rble@d > \figbleed \figbleed\else\rble@d\fi}%
+  \edef\ftble@d{\ifdim \tble@d > \figbleed \figbleed\else\tble@d\fi}%
+  \edef\fbble@d{\ifdim \bble@d > \figbleed \figbleed\else\bble@d\fi}%
+  \def\sb@rrefwid{\the\wd\extb@x}%
+  \set@ref@dims
+  \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
+  \ifx\cp@ram\relax
+    \let\sb@rheightspec\empty
+    \edef\outer@ref@h@ight{\the\textheight}%
+    \edef\inner@ref@h@ight{\the\dimexpr \textheight - \b@dr@bot@edge - \b@dr@top@edge\relax}%
+    \edef\box@ref@h@ight{\the\dimexpr \ht\extb@x+\dp\extb@x +\fb@tpadding + \fb@bpadding\relax}%
+    \edef\border@ref@h@ight{\the\dimexpr\ht\extb@x + \b@dr@top@pad + \b@dr@bot@pad\relax}%
+    \edef\iborder@ref@h@ight{\the\dimexpr\ht\extb@x + \b@dr@top@pad + \b@dr@bot@pad -\b@drwidth pt * \b@drvsides\relax}%
+    \sb@rfillpagefalse
+  \else
+    \sb@rfillpagetrue
+    \edef\outer@ref@h@ight{\the\dimexpr \cp@ram \relax}%
+    \edef\inner@ref@h@ight{\the\dimexpr \cp@ram - \b@dr@bot@edge - \b@dr@top@edge\relax}%
+    \edef\border@ref@h@ight{\the\dimexpr\cp@ram + \border@tpadding + \border@tpadding +\b@drwidth pt * \b@drvsides \relax}%
+    \edef\iborder@ref@h@ight{\the\dimexpr\cp@ram + \border@tpadding + \border@tpadding\relax}%
+    \edef\box@ref@h@ight{\the\dimexpr \cp@ram\relax}%
+    \ifble@d
+      \edef\colbleed@ref@h@ight{\the\dimexpr \cp@ram + \tble@d + \bble@d\relax}%
+      \edef\colbleed@ref@w@dth{\the\dimexpr \outer@ref@w@dth + \lble@d + \rble@d\relax}%
+      \edef\bleed@ref@h@ight{\the\dimexpr \cp@ram + \ftble@d + \fbble@d\relax}%
+      \edef\bleed@ref@w@dth{\the\dimexpr \outer@ref@w@dth + \flble@d + \frble@d\relax}%
+    \else
+      \let\colbleed@ref@h@ight\outer@ref@h@ight
+      \let\colbleed@ref@w@dth\outer@ref@w@dth
+      \let\bleed@ref@h@ight\outer@ref@h@ight
+      \let\bleed@ref@w@dth\outer@ref@w@dth
+    \fi
+    \edef\sb@rheightspec{to \inner@ref@h@ight}%
+    \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
+  \fi
+  %
+  \earlybgimagefalse
+  \ifx\bgf@gsp@c\relax
+    \let\t@mpfigspec\relax
+  \else
+    \trace{e}{Sidebar has image}%
+    \p@rsefigscale{bg}%
+    \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\scale@width}%
+    \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec|\fig@lskip|\fig@rskip\E}%
+    \ch@ckfigdim
+    \iftemp% It doesn't fit
+      \trace{e}{Image oversize}%
+      \getsbp@ram{bgfigoversize}%
+      \ifx\cp@ram\Img@Shrink\edef\t@mpfigspec{\bgf@gsp@c \resc@le|\scale@width}\else
+        \ifx\cp@ram\Img@Distort\edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd \resc@le|\scale@width}\else
+          \ifx\cp@ram\Img@Crop\message{Image crop not supported}\tempfalse\else
+            \tempfalse % No action
+          \fi
+        \fi
+      \fi
+      \iftemp
+        \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec|\fig@lskip|\fig@rskip\E}%
+      \fi
+    \fi
+    \ifdim\wd\newpicb@x >\wd\extb@x
+      \setbox\newpicb@x\hbox to 0pt{\box\newpicb@x\hss}%
+    \fi
+    \def\sb@rchunkheight{\the\maxdimen}% Background images and page-broken chunks are incompatible 
+    \tempfalse
+    \if\bgf@gl@w F%
+      \earlybgimagetrue
+    \fi
+    \if\h@scol F%
+      \earlybgimagetrue
+    \fi
+  \fi
+  \let\w@tsit\sb@rb@x % Make sure the item is identified properly - used in debugging and .delayed file
+  \let\loc@ption\sb@rpos
+  \picUsesInstrue \picNarrowfalse
+  \ifdim\wd\extb@x=\p@cinswid\else
+    \picNarrowtrue
+  \fi
+  \x@\p@rsePicUse\loc@ption\end  %set loc@ption and discover if there's to be an insert. (sets \picUsesInsfalse if not)
+  \doIntskipfalse% Upper baseline-preserving skip should be outside the border, not in the text area.
+  \ifpicUsesIns
+    \doIntskiptrue %Skip inside the frame, not outside it, so that frame lines up with page boundaries
+    \dimen4=-\b@dr@top@edge
+  \else
+    \dimen4=-\b@dr@top@pad
+  \fi
+  \t@mpfalse% Do we kill the first above-heading skip?
+  \ifsm@rtgrid
+    \t@mptrue 
+    \global\let\@@sb@rgrid\gr@dnone
+  \else
+    \ifdoIntskip\else 
+      \ifx\@@sb@rgrid\gr@dorig\else
+        \t@mptrue
+  \fi\fi\fi
+  \ift@mp
+    \setbox\extb@x\vbox{%\dbghrule
+      \kern-\@@sb@rfirstskip
+      \unvbox\extb@x}%
+    \xdef\@@sb@rfirstskip{0pt}%
+  \fi
+  \trace{eg}{Initial skip: \the\dimen4}%
+  \advance\dimen4 by -\ht\extb@x
+  \loop\ifdim\dimen4> \onel@neunit
+    \advance\dimen4 by -\onel@neunit
+  \repeat
+  \dimen9=-0.5pt %(Almost) no overlap between box contents and the border.
+  \ifx\@@sb@rgrid\gr@dorig\else
+    \dimen9=-\@@sb@rfirstskip
+  \fi
+  \loop\ifdim\dimen4<\dimen9
+    \advance\dimen4 by \onel@neunit
+  \repeat
+  \trace{eg}{Adjusted skip:\the\dimen4 (\the\ht\extb@x+\the\dp\extb@x)/\the\onel@neunit }%
+  \trace{eg}{sb@rgrid:\@@sb@rgrid. sb@rfirstskip was \@@sb@rfirstskip. doIntskip\ifdoIntskip true\else false\fi}%
+  \edef\b@xgridadj{\the\dimen4}%
+  \ifdoIntskip
+    \trace{e}{hts: \the\headingtopspace, b@xintadj:\b@xintadj, b@xgridadj\b@xgridadj}%
+    \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
+      \trace{e}{No intskip}%
+    \else
+      \setbox\extb@x\vbox{%\dbghrule
+        \kern\b@xgridadj
+        \unvbox\extb@x}%
+    \fi
+  \fi
+  \ifearlybgimage
+    %modify the esbbox to include the picture
+    \trace{e}{Including background image below contents: \t@mpfigspec}%
+    \ifx\sb@rheightspec\empty
+      \edef\sb@rheightspec{to \the\ht\extb@x}%
+    \fi
+    \setbox\extb@x\vbox\sb@rheightspec{\lineskiplimit=0pt \baselineskip=0pt
+      \vbox to 0pt{\vbox \sb@rheightspec{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\hbox{\hskip-\sb@leftshift\unhbox\newpicb@x\hskip-\sb@rightshift}}\hss}\vss}\vss}%
+      \vbox\sb@rheightspec{\unvbox\extb@x}%
+    }%
+    \let\bgf@gsp@c\relax %used it, so delete it. If it were still there later, we'd use it.
+  \fi
+  \ifx\h@scol\tr@e
+    \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
+    \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
+  \fi
+  \let\fstb@drtop=\b@drtop % Top border for the first chunk? 
+  \let\lstb@drbot=\b@drbottom % Bottom border for the last chunk?
+  \ifdim\ht\extb@x > 0.9\textheight
+    \def\tmp{Fcf}\ifx\sb@rpos\tmp\else
+      \message{*** WARNING: Sidebar or colophon might not print on page \folio. (\the\ht\extb@x\space high, and  page is \the\textheight).}%
+    \fi
+  \fi
+  \def\lstch@nkdp{0pt}%
+  \loop %Breakable box:
+    \ifdim\ht\extb@x>\sb@rchunkheight % to enable page splitting, the box should be chunked.
+      \dimen1=\sb@rchunkheight
+      {% 
+        \@LOOP
+          \setbox2=\copy\extb@x
+          \global\setbox\extchunkb@x=\vsplit\extb@x to \dimen1
+          \ifnum\badness>999999
+            \setbox\extb@x=\box2
+            \advance\dimen1 by \baselineskip %Couldnt split, make the chunk bigger.
+            \trace{e}{Chunk grown to \the\dimen1}%
+        \@REPEAT
+      }%
+      \setbox\extchunkb@x=\vbox\sb@rheightspec{\unvbox\extchunkb@x}% Reset to natural size
+      \let\b@drbottom=\relax
+    \else
+      \setbox\extchunkb@x=\vbox\sb@rheightspec{\unvbox\extb@x}%
+      \let\fb@tpadding=\s@vedtpadding
+      \let\fb@bpadding=\s@vedbpadding
+      \let\b@drbottom=\lstb@drbot
+    \fi
+    %\showbox\extchunkb@x
+    % Shift text for side image(s) 
+    \ifdim\sb@leftshift>0pt
+      \setbox0\vbox to\ht\extchunkb@x{\sb@leftedge}%
+      \trace{e}{Adding \sb@leftshift to left of box}%
+      \setbox\extchunkb@x\vbox{\hbox{\hbox to \sb@leftshift{\hss\box0\hskip\fb@rpadding}\box\extchunkb@x}}\fi
+    \ifdim\sb@rightshift>0pt
+      \setbox0\vbox to\ht\extchunkb@x{\sb@rightedge}%
+      \trace{e}{Adding \sb@rightshift to right of box}%
+      \setbox\extchunkb@x\vbox{%
+        \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@lpadding\box0\hss}}}\fi
+    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x) in insert \the\p@cinswid}%
+    \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
+    \getsbp@ram{spaceafter}%
+    \ifx\cp@ram\relax
+      \edef\sp@ceafter{0pt}%
+    \else
+      \edef\sp@ceafter{\the\dimexpr\cp@ram\verticalsp@ceunit\relax}%
+    \fi
+    \trace{e}{Before bg: \the\ht\extchunkb@x+\the\dp\extchunkb@x * \the\wd\extchunkb@x}%
+    \ifx\h@scol\tr@e
+      \setbox\extchunkb@x\vbox{%
+        \ifx\bgf@gsp@c\relax\else
+         \trace{e}{Including background image below everything: \t@mpfigspec}%
+          \vbox to 0pt{\vbox to\ht\extchunkb@x{\vss\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vss}\vss}%
+        \fi
+        \let\fb@htadjust=\lstch@nkdp
+        \trace{cov}{Space removal around feintbox (\ifble@d bleed: \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax\else none\fi)}%
+        \ifble@d
+          %\hbox{\hskip-\lble@d\vrule width 1pt \vbox{\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}\hskip-\rble@d}%
+          \vskip -\dimexpr \tble@d\relax
+          \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}%
+          \vskip -\dimexpr \bble@d\relax
+        \else
+          \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}%
+        \fi
+      }%
+      %\ifdim\the\ht\extchunkb@x = 840.04684pt \showbox\extchunkb@x \fi
+      \trace{e}{After bg: \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
+      \xdef\lstch@nkdp{\thsch@nkdp}%
+    \else
+      \ifsb@rfillpage
+        \dp\extchunkb@x=\fb@bpadding
+      \fi
+    \fi
+    \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
+    \let\b@drtop=\fstb@drtop
+    \ch@ckhasb@rder
+    \prepb@rderbox\extchunkb@x 
+    \ifx\picl@c\loc@Inl
+      \headingtopspace=0pt %-\oldlastdepth ?
+    \else
+      \headingtopspace=0pt
+    \fi
+    \ifble@d
+      %\advance\headingtopspace -\tble@d
+    \fi
+    \ifhasb@rder\ifsb@rfillpage
+        %\advance\headingtopspace \fb@tpadding
+    \fi\fi
+    \trace{e}{heading topspace=\the\headingtopspace}%
+    \getsbp@ram{spacebefore}\ifx\cp@ram\relax\else
+      \advance\headingtopspace by \cp@ram\verticalsp@ceunit
+    \fi
+    \ifhasb@rder % any border
+      \dob@rder % Actually generate the border
+      \dimen1=\dimexpr -\b@rderbox@depth\relax
+      \advance\dimen1 by -\sp@ceafter
+      \relax
+      \ifdoIntskip
+        \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
+          \doIntskipfalse
+          \advance\dimen1 by \b@xgridadj
+      \fi\fi
+      %\message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
+      \@LOOP\ifdim\dimen1 <0.01\onel@neunit
+        \advance\dimen1 by \onel@neunit
+      \@REPEAT
+      \ifsb@rfillpage
+       \trace{e}{Killing kerns/skips as box is stretch-to-fit (\sb@rheightspec)}%
+        \dimen1=0pt \def\b@xextadj{0pt}\def\b@xintadj{0pt}%
+      \fi
+      \ifdoIntskip\else
+        \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
+          \ifpicUsesIns\else
+          \trace{e}{Killing post-skips as gridding disabled (\@@sb@rgrid)}% 
+          \dimen1=0pt
+        \fi\fi
+      \fi
+      \trace{e}{Border Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
+      \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xintadj / \b@xextadj,  \ifdoIntskip 1st \else 2nd\fi}%
+      \x@\setbox\extchunkb@x\vbox{\lineskiplimit=0pt \lineskip=0pt \baselineskip=0pt
+        \vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi
+        \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox
+        \kern\dimen1
+        \vskip\sp@ceafter
+      }%
+    \else
+      \ifBoxLikeBorder
+        \dimen1=\dimexpr -\dp\extchunkb@x\relax
+        \advance\dimen1 by -\sp@ceafter
+      \else
+        \dimen1=-\sp@ceafter
+      \fi
+      \ifdoIntskip
+        \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
+          \doIntskipfalse
+          \advance\dimen1 by \b@xgridadj
+      \fi\fi
+      \relax
+      %\message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
+      \@LOOP\ifdim\dimen1 <0.1\onel@neunit
+        \advance\dimen1 by \onel@neunit
+      \@REPEAT
+      \trace{e}{Borderless Box \the\ht\extchunkb@x +\the\dp\extchunkb@x x \the\wd\extchunkb@x is offset \the\headingtopspace+\ifdoIntskip\b@xintadj\else\b@xextadj\fi+\b@dr@top@pad (v) \ifBoxLikeBorder and <\b@dr@left@pad|\b@dr@right@pad> (h)\fi. Final adjust\the\dimen1,\sp@ceafter}%
+      \x@\setbox\extchunkb@x\vbox{\lineskiplimit=0pt \baselineskip=0pt \vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi%
+          \ifBoxLikeBorder
+            \vbox{\vskip\b@dr@top@pad
+              \hbox{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}}%
+          \else
+            \box\extchunkb@x
+          \fi
+          \ifsb@rfillpage\else\kern\dimen1\fi
+          \vskip\sp@ceafter}%
+    \fi
+    \ifx\c@tegory\DebugBorderCat \bgroup\def\@im{\the\interactionmode}\interactionmode=2 \showboxdepth=99\showboxbreadth=99\showbox\extchunkb@x
+       \interactionmode=\@im \egroup 
+    \fi
+    \getsbp@ram{firstindent}\ifx\cp@ram\relax\p@chshift=0pt\else\p@chshift=\cp@ram\IndentUnit\fi
+    \let\sp@ceafter\empty
+    \let\fstb@drtop=\relax
+    \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%
+    %\ifsbar@rotated
+      %\tracingmacros=1
+      %\tracingcommands=3
+      %\setbox0\box\extchunkb@x
+      %\ifnum \pdf@ab=1
+	%\let\r@tSet\r@cwSet%FIXME
+      %\else
+	%\let\r@tSet\r@acwSet%
+      %\fi
+      %%\rot@tebz
+      %\tracingmacros=0
+      %\tracingcommands=0
+    %\fi
+    %\let\r@tSet\r@cwSet%FIXME
+    %\setbox\extchunkb@x\hbox{\rot@tebz}%
+    \ifpicUsesIns
+      \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
+      \trace{g}{Sidebar aligned into hbox \the\p@cinswid (\pic@lign)}%
+      \ifdim\wd\extchunkb@x<\p@cinswid
+        \setbox\extchunkb@x\vbox{%
+          \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\extchunkb@x}%
+          \else
+            \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\extchunkb@x\hss}%
+            \else\hbox to \p@cinswid{\hss\box\extchunkb@x\hss}\fi
+        \fi}%
+      \fi
+      \trace{e}{using ins-\loc@ption}%
+      \insert\@xtins{%\vskip\baselineskip
+        \dimen0=-\dp\extchunkb@x
+        \penalty10000
+        \pdfsavepos
+        \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+        \penalty10000
+        %\gridp@ctrue\gridb@x\extchunkb@x\gridp@cfalse% make sure we align to the page grid
+        \unvbox\extchunkb@x\vskip\the\dimen0
+        \penalty10000
+        \pdfsavepos
+        \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+        \ifdim\ht\extb@x>0pt \penalty5000 \fi}%
+    \else
+      \ifx\picl@c\empty
+        \message{Could not interpret position \loc@ption for \c@tegory:\sb@rmarker}%
+      \else
+        \dimen0=\ht\extchunkb@x \advance\dimen0 by \dp\extchunkb@x \advance\dimen0 by 0.5\baselineskip % Rounding correction
+        \divide\dimen0 by \baselineskip \count255=\dimen0
+        \advance\count255 by 1
+        \trace{g}{Inline \w@tsit [\c@tegory:\sb@rmarker] (\picl@c [\l@cspec@b\l@cspec@c]) takes \the\count255 lines, ls:\l@cspec@b, oldlastsdepth:\oldlastdepth, hts=\the\headingtopspace}%
+        \ifx\picl@c\loc@Inl
+          \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
+          \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
+          %\headingtopspace=\oldlastdepth
+	  %\vskip -\oldlastdepth
+          \lastdepth=\oldlastdepth
+          \d@figureInl\extchunkb@x
+          \ifhmode\else
+           \lastdepth=\oldlastdepth
+          \fi
+        \fi
+        \ifx\picl@c\loc@Par
+          \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
+          \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
+          \lastdepth=0pt
+          \setbox\extchunkb@x\vbox{\unvbox\extchunkb@x\kern -1sp \kern 1sp}% Add a marker to tell it to grid
+          \d@figurePar\extchunkb@x
+        \fi
+        \ifx\picl@c\loc@Page
+          \d@figurePage\extchunkb@x
+        \fi
+        \ifx\picl@c\loc@Full
+          \trace{e}{Full page box \b@x@lunpad | \b@x@runpad}%
+          \setbox\extchunkb@x\hbox {\penalty-10001\kern\b@x@lunpad\box\extchunkb@x\kern \b@x@runpad}%
+          \d@figureFull\extchunkb@x
+        \fi
+        \ifx\picl@c\loc@Cut
+          \ifinner\unskip\unskip\fi
+          \d@figureCut\extchunkb@x
+          %\showlists
+          %\ifhmode |+\fi
+        \fi
+        \ifvoid\extchunkb@x\else
+          \message{Could not understand / interpret position \loc@ption for \c@tegory:\sb@rmarker}%
+        \fi
+      \fi
+    \fi
+    \ifdim\ht\extb@x>0pt
+      \def\fb@tpadding{0pt}%
+      \def\fb@bpadding{0pt}%
+  \repeat
+  \let\c@tegory\oldc@tegory 
+  \s@tc@tpr@fix
+  \ifvoid\sid@barnotes\else
+    \ifinner%\unvbox\sid@barnotes % Inner boxes can't do vadjust, and if we unvbox here they'll be lost. Hopefully they can be unwrapped somewhere else.
+    \else
+      \ifhmode\vadjust\fi{\unvbox\sid@barnotes}%
+    \fi
+  \fi
+  \let\fb@lpadding\os@vedlpadding
+  \let\fb@rpadding\os@vedrpadding
+  \let\fb@tpadding\os@vedtpadding
+  \let\fb@bpadding\os@vedbpadding
+  \kill@PossParamCache
+  \c@th@@ks{}% Just in case
+  \ifx\c@tprefix\empty
+    \dos@vedm@rk
+  \fi
+  \ifnum \sb@numcuts>0
+    \@numcuts=\sb@numcuts
+    \trace{e}{Re-doing cutouts for \sb@numcuts}%
+    \restore@cutouts{esb}%
+    \makecutouts
+  \fi
+  \traceifcheck{esbe}%
+}
+
+\lowercase{\edef\msl@sh{|}}
+% Category file parsing 
+\def\Category   #1\relax{%Store name of current category and defaults
+  \S@tCat{#1}%
+  \xdef\m@rker{esb}%
+}
+
+\def\initc@t{%
+  \ifx\c@tprefix\empty
+    \edef\t@stname{\m@rker\ds@ffix:is_defined}%
+  \else 
+    \edef\t@stname{\c@tprefix \m@rker\ds@ffix:is_defined}%
+  \fi
+  \x@\xdef\csname m@rkerexists-\c@tprefix\m@rker\endcsname{t}%
+  \x@\let\x@\t@st\csname \t@stname\endcsname
+  \ifx\t@st\relax 
+    \trace{e}{First definition of \c@tprefix\m@rker\ds@ffix}%
+    \x@\xdef\csname \t@stname\endcsname{Done}%
+  \fi
+}
+\def\Position   #1\relax{\initc@t\setsbp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
+\def\Scale      #1\relax{\initc@t\setsbp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
+\def\Breakable   #1\relax{\initc@t\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setsbp@ram{break}{#1}\else\setsbp@ram{break}{\uppercase{#1}}\fi} %Can the box page-break?
+\def\FgImage      #1\relax{\initc@t\stripqu@te{#1}\setsbp@ram{fgfigname}{\@@result}\GenC@tFig{fg}}
+\def\FgImagePos   #1\relax{\initc@t\setsbp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
+\def\FgImageScale   #1\relax{\initc@t\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
+\def\FgImageScaleTo   #1\relax{\initc@t\setsbp@ram{fgfigscaleto}{#1}\GenC@tFig{fg}}
+\def\BgImage      #1\relax{\initc@t\stripqu@te{#1}\setsbp@ram{bgfigname}{\@@result}\GenC@tFig{bg}}
+\def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
+\def\BgImageScaleTo   #1\relax{\initc@t\setsbp@ram{bgfigscaleto}{#1}\GenC@tFig{bg}}
+\def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
+\def\BgImageLow   #1\relax{\initc@t\uppercase{\edef\t@st{#1}}\setsbp@ram{bgfiglow}{\t@st}}% What's the right sequence for colour layer and background image
+\def\BgImageColour       #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{bgfigcolour}{\rgb@out}}
+\let\BgImageColor=\BgImageColour%for Americans
+\def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
+\def\BgImageOversize       #1\relax{\initc@t\setsbp@ram{bgfigoversize}{#1}}
+
+\def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\x@\checkh@x #1\end\setsbp@ram{bgcolour}{\rgb@out}\fi}%For British/Australian/NZ/etc.
+\def\SpaceBeside #1\relax{\initc@t\setsbp@ram{spacebeside}{#1}}
+\let\BgColor\BgColour%For Americans
+\def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
+\def\BoxLPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}}
+\def\BoxRPadding #1\relax{\initc@t\setsbp@ram{boxrpadding}{#1}}
+\def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}}
+\def\BoxTPadding #1\relax{\initc@t\setsbp@ram{boxtpadding}{#1}}
+\def\BoxBPadding #1\relax{\initc@t\setsbp@ram{boxbpadding}{#1}}
+\def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
+\def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
+\def\BoxPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{boxpadinnerouter}{\t@st}}
+\def\Rotation  #1\relax{\initc@t\setsbp@ram{sbarrotation}{#1}}
+\def\SidebarGridding #1\relax{\initc@t\lowercase{\setsbp@ram{sbargrid}{#1}}}
+\def\GenC@tFig#1{%
+ \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
+   \trace{e}{No figname yet for \c@tprefix\m@rker}%
+   \x@\setsbp@ram{#1figspec}{}%
+ \else
+   \ifx\p@ram\false
+    \x@\setsbp@ram{#1figspec}{}%
+   \else
+     \let\c@tfigname\p@ram
+     %\getbp@r@m{#1figscale}%
+     \edef\tmp{\c@tfigname|}%
+     \x@\setsbp@ram{#1figspec}{\tmp}%
+     \trace{e}{figspec for \c@tprefix\m@rker:  \tmp}%
+   \fi
+ \fi
+}
+\def\sb@ins@rtpic#1|#2|#3|#4|#5\E{%
+  \trace{e}{Figure #1|#2|#3|#4|#5}% #1 is filename (without quotes). #4, #5 are l/r skips.
+  \dimen0=#3\relax
+  \def\@fig@lskip{#4}\def\@fig@rskip{#5}%
+  \openin\t@stread="#1"\relax 
+   \ifeof\t@stread 
+     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{#1}%
+   \else\closein\t@stread
+    \let\picfilecomm@nd=\XeTeXpicfile
+    \expandafter\ch@ckpdf#1..\endf@lename
+    \setbox0\hbox{\picfilecomm@nd "#1" #2}%
+    \global\dimen3=\wd0
+    \global\dimen4=\ht0
+    \trace{e}{Image dims: \the\dimen3 x \the\dimen4}%
+    \hbox{\hskip\sb@leftshift\hbox to #3{\hskip\@fig@lskip\box0\hskip\@fig@rskip}\hskip\sb@rightshift}%
+   \fi}
+
+\def\sb@rsavegriddims{% Called after gridding a heading
+  \ifx\lastp@rclass\empty
+    \ifx\sb@rgrid\gr@dorig
+      \edef\sb@rfirstskip{0pt}%
+      \trace{e}{sb@rfirstskip set as 0pt (sb@rgrid: orig)}%
+    \else
+      \edef\sb@rfirstskip{\the\dimen0}%
+      \trace{e}{Saving sb@rfirstskip as \sb@rfirstskip}%
+    \fi
+  \fi
+}
+\def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
+
+\def\showTheCategory{\c@tegory\message{The category is \c@tegory}}
+
+\def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}
+\def\categorysheet#1{%Just wrap \stylesheet with category-blanking commands
+  \subc@lltrue
+  \EndCategory\stylesheet{#1}\EndCategory
+  \subc@llfalse
+}
+\def\B@rderTOP{\setsbp@ram{bordertop}{T}}
+\def\B@rderBOTTOM{\setsbp@ram{borderbottom}{T}}
+\def\B@rderLEFT{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}
+\def\B@rderRIGHT{\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}}
+\def\B@rderINNER{\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
+\def\B@rderOUTER{\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
+\def\B@rderALL{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
+\def\B@rderNONE{\setsbp@ram{borderoddleft}{F}\setsbp@ram{borderevenleft}{F}\setsbp@ram{borderoddright}{F}\setsbp@ram{borderevenright}{F}\setsbp@ram{bordertop}{F}\setsbp@ram{borderbottom}{F}}
+
+\addtoinithooks{\let\@SB=\esb\let\@SBE=\esbe \let\esb=\@sb\let\esbe=\@sbe}
+\def\g@nbox#1{%For some reason, this prefers to be in its own macro.
+  \x@\newb@x\csname #1\endcsname
+}
+%\x@\def\csname d@code-t\endcsname{\edef\tmp{cat:\tmp}}
+%\x@\def\csname d@code-T\endcsname{\edef\tmp{cat:\tmp}}
+\x@\def\csname d@code-T\endcsname{\let\tmp\h@phen} % a paragraph-catergory does not alter the stystak
+\x@\def\csname d@code-t\endcsname{\let\tmp\h@phen} % a non-paragraph-catergory does not alter the stystak either.
+
+\def\dbghrule{\vbox to 0pt{\vrule width 0.5\hsize height 0.1pt \vss}}
+\def\Override{\m@kedigitsother}
+\def\EndOverride{\m@kedigitsletters}

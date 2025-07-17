@@ -1,0 +1,729 @@
+[DEFAULT]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = 
+piccredit = 
+approved = false
+
+[lb00294]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[hk00208]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00244]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00305]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00299]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00310]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00311]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[hk00155]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00213]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00280]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00317]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[hk00033]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00103]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[hk00166]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00250]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00320]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00284]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00321]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00324]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00329cmod]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00636]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00638]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00646]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00647]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00655]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00656]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00659]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00683]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00692]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00709]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00718]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00745]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00760]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01628]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = bl,0,None
+piccredit = © David C Cook
+approved = false
+
+[cn01684]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01841]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01998]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01833]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01994]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[dn00401]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01681]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = br,90,None
+piccredit = © David C Cook
+approved = false
+
+[cn01723]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01771]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01774]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01784]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00104]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[hk00168]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00061]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01698]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01814]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01825]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01849]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01606]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01609]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01617]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01647]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01656]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01686]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01699]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01702]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01778]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01709]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01713]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01718]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01728]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01750]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01759]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01761]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01715]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01739]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01776]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01789]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01794]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01803]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01815]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01822]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01836]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01853]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01859]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01866]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01667]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00302]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01700]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00014]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01769]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01782]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01800]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[hk00108]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[ab02861]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[lb00328]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01857]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01875]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01923]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01932]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01945cmod]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01953]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01964]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01988]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01993]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn02045]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[armor_of_godsgb]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00621]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01738]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01603]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00843]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn02103]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01843]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00604]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00626]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00663]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00754]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00818]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00606]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00613]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co01451]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00625]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00630]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00634]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00635]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[hk00227]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00951]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00956]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00958]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00964]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00966]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00968]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00970]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00971]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00972]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00973]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co01407]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co01415]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co01417]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co01419]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co01421]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co01422]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co01423]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn01921]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[cn02093]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[hk00264]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[ab02753]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00992]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[CN01771C.jpg]
+picclear = yes
+picaccept = Culturally Appropriate
+picreverse = unknown
+

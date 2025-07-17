@@ -1,0 +1,1615 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Paragraph style macros
+
+% some flags used to communicate between the macros
+\newif\if@ntromarker
+\newif\if@ntro \newif\ift@tle \newif\ifb@dy \newif\ifNoBody
+\newif\ifbeenb@dy
+\newif\ifstartpara
+\newif\ifintr@done\intr@donefalse % If true, then if@ntro can only be set between the start of a book and the first chapter number
+\newif\ifReenterIntroOK\ReenterIntroOKtrue % If true, then a chapter number does not set intr@done
+\newif\ifinextended \inextendedfalse % Test for sidebars (ptx extended)
+\newcount\l@stparbadness
+\def\EndTitle#1{\x@\let\csname at@end-#1\endcsname\tr@e} % There are a few end-titles that shouldn't trigger a penalty1000 after their titleblock
+\EndTitle{mte} \EndTitle{mte1} \EndTitle{mte2} \EndTitle{mte3}
+\EndTitle{imte} \EndTitle{imte1} \EndTitle{imte2} \EndTitle{imte3}
+
+%+cpar_init
+\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{p}\hsize=\textwidth}
+%-cpar_init
+
+% test if a marker is an "introduction" style (name begins with "i") and we're allowed to enter intro mode.
+%+cpar_testintro
+\def\t@stintro#1#2\relax{\ifnum 1=\if#1i \ifintr@done 0 \else 1 \fi \else 0\fi \global\@ntromarkertrue\else\global\@ntromarkerfalse\fi}
+%-cpar_testintro
+
+%+cpar_starttypes
+\def\chkintrobody{% What sort of paragraph is this?
+  \t@mpfalse\iftoplevelp@r\t@mptrue\fi\ift@plevel@utobox\t@mptrue\fi
+  \ift@mp\if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+}
+  
+% start title/intro/body, if not already in that mode, switching columns if needed
+\def\st@rtintro{\TRACE{st@rtintro}\if@ntro\else
+  \t@mptrue
+  \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
+  \ift@mp
+    \ifnum\IntroColumns=\c@rrentcols\else
+      \ifnum\IntroColumns=3 \threecolumns \else\ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi\fi
+    \fi
+  \fi
+  \global\@ntrotrue\global\t@tlefalse\global\b@dyfalse\fi}
+
+\def\st@rttitle{\TRACE{st@rttitle}\ift@tle\else
+  \t@mptrue
+  \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
+  \ift@mp
+    \ifnum\TitleColumns=\c@rrentcols\else
+      \ifnum\TitleColumns=3 \threecolumns\else\ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi\fi
+    \fi
+  \fi
+  \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
+
+\newif\iftob@dy \tob@dyfalse
+\newif\ifPBOnBody \PBOnBodyfalse
+\def\st@rtbody{%\endhe@dings
+ % \trace{o}{st@rtbody: b@dy\ifb@dy true\else false\fi}%
+ \traceifset{st@rtbody}%
+ \ifNoBody\else\ifb@dy\else\trace{o}{st@rtbody by \m@rker,  diglot\ifdiglot true\else false\fi, BodyColums=\the\BodyColumns, currentcols=\the\c@rrentcols}%
+  \t@mptrue
+  \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
+  \ift@mp
+    \ifnum\BodyColumns=\c@rrentcols
+      \count255=\lastpenalty
+      \vskip\baselineskip
+    \else
+      \tob@dytrue\ifnum\BodyColumns=3 \threecolumns\else\ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi\fi
+      \count255=10000
+    \fi
+    \ifPBOnBody\vfill\eject
+    \else
+      \penalty\count255
+    \fi
+  \else
+    \ifPBOnBody
+      \ifdiglot 
+        \trace{d}{Page Break on starting body - \c@rrdstat}%
+        \@diglot@pagebreak
+        %\if L\c@rrdstat\relax \@writep@ge\fi
+      \fi
+    \fi
+  \fi
+  \tob@dyfalse
+  \global\b@dytrue\global\beenb@dytrue\global\@ntrofalse\global\t@tlefalse
+  % set up for single column from single column. Empty vbox to say we are not at the start of a page
+  \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi
+  \else\ifnum\BodyColumns=3 \threecolwidth{\hsize}\fi\fi
+ \fi\fi
+  \traceifcheck{st@rtbody}%
+}
+
+\newcount\c@rrentcols \global\c@rrentcols=1
+%-cpar_starttypes
+
+%
+% Headings are set into a box, so that they can be measured and adjusted for the grid
+%
+%+cpar_endheadings
+\newif\ift@plevel@utobox
+\newif\ifhe@dings
+\newif\ifnormalhe@dings \normalhe@dingstrue
+\newskip\headingtopspace
+\newskip\headingmidspace
+\def\endheadingshook{}
+\newbox\he@dingbox
+\def\endhe@dings{\ifhe@dings\trace{h}{+endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi}%
+  \makecutouts \endgraf
+  \global\l@stparbadness=\badness
+  \ifx\thisp@rclass\undefined
+    \global\let\tmppcl@ss\empty %pass out the heading group class
+  \else
+    \global\let\tmppcl@ss\thisp@rclass %pass out the heading group class
+  \fi
+  \egroup %\showbox\he@dingbox
+  \global\normalhe@dingstrue\ifcsname at@end-\oldm@rker\endcsname \x@\ifx\csname at@end-\oldm@rker\endcsname\tr@e
+    \global\normalhe@dingsfalse
+  \fi\fi
+  \trace{h}{\oldm@rker\space is a\ifnormalhe@dings\space  normal\else n end\fi-heading}%
+  \cutoutcarryover
+%{\showboxbreadth=200 \showbox\he@dingbox}
+  \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
+  \trace{h}{ht=\the\ht\he@dingbox , dp=\the\dp\he@dingbox, useglyph=\the\XeTeXuseglyphmetrics}%
+  \endheadingshook
+  \ifhe@dings
+    \ift@plevel@utobox
+      \ifdim\dimexpr \ht\he@dingbox + \dp\he@dingbox\relax>0pt 
+        \box\he@dingbox
+        \he@dingsfalse
+        \endlastp@rstyle{end\B@xtype}\penalty10000
+        \@sbe
+        %\showlists
+        \let\B@xtype\empty
+        \t@plevel@utoboxfalse
+        \toplevelp@rtrue % Is this always correct? Alternative is re-check the mcstack.
+      \fi
+    \else
+      \ifinextended\trace{e}{sb@rgrid: \sb@rgrid, lpc:\lastp@rclass,tpc:\thisp@rclass}%
+        \x@\ifx\csname @gr@d@\sb@rgrid\endcsname\false
+          \unvbox\he@dingbox
+          %\showboxbreadth=99\showlists
+      \fi\fi % Disable gridding of headings box if no gridding here
+      \ifdim\ht\he@dingbox>0pt 
+        \setbox\he@dingbox\vbox{\t@gstart{H}{heading}\unvbox\he@dingbox\t@gend{H}}%
+        \gridb@x\he@dingbox
+        \ifinextended\sb@rsavegriddims\fi
+      \fi%
+    \fi
+    \let\lastp@rclass\tmppcl@ss%
+  \fi
+  \ifvoid\he@dingnotes
+    \ifnormalhe@dings\else\penalty10\fi
+    \trace{h}{\oldm@rker: Outputting \ifnormalhe@dings normal \fi end-headings penalty}%
+  \else
+    \unvbox\he@dingnotes
+    \ifnormalhe@dings\penalty10000 \else\penalty10 \fi
+  \fi
+    \global\first@fterheadingtrue
+  \global\he@dingsfalse
+  \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
+ \fi
+}
+\let\zendheadings\endhe@dings
+\newif\iffirst@fterheading
+%-cpar_endheadings
+
+%+cpar_killdescenders
+\def\killd@scenders#1{%
+  \vbox{%
+  \trace{h}{killing descenders: ht=\the\ht#1, dp=\the\dp#1}%
+  \unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
+    \setbox0=\lastbox\global\dimen4=\dp0  % Remember last box's depth
+    \ifvoid0\else\dp0=0pt \box0 \fi
+    \trace{h}{+skip=\the\skip0, depth=\the\dimen4}%
+    \ifdim\skip0>0pt \penalty\count255 \vskip\skip0 \fi}%
+}
+%-cpar_killdescenders
+
+%
+% Given a box of headings, output it but ensure we use an integral number of lines altogether
+%
+%+cpar_gridbox1
+\def\gr@db@x#1{%
+% \setbox0=\vbox{\kern-#1pt \vrule\kern#1pt \kern-.4pt \box#1\kern-.4pt \vrule}%
+\setbox0=\vbox{\unvbox#1}%\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
+\trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (dp was \the\dimen4)}%
+%\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
+%{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
+ \dimen2=\ht0 \advance\dimen2 by \dp0
+ %\dimen0=\ifnum\@djustment>0 -\baselineskip\else0pt \fi
+ \dimen0=0pt
+ \ifgridp@c\line{}\nobreak\fi % otherwise first \line in loop won't get any baselineskip
+                              % when doing a picture box, because it's not part of the
+                              % current page
+ \loop \ifdim\dimen0<\dimen2                                                    %(1)
+   \advance\dimen0 by \baselineskip
+   \line{}\nobreak \repeat
+ \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}%
+ \trace{h}{after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}%
+ \unvbox0 \nobreak
+}
+\newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
+%-cpar_gridbox1
+
+%+cpar_gridbox2
+% returns in \dimen0 how much to advance \dimen1 (y) to be an integral multiple of \dimen0 (x)
+% \dimen1 := y % x, \dimen3 := y - y % x, \dimen0 := x - y + y % x
+\def\m@d{\dimen3=\dimen1\divide\dimen1 \dimen0\multiply\dimen1 \dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
+\newdimen\upwardsHackDiff \upwardsHackDiff=0pt
+\def\gr@db@@x#1{%
+  \ifdim 0.5pt>\baselineskip \unvbox#1
+  \else
+      \ifhmode\endgraf\lastdepth=\prevdepth
+        \global\l@stparbadness=\badness
+        \trace{h}{gr@db@@x needed to end paragraph. Why?}%
+      \fi % Not sure why, but sometiems we get here in hmode
+      \edef\oldprevdepth{\the\prevdepth}%
+      \prevdepth=0pt
+      % \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
+      \setbox0=\vbox{\box#1}%
+      \trace{h}{after killingdescenders: ht=\the\ht0, dp=\the\dp0}
+      \ifVisTraceExtra
+        \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
+      \fi
+      \ift@tle\lastdepth=0pt \fi
+      \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth; upwardsHackDiff=\the\upwardsHackDiff}%
+      \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
+      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space, y and x. z = x - y + y % x
+      \dimen1=\ht0 \advance\dimen1 by -\headingtopspace % a = y - b
+      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0 % z = x - y + y % x - x + y - b - (y-b) % x; w = x - y + b + (y-b) % x
+      \advance\dimen2 by \headingtopspace   % (1), z = y % x - (y-b) % x
+      \ifgridp@c\else\ifdiglot\else
+        \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
+      \fi\fi
+      \ifdim\upwardsHackDiff=0pt\else\advance\dimen2 by -\upwardsHackDiff \advance\dimen0 by \upwardsHackDiff\fi
+      \ifdiglot\kern\else\vskip\fi\dimen2
+      \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
+      \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
+      \ifrotate\prevdepth=\baselineskip\fi
+      \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
+      %\ifdim\oldprevdepth<-999pt \prevdepth=\oldprevdepth\fi % DON"T restore old prevdepth. For some reason this puts things off grid.
+  \fi
+}
+
+\def\ungr@db@x#1{\vskip0pt \unvbox#1\nobreak}
+\newif\ifsquashgridbox\squashgridboxtrue                                        %(2)
+\let\gridb@x\gr@db@@x % overridden during \ptxfile setup, depending on \ifdiglot and \ifsquashgridbox 
+%-cpar_gridbox2
+
+\def\at@ndofthispar{}
+\def\at@ndofthisparR{}
+\def\at@ndofthisparL{}
+\def\at@ndofthisparDelay{}
+\def\at@ndofthisparRDelay{}
+\def\at@ndofthisparLDelay{}
+\ifcsname ForcedLooseness\endcsname\else\gdef\ForcedLooseness{}\fi
+
+\newif\ifdoingt@ble
+\newdimen\lastdepth
+\newif\ifrotate \rotatefalse
+\newif\ifb@xedparstyle
+%+cpar_par
+% end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook. Normally called from inside endlastp@rstyle
+\def\par{%
+  \trace{sP}{par! n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
+  \ifhmode
+   \ifb@xedparstyle \trace{s}{b@xedstyle met in par! \styst@k}%
+    \set@endb@xedstyle{\styst@kfirst}{\styst@k}\egroup\apply@endb@xedstyle{\tmpctsb@x}%
+    \unhbox\tmpctsb@x
+    \b@xedparstylefalse
+   \fi
+   \makecutouts
+   \cl@singhooks{end}{\m@rker}{\styst@k}%
+   \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
+   \trace{j}{Ending marker: \m@rker (\styst@kfirst)}%
+   \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
+   \def\@@@st@t{}%
+   \ifhmode\def\@@@st@t{hmode}\fi
+   \ifvmode\edef\@@@st@t{vmode \@@@st@t}\fi
+   \ifinner\edef\@@@st@t{inner \@@@st@t}\fi
+   \trace{j}{(gt:\the\currentgrouptype) \@@@st@t\space  doingt@ble\ifdoingt@ble true\else false\fi\space inn@te\ifinn@te true\else false\fi [\styst@k]}%
+   \ifdoingt@ble\else
+     \ifx\styst@k\empty% If we have an empty stystack, then should we do nothing or fall back to using m@rker? it seems to be anomalous
+       %\s@tsideskips{\m@rker}% 
+     \else\ifinn@te\else
+       \s@tsideskips{\styst@kfirst}{-1pt}%%Need this for when \everypar gets fired from within a group. (e.g. from a trigger or milestone)
+       \trace{j}{[\styst@kfirst] hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
+     \fi\fi
+   \fi
+   \seteotpn@me
+   \csname pre\eotpn@me\endcsname\x@\let\csname pre\eotpn@me\endcsname\empty
+   \ifhmode 
+     \endgraf
+     \global\l@stparbadness=\badness
+   \fi
+   \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else
+     %\ifrotate
+     %  \setbox9=\lastbox \lastdepth=\ht9 \box9\trace{h}{lastdepth in upwards = \the\lastdepth}%
+     %  \lastdepth=0pt\prevdepth=0pt%
+     %\else
+       \lastdepth=\prevdepth
+     %\fi
+   \fi\fi\fi\fi
+   \ifinn@te\else\ifdoingt@ble\else
+     \edef\t@mpp{\string\@parlen{\ifdiglot \dc@rref\else\c@rref\fi}{\the\curr@djpar}{\the\prevgraf}{\m@rker}{\lastc@rref}{\lastc@rradj}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+   \fi\fi
+   \cutoutcarryover 
+   \ifversion{3}{\do@ndofthispar}{}%
+ \else
+  \global\l@stparbadness=\badness
+ \fi
+ \ifversion{3}{}{\do@ndofthispar}%
+}
+%-cpar_par
+% No blank line here!
+%+cpar_doendofthispar
+\def\seteotpn@me{\edef\eotpn@me{at@ndofthispar\c@rrdstat}}% Which endofthispar macro?
+\def\addtopreeotp#1{\seteotpn@me\edef\peotpn@me{pre\eotpn@me}%
+  \trace{g}{\peotpn@me\space set}%
+  \ifcsname \peotpn@me\endcsname\else\x@\let\csname \peotpn@me\endcsname\empty\fi
+  \x@\x@\x@\x@\x@\x@\x@\gdef\x@\x@\x@\csname \x@\x@\x@\peotpn@me\x@\x@\x@\endcsname\x@\x@\x@{\csname \peotpn@me\endcsname%
+    #1}}
+\def\addtoeotp#1{\seteotpn@me
+  \trace{g}{\eotpn@me\space set}%
+  \ifcsname \eotpn@me\endcsname\else\x@\let\csname \eotpn@me\endcsname\empty\fi
+  \x@\x@\x@\x@\x@\x@\x@\gdef\x@\x@\x@\csname \x@\x@\x@\eotpn@me\x@\x@\x@\endcsname\x@\x@\x@{\csname \eotpn@me\endcsname%
+    #1}}
+\def\do@ndofthispar{%
+ \seteotpn@me
+ %run code to insert picb@x / picb@xR at the right time.
+ \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
+ \trace{g}{doendofthispar \ch@pter:\v@rse\c@rrdstat \space \the\pagetotal,
+           \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi. \csname \eotpn@me Delay\endcsname}%
+ \ifnum \holdinginserts=1 
+   \temptrue %If iftemp stays true, then it's a valid insertion point.
+   \ifx\pn@xt\empty\tempfalse\fi
+   \ifinn@te\tempfalse\fi %No pictures in notes!
+   \ifdiglot
+     \ifp@gestart\tempfalse\fi
+   \else 
+     \ifinextended\else\ifdim\pagetotal=0pt \tempfalse\fi\fi
+   \fi
+   \ifx\pn@xt\empty\else
+     \iftemp
+       %Potential inclusion location. Check delay.
+       \edef\temp{\csname\eotpn@me Delay\endcsname}%
+       \ifx\temp\empty\else
+         \let\pn@xt=\empty
+         \trace{g}{\ch@pter:\v@rse. Delayed by specification (\temp)}%
+         \x@\shrinkdel@y \temp\EDLY\relax
+         \trace{g}{Delay for \eotpn@me set to \temp}%
+         \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
+         \edef\eotpn@me{empty}%
+       \fi
+     \else
+       \edef\eotpn@me{empty}%
+       \let\pn@xt=\empty
+       \trace{g}{\ch@pter:\v@rse. Not here (\ifx\pn@xt\empty nothing \fi \ifinn@te innote \fi) }%
+     \fi
+   \fi
+   \ifx\pn@xt\empty\else
+     % Time to acually include the picture
+     \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x / \the\ht\picb@xR}%
+     %\nonstopmode
+     %\show\pn@xt
+     %\edef\pn@xt{\hbox{x}}% test code
+     \x@\global\x@\let\csname\eotpn@me\endcsname=\empty
+     \pn@xt\relax 
+   \fi
+  \fi
+}
+
+\def\shrinkdel@y#1|#2\EDLY{\trace{g}{shrink {#1}{#2}}\xdef\temp{#2}}
+%-cpar_doendofthispar
+
+%
+% Handle a paragraph style marker (parameter is the marker name)
+%
+%+cpar_parstyle_intro
+\newif\ifhe@dingstyle
+\newif\ifJustifyPars \JustifyParstrue
+\def\introAmbigious#1{\x@\def\csname intro@mbigious-#1\endcsname{t}}
+\def\settest@mb#1{\x@\let\x@\test@mb\csname intro@mbigious-#1\endcsname}
+\introAmbigious{iex} % iex can be intro or not intro.
+
+\newcount\dropped@ther@lines
+\dropped@ther@lines=0
+\def\endit@P{%Called by whileitp@ps, to end a paragraph style
+ \let\p@r=\par % end the paragraph
+ \ifhmode\unskip % remove any trailing space
+   \beginL\pdfsavepos\t@gendfull{P}{id="\adjc@rref[\the\curr@djpar]"}%
+   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parend\x@{\the\l@stparbadness}{\the\pdflastxpos}{\the\pdflastypos}{\the\lastdepth}}\endL       %(1)
+   \global\l@stparbadness=-1
+   %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
+   %  \fi\else\tolerance=10\fi
+   \p@r
+   \ifvmode
+    %\ifdim\prevdepth>0pt \lastdepth=\prevdepth\else\lastdepth=-1pt \fi
+   \else
+     %\lastdepth=0pt
+     \ifinner\trace{sa}{Inner mode at end of paragraph style \m@rker}\fi
+   \fi
+   {\count255=\prevgraf \trace{C}{endit@P: \the\dropped@ther@lines, \ifdr@ppednumber dropped num\fi, \pending@items, pgrf:\the\count255}}%
+   \ifnum\pagetracing>0\tracingparagraphs=0\fi
+   \ifnum 0\ifdr@ppednumber 1\else\ifnum\dropped@ther@lines>0 1\fi\ifx\pending@items\cstackempty\else1\fi\fi>0 % the preceding par had a dropped number or other cutout;                       %(2)
+                    % add \nobreak if it was a single line, else clear the flag
+     \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
+     \ifnum\prevgraf=1 \nobreak\else 
+       \dr@ppednumberfalse 
+       \ifnum\prevgraf<\dropped@ther@lines \nobreak
+       \fi
+     \fi
+     \ifnum\dropped@ther@lines>0
+       \advance\dropped@ther@lines by -\prevgraf
+     \fi
+   \fi
+ \fi
+ \mcpop
+}
+
+\def\writep@rstart#1#2{%Call with #1 = fully expanded baselineskip
+   \getp@ram{type}{#2}{#2}%
+   \beginL\pdfsavepos\t@gstartfull{P}{#2}{lspace="#1" id="\adjc@rref[\the\curr@djpar]"}%
+   \edef\tmp{{\ifdiglot\x@\dc@rref\else\x@\c@rref\fi}{\p@ram}}%
+   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parstart\tmp{#2}{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
+}
+
+\newif\iftoplevelp@r
+\newif\ifdebugthispar
+\newif\ifdebugthisparearly
+\def\endlastp@rstyle#1{%
+ \ifdebugthisparearly\global\debugthisparearlyfalse\showlists\fi
+ \getp@ram{spaceafter}{\m@rker}{\styst@k}% output any <spaceafter> for the  style active when the last paragraph ended.
+ \global\let\spaceafterp@ram\p@ram
+ \global\let\h@@kstyst@k\styst@k
+ \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
+ \let\p@r=\par
+ \the\p@rstylehooks % allow other modules to hook in here
+ \ifb@xedparstyle \trace{s}{b@xedstyle met in endlastp@rstyle! \styst@k}%
+  \unskip\set@endb@xedstyle{\styst@kfirst}{\styst@k}\egroup%\showbox\tmpctsb@x
+  \apply@endb@xedstyle{\tmpctsb@x}%
+  %\showbox\tmpctsb@x
+  \unhbox\tmpctsb@x
+  \b@xedparstylefalse
+ \fi
+ \end@llpoppedstyles{P}%
+ \ifdebugthispar\global\debugthisparfalse\showlists\fi
+ \trace{s}{endlastp@rstyle #1 stack=\mcstack, styst@k:\styst@k}%
+ \trace{ss}{endlastp@rstyle #1 stack=\mcstack}%
+ \toplevelp@rtrue
+ \def\d@##1+##2\E{\if##1P\relax\global\toplevelp@rfalse\let\d@=\cstackrelax\fi}%
+ \mcdown
+%-cpar_parstyle_intro
+%+cpar_parstyle_after
+ \t@stpublishability{#1}% test if the new marker is nonpublishable
+ \ifn@npublishable
+  \p@r% End the present paragaph, to make sure that cutouts, etc. are handled properly
+  \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
+ \else % else we need to actually process it!
+  \ifx\m@rker\relax\else
+    \if@ntro\mark{\intr@}\ifdiglot\x@\marks\csname m@rknum\c@rrdstat\endcsname{\intr@}\fi\fi
+    \ifx\spaceafterp@ram\relax \else
+      \ifhe@dings\nobreak\fi
+      \vskip\spaceafterp@ram\verticalsp@ceunit                                              %(1)
+    \fi
+    %\edef\spc@ut{pdf:code EMC}\x@\special\x@{\spc@ut}%
+  \fi
+  %\ifx\mcstack\mcstack@mpty\else
+    %\def\d@##1+##2\E{\edef\tmp{##2}%
+      %\ifx\tmp\m@rker\else\ifx\m@rker\relax\else\MSG{Bad closing marker "\tmp" expecting "\m@rker"}\fi\fi}%
+  
+    %\mctop \mcpop                                                                 %(2)
+  %\fi
+  \cl@singhooks{after}{\m@rker}{\h@@kstyst@k}%
+  \the\afterh@@ks
+ \fi
+}
+
+\def\s@tsideskips#1#2{% REMINDER: sideskips cannot be set globally, or a sidebar might change main-paragraph formatting.
+% #1 marker, #2 rag amount (or <=0pt for reading the glue
+   \ifx\styst@k\empty
+      \edef\tmpstyst@k{#1}%
+   \else
+      \let\tmpstyst@k\styst@k
+   \fi
+   \ifdim #2 > 0pt\edef\gl@e{#2}\else
+     \getp@ram{glue}{#1}{\tmpstyst@k}%
+     \ifx\p@ram\relax
+       \def\gl@e{0.25\hsize}%
+     \else
+       \edef\gl@e{\p@ram\noexpand\hsize}%
+     \fi
+   \fi
+   % inside \beginR rightskip is leftskip and leftskip is rightskip!
+   \parfillskip=0pt plus 1fil
+   \ifRTL \rightskip\else\leftskip\fi =0pt
+   \ifRTL \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
+   \ifRTL\beginR\fi
+   \getp@ram{justification}{#1}{\tmpstyst@k}%
+   \ifx\p@ram\c@nter
+    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+   \else\ifx\p@ram\l@ftb@l
+    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \parfillskip=0pt plus \gl@e
+   \else\ifx\p@ram\l@ft
+    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \parfillskip=0pt plus 1fil
+   \else\ifx\p@ram\r@ght
+    \ifRTL\rightskip\else\leftskip\fi=0pt plus \gl@e \parfillskip=0pt
+   \fi\fi\fi\fi
+   \getp@ram{leftmargin}{#1}{\tmpstyst@k}%
+   \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+   \getp@ram{rightmargin}{#1}{\tmpstyst@k}%
+   \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+   \trace{j}{s@tsideskips #1 (\styst@k). \the\leftskip/\the\rightskip, pf=\the\parfillskip}%
+}
+
+\def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
+ \edef\newp@rstyle{#1}%
+ \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
+ \catcode13=12 % ditto for <return>
+ \catcode`\^=12
+ \futurelet\n@xt\@@p@rstyle % look at following character and call \@@p@rstyle
+}
+
+\def\dop@rstyle#1{\trace{ss}{dop@rstyle: #1, onto stack: \mcstack}%
+ \edef\newp@rstyle{#1}\global\let\f@ntextend\empty
+ \@p@rstyle{#1}%
+}
+
+\catcode`\^=12
+\catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
+\catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
+\lccode`\|=`\\
+\let\thisch@rstyle\empty
+\lowercase{
+%-cchar_docharstyle_intro
+%+cchar_docharstyle
+ \let\@@st@risk*
+ \global\let\@@spc~
+ \let\@@nl_
+\def\@@p@rstyle{%
+  \catcode32=10 % reset <space> to act like a space again
+  \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
+  \trace{s}{parstyle: \newp@rstyle, next=\meaning\n@xt}%
+  \ifx \n@xt^\relax
+    \let\n@xt\@@@p@rstyle
+  \else
+    \global\let\f@ntextend\empty
+    \ifx\n@xt\@@spc\let\n@xt\@p@rstyle@spc\trace{ss}{space delimiter for \newp@rstyle, after \m@rker}\else
+      \ifx\n@xt\@@nl\let\n@xt\@p@rstyle@nl\trace{ss}{nl delimiter for \newp@rstyle}\else
+        \let\n@xt\@p@rstyle
+    \fi\fi
+  \fi
+  \x@\n@xt\x@{\newp@rstyle}%
+}
+\def\@p@rstyle@spc#1~{\@p@rstyle{#1}}
+\def\@p@rstyle@nl#1_{\@p@rstyle{#1}}
+}
+
+\def\p@rcent #1#2#3#4\E{\ifx #3x.#1#2\else #1.#2#3\fi}
+\def\@@@p@rstyle#1^#2 {%
+  \xdef\f@ntextend{\p@rcent #2xx\E}%
+  %\xdef\f@ntextend{#2}%
+  \trace{s}{extending [\f@ntextend]}%
+  \ifcsname #1^#2\endcsname\x@\@p@rstyle\x@{#1^#2}\else
+  \x@\@p@rstyle\x@{#1}\fi
+}
+
+\def\ColAdjskip{0pt}
+\catcode`\^=7
+\catcode`\_=11
+\def\thisp@rclass{}%
+\def\lastp@rclass{}% What was the last paragraph type? 
+\def\@p@rstyled@mp#1#2{\@p@rstyle{#1}}
+\def\@p@rstyle#1{%
+ \global\let\oldm@rker\m@rker
+ \endlastp@rstyle{#1}% This sets / unsets n@npublishable
+ \ifn@npublishable\else
+  \ifx\thisp@rcl@ss\undefined\else
+    \let\lastp@rclass\thisp@rcl@ss
+  \fi
+  \op@ninghooks{between-\m@rker}{#1}{\styst@k}% OR: #1\ifx\styst@k\empty\else+\styst@k\fi}??% Run any between old par an current
+  \traceifset{p@rstyle}%
+  \gdef\m@rker{#1}% remember the new style name
+%-cpar_parstyle_after
+  %
+  % now we check what kind of marker this is: intro? title? section? other?
+  % and switch to the appropriate mode
+  %
+%+cpar_parstyle_transition
+  \x@\t@stintro\m@rker\relax
+  %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
+  %set the intromarker flag based on what the current state (\if@ntro) is.
+  \ifReenterIntroOK
+    \settest@mb{\m@rker}\ifx\test@mb\relax\else
+      \if@ntro\@ntromarkertrue\else\@ntromarkerfalse\fi 
+    \fi
+  \fi
+  % \tr is treated as an intro marker if we're already in intro mode
+  \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
+  \global\he@dingstylefalse
+  \getp@ram{type}{\m@rker}{\m@rker}%
+  \let\B@xtype\empty%
+  \ifx\p@ram\t@tle
+    \mark{\t@tle}\ifdiglot\x@\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
+    \ift@tle\else
+      \ifhe@dings\endhe@dings\fi
+        \let\thisp@rclass\t@tle
+      \iftoplevelp@r\t@stpublishability{cat:titlebox|esb}\ifn@npublishable\else
+        \let\B@xtype\t@tle
+      \fi\fi
+    \fi
+    \iftoplevelp@r\st@rttitle\fi
+    \global\he@dingstyletrue 
+  \else\ifx\p@ram\s@ction                                                       %(1)
+    \ift@tle\ifhe@dings\endhe@dings\fi\fi
+    \let\thisp@rclass\s@ction
+    \chkintrobody % Start intro / body text
+    \global\he@dingstyletrue
+  \else\ifx\p@ram\oth@r
+    \ift@tle\ifhe@dings\endhe@dings\fi\fi
+    \let\thisp@rclass\oth@r
+    \chkintrobody % Start intro / body text
+    \if@ntromarker\else\global\he@dingstyletrue\fi
+  \else
+    \ift@tle\ifhe@dings\endhe@dings\fi\fi
+    \chkintrobody % Start intro / body text
+  \fi\fi\fi                                                                     %(2)
+  \iftoplevelp@r\ifhe@dingstyle\ifhe@dings\else
+      \ift@tle\else
+        \let\thisp@rclass\he@dings
+        \testm@rkerexists{cat:\m@rker box|esb}\iftemp
+          \t@stpublishability{cat:\m@rker box|esb}\ifn@npublishable\else
+            \let\B@xtype\m@rker
+          \fi
+        \else
+          \testm@rkerexists{cat:headingsbox|esb}\iftemp
+            \t@stpublishability{cat:headingsbox|esb}\ifn@npublishable\else
+              \def\B@xtype{headings}%
+            \fi
+          \fi
+        \fi
+      \fi
+  \fi\fi\fi
+  \ifx\B@xtype\empty\else
+    \t@plevel@utoboxtrue
+    \let\tmphb\m@rker
+    \testm@rkerexists{cat:\m@rker box|esb}%
+    \iftemp\let\B@xtype\m@rker
+      \trace{eh}{Style exists for \m@rker box}%
+    \fi
+    \trace{eh}{Starting \B@xtype box for \m@rker}%
+    \x@\@sb\x@\cat\B@xtype box\cat*
+    \let\m@rker\tmphb
+  \fi
+  \mcpushunderms{P}{#1}%
+  \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
+  \let\styst@k=\empty
+  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
+  \s@tstyst@k%
+  \trace{H}{Marker type: \p@ram, stack: \mcstack [\styst@k] \space toplevel: \iftoplevelp@r True\else False\fi}%
+  \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\global\headingmidspace=0pt \else
+    \global\headingmidspace=\p@ram\verticalsp@ceunit
+  \fi
+  \global\advance\headingmidspace by \ColAdjskip
+  \headingtopspace=\headingmidspace
+  \ifhe@dingstyle\trace{sa}{headingstyle true}%
+    \ifhe@dings\s@tbaseline{\m@rker}{\styst@k}%In a heading again, may be different so set a new baseline
+    \else
+      % Headingtopspace gets removed at top of page, preserve for titles.
+%      \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\headingtopspace=0pt \else
+%        \ift@tle\headingtopspace=0pt \else
+%          \headingtopspace=\p@ram\verticalsp@ceunit
+%          \ifinextended 
+%            \ifx\sb@rgrid\gr@dorig\else
+%              \ifx\lastp@rclass\empty %Top of side-bar
+%                \headingtopspace=0pt
+%            \fi\fi
+%            \trace{e}{hts: \the\headingtopspace, gridding:\sb@rgrid, '\lastp@rclass','\thisp@rclass'}%
+%          \fi
+%      \fi\fi
+      \ift@tle\headingtopspace=0pt \else
+        \ifinextended 
+          \ifx\lastp@rclass\empty %Top of side-bar: never any space
+            \ifx\sb@rgrid\gr@dorig\else
+              \ifx\sb@rgrid\gr@dheading\else
+                \headingmidspace=0pt
+                \headingtopspace=0pt
+              \fi
+          \fi\fi
+          \trace{e}{hts: \the\headingtopspace, hms:\the\headingmidspace, gridding:\sb@rgrid, lpc:'\lastp@rclass' tpc:'\thisp@rclass'}%
+        \fi
+      \fi
+      \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
+        \s@tbaseline{\m@rker}{\styst@k}% Obey baseline changes for headings
+        \linepenalty=1000 % minimize line count
+        \interlinepenalty=10000 % never break column/page between lines
+        \XeTeXdashbreakstate=0 % mainly for ranges in \r
+        \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
+        \savingmarks % capture marks to propagate to the top level
+        \trace{h}{marker = \m@rker, heading top space = \the\headingtopspace}%
+    \fi
+    \nobreak
+  \else\trace{sa}{headingstyle false}%
+    \ifhe@dings\endhe@dings\fi
+    \let\thisp@rclass\P@ra
+    \s@tbaseline{\m@rker}{\styst@k}%
+    \global\advance\baselineskip by \ColAdjskip
+  \fi
+ \op@ninghooks{before}{\m@rker}{\styst@k}%
+ \let\stylet@pe\ss@Para % Thus must come this late, or grouping gives odd results sometimes..
+  \ifdim\headingmidspace=0pt \else %\ifdiglot\else\vskip \ColAdjskip\fi\else
+    \ifhe@dings\nobreak\fi
+    \vskip\headingmidspace
+  \fi
+  \global\startparatrue
+  \resetp@rstyle
+%-cpar_parstyle_transition
+  \b@xedstylefalse
+  \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
+  \trace{s}{parstyle: \styst@k, (b@xedstyle\ifb@xedstyle true\else false\fi)}%
+  \ifb@xedstyle
+    \global\b@xedparstyletrue\else\global\b@xedparstylefalse\fi
+  \p@rstyle@everypar{#1}%
+  \traceifcheck{p@rstyle}%
+ \fi}
+%+cpar_parstyle_start
+
+%Some user-supplied code may cause unwanted side-effects, e.g. to newch@rstyle 
+\def\preservesettings{\let\epch@rstyle\newch@rstyle}
+\def\restoresettings{\let\newch@rstyle\epch@rstyle}
+\def\ch@pterc@tnum{}
+%\newtoks\Flag
+\def\p@rstyle@everypar#1{%
+  \trace{sP}{Redefined everypar (#1)}%
+  \everypar={%
+   \trace{sP}{everypar! (#1) n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
+   %
+   % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
+   % or something like a verse number); then we'll set up margins/indents and font
+   %
+   \preservesettings % Needed?
+   \ifx\oldlinepenalty\relax\else
+     \linepenalty=\oldlinepenalty
+     \let\oldlinepenalty\relax
+   \fi
+   \the\@veryparhooks
+   \restoresettings
+   \x@\writep@rstart\x@{\the\baselineskip}{#1}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
+   %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
+   \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\c@rref}\fi\xdef\lastc@rradj{\the\curr@djpar}%
+   \s@tsideskips{\styst@kfirst}{-1pt}%Probably need this here in case the par gets ended e.g. by end of book.
+   \trace{sa}{\m@rker\g@tdstat\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
+   \getp@ram{fontsize}{\styst@kfirst}{\styst@k}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%Need to set this before calling s@tfont, else that will consder the current fontsize as ruling.
+   \setwh@tvrstyle% set up font attributes (based on style stack)
+   \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
+   \trace{o}{paragraph #1, hsize=\the\hsize}%
+   \allowp@rindenttrue
+   \def\t@st{0}%
+   \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \ifdr@ppednumber \def\t@st{2}\fi\else \def\t@st{1}\fi
+   \ifnum 0=\t@st \else
+     \ifversion{5}{%
+       \ifIndentAtChapter\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterchap}\fi
+       \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterheading}\fi\fi
+     }{%
+       \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \trace{C}{\ptxversion v<5 afterheading}\fi\fi
+       \ifnum 1=\t@st
+         \ifIndentAtChapter\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterchap}\fi
+       \fi
+     }%
+     \trace{C}{allowp@rindent \ifallowp@rindent true\else false\fi \space\t@st, (\iffirst@fterheading fah,\fi\ifIndentAfterHeading IAH,\fi\ifIndentAtChapter IAC,\fi)}%
+   \fi
+   %
+   % Generate top-level PDF bookmark if the \h book name has changed
+   \pdfb@@kmark
+   \getp@ram{firstindent}{\styst@kfirst}{\styst@k}\let\f@rstindent=\p@ram
+   \dimen3=\ifx\p@ram\relax 0\else\f@rstindent\fi \IndentUnit
+%-cpar_parstyle_start
+   %
+   % handle drop-cap style chapter number, if this is the beginning of a chapter
+   %
+%+cpar_parstyle_chapter
+   \ifinextended\else\x@\unless\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax
+    \getp@ram{type}{\m@rker}{\m@rker}%
+    \ifx\p@ram\v@rsetext
+     \t@stpublishability{c}\ifn@npublishable
+     \else
+      % Before version 4->5 fix: Chapter numbers moved with indent.
+      % Version 4 IndentAtChapter applied only to line1, par starting on line 2 had indent stacked on cutout.
+      % Version 5 Indent at Chapter applies to line2 as well. No stacking.
+      \m@kechapterbox
+      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+      \xdef\ch@pterc@tnum{}%
+      \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
+      \ifx\f@rstindent\relax\else\ifx\p@ram\relax
+        \def\p@ram{0}% Can't use simple case if firstindent is defined
+      \fi\fi
+      \ifx\p@ram\relax % simple case - no left indent
+        \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
+        \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
+      \else % probably \q or something like that;                               %(1)
+            % need to compare cutout width with leftindent
+        \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
+        \ifallowp@rindent
+          \ifversion{5}{}{\ifdim\dimen3>0pt \advance \dimen3 by \ch@pterwd\fi}%
+          \advance\dimen0 by \dimen3
+          \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
+        \else
+          \dimen4=\wd\ch@pterbox
+          \advance\dimen0 by \dimen3
+          \ifdim\dimen2>0pt 
+            \advance\dimen4 -\dimen2
+          \fi
+        \fi
+        \trace{C}{Dropchap cutout is naturally \the\wd\ch@pterbox. Indent on line 1 is \the\dimen0/\the\dimen4/\the\dimen2}%
+        \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
+          \x@\c@tcmd\x@{\the\dimen4}{0}{1}% create extra indent
+        \else % the indent is already big enough, so just use it as is
+          \trace{C}{Dropchap box set to \the\dimen0, so it's properly aligned.}%
+          \setbox\ch@pterbox=\hbox to \dimen0{\box\ch@pterbox\hfil}%
+        \fi
+        \dimen4=\ch@pterwd \advance\dimen4 by -\dimen2 % and for wrap if needed
+        \ifdim\dimen4>0pt 
+          \trace{C}{Dropchap cutout for 2nd line set to \the\dimen4}%
+          \x@\c@tcmd\x@{\the\dimen4}{1}{1}\fi
+        \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
+      \fi
+      \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
+      \dr@ppednumbertrue
+     \fi
+     % generate second-level PDF bookmark for the chapter
+     \pdfch@ptermark
+    \fi
+%-cpar_parstyle_chapter
+%+cpar_parstyle_drop
+   \else
+    \ifdr@ppednumber % second line of chapter number, need to check indent/cutout
+     \trace{C}{dr@ppednumbertrue, line2 of chapter number}%
+     \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+     \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
+     \trace{C}{leftmargin? '\p@ram', \styst@kfirst, \styst@k}%
+     \ifversion{5}{%
+        \ifx\f@rstindent\relax\else\ifx\p@ram\relax
+          \def\p@ram{0}% Can't use simple case if firstindent is defined
+       \fi\fi
+     }{}%
+     \ifx\p@ram\relax % simple case - no left indent
+       \ifx\ch@pterc@tnum\empty
+         \trace{C}{New cutout needed}%
+         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{1}% No pre-existing cutout
+       \else
+         \trace{C}{Modifying existing cutout \ch@pterc@tnum}%
+         \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
+       \fi
+     \else % probably \q or something like that;
+           % need to compare cutout width with leftindent and 1stline indent
+       \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
+       \advance\dimen0 by \dimen3
+       % now \dimen0 is the real (target) indent of the 1st line
+       \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0 \relax
+       \trace{C}{Modified cutout (maybe) needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd, \the\dimen4}%
+       \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
+         \trace{sP}{Indent is insufficient: \the\dimen4, \the\dimen5}%
+         \ifx\ch@pterc@tnum\empty
+           \trace{C}{New cutout needed (\ch@pterc@tnum)}%
+           \x@\c@tcmd\x@{\the\dimen4}{0}{1}% No pre-existing cutout
+         \else
+           \trace{C}{modifying (\ch@pterc@tnum)}%
+           \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
+           %\Flag{\MSG{FLAG!}M\Flag{}}%
+         \fi
+         \dimen3=0pt
+         %\advance\dimen3 by -\ch@pterwd
+       \else % the indent is already big enough, so just use it as is
+        \dimen5=0pt \ifcsname cut@width\the\@numcuts\endcsname \x@\dimen5 \csname cut@width\the\@numcuts\endcsname\fi
+        \trace{sP}{Indent is sufficient: \the\dimen3, \the\dimen4, \the\dimen5}%
+        \ifversion{5}{\advance\dimen3 by -\dimen5}{%
+          \ifversion{3}{\ifdim\dimen4 > -1pt \advance\dimen3 by -\dimen5\fi}{}}%
+       \fi
+     \fi
+     \dr@ppednumberfalse
+     \trace{hv}{Setting new chapter spacefactor (ep1)}%
+     \spacefactor=\n@wchaptersf % prevent hanging verse number here
+    \fi
+   \fi\fi
+   %\the\Flag
+   \run@pending
+%-cpar_parstyle_drop
+%+cpar_parstyle_final
+   \ifx\f@rstindent\relax \else
+    \ifdim\dimen3 < 0pt
+     \allowp@rindenttrue %
+    \else
+     \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
+    \fi
+    \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
+                      % (note that we don't suppress negative indents, as in \q1 etc)
+     \trace{Ds}{\m@rker\ifdiglot\c@rrdstat\fi\space  First indent \f@rstindent * \the\IndentUnit, kern by \the\dimen3}%
+     \kern\dimen3                                              %(1)
+    \fi
+   \fi
+   \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
+   \global\p@ranesting=1
+   \let\tmpn@xtparstart\n@xtparstart\gdef\n@xtparstart{}% Allow n@xtparstart to re-trigger itself
+   \tmpn@xtparstart
+   \op@ninghooks{start}{\m@rker}{\styst@k}%handle <start> hook
+   \ifdr@ppednumber \trace{hv}{Setting new chapter spacefactor (ep2)}%
+     \spacefactor=0\n@wchaptersf \fi
+   % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
+   \startparafalse\first@fterheadingfalse
+   \ifb@xedparstyle
+      \trace{s}{Par settings requesting boxing}%
+      \setbox\tmpctsb@x\hbox\bgroup
+   \fi
+  }% end everypar
+}
+%-cpar_parstyle_final
+
+\def\m@difychapcut#1#2{%Change the width of an existing cutout
+  \trace{C}{Modifying cutout #1 width to be #2 from \csname cut@width#1\endcsname, length: \csname cut@lines#1\endcsname }%
+  \expandafter\xdef\csname cut@width#1\endcsname{#2}%
+}
+%+cpar_pdfbookmark
+\newif\ifRTL
+\newif\ifallowp@rindent
+\newif\ifdr@ppednumber
+\newif\ifdr@ppedother
+\dr@ppedotherfalse
+\newif\ifIndentAtChapter
+\newif\ifIndentAfterHeading \IndentAfterHeadingtrue
+\newif\ifOmitVerses \OmitVersesfalse
+\newif\ifDropActions \DropActionsfalse
+\def\n@wchaptersf{998}
+\let\book\relax
+\let\prevb@ok\relax
+\let\bookR\relax
+\let\prevb@okR\relax
+\def\pdfb@@kmark{\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn\relax \pdfb@@km@rkD\fi\else\pdfb@@km@rk\fi}
+
+\newif\ifActions \Actionstrue
+\def\pdf@utline#1#2#3{%
+% #1 dest id, #2 outline title, #3 outline level
+  \ifActions
+    \special{pdf:dest (#1) [@thispage /Fit]}%
+    \special{pdf:outline #3 << /Title (#2) /A << /S /GoTo /D (#1) >> >>}%
+  \else
+    \special{pdf:outline #3 << /Title (#2) /Dest [@thispage /Fit] >>}%
+  \fi
+}
+
+\def\pdfb@@km@rk{\trace{V}{pdfbookmark: \book \space after \prevb@ok}%
+ \ifx\book\prevb@ok\else
+  \global\dr@ppednumberfalse
+  \ifDropActions\else\bgroup\liter@lspecials
+    \ifx\book\relax \let\t@mp=\id@@@ \else \let\t@mp=\book\fi
+    \ifrefbookmarks\let\t@mp=\id@@@\fi
+    \pdf@utline{\id@@@.}{\t@mp}{0}%
+    \global\let\prevb@ok\book\egroup\fi
+ \fi}
+
+\def\Alternative{\ /\ }%
+\let\PDFBookMarkColumn=\relax
+\let\b@okDiglot\empty
+
+%Build a \Alternative separated list of book names 
+\def\buildb@@k#1{\bgroup\liter@lspecials\edef\bbtmp{#1}\x@\let\x@\t@st\csname book\if L\bbtmp\else\bbtmp\fi\endcsname
+  \ifx\t@st\relax\let\t@st\id@@@\fi
+  \ifx\b@okDiglot\t@st\else 
+    \ifx\b@okDiglot\empty\xdef\b@okDiglot{\t@st}\else\xdef\b@okDiglot{\b@okDiglot\Alternative\t@st}\fi
+  \fi
+  \trace{d}{b@okDiglot(#1) is \b@okDiglot (\bbtmp / \t@st)}%
+ \egroup
+}
+
+\def\pdfb@@km@rkD{\ifDropActions\else
+ %\tracingmacros=1
+ %\tracingassigns=1
+ \let\col@do\buildb@@k
+ \let\b@okDiglot\empty
+ \x@\each@col\diglot@list\E
+ %\message{Bookname now: \b@okDiglot}%
+ \ifx\b@okDiglot\prevb@okD\else
+  \bgroup\liter@lspecials
+   \ifrefbookmarks\let\t@mp=\id@@@\else\let\t@mp=\b@okDiglot\fi
+   \pdf@utline{\id@@@.}{\t@mp}{0}%
+   \global\let\prevb@okD\b@okDiglot
+  \egroup
+ \fi\fi}
+%-cpar_pdfbookmark
+
+%+cpar_pdfchaptermark
+\def\prevch@p{}
+\def\pdfch@ptermark{\ifDropActions\else\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn\relax \pdfch@pterm@rk\fi
+                                        \else\pdfch@pterm@rk\fi\fi}
+\def\pdfch@pterm@rk{%
+  \ifx\prevch@p\ch@pter\else
+    \bgroup\liter@lspecials
+    \edef\@@side{\g@tdstat}%
+    \ifdiglot
+      \let\t@mp\b@okDiglot
+    \else
+      \let\t@mp\book
+    \fi
+    \x@\let\x@\t@mp\csname book\@@side\endcsname
+    \ifrefbookmarks\let\t@mp=\id@@@\fi
+    \ifx\book\relax \let\t@mp=\id@@@ \fi
+    \pdf@utline{\id@@@\@@side\ifOneChapBook\else.\ch@pter\fi}{\t@mp\ifOneChapBook\else\space\ch@pter\fi}{1}%
+  \egroup\fi}
+
+\newif\ifrefbookmarks
+%-cpar_pdfchaptermark
+
+%+cpar_initparlocs
+\newwrite\p@rlocs
+\newread\readp@rlocs
+\def\initp@rlocs{%
+  % check if there's a delayed-chapters file from a previous run
+  \openin\readp@rlocs="\j@bname.delayed"
+  \ifeof\readp@rlocs \let\n@xt\relax
+  \else \def\n@xt{\input "\j@bname.delayed"}\fi
+  \closein\readp@rlocs
+  % and if so, read it so we'll use those settings
+  \n@xt
+}
+\addtoinithooks{\initp@rlocs}
+\def\locs@startstop#1#2#3{%
+  %\showboxdepth=99
+  %\showboxbreadth=99
+  \let\old@ep=\everypar
+  \everypar{}%
+  \setbox#1\vbox to \ht#2{%
+    %\hsize=\wd#1%
+    \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
+    \pdfsavepos
+    \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
+    \edef\dc@ref@rgs{avail="\the\availht" width="\the\wd#2"}%
+    \t@gstartfull{Column}{#3}{\dc@ref@rgs}%
+    \unvbox#1%
+    \pdfsavepos\t@gend{Column}%
+    \write\p@rlocs{\string\@colstop{\the\pdflastxpos}{\the\pdflastypos}}%
+    %\MSG{\dc@ref@rgs (\the\hsize) ->}%
+    }%
+    %\MSG{\the\ht#1,\the\dp#1,\the\wd#1}%
+    %\showbox#1
+}
+%-cpar_initparlocs
+
+%+cpar_finishparlocs
+\def\finishp@rlocs{%
+  \immediate\closeout\p@rlocs
+  \trace{x}{Starting parlocs processing}%
+  \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
+  \immediate\openout\delayf@le="\j@bname.delayed"
+  %\tracingassigns=1
+  \input "\j@bname.parlocs"
+  \immediate\closeout\delayf@le
+  \trace{x}{Finished parlocs processing}%
+}
+\newif\ifdelay@pen
+\let\delayf@le=\p@rlocs % we write the delay file while reading the finished parlocs, so we can re-use the write stream
+\addtoendhooks{\finishp@rlocs}
+%-cpar_finishparlocs
+
+
+% commands that get written to the parlocs file to record locations
+
+%+cpar_parloccmds
+%prev@y is the pdf y pos of the current paragraph
+%this@y is the pdf y pos of the last line within the paragraph 
+%thispar@lines is number of lines in the (recently finished) paragrpah
+%
+\newcount\prev@y \newcount\this@y \newcount\thing@y
+\newcount\tmp@lines \newcount\thispar@lines
+\newcount\p@rlinesgoneMonoglot
+\let\p@rlinesgone\p@rlinesgoneMonoglot
+
+\def\this@pgno{}
+\def\par@items{,}   % \cstackempty but not defined yet
+\x@\newif\csname ifinp@r-\endcsname
+
+\def\calc@p@rlinesgone#1#2{%
+  \ifcsname baselineskip@\c@rrdstat\endcsname
+    \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+    \relax % Must end look-ahead from setting baselineskip
+  \fi
+  \ifdim 100sp>\baselineskip \trace{C}{baselineskip too low}%
+  \else
+    \trace{C}{#2: \the\p@rlinesgone \space += #1 / \the\baselineskip}%
+    \ifdim #1 > 1pt
+      \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
+    \fi
+  \fi
+  \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
+}
+
+\def\@parstart#1#2#3#4#5#6{%
+  \prev@y=#6\relax
+  \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
+  \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
+  \trace{C}{@parstart \tot@col@ht - \the\dimen1 = \prev@col@ht}%
+  \csname inp@r-\c@rrdstat true\endcsname
+  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
+
+\def\@parend#1#2#3#4{%
+  \this@y=#3\relax
+  \ifnum\this@y=\prev@y 
+    \x@\ifdim\x@ 0pt\x@=\csname baselineskip@\c@rrdstat\endcsname
+      \advance\p@rlinesgone by 1
+    \fi
+  \else
+    \relax\calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
+  \fi
+  \csname inp@r-\c@rrdstat false\endcsname
+}
+
+\def\@parlen#1#2#3#4#5#6{}
+\def\@noteid#1#2#3#4#5#6{}
+\def\@parpageend#1#2#3{}
+\def\@parnote#1#2#3{}
+\def\@notebox#1#2#3{}
+
+\def\@nontextstart#1#2{\xdef\n@ntextstart{#2}}%
+\def\@nontextstop#1#2{%
+  \csname ifinp@r-\c@rrdstat\endcsname
+    \ifcsname n@ntextstart\endcsname
+      \dimen1=\dimexpr \n@ntextstart sp - #2 sp\relax
+      \trace{C}{Non text for \n@ntextstart -#2 (=\the\dimen1)}%
+      \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}%
+      \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}%
+  \fi\fi
+}%
+
+\def\@pgstart#1#2#3#4{%
+  \edef\this@pgno{#1}}
+
+\newif\ifp@rlengthimportant
+
+\def\@@colstart#1#2#3#4#5{%
+  \trace{C}{@colstart: \the\p@rlinesgone.}
+  \edef\prev@col@x{#4}%
+  \edef\prev@col@y{#5}%
+  \prev@y=#5\relax
+  \edef\tot@col@ht{\the\dimexpr #1 + #2\relax}%
+  \let\prev@col@ht\tot@col@ht
+  \edef\prev@col@wd{#3}%
+  \p@rlengthimportantfalse
+}
+\@@colstart{0pt}{0pt}{0pt}{0}{0}
+\def\@@colstop#1#2{%
+  \edef\this@col@x{#1}%
+  \edef\this@col@y{#2}%
+  %\prev@y=#1
+  \trace{C}{colstop:\c@rrdstat:\par@items}%
+  \csname ifinp@r-\c@rrdstat\endcsname
+    \calc@p@rlinesgone{\the\dimexpr \prev@col@ht\relax}{colstop}%
+  \fi
+  \let\d@=\check@pagefoot
+  \x@\cstackdown\par@items\E
+}
+\def\@colstart#1#2#3#4#5{%
+  \let\p@rlinesgone=\p@rlinesgoneMonoglot
+  \@@colstart{#1}{#2}{#3}{#4}{#5}}
+\def\@colstop#1#2{\def\c@rrdstat{}%%
+  \@@colstop{#1}{#2}}
+%Do somehing clever for items that are near 
+%the end of the column.. Problem: the ones we're
+%interested in doing clever things with were not put
+%on the pending stack. Use a new stack, \par@items and
+%...  Do somthing with it. At the moment just moan.
+\def\check@pagefoot#1|#2|#3\E{%
+  \ifnum #3 < \this@col@y
+  \dimen1=\this@col@y sp
+  \advance \dimen1 by -#3 sp
+  \MSG{*** item type '#1' in cutout at #2 drops below the bottom of the column(by more than \the\dimen1)}%
+  \fi
+}
+
+\def\@parlines#1{%
+  \thispar@lines=#1
+%  \MSG{* calculated \string\DelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}}%
+  %\ifx\pendingb@@k\empty\else
+    %\ifdr@ppednumber
+      %\wr@teDelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\thispar@lines}%
+      %\let\pendingch@pter\empty\let\pendingb@@k\empty
+    %\fi
+  %\fi
+  \trace{C}{parlines: \the\thispar@lines =\the\p@rlinesgone?}%
+  \ifnum \thispar@lines=\p@rlinesgone\else
+    \ifp@rlengthimportant\let\tmp\MSG\else\let\tmp\message\fi
+    \tmp{*** Mismatch between calculated (\the\thispar@lines) and reported (\the\p@rlinesgone) lines on page \this@pgno.  for Cutouts may not have been calculated properly}%
+    \let\tmp\undefined
+  \fi
+  \ifx\pending@items\cstackempty\else
+    \trace{C}{Before parlines: pending: \pending@items}%
+   % \thispar@lines=\prev@y\advance\thispar@lines by -\this@y
+   % \divide\thispar@lines by \baselineskip
+    \def\D@IT{%
+      %\tmp@lines=\thing@after
+      \ifnum\thing@after>500\MSG{*** Rubbish data got into parlocs file.  \this@thing\space\thing@ref\space ignored}%
+      \else
+        \ifnum\thing@after>\thispar@lines
+          \MSG{*** \this@thing\space \thing@ref Is supposed to be delayed by \thing@after lines, but paragraph is \the\thispar@lines long}%
+          \tmp@lines=\thing@after
+          \advance\tmp@lines by -\thispar@lines
+          \edef\thing@after{\the\tmp@lines}%
+          \add@pending{\this@thing}{\thing@ref}{\the\this@y}{\thing@wd}{\thing@ht}{\thing@after}{\thing@side}%
+      %\this@y=#2\relax
+      %\ifnum\thing@y=0% First time. Don't adjust anything
+        \else
+          \ifnum\thing@y<\this@y
+            \MSG{*** unable to determine \string\DelayedItem\space setting for \this@thing/\thing@ref (\the\thing@y, \the\this@y), removed from list}%
+          \else
+            \tmp@lines=\thing@y
+            \advance\tmp@lines by -\this@y
+            \divide\tmp@lines by \baselineskip
+            \advance\tmp@lines by \thing@after
+            \MSG{\this@thing \thing@ref [ \thing@after=>\the\tmp@lines]}%
+            \add@pending{\this@thing}{\thing@ref}{\the\this@y}{\thing@wd}{\thing@ht}{\thing@after}{\thing@side}%
+          \fi
+        \fi
+      \fi
+    }%
+    \let\d@=\parse@pending
+    \let\tmp\pending@items
+    \global\let\pending@items\cstackempty
+    \x@\cstackup\tmp\E
+    \trace{C}{After parlines: pending: \pending@items}%
+  \fi
+  \let\n@xtline=\relax
+  \trace{C}{Pending: \pending@items}%
+  \ifx\pending@items\cstackempty\else
+    \let\d@=\write@pending
+    \x@\cstackdown\pending@items\E
+  \fi
+}
+%-cpar_parloccmds
+
+%+cpar_delayedchap
+%\def\@delayedchapter#1#2#3#4{\chap@y=#4\relax
+  %\ifnum\prev@y<\chap@y % para start was lower than chapter number, must have passed a col/page break
+    %\def\pendingb@@k{#1}%
+    %\def\pendingch@pter{#2}%
+  %\else % para start level with or above chapter number; OK to calculate # of lines
+    %\advance\prev@y by -\chap@y
+    %\divide\prev@y by \baselineskip
+    %\MSG{* calculated \string\DelayedChapter{#1}{#2}{\the\prev@y}}%
+    %\wr@teDelayedChapter{#1}{#2}{\the\prev@y}%
+  %\fi}
+
+\def\@delayedchapter#1#2#3#4{% Part of post-run processing
+  \trace{C}{delayedchapter #1 #2 #3 #4}%
+  \@delayedthing{chapter}{#1#2.0}{#4}{\the\ch@pterwd}{2}{0}{\ifRTL R\else L\fi}{#3}{#4}}
+
+% @delayedthing
+% #1 - type-code (determines flexibility of position
+% #2 - Reference trigger point
+% #3 - ?
+% #4 - cutout width  (pt)
+% #5 - cutout length (lines)
+% #6 - Cutout delay
+% #7 - cutout side
+% #8 - pdfpos X
+% #9 - pdfpos Y
+\def\HistoricDelays#1#2#3#4{%
+  \x@\edef\csname historicdelays-#1\endcsname{#2}% A count of how many times this item has been (re)positioned
+  \x@\edef\csname lastdelay-#1\endcsname{#3}% The last user-requested delay
+  \x@\edef\csname historicdelay-#1\endcsname{#4}% History of computed delay positions
+}
+\def\@delayedthing#1#2#3#4#5#6#7#8#9{%Part of post-run processing
+  \thing@y=#9\relax 
+  \ifcsname baselineskip@\c@rrdstat\endcsname
+    \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+  \fi
+  \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9, bl:\the\baselineskip}%
+  %First, remember where the bottom of the item probably is.
+  \tmp@lines=\thing@y
+  \trace{C}{\the\tmp@lines}% 
+  \dimen1=\dimexpr #5 \baselineskip\relax %how many lines the item is
+  \trace{C}{... -\the\dimen1}% 
+  \advance\tmp@lines by -\dimen1
+  \dimen1=#6 \baselineskip % delay of the item
+  \trace{C}{... -\the\dimen1}% 
+  \advance\tmp@lines by -\dimen1
+  \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
+  \tmp@lines=\prev@y
+  \advance\tmp@lines by -\thing@y
+  \divide\tmp@lines by \baselineskip
+  \advance\tmp@lines by #6
+  \advance\tmp@lines by \p@rlinesgone
+  \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
+  \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
+  %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
+  \ifnum\tmp@lines>3 \p@rlengthimportanttrue\fi
+  \wr@teHistoric{#1}{\the\tmp@lines}{#6}%
+  \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
+}
+\def\wr@teHistoric#1#2#3{%
+  \ifcsname historicdelays-#1\endcsname 
+    \edef\tmpc{\the\numexpr 1+\csname historicdelays-#1\endcsname\relax}%
+  \else
+    \edef\tmpc{0}%
+  \fi
+  \edef\dc@ref@rgs{\string\HistoricDelays{#1}{\tmpc}{#3}{\ifcsname historicdelay-#1\endcsname\csname historicdelay-#1\endcsname,\fi#2}}%
+  \ifcsname lastdelay-#1\endcsname \edef\tmp{#3}%
+    \x@\ifx\csname lastdelay-#1\endcsname\tmp \else
+      \edef\dc@ref@rgs{\string\HistoricDelays{#1}{0}{#3}{#2}}%
+      \x@\edef\csname historicdelays-#1\endcsname{0}% reset count to 0
+    \fi
+  \fi
+  \immediate\write\delayf@le{\dc@ref@rgs}%
+}
+%-cpar_delayedchap
+
+%+cpar_writedelayed
+\def\setCutoutSlop#1#2#3{\x@\xdef\csname raiselimits-#1\endcsname{#2,#3}}
+\def\setCutoutSlopDefault#1#2{\xdef\defaultSlop{#1,#2}}
+\setCutoutSlop{chapter}{1}{0} % Up,Down
+\setCutoutSlopDefault{2}{1}% 2 up, 1 down
+\def\@@getCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname}%
+\def\g@tCutoutSlop#1{\@@getCutoutSlop{#1}\ifx\r@iselimit\relax\x@\p@rselimit\defaultSlop\E\else\x@\p@rselimit\r@iselimit\E\fi}
+\def\p@rselimit#1,#2\E{\edef\@djustmin{-#1}\edef\@djustmax{#2}}
+\def\Rerun#1#2#3{}
+ 
+\def\wr@teDelayedItem#1#2#3#4{% Part of post-run processing
+  %\wr@teDelayedItem{thingtype}{curref}{delay}{cutout wd}{cutout ht}{cutout after}{cutout side}%
+  \edef\c@rref{#2}%
+  \trace{C}{wDI}%
+  \delay@test{#1}% 
+  \raise@test{#1}%
+  \ifx\t@std@lay\relax \pr@vdelay=0 
+  \else \pr@vdelay=\t@std@lay\fi
+  \th@sdelay=#3\relax % Delay calculated here
+  \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
+    \ifx\t@str@ise\relax
+      \trace{C}{PARLOC:ok}%
+    \else
+       \ifdim\t@str@ise pt=0pt\else
+         \immediate\write\delayf@le{\string\Rerun{#1}{F}{No need for RaiseItem}}%
+         \MSG{PARLOC: Rerun. RaiseItem was applied for #1 #2, but not needed}%
+       \fi
+    \fi
+  \else
+    \tmp@lines=\pr@vdelay
+    \advance\tmp@lines by -\th@sdelay % Negative if the image/chapnum is going up, +ve if going down
+    %\ifx\t@str@ise\relax \else \count255=\t@str@ise\advance\tmp@lines by -\count255\fi
+    %\ifnum\tmp@lines <0 \count255=-\tmp@lines\else\count255=\tmp@lines\fi
+    \g@tCutoutSlop{#1}%
+    \ifcsname historicdelays-#1\endcsname
+      \x@\let\x@\tmpl\csname historicdelays-#1\endcsname
+      \ifnum \@djustmin < -\tmpl
+        \trace{C}{Limiting @djustmin to -\tmpl, as it's an early cycle}%
+        \edef\@djustmin{-\csname historicdelays-#1\endcsname}%
+      \fi
+      \ifnum \tmpl < -\@djustmax
+        \trace{C}{Limiting @djustmax to \tmpl, as it's an early cycle}%
+        \edef\@djustmax{\csname historicdelays-#1\endcsname}%
+      \fi
+    \else
+    \fi
+    \trace{C}{tmplines =\the\tmp@lines. OK if \@djustmin <= tmplines <=  \@djustmax}%
+    \tempfalse
+    \edef\@accept@djmin{\@djustmin}%
+    \edef\@accept@djmax{\@djustmax}%
+    \ifnum \tmp@lines<\@djustmin\relax 
+      \edef\@accept@djmin{\the\tmp@lines}%
+      \temptrue
+    \fi
+    \ifnum \tmp@lines>\@djustmax\relax 
+      \edef\@accept@djmax{\the\tmp@lines}%
+      \temptrue
+    \fi  % if new delay is <2 away than old, we can use \RaiseItem
+    \iftemp
+      \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2.}
+      \immediate\write\delayf@le{\string\Rerun{#1}{T}{Position changed}}%
+      \message{Current slop: \string\setCutoutSlop{#1}{\the\numexpr -\@djustmin\relax}{\@djustmax}}%
+      \message{Would use RaiseItem if: \string\setCutoutSlop{#1}{\the\numexpr -\@accept@djmin\relax}{\@accept@djmax}}%
+    \else
+      \th@sdelay=\pr@vdelay % Retain past delay and (if needed) use raiseitem
+      \multiply\tmp@lines by -1 % change sign to match semantics of raise.
+      \ifx\t@str@ise\relax
+        \ifnum\tmp@lines=0\else
+          \ifx\t@std@lay\relax\else
+            \MSG{PARLOC: Rerun. RaiseItem needed at #1 #2}%
+            \immediate\write\delayf@le{\string\Rerun{#1}{F}{Need RaiseItem}}%
+            \temptrue
+          \fi
+        \fi
+      \else 
+        \ifnum\tmp@lines=\t@str@ise
+          \ifnum\tmp@lines=0\relax\else % Need the same RaiseItem we had last time. 
+            \trace{C}{PARLOC: OK.  RaiseItem still needed at #1 #2}%
+            \temptrue
+          \fi
+        \else 
+          \MSG{PARLOC: Rerun with new RaiseItem (by \the\tmp@lines was \t@str@ise) at #1 #2}%   
+          \temptrue
+          \immediate\write\delayf@le{\string\Rerun{#1}{F}{RaiseItem changed}}%
+        \fi
+      \fi
+      \iftemp
+        \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}{\the\tmp@lines}}%
+      \fi
+    \fi
+  \fi
+  \immediate\write\delayf@le{\string\DelayedItem{#1}{#2}{\number\th@sdelay}{#4}}%
+}
+\newcount\pr@vdelay \newcount\th@sdelay
+\newif\ifsk@pping \newbox\j@nkbox
+\newbox\tmpctsb@x
+%-cpar_writedelayed
+
+% Create the drop-cap in \ch@pterbox
+%+cpar_makechapterbox
+\newdimen\ch@pterwd
+\newbox\ch@pterbox
+\newbox\ch@pternote
+\def\beforechapternum#1#2#3{}
+\def\afterchapternum#1#2#3{}
+\def\AfterChapterSpaceFactor{3}
+\def\m@kechapterbox{%
+ \trace{sP}{m@kechapterbox for \ch@ptert@xt, reftooltip\ifreftooltip true\else false\fi}%
+ \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
+ \edef\printchapter{\ch@ptert@xt}%
+ \csname PrepChapterNumber\endcsname
+ \getp@ram{rightmargin}{c}{c}%
+ \let\ch@pterrmargin\p@ram
+ \ifx\ch@pterrmargin\relax\else\ifdim 0pt=\ch@pterrmargin\IndentUnit \let\ch@pterrmargin\relax\fi\fi
+ \getp@ram{leftmargin}{c}{c}%
+ \let\ch@pterlmargin\p@ram
+ \ifx\ch@pterlmargin\relax\else\ifdim 0pt=\ch@pterlmargin\IndentUnit \let\ch@pterlmargin\relax\fi\fi
+ \getp@ram{justification}{c}{c}%
+ \setbox\ch@pterbox=\hbox{%
+    \ifx\p@ram\r@ght
+      {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
+      \s@tfont{c}{c}\printchapter%
+    \else
+      \ifx\ch@pterlmargin\relax\else\kern \ch@pterlmargin\IndentUnit\fi
+      {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
+      \s@tfont{c}{c}\printchapter%
+    \fi
+    {\afterchapternum{\id@@@}{\book}{\ch@pter}}%
+ }%
+ \ifx\p@ram\r@ght
+   \ifx\ch@pterrmargin\relax\let\ch@pterrmargin\ch@pterlmargin\fi
+   \ifx\ch@pterrmargin\relax\def\ch@pterrmargin{0}\fi
+   \trace{sP}{chapterbox right-aligned}%
+   \setbox\ch@pterbox=\hbox to \ch@pterrmargin\IndentUnit{\hss\unhbox\ch@pterbox}%
+ \fi
+ \ifrotate
+  \dimen0=1.0\ht\ch@pterbox
+  \dimen1=\ht\ch@pterbox \advance\dimen1 by \dp\ch@pterbox\advance\dimen1 by \AfterChapterSpaceFactor \FontSizeUnit
+  \dimen2=0.5\wd\ch@pterbox \advance\dimen2 by -0.5\ht\ch@pterbox
+  \setbox\ch@pterbox=\hbox{\lower\dimen2\hbox to \dimen0{%
+    \hskip\ht\ch@pterbox \special{x:gsave}\special{x:rotate 90}%
+    \box\ch@pterbox\special{x:grestore}\hss}}%
+  \ht\ch@pterbox=\wd\ch@pterbox\wd\ch@pterbox=\dimen1
+ \else
+  %\getp@ram{raise}{c}{\styst@k}%
+  \getp@ram{raise}{c}{c+\styst@k}%
+  \dimen0\baselineskip
+  \trace{c}{Lowering by \the\dimen0 + \p@ram}%
+  \ifx\p@ram\relax\else\advance\dimen0 by -\p@ram\fi
+  \setbox\ch@pterbox=\hbox{\lower\dimen0\box\ch@pterbox
+    \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
+ \fi
+ \XeTeXuseglyphmetrics=\@seglyphmetrics
+ \ch@pterwd=\wd\ch@pterbox
+ \trace{sP}{box width=\the\ch@pterwd}%
+ \dp\ch@pterbox=0pt
+}
+%-cpar_makechapterbox
+
+\newif\ifreftooltip
+\def\ch@ptooltipstart{\special{pdf:bann << /Type /Annot /Subtype /Widget /H /N /TU (\id@@@ \space \ch@pter :\v@rse) /T (tooltip \id@@@ \ch@pter :\v@rse) /C [] /FT /Btn /F 768 /Ff 65536 /BS << /W 0 >> >>}}
+\def\ch@ptooltipend{\special{pdf:eann}}
+
+%+cpar_ptxnb
+% Used to delay a cutout until later in the paragraph, for no-break chapter numbers
+%\def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
+  %\x@\edef\csname delay-\ucb@@k.#2\endcsname{#3}}
+
+\def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
+  \DelayedItem{chapter}{\ucb@@k.#2}{#3}{#2}}
+
+%Param 3 is in lines.
+\def\DelayedItem#1#2#3#4{%
+  \x@\xdef\csname delay-#1.#2\endcsname{#3}\x@\xdef\csname delayparam-#1.#2\endcsname{#4}}
+
+% Used to set a delayed paragraph number one line higher (projecting above the line with v.1 instead of below it)
+%\def\RaiseChapter#1#2{\uppercase{\def\ucb@@k{#1}}%
+  %\x@\let\csname raise-\ucb@@k.#2\endcsname=1}
+\def\RaiseChapter#1#2{\uppercase{\def\ucb@@k{#1}}%
+  \RaiseItem{chapter}{\ucb@@k.#2}{-1}}
+
+\def\RaiseItem#1#2#3{%
+  \x@\def\csname raise-#1.#2\endcsname{#3}}%
+
+\def\delay@test#1{\x@\let\x@\t@std@lay\csname delay-#1.\c@rref\endcsname
+  \trace{C}{delay@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref ::\t@std@lay}}%
+
+\def\raise@test#1{\x@\let\x@\t@str@ise\csname raise-#1.\c@rref\endcsname 
+  \trace{C}{raise@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref ::\t@str@ise}}%
+
+\def\ptx@nb{%
+  \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax
+    \MSG{nb ignored near \ifdiglot\dc@rref\else\c@rref\fi: not after chapter}%
+  \else
+    \delay@test{chapter}%
+    %\x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
+    \ifx\t@std@lay\relax
+      \MSG{*** no-break at \id@@@\ifdiglot \c@rrdstat\fi\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
+      \def\t@std@lay{0}%
+    \else 
+      \MSG{* no-break at \id@@@\ifdiglot \c@rrdstat\fi\space\ch@pter (\t@std@lay)}%
+    \fi
+    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
+    \ifhmode
+      \unskip\let\aft@rnb\space
+    \else
+      \let\aft@rnb\empty
+      \leavevmode\str@t                                                           %(1)
+    \fi
+    \t@stpublishability{c}\ifn@npublishable
+     \setbox\ch@pterbox=\box\voidb@x
+    \else
+     \m@kechapterbox
+     \setbox\ch@pterbox=\hbox{\box\ch@pterbox
+       \kern\ifRTL\rightskip\else\leftskip\fi}%
+     %\ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+     %\x@\c@tcmd\x@{\the\ch@pterwd}{\t@std@lay}{2}%
+     \raise@test{chapter}%
+     \ifx\t@str@ise\else\ifdim \t@str@ise pt=1pt
+      \vadjust pre {\nobreak}% Prevent break before this line if the box is raised
+     \fi\fi
+     \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)
+      \ifx\t@str@ise\relax \else \kern-\t@str@ise\baselineskip \fi
+      \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
+      \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}%
+      \pdfb@@kmark\pdfch@ptermark\nobreak}%
+     \beginL\pdfsavepos                                                         %(3)
+     %\edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
+     \ifdiglot\edef\@@ref{\id@@@\c@rrdstat}\else\edef\@@ref{\id@@@}\fi
+     \edef\dc@ref@rgs{\string\@delayedchapter\string{\@@ref\string}\string{\ch@pter\string}}%
+     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
+     \dr@ppednumbertrue
+     \add@pending{chapter}{\ifdiglot\dc@rref\else\c@rref\fi}{0}{\the\ch@pterwd}{2}{\t@std@lay}{\ifRTL R\else L\fi}%
+     \run@pending
+     \aft@rnb
+    \fi
+  \fi}
+
+\newbox\str@tbox
+\def\mkstr@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0                %(4)
+  \char32 \hss}}
+\def\str@t{\mkstr@t\copy\str@tbox}
+%-cpar_ptxnb
+
+
+%+cpar_resetparstyle
+\def\resetp@rstyle{%
+ \leftskip=0pt \rightskip=\leftskip
+% \dimen0=\hsize \advance\dimen0 by -4em \parfillskip=2em plus \dimen0 minus 1em
+ \parfillskip=0pt plus 1fil
+ %\emergencystretch=11in
+ \parindent=0pt }
+%-cpar_resetparstyle
+
+\newif\iftaggedPDF \taggedPDFfalse
+\newcount\tagCount
+\def\t@gstart#1#2{\t@gstartfull{#1}{#2}{}}
+\def\t@gstartfull#1#2#3{%
+  \iftaggedPDF
+    \global\advance\tagCount by 1
+    \edef\t@gt@mp{ptxp:tagstart #1 #2 \the\tagCount\space #3}%
+    \special{\t@gt@mp}%
+  \fi
+}
+\def\t@gempty#1#2{\t@gemptyfull{#1}{#2}{}}
+\def\t@gemptyfull#1#2#3{%
+  \iftaggedPDF
+    \global\advance\tagCount by 1
+    \edef\t@t@mp{ptxp:tag #1 #2 \the\tagCount\space #3}%
+    \special{\t@t@mp}%
+  \fi
+}
+\def\t@gend#1{\t@gendfull{#1}{}}
+\def\t@gendfull#1#2{\iftaggedPDF\special{ptxp:tagend #1 #2}\fi}
+
+\endinput
