@@ -1,8 +1,30 @@
 PTXprint 2.8.20 Release Notes
-9 Jul 2025
+17 Jul 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.21 (17 Jul 2025)
+  * Fix modules and \inc
+  * Update DBL link to new URL (new site requires login)
+  * Minor bugs in xref and pos being None
+  * Fallback scripture files to usfm
+  * Nearly fix strongs and xrefs
+  * Add to snippets.md (kerning digits in a chapter number)
+  * Refactor s@tsideskips ready for note integration
+  * Add inner and outer as paragraph alignment options
+  * Add Blue, Orange, Red status for Update available button
+  * Fix marginnotes both 1 and 2 col
+  * Fix collision avoidance direct algorithm
+  * Improve margin note positioning
+  * Refactor out old RefList.filterBooks
+  * Fix bug where the log file wasn't being tailed well
+  * Add war stories (subtle user errors with troubleshooting tips)
+  * Refined report details
+  * Update report for changed markers
+  * Update ployglot cfg for newly created config
+  * Add TOC marker list to report
+  * Try to get more info on changed markers
 
 Bug fixes and Improvements in 2.8.20 (9 Jul 2025)
   * Add tex standalones to parser and assume files are usfm
