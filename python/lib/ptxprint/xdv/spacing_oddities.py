@@ -68,10 +68,7 @@ class SpacingOddities(XDViPositionedReader):
 
     def line_collision(self):
         # todo: think about whether a collision can happen with lines before the previous line.
-        if (self.line.vmin < self.prev_line.vmax) and (self.line.vmax > self.prev_line.vmin) :
-            # hdiff = self.line.glyph_clusters[0].hstart - self.prev_line.glyph_clusters[0].hstart
-            # hdiff_threshold = self.line.glyph_clusters[0].font.points *3
-            # if hdiff < hdiff_threshold:
+        if (self.line.vmin < self.prev_line.vmax) :
             self.line.gc_collision(self.prev_line.glyph_clusters)
 class Line: 
     def __init__(self, v, ref, font):
@@ -86,8 +83,9 @@ class Line:
 
     def change_font(self, h, font):
         self.curr_font = font
+        if len(self.glyph_clusters) >0:
+            self.update_bounds()
         self.glyph_clusters.append(GlyphCluster((h, self.vstart), self.curr_font))
-        self.update_bounds()
 
     def update_bounds(self):
         self.vmin = min(self.vmin, self.glyph_clusters[-1].vmin)
@@ -119,25 +117,18 @@ class Line:
                     bad_spaces.append([(self.glyph_clusters[i].hstart + self.glyph_clusters[i].width, self.vstart), width, width/fontsize])
         return bad_spaces
 
-    def gc_collision(self, prev_gcs):
-        i = 0
-        j = 0
-        while i < len(self.glyph_clusters) and j < len(prev_gcs):
-            curr = self.glyph_clusters[i]
-            prev = prev_gcs[j]
-            if curr.vmin < prev.vmax:
-                # collision on gc level: bottom line gc's vmin is higher on page than top line gc's vmax.
-                if min(curr.hstart + curr.width, prev.hstart + prev.width) > max(curr.hstart, prev.hstart):
-                    # horizontal overlap.
-                    glyph_cols = curr.glyph_collision(prev)
-                    # todo: find more elegant way to add this.
-                    if len(glyph_cols) >0:
+    def gc_collision(self, prev_gcs):            
+        for gc in self.glyph_clusters:
+            i = 0
+            while i < len(prev_gcs):
+                c = [gc.hstart, gc.vmin, gc.hstart+gc.width, gc.vmax]
+                p = [prev_gcs[i].hstart, prev_gcs[i].vmin, prev_gcs[i].hstart + prev_gcs[i].width, prev_gcs[i].vmax]
+                if c[0] < p[2] and c[2] > p[0] and c[1] < p[3] and c[3] > p[1]:
+                    glyph_cols = gc.glyph_collision(prev_gcs[i])
+                    if len(glyph_cols) > 0:
                         for c in glyph_cols:
                             self.collisions.append(c)
-            if (curr.hstart + curr.width) < (prev.hstart + prev.width):
                 i +=1
-            else:
-                j +=1
 
     def has_collisions(self):
         return self.collisions                
@@ -162,34 +153,27 @@ class GlyphCluster:
         self.vmax = max(self.vmax, vmax)
         self.glyphs.append([hmin, vmin, hmax, vmax])
 
-            
     def glyph_topt(self, no, i):
-        a = self.font.ttfont.glyphs[no][i]
-        u = self.font.ttfont.upem
-        p = self.font.points
         return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points)
-    
+
     def glyph_collision(self, other):
         collisions = []
-        i = 0
-        j= 0
-        while i < len(self.glyphs) and j < len(other.glyphs):
-            curr = self.glyphs[i]
-            prev = other.glyphs[j]
-            if curr[1] < prev[3]:
-                # bottom line glyph's vmin is higher on the page than top line glyph's vmax.
-                if min(curr[2],prev[2]) > max(curr[0], prev[0]):
-                    # horizontal overlap.
+        for c in self.glyphs:
+            i=0
+            while i < len(other.glyphs):
+                p = other.glyphs[i]
+                if c[0] < p[2] and c[2] > p[0] and c[1] < p[3] and c[3] > p[1]:
                     # rectangle drawing takes [xtopleft, ytopleft, width, height]
-                    xtopleft = max(curr[0], prev[0]) - (0.5*self.font.points)
-                    ytopleft = min(curr[1], prev[3]) - (0.5*self.font.points)
-                    width = abs(max(curr[2], prev[2]) - xtopleft) + (0.5*self.font.points)
-                    height = abs(max(curr[1],prev[3]) - ytopleft) + (0.5*self.font.points)
+                    # xtopleft = max(c[0], p[0]) 
+                    # ytopleft = min(c[1], p[3]) 
+                    # width = 15
+                    # height = 15
+                    xtopleft = max(c[0], p[0]) - (0.5*self.font.points)
+                    ytopleft = min(c[1], p[3]) - (0.5*self.font.points)
+                    width = abs(max(c[2], p[2]) - xtopleft) 
+                    height = abs(max(c[1],p[3]) - ytopleft) + (0.5*self.font.points)
                     collisions.append([xtopleft, ytopleft, width, height])
-            if curr[2] < prev[2]:
-                i += 1
-            else:
-                j+=1
+                i +=1
         return collisions
 
 def main():
