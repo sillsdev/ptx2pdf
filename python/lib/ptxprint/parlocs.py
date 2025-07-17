@@ -519,8 +519,7 @@ class Paragraphs(list):
             
     def getcollisions(self, pnum):
         for l in self._getlines(pnum):
-            collisions = l.has_collision()
+            collisions = l.has_collisions()
             for c in collisions:
                 print(c)
                 yield c
-
