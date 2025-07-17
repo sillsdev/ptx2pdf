@@ -890,7 +890,7 @@ class TTFont:
         for i in range(self.numglyphs):
             inf.seek(self.dict['glyf'][0] + locas[i][0])
             data = inf.read(10)
-            self.glyphs.append(struct.unpack(">4H", data[2:]))  # xMin, yMin, xMax, yMax
+            self.glyphs.append(struct.unpack(">4h", data[2:]))  # xMin, yMin, xMax, yMax
 
 
     # def style2str(self, style):
