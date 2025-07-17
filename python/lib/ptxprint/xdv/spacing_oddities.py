@@ -196,7 +196,7 @@ class GlyphCluster:
                 collisions.append([xtopleft, ytopleft, width, height])
                 # i +=1
                 # j +=1
-            elif curr[2] < prev[2]:
+            if curr[2] < prev[2]:
                 i += 1
             else:
                 j+=1
