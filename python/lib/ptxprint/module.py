@@ -14,10 +14,11 @@ def read_module(inf, sheets):
     return Usfm(lines, sheets)
 
 #    e: ([mkrs], modelmap entry, invert_test)
+#    If entry is not empty include the marker
 exclusionmap = {
 #    'v': (None, "document/ifshowversenums", False, 'verse'),    # opposite use of %
-    'x': (('x',), None, False, 'note'),
-    'f': (('f',), "notes/includefootnotes", True, 'note'),
+    'x': (('x',), "notes/includexrefs", True, 'note'),
+    'f': (('f',), "notes/includefootnotes", True, 'note'), 
     's': (('s', 's1', 's2', 'r'), "document/sectionheads", True, 'para'),
 #    'c': (None, 'document/ifshowchapternums', True, 'chapter'),
     'p': (None, None, False, 'figure')
@@ -138,12 +139,15 @@ class Module:
                     if len(reps):
                         self.doc.transform_text(*reps, parts=p)
             elif s == 'inc':
-                for c in eloc.text.split():
-                    einfo = exclusionmap.get(c, ([], None, False))
+                values = [v for v in eloc.text.split() if v.strip()]
+                # breakpoint()
+                for c in values:
+                    einfo = exclusionmap.get(c, (tuple(), None, False, ""))
                     if c == "-":
                         self.removes = set(exclusionmap.values())
                     elif not self.testexclude(einfo):
-                        self.removes.difference_update(einfo)
+                        self.removes.discard(einfo)
+                print(f"{self.removes=}")
             elif s == 'mod':
                 dirname = os.path.dirname(self.fname)
                 infpath = os.path.join(dirname, eloc.text.strip())

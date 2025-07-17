@@ -827,7 +827,7 @@ class GtkViewModel(ViewModel):
         recent_project_ids = {}
         if len(all_projects) > 10:
             topTenPcnt = min(int(len(all_projects)/10), 10)
-            print(f"{topTenPcnt=}")
+            # print(f"{topTenPcnt=}")
             projects_with_time.sort(key=lambda x: x['mtime'], reverse=True)
             recent_project_ids = {d['p'].prjid for d in projects_with_time[:topTenPcnt] if d['mtime'] > 0}
 

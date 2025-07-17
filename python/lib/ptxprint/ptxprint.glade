@@ -29071,15 +29071,18 @@ the name of an existing Project.</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">There are hundreds of DBL bundles available at
 the Digital Bible Library website which you may
-download and use in a publication.</property>
+download and use in a publication.
+
+Note that you must log in to the site to access
+resources.</property>
                     <property name="halign">center</property>
                     <property name="valign">end</property>
                     <property name="relief">none</property>
-                    <property name="uri">https://app.thedigitalbiblelibrary.org/entries/open_access_entries?type=text</property>
+                    <property name="uri">https://app.library.bible/content?licenseType=open</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -29143,7 +29146,7 @@ and select the USX download option.</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">1</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
