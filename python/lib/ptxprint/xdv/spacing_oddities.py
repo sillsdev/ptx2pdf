@@ -60,6 +60,7 @@ class SpacingOddities(XDViPositionedReader):
             if (self.cursor[1] - self.line.vstart) < self.v_line_treshold:
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return
+        self.line.update_bounds()
         self.line_collision()
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font, self.dviratio)
@@ -67,11 +68,11 @@ class SpacingOddities(XDViPositionedReader):
 
     def line_collision(self):
         # todo: think about whether a collision can happen with lines before the previous line.
-        if self.line.vmin <= self.prev_line.vmax:
-            hdiff = self.line.glyph_clusters[0].hstart - self.prev_line.glyph_clusters[0].hstart
-            hdiff_threshold = self.line.glyph_clusters[0].font.points *3
-            if hdiff < hdiff_threshold:
-                self.line.gc_collision(self.prev_line.glyph_clusters)
+        if (self.line.vmin <= self.prev_line.vmax) and (self.line.vmax > self.prev_line.vmin) :
+            # hdiff = self.line.glyph_clusters[0].hstart - self.prev_line.glyph_clusters[0].hstart
+            # hdiff_threshold = self.line.glyph_clusters[0].font.points *3
+            # if hdiff < hdiff_threshold:
+            self.line.gc_collision(self.prev_line.glyph_clusters)
 class Line: 
     def __init__(self, v, ref, font, ratio):
         self.ref = ref
@@ -87,6 +88,9 @@ class Line:
     def change_font(self, h, font):
         self.curr_font = font
         self.glyph_clusters.append(GlyphCluster((h, self.vstart), self.curr_font, self.ratio))
+        self.update_bounds()
+
+    def update_bounds(self):
         self.vmin = min(self.vmin, self.glyph_clusters[-1].vmin)
         self.vmax = max(self.vmax, self.glyph_clusters[-1].vmax)
 
@@ -95,8 +99,7 @@ class Line:
             self.glyph_clusters.append(GlyphCluster(startpos, self.curr_font, self.ratio))
         elif startpos[0] - (self.glyph_clusters[-1].hstart + self.glyph_clusters[-1].width) > self.h_gc_threshold:
             # make new gc block only if there is space between glyphs this block and the previous one.
-            self.vmin = min(self.vmin, self.glyph_clusters[-1].vmin)
-            self.vmax = max(self.vmax, self.glyph_clusters[-1].vmax)
+            self.update_bounds()
             self.glyph_clusters.append(GlyphCluster(startpos, self.curr_font, self.ratio))
         self.glyph_clusters[-1].width += w
         for i in range(len(g)):
@@ -118,24 +121,26 @@ class Line:
         return bad_spaces
 
     def gc_collision(self, prev_gcs):
-            i = 0
-            j = 0
-            while i < len(self.glyph_clusters) and j < len(prev_gcs):
-                curr = self.glyph_clusters[i]
-                prev = prev_gcs[j]
-                if curr.vmin <= prev.vmax:
-                    # collision on gc level: bottom line gc's vmin is higher on page than top line gc's vmax.
-                    if min(curr.hstart + curr.width, prev.hstart + prev.width) > max (curr.hstart, prev.hstart):
-                        # horizontal overlap.
-                        glyph_cols = curr.glyph_collision(prev)
-                        # todo: find more elegant way to add this.
-                        if len(glyph_cols) >0:
-                            for c in glyph_cols:
-                                self.collisions.append(c)
-                if (curr.hstart + curr.width) > (prev.hstart + prev.width):
-                    i +=1
-                else:
-                    j +=1
+        i = 0
+        j = 0
+        while i < len(self.glyph_clusters) and j < len(prev_gcs):
+            curr = self.glyph_clusters[i]
+            prev = prev_gcs[j]
+            if curr.vmin <= prev.vmax:
+                # collision on gc level: bottom line gc's vmin is higher on page than top line gc's vmax.
+                #if min(curr.hstart + curr.width, prev.hstart + prev.width) > max (curr.hstart, prev.hstart):
+                # horizontal overlap.
+                glyph_cols = curr.glyph_collision(prev)
+                # todo: find more elegant way to add this.
+                if len(glyph_cols) >0:
+                    for c in glyph_cols:
+                        self.collisions.append(c)
+                # i +=1
+                # j +=1
+            if (curr.hstart + curr.width) < (prev.hstart + prev.width):
+                i +=1
+            else:
+                j +=1
 
     def has_collisions(self):
         return self.collisions                
@@ -184,12 +189,14 @@ class GlyphCluster:
                 #if (min(curr[2], prev[2]) - max(curr[0], prev[0])) > 0:
                     # horizontal overlap.
                     # rectangle drawing takes [xtopleft, ytopleft, width, height]
-                xtopleft = min(curr[0], prev[0]) - (0.5*self.font.points)
+                xtopleft = max(curr[0], prev[0]) - (0.5*self.font.points)
                 ytopleft = min(curr[1], prev[3]) - (0.5*self.font.points)
                 width = abs(max(curr[2], prev[2]) - xtopleft) + (0.5*self.font.points)
                 height = abs(max(curr[1],prev[3]) - ytopleft) + (0.5*self.font.points)
                 collisions.append([xtopleft, ytopleft, width, height])
-            if curr[2] < prev[2]:
+                # i +=1
+                # j +=1
+            elif curr[2] < prev[2]:
                 i += 1
             else:
                 j+=1
