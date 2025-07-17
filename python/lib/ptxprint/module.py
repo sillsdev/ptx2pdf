@@ -14,12 +14,12 @@ def read_module(inf, sheets):
 
 #    e: ([mkrs], modelmap entry, invert_test)
 exclusionmap = {
-    'v': (['v'], "document/ifshowversenums", False),
-    'x': (['x'], None, False),
-    'f': (['f'], "notes/includefootnotes", True),
-    's': (['s', 's1', 's2', 'r'], "document/sectionheads", False),
-    'c': (['c'], 'document/ifshowchapternums', True),
-    'p': (['fig'], None, False)
+    'v': (None, "document/ifshowversenums", False, 'verse'),    # opposite use of %
+    'x': (('x',), None, False, 'note'),
+    'f': (('f',), "notes/includefootnotes", True, 'note'),
+    's': (('s', 's1', 's2', 'r'), "document/sectionheads", True, 'para'),
+    'c': (None, 'document/ifshowchapternums', True, 'chapter'),
+    'p': (None, None, False, 'figure')
 }
 
 _abbrevmodes = {
@@ -88,7 +88,7 @@ class Module:
         return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))
 
     def parse(self):
-        self.removes = set((sum((e[0] for e in exclusionmap.values() if self.testexclude(e)), [])))
+        self.removes = set((e for e in exclusionmap.values() if self.testexclude(e)))
         skipme = 0
         for eloc, isin in iterusx(self.doc.getroot()):
             if skipme > 0:
@@ -138,9 +138,9 @@ class Module:
                 for c in eloc.text.split():
                     einfo = exclusionmap.get(c, ([], None, False))
                     if c == "-":
-                        self.removes = set(sum((x[0] for x in exclusionmap.values()), []))
+                        self.removes = set(exclusionmap.values())
                     elif not self.testexclude(einfo):
-                        self.removes.difference_update(einfo[0])
+                        self.removes.difference_update(einfo)
             elif s == 'mod':
                 dirname = os.path.dirname(self.fname)
                 infpath = os.path.join(dirname, eloc.text.strip())
@@ -160,5 +160,19 @@ class Module:
             book = None
         if book is None:
             return []
-        res = book.xml.getrefs(ref, headers=True)
+        res = book.xml.getrefs(ref, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
+                                    chapters= not any('chapter' in x[3] for x in removes))
+        for e, isin in res.iterusx():
+            if not isin:
+                continue
+            for r in removes:
+                if e.tag == r[3] and (r[0] is None or e.get('style', '') in r[0]):
+                    if e.tail:
+                        i = e.parent.index(e)
+                        if i == 0:
+                            e.parent.text = (e.parent.text or "") + e.tail
+                        else:
+                            e.parent[i-1].tail = (e.parent.tail or "") + e.tail
+                    e.parent.remove(e)
+                    break
         return res.getroot()
