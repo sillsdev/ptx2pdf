@@ -6885,7 +6885,7 @@ Thank you,
                     outf.write("\n" + new_map_usfm)
             else:
                 # 2. If it does not exist, create it
-                title = "Maps (currently experimental)"
+                title = "Maps"
                 with open(outfile, "w", encoding="utf-8") as outf:
                     outf.write("\\id {0} Maps index\n\\h {1}\n\\mt1 {1}\n".format(mapbkid, title))
                     outf.write(new_map_usfm)

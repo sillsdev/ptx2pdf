@@ -529,7 +529,7 @@ class TexModel:
 
     def getTextBlockSize(self):
         unitConv = {'mm':2.8453, 'cm':28.453, 'in':72.27, '"':72.27, "pt": 1}
-        m = re.match("(-?[\d.]+)(\D+)", self.dict["paper/height"])
+        m = re.match(r"(-?[\d.]+)(\D+)", self.dict["paper/height"])
         if m:
             pheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
         else:
@@ -908,6 +908,8 @@ class TexModel:
         if doc is not None:
             data = doc.asUsfm(grammar=self.printer.usfms.grammar)
             logger.log(5, logmsg+data)
+        else:
+            logger.log(5, logmsg)
         return (data, None)
 
     def _getDoc(self, data, doc, bk, logmsg=""):
@@ -915,6 +917,8 @@ class TexModel:
             doc = self._makeUSFM(data, bk, reason=logmsg)
             if doc is not None:
                 logger.log(5, logmsg+doc.outUsx(None))
+        else:
+            logger.log(5, logmsg)
         return (None if doc else data, doc)
         
     def _changeError(self, txt):

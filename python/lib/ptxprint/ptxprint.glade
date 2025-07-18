@@ -20495,8 +20495,10 @@ use in the current set of books.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">start</property>
                                         <property name="margin-top">12</property>
-                                        <property name="hexpand">True</property>
                                         <property name="wrap">True</property>
+                                        <property name="width-chars">45</property>
+                                        <property name="max-width-chars">45</property>
+                                        <property name="xalign">0</property>
                                         <attributes>
                                           <attribute name="style" value="italic"/>
                                         </attributes>
