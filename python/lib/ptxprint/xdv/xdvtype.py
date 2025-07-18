@@ -160,10 +160,10 @@ class XDviType:
     def dim(self, opcode, parm, data):
         if parm in "wx":
             self.h += getattr(self, parm)
-            self.out("{} (h={})".format(parm, self.asdimen(self.h)))
+            self.out("{}[{}] (h={})".format(parm, opcode, self.asdimen(self.h)))
         elif parm in "yz":
             self.v += getattr(self, parm)
-            self.out("{} (v={})".format(parm, self.asdimen(self.v)))
+            self.out("{}[{}] (v={})".format(parm, opcode, self.asdimen(self.v)))
 
     def simple(self, opcode, parm, data):
         self.out("{}".format(parm))
