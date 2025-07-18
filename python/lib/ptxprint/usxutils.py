@@ -511,7 +511,7 @@ class Usfm:
     def getsubbook(self, refrange, removes={}):
         if isinstance(refrange, (Ref, RefRange)):
             refrange = [refrange]
-        subdoc = self.xml.getrefs(*refrange)
+        subdoc = self.xml.getrefs(*refrange, addintro=True)
         return Usfm(subdoc, parser=self.parser, grammar=self.grammar)
 
     def versesToEnd(self):
