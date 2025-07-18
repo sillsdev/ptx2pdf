@@ -1,7 +1,7 @@
 import re, regex, logging, os, time
 import usfmtc
 from usfmtc import _filetypes
-from usfmtc.reference import Ref, RefList
+from usfmtc.reference import Ref, RefList, RefRange
 from usfmtc.usfmparser import Grammar
 from ptxprint.utils import universalopen, runChanges
 from usfmtc.xmlutils import ParentElement, hastext, isempty
@@ -508,80 +508,11 @@ class Usfm:
         res = self.factory("ms", attribs, parent=parent)
         return res
 
-    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True, keepheaders=False):
-        ''' Creates a document consisting of only the text covered by the reference
-            ranges. refrange is a RefList of RefRange or a RefRange'''
-        self.addorncv()
-        if not isinstance(refranges, (list, RefList)):
-            refranges = [refranges]
-        last = (0, -1)
-        chaps = []      # a list of 2 element tuples. 0: list of first paragraphs, 1: indices in refranges
-        minc = 10000
-        for i, r in enumerate(refranges):
-            if r.first.chapter > last[1] or r.first.chapter < last[0]:
-                chaps.append((self.chapters[r.first.chapter:r.last.chapter+2], [i]))
-                last = (r.first.chapter, r.last.chapter)
-            elif r.first.chapter >= last[0] and r.last.chapter <= last[1]:
-                chaps[-1][1].append(i)
-            else:
-                chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chapter+1])
-                chaps[-1][1].append(i)
-                last = (last[0], r.last.chapter)
-            minc = min(r.first.chapter, minc)
-        def pred(e, rlist):
-            if e.parent is None:
-                return True
-            if e.parent.get('style', e.tag) in removes:
-                return False
-            if any(getattr(e.pos, 'ref', None) in refranges[i] for i in rlist) \
-                    and (e.pos.ref.first.verse != 0 or refranges[i].first.verse == 0 or e.get('style', e.tag) == "c"):
-                if strippara and e.tag == "para":
-                    return False
-                return True
-            return False
-
-        def copyrange(start, out, rlist, pstyle=None) -> bool:
-            res = out
-            if start.tag == "para":
-                pstyle = start.get("style", "p")
-            isactive = False
-            if pred(start, rlist):
-                isactive = True
-                if out.tag == "usx" and start.tag not in ("para", "chapter", "book"):
-                    out = self.factory("para", attrib=dict(style=pstyle), parent=out, pos=start.pos)
-                res = self.factory(start.tag, start.attrib, parent=out, pos=start.pos)
-                out.append(res)
-                res.text = start.text
-            endactive = isactive
-            for c in start:
-                endactive = copyrange(c, res, rlist, pstyle)
-            if endactive:
-                res.tail = start.tail
-            return endactive
-
-        root = self.getroot()
-        d = list(root)
-        res = self.factory("usx", root.attrib)
-        res.text = root.text
-        if keepheaders:
-            for e in root:
-                if e.tag == "chapter":
-                    break
-                if minc > 1 and e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in ("header", ):
-                    break
-                newe = e.copy(deep=True, parent=res)
-                res.append(newe)
-        for c in chaps:
-            if addzsetref:
-                minref = min(refranges[r].first for r in c[1])
-                if (minref.verse or 0) > 0:
-                    res.append(self.make_zsetref(minref, None, root, None))
-            for chap in range(c[0][0], c[0][-1]):
-                copyrange(d[chap], res, c[1])
-        return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)
-
     def getsubbook(self, refrange, removes={}):
-        return self.subdoc(refrange, removes=removes, keepheaders=True)
+        if isinstance(refrange, (Ref, RefRange)):
+            refrange = [refrange]
+        subdoc = self.xml.getrefs(*refrange)
+        return Usfm(subdoc, parser=self.parser, grammar=self.grammar)
 
     def versesToEnd(self):
         root = self.getroot()
