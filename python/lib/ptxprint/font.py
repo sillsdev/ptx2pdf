@@ -698,7 +698,8 @@ class TTFont:
             self.readhhea(inf)
             self.readhead(inf)
             if withglyphs:
-                self.readglyf(inf) 
+                self.readhmtx(inf)
+                self.readglyf(inf)
         self.isGraphite = 'Silf' in self.dict
         return True
 
@@ -854,8 +855,9 @@ class TTFont:
 
     def readhhea(self, inf):
         inf.seek(self.dict['hhea'][0])
-        data = inf.read(8)
-        self.ascent, self.descent = struct.unpack(b">Hh", data[4:])
+        data = inf.read(36)
+        self.ascent, self.descent = struct.unpack(b">Hh", data[4:8])
+        self.numhmetrics = struct.unpack(b">H", data[34:])[0]
 
     def readhead(self, inf):
         if self.upem != 1:
@@ -872,6 +874,14 @@ class TTFont:
         inf.seek(self.dict['maxp'][0])
         data = inf.read(6)
         self.numglyphs = struct.unpack(b">H", data[4:])[0]
+
+    def readhmtx(self, inf):
+        if hasattr(self, 'advances'):
+            return
+        inf.seek(self.dict['hmtx'][0])
+        data = inf.read(self.numhmetrics * 4)
+        metrics = struct.unpack(">{}H".format(self.numhmetrics * 2), data)
+        self.advances = metrics[0::2]
 
     def readglyf(self, inf):
         if hasattr(self, 'glyphs'):
