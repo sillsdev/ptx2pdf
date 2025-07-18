@@ -246,7 +246,7 @@ class XDViPositionedReader(XDViReader):
 
     def pre(self, opcode, parm, data):
         (i, n, d, m, x) = super().pre(opcode, parm, data)
-        self.dviratio = m * n / d / 1000. / 10000 / 25.4 * 72.27      # map to pt not .0001mm
+        self.dviratio = m * n / d / 1000. / 10000 / 25.4 * 72      # map to pt not .0001mm
         return (i, n, d, m, x)
 
     def parmop(self, opcode, parm, data):
@@ -265,7 +265,7 @@ class XDViPositionedReader(XDViReader):
     def simple(self, opcode, parm, data):
         prev_v = self.v
         if parm in "wx":
-            self.h += self.topt(getattr(self, parm))
+            self.h += getattr(self, parm)
         elif parm in "yz":            
             self.v += getattr(self, parm)
             # note: this was the problem, it converted self.y to points before adding (y is already in points)
@@ -284,7 +284,7 @@ class XDViPositionedReader(XDViReader):
 
     def bop(self, opcode, parm, data):
         for a in "hvwxyz":
-            setattr(self, a, 72.27 if a in "hv" else 0.)
+            setattr(self, a, 72 if a in "hv" else 0.)
         return (opcode, parm, data)
 
     def xfontdef(self, opcode, parm, data):

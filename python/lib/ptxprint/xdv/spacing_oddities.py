@@ -18,7 +18,7 @@ class SpacingOddities(XDViPositionedReader):
         start_pos = (self.h, self.v) 
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         glyphs_width = self.topt(width)
-        print(f"{{\"name\": \"Xlgyphs run\", \"coords\": [{start_pos[0]}, {start_pos[1]}, {self.h}, {self.v}]}},")
+        #print(f"{{\"name\": \"Xlgyphs run\", \"coords\": [{start_pos[0]}, {start_pos[1]}, {self.h}, {self.v}]}},")
         self.update_lines(start_pos)
         # pos need to be converted to points!
         pos_points = [[self.topt(n) for n in p] for p in pos]
@@ -62,18 +62,18 @@ class SpacingOddities(XDViPositionedReader):
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return
         self.line.update_bounds()
-        #self.line_collision()
+        self.line_collision()
         self.bounds_checking()
-        print(f"{{\"name\": \"line\", \"coords\": [{self.line.glyph_clusters[0].hstart}, {self.line.vmin}, {self.line.glyph_clusters[-1].hstart + self.line.glyph_clusters[-1].width}, {self.line.vmax}]}},")
-        for gc in self.line.glyph_clusters:
-                        print(f"{{\"name\": \"gc\", \"coords\": [{gc.hstart}, {gc.vmin}, {gc.hstart + gc.width}, {gc.vmax}]}},")
+        #print(f"{{\"name\": \"line\", \"coords\": [{self.line.glyph_clusters[0].hstart}, {self.line.vmin}, {self.line.glyph_clusters[-1].hstart + self.line.glyph_clusters[-1].width}, {self.line.vmax}]}},")
+        #for gc in self.line.glyph_clusters:
+       #                 print(f"{{\"name\": \"gc\", \"coords\": [{gc.hstart}, {gc.vmin}, {gc.hstart + gc.width}, {gc.vmax}]}},")
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
         self.parent.addxdvline(self.line, self.page_index, startpos[0], startpos[1])
 
     def line_collision(self):
         # todo: think about whether a collision can happen with lines before the previous line.
-        if (self.line.vmin < self.prev_line.vmax) :
+        if (self.line.vmin <= self.prev_line.vmax) :
             self.line.gc_collision(self.prev_line.glyph_clusters)
             
     def bounds_checking(self):
@@ -109,7 +109,7 @@ class Line:
             self.glyph_clusters.append(GlyphCluster(startpos, self.curr_font))
         self.glyph_clusters[-1].width += w
         for i in range(len(g)):
-            self.glyph_clusters[-1].add_glyph((startpos[0] + pos[i][0], startpos[1]  + pos[i][1]), g[i])
+            self.glyph_clusters[-1].add_glyph((startpos[0] +pos[i][0], startpos[1]+pos[i][1]), g[i])
             #self.glyph_clusters[-1].add_glyph((startpos[0], startpos[1]), g[i])
 
     def has_badspace(self, threshold = 4):
@@ -131,9 +131,9 @@ class Line:
         for gc in self.glyph_clusters:
             i = 0
             while i < len(prev_gcs):
-                c = [gc.hstart, gc.vmin, gc.hstart+gc.width, gc.vmax]
-                p = [prev_gcs[i].hstart, prev_gcs[i].vmin, prev_gcs[i].hstart + prev_gcs[i].width, prev_gcs[i].vmax]
-                if c[0] < p[2] and c[2] > p[0] and c[1] < p[3] and c[3] > p[1]:
+                c = [gc.hstart, gc.vmin, gc.glyphs[-1][2], gc.vmax]
+                p = [prev_gcs[i].hstart, prev_gcs[i].vmin, prev_gcs[i].glyphs[-1][2], prev_gcs[i].vmax]
+                if c[0] <= p[2] and c[2] >= p[0] and c[1] <= p[3] and c[3] >= p[1]:
                     glyph_cols = gc.glyph_collision(prev_gcs[i])
                     if len(glyph_cols) > 0:
                         for c in glyph_cols:
@@ -149,7 +149,7 @@ class Line:
         for gc in self.glyph_clusters:
             i = 0
             while i < len(prev_gcs):
-                if gc.vmin < prev_vmax or prev_gcs[i].vmax > self.vmin:
+                if gc.vmin <= prev_vmax or prev_gcs[i].vmax >= self.vmin:
                     glyph_cols = gc.crossing_line_bounds(prev_gcs[i], self.vmin, prev_vmax)
                     if len(glyph_cols) > 0:
                         for c in glyph_cols:
@@ -180,7 +180,7 @@ class GlyphCluster:
         vmin = pos[1] - self.glyph_topt(g,3)
         hmax = pos[0] + self.glyph_topt(g,2)
         vmax = pos[1] - self.glyph_topt(g,1)
-        print(f"{{\"name\": \"glyph\", \"coords\": [{hmin}, {vmin}, {hmax}, {vmax}]}},")
+        #print(f"{{\"name\": \"glyph\", \"coords\": [{hmin}, {vmin}, {hmax}, {vmax}]}},")
         self.vmin = min(self.vmin, vmin)
         self.vmax = max(self.vmax, vmax)
         self.glyphs.append([hmin, vmin, hmax, vmax])
@@ -197,7 +197,7 @@ class GlyphCluster:
             i=0
             while i < len(other.glyphs):
                 p = other.glyphs[i]
-                if c[0] < p[2] and c[2] > p[0] and c[1] < p[3] and c[3] > p[1]:
+                if c[0] <= p[2] and c[2] >= p[0] and c[1] <= p[3] and c[3] >= p[1]:
                     # rectangle drawing takes [xtopleft, ytopleft, width, height]
                     xtopleft = max(c[0], p[0]) 
                     ytopleft = min(c[1], p[3]) 
