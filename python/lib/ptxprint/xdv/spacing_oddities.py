@@ -6,7 +6,7 @@ class SpacingOddities(XDViPositionedReader):
         super().__init__(fname)
         self.ref = None # reference of where we're at, str
         self.cursor = (self.h, self.v) # location of last printed glyph
-        self.v_line_treshold = 4 # vdiff of verse numbers and *s, less than line diff
+        self.v_line_threshold = 4 # vdiff of verse numbers and *s, less than line diff
         self.page_index = 0 
         self.pagediff = self.pageno 
         self.parent = parent
@@ -15,9 +15,10 @@ class SpacingOddities(XDViPositionedReader):
         self.line = Line(self.v, self.ref, self.curr_font)
 
     def xglyphs(self, opcode, parm, data):
-        start_pos = (self.h, self.v)       
+        start_pos = (self.h, self.v) 
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         glyphs_width = self.topt(width)
+        print(f"{{\"name\": \"Xlgyphs run\", \"coords\": [{start_pos[0]}, {start_pos[1]}, {self.h}, {self.v}]}},")
         self.update_lines(start_pos)
         # pos need to be converted to points!
         pos_points = [[self.topt(n) for n in p] for p in pos]
@@ -34,7 +35,7 @@ class SpacingOddities(XDViPositionedReader):
     def font(self, opcode, parm, data):
         (k, ) = super().font(opcode, parm, data)
         self.curr_font = self.fonts[k]
-        self.v_line_threshold = self.curr_font.points * 0.2
+        self.v_line_threshold = self.curr_font.points * 0.3
         self.update_lines((self.h, self.v))
         self.line.change_font(self.h, self.curr_font)
         self.cursor = (self.h,self.v)
@@ -56,12 +57,16 @@ class SpacingOddities(XDViPositionedReader):
             self.line = Line(self.v, self.ref, self.curr_font)
             self.parent.addxdvline(self.line, self.page_index, startpos[0], startpos[1])
             return
-        if (self.cursor[1]-startpos[1]) < self.v_line_treshold:
-            if (self.cursor[1] - self.line.vstart) < self.v_line_treshold:
+        if abs(self.cursor[1]-startpos[1]) < self.v_line_threshold:
+            if abs(self.cursor[1] - self.line.vstart) < self.v_line_threshold:
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return
         self.line.update_bounds()
-        self.line_collision()
+        #self.line_collision()
+        self.bounds_checking()
+        print(f"{{\"name\": \"line\", \"coords\": [{self.line.glyph_clusters[0].hstart}, {self.line.vmin}, {self.line.glyph_clusters[-1].hstart + self.line.glyph_clusters[-1].width}, {self.line.vmax}]}},")
+        for gc in self.line.glyph_clusters:
+                        print(f"{{\"name\": \"gc\", \"coords\": [{gc.hstart}, {gc.vmin}, {gc.hstart + gc.width}, {gc.vmax}]}},")
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
         self.parent.addxdvline(self.line, self.page_index, startpos[0], startpos[1])
@@ -70,6 +75,10 @@ class SpacingOddities(XDViPositionedReader):
         # todo: think about whether a collision can happen with lines before the previous line.
         if (self.line.vmin < self.prev_line.vmax) :
             self.line.gc_collision(self.prev_line.glyph_clusters)
+            
+    def bounds_checking(self):
+        if (self.line.vmin < self.prev_line.vmax):
+            self.line.check_bounds(self.prev_line.glyph_clusters, self.prev_line.vmax)
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
@@ -101,6 +110,7 @@ class Line:
         self.glyph_clusters[-1].width += w
         for i in range(len(g)):
             self.glyph_clusters[-1].add_glyph((startpos[0] + pos[i][0], startpos[1]  + pos[i][1]), g[i])
+            #self.glyph_clusters[-1].add_glyph((startpos[0], startpos[1]), g[i])
 
     def has_badspace(self, threshold = 4):
         # threshold in ems
@@ -129,6 +139,28 @@ class Line:
                         for c in glyph_cols:
                             self.collisions.append(c)
                 i +=1
+        new = []
+        for val in self.collisions:
+            if val not in new:
+                new.append(val)
+        self.collisions = new
+
+    def check_bounds(self, prev_gcs, prev_vmax):
+        for gc in self.glyph_clusters:
+            i = 0
+            while i < len(prev_gcs):
+                if gc.vmin < prev_vmax or prev_gcs[i].vmax > self.vmin:
+                    glyph_cols = gc.crossing_line_bounds(prev_gcs[i], self.vmin, prev_vmax)
+                    if len(glyph_cols) > 0:
+                        for c in glyph_cols:
+                            self.collisions.append(c)
+                i +=1
+        new = []
+        for val in self.collisions:
+            if val not in new:
+                new.append(val)
+        self.collisions = new
+        
 
     def has_collisions(self):
         return self.collisions                
@@ -144,16 +176,19 @@ class GlyphCluster:
         self.vmax = startpos[1]
 
     def add_glyph(self, pos, g): # pos = (h,v) and g = glyph number
-        # todo: check if the glyph info is ever negative.
         hmin = pos[0] + self.glyph_topt(g,0)
         vmin = pos[1] - self.glyph_topt(g,3)
         hmax = pos[0] + self.glyph_topt(g,2)
         vmax = pos[1] - self.glyph_topt(g,1)
+        print(f"{{\"name\": \"glyph\", \"coords\": [{hmin}, {vmin}, {hmax}, {vmax}]}},")
         self.vmin = min(self.vmin, vmin)
         self.vmax = max(self.vmax, vmax)
         self.glyphs.append([hmin, vmin, hmax, vmax])
 
     def glyph_topt(self, no, i):
+        a = self.font.ttfont.glyphs[no][i]
+        b = self.font.ttfont.upem
+        c = self.font.points
         return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points)
 
     def glyph_collision(self, other):
@@ -164,16 +199,27 @@ class GlyphCluster:
                 p = other.glyphs[i]
                 if c[0] < p[2] and c[2] > p[0] and c[1] < p[3] and c[3] > p[1]:
                     # rectangle drawing takes [xtopleft, ytopleft, width, height]
-                    # xtopleft = max(c[0], p[0]) 
-                    # ytopleft = min(c[1], p[3]) 
-                    # width = 15
-                    # height = 15
-                    xtopleft = max(c[0], p[0]) - (0.5*self.font.points)
-                    ytopleft = min(c[1], p[3]) - (0.5*self.font.points)
-                    width = abs(max(c[2], p[2]) - xtopleft) 
-                    height = abs(max(c[1],p[3]) - ytopleft) + (0.5*self.font.points)
-                    collisions.append([xtopleft, ytopleft, width, height])
+                    xtopleft = max(c[0], p[0]) 
+                    ytopleft = min(c[1], p[3]) 
+                    width = 10
+                    height = 10
+                    collisions.append([[xtopleft, ytopleft, width, height], (1.0,0,0.2,0.5)])
+                    # xtopleft = min(c[0], p[0])
+                    # ytopleft = min(c[1], p[1])
+                    # width = max(c[2], p[2]) - xtopleft 
+                    # height = max(c[3],p[3]) - ytopleft
+                    # collisions.append([xtopleft, ytopleft, width, height])
                 i +=1
+        return collisions
+    
+    def crossing_line_bounds(self, other, bottomvmin, topvmax):
+        collisions = []
+        for c in self.glyphs:
+            if c[1] < topvmax:
+                collisions.append([[c[0], c[1], c[2]-c[0], c[3]-c[1]], (4,0,4,0.5)])
+        for p in other.glyphs:
+            if p[3] > bottomvmin:
+                collisions.append([[p[0], p[1], p[2]-p[0], p[3]-p[1]], (180,150, 0, 0.5)])
         return collisions
 
 def main():
