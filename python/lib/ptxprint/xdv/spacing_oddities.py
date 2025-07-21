@@ -18,7 +18,7 @@ class SpacingOddities(XDViPositionedReader):
         start_pos = (self.h, self.v) 
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         glyphs_width = self.topt(width)
-        #print(f"{{\"name\": \"Xlgyphs run\", \"coords\": [{start_pos[0]}, {start_pos[1]}, {self.h}, {self.v}]}},")
+        #print(f"{{\"name\": \"xglyphs method\", \"coords\": [{start_pos[0]}, {start_pos[1]}, {self.h}, {self.v}]}},")
         self.update_lines(start_pos)
         # pos need to be converted to points!
         pos_points = [[self.topt(n) for n in p] for p in pos]
@@ -31,7 +31,7 @@ class SpacingOddities(XDViPositionedReader):
         if re.search(r'pdf:dest', txt):
             self.ref = re.findall(r'\((.*?)\)', txt)[0]
         return (txt,)
-    
+
     def font(self, opcode, parm, data):
         (k, ) = super().font(opcode, parm, data)
         self.curr_font = self.fonts[k]
@@ -55,7 +55,6 @@ class SpacingOddities(XDViPositionedReader):
         if len(self.line.glyph_clusters) == 0:
             # overwrite line if it is empty
             self.line = Line(self.v, self.ref, self.curr_font)
-            self.parent.addxdvline(self.line, self.page_index, startpos[0], startpos[1])
             return
         if abs(self.cursor[1]-startpos[1]) < self.v_line_threshold:
             if abs(self.cursor[1] - self.line.vstart) < self.v_line_threshold:
@@ -63,14 +62,12 @@ class SpacingOddities(XDViPositionedReader):
                 return
         self.line.update_bounds()
         self.line_collision()
-        self.bounds_checking()
         #print(f"{{\"name\": \"line\", \"coords\": [{self.line.glyph_clusters[0].hstart}, {self.line.vmin}, {self.line.glyph_clusters[-1].hstart + self.line.glyph_clusters[-1].width}, {self.line.vmax}]}},")
         #for gc in self.line.glyph_clusters:
-       #                 print(f"{{\"name\": \"gc\", \"coords\": [{gc.hstart}, {gc.vmin}, {gc.hstart + gc.width}, {gc.vmax}]}},")
+            #print(f"{{\"name\": \"glyph cluster\", \"coords\": [{gc.hstart}, {gc.vmin}, {gc.hstart + gc.width}, {gc.vmax}]}},")
+        self.parent.addxdvline(self.line, self.page_index, self.line.glyph_clusters[0].hstart + self.line.glyph_clusters[0].width, self.line.vstart)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
-        self.parent.addxdvline(self.line, self.page_index, startpos[0], startpos[1])
-
     def line_collision(self):
         # todo: think about whether a collision can happen with lines before the previous line.
         if (self.line.vmin <= self.prev_line.vmax) :
@@ -92,7 +89,7 @@ class Line:
 
     def change_font(self, h, font):
         self.curr_font = font
-        if len(self.glyph_clusters) >0:
+        if len(self.glyph_clusters) > 0:
             self.update_bounds()
         self.glyph_clusters.append(GlyphCluster((h, self.vstart), self.curr_font))
 
@@ -110,7 +107,6 @@ class Line:
         self.glyph_clusters[-1].width += w
         for i in range(len(g)):
             self.glyph_clusters[-1].add_glyph((startpos[0] +pos[i][0], startpos[1]+pos[i][1]), g[i])
-            #self.glyph_clusters[-1].add_glyph((startpos[0], startpos[1]), g[i])
 
     def has_badspace(self, threshold = 4):
         # threshold in ems
