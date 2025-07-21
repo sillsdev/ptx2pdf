@@ -188,31 +188,42 @@ class GlyphCluster:
         self.glyphs.append([hmin, vmin, hmax, vmax])
 
     def glyph_topt(self, no, i):
-        a = self.font.ttfont.glyphs[no][i]
-        b = self.font.ttfont.upem
-        c = self.font.points
         return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points)
 
     def glyph_collision(self, other):
         collisions = []
-        for c in self.glyphs:
-            i=0
-            while i < len(other.glyphs):
-                p = other.glyphs[i]
-                if c[0] <= p[2] and c[2] >= p[0] and c[1] <= p[3] and c[3] >= p[1]:
-                    # rectangle drawing takes [xtopleft, ytopleft, width, height]
-                    xtopleft = max(c[0], p[0]) 
-                    ytopleft = min(c[1], p[3]) 
-                    width = 10
-                    height = 10
-                    collisions.append([[xtopleft, ytopleft, width, height], (1.0,0,0.2,0.5)])
-                    # xtopleft = min(c[0], p[0])
-                    # ytopleft = min(c[1], p[1])
-                    # width = max(c[2], p[2]) - xtopleft 
-                    # height = max(c[3],p[3]) - ytopleft
-                    # collisions.append([xtopleft, ytopleft, width, height])
+        i = 0
+        j = 0
+        while i<len(self.glyphs) and j < len(other.glyphs):
+            col = self.compare_glyphs(other, i , j)
+            if col:
+                collisions.append(col)                
+            if self.glyphs[i][2] < other.glyphs[j][2]:
                 i +=1
+            else:
+                j += 1
+        while i < len(self.glyphs):
+            col = self.compare_glyphs(other, i , j-1)
+            if col:
+                collisions.append(col) 
+            i +=1       
+        while j < len(other.glyphs):
+            col = self.compare_glyphs(other, i -1, j)
+            if col:
+                collisions.append(col) 
+            j +=1 
         return collisions
+
+    def compare_glyphs(self, other, i , j):
+        c = self.glyphs[i]
+        p = other.glyphs[j]
+        if c[0] <= p[2] and c[2] >= p[0] and c[1] <= p[3] and c[3] >= p[1]:
+            # rectangle drawing takes [xtopleft, ytopleft, width, height]
+            xtopleft = max(c[0], p[0]) - 0.3* self.font.points
+            ytopleft = min(c[1], p[3]) - 0.3 * self.font.points
+            width = self.font.points
+            height = self.font.points
+            return [[xtopleft, ytopleft, width, height], (1.0,0,0.2,0.5)]
     
     def crossing_line_bounds(self, other, bottomvmin, topvmax):
         collisions = []
