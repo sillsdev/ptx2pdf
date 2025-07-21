@@ -60,7 +60,6 @@ class SpacingOddities(XDViPositionedReader):
                 return
         self.line.update_bounds()
         self.check_line_collision()
-        #self.bounds_checking()
         self.parent.addxdvline(self.line, self.page_index)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
@@ -68,10 +67,6 @@ class SpacingOddities(XDViPositionedReader):
     def check_line_collision(self):
         if (self.line.vmin <= self.prev_line.vmax) :
             self.line.gc_collision(self.prev_line.glyph_clusters)
-
-    def bounds_checking(self):
-        if (self.line.vmin < self.prev_line.vmax):
-            self.line.check_bounds(self.prev_line.glyph_clusters, self.prev_line.vmax)
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
@@ -151,22 +146,6 @@ class Line:
 
     def has_collisions(self):
         return self.collisions   
-    
-    def check_bounds(self, prev_gcs, prev_vmax):
-        for gc in self.glyph_clusters:
-            i = 0
-            while i < len(prev_gcs):
-                if gc.vmin <= prev_vmax or prev_gcs[i].vmax >= self.vmin:
-                    glyph_cols = gc.crossing_line_bounds(prev_gcs[i], self.vmin, prev_vmax)
-                    if len(glyph_cols) > 0:
-                        for c in glyph_cols:
-                            self.collisions.append(c)
-                i +=1
-        new = []
-        for val in self.collisions:
-            if val not in new:
-                new.append(val)
-        self.collisions = new             
 
 class GlyphCluster:
     def __init__(self, startpos, font):
@@ -182,7 +161,6 @@ class GlyphCluster:
         vmin = pos[1] - self.glyph_topt(g,3)
         hmax = pos[0] + self.glyph_topt(g,2)
         vmax = pos[1] - self.glyph_topt(g,1)
-        #print(f"{{\"name\": \"glyph\", \"coords\": [{hmin}, {vmin}, {hmax}, {vmax}]}},")
         self.vmin = min(self.vmin, vmin)
         self.vmax = max(self.vmax, vmax)
         self.glyphs.append([hmin, vmin, hmax, vmax])
@@ -224,21 +202,9 @@ class GlyphCluster:
             width = self.font.points
             height = self.font.points
             return [[xtopleft, ytopleft, width, height], (1.0,0,0.2,0.5)]
-        
-        
-    def crossing_line_bounds(self, other, bottomvmin, topvmax):
-        collisions = []
-        for c in self.glyphs:
-            if c[1] < topvmax:
-                collisions.append([[c[0], c[1], c[2]-c[0], c[3]-c[1]], (4,0,4,0.5)])
-        for p in other.glyphs:
-            if p[3] > bottomvmin:
-                collisions.append([[p[0], p[1], p[2]-p[0], p[3]-p[1]], (180,150, 0, 0.5)])
-        return collisions
 
 def main():
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSG1/local/ptxprint/Default/WSG1_Default_GEN_ptxp.xdv")
-    #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/OGNT/local/ptxprint/Default/OGNT_Default_JHN_ptxp.xdv")    
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
     for (opcode, data) in reader.parse():
         if reader.pageno > 1:

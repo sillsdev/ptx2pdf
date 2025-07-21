@@ -370,20 +370,25 @@ class Paragraphs(list):
     def isEmpty(self):
         return not len(self.pindex)
         
-    def findPos(self, pnum, x, y, rtl=False):
+    def findPos(self, pnum, x, y, rtl=False, endx = None):
         """ Given page index (not folio) returns (ParDest, ParRect) covering the given x, y """
         # just iterate over paragraphs on this page
         if pnum > len(self.pindex): # need some other test here 
             return (None, None, None)
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
-
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
             for i,r in enumerate(p.rects):
                 if r.pagenum != pnum:
                     continue
                 logger.log(7, f"Testing {r} against ({x},{y})")
-                if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
+                if r.ystart >=y and r.yend <= y:
+                    if r.xstart <= x and x <= r.xend:
+                        return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
+                if endx != None:
+                    if r.xstart <= endx and endx <= r.xend:
+                        return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
+                    if x <= r.xstart and r.xend <= endx:
+                        return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
         return (None, None, None)
 
     def getParas(self, pnum, inclast=False):
@@ -470,11 +475,14 @@ class Paragraphs(list):
                     r.dests.append((a.name, (a.x, a.y)))
                     currlast = max(currlast, a) if currlast is not None else a
 
-    def addxdvline(self, line, pindex, x, y):
+    def addxdvline(self, line, pindex):
+        x = line.glyph_clusters[0].glyphs[0][0]
+        end = line.glyph_clusters[-1].glyphs[-1][2]
+        y = line.vstart
         pheight = self.pheights[pindex - 1] if pindex <= len(self.pheights) else self.pheights[-1]
-        inpar, inrect, _ = self.findPos(pindex, x, pheight - y)
+        inpar, inrect, _ = self.findPos(pindex, x, pheight - y, endx = end)
         if inrect is None:
-            # print(f"{pindex}@({x},{pheight-y})")
+            print(f"{pindex}@({x},{pheight-y})")
             return
         if inrect.xdvlines is None:
             inrect.xdvlines = []
