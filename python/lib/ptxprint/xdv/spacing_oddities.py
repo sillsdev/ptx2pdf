@@ -18,9 +18,7 @@ class SpacingOddities(XDViPositionedReader):
         start_pos = (self.h, self.v) 
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
         glyphs_width = self.topt(width)
-        #print(f"{{\"name\": \"xglyphs method\", \"coords\": [{start_pos[0]}, {start_pos[1]}, {self.h}, {self.v}]}},")
         self.update_lines(start_pos)
-        # pos need to be converted to points!
         pos_points = [[self.topt(n) for n in p] for p in pos]
         self.line.add_glyphs(start_pos, glyphs_width, pos_points, glyphs)
         self.cursor = (self.h, self.v)
@@ -61,18 +59,15 @@ class SpacingOddities(XDViPositionedReader):
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return
         self.line.update_bounds()
-        self.line_collision()
-        #print(f"{{\"name\": \"line\", \"coords\": [{self.line.glyph_clusters[0].hstart}, {self.line.vmin}, {self.line.glyph_clusters[-1].hstart + self.line.glyph_clusters[-1].width}, {self.line.vmax}]}},")
-        #for gc in self.line.glyph_clusters:
-            #print(f"{{\"name\": \"glyph cluster\", \"coords\": [{gc.hstart}, {gc.vmin}, {gc.hstart + gc.width}, {gc.vmax}]}},")
+        self.check_line_collision()
         self.parent.addxdvline(self.line, self.page_index, self.line.glyph_clusters[0].hstart + self.line.glyph_clusters[0].width, self.line.vstart)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
-    def line_collision(self):
-        # todo: think about whether a collision can happen with lines before the previous line.
+
+    def check_line_collision(self):
         if (self.line.vmin <= self.prev_line.vmax) :
             self.line.gc_collision(self.prev_line.glyph_clusters)
-            
+
     def bounds_checking(self):
         if (self.line.vmin < self.prev_line.vmax):
             self.line.check_bounds(self.prev_line.glyph_clusters, self.prev_line.vmax)
@@ -123,23 +118,35 @@ class Line:
                     bad_spaces.append([(self.glyph_clusters[i].hstart + self.glyph_clusters[i].width, self.vstart), width, width/fontsize])
         return bad_spaces
 
-    def gc_collision(self, prev_gcs):            
-        for gc in self.glyph_clusters:
-            i = 0
-            while i < len(prev_gcs):
-                c = [gc.hstart, gc.vmin, gc.glyphs[-1][2], gc.vmax]
-                p = [prev_gcs[i].hstart, prev_gcs[i].vmin, prev_gcs[i].glyphs[-1][2], prev_gcs[i].vmax]
-                if c[0] <= p[2] and c[2] >= p[0] and c[1] <= p[3] and c[3] >= p[1]:
-                    glyph_cols = gc.glyph_collision(prev_gcs[i])
-                    if len(glyph_cols) > 0:
-                        for c in glyph_cols:
-                            self.collisions.append(c)
+    def gc_collision(self, prev_gcs):
+        i = 0
+        j = 0
+        while i < len(self.glyph_clusters) and j < len(prev_gcs):
+            self.compare_gcs(prev_gcs,i,j)
+            if self.glyph_clusters[i].glyphs[-1][2] < prev_gcs[j].glyphs[-1][2]:
                 i +=1
+            else:
+                j +=1
+        while i < len(self.glyph_clusters):
+            self.compare_gcs(prev_gcs,i, j-1)
+            i += 1
+        while j < len(prev_gcs):
+            self.compare_gcs(prev_gcs,i-1, j)
+            j +=1
         new = []
         for val in self.collisions:
             if val not in new:
                 new.append(val)
         self.collisions = new
+
+    def compare_gcs(self, prev_gcs, i,j):
+        curr = [self.glyph_clusters[i].hstart, self.glyph_clusters[i].vmin, self.glyph_clusters[i].glyphs[-1][2], self.glyph_clusters[i].vmax]
+        prev = [prev_gcs[j].hstart, prev_gcs[j].vmin, prev_gcs[j].glyphs[-1][2], prev_gcs[j].vmax]
+        if curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3] and curr[3] >= prev[1]:
+                glyph_cols = self.glyph_clusters[i].glyph_collision(prev_gcs[j])
+                if len(glyph_cols) > 0:
+                    for c in glyph_cols:
+                        self.collisions.append(c)
 
     def check_bounds(self, prev_gcs, prev_vmax):
         for gc in self.glyph_clusters:
@@ -156,7 +163,6 @@ class Line:
             if val not in new:
                 new.append(val)
         self.collisions = new
-        
 
     def has_collisions(self):
         return self.collisions                
