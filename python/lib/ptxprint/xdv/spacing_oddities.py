@@ -60,7 +60,8 @@ class SpacingOddities(XDViPositionedReader):
                 return
         self.line.update_bounds()
         self.check_line_collision()
-        self.parent.addxdvline(self.line, self.page_index, self.line.glyph_clusters[0].hstart + self.line.glyph_clusters[0].width, self.line.vstart)
+        #self.bounds_checking()
+        self.parent.addxdvline(self.line, self.page_index)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
 
@@ -148,6 +149,9 @@ class Line:
                     for c in glyph_cols:
                         self.collisions.append(c)
 
+    def has_collisions(self):
+        return self.collisions   
+    
     def check_bounds(self, prev_gcs, prev_vmax):
         for gc in self.glyph_clusters:
             i = 0
@@ -162,14 +166,10 @@ class Line:
         for val in self.collisions:
             if val not in new:
                 new.append(val)
-        self.collisions = new
-
-    def has_collisions(self):
-        return self.collisions                
+        self.collisions = new             
 
 class GlyphCluster:
     def __init__(self, startpos, font):
-        # todo: find elegant way to pass ratio, now it needs to be passed often.
         self.hstart = startpos[0]
         self.font = font 
         self.width = 0
@@ -224,7 +224,8 @@ class GlyphCluster:
             width = self.font.points
             height = self.font.points
             return [[xtopleft, ytopleft, width, height], (1.0,0,0.2,0.5)]
-    
+        
+        
     def crossing_line_bounds(self, other, bottomvmin, topvmax):
         collisions = []
         for c in self.glyphs:
