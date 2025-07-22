@@ -543,7 +543,7 @@ class PDFViewer:
             context.fill()
 
         for c in self.parlocs.getcollisions(pnum):
-            make_rect(c[0], col = c[1])
+            make_rect(c)
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):

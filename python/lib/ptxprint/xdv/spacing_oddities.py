@@ -55,8 +55,7 @@ class SpacingOddities(XDViPositionedReader):
             # overwrite line if it is empty
             self.line = Line(self.v, self.ref, self.curr_font)
             return
-        if abs(self.cursor[1]-startpos[1]) < self.v_line_threshold:
-            if abs(self.cursor[1] - self.line.vstart) < self.v_line_threshold:      # CR: use an and?
+        if abs(self.cursor[1]-startpos[1]) < self.v_line_threshold and abs(self.cursor[1] - self.line.vstart) < self.v_line_threshold:      # CR: use an and? SOLVED
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return
         self.line.update_bounds()
@@ -203,7 +202,7 @@ class GlyphCluster:
             ytopleft = min(c[1], p[3]) - 0.3 * self.font.points
             width = self.font.points
             height = self.font.points
-            return [[xtopleft, ytopleft, width, height], (1.0,0,0.2,0.5)]       # CR: Leave colours to the UI layer
+            return [xtopleft, ytopleft, width, height]      # CR: Leave colours to the UI layer SOLVED
 
 
 class Rivers:
