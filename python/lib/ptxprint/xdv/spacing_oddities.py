@@ -11,7 +11,7 @@ class SpacingOddities(XDViPositionedReader):
         self.page_index = 0 
         self.pagediff = self.pageno 
         self.parent = parent
-        self.curr_font = None           # TTFont object
+        self.curr_font = None           # font object with .ttfont attribute
         self.prev_line = Line(self.v, self.ref, self.curr_font)
         self.line = Line(self.v, self.ref, self.curr_font)
 
@@ -28,7 +28,9 @@ class SpacingOddities(XDViPositionedReader):
     def xxx(self, opcode, parm, data):
         (txt,) = super().xxx(opcode, parm, data)
         if re.search(r'pdf:dest', txt):
-            self.ref = re.findall(r'\((.*?)\)', txt)[0]     # CR: And if it isn't there?
+            ref = re.findall(r'\((.*?)\)', txt)
+            if ref:
+                self.ref = ref[0]            # CR: And if it isn't there? SOLVED: would be index error. Not happened yet tho. But check first now.
         return (txt,)
 
     def font(self, opcode, parm, data):
@@ -42,8 +44,9 @@ class SpacingOddities(XDViPositionedReader):
 
     def xfontdef(self, opcode, parm, data):
         (k, font) = super().xfontdef(opcode, parm, data)
-        self.fonts[k].ttfont = TTFont(None, filename = font.name)       # CR: this does get repeated. Only load if not already loaded?
-        self.fonts[k].ttfont.readfont(withglyphs=True)
+        if not hasattr(self.fonts[k], 'ttfont'):
+            self.fonts[k].ttfont = TTFont(None, filename = font.name)       # CR: this does get repeated. Only load if not already loaded? SOLVED
+            self.fonts[k].ttfont.readfont(withglyphs=True)
         return (k, font)
 
     def bop(self, opcode, parm, data):
@@ -59,14 +62,42 @@ class SpacingOddities(XDViPositionedReader):
                 # cursor is at glyph start position and at current line v, or at a verse number of current line
                 return
         self.line.update_bounds()
-        self.check_line_collision()
+        self.check_line_collisions()
         self.parent.addxdvline(self.line, self.page_index)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
 
-    def check_line_collision(self):
-        if (self.line.vmin <= self.prev_line.vmax) :
-            self.line.gc_collision(self.prev_line.glyph_clusters)
+    def check_line_collisions(self):
+        if (self.line.vmin <= self.prev_line.vmax):
+            curr_clusterpos = [[c.hstart, c.vmin, c.glyphs[-1][2], c.vmax] for c in self.line.glyph_clusters]
+            prev_clusterpos = [[c.hstart, c.vmin, c.glyphs[-1][2], c.vmax] for c in self.prev_line.glyph_clusters]
+            for i,j in self.search_collisions(curr_clusterpos, prev_clusterpos):
+                for k,l in self.search_collisions(self.line.glyph_clusters[i].glyphs, self.prev_line.glyph_clusters[j].glyphs):
+                    self.line.add_collision(self.line.glyph_clusters[i].glyphs[k], self.prev_line.glyph_clusters[j].glyphs[l])
+
+    def search_collisions(self, curr, prev):
+        i = 0
+        j = 0
+        while i < len(curr) and j < len(prev):
+            if self.overlap(curr[i], prev[j]):
+                yield i,j
+            if curr[i][2] < prev[j][2]:
+                i +=1
+            else:
+                j +=1
+        while i < len(curr):
+            if self.overlap(curr[i], prev[j-1]):
+                yield i,j-1
+            i +=1
+        while j < len(prev):
+            if self.overlap(curr[i-1], prev[j]):
+                yield i-1,j
+            j +=1
+
+    def overlap(self, curr, prev):
+        if curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3] and curr[3] >= prev[1]:
+            return True
+        return False      
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
@@ -76,7 +107,7 @@ class Line:
         self.h_gc_threshold = 1     # space threshold to add glyph to current gc or start new gc  CR: make it a class attribute
         self.vmin = v
         self.vmax = v
-        self.collisions = []        # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
+        self.collisions = set()     # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
 
     def change_font(self, h, font):
         self.curr_font = font
@@ -114,38 +145,15 @@ class Line:
                     bad_spaces.append([(self.glyph_clusters[i].hstart + self.glyph_clusters[i].width, self.vstart), width, width/fontsize])
         return bad_spaces
 
-    def gc_collision(self, prev_gcs):
-        i = 0
-        j = 0
-        while i < len(self.glyph_clusters) and j < len(prev_gcs):
-            self.compare_gcs(prev_gcs,i,j)
-            if self.glyph_clusters[i].glyphs[-1][2] < prev_gcs[j].glyphs[-1][2]:        # hmax
-                i +=1
-            else:
-                j +=1
-        while i < len(self.glyph_clusters):
-            self.compare_gcs(prev_gcs,i, j-1)
-            i += 1
-        while j < len(prev_gcs):
-            self.compare_gcs(prev_gcs,i-1, j)
-            j +=1
-        new = []                        # CR: Use a set?
-        for val in self.collisions:
-            if val not in new:
-                new.append(val)
-        self.collisions = new
-
-    def compare_gcs(self, prev_gcs, i,j):
-        curr = [self.glyph_clusters[i].hstart, self.glyph_clusters[i].vmin, self.glyph_clusters[i].glyphs[-1][2], self.glyph_clusters[i].vmax]
-        prev = [prev_gcs[j].hstart, prev_gcs[j].vmin, prev_gcs[j].glyphs[-1][2], prev_gcs[j].vmax]
-        if curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3] and curr[3] >= prev[1]:
-                glyph_cols = self.glyph_clusters[i].glyph_collision(prev_gcs[j])
-                # CR: self.collisions.extend(glyph_cols). But a bad side effect. Return the list
-                if len(glyph_cols) > 0:
-                    for c in glyph_cols:
-                        self.collisions.append(c)
+    def add_collision(self, curr, prev):
+        xtopleft = max(curr[0], prev[0]) - 0.3* self.curr_font.points
+        ytopleft = min(curr[1], prev[3]) - 0.3 * self.curr_font.points
+        width = self.curr_font.points
+        height = self.curr_font.points
+        self.collisions.add((xtopleft, ytopleft, width, height)) 
 
     def has_collisions(self):
+        # collisions = set(self.collisions)
         return self.collisions   
 
 class GlyphCluster:
@@ -153,7 +161,7 @@ class GlyphCluster:
         self.hstart = startpos[0]
         self.font = font 
         self.width = 0
-        self.glyphs = []            # list of [hmin, vmin, hmax, vmax] for each glyph. boundary boxes. s
+        self.glyphs = []            # list of [hmin, vmin, hmax, vmax] for each glyph. boundary boxes. 
         self.vmin = startpos[1]
         self.vmax = startpos[1]
 
@@ -168,42 +176,6 @@ class GlyphCluster:
 
     def glyph_topt(self, no, i):
         return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points)
-
-    def glyph_collision(self, other):
-        collisions = []                 # CR: can be made a generic function along with line.gc_collision
-        i = 0
-        j = 0
-        while i<len(self.glyphs) and j < len(other.glyphs):
-            col = self.compare_glyphs(other, i , j)
-            if col:
-                collisions.append(col)                
-            if self.glyphs[i][2] < other.glyphs[j][2]:
-                i +=1
-            else:
-                j += 1
-        while i < len(self.glyphs):
-            col = self.compare_glyphs(other, i , j-1)
-            if col:
-                collisions.append(col) 
-            i +=1       
-        while j < len(other.glyphs):
-            col = self.compare_glyphs(other, i -1, j)
-            if col:
-                collisions.append(col) 
-            j +=1 
-        return collisions
-
-    def compare_glyphs(self, other, i , j):
-        c = self.glyphs[i]
-        p = other.glyphs[j]
-        if c[0] <= p[2] and c[2] >= p[0] and c[1] <= p[3] and c[3] >= p[1]:
-            # rectangle drawing takes [xtopleft, ytopleft, width, height]
-            xtopleft = max(c[0], p[0]) - 0.3* self.font.points
-            ytopleft = min(c[1], p[3]) - 0.3 * self.font.points
-            width = self.font.points
-            height = self.font.points
-            return [xtopleft, ytopleft, width, height]      # CR: Leave colours to the UI layer SOLVED
-
 
 class Rivers:
     def __init__(self, max_v_gap = 0.8, min_h_overlap = 0.3):
@@ -239,6 +211,7 @@ class River:
         # add to river
     # list of spaces that are part of the river
     # start v and end v?
+        pass
     
     
 
