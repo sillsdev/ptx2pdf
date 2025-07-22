@@ -203,6 +203,58 @@ class GlyphCluster:
             height = self.font.points
             return [[xtopleft, ytopleft, width, height], (1.0,0,0.2,0.5)]
 
+
+class Rivers:
+    def __init__(self, max_v_gap = 0.8, min_h_overlap = 0.3):
+        self.final_rivers = []
+        self.active_river = River()
+        self.max_v_gap = max_v_gap
+        self.min_h_overlap = min_h_overlap
+        self.last_v = 0
+
+    def add_line(self, line):
+        # check vertical gap
+        #call self.finish_active_river if vgap is too big
+        # iterate over spaces in line
+        # check if space > minhoverlap
+        # call river.check_space 
+        # add space with river.add_ if true
+        # update last v
+        # if no space added, then finish river and start a new one.
+        pass
+    
+    def finish_active_river(self):
+        # call river.iscomplete
+        # if true, add to final rivers.
+        # overwrite active river with new river.
+        pass
+class River:
+    def __init__(self):
+        spaces = []
+        
+    def check_line(self, line):
+        # for space in line
+        # if horizontal overlap with line
+        # add to river
+    # list of spaces that are part of the river
+    # start v and end v?
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def main():
     reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSG1/local/ptxprint/Default/WSG1_Default_GEN_ptxp.xdv")
     #reader = SpacingOddities("C:/Users/jedid//Documents/VSC_projects/ptx2pdf/test/projects/WSGlatin/local/ptxprint/Default/WSGlatin_Default_RUT_ptxp.xdv")
