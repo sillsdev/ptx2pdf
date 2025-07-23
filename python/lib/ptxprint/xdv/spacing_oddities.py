@@ -2,12 +2,36 @@ from ptxprint.xdv.xdv import XDViPositionedReader
 from ptxprint.font import TTFont
 import re
 
+def search_collisions( curr, prev):
+    i = 0
+    j = 0
+    while i < len(curr) and j < len(prev):
+        if overlap(curr[i], prev[j]):
+            yield i,j
+        if curr[i][2] < prev[j][2]:
+            i +=1
+        else:
+            j +=1
+    while i < len(curr):
+        if overlap(curr[i], prev[j-1]):
+            yield i,j-1
+        i +=1
+    while j < len(prev):
+        if overlap(curr[i-1], prev[j]):
+            yield i-1,j
+        j +=1
+
+def overlap( curr, prev):
+    if curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3] and curr[3] >= prev[1]:
+        return True
+    return False  
+
 class SpacingOddities(XDViPositionedReader):
-    def __init__(self, fname, parent = None):
+    def __init__(self, fname, parent = None, line_spacing = 12):  # linespacing in points
         super().__init__(fname)
         self.ref = None                 # reference of where we're at, str
         self.cursor = (self.h, self.v)  # location of last printed glyph
-        self.v_line_threshold = 4       # vdiff of verse numbers and *s, less than line diff  CR: Perhaps ask for 0.5 * main linespacing?
+        self.v_line_threshold = line_spacing * 0.5       
         self.page_index = 0 
         self.pagediff = self.pageno 
         self.parent = parent
@@ -30,13 +54,13 @@ class SpacingOddities(XDViPositionedReader):
         if re.search(r'pdf:dest', txt):
             ref = re.findall(r'\((.*?)\)', txt)
             if ref:
-                self.ref = ref[0]            # CR: And if it isn't there? SOLVED: would be index error. Not happened yet tho. But check first now.
+                self.ref = ref[0]        
         return (txt,)
 
     def font(self, opcode, parm, data):
         (k, ) = super().font(opcode, parm, data)
         self.curr_font = self.fonts[k]
-        self.v_line_threshold = self.curr_font.points * 0.3     # CR: What about verse numbers? Should this be a line attribute? Allows max threshold on a line
+        self.v_line_threshold = self.curr_font.points * 0.3  
         self.update_lines((self.h, self.v))
         self.line.change_font(self.h, self.curr_font)
         self.cursor = (self.h,self.v)
@@ -45,7 +69,7 @@ class SpacingOddities(XDViPositionedReader):
     def xfontdef(self, opcode, parm, data):
         (k, font) = super().xfontdef(opcode, parm, data)
         if not hasattr(self.fonts[k], 'ttfont'):
-            self.fonts[k].ttfont = TTFont(None, filename = font.name)       # CR: this does get repeated. Only load if not already loaded? SOLVED
+            self.fonts[k].ttfont = TTFont(None, filename = font.name)    
             self.fonts[k].ttfont.readfont(withglyphs=True)
         return (k, font)
 
@@ -58,46 +82,14 @@ class SpacingOddities(XDViPositionedReader):
             # overwrite line if it is empty
             self.line = Line(self.v, self.ref, self.curr_font)
             return
-        if abs(self.cursor[1]-startpos[1]) < self.v_line_threshold and abs(self.cursor[1] - self.line.vstart) < self.v_line_threshold:      # CR: use an and? SOLVED
-                # cursor is at glyph start position and at current line v, or at a verse number of current line
-                return
+        if abs(self.cursor[1]-startpos[1]) < self.v_line_threshold and abs(self.cursor[1] - self.line.vstart) < self.v_line_threshold:     
+            # cursor is at glyph start position and at current line v, or at a verse number of current line
+            return
         self.line.update_bounds()
-        self.check_line_collisions()
+        self.line.check_line_collisions(self.prev_line)
         self.parent.addxdvline(self.line, self.page_index)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
-
-    def check_line_collisions(self):
-        if (self.line.vmin <= self.prev_line.vmax):
-            curr_clusterpos = [[c.hstart, c.vmin, c.glyphs[-1][2], c.vmax] for c in self.line.glyph_clusters]
-            prev_clusterpos = [[c.hstart, c.vmin, c.glyphs[-1][2], c.vmax] for c in self.prev_line.glyph_clusters]
-            for i,j in self.search_collisions(curr_clusterpos, prev_clusterpos):
-                for k,l in self.search_collisions(self.line.glyph_clusters[i].glyphs, self.prev_line.glyph_clusters[j].glyphs):
-                    self.line.add_collision(self.line.glyph_clusters[i].glyphs[k], self.prev_line.glyph_clusters[j].glyphs[l])
-
-    def search_collisions(self, curr, prev):
-        i = 0
-        j = 0
-        while i < len(curr) and j < len(prev):
-            if self.overlap(curr[i], prev[j]):
-                yield i,j
-            if curr[i][2] < prev[j][2]:
-                i +=1
-            else:
-                j +=1
-        while i < len(curr):
-            if self.overlap(curr[i], prev[j-1]):
-                yield i,j-1
-            i +=1
-        while j < len(prev):
-            if self.overlap(curr[i-1], prev[j]):
-                yield i-1,j
-            j +=1
-
-    def overlap(self, curr, prev):
-        if curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3] and curr[3] >= prev[1]:
-            return True
-        return False      
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
@@ -107,7 +99,15 @@ class Line:
         self.h_gc_threshold = 1     # space threshold to add glyph to current gc or start new gc  CR: make it a class attribute
         self.vmin = v
         self.vmax = v
-        self.collisions = set()     # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
+        self.collisions = set()        # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
+
+    def check_line_collisions(self, prev_line):
+        if (self.vmin <= prev_line.vmax):
+            curr_clusterpos = [c.boundary_box() for c in self.glyph_clusters]
+            prev_clusterpos = [c.boundary_box() for c in prev_line.glyph_clusters]   
+            for i,j in search_collisions(curr_clusterpos, prev_clusterpos):
+                for g, p in self.glyph_clusters[i].collision(prev_line.glyph_clusters[j]):
+                    self.add_collision(g, p)
 
     def change_font(self, h, font):
         self.curr_font = font
@@ -122,7 +122,7 @@ class Line:
     def add_glyphs(self, startpos, w, pos, g): # in points
         if len(self.glyph_clusters) == 0:
             self.glyph_clusters.append(GlyphCluster(startpos, self.curr_font))
-        elif startpos[0] - (self.glyph_clusters[-1].hstart + self.glyph_clusters[-1].width) > self.h_gc_threshold:
+        elif self.glyph_clusters[-1].gap_too_big(startpos):
             # make new gc block only if there is space between glyphs this block and the previous one.
             self.update_bounds()
             self.glyph_clusters.append(GlyphCluster(startpos, self.curr_font))
@@ -153,7 +153,6 @@ class Line:
         self.collisions.add((xtopleft, ytopleft, width, height)) 
 
     def has_collisions(self):
-        # collisions = set(self.collisions)
         return self.collisions   
 
 class GlyphCluster:
@@ -164,6 +163,7 @@ class GlyphCluster:
         self.glyphs = []            # list of [hmin, vmin, hmax, vmax] for each glyph. boundary boxes. 
         self.vmin = startpos[1]
         self.vmax = startpos[1]
+        self.h_threshold = 1
 
     def add_glyph(self, pos, g):    # pos = (h,v) and g = glyph number
         hmin = pos[0] + self.glyph_topt(g,0)
@@ -176,6 +176,18 @@ class GlyphCluster:
 
     def glyph_topt(self, no, i):
         return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points)
+    
+    def collision(self, prev_gc):
+        for i,j in search_collisions(self.glyphs, prev_gc.glyphs):
+            yield self.glyphs[i], prev_gc.glyphs[j]
+    
+    def boundary_box(self):
+        return [self.hstart, self.vmin, self.glyphs[-1][2], self.vmax]
+    
+    def gap_too_big(self, startpos):
+        if startpos[0] -(self.hstart + self.width) > self.h_threshold:
+            return True
+        return False
 
 class Rivers:
     def __init__(self, max_v_gap = 0.8, min_h_overlap = 0.3):
@@ -185,35 +197,55 @@ class Rivers:
         self.min_h_overlap = min_h_overlap
         self.last_v = 0
 
-    def add_line(self, line):
-        # check vertical gap
-        #call self.finish_active_river if vgap is too big
-        # iterate over spaces in line
-        # check if space > minhoverlap
-        # call river.check_space 
-        # add space with river.add_ if true
-        # update last v
-        # if no space added, then finish river and start a new one.
+    def add_line(self, line):   # check vertical gap and finish river, then add spaces
+        if line.vmin - self.last_v > self.max_v_gap * line.curr_font.points:
+            self.finish_active_river()
+        self.check_spaces(line.glyph_clusters)
+        self.last_v = line.vmax
         pass
     
-    def finish_active_river(self):
-        # call river.iscomplete
-        # if true, add to final rivers.
-        # overwrite active river with new river.
+    def finish_active_river(self):  # add river to final_rivers if >3 lines, create new River.
+        if self.active_river.is_valid():
+            self.final_rivers.append(self.active_river)
+        self.active_river = River()
         pass
+
+    def check_spaces(self, gcs):    # iterate over space and check river acceptance, add
+        for i in range(0, len(gcs)-1):
+            space = (gcs[i].glyphs[-1][2], gcs[i+1].hstart)
+            if space[1]-space[0] > self.min_h_overlap:
+                if self.active_river.accepts(space, self.min_h_overlap*gcs.font.points):
+                    self.active_river.add(space)
+                    return          # because for now we will only track one river
+        self.finish_active_river()
 class River:
     def __init__(self):
-        spaces = []
-        
-    def check_line(self, line):
-        # for space in line
-        # if horizontal overlap with line
-        # add to river
-    # list of spaces that are part of the river
-    # start v and end v?
+        self.spaces = []
+        self.covered_regions = []
+
+    def accepts(self, space, threshold):
+        if len(self.spaces) <1:
+            return True
+        overlap = min(self.spaces[-1][1], space[1]) - max(self.spaces[-1][0], space[0])
+        if overlap > threshold:
+            return True
+        return False
+
+    def add(self, space):
+        self.spaces.append(space)
+        # adds space to river
+        # updates covered regions
         pass
+
+    def is_valid(self):
+        if len(self.spaces) > 2:
+            return True
+        return False
     
-    
+    def is_empty(self):
+        if len(self.spaces) >0:
+            return False
+        return True
 
 
 
