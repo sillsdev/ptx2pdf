@@ -1,0 +1,159 @@
+% usfmTex-ext.tex
+%
+% Custom TeX setup file for the usfmTex macro package. These
+% additional TeX commands will be loaded in after the stylesheet
+% and style overrides are loaded
+
+%%%%%%%%%%%%%%%%%%%%%%%  Extra Tweaks %%%%%%%%%%%%%%%%%%%%%%
+
+% In a perfect world none of these would be needed but when
+% your publication throws you a curve, perhaps one of these
+% work-arounds might help you do what you want to do. Below
+% you will find a number of extra Tweaks that may not be included
+% in the normal functions of this macro package. Hopefully the
+% comments and documentation included with each one will be
+% helpful and enable you to use them to your satisfaction. You
+% can comment, uncomment and modify them to work with this
+% specific project. You can also add more as needed. Have fun!
+
+
+%%%%% Depricated and special USFM Markers
+% Process \b 
+% This is often frowned upon but if you want to add extra
+% spaces around poetry, uncomment this next line.
+%\def\b{\vskip 0.5\baselineskip}
+
+
+%%%%% Baselineskip Adjustment Hooks
+% This hook provides a means to adjust the baselineskip on a
+% specific style. It provides a place to put the initial 
+% setting so the hook can make the change and then go back
+% to the initial setting when done.
+\newdimen\remblskip \remblskip=\baselineskip
+
+% Baselineskip Adjustment Hook Example
+%\sethook{start}{s1}{\remblskip=\baselineskip \baselineskip=10pt}
+%\sethook{after}{s1}{\baselineskip=\remblskip}
+
+
+%%%%% Header output
+% To adjust the size of the page number in the header or footer
+% use the following code. Adjust font name and size as necessary.
+%\font\mysmallfont="[../Fonts/CharisSIL/CharisSILB.ttf]" at 10pt
+%\def\pagenumber{{\mysmallfont \folio}}
+
+% This will output only the book name in the header that is
+% found in \h. (This should be added to ptx2pdf.)
+\catcode`\@=11
+\def\bookname{\x@\extr@ctfirst\p@gefirstmark\relax\@book}
+\catcode`\@=12
+
+
+%%%%% Footnote tweaks
+% Footnote caller kerning - To adjust space around the
+% footnote caller use the following code Adjust the kern
+% amounts as necessary
+\let\OriginalGetCaller=\getcaller
+\def\getcaller#1#2{%
+  \kern0.2em\OriginalGetCaller{#1}{#2}\kern0.4em}
+
+% Inter Note Skip - Adjust the horizontal space between footnotes,
+% both paragraphed and non-paragraphed
+\catcode`\@=11
+  \intern@teskip=10pt
+\catcode`\@=12
+
+% Inter-note Penalty - Control the amount of "tension" between
+% parts of a footnote to help control line breaking. If you
+% use the highest setting, 10000, it will never break. A lower
+% setting, like 9999, will lossen it up. Default is 9999.
+\def\internotepenalty{9999}
+
+
+%%%%% Substituting Characters
+% Some times, when a character does not exist in a font
+% you can substitute from another if no special rendering
+% is needed. This code will do that. Modify as needed.
+%% Example 1 - None Rapuma font
+%\font\cwi="[../Fonts/Padauk/Padauk.ttf]" at 10pt
+%\catcode"A92E=\active                          % Make U+A92E an active character
+%\def^^^^a92e{\leavevmode{\cwi\char"A92E}}      % Define it to print itself
+
+%% Example 2 - Rapuma (secondary) font
+%\crossmaltese=\wingdingfontregular\char"2720
+%\catcode"2720=\active                          % Make U+2720 an active character
+%\def^^^^2720{\leavevmode{\crossmaltese}}       % Define it to replace itself
+                                                % with the character found in
+                                                % the specified font
+
+
+%%%%% Non-standard Spaces
+% Some publications may use non-standard (U+0020) between words.
+% But TeX (and XeTeX) will treat spaces other than U+0020 as
+% non-breaking which messes up your justification. This is a
+% work around to force TeX to break and stretch words with
+% another space character in a controled way.
+%\catcode"2009=13
+%\def^^^^2009{\hskip .2em plus.1em minus.1em\relax}
+
+
+%%%%% Heading space
+% There always seems to be problems with extra space between 
+% the section heading and the top of the column when the 
+% section head is at the top of the column. To take up the
+% slack this code will usually help. Any adjustments needed
+% should be done in the .sty and \VerticalSpaceFactor.
+% Trying to adjust this code doesn't seem to make any dif.
+% This is normally on by default.
+\catcode`\@=11
+\def\gridb@x#1{%
+ \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
+ \dimen2=\ht0 \advance\dimen2 by \dp0
+ \dimen0=\baselineskip \vskip\baselineskip
+ \ifgridp@c\line{}\nobreak\fi % otherwise first \line in loop won't get any baselineskip
+                              % when doing a picture box, because it's not part of the
+                              % current page
+ \loop \ifdim\dimen0<\dimen2
+   \advance\dimen0 by \baselineskip
+    \line{}\nobreak \repeat
+ \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}
+ \unvbox0 \nobreak
+}
+\catcode`\@=12
+
+
+%%%%% Chapter/Verse Number Settings
+% Some additional macros and commands to gain more control over verse numbers
+
+% Superscript tweaks (uncomment \def settings to override default values)
+% Any style that has \Superscript in it will be affected by these modified settings
+%\def\SuperscriptRaise{0.85ex}   % Raise or lower a verse number or caller
+%\def\SuperscriptFactor{0.75}    % Scale up or down the size of the verse number or caller
+
+
+%%%%% Special commands
+% These are extra commands that can be inserted in the text
+
+% Enable commands with digits in them to be processed
+\catcode`@=11
+\def\makedigitsother{\m@kedigitsother}
+\def\makedigitsletters{\m@kedigitsletters}
+\catcode `@=12
+
+% Special spaces
+\def\nbsp{ }    % Nonbreaking space (U+00A0)
+\def\zwsp{​}     % Zero width space (U+200B)
+\def\zwj{‍}      % Zero width joiner (U+200D)
+
+% Special line space commands (Warning, these do not always work)
+\newdimen\remblskip \remblskip=\baselineskip
+% Remove space
+\def\suckupline{\vskip -\baselineskip}          % Full line
+\def\suckuphalfline{\vskip -0.5\baselineskip}   % Half a line
+\def\suckupqline{\vskip -0.25\baselineskip}     % 1/4 of a line
+% Add space
+\def\skipline{\vskip\baselineskip}              % Full line
+\def\skiphalfline{\vskip 0.5\baselineskip}      % Half a line
+\def\skipqline{\vskip 0.25\baselineskip}        % 1/4 of a line
+
+
