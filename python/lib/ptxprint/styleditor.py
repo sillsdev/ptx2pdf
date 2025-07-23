@@ -452,7 +452,7 @@ class StyleEditor:
         return val
 
     def _eq_val(self, a, b, key=""):
-        if (b is None) ^ (a is None):
+        if (b is None) != (a is None):
             return False
         elif key.lower() in absolutes:
             fa = asFloatPts(self, str(a))

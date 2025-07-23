@@ -585,6 +585,7 @@ class Xrefs:
         if usfm is not None:
             usfm.addorncv()
         if self.xrefs is not None:
+            logger.debug(f"Processing xrefs for {bk}")
             return self.xrefs.process(bk, triggers, self, usfm=usfm, vrsf=vrsf)
         return triggers
 
