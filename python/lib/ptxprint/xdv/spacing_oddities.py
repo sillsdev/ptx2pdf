@@ -29,7 +29,7 @@ def overlap( curr, prev):
 class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, parent = None): 
         super().__init__(fname)
-        self.ref = None                 # reference of where we're at, str
+        self.ref = ''                 # reference of where we're at, str
         self.cursor = (self.h, self.v)  # location of last printed glyp
         self.page_index = 0 
         self.pagediff = self.pageno 
@@ -41,10 +41,9 @@ class SpacingOddities(XDViPositionedReader):
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
-        glyphs_width = self.topt(width)
         self.update_lines(start_pos)
         pos_points = [[self.topt(n) for n in p] for p in pos]
-        self.line.add_glyphs(start_pos, glyphs_width, pos_points, glyphs)
+        self.line.add_glyphs(start_pos, pos_points, glyphs)
         self.cursor = (self.h, self.v)
         return (parm, width, pos, glyphs, txt)
 
@@ -58,10 +57,10 @@ class SpacingOddities(XDViPositionedReader):
 
     def font(self, opcode, parm, data):
         (k, ) = super().font(opcode, parm, data)
-        self.curr_font = self.fonts[k]
-        self.v_line_threshold = self.curr_font.points * 0.3  
+        self.curr_font = self.fonts[k] 
+        # question: should we first update lines or first change font? font changes vthresh used in update lines, adds gc to the right line according to update tho.
         self.update_lines((self.h, self.v))
-        self.line.change_font(self.h, self.curr_font)
+        self.line.change_font(self.curr_font)
         self.cursor = (self.h,self.v)
         return (k,)
 
@@ -77,109 +76,116 @@ class SpacingOddities(XDViPositionedReader):
         return super().bop(opcode, parm, data)
 
     def update_lines(self, startpos):
-        if len(self.line.glyph_clusters) == 0:
-            # overwrite line if it is empty
+        if self.line.is_empty():
             self.line = Line(self.v, self.ref, self.curr_font)
             return
-        if self.line.vgap_below_threshold(self.cursor, startpos):     
-            # cursor is at glyph start position and at current line v, or at a verse number of current line
+        if self.line.vgap_below_threshold(self.cursor,startpos):
             return
+        if self.line.glyph_clusters[-1].is_empty():
+            self.line.glyph_clusters.pop()
         self.line.update_bounds()
-        self.line.check_line_collisions(self.prev_line)
+        #self.line.check_line_collisions(self.prev_line)
+        self.line.mark_starts()
         self.parent.addxdvline(self.line, self.page_index)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
 class Line: 
     def __init__(self, v, ref, font):
         self.ref = ref
-        self.glyph_clusters = []    # list of GlyphCluster objects
         self.vstart = v             # v of first glyph
         self.curr_font = font
         self.vmin = v
         self.vmax = v
+        self.v_threshold = 0.7*font.points if font is not None else 4
+        self.glyph_clusters = []    # list of GlyphCluster objects
         self.collisions = set()        # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
-        if self.curr_font == None:
-            self.v_threshold = 4
-        else:
-            
-            self.v_threshold = 0.5 * self.curr_font.points
 
-    def check_line_collisions(self, prev_line):
-        if (self.vmin <= prev_line.vmax):
-            curr_clusterpos = [c.boundary_box() for c in self.glyph_clusters]
-            prev_clusterpos = [c.boundary_box() for c in prev_line.glyph_clusters]   
-            for i,j in search_collisions(curr_clusterpos, prev_clusterpos):
-                for g, p in self.glyph_clusters[i].collision(prev_line.glyph_clusters[j]):
-                    self.add_collision(g, p)
-
-    def change_font(self, h, font):
-        self.curr_font = font
-        self.update_gcs((h, self.vstart), True)
-
-    def update_bounds(self):
-        if self.glyph_clusters[-1].width == 0:
-            self.glyph_clusters.pop()
-        self.vmin = min(self.vmin, self.glyph_clusters[-1].vmin)
-        self.vmax = max(self.vmax, self.glyph_clusters[-1].vmax)
-        self.v_threshold = self.vmax- self.vstart
-        #print(f"threshold now {self.v_threshold}")
-        #self.v_threshold = self.vmax - self.vmin
-
-    def add_glyphs(self, startpos, w, pos, g): # in points
-        self.update_gcs(startpos, False)
-        self.glyph_clusters[-1].width += w
-        for i in range(len(g)):
-            self.glyph_clusters[-1].add_glyph((startpos[0]+pos[i][0], startpos[1]+pos[i][1]), g[i])
-            
-    def update_gcs(self, startpos, font_change):
-        if len(self.glyph_clusters) == 0:
-            self.glyph_clusters.append(GlyphCluster(startpos, self.curr_font))
-            return
+    def gcs_change(self, v):
+        if self.is_empty():
+            self.glyph_clusters.append(GlyphCluster(v, self.curr_font))
+            return True
         if self.glyph_clusters[-1].is_empty():
-            self.glyph_clusters[-1] = GlyphCluster(startpos, self.curr_font)
-            return
-        if self.glyph_clusters[-1].gap_too_big(startpos) or font_change:
-            self.update_bounds()
-            self.glyph_clusters.append(GlyphCluster(startpos, self.curr_font))
+            self.glyph_clusters[-1] = GlyphCluster(v, self.curr_font)
+            return True
+        return False
+    
+    def update_bounds(self):
+        self.vmin = min(self.vmin, self.glyph_clusters[-1].vmin)
+        self.vmax = max(self.vmax, self.glyph_clusters[-1].vmax)  
 
-    def has_badspace(self, threshold = 4):
-        # threshold in ems
-        bad_spaces = []
-        if len(self.glyph_clusters) > 1:
-            fontsize = self.glyph_clusters[0].font.points
-            maxspace = fontsize*threshold
-            for i in range(0, len(self.glyph_clusters)-1):
-                if self.glyph_clusters[i].font.points != fontsize:
-                    fontsize = self.glyph_clusters[0].font.points
-                    maxspace = fontsize*threshold
-                width = self.glyph_clusters[i+1].hstart - (self.glyph_clusters[i].hstart + self.glyph_clusters[i].width)
-                if width > maxspace:
-                    bad_spaces.append([(self.glyph_clusters[i].hstart + self.glyph_clusters[i].width, self.vstart), width, width/fontsize])
-        return bad_spaces
+    def change_font(self, font):
+        self.curr_font = font
+        self.v_threshold = 0.7*font.points
+        gcs_changed = self.gcs_change(self.vstart) 
+        if not gcs_changed:
+            self.update_bounds()
+            self.glyph_clusters.append(GlyphCluster(self.vstart, self.curr_font))
+
+    def add_glyphs(self, startpos, pos, g): # in points
+        gcs_changed = self.gcs_change(startpos[1])
+        if not gcs_changed:
+            self.update_bounds()
+            gc_box = self.glyph_clusters[-1].get_boundary_box()
+            if self.glyph_clusters[-1].hgap_too_big(startpos):
+                self.glyph_clusters.append(GlyphCluster(self.vstart, self.curr_font))
+        for i in range(len(g)):
+            self.glyph_clusters[-1].add_glyph((startpos[0]+pos[i][0], startpos[1]+pos[i][1]), g[i])    
 
     def add_collision(self, curr, prev):
         xtopleft = max(curr[0], prev[0]) - 0.3* self.curr_font.points
         ytopleft = min(curr[1], prev[3]) - 0.3 * self.curr_font.points
         width = self.curr_font.points
         height = self.curr_font.points
-        self.collisions.add((xtopleft, ytopleft, width, height)) 
-
+        self.collisions.add((xtopleft, ytopleft, width, height))      
+        
+    def check_line_collisions(self, prev_line):
+        if (self.vmin <= prev_line.vmax):
+            curr_clusterpos = [c.get_boundary_box() for c in self.glyph_clusters]
+            prev_clusterpos = [c.get_boundary_box() for c in prev_line.glyph_clusters]   
+            for i,j in search_collisions(curr_clusterpos, prev_clusterpos):
+                for g, p in self.glyph_clusters[i].collision(prev_line.glyph_clusters[j]):
+                    self.add_collision(g, p)        
+            
+    def has_badspace(self, threshold = 4):
+        # threshold in ems
+        bad_spaces = []
+        if len(self.glyph_clusters) > 1:
+            fontsize = self.glyph_clusters[0].font.points
+            maxspace = fontsize*threshold
+            for i in range(len(self.glyph_clusters)-1):
+                if self.glyph_clusters[i].font.points != fontsize:
+                    fontsize = self.glyph_clusters[i].font.points
+                    maxspace = fontsize*threshold
+                gc_box1 = self.glyph_clusters[i].get_boundary_box()
+                gc_box2 = self.glyph_clusters[i+1].get_boundary_box()
+                width = gc_box2[0] - gc_box1[2]
+                if width > maxspace:
+                    bad_spaces.append([gc_box1[2], self.vstart], width, width/fontsize)
+                    #bad_spaces.append([(self.glyph_clusters[i].hstart + self.glyph_clusters[i].width, self.vstart), width, width/fontsize])
+        else:
+            print(f"This line has 0 glyphclusters")
+        return bad_spaces        
+    
     def has_collisions(self):
         return self.collisions   
     
     def vgap_below_threshold(self, cursor, startpos):
-        return abs(cursor[1]-startpos[1]) < self.v_threshold and abs(cursor[1]-self.vstart) < self.v_threshold
+        return abs(cursor[1]-startpos[1]) < self.v_threshold and abs(cursor[1]-self.vstart) < self.v_threshold  
+    
+    def mark_starts(self):
+        self.collisions.add((self.glyph_clusters[0].glyphs[0][0], self.vmin, 10, self.vmax-self.vmin))
+    
+    def is_empty(self):
+        return len(self.glyph_clusters) == 0
 
 class GlyphCluster:
-    def __init__(self, startpos, font):
-        self.hstart = startpos[0]
+    def __init__(self, v, font):
         self.font = font 
-        self.width = 0
         self.glyphs = []            # list of [hmin, vmin, hmax, vmax] for each glyph. boundary boxes. 
-        self.vmin = startpos[1]
-        self.vmax = startpos[1]
-        self.h_threshold = 1
-
+        self.h_threshold = 0.1*font.points  # this was 1.
+        self.vmin = v
+        self.vmax = v
+    
     def add_glyph(self, pos, g):    # pos = (h,v) and g = glyph number
         hmin = pos[0] + self.glyph_topt(g,0)
         vmin = pos[1] - self.glyph_topt(g,3)
@@ -196,19 +202,19 @@ class GlyphCluster:
         for i,j in search_collisions(self.glyphs, prev_gc.glyphs):
             yield self.glyphs[i], prev_gc.glyphs[j]
     
-    def boundary_box(self):
-        if len(self.glyphs) <1:
-            print(f"glyphs: {self.glyphs}")
-            print(f"vmin: {self.vmin}, vmax: {self.vmax}, hstart: {self.hstart} width: {self.width}")
-        return [self.hstart, self.vmin, self.glyphs[-1][2], self.vmax]
-    
-    def gap_too_big(self, startpos):
-        if startpos[0] -(self.hstart + self.width) > self.h_threshold:
-            return True
-        return False
+    def get_boundary_box(self):
+        if len(self.glyphs) ==0:
+            return [0, self.vmin, 0, self.vmax]
+        else:
+            return [self.glyphs[0][0], self.vmin, self.glyphs[-1][2], self.vmax]
     
     def is_empty(self):
-        return self.width == 0
+        return len(self.glyphs) == 0
+    
+    def hgap_too_big(self, startpos):
+        if startpos[0] - self.glyphs[-1][2] > self.h_threshold:
+            return True
+        return False
 
 # class Rivers:
 #     def __init__(self, max_v_gap = 0.8, min_h_overlap = 0.3):
