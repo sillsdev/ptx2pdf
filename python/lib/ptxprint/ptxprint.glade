@@ -5153,6 +5153,7 @@ Multiple Books:</property>
                                 <property name="can-focus">False</property>
                                 <property name="can-default">True</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="model">ls_projects</property>
                                 <property name="wrap-width">1</property>
                                 <property name="entry-text-column">0</property>
@@ -5322,18 +5323,23 @@ chapter number to end with.</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_DBLbundleDiglot1">
-                                <property name="label" translatable="yes">DBL</property>
-                                <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                                <property name="label" translatable="yes">  Import Scripture  </property>
+                                <property name="name">Get Scripture text from Open.Bible or the Digital Bible Library (DBL)</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
-available texts to print from. Note that the
-DBL bundle will get unpacked into your 
-regular folder (e.g. My Paratext 9 Projects)
-but will only be used by PTXprint. It cannot
-be viewed or edited in Paratext.</property>
+                                <property name="tooltip-text" translatable="yes">Many scripture texts are available in a 
+range of languages which can be freely
+downloaded and added to the list of
+available texts to print from. 
+
+Note that these Scripture text bundles 
+will get unpacked into a sub-folder 
+(e.g. C:\My Paratext 9 Projects\_PTXprint)
+to be used by PTXprint. The texts will not 
+be available for viewing or editing in Paratext.</property>
                                 <property name="halign">end</property>
+                                <property name="valign">center</property>
                                 <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
                               </object>
                               <packing>
@@ -18641,6 +18647,7 @@ A forward slash / indicates one
 text being under the other on the
 same page.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="max-length">12</property>
                                 <property name="width-chars">12</property>
                                 <property name="xalign">0.5</property>
@@ -18659,18 +18666,23 @@ same page.</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkButton" id="btn_DBLbundleDiglot2">
-                                    <property name="label" translatable="yes">DBL</property>
-                                    <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                                    <property name="label" translatable="yes">  Import Scripture  </property>
+                                    <property name="name">Get Scripture text from Open.Bible or the Digital Bible Library (DBL)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
-available texts to print from. Note that the
-DBL bundle will get unpacked into your 
-regular folder (e.g. My Paratext 9 Projects)
-but will only be used by PTXprint. It cannot
-be viewed or edited in Paratext.</property>
+                                    <property name="tooltip-text" translatable="yes">Many scripture texts are available in a 
+range of languages which can be freely
+downloaded and added to the list of
+available texts to print from. 
+
+Note that these Scripture text bundles 
+will get unpacked into a sub-folder 
+(e.g. C:\My Paratext 9 Projects\_PTXprint)
+to be used by PTXprint. The texts will not 
+be available for viewing or editing in Paratext.</property>
                                     <property name="halign">end</property>
+                                    <property name="valign">center</property>
                                     <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
                                   </object>
                                   <packing>
@@ -18764,6 +18776,7 @@ algorithms which may be used to obtain the best overall result:
   can result in a lot of breaks!
 
 Note that for polyglots, only the Scored options are available to be used.</property>
+                                    <property name="valign">center</property>
                                     <property name="model">ls_diglotMerge</property>
                                     <property name="active">1</property>
                                     <property name="has-entry">True</property>
@@ -27686,7 +27699,7 @@ output with a previous PDF.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27702,11 +27715,12 @@ output with a previous PDF.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">2</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_working_dir">
+                                    <property name="width-request">250</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">The PDF file created is stored in this
@@ -27722,11 +27736,12 @@ included in Paratext's Send/Recv data.</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Output PDF Location:</property>
                                     <property name="justify">right</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27922,7 +27937,7 @@ file or the Changes.txt file as appropriate.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">3</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27975,6 +27990,7 @@ Email the ZIPped archive file to:
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_community">
+                                    <property name="width-request">250</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Scripture Software Community site where you can 
@@ -28043,7 +28059,7 @@ by deleting unneeded files.</property>
                                     <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">16</property>
                                     <property name="label">&lt;a href="working dir"&gt;working dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
@@ -28051,9 +28067,9 @@ by deleting unneeded files.</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">0</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28062,7 +28078,7 @@ by deleting unneeded files.</property>
                                     <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">16</property>
                                     <property name="label">&lt;a href="prjdir"&gt;prjdir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
@@ -28070,9 +28086,9 @@ by deleting unneeded files.</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28081,7 +28097,7 @@ by deleting unneeded files.</property>
                                     <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">16</property>
                                     <property name="label">&lt;a href="settings dir"&gt;settings dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
@@ -28089,9 +28105,9 @@ by deleting unneeded files.</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">2</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28100,7 +28116,7 @@ by deleting unneeded files.</property>
                                     <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">16</property>
                                     <property name="label">&lt;a href="docs dir"&gt;docs dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
@@ -28108,9 +28124,9 @@ by deleting unneeded files.</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">3</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28845,7 +28861,7 @@ Shortcut: Ctrl-W</property>
   </object>
   <object class="GtkDialog" id="dlg_DBLbundle">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Set up DBL bundle...</property>
+    <property name="title" translatable="yes">PTXprint: Import Scripture...</property>
     <property name="type-hint">dialog</property>
     <property name="transient-for">ptxprint</property>
     <child internal-child="vbox">
@@ -28906,24 +28922,7 @@ Shortcut: Ctrl-W</property>
             <property name="margin-bottom">6</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
-                <property name="margin-top">12</property>
-                <property name="margin-bottom">12</property>
-                <property name="label" translatable="yes">In order to print from a DBL bundle it is
-neccessary to unpack the bundle into
-a project folder - from where PTXprint
-can access the required files.</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <!-- n-columns=2 n-rows=7 -->
@@ -29099,9 +29098,9 @@ If you already have the required DBL bundle,
 then skip this first step.</property>
                     <property name="halign">end</property>
                     <property name="margin-start">6</property>
-                    <property name="label" translatable="yes">[Optional]     Step 1.
-Download a DBL
-Bundle (USX) from
+                    <property name="label" translatable="yes">Step 1.
+Download a Scripture
+Text Bundle (USX) from
 an Online Repository</property>
                     <property name="justify">right</property>
                   </object>

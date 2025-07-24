@@ -434,7 +434,8 @@ _object_classes = {
                     "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot"), 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
-                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun", "btn_addMaps2"),
+                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun", "btn_addMaps2",
+                    "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"),
     "tinybutton":  ("col_noteLines",),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
@@ -449,7 +450,7 @@ _object_classes = {
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_downloadPics", "btn_resetTabGroups", "btn_adjust_spacing", 
-                    "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", 
+                    "btn_adjust_top", "btn_adjust_bottom",  
                     "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats") # "btn_reloadConfig", 
 }
 
@@ -958,6 +959,7 @@ class GtkViewModel(ViewModel):
                     added.add(fname)
 
     def _setup_css(self):
+            # .dblbutton {font-size: 10px; min-height: 0; min-width:0;  padding:2px;}
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}

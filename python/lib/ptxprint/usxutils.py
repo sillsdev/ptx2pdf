@@ -706,8 +706,8 @@ class Usfm:
                         i = 0
                     else:
                         x.tail = b[0] + "\u200B"
-                        if x.parent is None:
-                            breakpoint()
+                        # if x.parent is None:
+                            # breakpoint()
                         i = list(x.parent).index(x) + 1
                     lastw = x
                     for a in range(1, len(b), 2):

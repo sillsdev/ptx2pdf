@@ -1,8 +1,16 @@
 PTXprint 2.8.21 Release Notes
-17 Jul 2025
+23 Jul 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.22 (17 Jul 2025)
+  * Hope to avoid style corruptions (debounce to avoid rapid, repeated searches)
+  * Fix tests with the demise of usxutils subdoc()
+  * Minor tweaks to UI and map header
+  * Multiple bug fixes to usfmtc lib
+  * Add intros to subdoc-ed books
+  * Refactor subdoc to use usfmtc
 
 Bug fixes and Improvements in 2.8.21 (17 Jul 2025)
   * Fix modules and \inc

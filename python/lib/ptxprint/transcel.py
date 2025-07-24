@@ -48,7 +48,7 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
     return triggers
 
 def outtriggers(triggers, bk, outpath):
-    dotsep = Environment(cvsep=".", bookspace="", nochap=False, titlecase=True)
+    dotsep = Environment(cvsep=".", bookspace="", nochap=False, titlecase=False)
     with open(outpath, "w", encoding="utf-8") as outf:
         for k, v in [x for x in sorted(triggers.items()) if x[0].first.book == bk]:
             outf.write("\n\\AddTrigger {}\n{}\n\\EndTrigger\n".format(k.str(env=dotsep), v))
