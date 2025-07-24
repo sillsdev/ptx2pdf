@@ -369,7 +369,7 @@ class Report:
                         badlist.append(BadSpace(r.pagenum, l, *b)) 
         if len(badlist):
             bads = set([Ref(x.line.ref.replace(".", " ")) for x in badlist])
-        self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
+            self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
