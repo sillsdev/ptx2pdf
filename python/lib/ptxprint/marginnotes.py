@@ -216,19 +216,19 @@ class MarginNotes:
                     currw += w
                 else:                                   # end of block. Now shift the block back up based on weighted costs
                     if i > start + 1:
+                        islast = True
                         currw += weights.get(t[start].marker, 1)
                         shift = float(currc / currw)            # the heavier the weight the more the corrective shift back
                         shift = min(shift, self.top - t[start].ymax - t[start].yshift)  # don't shift off the top of the page
                         if t[i-1].ymin + t[i-1].yshift + shift < self.bot:              # if shift would result in stuff off the bottom
                             shift = self.bot - t[i-1].ymin - t[i-1].yshift                  # increase shift
+                            islast = False
                             if math.fabs(shift) > maxshift:
                                 logger.error(f"Shift {shift} out of bounds on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
-                        islast = True
                         for j in range(i-1, start-1, -1):
                             if islast and -t[j].yshift < shift:     # if we can hit original position, do it
                                 shift = max(0, -t[j].yshift)        # don't make matters worse (more shifting away)
-                            else:                                   # can't do this inside the block otherwise we hit the line below
-                                islast = False
+                            islast = False
                             t[j].yshift += shift
 
                         # Now scan up the page to see what we need to push up. Basically the same algorithm inverted
@@ -238,6 +238,7 @@ class MarginNotes:
                             shiftu = 0
                             currc = 0
                             currw = 0
+                            islast = True
                             # identify which notes need to move up and shift them up
                             while k >= 0 and currt > t[k].ymin + t[k].yshift:
                                 shiftu = currt - t[k].ymin - t[k].yshift
@@ -253,13 +254,12 @@ class MarginNotes:
                             shift = max(shift, self.bot - t[i-1].ymin - t[i-1].yshift)      # don't shift off the bottom of the page
                             if k >= 0 and t[k].ymax + t[k].yshift + shift > self.top:       # if upward shift would push us over the top
                                 shift = self.top - t[k].ymax - t[k].yshift                      # increase downward shift to match
-                            islast = True
+                                islast = False
                             # now apply updated shift to the whole block top to bottom (since bottom is tight from last shifts)
                             for j in range(k, i):
                                 if islast and -t[j].yshift > shift:
                                     shift = min(0, -t[j].yshift)
-                                else:
-                                    islast = False
+                                islast = False
                                 t[j].yshift += shift
                     currs = 0
                     start = i
