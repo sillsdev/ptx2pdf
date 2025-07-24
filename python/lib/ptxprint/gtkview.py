@@ -2345,6 +2345,8 @@ class GtkViewModel(ViewModel):
         self.picinfos.merge(newpics, pref, mergeCaptions=True, bkanchors=True)
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
+                if v is None:
+                    continue
                 digpics = Piclist(v)
                 digpics.threadUsfms(v, nosave=True)     # is this safe?
                 self.picinfos.merge(digpics, k, mergeCaptions=True, bkanchors=True)
