@@ -160,7 +160,7 @@ class Line:
                 gc_box2 = self.glyph_clusters[i+1].get_boundary_box()
                 width = gc_box2[0] - gc_box1[2]
                 if width > maxspace:
-                    bad_spaces.append([gc_box1[2], self.vstart], width, width/fontsize)
+                    bad_spaces.append([(gc_box1[2], self.vstart), width, width/fontsize])
                     #bad_spaces.append([(self.glyph_clusters[i].hstart + self.glyph_clusters[i].width, self.vstart), width, width/fontsize])
         else:
             print(f"This line has 0 glyphclusters")
