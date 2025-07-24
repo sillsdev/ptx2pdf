@@ -71,9 +71,8 @@ class SpacingOddities(XDViPositionedReader):
         return (k, font)
 
     def bop(self, opcode, parm, data):
-        # the current line is the last line of the page. needs to be added to rectangle before the update, so first update lines. 
-        # the cursor needs to be updated to the new start location i think. First line on new page. 
         self.update_lines((self.h,self.v))
+        self.cursor = (self.h, self.v)
         self.page_index += 1
         return super().bop(opcode, parm, data)
 
@@ -86,8 +85,8 @@ class SpacingOddities(XDViPositionedReader):
         if self.line.glyph_clusters[-1].is_empty():
             self.line.glyph_clusters.pop()
         self.line.update_bounds()
-        #self.line.check_line_collisions(self.prev_line)
-        self.line.mark_starts()
+        self.line.check_line_collisions(self.prev_line)
+        #self.line.mark_starts()
         self.parent.addxdvline(self.line, self.page_index)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font)
@@ -133,15 +132,13 @@ class Line:
             self.glyph_clusters[-1].add_glyph((startpos[0]+pos[i][0], startpos[1]+pos[i][1]), g[i])    
 
     def add_collision(self, curr, prev):
-        # xtopleft = max(curr[0], prev[0]) - 0.3* self.curr_font.points
-        # ytopleft = min(curr[1], prev[3]) - 0.3 * self.curr_font.points
-        # width = self.curr_font.points
-        # height = self.curr_font.points
-        # self.collisions.add((xtopleft, ytopleft, width, height))
-        self.collisions.add((curr[0], curr[1], curr[2]-curr[0], curr[3]-curr[1]))
-        self.collisions.add((prev[0], prev[1], prev[2]-prev[0], prev[3]-prev[1]))      
-        # self.collisions.add((curr[0], curr[1], 10, 10))
-        # self.collisions.add((prev[0], prev[1], 10,10))   
+        xtopleft = max(curr[0], prev[0]) - 0.3* self.curr_font.points
+        ytopleft = min(curr[1], prev[3]) - 0.3 * self.curr_font.points
+        width = self.curr_font.points
+        height = self.curr_font.points
+        self.collisions.add((xtopleft, ytopleft, width, height))
+        # self.collisions.add((curr[0], curr[1], curr[2]-curr[0], curr[3]-curr[1]))       # to highlight both glyph boxes
+        # self.collisions.add((prev[0], prev[1], prev[2]-prev[0], prev[3]-prev[1]))        
         
     def check_line_collisions(self, prev_line):
         if (self.vmin <= prev_line.vmax):
@@ -163,7 +160,7 @@ class Line:
                     maxspace = fontsize*threshold
                 gc_box1 = self.glyph_clusters[i].get_boundary_box()
                 gc_box2 = self.glyph_clusters[i+1].get_boundary_box()
-                width = gc_box2[0] - gc_box1[2]
+                width = abs(gc_box2[0] - gc_box1[2])
                 if width > maxspace:
                     bad_spaces.append([(gc_box1[2], self.vstart), width, width/fontsize])
         return bad_spaces        
@@ -175,11 +172,14 @@ class Line:
         return abs(cursor[1]-startpos[1]) < self.v_threshold and abs(cursor[1]-self.vstart) < self.v_threshold  
     
     def mark_starts(self):
-        box = self.glyph_clusters[0].get_boundary_box()
-        self.collisions.add((box[0], box[1], box[2] - box[0], box[3]-box[1]))
-        self.collisions.add((box[0], self.vmin, 10, self.vmax-self.vmin))
-        box2 = self.glyph_clusters[-1].get_boundary_box()
-        self.collisions.add((box2[0], box2[1], box2[2] - box2[0], box2[3]-box2[1]))
+        # box = self.glyph_clusters[0].get_boundary_box()
+        # self.collisions.add((box[0], box[1], box[2] - box[0], box[3]-box[1]))
+        # box2 = self.glyph_clusters[-1].get_boundary_box()
+        # self.collisions.add((box2[0], box2[1], box2[2] - box2[0], box2[3]-box2[1]))
+        start_glyph = self.glyph_clusters[0].glyphs[0]
+        end_glyph = self.glyph_clusters[-1].glyphs[-1]
+        self.collisions.add((start_glyph[0], start_glyph[1], start_glyph[2]-start_glyph[0], start_glyph[3]-start_glyph[1]))
+        self.collisions.add((end_glyph[0], end_glyph[1], end_glyph[2]-end_glyph[0], end_glyph[3]-end_glyph[1]))
     
     def is_empty(self):
         return len(self.glyph_clusters) == 0
@@ -218,7 +218,7 @@ class GlyphCluster:
         return len(self.glyphs) == 0
     
     def hgap_too_big(self, startpos):
-        if startpos[0] - self.glyphs[-1][2] > self.h_threshold:
+        if abs(startpos[0] - self.glyphs[-1][2]) > self.h_threshold:
             return True
         return False
 
