@@ -1008,12 +1008,10 @@
    \ifOmitVerseNumberOne \ifdr@ppednumber\c@ncelfirstversetrue % v1
                          \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
    \fi
-   \everyfirstverse{\id@@@}{\book}{\ch@pter}%
-  \else
-    %\message{verse was \meaning\oldv@rse}%
-    \ifx \oldv@rse\empty
-     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
-    \fi
+  \fi
+  %\message{verse was \meaning\oldv@rse}% Set to empty at chapter number.
+  \ifx \oldv@rse\empty
+    \everyfirstverse{\id@@@}{\book}{\ch@pter}%
   \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
