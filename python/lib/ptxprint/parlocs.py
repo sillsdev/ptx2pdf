@@ -491,7 +491,7 @@ class Paragraphs(list):
             pheight = self.pheights[pindex - 1] if pindex <= len(self.pheights) else self.pheights[-1]
             inpar, inrect, _ = self.findPos(pindex, x, pheight - y, endx = end)
             if inrect is None:
-                print(f"{pindex}@({x},{pheight-y})")
+                #print(f"{pindex}@({x},{pheight-y})")
                 return
         if inrect.xdvlines is None:
             inrect.xdvlines = []
