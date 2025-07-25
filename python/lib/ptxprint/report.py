@@ -2,7 +2,9 @@ import html # Added for html.escape
 import logging, os, re
 import xml.etree.ElementTree as et
 from datetime import datetime
-from ptxprint.utils import rtlScripts
+from ptxprint.utils import rtlScripts, dediglotref
+#from ptxprint.parlocs import BadSpace
+from usfmtc.reference import Ref
 
 # DEBUG is informational
 # INFO is something that could fail, passed
@@ -391,7 +393,8 @@ class Report:
             if l.has_badspace(threshold):
                 badlist.append(l.ref)
         if len(badlist):
-            self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join(badlist), severity=logging.WARN, txttype="text")
+            bads = set([Ref(dediglotref(x.line.ref).replace(".", " ")) for x in badlist])
+            self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 

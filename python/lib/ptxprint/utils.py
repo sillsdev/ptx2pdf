@@ -214,6 +214,9 @@ def refSort(r, info=""):
         return (100, 0, 0, res[3], info, res[5], res[6])
     return res
 
+def dediglotref(r):
+    return re.sub(r'^([\dA-Z][A-Z]{2})[A-Z]', r"\1", r)
+
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
     try:
