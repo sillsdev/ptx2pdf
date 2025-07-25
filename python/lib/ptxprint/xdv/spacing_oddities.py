@@ -35,18 +35,21 @@ class SpacingOddities(XDViPositionedReader):
         self.pagediff = self.pageno 
         self.parent = parent
         self.curr_font = None           # font object with .ttfont attribute
-        self.prev_line = Line(self.v, self.ref, self.curr_font)
-        self.line = Line(self.v, self.ref, self.curr_font)
-        self.v_threshold = 0.7* line_spacing
-        self.rivers = Rivers()
+        self.prev_line = Line(self.v, self.ref, self.curr_font, None)
+        self.line = Line(self.v, self.ref, self.curr_font, None)
+        self.v_threshold = 0.5* line_spacing
+        #self.rivers = Rivers()
 
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 
         (parm, width, pos, glyphs, txt) = super().xglyphs(opcode, parm, data)
-        self.update_lines(start_pos)
-        pos_points = [[self.topt(n) for n in p] for p in pos]
-        self.line.add_glyphs(start_pos, pos_points, glyphs)
-        self.cursor = (self.h, self.v)
+        # get rect of pos. if none, could be that glyphs are actually in box? nahh. if none, don't process. 
+        curr_rect = self.get_rect(start_pos)
+        if curr_rect:
+            self.update_lines(start_pos, curr_rect)
+            pos_points = [[self.topt(n) for n in p] for p in pos]
+            self.line.add_glyphs(start_pos, pos_points, glyphs)
+            self.cursor = (self.h, self.v)
         return (parm, width, pos, glyphs, txt)
 
     def xxx(self, opcode, parm, data):
@@ -60,9 +63,11 @@ class SpacingOddities(XDViPositionedReader):
     def font(self, opcode, parm, data):
         (k, ) = super().font(opcode, parm, data)
         self.curr_font = self.fonts[k] 
-        self.update_lines((self.h, self.v))
-        self.line.change_font(self.curr_font)
-        self.cursor = (self.h,self.v)
+        curr_rect = self.get_rect((self.h, self.v))
+        if curr_rect:
+            self.update_lines((self.h, self.v), curr_rect)
+            self.line.change_font(self.curr_font)
+            self.cursor = (self.h,self.v)
         return (k,)
 
     def xfontdef(self, opcode, parm, data):
@@ -73,33 +78,41 @@ class SpacingOddities(XDViPositionedReader):
         return (k, font)
 
     def bop(self, opcode, parm, data):
-        self.update_lines((self.h,self.v))
+        curr_rect  = self.get_rect((self.h, self.v))
+        self.update_lines((self.h,self.v), curr_rect)
         self.cursor = (self.h, self.v)
         self.page_index += 1
         return super().bop(opcode, parm, data)
     
-    def update_lines(self, startpos):
+    def update_lines(self, startpos, rect):
         if self.line.is_empty():
-            self.line = Line(startpos[1], self.ref, self.curr_font)
+            self.line = Line(startpos[1], self.ref, self.curr_font, rect)
             return
         if abs(self.cursor[1]-startpos[1]) < self.v_threshold and abs(self.cursor[1]-self.line.vstart) < self.v_threshold :
             # v might be right, but we need to check the h in case of a diglot, since it's printed horizontally
-            # ask parent for paragraph info
-            # find out the paragraph of line last h + the pragraph of startpos h.
-            # if different paragraphs, new line needed so don't return. 
-            # if same pragraph, return. 
-            return
+            if rect == self.line.inrect:
+                return
         if self.line.glyph_clusters[-1].is_empty():
             self.line.glyph_clusters.pop()
         self.line.update_bounds()
-        self.line.check_line_collisions(self.prev_line)
-        #self.line.mark_starts()
-        self.parent.addxdvline(self.line, self.page_index)
-        self.rivers.add_line(self.line)
+        #self.line.check_line_collisions(self.prev_line)
+        self.line.mark_starts()
+        self.parent.addxdvline(self.line, self.page_index, self.line.inrect)
+       # self.rivers.add_line(self.line)
         self.prev_line = self.line
-        self.line = Line(startpos[1], self.ref, self.curr_font)
+        self.line = Line(startpos[1], self.ref, self.curr_font, rect)
+        
+    def get_rect(self, pos):
+        v_rects = self.parent.getyrects(self.page_index, pos[1])
+        if len(v_rects) ==1:
+            return v_rects[0]
+        for r in v_rects:
+            # assuming rects are ordered and the program prints horizontally left to right:
+            if pos[0] <= r.xend:
+                return r
+
 class Line: 
-    def __init__(self, v, ref, font):
+    def __init__(self, v, ref, font, rect):
         self.ref = ref
         self.vstart = v             # v of first glyph
         self.curr_font = font
@@ -107,7 +120,8 @@ class Line:
         self.vmax = v
         self.glyph_clusters = []    # list of GlyphCluster objects
         self.collisions = set()        # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
-
+        self.inrect = rect
+        
     def gcs_change(self, v):
         if self.is_empty():
             self.glyph_clusters.append(GlyphCluster(v, self.curr_font))
