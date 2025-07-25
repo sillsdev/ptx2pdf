@@ -152,6 +152,7 @@ class PDFViewer:
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
         self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
+        self.linespacing = float(self.model.get("s_linespacing", "12"))
         
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -694,7 +695,7 @@ class PDFViewer:
         if self.showanalysis:
             xdvname = fname.replace(".parlocs", ".xdv")
             print(f"Reading {xdvname}")
-            xdvreader = SpacingOddities(xdvname, parent=self.parlocs)
+            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, line_spacing=self.linespacing)
             for (opcode, data) in xdvreader.parse():
                 pass
             if self.showanalysis and self.spacethreshold == 0:
