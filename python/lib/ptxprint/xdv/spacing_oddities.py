@@ -27,16 +27,17 @@ def overlap( curr, prev):
     return False  
 
 class SpacingOddities(XDViPositionedReader):
-    def __init__(self, fname, parent = None): 
+    def __init__(self, fname, parent = None, line_spacing = 12): #line spacing in points
         super().__init__(fname)
         self.ref = ''                 # reference of where we're at, str
-        self.cursor = (self.h, self.v)  # location of last printed glyp
+        self.cursor = (self.h, self.v)  # location of last printed glyph
         self.page_index = 0 
         self.pagediff = self.pageno 
         self.parent = parent
         self.curr_font = None           # font object with .ttfont attribute
         self.prev_line = Line(self.v, self.ref, self.curr_font)
         self.line = Line(self.v, self.ref, self.curr_font)
+        self.v_threshold = 0.7* line_spacing
 
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 
@@ -75,12 +76,12 @@ class SpacingOddities(XDViPositionedReader):
         self.cursor = (self.h, self.v)
         self.page_index += 1
         return super().bop(opcode, parm, data)
-
+    
     def update_lines(self, startpos):
         if self.line.is_empty():
             self.line = Line(startpos[1], self.ref, self.curr_font)
             return
-        if self.line.vgap_below_threshold(self.cursor,startpos):
+        if abs(self.cursor[1]-startpos[1]) < self.v_threshold and abs(self.cursor[1]-self.line.vstart) < self.v_threshold :
             return
         if self.line.glyph_clusters[-1].is_empty():
             self.line.glyph_clusters.pop()
@@ -97,7 +98,6 @@ class Line:
         self.curr_font = font
         self.vmin = v
         self.vmax = v
-        self.v_threshold = 0.5*font.points if font is not None else 4
         self.glyph_clusters = []    # list of GlyphCluster objects
         self.collisions = set()        # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
 
@@ -116,7 +116,6 @@ class Line:
 
     def change_font(self, font):
         self.curr_font = font
-        self.v_threshold = 0.5*font.points
         gcs_changed = self.gcs_change(self.vstart) 
         if not gcs_changed:
             self.update_bounds()
@@ -132,10 +131,11 @@ class Line:
             self.glyph_clusters[-1].add_glyph((startpos[0]+pos[i][0], startpos[1]+pos[i][1]), g[i])    
 
     def add_collision(self, curr, prev):
-        xtopleft = max(curr[0], prev[0]) - 0.3* self.curr_font.points
+        # move left top point to left top to get collision in middle of highlight.
+        xtopleft = max(curr[0], prev[0]) - 0.2* self.curr_font.points
         ytopleft = min(curr[1], prev[3]) - 0.3 * self.curr_font.points
-        width = self.curr_font.points
-        height = self.curr_font.points
+        width = 0.8*self.curr_font.points
+        height = 0.8*self.curr_font.points
         self.collisions.add((xtopleft, ytopleft, width, height))
         # self.collisions.add((curr[0], curr[1], curr[2]-curr[0], curr[3]-curr[1]))       # to highlight both glyph boxes
         # self.collisions.add((prev[0], prev[1], prev[2]-prev[0], prev[3]-prev[1]))        
@@ -168,10 +168,7 @@ class Line:
     def has_collisions(self):
         return self.collisions   
     
-    def vgap_below_threshold(self, cursor, startpos):
-        return abs(cursor[1]-startpos[1]) < self.v_threshold and abs(cursor[1]-self.vstart) < self.v_threshold  
-    
-    def mark_starts(self):
+    def mark_starts(self):  # to mark the start of every line, perform this method instead of check_collisions methods in spacingoddities update_lines
         # box = self.glyph_clusters[0].get_boundary_box()
         # self.collisions.add((box[0], box[1], box[2] - box[0], box[3]-box[1]))
         # box2 = self.glyph_clusters[-1].get_boundary_box()
@@ -188,7 +185,7 @@ class GlyphCluster:
     def __init__(self, v, font):
         self.font = font 
         self.glyphs = []            # list of [hmin, vmin, hmax, vmax] for each glyph. boundary boxes. 
-        self.h_threshold = 0.1*font.points  # this was 1.
+        self.h_threshold = 0.05*font.points  # this was 1.
         self.vmin = v
         self.vmax = v
     
@@ -228,7 +225,6 @@ class GlyphCluster:
 #         self.active_river = River()
 #         self.max_v_gap = max_v_gap
 #         self.min_h_overlap = min_h_overlap
-#         self.last_v = 0
 
 #     def add_line(self, line):   # check vertical gap and finish river, then add spaces
 #         if line.vmin - self.last_v > self.max_v_gap * line.curr_font.points:
@@ -255,6 +251,7 @@ class GlyphCluster:
 #     def __init__(self):
 #         self.spaces = []
 #         self.covered_regions = []
+#         self.last_v = 0
 
 #     def accepts(self, space, threshold):
 #         if len(self.spaces) <1:
