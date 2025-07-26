@@ -1,0 +1,431 @@
+#!/usr/bin/python3
+
+import argparse, json, heapq, os, re, csv, sys
+import xml.etree.ElementTree as et
+from usfmtc.reference import Ref, RefRange, RefList, Environment, allbooks, bookcodes
+from ptxprint.ptsettings import ParatextSettings
+from math import log2, sqrt, log
+from bisect import bisect
+
+def read_csv(fpath, **kw):
+    with open(fpath, encoding="utf-8") as inf:
+        csvr = csv.reader(inf, **kw)
+        data = [row for row in csvr]
+    return data
+
+def find_pericope(r, pericopes):
+    m = bisect(pericopes, r)
+    if m <= len(pericopes) and r in pericopes[m-1]:
+        return pericopes[m-1]
+    return None
+
+def calc_threshold(sdrefs, speris, numv):
+    weightq = []
+    for s, rs in sdrefs.items():
+        weight = sqrt(len(rs))
+        for r, v in speris.get(s, {}).items():
+            v[4] = v[3] / weight
+            if len(weightq) >= args.factor * numv:
+                heapq.heapreplace(weightq, v[4])
+            else:
+                heapq.heappush(weightq, v[4])
+    print(f"{numv=} * {args.factor}, {len(weightq)}, {weightq[0]}")
+    return weightq[1]
+
+def extend_ranges(verses):
+    lastsd = {}
+    for r, vs in sorted(verses.items()):
+        for v in vs[:]:
+            if (k := lastsd.get(v[0], None)) is not None \
+                    and v[1] == lastsd[v[0]][2].nextverse(thisbook=True):
+                k[2] = v[2]     # reset final verse
+                k[3] += v[3]    # add weight
+                k[4] = v[4]     # track next ref
+                vs.remove(v)
+            else:
+                lastsd[v[0]] = v
+
+def make_verses(speris):
+    """ Make a list of [semantic code, first ref, last ref, weight, nextref] for each verse """
+    verses = {}
+    for s, rs in speris.items():
+        vals = sorted(rs.values())
+        for i, v in enumerate(vals):
+            verses.setdefault(v[1], []).append([s, v[1], v[2], v[4], vals[i+1][1] if i < len(vals)-1 else vals[0][1]])
+    return verses
+
+def filter_verses(verses, threshold):
+    count = 0
+    for v, vs in verses.items():
+        vs[:] = [x for x in vs if x[3] >= threshold]
+        count += len(vs)
+    return count
+
+def sdint(s):
+    cs = s.split(".")
+    v = int(cs[0]) * 10000
+    if len(cs) > 1:
+        cs[1] += "0" * (4-len(cs[1]))
+        v + int(cs[1])
+    return v
+
+def test_excludes(s, excludes):
+    if s.startswith("_"):
+        return False
+    v = sdint(s)
+    for e in excludes:
+        if v >= e[0] and v < e[1]:
+            return True
+    return False
+
+def filter_excludes(excludes, sdrefs, speris):
+    for s in list(sdrefs.keys()):
+        if test_excludes(s, excludes):
+            del sdrefs[s]
+            speris.pop(s, None)
+
+class SemDomData:
+
+    def __init__(self, args):
+        self.sdrefs = {}
+        self.speris = {}
+        self.labels = {}
+        self.shorts = {}
+        self.words  = {}
+        self.pericopes = {}
+        self._proc_excludes(args)
+
+    def _proclex(self, args, readfn=None):
+        if args.pericope:
+            self._read_pericopes(args)
+        if args.shorts:
+            self._read_shorts(args)
+        self._read_domain(args)
+        if readfn:
+            readfn(args)
+        hebmap = self._read_map(args) if args.map else None
+        self._read_lexicon(args, mapping=hebmap)
+        filter_excludes(self.excludes, self.sdrefs, self.speris)
+        self.threshold = calc_threshold(self.sdrefs, self.speris, self.numv)
+        self._outdb(args)
+
+    def create(self, args):
+        self._proclex(args)
+
+    def trigger(self, args):
+        self._read_infile(args)
+        self.threshold = calc_threshold(self.sdrefs, self.speris, self.numv)
+        self.verses = make_verses(self.speris)
+        extend_ranges(self.verses)
+        self._make_env(args)
+        self._out_template(args)
+
+    def merge(self, args):
+        self._proclex(args, readfn=self._read_infile)
+
+    def dict(self, args):
+        pass
+
+    def _read_infile(self, args):
+        doc = et.parse(args.infile)
+        for e in doc.findall(".//sd"):
+            code = e.get("code")
+            rs = e.find(".//refs")
+            if rs is not None:
+                self.sdrefs[code] = set(RefList(rs.text))
+            rp = e.find(".//pericopes")
+            if rp is not None:
+                for r in rp:
+                    p = self.speris.setdefault(code, {})
+                    if r.tag in ("ref", "range"):
+                        rr = Ref(r.get("r"))
+                        p[rr.first] = [rr, rr.first, rr.last, int(r.get("num")), 0]
+            for es in e.findall(".//strings"):
+                self.labels.setdefault(es.get("lang"), {})[code] = es.get("label", None)
+                s = es.get("short", None)
+                if s:
+                    self.shorts.setdefault(es.get("lang"), {})[code] = s
+
+    def _read_pericopes(self, args):
+        with open(args.pericope, encoding="utf-8") as inf:
+            pdat = json.load(inf)
+        self.pericopes = [Ref(s) for s in pdat.keys()]
+        self.pericopes.sort()
+
+    def _read_shorts(self, args):
+        self.shorts['en'] = {self.fmtsd(r[0] if args.ot else r[0][1:]): r[1] for r in read_csv(args.shorts, delimiter="\t")}
+
+    heblexidsizes = [6, 3, 3, 3, 3]
+    def _remap_heblexid(self, s):
+        res = []
+        for i, n in enumerate(s.split(".")):
+            res.append(f"{{:0{self.heblexidsizes[i]}d}}".format(int(n)))
+        return "".join(res)
+
+    def _read_map(self, args):
+        res = {}
+        for r in read_csv(args.map, delimiter="\t"):
+            if "." in r[0]:
+                r[0] = self._remap_heblexid(r[0])
+            res[r[0]] = self.fmtsd(r[1])
+        return res
+
+    def _read_domain(self, args):
+        self.labels.setdefault("en", {})
+        doc = et.parse(args.domain)
+        for sd in doc.findall(".//SemanticDomain"):
+            code = self.fmtsd(sd.findtext("Code"))
+            if code is not None:
+                self.sdrefs.setdefault(code, set())
+                self.labels["en"][code] = sd.findtext('.//SemanticDomainLocalization[@LanguageCode="en"]/Label')
+
+    def _read_lexicon(self, args, mapping=None):
+        namecount = 1
+        lex = et.parse(args.lexicon)
+        for sense in lex.findall(".//LEXMeaning"):
+            code = None
+            if mapping is not None:
+                lid = sense.get("Id")
+                code = mapping.get(lid, None)
+            else:
+                for a in ("LEXSubDomain", "LEXDomain"):
+                    codee = sense.find("{0}s/{0}".format(a))
+                    if codee is None:
+                        continue
+                    code = self.fmtsd(codee.get("Code", None))
+                    if code is not None:
+                        break
+            if code is None:
+                continue
+            if code in self.namecodes:       # it's a name grab it differently
+                code = "_{}{:04d}".format(1 if args.ot else 2, namecount)
+                self.labels['en'][code] = sense.findtext(".//DefinitionShort")
+                self.shorts['en'][code] = sense.findtext(".//Gloss")
+                self.sdrefs.setdefault(code, set())
+                namecount += 1
+            self.words.setdefault(code, []).append(sense.findtext(".//Gloss"))
+            for lref in sense.findall(".//LEXReference"):
+                r = Ref.fromBCV(int(lref.text[:9]))
+                self.sdrefs.setdefault(code, set()).add(r)
+                p = find_pericope(r, self.pericopes)
+                if p is not None:
+                    pinfo = self.speris.setdefault(code, {}).setdefault(p, [p, p.last, p.first, 0, 0])
+                    pinfo[1] = min(pinfo[1], r.first)
+                    pinfo[2] = max(pinfo[2], r.last)
+                    pinfo[3] += 1
+                else:       # [pericope range, first match, last match, num match, weight]
+                    self.speris.setdefault(code, {})[r] = [r, r, r, 1, 0]
+            if (args.flags & 1) == 0 and code in self.speris and len(self.speris[code]) < 2 or len(self.sdrefs[code]) < 2:
+                self.speris.pop(code, None)
+                del self.sdrefs[code]
+
+    namecodes = ["93.1", "93.2", "60.2"]
+    def _proc_excludes(self, args):
+        # args.exclude.extend(["4107", "4110"])
+        args.exclude.extend(self.namecodes)
+        self.excludes = []
+        for x in args.exclude:
+            for a in x.split(","):
+                r = []
+                if "-" in a:
+                    e = [sdint(x.strip()) for x in a.split("-")]
+                else:
+                    e = [sdint(a.strip())] * 2
+                if e[1] % 10000:
+                    e[1] += 1
+                else:
+                    e[1] += 10000
+                self.excludes.append(e)
+
+    sdtemplatebits = ["{0:d}", ".{1:d}"]
+    # sdtemplatebits = ["{0:d}", "{1:d}", "{2:02d}", ".{3:d}"]
+    sdoffset = 0
+    sdlength = 0
+    numv = 23145 + 7959
+    def fmtsd(self, n):
+        if n is None:
+            return None
+        s = [int(n[i*3:i*3+3]) for i in range(len(n) // 3)]
+        s[0] += self.sdoffset
+        if self.sdlength > 0:
+            s.extend([0] * (self.sdlength-len(s)))
+        return "".join(self.sdtemplatebits[:len(s)]).format(*s)
+
+    def _outdb(self, args):
+        outroot = et.Element("domains", threshold="{:.4f}".format(self.threshold))
+        outdoc = et.ElementTree(outroot)
+        count = 0
+        histogram = {}
+        histogramp = {}
+        countp = 0
+
+        for i, (s, rs) in enumerate(sorted(self.sdrefs.items(),
+                    key=lambda x:[int(n) for n in x[0].split(".")] if not x[0].startswith("_") else [int(x[0][1:])])):
+            sde = et.SubElement(outroot, "sd", code=s, num=str(len(rs)), nump=str(len(self.speris.get(s, {}))))
+            sds = et.SubElement(sde, "strings", label=self.labels["en"][s] or "", lang="en", short=self.shorts['en'].get(s, ""))
+            if len(ws := self.words.get(s, [])):
+                we = et.SubElement(sde, "words", num=str(len(ws)))
+                we.text = ", ".join([w for w in ws if w is not None])
+            refe = et.SubElement(sde, "refs")
+            refs = RefList(sorted(rs))
+            refe.text = str(refs)
+            p = self.speris.get(s, {})
+            if len(p):
+                refp = et.SubElement(sde, "pericopes")
+            for r, v in sorted(p.items(), key=lambda x:x[1][1:3]):
+                sdp = et.SubElement(refp, "range", r=str(RefRange(v[1], v[2])), num=str(v[3]))
+                #sdp.text = "{:09d}-{:09d}".format(v[1].bcv(), v[2].bcv()) if v[1] != v[2] else "{}".format(v[1].bcv())
+            if len(rs):
+                histogram[int(log2(len(rs)))] = histogram.get(int(log2(len(rs))), 0) + 1
+                ps = len(p)
+                if ps > 0:
+                    histogramp[int(log2(ps))] = histogramp.get(int(log2(ps)), 0) + 1
+                countp += ps
+            count += len(rs)
+
+        et.indent(outroot)
+        outdoc.write(args.outfile, encoding="utf-8", xml_declaration=True)
+
+        hisres = ", ".join("{}:{}".format(n, v) for n, v in sorted(histogram.items()))
+        print("\nHistogram: "+hisres)
+        print("Total: {}/{}".format(sum(histogram.values()), count))
+        if len(histogramp):
+            hisres = ", ".join("{}:{}".format(n, v) for n, v in sorted(histogramp.items()))
+            print("Histogram of pericopes: "+hisres)
+            print("Threshold = {}".format(self.threshold))
+            print("Total pericopes: {}/{}".format(sum(histogramp.values()), countp))
+
+    def _make_env(self, args):
+        if args.prjdir:
+            ptxsettings = ParatextSettings(args.prjdir)
+            self.env = ptxsettings.getRefEnvironment()
+        else:
+            self.env = Environment(titlecase=True)
+
+    def _makeref(self, r, c):
+        if r is None:
+            return ""
+        if args.refs:
+            return r"\ref {}|{}\ref*".format(r.str(env=self.env, level=2, context=c, start="verse"), r.str())
+        else:
+            return r.str(env=self.env, level=2, context=c, start="verse")
+
+    def _makename(self, code):
+        while len(code):
+            s = self.shorts['en'].get(code, None)
+            if s:
+                break
+            code = code[:-1]
+            if code.endswith("."):
+                code = code[:-1]
+        return s or ""
+
+    def _out_template(self, args):
+        template = re.sub(r"(\d+)", "{0}", args.template)
+        for i in range(len(template) - 3):
+            if template[i:i+3].upper() in allbooks:
+                islower = template[i].islower()
+                template = template[:i]+"{1}"+template[i+3:]
+                break
+        dotted = Environment(cvsep=".", titlecase=False, bookspace="")
+        nume = filter_verses(self.verses, self.threshold)
+        print(f"{nume} entries = {nume/self.numv} per verse")
+        lastbook = None
+        currf = None
+        for r, v in sorted(self.verses.items()):
+            if r.book != lastbook:
+                if currf is not None:
+                    currf.close()
+                fname = template.format(bookcodes[r.book], r.book.lower() if islower else r.book) + ".triggers"
+                fpath = os.path.join(args.outfile, fname) if args.outfile else fname
+                currf = open(fpath, "w", encoding="utf-8")
+                lastbook = r.book
+            res = []
+            res.append(r"\AddTrigger {}-preverse".format(r.str(env=dotted)))
+            lastr = None
+            vlist = sorted(v, key=lambda x:x[1:])
+            done = [False] * len(vlist)
+            for i, e in enumerate(vlist):
+                if not done[i] and not e[0] in [x[0] for x in vlist[:i]]:
+                    done[i] = True
+                    s = self._makename(e[0])
+                    mrkr = "xtl"
+                    for k,v in enumerate(vlist[i+1:]):
+                        if all(v[j] == e[j] for j in (1, 2, 4)):
+                            s += ", " + (r"\xtn {}\xtn*".format(v[0]) if v[0][0] != '_' else "") + " " + self._makename(v[0])
+                            done[k+i+1] = True
+                    if len(res) == 1:
+                        res.append(r"\x -")
+                    res.append(r"\xo {0} \xt {1} \{2} {3}\{2}* \xtr {4}\xtr*".format("\u00A0\u00A0" if (e[1], e[2]) == lastr else
+                            RefRange(e[1], e[2]).str(context=e[1], start="verse") if e[1] != e[2] else
+                            e[1].str(context=e[1], start="verse"),
+                        r"\xtn {}\xtn*".format(e[0]) if e[0][0] != "_" else "", mrkr, s, self._makeref(e[4], e[1])))
+                    lastr = (e[1], e[2])
+                    res.append(r"\break")
+            if len(res) > 1:
+                res[-1] = r"\x*"
+            res.append(r"\EndTrigger")
+            if len(res) > 2:
+                currf.write("\n"+"\n".join(res)+"\n")
+        if currf is not None:
+            currf.close()
+
+
+cmd_aliases = {
+'create':   ['c'],
+'trigger':  ['trig', 't'],
+'merge':    ['m'],
+'dict':     ['d', 'xxs', 'x']
+}
+aliases_cmd = {a:k for k,v in cmd_aliases.items() for a in v}
+
+def add_procargs(proc_parser):
+    proc_parser.add_argument("-i","--infile",required=True,help="Semantic domain info XML")
+    proc_parser.add_argument("-F","--factor",type=float,default=2,help="Average entries per verse")
+    proc_parser.add_argument("-o","--outfile",help="Output file (or directory)")
+    proc_parser.add_argument("-L","--lang",default='en',help="Language to use for text in output triggers")
+    proc_parser.add_argument("-p","--prjdir",help="Project directory, for bookname localisation")
+
+def add_lexargs(parser):
+    parser.add_argument("-l","--lexicon",required=True,help="Lexicon XML file")
+    parser.add_argument("-P","--pericope",help="Input JSON of perciopes")
+    parser.add_argument("--ot",action="store_true",default=False,help="Output is unmapped Hebrew")
+    parser.add_argument("-m","--map",help="Hebrew mapping file")
+    parser.add_argument("-s","--shorts",help="Short labels TSV")
+    parser.add_argument("-d","--domain",required=True,help="LexicalDomains XML file")
+
+def add_globalargs(parser):
+    parser.add_argument("-x","--exclude",default=[],action="append",help="SDs to exclude, allows ranges")
+    parser.add_argument("-z","--flags",default=0,type=int,help="1=even single pericopes")
+
+parser = argparse.ArgumentParser()
+
+subparser = parser.add_subparsers(dest="cmd")
+create_parser = subparser.add_parser("create", aliases=cmd_aliases['create'], help="Create database file")
+add_lexargs(create_parser)
+create_parser.add_argument("-o","--outfile",help="Output XML file of semantic domain info")
+add_globalargs(create_parser)
+
+trig_parser = subparser.add_parser("trigger", aliases=cmd_aliases['trigger'], help="Create trigger files into a directory")
+add_procargs(trig_parser)
+trig_parser.add_argument("-t","--template",help="Sample book filename for trigger file creation")
+trig_parser.add_argument("-r","--refs",action="store_true",default=False, help="Insert \\ref")
+add_globalargs(trig_parser)
+
+merge_parser = subparser.add_parser("merge", aliases=cmd_aliases['merge'], help="Merge databases")
+add_procargs(merge_parser)
+add_lexargs(merge_parser)
+add_globalargs(merge_parser)
+
+xxs_parser = subparser.add_parser("dict", aliases=cmd_aliases['dict'], help="Create BoB Domains list")
+add_procargs(xxs_parser)
+add_globalargs(xxs_parser)
+
+args = parser.parse_args()
+
+if getattr(args, 'ot', False):
+    SemDomData.namecodes = ["4107", "4110"]
+    SemDomData.sdtemplatebits = ["{0:d}", "{1:d}", "{2:02d}", ".{3:d}"]
+
+semdom = SemDomData(args)
+getattr(semdom, aliases_cmd.get(args.cmd, args.cmd))(args)
