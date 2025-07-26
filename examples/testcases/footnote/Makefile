@@ -1,6 +1,6 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf longtest.pdf
-DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+DIR:=$(shell dirname `find ../../..  \( -name test -prune \) -or -name paratext2.tex -print`)
 .tex.pdf:
 	TEXINPUTS=.:$(DIR) xetex $<
 	TEXINPUTS=.:$(DIR) xetex $<
