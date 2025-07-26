@@ -2328,7 +2328,7 @@
     \divide \count255 by 10\relax\global\usfm@minor=\numexpr 100000 * \count255 + (#1 - 100*\usfm@major - 10*\count255)\relax
   \fi\fi\fi
   \iftemp\else\MSG{Unable to make sense of USFM version #1.#2.#3}\fi%
-  \ifnum\usfm@minor<2 \else %
+  \ifnum\usfm@major<3 \else %
     \ifnum\usfm@minor<100000 \else %3.1 or greater:
       \global\implicitcl@sefalse%
     \fi%

@@ -94,6 +94,7 @@ class SemDomData:
         self.words  = {}
         self.pericopes = {}
         self._proc_excludes(args)
+        self.namecount = 1
 
     def _proclex(self, args, readfn=None):
         if args.pericope:
@@ -130,6 +131,8 @@ class SemDomData:
         doc = et.parse(args.infile)
         for e in doc.findall(".//sd"):
             code = e.get("code")
+            if code.startswith("_"):
+                self.namecount = max(self.namecount, int(code[1:]))
             rs = e.find(".//refs")
             if rs is not None:
                 self.sdrefs[code] = set(RefList(rs.text))
@@ -162,6 +165,10 @@ class SemDomData:
             res.append(f"{{:0{self.heblexidsizes[i]}d}}".format(int(n)))
         return "".join(res)
 
+    sdmap = {
+        "003007001": "93.1",
+        "003001010": "93.2"
+    }
     def _read_map(self, args):
         res = {}
         for r in read_csv(args.map, delimiter="\t"):
@@ -180,29 +187,29 @@ class SemDomData:
                 self.labels["en"][code] = sd.findtext('.//SemanticDomainLocalization[@LanguageCode="en"]/Label')
 
     def _read_lexicon(self, args, mapping=None):
-        namecount = 1
         lex = et.parse(args.lexicon)
         for sense in lex.findall(".//LEXMeaning"):
             code = None
             if mapping is not None:
                 lid = sense.get("Id")
                 code = mapping.get(lid, None)
-            else:
+            if code is None:
                 for a in ("LEXSubDomain", "LEXDomain"):
                     codee = sense.find("{0}s/{0}".format(a))
                     if codee is None:
                         continue
-                    code = self.fmtsd(codee.get("Code", None))
+                    code = codee.get("Code", None)
                     if code is not None:
+                        code = self.sdmap.get(code, self.fmtsd(code))
                         break
             if code is None:
                 continue
             if code in self.namecodes:       # it's a name grab it differently
-                code = "_{}{:04d}".format(1 if args.ot else 2, namecount)
+                code = "_{}{:04d}".format(1 if args.ot else 2, self.namecount)
                 self.labels['en'][code] = sense.findtext(".//DefinitionShort")
                 self.shorts['en'][code] = sense.findtext(".//Gloss")
                 self.sdrefs.setdefault(code, set())
-                namecount += 1
+                self.namecount += 1
             self.words.setdefault(code, []).append(sense.findtext(".//Gloss"))
             for lref in sense.findall(".//LEXReference"):
                 r = Ref.fromBCV(int(lref.text[:9]))
