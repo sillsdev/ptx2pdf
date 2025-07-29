@@ -891,7 +891,7 @@ class TTFont:
         inf.seek(self.dict['loca'][0])
         if self.locatype == 0:      # short format
             data = inf.read(self.numglyphs * 2 + 2)
-            ls = struct.unpack(">"+str(self.numglyphs+1)+"H", data)
+            ls = [2 * x for x in struct.unpack(">"+str(self.numglyphs+1)+"H", data)]
         else:
             data = inf.read(self.numglyphs * 4 + 4)
             ls = struct.unpack(">"+str(self.numglyphs+1)+"L", data)
