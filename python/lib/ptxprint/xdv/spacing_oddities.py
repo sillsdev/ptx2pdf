@@ -2,7 +2,7 @@ from ptxprint.xdv.xdv import XDViPositionedReader
 from ptxprint.font import TTFont
 import re
 
-def search_collisions( curr, prev):
+def search_collisions(curr, prev):
     i = 0
     j = 0
     while i < len(curr) and j < len(prev):
@@ -13,7 +13,7 @@ def search_collisions( curr, prev):
         else:
             j +=1
     while i < len(curr):
-        if overlap(curr[i], prev[j-1]):
+        if overlap(curr[i], prev[j-1]):        
             yield i,j-1
         i +=1
     while j < len(prev):
@@ -37,8 +37,9 @@ class SpacingOddities(XDViPositionedReader):
         self.curr_font = None           # font object with .ttfont attribute
         self.prev_line = Line(self.v, self.ref, self.curr_font, None)
         self.line = Line(self.v, self.ref, self.curr_font, None)
-        self.v_threshold = 0.5* line_spacing
-        #self.rivers = Rivers()
+        self.v_threshold = 0.7* line_spacing
+       # self.active_lines = []      # complete lines that have not been compared to the line below them.
+        #self.rivers = Rivers()s
 
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 
@@ -63,6 +64,7 @@ class SpacingOddities(XDViPositionedReader):
     def font(self, opcode, parm, data):
         (k, ) = super().font(opcode, parm, data)
         self.curr_font = self.fonts[k] 
+        self.v_threshold = 0.7*self.curr_font.points
         curr_rect = self.get_rect((self.h, self.v))
         if curr_rect:
             self.update_lines((self.h, self.v), curr_rect)
@@ -82,6 +84,7 @@ class SpacingOddities(XDViPositionedReader):
         self.update_lines((self.h,self.v), curr_rect)
         self.cursor = (self.h, self.v)
         self.page_index += 1
+       # self.active_lines = []
         return super().bop(opcode, parm, data)
     
     def update_lines(self, startpos, rect):
@@ -95,19 +98,43 @@ class SpacingOddities(XDViPositionedReader):
         if self.line.glyph_clusters[-1].is_empty():
             self.line.glyph_clusters.pop()
         self.line.update_bounds()
-        #self.line.check_line_collisions(self.prev_line)
-        self.line.mark_starts()
+        # iterate over active lines to find the line above curr line.
+        # prev_line = None
+        # for l in self.active_lines:
+        #     if l.inrect.ystart >= self.line.inrect.ystart:
+        #         # same rect or l is in rect above self.line
+        #         if l.inrect.xstart == self.line.inrect.xstart:
+        #             prev_line = l
+        #             break
+                # if l.inrect == self.line.inrect:
+                    # l is at same hpos as current line
+                    # prev_line = l
+                #     break
+                # elif abs(l.glyph_clusters[0].glyphs[0][0] - self.line.glyph_clusters[0].glyphs[0][0]) <= 100:
+                #     prev_line = l
+                #     break
+                # also check h overlap in another way to catch the last line of prev rect with first line of new rect collision
+        # if line is found, check collisions.
+        # if prev_line:
+        #     self.line.check_line_collisions(prev_line)
+        #     self.active_lines.remove(prev_line)
+        # self.line.mark_starts()
+        
+        if not self.prev_line.is_empty():
+            self.line.check_line_collisions(self.prev_line)
+       # self.active_lines.append(self.line)
         self.parent.addxdvline(self.line, self.page_index, self.line.inrect)
-       # self.rivers.add_line(self.line)
+        # self.rivers.add_line(self.line)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font, rect)
         
     def get_rect(self, pos):
         v_rects = self.parent.getyrects(self.page_index, pos[1])
-        if len(v_rects) ==1:
-            return v_rects[0]
+        # if len(v_rects) ==1:
+        #     return v_rects[0]
         for r in v_rects:
             # assuming rects are ordered and the program prints horizontally left to right:
+            # if r.xstart - 0.05 <= pos[0] <= r.xend:
             if pos[0] <= r.xend:
                 return r
 
@@ -153,13 +180,13 @@ class Line:
 
     def add_collision(self, curr, prev):
         # move left top point to left top to get collision in middle of highlight.
-        xtopleft = max(curr[0], prev[0]) - 0.2* self.curr_font.points
-        ytopleft = min(curr[1], prev[3]) - 0.3 * self.curr_font.points
-        width = 0.8*self.curr_font.points
-        height = 0.8*self.curr_font.points
-        self.collisions.add((xtopleft, ytopleft, width, height))
-        # self.collisions.add((curr[0], curr[1], curr[2]-curr[0], curr[3]-curr[1]))       # to highlight both glyph boxes
-        # self.collisions.add((prev[0], prev[1], prev[2]-prev[0], prev[3]-prev[1]))        
+        # xtopleft = max(curr[0], prev[0]) - 0.2* self.curr_font.points
+        # ytopleft = min(curr[1], prev[3]) - 0.3 * self.curr_font.points
+        # width = 0.8*self.curr_font.points
+        # height = 0.8*self.curr_font.points
+        # self.collisions.add((xtopleft, ytopleft, width, height))
+        self.collisions.add((curr[0], curr[1], curr[2]-curr[0], curr[3]-curr[1]))       # to highlight both glyph boxes
+        self.collisions.add((prev[0], prev[1], prev[2]-prev[0], prev[3]-prev[1]))        
         
     def check_line_collisions(self, prev_line):
         if (self.vmin <= prev_line.vmax):
@@ -220,7 +247,10 @@ class GlyphCluster:
         self.glyphs.append([hmin, vmin, hmax, vmax])
     
     def glyph_topt(self, no, i):
-        return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points)
+        a = self.font.ttfont.glyphs[no][i]
+        b  = self.font.ttfont.upem
+        c = self.font.points
+        return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points) 
     
     def collision(self, prev_gc):
         for i,j in search_collisions(self.glyphs, prev_gc.glyphs):
