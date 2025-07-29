@@ -695,7 +695,7 @@ class PDFViewer:
         if self.showanalysis:
             xdvname = fname.replace(".parlocs", ".xdv")
             print(f"Reading {xdvname}")
-            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, line_spacing=self.linespacing)
+            xdvreader = SpacingOddities(xdvname, parent=self.parlocs)
             for (opcode, data) in xdvreader.parse():
                 pass
             if self.showanalysis and self.spacethreshold == 0:

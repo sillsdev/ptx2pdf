@@ -268,7 +268,6 @@ class XDViPositionedReader(XDViReader):
             self.h += getattr(self, parm)
         elif parm in "yz":            
             self.v += getattr(self, parm)
-            # note: this was the problem, it converted self.y to points before adding (y is already in points)
         return super().simple(opcode, parm, data)
 
     def push(self, opcode, parm, data):
