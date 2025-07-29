@@ -95,23 +95,25 @@ def filter_excludes(excludes, sdrefs, speris):
             del sdrefs[s]
             speris.pop(s, None)
 
-def tryhard(s, mkeys, refset):
+def tryhard(s, mkeys, refset=None):
     def calc_cost(r):
         mset = set(r.refs)
         if len(mset) == 0:
             return 0
         cost = len(mset & refset) ** 2 / len(mset) / len(refset)
         return cost
-    rem = regex.compile(r"({}){{e<=3}}".format(s))
+    rem = regex.compile(r"\|({}){{e<=3}}\|".format(regex.escape(s)))
+    teststr = "|" + "|".join(sorted(mkeys.keys())) + "|"
     bestscore = 4
     bestkey = None
     bestcost = 0.
-    for k,v in mkeys.items():
-        m = rem.match(k)
-        if m is None:
+    for m in rem.finditer(teststr):
+        k = m.group(1)
+        if "|" in k:
             continue
-        cost = min(calc_cost(r) for r in v)
+        v = mkeys[k]
         score = sum(m.fuzzy_counts)
+        cost = min(calc_cost(r) for r in v) if refset else 0
         if score < bestscore:
             bestkey = k
             bestcost = cost
@@ -208,10 +210,14 @@ class SemDomData:
         print(f"{len(self.mkeys)} lexemes")
         greekwords = []
         self.sdtemplatebits = self.ntsdtemplatebits
-        self._read_lexicon(args, key="greek", target=greekwords)
+        self.greekalts = {}
+        self._read_lexicon(args, key="greek", alt=self.greekalts, target=greekwords)
         greekmap = {}
         for k in greekwords:
             greekmap.setdefault(greeknorm(k.lexeme), set()).add(k.sd)
+        for k, v in self.greekalts.items():
+            for s in v:
+                greekmap.setdefault(greeknorm(k), set()).add(s.sd)
         print(f"{len(greekmap)} unique words in the greek dictionary, with {sum(1 for g, v in greekmap.items() if len(v))} non empty")
         hebmap = read_csv(args.infile, delimiter="\t")
         print(f"{len(hebmap)} entries in the hebrew to greek mappings")
@@ -243,9 +249,9 @@ class SemDomData:
             if keys is None:
                 keys = self.alternates.get(unpoint(h[0]), None)
             if keys is None:
-                keys = tryhard(normalize("NFC", h[0]), self.mkeys, refset)
+                keys = tryhard(normalize("NFC", h[0]), self.mkeys, refset=refset)
             if keys is None:
-                keys = tryhard(unpoint(h[0]), self.ukeys, refset)
+                keys = tryhard(unpoint(h[0]), self.ukeys, refset=refset)
             if keys is None:
                 badhebrew.append([h[0]])
                 bads += 1
@@ -266,20 +272,21 @@ class SemDomData:
             if best is not None:
                 best.gsds = []
                 for w in h[3:]:
-                    g = greekmap.get(greeknorm(rootmap.get(greeknorm(w), w)), None)
+                    wg = rootmap.get(greeknorm(w), w)
+                    g = greekmap.get(wg, None)
+                    if g is None:
+                        g = greekmap.get(rootmap.get(unpoint(w), w), None)
+                    if g is None:
+                        g = tryhard(wg, greekmap)
+                    if g is None:
+                        g = tryhard(rootmap.get(unpoint(w), w), greekmap)
                     if g is not None:
                         best.gsds += list(g)
-                    else:
-                        g = greekmap.get(rootmap.get(unpoint(w), w), None)
-                        if g is not None:
-                            best.gsds += list(g)
                 if not len(best.gsds):
                     badgreek.append(h[3:])
             else:
                 badsds += 1
                 badhebrew.append([h[0]])
-                #breakpoint()
-                #print(f"Can't find sd for {h[0]}[{sd}]")
         print(f"Found {count} matching words and {bads} hebrew fails, with {names} names and {badsds} missing sds.")
         print(f"{sum(1 for m in self.meanings if hasattr(m, 'gsds') and len(m.gsds))} have non empty gsds but {sum(1 for m in self.meanings if hasattr(m, 'gsds'))} had some greek words to try")
         print(f"{sum(1 for g in greekwords if g.sd in ('93.1', '93.2'))} words are names in Greek")
@@ -357,21 +364,26 @@ class SemDomData:
                 self.sdrefs.setdefault(code, set())
                 self.labels["en"][code] = sd.findtext('.//SemanticDomainLocalization[@LanguageCode="en"]/Label')
 
-    def _read_lexicon(self, args, key="lexicon", target=None, mapping=None):
+    def _read_lexicon(self, args, key="lexicon", alt=None, target=None, mapping=None):
         self.labels.setdefault('en', {})
         self.shorts.setdefault('en', {})
         if target is None:
             target = self.meanings
+        if alt is None:
+            alt = self.alternates
         lex = et.parse(getattr(args, key))
         for lexitem in lex.findall(".//Lexicon_Entry"):
             lemma = lexitem.get("Lemma")
             alts = [s.text.strip() for s in lexitem.findall(".//RelatedLemma/Word") if s.text]
+            alts.extend([s.get("Lemma", None) for s in lexitem.findall(".//Inflection")])
+            alts.extend([s.get("Lemma", None) for s in lexitem.findall(".//Construct")])
+            alts = [x for x in alts if x is not None and  x != lemma]
             for sense in lexitem.findall(".//LEXMeaning"):
                 code = None
                 lid = sense.get("Id")
                 if mapping is not None:
                     code = mapping.get(lid, None)
-                if code is None:
+                else:
                     for a in ("LEXSubDomain", "LEXDomain"):
                         codee = sense.find("{0}s/{0}".format(a))
                         if codee is None:
@@ -385,9 +397,9 @@ class SemDomData:
                 lmeaning = Sense(lemma, lid, code, gloss, defshrt)
                 target.append(lmeaning)
                 for syn in sense.findall(".//LEXSynonym"):
-                    self.alternates.setdefault(syn.text.strip(), []).append(lmeaning)
+                    alt.setdefault(syn.text.strip(), []).append(lmeaning)
                 for a in alts:
-                    self.alternates.setdefault(a, []).append(lmeaning)
+                    alt.setdefault(a, []).append(lmeaning)
                 refs = []
                 for lref in sense.findall(".//LEXReference"):
                     r = Ref.fromBCV(int(lref.text[:9]))
@@ -445,6 +457,8 @@ class SemDomData:
     def fmtsd(self, n, template=None):
         if not n:
             return None
+        if "." in n or len(n) % 3 != 0:
+            return n
         s = [int(n[i*3:i*3+3]) for i in range(len(n) // 3)]
         s[0] += self.sdoffset
         if self.sdlength > 0:
@@ -468,6 +482,7 @@ class SemDomData:
                 we.text = ", ".join([w for w in ws if w is not None])
             refe = et.SubElement(sde, "refs")
             refs = RefList(sorted(rs))
+            refs.simplify()
             refe.text = str(refs)
             p = self.speris.get(s, {})
             if len(p):
