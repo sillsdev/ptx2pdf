@@ -24,7 +24,7 @@ def search_collisions(curr, prev):
 def overlap( curr, prev):
     return (curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3] and curr[3] >= prev[1])
 class SpacingOddities(XDViPositionedReader):
-    def __init__(self, fname, parent = None): #line spacing in points
+    def __init__(self, fname, parent = None): 
         super().__init__(fname)
         self.ref = ''                 # reference of bible verse
         self.cursor = (self.h, self.v)  # location of last printed glyph
