@@ -35,6 +35,7 @@ class SpacingOddities(XDViPositionedReader):
         self.prev_line = Line(self.v, self.ref, self.curr_font, None)
         self.line = Line(self.v, self.ref, self.curr_font, None)
         self.v_threshold = 8
+        self.rivers = Rivers()
         
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 
@@ -78,6 +79,8 @@ class SpacingOddities(XDViPositionedReader):
         self.update_lines((self.h,self.v), curr_rect)
         self.cursor = (self.h, self.v)
         self.page_index += 1
+        self.rivers.print_all()
+        self.rivers = self.rivers.clear()
         return super().bop(opcode, parm, data)
     
     def update_lines(self, startpos, rect):
@@ -93,6 +96,7 @@ class SpacingOddities(XDViPositionedReader):
         self.line.update_bounds()        
         if not self.prev_line.is_empty():
             self.line.check_line_collisions(self.prev_line)
+        self.rivers.add_line(self.line)
         self.parent.addxdvline(self.line, self.page_index, self.line.inrect)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font, rect)
@@ -222,3 +226,72 @@ class GlyphCluster:
         if abs(startpos[0] - self.glyphs[-1][2]) > self.h_threshold:
             return True
         return False
+    
+class Rivers:
+    def __init__(self, max_v_gap = 1, min_h_overlap = 0.05):
+        self.final_rivers = []
+        self.active_rivers = [River()]
+        self.max_v_gap = max_v_gap
+        self.min_h_overlap = min_h_overlap
+
+    def add_line(self, line):   # check vertical gap and finish river, then add spaces
+        for river in self.active_rivers:
+            if river.vdiff(line.vmin) > self.max_v_gap*line.curr_font.points:
+                self.finish_active_river(river)
+        self.check_spaces(line.glyph_clusters)
+        
+    def finish_active_river(self, river):  # add river to final_rivers if >3 lines, create new River.
+        if river.is_valid():
+            self.final_rivers.append(river)
+        self.active_rivers.remove(river)
+        
+    def check_spaces(self, gcs):    # iterate over space and check river acceptance, add
+        for i in range(len(gcs)-1):
+            gc1_box = gcs[i].get_boundary_box()
+            gc2_box = gcs[i+1].get_boundary_box()
+            space = [gc1_box[2], min(gc1_box[1], gc2_box[1]), abs(gc2_box[0]-gc1_box[2]), abs(max(gc1_box[3], gc2_box[3])- min(gc1_box[1], gc2_box[1]))]
+            if space[2] > self.min_h_overlap*gcs[i].font.points:  # since space between gcs takes the font of the previous gc
+                for river in self.active_rivers:
+                    if river.accepts(space, self.min_h_overlap*gcs[i].font.points):
+                        river.add(space)
+                        break       # todo: what if a space should be added to multiple active rivers because it's for example a bad space?
+        self.finish_active_river()
+        
+    def clear(self):
+        self.active_rivers = [River()]
+        self.final_rivers = []
+        
+    def print_all(self):
+        for r in self.final_rivers:
+            print(r)
+class River:
+    def __init__(self):
+        self.spaces = []
+        self.covered_regions = []
+        
+    def vdiff(self, v):
+        if len(self.spaces) <1:
+            return 100
+        return abs(self.spaces[-1][3] - v)
+        
+    def accepts(self, space, threshold):
+        if len(self.spaces) <1:
+            return True
+        overlap = abs(min(self.spaces[-1][0] + self.spaces[-1][2], space[0]+space[2]) - max(self.spaces[-1][0], space[0]))
+        if overlap > threshold:
+            return True
+        return False
+    
+    def add(self, space):
+        self.spaces.append(space)
+        # todo: updates covered regions
+        
+    def is_valid(self):
+        if len(self.spaces) > 2:
+            return True
+        return False
+    
+    def is_empty(self):
+        if len(self.spaces) >0:
+            return False
+        return True
