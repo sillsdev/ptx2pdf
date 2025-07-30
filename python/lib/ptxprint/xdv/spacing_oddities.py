@@ -2,29 +2,29 @@ from ptxprint.xdv.xdv import XDViPositionedReader
 from ptxprint.font import TTFont
 import re
 
-def search_collisions(curr, prev):
+def search_collisions(curr, prev, threshold):
     i = 0
     j = 0
     while i < len(curr) and j < len(prev):
-        if overlap(curr[i], prev[j]):
+        if overlap(curr[i], prev[j], threshold):
             yield i,j
         if curr[i][2] < prev[j][2]:
             i +=1
         else:
             j +=1
     while i < len(curr):
-        if overlap(curr[i], prev[j-1]):        
+        if overlap(curr[i], prev[j-1], threshold):        
             yield i,j-1
         i +=1
     while j < len(prev):
-        if overlap(curr[i-1], prev[j]):
+        if overlap(curr[i-1], prev[j], threshold):
             yield i-1,j
         j +=1
 
-def overlap( curr, prev):
-    return (curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3] and curr[3] >= prev[1])
+def overlap(curr, prev, t):
+    return (curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3]+t and curr[3] +t >= prev[1])
 class SpacingOddities(XDViPositionedReader):
-    def __init__(self, fname, parent = None): 
+    def __init__(self, fname, parent = None, collision_threshold = 0.5): 
         super().__init__(fname)
         self.ref = ''                 # reference of bible verse
         self.cursor = (self.h, self.v)  # location of last printed glyph
@@ -35,7 +35,7 @@ class SpacingOddities(XDViPositionedReader):
         self.prev_line = Line(self.v, self.ref, self.curr_font, None)
         self.line = Line(self.v, self.ref, self.curr_font, None)
         self.v_threshold = 8
-        self.rivers = Rivers()
+        self.collision_threshold = collision_threshold
         
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 
@@ -79,8 +79,6 @@ class SpacingOddities(XDViPositionedReader):
         self.update_lines((self.h,self.v), curr_rect)
         self.cursor = (self.h, self.v)
         self.page_index += 1
-        self.rivers.print_all()
-        self.rivers = self.rivers.clear()
         return super().bop(opcode, parm, data)
     
     def update_lines(self, startpos, rect):
@@ -95,8 +93,10 @@ class SpacingOddities(XDViPositionedReader):
             self.line.glyph_clusters.pop()
         self.line.update_bounds()        
         if not self.prev_line.is_empty():
-            self.line.check_line_collisions(self.prev_line)
-        self.rivers.add_line(self.line)
+            self.line.check_line_collisions(self.prev_line, self.collision_threshold)
+        # if self.line.inrect not in self.rivers_inrect.keys():
+        #     self.rivers_inrect[self.line.inrect] = Rivers()
+        # self.rivers_inrect[self.line.inrect].add_line(self.line)
         self.parent.addxdvline(self.line, self.page_index, self.line.inrect)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font, rect)
@@ -158,12 +158,12 @@ class Line:
         # self.collisions.add((curr[0], curr[1], curr[2]-curr[0], curr[3]-curr[1]))       # to highlight both glyph boxes
         # self.collisions.add((prev[0], prev[1], prev[2]-prev[0], prev[3]-prev[1]))        
         
-    def check_line_collisions(self, prev_line):
+    def check_line_collisions(self, prev_line, threshold):
         if (self.vmin <= prev_line.vmax):
             curr_clusterpos = [c.get_boundary_box() for c in self.glyph_clusters]
             prev_clusterpos = [c.get_boundary_box() for c in prev_line.glyph_clusters]   
-            for i,j in search_collisions(curr_clusterpos, prev_clusterpos):
-                for g, p in self.glyph_clusters[i].collision(prev_line.glyph_clusters[j]):
+            for i,j in search_collisions(curr_clusterpos, prev_clusterpos, threshold):
+                for g, p in self.glyph_clusters[i].collision(prev_line.glyph_clusters[j], threshold):
                     self.add_collision(g, p)        
             
     def has_badspace(self, threshold = 4):
@@ -209,8 +209,8 @@ class GlyphCluster:
     def glyph_topt(self, no, i):
         return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points) 
     
-    def collision(self, prev_gc):
-        for i,j in search_collisions(self.glyphs, prev_gc.glyphs):
+    def collision(self, prev_gc, threshold):
+        for i,j in search_collisions(self.glyphs, prev_gc.glyphs, threshold):
             yield self.glyphs[i], prev_gc.glyphs[j]
     
     def get_boundary_box(self):
@@ -228,7 +228,7 @@ class GlyphCluster:
         return False
     
 class Rivers:
-    def __init__(self, max_v_gap = 1, min_h_overlap = 0.05):
+    def __init__(self, max_v_gap = 0.8, min_h_overlap = 0.2):
         self.final_rivers = []
         self.active_rivers = [River()]
         self.max_v_gap = max_v_gap
@@ -251,11 +251,18 @@ class Rivers:
             gc2_box = gcs[i+1].get_boundary_box()
             space = [gc1_box[2], min(gc1_box[1], gc2_box[1]), abs(gc2_box[0]-gc1_box[2]), abs(max(gc1_box[3], gc2_box[3])- min(gc1_box[1], gc2_box[1]))]
             if space[2] > self.min_h_overlap*gcs[i].font.points:  # since space between gcs takes the font of the previous gc
-                for river in self.active_rivers:
-                    if river.accepts(space, self.min_h_overlap*gcs[i].font.points):
-                        river.add(space)
-                        break       # todo: what if a space should be added to multiple active rivers because it's for example a bad space?
-        self.finish_active_river()
+                if not self.space_added(space, gcs[i].font.points):
+                    # new river.
+                    self.active_rivers.append(River())   
+                    self.active_rivers[-1].add(space)
+        
+    def space_added(self, space, fontsize):
+        added = False
+        for river in self.active_rivers:
+            if river.accepts(space, self.min_h_overlap*fontsize):
+                river.add(space)
+                added = True
+        return added
         
     def clear(self):
         self.active_rivers = [River()]
@@ -263,7 +270,7 @@ class Rivers:
         
     def print_all(self):
         for r in self.final_rivers:
-            print(r)
+            print(r.spaces)
 class River:
     def __init__(self):
         self.spaces = []
