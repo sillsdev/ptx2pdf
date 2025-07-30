@@ -49,7 +49,7 @@
   \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#4}%
   \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#5}%
   % identify which column it actually was/is in
-  \dimen0=#6 sp \adjustpdfXsavepos \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
+  \dimen0=#6 sp \adjustpdfXsavepos \dimen1=\dimexpr \textwidth + \SideMarginFactor \MarginUnit\relax\divide \dimen1 2
   \ifBindingGutter\ifodd #5\else\advance\dimen1 \BindingGutter\fi\fi
   \ifdim\dimen0 > \dimen1 \ifRTL\edef\c@l{0}\else\edef\c@l{1}\fi\else\ifRTL\edef\c@l{1}\else\edef\c@l{0}\fi\fi
   \x@\xdef\csname marginnote-#1@#2:colno\endcsname{\c@l}%
@@ -104,12 +104,13 @@
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
   \getp@ram{spacebefore}{#3}{#3+\styst@k}%
   \ifx\p@ram\relax \dimen0=1pt\else\dimen0=\p@ram\IndentUnit \divide\dimen0 by 12\fi
-  \trace{M}{marginnote(#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, offset=\the\dimen0, stystack=\styst@k}%
+  \dimen3 = #6
+  \trace{M}{marginnote(#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
   %\dimen0=0pt
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
   \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
   \xdef\wr@tet@mp{\string\@marginnote{#2}{#3}{\p@s}{#5}{\the\dimen0}{\the\wd#1}{\the\ht#1}{\the\dp#1}{\the\dimen1}{\the\dimen2}}%
-  \advance\dimen2 by #6%
+  \advance\dimen2 by \dimen3%
   %\ifx#3s \showbox#1\fi
   \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%
 }

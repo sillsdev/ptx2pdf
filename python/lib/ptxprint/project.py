@@ -159,6 +159,8 @@ class Project:
         return f"{self.prjid}[{self.guid}] {self.path}"
 
     def findConfigs(self, path):
+        if not os.path.exists(os.path.join(path, self.shareddir)) and os.path.exists(os.path.join(path, "shared/PTXprint")):
+            self.shareddir = 'shared/PTXprint'
         for a in (self.shareddir, self.localdir):
             cpath = os.path.join(path, a)
             if not os.path.exists(cpath) or not os.path.isdir(cpath):

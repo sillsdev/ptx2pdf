@@ -1,4 +1,5 @@
 \id TST Test file
+\usfm 3.1
 \h small test file
 \mt Testing Long Footnotes
 \is1 This is an introductory title\f + \ft And a footnote on an introductory title
@@ -83,7 +84,11 @@ Possimus hic eveniet autem rerum dolorum molestiae dolores. Qui quos adipisci co
 
 Veritatis itaque est veniam non doloribus. Est quo necessitatibus ratione magni et incidunt repudiandae. Error amet omnis eum ducimus. Atque officia eum aliquid libero magnam. Aut praesentium consequuntur corporis et. Optio odio mollitia nisi consequuntur dolorem commodi.
 
+\v 12
 Quo necessitatibus qui culpa dolorum ratione. Dolores voluptatem a minus qui ad dolor voluptatibus eum. Id consequatur nisi fugiat dolor. Atque\f + Bluble\f* excepturi hic accusantium a. Et praesentium aspernatur beatae sint eius cupiditate aut reiciendis. Rerum consequuntur voluptatem ullam sint consequatur ut doloremque.
+\p
+\v 13 And after he had become the father of Shelah, Arphaxad lived 403 years and had other sons and daughters.\f + \fr 11:13 \ft Hebrew; LXX (see also \xt Luke 3:35–36\xt*) \fq testing \fv 12\fv* When Arphaxad was 135 years old, he became the father of Cainan. \fv 13\fv* And after he had become the father of Cainan, Arphaxad lived 430 years and had other sons and daughters, and then he died. When Cainan had lived 130 years, he became the father of Shelah. And after he had become the father of Shelah, Cainan lived 330 years and had other sons and daughters. \ft Note that LXX also adds 100 years to the ages of Shelah, Eber, Peleg, Reu, Serug, and Nahor in this genealogy.\f*
+
 \is Outroduction
 \ip This is another intro paragraph\f + \ft An uninformative note Officia natus
 voluptate veniam dignissimos. Quaerat atque voluptas provident. Hic officiis

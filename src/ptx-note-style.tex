@@ -147,6 +147,8 @@
 \lowercase{\gdef\@@@startn@testyle#1{\startn@testyle~#1 }}%
 %-cnote_notestyle
 
+\newif\ifstructmarkerlistcorrect
+
 %+cnote_startnote_start
 \def\b@lance{BALANCE}
 \lowercase{
@@ -156,7 +158,7 @@
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
     \begingroup
-    \implicitcl@setrue % Char styles in notes implicitly close other ones. 
+    \implicitcl@setrue % Char styles in notes may implicitly close other ones.  We don't care here.
     \let\aftern@te\relax
     %\ifhe@dings\bgroup\fi
     \setbox0=\vbox\bgroup \skipn@testyletrue \inn@tetrue
@@ -176,7 +178,9 @@
     \else \trace{n}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\def\them@rk{#1}% otherwise the caller is the parameter
     \fi\fi
     \begingroup
-    \implicitcl@setrue % Char styles in notes implicitly close other ones.FIXME: develop testcase for new n@testructmkr tests
+    \ifstructmarkerlistcorrect\else
+      \implicitcl@setrue % Char styles in notes implicitly close other ones unless someone declares the list of structural markers is correct (see structm@rker in ptx-charstyle. FIXME: develop testcase for new structural markers.
+    \fi
     \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
     \resetp@rstyle                                                              %(1)
@@ -321,6 +325,7 @@
 \FootNoteGlyphMetricsfalse
   
 \newcount\currn@tetparnum % Note type paragraph number
+\newif\ifusespacebefore \usespacebeforetrue
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \global\advance\n@teid by 1 %
@@ -385,7 +390,7 @@
     \fi
     \ifp@ranotes\else
       \prevdepth=0pt % Ensure that we start with a baselineskip.
-      \getp@ram{spacebefore}{#1}{#1}\trace{n}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi
+      \ifusespacebefore\getp@ram{spacebefore}{#1}{#1}\trace{n}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi\fi
 %      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
 %      \ifdim\dimen0<\baselineskip
 %        \dimen1=\baselineskip\advance\dimen1 by -\dimen0

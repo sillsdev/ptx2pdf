@@ -118,10 +118,14 @@ class TexModel:
         "fb": r"\\+zglm \u2E24\\+zglm*\1\\+zglm \u2E25\\+zglm*",    # "with ⸤floor⸥ brackets":   
         "fc": r"\\+zglm \u230a\\+zglm*\1\\+zglm \u230b\\+zglm*",    # "with ⌊floor⌋ characters": 
         "cc": r"\\+zglm \u231e\\+zglm*\1\\+zglm \u231f\\+zglm*",    # "with ⌞corner⌟ characters":
-        "sb": r"*\1",               # "star *before word":       
-        "sa": r"\1*",               # "star after* word":        
+        "sb": r"*\1",               # "star *before word":
+        "sa": r"\1*",               # "star after* word":
         "cb": r"^\1",               # "circumflex ^before word": 
-        "ca":  r"\1^"               # "circumflex after^ word":  
+        "ca":  r"\1^",              # "circumflex after^ word":  
+        "gb": r"\u2020\1",               # "dagger †before word":
+        "ga": r"\1\u2020",               # "dagger after† word":
+        "db": r"\u2021\1",               # "double (dagger) †before word":
+        "da": r"\1\u2021",               # "double (dagger) after† word":
     }
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", None, FancyIntro),
@@ -331,7 +335,7 @@ class TexModel:
             self.plugins = set()
         chvssep = self.dict['header/chvseparator']
         self.dict['chvssep_'] = self.ptsettings.get('ChapterVerseSeparator', chvssep) if chvssep == ':' else chvssep
-        rsep = self.ptsettings.get('RangeIndicator', '-')
+        rsep = re.sub(r"^.*\|", "", self.ptsettings.get('RangeIndicator', '-'))
         self.dict['rangesep_'] = "\u2013" if rsep == "-" else rsep
 
     def updatefields(self, a):
@@ -522,7 +526,19 @@ class TexModel:
         self.dict["paper/headerposition"] = f2s(headerposmms / marginmms)
         self.dict["paper/footerposition"] = f2s(footerposmms / marginmms)
         self.dict["paper/ruleposition"] = f2s(ruleposmms * 72.27 / 25.4)
+
+    def getTextBlockSize(self):
+        unitConv = {'mm':2.8453, 'cm':28.453, 'in':72.27, '"':72.27, "pt": 1}
+        m = re.match(r"(-?[\d.]+)(\D+)", self.dict["paper/height"])
+        if m:
+            pheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
+        else:
+            pheight = 210 / unitConv["mm"]
+        top = pheight - float(self.dict["paper/topmargin"]) * unitConv["mm"]
+        bottom = float(self.dict["paper/bottommargin"]) * unitConv["mm"]
+        return (pheight, top, bottom)
         
+
     def texfix(self, path):
         return path.replace(" ", r"\ ")
 
@@ -752,7 +768,6 @@ class TexModel:
                 elif l.startswith(r"%\diglot "):
                     if diglots:
                         l = l[9:]
-                        # breakpoint()
                         for a, digdict in self.dict["diglots_"].items():
                             res.append(l.strip().format(diglot=digdict.dict, s_=a, **self.dict))
                 else:
@@ -847,12 +862,11 @@ class TexModel:
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
-        try:
-            mod = Module(infpath, usfms, self, text=text)
-            mod.parse()
-            res = mod.doc
-        except SyntaxError as e:
-            return (None, e)
+        mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
+        mod.parse()
+        res = mod.doc
+        if res.xml.errors:
+            self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         if text is not None:
             return res
         res.xml.outUsfm(outfpath, version=[3, 1])
@@ -893,14 +907,17 @@ class TexModel:
         if doc is not None:
             data = doc.asUsfm(grammar=self.printer.usfms.grammar)
             logger.log(5, logmsg+data)
+        else:
+            logger.log(5, logmsg)
         return (data, None)
 
     def _getDoc(self, data, doc, bk, logmsg=""):
         if data is not None:
-            doc = self._makeUSFM(data, bk)
-            doc.xml.version="3.1"
+            doc = self._makeUSFM(data, bk, reason=logmsg)
             if doc is not None:
                 logger.log(5, logmsg+doc.outUsx(None))
+        else:
+            logger.log(5, logmsg)
         return (None if doc else data, doc)
         
     def _changeError(self, txt):
@@ -1035,8 +1052,9 @@ class TexModel:
                     and self.dict["notes/ifxrexternalist"] and isCanon:
             (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("Add strongs numbers to text")
+            script = (printer.get("fcb_script") or "").title()
             try:
-                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"])
+                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
             except SyntaxError as e:
                 self.printer.doError("Processing Strongs", secondary=str(e))
 
@@ -1093,55 +1111,18 @@ class TexModel:
         else:
             return bn
             
-    def _makeUSFM(self, txt, bk):
-        # import pdb; pdb.set_trace()
+    def _makeUSFM(self, txt, bk, reason=""):
         syntaxErrors = []
-        try:
-            doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar)
-            doc.xml.canonicalise(version="3.1")
-        except SyntaxError as e:
-            syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
-        except Exception as e:
-            syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
-            traceback.print_exc()
-        if len(syntaxErrors):
-            dlgtitle = "PTXprint [{}] - USFM Text Error!".format(self.VersionStr)
-            # print(syntaxErrors[0])
-            # logger.info(syntaxErrors[0])
-            errbits = re.match(r"(\S+) (...) line: (\d+),\d+\s*\[(.*?)\]: orphan marker (\\.+?)", syntaxErrors[0])
-            if errbits is not None:
-                self.printer.doError("Syntax Error warning: ",        
-                    secondary=_("Examine line {} in {} on the 'Final SFM' tab of the View+Edit " + \
-                        "page to determine the cause of this issue related to marker: {} as found in the markers: {}.").format(
-                                errbits[3], errbits[2], errbits[5], errbits[4]) + \
-                        "\n\n"+_("This warning was triggered due to 'Auto-Correct USFM' being " + \
-                        "enabled on the Advanced tab but is due to an orphaned marker. " + \
-                        "It means the marker does not belong in that position, or it " + \
-                        "is missing a valid parent marker."), title=dlgtitle,
-                        show=not self.printer.get("c_quickRun"))
-            else:
-                prtDrft = _("And check if a faulty rule in changes.txt has caused the error(s).") if self.asBool("project/usechangesfile") else ""
-                self.printer.doError(_("Failed to normalize texts due to a Syntax Error: "),        
-                    secondary="\n".join(syntaxErrors)+"\n\n"+_("Run the Basic Checks in Paratext to ensure there are no Marker errors "+ \
-                    "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
-                    title=dlgtitle, show=not self.printer.get("c_quickRun"))
-                    
-            return None
-        else:
-            return doc  
+        doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar, informat="usfm")
+        doc.xml.canonicalise(version="3.1")
+        if doc.xml.errors:      # (msg, pos, ref)
+            dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
+            errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors])
+            secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
+            self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
+        return doc  
 
     def makelocalChanges(self, printer, bk, chaprange=None):
-        #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
-        # if self.printer is not None and self.printer.get("c_tracing"):
-            # print("List of changes.txt:-------------------------------------------------------------")
-            # report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
-            # if getattr(self.printer, "logger", None) is not None:
-                # self.printer.logger.insert_at_cursor(v)
-            # else:
-                # try:
-                    # print(report)
-                # except UnicodeEncodeError:
-                    # print("Unable to print details of changes.txt")
         self.localChanges = []
         script = self.dict["document/script"]
         if len(script):
@@ -1204,7 +1185,7 @@ class TexModel:
             pass
 
         # Throw out the known "nonpublishable" markers and their text (if any)
-        self.localChanges.append(makeChange(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", ""))
+        self.localChanges.append(makeChange(r"\\(ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", ""))
 
         # Throw out any empty footnotes or cross-references (if any) even if they have an xo or fr but no content
         # e.g.  \f + \f*     \x +\x*    \f + \fr 27:12 \ft \f*    \x - \xo 27:13-15 \xt \x*    \x - \xo 27:12 \xo*\xt \xt*\x*
@@ -1254,7 +1235,7 @@ class TexModel:
         if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
-                self.localChanges.append(makeChange(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', '', flags=regex.M))  # USFM2
+                #self.localChanges.append(makeChange(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', '', flags=regex.M))  # USFM2
                 self.localChanges.append(makeChange(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', '', flags=regex.M))    # USFM3
             def figtozfiga(m):
                 a = self.printer.picinfos.getAnchor(m.group(1), bk + (self.printer.digSuffix or ""))
@@ -1265,8 +1246,8 @@ class TexModel:
                     return ""
                 return r"\zfiga|{}\*".format(ref)
             logger.debug(self.printer.picinfos)
-            self.localChanges.append(makeChange(r'\\fig.*?src="([^"]+?)".*?\\fig\*', figtozfiga, flags=regex.M))
-            self.localChanges.append(makeChange(r'\\fig(?: .*?)?\|(.*?)\|.*?\\fig\*', figtozfiga, flags=regex.M))
+            self.localChanges.append(makeChange(r'\\fig.*?(?:src|file)="([^"]+?)".*?\\fig\*', figtozfiga, flags=regex.M))
+            #self.localChanges.append(makeChange(r'\\fig(?: .*?)?\|((?:.(?!\\fig))*?)\|.*?\\fig\*', figtozfiga, flags=regex.M))
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append(makeChange(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", r"\1\3", flags=regex.M))   # USFM2

@@ -264,7 +264,7 @@ class ParatextSettings:
             if v in self.dict:
                 foundsetting = True
                 setattr(self.refenv, k, re.sub(r"^(.*?)(\|.*)?$", r"\1", self.dict[v]))
-        if self.dict.get('NoSpaceBetweenBookAndChapter', False):
+        if self.dict.get('NoSpaceBetweenBookAndChapter', "False") == "True":
             self.refenv.bookspace = ''
         return self.refenv
 

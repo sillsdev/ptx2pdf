@@ -38,7 +38,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
         try:
             usfm = get_usfm(bk)
         except SyntaxError:
-            pass
+            usfm = None
         if usfm is not None:
             usfm.addorncv()
     qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"

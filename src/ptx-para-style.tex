@@ -310,7 +310,7 @@
      \ifx\styst@k\empty% If we have an empty stystack, then should we do nothing or fall back to using m@rker? it seems to be anomalous
        %\s@tsideskips{\m@rker}% 
      \else\ifinn@te\else
-       \s@tsideskips{\styst@kfirst}%%Need this for when \everypar gets fired from within a group. (e.g. from a trigger or milestone)
+       \s@tsideskips{\styst@kfirst}{-1pt}%%Need this for when \everypar gets fired from within a group. (e.g. from a trigger or milestone)
        \trace{j}{[\styst@kfirst] hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
      \fi\fi
    \fi
@@ -503,17 +503,20 @@
  \fi
 }
 
-\def\s@tsideskips#1{% REMINDER: sideskips cannot be set globally, or a sidebar might change main-paragraph formatting.
+\def\s@tsideskips#1#2{% REMINDER: sideskips cannot be set globally, or a sidebar might change main-paragraph formatting.
+% #1 marker, #2 rag amount (or <=0pt for reading the glue
    \ifx\styst@k\empty
       \edef\tmpstyst@k{#1}%
    \else
       \let\tmpstyst@k\styst@k
    \fi
-   \getp@ram{glue}{#1}{\tmpstyst@k}%
-   \ifx\p@ram\relax
-     \def\gl@e{0.25\hsize}%
-   \else
-     \edef\gl@e{\p@ram\noexpand\hsize}%
+   \ifdim #2 > 0pt\edef\gl@e{#2}\else
+     \getp@ram{glue}{#1}{\tmpstyst@k}%
+     \ifx\p@ram\relax
+       \def\gl@e{0.25\hsize}%
+     \else
+       \edef\gl@e{\p@ram\noexpand\hsize}%
+     \fi
    \fi
    % inside \beginR rightskip is leftskip and leftskip is rightskip!
    \parfillskip=0pt plus 1fil
@@ -772,7 +775,7 @@
    \x@\writep@rstart\x@{\the\baselineskip}{#1}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\c@rref}\fi\xdef\lastc@rradj{\the\curr@djpar}%
-   \s@tsideskips{\styst@kfirst}%Probably need this here in case the par gets ended e.g. by end of book.
+   \s@tsideskips{\styst@kfirst}{-1pt}%Probably need this here in case the par gets ended e.g. by end of book.
    \trace{sa}{\m@rker\g@tdstat\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
    \getp@ram{fontsize}{\styst@kfirst}{\styst@k}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%Need to set this before calling s@tfont, else that will consder the current fontsize as ruling.
    \setwh@tvrstyle% set up font attributes (based on style stack)
@@ -791,13 +794,19 @@
          \ifIndentAtChapter\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterchap}\fi
        \fi
      }%
-     \trace{C}{allowp@rindent \ifallowp@rindent true\else false\fi \space\t@st, (\iffirst@fterheading fah,\fi\ifIndentAfterHeading IAH,\fi\ifIndentAtChapter IAC,\fi)}%
+     \trace{C}{allowp@rindent \ifallowp@rindent true\else false\fi \space\t@st, (\iffirst@fterheading fah,\fi\ifIndentAfterHeading\else !\fi IAH,\ifIndentAtChapter \else !\fi IAC)}%
    \fi
    %
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
    \getp@ram{firstindent}{\styst@kfirst}{\styst@k}\let\f@rstindent=\p@ram
    \dimen3=\ifx\p@ram\relax 0\else\f@rstindent\fi \IndentUnit
+   \ifversion{5}{\ifallowp@rindent\else\ifdim \dimen3>0pt \dimen3=0pt \fi\fi}{}%
+   %In the code below...
+   % dimen3 is first line indent
+   % dimen2 is the par indent.
+   % dimen0 is the target total indent (d2+d3)
+   % dimen4 is the left-over cutout (not supplied by indent)
 %-cpar_parstyle_start
    %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
@@ -821,21 +830,33 @@
       \ifx\p@ram\relax % simple case - no left indent
         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
         \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
+        \let\tmp\empty\edef\tmpb{\the\ch@pterwd}%
       \else % probably \q or something like that;                               %(1)
             % need to compare cutout width with leftindent
         \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
-        \ifallowp@rindent
-          \ifversion{5}{}{\ifdim\dimen3>0pt \advance \dimen3 by \ch@pterwd\fi}%
+        \edef\tmp{(\p@ram\IndentUnit = \the\dimen2)}%
+        \tempfalse
+        \ifallowp@rindent \temptrue \else \ifversion{5}{\temptrue}{\ifdim\dimen3<0pt \temptrue\fi}\fi
+        \iftemp
+          \x@\def\x@\tmp\x@{\tmp + \the\dimen3}%% Loging info. Happens later.
+          \ifversion{5}{}{%
+            \ifdim\dimen3>0pt \advance \dimen3 by \ch@pterwd\relax\x@\def\x@\tmp\x@{\tmp  + \the\ch@pterwd}%% Loging info
+          \fi}%
           \advance\dimen0 by \dimen3
           \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
+          \edef\tmpb{\the\ch@pterwd - \the\dimen0}%
         \else
           \dimen4=\wd\ch@pterbox
           \advance\dimen0 by \dimen3
+          \x@\def\x@\tmp\x@{\tmp  +(FLI=\the\dimen3)}%% Loging info
           \ifdim\dimen2>0pt 
+            \edef\tmpb{\the\dimen4  - \the\dimen2}%% %Loging info
             \advance\dimen4 -\dimen2
+          \else
+           \edef\tmpb{\the\dimen4}%% %Loging info
           \fi
         \fi
-        \trace{C}{Dropchap cutout is naturally \the\wd\ch@pterbox. Indent on line 1 is \the\dimen0/\the\dimen4/\the\dimen2}%
+        \trace{C}{Dropchap cutout is naturally \the\wd\ch@pterbox. Indent on line 1 is \the\dimen0 (\tmp) cutout1 \the\dimen4}%
         \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
           \x@\c@tcmd\x@{\the\dimen4}{0}{1}% create extra indent
         \else % the indent is already big enough, so just use it as is
@@ -845,8 +866,11 @@
         \dimen4=\ch@pterwd \advance\dimen4 by -\dimen2 % and for wrap if needed
         \ifdim\dimen4>0pt 
           \trace{C}{Dropchap cutout for 2nd line set to \the\dimen4}%
-          \x@\c@tcmd\x@{\the\dimen4}{1}{1}\fi
-        \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
+          \x@\c@tcmd\x@{\the\dimen4}{1}{1}%
+          \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
+        \else
+          \xdef\ch@pterc@tnum{}%
+        \fi
       \fi
       \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
       \dr@ppednumbertrue
@@ -880,22 +904,22 @@
        \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
        \advance\dimen0 by \dimen3
        % now \dimen0 is the real (target) indent of the 1st line
+       \dimen5=0pt \ifcsname cut@width\ch@pterc@tnum\endcsname \x@\dimen5 \csname cut@width\ch@pterc@tnum\endcsname\fi
        \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0 \relax
-       \trace{C}{Modified cutout (maybe) needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd, \the\dimen4}%
+       \trace{C}{Modified cutout \ch@pterc@tnum\space (maybe) needed (paragraph is \the\dimen0 / (\the\dimen2+\the\dimen3), chapnum \the\ch@pterwd, \the\dimen4}%
        \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
          \trace{sP}{Indent is insufficient: \the\dimen4, \the\dimen5}%
          \ifx\ch@pterc@tnum\empty
            \trace{C}{New cutout needed (\ch@pterc@tnum)}%
            \x@\c@tcmd\x@{\the\dimen4}{0}{1}% No pre-existing cutout
          \else
-           \trace{C}{modifying (\ch@pterc@tnum)}%
-           \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
-           %\Flag{\MSG{FLAG!}M\Flag{}}%
+           \trace{C}{modifying (\ch@pterc@tnum - \csname cut@width\ch@pterc@tnum\endcsname)}%
+           \ifversion{5}{\m@difychapcut{\ch@pterc@tnum}{\the\dimen4}}% modify current chapternumber cutout.
+           {\m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}%
+            }% Old buggy version
          \fi
-         \dimen3=0pt
-         %\advance\dimen3 by -\ch@pterwd
+         %\ifdim\dimen3>0pt \dimen3=0pt\fi
        \else % the indent is already big enough, so just use it as is
-        \dimen5=0pt \ifcsname cut@width\the\@numcuts\endcsname \x@\dimen5 \csname cut@width\the\@numcuts\endcsname\fi
         \trace{sP}{Indent is sufficient: \the\dimen3, \the\dimen4, \the\dimen5}%
         \ifversion{5}{\advance\dimen3 by -\dimen5}{%
           \ifversion{3}{\ifdim\dimen4 > -1pt \advance\dimen3 by -\dimen5\fi}{}}%
@@ -1393,7 +1417,7 @@
       \temptrue
     \fi  % if new delay is <2 away than old, we can use \RaiseItem
     \iftemp
-      \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2.}
+      \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2.}%
       \immediate\write\delayf@le{\string\Rerun{#1}{T}{Position changed}}%
       \message{Current slop: \string\setCutoutSlop{#1}{\the\numexpr -\@djustmin\relax}{\@djustmax}}%
       \message{Would use RaiseItem if: \string\setCutoutSlop{#1}{\the\numexpr -\@accept@djmin\relax}{\@accept@djmax}}%

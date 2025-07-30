@@ -1,7 +1,9 @@
 import re, regex, logging, os, time
 import usfmtc
-from usfmtc.reference import Ref, RefList
+from usfmtc import _filetypes
+from usfmtc.reference import Ref, RefList, RefRange
 from usfmtc.usfmparser import Grammar
+from ptxprint.utils import universalopen, runChanges
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
 from ptxprint.changes import readChanges
@@ -175,6 +177,8 @@ def typesFromMrk(mtype):
         return ('Note', 'NoteText')
     return (None, None)
 
+texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody zBottomRag zfiga zvar"""
+
 def createGrammar(sheets):
     grammar = Grammar()
     for k in sheets:
@@ -186,6 +190,8 @@ def createGrammar(sheets):
         if a is not None and k not in grammar.attribmap:
             attrib = a.split()[0].replace("?", "")
             grammar.attribmap[k] = attrib
+    for k in texcmds.split():
+        grammar.marker_categories[k] = "standalone"
     return grammar
 
 
@@ -227,9 +233,9 @@ class UsfmCollection:
                 with universalopen(bkfile) as inf:
                     bkdat = inf.read()
                 bkdat = runChanges(self.changes, bk, bkdat)
-                self.books[bk] = Usfm.readfile(bkdat, informat="usfm", grammar=self.grammar, elfactory=ParentElement)
+                self.books[bk] = Usfm.readfile(bkdat, grammar=self.grammar, elfactory=ParentElement, informat="usfm")
             else:
-                self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement)
+                self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement, informat="usfm")
             self.times[bk] = time.time()
         return self.books[bk]
 
@@ -336,10 +342,16 @@ class Usfm:
         self.book = book
 
     @classmethod
-    def readfile(cls, fname, grammar=None, sheet=None, elfactory=None):       # can also take the data straight
+    def readfile(cls, fname, grammar=None, sheet=None, elfactory=None, informat=None, **kw):       # can also take the data straight
         if grammar is None:
             grammar = createGrammar(sheet if sheet is not None else [])
-        usxdoc = usfmtc.readFile(fname, informat="usfm", keepparser=True, grammar=grammar, elfactory=elfactory)
+        if informat is None and os.path.exists(fname):
+            (_, ext) = os.path.splitext(fname)
+            if ext not in _filetypes:
+                informat = "usfm"
+        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, **kw)
+        if usxdoc is None:
+            return None
         book = None
         bkel = usxdoc.getroot().find(".//book")
         if bkel is not None:
@@ -375,6 +387,9 @@ class Usfm:
 
         root = self.getroot()
         self.bridges = {}
+        if not len(root):
+            logger.warn(f"root is empty!")
+            return
         bk = root[0].get('code') or "UNK"
         self.factory = factory
         self.chapters = [0]
@@ -386,6 +401,7 @@ class Usfm:
             if isin:
                 if x.tag == 'para':
                     currp = x
+            else:
                 continue
             p = x
             if x.parent == root:
@@ -427,7 +443,8 @@ class Usfm:
                 if s == "k":
                     v = p.get("key", p.text.strip().replace(" ", ""))    # there is more to this
                     self.kpars[v] = currp
-            p.pos = RefPos(p.pos, curr)
+            if curr is not None:
+                p.pos = RefPos(p.pos, curr)
         self.chapters.append(i)
         for s in sections:
             _addorncv_hierarchy(s, curr)
@@ -491,80 +508,11 @@ class Usfm:
         res = self.factory("ms", attribs, parent=parent)
         return res
 
-    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True, keepheaders=False):
-        ''' Creates a document consisting of only the text covered by the reference
-            ranges. refrange is a RefList of RefRange or a RefRange'''
-        self.addorncv()
-        if not isinstance(refranges, (list, RefList)):
-            refranges = [refranges]
-        last = (0, -1)
-        chaps = []      # a list of 2 element tuples. 0: list of first paragraphs, 1: indices in refranges
-        minc = 10000
-        for i, r in enumerate(refranges):
-            if r.first.chapter > last[1] or r.first.chapter < last[0]:
-                chaps.append((self.chapters[r.first.chapter:r.last.chapter+2], [i]))
-                last = (r.first.chapter, r.last.chapter)
-            elif r.first.chapter >= last[0] and r.last.chapter <= last[1]:
-                chaps[-1][1].append(i)
-            else:
-                chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chapter+1])
-                chaps[-1][1].append(i)
-                last = (last[0], r.last.chapter)
-            minc = min(r.first.chapter, minc)
-        def pred(e, rlist):
-            if e.parent is None:
-                return True
-            if e.parent.get('style', e.tag) in removes:
-                return False
-            if any(e.pos.ref in refranges[i] for i in rlist) \
-                    and (e.pos.ref.first.verse != 0 or refranges[i].first.verse == 0 or e.get('style', e.tag) == "c"):
-                if strippara and e.tag == "para":
-                    return False
-                return True
-            return False
-
-        def copyrange(start, out, rlist, pstyle=None) -> bool:
-            res = out
-            if start.tag == "para":
-                pstyle = start.get("style", "p")
-            isactive = False
-            if pred(start, rlist):
-                isactive = True
-                if out.tag == "usx" and start.tag not in ("para", "chapter", "book"):
-                    out = self.factory("para", attrib=dict(style=pstyle), parent=out, pos=start.pos)
-                res = self.factory(start.tag, start.attrib, parent=out, pos=start.pos)
-                out.append(res)
-                res.text = start.text
-            endactive = isactive
-            for c in start:
-                endactive = copyrange(c, res, rlist, pstyle)
-            if endactive:
-                res.tail = start.tail
-            return endactive
-
-        root = self.getroot()
-        d = list(root)
-        res = self.factory("usx", root.attrib)
-        res.text = root.text
-        if keepheaders:
-            for e in root:
-                if e.tag == "chapter":
-                    break
-                if minc > 1 and e.tag == "para" and self.grammar.marker_categories.get(e.get("style", ""), "") not in ("header", ):
-                    break
-                newe = e.copy(deep=True, parent=res)
-                res.append(newe)
-        for c in chaps:
-            if addzsetref:
-                minref = min(refranges[r].first for r in c[1])
-                if (minref.verse or 0) > 0:
-                    res.append(self.make_zsetref(minref, None, root, None))
-            for chap in range(c[0][0], c[0][-1]):
-                copyrange(d[chap], res, c[1])
-        return Usfm(usfmtc.USX(res, self.grammar), parser=self.parser, grammar=self.grammar)
-
     def getsubbook(self, refrange, removes={}):
-        return self.subdoc(refrange, removes=removes, keepheaders=True)
+        if isinstance(refrange, (Ref, RefRange)):
+            refrange = [refrange]
+        subdoc = self.xml.getrefs(*refrange, addintro=True)
+        return Usfm(subdoc, parser=self.parser, grammar=self.grammar)
 
     def versesToEnd(self):
         root = self.getroot()
@@ -724,28 +672,31 @@ class Usfm:
                 addellipsis(root, i - 1)
         return
 
-    def addStrongs(self, strongs, showall):
+    def addStrongs(self, strongs, showall, script=None):
         self.addorncv()
         currstate = [None, set()]
         root = self.getroot()
         enters = "cell char versepara".split()
+        found = {}
         for x, isin in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
+            if x.tag == "ms" and x.get('style', '') == "xts":
+                continue
             if isin:
                 t = x.text
-                r = x.pos.ref if hasattr(x.pos, 'ref') else None
             else:
                 t = x.tail
-                r = x.pos.ref
-            if r != currstate[0]:
+            r = x.pos.ref if hasattr(x.pos, 'ref') else None
+            if r is not None and r != currstate[0]:
                 currstate = [r, set(strongs.getstrongs(r))]
+                found = {}
             for st in list(currstate[1]):
-                regs = strongs.regexes[st] if st in strongs.regexes else strongs.addregexes(st)
+                regs = strongs.regexes[st] if st in strongs.regexes else strongs.addregexes(st, script=script)
                 if not len(regs):
                     currstate[1].remove(st)
                     continue
                 matched = False
                 try:
-                    regre = regex.compile(("(?<!\u200A?)" if not showall else "") + regs, regex.I | regex.F)
+                    regre = regex.compile(regs, regex.I | regex.F)
                 except regex._regex_core.error as e:
                     raise SyntaxError(f"Faulty regex in {regs}: {e}")
                 b = regre.split(t)
@@ -755,17 +706,27 @@ class Usfm:
                         i = 0
                     else:
                         x.tail = b[0] + "\u200B"
+                        # if x.parent is None:
+                            # breakpoint()
                         i = list(x.parent).index(x) + 1
+                    lastw = x
                     for a in range(1, len(b), 2):
-                        e = self.factory("char", attrib={"style": "xts", "strong": st.lstrip("GH"), "align": "r"})
-                        e.text = "\\nobreak \u200A" + b[a]
-                        if a < len(b) - 2:
-                            e.tail = b[a+1]
-                        if isin:
-                            x.insert(i, e)
+                        if showall or st not in found.get(b[a], []):
+                            e = self.factory("ms", parent=x, attrib={"style": "xts", "strongs": st.lstrip("GH"), "align": "r"})
+                            e.tail = "\u2064\u200A" + b[a]
+                            found.setdefault(b[a], []).append(st)
+                            if a < len(b) - 1:
+                                e.tail += b[a+1]
+                            if isin:
+                                x.insert(i, e)
+                            else:
+                                x.parent.insert(i, e)
+                            i += 1
+                            lastw = e
+                        elif isin and i == 0:
+                            x.text += b[a] + (b[a+1] if a < len(b) - 2 else "")
                         else:
-                            x.parent.insert(i, e)
-                        i += 1
+                            lastw.tail += b[a] + (b[a+1] if a < len(b) - 2 else "")
                     matched = True
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
 

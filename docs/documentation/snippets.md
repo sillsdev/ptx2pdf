@@ -218,6 +218,39 @@ We then run this code over various key markers that we want to have verse
 numbers on. Notice we don't do this for all paragraph markers, since we aren't
 interested in tracking verse numbers in `\\q2` for example.
 
+## Technique: Kerning digits in a chapter number
+
+Digits are typically designed to be monospaced so that they layout out nicely in
+tables. But in some scripts, some digits are significantly narrower than others
+and it would be nice to kern those digits more tightly in chapter numbers. This
+is only really noticeable in the book of Psalms.
+
+To do this we create some magic characters that will insert the negative kerns:
+
+```tex
+\catcode"005E=7
+\catcode"E123=\active
+\def^^^^e123{\nobreak\kern-0.2em\relax}
+\catcode"E124=\active
+\def^^^^e124{\nobreak\kern-0.4em\relax}
+```
+
+In effect we are making two negative spaces. Now in the changes file we want to
+insert those special spaces around the digits 0 and 1 for chapter numbers.
+
+```perl
+at PSA "\\c\s(\d*[10]\d*)" > "\\c \1\n\\cp \\beginL \1 \\endL\n"
+in "\\cp\s+\\beginL \d+ \\endL": "([01])" > "\uE123\1\uE123"
+"\uE123\uE123" > "\uE124"
+```
+
+The first rule copies the chapter number to a published chapter string if it
+contains a 0 or a 1. It also marks it as being output left to right, since
+Arabic digits are output left to right in right to left text. The second rule
+takes that publishable chapter and inserts a negative space before and after
+ever 0 or 1 in the string. The last rule merges adjacent pairs of negative widths
+into a single doubly narrow width.
+
 ## Technique: Setting style parameters in ptxprint-mods.tex
 
 This snippet is less a snippet as a technique. It shows two ways of setting

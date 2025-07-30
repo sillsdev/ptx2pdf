@@ -1,8 +1,60 @@
-PTXprint 2.8.19 Release Notes
-4 Jul 2025
+PTXprint 2.8.22 Release Notes
+24 Jul 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.8.22 (24 Jul 2025)
+  * Attempt to fix/prevent style corruptions (debounce to avoid rapid, repeated searches)
+  * Improve everyfirstverse handling
+  * Multiple bug fixes to usfmtc lib
+  * Refactor subdoc to use usfmtc
+  * Add intros to subdoc-ed books
+  * Minor tweaks to UI and map header
+  * Reword DBL button -> Import Scripture
+  * Fix chapter indents for li-type paragraphs
+  * Fix bunching in margin note collision avoidance
+  * Fix tests with the demise of usxutils subdoc()
+
+Bug fixes and Improvements in 2.8.21 (17 Jul 2025)
+  * Fix modules and \inc
+  * Update DBL link to new URL (new site requires login)
+  * Minor bugs in xref and pos being None
+  * Fallback scripture files to usfm
+  * Nearly fix strongs and xrefs
+  * Add to snippets.md (kerning digits in a chapter number)
+  * Refactor s@tsideskips ready for note integration
+  * Add inner and outer as paragraph alignment options
+  * Add Blue, Orange, Red status for Update available button
+  * Fix marginnotes both 1 and 2 col
+  * Fix collision avoidance direct algorithm
+  * Improve margin note positioning
+  * Refactor out old RefList.filterBooks
+  * Fix bug where the log file wasn't being tailed well
+  * Add war stories (subtle user errors with troubleshooting tips)
+  * Refined report details
+  * Update report for changed markers
+  * Update ployglot cfg for newly created config
+  * Add TOC marker list to report
+  * Try to get more info on changed markers
+
+Bug fixes and Improvements in 2.8.20 (9 Jul 2025)
+  * Add tex standalones to parser and assume files are usfm
+  * Add daggers to glossary options
+  * Add colors to book chooser
+  * Add some UI for Adding Maps [work in progress]
+  * Add missing dependency for universalopen in utils
+  * Highlight recently used projects
+  * Treat file= as src= in localChanges
+  * Refactor module learning for usfm3.1
+  * Refactor modules to give better errors
+  * Refactor module parsing
+  * Warn not crash on empty book in addorncv
+  * Refactor model filling in gtkpiclist
+  * Don't give existing project name to DBL expander
+  * Minor usfm reading fixes
+  * Fix minor modname bug
+  * Refactor converting to usx model in texmodel convertBook
 
 Bug fixes and Improvements in 2.8.19 (4 Jul 2025)
   * Change labels of buttons in SpeedSlice to Enable and Disable

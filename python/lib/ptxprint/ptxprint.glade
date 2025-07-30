@@ -407,6 +407,13 @@ THE SOFTWARE.
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
   </object>
+  <object class="GtkAdjustment" id="a_mapScale">
+    <property name="lower">0.01</property>
+    <property name="upper">4</property>
+    <property name="value">1</property>
+    <property name="step-increment">0.10</property>
+    <property name="page-increment">0.10</property>
+  </object>
   <object class="GtkAdjustment" id="a_margins">
     <property name="lower">0.5</property>
     <property name="upper">200</property>
@@ -926,7 +933,7 @@ THE SOFTWARE.
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.8.19</property>
+    <property name="version">Version 2.8.22</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -1801,6 +1808,22 @@ settings for a similar project.</property>
         <col id="1">ca</col>
       </row>
       <row>
+        <col id="0" translatable="yes">dagger †before word</col>
+        <col id="1">gb</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">dagger after† word</col>
+        <col id="1">ga</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">double ‡before word</col>
+        <col id="1">db</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">double after‡ word</col>
+        <col id="1">da</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">\w ...\w* char style</col>
         <col id="1">ww</col>
       </row>
@@ -1962,6 +1985,26 @@ settings for a similar project.</property>
       <row>
         <col id="0">________________</col>
         <col id="1">4</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_mapBorder">
+    <columns>
+      <!-- column-name Action -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+      </row>
+      <row>
+        <col id="0">Han3</col>
+      </row>
+      <row>
+        <col id="0">Map Edge A</col>
+      </row>
+      <row>
+        <col id="0">Map Edge B</col>
       </row>
     </data>
   </object>
@@ -2149,6 +2192,10 @@ settings for a similar project.</property>
         <col id="0" translatable="yes">Bottom</col>
         <col id="1">b</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">Fill</col>
+        <col id="1">f</col>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_plHoriz">
@@ -2277,11 +2324,52 @@ settings for a similar project.</property>
       <column type="gchararray"/>
       <!-- column-name guid -->
       <column type="gchararray"/>
+      <!-- column-name font_weight -->
+      <column type="gint"/>
+      <!-- column-name foreground_color -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0">Unknown</col>
         <col id="1" translatable="yes">0000</col>
+        <col id="2">0</col>
+        <col id="3" translatable="yes"/>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_ptxMapBook">
+    <columns>
+      <!-- column-name MapBookID -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">XXM</col>
+      </row>
+      <row>
+        <col id="0">XXA</col>
+      </row>
+      <row>
+        <col id="0">XXB</col>
+      </row>
+      <row>
+        <col id="0">XXC</col>
+      </row>
+      <row>
+        <col id="0">XXD</col>
+      </row>
+      <row>
+        <col id="0">XXE</col>
+      </row>
+      <row>
+        <col id="0">XXF</col>
+      </row>
+      <row>
+        <col id="0">XXG</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">BAK</col>
       </row>
     </data>
   </object>
@@ -2962,6 +3050,14 @@ settings for a similar project.</property>
       <row>
         <col id="0" translatable="yes">Right</col>
         <col id="1">Right</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inner</col>
+        <col id="1">Inner</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Outer</col>
+        <col id="1">Outer</col>
       </row>
     </data>
   </object>
@@ -5127,6 +5223,7 @@ Multiple Books:</property>
                                 <property name="can-focus">False</property>
                                 <property name="can-default">True</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="model">ls_projects</property>
                                 <property name="wrap-width">1</property>
                                 <property name="entry-text-column">0</property>
@@ -5296,18 +5393,23 @@ chapter number to end with.</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_DBLbundleDiglot1">
-                                <property name="label" translatable="yes">DBL</property>
-                                <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                                <property name="label" translatable="yes">  Import Scripture  </property>
+                                <property name="name">Get Scripture text from Open.Bible or the Digital Bible Library (DBL)</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
-available texts to print from. Note that the
-DBL bundle will get unpacked into your 
-regular folder (e.g. My Paratext 9 Projects)
-but will only be used by PTXprint. It cannot
-be viewed or edited in Paratext.</property>
+                                <property name="tooltip-text" translatable="yes">Many scripture texts are available in a 
+range of languages which can be freely
+downloaded and added to the list of
+available texts to print from. 
+
+Note that these Scripture text bundles 
+will get unpacked into a sub-folder 
+(e.g. C:\My Paratext 9 Projects\_PTXprint)
+to be used by PTXprint. The texts will not 
+be available for viewing or editing in Paratext.</property>
                                 <property name="halign">end</property>
+                                <property name="valign">center</property>
                                 <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
                               </object>
                               <packing>
@@ -15548,7 +15650,7 @@ headers and footers.</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">4</property>
                                 <child>
-                                  <!-- n-columns=2 n-rows=2 -->
+                                  <!-- n-columns=2 n-rows=3 -->
                                   <object class="GtkGrid" id="gr_picButtons">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -15636,11 +15738,26 @@ settings will remain unchanged.</property>
                                         <property name="top-attach">1</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_addMaps2">
+                                        <property name="label" translatable="yes">Add Maps...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="valign">center</property>
+                                        <signal name="clicked" handler="addMapsClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">2</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">0</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15725,7 +15842,7 @@ any items that match.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">1</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15750,7 +15867,7 @@ the PicList details just for *that* book.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">2</property>
+                                    <property name="position">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15762,7 +15879,7 @@ the PicList details just for *that* book.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">3</property>
+                                    <property name="position">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15780,13 +15897,13 @@ for trial publications may be downloaded.
 Or if you have already downloaded a set
 of images, you can install them in an
 appropriate location using this feature.</property>
-                                    <property name="valign">end</property>
+                                    <property name="valign">center</property>
                                     <signal name="clicked" handler="onImageSetClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">4</property>
+                                    <property name="position">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15846,7 +15963,7 @@ odd/right-hand page of a spread.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">5</property>
+                                    <property name="position">6</property>
                                   </packing>
                                 </child>
                               </object>
@@ -18600,6 +18717,7 @@ A forward slash / indicates one
 text being under the other on the
 same page.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="max-length">12</property>
                                 <property name="width-chars">12</property>
                                 <property name="xalign">0.5</property>
@@ -18618,18 +18736,23 @@ same page.</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkButton" id="btn_DBLbundleDiglot2">
-                                    <property name="label" translatable="yes">DBL</property>
-                                    <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                                    <property name="label" translatable="yes">  Import Scripture  </property>
+                                    <property name="name">Get Scripture text from Open.Bible or the Digital Bible Library (DBL)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
-available texts to print from. Note that the
-DBL bundle will get unpacked into your 
-regular folder (e.g. My Paratext 9 Projects)
-but will only be used by PTXprint. It cannot
-be viewed or edited in Paratext.</property>
+                                    <property name="tooltip-text" translatable="yes">Many scripture texts are available in a 
+range of languages which can be freely
+downloaded and added to the list of
+available texts to print from. 
+
+Note that these Scripture text bundles 
+will get unpacked into a sub-folder 
+(e.g. C:\My Paratext 9 Projects\_PTXprint)
+to be used by PTXprint. The texts will not 
+be available for viewing or editing in Paratext.</property>
                                     <property name="halign">end</property>
+                                    <property name="valign">center</property>
                                     <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
                                   </object>
                                   <packing>
@@ -18723,6 +18846,7 @@ algorithms which may be used to obtain the best overall result:
   can result in a lot of breaks!
 
 Note that for polyglots, only the Scored options are available to be used.</property>
+                                    <property name="valign">center</property>
                                     <property name="model">ls_diglotMerge</property>
                                     <property name="active">1</property>
                                     <property name="has-entry">True</property>
@@ -20454,8 +20578,10 @@ use in the current set of books.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">start</property>
                                         <property name="margin-top">12</property>
-                                        <property name="hexpand">True</property>
                                         <property name="wrap">True</property>
+                                        <property name="width-chars">45</property>
+                                        <property name="max-width-chars">45</property>
+                                        <property name="xalign">0</property>
                                         <attributes>
                                           <attribute name="style" value="italic"/>
                                         </attributes>
@@ -21016,6 +21142,23 @@ ital= slant value (faux italics)</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">False</property>
                                                         <property name="can-default">True</property>
+                                                        <property name="tooltip-text" translatable="yes">If text is justified but Justify Paragraphs is turned off on the
+Body tab then an alignment of Justified here is treated as 
+Left, (and maybe swapped if Right-to-Left).
+
+When the Writing system text flow direction is Right-to-Left
+the interpretation of Left and Right is swapped. Top-to-Bottom
+flow is treated as Left-to-Right.
+
+Inner vs Outer (used for Marginal Notes, Xrefs or Headings)
+  Inner = closer to the center:
+    In a 2-column layout: closer to the space between columns.
+    In a 1-column layout: closer to the spine of the page spread.
+  Outer = further from the center:
+    In a 2-column layout: closer to the outer edge of the page.
+    In a 1-column layout: closer to the outer edge of the page spread.
+  Note: Marginal notes cannot switch sides mid-paragraph 
+             if the page or column changes.</property>
                                                         <property name="model">ls_styJustification</property>
                                                         <property name="wrap-width">1</property>
                                                         <property name="has-entry">True</property>
@@ -21217,7 +21360,17 @@ Left, (and maybe swapped if Right-to-Left).
 
 When the Writing system text flow direction is Right-to-Left
 the interpretation of Left and Right is swapped. Top-to-Bottom
-flow is treated as Left-to-Right.</property>
+flow is treated as Left-to-Right.
+
+Inner vs Outer (used for Marginal Notes, Xrefs or Headings)
+  Inner = closer to the center:
+    In a 2-column layout: closer to the space between columns.
+    In a 1-column layout: closer to the spine of the page spread.
+  Outer = further from the center:
+    In a 2-column layout: closer to the outer edge of the page.
+    In a 1-column layout: closer to the outer edge of the page spread.
+  Note: Marginal notes cannot switch sides mid-paragraph 
+             if the page or column changes.</property>
                                                             <property name="label" translatable="yes">Alignment:</property>
                                                             <property name="xalign">1</property>
                                                           </object>
@@ -24248,6 +24401,7 @@ cover using the online Canva.com tool (link provided).</property>
                             <property name="hexpand">True</property>
                             <property name="ellipsize">middle</property>
                             <property name="max-width-chars">60</property>
+                            <property name="xalign">0</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -25042,7 +25196,7 @@ on subsequent runs.</property>
                       </packing>
                     </child>
                     <child>
-                      <!-- n-columns=3 n-rows=1 -->
+                      <!-- n-columns=4 n-rows=1 -->
                       <object class="GtkGrid" id="gr_importBackPDF">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
@@ -25096,13 +25250,27 @@ file is selected, then these will appear in alphabetical order.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="opacity">0.80</property>
-                            <property name="halign">start</property>
                             <property name="valign">center</property>
+                            <property name="hexpand">True</property>
                             <property name="ellipsize">middle</property>
                             <property name="max-width-chars">70</property>
+                            <property name="xalign">0</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_addMaps1">
+                            <property name="label" translatable="yes">Add Maps...</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <signal name="clicked" handler="addMapsClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -27601,7 +27769,7 @@ output with a previous PDF.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27617,11 +27785,12 @@ output with a previous PDF.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">2</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_working_dir">
+                                    <property name="width-request">250</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">The PDF file created is stored in this
@@ -27637,11 +27806,12 @@ included in Paratext's Send/Recv data.</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Output PDF Location:</property>
                                     <property name="justify">right</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27837,7 +28007,7 @@ file or the Changes.txt file as appropriate.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">3</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27890,6 +28060,7 @@ Email the ZIPped archive file to:
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_community">
+                                    <property name="width-request">250</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Scripture Software Community site where you can 
@@ -27958,7 +28129,7 @@ by deleting unneeded files.</property>
                                     <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">16</property>
                                     <property name="label">&lt;a href="working dir"&gt;working dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
@@ -27966,9 +28137,9 @@ by deleting unneeded files.</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">0</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27977,7 +28148,7 @@ by deleting unneeded files.</property>
                                     <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">16</property>
                                     <property name="label">&lt;a href="prjdir"&gt;prjdir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
@@ -27985,9 +28156,9 @@ by deleting unneeded files.</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -27996,7 +28167,7 @@ by deleting unneeded files.</property>
                                     <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">16</property>
                                     <property name="label">&lt;a href="settings dir"&gt;settings dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
@@ -28004,9 +28175,9 @@ by deleting unneeded files.</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">2</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28015,7 +28186,7 @@ by deleting unneeded files.</property>
                                     <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">16</property>
                                     <property name="label">&lt;a href="docs dir"&gt;docs dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
@@ -28023,9 +28194,9 @@ by deleting unneeded files.</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">3</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28483,9 +28654,6 @@ Click to visit download page on the website.</property>
                 <property name="margin-bottom">3</property>
                 <property name="image">icon_download</property>
                 <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
-                <style>
-                  <class name="attention"/>
-                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -28763,7 +28931,7 @@ Shortcut: Ctrl-W</property>
   </object>
   <object class="GtkDialog" id="dlg_DBLbundle">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Set up DBL bundle...</property>
+    <property name="title" translatable="yes">PTXprint: Import Scripture...</property>
     <property name="type-hint">dialog</property>
     <property name="transient-for">ptxprint</property>
     <child internal-child="vbox">
@@ -28824,24 +28992,7 @@ Shortcut: Ctrl-W</property>
             <property name="margin-bottom">6</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
-                <property name="margin-top">12</property>
-                <property name="margin-bottom">12</property>
-                <property name="label" translatable="yes">In order to print from a DBL bundle it is
-neccessary to unpack the bundle into
-a project folder - from where PTXprint
-can access the required files.</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <!-- n-columns=2 n-rows=7 -->
@@ -28991,15 +29142,18 @@ the name of an existing Project.</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">There are hundreds of DBL bundles available at
 the Digital Bible Library website which you may
-download and use in a publication.</property>
+download and use in a publication.
+
+Note that you must log in to the site to access
+resources.</property>
                     <property name="halign">center</property>
                     <property name="valign">end</property>
                     <property name="relief">none</property>
-                    <property name="uri">https://app.thedigitalbiblelibrary.org/entries/open_access_entries?type=text</property>
+                    <property name="uri">https://app.library.bible/content?licenseType=open</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -29014,9 +29168,9 @@ If you already have the required DBL bundle,
 then skip this first step.</property>
                     <property name="halign">end</property>
                     <property name="margin-start">6</property>
-                    <property name="label" translatable="yes">[Optional]     Step 1.
-Download a DBL
-Bundle (USX) from
+                    <property name="label" translatable="yes">Step 1.
+Download a Scripture
+Text Bundle (USX) from
 an Online Repository</property>
                     <property name="justify">right</property>
                   </object>
@@ -29063,7 +29217,7 @@ and select the USX download option.</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">1</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
@@ -29894,6 +30048,519 @@ maintains its proportions.</property>
       <action-widget response="-5">btn_removeSBimage</action-widget>
       <action-widget response="-5">btn_image_ok</action-widget>
       <action-widget response="-6">btn_image_cancel</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkDialog" id="dlg_addMap">
+    <property name="can-focus">False</property>
+    <property name="halign">start</property>
+    <property name="valign">start</property>
+    <property name="title" translatable="yes">PTXprint: Add Map</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window-position">center-always</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type-hint">dialog</property>
+    <property name="skip-taskbar-hint">True</property>
+    <property name="deletable">False</property>
+    <property name="gravity">center</property>
+    <property name="transient-for">ptxprint</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">3</property>
+            <property name="margin-right">3</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_mapAddAnother">
+                <property name="label" translatable="yes">Add Another Map</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Add as many maps as 
+needed, one at a time.</property>
+                <signal name="clicked" handler="addAnotherMapClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_addMap">
+                <property name="label">OK - Done!</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="halign">end</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+                <property name="non-homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_gnr8cover_cancel1">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="halign">end</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
+                <property name="non-homogeneous">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <!-- n-columns=1 n-rows=2 -->
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="halign">start</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="row-spacing">6</property>
+            <property name="column-spacing">6</property>
+            <child>
+              <object class="GtkFrame" id="fr_coverSettings1">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="margin-left">6</property>
+                <property name="margin-right">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="label-xalign">0.029999999329447746</property>
+                <child>
+                  <!-- n-columns=4 n-rows=6 -->
+                  <object class="GtkGrid">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin-left">6</property>
+                    <property name="margin-right">6</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="row-spacing">6</property>
+                    <property name="column-spacing">6</property>
+                    <child>
+                      <object class="GtkSpinButton" id="s_mapScale">
+                        <property name="name">Scale Map Size</property>
+                        <property name="width-request">137</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="width-chars">6</property>
+                        <property name="text">1.70</property>
+                        <property name="input-purpose">number</property>
+                        <property name="adjustment">a_mapScale</property>
+                        <property name="climb-rate">0.10</property>
+                        <property name="digits">2</property>
+                        <property name="numeric">True</property>
+                        <property name="update-policy">if-valid</property>
+                        <property name="value">1</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_mapScale">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Scale:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="fcb_coordBorder">
+                        <property name="name">Generate cover: Select Ornamental Border</property>
+                        <property name="width-request">137</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
+                        <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available
+to choose from, or a custom-made border may
+be applied to the front cover page.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="model">ls_mapBorder</property>
+                        <property name="wrap-width">1</property>
+                        <property name="active">0</property>
+                        <property name="has-entry">True</property>
+                        <property name="entry-text-column">0</property>
+                        <property name="id-column">0</property>
+                        <property name="active-id">None</property>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                            <property name="can-focus">True</property>
+                            <property name="width-chars">14</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_selectMap">
+                        <property name="label" translatable="yes">Select Map...</property>
+                        <property name="name">Generate cover: Select Background Picure (or Image)</property>
+                        <property name="width-request">130</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <signal name="clicked" handler="onSelectMapClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="lb_mapFilename">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-right">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="label" translatable="yes">&lt;== Select an image file of the map to be added (.png, .jpg, .pdf, .tif)</property>
+                        <property name="ellipsize">middle</property>
+                        <attributes>
+                          <attribute name="scale" value="0.84999999999999998"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_mapCaption">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Caption:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="t_mapCaption">
+                        <property name="name">Picture: Caption</property>
+                        <property name="width-request">300</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">By default the caption will appear below the picture.
+If you need the caption to come before the picture
+then add this line to your ptxprint-mods.tex file:
+   \CaptionFirsttrue
+
+Note that captions are NOT processed by any
+changes specified in the PrintDraftChanges.txt file.</property>
+                        <property name="hexpand">False</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">5</property>
+                        <property name="width">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame" id="fr_mapPreview">
+                        <property name="width-request">165</property>
+                        <property name="height-request">165</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="hexpand">False</property>
+                        <property name="vexpand">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="label-yalign">0</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="yalign">0</property>
+                            <property name="left-padding">3</property>
+                            <property name="right-padding">3</property>
+                            <child>
+                              <object class="GtkImage" id="img_mapPreview">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="pixbuf">62859-open-book-icon(128).png</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label_item">
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">1</property>
+                        <property name="width">2</property>
+                        <property name="height">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="fcb_mapRotate">
+                        <property name="name">Image credit dialog: Rotation of text</property>
+                        <property name="width-request">137</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Sometimes the credit text needs
+to be rotated. 
+</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="model">ls_plCreditRotate</property>
+                        <property name="wrap-width">1</property>
+                        <property name="has-entry">True</property>
+                        <property name="entry-text-column">0</property>
+                        <property name="id-column">1</property>
+                        <property name="active-id">0</property>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="halign">start</property>
+                            <property name="width-chars">14</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Rotation:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_mapBorder">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Border:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_mapSizePosition">
+                        <property name="label" translatable="yes">Size and Position...</property>
+                        <property name="width-request">130</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <signal name="clicked" handler="onSBpositionClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="GtkEntry" id="t_mapPgPos">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="width-chars">7</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_mapSpread">
+                            <property name="label" translatable="yes">Spread</property>
+                            <property name="name">Spread Map Out Across Both Pages</property>
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">Only enable this option if
+the map needs to be spread
+out across both pages.</property>
+                            <property name="draw-indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Add Map</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Select the extra book code to be used for the 
+list of maps.
+
+An extra book (e.g. XXM) can be used to store
+map details. If you prefer to use one of the
+other standard Paratext bookx XXA...XXG then
+select it here, but be aware that it will overwrite
+whatever is in that book without prior warning.</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Book Code for Maps:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="fcb_ptxMapBook">
+                    <property name="name">Maps: Book code to be used to store map details</property>
+                    <property name="width-request">80</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="can-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Select the extra book code to be used for the 
+list of maps.
+
+An extra book (e.g. XXM) can be used to store
+map details. If you prefer to use one of the
+other standard Paratext bookx XXA...XXG then
+select it here, but be aware that it will overwrite
+whatever is in that book without prior warning.</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="model">ls_ptxMapBook</property>
+                    <property name="wrap-width">1</property>
+                    <property name="active">0</property>
+                    <property name="entry-text-column">0</property>
+                    <property name="id-column">0</property>
+                    <property name="active-id">XXM</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_addMap</action-widget>
+      <action-widget response="-6">btn_gnr8cover_cancel1</action-widget>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_borders">
@@ -37862,7 +38529,7 @@ saved configuration.</property>
   </object>
   <object class="GtkDialog" id="dlg_sbPosition">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Sidebar Size and Position Settings</property>
+    <property name="title" translatable="yes">Size and Position Settings</property>
     <property name="type-hint">dialog</property>
     <property name="transient-for">ptxprint</property>
     <child internal-child="vbox">

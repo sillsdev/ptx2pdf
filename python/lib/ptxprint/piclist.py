@@ -434,15 +434,16 @@ class Piclist:
         if not sync:
             for p in self.pics.values():
                 if p.sync(pic, suffix=suffix):
-                    return
+                    return p
         self.pics[pic.key] = pic
+        return pic
 
-    def addpic(self, suffix="", **kw):
+    def addpic(self, suffix="", sync=False, **kw):
         m = kw['anchor'].split(' ', 1)
         suffix = suffix or ""
         kw['anchor'] = m[0] + suffix + " " + m[1]
         p = Picture(**kw)
-        self.add_picture(p)
+        return self.add_picture(p)
 
     def get(self, k, default):
         return self.pics.get(k, default)

@@ -1,4 +1,4 @@
-from gi.repository import Gtk, Pango
+from gi.repository import Gtk, Pango, GLib
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.styleditor import StyleEditor, aliases
 from ptxprint.usxutils import mrktype
@@ -217,10 +217,11 @@ class StyleEditorView(StyleEditor):
         self.treeview.append_column(tvc)
         tself = self.treeview.get_selection()
         tself.connect("changed", self.onSelected)
-        self.treeview.set_search_equal_func(self.tree_search)
+        # The original interactive search caused issues. We now use a manual, delayed search.
         searchentry = self.builder.get_object("t_styleSearch")
-        self.treeview.set_search_entry(searchentry)
-        #self.treeview.set_enable_search(True)
+        self.treeview.set_search_entry(None) # Explicitly disable
+        self.search_timer_id = None
+        searchentry.connect("search-changed", self.on_search_changed)
         for k, v in stylemap.items():
             if v[0].startswith("l_") or k in dialogKeys:
                 continue
@@ -234,6 +235,20 @@ class StyleEditorView(StyleEditor):
             #     w.connect("focus-out-event", self.item_changed, k)
         self.isLoading = False
 
+    def on_search_changed(self, entry):
+        """Debounces search entry changes to avoid rapid, repeated searches."""
+        if self.search_timer_id is not None:
+            GLib.source_remove(self.search_timer_id)
+        self.search_timer_id = GLib.timeout_add(500, self.do_search, entry)
+
+    def do_search(self, entry):
+        """Performs the search after the 500ms delay."""
+        self.search_timer_id = None
+        key = entry.get_text()
+        if not key:
+            return False  # Stop the timer if the search box is empty
+        self.tree_search(self.treeview.get_model(), 0, key, None)
+        return False  # Returning False ensures the timer only runs once
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None, mapin=True):
         super().setval(mrk, key, val, ifunchanged=ifunchanged, parm=parm, mapin=mapin)

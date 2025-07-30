@@ -32,7 +32,7 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
         MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
         1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1 HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
-        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|999 XXB|999 XXC|999 XXD|999 XXE|999 XXF|999 XXG|999 FRT|0 BAK|999 OTH|999 XXS|0 ZZZ|0 
+        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|999 XXB|999 XXC|999 XXD|999 XXE|999 XXF|999 XXG|999 FRT|0 BAK|999 OTH|999 XXS|0 XXM|0 ZZZ|0 
         ZZZ|0 ZZZ|0 INT|999 CNC|999 GLO|999 TDX|999 NDX|999 DAG|14 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 LAO|1"""
         
 _hebOrder = ["GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "1SA", "2SA", "1KI", "2KI", "ISA", "JER", "EZK", "HOS", "JOL", "AMO",
@@ -40,7 +40,7 @@ _hebOrder = ["GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "1SA", "2SA", "1KI
              "DAN", "EZR", "NEH", "1CH", "2CH"]
              
 _endBkCodes = {'XXG':'100', 'FRT':'A0', 'BAK':'A1', 'OTH':'A2', 'INT':'A7', 'CNC':'A8', 'GLO':'A9',
-               'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3', 'XXS': '101'} 
+               'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3', 'XXS': '101', 'XXM': '102'} 
 
 _allbooks = ["FRT", "INT", 
             "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST",
@@ -50,12 +50,55 @@ _allbooks = ["FRT", "INT",
             "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",
             "MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT",
             "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV", 
-            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS",
+            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS", "XXM",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
 
-nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
+nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", 
+            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS", "XXM"]
+
+_bookCategories = {
+    "Pentateuch": ["GEN", "EXO", "LEV", "NUM", "DEU"],
+    "OT_Historical": ["JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST"],
+    "Wisdom": ["JOB", "PSA", "PRO", "ECC", "SNG"],
+    "Major_Prophets": ["ISA", "JER", "LAM", "EZK", "DAN"],
+    "Minor_Prophets": ["HOS", "JOL", "AMO", "OBA", "JON", "MIC", "NAM", "HAB", "ZEP", "HAG", "ZEC", "MAL"],
+    "Gospels": ["MAT", "MRK", "LUK", "JHN"],
+    "Acts": ["ACT"],
+    "Pauline_Epistles": ["ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT", "PHM"],
+    "General_Epistles": ["HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD"],
+    "Apocalyptic": ["REV"],
+    "Deuterocanon": ["TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", 
+                     "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",],
+    "Extra_Material": ["FRT", "INT", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "BAK", "OTH", "CNC", "GLO", "TDX", "NDX"],
+    "Unique_Extras": ["XXS", "XXM"],
+}
+
+_bookToCategory = {
+    book_code: category
+    for category, books in _bookCategories.items()
+    for book_code in books
+}
+
+_categoryColors = {
+    # Category:           {"normal": "lighter_bg", "checked": "darker_bg_for_checked", "text": "text_color"}
+    "Pentateuch":         {"normal": "#E3F2FD", "checked": "#BBDEFB", "text": "#000000"}, # Very Light Blue
+    "OT_Historical":      {"normal": "#E8F5E9", "checked": "#C8E6C9", "text": "#000000"}, # Very Light Green
+    "Wisdom":             {"normal": "#FFFDE7", "checked": "#FFF9C4", "text": "#000000"}, # Very Light Yellow
+    "Major_Prophets":     {"normal": "#FFEBEE", "checked": "#FFCDD2", "text": "#000000"}, # Very Light Red
+    "Minor_Prophets":     {"normal": "#F3E5F5", "checked": "#E1BEE7", "text": "#000000"}, # Very Light Purple
+    "Gospels":            {"normal": "#FFF8E1", "checked": "#FFECB3", "text": "#000000"}, # Very Light Amber
+    "Acts":               {"normal": "#E0F7FA", "checked": "#B2EBF2", "text": "#000000"}, # Very Light Cyan
+    "Pauline_Epistles":   {"normal": "#FCE4EC", "checked": "#F8BBD0", "text": "#000000"}, # Very Light Pink
+    "General_Epistles":   {"normal": "#EDE7F6", "checked": "#D1C4E9", "text": "#000000"}, # Very Light Deep Purple
+    "Apocalyptic":        {"normal": "#F5F5F5", "checked": "#E0E0E0", "text": "#000000"}, # Almost White/Grey
+    "Deuterocanon":       {"normal": "#FBE9E7", "checked": "#FFCCBC", "text": "#000000"}, # Very Light Deep Orange
+    "Extra_Material":     {"normal": "#FAFAFA", "checked": "#F0F0F0", "text": "#000000"}, # Neutral Grey
+    "Unique_Extras":      {"normal": "#E0F2F1", "checked": "#B2DFDB", "text": "#000000"}, # Very Light Teal
+    "Default":            {"normal": "#FAFAFA", "checked": "#EAEAEA", "text": "#000000"}
+}
 
 rtlScripts = "Arab Armi Avst Hebr Mand Mani Nkoo Phli Phlp Phnx Prti Samr Sarb Sogd Sogo Syrc Thaa Yezi".split()
+nonSpacingScripts = "Khmr Laoo Mymr Thai".split()
 
 def booknum(bookcode):
     if len(bookcode):
@@ -170,6 +213,9 @@ def refSort(r, info=""):
     if res[1] == 0 and res[2] == 0 and len(res[5]):
         return (100, 0, 0, res[3], info, res[5], res[6])
     return res
+
+def dediglotref(r):
+    return re.sub(r'^([\dA-Z][A-Z]{2})[A-Z]', r"\1", r)
 
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
@@ -572,15 +618,15 @@ def texprotect(s):
 
 wfreg = "\\p{L}\\p{M}\\p{Sk}\\-\u200C\u200D"
 special_regexes = {
-    'ba': f'(?=[^{wfreg}])',
-    'BA': f'(?=[{wfreg})',
-    'bb': f'(?<=[^{wfreg}])',
-    'BB': f'(?<=[{wfreg}])',
+    'ba': f'(?=$|[^{wfreg}])',
+    'BA': f'(?=$|[{wfreg})',
+    'bb': f'(?<=^|[^{wfreg}])',
+    'BB': f'(?<=^|[{wfreg}])',
     'w': f'[{wfreg}]',
     'W': f'[^{wfreg}]'
 }
 
-def regex_localiser(r):
+def regex_localiser(r, script=None):
     specials = "|".join(special_regexes.keys())
     return re.sub(r"\\({})".format(specials), lambda m:special_regexes.get(m.group(1), "\\"+m.group(1)), r)
 

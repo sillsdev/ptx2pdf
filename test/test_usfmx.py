@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import unittest, re
-from usfmtc.reference import RefList
+from usfmtc.reference import Ref
 
 testmode = ("usfm", "usx")[1]
 if testmode == "usx":
@@ -76,8 +76,8 @@ class TestUSFMClass(unittest.TestCase):
     def test_subdoc(self, res=None):
         if res is None:
             res = "\u201CDue to God loving the people"
-        refrange = RefList("JHN 3:16")
-        subdoc = self.usfmdoc.subdoc(refrange, addzsetref=False).getroot()
+        refrange = Ref("JHN 3:16")
+        subdoc = self.usfmdoc.getsubbook(refrange).getroot()
         t = str(subdoc[0][0][0])[9:9+len(res)] if self.mode == "usfm" else subdoc[0][0].tail[:len(res)]
         self.assertEqual(t, res)
 
@@ -95,12 +95,12 @@ class TestUSFMClass(unittest.TestCase):
         #breakpoint()
         aStrongs = MockStrongs()
         self.usfmdoc.addStrongs(aStrongs, True)
-        refrange = RefList("JHN 3:16")
+        refrange = Ref("JHN 3:16")
         if self.mode == "usfm":
             res = '\u201CDue to God \u200B\\xts|strong="25" align="r"\\*\\nobreak loving'
         else:
             res = "\u201CDue to God \u200b"
-        subdoc = self.usfmdoc.subdoc(refrange, addzsetref=False).getroot()
+        subdoc = self.usfmdoc.getsubbook(refrange).getroot()
         t = str(subdoc[0][0][0])[9:9+len(res)] if self.mode == "usfm" else subdoc[0][0].tail[:len(res)]
         self.assertEqual(t, res)
 
