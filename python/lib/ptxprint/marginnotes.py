@@ -215,7 +215,7 @@ class MarginNotes:
                     currc += w * shift                  # track weighted cost
                     currw += w
                 else:                                   # end of block. Now shift the block back up based on weighted costs
-                    if i > start + 1:
+                    if i > start + 1 or i == len(t) and curry < 0:
                         islast = True
                         currw += weights.get(t[start].marker, 1)
                         shift = float(currc / currw)            # the heavier the weight the more the corrective shift back
@@ -224,7 +224,7 @@ class MarginNotes:
                             shift = self.bot - t[i-1].ymin - t[i-1].yshift                  # increase shift
                             islast = False
                             if math.fabs(shift) > maxshift:
-                                logger.error(f"Shift {shift} out of bounds on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
+                                logger.error(f"Shift {shift} out of bounds ({maxshift}) on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
                         for j in range(i-1, start-1, -1):
                             if islast and -t[j].yshift < shift:     # if we can hit original position, do it
                                 shift = max(0, -t[j].yshift)        # don't make matters worse (more shifting away)
@@ -245,6 +245,9 @@ class MarginNotes:
                                 t[k].yshift += shiftu
                                 currt = t[k].ymax + t[k].yshift
                                 k -= 1
+                            start = k
+                            currw = 0
+                            currc = 0
                             # now calculate weighted cost and so shift for the whole block from bottom to top
                             for j in range(i-1, k-1, -1):
                                 w = weights.get(t[j].marker, 1)
@@ -252,22 +255,22 @@ class MarginNotes:
                                 currc += t[j].yshift * w
                             shift = -float(currc / currw)
                             shift = max(shift, self.bot - t[i-1].ymin - t[i-1].yshift)      # don't shift off the bottom of the page
-                            if k >= 0 and t[k].ymax + t[k].yshift + shift > self.top:       # if upward shift would push us over the top
-                                shift = self.top - t[k].ymax - t[k].yshift                      # increase downward shift to match
+                            if start >= 0 and t[start].ymax + t[start].yshift + shift > self.top:       # if upward shift would push us over the top
+                                shift = self.top - t[start].ymax - t[start].yshift                      # increase downward shift to match
                                 islast = False
                             # now apply updated shift to the whole block top to bottom (since bottom is tight from last shifts)
-                            for j in range(k, i):
+                            for j in range(start, i):
                                 if islast and -t[j].yshift > shift:
                                     shift = min(0, -t[j].yshift)
                                 islast = False
                                 t[j].yshift += shift
                     currs = 0
-                    start = i
+                    if 0 < i < len(t) and t[i].ymax + t[i].yshift < t[i-1].ymin + t[i-1].yshift:
+                        start = i
                 if i < len(t):
                     curry = t[i].ymin + t[i].yshift
-                if curry < 0:
-                    logger.error(f"Page {t[i].pnum} with {len(t)} at {i}({t[i].ref}) too full to fit everything")
-                    break
+                elif curry < 0:
+                    logger.error(f"Page {t[i-1].pnum} with {len(t)} at {i}({t[i-1].ref}) too full to fit everything")
                 i += 1
         return
 

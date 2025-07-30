@@ -508,10 +508,10 @@ class Usfm:
         res = self.factory("ms", attribs, parent=parent)
         return res
 
-    def getsubbook(self, refrange, removes={}):
+    def getsubbook(self, refrange, removes={}, addintro=True, **kw):
         if isinstance(refrange, (Ref, RefRange)):
             refrange = [refrange]
-        subdoc = self.xml.getrefs(*refrange, addintro=True)
+        subdoc = self.xml.getrefs(*refrange, addintro=addintro, **kw)
         return Usfm(subdoc, parser=self.parser, grammar=self.grammar)
 
     def versesToEnd(self):

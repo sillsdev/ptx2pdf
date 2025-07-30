@@ -383,7 +383,7 @@ class Report:
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
     def get_layoutinfo(self, view):
-        threshold = float(view.get("s_spaceEms"))
+        threshold = float(view.get("s_spaceEms", 3.0))
         if getattr(view, 'pdf_viewer', None) is None:
             return
         if threshold == 0:

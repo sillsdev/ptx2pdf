@@ -530,6 +530,10 @@ class PDFViewer:
             context.fill()
         threshold = self.spacethreshold
         if threshold == 0:
+            if not hasattr(self, 'badspaces'):
+                self.badspaces = self.parlocs.getnbadspaces()
+                if len(self.badspaces):
+                    self.model.set("s_spaceEms", self.badspaces[0].widthem)
             for s in self.badspaces:
                 if s.pnum == pnum:
                     make_rect(*s.pos, s.width)

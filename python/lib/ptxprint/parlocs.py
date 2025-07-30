@@ -539,5 +539,5 @@ class Paragraphs(list):
         for l in self._getlines(pnum):
             collisions = l.has_collisions()
             for c in collisions:
-                print(c)
+                #print(c)
                 yield c
