@@ -1,6 +1,0 @@
-[DEFAULT]
-pubusage = Unknown
-pubclear = unchecked
-pubnoise = unchecked
-pubaccept = Unknown
-
