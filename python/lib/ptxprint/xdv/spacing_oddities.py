@@ -225,11 +225,12 @@ class GlyphCluster:
         return False
     
 class Rivers:
-    def __init__(self, max_v_gap = 0.5, min_h_overlap = 0.3):
+    def __init__(self, max_v_gap = 0.7, min_h_overlap = 0.4):
         self.final_rivers = []
         self.active_rivers = []
         self.max_v_gap = max_v_gap
         self.min_h_overlap = min_h_overlap
+        self.wider_h = 1
 
     def add_line(self, line):   # check vertical gap and finish river, then add spaces
         spaces_info = self.get_line_spaces(line)   
@@ -243,7 +244,7 @@ class Rivers:
         
         for river in self.active_rivers.copy():
             if river.vdiff(line.vmin) > self.max_v_gap*line.curr_font.points:
-                self.finish_active_river(river)
+                self.finish_active_river(river, self.wider_h*line.curr_font.points)
         
         for space, fontsize in spaces_info:
             space_in_river = False
@@ -255,8 +256,6 @@ class Rivers:
                 self.active_rivers.append(River())   
                 self.active_rivers[-1].add(space)
         
-        # what if there's no space added to a river? It will vanish in the next round I think because of vgap?
-        
     def get_line_spaces(self, line):
         spaces = []
         for i in range(len(line.glyph_clusters)-1):
@@ -267,8 +266,8 @@ class Rivers:
                 spaces.append((space, line.glyph_clusters[i].font.points))
         return spaces
         
-    def finish_active_river(self, river):  # add river to final_rivers if >3 lines, create new River.
-        if river.is_valid():
+    def finish_active_river(self, river, h_threshold):  # add river to final_rivers if >3 lines, create new River.
+        if river.is_valid(h_threshold):
             self.final_rivers.append(river)
         self.active_rivers.remove(river)
         
@@ -304,9 +303,11 @@ class River:
         self.spaces.append(space)
         # todo: updates covered regions
         
-    def is_valid(self):
+    def is_valid(self, h_threshold):
         if len(self.spaces) > 2:
-            return True
+            for s in self.spaces:
+                if s[2] > h_threshold:
+                    return True
         return False
     
     def is_empty(self):
