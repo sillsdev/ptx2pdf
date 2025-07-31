@@ -343,6 +343,7 @@ class PDFViewer:
         if self.showanalysis:
             layerfns.append(self._draw_spaces)
             layerfns.append(self._draw_collisions)
+            layerfns.append(self._draw_whitespace_rivers)
         
         images = []
         if self.model.isCoverTabOpen():
@@ -549,6 +550,17 @@ class PDFViewer:
 
         for c in self.parlocs.getcollisions(pnum):
             make_rect(c)
+            
+    def _draw_whitespace_rivers(self, page, pnum, context, zoomlevel):
+        def make_rect(r, col=(145, 135, 0, 0.6)):
+            context.set_source_rgba(*col)
+            context.rectangle(*r)
+            context.fill()
+            
+        for r in self.parlocs.getrivers(pnum):
+            for s in r.spaces:
+                make_rect(s)
+
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):

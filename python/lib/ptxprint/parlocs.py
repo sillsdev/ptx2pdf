@@ -2,7 +2,7 @@ import os, re, ctypes, math, heapq
 import logging
 from dataclasses import dataclass, InitVar, field
 from ptxprint.utils import refSort
-from ptxprint.xdv.spacing_oddities import Line
+from ptxprint.xdv.spacing_oddities import Line, Rivers
 from typing import Tuple
 
 logger = logging.getLogger(__name__)
@@ -541,3 +541,11 @@ class Paragraphs(list):
             for c in collisions:
                 #print(c)
                 yield c
+                
+    def getrivers(self, pnum):
+        rivers = Rivers()
+        for l in self._getlines(pnum):
+            rivers.add_line(l)
+        page_rivers = rivers.all_rivers()
+        return page_rivers
+        

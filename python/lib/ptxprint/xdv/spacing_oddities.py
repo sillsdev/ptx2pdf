@@ -94,9 +94,6 @@ class SpacingOddities(XDViPositionedReader):
         self.line.update_bounds()        
         if not self.prev_line.is_empty():
             self.line.check_line_collisions(self.prev_line, self.collision_threshold)
-        # if self.line.inrect not in self.rivers_inrect.keys():
-        #     self.rivers_inrect[self.line.inrect] = Rivers()
-        # self.rivers_inrect[self.line.inrect].add_line(self.line)
         self.parent.addxdvline(self.line, self.page_index, self.line.inrect)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font, rect)
@@ -271,6 +268,9 @@ class Rivers:
     def print_all(self):
         for r in self.final_rivers:
             print(r.spaces)
+            
+    def all_rivers(self):
+        return self.final_rivers
 class River:
     def __init__(self):
         self.spaces = []
@@ -284,7 +284,7 @@ class River:
     def accepts(self, space, threshold):
         if len(self.spaces) <1:
             return True
-        overlap = abs(min(self.spaces[-1][0] + self.spaces[-1][2], space[0]+space[2]) - max(self.spaces[-1][0], space[0]))
+        overlap = min(self.spaces[-1][0] + self.spaces[-1][2], space[0]+space[2]) - max(self.spaces[-1][0], space[0])
         if overlap > threshold:
             return True
         return False
