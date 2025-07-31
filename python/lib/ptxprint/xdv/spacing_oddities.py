@@ -23,6 +23,8 @@ def search_collisions(curr, prev, threshold):
 
 def overlap(curr, prev, t):
     return (curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3]+t and curr[3] +t >= prev[1])
+
+
 class SpacingOddities(XDViPositionedReader):
     def __init__(self, fname, parent = None, collision_threshold = 0.5): 
         super().__init__(fname)
