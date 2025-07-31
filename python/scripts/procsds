@@ -4,11 +4,17 @@ import argparse, json, heapq, os, re, csv, sys
 import xml.etree.ElementTree as et
 from usfmtc.reference import Ref, RefRange, RefList, Environment, allbooks, bookcodes
 from ptxprint.ptsettings import ParatextSettings
+from cltk.lemmatize.grc import GreekBackoffLemmatizer
+from cltk.alphabet.text_normalization import cltk_normalize
 from math import log2, sqrt, log
 from bisect import bisect
 import dataclasses
 from unicodedata import normalize
+from usfmtc.versification import cached_versification
 import regex
+
+vrs = cached_versification("eng")
+vlens = {k: v[-1] for k,v in vrs.vnums.items()}
 
 def read_csv(fpath, delimiter='\t', **kw):
     with open(fpath, encoding="utf-8") as inf:
@@ -24,24 +30,38 @@ def write_csv(fpath, data=[], headings=None, delimiter='\t', **kw):
         for d in data:
             csvw.writerow(d)
 
+def grcrootl(lem, *s):
+    s = [cltk_normalize(w) for w in s]
+    res = lem.lemmatize(s)
+    return [z[1] for z in res]
+
+def grcroot(lem, s):
+    return grcrootl(lem, s)[0]
+
 def find_pericope(r, pericopes):
     m = bisect(pericopes, r)
     if m <= len(pericopes) and r in pericopes[m-1]:
         return pericopes[m-1]
     return None
 
-def calc_threshold(sdrefs, speris, numv):
+def calc_thresholds(sdrefs, speris):
+    results = {}
+    heaps = {}
     weightq = []
     for s, rs in sdrefs.items():
         weight = sqrt(len(rs))
         for r, v in speris.get(s, {}).items():
+            bk = r.book
             v[4] = v[3] / weight
-            if len(weightq) >= args.factor * numv:
-                heapq.heapreplace(weightq, v[4])
+            wq = heaps.setdefault(bk, [])
+            if len(wq) >= args.factor * vlens[bk]:
+                if v[4] > wq[0]:       # otherwise weightq[0] will end up as least or last
+                    heapq.heapreplace(wq, v[4])
             else:
-                heapq.heappush(weightq, v[4])
-    print(f"{numv=} * {args.factor}, {len(weightq)}, {weightq[0]}")
-    return weightq[1]
+                heapq.heappush(wq, v[4])
+    results = {k: v[0] for k, v in heaps.items()}
+    print(results)
+    return results
 
 def extend_ranges(verses):
     lastsd = {}
@@ -65,10 +85,10 @@ def make_verses(speris):
             verses.setdefault(v[1], []).append([s, v[1], v[2], v[4], vals[i+1][1] if i < len(vals)-1 else vals[0][1]])
     return verses
 
-def filter_verses(verses, threshold):
+def filter_verses(verses, thresholds):
     count = 0
     for v, vs in verses.items():
-        vs[:] = [x for x in vs if x[3] >= threshold]
+        vs[:] = [x for x in vs if x[3] >= thresholds[x[1].book]]
         count += len(vs)
     return count
 
@@ -95,35 +115,6 @@ def filter_excludes(excludes, sdrefs, speris):
             del sdrefs[s]
             speris.pop(s, None)
 
-def tryhard(s, mkeys, refset=None):
-    def calc_cost(r):
-        mset = set(r.refs)
-        if len(mset) == 0:
-            return 0
-        cost = len(mset & refset) ** 2 / len(mset) / len(refset)
-        return cost
-    rem = regex.compile(r"\|({}){{e<=3}}\|".format(regex.escape(s)))
-    teststr = "|" + "|".join(sorted(mkeys.keys())) + "|"
-    bestscore = 4
-    bestkey = None
-    bestcost = 0.
-    for m in rem.finditer(teststr):
-        k = m.group(1)
-        if "|" in k:
-            continue
-        v = mkeys[k]
-        score = sum(m.fuzzy_counts)
-        cost = min(calc_cost(r) for r in v) if refset else 0
-        if score < bestscore:
-            bestkey = k
-            bestcost = cost
-            bestscore = score
-        elif score == bestscore:
-            if cost > bestcost:
-                bestscore = score
-                bestcost = cost
-                bestkey = k
-    return mkeys.get(bestkey, None)
 
 @dataclasses.dataclass
 class Sense:
@@ -147,6 +138,7 @@ class SemDomData:
         if hasattr(args, 'exclude'):
             self._proc_excludes(args)
         self.namecount = 1
+        self.lem = None
 
 # actions
 
@@ -161,7 +153,7 @@ class SemDomData:
         hebmap = self._read_map(args) if args.map else None
         self._read_lexicon(args, mapping=hebmap)
         filter_excludes(self.excludes, self.sdrefs, self.speris)
-        self.threshold = calc_threshold(self.sdrefs, self.speris, self.numv)
+        self.thresholds = calc_thresholds(self.sdrefs, self.speris)
         self._outdb(args)
 
     def create(self, args):
@@ -169,7 +161,7 @@ class SemDomData:
 
     def trigger(self, args):
         self._read_infile(args)
-        self.threshold = calc_threshold(self.sdrefs, self.speris, self.numv)
+        self.thresholds = calc_thresholds(self.sdrefs, self.speris)
         self.verses = make_verses(self.speris)
         extend_ranges(self.verses)
         self._make_env(args)
@@ -188,7 +180,7 @@ class SemDomData:
         write_csv(args.outfile, data=[dataclasses.astuple(w) for w in words],
                     headings=fields, delimiter="\t")
 
-    def mapping(self, args):
+    def oldmapping(self, args):
         def unpoint(s):
             s = normalize("NFD", re.sub(r"\s", "", s))
             s = re.sub("[\u0591-\u05C5]", "", s)
@@ -200,6 +192,8 @@ class SemDomData:
         def hebnorm(s):
             s = normalize("NFC", re.sub(r"\s", "", s))
             return s
+        if self.lem is None:
+            self.lem = GreekBackoffLemmatizer()
         self.sdtemplatebits = self.otsdtemplatebits
         self._read_lexicon(args)
         self.mkeys = {}
@@ -211,20 +205,21 @@ class SemDomData:
         greekwords = []
         self.sdtemplatebits = self.ntsdtemplatebits
         self.greekalts = {}
-        self._read_lexicon(args, key="greek", alt=self.greekalts, target=greekwords)
+        self._read_lexicon(args, key="infile", alt=self.greekalts, target=greekwords)
         greekmap = {}
         for k in greekwords:
-            greekmap.setdefault(greeknorm(k.lexeme), set()).add(k.sd)
+            greekmap.setdefault(grcroot(self.lem, k.lexeme), set()).add(k.sd)
         for k, v in self.greekalts.items():
             for s in v:
-                greekmap.setdefault(greeknorm(k), set()).add(s.sd)
+                greekmap.setdefault(grcroot(self.lem, k), set()).add(s.sd)
         print(f"{len(greekmap)} unique words in the greek dictionary, with {sum(1 for g, v in greekmap.items() if len(v))} non empty")
-        hebmap = read_csv(args.infile, delimiter="\t")
+        hebmap = read_csv(args.greek, delimiter="\t")
         print(f"{len(hebmap)} entries in the hebrew to greek mappings")
-        if args.roots:
-            rootmap = {k:v for k, v in read_csv(args.roots, delimiter="\t")}
-        else:
-            rootmap = {}
+        transrows = read_csv(args.trans)
+        trans = {}
+        for t in transrows:
+            if '[' not in t[0]:
+                trans.update({t[0]: grcroot(lem, l) for l in t[1:]})
         self.sdtemplatebits = self.otsdtemplatebits
         heblids = {}
         badgreek = []
@@ -249,9 +244,9 @@ class SemDomData:
             if keys is None:
                 keys = self.alternates.get(unpoint(h[0]), None)
             if keys is None:
-                keys = tryhard(normalize("NFC", h[0]), self.mkeys, refset=refset)
+                keys = self._tryhard(normalize("NFC", h[0]), self.mkeys, refset=refset)
             if keys is None:
-                keys = tryhard(unpoint(h[0]), self.ukeys, refset=refset)
+                keys = self._tryhard(unpoint(h[0]), self.ukeys, refset=refset)
             if keys is None:
                 badhebrew.append([h[0]])
                 bads += 1
@@ -272,14 +267,16 @@ class SemDomData:
             if best is not None:
                 best.gsds = []
                 for w in h[3:]:
-                    wg = rootmap.get(greeknorm(w), w)
+                    wg = grcroot(self.lem, w)
                     g = greekmap.get(wg, None)
                     if g is None:
-                        g = greekmap.get(rootmap.get(unpoint(w), w), None)
+                        g = greekmap.get(unpoint(wg), None)
+                    if g is None and len(trans):
+                        g = greekmap.get(trans.get(wg, None), None)
                     if g is None:
-                        g = tryhard(wg, greekmap)
+                        g = self._tryhard(wg, greekmap, issd=True)
                     if g is None:
-                        g = tryhard(rootmap.get(unpoint(w), w), greekmap)
+                        g = self._tryhard(unpoint(wg), greekmap, issd=True)
                     if g is not None:
                         best.gsds += list(g)
                 if not len(best.gsds):
@@ -302,6 +299,80 @@ class SemDomData:
         write_csv(args.outfile, res, delimiter="\t")
         if (args.flags & 4) != 0:
             write_csv("procsds_badhebrew.tsv", badhebrew)
+
+    def mapping(self, args):
+        if self.lem is None:
+            self.lem = GreekBackoffLemmatizer()
+        self._read_lexicon(args)
+        hebmap = {h[0]: h[1] for h in read_csv(args.map)} if args.map else {}
+        heblexitems = []
+        hebalts = {}
+        self.heblex = {}
+        if args.hebrew:
+            self._read_lexicon(args, key="hebrew", target=heblexitems, alt=hebalts, isot=True)
+            for l in heblexitems:
+                self.heblex.setdefault(l.lexeme, []).append(l)
+        ffritems = []
+        ffralts = {}
+        if args.ffr:
+            self._read_lexicon(args, key="ffr", target=ffritems, alt=ffralts, isot=True)
+        self.ffrmap = {grcroot(self.lem, m.lexeme): [m] for m in ffritems}
+        for k, v in ffralts.items():
+            self.ffrmap.setdefault(grcroot(self.lem, k), []).extend(v)
+        names = []
+        sids = {}
+        bads = set()
+        goods = set()
+        for m in self.meanings:
+            newcodes = []
+            lexeme = grcroot(self.lem, m.lexeme)
+            if lexeme in self.ffrmap:
+                newcodes = [x.sd for x in self.ffrmap[lexeme]]
+            if not len(newcodes):
+                newcodes = [r.sd for r in self.heblex.get(hebmap.get(lexeme, None), [])]
+            # if len(newcodes):
+            #     breakpoint()
+            if m.sd in self.namecodes or len(newcodes) and all(n in self.namecodes for n in newcodes):
+                names.append(m)
+                m.sd = None
+                goods.add(lexeme)
+            elif len(newcodes):
+                # what if more than one sd?
+                m.sd = [s for s in newcodes if s not in self.namecodes][0]
+                goods.add((lexeme, m.gloss))
+            else:
+                bads.add((lexeme, m.gloss))
+                m.sd = None
+        res = [[m.sid, m.sd] for m in self.meanings if m.sd]
+        write_csv(args.outfile, res)
+        print(f"{len(names)}/{len(self.meanings)} names")
+        if args.names:
+            res = [[m.sid, m.gloss] for m in names]
+            write_csv(args.names, res)
+        if args.bads:
+            res = {}
+            for k in bads-goods:
+                res.setdefault(k[0], []).append(k[1])
+            lines = [[k] + v for k, v in sorted(res.items())]
+            write_csv(args.bads, lines)
+
+    def testgreek(self, args):
+        self._read_lexicon(args)
+        allwords = set()
+        words = read_csv(args.mapping)
+        for w in words:
+            allwords.update(w[3:])
+        res = set()
+        for m in self.meanings:
+            if m.sd in ["93.1", "93.2", "60.1"]:
+                continue
+            if m.lexeme not in allwords:
+                res.add(m.lexeme)
+        for k, v in self.alternates.items():
+            if k in allwords:
+                for m in v:
+                    res.discard(m.lexeme)
+        print(res)
 
 # support methods
 
@@ -364,17 +435,25 @@ class SemDomData:
                 self.sdrefs.setdefault(code, set())
                 self.labels["en"][code] = sd.findtext('.//SemanticDomainLocalization[@LanguageCode="en"]/Label')
 
-    def _read_lexicon(self, args, key="lexicon", alt=None, target=None, mapping=None):
+    def _read_lexicon(self, args, key="lexicon", alt=None, target=None, mapping=None, isot=False):
         self.labels.setdefault('en', {})
         self.shorts.setdefault('en', {})
         if target is None:
             target = self.meanings
         if alt is None:
             alt = self.alternates
+        sdtemplate = self.otsdtemplatebits if isot else self.ntsdtemplatebits
         lex = et.parse(getattr(args, key))
         for lexitem in lex.findall(".//Lexicon_Entry"):
             lemma = lexitem.get("Lemma")
-            alts = [s.text.strip() for s in lexitem.findall(".//RelatedLemma/Word") if s.text]
+            if lemma is None:
+                continue
+            alts = []
+            if "," in lemma or " " in lemma:
+                lemmas = re.split(r"[,\s]+", lemma)
+                lemma = lemmas[0]
+                alts.extend(lemma[1:])
+            alts.extend([s.text.strip() for s in lexitem.findall(".//RelatedLemma/Word") if s.text])
             alts.extend([s.get("Lemma", None) for s in lexitem.findall(".//Inflection")])
             alts.extend([s.get("Lemma", None) for s in lexitem.findall(".//Construct")])
             alts = [x for x in alts if x is not None and  x != lemma]
@@ -390,7 +469,7 @@ class SemDomData:
                             continue
                         code = codee.get("Code", None)
                         if code is not None:
-                            code = self.sdmap.get(code, self.fmtsd(code))
+                            code = self.sdmap.get(code, self.fmtsd(code, template=sdtemplate))
                             break
                 defshrt = sense.findtext(".//DefinitionShort")
                 gloss = sense.findtext(".//Gloss")
@@ -403,12 +482,13 @@ class SemDomData:
                 refs = []
                 for lref in sense.findall(".//LEXReference"):
                     r = Ref.fromBCV(int(lref.text[:9]))
-                    refs.append(r)
+                    if r is not None:
+                        refs.append(r)
                 lmeaning.refs = refs
                 if code is None:
                     continue
                 if code in self.namecodes:       # it's a name grab it differently
-                    code = "_{}{:04d}".format(1 if getattr(args, 'ot', False) else 2, self.namecount)
+                    code = "_{}{:04d}_{}".format(1 if getattr(args, 'ot', False) else 2, self.namecount, code)
                     self.labels['en'][code] = defshrt
                     self.shorts['en'][code] = gloss
                     self.sdrefs.setdefault(code, set())
@@ -430,7 +510,7 @@ class SemDomData:
                     self.speris.pop(code, None)
                     del self.sdrefs[code]
 
-    namecodes = ["93.1", "93.2", "60.2"]
+    namecodes = ["93.1", "93.2", "60.2", "4107", "4110"]
     def _proc_excludes(self, args):
         # args.exclude.extend(["4107", "4110"])
         args.exclude.extend(self.namecodes)
@@ -448,12 +528,45 @@ class SemDomData:
                     e[1] += 10000
                 self.excludes.append(e)
 
+    def _tryhard(self, s, mkeys, refset=None, issd=False):
+        def calc_cost(r):
+            mset = set(r.refs)
+            if len(mset) == 0:
+                return 0
+            cost = len(mset & refset) ** 2 / len(mset) / len(refset)
+            return cost
+        rem = regex.compile(r"\|({}){{e<=3}}\|".format(regex.escape(s)))
+        teststr = "|" + "|".join(sorted(mkeys.keys())) + "|"
+        bestscore = 4
+        bestkey = None
+        bestcost = 0.
+        for m in rem.finditer(teststr):
+            k = m.group(1)
+            if "|" in k:
+                continue
+            v = mkeys[k]
+            if all((r if issd else r.sd) in self.namecodes for r in v):
+                continue
+            score = sum(m.fuzzy_counts)
+            cost = min(calc_cost(r) for r in v) if refset else 0
+            if score < bestscore:
+                bestkey = k
+                bestcost = cost
+                bestscore = score
+            elif score == bestscore:
+                if cost > bestcost:
+                    bestscore = score
+                    bestcost = cost
+                    bestkey = k
+        return mkeys.get(bestkey, None)
+
     ntsdtemplatebits = ["{0:d}", ".{1:d}"]
     sdtemplatebits = ntsdtemplatebits
     otsdtemplatebits = ["{0:d}", "{1:d}", "{2:02d}", ".{3:d}"]
     sdoffset = 0
     sdlength = 0
     numv = 23145 + 7959
+
     def fmtsd(self, n, template=None):
         if not n:
             return None
@@ -466,7 +579,7 @@ class SemDomData:
         return "".join((template or self.sdtemplatebits)[:len(s)]).format(*s)
 
     def _outdb(self, args):
-        outroot = et.Element("domains", threshold="{:.4f}".format(self.threshold))
+        outroot = et.Element("domains")
         outdoc = et.ElementTree(outroot)
         count = 0
         histogram = {}
@@ -474,7 +587,7 @@ class SemDomData:
         countp = 0
 
         for i, (s, rs) in enumerate(sorted(self.sdrefs.items(),
-                    key=lambda x:[int(n) for n in x[0].split(".")] if not x[0].startswith("_") else [int(x[0][1:])])):
+                    key=lambda x:[int(n) for n in x[0].split(".")] if not x[0].startswith("_") else [int(x[0][1:x[0].find("_",2)])])):
             sde = et.SubElement(outroot, "sd", code=s, num=str(len(rs)), nump=str(len(self.speris.get(s, {}))))
             sds = et.SubElement(sde, "strings", label=self.labels["en"][s] or "", lang="en", short=self.shorts['en'].get(s, ""))
             if len(ws := self.words.get(s, [])):
@@ -507,8 +620,8 @@ class SemDomData:
         if len(histogramp):
             hisres = ", ".join("{}:{}".format(n, v) for n, v in sorted(histogramp.items()))
             print("Histogram of pericopes: "+hisres)
-            print("Threshold = {}".format(self.threshold))
-            print("Total pericopes: {}/{}".format(sum(histogramp.values()), countp))
+            # print("Threshold = {}".format(self.threshold))
+            # print("Total pericopes: {}/{}".format(sum(histogramp.values()), countp))
 
     def _make_env(self, args):
         if args.prjdir:
@@ -543,7 +656,7 @@ class SemDomData:
                 template = template[:i]+"{1}"+template[i+3:]
                 break
         dotted = Environment(cvsep=".", titlecase=False, bookspace="")
-        nume = filter_verses(self.verses, self.threshold)
+        nume = filter_verses(self.verses, self.thresholds)
         print(f"{nume} entries = {nume/self.numv} per verse")
         lastbook = None
         currf = None
@@ -621,6 +734,7 @@ cmd_aliases = {
 'dict':     ['d', 'xxs', 'x'],
 'lexicon':  ['lex', 'l'],
 'mapping':  ['map'],
+'testgreek': ['tg'],
 }
 aliases_cmd = {a:k for k,v in cmd_aliases.items() for a in v}
 
@@ -675,16 +789,21 @@ lex_parser.add_argument("-o","--outfile",help="Output file (or directory)")
 
 map_parser = subparser.add_parser("mapping", aliases=cmd_aliases['mapping'], help="Create Heb->sd mapping")
 add_globalargs(map_parser)
-map_parser.add_argument("-i","--infile",required=True,help="heb greek options tsv")
-map_parser.add_argument("-l","--lexicon",required=True,help="Hebrew Lexicon XML file")
-map_parser.add_argument("-g","--greek",required=True,help="Greek Lexicon XML file")
-map_parser.add_argument("-R","--roots",help="word root tsv mapping file")
+map_parser.add_argument("-l","--lexicon",required=True,help="Greek Lexicon XML file")
+map_parser.add_argument("-H","--hebrew",required=True,help="Hebrew Lexicon XML file")
+map_parser.add_argument("-f","--ffr",help="FFR Greek lexicon XML")
+map_parser.add_argument("-m","--map",help="grc->hbo mapping tsv")
 map_parser.add_argument("-o","--outfile",help="Output mapping tsv")
+map_parser.add_argument("-n","--names",help="TSV of meaning id and gloss")
+map_parser.add_argument("-b","--bads",help="file of failed lexemes")
+
+tg_parser = subparser.add_parser("testgreek", aliases=cmd_aliases['testgreek'], help="Create Heb->sd mapping")
+tg_parser.add_argument("-l","--lexicon",required=True,help="Greek Lexicon XML file")
+tg_parser.add_argument("-m","--mapping",help="Hebrew mapping file")
 
 args = parser.parse_args()
 
 if getattr(args, 'ot', False):
-    SemDomData.namecodes = ["4107", "4110"]
     SemDomData.sdtemplatebits = ["{0:d}", "{1:d}", "{2:02d}", ".{3:d}"]
 
 semdom = SemDomData(args)
