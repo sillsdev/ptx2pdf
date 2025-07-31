@@ -225,12 +225,12 @@ class GlyphCluster:
         return False
     
 class Rivers:
-    def __init__(self, max_v_gap = 0.7, min_h_overlap = 0.4):
+    def __init__(self, max_v_gap = 0.7, min_h = 0.3, max_h_width = 1):
         self.final_rivers = []
         self.active_rivers = []
         self.max_v_gap = max_v_gap
-        self.min_h_overlap = min_h_overlap
-        self.wider_h = 1
+        self.min_h = min_h
+        self.minmax_h = max_h_width
 
     def add_line(self, line):   # check vertical gap and finish river, then add spaces
         spaces_info = self.get_line_spaces(line)   
@@ -244,12 +244,12 @@ class Rivers:
         
         for river in self.active_rivers.copy():
             if river.vdiff(line.vmin) > self.max_v_gap*line.curr_font.points:
-                self.finish_active_river(river, self.wider_h*line.curr_font.points)
+                self.finish_active_river(river, self.minmax_h*line.curr_font.points)
         
         for space, fontsize in spaces_info:
             space_in_river = False
             for river in self.active_rivers.copy():
-                if river.accepts(space, self.max_v_gap*fontsize, self.min_h_overlap*fontsize):
+                if river.accepts(space, self.max_v_gap*fontsize, self.min_h*fontsize):
                     river.add(space)
                     space_in_river = True
             if not space_in_river:
@@ -262,7 +262,7 @@ class Rivers:
             gc1_box = line.glyph_clusters[i].get_boundary_box()
             gc2_box = line.glyph_clusters[i+1].get_boundary_box()
             space = [gc1_box[2], line.vmin, gc2_box[0]-gc1_box[2], line.vmax-line.vmin]                   
-            if space[2] > self.min_h_overlap*line.glyph_clusters[i].font.points:
+            if space[2] > self.min_h*line.glyph_clusters[i].font.points:
                 spaces.append((space, line.glyph_clusters[i].font.points))
         return spaces
         
