@@ -1,3 +1,9 @@
+ptxprint (2.8.22-1ubuntu2) jammy; urgency=medium
+
+  * Adjusted variable for proper setuptool detection for Jammy
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Thu, 31 Jul 2025 11:19:10 -0500
+
 ptxprint (2.8.22-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 2.8.22
