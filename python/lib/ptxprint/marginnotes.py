@@ -215,7 +215,7 @@ class MarginNotes:
                     currc += w * shift                  # track weighted cost
                     currw += w
                 else:                                   # end of block. Now shift the block back up based on weighted costs
-                    if i > start + 1 or i == len(t) and curry < 0:
+                    if i > start + 1 or i == len(t) and curry < self.bot:
                         islast = True
                         currw += weights.get(t[start].marker, 1)
                         shift = float(currc / currw)            # the heavier the weight the more the corrective shift back
@@ -269,7 +269,7 @@ class MarginNotes:
                         start = i
                 if i < len(t):
                     curry = t[i].ymin + t[i].yshift
-                elif curry < 0:
+                elif curry < self.bot - 1:
                     logger.error(f"Page {t[i-1].pnum} with {len(t)} at {i}({t[i-1].ref}) too full to fit everything")
                 i += 1
         return
