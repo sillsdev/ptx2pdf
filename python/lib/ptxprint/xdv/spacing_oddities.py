@@ -225,13 +225,13 @@ class GlyphCluster:
         return False
     
 class Rivers:
-    def __init__(self, max_v_gap = 0.7, min_h = 0.3, max_h_width = 1):
+    def __init__(self, max_v_gap = 0.7, min_h = 0.3, minmax_h = 1, total_width = 3):
         self.final_rivers = []
         self.active_rivers = []
         self.max_v_gap = max_v_gap
         self.min_h = min_h
-        self.minmax_h = max_h_width
-        self.total_h = 3
+        self.minmax_h = minmax_h
+        self.total_width = total_width
 
     def add_line(self, line):   # check vertical gap and finish river, then add spaces
         spaces_info = self.get_line_spaces(line)   
@@ -245,12 +245,13 @@ class Rivers:
         
         for river in self.active_rivers.copy():
             if river.vdiff(line.vmin) > self.max_v_gap*line.curr_font.points:
-                self.finish_active_river(river, self.minmax_h*line.curr_font.points, self.total_h*line.curr_font.points)
+                self.finish_active_river(river, self.minmax_h*line.curr_font.points, self.total_width*line.curr_font.points)
         
         for space, fontsize in spaces_info:
             space_in_river = False
             for river in self.active_rivers.copy():
                 if river.accepts(space, self.max_v_gap*fontsize, self.min_h*fontsize):
+                    
                     river.add(space)
                     space_in_river = True
             if not space_in_river:
@@ -301,6 +302,9 @@ class River:
         return False
     
     def add(self, space):
+        if len(self.spaces) > 0:
+            shift = abs(space[1] - (self.spaces[-1][1] + self.spaces[-1][3]))
+            space = [space[0], self.spaces[-1][1] + self.spaces[-1][3], space[2], space[3] + shift]
         self.spaces.append(space)
         
     def is_valid(self, h_threshold, total_threshold):
