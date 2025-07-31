@@ -552,7 +552,7 @@ class PDFViewer:
             make_rect(c)
             
     def _draw_whitespace_rivers(self, page, pnum, context, zoomlevel):
-        def make_rect(r, col=(0.6, 0.55, 0, 0.5)):
+        def make_rect(r, col=(1, 1, 0.1, 0.4)):
             context.set_source_rgba(*col)
             context.rectangle(*r)
             context.fill()
@@ -646,8 +646,8 @@ class PDFViewer:
         self.riverparms = {
             'max_v_gap': float(self.model.get("s_rivergap", 0.4)),
             'min_h': float(self.model.get('s_riverminwidth', 0.5)),
-            'min_h_width': float(self.model.get('s_riverminmaxwidth', 1)),
-            'threshold': float(self.model.get("s_riverthreshold", 3))
+            'minmax_h': float(self.model.get('s_riverminmaxwidth', 1)),
+            'total_width': float(self.model.get("s_riverthreshold", 3))
         }
         if page is not None and page in self.parlocs.pnums:
             self.current_page = page
