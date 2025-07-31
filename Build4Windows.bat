@@ -1,3 +1,6 @@
+if not defined MSYS2_DIR set MSYS2_DIR="C:\msys64\mingw64"
+if not defined INNOSETUP_PATH set INNOSETUP_PATH="C:\Program Files (x86)\Inno Setup 6"
+
 @echo on
 REM Use this Batch file to build PTXprint Installer for Windows
 REM Mark Penny and Martin Hosken, Last updated: 18-Mar-2024
@@ -11,12 +14,12 @@ REM Call PyInstaller to create the "dist" folder
 REM pyinstaller --log-level DEBUG --clean ptxprint.spec
 pyinstaller ptxprint.spec
 mkdir dist\ptxprint\share
-xcopy /s /i /y /q C:\msys64\mingw64\share\locale dist\ptxprint\share\locale
-xcopy /s /i /y /q C:\msys64\mingw64\share\fontconfig dist\ptxprint\share\fontconfig
-xcopy /s /i /y /q C:\msys64\mingw64\share\glib-2.0 dist\ptxprint\share\glib-2.0
-REM xcopy /s /i /y /q C:\msys64\mingw64\share\gtksourceview-1.0 dist\ptxprint\share\gtksourceview-4
-REM xcopy /s /i /y /q C:\msys64\mingw64\share\icons dist\ptxprint\share\icons
-xcopy /s /i /y /q C:\msys64\mingw64\share\themes dist\ptxprint\share\themes
+xcopy /s /i /y /q %MSYS2_DIR%\share\locale dist\ptxprint\share\locale
+xcopy /s /i /y /q %MSYS2_DIR%\share\fontconfig dist\ptxprint\share\fontconfig
+xcopy /s /i /y /q %MSYS2_DIR%\share\glib-2.0 dist\ptxprint\share\glib-2.0
+REM xcopy /s /i /y /q %MSYS2_DIR%\share\gtksourceview-1.0 dist\ptxprint\share\gtksourceview-4
+REM xcopy /s /i /y /q %MSYS2_DIR%\share\icons dist\ptxprint\share\icons
+xcopy /s /i /y /q %MSYS2_DIR%\share\themes dist\ptxprint\share\themes
 xcopy /s /i /y /q python\lib\ptxprint\mo dist\ptxprint\mo
 xcopy /s /i /y /q python\graphics\icons dist\ptxprint\share\icons
 REM Then use a python script to build the #include list of only the needed icons from the Adwaita folders
@@ -24,7 +27,6 @@ python python\scripts\getstockicons -f inno -s dist\ptxprint -d "{app}" -i chang
 REM deleted: -i zoom-original-symbolic (from Zoom to 100%)
 
 REM Then call InnoSetup to build the final SetupPTXprint.exe file which is distributed
-IF "%INNOSETUP_PATH%"=="" SET INNOSETUP_PATH="C:\Program Files (x86)\Inno Setup 6"
-"%INNOSETUP_PATH%\ISCC.exe" InnoSetupPTXprint.iss
+%INNOSETUP_PATH%\ISCC.exe InnoSetupPTXprint.iss
 
 echo Windows Installer executable file is located in "Output" folder

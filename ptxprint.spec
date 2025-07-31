@@ -3,6 +3,7 @@
 block_cipher = None
 import sys, os
 from glob import glob
+from pathlib import Path
 print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
@@ -40,18 +41,19 @@ def anyver(p, path=".", ext=".dll"):
 
 # add all the library dependency dlls (not python ones, but the dlls they typically call)
 # including GTK, etc.
-mingwb = r'C:\msys64\mingw64\bin'
+msys2_base = Path(os.environ.get('MSYS2_DIR', Path('C:/', 'msys64', 'mingw64')))
+msys2_bin = msys2_base / "bin"
 if sys.platform in ("win32", "cygwin"):
-    binaries = [(f'C:\\msys64\\mingw64\\lib\\girepository-1.0\\{x}.typelib',
-                                            'gi_typelibs') for x in
+    mingw_typelib = msys2_base/'lib'/'girepository-1.0'
+    binaries = [(mingw_typelib / f'{x}.typelib', 'gi_typelibs') for x in
                     ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0', 'GdkPixbuf-2.0', 
                      'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'Poppler-0.18')] \
-              + [(f'{mingwb}\\gspawn-win64-helper.exe', 'ptxprint')] \
-              + [(f'{mingwb}\\{x}.dll', '.') for x in
-                    (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', anyver('libpoppler-cpp-', mingwb), 'libcurl-4',
+              + [(msys2_bin / 'gspawn-win64-helper.exe', 'ptxprint')] \
+              + [(msys2_bin.with_stem(x), '.') for x in
+                    (anyver('libpoppler-', msys2_bin), 'libpoppler-glib-8', anyver('libpoppler-cpp-', msys2_bin), 'libcurl-4',
                      'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
-                     'libpsl-5', 'libssh2-1', 'libplds4', anyver('libunistring-', mingwb)) if x is not None] 
-#             + [(x,'.') for x in glob('C:\\msys64\\mingw64\\bin\\*.dll')]
+                     'libpsl-5', 'libssh2-1', 'libplds4', anyver('libunistring-', msys2_bin)) if x is not None]
+            #   + [(x,'.') for x in msys2_bin.glob('*.dll')]
 else:
     binaries = []
 
