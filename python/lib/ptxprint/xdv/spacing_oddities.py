@@ -281,11 +281,11 @@ class Rivers:
 class River:
     def __init__(self):
         self.spaces = []
-        self.covered_regions = []
+        self.width = 0
         
     def vdiff(self, v):
         if len(self.spaces) <1:
-            return 100
+            return 100  # just some big number
         return abs(self.spaces[-1][1]+self.spaces[-1][3] - v)
         
     def accepts(self, space, vmaxgap, hminoverlap):
@@ -302,7 +302,6 @@ class River:
     
     def add(self, space):
         self.spaces.append(space)
-        # todo: updates covered regions
         
     def is_valid(self, h_threshold, total_threshold):
         if len(self.spaces) > 2:
@@ -310,6 +309,7 @@ class River:
             if total_width > total_threshold:
                 for s in self.spaces:
                     if s[2] > h_threshold:
+                        self.width = total_width
                         return True
         return False
     
