@@ -225,9 +225,9 @@ class GlyphCluster:
         return False
     
 class Rivers:
-    def __init__(self, max_v_gap = 0.8, min_h_overlap = 0.2):
+    def __init__(self, max_v_gap = 0.05, min_h_overlap = 0.5):
         self.final_rivers = []
-        self.active_rivers = [River()]
+        self.active_rivers = []
         self.max_v_gap = max_v_gap
         self.min_h_overlap = min_h_overlap
 
@@ -260,10 +260,6 @@ class Rivers:
                 river.add(space)
                 added = True
         return added
-        
-    def clear(self):
-        self.active_rivers = [River()]
-        self.final_rivers = []
         
     def print_all(self):
         for r in self.final_rivers:
