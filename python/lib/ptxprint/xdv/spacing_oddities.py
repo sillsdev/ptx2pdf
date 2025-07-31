@@ -231,6 +231,7 @@ class Rivers:
         self.max_v_gap = max_v_gap
         self.min_h = min_h
         self.minmax_h = max_h_width
+        self.total_h = 3
 
     def add_line(self, line):   # check vertical gap and finish river, then add spaces
         spaces_info = self.get_line_spaces(line)   
@@ -244,7 +245,7 @@ class Rivers:
         
         for river in self.active_rivers.copy():
             if river.vdiff(line.vmin) > self.max_v_gap*line.curr_font.points:
-                self.finish_active_river(river, self.minmax_h*line.curr_font.points)
+                self.finish_active_river(river, self.minmax_h*line.curr_font.points, self.total_h*line.curr_font.points)
         
         for space, fontsize in spaces_info:
             space_in_river = False
@@ -266,8 +267,8 @@ class Rivers:
                 spaces.append((space, line.glyph_clusters[i].font.points))
         return spaces
         
-    def finish_active_river(self, river, h_threshold):  # add river to final_rivers if >3 lines, create new River.
-        if river.is_valid(h_threshold):
+    def finish_active_river(self, river, h_threshold, total_threshold):  # add river to final_rivers if >3 lines, create new River.
+        if river.is_valid(h_threshold, total_threshold):
             self.final_rivers.append(river)
         self.active_rivers.remove(river)
         
@@ -303,11 +304,13 @@ class River:
         self.spaces.append(space)
         # todo: updates covered regions
         
-    def is_valid(self, h_threshold):
+    def is_valid(self, h_threshold, total_threshold):
         if len(self.spaces) > 2:
-            for s in self.spaces:
-                if s[2] > h_threshold:
-                    return True
+            total_width = sum([s[2] for s in self.spaces])
+            if total_width > total_threshold:
+                for s in self.spaces:
+                    if s[2] > h_threshold:
+                        return True
         return False
     
     def is_empty(self):
