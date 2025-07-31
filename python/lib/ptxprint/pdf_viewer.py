@@ -552,7 +552,7 @@ class PDFViewer:
             make_rect(c)
             
     def _draw_whitespace_rivers(self, page, pnum, context, zoomlevel):
-        def make_rect(r, col=(145, 135, 0, 0.6)):
+        def make_rect(r, col=(0.6, 0.55, 0, 0.5)):
             context.set_source_rgba(*col)
             context.rectangle(*r)
             context.fill()

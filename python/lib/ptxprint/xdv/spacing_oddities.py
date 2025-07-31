@@ -225,7 +225,7 @@ class GlyphCluster:
         return False
     
 class Rivers:
-    def __init__(self, max_v_gap = 0.7, min_h = 0.3, minmax_h = 1, total_width = 3):
+    def __init__(self, max_v_gap = 0.7, min_h = 0.4, minmax_h = 1, total_width = 3):
         self.final_rivers = []
         self.active_rivers = []
         self.max_v_gap = max_v_gap
@@ -251,7 +251,6 @@ class Rivers:
             space_in_river = False
             for river in self.active_rivers.copy():
                 if river.accepts(space, self.max_v_gap*fontsize, self.min_h*fontsize):
-                    
                     river.add(space)
                     space_in_river = True
             if not space_in_river:
@@ -268,7 +267,7 @@ class Rivers:
                 spaces.append((space, line.glyph_clusters[i].font.points))
         return spaces
         
-    def finish_active_river(self, river, h_threshold, total_threshold):  # add river to final_rivers if >3 lines, create new River.
+    def finish_active_river(self, river, h_threshold, total_threshold): 
         if river.is_valid(h_threshold, total_threshold):
             self.final_rivers.append(river)
         self.active_rivers.remove(river)
