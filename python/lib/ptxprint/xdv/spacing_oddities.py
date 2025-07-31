@@ -264,7 +264,8 @@ class Rivers:
         for i in range(len(line.glyph_clusters)-1):
             gc1_box = line.glyph_clusters[i].get_boundary_box()
             gc2_box = line.glyph_clusters[i+1].get_boundary_box()
-            space = [gc1_box[2], line.vmin, gc2_box[0]-gc1_box[2], line.vmax-line.vmin]                   
+            # space = [gc1_box[2], min(gc1_box[1], gc2_box[1]), gc2_box[0]-gc1_box[2], max((gc1_box[3]-gc1_box[1]), (gc2_box[3]-gc2_box[1]))] 
+            space = [gc1_box[2], line.vmin, gc2_box[0]-gc1_box[2],line.vmax - line.vmin]                              
             if space[2] > self.min_h*line.glyph_clusters[i].font.points:
                 spaces.append((space, line.glyph_clusters[i].font.points))
         return spaces
@@ -304,8 +305,8 @@ class River:
     
     def add(self, space):
         if len(self.spaces) > 0:
-            shift = abs(space[1] - (self.spaces[-1][1] + self.spaces[-1][3]))
-            space = [space[0], self.spaces[-1][1] + self.spaces[-1][3], space[2], space[3] + shift]
+            shift = space[1] - (self.spaces[-1][1] + self.spaces[-1][3])
+            space = [space[0], self.spaces[-1][1] + self.spaces[-1][3], space[2], min(space[3], space[3]- shift)]
         self.spaces.append(space)
         
     def is_valid(self, h_threshold, total_threshold):
