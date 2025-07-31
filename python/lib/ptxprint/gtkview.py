@@ -3344,6 +3344,7 @@ class GtkViewModel(ViewModel):
             'DIG': 'Diglot',
             'PIC': 'Pictures, Figures, Images, Sidebars', 
             'PDF': 'PDF Options, Show/Hide',
+            'PRV': 'Preview Pane: Adjustment and Analysis Settings',
             'OTH': 'Other Miscellaneous Settings' }
 
         texopts = self.builder.get_object("gr_texoptions")
