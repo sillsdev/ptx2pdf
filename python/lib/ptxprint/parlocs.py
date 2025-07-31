@@ -542,8 +542,8 @@ class Paragraphs(list):
                 #print(c)
                 yield c
                 
-    def getrivers(self, pnum):
-        rivers = Rivers()
+    def getrivers(self, pnum, **kw):
+        rivers = Rivers(**kw)
         for l in self._getlines(pnum):
             rivers.add_line(l)
         page_rivers = rivers.all_rivers()

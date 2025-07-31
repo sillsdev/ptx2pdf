@@ -557,7 +557,7 @@ class PDFViewer:
             context.rectangle(*r)
             context.fill()
             
-        for r in self.parlocs.getrivers(pnum):
+        for r in self.parlocs.getrivers(pnum, **self.riverparms):
             for s in r.spaces:
                 make_rect(s)
 
@@ -643,6 +643,12 @@ class PDFViewer:
         if not self.load_pdf(fname, adjlist=adjlist, isdiglot=isdiglot):
             return False
         self.load_parlocs(parlocs, rtl=rtl)
+        self.riverparms = {
+            'max_v_gap': float(self.model.get("s_rivergap", 0.4)),
+            'min_h': float(self.model.get('s_riverminwidth', 0.5)),
+            'min_h_width': float(self.model.get('s_riverminmaxwidth', 1)),
+            'threshold': float(self.model.get("s_riverthreshold", 3))
+        }
         if page is not None and page in self.parlocs.pnums:
             self.current_page = page
             self.current_index = self.parlocs.pnums[page]
@@ -711,7 +717,8 @@ class PDFViewer:
         if self.showanalysis:
             xdvname = fname.replace(".parlocs", ".xdv")
             print(f"Reading {xdvname}")
-            xdvreader = SpacingOddities(xdvname, parent=self.parlocs)
+            cthreshold = float(self.model.get("s_paddingwidth", 0.5))
+            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold)
             for (opcode, data) in xdvreader.parse():
                 pass
             if self.showanalysis and self.spacethreshold == 0:
