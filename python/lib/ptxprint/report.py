@@ -405,16 +405,16 @@ class Report:
                 for c in collisions:
                         collisions_list.append(l.ref)
         if threshold == 0:
-            badlist = view.pdf_viewer.parlocs.getnbadspaces()
+            badlist = plocs.getnbadspaces()
             threshold = badlist[0].widthem
             count = len(badlist)
         if len(badlist):
             bads = set([Ref(x.line.ref.replace(".", " ")) for x in badlist])
-            self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
+            self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}\n" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
         if len(collisions_list):
             cols = set([ref.replace(".", " ") for ref in collisions_list])
-            self.add("2. Layout", f"Line collisions [padding= {col_padding} em] {len(collisions_list)}/{count}:" + " ".join((str(c) for c in sorted(cols))), severity=logging.WARN, txttype= "text")
-            
+            self.add("2. Layout", f"Line collisions [padding= {col_padding} em]\n {len(collisions_list)}/{count}:" + " ".join((str(c) for c in sorted(cols))), severity=logging.WARN, txttype= "text")
+        self.add("2. Layout", f"Whitespace rivers [min_verticalgap= {riv_vgap}, min_spacewidth= {riv_minwidth}, min_maxspacewidth= {riv_minmaxwidth}, min_totalwidth={riv_totalwidth}] ")
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
