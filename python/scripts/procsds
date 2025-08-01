@@ -8,6 +8,7 @@ from cltk.lemmatize.grc import GreekBackoffLemmatizer
 from cltk.alphabet.text_normalization import cltk_normalize
 from math import log2, sqrt, log
 from bisect import bisect
+from typing import List
 import dataclasses
 from unicodedata import normalize
 from usfmtc.versification import cached_versification
@@ -120,7 +121,7 @@ def filter_excludes(excludes, sdrefs, speris):
 class Sense:
     lexeme: str
     sid:    str
-    sd:     str
+    sd:     List[str]
     gloss:  str
     defshrt:    str
 
@@ -173,9 +174,12 @@ class SemDomData:
     def dict(self, args):
         pass
 
+    def isname(self, lexm):
+       return all(s in self.namecodes for s in lexm.sd) 
+
     def lexicon(self, args):
         self._read_lexicon(args)
-        words = [m for m in self.meanings if m.sd not in ("93.1", "93.2", "60.2", "3107", "3110")]
+        words = [m for m in self.meanings if self.isname(m)]
         fields = [f.name for f in dataclasses.fields(words[0])]
         write_csv(args.outfile, data=[dataclasses.astuple(w) for w in words],
                     headings=fields, delimiter="\t")
@@ -208,10 +212,10 @@ class SemDomData:
         self._read_lexicon(args, key="infile", alt=self.greekalts, target=greekwords)
         greekmap = {}
         for k in greekwords:
-            greekmap.setdefault(grcroot(self.lem, k.lexeme), set()).add(k.sd)
+            greekmap.setdefault(grcroot(self.lem, k.lexeme), set()).update(k.sd)
         for k, v in self.greekalts.items():
             for s in v:
-                greekmap.setdefault(grcroot(self.lem, k), set()).add(s.sd)
+                greekmap.setdefault(grcroot(self.lem, k), set()).update(s.sd)
         print(f"{len(greekmap)} unique words in the greek dictionary, with {sum(1 for g, v in greekmap.items() if len(v))} non empty")
         hebmap = read_csv(args.greek, delimiter="\t")
         print(f"{len(hebmap)} entries in the hebrew to greek mappings")
@@ -232,7 +236,7 @@ class SemDomData:
             #if h[0] == "אֲבַטִּחִים":
             #    breakpoint()
             sd = self.fmtsd(h[1])
-            if h[1] in ("003001007", "003001010"):
+            if sd in self.namecodes:
                 names += 1
                 continue
             keys = self.mkeys.get(normalize("NFC", h[0]), None)
@@ -255,10 +259,10 @@ class SemDomData:
             best = None
             bestishsd = None
             for mk in keys:
-                if sd is None or mk.sd == sd:
+                if sd is None or sd in mk.sd:
                     best = mk
                     break
-                elif sd is not None and mk.sd is not None and mk.sd.startswith(sd):
+                elif sd is not None and mk.sd and any(s.startswith(sd) for s in mk.sd):
                     best = mk
                 elif bestishsd is None:
                     bestishsd = mk
@@ -293,9 +297,9 @@ class SemDomData:
         sdcounts = {}
         for m in self.meanings:
             if hasattr(m, 'gsd'):
-                sdcounts.setdefault(m.gsd, set()).add(m.sd)
+                sdcounts.setdefault(m.gsd, set()).update(m.sd)
         print(f"{sum(1 for k,v in sdcounts.items() if len(v) == 1)} 1:1 mappings of {len(sdcounts)}")
-        res = [[m.sid, m.sd] for m in self.meanings if hasattr(m, 'gsd')]
+        res = [[m.sid] + m.sd for m in self.meanings if hasattr(m, 'gsd')]
         write_csv(args.outfile, res, delimiter="\t")
         if (args.flags & 4) != 0:
             write_csv("procsds_badhebrew.tsv", badhebrew)
@@ -321,40 +325,42 @@ class SemDomData:
             self.ffrmap.setdefault(grcroot(self.lem, k), []).extend(v)
         names = []
         sids = {}
-        bads = set()
-        goods = set()
+        bads = []
+        goods = []
         for m in self.meanings:
             newcodes = []
             lexeme = grcroot(self.lem, m.lexeme)
             if lexeme in self.ffrmap:
-                newcodes = [x.sd for x in self.ffrmap[lexeme]]
+                newcodes = sum((x.sd for x in self.ffrmap[lexeme]), [])
             if not len(newcodes):
-                newcodes = [r.sd for r in self.heblex.get(hebmap.get(lexeme, None), [])]
+                newcodes = sum((r.sd for r in self.heblex.get(hebmap.get(lexeme, None), [])), [])
             # if len(newcodes):
             #     breakpoint()
-            if m.sd in self.namecodes or len(newcodes) and all(n in self.namecodes for n in newcodes):
-                names.append(m)
+            if self.isname(m) or len(newcodes) and all(n in self.namecodes for n in newcodes):
+                names.append((lexeme, m))
                 m.sd = None
-                goods.add(lexeme)
             elif len(newcodes):
                 # what if more than one sd?
-                m.sd = [s for s in newcodes if s not in self.namecodes][0]
-                goods.add((lexeme, m.gloss))
+                m.sd = [s for s in newcodes if s not in self.namecodes]
+                goods.append((lexeme, m))
             else:
-                bads.add((lexeme, m.gloss))
+                bads.append((lexeme, m))
                 m.sd = None
-        res = [[m.sid, m.sd] for m in self.meanings if m.sd]
+        res = [[m.sid, l, m.gloss] + sorted(m.sd, key=float) for l, m in goods]
         write_csv(args.outfile, res)
+        print(f"{len(res)}/{len(self.meanings)} mappings")
         print(f"{len(names)}/{len(self.meanings)} names")
         if args.names:
-            res = [[m.sid, m.gloss] for m in names]
+            res = [[m.sid, l, m.gloss] for l, m in names]
             write_csv(args.names, res)
         if args.bads:
-            res = {}
-            for k in bads-goods:
-                res.setdefault(k[0], []).append(k[1])
-            lines = [[k] + v for k, v in sorted(res.items())]
-            write_csv(args.bads, lines)
+            res = []
+            for l, m in bads:
+                if (l, m) in goods:
+                    continue
+                res.append([m.sid, l, m.gloss])
+            write_csv(args.bads, res)
+            print(f"{len(res)}/{len(self.meanings)} unknowns")
 
     def testgreek(self, args):
         self._read_lexicon(args)
@@ -364,7 +370,7 @@ class SemDomData:
             allwords.update(w[3:])
         res = set()
         for m in self.meanings:
-            if m.sd in ["93.1", "93.2", "60.1"]:
+            if self.isname(m):
                 continue
             if m.lexeme not in allwords:
                 res.add(m.lexeme)
@@ -458,18 +464,17 @@ class SemDomData:
             alts.extend([s.get("Lemma", None) for s in lexitem.findall(".//Construct")])
             alts = [x for x in alts if x is not None and  x != lemma]
             for sense in lexitem.findall(".//LEXMeaning"):
-                code = None
+                code = []
                 lid = sense.get("Id")
                 if mapping is not None:
-                    code = mapping.get(lid, None)
+                    code = [mapping.get(lid, None)]
                 else:
                     for a in ("LEXSubDomain", "LEXDomain"):
-                        codee = sense.find("{0}s/{0}".format(a))
-                        if codee is None:
-                            continue
-                        code = codee.get("Code", None)
-                        if code is not None:
-                            code = self.sdmap.get(code, self.fmtsd(code, template=sdtemplate))
+                        for codee in sense.findall("{0}s/{0}".format(a)):
+                            codev = codee.get("Code", None)
+                            if code is not None:
+                                code.append(self.sdmap.get(codev, self.fmtsd(codev, template=sdtemplate)))
+                        if len(code):
                             break
                 defshrt = sense.findtext(".//DefinitionShort")
                 gloss = sense.findtext(".//Gloss")
@@ -485,30 +490,33 @@ class SemDomData:
                     if r is not None:
                         refs.append(r)
                 lmeaning.refs = refs
-                if code is None:
+                if not len(code):
                     continue
-                if code in self.namecodes:       # it's a name grab it differently
-                    code = "_{}{:04d}_{}".format(1 if getattr(args, 'ot', False) else 2, self.namecount, code)
-                    self.labels['en'][code] = defshrt
-                    self.shorts['en'][code] = gloss
-                    self.sdrefs.setdefault(code, set())
-                    self.namecount += 1
-                self.words.setdefault(code, []).append(sense.findtext(".//Gloss"))
+                for c in code:
+                    if c in self.namecodes:       # it's a name grab it differently
+                        c = "_{}{:04d}_{}".format(1 if getattr(args, 'ot', False) else 2, self.namecount, code)
+                        self.labels['en'][c] = defshrt
+                        self.shorts['en'][c] = gloss
+                        self.sdrefs.setdefault(c, set())
+                        self.namecount += 1
+                    self.words.setdefault(c, []).append(sense.findtext(".//Gloss"))
                 if not len(self.pericopes):
                     continue
                 for r in refs:
-                    self.sdrefs.setdefault(code, set()).add(r)
-                    p = find_pericope(r, self.pericopes)
-                    if p is not None:
-                        pinfo = self.speris.setdefault(code, {}).setdefault(p, [p, p.last, p.first, 0, 0])
-                        pinfo[1] = min(pinfo[1], r.first)
-                        pinfo[2] = max(pinfo[2], r.last)
-                        pinfo[3] += 1
-                    else:       # [pericope range, first match, last match, num match, weight]
-                        self.speris.setdefault(code, {})[r] = [r, r, r, 1, 0]
-                if (args.flags & 1) == 0 and code in self.speris and len(self.speris[code]) < 2 or len(self.sdrefs[code]) < 2:
-                    self.speris.pop(code, None)
-                    del self.sdrefs[code]
+                    for c in code:
+                        self.sdrefs.setdefault(c, set()).add(r)
+                        p = find_pericope(r, self.pericopes)
+                        if p is not None:
+                            pinfo = self.speris.setdefault(c, {}).setdefault(p, [p, p.last, p.first, 0, 0])
+                            pinfo[1] = min(pinfo[1], r.first)
+                            pinfo[2] = max(pinfo[2], r.last)
+                            pinfo[3] += 1
+                        else:       # [pericope range, first match, last match, num match, weight]
+                            self.speris.setdefault(c, {})[r] = [r, r, r, 1, 0]
+                for c in code:
+                    if (args.flags & 1) == 0 and c in self.speris and len(self.speris[c]) < 2 or len(self.sdrefs[c]) < 2:
+                        self.speris.pop(c, None)
+                        del self.sdrefs[c]
 
     namecodes = ["93.1", "93.2", "60.2", "4107", "4110"]
     def _proc_excludes(self, args):
@@ -545,7 +553,9 @@ class SemDomData:
             if "|" in k:
                 continue
             v = mkeys[k]
-            if all((r if issd else r.sd) in self.namecodes for r in v):
+            if issd and all(r in self.namecodes for r in v):
+                continue
+            elif not issd and all(self.isname(r) for r in v):
                 continue
             score = sum(m.fuzzy_counts)
             cost = min(calc_cost(r) for r in v) if refset else 0
@@ -562,7 +572,7 @@ class SemDomData:
 
     ntsdtemplatebits = ["{0:d}", ".{1:d}"]
     sdtemplatebits = ntsdtemplatebits
-    otsdtemplatebits = ["{0:d}", "{1:d}", "{2:02d}", ".{3:d}"]
+    otsdtemplatebits = ["{0:01d}", "{1:01d}", "{2:02d}", ".{3:d}"]
     sdoffset = 0
     sdlength = 0
     numv = 23145 + 7959
@@ -572,11 +582,17 @@ class SemDomData:
             return None
         if "." in n or len(n) % 3 != 0:
             return n
+        if template is None:
+            template = self.sdtemplatebits
         s = [int(n[i*3:i*3+3]) for i in range(len(n) // 3)]
-        s[0] += self.sdoffset
+        #s[0] += self.sdoffset
+        for i, t in enumerate(template):
+            if t.startswith("."):
+                break
+        s.extend([0] * (i - len(s)))
         if self.sdlength > 0:
             s.extend([0] * (self.sdlength-len(s)))
-        return "".join((template or self.sdtemplatebits)[:len(s)]).format(*s)
+        return "".join(template[:len(s)]).format(*s)
 
     def _outdb(self, args):
         outroot = et.Element("domains")
@@ -708,7 +724,7 @@ class SemDomData:
             min_curr_sd = float('inf')
             for s in m.gsds:
                 current_sds = sds.get(s, set())
-                cost = m.sd in current_sds
+                cost = all(sd in current_sds for sd in m.sd)
                 if cost < min_new_sd_cost:
                     min_new_sd_cost = cost
                     best_sd = s
@@ -725,7 +741,7 @@ class SemDomData:
         # swap the sd info
         for m in self.meanings:
             if hasattr(m, 'gsd'):
-                m.sd, m.gsd = m.gsd, m.sd
+                m.sd, m.gsd = [m.gsd], m.sd
 
 cmd_aliases = {
 'create':   ['c'],
