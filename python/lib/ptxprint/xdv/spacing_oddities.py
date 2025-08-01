@@ -250,11 +250,9 @@ class Rivers:
                 self.active_rivers.append(River())   
                 self.active_rivers[-1].add(space)
             return
-        
         for river in self.active_rivers.copy():
             if river.vdiff(line.vmin) > self.max_v_gap*line.curr_font.points:
                 self.finish_active_river(river, self.minmax_h*line.curr_font.points, self.total_width*line.curr_font.points)
-        
         for space, fontsize in spaces_info:
             space_in_river = False
             for river in self.active_rivers.copy():
@@ -270,8 +268,7 @@ class Rivers:
         for i in range(len(line.glyph_clusters)-1):
             gc1_box = line.glyph_clusters[i].get_boundary_box()
             gc2_box = line.glyph_clusters[i+1].get_boundary_box()
-            # space = [gc1_box[2], min(gc1_box[1], gc2_box[1]), gc2_box[0]-gc1_box[2], max((gc1_box[3]-gc1_box[1]), (gc2_box[3]-gc2_box[1]))] 
-            space = [gc1_box[2], line.vmin, gc2_box[0]-gc1_box[2],line.vmax - line.vmin]                              
+            space = [gc1_box[2], line.vmin, gc2_box[0]-gc1_box[2], line.vmax - line.vmin]                              
             if space[2] > self.min_h*line.glyph_clusters[i].font.points:
                 spaces.append((space, line.glyph_clusters[i].font.points))
         return spaces
@@ -295,25 +292,28 @@ class River:
     def vdiff(self, v):
         if len(self.spaces) <1:
             return 100  # just some big number
-        return abs(self.spaces[-1][1]+self.spaces[-1][3] - v)
+        return v - (self.spaces[-1][1]+self.spaces[-1][3]) 
         
     def accepts(self, space, vmaxgap, hminoverlap):
         if len(self.spaces) <1:
             return True
-        last_space_box = [self.spaces[-1][0], self.spaces[-1][1], self.spaces[-1][0]+self.spaces[-1][2], self.spaces[-1][1]+self.spaces[-1][3]]
-        new_space_box = [space[0], space[1], space[0]+space[2], space[1]+space[3]]
-        if (new_space_box[1]-last_space_box[3]) > vmaxgap:
+        if (space[1] - (self.spaces[-1][1]+self.spaces[-1][3])) > vmaxgap:
             return False
-        h_overlap = min(last_space_box[2], new_space_box[2]) - max(last_space_box[0], new_space_box[0])
+        h_overlap = min(space[0]+space[2], self.spaces[-1][0]+self.spaces[-1][2]) - max(space[0], self.spaces[-1][0])
         if h_overlap > hminoverlap:
             return True
         return False
     
     def add(self, space):
-        if len(self.spaces) > 0:
-            shift = space[1] - (self.spaces[-1][1] + self.spaces[-1][3])
-            space = [space[0], self.spaces[-1][1] + self.spaces[-1][3], space[2], min(space[3], space[3]- shift)]
-        self.spaces.append(space)
+        if len(self.spaces) >0:
+            gap = space[1] - (self.spaces[-1][1]+self.spaces[-1][3])
+            if gap >0:
+                extended_topspace = [self.spaces[-1][0], self.spaces[-1][1], self.spaces[-1][2], self.spaces[-1][3] + gap/2]
+                extended_bottomspace = [space[0], space[1] - gap/2, space[2], space[3] + gap/2]
+                self.spaces[-1] = extended_topspace
+                self.spaces.append(extended_bottomspace)
+        else:
+            self.spaces.append(space)
         
     def is_valid(self, h_threshold, total_threshold):
         if len(self.spaces) > 2:
