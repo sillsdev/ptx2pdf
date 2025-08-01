@@ -384,6 +384,11 @@ class Report:
 
     def get_layoutinfo(self, view):
         threshold = float(view.get("s_spaceEms", 3.0))
+        col_padding = float(view.get("s_paddingwidth", 0.5))
+        riv_vgap = float(view.get("s_rivergap", 0.4))
+        riv_minwidth = float(view.get("s_riverminwidth", 1))
+        riv_minmaxwidth = float(view.get("s_riverminmaxwidth", 1))
+        riv_totalwidth = float(view.get("s_riverthreshold", 3))
         if getattr(view, 'pdf_viewer', None) is None:
             return
         badlist = []
@@ -408,7 +413,7 @@ class Report:
             self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
         if len(collisions_list):
             cols = set([ref.replace(".", " ") for ref in collisions_list])
-            self.add("2. Layout", f"Line collisions {len(collisions_list)}/{count}:" + " ".join((str(c) for c in sorted(cols))), severity=logging.WARN, txttype= "text")
+            self.add("2. Layout", f"Line collisions [padding= {col_padding} em] {len(collisions_list)}/{count}:" + " ".join((str(c) for c in sorted(cols))), severity=logging.WARN, txttype= "text")
             
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
