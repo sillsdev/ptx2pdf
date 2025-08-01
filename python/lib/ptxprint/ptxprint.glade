@@ -4306,30 +4306,7 @@ of unwanted whitespace).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSpinButton" id="s_spaceEms">
-                        <property name="name">Layout Analysis minimum Ems to flag as issue</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Set this to 0 if you just want to
-highlight the worst N items in
-the text.
-
-Otherwise set this to how many
-Ems wide the space needs to be
-before being flagged as an issue.</property>
-                        <property name="margin-start">3</property>
-                        <property name="margin-end">3</property>
-                        <property name="adjustment">a_spaceEms</property>
-                        <property name="climb-rate">0.10</property>
-                        <property name="digits">1</property>
-                        <property name="value">3</property>
-                        <signal name="value-changed" handler="onPdfAnalysisChanged" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>

@@ -238,6 +238,7 @@ class PDFViewer:
             'minmax_h': float(self.model.get('s_riverminmaxwidth', 1)),
             'total_width': float(self.model.get("s_riverthreshold", 3)),
         }
+        self.spacethreshold = float(self.model.get("s_spaceEms", 3.0))
 
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
         self.settingsChanged()

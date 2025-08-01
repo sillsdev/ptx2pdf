@@ -404,7 +404,6 @@ _sensitivities = {
     "c_coverBorder":           ["fcb_coverBorder", "col_coverBorder", "l_coverBorder"],
     "c_coverShading":          ["col_coverShading", "s_coverShadingAlpha", "l_coverShading"],
     "c_coverSelectImage":      ["fcb_coverImageSize", "c_coverImageFront", "s_coverImageAlpha", "btn_coverSelectImage", "lb_coverImageFilename"],
-    "c_layoutAnalysis":        ["s_spaceEms"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -6669,7 +6668,7 @@ Thank you,
         self.pdf_viewer.setShowParaBoxes(self.get("c_pdfparabounds"))
 
     def onPdfAnalysisChanged(self, widget):
-        self.pdf_viewer.setShowAnalysis(self.get("c_layoutAnalysis"), float(self.get("s_spaceEms")))
+        self.pdf_viewer.setShowAnalysis(self.get("c_layoutAnalysis"), float(self.get("s_spaceEms", 3.0)))
         
     def onPrintItClicked(self, widget):
         pages = self.pdf_viewer.numpages
