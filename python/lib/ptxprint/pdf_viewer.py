@@ -234,8 +234,9 @@ class PDFViewer:
         self.riverparms = {
             'max_v_gap': float(self.model.get("s_rivergap", 0.4)),
             'min_h': float(self.model.get('s_riverminwidth', 0.5)),
+            'min_overlap': float(self.model.get('s_riveroverlap', 0.4)),
             'minmax_h': float(self.model.get('s_riverminmaxwidth', 1)),
-            'total_width': float(self.model.get("s_riverthreshold", 3))
+            'total_width': float(self.model.get("s_riverthreshold", 3)),
         }
 
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):

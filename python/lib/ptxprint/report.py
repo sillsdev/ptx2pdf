@@ -1,10 +1,11 @@
 import html # Added for html.escape
-import logging, os, re
+import logging, os, re, heapq
 import xml.etree.ElementTree as et
 from datetime import datetime
 from ptxprint.parlocs import BadSpace
+from ptxprint.xdv.spacing_oddities import Rivers
 from ptxprint.utils import rtlScripts, dediglotref
-from usfmtc.reference import Ref
+from usfmtc.reference import Ref, RefList
 
 # DEBUG is informational
 # INFO is something that could fail, passed
@@ -383,6 +384,7 @@ class Report:
         #    and also Specific Line Break Locale (flagging an issue if we have unexpected values there for CJK languages)
 
     def get_layoutinfo(self, view):
+        max_rivers = 20
         threshold = float(view.get("s_spaceEms", 3.0))
         col_padding = float(view.get("s_paddingwidth", 0.5))
         riv_vgap = float(view.get("s_rivergap", 0.4))
@@ -395,6 +397,10 @@ class Report:
         collisions_list = []
         count = 0
         plocs = view.pdf_viewer.parlocs
+        rivers = []
+        currpnum = None
+        currivers = []
+        curriver = None
         for l, p, r in plocs.allxdvlines():
             count += 1
             if threshold != 0:  
@@ -404,6 +410,27 @@ class Report:
             if (collisions := l.has_collisions()):
                 for c in collisions:
                         collisions_list.append(l.ref)
+            if r.pagenum != currpnum:
+                if curriver is not None:
+                    for v in curriver.all_rivers():
+                        val = (v.width, Ref(v.ref.replace(".", " ")))
+                        if len(rivers) < max_rivers:
+                            heapq.heappush(rivers, val)
+                        elif val > rivers[0]:
+                            heapq.heapreplace(rivers, val)
+                currivers = []
+                curriver = Rivers(max_v_gap=riv_vgap, min_h=riv_minwidth,
+                                  minmax_h=riv_minmaxwidth, total_width=riv_totalwidth)
+                currpnum = r.pagenum
+            curriver.add_line(l)
+        if curriver is not None:
+            for v in curriver.all_rivers():
+                val = (v.width, Ref(v.ref.replace(".", " ")))
+                if len(rivers) < max_rivers:
+                    heapq.heappush(rivers, val)
+                elif val > rivers[0]:
+                    heapq.heapreplace(rivers, val)
+
         if threshold == 0:
             badlist = plocs.getnbadspaces()
             threshold = badlist[0].widthem
@@ -415,6 +442,9 @@ class Report:
             cols = set([ref.replace(".", " ") for ref in collisions_list])
             self.add("2. Layout", f"Line collisions [padding= {col_padding} em]\n {len(collisions_list)}/{count}:" + " ".join((str(c) for c in sorted(cols))), severity=logging.WARN, txttype= "text")
         self.add("2. Layout", f"Whitespace rivers [min_verticalgap= {riv_vgap}, min_spacewidth= {riv_minwidth}, min_maxspacewidth= {riv_minmaxwidth}, min_totalwidth={riv_totalwidth}] ")
+        if len(rivers):
+            riverrefs = RefList([v[1] for v in rivers])
+            self.add("2. Layout", f"Rivers ({rivers[0][0]:.2f}): {riverrefs.simplify()}", severity=logging.WARN, txttype="text")
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
