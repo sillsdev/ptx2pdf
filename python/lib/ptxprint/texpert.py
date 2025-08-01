@@ -207,7 +207,7 @@ texpertOptions = {
                             _("Limit how much text can expand to using right-click context menu adjustment.")),
     "PaddingWidth":       O("paddingwidth", "PRV", (0.5, -1.0, 5.0, 0.1, 0.1, 1), "", _("Collision Detection Padding (pt)"),
                             _("Minimum space between bounding boxes of glyphs before a collision is flagged.")),
-    "RiverThreshold":     O("riverthreshold", "PRV", (3, 1, 10, 1, 1, 1), "", _("River Detection Threshold (em)"),
+    "RiverThreshold":     O("riverthreshold", "PRV", (3, 1, 1000, 1, 10, 1), "", _("River Detection Threshold (em)"),
                             _("The sum of all the widths in the river must be above this for the river to be detected")),
     "RiverMinMaxWidth":   O("riverminmaxwidth", "PRV", (1, 0.1, 5, 0.1, 1, 1), "", _("River Detection minimum required maximum width (em)"),
                             _("Minimum width required for the widest part of the river")),
@@ -215,6 +215,8 @@ texpertOptions = {
                             _("Minimum width of any space in a river for it to be included")),
     "RiverGap":           O("rivergap", "PRV", (0.4, 0, 5, 0.1, 1.0, 1), "", _("River Detection maximum line leading (em)"),
                             _("Any lines separated by a gap greater than this will be considered not to be in the same river")),
+    "RiverOverlap":       O("riveroverlap", "PRV", (0.4, -5, 5, 0.1, 0.1, 1), "", _("River Detection minimum overlap (em)"),
+                            _("Minimum overlap in ems required for two spaces above each other to be considered part of the same river")),
 
     "UnderlineSpaces":    O("underlnsp", "OTH", True, None, _("Underline Spaces"),
                             _("Underline spaces in underlined runs")),

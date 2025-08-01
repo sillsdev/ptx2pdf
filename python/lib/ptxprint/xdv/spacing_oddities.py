@@ -234,12 +234,13 @@ class GlyphCluster:
         return False
     
 class Rivers:
-    def __init__(self, max_v_gap = 0.7, min_h = 0.4, minmax_h = 1, total_width = 3):
+    def __init__(self, max_v_gap=0.7, min_h=0.4, min_overlap=None, minmax_h=1, total_width=3):
         self.final_rivers = []
         self.active_rivers = []
         self.max_v_gap = max_v_gap
         self.min_h = min_h
         self.minmax_h = minmax_h
+        self.minoverlap = min_overlap or min_h
         self.total_width = total_width
 
     def add_line(self, line):   # check vertical gap and finish river, then add spaces
@@ -248,7 +249,7 @@ class Rivers:
             return
         if len(self.active_rivers) == 0:
             for space, fontsize in spaces_info:
-                self.active_rivers.append(River())   
+                self.active_rivers.append(River(line.ref))   
                 self.active_rivers[-1].add(space)
             return
         for river in self.active_rivers.copy():
@@ -257,11 +258,11 @@ class Rivers:
         for space, fontsize in spaces_info:
             space_in_river = False
             for river in self.active_rivers.copy():
-                if river.accepts(space, self.max_v_gap*fontsize, self.min_h*fontsize):
+                if river.accepts(space, self.max_v_gap*fontsize, self.minoverlap*fontsize):
                     river.add(space)
                     space_in_river = True
             if not space_in_river:
-                self.active_rivers.append(River())   
+                self.active_rivers.append(River(line.ref))   
                 self.active_rivers[-1].add(space)
         
     def get_line_spaces(self, line):
@@ -269,8 +270,9 @@ class Rivers:
         for i in range(len(line.glyph_clusters)-1):
             gc1_box = line.glyph_clusters[i].get_boundary_box()
             gc2_box = line.glyph_clusters[i+1].get_boundary_box()
-            space = [gc1_box[2], line.vmin, gc2_box[0]-gc1_box[2], line.vmax - line.vmin]                              
-            if space[2] > self.min_h*line.glyph_clusters[i].font.points:
+            # space = [gc1_box[2], min(gc1_box[1], gc2_box[1]), gc2_box[0]-gc1_box[2], max((gc1_box[3]-gc1_box[1]), (gc2_box[3]-gc2_box[1]))] 
+            space = [gc1_box[2], line.vmin, gc2_box[0] - gc1_box[2], line.vmax - line.vmin]                              
+            if space[2] > self.min_h * line.glyph_clusters[i].font.points:
                 spaces.append((space, line.glyph_clusters[i].font.points))
         return spaces
         
@@ -285,25 +287,26 @@ class Rivers:
             
     def all_rivers(self):
         return self.final_rivers
+
+
 class River:
-    def __init__(self):
+    def __init__(self, ref=None):
         self.spaces = []
         self.width = 0
+        self.ref = ref
         
     def vdiff(self, v):
-        if len(self.spaces) <1:
+        if len(self.spaces) < 1:
             return 100  # just some big number
         return v - (self.spaces[-1][1]+self.spaces[-1][3]) 
         
     def accepts(self, space, vmaxgap, hminoverlap):
-        if len(self.spaces) <1:
+        if len(self.spaces) < 1:
             return True
         if (space[1] - (self.spaces[-1][1]+self.spaces[-1][3])) > vmaxgap:
             return False
         h_overlap = min(space[0]+space[2], self.spaces[-1][0]+self.spaces[-1][2]) - max(space[0], self.spaces[-1][0])
-        if h_overlap > hminoverlap:
-            return True
-        return False
+        return h_overlap > hminoverlap
     
     def add(self, space):
         if len(self.spaces) >0:
@@ -311,22 +314,18 @@ class River:
             if gap >0:
                 extended_topspace = [self.spaces[-1][0], self.spaces[-1][1], self.spaces[-1][2], self.spaces[-1][3] + gap/2]
                 extended_bottomspace = [space[0], space[1] - gap/2, space[2], space[3] + gap/2]
+                self.width -= self.spaces[-1][2]
                 self.spaces[-1] = extended_topspace
                 self.spaces.append(extended_bottomspace)
+                self.width += extended_topspace[2] + extended_bottomspace[2]
         else:
             self.spaces.append(space)
+            self.width += space[2]
         
     def is_valid(self, h_threshold, total_threshold):
-        if len(self.spaces) > 2:
-            total_width = sum([s[2] for s in self.spaces])
-            if total_width > total_threshold:
-                for s in self.spaces:
-                    if s[2] > h_threshold:
-                        self.width = total_width
-                        return True
-        return False
+        return self.width > total_threshold \
+                and len(self.spaces) > 2 \
+                and any(s[2] > h_threshold for s in self.spaces)
     
     def is_empty(self):
-        if len(self.spaces) >0:
-            return False
-        return True
+        return len(self.spaces) > 0
