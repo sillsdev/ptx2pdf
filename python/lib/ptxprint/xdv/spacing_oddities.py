@@ -26,7 +26,7 @@ def overlap(curr, prev, t):
 
 
 class SpacingOddities(XDViPositionedReader):
-    def __init__(self, fname, parent = None, collision_threshold = 0.5): 
+    def __init__(self, fname, parent = None, collision_threshold = 0.5, fontsize=10): 
         super().__init__(fname)
         self.ref = ''                 # reference of bible verse
         self.cursor = (self.h, self.v)  # location of last printed glyph
@@ -38,6 +38,7 @@ class SpacingOddities(XDViPositionedReader):
         self.line = None
         self.v_threshold = 8
         self.collision_threshold = collision_threshold
+        self.fontsize = fontsize
         
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 

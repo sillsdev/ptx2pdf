@@ -360,7 +360,7 @@ class Report:
                 (extra, severity) = widget_fn(view, widget_id)
             if len(extra):
                 extra = ": " + extra
-            self.add(section, f"{title}{extra}", severity=severity, order=order, txttype="html")
+            self.add(section, f"{title}{extra}", severity=severity, order=order, txttype="html" if "</" in extra else "text")
 
     def get_writingSystems(self, view):  # to do: use the actual script name from a _allscripts lookup instead of just the code
         s = view.get("fcb_script") or "Zyyy"
