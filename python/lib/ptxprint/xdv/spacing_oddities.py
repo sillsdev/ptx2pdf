@@ -63,8 +63,8 @@ class SpacingOddities(XDViPositionedReader):
     def font(self, opcode, parm, data):
         (k, ) = super().font(opcode, parm, data)
         self.curr_font = self.fonts[k] 
-        if abs(self.curr_font.points-self.fontsize) <1:
-            self.v_threshold = 0.7*self.curr_font.points
+        # if abs(self.curr_font.points-self.fontsize) <1:
+        #     self.v_threshold = 0.7*self.curr_font.points
         curr_rect = self.get_rect((self.h, self.v))
         if curr_rect:
             self.update_lines((self.h, self.v), curr_rect)
@@ -201,7 +201,7 @@ class GlyphCluster:
     def __init__(self, v, font):
         self.font = font 
         self.glyphs = []            # list of [hmin, vmin, hmax, vmax] for each glyph. boundary boxes. 
-        self.h_threshold = 0.05*font.points  if font != None else 0.001
+        self.h_threshold = 0.001
         self.vmin = v
         self.vmax = v
     
