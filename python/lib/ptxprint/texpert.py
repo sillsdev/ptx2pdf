@@ -17,6 +17,7 @@ class O:
 #    _: KW_ONLY      # Everything after this is keyword only
     fn: Optional[Callable[['ViewModel', Union[int, bool, None]], None]] = None
     valfn: Optional[Callable[[str], str]] = None
+    method: Optional[str] = None
 
     # Key to val: (value, min, max, step increment, page increment, digits)
     # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr, decPlaces)

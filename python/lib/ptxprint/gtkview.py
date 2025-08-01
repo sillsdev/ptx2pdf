@@ -3394,6 +3394,8 @@ class GtkViewModel(ViewModel):
 
             findname = wname
             changeMethod = None
+            if opt.group == "PRV":
+                changeMethod = "viewerValChanged"
             if wname.startswith("c_"):
                 obj = Gtk.CheckButton()
                 self.btnControls.add(wname)
@@ -3401,7 +3403,7 @@ class GtkViewModel(ViewModel):
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
                 findname = lname
                 self.initValues[wname] = v
-                changeMethod = "buttonChanged"
+                changeMethod = changeMethod or getattr(opt, "method", None) or "buttonChanged"
                 obj.connect("clicked", getattr(self, changeMethod))
             elif wname.startswith("s_"):
                 x = opt.val
@@ -3409,7 +3411,7 @@ class GtkViewModel(ViewModel):
                 obj = Gtk.SpinButton()
                 obj.set_adjustment(adj)
                 obj.set_digits(x[5])  # Set the number of decimal places
-                changeMethod = "labelledChanged"
+                changeMethod = changeMethod or getattr(opt, "method", None) or "labelledChanged"
                 # put the label in an EventBox and then add button-release-event on the eventbox
                 obj.connect("value-changed", getattr(self, changeMethod))
                 eb = Gtk.EventBox()
@@ -5101,6 +5103,12 @@ class GtkViewModel(ViewModel):
         ctrl = Gtk.Buildable.get_name(widg)
         lbl = widg.get_child()
         self.changeLabel(ctrl, lbl)
+
+    def viewerValChanged(self, widg, *a):
+        self.labelledChanged(widg, *a)
+        if self.pdf_viewer is not None:
+            self.pdf_viewer.settingsChanged()
+            self.pdf_viewer.show_pdf()
 
     def adjustGridSettings(self, btn):
         dialog = self.builder.get_object("dlg_gridSettings")
