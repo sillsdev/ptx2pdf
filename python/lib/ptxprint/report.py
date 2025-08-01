@@ -386,22 +386,29 @@ class Report:
         threshold = float(view.get("s_spaceEms", 3.0))
         if getattr(view, 'pdf_viewer', None) is None:
             return
+        badlist = []
+        collisions_list = []
+        count = 0
+        plocs = view.pdf_viewer.parlocs
+        for l, p, r in plocs.allxdvlines():
+            count += 1
+            if threshold != 0:  
+                if (result := l.has_badspace(threshold)):
+                    for b in result:
+                        badlist.append(BadSpace(r.pagenum, l, *b)) 
+            if (collisions := l.has_collisions()):
+                for c in collisions:
+                        collisions_list.append(c)
         if threshold == 0:
             badlist = view.pdf_viewer.parlocs.getnbadspaces()
             threshold = badlist[0].widthem
             count = len(badlist)
-        else:
-            badlist = []
-            count = 0
-            plocs = view.pdf_viewer.parlocs
-            for l, p, r in plocs.allxdvlines():
-                count += 1
-                if (result := l.has_badspace(threshold)):
-                    for b in result:
-                        badlist.append(BadSpace(r.pagenum, l, *b)) 
         if len(badlist):
             bads = set([Ref(x.line.ref.replace(".", " ")) for x in badlist])
             self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}:" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
+        if len(collisions_list):
+            self.add("2. Layout", f"Line collisions [conditions] {len(collisions_list)}/{count}:")
+            
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
