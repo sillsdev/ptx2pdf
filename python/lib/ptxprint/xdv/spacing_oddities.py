@@ -26,7 +26,7 @@ def overlap(curr, prev, t):
 
 
 class SpacingOddities(XDViPositionedReader):
-    def __init__(self, fname, parent = None, collision_threshold = 0.5): 
+    def __init__(self, fname, parent = None, collision_threshold = 0.5, fontsize=10): 
         super().__init__(fname)
         self.ref = ''                 # reference of bible verse
         self.cursor = (self.h, self.v)  # location of last printed glyph
@@ -34,10 +34,12 @@ class SpacingOddities(XDViPositionedReader):
         self.pagediff = self.pageno 
         self.parent = parent
         self.curr_font = None           # font object with .ttfont attribute
-        self.prev_line = Line(self.v, self.ref, self.curr_font, None)
-        self.line = Line(self.v, self.ref, self.curr_font, None)
-        self.v_threshold = 8
+        self.prev_line = None
+        self.line = None
+        self.fontsize = fontsize
+        self.v_threshold = 0.7*self.fontsize
         self.collision_threshold = collision_threshold
+        
         
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 
@@ -61,7 +63,8 @@ class SpacingOddities(XDViPositionedReader):
     def font(self, opcode, parm, data):
         (k, ) = super().font(opcode, parm, data)
         self.curr_font = self.fonts[k] 
-        self.v_threshold = 0.7*self.curr_font.points
+        # if abs(self.curr_font.points-self.fontsize) <1:
+        #     self.v_threshold = 0.7*self.curr_font.points
         curr_rect = self.get_rect((self.h, self.v))
         if curr_rect:
             self.update_lines((self.h, self.v), curr_rect)
@@ -81,9 +84,14 @@ class SpacingOddities(XDViPositionedReader):
         self.update_lines((self.h,self.v), curr_rect)
         self.cursor = (self.h, self.v)
         self.page_index += 1
+        self.line = None
+        self.prev_line = None
         return super().bop(opcode, parm, data)
     
     def update_lines(self, startpos, rect):
+        if  self.line == None:
+            self.line = Line(startpos[1], self.ref, self.curr_font, rect)
+            return
         if self.line.is_empty():
             self.line = Line(startpos[1], self.ref, self.curr_font, rect)
             return
@@ -94,8 +102,9 @@ class SpacingOddities(XDViPositionedReader):
         if self.line.glyph_clusters[-1].is_empty():
             self.line.glyph_clusters.pop()
         self.line.update_bounds()        
-        if not self.prev_line.is_empty():
-            self.line.check_line_collisions(self.prev_line, self.collision_threshold)
+        if self.prev_line != None:
+            if not self.prev_line.is_empty():
+                self.line.check_line_collisions(self.prev_line, self.collision_threshold)
         self.parent.addxdvline(self.line, self.page_index, self.line.inrect)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font, rect)
@@ -192,7 +201,7 @@ class GlyphCluster:
     def __init__(self, v, font):
         self.font = font 
         self.glyphs = []            # list of [hmin, vmin, hmax, vmax] for each glyph. boundary boxes. 
-        self.h_threshold = 0.05*font.points 
+        self.h_threshold = 0.001
         self.vmin = v
         self.vmax = v
     
@@ -227,12 +236,13 @@ class GlyphCluster:
         return False
     
 class Rivers:
-    def __init__(self, max_v_gap = 0.7, min_h = 0.4, minmax_h = 1, total_width = 3):
+    def __init__(self, max_v_gap=0.7, min_h=0.4, min_overlap=None, minmax_h=1, total_width=3):
         self.final_rivers = []
         self.active_rivers = []
         self.max_v_gap = max_v_gap
         self.min_h = min_h
         self.minmax_h = minmax_h
+        self.minoverlap = min_overlap or min_h
         self.total_width = total_width
 
     def add_line(self, line):   # check vertical gap and finish river, then add spaces
@@ -241,22 +251,20 @@ class Rivers:
             return
         if len(self.active_rivers) == 0:
             for space, fontsize in spaces_info:
-                self.active_rivers.append(River())   
+                self.active_rivers.append(River(line.ref))   
                 self.active_rivers[-1].add(space)
             return
-        
         for river in self.active_rivers.copy():
             if river.vdiff(line.vmin) > self.max_v_gap*line.curr_font.points:
                 self.finish_active_river(river, self.minmax_h*line.curr_font.points, self.total_width*line.curr_font.points)
-        
         for space, fontsize in spaces_info:
             space_in_river = False
             for river in self.active_rivers.copy():
-                if river.accepts(space, self.max_v_gap*fontsize, self.min_h*fontsize):
+                if river.accepts(space, self.max_v_gap*fontsize, self.minoverlap*fontsize):
                     river.add(space)
                     space_in_river = True
             if not space_in_river:
-                self.active_rivers.append(River())   
+                self.active_rivers.append(River(line.ref))   
                 self.active_rivers[-1].add(space)
         
     def get_line_spaces(self, line):
@@ -264,8 +272,9 @@ class Rivers:
         for i in range(len(line.glyph_clusters)-1):
             gc1_box = line.glyph_clusters[i].get_boundary_box()
             gc2_box = line.glyph_clusters[i+1].get_boundary_box()
-            space = [gc1_box[2], line.vmin, gc2_box[0]-gc1_box[2], line.vmax-line.vmin]                   
-            if space[2] > self.min_h*line.glyph_clusters[i].font.points:
+            # space = [gc1_box[2], min(gc1_box[1], gc2_box[1]), gc2_box[0]-gc1_box[2], max((gc1_box[3]-gc1_box[1]), (gc2_box[3]-gc2_box[1]))] 
+            space = [gc1_box[2], line.vmin, gc2_box[0] - gc1_box[2], line.vmax - line.vmin]                              
+            if space[2] > self.min_h * line.glyph_clusters[i].font.points:
                 spaces.append((space, line.glyph_clusters[i].font.points))
         return spaces
         
@@ -280,45 +289,45 @@ class Rivers:
             
     def all_rivers(self):
         return self.final_rivers
+
+
 class River:
-    def __init__(self):
+    def __init__(self, ref=None):
         self.spaces = []
         self.width = 0
+        self.ref = ref
         
     def vdiff(self, v):
-        if len(self.spaces) <1:
+        if len(self.spaces) < 1:
             return 100  # just some big number
-        return abs(self.spaces[-1][1]+self.spaces[-1][3] - v)
+        return v - (self.spaces[-1][1]+self.spaces[-1][3]) 
         
     def accepts(self, space, vmaxgap, hminoverlap):
-        if len(self.spaces) <1:
+        if len(self.spaces) < 1:
             return True
-        last_space_box = [self.spaces[-1][0], self.spaces[-1][1], self.spaces[-1][0]+self.spaces[-1][2], self.spaces[-1][1]+self.spaces[-1][3]]
-        new_space_box = [space[0], space[1], space[0]+space[2], space[1]+space[3]]
-        if (new_space_box[1]-last_space_box[3]) > vmaxgap:
+        if (space[1] - (self.spaces[-1][1]+self.spaces[-1][3])) > vmaxgap:
             return False
-        h_overlap = min(last_space_box[2], new_space_box[2]) - max(last_space_box[0], new_space_box[0])
-        if h_overlap > hminoverlap:
-            return True
-        return False
+        h_overlap = min(space[0]+space[2], self.spaces[-1][0]+self.spaces[-1][2]) - max(space[0], self.spaces[-1][0])
+        return h_overlap > hminoverlap
     
     def add(self, space):
-        if len(self.spaces) > 0:
-            shift = abs(space[1] - (self.spaces[-1][1] + self.spaces[-1][3]))
-            space = [space[0], self.spaces[-1][1] + self.spaces[-1][3], space[2], space[3] + shift]
-        self.spaces.append(space)
+        if len(self.spaces) >0:
+            gap = space[1] - (self.spaces[-1][1]+self.spaces[-1][3])
+            if gap >0:
+                extended_topspace = [self.spaces[-1][0], self.spaces[-1][1], self.spaces[-1][2], self.spaces[-1][3] + gap/2]
+                extended_bottomspace = [space[0], space[1] - gap/2, space[2], space[3] + gap/2]
+                self.width -= self.spaces[-1][2]
+                self.spaces[-1] = extended_topspace
+                self.spaces.append(extended_bottomspace)
+                self.width += extended_topspace[2] + extended_bottomspace[2]
+        else:
+            self.spaces.append(space)
+            self.width += space[2]
         
     def is_valid(self, h_threshold, total_threshold):
-        if len(self.spaces) > 2:
-            total_width = sum([s[2] for s in self.spaces])
-            if total_width > total_threshold:
-                for s in self.spaces:
-                    if s[2] > h_threshold:
-                        self.width = total_width
-                        return True
-        return False
+        return self.width > total_threshold \
+                and len(self.spaces) > 2 \
+                and any(s[2] > h_threshold for s in self.spaces)
     
     def is_empty(self):
-        if len(self.spaces) >0:
-            return False
-        return True
+        return len(self.spaces) > 0

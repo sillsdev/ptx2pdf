@@ -128,12 +128,15 @@ class PDFViewer:
         self.toctv.connect("row-activated", self.pickToc)
         self.numpages = 0
         self.document = None
+        self.fname = None
+        self.parlocfile = None
         self.current_page = None    # current folio page number
         self.current_index = None   # current pdf page index starts at 1
         self.zoomLevel = 1.0        # Initial zoom level is 100%
         self.old_zoom = 1.0
         self.spread_mode = self.model.get("c_bkView", False)
         self.parlocs = None
+        self.widget = None
         self.psize = (0, 0)
         # self.drag_start_x = None
         # self.drag_start_y = None
@@ -181,6 +184,8 @@ class PDFViewer:
     def setShowAnalysis(self, val, threshold):
         self.showanalysis = val
         self.spacethreshold = threshold
+        if self.showanalysis:
+            self.loadnshow(None, page=self.current_page)
         self.show_pdf()
 
     def create_boxes(self, num):
@@ -221,11 +226,22 @@ class PDFViewer:
         self.hbox.show()
         self.hbox.grab_focus()
 
-    def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
+    def settingsChanged(self):
         self.shrinkStep = int(self.model.get('s_shrinktextstep', 2))
         self.expandStep = int(self.model.get('s_expandtextstep', 3))
         self.shrinkLimit = int(self.model.get('s_shrinktextlimit', 90))
         self.expandLimit = int(self.model.get('s_expandtextlimit', 110))
+        self.riverparms = {
+            'max_v_gap': float(self.model.get("s_rivergap", 0.4)),
+            'min_h': float(self.model.get('s_riverminwidth', 0.5)),
+            'min_overlap': float(self.model.get('s_riveroverlap', 0.4)),
+            'minmax_h': float(self.model.get('s_riverminmaxwidth', 1)),
+            'total_width': float(self.model.get("s_riverthreshold", 3)),
+        }
+        self.spacethreshold = float(self.model.get("s_spaceEms", 3.0))
+
+    def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
+        self.settingsChanged()
         
         self.isdiglot = isdiglot
         if pdf_path is None or not os.path.exists(pdf_path):
@@ -233,6 +249,7 @@ class PDFViewer:
             return False
 
         file_uri = Path(pdf_path).as_uri()
+        self.fname = pdf_path
         try:
             self.document = Poppler.Document.new_from_file(file_uri, None)
             self.numpages = self.document.get_n_pages()
@@ -639,16 +656,17 @@ class PDFViewer:
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
         self.rtl_mode = rtl
         if fname is None:
+            fname = self.fname
+        if fname is None:
             return False
+        self.settingsChanged()
         if not self.load_pdf(fname, adjlist=adjlist, isdiglot=isdiglot):
             return False
-        self.load_parlocs(parlocs, rtl=rtl)
-        self.riverparms = {
-            'max_v_gap': float(self.model.get("s_rivergap", 0.4)),
-            'min_h': float(self.model.get('s_riverminwidth', 0.5)),
-            'minmax_h': float(self.model.get('s_riverminmaxwidth', 1)),
-            'total_width': float(self.model.get("s_riverthreshold", 3))
-        }
+        if parlocs is None:
+            parlocs = self.parlocfile
+        if parlocs is not None:
+            self.parlocfile = parlocs
+            self.load_parlocs(parlocs, rtl=rtl)
         if page is not None and page in self.parlocs.pnums:
             self.current_page = page
             self.current_index = self.parlocs.pnums[page]
@@ -656,6 +674,9 @@ class PDFViewer:
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b %H:%M")
+        if widget is None:
+            widget = self.widget
+        self.widget = widget
         widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
         self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
         self.model.set_preview_pages(self.numpages, _("Pages:") if self.oneUp else _("Spreads:"))
@@ -718,13 +739,15 @@ class PDFViewer:
             xdvname = fname.replace(".parlocs", ".xdv")
             print(f"Reading {xdvname}")
             cthreshold = float(self.model.get("s_paddingwidth", 0.5))
-            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold)
+            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
+                                        fontsize=float(self.model.get("s_fontsize", 1)))
             for (opcode, data) in xdvreader.parse():
                 pass
             if self.showanalysis and self.spacethreshold == 0:
                 self.badspaces = self.parlocs.getnbadspaces()
                 if len(self.badspaces):
                     self.model.set("s_spaceEms", self.badspaces[0].widthem)
+
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         if ctrl_pressed:
