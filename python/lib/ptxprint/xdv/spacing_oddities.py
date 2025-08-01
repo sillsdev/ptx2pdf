@@ -34,8 +34,8 @@ class SpacingOddities(XDViPositionedReader):
         self.pagediff = self.pageno 
         self.parent = parent
         self.curr_font = None           # font object with .ttfont attribute
-        self.prev_line = Line(self.v, self.ref, self.curr_font, None)
-        self.line = Line(self.v, self.ref, self.curr_font, None)
+        self.prev_line = None
+        self.line = None
         self.v_threshold = 8
         self.collision_threshold = collision_threshold
         
@@ -81,9 +81,14 @@ class SpacingOddities(XDViPositionedReader):
         self.update_lines((self.h,self.v), curr_rect)
         self.cursor = (self.h, self.v)
         self.page_index += 1
+        self.line = None
+        self.prev_line = None
         return super().bop(opcode, parm, data)
     
     def update_lines(self, startpos, rect):
+        if  self.line == None:
+            self.line = Line(startpos[1], self.ref, self.curr_font, rect)
+            return
         if self.line.is_empty():
             self.line = Line(startpos[1], self.ref, self.curr_font, rect)
             return
@@ -94,8 +99,9 @@ class SpacingOddities(XDViPositionedReader):
         if self.line.glyph_clusters[-1].is_empty():
             self.line.glyph_clusters.pop()
         self.line.update_bounds()        
-        if not self.prev_line.is_empty():
-            self.line.check_line_collisions(self.prev_line, self.collision_threshold)
+        if self.prev_line != None:
+            if not self.prev_line.is_empty():
+                self.line.check_line_collisions(self.prev_line, self.collision_threshold)
         self.parent.addxdvline(self.line, self.page_index, self.line.inrect)
         self.prev_line = self.line
         self.line = Line(startpos[1], self.ref, self.curr_font, rect)
