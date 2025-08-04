@@ -494,6 +494,9 @@ class Paragraphs(list):
             if inrect is None:
                 #print(f"{pindex}@({x},{pheight-y})")
                 return
+            ypos = pheight - 0.1 * y - 0.9 * line.vmax
+            if inrect.ystart < ypos or inrect.yend > ypos:
+                return
         if inrect.xdvlines is None:
             inrect.xdvlines = []
         inrect.xdvlines.append(line)
