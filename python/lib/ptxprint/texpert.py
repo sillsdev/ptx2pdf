@@ -207,6 +207,8 @@ texpertOptions = {
                             _("Limit how much text can expand to using right-click context menu adjustment.")),
     "BadSpaces":          O("spaceEms", "PRV", (3, 0, 10, 0.1, 0.1, 1), "", _("Bad Space minimum width (em)"),
                             _("Minimum width for a bad space. 0 says to calculate for the 20 worst spaces in the doc")),
+    "BadCharSpaces":      O("charSpaceEms", "PRV", (0.3, 0, 1, 0.01, 0.1, 2), "", _("Bad intercharacter space minimum width (em)"),
+                            _("Minimum width for a bad inter character space.")),
     "PaddingWidth":       O("paddingwidth", "PRV", (0.5, -1.0, 5.0, 0.1, 0.1, 1), "", _("Collision Detection Padding (pt)"),
                             _("Minimum space between bounding boxes of glyphs before a collision is flagged.")),
     "RiverThreshold":     O("riverthreshold", "PRV", (3, 1, 1000, 1, 10, 1), "", _("River Detection Threshold (em)"),

@@ -532,9 +532,9 @@ class Paragraphs(list):
                 continue
             yield from r.xdvlines
 
-    def getbadspaces(self, pnum, threshold):
+    def getbadspaces(self, pnum, threshold, char_threshold):
         for l in self._getlines(pnum):
-            spaces = l.has_badspace(threshold)
+            spaces = l.has_badspace(threshold, char_threshold)
             for s in spaces:
                 yield BadSpace(pnum, l, *s)
             

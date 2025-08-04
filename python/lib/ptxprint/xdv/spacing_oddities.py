@@ -1,5 +1,6 @@
 from ptxprint.xdv.xdv import XDViPositionedReader
 from ptxprint.font import TTFont
+from math import isclose
 import re
 
 def search_collisions(curr, prev, threshold):
@@ -174,12 +175,14 @@ class Line:
                 for g, p in self.glyph_clusters[i].collision(prev_line.glyph_clusters[j], threshold):
                     self.add_collision(g, p)        
             
-    def has_badspace(self, threshold = 4):
+    def has_badspace(self, threshold=4, char_threshold=0):
         # threshold in ems
         bad_spaces = []
+        bad_chars = []
         if len(self.glyph_clusters) > 1:
             fontsize = self.glyph_clusters[0].font.points
             maxspace = fontsize*threshold
+            curr_charwidth = None
             for i in range(len(self.glyph_clusters)-1):
                 if self.glyph_clusters[i].font.points != fontsize:
                     fontsize = self.glyph_clusters[i].font.points
@@ -187,9 +190,17 @@ class Line:
                 gc_box1 = self.glyph_clusters[i].get_boundary_box()
                 gc_box2 = self.glyph_clusters[i+1].get_boundary_box()
                 width = abs(gc_box2[0] - gc_box1[2])
+                rect = [(gc_box1[2], self.vstart), width, width/fontsize]
+                if curr_charwidth is None:
+                    curr_charwidth = width
+                if char_threshold > 0 and isclose(width, curr_charwidth, abs_tol=1) and width > char_threshold * fontsize:
+                    bad_chars.append(rect)
+                else:       # hit a different sized space so dump what we have
+                    curr_charwidth = 0
+                    bad_chars = []
                 if width > maxspace:
-                    bad_spaces.append([(gc_box1[2], self.vstart), width, width/fontsize])
-        return bad_spaces        
+                    bad_spaces.append(rect)
+        return bad_spaces + bad_chars
     
     def has_collisions(self):
         return self.collisions   

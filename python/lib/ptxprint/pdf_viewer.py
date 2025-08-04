@@ -150,6 +150,7 @@ class PDFViewer:
         self.showrects = False # self.model.get("c_pdfadjoverlay", False)
         self.showanalysis = False
         self.spacethreshold = 0
+        self.charthreshold = 0
         self.ufCurrIndex = 0
         self.currpref = None
         self.timer_id = None  # Stores the timer reference
@@ -239,6 +240,7 @@ class PDFViewer:
             'total_width': float(self.model.get("s_riverthreshold", 3)),
         }
         self.spacethreshold = float(self.model.get("s_spaceEms", 3.0))
+        self.charthreshold = float(self.model.get("s_charSpaceEms", 0))
 
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
         self.settingsChanged()
@@ -556,7 +558,7 @@ class PDFViewer:
                 if s.pnum == pnum:
                     make_rect(*s.pos, s.width)
         else:
-            for s in self.parlocs.getbadspaces(pnum, threshold):
+            for s in self.parlocs.getbadspaces(pnum, threshold, self.charthreshold):
                 make_rect(*s.pos, s.width)
 
     def _draw_collisions(self, page, pnum, context, zoomlevel):
