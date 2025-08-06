@@ -496,7 +496,7 @@ class TexModel:
             if pri:
                 t = t+'L'
             else:
-                t = t+'R'
+                t = r'\cstyle{hR}{'+t+'R}'
         elif t == r"\empty":
             pass
         else:
