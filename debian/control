@@ -4,11 +4,11 @@ Priority: optional
 Maintainer: Nicolas Spalinger <nicolas.spalinger@sil.org>
 Build-Depends: debhelper-compat (= 12), dh-python, python3-all, python3-dev, python3-setuptools, python3-all-dev, pybuild-plugin-pyproject
 Standards-Version: 4.5.0
-X-Python3-Version: >= 3.6
+X-Python3-Version: >= 3.11
 
 Package: python3-ptxprint
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}, python3-gi, gobject-introspection, gir1.2-gtk-3.0, libgtk-3-0, gir1.2-gtksource-3.0, python3-cairo, python3-regex, python3-pil, python3-appdirs, python3-fonttools, gir1.2-poppler-0.18, texlive-xetex, python3-numpy, fonts-sil-charis, fonts-sil-gentiumplus, fonts-sil-andika
+Depends: ${python3:Depends}, ${misc:Depends}, python3-gi, gobject-introspection, gir1.2-gtk-3.0, libgtk-3-0, gir1.2-gtksource-3.0, python3-cairo, python3-regex, python3-pil, python3-appdirs, python3-fonttools, gir1.2-poppler-0.18, texlive-xetex, python3-numpy
 Description: GUI for XeTex typesetting macros (USFM)
  "Bible Layout For Everyone" - A tool to rapidly and easily create scripture
  PDFs of adequate quality for trial publications. PTXprint is a GTK-based gui
