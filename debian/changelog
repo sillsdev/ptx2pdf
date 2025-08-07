@@ -1,3 +1,9 @@
+ptxprint (2.8.22-1ubuntu3) jammy; urgency=medium
+
+  * Adjusted variables some more and bumped minor patch numer 
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Wed, 06 Aug 2025 21:57:36 -0500
+
 ptxprint (2.8.22-1ubuntu2) jammy; urgency=medium
 
   * Adjusted variable for proper setuptool detection for Jammy
