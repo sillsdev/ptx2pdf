@@ -2,11 +2,12 @@
 export DH_VERBOSE = 1
 
 export DEB_PYTHON_INSTALL_LAYOUT=deb
-export SETUPTOOLS_USE_DISTUTILS=local
+export SETUPTOOLS_USE_DISTUTILS=stdlib
 
 export PYBUILD_NAME=ptxprint
 
-export PYBUILD_SYSTEM=pyproject
+#export PYBUILD_SYSTEM=pyproject
+export PYBUILD_SYSTEM=pybuild
 
 export PYBUILD_DISABLE_python3.6=test
 export PYBUILD_DISABLE_python3.7=test
