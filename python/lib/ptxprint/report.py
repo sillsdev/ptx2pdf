@@ -397,6 +397,8 @@ class Report:
         collisions_list = []
         count = 0
         plocs = view.pdf_viewer.parlocs
+        if plocs is None:
+            return
         rivers = []
         currpnum = None
         currivers = []
