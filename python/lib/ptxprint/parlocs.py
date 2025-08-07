@@ -397,7 +397,9 @@ class Paragraphs(list):
 
     def getyrects(self, pnum, y):
         res = []
-        y = (self.pheights[pnum-1] if pnum <= len(self.pheights) else self.pheights[-1]) - y
+        if not len(self.pheights):
+            return []
+        y = (self.pheights[pnum-1] if pnum > 0 and pnum <= len(self.pheights) else self.pheights[-1]) - y
         return [r for p, r in self._iterRectsPage(pnum) if r.ystart >= y and r.yend <= y]
 
     def getParas(self, pnum, inclast=False):

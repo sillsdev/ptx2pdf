@@ -523,7 +523,15 @@
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
    \ifRTL\beginR\fi
+   \def\c@l{0}\ifnum\c@rrentcols>1 \relax \ifcsname startx:#1-\c@rref\endcsname
+     \dimen0=\csname startx:#1-\c@rref\endcsname sp
+     \ifdim\dimen0>0.5 \textwidth \def\c@l{1}\fi
+     \trace{C}{startx:#1-\c@rref=\csname startx:#1-\c@rref\endcsname, c@l=\c@l}\fi
+   \else % single column
+     \ifodd\pageno \def\c@l{1}\fi\fi
    \getp@ram{justification}{#1}{\tmpstyst@k}%
+   \ifx\p@ram\@nner \ifnum\c@l=0 \let\p@ram\r@ght\else\let\p@ram\l@ft\fi
+   \else\ifx\p@ram\@uter \ifnum\c@l=0 \let\p@ram\l@ft\else\let\p@ram\r@ght\fi\fi\fi
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
    \else\ifx\p@ram\l@ftb@l
@@ -1144,9 +1152,18 @@
   \prev@y=#6\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
-  \trace{C}{@parstart \tot@col@ht - \the\dimen1 = \prev@col@ht}%
+  \trace{C}{@parstart #3 \tot@col@ht - \the\dimen1 = \prev@col@ht}%
   \csname inp@r-\c@rrdstat true\endcsname
-  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
+  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty
+  \getp@ram{justification}{#3}{#3}%
+  \ifnum \ifx\p@ram\@nner 1\else\ifx\p@ram\@uter 1\else 0\fi\fi =1
+    \immediate\write\delayf@le{\string\ParPos{#3}{#1}{#5}}\fi
+}
+
+\def\ParPos#1#2#3{
+%   #1 mrkr, #2 c@rref, #3 start xpos
+  \x@\xdef\csname startx:#1-#2\endcsname{#3}%\trace{C}{startx:#1-#2 = #3}%
+}
 
 \def\@parend#1#2#3#4{%
   \this@y=#3\relax
