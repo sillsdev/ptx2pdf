@@ -1,3 +1,9 @@
+ptxprint (2.8.22-1ubuntu5) jammy; urgency=medium
+
+  * Further packaging testing
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Wed, 06 Aug 2025 22:46:46 -0500
+
 ptxprint (2.8.22-1ubuntu4) jammy; urgency=medium
 
   * Bumped version for further testing
