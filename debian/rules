@@ -2,7 +2,6 @@
 export DH_VERBOSE = 1
 
 export DEB_PYTHON_INSTALL_LAYOUT=deb
-export SETUPTOOLS_USE_DISTUTILS=stdlib
 
 export PYBUILD_NAME=ptxprint
 
