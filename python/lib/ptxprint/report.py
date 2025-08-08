@@ -415,11 +415,12 @@ class Report:
             if r.pagenum != currpnum:
                 if curriver is not None:
                     for v in curriver.all_rivers():
-                        val = (v.width, Ref(v.ref.replace(".", " ")))
-                        if len(rivers) < max_rivers:
-                            heapq.heappush(rivers, val)
-                        elif val > rivers[0]:
-                            heapq.heapreplace(rivers, val)
+                        if v.ref:
+                            val = (v.width, Ref(v.ref.replace(".", " ")))
+                            if len(rivers) < max_rivers:
+                                heapq.heappush(rivers, val)
+                            elif val > rivers[0]:
+                                heapq.heapreplace(rivers, val)
                 currivers = []
                 curriver = Rivers(max_v_gap=riv_vgap, min_h=riv_minwidth,
                                   minmax_h=riv_minmaxwidth, total_width=riv_totalwidth)
@@ -427,18 +428,19 @@ class Report:
             curriver.add_line(l)
         if curriver is not None:
             for v in curriver.all_rivers():
-                val = (v.width, Ref(v.ref.replace(".", " ")))
-                if len(rivers) < max_rivers:
-                    heapq.heappush(rivers, val)
-                elif val > rivers[0]:
-                    heapq.heapreplace(rivers, val)
+                if v.ref:
+                    val = (v.width, Ref(v.ref.replace(".", " ")))
+                    if len(rivers) < max_rivers:
+                        heapq.heappush(rivers, val)
+                    elif val > rivers[0]:
+                        heapq.heapreplace(rivers, val)
 
         if threshold == 0:
             badlist = plocs.getnbadspaces()
             threshold = badlist[0].widthem
             count = len(badlist)
         if len(badlist):
-            bads = set([Ref(x.line.ref.replace(".", " ")) for x in badlist])
+            bads = set([Ref(x.line.ref.replace(".", " ")) for x in badlist if x.line.ref])
             self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}\n" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
         if len(collisions_list):
             cols = set([ref.replace(".", " ") for ref in collisions_list])

@@ -837,7 +837,10 @@ class RunJob:
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
             if not self.noview and startname is not None:
-                    self.printer.onShowPDF(path=startname)
+                if self.printer.get("c_layoutAnalysis"):
+                    self.printer.incrementProgress(inproc=True, stage="al")
+                self.printer.onShowPDF(path=startname)
+                self.printer.incrementProgress(inproc=True, stage=None)
 
         elif self.res == 3:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),

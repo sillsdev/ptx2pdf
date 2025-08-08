@@ -148,10 +148,11 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali"
 
 _progress = {
     'gp' : _("Gathering pics..."),
+    'pr' : _("Processing..."),
     'lo' : _("Laying out..."),
     'xp' : _("Making PDF..."),
     'fn' : _("Finishing..."),
-    'pr' : _("Processing...")
+    'al' : _("Analyzing Layout...")
 }
 
 _ui_minimal = """
@@ -1764,7 +1765,7 @@ class GtkViewModel(ViewModel):
             self.doError(s, copy2clip=True)
             unlockme()
             self.builder.get_object("t_find").set_placeholder_text("Search for settings")
-            
+            self.builder.get_object("t_find").set_text("")
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -4738,16 +4739,19 @@ class GtkViewModel(ViewModel):
         wid.set_progress_fraction(val)
 
     def incrementProgress(self, inproc=False, stage="pr", run=0):
+        GLib.idle_add(self._incrementProgress)
+        currMsg = self.builder.get_object("t_find").get_placeholder_text()
+        if stage == 'lo' and run > 0:
+            msg = _(f"Redoing layout {run}...")
+        elif stage is None:
+            msg = ""
+        else:
+            msg = _progress[stage]
+        GLib.idle_add(lambda: self.builder.get_object("t_find").set_placeholder_text(msg))
         if inproc:
             self._incrementProgress()
             while (Gtk.events_pending()):
                 Gtk.main_iteration_do(False)
-        GLib.idle_add(self._incrementProgress)
-        currMsg = self.builder.get_object("t_find").get_placeholder_text()
-        msg = _progress[stage]
-        if stage == 'lo' and run > 0:
-            msg = _(f"Redoing layout {run}...")
-        GLib.idle_add(lambda: self.builder.get_object("t_find").set_placeholder_text(msg))
 
     def onIdle(self, fn, *args):
         GLib.idle_add(fn, *args)
@@ -5109,7 +5113,7 @@ class GtkViewModel(ViewModel):
             self.pdf_viewer.settingsChanged()
             self.pdf_viewer.show_pdf()
 
-    def adjustGridSettings(self, btn):
+    def adjustGridSettings(self, btn, foo):
         dialog = self.builder.get_object("dlg_gridSettings")
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -6854,6 +6858,10 @@ Thank you,
 
     def onSpinnerClicked(self, btn, foo):
         self.highlightwidget('s_autoupdatedelay')
+        self.builder.get_object("ptxprint").present()
+        
+    def onAnalysisSettingsClicked(self, btn, foo):
+        self.highlightwidget('s_spaceEms')
         self.builder.get_object("ptxprint").present()
 
     def onPreviewDeleteEvent(self, widget, event): # PDF Preview dialog (X button)

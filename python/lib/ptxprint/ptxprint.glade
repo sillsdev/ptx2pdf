@@ -4283,21 +4283,18 @@ as well as the baselines of the body text.</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkCheckButton" id="c_layoutAnalysis">
-                        <property name="label" translatable="yes">Layout Analysis</property>
-                        <property name="name">Perform Layout Analysis of the text to highlight spacing issues</property>
+                      <object class="GtkCheckButton" id="c_gridGraph">
+                        <property name="label" translatable="yes">Grid</property>
+                        <property name="name">Show grid (graph paper)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">This option analyzes the horizontal
-and vertical spaces within the text
-to highlight anomalies (large gaps
-of unwanted whitespace).</property>
-                        <property name="halign">start</property>
+                        <property name="tooltip-text" translatable="yes">If the standard Rules and Guides are inadequate
+you can generate a graph-paper-like grid behind
+the text. This may be useful for precise measuring.</property>
                         <property name="valign">center</property>
                         <property name="draw-indicator">True</property>
-                        <signal name="clicked" handler="onPdfAnalysisChanged" swapped="no"/>
-                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                        <signal name="clicked" handler="showGridClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -4306,7 +4303,30 @@ of unwanted whitespace).</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkEventBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <signal name="button-release-event" handler="adjustGridSettings" swapped="no"/>
+                        <child>
+                          <object class="GtkLabel" id="lb_adjustGrid">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Change the gridline settings.</property>
+                            <property name="valign">end</property>
+                            <property name="margin-bottom">2</property>
+                            <property name="label" translatable="yes">Settings</property>
+                            <attributes>
+                              <attribute name="underline" value="True"/>
+                              <attribute name="foreground" value="#1c1c7171d8d8"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -4320,19 +4340,22 @@ of unwanted whitespace).</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkCheckButton" id="c_gridGraph">
-                        <property name="label" translatable="yes">Grid</property>
-                        <property name="name">Show grid (graph paper)</property>
+                      <object class="GtkCheckButton" id="c_layoutAnalysis">
+                        <property name="label" translatable="yes">Layout Analysis</property>
+                        <property name="name">Perform Layout Analysis of the text to highlight spacing issues</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">If the standard Rules and Guides are inadequate
-you can generate a graph-paper-like grid behind
-the text. This may be useful for precise measuring.</property>
+                        <property name="tooltip-text" translatable="yes">This option analyzes the text
+to highlight layout issues:
+ - excessive horizontal space
+ - vertical rivers of space
+ - character collisions</property>
+                        <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="margin-bottom">10</property>
                         <property name="draw-indicator">True</property>
-                        <signal name="clicked" handler="showGridClicked" swapped="no"/>
+                        <signal name="clicked" handler="onPdfAnalysisChanged" swapped="no"/>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -4341,24 +4364,31 @@ the text. This may be useful for precise measuring.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLinkButton" id="lb_adjustGrid">
-                        <property name="label">Settings</property>
+                      <object class="GtkEventBox">
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="focus-on-click">False</property>
-                        <property name="receives-default">True</property>
-                        <property name="tooltip-text" translatable="yes">Change the gridline settings.</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="relief">none</property>
-                        <property name="xalign">0</property>
-                        <property name="yalign">0</property>
-                        <property name="uri">Click to change the Grid settings</property>
-                        <signal name="clicked" handler="adjustGridSettings" swapped="no"/>
+                        <property name="can-focus">False</property>
+                        <signal name="button-release-event" handler="onAnalysisSettingsClicked" swapped="no"/>
+                        <child>
+                          <object class="GtkLabel" id="l_analysisSettings">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Click to show the Advanced &gt; Other
+settings to adjust the parameters
+which control what should get
+highlighted as an issue.</property>
+                            <property name="valign">end</property>
+                            <property name="margin-bottom">2</property>
+                            <property name="label" translatable="yes">Settings</property>
+                            <attributes>
+                              <attribute name="underline" value="True"/>
+                              <attribute name="foreground" value="#1c1c7171d8d8"/>
+                            </attributes>
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
