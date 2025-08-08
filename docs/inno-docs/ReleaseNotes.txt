@@ -1,7 +1,20 @@
 PTXprint 2.8.22 Release Notes
-24 Jul 2025
+8 Aug 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 2.9.1 (8 Aug 2025)
+  * New feature: Layout Analysis in PDF Previewer
+     - highlight bad word spaces
+     - highlight bad inter character spaces
+     - highlight vertical rivers of whitespace
+     - highlight vertical glyph collisions between lines
+     - Analysis settings are configurable (Advanced > Other > Preview)
+  * Add support for inner and outer paragraphs
+  * For diglots, style secondary header material using secondary \h style
+  * Fix USFM 3.1 support for implicit closure inside notes
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 2.8.22 (24 Jul 2025)
