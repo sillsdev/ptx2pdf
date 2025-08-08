@@ -230,11 +230,13 @@
   \x@\let\csname sb@height-B\endcsname\textheight
   \x@\let\csname sb@height-P\endcsname\textheight
   \x@\let\csname sb@height-F\endcsname\PaperHeight %Good luck with that!
+  \x@\let\csname sb@height-m\endcsname\textheight
   \x@\let\csname sb@width-t\endcsname\textwidth
   \x@\let\csname sb@width-b\endcsname\textwidth
   \x@\let\csname sb@width-B\endcsname\textwidth
   \x@\let\csname sb@width-P\endcsname\textwidth
   \x@\let\csname sb@width-F\endcsname\PaperWidth %Good luck with that!
+  \x@\let\csname sb@width-m\endcsname\marginnoteswidth
   \ifcsname sb@width-\@t@st\endcsname
     \x@\let\x@\sb@height\csname sb@height-\@t@st\endcsname
     \x@\dimen1\csname sb@width-\@t@st\endcsname
@@ -250,6 +252,9 @@
         \if\tempc b\relax\dimen1=\colwidth
       \fi\fi
     \fi
+  \fi
+  \ifx\@t@st\loc@M
+    \advance\dimen1 -\marginnotesgap
   \fi
   %\ifsbar@rotated
     %\p@cinswid=\sb@height
@@ -291,6 +296,7 @@
   %t,b,B take the text width
   %F* takes the whole paper.
   %F* and P* might need to fill the vertical dimension.
+  %m take the marginnotes width - spacebeside - marginalversewidth
   \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \c@tprefix\m@rker}%
   \sbar@rotatedfalse
   \ch@ckr@tation
@@ -313,12 +319,15 @@
   \getsbp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
   \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
   \global\let\fgfig@cutout\false
+  \tracingifs=1
+  \trace{e}{s@tsb@rwidth iflevel=\the\currentiflevel}%
   \ifx\cp@ram\relax
     \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end% sets up temp[abcd] 
     \@@setsbp@cinswid% sets p@cinswid
     % Now apply scale..
     \edef\sb@rrefwid{\the\dimen1}%
-    \getsbp@ram{scale}\ifx\cp@ram\relax\else
+    \getsbp@ram{scale}%
+    \ifx\cp@ram\relax\else
       \dimen1=\cp@ram\dimen1
       \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
       \edef\sb@rrefwid{\the\dimen1}%
@@ -326,8 +335,10 @@
     \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
     \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
     \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
+    \trace{e}{fgfigsp@c=\fgfigsp@c}%
     % And shrink further if s has been specified for the fg picture
-    \ifx\fgfigsp@c\relax\else
+    \tracingmacros=1\tracingifs=1
+    \ifx\fgfigsp@c\relax\trace{e}{move on \the\currentiflevel}\else\trace{e}{keep going}%
       \prepb@rderdims
       \set@ref@dims
       \p@rsefigscale{fg}%
@@ -340,6 +351,7 @@
         %$\dimen0=\cp@ram\dimen1
       %$\fi
       \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
+      \trace{e}{tempa=\tempa}%
       \ifx\tempa \pos@Side
         \trace{e}{Forground picture will be \fgfigsp@c}%
         \advance\dimen1 by -\dimen0
@@ -365,6 +377,7 @@
         \fi
         \let\fgfigsp@c\empty
       \else% tempa!=s
+        \trace{e}{tempa(2)=\tempa}%
         \def\l@ftedge{\hfil}%
         \ifx\l@cspec@b\@lignLeft
           \def\l@ftedge{}%
@@ -390,6 +403,7 @@
           \xdef\sb@rbotedge{\noexpand\@@sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |\fig@lskip|\fig@rskip\noexpand\E\hfil}}%
         \fi
         \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
+        \trace{e}{tempa(1)=\tempa}%
         \ifx\tempa\loc@Cut
           \prevdepth=-1000pt % Ignore the presence of the figure
           \let\w@tsit\gr@phic
@@ -429,8 +443,12 @@
             \immediatefigurefalse
           }%
         \fi
+        \trace{e}{fi level 3}%
       \fi
+      \trace{e}{fi level 2}%
     \fi
+    \tracingmacros=0\tracingifs=0
+    \trace{e}{tempc=\tempc}%
     \@@sb@width@calcs
     \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
       \if p\tempc\relax\else
@@ -469,6 +487,7 @@
         \advance\dimen1 by -\b@drwidth pt 
         \advance\dimen1 by -\border@rpadding
     \fi\fi
+    \trace{e}{calculated with dimen1=\the\dimen1}%
 }
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
@@ -513,6 +532,7 @@
     \prevdepth=-1000pt
     \c@th@@ks{\st@rtsb@r}%
     \let\sb@rgrid\gr@dorig
+    \SHOWSTUFF
 }
 \newdimen\sb@rchunkh@ight
 \newdimen\sb@rus@dheightl
@@ -520,6 +540,7 @@
 \let\sb@rgrid\relax
 \def\st@rtsb@r{%Gets run by \cat..\cat*, if one is used. 
   \c@th@@ks{}%Once per box is enough!
+  \trace{e}{st@rtsb@r = @@sbar part 2}%
   \getsbp@ram{sbargrid}\let\sb@rgrid\cp@ram
   \ifx\sb@rgrid\relax\let\sb@rgrid\gr@dorig\fi
   \ifble@dthisbar
@@ -795,7 +816,7 @@
   \getsbp@ram{hascol}\let\h@scol\cp@ram%
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
-  \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
+  \getsbp@ram{spacebeside}\ifx\cp@ram\relax\x@\let\x@\sp@cebeside=\ifx\tempc\loc@M \z@ropt\else\DefaultSpaceBeside\fi\else\let\sp@cebeside\cp@ram\fi
   \let\s@vedtpadding=\fb@tpadding%%Preserve old value
   \let\s@vedbpadding=\fb@bpadding%%Preserve old value
   \prepb@rderdims
@@ -905,22 +926,22 @@
       \unvbox\extb@x}%
     \xdef\@@sb@rfirstskip{0pt}%
   \fi
-  \trace{eg}{Initial skip: \the\dimen4}%
-  \advance\dimen4 by -\ht\extb@x
-  \loop\ifdim\dimen4> \onel@neunit
-    \advance\dimen4 by -\onel@neunit
-  \repeat
-  \dimen9=-0.5pt %(Almost) no overlap between box contents and the border.
-  \ifx\@@sb@rgrid\gr@dorig\else
-    \dimen9=-\@@sb@rfirstskip
-  \fi
-  \loop\ifdim\dimen4<\dimen9
-    \advance\dimen4 by \onel@neunit
-  \repeat
-  \trace{eg}{Adjusted skip:\the\dimen4 (\the\ht\extb@x+\the\dp\extb@x)/\the\onel@neunit }%
-  \trace{eg}{sb@rgrid:\@@sb@rgrid. sb@rfirstskip was \@@sb@rfirstskip. doIntskip\ifdoIntskip true\else false\fi}%
-  \edef\b@xgridadj{\the\dimen4}%
   \ifdoIntskip
+    \trace{eg}{Initial skip: \the\dimen4}%
+    \advance\dimen4 by -\ht\extb@x
+    \loop\ifdim\dimen4> \onel@neunit
+      \advance\dimen4 by -\onel@neunit
+    \repeat
+    \dimen9=-0.5pt %(Almost) no overlap between box contents and the border.
+    \ifx\@@sb@rgrid\gr@dorig\else
+      \dimen9=-\@@sb@rfirstskip
+    \fi
+    \loop\ifdim\dimen4<\dimen9            % can we use \m@d here?
+      \advance\dimen4 by \onel@neunit
+    \repeat
+    \trace{eg}{Adjusted skip:\the\dimen4 (\the\ht\extb@x+\the\dp\extb@x)/\the\onel@neunit }%
+    \trace{eg}{sb@rgrid:\@@sb@rgrid. sb@rfirstskip was \@@sb@rfirstskip. doIntskip\ifdoIntskip true\else false\fi}%
+    \edef\b@xgridadj{\the\dimen4}%
     \trace{e}{hts: \the\headingtopspace, b@xintadj:\b@xintadj, b@xgridadj\b@xgridadj}%
     \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
       \trace{e}{No intskip}%
@@ -1024,17 +1045,17 @@
     \let\b@drtop=\fstb@drtop
     \ch@ckhasb@rder
     \prepb@rderbox\extchunkb@x 
-    \ifx\picl@c\loc@Inl
-      \headingtopspace=0pt %-\oldlastdepth ?
-    \else
+    %\ifx\picl@c\loc@Inl
+    %  \headingtopspace=0pt %-\oldlastdepth ?
+    %\else
       \headingtopspace=0pt
-    \fi
-    \ifble@d
-      %\advance\headingtopspace -\tble@d
-    \fi
-    \ifhasb@rder\ifsb@rfillpage
-        %\advance\headingtopspace \fb@tpadding
-    \fi\fi
+    %\fi
+    %\ifble@d
+      %%\advance\headingtopspace -\tble@d
+    %\fi
+    %\ifhasb@rder\ifsb@rfillpage
+        %%\advance\headingtopspace \fb@tpadding
+    %\fi\fi
     \trace{e}{heading topspace=\the\headingtopspace}%
     \getsbp@ram{spacebefore}\ifx\cp@ram\relax\else
       \advance\headingtopspace by \cp@ram\verticalsp@ceunit
@@ -1050,7 +1071,7 @@
           \advance\dimen1 by \b@xgridadj
       \fi\fi
       %\message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
-      \@LOOP\ifdim\dimen1 <0.01\onel@neunit
+      \@LOOP\ifdim\dimen1 <0.01\onel@neunit     % only wanted if want gridding
         \advance\dimen1 by \onel@neunit
       \@REPEAT
       \ifsb@rfillpage
@@ -1086,7 +1107,7 @@
       \fi\fi
       \relax
       %\message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
-      \@LOOP\ifdim\dimen1 <0.1\onel@neunit
+      \@LOOP\ifdim\dimen1 <0.1\onel@neunit      % gridding again!
         \advance\dimen1 by \onel@neunit
       \@REPEAT
       \trace{e}{Borderless Box \the\ht\extchunkb@x +\the\dp\extchunkb@x x \the\wd\extchunkb@x is offset \the\headingtopspace+\ifdoIntskip\b@xintadj\else\b@xextadj\fi+\b@dr@top@pad (v) \ifBoxLikeBorder and <\b@dr@left@pad|\b@dr@right@pad> (h)\fi. Final adjust\the\dimen1,\sp@ceafter}%
@@ -1095,7 +1116,7 @@
             \vbox{\vskip\b@dr@top@pad
               \hbox{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}}%
           \else
-            \box\extchunkb@x
+            \box\extchunkb@x        % How many more layers deep are we going?
           \fi
           \ifsb@rfillpage\else\kern\dimen1\fi
           \vskip\sp@ceafter}%

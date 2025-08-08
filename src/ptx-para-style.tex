@@ -528,7 +528,8 @@
      \ifdim\dimen0>0.5 \textwidth \def\c@l{1}\fi
      \trace{C}{startx:#1-\c@rref=\csname startx:#1-\c@rref\endcsname, c@l=\c@l}\fi
    \else % single column
-     \ifodd\pageno \def\c@l{1}\fi\fi
+     \let\p@num\pageno \ifcsname pnum:#1-\c@rref\endcsname \x@\let\x@\p@num\csname pnum:#1-\c@rref\endcsname\fi
+     \ifodd\p@num \def\c@l{1}\fi\fi
    \getp@ram{justification}{#1}{\tmpstyst@k}%
    \ifx\p@ram\@nner \ifnum\c@l=0 \let\p@ram\r@ght\else\let\p@ram\l@ft\fi
    \else\ifx\p@ram\@uter \ifnum\c@l=0 \let\p@ram\l@ft\else\let\p@ram\r@ght\fi\fi\fi
@@ -683,11 +684,13 @@
     \iftemp\let\B@xtype\m@rker
       \trace{eh}{Style exists for \m@rker box}%
     \fi
-    \trace{eh}{Starting \B@xtype box for \m@rker}%
-    \x@\@sb\x@\cat\B@xtype box\cat*
+    \trace{eh}{Starting \B@xtype box for \m@rker, ifcurrentlevel=\the\currentiflevel}%
+    \SHOWSTUFF\@sb\SHOWSTUFF\x@\cat\B@xtype box\cat*
     \let\m@rker\tmphb
   \fi
   \mcpushunderms{P}{#1}%
+  \tracingmacros=0\tracingifs=0
+  \trace{e}{ifcurrentlevel=\the\currentiflevel}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
   \let\styst@k=\empty
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
@@ -1149,6 +1152,7 @@
 }
 
 \def\@parstart#1#2#3#4#5#6{%
+% #1 curref, #2 type, #3 mrkr, #4 baselineskip, #5 xstart, #6 ystart
   \prev@y=#6\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
@@ -1157,12 +1161,14 @@
   \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty
   \getp@ram{justification}{#3}{#3}%
   \ifnum \ifx\p@ram\@nner 1\else\ifx\p@ram\@uter 1\else 0\fi\fi =1
-    \immediate\write\delayf@le{\string\ParPos{#3}{#1}{#5}}\fi
+    \immediate\write\delayf@le{\string\ParPos{#3}{#1}{\this@pgno}{#5}}\fi
 }
 
-\def\ParPos#1#2#3{
-%   #1 mrkr, #2 c@rref, #3 start xpos
-  \x@\xdef\csname startx:#1-#2\endcsname{#3}%\trace{C}{startx:#1-#2 = #3}%
+\def\ParPos#1#2#3#4{
+%   #1 mrkr, #2 c@rref, #3 pageno, #4 start xpos
+  \x@\xdef\csname startx:#1-#2\endcsname{#4}%
+  \x@\xdef\csname pnum:#1-#2\endcsname{#3}%
+  %\trace{C}{startx:#1-#2 = [#3] #4}%
 }
 
 \def\@parend#1#2#3#4{%
@@ -1195,7 +1201,7 @@
 }%
 
 \def\@pgstart#1#2#3#4{%
-  \edef\this@pgno{#1}}
+  \xdef\this@pgno{#1}}
 
 \newif\ifp@rlengthimportant
 

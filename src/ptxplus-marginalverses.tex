@@ -36,7 +36,11 @@
     \def\t@@mp{top}%
   \fi
   \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ifrsh@ft left\else right\fi}%
-  \ifversion{5}{\d@marginnote{2}{\t@mp}{v}{\colshiftmode}{\t@@mp}{-\dp\pstr@t}}{\d@marginnote{2}{\t@mp}{v}{\colshiftmode}{center}{0pt}}%
+  \getp@ram{spacebeside}{v}{v+\styst@k}%
+  \ifx\p@ram\relax \getp@ram{spacebefore}{v}{v+\styst@k}%
+    \ifx\p@ram\relax \dimen0=1pt\else\dimen0=\p@ram\IndentUnit \divide\dimen0 by 12\fi
+  \else \dimen0=\p@ram\fi
+  \ifversion{5}{\d@marginnote{2}{\t@mp}{v}{\colshiftmode}{\t@@mp}{\the\dimen0}{-\dp\pstr@t}}{\d@marginnote{2}{\t@mp}{v}{\colshiftmode}{center}{\the\dimen0}{0pt}}%
   \outputmvmkr
 }
 

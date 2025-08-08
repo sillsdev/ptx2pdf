@@ -35,7 +35,7 @@
 \newif\ifm@rginnotesopen 
 \newif\ifm@rginalnotesw@rn
 \newwrite\m@rginnotes
-\plugin@startif{marginnotes}
+%\plugin@startif{marginnotes}
 
 \def\@marginnote#1#2#3#4#5#6#7#8{%
 % #1 = reference, #2 = marker, #3 = side, #4 = valign, #5 = distance from text,
@@ -92,8 +92,10 @@
   \x@\write\x@\m@rginnotes\x@{\wr@tet@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
 }
 
-\def\d@marginnote#1#2#3#4#5#6{%
-% #1 = vbox, #2 = reference, #3 = marker #4 = side #5 = valign #6 = y-shift
+\newdimen\marginnotesgap     % distance from edge of text to start of notes. Not enforced here
+\newdimen\marginnoteswidth   % width of marginal notes allocation - marginnotesgap
+\def\d@marginnote#1#2#3#4#5#6#7{%
+% #1 = vbox, #2 = reference, #3 = marker #4 = side #5 = valign #6 = x-shift #7 = y-shift
   \edef\p@s{#4}%
   \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
   \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else
@@ -102,9 +104,8 @@
   \ifx\p@s\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
   \else\ifx\p@s\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
-  \getp@ram{spacebefore}{#3}{#3+\styst@k}%
-  \ifx\p@ram\relax \dimen0=1pt\else\dimen0=\p@ram\IndentUnit \divide\dimen0 by 12\fi
-  \dimen3 = #6
+  \dimen0 = #6
+  \dimen3 = #7
   \trace{M}{marginnote(#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
   %\dimen0=0pt
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
@@ -115,4 +116,4 @@
   \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%
 }
 
-\plugin@endif
+%\plugin@endif

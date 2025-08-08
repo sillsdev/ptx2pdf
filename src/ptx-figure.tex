@@ -1229,9 +1229,9 @@
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
     \fi
-  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
-  \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
-  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
+    \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
+    \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+    \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
   }%
   \ifvmode \picc@ntents
   \else 
@@ -1504,6 +1504,15 @@
           \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
           }%
 }
+
+\def\MarginNoteSide{outer}
+\def\d@figureMargin#1{%Stick the figure in the margin
+  \dimen0 = \dimexpr \sp@cebeside + \marginnotesgap
+  \getsbp@ram{baseline} \dimen1=\ifx\cp@ram\relax -\baselineskip\else -\cp@ram\fi
+  \advance\dimen1 -\dp\pstr@t
+  \d@marginnote{#1}{\c@rref}{\sb@rmarker}{\MarginNoteSide}{bottom}{\the\dimen0}{\the\dimen1}%
+}
+
 %-cfig_dofigure_7
 
 \newtoks\PicPath % directory containing picture files
