@@ -1,3 +1,9 @@
+ptxprint (2.9.2-1ubuntu2) jammy; urgency=medium
+
+  * Bumped minor patch for packaging test
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Fri, 08 Aug 2025 14:36:06 -0500
+
 ptxprint (2.9.2-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 2.9.2
