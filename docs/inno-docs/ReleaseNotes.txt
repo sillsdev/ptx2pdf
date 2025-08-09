@@ -4,6 +4,10 @@ PTXprint 2.9.2 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
+Bug fixes and Improvements in 2.9.3 (9 Aug 2025)
+  * Fix crash on Import Scripture
+  * Improve Linux packaging options
+
 Bug fixes and Improvements in 2.9.2 (8 Aug 2025)
   * New feature: Layout Analysis in PDF Previewer
      - highlight bad word spaces
