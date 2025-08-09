@@ -5156,16 +5156,17 @@ class GtkViewModel(ViewModel):
         if UnpackDBL(dblfile, prj, tdir):
             pjct = self.prjTree.addProject(prj, os.path.join(tdir, prj), None)
             v = [getattr(pjct, a) for a in ['prjid', 'guid']]
+            extras = [Pango.Weight.NORMAL, "#000000"]
             # add prj to ls_project before selecting it.
             for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
                 lsp = self.builder.get_object(a)
                 allprojects = [x[0] for x in lsp]
                 for i, p in enumerate(allprojects):
                     if prj.casefold() > p.casefold():
-                        lsp.insert(i, v)
+                        lsp.insert(i, v + (extras if a == "ls_projects" else []))
                         break
                 else:
-                    lsp.append(v)
+                    lsp.append(v + (extras if a == "ls_projects" else []))
             ui = self.uilevel
             self.resetToInitValues()
             self.set("fcb_project", prj)
