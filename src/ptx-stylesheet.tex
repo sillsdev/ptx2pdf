@@ -1012,6 +1012,7 @@
   %\message{verse was \meaning\oldv@rse}% Set to empty at chapter number.
   \ifx \oldv@rse\empty
     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+    \ifOmitVerseNumberOne\c@ncelfirstversetrue\fi
   \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
@@ -1123,8 +1124,16 @@
      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
      \ifcsname hookchapter\g@tdstat\endcsname\csname hookchapter\g@tdstat\endcsname\ch@pter
      \else
-       \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+       \ifx\ch@pl@bel\empty\relax 
          \trace{c}{No chapter label in use : \ch@pter}%
+         \getp@ram{posn}{c}{c}\ifx\p@ram\loc@M
+            \setbox\ch@pterbox=\vbox{\hbox{\cstyle{c}{\ch@pter}}}
+            \getp@ram{spacebeside}{c}{c}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
+            %\dp\ch@pterbox=\ht\ch@pterbox \ht\ch@pterbox=0pt
+            \dimen1=\dimexpr\baselineskip -\dp\pstr@t
+            \par\penalty 0 \d@marginnote{\ch@pterbox}{\c@rref}{c}{\MarginNoteSide}{inline}{\the\dimen0}{\the\dimen1}%
+         \else
+            \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
        \else % if \cl present, output chapter label here
          \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
          \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%

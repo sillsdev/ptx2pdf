@@ -182,7 +182,7 @@
     \unvbox\he@dingnotes
     \ifnormalhe@dings\penalty10000 \else\penalty10 \fi
   \fi
-    \global\first@fterheadingtrue
+  \global\first@fterheadingtrue
   \global\he@dingsfalse
   \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
  \fi
@@ -609,6 +609,7 @@
 \def\@p@rstyled@mp#1#2{\@p@rstyle{#1}}
 \def\@p@rstyle#1{%
  \global\let\oldm@rker\m@rker
+ \trace{H}{Starting par style #1 and ending the previous}%
  \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
   \ifx\thisp@rcl@ss\undefined\else
@@ -694,7 +695,7 @@
   \let\styst@k=\empty
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
   \s@tstyst@k%
-  \trace{H}{Marker type: \p@ram, stack: \mcstack [\styst@k] \space toplevel: \iftoplevelp@r True\else False\fi}%
+  \trace{H}{Marker type: \p@ram, stack: \mcstack [\styst@k] \space \styst@kfirst \space toplevel: \iftoplevelp@r True\else False\fi}%
   \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\global\headingmidspace=0pt \else
     \global\headingmidspace=\p@ram\verticalsp@ceunit
   \fi
@@ -770,7 +771,7 @@
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar (#1)}%
   \everypar={%
-   \trace{sP}{everypar! (#1) n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
+   \trace{sP}{everypar! (#1) n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi\space \styst@kfirst}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
@@ -812,6 +813,7 @@
    \getp@ram{firstindent}{\styst@kfirst}{\styst@k}\let\f@rstindent=\p@ram
    \dimen3=\ifx\p@ram\relax 0\else\f@rstindent\fi \IndentUnit
    \ifversion{5}{\ifallowp@rindent\else\ifdim \dimen3>0pt \dimen3=0pt \fi\fi}{}%
+   \trace{C}{\m@rker\space at \c@rref\space allowp@rindent=\ifallowp@rindent true\else false\fi, dimen3=\the\dimen3}%
    %In the code below...
    % dimen3 is first line indent
    % dimen2 is the par indent.
@@ -954,6 +956,8 @@
                       % (note that we don't suppress negative indents, as in \q1 etc)
      \trace{Ds}{\m@rker\ifdiglot\c@rrdstat\fi\space  First indent \f@rstindent * \the\IndentUnit, kern by \the\dimen3}%
      \kern\dimen3                                              %(1)
+    \else
+     \trace{Ds}{No par indent in \m@rker \space at \c@rref \space by \the\dimen3}%
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
