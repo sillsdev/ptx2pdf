@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-default_weights = {"f": 1, "x": 1, "s": 10, "c": 100, "v": 1000}
+default_weights = {"f": 1, "x": 1, "s": 10, "c": 100, "v": 1000, 'esb': 10}
 allfields = "ref marker hpos vpos gap width height depth xoffset yoffset pnum xpos ypos".split()
 mnotelinere = re.compile(r"\\@marginnote" + "".join(r"\{{(?P<{}>.*?)\}}".format(a) for a in allfields))
 
@@ -97,7 +97,7 @@ class MarginNote:
     side: str = ""
 
     def boxshift(self, istop):
-        if self.vpos == "bottom":
+        if self.vpos in ("bottom", "inline"):
             return 0. if istop else self.depth + self.height
         elif self.vpos == "top":
             return self.height if istop else self.depth

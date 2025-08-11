@@ -62,14 +62,15 @@
   \dimen9=\ht#1
   \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6, text = \the#4, side = #2, valign = #3, ht=\the\dimen9}%
   \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
+  \x@\let\x@\do@djust\ifx\t@mpv\@inline\relax\else\vadjust\fi
   \setbox0=\vbox to 0pt{\let\par=\endgraf
-    \ifx\t@mpv\@bottom\else\vss\fi
+    \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi
     \ifx\t@mp\l@ft\llap{\box #1\kern #5\kern #4}%
     \else\noindent\hfill\rlap{\kern #5\kern #4\box #1}%
     \fi
     \ifx\t@mpv\@top\else\vss\fi}%
   % \ifx\t@mp\l@ft\showbox0
-  \dp0=0pt\vadjust {\kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9}%
+  \dp0=0pt\do@djust {\kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9}%
   \endgroup
 }
 
@@ -101,8 +102,8 @@
   \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else
     \ifm@rginalnotesw@rn\else\MSG{*** marginnotes: no marginal note for #2-#3; re-run for accurate note positions}\global\m@rginalnotesw@rntrue\fi
     \edef\p@geno{\the\pageno}\fi
-  \ifx\p@s\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
-  \else\ifx\p@s\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
+  \ifx\p@s\@uter \ifodd\p@geno \ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi \else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
+  \else\ifx\p@s\@nner\ifodd\p@geno \ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi \else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
   \dimen0 = #6
   \dimen3 = #7

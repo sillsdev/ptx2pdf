@@ -157,6 +157,8 @@
 \endbc@l}%
 }
 
+\def\mkb@rder@none{\setbox\b@rderbox\vbox to \b@rderbox@height{}}
+
 \def\ch@ckiftextborderadj{\trace{eb}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \ifb@dy body\fi,\pretextb@rderskip, \posttextb@rderskip}%
   \tempfalse\ifm@rksonpage
   \ifdim 0pt < \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax

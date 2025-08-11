@@ -124,6 +124,7 @@ class Sense:
     sd:     List[str]
     gloss:  str
     defshrt:    str
+    numrefs: int
 
 class SemDomData:
 
@@ -341,12 +342,12 @@ class SemDomData:
                 m.sd = None
             elif len(newcodes):
                 # what if more than one sd?
-                m.sd = [s for s in newcodes if s not in self.namecodes]
+                m.hsd = [s for s in newcodes if s not in self.namecodes]
                 goods.append((lexeme, m))
             else:
                 bads.append((lexeme, m))
                 m.sd = None
-        res = [[m.sid, l, m.gloss] + sorted(m.sd, key=float) for l, m in goods]
+        res = [[m.sid, str(m.numrefs), l, m.gloss, ", ".join(m.sd),  ", ".join(sorted(m.hsd, key=float))] for l, m in goods]
         write_csv(args.outfile, res)
         print(f"{len(res)}/{len(self.meanings)} mappings")
         print(f"{len(names)}/{len(self.meanings)} names")
@@ -478,7 +479,8 @@ class SemDomData:
                             break
                 defshrt = sense.findtext(".//DefinitionShort")
                 gloss = sense.findtext(".//Gloss")
-                lmeaning = Sense(lemma, lid, code, gloss, defshrt)
+                numrefs = len(sense.findall(".//LEXReference"))
+                lmeaning = Sense(lemma, lid, code, gloss, defshrt, numrefs)
                 target.append(lmeaning)
                 for syn in sense.findall(".//LEXSynonym"):
                     alt.setdefault(syn.text.strip(), []).append(lmeaning)

@@ -684,13 +684,12 @@
     \iftemp\let\B@xtype\m@rker
       \trace{eh}{Style exists for \m@rker box}%
     \fi
-    \trace{eh}{Starting \B@xtype box for \m@rker, ifcurrentlevel=\the\currentiflevel}%
-    \SHOWSTUFF\@sb\SHOWSTUFF\x@\cat\B@xtype box\cat*
+    \trace{eh}{Starting \B@xtype box for \m@rker}%
+    \@sb\x@\cat\B@xtype box\cat*
     \let\m@rker\tmphb
   \fi
   \mcpushunderms{P}{#1}%
   \tracingmacros=0\tracingifs=0
-  \trace{e}{ifcurrentlevel=\the\currentiflevel}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
   \let\styst@k=\empty
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop

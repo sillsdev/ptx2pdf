@@ -382,6 +382,7 @@
     \xdef\pic@lign{\l@cspec@b}\xdef\picV@lign{\l@cspec@c}%
     \trace{g}{Experimental page / full-page \w@tsit (\pic@lign|\picV@lign)}%
   \fi
+  \ifx\l@cspec@a\loc@M\global\picUsesInsfalse\fi
 }
 %-cfig_parsepicuse
 
@@ -1510,7 +1511,9 @@
   \dimen0 = \dimexpr \sp@cebeside + \marginnotesgap
   \getsbp@ram{baseline} \dimen1=\ifx\cp@ram\relax -\baselineskip\else -\cp@ram\fi
   \advance\dimen1 -\dp\pstr@t
-  \d@marginnote{#1}{\c@rref}{\sb@rmarker}{\MarginNoteSide}{bottom}{\the\dimen0}{\the\dimen1}%
+  \setbox#1=\vtop{\unvbox#1}
+  \trace{e}{Margin figure x=\the\dimen0, y=\the\dimen1, ht=\the\ht#1}%
+  \d@marginnote{#1}{\c@rref}{\sb@rmarker}{\MarginNoteSide}{inline}{\the\dimen0}{\the\dimen1}%
 }
 
 %-cfig_dofigure_7

@@ -114,12 +114,14 @@
   \edef\thisalpha{#1}%
   \edef\thisRGB{#2}%
   \ifNoTransparency
-    \ifdim 1pt = #1 pt \relax\else
+    \ifdim 1pt = #1 pt \relax\else\ifdim 0pt = #1 pt\relax\else
       \edef\thisRGB{\x@\remove@transpancy\thisRGB|\thisalpha\noexpand\E }%
       \edef\thisalpha{1}%
       \MSG{* Transparency is disabled, anything behind transparent item will be hidden. #2 -> \thisRGB}%
-    \fi
+    \fi\fi
   \fi
+  \temptrue
+  \ifdim 0pt = \thisalpha pt \relax\tempfalse\else
   \ifdim 1pt = \thisalpha pt \relax %Not feint
     \x@\special\x@{pdf:code q \thisRGB\space rg}%
   \else 
@@ -127,9 +129,11 @@
     \x@\special\x@{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca \thisalpha /AIS false >>  >> >>}%
     \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs \thisRGB\space rg}%
     \global\advance\feintb@xnum by 1
+  \fi\fi
+  \iftemp
+    #3%
+    \special{pdf:code Q}%
   \fi
-  #3%
-  \special{pdf:code Q}%
 }%
 
 \newif\ifble@d
@@ -319,8 +323,6 @@
   \getsbp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
   \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
   \global\let\fgfig@cutout\false
-  \tracingifs=1
-  \trace{e}{s@tsb@rwidth iflevel=\the\currentiflevel}%
   \ifx\cp@ram\relax
     \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end% sets up temp[abcd] 
     \@@setsbp@cinswid% sets p@cinswid
@@ -337,8 +339,7 @@
     \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
     \trace{e}{fgfigsp@c=\fgfigsp@c}%
     % And shrink further if s has been specified for the fg picture
-    \tracingmacros=1\tracingifs=1
-    \ifx\fgfigsp@c\relax\trace{e}{move on \the\currentiflevel}\else\trace{e}{keep going}%
+    \ifx\fgfigsp@c\relax\else
       \prepb@rderdims
       \set@ref@dims
       \p@rsefigscale{fg}%
@@ -447,7 +448,6 @@
       \fi
       \trace{e}{fi level 2}%
     \fi
-    \tracingmacros=0\tracingifs=0
     \trace{e}{tempc=\tempc}%
     \@@sb@width@calcs
     \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
@@ -532,7 +532,6 @@
     \prevdepth=-1000pt
     \c@th@@ks{\st@rtsb@r}%
     \let\sb@rgrid\gr@dorig
-    \SHOWSTUFF
 }
 \newdimen\sb@rchunkh@ight
 \newdimen\sb@rus@dheightl
@@ -816,7 +815,7 @@
   \getsbp@ram{hascol}\let\h@scol\cp@ram%
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
-  \getsbp@ram{spacebeside}\ifx\cp@ram\relax\x@\let\x@\sp@cebeside=\ifx\tempc\loc@M \z@ropt\else\DefaultSpaceBeside\fi\else\let\sp@cebeside\cp@ram\fi
+  \getsbp@ram{spacebeside}\ifx\cp@ram\relax\x@\let\x@\sp@cebeside\ifx\tempc\loc@M \z@ropt\else\DefaultSpaceBeside\fi\else\let\sp@cebeside\cp@ram\fi
   \let\s@vedtpadding=\fb@tpadding%%Preserve old value
   \let\s@vedbpadding=\fb@bpadding%%Preserve old value
   \prepb@rderdims
@@ -1207,8 +1206,11 @@
           %\showlists
           %\ifhmode |+\fi
         \fi
+        \ifx\loc@ption\loc@M
+          \d@figureMargin\extchunkb@x
+        \fi
         \ifvoid\extchunkb@x\else
-          \message{Could not understand / interpret position \loc@ption for \c@tegory:\sb@rmarker}%
+          \message{Could not understand / interpret position \loc@ption \space for \c@tegory:\sb@rmarker}%
         \fi
       \fi
     \fi
