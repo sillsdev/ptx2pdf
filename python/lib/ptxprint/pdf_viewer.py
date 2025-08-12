@@ -920,7 +920,6 @@ class PDFViewer:
         # collisionPages  = getattr(self.model, "collisionPages", []) or []
         # horizWhitespace = getattr(self.model, "horizWhitespace", []) or []
         # vertRivers      = getattr(self.model, "vertRivers", []) or []
-        ufPages         = [1,2,3,4,40,24]
         collisionPages  = [7,9,12,13,30,45]
         horizWhitespace = [9,11,13,20,40,60]
         vertRivers      = [3,6,9,12,15,18,21,24,27]
@@ -1040,96 +1039,6 @@ class PDFViewer:
             # Use markup so colors are shown
             o.set_tooltip_markup(seekText)
 
-
-    def old_updatePageNavigation(self):
-        """Update button sensitivity and tooltips dynamically based on the current index."""
-        # Get current page index and total pages
-        pg = self.current_index or 1
-        num_pages = self.numpages 
-        ufPages = self.model.ufPages
-        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
-
-        # Get page number mapping
-        pnumpg = self.parlocs.pnumorder[pg - 1] if self.parlocs and pg <= len(self.parlocs.pnumorder) else 1
-
-        # Enable or disable navigation buttons based on position
-        if is_rtl:
-            self.model.builder.get_object("btn_page_first").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_previous").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_last").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_next").set_sensitive(pg > 1)
-        else:
-            self.model.builder.get_object("btn_page_first").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_previous").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_last").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_next").set_sensitive(pg < num_pages)
-
-        seekPrevBtn = self.model.builder.get_object("btn_seekPage2fill_previous")
-        seekNextBtn = self.model.builder.get_object("btn_seekPage2fill_next")
-        seekPrevBtn.set_sensitive(False)
-        seekNextBtn.set_sensitive(False)
-
-        total_count = len(ufPages)
-        self.model.builder.get_object("bx_seekPage").set_sensitive(total_count > 0)
-        for btn in ['btn_page_first', 'btn_page_previous', 'btn_page_next', 'btn_page_last', 
-                    'btn_seekPage2fill_previous', 'btn_seekPage2fill_next']:
-            action = btn.split("_")[-1]
-            o = self.model.builder.get_object(btn)
-            tt = o.get_tooltip_text()
-            if not 'seekPage' in btn:
-                o.set_tooltip_text(re.sub(action.title(), self.swap4rtl(action).title(), tt))
-            else:
-                if total_count < 1:
-                    seekText = _("Locate {} issue page.{}(None identified)").format(self.swap4rtl(action), "\n")
-                else:
-                    curr_pos = self.ufCurrIndex
-                    firstUFpg = ufPages[0]
-                    lastUFpg = ufPages[-1]
-
-                    if is_rtl:  # Fix later to include Arabic UI detection
-                        hide_prev = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
-                        hide_next = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-                    else:
-                        hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-                        hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
-
-                    seekPrevBtn.set_sensitive(not hide_prev)
-                    seekNextBtn.set_sensitive(not hide_next)
-
-                    window_size = 3  # Show 3 numbers before and after the current one
-
-                    # --- If there are fewer than 7 pages, show all without ellipses ---
-                    if total_count <= 7:
-                        formatted_pages = list(map(str, ufPages))
-                        if curr_pos < len(formatted_pages):
-                            formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
-                        pgs = "  ".join(formatted_pages)
-                        elipsis = ""  # No "(of X)" when all numbers are shown
-                    else:
-                        # Determine sliding window bounds
-                        start_idx = max(0, curr_pos - window_size)
-                        end_idx = min(total_count, curr_pos + window_size + 1)
-                        display_pages = ufPages[start_idx:end_idx]
-
-                        # Format pages with marker `<number>`
-                        formatted_pages = list(map(str, display_pages))
-                        formatted_pages[display_pages.index(ufPages[curr_pos])] = f"<{formatted_pages[display_pages.index(ufPages[curr_pos])]}>" 
-
-                        # Add leading/trailing ellipses when necessary
-                        if start_idx > 0:
-                            formatted_pages.insert(0, "...")
-                        if end_idx < total_count:
-                            formatted_pages.append("...")
-
-                        pgs = "  ".join(formatted_pages)
-                        elipsis = f" (of {total_count})"  # Show count only when ellipses are present
-
-                    if is_rtl or self.model.lang == 'ar_SA':
-                        pgs = "  ".join(reversed(pgs.split("  ")))  # Reverse order of numbers in RTL mode
-
-                    seekText = _("Locate {} issue page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
-                o.set_tooltip_text(seekText)
-        
     def on_button_press(self, widget, event):
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
             self.on_update_pdf(None)
