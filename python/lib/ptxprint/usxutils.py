@@ -517,9 +517,9 @@ class Usfm:
     def versesToEnd(self):
         root = self.getroot()
         addesids(root)
-        for el in root.findall('verse[eid=""]'):
+        for el in root.findall('.//verse[eid=""]'):
             el.parent.remove(el)
-        for el in root.findall('verse'):
+        for el in root.findall('.//verse'):
             ref = RefList(el.get('eid'))[0]
             el.set('number', str(ref.verse) + (ref.subverse or ""))
             del el.attrib['eid']
