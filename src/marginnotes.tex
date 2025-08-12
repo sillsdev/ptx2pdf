@@ -62,6 +62,7 @@
   \dimen9=\ht#1
   \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6, text = \the#4, side = #2, valign = #3, ht=\the\dimen9}%
   \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
+  \dimen8=\lastdepth
   \x@\let\x@\do@djust\ifx\t@mpv\@inline\relax\else\vadjust\fi
   \setbox0=\vbox to 0pt{\let\par=\endgraf
     \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi
@@ -70,7 +71,11 @@
     \fi
     \ifx\t@mpv\@top\else\vss\fi}%
   % \ifx\t@mp\l@ft\showbox0
-  \dp0=0pt\do@djust {\kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9}\penalty 10000%
+  \dp0=0pt\do@djust{\nointerlineskip\baselineskip=0pt
+    %\ifx\t@mpv\@inline\else\nobreak\fi
+    \vskip\topskip\vskip-\dimen8\vbox to 0pt{\hbox to 10pt{}}%
+    \kern -\topskip\kern\dimen8\kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9
+  }\ifx\t@mpv\@inline\nobreak\fi%
   \endgroup
 }
 
@@ -90,7 +95,7 @@
 \m@rginnotesopenfalse
 \def\writem@rginnote{%
   \pdfsavepos
-  \x@\write\x@\m@rginnotes\x@{\wr@tet@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
+  \x@\write\x@\m@rginnotes\x@{\wr@tet@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\nobreak% since ther emay be baselineskip glue following
 }
 
 \newdimen\marginnotesgap     % distance from edge of text to start of notes. Not enforced here
