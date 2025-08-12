@@ -12,10 +12,10 @@
   \ifdim\VerseBoxWidth=0pt \getverseboxwidth\fi
   \trace{v}{position is \colshiftmode, VerseBoxWidth=\the\VerseBoxWidth}%
   \ifnum\c@rrentcols=1 \edef\t@mpa{page}\else\edef\t@mpa{col}\fi
-  \ifx\v@rsefrom\v@rseto\edef\t@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\t@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
-  \ifcsname marginnote-\t@mp @v:\t@mpa no\endcsname \count10=\csname marginnote-\t@mp @v:\t@mpa no\endcsname
-    \trace{v}{from marginnote-\t@mp @v:\t@mpa no, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
-  \else\trace{v}{no marginnote-\t@mp @v:\t@mpa no, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
+  \ifx\v@rsefrom\v@rseto\edef\mt@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\mt@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
+  \ifcsname marginnote-\mt@mp @v:\t@mpa no\endcsname \count10=\csname marginnote-\mt@mp @v:\t@mpa no\endcsname
+    \trace{v}{from marginnote-\mt@mp @v:\t@mpa no, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
+  \else\trace{v}{no marginnote-\mt@mp @v:\t@mpa no, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
   \trace{v}{pagenumber is \ift@mp odd\else even\fi, and side is \colshiftmode, value=\the\count10, mcstack=\mcstack}%
   \ifnum \ifx\colshiftmode\@nner\ift@mp 0\else 1\fi\else\ifx\colshiftmode\@uter\ift@mp 1\else 0\fi\else\ifx\colshiftmode\r@ght 1\else 0\fi\fi\fi =0
     \rsh@fttrue\else\rsh@ftfalse
@@ -35,12 +35,12 @@
         \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
     \def\t@@mp{top}%
   \fi
-  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ifrsh@ft left\else right\fi}%
+  \trace{v}{verse \mt@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ifrsh@ft left\else right\fi}%
   \getp@ram{spacebeside}{v}{v+\styst@k}%
   \ifx\p@ram\relax \getp@ram{spacebefore}{v}{v+\styst@k}%
     \ifx\p@ram\relax \dimen0=1pt\else\dimen0=\p@ram\IndentUnit \divide\dimen0 by 12\fi
   \else \dimen0=\p@ram\fi
-  \ifversion{5}{\d@marginnote{2}{\t@mp}{v}{\colshiftmode}{\t@@mp}{\the\dimen0}{-\dp\pstr@t}}{\d@marginnote{2}{\t@mp}{v}{\colshiftmode}{center}{\the\dimen0}{0pt}}%
+  \ifversion{5}{\d@marginnote{2}{\mt@mp}{v}{\colshiftmode}{\t@@mp}{\the\dimen0}{-\dp\pstr@t}}{\d@marginnote{2}{\mt@mp}{v}{\colshiftmode}{center}{\the\dimen0}{0pt}}%
   \outputmvmkr
 }
 

@@ -56,14 +56,22 @@
   \trace{M}{defining marginnote-#1@#2:pageno = #5, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1 (smf=\SideMarginFactor x\the\MarginUnit, tw=\the\textwidth, bg=\the\BindingGutter)}%
 }
 
+\newbox\m@rginboxes
+\def\m@rgincollect#1{\setbox1=\vbox{#1}\global\setbox\m@rginboxes=\vbox{\box1\unvbox\m@rginboxes}\trace{e}{Adding vadj for \the\wd\m@rginboxes}}
+\def\m@rginvadj{\ifnum\currentgrouptype=0 \ifdim\wd\m@rginboxes>0pt\trace{e}{vadjusting boxes in mode \the\currentgrouptype}\loop
+    \global\setbox\m@rginboxes=\vbox{\unvbox\m@rginboxes \global\setbox0=\lastbox}%
+    \ifdim\wd0>0pt\trace{e}{vadjusting a box wd=\the\wd0}\vadjust{\special{IAFFM1}}\vadjust{\unvbox0}\vadjust{\special{IAFFM2}}%
+  \repeat
+  \global\setbox\m@rginboxes=\box\voidb@x\fi\fi}
+
 \def\pl@cemnote#1#2#3#4#5#6{%
 % #1 = vbox, #2 = side, #3 = valign, #4 = distance from text, #5 = x-shift, #6 = y-shift
   \edef\t@mp{#2}\edef\t@mpv{#3}%
   \dimen9=\ht#1
-  \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6, text = \the#4, side = #2, valign = #3, ht=\the\dimen9}%
+  \trace{M}{\t@mpv, \t@mp \space kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6, text = \the#4, side = #2, valign = #3, ht=\the\dimen9}%
   \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
   \dimen8=\lastdepth
-  \x@\let\x@\do@djust\ifx\t@mpv\@inline\relax\else\vadjust\fi
+  \x@\let\x@\do@djust\ifx\t@mpv\@inline\m@rgincollect\else\vadjust\fi
   \setbox0=\vbox to 0pt{\let\par=\endgraf
     \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi
     \ifx\t@mp\l@ft\llap{\box #1\kern #5\kern #4}%
@@ -71,11 +79,13 @@
     \fi
     \ifx\t@mpv\@top\else\vss\fi}%
   % \ifx\t@mp\l@ft\showbox0
-  \dp0=0pt\do@djust{\nointerlineskip\baselineskip=0pt
+  \dp0=0pt\do@djust{%\nointerlineskip\baselineskip=0pt
     %\ifx\t@mpv\@inline\else\nobreak\fi
-    \vskip\topskip\vskip-\dimen8\vbox to 0pt{\hbox to 10pt{}}%
-    \kern -\topskip\kern\dimen8\kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9
-  }\ifx\t@mpv\@inline\nobreak\fi%
+    %\vskip\topskip\vskip-\dimen8
+    %\vbox to 0pt{\hbox to 10pt{}}%
+    %\kern -\topskip\kern\dimen8
+    \kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9
+  }%\ifx\t@mpv\@inline\nobreak\fi%
   \endgroup
 }
 
@@ -89,6 +99,7 @@
     \openout\m@rginnotes="#1"
     \m@rginnotesopentrue
     \addtoendhooks{\finishm@rginnotes "#1"}
+    \addtoeveryparhooks{\m@rginvadj}
   \fi
 }
 
