@@ -54,6 +54,7 @@ from ptxprint.report import Report
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
+import unicodedata
 from threading import Thread
 from base64 import b64encode, b64decode
 from io import BytesIO
@@ -62,6 +63,7 @@ from dataclasses import asdict
 from zipfile import ZipFile, BadZipFile, ZIP_DEFLATED
 from usfmtc.reference import Ref, Environment
 from collections import defaultdict
+
 
 logger = logging.getLogger(__name__)
 
@@ -1829,7 +1831,13 @@ class GtkViewModel(ViewModel):
         self.doBookListChange()
 
     def doBookListChange(self):
-        bls = self.get('ecb_booklist', '')
+        raw_bls = self.get('ecb_booklist', '').strip()
+        normalized = unicodedata.normalize('NFD', raw_bls)
+        no_accents = ''.join(ch for ch in normalized if unicodedata.category(ch) != 'Mn')
+        cleaned = re.sub(r'[^A-Za-z0-9\-:;, ]+', '', no_accents)
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+        bls = re.sub(r'-END', '-end', cleaned.upper())
+        self.set('ecb_booklist', bls)
         self.bookrefs = None
         bl = self.getAllBooks()
         if not self.booklistKeypressed and not len(bl):
@@ -1847,7 +1855,7 @@ class GtkViewModel(ViewModel):
             w.remove(10)
         self.userconfig.set('init', 'mruBooks', "\n".join(self.mruBookList))
         self.showmybook()
-        
+
     def onSaveConfig(self, btn, force=False):
         """ Save the view """
         if self.project.prjid is None or (not force and self.configLocked()):
