@@ -1208,7 +1208,7 @@
         \fi
         \ifx\loc@ption\loc@M
           \ifhmode\else\prevdepth=\oldlastdepth\fi
-          \d@figureMargin\extchunkb@x
+          \d@figureMargin{\the\extchunkb@x}%
         \fi
         \ifvoid\extchunkb@x\else
           \message{Could not understand / interpret position \loc@ption \space for \c@tegory:\sb@rmarker}%

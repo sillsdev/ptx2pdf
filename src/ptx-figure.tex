@@ -1514,7 +1514,7 @@
   \lastdepth=\prevdepth
   %\kern-\baselineskip
   \setbox#1=\vtop{\unvbox#1}
-  \trace{e}{Margin figure x=\the\dimen0, y=\the\dimen1, ht=\the\ht#1, lastdepth=\the\lastdepth}%
+  \trace{e}{Margin figure x=\the\dimen0, y=\the\dimen1, ht=\the\ht#1+\the\dp#1*\the\wd#1, lastdepth=\the\lastdepth}%
   \d@marginnote{#1}{\c@rref}{\sb@rmarker}{\MarginNoteSide}{inline}{\the\dimen0}{\the\dimen1}%
   \prevdepth=\lastdepth
   \trace{e}{prevdepth=\the\lastdepth}%

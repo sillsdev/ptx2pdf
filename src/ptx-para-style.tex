@@ -771,7 +771,7 @@
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar (#1)}%
   \everypar={%
-   \trace{sP}{everypar! (#1) n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi\space \styst@kfirst}%
+   \trace{sP}{everypar! (#1) n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi\space \styst@kfirst\space mode=\the\currentgrouptype}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
