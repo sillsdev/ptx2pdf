@@ -517,12 +517,12 @@ class Usfm:
     def versesToEnd(self):
         root = self.getroot()
         addesids(root)
-        for el in root.findall('.//verse[eid=""]'):
-            el.parent.remove(el)
         for el in root.findall('.//verse'):
-            ref = RefList(el.get('eid'))[0]
-            el.set('number', str(ref.verse) + (ref.subverse or ""))
-            del el.attrib['eid']
+            if 'eid' in el.attrib:
+                ref = RefList(el.get('eid'))[0]
+                newel = el.parent.makeelement('char', attrib={'style': 'vp'})
+                newel.text = str(ref.verse) + (ref.subverse or "")
+                el.parent.insert(el.parent.index(el)+1, newel)
 
     def iterel(self, e, atend=None):
         yield e
