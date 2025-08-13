@@ -362,22 +362,23 @@
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
     \let\styst@k\empty
-    \parfillskip=0pt plus 1fil
-    \leftskip=0pt \rightskip=0pt
-    \getp@ram{justification}{#1}{#1}%
-    \ifx\p@ram\c@nter
-     \leftskip=\noteRag \rightskip=\leftskip \parfillskip=0pt
-    \else\ifx\p@ram\l@ftb@l
-     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
-    \else\ifx\p@ram\l@ft
-     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
-    \else\ifx\p@ram\r@ght
-     \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
-    \fi\fi\fi\fi
-    \getp@ram{leftmargin}{#1}{#1}%
-    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-    \getp@ram{rightmargin}{#1}{#1}%
-    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+    \s@tsideskips{#1}{\noteRag}%
+%    \parfillskip=0pt plus 1fil
+%    \leftskip=0pt \rightskip=0pt
+%    \getp@ram{justification}{#1}{#1}%
+%    \ifx\p@ram\c@nter
+%     \leftskip=\noteRag \rightskip=\leftskip \parfillskip=0pt
+%    \else\ifx\p@ram\l@ftb@l
+%     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
+%    \else\ifx\p@ram\l@ft
+%     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
+%    \else\ifx\p@ram\r@ght
+%     \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
+%    \fi\fi\fi\fi
+%    \getp@ram{leftmargin}{#1}{#1}%
+%    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+%    \getp@ram{rightmargin}{#1}{#1}%
+%    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \trace{n}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
@@ -1251,6 +1252,30 @@
 }
 %-c_makehboxofhboxes
 
+% Marginal notes
+\def\marginaln@te#1{\x@\gdef\csname note-no-insert-#1\endcsname{\n@test@rt{#1}}%
+  \x@\gdef\csname endnote-no-insert-#1\endcsname{\n@te@nd{#1}}%
+  \x@\newb@x\csname nm-box-#1\endcsname
+  \x@\gdef\csname nm-cref-#1\endcsname{#1}%
+  \x@\newc@unt\csname nm-count-#1\endcsname
+}
+\def\n@test@rt#1{\n@tewidth=\dimexpr \marginnoteswidth - \marginnotesgap\relax
+  \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup\usespacebeforefalse
+    \s@tsideskips{#1}{-1pt}\hsize=\n@tewidth
+    \ifdim\parfillskip>0pt\hfil\fi
+}
+\def\n@te@nd#1{\egroup% \x@\showbox\csname nm-box-#1\endcsname
+  \x@\ifx\csname nm-cref-#1\endcsname\c@rref
+    \x@\advance\csname nm-count-#1\endcsname 1
+  \else \csname nm-count-#1\endcsname=0 \x@\xdef\csname nm-cref-#1\endcsname{\c@rref}\fi
+  \x@\ifnum\csname nm-count-#1\endcsname=0\relax \edef\t@@mp{\c@rref} \else \edef\t@@mp{\c@rref!#1[\x@\the\csname nm-count-#1\endcsname]}\fi
+  \skip1=\baselineskip \s@tbaseline{#1}{#1}%
+  \getp@ram{spacebeside}{#1}{#1}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
+  \advance\dimen0 \marginnotesgap
+  \trace{M}{nm-box-#1 \x@\the\x@\ht\csname nm-box-#1\endcsname+\x@\the\x@\dp\csname nm-box-#1\endcsname*\x@\the\x@\wd\csname nm-box-#1\endcsname}%
+  \d@marginnote{\x@\the\csname nm-box-#1\endcsname}{\t@@mp}{#1}{\MarginNoteSide}{bottom}{\the\dimen0}{\dimexpr -\dp\pstr@t -\baselineskip}%
+  \baselineskip=\skip1
+}
 
 %+cnote_declare
 \edef\pl@scatcode{\the\catcode`+}

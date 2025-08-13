@@ -60,7 +60,7 @@
 \def\m@rgincollect#1{\setbox1=\vbox{#1}\trace{e}{vadj adding box \the\ht1+\the\dp1*\the\wd1}\global\setbox\m@rginboxes=\vbox{\box1\unvbox\m@rginboxes}\trace{e}{Adding vadj for \the\wd\m@rginboxes}}
 \def\m@rginvadj{\ifnum\currentgrouptype=0 \ifvoid\m@rginboxes\else\trace{e}{vadjusting boxes in mode \the\currentgrouptype}\loop
     \global\setbox\m@rginboxes=\vbox{\unvbox\m@rginboxes \global\setbox0=\lastbox}%
-    \ifvoid0 \tempfalse\else\temptrue\fi \iftemp\trace{e}{vadjusting a box wd=\the\wd0}\vadjust{\special{IAFFM1}}\vadjust{\unvbox0}\vadjust{\special{IAFFM2}}%
+    \ifvoid0 \tempfalse\else\temptrue\fi \iftemp\trace{e}{vadjusting a box wd=\the\wd0}\vadjust{\unvbox0}%
   \repeat
   \global\setbox\m@rginboxes=\box\voidb@x\fi\fi}
 
@@ -81,7 +81,7 @@
     \fi
     \ifx\t@mpv\@top\else\vss\fi}%
   % \ifx\t@mp\l@ft\showbox0
-  %\dp0=\dimen7
+  \dp0=0pt
   \do@djust{%\nointerlineskip\baselineskip=0pt
     %\ifx\t@mpv\@inline\else\nobreak\fi
     %\vskip\topskip\vskip-\dimen8
