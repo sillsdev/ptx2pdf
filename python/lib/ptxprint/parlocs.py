@@ -553,4 +553,29 @@ class Paragraphs(list):
             rivers.add_line(l)
         page_rivers = rivers.all_rivers()
         return page_rivers
-        
+
+    # wanted bits 0 = spaces, 1 = collisions, 2 = rivers
+    def getstats(self, wanted, threshold, char_threshold):
+        collisions = set()
+        spaces = set()
+        rivers = set()
+        for pnum in range(len(self.pindex)):
+            for l in self._getlines(pnum):
+                if (wanted & 1) == 1 and pnum not in spaces:
+                    s = l.has_badspace(threshold, char_threshold)
+                    if len(s):
+                        spaces.add(pnum)
+                if (wanted & 2) == 2 and pnum not in collisions:
+                    c = l.has_collisions()
+                    if len(c):
+                        collisions.add(pnum)
+                if ((wanted & 2) == 0 or pnum in collisions) \
+                        and ((wanted & 1) == 0 or pnum in spaces):
+                    break
+            if (wanted & 4) == 4:
+                r = self.getrivers(pnum)
+                if len(r):
+                    rivers.add(pnum)
+        return (sorted(spaces), sorted(collisions), sorted(rivers))
+            
+            

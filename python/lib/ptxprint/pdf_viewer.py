@@ -157,6 +157,9 @@ class PDFViewer:
         self.last_click_time = 0  # Timestamp of the last right-click
         self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
         self.linespacing = float(self.model.get("s_linespacing", "12"))
+        self.collisionpages = []
+        self.spacepages = []
+        self.riverpages = []
         
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -745,10 +748,13 @@ class PDFViewer:
                                         fontsize=float(self.model.get("s_fontsize", 1)))
             for (opcode, data) in xdvreader.parse():
                 pass
-            if self.showanalysis and self.spacethreshold == 0:
+            if self.spacethreshold == 0:
                 self.badspaces = self.parlocs.getnbadspaces()
                 if len(self.badspaces):
                     self.model.set("s_spaceEms", self.badspaces[0].widthem)
+            wanted = 7
+            self.spacepages, self.collisionpages, self.riverpages = \
+                self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)), float(self.model.get('s_charSpaceEms', 4)))
 
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
