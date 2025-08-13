@@ -1844,6 +1844,7 @@ class GtkViewModel(ViewModel):
             self.set("ecb_book", list(bl.keys())[0])
         self.updateExamineBook()
         self.updateDialogTitle()
+        self.disableLayoutAnalysis()
         # Save to user's MRU
         if bls in self.mruBookList or bls == "":
             return
@@ -1868,6 +1869,7 @@ class GtkViewModel(ViewModel):
             stngdir = self.project.srcPath(self.cfgid)
             self.set("lb_settings_dir", '<a href="{}">{}</a>'.format(stngdir, stngdir))
             self.updateDialogTitle()
+            self.disableLayoutAnalysis()
         self.userconfig.set("init", "project", self.project.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.userconfig.set("init", "quickrun",   "true" if self.get("c_quickRun")   else "false")
@@ -1959,6 +1961,7 @@ class GtkViewModel(ViewModel):
             self.triggervcs = True
             self.doStatus(msg)
         self.colorTabs()
+        self.disableLayoutAnalysis()
 
     def updateBookList(self):
         self.noUpdate = True
@@ -2217,6 +2220,7 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.updateMarginGraphics()
         self.updateDialogTitle()
+        self.disableLayoutAnalysis()
         if self.loadingConfig:
             return
         self.picListView.onRadioChanged()
@@ -3546,6 +3550,7 @@ class GtkViewModel(ViewModel):
             self.set("r_book", "multiple" if len(booklist) else "single", mod=False)
         self.doBookListChange()
         self.updateDialogTitle()
+        self.disableLayoutAnalysis()
         self.updateExamineBook()
         self.updatePicList()
         dialog.hide()
@@ -3708,6 +3713,7 @@ class GtkViewModel(ViewModel):
                 self.set("t_chapto", str(chaps.get(str(bk), 999)))
             self.updateExamineBook()
         self.updateDialogTitle()
+        self.disableLayoutAnalysis()
         self.updatePicList()
         # print("onBookChange-s")
         self.set("r_book", "single")
@@ -3869,6 +3875,8 @@ class GtkViewModel(ViewModel):
         self._setup_digits()
         self.updatePicList()
         self.updateDialogTitle()
+        print(f"self.disableLayoutAnalysis in updateProjectSettings")  # Do we need this here?
+        self.disableLayoutAnalysis()  # Do we need this here?
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
         self.loadPolyglotSettings()
@@ -3957,6 +3965,7 @@ class GtkViewModel(ViewModel):
         if cpath is not None and os.path.exists(cpath):
             self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=False, configName=configName, readConfig=True) # False means DON'T Save!
             self.updateDialogTitle()
+        self.disableLayoutAnalysis()
 
     def onConfigNameChanged(self, btn, *a):
         if self.configKeypressed:
@@ -4025,6 +4034,9 @@ class GtkViewModel(ViewModel):
             self.set('bl_fontR', ptfont)
             self.onFontChanged(None)
 
+    def disableLayoutAnalysis(self):
+        self.set('c_layoutAnalysis', False)
+        
     def updateDialogTitle(self):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
@@ -4276,6 +4288,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
             self.set("r_book", "single")
         self.updateDialogTitle()
+        self.disableLayoutAnalysis()
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
         customFigFolder = self.fileChooser(_("Select the folder containing image files"),
@@ -4629,6 +4642,7 @@ class GtkViewModel(ViewModel):
             self.setPrintBtnStatus(2)
             self.diglotViews = {}
         self.updateDialogTitle()
+        self.disableLayoutAnalysis()
         self.loadPics(mustLoad=False, force=True)
         if self.get("c_includeillustrations"):
             self.onUpdatePicCaptionsClicked(None)
@@ -4645,6 +4659,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("b_reprint").set_sensitive(False)
         self.set("fcb_project", dvprj.prjid)
         self.set("ecb_savedConfig", dv.cfgid)
+        self.disableLayoutAnalysis()
         # self.updateProjectSettings(dvprj.prjid, dvprj.guid, configName=dv.cfgid)
         # self.updateDialogTitle()
         return True
