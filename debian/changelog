@@ -1,3 +1,9 @@
+ptxprint (2.9.3-1ubuntu2) jammy; urgency=medium
+
+  * Bumped version for Jammy build
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Thu, 14 Aug 2025 01:11:25 -0500
+
 ptxprint (2.9.3-1ubuntu1) jammy; urgency=medium
 
   * Bumped release to 2.9.3
