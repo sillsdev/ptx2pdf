@@ -440,6 +440,10 @@ _map = {
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
     # "viewer/layoutanalysis":    ("c_layoutAnalysis", None, None),
+    "viewer/findunbalanced":    ("c_findUnbalanced", None, None),
+    "viewer/findcollisions":    ("c_findCollisions", None, None),
+    "viewer/findwhitespace":    ("c_findWhitespace", None, None),
+    "viewer/findrivers":        ("c_findRivers", None, None),
     "viewer/spacetoobig":       ("s_spaceEms", None, None),
     
     "thumbtabs/ifthumbtabs":    ("c_thumbtabs", "tabsborders", None),

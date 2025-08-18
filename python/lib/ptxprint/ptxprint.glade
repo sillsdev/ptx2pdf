@@ -3518,6 +3518,7 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="receives-default">False</property>
             <property name="active">True</property>
             <property name="draw-indicator">True</property>
+            <signal name="clicked" handler="locateOptionsChanged" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -3533,6 +3534,7 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="receives-default">False</property>
             <property name="active">True</property>
             <property name="draw-indicator">True</property>
+            <signal name="clicked" handler="locateOptionsChanged" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -3548,6 +3550,7 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="receives-default">False</property>
             <property name="active">True</property>
             <property name="draw-indicator">True</property>
+            <signal name="clicked" handler="locateOptionsChanged" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -3563,6 +3566,7 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="receives-default">False</property>
             <property name="active">True</property>
             <property name="draw-indicator">True</property>
+            <signal name="clicked" handler="locateOptionsChanged" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -3871,7 +3875,10 @@ Mouse Scroll also changes pages</property>
                 <property name="tooltip-text" translatable="yes">The next/previous issue arrows will
 jump to pages with issues to be
 resolved. You can choose which
-kinds of issues to deal with.</property>
+kinds of issues to deal with.
+
+Note: It is only enabled when
+Layout Analysis is active.</property>
                 <property name="halign">end</property>
                 <property name="valign">center</property>
                 <property name="popover">pop_locateIssues</property>

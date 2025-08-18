@@ -407,6 +407,7 @@ _sensitivities = {
     "c_coverBorder":           ["fcb_coverBorder", "col_coverBorder", "l_coverBorder"],
     "c_coverShading":          ["col_coverShading", "s_coverShadingAlpha", "l_coverShading"],
     "c_coverSelectImage":      ["fcb_coverImageSize", "c_coverImageFront", "s_coverImageAlpha", "btn_coverSelectImage", "lb_coverImageFilename"],
+    "c_layoutAnalysis":        ["btn_findButton"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -7010,3 +7011,8 @@ Thank you,
         self.builder.get_object("lb_mapFilename").set_label(_("<== Select an image file of the map to be added (.png, .jpg, .pdf, .tif)"))
         self.builder.get_object("t_mapCaption").set_text("")
         self.setPreview(None)
+
+    def locateOptionsChanged(self, foo):
+        if self.loadingConfig:
+            return
+        self.pdf_viewer.updatePageNavigation()

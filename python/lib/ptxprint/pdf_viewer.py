@@ -899,36 +899,29 @@ class PDFViewer:
             current_pg = 1
         if direction == self.swap4rtl('next'):
             next_page = None
-            for pg in self.model.ufPages:
+            for pg in self.all_pages: # self.model.ufPages:
                 if pg > current_pg:
                     next_page = pg
                     break
             if next_page:
-                self.ufCurrIndex = self.model.ufPages.index(next_page) 
+                self.ufCurrIndex = self.all_pages.index(next_page)  # self.model.ufPages
         else:  # 'previous'
             prev_page = None
-            for pg in reversed(self.model.ufPages):
+            for pg in reversed(self.all_pages):
                 if pg < current_pg:
                     prev_page = pg
                     break
             if prev_page:
-                self.ufCurrIndex = self.model.ufPages.index(prev_page)
-        pg = self.model.ufPages[self.ufCurrIndex]
+                self.ufCurrIndex = self.all_pages.index(prev_page)
+        pg = self.all_pages[self.ufCurrIndex]
         pnum = self.parlocs.pnums.get(pg, pg) if self.parlocs is not None else pg
         self.show_pdf(pnum)
-
+        
     def updatePageNavigation(self):
         """Update button sensitivity and tooltips dynamically based on the current index."""
         # Get current page index and total pages
         pg = self.current_index or 1
         num_pages = self.numpages
-        ufPages         = self.model.ufPages or []
-        # collisionPages  = getattr(self.model, "collisionPages", []) or []
-        # horizWhitespace = getattr(self.model, "horizWhitespace", []) or []
-        # vertRivers      = getattr(self.model, "vertRivers", []) or []
-        collisionPages  = [7,9,12,13,30,45]
-        horizWhitespace = [9,11,13,20,40,60]
-        vertRivers      = [3,6,9,12,15,18,21,24,27]
 
         is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
 
@@ -952,15 +945,26 @@ class PDFViewer:
         seekPrevBtn.set_sensitive(False)
         seekNextBtn.set_sensitive(False)
 
+        if not self.model.get('c_layoutAnalysis', False):
+            ufPages         = self.model.ufPages or []
+            collisionPages  = []
+            horizWhitespace = []
+            vertRivers      = []
+        else:
+            ufPages         = self.model.ufPages or [] if self.model.get('c_findUnbalanced', False) else []
+            collisionPages  = self.collisionpages      if self.model.get('c_findCollisions', False) else []
+            horizWhitespace = self.spacepages          if self.model.get('c_findWhitespace', False) else []
+            vertRivers      = self.riverpages          if self.model.get('c_findRivers',     False) else []
+
         # Merge lists in order with uniqueness
-        all_pages = []
+        self.all_pages = []
         for lst in [ufPages, collisionPages, horizWhitespace, vertRivers]:
             for p in lst:
-                if p not in all_pages:
-                    all_pages.append(p)
-        all_pages = sorted(all_pages)
+                if p not in self.all_pages:
+                    self.all_pages.append(p)
+        self.all_pages = sorted(self.all_pages)
         
-        total_count = len(all_pages)
+        total_count = len(self.all_pages)
         self.model.builder.get_object("bx_seekPage").set_sensitive(total_count > 0)
 
         for btn in [
@@ -981,32 +985,32 @@ class PDFViewer:
                 seekText = _("Locate {} issue page.{}(None identified)").format(self.swap4rtl(action), "\n")
             else:
                 curr_pos = 0
-                if pnumpg in all_pages:
-                    curr_pos = all_pages.index(pnumpg)
+                if pnumpg in self.all_pages:
+                    curr_pos = self.all_pages.index(pnumpg)
 
-                firstUFpg = all_pages[0]
-                lastUFpg  = all_pages[-1]
+                locatefirstPage = self.all_pages[0]
+                locatelastPage  = self.all_pages[-1]
 
                 if is_rtl:  # Fix later to include Arabic UI detection
-                    hide_prev = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
-                    hide_next = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
+                    hide_prev = pnumpg >= locatelastPage or pnumpg == num_pages or not self.oneUp
+                    hide_next = pnumpg <= locatefirstPage or pnumpg == 1 or not self.oneUp
                 else:
-                    hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-                    hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
+                    hide_prev = pnumpg <= locatefirstPage or pnumpg == 1 or not self.oneUp
+                    hide_next = pnumpg >= locatelastPage or pnumpg == num_pages or not self.oneUp
 
                 seekPrevBtn.set_sensitive(not hide_prev)
                 seekNextBtn.set_sensitive(not hide_next)
 
-                window_size = 3  # Show 3 numbers before and after the current one
+                window_size = 5  # Show 3 numbers before and after the current one
 
                 # Determine which pages to display
-                if total_count <= 27:
-                    display_pages = all_pages
+                if total_count <= 12:
+                    display_pages = self.all_pages
                     elipsis = ""
                 else:
                     start_idx = max(0, curr_pos - window_size)
                     end_idx   = min(total_count, curr_pos + window_size + 1)
-                    display_pages = all_pages[start_idx:end_idx]
+                    display_pages = self.all_pages[start_idx:end_idx]
                     elipsis = f" (of {total_count})"
                     if start_idx > 0:
                         display_pages.insert(0, "...")
@@ -1019,16 +1023,16 @@ class PDFViewer:
                     if p == "...":
                         formatted_pages.append("...")
                         continue
-                    if p in ufPages:
-                        text = f"<b>{p}</b>"
-                    elif p in collisionPages:
-                        text = f"<span foreground='red'>{p}</span>"
+                    if p in collisionPages:
+                        text = f"<span foreground='red'><b>{p}</b></span>"
+                    elif p in horizWhitespace and p in vertRivers:
+                        text = f"<span foreground='lightgreen'><b>{p}</b></span>"
                     elif p in horizWhitespace:
-                        text = f"<span foreground='lightblue'>{p}</span>"
+                        text = f"<span foreground='lightblue'><b>{p}</b></span>"
                     elif p in vertRivers:
-                        text = f"<span foreground='yellow'>{p}</span>"
-                    else:
-                        text = str(p)
+                        text = f"<span foreground='yellow'><b>{p}</b></span>"
+                    else: # if p in ufPages:
+                        text = f"<b>{p}</b>"
 
                     # Mark current page with <>
                     if p == pnumpg:
