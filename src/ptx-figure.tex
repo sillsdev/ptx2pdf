@@ -424,6 +424,7 @@
 \def\d@caption{%
   %\ifhmode\endgraf\fi
   \unvbox\c@ptionbox
+  \vskip.5\onel@neunit
 }
 
 \def\FigCaptionAdjust{0pt}
@@ -447,7 +448,6 @@
         \x@\each@col\tmp\E
       \egroup
     \fi
-    \vskip.5\onel@neunit
     \end@llpoppedstyles{\ss@Fig*}%
   \fi
  }%
@@ -1082,7 +1082,7 @@
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
     \t@gend{Figure}%
-    \pdfsavepos
+    %\pdfsavepos
   }% END of box0
   \temptrue
   \iffigf@und\else\ifSkipMissingFig
@@ -1131,9 +1131,13 @@
       \pdfsavepos\penalty10000
       \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}\penalty10000%
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
+      \unpenalty\setbox1=\lastbox\unvbox1\setbox1=\lastbox\vbox{\unvbox1\global\skip1=\lastskip\unskip}%
       \pdfsavepos
       \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
       \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+      \kern -\lastdepth
+      \vskip\lastdepth
+      \vskip\skip1
     }\ifx\@wrap\empty\else\egroup\fi
 %-cfig_dofigure_5
 %+cfig_dofigure_6

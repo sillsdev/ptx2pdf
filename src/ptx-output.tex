@@ -1128,6 +1128,9 @@
 %-c_balanced_loop
 
 %+c_calcboxheights
+\def\cl@rfinalsp@ce#1{
+  \vbox{\unvbox#1\unskip\unskip}%
+}
 \def\c@lcboxheights{%
   \g@tcolhts
   \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}%
@@ -1168,11 +1171,11 @@
   \fi
   \dimen9=\availht\advance\dimen9 by \bmg@p
   \trace{o}{fitting columns to \the\dimen9, coln@tes=\the\ht\xr@fbox}%
-  \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\ifdim\ht7>0pt \vfil\unvbox7\fi}\dp\colA=\lastd@pth
+  \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\ifdim\ht7>0pt \vfil\cl@rfinalsp@ce7\fi}\dp\colA=\lastd@pth
   \ifdim\ht\colB<1pt \setbox\colB\vbox to 0pt{\hbox to \hsize{}}\else
     \ifcolbfull\ifdim\lastd@pth<\dp\colB \lastd@pth=\dp\colB\fi\else\lastd@pth=\dp\colB\fi
   \fi
-  \setbox\colB=\vbox to \dimen9{\unvbox6\unvbox\colB\ifdim\ht8>0pt \vfil\unvbox8\fi}\dp\colB=\lastd@pth
+  \setbox\colB=\vbox to \dimen9{\unvbox6\unvbox\colB\ifdim\ht8>0pt \vfil\cl@rfinalsp@ce8\fi}\dp\colB=\lastd@pth
   \ifdim\colhtA>\colhtB \dimen3=\colhtA
     \ifcolbfull\lastd@pth=\dp\colA\dp\colB=\lastd@pth\fi
   \else
