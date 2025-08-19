@@ -1,8 +1,18 @@
 PTXprint 2.9.3 Release Notes
-8 Aug 2025
+19 Aug 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.9.4 (19 Aug 2025)
+  * Place bottom images on the baseline
+  * Provide various options for Locate... issues in PDF Viewer
+  * Improve Linux packaging toolchain
+  * Add typesetting report page numbers in pdf viewer
+  * Fix versesToEnd
+  * Disable Layout Analysis when switching configs/projects/books
+  * Fix end of ayahs
+  * Fix missing spaces in pyproject.toml version field to get auto-updated
 
 Bug fixes and Improvements in 2.9.3 (9 Aug 2025)
   * Fix crash on Import Scripture
