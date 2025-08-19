@@ -816,10 +816,11 @@
    %
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
+   %\getp@ram{firstindent}{\m@rker}{\styst@k}\let\f@rstindent=\p@ram
    \getp@ram{firstindent}{\styst@kfirst}{\styst@k}\let\f@rstindent=\p@ram
-   \dimen3=\ifx\p@ram\relax 0\else\f@rstindent\fi \IndentUnit
+   \dimen3=\ifx\p@ram\relax 0\else\p@ram\fi \IndentUnit
    \ifversion{5}{\ifallowp@rindent\else\ifdim \dimen3>0pt \dimen3=0pt \fi\fi}{}%
-   \trace{C}{\m@rker\space at \c@rref\space allowp@rindent=\ifallowp@rindent true\else false\fi, dimen3=\the\dimen3}%
+   \trace{C}{\m@rker\space at \c@rref\space allowp@rindent=\ifallowp@rindent true\else false\fi, dimen3=\the\dimen3\space \styst@kfirst/\styst@k}%
    %In the code below...
    % dimen3 is first line indent
    % dimen2 is the par indent.

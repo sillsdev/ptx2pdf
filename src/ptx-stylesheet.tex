@@ -1062,6 +1062,7 @@
     \trace{hv}{End of hanging verse \ch@pter:\v@rse }%
     \hangingversefalse
     \ignorespaces
+  \else\ifMarginalVerses \ignorespaces\fi
   \fi
  }
  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
@@ -1721,7 +1722,7 @@
   }\mcdown
   \global\let\tmpstyst@k\styst@k
   \global\let\tmpstyst@kfirst\styst@kfirst
-  \trace{sa}{styst@k -> (\styst@kfirst/\styst@k)}%
+  \trace{sa}{styst@k -> (\styst@kfirst/\styst@k) from \mcstack}%
 }
 \let\styst@kfirst\empty
 \let\styst@k\empty

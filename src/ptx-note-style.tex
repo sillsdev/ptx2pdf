@@ -1266,9 +1266,9 @@
 }
 \def\n@te@nd#1{\egroup% \x@\showbox\csname nm-box-#1\endcsname
   \x@\ifx\csname nm-cref-#1\endcsname\c@rref
-    \x@\advance\csname nm-count-#1\endcsname 1
+    \x@\advance\csname nm-count-#1\endcsname 1%
   \else \csname nm-count-#1\endcsname=0 \x@\xdef\csname nm-cref-#1\endcsname{\c@rref}\fi
-  \x@\ifnum\csname nm-count-#1\endcsname=0\relax \edef\t@@mp{\c@rref} \else \edef\t@@mp{\c@rref!#1[\x@\the\csname nm-count-#1\endcsname]}\fi
+  \x@\ifnum\csname nm-count-#1\endcsname=0\relax \edef\t@@mp{\c@rref}\else \edef\t@@mp{\c@rref!#1[\x@\the\csname nm-count-#1\endcsname]}\fi
   \skip1=\baselineskip \s@tbaseline{#1}{#1}%
   \getp@ram{spacebeside}{#1}{#1}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
   \advance\dimen0 \marginnotesgap

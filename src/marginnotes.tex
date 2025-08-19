@@ -125,8 +125,8 @@
   \ifx\p@s\@uter \ifodd\p@geno \ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi \else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
   \else\ifx\p@s\@nner\ifodd\p@geno \ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi \else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
-  \dimen0 = #6
-  \dimen3 = #7
+  \dimen0 = #6%
+  \dimen3 = #7%
   \trace{M}{marginnote(#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
   %\dimen0=0pt
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
