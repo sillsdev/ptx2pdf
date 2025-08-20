@@ -118,61 +118,6 @@ _diglotprinter = {
 "_diglotincludexr":         "c_includeXrefs"
 }
 
-_diglot = {
-"diglot/ifusecustomsty_":    "project/ifusecustomsty",
-"diglot/ifusemodsty_":       "project/ifusemodssty",
-"diglot/ifincludefootnotes_":"notes/includefootnotes",
-"diglot/ifincludexrefs_":    "notes/includexrefs",
-"diglot/ifhavehyphenate_":   "paragraph/ifhavehyphenate",
-"diglot/ifhyphenate_":       "paragraph/ifhyphenate",
-
-"diglot/intfile":           "project/intfile",
-# "diglot/colorfonts" :       "document/ifcolorfonts",
-"diglot/diglotcolour":      "document/diglotcolour",
-"diglot/ifdiglotcolour_":   "document/ifdiglotcolour",
-"diglot/ifrtl" :            "document/ifrtl",
-"diglot/ifshow1chbooknum":  "document/ifshow1chbooknum",
-"diglot/fontfactor" :       "paper/fontfactor",
-"diglot/linespacingfactor": "paragraph/linespacingfactor",
-"diglot/afterchapterspace": "texpert/afterchapterspace",
-"diglot/afterversespace":   "texpert/afterversespace",
-"diglot/iflinebreakon" :    "document/iflinebreakon",
-"diglot/linebreaklocale" :  "document/linebreaklocale",
-
-"diglot/ifletter":          "document/ifletter",
-"diglot/letterspace":       "document/letterspace",
-"diglot/letterstretch":     "document/letterstretch",
-"diglot/lettershrink":      "document/lettershrink",
-
-"diglot/docscript" :        "document/script",
-# "diglot/docdigitmapping" :  "document/digitmapping",
-"diglot/interlinear":       "project/interlinear",
-                            
-"diglot/fontregular" :      "document/fontregular",
-"diglot/fontbold" :         "document/fontbold",
-"diglot/fontitalic" :       "document/fontitalic",
-"diglot/fontbolditalic" :   "document/fontbolditalic",
-"diglot/ifshowversenums" :  "document/ifshowversenums",
-"diglot/indentunit":        "document/indentunit",
-"diglot/ifrtl":             "document/ifrtl",
-"diglot/xrlocation" :       "notes/xrlocation",
-
-"diglot/copyright":         "project/copyright",
-"diglot/license":           "project/license",
-"diglot/ptxprintstyfile_":  "project/ptxprintstyfile_",
-
-"diglotfancy/versedecorator":       "fancy/versedecorator",
-"diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
-"diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
-"diglotfancy/versedecoratorscale":  "fancy/versedecoratorscale",
-"diglotfancy/versedecoratorisfile": "fancy/versedecoratorisfile",
-"diglotfancy/versedecoratorisayah": "fancy/versedecoratorisayah",
-"diglotfancy/endayah":              "fancy/endayah",
-"diglotfancy/sectionheader":        "fancy/sectionheader",
-"diglotfancy/sectionheadershift":   "fancy/sectionheadershift",
-"diglotfancy/sectionheaderscale":   "fancy/sectionheaderscale",
-"diglotfancy/sectionheaderpdf":     "fancy/sectionheaderpdf",
-}
 
 _joblock = None
 def lockme(job):
