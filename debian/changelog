@@ -1,3 +1,9 @@
+ptxprint (2.9.4-1ubuntu2) jammy; urgency=medium
+
+  * Dropped debugpy dep, especially for jammy as the dependency is not available in the archive 
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Wed, 20 Aug 2025 11:19:32 -0500
+
 ptxprint (2.9.4-1ubuntu1) jammy; urgency=medium
 
   * Bumped release to 2.9.4
