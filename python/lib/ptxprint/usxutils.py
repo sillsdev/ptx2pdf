@@ -8,6 +8,7 @@ from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
 from ptxprint.changes import readChanges
 from ptxprint.ptsettings import PTEnvironment
+from ptxprint.unicode.ucd import get_ucd
 from copy import deepcopy
 
 logger = logging.getLogger(__name__)
@@ -671,6 +672,30 @@ class Usfm:
             if ellipsis and i < j + offset - 1:
                 addellipsis(root, i - 1)
         return
+
+    def findScript(self):
+        stats = {}
+        root = self.getroot()
+        for i, e in enumerate(root):
+            if e.tag == "chapter":
+                break
+        for x, isin in iterusx(root, parindex=i+1):
+            s = x.get('style', "")
+            if x.tag == "para" and self.grammar.marker_categories.get(s, "") != "versepara":
+                continue
+            t = x.text if isin else x.tail
+            if isempty(t):
+                continue
+            for c in t:
+                cs = get_ucd(ord(c), 'sc')
+                if cs not in ("Zyyy", "Zinh"):
+                    stats[cs] = stats.get(cs, 0) + 1
+                    if stats[cs] > 100:
+                        return cs
+        if not len(stats):
+            return None
+        cs, val = max(stats.items(), key=lambda x:x[1])
+        return cs
 
     def addStrongs(self, strongs, showall, script=None):
         self.addorncv()

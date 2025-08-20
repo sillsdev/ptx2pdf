@@ -706,6 +706,10 @@ class ViewModel:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
                 if self.get("t_txlQuestionsLang") == "":
                     self.set("t_txlQuestionsLang", lngCode)
+            if self.get("fcb_script", "Zyyy") == "Zyyy":
+                scr = self.analyse_script()
+                if scr is not None:
+                    self.set("fcb_script", scr)
             return float(oldVersion) >= 0
         else:
             return True
@@ -726,6 +730,16 @@ class ViewModel:
                 self.doError(_("Syntax Error Warning"), secondary=str(e), show=not self.get("c_quickRun"))
             logger.debug(f"Syntax Error in the context of stylesheets: {self.usfms.sheets.files}")
             return None
+        return res
+
+    def analyse_script(self):
+        pts = self._getPtSettings()
+        res = None
+        bk = None
+        while res is None:
+            bk = pts.getABook(bk)
+            abook = self.get_usfm(bk)
+            res = abook.findScript()
         return res
 
     def getDialogTitle(self):

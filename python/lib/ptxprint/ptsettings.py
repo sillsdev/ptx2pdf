@@ -228,6 +228,18 @@ class ParatextSettings:
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
 
+    def getABook(self, bk=None):
+        try:
+            start = allbooks.index(bk)
+            start += 1
+        except ValueError:
+            start = 0
+        for i in range(start, len(allbooks)):
+            fname = self.getBookFilename(allbooks[i])
+            path = os.path.join(self.prjdir, fname)
+            if os.path.exists(path):
+                return allbooks[i]
+
     def getArchiveFiles(self):
         res = {}
         for a in ("Settings.xml", "BookNames.xml", "ptxSettings.xml"):
