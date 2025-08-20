@@ -282,9 +282,9 @@ class FancyBorders(Snippet):
 
 """
         if texmodel.dict.get("_isDiglot", False):
-            repeats = ["L", texmodel.dict] + list(texmodel.dict["diglots_"].items())
+            repeats = [("L", texmodel)] + list(texmodel.dict["diglots_"].items())
         else:
-            repeats = [("", texmodel.dict)]
+            repeats = [("", texmodel)]
         for k, v in repeats:
             res += r"""
 {fancy/sectionheader}\newbox\sectionheadbox%D%
@@ -311,7 +311,7 @@ class FancyBorders(Snippet):
 {fancy/versedecoratorisayah}\catcode`@=12\catcode`=12
 {fancy/versedecoratorisayah}\def\AdornVerseNumber%D%#1{{\hbox{{\char"06DD #1}}}}
 """.replace("%D%", k)
-        return res.format(**v)
+        return res.format(**v.dict)
 
     unusedStuff = r"""
 % Some code to allow us to kern chapter numbers
