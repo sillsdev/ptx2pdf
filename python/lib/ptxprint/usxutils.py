@@ -178,7 +178,7 @@ def typesFromMrk(mtype):
         return ('Note', 'NoteText')
     return (None, None)
 
-texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody zBottomRag zfiga zvar"""
+texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody zBottomRag"""
 
 def createGrammar(sheets):
     grammar = Grammar()

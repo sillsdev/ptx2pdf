@@ -83,10 +83,15 @@ class Module:
         return books
 
     def localref(self, m):
-        rl = getreflist(m.group(2), booknames=self.usfms.booknames)
         loctype = m.group(1) or self.refmode
-        tocindex = self.localcodes.get(loctype.lower(), 0)
-        return rl.str(env=self.model.printer.getRefEnv(), level=tocindex)
+        text = m.group(2).strip()
+        if (m := re.match(r"^[a-z]+[.:](.+)$", text)) is not None:
+            ptsettings = self.model.printer._getPtSettings()
+            return ptsettings.get_ldml(loctype, text) if ptsettings is not None else m.group(1).strip()
+        else:
+            rl = getreflist(text, booknames=self.usfms.booknames)
+            tocindex = self.localcodes.get(loctype.lower(), 0)
+            return rl.str(env=self.model.printer.getRefEnv(), level=tocindex)
 
     def testexclude(self, einfo):
         return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))

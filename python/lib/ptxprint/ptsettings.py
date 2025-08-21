@@ -16,6 +16,19 @@ ptrefsepvals = {
 
 _versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org
 
+_ldml_paths = {
+    "month":    'dates/calendars/calendar[@type="gregorian"]/months/monthContext[@type="format"]/monthWidth[@type="{length}"]/month[@type="{num}"]',
+    "day":      'dates/calendars/calendar[@type="gregorian"]/days/dayContext[@type="format"]/dayWidth[@type="{length}"]/day[@type="{num}"]',
+}
+_ldml_lengths = {
+    "a":    "short",
+    "s":    "abbreviated",
+    "l":    "wide"
+}
+_ldml_days = "sun mon tue wed thu fri sat"
+_ldml_months = "jan feb mar apr may jun jul aug sep oct nov dec"
+_ldml_datenums = {k:i for v in (_ldml_days, _ldml_months) for i, k in enumerate(v)}
+
 class ParatextSettings:
     def __init__(self, prjdir):
         self.dict = {}
@@ -89,6 +102,19 @@ class ParatextSettings:
                     self.dir = "right"
         else:
             self.ldml = None
+
+    def get_ldml(self, length, key):
+        b = re.split(r'[.:]', key)
+        if self.ldml is None:
+            return b[1]
+        if b[0].strip().lower() in ("day", "month"):
+            parms = {   "num":      _ldml_datenums.get(b[1].strip().lower(), 0),
+                        "length":   _ldml_lengths.get(length, "abbreviated"),
+                        "key":      b[1].strip() }
+            val = self.ldml.findtext(_ldml_paths[b[0].strip().lower()].format(**parms))
+            if val is not None:
+                return val
+        return b[1]
 
     def read_bookNames(self, fpath):
         bkstrs = {}
