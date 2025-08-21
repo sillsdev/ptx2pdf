@@ -110,8 +110,8 @@ class ParatextSettings:
             self.bkNames = {k:v for k,v in bkstrs.items() if v != ""}
 
     def default_bookNames(self):
-        self.bookNames = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
-        self.bookStrs = {k: [k] * 3 for k in self.bookNames.keys()}
+        self.bkNames = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
+        self.bookStrs = {k: [k] * 3 for k in self.bkNames.keys()}
 
     def getLocalBook(self, s, level=0):
         return self.bookStrs.get(s, [s]*(level+1))[level] or s
