@@ -104,17 +104,19 @@ class ParatextSettings:
             self.ldml = None
 
     def get_ldml(self, length, key):
-        b = re.split(r'[.:]', key)
-        if self.ldml is None:
-            return b[1]
-        if b[0].strip().lower() in ("day", "month"):
-            parms = {   "num":      _ldml_datenums.get(b[1].strip().lower(), 0),
-                        "length":   _ldml_lengths.get(length, "abbreviated"),
-                        "key":      b[1].strip() }
-            val = self.ldml.findtext(_ldml_paths[b[0].strip().lower()].format(**parms))
-            if val is not None:
-                return val
-        return b[1]
+        b = [x.strip() for x in re.split(r'[.:]', key)]
+        if b[0] == "ldml":
+            if self.ldml is None:
+                return b[2]
+            t = b[1].lower()
+            if t in ("day", "month"):
+                parms = {   "num":      _ldml_datenums.get(b[2].lower(), 0),
+                            "length":   _ldml_lengths.get(length, "abbreviated"),
+                            "key":      b[2] }
+                val = self.ldml.findtext(_ldml_paths[t].format(**parms))
+                if val is not None:
+                    return val
+        return b[2]
 
     def read_bookNames(self, fpath):
         bkstrs = {}

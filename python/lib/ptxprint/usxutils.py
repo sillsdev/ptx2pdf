@@ -523,6 +523,17 @@ class Usfm:
                 ref = RefList(el.get('eid'))[0]
                 newel = el.parent.makeelement('char', attrib={'style': 'vp'})
                 newel.text = str(ref.verse) + (ref.subverse or "")
+                pindex = el.parent.index(el)
+                if pindex == 0 and el.parent.text:
+                    t = el.parent.text
+                    el.parent.text = el.parent.text.strip()
+                    w = t[len(el.parent.text):]
+                else:
+                    pel = el.parent[pindex-1]
+                    t = pel.tail
+                    pel.tail = pel.tail.strip()
+                    w = t[len(pel.tail):]
+                newel.tail = w
                 el.parent.insert(el.parent.index(el)+1, newel)
 
     def iterel(self, e, atend=None):

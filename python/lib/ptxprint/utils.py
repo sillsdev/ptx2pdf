@@ -728,7 +728,7 @@ def xdvigetfonts(xdv):
 
 varpaths = (
     ('prjdir', lambda p,v: p.path),
-    ('settingsdir', lambda p,v: os.path.join(p.path, '..')),
+    ('settingsdir', lambda p,v: p.path),
     ('workingdir', lambda p,v: p.printPath(v.cfgid)),
 )
 
@@ -759,13 +759,17 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
                 txt = str(varlib[k]) + "/" + txt[len(k)+4:]
             super().__init__(txt)
 
-    def withvars(self, aView):
+    def withvars(self, aView, relto=None):
+        if relto is None:
+            base = self.as_posix()
+        else:
+            base = os.path.join(relto, self.as_posix())
         varlib = self.create_varlib(aView)
-        bestr = self.as_posix()
+        bestr = base
         bestk = None
         for k, v in varlib.items():
             try:
-                rpath = os.path.relpath(self.as_posix(), start=v.as_posix())
+                rpath = os.path.relpath(base, start=v.as_posix())
             except (ValueError, TypeError):
                 continue
             if len(str(rpath)) < len(bestr):
