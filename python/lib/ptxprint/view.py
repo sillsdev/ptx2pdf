@@ -732,6 +732,13 @@ class ViewModel:
             return None
         return res
 
+    def wipe_usfms(self, refs):
+        if refs is None:
+            return
+        self.get_usfms()
+        for r in refs:
+            self.usfms.clear(r.book)
+
     def analyse_script(self):
         pts = self._getPtSettings()
         res = None

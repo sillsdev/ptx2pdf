@@ -240,6 +240,9 @@ class UsfmCollection:
             self.times[bk] = time.time()
         return self.books[bk]
 
+    def clear(self, bk):
+        self.times.pop(bk, None)
+
     def makeBookNames(self):
         if self.booknames is not None:
             return

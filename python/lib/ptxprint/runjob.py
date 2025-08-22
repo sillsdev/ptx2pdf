@@ -191,6 +191,7 @@ class RunJob:
         jobs = []       # [(bkid/module_path, False) or (RefList, True)] 
         logger.debug(f"{self.printer.bookrefs=}")
         lastbook = None
+        self.printer.wipe_usfms(self.printer.bookrefs)
         if self.printer.bookrefs is not None:
             for r in self.printer.bookrefs:
                 if r.first.book != lastbook:
