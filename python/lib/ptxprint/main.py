@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 import argparse, sys, os, re, configparser, shlex
-import appdirs
 import site, logging
 from shutil import rmtree
 from zipfile import ZipFile
 
 import ptxprint
-from ptxprint.utils import saferelpath
+from ptxprint.utils import saferelpath, appdirs
 from pathlib import Path
 # import debugpy
 # debugpy.listen(("localhost", 5678))

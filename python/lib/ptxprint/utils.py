@@ -7,10 +7,16 @@ from ptxprint.pdfrw.uncompress import uncompress
 from shutil import copy2
 from inspect import currentframe
 from struct import unpack
-import contextlib, appdirs, pickle, gzip
+import contextlib, pickle, gzip
 import regex
 from subprocess import check_output, call
 import logging
+
+try:
+    import appdirs
+except ModuleNotFoundError:
+    import platformdirs
+    appdirs = platformdirs
 
 logger = logging.getLogger(__name__)
 

@@ -161,10 +161,11 @@ class lana(ScriptSnippet):
 class talu(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
-        res = [makeChange(r'/', "\u200B", context=noattrib),
+        res = [makeChange(r'/', "\u200B", context=notattrib),
                makeChange(r'([^\u1980-\u19DF])\u200B', r'\1'),
                makeChange(r'\u200B([^\\\u1980-\u19DF])', r'\1'),
                makeChange('\u200B', "", context=nonbody)]
+        return res
 
 class arab(ScriptSnippet):
     dialogstruct = [
