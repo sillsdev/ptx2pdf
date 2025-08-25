@@ -737,7 +737,9 @@ class ViewModel:
             return
         self.get_usfms()
         for r in refs:
-            self.usfms.clear(r.book)
+            if r is not None:
+                bk = r if isinstance(r, str) else r.book
+                self.usfms.clear(bk)
 
     def analyse_script(self):
         pts = self._getPtSettings()

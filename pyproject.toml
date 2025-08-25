@@ -23,7 +23,7 @@ dependencies = [
 "usfmtc @ https://github.com/usfm-bible/usfmtc/archive/main.zip",
 "regex",
 "fonttools",
-"appdirs",
+"platformdirs",
 "Pillow",
 "numpy"
 ]

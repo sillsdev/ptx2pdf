@@ -2435,6 +2435,7 @@ class GtkViewModel(ViewModel):
 
         elif pgid == "tb_FinalSFM" and bk is not None:
             bk = bk if bk in bks2gen else None
+            self.wipe_usfms([bk])
             tmodel = TexModel(self, self._getPtSettings(self.project.prjid), self.project.prjid)
             out = tmodel.convertBook(bk, None, self.project.printPath(self.cfgid), self.project.path)
             self.editFile(out, loc="wrk", pgid=pgid)

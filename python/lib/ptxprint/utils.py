@@ -13,10 +13,10 @@ from subprocess import check_output, call
 import logging
 
 try:
-    import appdirs
-except ModuleNotFoundError:
     import platformdirs
     appdirs = platformdirs
+except ModuleNotFoundError:
+    import appdirs
 
 logger = logging.getLogger(__name__)
 
@@ -362,7 +362,19 @@ def getPDFconfig(fname):
             return None
     return None
 
-if sys.platform == "linux":
+if sys.platform.startswith("win"):
+    import winreg
+
+    def openkey(path):
+        try:
+            k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
+        except FileNotFoundError:
+            k = None
+        return k
+
+    def queryvalue(base, value):
+        return winreg.QueryValueEx(base, value)[0]
+else:
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
         valuepath = os.path.join(basepath, path.lower(), "values.xml")
@@ -377,19 +389,6 @@ if sys.platform == "linux":
             return ""
         else:
             return res.text
-
-elif sys.platform.startswith("win"):
-    import winreg
-
-    def openkey(path):
-        try:
-            k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
-        except FileNotFoundError:
-            k = None
-        return k
-
-    def queryvalue(base, value):
-        return winreg.QueryValueEx(base, value)[0]
 
 def saferelpath(p, r="."):
     if p is None or not len(str(p)):
