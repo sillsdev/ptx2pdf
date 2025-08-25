@@ -144,7 +144,9 @@ def setup_i18n(i18nlang):
         os.environ["LANG"] = i18nlang
         lang = i18nlang
     else:
-        lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
+        lang, enc = locale.getlocale()
+        if lang is None:
+            lang = "en"
     enc = "UTF-8"
     logger.debug(f"Loading locale for {lang}.{enc} from {localedir}")
     if sys.platform.startswith('win'):
