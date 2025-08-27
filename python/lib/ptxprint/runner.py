@@ -1,9 +1,11 @@
 
-import sys, subprocess, os, logging
+import sys, subprocess, os, logging, platform
 import xml.etree.ElementTree as et
 from ptxprint.utils import pt_bindir
 
 logger = logging.getLogger(__name__)
+
+bindir = sys.platform + "_" + platform.machine()
 
 if sys.platform == "linux":
 
@@ -24,7 +26,7 @@ elif sys.platform == "darwin":
 
     def fclist(family, pattern):
         # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-        a = [os.path.join(pt_bindir(), "xetex", "bin", "darwin", "fc-list").replace("\\", "/"),
+        a = [os.path.join(pt_bindir(), "xetex", "bin", bindir, "fc-list").replace("\\", "/"),
                 '"'+family+'"', '":style='+pattern+'"', 'file']
         return subprocess.check_output(a).decode("utf-8", errors="ignore")
 
@@ -34,7 +36,7 @@ elif sys.platform == "darwin":
         if 'path' in kw:
             if kw['path'] == 'xetex':
                 # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-                path = os.path.join(pt_bindir(), "xetex", "bin", "darwin", a[0][0]).replace("\\", "/")
+                path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]).replace("\\", "/")
                 a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
             del kw['path']
         else:
@@ -44,7 +46,7 @@ elif sys.platform == "darwin":
 
     def call(*a, **kw):
         # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-        path = os.path.join(pt_bindir(), "xetex", "bin", "darwin", a[0][0]).replace("\\", "/")
+        path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]).replace("\\", "/")
         newa = [[path] + a[0][1:]] + list(a)[1:]
         logger.debug(f"{path=} {newa=}")
         kw['stdout'] = kw.get('stdout', subprocess.PIPE)
@@ -57,7 +59,7 @@ elif sys.platform == "win32":
 
     def fclist(family, pattern):
         # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-        a = [os.path.join(pt_bindir(), "xetex", "bin", "windows", "fc-list.exe").replace("\\", "/"),
+        a = [os.path.join(pt_bindir(), "xetex", "bin", bindir, "fc-list.exe").replace("\\", "/"),
                 '"'+family+'"', '":style='+pattern+'"', 'file']
         return subprocess.check_output(a, creationflags=CREATE_NO_WINDOW).decode("utf-8", errors="ignore")
 
@@ -67,7 +69,7 @@ elif sys.platform == "win32":
         if 'path' in kw:
             if kw['path'] == 'xetex':
                 # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-                path = os.path.join(pt_bindir(), "xetex", "bin", "windows", a[0][0]+".exe").replace("\\", "/")
+                path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]+".exe").replace("\\", "/")
                 a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
             del kw['path']
         else:
@@ -77,7 +79,7 @@ elif sys.platform == "win32":
 
     def call(*a, **kw):
         # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-        path = os.path.join(pt_bindir(), "xetex", "bin", "windows", a[0][0]+".exe").replace("/", "\\")
+        path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
         logger.debug(f"{path=} {newa=}")
         kw['stdout'] = kw.get('stdout', subprocess.PIPE)
