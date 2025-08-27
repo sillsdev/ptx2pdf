@@ -1,12 +1,15 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-import sys, os
+import sys, os, platform
 from glob import glob
+from subprocess import call
 print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
-from subprocess import call
+bindir = sys.platform + "_" + platform.machine()
+print("bindir:", bindir)
+
 import usfmtc           # so we can find its data files
 
 #if 'Analysis' not in dir():
@@ -95,11 +98,11 @@ a1 = Analysis(['python/scripts/ptxprint'],
 #                      + sum(([('{}/*.*'.format(dp), 'ptxprint/{}'.format(dp))] for dp, dn, fn in os.walk('xetex') if dp not in ('xetex/bin/windows', ) and any(os.path.isfile(os.path.join(dp, f)) and '.' in f for f in fn)), [])
 ##					  + [(f"{dp}/*.*", f"ptxprint/{dp}") for dp, _, fn in os.walk("xetex") if dp != "xetex/bin/windows" and any("." in f for f in fn)]
 					  + [(f'src{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
-##					  + [(f'xetex/{d}/*', f'ptxprint/xetex/{d}') for d in ('texmf_dist', 'texmf_var')]
+					  + [(f'xetex/{d}/*', f'ptxprint/xetex/{d}') for d in ('texmf_dist', 'texmf_var', 'fonts')]
 					  + [(f'src/mappings/*.map', f'ptxprint/ptx2pdf/mappings')]
                       + [('python/lib/ptxprint/unicode/*.txt', 'ptxprint/unicode')]
                       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
-##                      + [('xetex/bin/windows/*.*', 'ptxprint/xetex/bin/windows')]
+                      + [('xetex/bin/'+bindir+'/*.*', 'ptxprint/xetex/bin/'+bindir)]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
 #                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
 #                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
