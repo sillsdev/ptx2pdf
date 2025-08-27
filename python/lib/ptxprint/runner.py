@@ -44,7 +44,7 @@ elif sys.platform == "darwin":
 
     def call(*a, **kw):
         # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-        path = os.path.join(pt_bindir(), "xetex", "bin", "darwin", a[0][0]).replace("/", "\\")
+        path = os.path.join(pt_bindir(), "xetex", "bin", "darwin", a[0][0]).replace("\\", "/")
         newa = [[path] + a[0][1:]] + list(a)[1:]
         logger.debug(f"{path=} {newa=}")
         kw['stdout'] = kw.get('stdout', subprocess.PIPE)
