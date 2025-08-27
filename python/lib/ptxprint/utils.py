@@ -342,6 +342,8 @@ def startfile(fpath):
             os.startfile(fpath)
         elif sys.platform.startswith("linux"):
             call(('xdg-open', fpath))
+        elif sys.platform == "darwin":
+            call(('open', fpath), shell=True)
 
 def getPDFconfig(fname):
     if str(fname).lower().endswith(".zip"):
