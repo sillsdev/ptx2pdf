@@ -408,10 +408,7 @@ def pt_bindir():
     if not os.path.exists(basedir):
         basedir = os.path.abspath(os.path.dirname(__file__))
     res = getattr(sys, '_MEIPASS', None)
-    if res is None:
-        res = basedir
-    else:
-        res = os.path.join(res, 'ptxprint')
+    res = basedir if res is None else os.path.join(res, 'ptxprint')
     logger.debug(f"pt_bindir= {res}")
     return res
 

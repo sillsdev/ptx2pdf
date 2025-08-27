@@ -508,7 +508,9 @@ class RunJob:
             if a not in texinputs:
                 texinputs.append(a+"//")
         miscfonts = getfontcache().fontpaths[:]
-        if sys.platform.startswith("win") and not nosysfonts:
+        if sys.platform.startswith("darwin") and not nosysfonts:
+            miscfonts.extend(["/System/Library/Fonts", "/Library/Fonts"])
+        elif sys.platform.startswith("win") and not nosysfonts:
             a = "/usr/share/ptx2pdf/texmacros"
             if a not in texinputs:
                 texinputs.append(a)

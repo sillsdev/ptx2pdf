@@ -5,7 +5,7 @@ from ptxprint.utils import pt_bindir
 
 logger = logging.getLogger(__name__)
 
-if sys.platform == "linux" or sys.platform == "darwin":
+if sys.platform == "linux":
 
     def fclist(family, pattern):
         a = ["fc-list", '"{0}":style="{1}"'.format(family, pattern), 'file']
@@ -19,6 +19,38 @@ if sys.platform == "linux" or sys.platform == "darwin":
 
     def call(*a, **kw):
         return subprocess.call(*a, **kw)
+
+elif sys.platform == "darwin":
+
+    def fclist(family, pattern):
+        # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
+        a = [os.path.join(pt_bindir(), "xetex", "bin", "windows", "fc-list.exe").replace("\\", "/"),
+                '"'+family+'"', '":style='+pattern+'"', 'file']
+        return subprocess.check_output(a).decode("utf-8", errors="ignore")
+
+    def checkoutput(*a, **kw):
+        if 'shell' in kw:
+            del kw['shell']
+        if 'path' in kw:
+            if kw['path'] == 'xetex':
+                # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
+                path = os.path.join(pt_bindir(), "xetex", "bin", "darwin", a[0][0]+".exe").replace("\\", "/")
+                a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
+            del kw['path']
+        else:
+            a = [[x.replace("/", "\\") for x in a[0]]] + [x.replace('"', '') for x in a[1:]]
+        res = subprocess.check_output(*a, **kw).decode("utf-8", errors="ignore")
+        return res
+
+    def call(*a, **kw):
+        # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
+        path = os.path.join(pt_bindir(), "xetex", "bin", "darwin", a[0][0]+".exe").replace("/", "\\")
+        newa = [[path] + a[0][1:]] + list(a)[1:]
+        logger.debug(f"{path=} {newa=}")
+        kw['stdout'] = kw.get('stdout', subprocess.PIPE)
+        kw['stderr'] = kw.get('stderr', subprocess.STDOUT)
+        res = subprocess.run(*newa, **kw)
+        return res
 
 elif sys.platform == "win32":
     CREATE_NO_WINDOW = 0x08000000
