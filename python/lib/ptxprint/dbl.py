@@ -2,7 +2,7 @@
 import xml.etree.ElementTree as et
 import re, os, shutil
 from zipfile import ZipFile
-from ptxprint.ptsettings import books, allbooks
+from ptxprint.ptsettings import books, allbooks, bookcodes
 from ptxprint.utils import get_ptsettings
 import usfmtc
 
@@ -72,88 +72,6 @@ class Emitter:
         if self.last_ws is not None and not len(self.last_ws):
             self.last_ws = " "
 
-def usx2usfm(fname, outf, reftag=None):
-    emit = Emitter(outf)
-    parent = None
-    stack = []
-    lastel = None
-    for (ev, el) in et.iterparse(fname, ("start", "end")):
-        s = el.get("style", "")
-        if lastel is not None:
-            emit(lastel.tail, True)
-        if ev == "start":
-            if lastel is None and parent is not None:
-                if parent.text is not None and len(parent.text.strip()):
-                    emit.addws()
-                emit(parent.text, True)
-            if el.tag in ("chapter", "book", "para", "row", "sidebar", "verse") and s != "":
-                emit("\n")
-            if el.tag == "chapter":
-                proc_start_ms(el, "chapter", "c", emit, "\n")
-            elif el.tag == "verse":
-                proc_start_ms(el, "verse", "v", emit, " ")
-            elif el.tag == "book":
-                emit("\\{0} {1} ".format(s, el.get("code")))
-            elif el.tag in ("row", "para"):
-                emit("\\{0}".format(s))
-            elif el.tag in ("link", "char"):
-                nested = "+" if parent is not None and parent.tag == "char" else ""
-                emit("\\{0} ".format(nested + s))
-            elif el.tag in ("note", "sidebar"):
-                emit("\\{0} {1} ".format(s, el.get("caller")))
-                if "category" in el.attrib:
-                    emit("\\cat {0}\\cat*".format(el.get("category")))
-            elif el.tag == "unmatched":
-                emit("\\" + el.get(marker))
-            elif el.tag == "figure":
-                emit("\\{} ".format(s))
-            elif el.tag == "cell":
-                if "colspan" in el.attrib:
-                    emit("\\{0}-{1} ".format(s, el.get("colspan")))   # check colspan ScrStylesheet.RangeMarker
-                else:
-                    emit("\\{} ".format(s))
-            elif el.tag == "optbreak":
-                emit("//")
-            elif el.tag == "ms":
-                emit("\\{}".format(s))
-                append_attribs(el, emit)
-                emit("\\*")
-            elif reftag is not None and el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
-                emit("\\"+reftag)
-            elif el.tag in ("usx", "annot", "table", "usfm", "text", "ref"):
-                pass
-            else:
-                raise SyntaxError(el.tag)
-            stack.append(parent)
-            parent = el
-            lastel = None
-            lastopen = el
-        elif ev == "end":
-            if id(lastopen) == id(el):
-                if el.text is not None and len(el.text.strip()):
-                    emit.addws()
-                emit(el.text, True)
-            parent = stack.pop()
-            if el.tag == "note" and el.get("closed", "true") == "true":
-                emit("\\{}*".format(s))
-            elif el.tag in ("char", "link"):
-                nested = "+" if parent is not None and parent.tag == "char" else ""
-                if el.get("closed", "true") == "true":
-                    append_attribs(el, emit, nows=True)
-                    emit("\\{}*".format(nested + s))
-            elif el.tag == "figure":
-                for k in ("alt", ("src", "file"), "size", "loc", "copy", "ref"):
-                    append_attribs(el, emit, k)
-                emit("\\{}*".format(s))
-            elif el.tag == "sidebar":
-                emit.addws()
-                if el.get("closed", "true") == "true":
-                    emit("\\{}e ".format(s))
-            elif reftag is not None and el.tag == "ref" and el.get('gen', 'false').lower() != 'true':
-                #append_attribs(el, emit, nows=True)
-                emit("\\{}*".format(reftag))
-            lastel = el
-
 
 _dblMapping = {
     'Name':                         ('meta', 'identification/systemId[@type="paratext"]/name'),
@@ -199,65 +117,90 @@ def GetDBLName(dblfile):
             return ltag + prjcode
     return None
 
-def UnpackDBL(dblfile, prjid, prjdir):
+def UnpackBundle(dblfile, prjid, prjdir):
+    with ZipFile(dblfile) as dblzip:
+        fnames = dblzip.namelist()
+        if any(f.endswith("metadata.xml") for f in fnames):
+            return UnpackDBL(dblzip, prjid, prjdir)
+        elif any(f.lower().endswith("settings.xml") for f in fnames):
+            return UnpackPTX(dblzip, prjid, prjdir)
+        else:
+            return UnpackBooks(dblzip, prjid, prjdir)
+
+def UnpackBooks(inzip, prjid, prjdir, subdir=None):
+    for f in inzip.nameslist():
+        if subdir is not None and not f.startswith(subdir+"/"):
+            continue
+        fbase = os.path.basename(f)
+        (fbk, fext) = os.path.splitext(fbase)
+        ftype = usfmtc._filetypes.get(fext.lower(), None)
+        if ftype is None:
+            continue
+        if fbk in bookcodes:
+            unpackBook(inzip, f, fbk, ftype, prjid, prjdir)
+
+def unpackBook(inzip, inname, bkid, informat, prjid, prjdir):
+    prjpath = os.path.join(prjdir, prjid)
+    bkindex = books.get(bkid)+1
+    bookshere[bkindex-1] = 1
+    outfname = "{}{}{}.USFM".format(bookcodes.get(bkid, "ZZ"), bkid, prjid)
+    outpath = os.path.join(prjpath, outfname)
+    with inzip.open(subFolder + infname) as inf:
+        indoc = usfmtc.readFile(inf, informat=informat)
+        indoc.saveAs(outpath)
+
+def UnpackPTX(inzip, prjid, prjdir):
+    inzip.extractall(os.path.join(prjdir, prjid))
+
+def UnpackDBL(inzip, prjid, prjdir):
     info = {'prjid': prjid}
     bookshere = [0] * len(allbooks)
     subFolder = ""
-    with ZipFile(dblfile) as inzip:
-        for name in inzip.namelist():
-            if name == "metadata.xml":
-                break
-            if name.endswith("/metadata.xml"):
-                subFolder = name[:-12]
-                break
-        else:
-            return False
-        with inzip.open(subFolder + "metadata.xml") as inmeta:
-            metadoc = et.parse(inmeta)
-            meta = metadoc.getroot()
-        if prjid is None:
-            prjid = meta.findtext('identification/abbreviation')
-        prjpath = os.path.join(prjdir, prjid)
-        os.makedirs(prjpath, exist_ok=True)
-        for f in ('styles.xml', 'release/styles.xml'):
-            try:
-                with inzip.open(subFolder + f) as instyle:
-                    style = et.parse(instyle)
-                break
-            except KeyError:
-                pass
+    for name in inzip.namelist():
+        if name == "metadata.xml":
+            break
+        if name.endswith("/metadata.xml"):
+            subFolder = name[:-12]
+            break
+    else:
+        return False
+    with inzip.open(subFolder + "metadata.xml") as inmeta:
+        metadoc = et.parse(inmeta)
+        meta = metadoc.getroot()
+    if prjid is None:
+        prjid = meta.findtext('identification/abbreviation')
+    prjpath = os.path.join(prjdir, prjid)
+    os.makedirs(prjpath, exist_ok=True)
+    for f in ('styles.xml', 'release/styles.xml'):
+        try:
+            with inzip.open(subFolder + f) as instyle:
+                style = et.parse(instyle)
+            break
+        except KeyError:
+            pass
 
-        ldmlname = "{}_{}.ldml".format(meta.findtext('language/iso'), meta.findtext('language/ldml'))
-        for f in (ldmlname, 'release/'+ldmlname):
-            try:
-                with inzip.open(subFolder + f) as source, \
-                     open(os.path.join(prjpath, ldmlname), "wb") as target:
-                    shutil.copyfileobj(source, target)
-                break
-            except KeyError:
-                pass
+    ldmlname = "{}_{}.ldml".format(meta.findtext('language/iso'), meta.findtext('language/ldml'))
+    for f in (ldmlname, 'release/'+ldmlname):
+        try:
+            with inzip.open(subFolder + f) as source, \
+                 open(os.path.join(prjpath, ldmlname), "wb") as target:
+                shutil.copyfileobj(source, target)
+            break
+        except KeyError:
+            pass
 
-        def process_usx(bkid, infname):
-            bkindex = books.get(bkid)+1
-            bookshere[bkindex-1] = 1
-            outfname = "{:02}{}{}.USFM".format(bkindex, bkid, prjid)
-            outpath = os.path.join(prjpath, outfname)
-            with inzip.open(subFolder + infname) as inf:
-                indoc = usfmtc.readFile(inf, informat="usx")
-                indoc.saveAs(outpath)
-
-        metacontents = meta.find('publications/publication[@default="true"]/structure')
-        if metacontents is not None:
-            for contentel in metacontents.findall('content'):
-                bkid = contentel.get("role")
-                infname = contentel.get("src")
-                process_usx(bkid, infname)
-        else:
-            metacontents = meta.find('contents/bookList[@default="true"]/books')
-            for contentel in metacontents.findall('book'):
-                bkid = contentel.get('code')
-                infname = 'USX_1/{}.usx'.format(bkid)
-                process_usx(bkid, infname)
+    metacontents = meta.find('publications/publication[@default="true"]/structure')
+    if metacontents is not None:
+        for contentel in metacontents.findall('content'):
+            bkid = contentel.get("role")
+            infname = contentel.get("src")
+            unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
+    else:
+        metacontents = meta.find('contents/bookList[@default="true"]/books')
+        for contentel in metacontents.findall('book'):
+            bkid = contentel.get('code')
+            infname = 'USX_1/{}.usx'.format(bkid)
+            unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
 
     info['bookspresent'] = "".join(str(x) for x in bookshere)
     settings = et.Element('ScriptureText')

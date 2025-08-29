@@ -21,6 +21,9 @@ fontconfig_template = """<?xml version="1.0"?>
         <rejectfont>
             <glob>*.woff</glob>
         </rejectfont>
+        <rejectfont>
+            <glob>*.otf</glob>
+        </rejectfont>
 <!--        <rejectfont>
             <pattern>
                 <patelt name="variable"/>
@@ -887,7 +890,7 @@ class TTFont:
         self.advances = metrics[0::2]
 
     def readglyf(self, inf):
-        if hasattr(self, 'glyphs'):
+        if hasattr(self, 'glyphs') or 'loca' not in self.dict:
             return
         self.readhead(inf)
         self.readmaxp(inf)
