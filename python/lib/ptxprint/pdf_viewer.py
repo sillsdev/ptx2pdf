@@ -1587,7 +1587,7 @@ class PDFViewer:
                 winreg.CloseKey(key)
                 logger.debug(f"Set Scr Ref in registry to: {vref}")
         except WindowsError as e:
-            logger.debug(f"Error: {e} while tryint to set ref in registry")
+            logger.debug(f"Error: {e} while trying to set ref in registry")
             return
 
         # Load user32.dll

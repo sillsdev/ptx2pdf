@@ -3877,7 +3877,6 @@ class GtkViewModel(ViewModel):
         self._setup_digits()
         self.updatePicList()
         self.updateDialogTitle()
-        print(f"self.disableLayoutAnalysis in updateProjectSettings")  # Do we need this here?
         self.disableLayoutAnalysis()  # Do we need this here?
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
@@ -7019,3 +7018,11 @@ Thank you,
         if self.loadingConfig:
             return
         self.pdf_viewer.updatePageNavigation()
+
+    def onInstallBSBclicked(self, btn):
+        print("Installing BSB...")
+        time.sleep(3)
+        print("Done! Enjoy reading the Berean Standard Bible :-)")
+        dialog = self.builder.get_object("dlg_DBLbundle")
+        dialog.hide()
+        # Remember to switch to BSB after unpacking/installing it
