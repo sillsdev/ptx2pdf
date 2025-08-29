@@ -133,11 +133,12 @@ a1 = Analysis(['python/scripts/ptxprint'],
              win_private_assemblies = False,
              noarchive = False)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
+app_name = 'PTXprint'
 exe1 = EXE(pyz1,
           a1.scripts,
           [],
           exclude_binaries=True,
-          name='PTXprint-app',
+          name=f"{app_name}-app",
           debug = False,
           bootloader_ignore_signals = False,
           strip = False,
@@ -191,4 +192,96 @@ coll = COLLECT(*allcolls,
                strip=False,
                upx=True,
                upx_exclude=['tcl'],
-               name='ptxprint')
+               name=app_name)
+
+if sys.platform == "darwin":
+    import shutil
+    import subprocess
+    app = BUNDLE(coll,
+                name=f"{app_name}.app",
+                icon='icon/Google-Noto-Emoji-Objects-62859-open-book.ico',
+                bundle_identifier=f"org.sil.{app_name}",
+                info_plist={
+                    'NSPrincipalClass':'NSApplication',
+                    'NSAppleScriptEnabled':False,
+                    'CFBundleExecutable':f"{app_name}-app"
+                })
+
+    skip_codesign = os.environ.get("SKIP_CODESIGN") == "1"
+    if  skip_codesign:
+        sys.exit(0)
+
+    #
+    # Create DMG staging directory in dist/dmg
+    #
+    dmg_staging = os.path.join(DISTPATH, "dmg")
+    if os.path.exists(dmg_staging):
+        shutil.rmtree(dmg_staging)
+    os.makedirs(dmg_staging)
+    # Copy the .app bundle to dist/dmg
+    shutil.copytree(os.path.join(DISTPATH, f"{app_name}.app"), os.path.join(dmg_staging, f"{app_name}.app"), symlinks=True)
+    # Create Applications symlink in dist/dmg
+    applications_link = os.path.join(dmg_staging, "Applications")
+    if not os.path.exists(applications_link):
+        os.symlink("/Applications", applications_link)
+
+    #
+    # Sign all Mach-O binaries
+    #
+    print("Codesigning all binaries")
+    sign_script = os.path.abspath("mac-sign-all-binaries.sh")
+    app_bundle_path = os.path.join(dmg_staging, f"{app_name}.app")
+    if not os.path.exists(sign_script):
+        raise Exception(f"Signing script not found: {sign_script}")
+    subprocess.run(["bash", sign_script, app_bundle_path], check=True)
+
+    #
+    # Create the DMG from dist/dmg
+    #
+    dmg_path = os.path.join(DISTPATH, f"{app_name}.dmg")
+    print(f"Creating {app_name}.dmg")
+    subprocess.run([
+        "hdiutil", "create", "-volname", f"{app_name}",
+        "-srcfolder", dmg_staging, "-ov", "-format", "UDZO", dmg_path
+    ], check=True)
+
+    skip_notarize = os.environ.get("SKIP_NOTARIZE") == "1"
+    if skip_notarize:
+        sys.exit(0)
+
+    #
+    # Notarize the DMG using xcrun notarytool
+    #
+    apple_id = os.environ.get("NOTARIZATION_USERNAME")
+    password = os.environ.get("NOTARIZATION_PASSWORD")
+    team_id = os.environ.get("NOTARIZATION_TEAM")
+    if apple_id and password and team_id:
+        try:
+            # Run xcrun notarytool submit and capture output
+            print(f"Notarizing {dmg_path}")
+            import json
+            result = subprocess.run([
+                "xcrun", "notarytool", "submit", dmg_path,
+                "--apple-id", apple_id,
+                "--password", password,
+                "--team-id", team_id,
+                "--output-format", "json"
+            ], check=True, capture_output=True, text=True)
+            output_json = json.loads(result.stdout)
+            request_id = output_json.get("id")
+            if not request_id:
+                raise Exception("No request ID found in notarytool output.")
+            print(f"Notarization RequestID: {request_id}")
+            # Run the mac-check-notarized.sh script with dmg path and request_id
+            script_path = os.path.abspath("mac-check-notarized.sh")
+            if not os.path.exists(script_path):
+                raise Exception("No check notarized script found")
+            subprocess.run(["bash", script_path, dmg_path, request_id], check=True)
+            print("Notarization check script complete.")
+        except Exception as e:
+            print(f"Notarization failed: {e}")
+    else:
+        print("Notarization skipped: NOTARIZATION_TEAM, NOTARIZATION_USERNAME, or NOTARIZATION_PASSWORD not set in environment.")
+    
+    # Clean up the staging directory
+    shutil.rmtree(dmg_staging)
