@@ -547,9 +547,9 @@ mac_menu = {
     "PTXprint": {
         "Quit": 'onDestroy',
     },
-    "Help": {
-        "About": 'do_help',     # switch to the help tab or create a dialog
-    }
+    # "Help": {
+    #     "About": 'do_help',     # switch to the help tab or create a dialog
+    # }
 }
 
 def getPTDir():
@@ -625,14 +625,13 @@ class GtkViewModel(ViewModel):
             except:
                 windll.user32.SetProcessDPIAware()  # Fallback for older Windows versions
 
-        if sys.platform == "darwin":
-            runsplash_path = os.path.join(sys._MEIPASS, '..', 'MacOS', 'runsplash')
-            runsplash_path = os.path.abspath(runsplash_path)
-        else:
-            runsplash_path = os.path.join(sys._MEIPASS, 'runsplash')
-
         if not self.args.quiet:
             if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+                if sys.platform == "darwin":
+                    runsplash_path = os.path.join(sys._MEIPASS, '..', 'MacOS', 'runsplash')
+                    runsplash_path = os.path.abspath(runsplash_path)
+                else:
+                    runsplash_path = os.path.join(sys._MEIPASS, 'runsplash')
                 cmds = [runsplash_path, os.path.join(pycodedir(), 'splash.glade')]
             else:
                 cmds = [sys.executable, os.path.join(pycodedir(), "runsplash.py"), os.path.join(pycodedir(), "splash.glade")]
@@ -841,10 +840,10 @@ class GtkViewModel(ViewModel):
             mb = self._add_mac_menu()
             mvb = Gtk.VBox(False, 0)
             mvb.pack_start(mb, False, False, 0)
-            mwc = mw.get_child()
-            mw.remove(mwc)
-            vbox.pack_start(mwc, True, True, 0)
-            mw.add(vbox)
+            mwc = self.mw.get_child()
+            self.mw.remove(mwc)
+            mvb.pack_start(mwc, True, True, 0)
+            self.mw.add(mvb)
         if sys.platform.startswith("win"):
             self.restore_window_geometry()
 
