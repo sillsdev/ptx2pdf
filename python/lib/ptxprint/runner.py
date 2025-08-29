@@ -5,7 +5,8 @@ from ptxprint.utils import pt_bindir
 
 logger = logging.getLogger(__name__)
 
-bindir = sys.platform + "_" + platform.machine()
+architectures = {k:k for k in ("arm64", "x86_64")}
+bindir = sys.platform + "_" + architectures.get(platform.machine(), "x86_64")
 
 if sys.platform == "linux":
 
