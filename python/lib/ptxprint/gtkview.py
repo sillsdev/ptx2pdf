@@ -625,9 +625,15 @@ class GtkViewModel(ViewModel):
             except:
                 windll.user32.SetProcessDPIAware()  # Fallback for older Windows versions
 
+        if sys.platform == "darwin":
+            runsplash_path = os.path.join(sys._MEIPASS, '..', 'MacOS', 'runsplash')
+            runsplash_path = os.path.abspath(runsplash_path)
+        else:
+            runsplash_path = os.path.join(sys._MEIPASS, 'runsplash')
+
         if not self.args.quiet:
             if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-                cmds = [os.path.join(sys._MEIPASS, 'runsplash'), os.path.join(pycodedir(), 'splash.glade')]
+                cmds = [runsplash_path, os.path.join(pycodedir(), 'splash.glade')]
             else:
                 cmds = [sys.executable, os.path.join(pycodedir(), "runsplash.py"), os.path.join(pycodedir(), "splash.glade")]
             self.splash = subprocess.Popen(cmds)
