@@ -4386,7 +4386,7 @@ as well as the baselines of the body text.</property>
                     <property name="can-focus">False</property>
                     <child>
                       <object class="GtkCheckButton" id="c_gridGraph">
-                        <property name="label" translatable="yes">Grid</property>
+                        <property name="label" translatable="yes">Graph Paper</property>
                         <property name="name">Show grid (graph paper)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -4411,9 +4411,10 @@ the text. This may be useful for precise measuring.</property>
                         <signal name="button-release-event" handler="adjustGridSettings" swapped="no"/>
                         <child>
                           <object class="GtkLabel" id="lb_adjustGrid">
+                            <property name="name">Graph Paper Settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">Change the gridline settings.</property>
+                            <property name="tooltip-text" translatable="yes">Change the graph paper settings.</property>
                             <property name="valign">end</property>
                             <property name="margin-bottom">2</property>
                             <property name="label" translatable="yes">Settings</property>
@@ -4444,15 +4445,15 @@ the text. This may be useful for precise measuring.</property>
                     <child>
                       <object class="GtkCheckButton" id="c_layoutAnalysis">
                         <property name="label" translatable="yes">Layout Analysis</property>
-                        <property name="name">Perform Layout Analysis of the text to highlight spacing issues</property>
+                        <property name="name">Perform Layout Analysis of the text to highlight issues</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
                         <property name="tooltip-text" translatable="yes">This option analyzes the text
 to highlight layout issues:
+ - character collisions
  - excessive horizontal space
- - vertical rivers of space
- - character collisions</property>
+ - vertical rivers of space</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="draw-indicator">True</property>
@@ -4472,6 +4473,7 @@ to highlight layout issues:
                         <signal name="button-release-event" handler="onAnalysisSettingsClicked" swapped="no"/>
                         <child>
                           <object class="GtkLabel" id="l_analysisSettings">
+                            <property name="name">Layout Analysis Settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Click to show the Advanced &gt; Other
@@ -6550,11 +6552,12 @@ Spacing (pt):</property>
                                         <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkLabel" id="l_gridAligned">
+                                            <property name="name">Align Text to Baseline - uses fixed line spacing</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">For high quality typesetting it is
 best practice to Align the Text
-to the (baseline) Grid. This
+to the Baseline (i.e. on grid). This
 ensures consistent line spacing
 and front-to-back registration.
 
@@ -6562,7 +6565,7 @@ Note that this may leave larger
 empty spaces at the end of pages
 which will need to be manually
 adjusted using the Adjust List.</property>
-                                            <property name="label" translatable="yes">Align Text to Grid</property>
+                                            <property name="label" translatable="yes">Align Text to Baseline</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -6605,6 +6608,7 @@ carefully before changing this setting.</property>
                                         </child>
                                         <child>
                                           <object class="GtkLabel" id="l_gridVariable">
+                                            <property name="name">Variable Line Spacing - to vertically justify columns of text</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">Allowing a small increase in the (vertical)
