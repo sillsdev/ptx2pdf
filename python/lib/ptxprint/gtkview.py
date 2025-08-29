@@ -543,6 +543,15 @@ _dlgtriggers = {
     # "dlg_preview":          "????",
 }
 
+mac_menu = {
+    "PTXprint": {
+        "Quit": 'onDestroy',
+    },
+    "Help": {
+        "About": 'do_help',     # switch to the help tab or create a dialog
+    }
+}
+
 def getPTDir():
     txt = _("Paratext is not installed on this system.\n" + \
             "Please locate the directory where your USFM projects\n" +\
@@ -590,6 +599,20 @@ class GtkViewModel(ViewModel):
         self.lang = args.lang if args.lang is not None else 'en'
         self.args = args
         self.initialised = False
+
+    def _add_mac_menu(self, menudesc=mac_menu, parent=None):
+        if parent is None:
+            parent = Gtk.MenuBar()
+        for k, v in menudesc.items():
+            item = Gtk.MenuItem(label=k)
+            if isinstance(v, str):
+                item.connect("activate", getattr(self, v, None))
+            else:
+                submenu = Gtk.Menu()
+                self._add_mac_menu(menudesc=v, parent=submenu)
+                item.set_submenu(submenu)
+            parent.append(item)
+        return parent
 
     def setup_ini(self):
         # logger.debug("Starting setup_ini in gtkview")
@@ -808,6 +831,14 @@ class GtkViewModel(ViewModel):
         self.tv_polyglot = Gtk.TreeView()
 
         self.mw = self.builder.get_object("ptxprint")
+        if sys.platform == "darwin":
+            mb = self._add_mac_menu()
+            mvb = Gtk.VBox(False, 0)
+            mvb.pack_start(mb, False, False, 0)
+            mwc = mw.get_child()
+            mw.remove(mwc)
+            vbox.pack_start(mwc, True, True, 0)
+            mw.add(vbox)
         if sys.platform.startswith("win"):
             self.restore_window_geometry()
 
