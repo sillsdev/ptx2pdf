@@ -590,6 +590,8 @@ def getsign(b, v, a, m=""):
         r = "+" + r
     return r
 
+def dummy(*a):
+    pass
 
 class GtkViewModel(ViewModel):
 
@@ -691,6 +693,7 @@ class GtkViewModel(ViewModel):
         logger.debug("Loading glade")
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         logger.debug("Glade loaded in gtkview")
+
         class MacApp(Gtk.Application):
             def __init__(self, view, glade_text, *a, **kw):
                 super().__init__(*a, flags=Gio.ApplicationFlags.NON_UNIQUE, **kw)
@@ -703,13 +706,15 @@ class GtkViewModel(ViewModel):
                 self.view.mw = self.win
                 self.hold()
             def do_startup(self):
-                mb = Gio.Menu()
-                a = Gio.SimpleAction.new("onDestroy", None)
-                a.connect("activate", self.view.onDestroy)
-                self.add_action(a)
-                mb.append("Quit", "app.onDestroy")
+                Gtk.Application.do_startup(self)
+                mb = self.view._add_mac_menu(self)
+                #mb = Gio.Menu()
+                #a = Gio.SimpleAction.new("onDestroyX", None)
+                #a.connect("activate", dummy)    # self.view.onDestroy)
+                #self.add_action(a)
+                #mb.append("Quit", "app.onDestroyX")
                 print("MacApp adding menu")
-                self.set_app_menu(None)
+                self.set_app_menu(mb)
                 print("MacApp done")
             def do_activate(self, *a):
                 print("MacApp do_activate called")
