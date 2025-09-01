@@ -85,8 +85,6 @@ class ProjectList:
                     pt = ParatextSettings(path)
                 guid = pt.createGuid()
                 pt.saveAs(os.path.join(path, 'ptxSettings.xml'))
-            else:
-                return None
         p = ProjectDir(prjid, guid, path)
         logger.debug(f"Adding project {p}")
         self.projects[guid] = p
