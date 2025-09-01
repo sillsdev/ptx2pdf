@@ -692,36 +692,36 @@ class GtkViewModel(ViewModel):
                             self.btnControls.add(nid)
         logger.debug("Loading glade")
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
+        self.builder = Gtk.Builder()
+        self.builder.add_from_string(xml_text)
+        self.builder.connect_signals(self)
+        self.mw = self.builder.get_object("ptxprint")
         logger.debug("Glade loaded in gtkview")
 
         class MacApp(Gtk.Application):
-            def __init__(self, view, glade_text, *a, **kw):
+            def __init__(self, view, *a, **kw):
                 super().__init__(*a, flags=Gio.ApplicationFlags.NON_UNIQUE, **kw)
+                GLib.set_application_name("PTXprint")
                 self.view = view
-                view.builder = Gtk.Builder()
-                view.builder.add_from_string(glade_text)
-                view.builder.connect_signals(view)
-                self.win = Gtk.ApplicationWindow(application=self, title="ptxprint")
-                self.win.add(view.builder.get_object("ptxprint"))
-                self.view.mw = self.win
+                self.win = None
                 self.hold()
+
             def do_startup(self):
                 Gtk.Application.do_startup(self)
+                self.win = Gtk.ApplicationWindow(application=self, title="ptxprint")
+                self.win.add(self.view.builder.get_object("ptxprint"))
                 mb = self.view._add_mac_menu(self)
-                #mb = Gio.Menu()
-                #a = Gio.SimpleAction.new("onDestroyX", None)
-                #a.connect("activate", dummy)    # self.view.onDestroy)
-                #self.add_action(a)
-                #mb.append("Quit", "app.onDestroyX")
-                print("MacApp adding menu")
                 self.set_app_menu(mb)
-                print("MacApp done")
-            def do_activate(self, *a):
-                print("MacApp do_activate called")
-                print("Done do_activate")
+                self.win.show_all()
+
+            def do_activate(self):
+                #Gtk.Application.do_activate(self)
+                pass
+
             def on_window_destory(self, widget):
                 self.release()
-        self.mainapp = MacApp(self, xml_text)
+
+        self.mainapp = MacApp(self)
 
         self.startedtime = time.time()
         self.lastUpdatetime = time.time() - 3600
@@ -1130,9 +1130,6 @@ class GtkViewModel(ViewModel):
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
 
-        width = self.userconfig.getint("geometry", f"ptxprint_width", fallback=1005)
-        height = self.userconfig.getint("geometry", f"ptxprint_height", fallback=665)
-        self.mw.resize(width, height)
         self.mw.show_all()
         self.set_uiChangeLevel(self.uilevel)
         GObject.timeout_add(1000, self.monitor)
@@ -1183,6 +1180,9 @@ class GtkViewModel(ViewModel):
 
     def first_method(self):
         """ This is called first thing after the UI is set up and all is active """
+        width = self.userconfig.getint("geometry", f"ptxprint_width", fallback=1005)
+        height = self.userconfig.getint("geometry", f"ptxprint_height", fallback=665)
+        self.mainapp.win.resize(width, height)
         self.doConfigNameChange(None)
 
 
@@ -1667,7 +1667,7 @@ class GtkViewModel(ViewModel):
         # elif dest == "sbcats":
             # self.sbcatlist.clear()
 
-    def onDestroy(self, btn):
+    def onDestroy(self, btn, *a):
         if self.logfile != None:
             self.logfile.write("</actions>\n")
             self.logfile.close()
@@ -4096,7 +4096,8 @@ class GtkViewModel(ViewModel):
     def updateDialogTitle(self):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         #self.builder.get_object("ptxprint").set_title(titleStr)
-        self.mainapp.win.set_title(titleStr)
+        if self.mainapp.win:
+            self.mainapp.win.set_title(titleStr)
 
     def _locFile(self, file2edit, loc, fallback=False):
         fpath = None
