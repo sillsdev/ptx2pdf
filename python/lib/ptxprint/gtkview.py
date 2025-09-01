@@ -600,18 +600,20 @@ class GtkViewModel(ViewModel):
         self.args = args
         self.initialised = False
 
-    def _add_mac_menu(self, menudesc=mac_menu, parent=None):
+    def _add_mac_menu(self, app, menudesc=mac_menu, parent=None):
         if parent is None:
-            parent = Gtk.MenuBar()
+            parent = Gio.Menu()
         for k, v in menudesc.items():
-            item = Gtk.MenuItem(label=k)
+            item = Gio.Menu()
             if isinstance(v, str):
-                item.connect("activate", getattr(self, v, None))
+                action = Gio.SimplAction(v, parameter_type=None, enabled=True)
+                action.connect("activate", getattr(self, v, None))
+                app.add_action(action)
+                parent.append(action, f"app.{v}")
             else:
-                submenu = Gtk.Menu()
-                self._add_mac_menu(menudesc=v, parent=submenu)
-                item.set_submenu(submenu)
-            parent.append(item)
+                submenu = Gio.Menu()
+                self._add_mac_menu(app, menudesc=v, parent=submenu)
+                item.append_submenu(k, submenu)
         return parent
 
     def setup_ini(self):
@@ -837,13 +839,11 @@ class GtkViewModel(ViewModel):
 
         self.mw = self.builder.get_object("ptxprint")
         if sys.platform == "darwin":
-            mb = self._add_mac_menu()
-            mvb = Gtk.VBox(False, 0)
-            mvb.pack_start(mb, False, False, 0)
-            mwc = self.mw.get_child()
-            self.mw.remove(mwc)
-            mvb.pack_start(mwc, True, True, 0)
-            self.mw.add(mvb)
+            class MacApp(Gtk.Application):
+                def do_startup(this):
+                    mb = self._add_mac_menu(this)
+                    this.set_app_menu(mb)
+            self.mainapp = MacApp()
         if sys.platform.startswith("win"):
             self.restore_window_geometry()
 
