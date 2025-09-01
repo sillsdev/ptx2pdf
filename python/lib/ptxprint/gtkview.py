@@ -41,7 +41,7 @@ from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel
 from ptxprint.modelmap import ModelMap
 from ptxprint.minidialog import MiniDialog
-from ptxprint.dbl import UnpackDBL, GetDBLName
+from ptxprint.dbl import UnpackBundle, GetDBLName
 from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
 from ptxprint.hyphen import Hyphenation
@@ -5236,7 +5236,7 @@ class GtkViewModel(ViewModel):
 
     def _expandDBLBundle(self, prj, dblfile):
         tdir = self.prjTree.findWriteable()
-        if UnpackDBL(dblfile, prj, tdir):
+        if UnpackBundle(dblfile, prj, tdir):
             pjct = self.prjTree.addProject(prj, os.path.join(tdir, prj), None)
             v = [getattr(pjct, a) for a in ['prjid', 'guid']]
             extras = [Pango.Weight.NORMAL, "#000000"]

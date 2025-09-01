@@ -59,7 +59,7 @@ class ProjectList:
                             if '<Guid>' in l:
                                 guid = l[l.find("<Guid>")+6:l.rfind("<")]
             if guid is None:
-                if any(x.lower().endswith("sfm") for x in os.listdir(p)):
+                if any(x.lower().endswith("sfm") and not os.path.isdir(os.path.join(p, x)) for x in os.listdir(p)):
                     addme = True
                 if addme:
                     pt = ParatextSettings(p)

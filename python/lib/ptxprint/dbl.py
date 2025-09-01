@@ -1,6 +1,6 @@
 
 import xml.etree.ElementTree as et
-import re, os, shutil
+import re, os, shutil, io
 from zipfile import ZipFile
 from ptxprint.ptsettings import books, allbooks, bookcodes
 from ptxprint.utils import get_ptsettings
@@ -128,7 +128,7 @@ def UnpackBundle(dblfile, prjid, prjdir):
             return UnpackBooks(dblzip, prjid, prjdir)
 
 def UnpackBooks(inzip, prjid, prjdir, subdir=None):
-    for f in inzip.nameslist():
+    for f in inzip.namelist():
         if subdir is not None and not f.startswith(subdir+"/"):
             continue
         fbase = os.path.basename(f)
@@ -138,19 +138,20 @@ def UnpackBooks(inzip, prjid, prjdir, subdir=None):
             continue
         if fbk in bookcodes:
             unpackBook(inzip, f, fbk, ftype, prjid, prjdir)
+    return True
 
 def unpackBook(inzip, inname, bkid, informat, prjid, prjdir):
     prjpath = os.path.join(prjdir, prjid)
-    bkindex = books.get(bkid)+1
-    bookshere[bkindex-1] = 1
     outfname = "{}{}{}.USFM".format(bookcodes.get(bkid, "ZZ"), bkid, prjid)
     outpath = os.path.join(prjpath, outfname)
-    with inzip.open(subFolder + infname) as inf:
+    os.makedirs(prjpath, exist_ok=True)
+    with io.TextIOWrapper(inzip.open(inname), encoding="utf-8") as inf:
         indoc = usfmtc.readFile(inf, informat=informat)
         indoc.saveAs(outpath)
 
 def UnpackPTX(inzip, prjid, prjdir):
     inzip.extractall(os.path.join(prjdir, prjid))
+    return True
 
 def UnpackDBL(inzip, prjid, prjdir):
     info = {'prjid': prjid}
@@ -201,6 +202,8 @@ def UnpackDBL(inzip, prjid, prjdir):
             bkid = contentel.get('code')
             infname = 'USX_1/{}.usx'.format(bkid)
             unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
+    bkindex = books.get(bkid)+1
+    bookshere[bkindex-1] = 1
 
     info['bookspresent'] = "".join(str(x) for x in bookshere)
     settings = et.Element('ScriptureText')
