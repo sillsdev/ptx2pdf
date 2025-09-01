@@ -31,7 +31,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
-            _categoryColors, _bookToCategory
+            _categoryColors, _bookToCategory, getResourcesDir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -7078,7 +7078,10 @@ Thank you,
 
     def onInstallBSBclicked(self, btn):
         print("Installing BSB...")
-        time.sleep(3)
+        tdir = self.prjTree.findWriteable()
+        prjid = "BSB"
+        zipfile = os.path.join(getResourcesDir(), "bsb.zip")
+        UnpackBundle(zipfile, prjid, tdir)
         print("Done! Enjoy reading the Berean Standard Bible :-)")
         dialog = self.builder.get_object("dlg_DBLbundle")
         dialog.hide()

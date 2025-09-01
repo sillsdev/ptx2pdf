@@ -679,6 +679,13 @@ def extraDataDir(base, dirname, create=False):
     else:
         return None
 
+def getResourcesDir():
+    if hasattr(sys, '_MEIPASS'):
+        res = os.path.join(getattr(sys, '_MEIPASS'), 'ptxprint', 'resources')
+    else:
+        res = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources')
+    return res
+
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
         inf.seek(-12, 2)
