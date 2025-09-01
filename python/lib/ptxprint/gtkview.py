@@ -710,8 +710,9 @@ class GtkViewModel(ViewModel):
                 Gtk.Application.do_startup(self)
                 self.win = Gtk.ApplicationWindow(application=self, title="ptxprint")
                 self.win.add(self.view.builder.get_object("ptxprint"))
-                mb = self.view._add_mac_menu(self)
-                self.set_app_menu(mb)
+                if not sys.platform.startswith("win"):
+                    mb = self.view._add_mac_menu(self)
+                    self.set_app_menu(mb)
                 self.win.show_all()
 
             def do_activate(self):
@@ -859,9 +860,6 @@ class GtkViewModel(ViewModel):
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
         self.tv_polyglot = Gtk.TreeView()
-
-        if sys.platform.startswith("win"):
-            self.restore_window_geometry()
 
         for w in self.allControls:
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
@@ -1184,6 +1182,8 @@ class GtkViewModel(ViewModel):
         height = self.userconfig.getint("geometry", f"ptxprint_height", fallback=665)
         self.mainapp.win.resize(width, height)
         self.doConfigNameChange(None)
+        if sys.platform.startswith("win"):
+            self.restore_window_geometry()
 
 
     def emission_hook(self, w, *a):
@@ -6907,7 +6907,7 @@ Thank you,
         if not self.userconfig.has_section("geometry"):
             self.userconfig.add_section("geometry")
         prvw = self.builder.get_object("dlg_preview")
-        _dialogs = {"ptxprint":    self.mw,
+        _dialogs = {"ptxprint":    self.mainapp.win,
                     "dlg_preview": prvw }
 
         for name, dialog in _dialogs.items():
@@ -6923,7 +6923,7 @@ Thank you,
         screen = self.mw.get_screen()  # Get screen info
         current_monitor_count = screen.get_n_monitors()
         prvw = self.builder.get_object("dlg_preview")
-        _dialogs = {"ptxprint":    self.mw,
+        _dialogs = {"ptxprint":    self.mainapp.win,
                     "dlg_preview": prvw }
 
         for name, dialog in _dialogs.items():

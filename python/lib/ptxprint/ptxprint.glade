@@ -29126,8 +29126,10 @@ Projects folder.
 
 This is a good training project
 and can also be used in diglots.</property>
+                    <property name="halign">end</property>
                     <property name="label" translatable="yes">Install Sample Text:
 Berean Standard Bible</property>
+                    <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
