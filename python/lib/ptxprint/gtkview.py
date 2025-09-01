@@ -21,7 +21,7 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     pass
 else:
     gi.require_version('GtkSource', '3.0')
-from gi.repository import GtkSource, Poppler
+from gi.repository import GtkSource, Poppler, Gio
 import cairo
 
 import xml.etree.ElementTree as et
@@ -604,16 +604,16 @@ class GtkViewModel(ViewModel):
         if parent is None:
             parent = Gio.Menu()
         for k, v in menudesc.items():
-            item = Gio.Menu()
             if isinstance(v, str):
-                action = Gio.SimplAction(v, parameter_type=None, enabled=True)
+                action = Gio.SimpleAction.new(v, None)
                 action.connect("activate", getattr(self, v, None))
                 app.add_action(action)
-                parent.append(action, f"app.{v}")
+                parent.append(k, f"app.{v}")
+                print(f"Appending action {k} to {v}")
             else:
                 submenu = Gio.Menu()
                 self._add_mac_menu(app, menudesc=v, parent=submenu)
-                item.append_submenu(k, submenu)
+                parent.append_submenu(k, submenu)
         return parent
 
     def setup_ini(self):
@@ -644,7 +644,6 @@ class GtkViewModel(ViewModel):
         self._setup_css()
         self.radios = {}
         GLib.set_prgname("ptxprint")
-        self.builder = Gtk.Builder()
         gladefile = os.path.join(pycodedir(), "ptxprint.glade")
         GObject.type_register(GtkSource.View)
         GObject.type_register(GtkSource.Buffer)
@@ -691,14 +690,33 @@ class GtkViewModel(ViewModel):
                             self.btnControls.add(nid)
         logger.debug("Loading glade")
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
-        self.builder.add_from_string(xml_text)
-        #    self.builder.set_translation_domain(APP)
-        #    self.builder.add_from_file(gladefile)
-        self.builder.connect_signals(self)
-        # if self.args.extras & 16 != 0:
-            # _ui_keepHidden.remove("tb_Cover")
-            # self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
+        class MacApp(Gtk.Application):
+            def __init__(self, view, glade_text, *a, **kw):
+                super().__init__(*a, flags=Gio.ApplicationFlags.NON_UNIQUE, **kw)
+                self.view = view
+                view.builder = Gtk.Builder()
+                view.builder.add_from_string(glade_text)
+                view.builder.connect_signals(view)
+                self.win = Gtk.ApplicationWindow(application=self, title="ptxprint")
+                self.win.add(view.builder.get_object("ptxprint"))
+                self.view.mw = self.win
+                self.hold()
+            def do_startup(self):
+                mb = Gio.Menu()
+                a = Gio.SimpleAction.new("onDestroy", None)
+                a.connect("activate", self.view.onDestroy)
+                self.add_action(a)
+                mb.append("Quit", "app.onDestroy")
+                print("MacApp adding menu")
+                self.set_app_menu(None)
+                print("MacApp done")
+            def do_activate(self, *a):
+                print("MacApp do_activate called")
+                print("Done do_activate")
+            def on_window_destory(self, widget):
+                self.release()
+        self.mainapp = MacApp(self, xml_text)
 
         self.startedtime = time.time()
         self.lastUpdatetime = time.time() - 3600
@@ -837,13 +855,6 @@ class GtkViewModel(ViewModel):
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
         self.tv_polyglot = Gtk.TreeView()
 
-        self.mw = self.builder.get_object("ptxprint")
-        if sys.platform == "darwin":
-            class MacApp(Gtk.Application):
-                def do_startup(this):
-                    mb = self._add_mac_menu(this)
-                    this.set_app_menu(mb)
-            self.mainapp = MacApp()
         if sys.platform.startswith("win"):
             self.restore_window_geometry()
 
@@ -1156,7 +1167,10 @@ class GtkViewModel(ViewModel):
         logger.debug("Starting UI")
         try:
             GLib.idle_add(self.first_method)
-            Gtk.main()
+            if self.mainapp is not None:
+                self.mainapp.run()
+            else:
+                Gtk.main()
         except Exception as e:
             s = traceback.format_exc()
             s += "\n{}: {}".format(type(e), str(e))
@@ -1652,7 +1666,7 @@ class GtkViewModel(ViewModel):
         if self.logfile != None:
             self.logfile.write("</actions>\n")
             self.logfile.close()
-        Gtk.main_quit()
+        self.mainapp.quit()
 
     def onKeyPress(self, dlg, event):
         if event.keyval == Gdk.KEY_Escape:
@@ -4076,7 +4090,8 @@ class GtkViewModel(ViewModel):
         
     def updateDialogTitle(self):
         titleStr = super(GtkViewModel, self).getDialogTitle()
-        self.builder.get_object("ptxprint").set_title(titleStr)
+        #self.builder.get_object("ptxprint").set_title(titleStr)
+        self.mainapp.win.set_title(titleStr)
 
     def _locFile(self, file2edit, loc, fallback=False):
         fpath = None

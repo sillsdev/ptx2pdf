@@ -5069,22 +5069,22 @@ should the Slice contain?</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">0.5</property>
   </object>
-  <object class="GtkDialog" id="ptxprint">
-    <property name="can-focus">False</property>
+  <object class="GtkBox" id="ptxprint">
+    <!-- <property name="can-focus">False</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">normal</property>
-    <property name="urgency-hint">True</property>
+    <property name="urgency-hint">True</property> -->
     <signal name="configure-event" handler="onMainConfigure" swapped="no"/>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
     <signal name="key-press-event" handler="onKeyPress" swapped="no"/>
-    <child internal-child="vbox">
+    <child> <!-- internal-child="vbox"> -->
       <object class="GtkBox">
         <property name="can-focus">False</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
-        <child internal-child="action_area">
+        <child> <!-- internal-child="action_area"> -->
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
             <property name="valign">start</property>
