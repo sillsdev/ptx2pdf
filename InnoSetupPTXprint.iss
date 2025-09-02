@@ -50,6 +50,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [InstallDelete]
 Type: filesandordirs; Name: "{app}\xetex"
 Type: filesandordirs; Name: "{app}\ptx2pdf"
+Type: filesandordirs; Name: "{app}\ptxprint\xetex\bin\windows"
 
 [Files]
 Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -90,4 +91,3 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 [InstallDelete]
 Type: files;   Name: "{app}\ptxprint\Strong*.xml"
 Type: files;   Name: "{app}\ptxprint\cross_references.txt"
-Type: folders; Name: "{app}\ptxprint\xetex\bin\windows"
