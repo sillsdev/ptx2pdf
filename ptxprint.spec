@@ -8,7 +8,7 @@ print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
 if sys.platform.startswith("win"):
-    binddir = "win32_x86_64"
+    bindir = "win32_x86_64"
 else:
     bindir = sys.platform + "_" + platform.machine()
 print("bindir:", bindir)
@@ -53,7 +53,7 @@ def getfiles(basedir, outbase, extin=[], excldirs=[]):
                 continue
             if '.' not in f:
                 f += "."
-            res.append((f'{dp}/{f}', f'{outbase}/{dp}/{f}'))
+            res.append((f'{dp}/{f}', f'{outbase}/{dp}'))
     return res
 
 # Run this every time until a sysadmin adds it to the agent
@@ -116,25 +116,18 @@ binaries = (binaries
       + getfiles(f"xetex/bin/{bindir}", "ptxprint")
       + getfiles(f"xetex", "ptxprint", extin=[".tfm", ".pfm", ".pfb"])
       )
-##                    + [('xetex/texmf_var/web2c/xetex/*.fmt', 'ptxprint/xetex/texmf_var/web2c/xetex')],
-#                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
 
-                # data files are considered text and end up where specified by the tuple.
+# data files are considered text and end up where specified by the tuple.
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
 	    ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'pdfrw', 'pdfrw/objects')]
       + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
-##					  + [(f"{dp}/*.*", f"ptxprint/{dp}") for dp, _, fn in os.walk("xetex") if dp != "xetex/bin/windows" and any("." in f for f in fn)]
 			  + [(f'src{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
-#					  + [(f'xetex/{d}/*', f'ptxprint/xetex/{d}') for d in ('texmf_dist', 'texmf_var', 'fonts')]
 			  + [(f'src/mappings/*.map', f'ptxprint/ptx2pdf/mappings')]
       + [('python/lib/ptxprint/unicode/*.txt', 'ptxprint/unicode')]
       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
-#                      + [('xetex/bin/'+bindir+'/*.*', 'ptxprint/xetex/bin/'+bindir)]
       + [('docs/inno-docs/*.txt', 'ptxprint')]
-#                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
-#                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
       + [(os.path.dirname(usfmtc.__file__)+"/"+x, "usfmtc") for x in ("*.vrs", "*.rng")]
     )
 
