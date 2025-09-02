@@ -73,7 +73,6 @@ Source: "dist\ptxprint\share\locale\ru\*"; DestDir: "{app}\share\locale\ru\"; Fl
 Source: "dist\ptxprint\share\locale\th\*"; DestDir: "{app}\share\locale\th\"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Source: "dist\ptxprint\share\locale\tpi\*"; DestDir: "{app}\share\locale\tpi\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "xetex\*"; DestDir: "{app}\ptxprint\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita" 
 
@@ -89,5 +88,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 ;skipifsilent - removed this flag/param so it can automatically (re)start the app after a silent install
 
 [InstallDelete]
-Type: files; Name: "{app}\ptxprint\Strong*.xml"
-Type: files; Name: "{app}\ptxprint\cross_references.txt"
+Type: files;   Name: "{app}\ptxprint\Strong*.xml"
+Type: files;   Name: "{app}\ptxprint\cross_references.txt"
+Type: folders; Name: "{app}\ptxprint\xetex\bin\windows"

@@ -228,7 +228,6 @@ class ParatextSettings:
                 self.inferValues(forced=True)
                 self.calcbookspresent(forced=True)
         else:
-            breakpoint()
             for f in os.listdir(self.prjdir):
                 if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
                     continue

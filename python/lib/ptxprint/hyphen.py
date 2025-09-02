@@ -52,7 +52,9 @@ class Hyphenation:
         if c == 0:
             self = cls()
             self.m1 = _("Hyphenation List Empty")
-            self.m2 = _("{} Paratext Project's Hyphenation file does not contain any entries:\n{}").format(prjid, infname)
+            self.m2 = _("{} Paratext Project's Hyphenation file does not contain any {}entries:\n{}").format(prjid, "approved " if strict else "", infname)
+            if strict:
+                self.m2 = self.m2 + (_("\nThe option 'Only Use Approved Hyphenation Words' was enabled. Try disabling that option and try again.").format(prjid, infname))
             return self
         elif c >= cls.listlimit or len(scriptregs) or inbooks:
             hyphwords = set([x.replace("-", "") for x in hyphenatedWords])

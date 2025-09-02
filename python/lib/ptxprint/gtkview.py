@@ -7080,13 +7080,12 @@ Thank you,
         self.pdf_viewer.updatePageNavigation()
 
     def onInstallBSBclicked(self, btn):
-        print("Installing BSB...")
+        logger.debug("Installing BSB...")
         tdir = self.prjTree.findWriteable()
         prjid = "BSB"
         zipfile = os.path.join(getResourcesDir(), "bsb.zip")
         if UnpackBundle(zipfile, prjid, tdir):
             self._selectProject(prjid, tdir)
-            print("Done! Enjoy reading the Berean Standard Bible :-)")
+            logger.debug("Done installing the Berean Standard Bible")
         dialog = self.builder.get_object("dlg_DBLbundle")
         dialog.hide()
-        # Remember to switch to BSB after unpacking/installing it
