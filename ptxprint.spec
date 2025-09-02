@@ -36,13 +36,22 @@ def anyver(p, path=".", ext=".dll"):
         res = p + str(intver)
     else:
         res = None
-    print(f"{p=}, {allfiles}: {res=}")
     return res
 
-def getfiles(basedir, outbase, extin=[]):
-    return [('{}/{}'.format(dp, f), '{}/{}/{}'.format(outbase, os.path.relpath(dp, basedir), f))
-                for dp, dn, fs in os.walk(basedir)
-                    for f in fs if not len(extin) or os.path.splitext(f)[1] in extin]
+def getfiles(basedir, outbase, extin=[], excldirs=[]):
+    res = []
+    for dp, dn, fs in os.walk(basedir):
+        rpath = os.path.relpath(dp, basedir)
+        rpath = "" if rpath == "." else rpath+"/"
+        if any(x in dp for x in excldirs):
+            continue
+        for f in fs:
+            if len(extin) and os.path.splitext(f)[1] not in extin:
+                continue
+            if '.' not in f:
+                f += "."
+            res.append((f'{dp}/{f}', f'{outbase}/{dp}/{f}'))
+    return res
 
 # Run this every time until a sysadmin adds it to the agent
 # call([r'echo "y" | C:\msys64\usr\bin\pacman.exe -S mingw-w64-x86_64-python-numpy'], shell=True)
@@ -101,6 +110,8 @@ binaries = (binaries
       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptxprint/PDFassets/reference')]
       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
       + getfiles('resources', 'ptxprint', extin=['.zip'])
+      + getfiles(f"xetex/bin/{bindir}", "ptxprint")
+      + getfiles(f"xetex", "ptxprint", extin=[".tfm", ".pfm", ".pfb"])
       )
 ##                    + [('xetex/texmf_var/web2c/xetex/*.fmt', 'ptxprint/xetex/texmf_var/web2c/xetex')],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
@@ -109,8 +120,7 @@ binaries = (binaries
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
 	    ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'pdfrw', 'pdfrw/objects')]
-      + sum(([('{}/*.*'.format(dp), 'ptxprint/{}'.format(dp))] for dp, dn, fn in os.walk('xetex') if not dp.startswith('xetex/bin/') and any(os.path.isfile(os.path.join(dp, f)) and '.' in f for f in fn)), [])
-      + sum(([('{}/*'.format(dp), 'ptxprint/{}'.format(dp))] for dp, dn, fn in os.walk('xetex/bin/'+bindir) if any(os.path.isfile(os.path.join(dp, f)) for f in fn)), [])
+      + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
 ##					  + [(f"{dp}/*.*", f"ptxprint/{dp}") for dp, _, fn in os.walk("xetex") if dp != "xetex/bin/windows" and any("." in f for f in fn)]
 			  + [(f'src{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
@@ -122,7 +132,8 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
       + [('docs/inno-docs/*.txt', 'ptxprint')]
 #                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
 #                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
-      + [(os.path.dirname(usfmtc.__file__)+"/"+x, "usfmtc") for x in ("*.vrs", "*.rng")])
+      + [(os.path.dirname(usfmtc.__file__)+"/"+x, "usfmtc") for x in ("*.vrs", "*.rng")]
+    )
 
 print("binaries:", binaries)
 print("datas:", datas)

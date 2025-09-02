@@ -6876,7 +6876,7 @@ Thank you,
             self.onOK(None)
             
     def onShowMainDialogClicked(self, btn):
-        self.builder.get_object("ptxprint").present()
+        self.mainapp.win.present()
 
     def get_dialog_geometry(self, dialog):
         """Retrieve the position, size, and monitor details of a given GTK dialog."""
