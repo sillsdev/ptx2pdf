@@ -7,7 +7,10 @@ from subprocess import call
 print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
-bindir = sys.platform + "_" + platform.machine()
+if sys.platform.startswith("win"):
+    binddir = "win32_x86_64"
+else:
+    bindir = sys.platform + "_" + platform.machine()
 print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
