@@ -4229,6 +4229,14 @@ class GtkViewModel(ViewModel):
             self.onRefreshViewerTextClicked(None)
             self.builder.get_object('l_Settings1').set_label(os.path.basename(self.moduleFile))
         
+    def onEditMaps(self, btn):
+        mapbkid = self.get("fcb_ptxMapBook") 
+        mapfile = os.path.join(self.project.path, self.getBookFilename(mapbkid))
+        if len(mapfile):
+            self._editProcFile(str(mapfile), "prj")
+            self.onRefreshViewerTextClicked(None)
+            self.builder.get_object('l_Settings1').set_label(os.path.basename(mapfile))
+        
     def onEditModsTeX(self, btn):
         cfgname = self.cfgid
         self._editProcFile("ptxprint-mods.tex", "cfg",
@@ -7005,7 +7013,7 @@ Thank you,
                 # 2. If it does not exist, create it
                 title = "Maps"
                 with open(outfile, "w", encoding="utf-8") as outf:
-                    outf.write("\\id {0} Maps index\n\\h {1}\n\\mt1 {1}\n".format(mapbkid, title))
+                    outf.write("\\id {0} Maps index\n\\h {1}\n\\toc3 {1}\n\\mt1 {1}\n".format(mapbkid, title))
                     outf.write(new_map_usfm)
                     
             bkid = self.get("fcb_ptxMapBook") or "XXM"
@@ -7017,7 +7025,7 @@ Thank you,
             if bkid not in bl:
                 bls = " ".join(bl)+ " " + bkid
                 self.set('ecb_booklist', bls)
-            self.saveConfig(force=force)
+            self.saveConfig(force=True)
             self.doStatus(_("Maps added to: {}").format(bkid))
 
     def onSelectMapClicked(self, btn_selectMap):

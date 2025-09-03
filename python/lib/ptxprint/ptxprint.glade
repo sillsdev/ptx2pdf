@@ -27183,9 +27183,13 @@ settings will remain unchanged.</property>
                                         <child>
                                           <object class="GtkButton" id="btn_addMaps2">
                                             <property name="label" translatable="yes">Add Maps...</property>
+                                            <property name="name">Add Maps to the Publication</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Maps for the end of the publication
+can be added to one of the XX* books
+or to the XXM book using this dialog.</property>
                                             <property name="valign">center</property>
                                             <signal name="clicked" handler="addMapsClicked" swapped="no"/>
                                           </object>
@@ -36638,7 +36642,7 @@ on subsequent runs.</property>
                           </packing>
                         </child>
                         <child>
-                          <!-- n-columns=4 n-rows=1 -->
+                          <!-- n-columns=5 n-rows=1 -->
                           <object class="GtkGrid" id="gr_importBackPDF">
                             <property name="width-request">700</property>
                             <property name="visible">True</property>
@@ -36647,7 +36651,7 @@ on subsequent runs.</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
-                            <property name="column-spacing">12</property>
+                            <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="c_inclBackMatter">
                                 <property name="label" translatable="yes">Back Matter PDF(s)</property>
@@ -36706,13 +36710,35 @@ file is selected, then these will appear in alphabetical order.</property>
                             <child>
                               <object class="GtkButton" id="btn_addMaps1">
                                 <property name="label" translatable="yes">Add Maps...</property>
+                                <property name="name">Add Maps to the Publication</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Maps for the end of the publication
+can be added to one of the XX* books
+or to the XXM book using this dialog.</property>
+                                <property name="valign">center</property>
                                 <signal name="clicked" handler="addMapsClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left-attach">3</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_editMaps">
+                                <property name="label" translatable="yes">Edit...</property>
+                                <property name="name">Edit Maps module</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
+show/edit the Maps module.</property>
+                                <property name="valign">center</property>
+                                <signal name="clicked" handler="onEditMaps" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">4</property>
                                 <property name="top-attach">0</property>
                               </packing>
                             </child>
