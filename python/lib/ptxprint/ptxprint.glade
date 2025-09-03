@@ -16474,14 +16474,13 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_chooseBooks">
-                                    <property name="label" translatable="yes">Choose...</property>
-                                    <property name="name">Multiple books chooser</property>
+                                    <property name="label" translatable="yes">Select Various Books...</property>
+                                    <property name="name">Multiple book selector</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="tooltip-text" translatable="yes">Select one or more Biblical books
 to be printed from the project.</property>
-                                    <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <signal name="clicked" handler="onChooseBooksClicked" swapped="no"/>
                                     <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>

@@ -1,12 +1,12 @@
 PTXprint 2.9.4 Release Notes
-2 Sep 2025
+3 Sep 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.9.5 (2 Sep 2025)
+Bug fixes and Improvements in 2.9.5 (3 Sep 2025)
   * Refactor code for MacOS
-  * Get Mac packaging working and available on Downloads page
+  * Get Mac packaging working and make available on downloads page
   * Add button to install BSB as an option in Import Scripture
   * Enable Import to handle .zip files with either USX or USFM
   * Tweak wording grid/baseline/graph paper in UI
@@ -16,6 +16,10 @@ Bug fixes and Improvements in 2.9.5 (2 Sep 2025)
   * Update ptx-unicode to latest unicode and support U+FDD0 as interchar space inhibiter
   * Refactor decorative boxes snippet for modern diglots
   * Re-enable shortcut/accelerator keys after Mac refactoring
+  * Tidy up Project and Scope area of UI (stop expanding horizontally)
+  * Test guid when changing project
+  * Color Project codes from _PTXprint in purple - distinguishing them from normal projects
+  * Get accelerators (shortcut keys) working on the main window  
   * Fix bug of processing stale data - now reloads usfm files on each print
   * Fix parsing zvar and add early ldml lookup support
   * Fix ptxsettings.bookNames -> bkNames
