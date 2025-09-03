@@ -547,8 +547,8 @@ class Xrefs:
         if not parent.ptsettings.hasLocalBookNames:
             usfms = parent.printer.get_usfms()
             usfms.makeBookNames()
-            parent.ptsettings.bookStrs = usfms.booknames.bookStrs
-            parent.ptsettings.bookNames = usfms.booknames.bookNames
+            parent.ptsettings.bookStrs = usfms.booknames.bookstrings
+            parent.ptsettings.bookNames = usfms.booknames.booknames
             parent.hasLocalBookNames = True
         rtl = parent['document/ifrtl'] == 'true'
         logger.debug(f"Source: {source}, {rtl=}")
