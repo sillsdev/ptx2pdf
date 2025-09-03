@@ -713,6 +713,7 @@ class GtkViewModel(ViewModel):
                     mb = self.view._add_mac_menu(self)
                     self.set_app_menu(mb)
                 self.win.show_all()
+                self.view.first_method()
 
             def do_activate(self):
                 #Gtk.Application.do_activate(self)
@@ -1165,7 +1166,6 @@ class GtkViewModel(ViewModel):
         self.changed(False)
         logger.debug("Starting UI")
         try:
-            GLib.idle_add(self.first_method)
             if self.mainapp is not None:
                 self.mainapp.run()
             else:
