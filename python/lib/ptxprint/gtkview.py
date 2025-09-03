@@ -181,6 +181,7 @@ s_pdfZoomLevel btn_page_first btn_page_previous t_pgNum btn_page_next btn_page_l
 b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
 btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint
+btn_showSettings
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
 _ui_enable4diglot2ndary = """
@@ -869,8 +870,11 @@ class GtkViewModel(ViewModel):
 
         # 1. Get all projects and their last-modified times
         all_projects = self.prjTree.projectList()
+        resource_projects = []
         projects_with_time = []
         for p in all_projects:
+            if "_PTXprint" in p.path:
+                resource_projects.append(p.guid) 
             config_file_path = os.path.join(p.path, "unique.id")
             try:
                 mtime = os.path.getmtime(config_file_path)
@@ -904,7 +908,12 @@ class GtkViewModel(ViewModel):
             # Determine style based on whether the project is in our "recent" set
             is_recent = prjid in recent_project_ids
             weight = Pango.Weight.BOLD if is_recent else Pango.Weight.NORMAL
-            color = "#00008B" if is_recent else "#000000" # blue if recent
+            if guid in resource_projects:
+                color = "#800080" # purple if resource text
+            elif is_recent:
+                color = "#00008B" # blue if recent project
+            else: 
+                color = "#000000" # otherwise black
 
             # Append to all relevant models, adding style info to the main one
             projects.append([prjid, guid, weight, color]) 
@@ -3845,6 +3854,7 @@ class GtkViewModel(ViewModel):
         self.setConfigId(configid)
 
     def onProjectChange(self, cb_prj):
+        # breakpoint()
         if not self.initialised:
             return
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
@@ -5238,8 +5248,7 @@ class GtkViewModel(ViewModel):
         if UnpackBundle(dblfile, prj, tdir):
             self._selectProject(prj, tdir)
         else:
-            self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
-                                              "Or contact the DBL bundle provider.")
+            self.doError("Faulty Scripture Text Bundle", "Check if you have selected a valid scripture text bundle (ZIP) file.")
 
     def _selectProject(self, prj, tdir):
         pjct = self.prjTree.addProject(prj, os.path.join(tdir, prj), None)
