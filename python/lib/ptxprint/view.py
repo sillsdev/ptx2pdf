@@ -304,7 +304,13 @@ class ViewModel:
                 if bname is not None and os.path.exists(os.path.join(self.project.path, bname)):
                     fromchap = round(float(self.get("t_chapfrom") or "0"))
                     tochap = round(float(self.get("t_chapto") or "200"))
-                    res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
+                    try:
+                        res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
+                    except ValueError as e:
+                        if fromchap > tochap:
+                            res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=fromchap, verse=200)), ))
+                        else:
+                            raise e
                     return self._bookrefsBooks(res, local)
             return []
         elif scope == "multiple":
