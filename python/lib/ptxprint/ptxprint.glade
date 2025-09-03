@@ -16421,7 +16421,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                             <property name="margin-bottom">6</property>
                             <property name="label-xalign">0.019999999552965164</property>
                             <child>
-                              <!-- n-columns=6 n-rows=4 -->
+                              <!-- n-columns=5 n-rows=4 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -16473,19 +16473,20 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_chooseBooks">
-                                    <property name="label" translatable="yes">Ch_oose...</property>
+                                    <property name="label" translatable="yes">Choose...</property>
                                     <property name="name">Multiple books chooser</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="tooltip-text" translatable="yes">Select one or more Biblical books
 to be printed from the project.</property>
-                                    <property name="use-underline">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <signal name="clicked" handler="onChooseBooksClicked" swapped="no"/>
                                     <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">5</property>
+                                    <property name="left-attach">4</property>
                                     <property name="top-attach">2</property>
                                   </packing>
                                 </child>
@@ -16562,11 +16563,11 @@ Multiple Books:</property>
                                     <property name="opacity">0.69999999999999996</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="label" translatable="yes">&lt;&lt;&lt;&lt; Start by selecting a project</property>
+                                    <property name="label" translatable="yes">&lt;&lt;&lt; Select a project  OR  Import &gt;&gt;&gt;</property>
                                     <property name="wrap">True</property>
-                                    <property name="ellipsize">middle</property>
-                                    <property name="width-chars">30</property>
-                                    <property name="max-width-chars">30</property>
+                                    <property name="ellipsize">end</property>
+                                    <property name="width-chars">20</property>
+                                    <property name="max-width-chars">32</property>
                                     <property name="xalign">0</property>
                                     <attributes>
                                       <attribute name="scale" value="0.90000000000000002"/>
@@ -16579,28 +16580,14 @@ Multiple Books:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_chooseBibleModule">
-                                    <property name="label" translatable="yes">Ch_oose...</property>
-                                    <property name="name">Bible module chooser button</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="use-underline">True</property>
-                                    <signal name="clicked" handler="onSelectModuleClicked" swapped="no"/>
-                                    <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">5</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="lb_bibleModule">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="opacity">0.7019607843137254</property>
                                     <property name="halign">start</property>
                                     <property name="ellipsize">middle</property>
+                                    <property name="width-chars">50</property>
+                                    <property name="max-width-chars">60</property>
                                     <attributes>
                                       <attribute name="foreground" value="#121212121212"/>
                                     </attributes>
@@ -16649,7 +16636,8 @@ for ranges of scripture to be printed. For example:
   GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
 
 Shortcut: Ctrl-B</property>
-                                    <property name="hexpand">True</property>
+                                    <property name="valign">center</property>
+                                    <property name="hexpand">False</property>
                                     <property name="active">0</property>
                                     <property name="has-entry">True</property>
                                     <property name="active-id">0</property>
@@ -16681,6 +16669,7 @@ are not permitted: For example,
   MAT 1:1-REV 22:21   does not work.
 
 Shortcut: Ctrl-B</property>
+                                        <property name="valign">center</property>
                                         <property name="placeholder-text" translatable="yes">e.g. GEN 1:1-2:3 JHN 1:1-5    or    LUK ACT GLO    or    GEN EXO LEV NUM DEU</property>
                                         <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
                                         <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
@@ -16691,7 +16680,7 @@ Shortcut: Ctrl-B</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">2</property>
-                                    <property name="width">4</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -16784,7 +16773,6 @@ chapter number to end with.</property>
                                   <packing>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -16809,26 +16797,76 @@ be available for viewing or editing in Paratext.</property>
                                     <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">5</property>
+                                    <property name="left-attach">4</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_editModule">
-                                    <property name="label" translatable="yes">Edit...</property>
-                                    <property name="name">Edit Bible module</property>
+                                  <object class="GtkBox">
                                     <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
+                                    <property name="can-focus">False</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkButton" id="btn_chooseBibleModule">
+                                        <property name="label" translatable="yes">Choose...</property>
+                                        <property name="name">Bible module chooser button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <signal name="clicked" handler="onSelectModuleClicked" swapped="no"/>
+                                        <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editModule">
+                                        <property name="label" translatable="yes">Edit...</property>
+                                        <property name="name">Edit Bible module</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
 show the selected Bible module.</property>
-                                    <property name="halign">end</property>
-                                    <signal name="clicked" handler="onEditModule" swapped="no"/>
-                                    <accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                                        <property name="hexpand">True</property>
+                                        <signal name="clicked" handler="onEditModule" swapped="no"/>
+                                        <accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">4</property>
                                     <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -16880,12 +16918,12 @@ show the selected Bible module.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">When the Paratext project is shared through
-Send/Recv, all saved configurations will be
-also made available to other PTXprint users 
+Send/Recv, all saved layout configurations will 
+also be made available to other PTXprint users 
 of the same Paratext project.
 
 Alternatively, select a previously-saved
-configuration to retrieve those settings.</property>
+layout configuration to retrieve settings.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Name:</property>
                                         <property name="justify">right</property>
@@ -17011,8 +17049,8 @@ settings for a similar project.</property>
                                       <object class="GtkComboBoxText" id="ecb_savedConfig">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">Select a previously-saved config
-to retrieve those settings.</property>
+                                        <property name="tooltip-text" translatable="yes">Select a previously-saved layout
+configuration to retrieve those settings.</property>
                                         <property name="margin-top">6</property>
                                         <property name="margin-bottom">6</property>
                                         <property name="active">0</property>
@@ -17026,7 +17064,8 @@ to retrieve those settings.</property>
                                           <object class="GtkEntry" id="t_savedConfig">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+                                            <property name="tooltip-text" translatable="yes">Enter a name for the layout configuration
+to be saved.
 
 Note that only Roman/Latin names
 are supported using: a-z A-Z, 0-9,
@@ -17161,7 +17200,11 @@ or export them to an external folder.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Saved/Shared Configuration</property>
+                                <property name="tooltip-text" translatable="yes">A Layout (or Config) is a collection
+of settings that can be saved.
+By naming and saving a layout
+you can recall those settings later.</property>
+                                <property name="label" translatable="yes">Layout Configuration</property>
                               </object>
                             </child>
                           </object>
