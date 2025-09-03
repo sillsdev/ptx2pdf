@@ -7007,6 +7007,18 @@ Thank you,
                 with open(outfile, "w", encoding="utf-8") as outf:
                     outf.write("\\id {0} Maps index\n\\h {1}\n\\mt1 {1}\n".format(mapbkid, title))
                     outf.write(new_map_usfm)
+                    
+            bkid = self.get("fcb_ptxMapBook") or "XXM"
+            lsbooks = self.builder.get_object("ls_books")
+            if bkid not in enumerate(lsbooks):
+                lsbooks.append([bkid])
+            bl = self.getBooks()
+            self.set("r_book", "multiple")
+            if bkid not in bl:
+                bls = " ".join(bl)+ " " + bkid
+                self.set('ecb_booklist', bls)
+            self.saveConfig(force=force)
+            self.doStatus(_("Maps added to: {}").format(bkid))
 
     def onSelectMapClicked(self, btn_selectMap):
         picroot = self.project.path
@@ -7059,10 +7071,15 @@ Thank you,
 
     def addAnotherMapClicked(self, btn):
         mapfile = self.get("lb_mapFilename")
+        if not len(mapfile):
+            return
         caption = self.get("t_mapCaption")
-        posn = self.get("t_mapPgPos")
-        scale = self.get("s_mapScale")
-        mapbk = self.get("fcb_ptxMapBook")
+        size = self.get("fcb_sbSize", "page")
+        posn = self.get("t_mapPgPos", "Pc")
+        scale = self.get("s_mapScale", 1.0)
+        rotate = self.get("fcb_mapRotate")
+        x = "rotated {}".format(rotate) if rotate != '0' else ""
+        mapbk = self.get("fcb_ptxMapBook", "XXM")
         mapcntr = 1
         if os.path.exists(mapfile):
             while True:
@@ -7070,8 +7087,8 @@ Thank you,
                 if not self.picinfos.find(anchor=anchor):
                     break
                 mapcntr += 1
-            p = self.picinfos.addpic(anchor=anchor, caption=caption, srcfile=mapfile, 
-                                     src=os.path.basename(mapfile), pgpos=posn, scale=scale, sync=True)
+            p = self.picinfos.addpic(anchor=anchor, caption=caption, srcfile=mapfile, src=os.path.basename(mapfile),
+                                     size=size, pgpos=posn, scale=scale, **{"x-xetex": x}, sync=True)
             self.set("nbk_PicList", 1)
             self.picListView.add_row(p)
             self.mapusfm.append(f'\\pb\n\\zfiga |id="{anchor[4:]}" rem="{caption}"\\*') # fixme for polyglot

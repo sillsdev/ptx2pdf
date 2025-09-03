@@ -308,7 +308,7 @@ class ViewModel:
                         res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
                     except ValueError as e:
                         if fromchap > tochap:
-                            res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=fromchap, verse=200)), ))
+                            res = RefList((RefRange(Ref(book=bk, chapter=tochap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
                         else:
                             raise e
                     return self._bookrefsBooks(res, local)

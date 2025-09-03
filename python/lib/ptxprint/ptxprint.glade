@@ -10932,6 +10932,7 @@ needed, one at a time.</property>
                         <property name="name">Generate cover: Select Ornamental Border</property>
                         <property name="width-request">137</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
                         <property name="can-default">True</property>
                         <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available

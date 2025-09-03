@@ -19,7 +19,9 @@ Bug fixes and Improvements in 2.9.5 (3 Sep 2025)
   * Tidy up Project and Scope area of UI (stop expanding horizontally)
   * Test guid when changing project
   * Color Project codes from _PTXprint in purple - distinguishing them from normal projects
-  * Get accelerators (shortcut keys) working on the main window  
+  * Get accelerators (shortcut keys) working again on the main window
+  * Catch bad chapter ranges perhaps
+  * Add icon to AppWindow
   * Fix bug of processing stale data - now reloads usfm files on each print
   * Fix parsing zvar and add early ldml lookup support
   * Fix ptxsettings.bookNames -> bkNames
