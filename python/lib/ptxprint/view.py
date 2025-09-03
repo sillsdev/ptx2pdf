@@ -886,16 +886,16 @@ class ViewModel:
                 # except (OSError, PermissionError):
                     # pass
         if forcerewrite:
-            self.writeConfig(cfgname=cfgname, force=forcerewrite)
+            self.writeConfig(cfgname=cfgname, force=forcerewrite, diff=None)
         return oldversion
 
-    def writeConfig(self, cfgname=None, force=False):
+    def writeConfig(self, cfgname=None, force=False, diff=None):
         if not force and self.configLocked():
             return
         if cfgname is None:
             cfgname = self.cfgid or ""
         path = os.path.join(self.project.createConfigDir(cfgname), "ptxprint.cfg")
-        config = self.createConfig()
+        config = self.createConfig(diff=diff)
         if self.get('c_diglot') and not self.isDiglot:
             for k, p in self.polyglots.items():
                 p.writeConfig(config, f"diglot_{k}")
@@ -907,7 +907,7 @@ class ViewModel:
                 outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
             self.triggervcs = False
 
-    def _configset(self, config, key, value, update=True):
+    def _configset(self, config, key, value, update=True, diff=None):
         if "/" in key:
             (sect, k) = key.split("/", maxsplit=1)
         else:
@@ -919,10 +919,12 @@ class ViewModel:
             hasval = config.has_option(sect, k)
         if isinstance(value, bool):
             value = "true" if value else "false"
+        if diff is not None and diff.get(sect, k) == str(value):
+            return
         if update or not hasval:
             config.set(sect, k, str(value))
 
-    def createConfig(self):
+    def createConfig(self, diff=None):
         def sortkeys(x):
             k, v = x
             if k in self._activekeys:
@@ -959,22 +961,22 @@ class ViewModel:
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
-            self._configset(config, k, str(val) if val is not None else "", update=False)
+            self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
         for k in self.allvars():
-            self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False)
+            self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
-            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False)
+            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
         # for attribute, value in vars(self.polyglots).items():
             # print(f"{attribute}: {value}")    
         # for k, v in self.polyglots.items():
             # v.writeConfig(config, f"diglot_{k}")
         if isinstance(self.polyglots, dict):  # Ensure it's a dictionary
             for k, v in self.polyglots.items():
-                v.writeConfig(config, f"diglot_{k}")
+                v.writeConfig(config, f"diglot_{k}", diff=diff)
         else:
             print("Error: self.polyglots is not a dictionary.")
 
-        TeXpert.saveConfig(config, self)
+        TeXpert.saveConfig(config, self, diff=diff)
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):

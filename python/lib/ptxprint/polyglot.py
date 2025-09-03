@@ -48,7 +48,7 @@ class PolyglotConfig:
             if nv is not None:
                 setattr(self, v[0], nv)
 
-    def writeConfig(self, config, sect):
+    def writeConfig(self, config, sect, diff=None):
         for k, v in configmap.items():
             nv = getattr(self, v[0])
             if nv is None:
@@ -59,6 +59,8 @@ class PolyglotConfig:
                 nv = str(nv)
             elif v[1] == bool:
                 nv = "true" if nv else "false"
+            if diff is not None and diff.get(sect, k) == nv:
+                continue
             if not config.has_section(sect):
                 config.add_section(sect)
             config.set(sect, k, nv)

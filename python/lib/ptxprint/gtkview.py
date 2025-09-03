@@ -708,8 +708,7 @@ class GtkViewModel(ViewModel):
 
             def do_startup(self):
                 Gtk.Application.do_startup(self)
-                self.win = Gtk.ApplicationWindow(application=self, title="ptxprint")
-                self.win.add(self.view.builder.get_object("ptxprint"))
+                self.win = self.view.builder.get_object("mainapp_win")
                 if not sys.platform.startswith("win"):
                     mb = self.view._add_mac_menu(self)
                     self.set_app_menu(mb)

@@ -254,7 +254,7 @@ class TeXpert:
     section = "texpert"
 
     @classmethod
-    def saveConfig(self, config, view):
+    def saveConfig(self, config, view, diff=None):
         for opt in texpertOptions.values():
             n = widgetName(opt)
             v = view.get(n)
@@ -269,7 +269,7 @@ class TeXpert:
             else:
                 incl = False
             if incl:
-                view._configset(config, "{}/{}".format(self.section, opt.ident), v)
+                view._configset(config, "{}/{}".format(self.section, opt.ident), v, diff=diff)
 
     @classmethod
     def loadConfig(self, config, view):
