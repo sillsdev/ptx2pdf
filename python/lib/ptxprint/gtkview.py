@@ -3854,7 +3854,6 @@ class GtkViewModel(ViewModel):
         self.setConfigId(configid)
 
     def onProjectChange(self, cb_prj):
-        # breakpoint()
         if not self.initialised:
             return
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
@@ -3905,7 +3904,7 @@ class GtkViewModel(ViewModel):
             self.set("lb_working_dir", '<a href="{}">{}</a>'.format(outdir, outdir))
             
     def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, readConfig=None):
-        if prjid == getattr(self.project, 'prjid', None) and configName == self.cfgid:
+        if prjid == getattr(self.project, 'prjid', None) and configName == self.cfgid and (getattr(self.project, 'guid', None) is None or guid == self.project.guid):
             return True
         self.picListView.clear()
         if self.picinfos is not None:
