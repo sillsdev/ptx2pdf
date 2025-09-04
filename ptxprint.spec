@@ -209,6 +209,7 @@ for k, v in jobs.items():
           contents_directory = '.',
           windowed=True,
           console = False)
+    a.binaries = stripbinaries(a.binaries, f'xetex/bin/{bindir}')
     colls.append([e, a.binaries, a.zipfiles, a.datas])
 allcolls = sum(colls, [])
 
