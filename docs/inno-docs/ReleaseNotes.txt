@@ -1,10 +1,10 @@
 PTXprint 2.9.4 Release Notes
-3 Sep 2025
+4 Sep 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.9.5 (3 Sep 2025)
+Bug fixes and Improvements in 2.9.5 (4 Sep 2025)
   * Refactor code for MacOS
   * Get Mac packaging working and make available on downloads page
   * Add button to install BSB as an option in Import Scripture
@@ -20,8 +20,11 @@ Bug fixes and Improvements in 2.9.5 (3 Sep 2025)
   * Test guid when changing project
   * Color Project codes from _PTXprint in purple - distinguishing them from normal projects
   * Get accelerators (shortcut keys) working again on the main window
+  * Tidy up creation and management of XXM details for Maps
   * Catch bad chapter ranges perhaps
+  * Reduce installer size (remove redundant binaries)
   * Add icon to AppWindow
+  * Add support for \ca (without styling)
   * Fix bug of processing stale data - now reloads usfm files on each print
   * Fix parsing zvar and add early ldml lookup support
   * Fix ptxsettings.bookNames -> bkNames
