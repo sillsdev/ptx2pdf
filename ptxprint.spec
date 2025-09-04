@@ -42,6 +42,8 @@ def anyver(p, path=".", ext=".dll"):
     return res
 
 def getfiles(basedir, outbase, extin=[], excldirs=[]):
+    if "tfm" in excldirs:
+        breakpoint()
     res = []
     for dp, dn, fs in os.walk(basedir):
         rpath = os.path.relpath(dp, basedir)
