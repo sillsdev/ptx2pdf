@@ -7,10 +7,16 @@ from ptxprint.pdfrw.uncompress import uncompress
 from shutil import copy2
 from inspect import currentframe
 from struct import unpack
-import contextlib, appdirs, pickle, gzip
+import contextlib, pickle, gzip
 import regex
 from subprocess import check_output, call
 import logging
+
+try:
+    import platformdirs
+    appdirs = platformdirs
+except ModuleNotFoundError:
+    import appdirs
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +38,7 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
         MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
         1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1 HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
-        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|999 XXB|999 XXC|999 XXD|999 XXE|999 XXF|999 XXG|999 FRT|0 BAK|999 OTH|999 XXS|0 ZZZ|0 
+        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|999 XXB|999 XXC|999 XXD|999 XXE|999 XXF|999 XXG|999 FRT|0 BAK|999 OTH|999 XXS|0 XXM|0 ZZZ|0 
         ZZZ|0 ZZZ|0 INT|999 CNC|999 GLO|999 TDX|999 NDX|999 DAG|14 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 LAO|1"""
         
 _hebOrder = ["GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "1SA", "2SA", "1KI", "2KI", "ISA", "JER", "EZK", "HOS", "JOL", "AMO",
@@ -40,7 +46,7 @@ _hebOrder = ["GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "1SA", "2SA", "1KI
              "DAN", "EZR", "NEH", "1CH", "2CH"]
              
 _endBkCodes = {'XXG':'100', 'FRT':'A0', 'BAK':'A1', 'OTH':'A2', 'INT':'A7', 'CNC':'A8', 'GLO':'A9',
-               'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3', 'XXS': '101'} 
+               'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3', 'XXS': '101', 'XXM': '102'} 
 
 _allbooks = ["FRT", "INT", 
             "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST",
@@ -50,10 +56,55 @@ _allbooks = ["FRT", "INT",
             "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",
             "MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT",
             "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV", 
-            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS",
+            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS", "XXM",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
 
-nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
+nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", 
+            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS", "XXM"]
+
+_bookCategories = {
+    "Pentateuch": ["GEN", "EXO", "LEV", "NUM", "DEU"],
+    "OT_Historical": ["JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST"],
+    "Wisdom": ["JOB", "PSA", "PRO", "ECC", "SNG"],
+    "Major_Prophets": ["ISA", "JER", "LAM", "EZK", "DAN"],
+    "Minor_Prophets": ["HOS", "JOL", "AMO", "OBA", "JON", "MIC", "NAM", "HAB", "ZEP", "HAG", "ZEC", "MAL"],
+    "Gospels": ["MAT", "MRK", "LUK", "JHN"],
+    "Acts": ["ACT"],
+    "Pauline_Epistles": ["ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT", "PHM"],
+    "General_Epistles": ["HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD"],
+    "Apocalyptic": ["REV"],
+    "Deuterocanon": ["TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", 
+                     "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",],
+    "Extra_Material": ["FRT", "INT", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "BAK", "OTH", "CNC", "GLO", "TDX", "NDX"],
+    "Unique_Extras": ["XXS", "XXM"],
+}
+
+_bookToCategory = {
+    book_code: category
+    for category, books in _bookCategories.items()
+    for book_code in books
+}
+
+_categoryColors = {
+    # Category:           {"normal": "lighter_bg", "checked": "darker_bg_for_checked", "text": "text_color"}
+    "Pentateuch":         {"normal": "#E3F2FD", "checked": "#BBDEFB", "text": "#000000"}, # Very Light Blue
+    "OT_Historical":      {"normal": "#E8F5E9", "checked": "#C8E6C9", "text": "#000000"}, # Very Light Green
+    "Wisdom":             {"normal": "#FFFDE7", "checked": "#FFF9C4", "text": "#000000"}, # Very Light Yellow
+    "Major_Prophets":     {"normal": "#FFEBEE", "checked": "#FFCDD2", "text": "#000000"}, # Very Light Red
+    "Minor_Prophets":     {"normal": "#F3E5F5", "checked": "#E1BEE7", "text": "#000000"}, # Very Light Purple
+    "Gospels":            {"normal": "#FFF8E1", "checked": "#FFECB3", "text": "#000000"}, # Very Light Amber
+    "Acts":               {"normal": "#E0F7FA", "checked": "#B2EBF2", "text": "#000000"}, # Very Light Cyan
+    "Pauline_Epistles":   {"normal": "#FCE4EC", "checked": "#F8BBD0", "text": "#000000"}, # Very Light Pink
+    "General_Epistles":   {"normal": "#EDE7F6", "checked": "#D1C4E9", "text": "#000000"}, # Very Light Deep Purple
+    "Apocalyptic":        {"normal": "#F5F5F5", "checked": "#E0E0E0", "text": "#000000"}, # Almost White/Grey
+    "Deuterocanon":       {"normal": "#FBE9E7", "checked": "#FFCCBC", "text": "#000000"}, # Very Light Deep Orange
+    "Extra_Material":     {"normal": "#FAFAFA", "checked": "#F0F0F0", "text": "#000000"}, # Neutral Grey
+    "Unique_Extras":      {"normal": "#E0F2F1", "checked": "#B2DFDB", "text": "#000000"}, # Very Light Teal
+    "Default":            {"normal": "#FAFAFA", "checked": "#EAEAEA", "text": "#000000"}
+}
+
+rtlScripts = "Arab Armi Avst Hebr Mand Mani Nkoo Phli Phlp Phnx Prti Samr Sarb Sogd Sogo Syrc Thaa Yezi".split()
+nonSpacingScripts = "Khmr Laoo Mymr Thai".split()
 
 def booknum(bookcode):
     if len(bookcode):
@@ -93,9 +144,11 @@ def setup_i18n(i18nlang):
         os.environ["LANG"] = i18nlang
         lang = i18nlang
     else:
-        lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
+        lang, enc = locale.getlocale()
+        if lang is None:
+            lang = "en"
     enc = "UTF-8"
-    logger.debug(f"Loading locale for {lang}.{enc}")
+    logger.debug(f"Loading locale for {lang}.{enc} from {localedir}")
     if sys.platform.startswith('win'):
         from ctypes import cdll, windll
         from ctypes.util import find_msvcrt
@@ -110,9 +163,12 @@ def setup_i18n(i18nlang):
         locale.setlocale(locale.LC_ALL, '')
     else:
         locale.setlocale(locale.LC_ALL, (lang, enc))
-        #locale.bindtextdomain(APP, localedir)
         gettext.bindtextdomain(APP, localedir)
+        os.environ["LANGUAGE"] = lang
+        #gettext.bindtextdomain(APP, localedir)
     # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
+    langs = {x: os.getenv(x, "") for x in ("LANGUAGE", "LC_ALL", "LC_MESSAGES", "LANG")}
+    logger.debug(f"Langs are: {langs}")
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
     if "_" in lang:
@@ -166,6 +222,9 @@ def refSort(r, info=""):
         return (100, 0, 0, res[3], info, res[5], res[6])
     return res
 
+def dediglotref(r):
+    return re.sub(r'^([\dA-Z][A-Z]{2})[A-Z]', r"\1", r)
+
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
     try:
@@ -179,6 +238,8 @@ def coltoonemax(s):
             return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
         elif " " in s:
             return [float(x) for x in s.split(" ")]
+        elif s.startswith("#"):
+            return [float(int(s[i:i+2], 16))/256. for i in range(1, 6, 2)]
         else:
             return [0.8, 0.8, 0.8]
     except (ValueError, TypeError):
@@ -187,7 +248,7 @@ def coltoonemax(s):
 def textocol(s):
     if s is None:
         vals = [0, 0, 0]
-    elif s.startswith("x"):
+    elif s.startswith("x") or s.startswith("#"):
         try:
             vals = [int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16)]
         except (ValueError, TypeError):
@@ -281,6 +342,8 @@ def startfile(fpath):
             os.startfile(fpath)
         elif sys.platform.startswith("linux"):
             call(('xdg-open', fpath))
+        elif sys.platform == "darwin":
+            call(('open', fpath), shell=True)
 
 def getPDFconfig(fname):
     if str(fname).lower().endswith(".zip"):
@@ -303,7 +366,19 @@ def getPDFconfig(fname):
             return None
     return None
 
-if sys.platform == "linux":
+if sys.platform.startswith("win"):
+    import winreg
+
+    def openkey(path):
+        try:
+            k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
+        except FileNotFoundError:
+            k = None
+        return k
+
+    def queryvalue(base, value):
+        return winreg.QueryValueEx(base, value)[0]
+else:
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
         valuepath = os.path.join(basepath, path.lower(), "values.xml")
@@ -318,19 +393,6 @@ if sys.platform == "linux":
             return ""
         else:
             return res.text
-
-elif sys.platform.startswith("win"):
-    import winreg
-
-    def openkey(path):
-        try:
-            k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
-        except FileNotFoundError:
-            k = None
-        return k
-
-    def queryvalue(base, value):
-        return winreg.QueryValueEx(base, value)[0]
 
 def saferelpath(p, r="."):
     if p is None or not len(str(p)):
@@ -348,10 +410,7 @@ def pt_bindir():
     if not os.path.exists(basedir):
         basedir = os.path.abspath(os.path.dirname(__file__))
     res = getattr(sys, '_MEIPASS', None)
-    if res is None:
-        res = basedir
-    else:
-        res = os.path.join(res, 'ptxprint')
+    res = basedir if res is None else os.path.join(res, 'ptxprint')
     logger.debug(f"pt_bindir= {res}")
     return res
 
@@ -557,17 +616,23 @@ def htmlprotect(s):
     sc = '([' + "".join(_htmlentities.keys()) + '])'
     return re.sub(sc, lambda m: "&"+_htmlentities[m.group(1)]+";", s)
 
+def texprotect(s):
+    s = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), s)
+    s = re.sub(r"\\U([0-9A-Fa-f]{8})", lambda m:chr(int(m.group(1), 16)), s)
+    s = s.replace("://", ":/\\ZWNBSP/")
+    return s
+
 wfreg = "\\p{L}\\p{M}\\p{Sk}\\-\u200C\u200D"
 special_regexes = {
-    'ba': f'(?=[^{wfreg}])',
-    'BA': f'(?=[{wfreg})',
-    'bb': f'(?<=[^{wfreg}])',
-    'BB': f'(?<=[{wfreg}])',
+    'ba': f'(?=$|[^{wfreg}])',
+    'BA': f'(?=$|[{wfreg})',
+    'bb': f'(?<=^|[^{wfreg}])',
+    'BB': f'(?<=^|[{wfreg}])',
     'w': f'[{wfreg}]',
     'W': f'[^{wfreg}]'
 }
 
-def regex_localiser(r):
+def regex_localiser(r, script=None):
     specials = "|".join(special_regexes.keys())
     return re.sub(r"\\({})".format(specials), lambda m:special_regexes.get(m.group(1), "\\"+m.group(1)), r)
 
@@ -578,7 +643,10 @@ def cachedData(filepath, fn):
     logger.debug(f"Reading cache file {cfgfilepath}")
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
-            return pickle.load(inf)
+            try:
+                return pickle.load(inf)
+            except:
+                pass        # if the pickle loading fails, rebuild the pickle file
     testbase = os.path.basename("{}.pickle".format(filepath))
     for l in os.listdir(cfgdir):
         if l.startswith(testbase):
@@ -610,6 +678,13 @@ def extraDataDir(base, dirname, create=False):
         return ddir
     else:
         return None
+
+def getResourcesDir():
+    if hasattr(sys, '_MEIPASS'):
+        res = os.path.join(getattr(sys, '_MEIPASS'), 'ptxprint', 'resources')
+    else:
+        res = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources')
+    return res
 
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
@@ -666,7 +741,7 @@ def xdvigetfonts(xdv):
 
 varpaths = (
     ('prjdir', lambda p,v: p.path),
-    ('settingsdir', lambda p,v: os.path.join(p.path, '..')),
+    ('settingsdir', lambda p,v: p.path),
     ('workingdir', lambda p,v: p.printPath(v.cfgid)),
 )
 
@@ -697,13 +772,17 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
                 txt = str(varlib[k]) + "/" + txt[len(k)+4:]
             super().__init__(txt)
 
-    def withvars(self, aView):
+    def withvars(self, aView, relto=None):
+        if relto is None:
+            base = self.as_posix()
+        else:
+            base = os.path.join(relto, self.as_posix())
         varlib = self.create_varlib(aView)
-        bestr = self.as_posix()
+        bestr = base
         bestk = None
         for k, v in varlib.items():
             try:
-                rpath = os.path.relpath(self.as_posix(), start=v.as_posix())
+                rpath = os.path.relpath(base, start=v.as_posix())
             except (ValueError, TypeError):
                 continue
             if len(str(rpath)) < len(bestr):

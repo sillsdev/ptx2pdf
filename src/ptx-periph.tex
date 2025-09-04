@@ -72,9 +72,13 @@
       ~trace{T}{New periph starting}%
       ~let~getp@riphline~n@wperiph%
     ~else%
-       ~xdef~p@riphlines{~ifx~p@riphlines~empty~else~p@riphlines~n@wline~fi~p@riphtst}%
+       ~ifx~p@riphlines~empty~global~let~p@riphlines~p@riphtst%
+       ~else%DO NOT COMMENT THE END OF THE NEXT LINE!
+         ~x@~x@~x@~gdef~x@~x@~x@~p@riphlines~x@~x@~x@{~x@~p@riphlines~x@
+         ~p@riphtst}%
+       ~fi%
     ~fi}% DO NOT COMMENT THE END OF THE NEXT LINE!
-  ~gdef~newperiphb #1\periph#2~E{~xdef~p@riphlines{~ifx~p@riphlines~empty~else ~p@riphlines~n@wline~fi #1}~endp@riph ~periph #2
+  ~gdef~newperiphb #1\periph#2~E{~x@~x@~x@~gdef~x@~x@~x@~p@riphlines~x@~x@~x@{~x@~p@riphlines~n@wline #1}~endp@riph ~periph #2
 }%
 }
 ~catcode`\=0 
@@ -111,6 +115,7 @@
   \ifst@ringperiph
     \egroup\egroup
     \let\tmp\p@riphlines
+	\trace{per}{save periph contents: periphcontents\c@rrdstat=\periphattr@b}%
     \x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{%
       \x@\kill@PossParamCache\x@\p@sheof\x@\scantokens\x@{\tmp}\endlastp@rstyle{endperiph}\p@peof
       \ifhe@dings\endhe@dings\fi
@@ -172,6 +177,7 @@
     \let\t@mpside\attr@b
   \fi
   \get@ttribute{id}%
+  \trace{per}{getperiph(\g@tperiphid{\t@mpside}{\attr@b})}%
   \ifcsname\g@tperiphid{\t@mpside}{\attr@b}\endcsname
     \let\periph@@@\attr@b
     \@chk@pull{\periph@@@}%
@@ -211,7 +217,7 @@
       \let\@@pdftag\attr@b
       \trace{per}{zmakeinsert tagging periph '\periph@@@' as '\@@pdftag' (\the\pagetotal, \the\pagegoal)}%
       \m@rkpdftag{\@@pdftag}%
-      \showlists
+      %\showlists
       \get@ttribute{nopagecount}%
       \ifx\attr@b\relax\else
         \x@\global\x@\let\csname periph-\@@pdftag-nocount\endcsname\attr@b % Page builder shouldn't increment page count for this.

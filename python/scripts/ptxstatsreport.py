@@ -5,7 +5,7 @@ current_module = sys.modules[__name__]
 
 # data from metrics.paratext.org
 # run from commandline with something like this:
-python python/scripts/ptxstatsreport.py -f projectAge -f cfgCount -f first_last_used -f intlin -f hasOT -f org -f font
+# python python/scripts/ptxstatsreport.py -f projectAge -f cfgCount -f first_last_used -f intlin -f hasOT -f org -f font
 
 # --------------------------- snip ------------------------------
 

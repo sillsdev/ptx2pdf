@@ -11,7 +11,12 @@ def onTextEditKeypress(widget, event, bufView):
     logger.debug(f"KeyPress {event.keyval} in {event.state} in buffer {i}")
     state = event.state
     keyval = event.keyval
-    if (state & Gdk.ModifierType.CONTROL_MASK) != 0:
+    # if (state & Gdk.ModifierType.CONTROL_MASK) != 0:
+        # if i < len(bindings) and keyval in bindings[i]:
+            # info = bindings[i][keyval]
+            # info[0](buffer, view, model, info[1:])
+    if ((state & Gdk.ModifierType.CONTROL_MASK) != 0 or
+        (state & Gdk.ModifierType.MOD1_MASK) != 0):
         if i < len(bindings) and keyval in bindings[i]:
             info = bindings[i][keyval]
             info[0](buffer, view, model, info[1:])
@@ -136,6 +141,13 @@ def count_selected_lines(buffer):
         num_lines += 1
     return num_lines
 
+def showUnicodeValues(buffer, view, model, *a):
+    if buffer.get_has_selection():
+        start_iter, end_iter = buffer.get_selection_bounds()
+        selected_text = buffer.get_text(start_iter, end_iter, True)
+        unicode_values = "".join(f"\\u{ord(c):04X}" for c in selected_text[:20])
+        model.doStatus(unicode_values)
+
 # Each dict within the list represents a different tab on the View+Edit page
 bindings = [
     # Front Matter
@@ -147,7 +159,8 @@ bindings = [
      Gdk.KEY_Down:  (moveLines, True),
      Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, ),
-     Gdk.KEY_l:     (removeLine, )},
+     Gdk.KEY_l:     (removeLine, ),
+     Gdk.KEY_x:     (showUnicodeValues, )},  # Alt+X
     # AdjList - no longer uses the text editor!
     {Gdk.KEY_0:     (commentOut, r"%"),
      # Gdk.KEY_comma: (commentOut, r"%"),
@@ -163,16 +176,20 @@ bindings = [
      # Gdk.KEY_grave: (shrinkLine, ),
      # Gdk.KEY_i:     (shrinkLine, ),
      # Gdk.KEY_d:     (duplicateLine, ),
-     Gdk.KEY_l:     (removeLine, )},
+     Gdk.KEY_l:     (removeLine, ),
+     Gdk.KEY_x:     (showUnicodeValues, )},  # Alt+X
     # Final SFM
     {Gdk.KEY_minus: (shrinkText, ),
-     Gdk.KEY_equal: (growText, )},
+     Gdk.KEY_equal: (growText, ),
+     Gdk.KEY_x:     (showUnicodeValues, )},  # Alt+X
     # tex file
     {Gdk.KEY_minus: (shrinkText, ),
-     Gdk.KEY_equal: (growText, )},
+     Gdk.KEY_equal: (growText, ),
+     Gdk.KEY_x:     (showUnicodeValues, )},  # Alt+X
     # log file
     {Gdk.KEY_minus: (shrinkText, ),
-     Gdk.KEY_equal: (growText, )},
+     Gdk.KEY_equal: (growText, ),
+     Gdk.KEY_x:     (showUnicodeValues, )},  # Alt+X
     # General Editing tab(1)
     {Gdk.KEY_0:     (commentOut, r"#"),
      Gdk.KEY_comma: (commentOut, r"%"),
@@ -182,7 +199,8 @@ bindings = [
      Gdk.KEY_Down:  (moveLines, True),
      Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, ),
-     Gdk.KEY_l:     (removeLine, )},
+     Gdk.KEY_l:     (removeLine, ),
+     Gdk.KEY_x:     (showUnicodeValues, )},  # Alt+X
     # General Editing tab(2)
     {Gdk.KEY_0:     (commentOut, r"#"),
      Gdk.KEY_comma: (commentOut, r"%"),
@@ -192,7 +210,8 @@ bindings = [
      Gdk.KEY_Down:  (moveLines, True),
      Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, ),
-     Gdk.KEY_l:     (removeLine, )},
+     Gdk.KEY_l:     (removeLine, ),
+     Gdk.KEY_x:     (showUnicodeValues, )},  # Alt+X
     # General Editing tab(3)
     {Gdk.KEY_0:     (commentOut, r"#"),
      Gdk.KEY_comma: (commentOut, r"%"),
@@ -202,6 +221,7 @@ bindings = [
      Gdk.KEY_Down:  (moveLines, True),
      Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, ),
-     Gdk.KEY_l:     (removeLine, )},
+     Gdk.KEY_l:     (removeLine, ),
+     Gdk.KEY_x:     (showUnicodeValues, )},  # Alt+X
     ]
 

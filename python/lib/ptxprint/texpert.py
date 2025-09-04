@@ -17,6 +17,7 @@ class O:
 #    _: KW_ONLY      # Everything after this is keyword only
     fn: Optional[Callable[['ViewModel', Union[int, bool, None]], None]] = None
     valfn: Optional[Callable[[str], str]] = None
+    method: Optional[str] = None
 
     # Key to val: (value, min, max, step increment, page increment, digits)
     # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr, decPlaces)
@@ -59,15 +60,17 @@ texpertOptions = {
     # "NoteLineMajorDiv":   O("notelinediv", "LAY", (0, 0, 100, 1, 5, 0), r"\def{0}{{{1}}}", _("Noteline subdivisions"), 
                             # _("Major noteline happens at the start then every this many lines after.")),
 
-    "versehyphen":        O("vhyphen", "CVS", True, "", _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
-    "versehyphenup":      O("vhyphenup", "CVS", False, "", _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
-    "marginalVerseIsMargin": O("mverseismargin", "CVS", False, None, _("No column space reduction for marginal verses"), _("If false, the space for marginal verses is taken from the column. If true, the space for marginal verses is taken from the margins or rule gutter")),
+    "versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
+    "versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
+    "marginalVerseIsMargin": O("mverseismargin", "CVS", False, None, _("Gutter space reduction for marginal verses"), _("If false, the space for marginal verses is taken from the column. If true, some space for marginal verses is taken from the margins or rule gutter")),
     "CalcChapSize":       O("calcchapsize", "CVS", True, None, _("Auto Calc Optimum Chapter Size"),
                             _("Attempt to automatically calculate drop chapter number size")),
     "NoHangVerseNumberOne": O("nohangvone", "CVS", True, None, _("Don't hang verse one beside a chapter (in poetry)"),
                               _("Hanging verses into a chapter number can result in clashes, depending on the after-chapter space. If so, then turn off hanging verse numbers for the first verse (in poetry only). ")),
     "HangVA":             O("hangva", "CVS", False, None, _("Alternate verse numbers also hang"),
                             _("If there is an alternative verse and the current verse is hanging, does the alternate hang?")),
+    "RefLocLink":             O("userefloc", "CVS", True, None, _("Use loc attrib on ref to make a link"),
+                            _('The ref character style can include an attribute like loc="GEN 1:2". Should this be used to make a clickable link?')),
     "AfterChapterSpaceFactor":  O("afterchapterspace", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), r"\def\{0}{{{1}}}", _("After chapter space factor"),
                             _("This sets the gap between the chapter number and the text following. The setting here is a multiple of the main body text size as specified in layout."),
                             valfn=lambda v: f2s(asfloat(v, 0.25) * 12)),
@@ -79,9 +82,10 @@ texpertOptions = {
                             _("Allow indented paragraphs at chapter start with cutouts")),
     "IndentAfterHeading": O("afterheadindent", "BDY", True, None, _("Allow Indent Para After Heading"),
                             _("Allow indented paragraphs following a heading")),
-    "maxorphanlength":    O("maxorphanlength", "BDY", (8, 1, 20, 1, 1, 0), "", _("Maximum orphan word length"), _("Maximum length of the word that will erreceived orphan protection at the end of a paragraph")),
+    "maxorphanlength":    O("maxorphanlength", "BDY", (8, 1, 20, 1, 1, 0), "", _("Maximum orphan word length"),
+                            _("Maximum length of the word that will receive orphan protection at the end of a paragraph")),
     "badspacepenalty":    O("badsppen", "BDY", (100, -10000, 10000, 10, 100, 0), "{0}={1}", _("Bad space penalty"),
-                            _("A bad but not impossible place to breal")),
+                            _("Penalty for a bad (but not impossible) place to break")),
     "OptionalBreakPenalty": O("optbkpen", "BDY", (300, 0, 10000, 10, 100, 0), r"\def{0}{{{1}}}", _("Optional break penalty"),
                               _("Penalty for the optional break")),
     "pretolerance":       O("pretolerance", "BDY", (100, -1, 10000, 10, 100, 0), "{0}={1}", _("Hyphenation threshold"),
@@ -95,7 +99,7 @@ texpertOptions = {
                                _("PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths. Font metrics gives more consistent results."),
                                valfn = lambda v:"%" if v else ""),
     "usesysfonts":        O("usesysfonts", "FNT", True, "", _("Use system fonts"),
-                            _("Use fonts from your system as well as your project")),
+                            _("Use fonts from your system as well as your project. Note that you need to restart PTXprint for this setting to take effect.")),
     "underlineThickness": O("underlinethickness", "FNT", (0.05,  0.01, 0.5, 0.01, 0.01, 2), r"\def{0}{{{1}}}", _("Underline thickness (em)"),
                             _("This sets the thickness of the text underline, (measured in ems)."),
                             valfn=lambda v: f2s(float(v or "0.05"))),
@@ -146,6 +150,12 @@ texpertOptions = {
     "FootnoteMulC":       O("footnotemulc", "NTS", (0, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
 
+    "ReVersify":          O("reversify", "DIG", True, "", _("Adjust Versification of Projects"),
+                            _("If versification differs between projects, adjust diglot/polyglot projects to match the primary (L) project.")),
+    "ShowVPvrse":         O("showvpvrse", "DIG", True, "", _("Keep existing verse numbers (as \\vp)"),
+                            _("When adjusting versification, show the original verse numbers in their new (adjusted) location.")),
+    "ShowVPchap":         O("showvpchap", "DIG", True, "", _("Show old chapter numbers if changed (in \\vp)"),
+                            _("When adjusting versification, show the adjusted chapter numbers (only) if they have changed.")),
     "VisTrace":           O("vistrace", "DIG", False, None, _("Show Diglot Trace Marks"),
                             _("Insert visible trace marks in diglot output")),
     "VisTraceExtra":      O("vistracex", "DIG", False, None, _("Extra Trace Mark Info"),
@@ -185,6 +195,33 @@ texpertOptions = {
     # "ProperCase":         O("lowercase", "PDF", False, "", _("Title"),
                             # _("Description in Tooltip")),
 
+    "autoUpdateDelay":    O("autoupdatedelay", "PRV", (3, 0.0, 120.0, 0.1, 1.0, 1), "", _("Auto-update Delay (seconds)"),
+                            _("Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-update from running.")),
+    "ShrinkTextStep":     O("shrinktextstep", "PRV", (2, 1, 5, 1, 1, 0), "", _("Shrink Text Step Value (%)"),
+                            _("Step Value to shrink text using right-click context menu adjustment.")),
+    "ShrinkTextLimit":    O("shrinktextlimit", "PRV", (90, 75, 95, 1, 1, 0), "", _("Minimum Text Shrink (%)"),
+                            _("Limit how much text can shrink to using right-click context menu adjustment.")),
+    "ExpandTextStep":     O("expandtextstep", "PRV", (3, 1, 5, 1, 1, 0), "", _("Expand Text Step Value (%)"),
+                            _("Step Value to expand text using right-click context menu adjustment.")),
+    "ExpandTextLimit":    O("expandtextlimit", "PRV", (110, 105, 125, 1, 1, 0), "", _("Maximum Text Expand (%)"),
+                            _("Limit how much text can expand to using right-click context menu adjustment.")),
+    "BadSpaces":          O("spaceEms", "PRV", (3, 0, 10, 0.1, 0.1, 1), "", _("Bad Space minimum width (em)"),
+                            _("Minimum width for a bad space. 0 says to calculate for the 20 worst spaces in the doc")),
+    "BadCharSpaces":      O("charSpaceEms", "PRV", (0.3, 0, 1, 0.01, 0.1, 2), "", _("Bad intercharacter space minimum width (em)"),
+                            _("Minimum width for a bad inter character space.")),
+    "PaddingWidth":       O("paddingwidth", "PRV", (0.5, -1.0, 5.0, 0.1, 0.1, 1), "", _("Collision Detection Padding (pt)"),
+                            _("Minimum space between bounding boxes of glyphs before a collision is flagged.")),
+    "RiverThreshold":     O("riverthreshold", "PRV", (3.0, 1.0, 1000, 0.1, 1, 1), "", _("River Detection Threshold (em)"),
+                            _("The sum of all the widths in the river must be above this for the river to be detected")),
+    "RiverMinMaxWidth":   O("riverminmaxwidth", "PRV", (1, 0.1, 5, 0.1, 1, 1), "", _("River Detection minimum required maximum width (em)"),
+                            _("Minimum width required for the widest part of the river")),
+    "RiverWidth":         O("riverminwidth", "PRV", (0.5, 0.1, 5, 0.1, 1.0, 1), "", _("River Detection minimum width (em)"),
+                            _("Minimum width of any space in a river for it to be included")),
+    "RiverGap":           O("rivergap", "PRV", (0.4, 0, 5, 0.1, 1.0, 1), "", _("River Detection maximum line leading (em)"),
+                            _("Any lines separated by a gap greater than this will be considered not to be in the same river")),
+    "RiverOverlap":       O("riveroverlap", "PRV", (0.4, -5, 5, 0.1, 0.1, 1), "", _("River Detection minimum overlap (em)"),
+                            _("Minimum overlap in ems required for two spaces above each other to be considered part of the same river")),
+
     "UnderlineSpaces":    O("underlnsp", "OTH", True, None, _("Underline Spaces"),
                             _("Underline spaces in underlined runs")),
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
@@ -200,16 +237,7 @@ texpertOptions = {
                             _("Display trigger points in output")),
     "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2, -10, 50, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"),
                             _("Shift thumbtab text")),
-    "ShrinkTextStep":     O("shrinktextstep", "OTH", (2, 1, 5, 1, 1, 0), "", _("Shrink Text Step Value (%)"),
-                            _("Step Value to shrink text using right-click context menu adjustment.")),
-    "ShrinkTextLimit":    O("shrinktextlimit", "OTH", (90, 75, 95, 1, 1, 0), "", _("Minimum Text Shrink (%)"),
-                            _("Limit how much text can shrink to using right-click context menu adjustment.")),
-    "ExpandTextStep":     O("expandtextstep", "OTH", (3, 1, 5, 1, 1, 0), "", _("Expand Text Step Value (%)"),
-                            _("Step Value to expand text using right-click context menu adjustment.")),
-    "ExpandTextLimit":    O("expandtextlimit", "OTH", (110, 105, 125, 1, 1, 0), "", _("Maximum Text Expand (%)"),
-                            _("Limit how much text can expand to using right-click context menu adjustment.")),
-    "autoUpdateDelay":    O("autoupdatedelay", "OTH", (3, 0.0, 120.0, 0.1, 1.0, 1), "", _("Auto-Update Delay (seconds)"),
-                            _("Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-Update from running.")),
+
 }                          # (default, lower, upper, stepIncr, pageIncr, decPlaces)
 
 def widgetName(opt):
@@ -226,7 +254,7 @@ class TeXpert:
     section = "texpert"
 
     @classmethod
-    def saveConfig(self, config, view):
+    def saveConfig(self, config, view, diff=None):
         for opt in texpertOptions.values():
             n = widgetName(opt)
             v = view.get(n)
@@ -241,7 +269,7 @@ class TeXpert:
             else:
                 incl = False
             if incl:
-                view._configset(config, "{}/{}".format(self.section, opt.ident), v)
+                view._configset(config, "{}/{}".format(self.section, opt.ident), v, diff=diff)
 
     @classmethod
     def loadConfig(self, config, view):

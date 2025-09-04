@@ -1,8 +1,393 @@
-PTXprint 2.7.29 Release Notes
-14 Mar 2025
+PTXprint 2.9.4 Release Notes
+3 Sep 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.9.5 (3 Sep 2025)
+  * Refactor code for MacOS
+  * Get Mac packaging working and make available on downloads page
+  * Add button to install BSB as an option in Import Scripture
+  * Enable Import to handle .zip files with either USX or USFM
+  * Tweak wording grid/baseline/graph paper in UI
+  * Move forward from appdirs which is now deprecated
+  * End of Ayahs have the space before moved after
+  * Auto analyse projects for script
+  * Update ptx-unicode to latest unicode and support U+FDD0 as interchar space inhibiter
+  * Refactor decorative boxes snippet for modern diglots
+  * Re-enable shortcut/accelerator keys after Mac refactoring
+  * Tidy up Project and Scope area of UI (stop expanding horizontally)
+  * Test guid when changing project
+  * Color Project codes from _PTXprint in purple - distinguishing them from normal projects
+  * Get accelerators (shortcut keys) working again on the main window
+  * Catch bad chapter ranges perhaps
+  * Add icon to AppWindow
+  * Fix bug of processing stale data - now reloads usfm files on each print
+  * Fix parsing zvar and add early ldml lookup support
+  * Fix ptxsettings.bookNames -> bkNames
+  * Fix diglot border
+
+Bug fixes and Improvements in 2.9.4 (19 Aug 2025)
+  * Place bottom images on the baseline
+  * Provide various options for Locate... issues in PDF Viewer
+  * Improve Linux packaging toolchain
+  * Add typesetting report page numbers in pdf viewer
+  * Fix versesToEnd
+  * Disable Layout Analysis when switching configs/projects/books
+  * Fix end of ayahs
+  * Fix missing spaces in pyproject.toml version field to get auto-updated
+
+Bug fixes and Improvements in 2.9.3 (9 Aug 2025)
+  * Fix crash on Import Scripture
+  * Improve Linux packaging options
+
+Bug fixes and Improvements in 2.9.2 (8 Aug 2025)
+  * New feature: Layout Analysis in PDF Previewer
+     - highlight bad word spaces
+     - highlight bad inter character spaces
+     - highlight vertical rivers of whitespace
+     - highlight vertical glyph collisions between lines
+     - Analysis settings are configurable (Advanced > Other > Preview)
+  * Add support for inner and outer paragraphs
+  * For diglots, style secondary header material using secondary \h style
+  * Fix USFM 3.1 support for implicit closure inside notes
+
+_____________________________________________________________
+
+Bug fixes and Improvements in 2.8.22 (24 Jul 2025)
+  * Attempt to fix/prevent style corruptions (debounce to avoid rapid, repeated searches)
+  * Improve everyfirstverse handling
+  * Multiple bug fixes to usfmtc lib
+  * Refactor subdoc to use usfmtc
+  * Add intros to subdoc-ed books
+  * Minor tweaks to UI and map header
+  * Reword DBL button -> Import Scripture
+  * Fix chapter indents for li-type paragraphs
+  * Fix bunching in margin note collision avoidance
+  * Fix tests with the demise of usxutils subdoc()
+
+Bug fixes and Improvements in 2.8.21 (17 Jul 2025)
+  * Fix modules and \inc
+  * Update DBL link to new URL (new site requires login)
+  * Minor bugs in xref and pos being None
+  * Fallback scripture files to usfm
+  * Nearly fix strongs and xrefs
+  * Add to snippets.md (kerning digits in a chapter number)
+  * Refactor s@tsideskips ready for note integration
+  * Add inner and outer as paragraph alignment options
+  * Add Blue, Orange, Red status for Update available button
+  * Fix marginnotes both 1 and 2 col
+  * Fix collision avoidance direct algorithm
+  * Improve margin note positioning
+  * Refactor out old RefList.filterBooks
+  * Fix bug where the log file wasn't being tailed well
+  * Add war stories (subtle user errors with troubleshooting tips)
+  * Refined report details
+  * Update report for changed markers
+  * Update ployglot cfg for newly created config
+  * Add TOC marker list to report
+  * Try to get more info on changed markers
+
+Bug fixes and Improvements in 2.8.20 (9 Jul 2025)
+  * Add tex standalones to parser and assume files are usfm
+  * Add daggers to glossary options
+  * Add colors to book chooser
+  * Add some UI for Adding Maps [work in progress]
+  * Add missing dependency for universalopen in utils
+  * Highlight recently used projects
+  * Treat file= as src= in localChanges
+  * Refactor module learning for usfm3.1
+  * Refactor modules to give better errors
+  * Refactor module parsing
+  * Warn not crash on empty book in addorncv
+  * Refactor model filling in gtkpiclist
+  * Don't give existing project name to DBL expander
+  * Minor usfm reading fixes
+  * Fix minor modname bug
+  * Refactor converting to usx model in texmodel convertBook
+
+Bug fixes and Improvements in 2.8.19 (4 Jul 2025)
+  * Change labels of buttons in SpeedSlice to Enable and Disable
+  * Add Section Links and date-time with summary at top and bottom of HTML report
+  * Add support for marginal notes adjustment
+  * Add sections(piclist) support
+  * Remove xyzREF and xyzCAP changes feature
+  * Remove marginnotes file at start of run
+  * Stop addorncv raising errors
+  * Improve USFM error reports
+  * Don't process for adjlist if the adjlist is empty
+  * Fix xo outputting book, bad at references in changes
+  * Cross reference xo should have no book
+  * Small (1st line) indents at chapters now behave the same in 1st and 2nd lines
+  * Fix ancient bug with dropcaps and firstline / paragraph indents
+  * Over zealous with the line ending %
+  * Refactor to separate changes.py
+  * Fix localising xrefs, shifting the bottom cluster of marginal notes
+  * Adjusted the manual installation steps just a tiny bit
+
+Bug fixes and Improvements in 2.8.18 (1 Jul 2025)
+  * Add some hooks to the tech ref
+  * Avoid some diglot crashes, and set old paragraph style (or something) on column switch, in case no par style is used.
+  * Add merged changes sections to tech ref
+  * Add chapter range to at changes
+  * Add support for marginal chapters, notes and headings
+  * Fix merged changes section
+  * Minor fix for pdf_viewer index error
+  * Get rid of chapters too long error
+  * Fix at changes and version 3.1 output
+  * Get at changes for verse ranges working
+  * Add logger INFO and above to report
+  * Try to handle 'at' changes more succinctly
+
+Bug fixes and Improvements in 2.8.17 (24 Jun 2025)
+  * Add link to auto-update delay settings
+  * Add link to PTXprint Support chatbot
+  * Add capabilities for marginal section heads
+  * Add vertical alignment to marginnotes (work in progress)
+  * Fix missing FigInfo import in pdf_viewer
+
+Bug fixes and Improvements in 2.8.16 (20 Jun 2025)
+  * Flip flop the licensing information to make launchpad happy
+  * Fix bug with book codes starting with a digit not printing
+
+Bug fixes and Improvements in 2.8.15 (20 Jun 2025)
+  * Ensure that changing the page size recalculates the lines per page
+  * Add FRT and INT to picture active books, if enabled
+  * Add importing custom script
+  * Freshen up DBL import
+  * XDVPositionedReader sets font size in points
+  * First step to moving texmf-dist to texmf_dist etc.
+  * mv texmf- to texmf_ to make pyproject linux build happy
+  * Don't include xetex/bin since pyproject is only for linux/mac packaging
+  * Refactor python packaging and put texmf-dist back
+  * Fix minor font bug where case on Bold or bold makes a difference
+  * Fix missing/empty bks
+
+Bug fixes and Improvements in 2.8.13 (18 Jun 2025)
+  * Add feature to generate a publication report with pertinent details
+    * Fix changed markers in report
+    * Added page layout visualization
+  * Add Hans script support
+    * for Chinese vertical alignment (not yet vertical text flow)
+    * Add tooltips to CJK script snippet minidialog
+    * Move local changes after adjlist for cjk scriptsnippet \cjksp
+  * QR code generation for chapters:
+    * Chapter number QRcodes can now also go inside the chapter number box
+    * Update documentation; make sure that everyfirstverse gets called for \nb chapters too
+    * Add Chapter codelet (.tex) for inserting QR codes
+  * Refactor checking for updates to be threaded and only every 24hrs
+  * Add Alt-X keyboard shortcut on View+Edit tab to show unicode values of selected text
+  * Add TTC (True Type Collection) font support at least for font 0
+  * Explicitly mark to omit verses
+  * Don't insert afterversespace in the text when no verses or marginal verses
+  * Add codelets for chapter number adjustments - exp. QR code next 
+  * Adjlist now ignores \b
+  * Add support for \csname \typef@ce _spacefactor to multiply the space in a font. e.g. to make it thinner
+  * Add missing \h check
+  * Get marginal verse hyphenup working
+  * Refactor pdf_viewer to pull out parlocs
+  * Allow PTXprint to be hooked
+  * Fix xrefs and dependency bugs
+
+Bug fixes and Improvements in 2.8.12 (3 Jun 2025)
+  * Add (re-)versification to xrefs
+  * Add new code for a hook every first verse in a chapter. e.g. for QR links
+  * Add new novpadding parameter to QR generator.
+  * Add new nohpadding option to QR generator, making horizontal paddig the users problem
+  * Add key files to the report, more to come
+  * Add the start of a report generator via Create Report... button on Help tab
+  * Don't crash in picselection if there is no description
+  * Fix QR code alignment if positioned centrally
+  * Fix interlinear minor bug with big effects
+  * Fix report output if not available
+  * Fix xrefs and versification
+  * Fix #1082 styles editor pane issue.
+  * Fix manual pagebreaks
+  * Fix changing picture src not printing
+
+Bug fixes and Improvements in 2.8.11 (27 May 2025)
+  * Integrate reversification (to align diglot texts)
+  * Add getting the versification out of paratext
+  * Add TeXpert options for reversification
+  * Layout changes to tech ref
+  * Add copyright and license for diglots (\zcopyrightR \zlicenseR etc.)
+  * Turn off letter spacing if hyphenate is enabled and display warning message
+  * Add missing locale data for ml and en_GB
+  * Ensure usfmtc data files are installed in build
+  * Refactor texmodel reversify
+
+Bug fixes and Improvements in 2.8.10 (24 May 2025)
+  * Work around MapCreator pdf generation bug
+  * Swap inactive Share button for an active Open PDF button in preview pane
+  * Don't quit if the (new) UI language is the same as the current value
+  * Improve main menu options to highlight current value
+  * Hide main menu options after an option has been selected
+  * Right-click context menu in Polyglot no longer hangs around after selecting choice
+  * Add Donate button to menu
+  * Add a More... link for codelets (pointing to the online Snippets.md file)
+  * Add 3 column output, sufficient at least for a concordance
+  * Add documentation snippet for 3 column concordance (in Snippets.md)
+  * Solve character-styles in tables issue
+  * Allow colour / color as attribute for zrule
+  * Capture marks to top level in section paras (e.g. for k)
+  * Some changes to endnotes and clearnotes, for better behaviour
+  * Prevent breaking after write{@nontextstop} to parlocs
+  * Open Preview or System Viewer or Folder when selecting menu option
+  * Ensure the Open in System viewer gets the right PDF file, including TechRef or _diff
+  * dimexpr needs a \relax to stop processing
+  * Update TechRef documentation and test results
+  * Layout v4: split column boxes to height + last line depth rather than just height
+  * Add a few more debugging lines to help identify issues with changes sections
+  * Implement loc parsing for ref character style
+  * Fix crash on usfm3.1 attribute grab
+  * Fix 'missing csname' bug
+  * Fix UI level resetting
+
+Bug fixes and Improvements in 2.8.8 (15 May 2025)
+  * Replace archive-specific font lookup location
+  * Allow catcode update to process
+  * Better document subsetting for not starting with chapter 1
+  * Include headers in subset documents
+  * Add test cases, make \fig work (outside piclist) solve caption styling issue
+  * Start working on character-styling in captions
+  * Fix caption styling leaking into main text (pop styles)
+  * Ensure glossary-depth entries only get processed in thier own level
+  * Minor fixes to get tests working
+  * Attempt to address issue #1078 (Chained glossary entries broken)
+  * Add single option to 'Shrink Line and Text' and re-arrange context menu
+  * Fix addorncv
+  * Don't crash if you change language with no project set
+  * Improve pagebreak handling in diglots
+  * Fix pdfviewer picture boxes before colstarts
+  * Ensure rectangles in pdfviewer are closed off
+  * Fix pdf_viewer picture loading?
+
+Bug fixes and Improvements in 2.8.7 (9 May 2025)
+  * Add UI languages (AI-drafts) for: Burmese, Hindi, Korean, Malayalam, Thai, Tok Pisin
+  * Added .tex codelet to Other button to start book on an odd page
+  * Prevent crashing due to a bad picture \fig parameter
+  * Clarify some things in technical reference, and document some macros
+  * Add code to differentiate between structural and non-structural char markers in notes
+  * Solve crash with usfm3.1 and nonpublishable notes
+  * Update Crowdin localizations
+  * Fix Start books on odd page typo
+  * Create StyleType and TextType from mrkrtype when creating a new marker
+  * Include blank lines in cutout calculations
+
+Bug fixes and Improvements in 2.8.6 (8 May 2025)
+  * Restore notes to previous state when there's a rejected chunk
+  * Solve lost text on rejecting a galley
+  * Keep Fontsize and Baseline spacing in sync with Diglot L in polyglot
+  * Prevent polyglot L linespacing and fontsize from corrupting primary settings
+  * Refactor to new usfmtc api
+  * Make sure resetToInitValues clears out polyglot settings and variables
+  * Fix Glossary filtering (removeGlosses by doc)
+  * Update direct tr@ceout call
+  * Make providing DiglotXFraction optional
+
+Bug fixes and Improvements in 2.8.5 (2 May 2025)
+  * Make unlabelled pictures be L in diglots
+  * Improve background color options for polyglot setup
+  * Add support for polyglot caption choice 
+  * Ensure the Dialog Title gets updated when polyglot values change
+  * More diglot picture update code
+  * Handle adding and removing diglot views with regard to pictures
+  * Don't use xdef when storing periphs
+  * Don't try to interlinearise outside doc chapter ranges
+  * Fix missing interlinear folder in archives
+  * Fix polyglot interlinear settings
+  * Fix polyglot piclist changes to code or config
+  * Fix getting pictures in both glots of GLO
+  * Fix Donebooks polyglot issue
+
+Bug fixes and Improvements in 2.8.4 (29 Apr 2025)
+  * Dont run paragraph triggers for milestones with blank/lost attributes
+  * Fix preview right-click bug
+  * Sort out GLO for polyglot
+  * Fix diglot int file processing
+  * Fix paths in diglot files
+
+Bug fixes and Improvements in 2.8.3 (26 Apr 2025)
+  * Speed up pdf viewer page switching
+  * Automatically fill in plugin name for polyglot
+  * Don't spit out inter peripheral project books twice
+  * Fix diglots with swapped sides (#1073)
+  * Fix NoneType bug in layout
+
+Bug fixes and Improvements in 2.8.2 (22 Apr 2025)
+  * Fix issue with packaging usfmtc module (for \f* issue and other fixes)
+  * Reconfigure @parlen reporting to help python identify pars
+
+Bug fixes and Improvements in 2.8.1 (20 Apr 2025)
+  * New feature: Polyglot (more than 2 texts) is now possible (via the Diglot tab)
+  * pdf_viewer improvements for diglots and polyglots:
+    * Right-click to change styles and settings in any of the project-configs
+    * Option to display Paragraph boxes
+  * Fix 'mirrored' view-swapping in multipage polyglots
+  * Get background colours to work in polyglot
+_____________________________________________________________
+
+Bug fixes and Improvements in 2.7.38 (17 Apr 2025)
+  * Fix some stylesheet-handling errors
+  * Fix usfmerge2
+  * Fix template to hide coverpage when not needed
+  * Add telemetry to find why fonts sometimes reset to 1
+
+Bug fixes and Improvements in 2.7.36 (2 Apr 2025)
+  * Switch from OccursUnder to Mrktype for styles
+  * Add mrktypes to ptx2pdf.sty
+  * Cope with active chars/spaces in running headers
+  * Don't localize paper size settings on finishing tab
+  * Make display of Paragraph Boxes user-configurable in Preview Panel
+  * Include changes file "sections()" in TechRef
+  * Tidy up and add Standalone Milestone
+  * Add Mac fonts list to fonts.conf (work in progress)
+  * Don't remove normal chapter numbers in stripChVs
+  * Extra font config in archives, so that directly running the tex file doesn't moan about missing fonts
+  * Fix grid lines with cropmarks
+  * Fix strip empty ch.vs and ellipsis
+  * Fix paragraph identification when k is not first in para (MH)
+
+Bug fixes and Improvements in 2.7.35 (28 Mar 2025)
+  * Make per-book OmitChapterNumberRH booleans, so rangeref etc works properly (#1054)
+  * Ensure latest usfmtc code is being used in build (.33 and .34 used stale code)
+  
+Bug fixes and Improvements in 2.7.34 (27 Mar 2025)
+  * Prepare to make code snippet searches switch window
+  * Fix poetry special measures to revert correctly
+  * Don't allow Page Size to be translatable
+  * Improve user feedback when Anchor Ref is missing
+  * id in a diglot only resets it own side's chapter number
+  * Synchronise log formats between ptxprint and usfmerge script
+
+Bug fixes and Improvements in 2.7.33 (26 Mar 2025)
+  * Picist fix - make sure piclist is deleted when all pics are deleted
+  * Add rectangle overlays to help move them
+  * Switch usfmtc dependency from pypi to github
+  * Fix several minor bugs
+  * Fix adding pictures
+
+Bug fixes and Improvements in 2.7.32 (25 Mar 2025)
+  * [Built against usfmtc 0.3.4]
+  * Fix parpicstart in diglot
+  * Add attrib support to usxutils
+  * Fix overfull pages (affecting study Bibles)
+  * Fix notelines, picture problems, scored merging
+
+Bug fixes and Improvements in 2.7.31 (24 Mar 2025)
+  * Replace underlying USFM parser with a new USX-based parser
+    [Built against usfmtc 0.3.3]
+  * Adjlists (context menu changes) work with indexed paragraphs e.g. q2[2]
+  * GLO word adjustments now working as expected
+  * Modified option to 'Pagebreak on all other chapters'
+  * Allow pagebreak at start of body-text (PBOnBody)
+  * Make BorderColor stick
+  * Re-instate the red-X Close button on the PDF Preview dialog
+  * Fix issue 'failure when using forward slash' #1060 and similar
+  * Get interlinear doing pre chapter headings (1:0)
+  * Fix tending to categorise as footnotechar instead of char
+  * Fix RTL hbox header left/right content
+  * Fix showing PDF overlay on indexed paragraphs
 
 Bug fixes and Improvements in 2.7.29 (14 Mar 2025)
   * parse the whole of parlocs file (don't early return)

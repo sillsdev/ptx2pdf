@@ -155,6 +155,7 @@
       \edef\t@mpd{tc\the\t@ccount}%
     \fi
     \trace{t}{A: \t@mpd \space \t@mpa}%
+    \ifx\int@c\empty\else\msg{TOC[\int@c ] col \the\t@ccount \space \t@mpd}\fi
     \csname \t@mpd\endcsname \t@mpa
     \ifcsname \tcb@se{\the\t@ccount}:fill\endcsname\else\d@ftoc{\the\t@ccount}{fill}{\hfill}\fi
     \ifcsname \tcb@se{\the\t@ccount}:verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
@@ -170,6 +171,7 @@
       \edef\t@mpd{tc\the\t@ccount}%
     \fi
     \trace{t}{B: \t@mpd \space \t@mpb}%
+    \ifx\int@c\empty\else\msg{TOC[\int@c ] col \the\t@ccount \space \t@mpd}\fi
     \csname \t@mpd\endcsname \t@mpb
     \ifcsname \tcb@se{\the\t@ccount}:fill\endcsname\else\d@ftoc{\the\t@ccount}{fill}{\hfill}\fi
     \ifcsname \tcb@se{\the\t@ccount}:verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
@@ -184,6 +186,7 @@
       \edef\t@mpd{tc\the\t@ccount}%
     \fi
     \trace{t}{C: \t@mpd \space \t@mpc}%
+    \ifx\int@c\empty\else\msg{TOC[\int@c ] col \the\t@ccount \space \t@mpd}\fi
     \csname \t@mpd\endcsname \t@mpc
     \ifcsname \tcb@se{\the\t@ccount}:fill\endcsname\else\d@ftoc{\the\t@ccount}{fill}{\hfill}\fi
     \ifcsname \tcb@se{\the\t@ccount}:verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
@@ -192,7 +195,7 @@
     \global\advance\t@ccount by 1
   \fi
   \edef\t@mpd{tcr\the\t@ccount}%
-  \trace{t}{D: \t@mpd \space #5}%
+  \ifx\int@c\empty\else\msg{TOC[\int@c ] col \the\t@ccount \space \t@mpd}\fi
   \ifcsname l@drs\endcsname
     \trace{t}{Refactor for last column \the\t@ccount, \tcb@se{\the\t@ccount}}%
     \deftocalign{\the\t@ccount}{r}%
@@ -204,6 +207,7 @@
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
   \trace{t}{\noexpand\tcr\the\t@ccount \space \t@mpd}%
   \gdef\tablecategory{}%
+  \global\let\int@c\empty
 }
 
 \addtoeveryparhooks{\checkfort@c}
@@ -214,6 +218,7 @@
 \def\d@ftoc#1#2#3{\should@xist{cat:toc|}{#1\ifdiglot\c@rrdstat\fi}\expandafter\xdef\csname \tcb@se{#1}:#2\endcsname{#3}}
 \def\d@ftocx#1#2{\should@xist{cat:toc|}{#1\ifdiglot\c@rrdstat\fi}\expandafter\xdef\csname cat:toc|#1\ifdiglot\c@rrdstat\fi\endcsname{#2}}
 \def\defTOC#1#2{%
+  \gdef\int@c{#1}%
   \ifRTL\x@\def\csname ms:ztoc=#1\endcsname{\TOCRTLtrue\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}%
   \else\x@\def\csname ms:ztoc=#1\endcsname{\TOCRTLfalse\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}%
   \fi}

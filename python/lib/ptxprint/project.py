@@ -59,7 +59,7 @@ class ProjectList:
                             if '<Guid>' in l:
                                 guid = l[l.find("<Guid>")+6:l.rfind("<")]
             if guid is None:
-                if any(x.lower().endswith("sfm") for x in os.listdir(p)):
+                if any(x.lower().endswith("sfm") and not os.path.isdir(os.path.join(p, x)) for x in os.listdir(p)):
                     addme = True
                 if addme:
                     pt = ParatextSettings(p)
@@ -85,18 +85,16 @@ class ProjectList:
                     pt = ParatextSettings(path)
                 guid = pt.createGuid()
                 pt.saveAs(os.path.join(path, 'ptxSettings.xml'))
-            else:
-                return None
         p = ProjectDir(prjid, guid, path)
         logger.debug(f"Adding project {p}")
         self.projects[guid] = p
         return p
 
-    def getProject(self, guid):
+    def getProject(self, guid, name=None):
         p = self.projects.get(guid, None)
         logger.debug(f"Seeking project {guid} found {p}")
         if p is None:
-            return None
+            return self.findProject(name)
         return Project(p)
 
     def projectList(self):
@@ -144,7 +142,7 @@ class ProjectList:
 
 class Project:
     shareddir = "shared/ptxprint"
-    localdir = "local/shared/ptxprint"
+    localdir = "local/ptxprint"
     printdir = "local/ptxprint"
 
     def __init__(self, prjdir):
@@ -152,12 +150,15 @@ class Project:
         self.path = prjdir.path
         self.guid = prjdir.guid
         self.configs = {}
+        logger.debug(f"Creating Project({self.prjid}) at {self.path} guid={self.guid}")
         self.findConfigs(self.path)
 
     def __repr__(self):
         return f"{self.prjid}[{self.guid}] {self.path}"
 
     def findConfigs(self, path):
+        if not os.path.exists(os.path.join(path, self.shareddir)) and os.path.exists(os.path.join(path, "shared/PTXprint")):
+            self.shareddir = 'shared/PTXprint'
         for a in (self.shareddir, self.localdir):
             cpath = os.path.join(path, a)
             if not os.path.exists(cpath) or not os.path.isdir(cpath):

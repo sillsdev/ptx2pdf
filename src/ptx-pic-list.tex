@@ -118,6 +118,7 @@
       \catcode`5=12 \catcode`6=12 \catcode`7=12 \catcode`8=12 \catcode`9=12
       \catcode`.=12  \catcode`\/=12 %\catcode"201D=12 \catcode"201C=12 
       \catcode`\&=12 \catcode`\#=12
+      \catcode`\\=12
       \ifPiclistLitPct \catcode`\%=12 \else \catcode`\%=5 \fi
       \endlinechar=-1
       \read\p@clist to \p@cline
@@ -163,7 +164,7 @@
 \def\ch@ckN@xtPicid{%Check to see if there's one or more pictures for this verse.
   \mkp@cid
   \mkkp@cid
-  \trace{P}{ch@ckN@xtPicid: \p@cid (keepid:\kp@cid) \ifcsname\p@cid\endcsname found\fi}%
+  \trace{P}{ch@ckN@xtPicid(\p@cref): \p@cid (keepid:\kp@cid) \ifcsname\p@cid\endcsname found\fi}%
   \ifcsname\p@cid\endcsname 
     \traceifset{ch@ckN@xtPicid}%
     \x@\let\x@\t@st\csname \p@cid\endcsname
@@ -216,11 +217,14 @@
 }
 
 \def\ch@ckpiclist{%
-  \trace{P}{Start of of checkpic \c@rref}%
+  \trace{P}{Start of checkpic \c@rref, \dc@rref}%
   \ifpicslurp
-    \let\p@cref=\c@rref
-    \p@clistsuff=1
-    \ch@ckN@xtPicid
+    % treat unlabelled as L only not both sides
+    \ifnum \ifdiglot\ifx\c@rrdstat\d@glotl 1\else 0\fi\else 1\fi =1
+      \let\p@cref=\c@rref
+      \p@clistsuff=1
+      \ch@ckN@xtPicid
+    \fi
     \ifdiglot
       \let\p@cref=\dc@rref
       \p@clistsuff=1
@@ -236,7 +240,7 @@
       \fi
     \fi
   \fi
-  \trace{P}{End of checkpic}%
+  \trace{P}{End of checkpic \c@rref, \dc@rref}%
 }
 
 \def\endpiclistch@ck{%

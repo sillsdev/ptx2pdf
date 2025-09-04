@@ -5,7 +5,7 @@ from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.project import ProjectList
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
-from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
+from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
                             zipopentext, xdvigetfonts, calledme
@@ -14,11 +14,13 @@ from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
-from ptxprint.reference import RefList, RefRange, Reference
+from usfmtc.reference import RefList, RefRange, Ref
 from ptxprint.texpert import TeXpert
 from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
+from ptxprint.polyglot import PolyglotConfig
+from ptxprint.report import Report
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -27,17 +29,18 @@ from tempfile import NamedTemporaryFile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
 from shutil import rmtree
-import datetime, time, traceback
+import datetime, time
 import json, logging, hashlib
 from shutil import copyfile, copytree, move
 from difflib import Differ
 from base64 import b64encode, b64decode
+from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.7.29"
-GitVersionStr = "2.7.29"
-ConfigVersion = "2.23"
+VersionStr = "2.9.4"
+GitVersionStr = "2.9.4"
+ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -90,8 +93,8 @@ class ViewModel:
         "notes/xrcallers": "crossrefs",
         "notes/fncallers": "footnotes"
     }
+        # "document/diglotsecprj": "updateDiglotConfigList",
     _activekeys = {
-        "document/diglotsecprj": "updateDiglotConfigList",
         "import/project":        "updateimpProjectConfigList"
     }
     _nonresetcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
@@ -114,8 +117,12 @@ class ViewModel:
         for v in ("""ptsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
                      customFigFolder customOutputFolder impSourcePDF impTargetFolder coverImage
-                     prjid diglotView usfms picinfos bookrefs""").split():
+                     prjid usfms picinfos bookrefs""").split():
             setattr(self, v, None)
+        self.polyglots = {}
+        self.diglotViews = {}
+        self.digbasepics = {}
+        self.digSuffix = ""
         self.isDiglot = False
         self.isDisplay = False
         self.isChanged = False
@@ -134,15 +141,15 @@ class ViewModel:
         self.artpgs = None
         self.spine = 0
         self.periphs = {}
-        self.digSuffix = None
-        self.digbasepics = None
         self.hyphenation = None
+        self.report = Report()
 
         # private to this implementation
         self.dict = {}
 
     def setup_ini(self):
         self.setDate()
+        self.report.clear()
 
     def setDate(self):
         t = datetime.datetime.now()
@@ -191,7 +198,7 @@ class ViewModel:
 
     def changed(self, val=True):
         # if val != self.isChanged:
-        #     print(val, calledme(2))
+            # print(val, calledme(2))
         self.isChanged = val
 
     def get(self, wid, default=None, sub=-1, asstr=False, skipmissing=False):
@@ -239,10 +246,12 @@ class ViewModel:
             return [""]
         elif len(bks) > 1:
             components['bks'] = "{}-{}".format(bks[0], bks[-1])
-        elif '.' in bks[0]:
+        elif len(bks) and bks[0] is not None and len(bks[0]) and '.' in bks[0]:
             components['bks'] = os.path.splitext(os.path.basename(bks[0]))[0]
-        else:
+        elif len(bks):
             components['bks'] = bks[0]
+        else:
+            components['bks'] = ""
         cfgname = self.cfgid
         if cfgname is None:
             cfgname = ""
@@ -285,7 +294,9 @@ class ViewModel:
             return [res] if files and res else []
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
-        bl = RefList.fromStr(self.get("ecb_booklist", ""))
+        # This is where it is broken - it isn't coming back from RefList
+        bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False)
+        # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
@@ -293,7 +304,13 @@ class ViewModel:
                 if bname is not None and os.path.exists(os.path.join(self.project.path, bname)):
                     fromchap = round(float(self.get("t_chapfrom") or "0"))
                     tochap = round(float(self.get("t_chapto") or "200"))
-                    res = RefList((RefRange(Reference(bk, fromchap, 0), Reference(bk, tochap, 200)), ))
+                    try:
+                        res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
+                    except ValueError as e:
+                        if fromchap > tochap:
+                            res = RefList((RefRange(Ref(book=bk, chapter=tochap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
+                        else:
+                            raise e
                     return self._bookrefsBooks(res, local)
             return []
         elif scope == "multiple":
@@ -316,14 +333,14 @@ class ViewModel:
             # return self.booklist
             return []
 
-    def getRefSeparators(self, **kw):
+    def getRefEnv(self, **kw):
         if self.get("fcb_textDirection", "") == "rtl":
             res = None
         else:
             pts = self._getPtSettings()
-            res = pts.getRefSeparators()
+            res = pts.getRefEnvironment()
         if res is None:
-            res = self.getScriptSnippet().getrefseps(self)
+            res = self.getScriptSnippet().getrefenv(self)
         if len(kw):
             res = res.copy(**kw)
         return res
@@ -424,6 +441,30 @@ class ViewModel:
         self.set("l_footer2edge", "{}mm".format(f2s(footerlabel, 1)))
         return True
 
+    def calcPageSize(self):
+        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        if m:
+            pagewidth  = float(m.group(1)) * unitConv.get(m.group(2), 1)
+            pageheight = float(m.group(3)) * unitConv.get(m.group(4), 1)
+        else:
+            pagewidth  = 148
+            pageheight = 210
+        return pagewidth, pageheight
+
+    def calcBodyHeight(self):
+        linespacing = float(self.get("s_linespacing")) * 25.4 / 72.27
+        pagewidth, pageheight = self.calcPageSize()
+        bottommargin = float(self.get("s_bottommargin"))
+        topmargin = float(self.get("s_topmargin"))
+        font = self.get("bl_fontR")
+        if font is not None:
+            tt = font.getTtfont()
+            if tt is not None:
+                ttadj = tt.descent / tt.upem * float(self.get("s_fontsize")) * 25.4 / 72.27
+                bottommargin -= ttadj
+        return (pageheight - bottommargin - topmargin, linespacing)
+
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27
         hfont = self.styleEditor.getval("h", "font")
@@ -432,7 +473,7 @@ class ViewModel:
             hfont = self.get("bl_fontR")
             if hfont is None:
                 # print("hfont is STILL None")
-                return (0, 0, 0, 0, 0, 0, 0, 0)
+                return (0, 0, 0, 0, 0, 0, 0, 0, 0)
         hfont = hfont.getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         hfontheight = float(hfont.ascent) / hfont.upem
@@ -462,8 +503,8 @@ class ViewModel:
     def updateSavedConfigList(self):
         pass
 
-    def updateDiglotConfigList(self):
-        pass
+    # def updateDiglotConfigList(self):
+        # pass
 
     def updateimpProjectConfigList(self):
         pass
@@ -472,9 +513,9 @@ class ViewModel:
         pass
 
     def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True):
-        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig)
+        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=True)
 
-    def setConfigId(self, configid, saveCurrConfig=False, force=False, loadConfig=True):
+    def setConfigId(self, configid, saveCurrConfig=False, force=True, loadConfig=True):
         return self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
     def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None, nobase=False):
@@ -603,7 +644,7 @@ class ViewModel:
             outf.write("".join(res))
         copyfile(srcp, mergep)
 
-    def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
+    def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None, quickload=False):
         logger.debug(f"Changing project to {prjid or self.get('fcb_project')} from {getattr(self.project, 'prjid', 'NONE')}, {configName=} from {getcaller(1)}")
         currprjguid = getattr(self.project, 'guid', None)
         currprj = getattr(self.project, 'prjid', None)
@@ -642,16 +683,18 @@ class ViewModel:
                 self.resetToInitValues(updatebklist=False)
             logger.debug(f"Reading config {configName} in the config context of {self.cfgid}")
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
-            if oldVersion < 0:
+            if float(oldVersion) < 0:
                 return False
             self.styleEditor.reset(os.path.join(self.scriptsdir, "usfm_sb.sty"))
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
             if newconfig:
                 self.set("t_invisiblePassword", "", mod=False)
-            if oldVersion >= 0 or forceConfig:
+            if float(oldVersion) >= 0 or forceConfig:
                 logger.debug(f"Switching config from {self.cfgid} to {configName}")
                 self.cfgid = configName
+            if quickload:
+                return
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
@@ -659,7 +702,7 @@ class ViewModel:
             self.onNumTabsChanged()
             self.readCopyrights(forced=True)
             self.picChecksView.init(basepath=self.project.srcPath(self.cfgid))
-            self.picinfos = None
+            self.picinfos: Optional[Piclist] = None
             self.loadPics(mustLoad=False, force=True)
             self.hyphenation = None
             self.adjlists = {}
@@ -669,14 +712,19 @@ class ViewModel:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
                 if self.get("t_txlQuestionsLang") == "":
                     self.set("t_txlQuestionsLang", lngCode)
-            return oldVersion >= 0
+            if self.get("fcb_script", "Zyyy") == "Zyyy":
+                scr = self.analyse_script()
+                if scr is not None:
+                    self.set("fcb_script", scr)
+            return float(oldVersion) >= 0
         else:
             return True
 
     def get_usfms(self):
         if self.usfms is None:
+            cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
             self.usfms = UsfmCollection(self.getBookFilename, self.project.path,
-                            Sheets(self.getStyleSheets()))
+                            Sheets(self.getStyleSheets()), changes=cfile)
         return self.usfms
 
     def get_usfm(self, bk, silent=False):
@@ -690,10 +738,27 @@ class ViewModel:
             return None
         return res
 
+    def wipe_usfms(self, refs):
+        if refs is None:
+            return
+        self.get_usfms()
+        for r in refs:
+            if r is not None:
+                bk = r if isinstance(r, str) else r.book
+                self.usfms.clear(bk)
+
+    def analyse_script(self):
+        pts = self._getPtSettings()
+        res = None
+        bk = None
+        while res is None:
+            bk = pts.getABook(bk)
+            abook = self.get_usfm(bk)
+            res = abook.findScript()
+        return res
+
     def getDialogTitle(self):
-        # print(f"  > > > In view.py Start of getDialogTitle")
         if self.project is None or self.project.prjid is None:
-            # print(f"<< Returning from getDialogTitle because prjid is None")
             return _("PTXprint {} - Bible Layout for Everyone!").format(VersionStr)
         else:
             prjid = self.project.prjid
@@ -701,7 +766,7 @@ class ViewModel:
             if len(bks) == 2:
                 bks = bks[0] + "," + bks[1]
             elif len(bks) <= 4:
-                bks = ",".join(bks)
+                bks = ",".join([b for b in bks if b])
             elif len(bks) > 4:
                 bks = bks[0] + "," + bks[1] + "..." + bks[-2] + "," + bks[-1]
             else:
@@ -712,11 +777,21 @@ class ViewModel:
             cfg = ":" + self.cfgid
             cfg = ":" + cfg if (not self.get("c_diglot") and self.get("c_doublecolumn", False)) else cfg
             prjcfg = "{}{}".format(prjid, cfg) 
-            # print(f"view.py - in getDialogTitle; {prjid=}, {cfg=}")
-            if self.get("c_diglot") and self.diglotView is not None:
-                cfg2 = ":" + self.diglotView.cfgid
-                prjcfg2 = "{}{}".format(self.diglotView.project.prjid, cfg2) 
-                prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
+            
+            if self.get("c_diglot") and len(self.diglotViews):
+                parts = []
+                for v in self.diglotViews.values():
+                    try:
+                        prjid = v.project.prjid
+                        cfgid = v.cfgid
+                        parts.append(f"{prjid}:{cfgid}")
+                    except Exception as e:
+                        parts.append("???")  # fallback in case of missing data
+
+                prjcfg2 = " | ".join(parts)
+                if len(prjcfg2) > 100:
+                    prjcfg2 = re.sub(r":[^\s\]]+", "", prjcfg2)
+                prjcfg = f"[{prjcfg} | {prjcfg2}]"
             return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
     def readCopyrights(self, forced=False):
@@ -773,6 +848,8 @@ class ViewModel:
         (oldversion, forcerewrite) = self.versionFwdConfig(config, cp)
         self.loadingConfig = True
         self.localiseConfig(config)
+        self.diglotViews = {}
+        self.polyglots = {}
         self.loadConfig(config, updatebklist=updatebklist)
         for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
                                (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
@@ -786,11 +863,19 @@ class ViewModel:
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
-            self.diglotView = self.createDiglotView("R")
+            for s in config.sections():
+                if s.startswith("diglot_"):
+                    k = s[7:]
+                    pg = PolyglotConfig()
+                    pg.readConfig(config, s)
+                    self.polyglots[k] = pg
+                    if k != "L":
+                        try:
+                            self.createDiglotView(k)
+                        except ValueError:
+                            pass
         else:
             self.setPrintBtnStatus(2)
-            self.diglotView = None
-            self.digSuffix = None
         self.loadingConfig = False
         if self.get("bl_fontR", skipmissing=True) is None:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
@@ -807,16 +892,19 @@ class ViewModel:
                 # except (OSError, PermissionError):
                     # pass
         if forcerewrite:
-            self.writeConfig(cfgname=cfgname, force=forcerewrite)
+            self.writeConfig(cfgname=cfgname, force=forcerewrite, diff=None)
         return oldversion
 
-    def writeConfig(self, cfgname=None, force=False):
+    def writeConfig(self, cfgname=None, force=False, diff=None):
         if not force and self.configLocked():
             return
         if cfgname is None:
             cfgname = self.cfgid or ""
         path = os.path.join(self.project.createConfigDir(cfgname), "ptxprint.cfg")
-        config = self.createConfig()
+        config = self.createConfig(diff=diff)
+        if self.get('c_diglot') and not self.isDiglot:
+            for k, p in self.polyglots.items():
+                p.writeConfig(config, f"diglot_{k}")
         self.globaliseConfig(config)
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
@@ -825,7 +913,7 @@ class ViewModel:
                 outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
             self.triggervcs = False
 
-    def _configset(self, config, key, value, update=True):
+    def _configset(self, config, key, value, update=True, diff=None):
         if "/" in key:
             (sect, k) = key.split("/", maxsplit=1)
         else:
@@ -837,10 +925,12 @@ class ViewModel:
             hasval = config.has_option(sect, k)
         if isinstance(value, bool):
             value = "true" if value else "false"
+        if diff is not None and diff.get(sect, k) == str(value):
+            return
         if update or not hasval:
             config.set(sect, k, str(value))
 
-    def createConfig(self):
+    def createConfig(self, diff=None):
         def sortkeys(x):
             k, v = x
             if k in self._activekeys:
@@ -862,9 +952,9 @@ class ViewModel:
                 if val is None:
                     continue
                 if v[1]:
-                    val = "\n".join(x.withvars(self) for x in val)
+                    val = "\n".join(x.withvars(self, relto=self.project.path) for x in val)
                 else:
-                    val = val.withvars(self)
+                    val = val.withvars(self, relto=self.project.path)
             elif v.widget.startswith("bl_"):
                     vfont = self.get(v.widget, skipmissing=True)
                     if vfont is None:
@@ -877,12 +967,22 @@ class ViewModel:
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
-            self._configset(config, k, str(val) if val is not None else "", update=False)
+            self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
         for k in self.allvars():
-            self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False)
+            self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
-            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False)
-        TeXpert.saveConfig(config, self)
+            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
+        # for attribute, value in vars(self.polyglots).items():
+            # print(f"{attribute}: {value}")    
+        # for k, v in self.polyglots.items():
+            # v.writeConfig(config, f"diglot_{k}")
+        if isinstance(self.polyglots, dict):  # Ensure it's a dictionary
+            for k, v in self.polyglots.items():
+                v.writeConfig(config, f"diglot_{k}", diff=diff)
+        else:
+            print("Error: self.polyglots is not a dictionary.")
+
+        TeXpert.saveConfig(config, self, diff=diff)
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
@@ -1116,6 +1216,35 @@ class ViewModel:
                 self._configset(config, 'grid/gridgraph', False)
                 self._configset(config, 'grid/gridlines', False)
                 
+        if v < 2.24: # change from simple pri/sec diglot to polyglot
+            if config.getboolean("snippets", "diglot"):
+                for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
+                             "config": "secconfig", "color": "colour"}.items():
+                    val = config.get("document", f"diglot{a}", fallback=None)
+                    if val is not None:
+                        self._configset(config, f"diglot_R/{k}", val)
+                for k,v in {"page": "1", "weight": "50"}.items():
+                    self._configset(config, f"diglot_L/{k}", v)
+                    self._configset(config, f"diglot_R/{k}", v)
+                val = config.get("document", "diglotprifraction", fallback=50)
+                self._configset(config, f"poly/fraction", val)
+                self._configset(config, f"diglot_L/fraction", val)
+                self._configset(config, f"diglot_R/fraction", f2s(100 - float(val)))
+                pics = config.get("document", "diglotpicsources", fallback="pri")
+                self._configset(config, f"diglot_L/captions", True if pics in ("pri", "bth") else False)
+                self._configset(config, f"diglot_R/captions", True if pics in ("sec", "bth") else False)
+                prj = config.get("project", "id", fallback=None)
+                self._configset(config, f"diglot_L/projectid", prj)
+                cfg = config.get("config", "name", fallback=None)
+                self._configset(config, f"diglot_L/config", cfg)
+                revrs = config.get("document", "diglotswapside", fallback=False)
+                logger.debug(f"{revrs=} ({type(revrs)}")
+                self._configset(config, f"document/diglotlayout", "RL" if revrs == 'True' else "LR")
+                fsz = config.get("paper", "fontfactor", fallback=12)
+                self._configset(config, f"diglot_L/fontsize", fsz)
+                lsp = config.get("paragraph", "linespacing", fallback=15)
+                self._configset(config, f"diglot_L/baseline", lsp)
+                
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
@@ -1262,9 +1391,9 @@ class ViewModel:
         self.updateFont2BaselineRatio()
 
     def updateStyles(self, version):
-        if version < 0:
+        if float(version) < 0:
             return
-        if version < 1.601:
+        if float(version) < 1.601:
            if self.get("fcb_textDirection", "") == "rtl":
                 for k in self.styleEditor.allStyles():
                     j = self.styleEditor.getval(k, 'Justification')
@@ -1272,14 +1401,14 @@ class ViewModel:
                         self.styleEditor.setval(k, 'Justification', 'Left')
                     elif j == "Left":
                         self.styleEditor.setval(k, 'Justification', 'Right')
-        elif version < 1.602:
+        elif float(version) < 1.602:
             for a in "fx":
                 for b in "klmopqrtvw":
                     v = self.styleEditor.getval(a+b, 'FontSize', None)
                     if v is not None:
                         self.styleEditor.setval(a+b, 'FontSize', None)
                         self.styleEditor.setval(a+b, 'FontScale', v, mapin=False)
-        elif version < 2.11:
+        elif float(version) < 2.11:
             xre = re.compile(r"^x-credit:box=(.*?)(\|fig)?$")
             for k in self.styleEditor.allStyles():
                 if k is not None and k.startswith("x-credit:"):
@@ -1292,7 +1421,7 @@ class ViewModel:
                         if k in s:
                             s[newk] = s[k]
                             del s[k]
-        elif version < 2.16:
+        elif float(version) < 2.16:
             for k in self.styleEditor.allStyles():
                 j = self.styleEditor.getval(k, 'Justification')
                 if j == "Left":
@@ -1328,6 +1457,10 @@ class ViewModel:
             os.utime(cfgpath, (cfgt, cfgt))
         self.savePics(force=force)
         self.saveStyles(force=force)
+        for k,v in self.diglotViews.items():
+            if v is not None and v.isChanged:
+                v.saveConfig()
+                v.changed(False)
 
     def saveAdjlists(self, force=False):
         for bk, adj in self.adjlists.items():
@@ -1344,32 +1477,36 @@ class ViewModel:
     def updatePicList(self, bks=None, priority="Both", output=False):
         return
 
+    def mergeCaptions(self, bk):
+        return bk not in self.get("s_diglotSerialBooks", "FRT BAK GLO")
+
     def generatePicList(self, procbks=None, doclear=True):
         ab = self.getAllBooks()
         if procbks is None:
             procbks = ab.keys()
         rnd = self.get("c_randomPicPosn")
         cols = 2 if self.get("c_doublecolumn") else 1
-        mrgCptn = self.get("c_diglot2captions", False)
+        # mrgCptn = self.get("c_diglot2captions", False) # FixMe!
+        mrgCptn = False # FixMe!
         sync = self.get("c_protectPicList", False)
-        if self.diglotView is None:
-            self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
-        else:
-            self.digbasepics.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
-            self.diglotView.picinfos.read_books(procbks, self.diglotView.getAllBooks(), cols=cols, random=rnd, sync=sync)
-            self.picinfos.merge(self.digbasepics, self.digSuffix, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
-            self.picinfos.merge(self.diglotView.picinfos, self.diglotView.digSuffix, mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+        self.picinfos.read_books(procbks, ab, cols=cols, random=rnd, sync=sync)
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                if v.picinfos is None:
+                    v.picinfos = Piclist(v)
+                v.picinfos.read_books(procbks, v.getAllBooks(), cols=cols, random=rnd, sync=sync)
+                self.picinfos.merge(v.picinfos, k, mergeCaptions=self.mergeCaptions)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
         if not force and self.configLocked():
             return False
         changed = False
-        pinfo = self.digbasepics if self.diglotView else self.picinfos
+        pinfo = self.digbasepics.get('R', self.picinfos) if len(self.diglotViews) else self.picinfos
         if pinfo is not None and pinfo.loaded:
             changed = changed or pinfo.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}.piclist".format(self.project.prjid, self.cfgid)))
-        if self.diglotView:
+        if len(self.diglotViews):
             changed = changed or self.picinfos.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}-diglot.piclist".format(self.project.prjid, self.cfgid)))
         changed = changed or self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
@@ -1378,24 +1515,23 @@ class ViewModel:
         if self.loadingConfig:
             return
         if self.picinfos is None:
-            self.picinfos = Piclist(self, diglot=self.diglotView is not None)
+            self.picinfos = Piclist(self, diglot=len(self.diglotViews) != 0)
         elif force:
 #            self.savePics(fromdata=fromdata)
             self.picinfos.clear(self)
         if not self.get("c_includeillustrations"):
             return
-        if self.diglotView is not None:
-            self.digbasepics = Piclist(self)
-            self.digbasepics.load_files(self)
-            if self.diglotView.picinfos is None:
-                self.diglotView.picinfos = Piclist(self.diglotView)
-                self.diglotView.picinfos.load_files(self.diglotView)
-        res = self.picinfos.load_files(self, base=self.digbasepics, suffix=self.digSuffix)
-        if not res and self.diglotView and len(self.picinfos.get_pics()):
-            self.picinfos.merge(self.diglotView.picinfos, self.diglotView.digSuffix)
-        if res:
-            pass
-#            self.savePics(fromdata=fromdata)
+        res = None
+        if self.picinfos.load_files(self, base=None):
+            return
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                # self.digbasepics[k] = Piclist(self)
+                # self.digbasepics[k].load_files(self)
+                if v.picinfos is None:
+                    v.picinfos = Piclist(v)
+                v.picinfos.load_files(v)
+                self.picinfos.merge(v.picinfos, k, mergeCaptions=self.mergeCaptions)
         elif mustLoad:
             self.onGeneratePicListClicked(None)
             
@@ -1613,6 +1749,72 @@ class ViewModel:
                 allfonts.add(f.filename)
         return allfonts
 
+    def _getProject(self, prjwname):
+        impgui = self.get(prjwname, sub=1)
+        if impgui is None or not len(impgui):
+            impname = self.get(prjwname)
+            impprj = self.prjTree.findProject(impname)
+        else:
+            impprj = self.prjTree.getProject(impgui)
+        return impprj
+
+    def createView(self, prj, cfgid):
+        res = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
+        res.setPrjid(prj.prjid, prj.guid)
+        res.setConfigId(cfgid)
+        return res
+
+    def createDiglotView(self, suffix="R", inserting=False):
+        self.setPrintBtnStatus(2)
+        if suffix not in self.polyglots:
+            return None
+        prjguid = self.polyglots[suffix].prjguid
+        prj = self.prjTree.getProject(prjguid, name=self.polyglots[suffix].prj)
+        cfg = self.polyglots[suffix].cfg
+        if prj is None or cfg is None:
+            raise ValueError(f"No Config found for Diglot [{suffix}]")
+            self.setPrintBtnStatus(2, _(f"No Config found for Diglot [{suffix}]"))
+            digview = None
+        else:
+            digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
+            digview.isDiglot = True
+            digview.setPrjid(prj.prjid, prj.guid)
+            if cfg is None or cfg == "" or not digview.setConfigId(cfg):
+                digview = None
+        if digview is None:
+            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfg}"))
+        else:
+            digview.isDiglot = True
+            digview.digSuffix = suffix
+            self.digSuffix = suffix
+            self.diglotViews[suffix] = digview
+            if inserting and self.picinfos:
+                if digView.picinfos is None:
+                    digView.picinfos = PicList(digView)
+                    digView.picinfos.load_files(digView)
+                self.picinfos.merge(v.picinfos, suffix, mergeCaptions=self.mergeCaptions)
+        return digview
+
+    def removeDiglotView(self, suffix):
+        if self.picinfos:
+            self.picinfos.unmerge(suffix)
+        self.diglotViews.pop(suffix, None)
+        self.polyglots.pop(suffix, None)
+
+    def moveDiglot(self, old, new):
+        self.diglotViews[new] = self.diglotViews.pop(old, None)
+        self.polyglots[new] = self.polyglots.pop(old, None)
+        self.polyglots[new].code = new
+        self.reloadDiglotPics(self.diglotViews[new], old, new)
+        logger.debug(f"Diglots={self.diglotViews.keys()}, polyglots={self.polyglots.keys()}")
+        
+    def reloadDiglotPics(self, digView, old, new):
+        self.picinfos.unmerge(old)
+        if digView.picinfos is None or not digView.picinfos.pics:
+            digView.picinfos = Piclist(digView)
+            digView.picinfos.load_files(digView)
+        self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
+
     def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
@@ -1649,9 +1851,9 @@ class ViewModel:
             if fname is not None:
                 res[os.path.join(fpath, fname)] = baseprjid + "/" + os.path.basename(fname)
             if interlang is not None:
-                intpath = "{}/Interlinear_{}".format(baseprjid, interlang)
+                intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
-                res[os.path.join(fpath, intpath, intfile)] = os.path.join(intpath, intfile)
+                res[os.path.join(fpath, intpath, intfile)] = os.path.join(baseprjid, intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
             self.picinfos.getFigureSources(exclusive=exclFigsFolder)
@@ -1659,8 +1861,9 @@ class ViewModel:
             cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'src path'
-        for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
-                res[f] = prjid + "/local/figures/"+os.path.basename(f)
+        if self.picinfos is not None:
+            for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
+                    res[f] = prjid + "/local/figures/"+os.path.basename(f)
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
             res[xrfile] = baseprjid + "/" + os.path.basename(xrfile)
@@ -1771,41 +1974,6 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def _getProject(self, prjwname):
-        impgui = self.get(prjwname, sub=1)
-        if impgui is None or not len(impgui):
-            impname = self.get(prjwname)
-            impprj = self.prjTree.findProject(impname)
-        else:
-            impprj = self.prjTree.getProject(impgui)
-        return impprj
-
-    def createView(self, prj, cfgid):
-        res = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
-        res.setPrjid(prj.prjid, prj.guid)
-        res.setConfigId(cfgid)
-        return res
-
-    def createDiglotView(self, suffix="R"):
-        self.setPrintBtnStatus(2)
-        prj = self._getProject("fcb_diglotSecProject")
-        cfgid = self.get("ecb_diglotSecConfig")
-        if prj is None or cfgid is None:
-            digview = None
-        else:
-            digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
-            digview.isDiglot = True
-            digview.setPrjid(prj.prjid, prj.guid)
-            if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
-                digview = None
-        if digview is None:
-            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfgid}"))
-        else:
-            digview.isDiglot = True
-            digview.digSuffix = suffix
-            self.digSuffix = "L"
-        return digview
-
     def createArchive(self, filename=None):
         if filename is None:
             filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
@@ -1824,7 +1992,7 @@ class ViewModel:
         found = False
         # TODO: include burst pdfs
         xdvfile = None
-        for a in (".pdf", ):
+        for a in (".pdf", ".html"):
             for d in ('', '..'):
                 for x in self.tempFiles:
                     if x.endswith(".xdv"):
@@ -1835,11 +2003,15 @@ class ViewModel:
                             break
         self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
         working_dir = self.project.printPath(self.cfgid)
-        if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.diglotView.project, parentcfg=self.cfgid)
-            ipf = os.path.join(working_dir, "diglot.sty")
-            if os.path.exists(ipf):
-                self._writearchive(zf, ipf, os.path.join(self.project.prjid, "diglot.sty"))
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                if v is None:
+                    v = self.createDiglotView(k)
+                if v is not None:
+                    v._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
+                ipf = os.path.join(working_dir, f"diglot{k}.sty")
+                if os.path.exists(ipf):
+                    self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
         for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
@@ -2033,7 +2205,7 @@ set stack_size=32768""".format(self.cfgid)
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile, prefix=prefix) as inf:
-                    otherpics.read_piclist(inf, "B")
+                    otherpics.read_piclist(inf)
             except (KeyError, FileNotFoundError) as e:
                 pass
             if impAll or self.get("r_impPics") == "entire":
@@ -2096,12 +2268,31 @@ set stack_size=32768""".format(self.cfgid)
                     continue
                 localmod = os.path.join(view.project.srcPath(view.cfgid), a[1])
                 mode = "a" if view.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
+                view.set(ModelMap[a[0]].widget, True)
                 with open(localmod, mode, encoding="utf-8") as outf:
                     if fzip.filename is not None:
                         outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
                     dat = zipmod.read()
                     outf.write(dat)
                 zipmod.close()
+
+            # handle the script
+            if config.getboolean("project", "processscript", fallback=False):
+                fname = config.get("project", "selectscript", fallback=None)
+                try:
+                    zipscript = zipopentext(fzip, fname, prefix=prefix)
+                except (KeyError, FileNotFoundError):
+                    logger.warn(f"Missing script {fname} in imported archive")
+                    zipscript = None
+                if zipscript is not None:
+                    localscript = os.path.join(view.project.srcPath(view.cfgid), os.path.basename(fname))
+                    with open(localscript, "w", encoding="utf-8") as outf:
+                        dat = zipscript.read()
+                        outf.write(dat)
+                    view.set(ModelMap["project/processscript"].widget, True)
+                    view.set(ModelMap["project/selectscript"].widget, localscript)
+                    view.set(ModelMap["project/whentoprocessscript"].widget,
+                            config.getboolean("project", "whentoprocessscript", fallback=False))
 
         # merge cover and import has cover
         if (impAll or self.get("c_oth_Cover")) and config.getboolean("cover", "makecoverpage", fallback=False):
@@ -2193,8 +2384,8 @@ set stack_size=32768""".format(self.cfgid)
         localfile = os.path.join(self.project.path, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
-        seps = self.getRefSeparators().copy()
-        seps['verseonly'] = self.getvar('verseident') or "v"
+        env = self.getRefEnv().copy()
+        env.verseid = self.getvar('verseident') or "v"
         ptsettings = self._getPtSettings()
         wanal = None
         if ptsettings.get('MatchBaseOnStems', 'F') == 'T':
@@ -2202,7 +2393,7 @@ set stack_size=32768""".format(self.cfgid)
             if not os.path.exists(wanal):
                 wanal = None
         self.strongs = StrongsXrefs(os.path.join(pycodedir(), "xrefs", "strongs.xml"), 
-                    None, localfile=localfile, ptsettings=ptsettings, separators=seps,
+                    None, localfile=localfile, ptsettings=ptsettings, env=env,
                     context=ptsettings, shownums=self.get("c_strongsShowNums"),
                     rtl=self.get("fcb_textDirection") == "rtl", shortrefs=self.get("c_xoVerseOnly"),
                     wanal=wanal)
@@ -2210,3 +2401,11 @@ set stack_size=32768""".format(self.cfgid)
 
     def isCoverTabOpen(self):
         return False
+
+    def runReport(self):
+        self.report.run_view(self)
+        fpath = os.path.join(self.project.path, self.project.printdir, os.path.basename(self.getPDFname()).replace(".pdf", ".html"))
+        tm = {"project/id": self.project.prjid, "config/name": self.cfgid}
+        self.report.generate_html(fpath, tm)
+        return fpath
+

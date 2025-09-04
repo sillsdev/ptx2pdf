@@ -1,6 +1,6 @@
 ; Inno Setup Script
 #define MyAppName "PTXprint"
-#define MyAppVersion "2.7.29"
+#define MyAppVersion "2.9.4"
 #define MyAppPublisher "SIL Global"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -16,7 +16,14 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 ArchitecturesInstallIn64BitMode=x64 arm64
 ArchitecturesAllowed=x64 arm64
+
+; Skips the "Choose Install Location" page
+DisableDirPage=yes
+; Skips the "Ready to Install" confirmation page
+DisableReadyPage=yes
+; Skips the "Create Start Menu Shortcut" page
 DisableProgramGroupPage=yes
+
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
@@ -43,6 +50,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [InstallDelete]
 Type: filesandordirs; Name: "{app}\xetex"
 Type: filesandordirs; Name: "{app}\ptx2pdf"
+Type: filesandordirs; Name: "{app}\ptxprint\xetex\bin\windows"
 
 [Files]
 Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -51,19 +59,21 @@ Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 ; These are the (14) languages that PTXprint's UI is available in:
 Source: "dist\ptxprint\share\locale\ar\*"; DestDir: "{app}\share\locale\ar\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\en\*"; DestDir: "{app}\share\locale\en\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\en_GB\*"; DestDir: "{app}\share\locale\en_GB\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\hi\*"; DestDir: "{app}\share\locale\hi\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\hu\*"; DestDir: "{app}\share\locale\hu\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\id\*"; DestDir: "{app}\share\locale\id\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\ko\*"; DestDir: "{app}\share\locale\ko\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\ml\*"; DestDir: "{app}\share\locale\ml\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\my\*"; DestDir: "{app}\share\locale\my\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\pt\*"; DestDir: "{app}\share\locale\pt\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\ro\*"; DestDir: "{app}\share\locale\ro\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\ru\*"; DestDir: "{app}\share\locale\ru\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\th\*"; DestDir: "{app}\share\locale\th\"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Source: "dist\ptxprint\share\locale\tpi\*"; DestDir: "{app}\share\locale\tpi\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "xetex\*"; DestDir: "{app}\ptxprint\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita" 
 
@@ -79,5 +89,5 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 ;skipifsilent - removed this flag/param so it can automatically (re)start the app after a silent install
 
 [InstallDelete]
-Type: files; Name: "{app}\ptxprint\Strong*.xml"
-Type: files; Name: "{app}\ptxprint\cross_references.txt"
+Type: files;   Name: "{app}\ptxprint\Strong*.xml"
+Type: files;   Name: "{app}\ptxprint\cross_references.txt"

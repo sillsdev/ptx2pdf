@@ -161,17 +161,19 @@
     \fi
     \xdef\c@rref{\id@@@#1}% Paragraph number (for triggers) resets on keywords
     \ifversion{4}{%
-      \global\p@rnum=\ifhmode 1\else 0\fi
+	  \global\p@rnum=\ifhmode 0\@dvance@djfalse\ch@ckadjustments\else 0\fi
     }{\global\p@rnum=1}%
 }
 
 \def\runtrigg@rs#1{%Generic something trigger (milestone, or...)
   \trace{T}{runtrigg@rs #1}%
   \edef\c@rref{#1}%
-  \ifdiglot\def\dc@rref{#1\g@tdstat}\fi%
+  \let\oodc@rref\dc@rref
+  \ifdiglot\edef\dc@rref{#1\g@tdstat}\fi%
   \trace{T}{running triggers \c@rref}%
     \ifMarkTriggerPoints\trigg@rmark{TV}\fi
   \the\trigg@rchecks
+  \global\let\dc@rref\oodc@rref
 }
 \def\settrign@me#1{\edef\trign@me{trigger-#1}}
 

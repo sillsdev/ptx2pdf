@@ -73,7 +73,43 @@
 %
 
 %+cchar_charstyle
-\def\ch@rstyle{\ifimplicitcl@se\let\n@xt\@ch@rstyle\else\let\n@xt\ch@rstylepls\fi\n@xt}
+
+\def\ch@rstyle{\ifimplicitcl@se\let\n@xt\@ch@rstyle\else
+  \ifinn@te\let\n@xt\ch@rstyleinnote\else
+    \ifdoingt@ble\let\n@xt\ch@rstyleintbl\else
+  \let\n@xt\ch@rstylepls\fi\fi\fi\n@xt}
+
+\def\ch@rstyleinnote#1{%USFM3.1 handles note structure markers differently to character styles.
+ \ifcsname STR@CT-#1\endcsname
+    \trace{sa}{Note structure marker}\let\n@xt\@ch@rstyle
+ \else\let\n@xt\ch@rstylepls\fi
+ \n@xt{#1}%
+}
+\def\ch@rstyleintbl#1{%USFM3.1 handles table structure markers differently to character styles.
+ \ifcsname STR@CT-#1\endcsname
+    \trace{sa}{Table structure marker}\let\n@xt\@ch@rstyle
+ \else\let\n@xt\ch@rstylepls\fi
+ \n@xt{#1}%
+}
+
+\def\structm@rker#1{\x@\let\csname STR@CT-#1\endcsname\empty}
+\structm@rker{ft}
+\structm@rker{fq}
+\structm@rker{fr}
+\structm@rker{fqa}
+\structm@rker{fk}
+\structm@rker{fl}
+\structm@rker{fw}
+\structm@rker{fp} % Is this cannonically followed by an ft?
+%\structm@rker{fv} % Not structural??
+\structm@rker{fdc}
+\structm@rker{xo}
+%\structm@rker{xop} % not structural
+\structm@rker{xk}
+\structm@rker{xq}
+\structm@rker{xt}
+\structm@rker{xta}
+
 \def\@ch@rstyle#1{%
  \trace{sa}{CH@RSTYLE:#1 nesting:(\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
  \edef\newch@rstyle{\detokenize{#1}}% record the name of the style
@@ -130,9 +166,9 @@
           \fi
     \fi\fi\fi
     \iftemp
-      \trace{ss}{group level before \the\currentgrouplevel}%
+      \trace{ss}{group level before popping \the\currentgrouplevel}%
       \end@llpoppedstyles{\ss@Char}%a char style closes all other char styles, milestones do not.e
-      \trace{ss}{group level after \the\currentgrouplevel}%
+      \trace{ss}{group level after popping \the\currentgrouplevel}%
     \fi
   \fi % else we need to start it
   \let\ch@rfontextend\empty
@@ -181,19 +217,19 @@
 
 %+cchar_endstyle
 \def\endch@rstylen*{%Consume the star..
-  \trace{s}{endch@rstylen \newch@rstyle}%
+  \trace{ss}{end of \newch@rstyle}\trace{s}{endch@rstylen \newch@rstyle}%
   \def\d@##1+##2\E{\tempfalse\if ##1c\else\if ##1C\else\temptrue\fi\fi}\mctopnoms
-  \iftemp\MSG{Unexpected closing marker for no plus \newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
+  \iftemp\MSG{Unexpected closing marker for no plus \newch@rstyle * on stack \mcstack. Ignoring. implicitcl@se\ifimplicitcl@se true\else false\fi}\else\endch@rstyle*\fi
 }
 \def\endch@rstylepls*{%Consume the star..
-  \trace{s}{endch@rstylepls \newch@rstyle}%
+  \trace{ss}{end of \newch@rstyle}\trace{s}{endch@rstylepls \newch@rstyle}%
   \def\d@##1+##2+##3\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctopnoms
-  \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
+  \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring. (implicitcl@se\ifimplicitcl@se true\else false\fi)}\else\endch@rstyle*\fi
 }
 %-cchar_endstyle
 %+cchar_startcharstyle
 \def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle (\stylet@pe)}%
-  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi}{\newch@rstyle}%
+  \mcpush{\ifx\stylet@pe\empty \ss@Char\else\stylet@pe\fi}{\newch@rstyle}%
   \let\styst@k=\empty
   \s@tstyst@k%
   \t@stpublishability{\newch@rstyle}\ifn@npublishable                   %(1)
@@ -211,7 +247,7 @@
     \ifx\ch@rfontextend\empty\else
      \m@kenumber{\ch@rfontextend}%
       \ifx\f@ntextend\empty\let\f@ntextend\@@result
-      \else 
+      \else
         \bgroup\dimen0=\f@ntextend pt\xdef\tmpv@l{\strip@pt{\dimexpr \@@result \dimen0\relax}}%
         \egroup
         \let\f@ntextend\tmpv@l
@@ -795,6 +831,11 @@
     \x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (page \the\pageno)}%
   \fi
   \xdef\f@ntlist{\f@ntlist,\f@ntstyle}%
+  \x@\ifcsname \typef@ce _spacefactor\endcsname
+    \dimen0=\x@\csname \typef@ce _spacefactor\endcsname \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
+    \trace{F}{\typef@ce _spacefactor = \the\dimen0}%
+    \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname=\dimen0
+  \fi
   \ifx\SpaceStretchFactor\empty\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
     \x@\x@\fontdimen3\csname font<\f@ntstyle>\endcsname=\dimen0

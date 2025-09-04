@@ -288,6 +288,7 @@
 % MS:\thismilestone is TeX code to generate zgaps, zrules etc. They never self-destruct.
 
 \def\st@ndalonemilestone{% 
+  \trace{m}{st@ndalonemilestone}%
   \ifx\attrid\empty
     \let\attr@b\relax
   \else 
@@ -315,10 +316,12 @@
   %\tracingmacros=1
   %\tracingassigns=1
   \ifx\attr@b\undefined\let\attr@b\relax\fi
-  \ifx\attr@b\relax\else
+  \ifx\attr@b\relax
+    \keeptriggerfalse
+  \else
     \edef\@@tmp{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
     \trace{m}{Checking for  \@@tmp}%
-    \keeptriggertrue %By default keep ms: type triggers.
+    \keeptriggertrue %By default keep ms: type triggers if they have an attribute .
     \ifcsname \@@tmp\endcsname
       \trace{mx}{Running \@@tmp (\x@\meaning\csname\@@tmp\endcsname)}%
       \bgroup
@@ -352,9 +355,17 @@
 	\runtrigg@rs{\mkp@cref{\id@@@\c@rrdstat}{\x@\detokenize\x@{\attr@b}}}%
       \fi
       \runtrigg@rs{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
-      \ifkeeptrigger% Not a location, leave c@rref what it used to be
-        \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
-      \else% This milestone is a named location 
+    \fi
+  \fi
+  \ifkeeptrigger% Not a location, leave c@rref what it used to be
+    \trace{m}{Restoring c@rref to \oldc@rref}%
+    \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
+  \else% This milestone is a named location 
+    \ifsuppresstr@gger\else
+      \ifx\attr@b\relax
+        \trace{m}{This milestone has no location (\thismil@stone \id@@@\attr@b)}%
+      \else
+        \trace{m}{This is a unique location (\id@@@\attr@b)}%
         \xdef\c@rref{\id@@@\attr@b}%
         \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
          \ch@ckadjustments
@@ -436,13 +447,24 @@
     \ifx\attr@b\relax\else\x@\s@tc@tprefix\x@{\attr@b}\fi
     \get@ttribute{width}%A
     \ifx\attr@b\relax
-      \s@tsideskips{zrule}%
+      \s@tsideskips{zrule}{-1pt}%
       \edef\rule@wid{\the\dimexpr \hsize - \leftskip - \rightskip\relax}%
     \else
       \m@kenumber{\attr@b}%
       \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}%
     \fi
-    \getp@ram{bordercolour}{zrule}{\styst@k}\let\b@drcol\p@ram
+    \get@ttribute{colour}%A
+    \ifx\attr@b\relax
+      \get@ttribute{color}%A
+      \ifx\attr@b\relax
+        \getp@ram{bordercolour}{zrule}{\styst@k}\let\attr@b\p@ram
+      \fi
+    \fi
+    \ifx\attr@b\relax\else
+      \m@kenumber{\attr@b}%
+      \x@\checkh@x\@@result\end \let\b@drcol\rgb@out
+      \trace{m}{zrule colour  \b@drcol}%
+    \fi
     \get@ttribute{thick}%
     \ifx\attr@b\relax
       \getp@ram{borderwidth}{zrule}{\styst@k}%
@@ -893,7 +915,7 @@
 \def\proc@strong#1{%
   \get@ttribute{align}%
   \ifx\attr@b\relax \let\al@gn\@lignLeft\else\let\al@gn\attr@b\fi
-  \get@ttribute{strong}%
+  \get@ttribute{strongs}%
   \trace{m}{Got strongs \attr@b}%
   \ifx\attr@b\relax \else\edef\tmpz{#1}%
     \x@\dostr@ngs\x@{\x@\tmpz\x@}\x@{\x@\al@gn\x@}\attr@b+++\E

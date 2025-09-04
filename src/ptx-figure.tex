@@ -406,9 +406,12 @@
     \ifx\cpt@mp\empty\else\setLRspecific\fi
     \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
     \t@xtfragment{fig}{%
+      \let\styst@k=\empty
+      \s@tstyst@k%
       \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
-      \c@ption\unskip
+      %\implicitcl@sefalse
+      \x@\scantokens\x@{\c@ption}\unskip
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
     \egroup
   \fi
@@ -421,6 +424,7 @@
 \def\d@caption{%
   %\ifhmode\endgraf\fi
   \unvbox\c@ptionbox
+  \vskip.5\onel@neunit
 }
 
 \def\FigCaptionAdjust{0pt}
@@ -435,14 +439,16 @@
       \hsize=\p@cinswid
     \fi
     \xdef\r@f{\csname figparam-ref\endcsname}% get reference
+    \mcpush{\ss@Fig}{fig}%
     \d@c@ption{}%Normal monoglot caption.
     \ifdiglot
       \bgroup %Alternative captions
         \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
-        \x@\each@col\diglot@list\E
+		\ifx\DiglotCaptions\undefined \let\tmp=\diglot@list\else \let\tmp=\DiglotCaptions\fi
+        \x@\each@col\tmp\E
       \egroup
     \fi
-    \vskip.5\onel@neunit
+    \end@llpoppedstyles{\ss@Fig*}%
   \fi
  }%
 }
@@ -920,7 +926,7 @@
   \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
     \pdfsavepos
-    \edef\t@mp{\string \@parpicstart{\c@rref}{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi}}%
+    \edef\t@mp{\string \@parpicstart{\ifdiglot\dc@rref\else\c@rref\fi}{\ifcsname figparam-src\endcsname\csname figparam-src\endcsname\fi}}%
     \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
@@ -1076,7 +1082,7 @@
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
     \t@gend{Figure}%
-    \pdfsavepos
+    %\pdfsavepos
   }% END of box0
   \temptrue
   \iffigf@und\else\ifSkipMissingFig
@@ -1125,9 +1131,13 @@
       \pdfsavepos\penalty10000
       \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}\penalty10000%
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
+      \unpenalty\setbox1=\lastbox\unvbox1\setbox1=\lastbox\vbox{\unvbox1\global\skip1=\lastskip\unskip}%
       \pdfsavepos
       \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
       \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+      \kern -\lastdepth
+      \vskip\lastdepth
+      \vskip\skip1
     }\ifx\@wrap\empty\else\egroup\fi
 %-cfig_dofigure_5
 %+cfig_dofigure_6
@@ -1201,7 +1211,10 @@
   \ifhmode \edef\curmode{\curmode, in HMODE}\fi %Can't test for these inside a write
   \ifvmode \edef\curmode{\curmode, in VMODE}\fi
   \trace{g}{\w@tsit\space is inline, \the\hsize \curmode \ifpicNarrow, narrow\fi. Penalties: \pr@penalty,\p@stpenalty}%
-  \ifpicNarrow
+  \tempfalse
+  \ifpicNarrow\temptrue\else
+    \iffigh@scaption\else\temptrue\fi\fi
+  \iftemp
     \@lignpic{#1}%
   \fi
   %\splittopskip\baselineskip
@@ -1222,6 +1235,7 @@
     \fi
   \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
   \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
   }%
   \ifvmode \picc@ntents
   \else 
@@ -1248,13 +1262,16 @@
     %\showbox\picb@@x
   \earlyeotpskipfalse
   \prepwr@teparstop{#1}%
-  \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
+  \ifvbox0 \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}\fi%
   \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
       \pdfsavepos\write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
       \gridp@ctrue% TRUE. Out of band like a floating image.
       \prevdepth=0pt
       \headingtopspace=0pt
-      \ifpicNarrow
+      \tempfalse
+      \ifpicNarrow\temptrue\else
+        \iffigh@scaption\else \temptrue\fi\fi
+      \iftemp
         \@lignpic{#1}%
       \fi
       \gridb@x#1%

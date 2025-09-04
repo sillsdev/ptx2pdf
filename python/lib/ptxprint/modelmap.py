@@ -1,5 +1,5 @@
 import re
-from ptxprint.utils import f2s, coltoonemax, asfloat
+from ptxprint.utils import f2s, coltoonemax, asfloat, texprotect
 from dataclasses import dataclass
 from typing import Callable, Optional
 
@@ -73,9 +73,8 @@ _map = {
     "project/interpunc":        ("c_usePunctuation", "advanced", None),
     "project/ruby":             ("c_ruby", "advanced", lambda w,v : "t" if v else "b"),
     "project/plugins":          ("t_plugins", "advanced", lambda w,v: v or ""),
-    "project/license":          ("ecb_licenseText", "meta", None),
-    "project/copyright":        ("t_copyrightStatement", "meta", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
-                                                                   lambda m: chr(int(m.group(1), 16)), v).replace("//", "\u2028") if v is not None else ""),
+    "project/license":          ("ecb_licenseText", "meta", lambda w,v: texprotect(str(v))),
+    "project/copyright":        ("t_copyrightStatement", "meta", lambda w,v: texprotect(v or "")),
     "project/iffrontmatter":    ("c_frontmatter", "front", lambda w,v: "" if v else "%"),
     "project/inclcoverperiphs": ("c_includeCoverSections", "cover", None),
     "project/periphpagebreak":  ("c_periphPageBreak", "front", None),
@@ -251,23 +250,17 @@ _map = {
 
     "document/ifdiglot":            ("c_diglot", "diglot", lambda w,v : "" if v else "%"),
     "document/ifndiglot":           ("c_diglot", "diglot", lambda w,v : "%" if v else ""),
-    "document/diglotprifraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
-    "document/diglotsecfraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
-    "document/diglotsecprj":        ("fcb_diglotSecProject", "diglot", None),
-    "document/diglotsecprjguid":    ("fcb_diglotSecProject[1]", "diglot", None),
+    "poly/fraction":                ("polyfraction_", "diglot", lambda w,v: str(float(v or 0.) / 100)),
+    "document/diglotlayout":        ("t_layout", "diglot", None),
     "document/diglotserialbooks":   ("t_diglotSerialBooks", "diglot", None),
-    "document/diglotpicsources":    ("fcb_diglotPicListSources", "diglot", None),
-    "document/diglot2captions": ("c_diglot2captions", "diglot", None),
-    "document/diglotswapside":  ("c_diglotSwapSide", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", "diglot", lambda w,v: "true" if v else "false"),
-    "document/diglotsecconfig": ("ecb_diglotSecConfig", "diglot", None),
     "document/diglotmergemode": ("fcb_diglotMerge", "diglot", None),
     "document/diglotadjcenter": ("c_diglotAdjCenter", "diglot", None),
     "document/diglotheaders":   ("c_diglotHeaders", "diglot", None),
     "document/diglotnotesrule": ("c_diglotNotesRule", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotjoinvrule": ("c_diglotJoinVrule", "diglot", lambda w,v: "true" if v else "false"),
-    "document/diglotcolour":    ("col_dibackcol", "diglot", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "1.0 1.0 1.0"),
-    "document/ifdiglotcolour":  ("col_dibackcol", "diglot", lambda w,v : "%" if v is None or v == "rgb(255,255,255)" else ""),
+    "document/diglotcolour":    ("_dibackcol", "diglot", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "1.0 1.0 1.0"),
+    "document/ifdiglotcolour":  ("_dibackcol", "diglot", lambda w,v : "%" if v is None or sum(coltoonemax(v)) > 2.95 else ""),
 
     "document/hasnofront_":        ("c_frontmatter", "front", lambda w,v: "%" if v else ""),
     "document/noblankpage":        ("c_periphSuppressPage", "layout", None),
@@ -446,6 +439,12 @@ _map = {
     "snippets/fancyborders":    ("c_useOrnaments", "decorate", None),
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
+    # "viewer/layoutanalysis":    ("c_layoutAnalysis", None, None),
+    "viewer/findunbalanced":    ("c_findUnbalanced", None, None),
+    "viewer/findcollisions":    ("c_findCollisions", None, None),
+    "viewer/findwhitespace":    ("c_findWhitespace", None, None),
+    "viewer/findrivers":        ("c_findRivers", None, None),
+    "viewer/spacetoobig":       ("s_spaceEms", None, None),
     
     "thumbtabs/ifthumbtabs":    ("c_thumbtabs", "tabsborders", None),
     "thumbtabs/numtabs":        ("s_thumbtabs", "tabsborders", None),
@@ -463,6 +462,8 @@ _map = {
     "scripts/arab/lrcolon":     ("c_scrarabrefs", "fontscript", None),
     "scripts/indic/syllables":  ("c_scrindicSyllable", "fontscript", None),
     "scripts/indic/showhyphen": ("c_scrindicshowhyphen", "fontscript", None),
+    "scripts/cjk/grid":         ("c_scrcjkgrid", "fontscript", None),
+    "scripts/cjk/halfpunc":     ("c_scrcjkhalfpunc", "fontscript", None),
 
     "strongsndx/showintext":    ("c_strongsShowInText", "strongs", None),
     "strongsndx/showall":       ("c_strongsShowAll", "strongs", None),
@@ -517,9 +518,7 @@ _map = {
     "import/frontmatter":       ("c_oth_FrontMatter", None, None),
     "import/overwitefrtmatter": ("c_oth_OverwriteFrtMatter", None, None),
     "import/cover":             ("c_oth_Cover", None, None),
-    
 }
-
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}
 
 ImportCategories = {

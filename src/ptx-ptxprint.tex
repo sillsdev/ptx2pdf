@@ -65,12 +65,19 @@
   \fi}{\pb\needoddemptyp@ge\prepusfm\zgetperiph|#1\*\unprepusfm\pb\needoddemptyp@ge}}
 \in@ntrofalse
 \def\slash{\sl@shprint}
+\let\ptxp@m@kechapterbox=\m@kechapterbox
+\def\cjkgridchapterbox{\gdef\m@kechapterbox{\ptxp@m@kechapterbox
+  \dimen0=12 \FontSizeUnit \dimen1=\ch@pterwd
+  \m@d \advance\ch@pterwd\dimen0}}
+
 \catcode`\@=12
 \def\onebody{\global\BodyColumns=1}
 \def\twobody{\global\BodyColumns=2}
+\def\threebody{\global\BodyColumns=3}
 \def\IntroPageAlign{page}
 \def\goone{\global\BodyColumns=1\global\notransitionskiptrue\singlecolumn\global\notransitionskipfalse}
 \def\gotwo{\global\BodyColumns=2\global\notransitionskiptrue\doublecolumns\global\notransitionskipfalse}
+\def\gothree{\global\BodyColumns=3\global\notransitionskiptrue\doublecolumns\global\notransitionskipfalse}
 \gdef\pausecharspacing{\global\let\currcharspacing\XeTeXinterchartokenstate \XeTeXinterchartokenstate=0}
 \gdef\unpausecharspacing{\XeTeXinterchartokenstate=\currcharspacing}
 
@@ -79,3 +86,4 @@
 % FDEE - use as {
 \DefineActiveChar{^^^^fdec}{\pausecharspacing}
 \DefineActiveChar{^^^^fded}{\unpausecharspacing}
+

@@ -175,6 +175,8 @@
 \def \ztexFontGrSpace   #1\relax{\defp@ram{fontgrspace}{#1}}
 \def \ztexFontICSpace   #1\relax{\defp@ram{fonticspace}{#1}} % eventually... font inter-char space
 \def \VerticalAlign     #1\relax{\defp@ram{verticalalign}{#1}} % for table cells
+\def \mrktype			#1\relax{}
+\def \Mrktype			#1\relax{}
 
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}     %(1)
@@ -185,7 +187,7 @@
 \def \Rank           #1\relax{}
 \def \TEStyleName    #1\relax{}
 \def \NotRepeatble   #1\relax{}
-\def \Attributes     #1\relax{}
+%\def \Attributes     #1\relax{}
 %-csty_definitions
 
 %+csty_defparam
@@ -273,7 +275,7 @@
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
-\def\sh@wstuff{SHOWSTUFF: \c@rref, styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth}
+\def\sh@wstuff{SHOWSTUFF:[v:\csname ptxversion\endcsname] \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
 \def\SHOWSTUFF{\message{\sh@wstuff}}%
 
 %returns \@@ut
@@ -982,16 +984,19 @@
 
 \newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
+\newif\ifOmitAllVerses \OmitAllVersesfalse
 \newif\ifNoHangVerseNumberOne\NoHangVerseNumberOnetrue
 \newif\ifHangVA\HangVAfalse
-
 \newif\iffilehasverses % Usercode (e.g. book end marks) might want to know this
 \newif\ifrotateVerse \rotateVersefalse
+\newif\ifversehyphen \versehyphentrue
+\newif\ifversehyphenup \versehyphenupfalse
+\def\everyfirstverse#1#2#3{}% Arguments are book ID (e.g. GEN), Book name (e.g. Genesis) and chapter
 \def\@ddcvhooks{
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
- \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
+ \def\@v@ ##1 {\let\oldv@rse\v@rse\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
   \ifdiglot\edef\dc@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\else\edef\c@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\fi
   \leavevmode % ensure we are in horizontal mode to build paragraph. This may output a chapter number
   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
@@ -1002,12 +1007,20 @@
   \ifnum\spacefactor=\n@wchaptersf \ifNoHangVerseNumberOne \kern0sp \hangingversefalse\fi\relax % override \hangversenumber here
    \ifOmitVerseNumberOne \ifdr@ppednumber\c@ncelfirstversetrue % v1
                          \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
-  \fi\fi
+   \fi
+  \fi
+  %\message{verse was \meaning\oldv@rse}% Set to empty at chapter number.
+  \ifx \oldv@rse\empty
+    \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+  \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
   % Otherwise make ll@p do nothing.
   \ifdim\lastkern=-1sp \hangingversetrue\fi
-  \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+  \ifversion{4}{\ifMarginalVerses\let\printverse\defaultprintverse
+                  \else\ifOmitAllVerses\let\printverse=\noprintv@rse\else
+                    \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+                \fi\fi}{\ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi}%
   %\trace{hv}{lastkern \the\dimen0}%
   \bgroup
   \ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
@@ -1031,8 +1044,9 @@
      \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
      \kern\AfterVerseSpaceFactor\FontSizeUnit
    \else
-    \ifreftooltip\ch@ptooltipstart\fi\printverse\ifreftooltip\ch@ptooltipend\fi
-    %\printverse
+    \ifreftooltip\ch@ptooltipstart\fi
+    \printverse
+    \ifreftooltip\ch@ptooltipend\fi
    \fi
   \fi
   \egroup
@@ -1107,24 +1121,29 @@
      % if chapter label not present, set \ch@pter[X]waiting to cause chapter number to be printed
      % at start of first text paragraph.
      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
-     \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
-       \trace{c}{No chapter label in use : \ch@pter}%
-     \else % if \cl present, output chapter label here
-       \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-       \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
-       \pdfb@@kmark \pdfch@ptermark
-       \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
-       \spacefactor=\n@wchaptersf % prevent hanging verse number here
+     \ifcsname hookchapter\g@tdstat\endcsname\csname hookchapter\g@tdstat\endcsname\ch@pter
+     \else
+       \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+         \trace{c}{No chapter label in use : \ch@pter}%
+       \else % if \cl present, output chapter label here
+         \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
+         \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+         \pdfb@@kmark \pdfch@ptermark
+         \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
+         \spacefactor=\n@wchaptersf % prevent hanging verse number here
+       \fi
      \fi
    \fi}
  %
  \def\c{\m@kedigitsother\@c@}
  \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
+ \def\ca ##1\ca*{\xdef\ch@ptert@xt{\ch@ptert@xt (##1)}}
 %-csty_chapdef
  % set default value for drop cap chapter number size if not already set
 %+csty_dropchap
  \ifdim\dropnumbersize=0pt
    \calcdr@psize
+ \else\edef\dr@psize{\the\dropnumbersize}
  \fi
  \def\m@rker{c}\def\@mkr{c\c@rrdstat}\defp@ram{fontsize}{\dr@psize}%
  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
@@ -1241,6 +1260,7 @@
     \cstyle{va}{\altern@teverse}\NBSP%
   \fi
 }
+\def\noprintv@rse{}
 \newif\ifSeparateVerseAdornments \SeparateVerseAdornmentstrue
 \newif\ifadorningrange
 
@@ -1259,7 +1279,7 @@
 }
 
 \def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\defaultprintverse
-    \else {\s@tsideskips{v} \h@ngprintv@rse{0}}\box0\kern\AfterVerseSpaceFactor\FontSizeUnit\fi
+    \else {\s@tsideskips{v}{-1pt} \h@ngprintv@rse{0}}\box0\kern\AfterVerseSpaceFactor\FontSizeUnit\fi
 }
 \def\hangprintverse{\trace{hv}{hangprintverse  \v@rse}\llap{\defaultprintverse}}
 \def\adornv#1{\AdornVerseNumber{#1}}
@@ -1356,8 +1376,9 @@
 \let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
 \let\zMarkVerseAgain\m@rkverse
-\def\m@rkverseNml{\mark{\book:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
-\def\m@rkverseDglot{\mark{\book:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
+\def\m@rkverseNml{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
+\let\cur@ds\empty
+\def\m@rkverseDglot{\mark{\ifx\book\relax\else\book\fi:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
 
 \def\n@xtparstart{}
 \def\print@bleverse{}
@@ -1412,9 +1433,9 @@
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
         %\tracingassigns=1
         \let\aftergr@b\@h\gr@btomacro}% \h gets stored as the book name (for references)
- \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{H}{Defining ifOmitChapterNumberRH@\detokenize{##1}}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
  \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \let\aftergr@b\@hh\gr@btomacro}% \h1 gets stored as the book name (for references)
- \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\egroup}% store book id in \b@ok1 / b@ok1R
  \def\bookalt{\csname b@ok1\g@tdstat\endcsname}%
  \x@\let\csname h1\endcsname=\h@h
  %
@@ -1438,7 +1459,7 @@
         \runtrigg@rsother{bookstart}%
         }%
  %
- \def\b{\endlastp@rstyle{b}\bgroup % End previous par before making a gap
+ \def\b{\global\dr@ppednumberfalse\endlastp@rstyle{b}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{b}{b+\styst@k}\@@b}
  \def\ib{\endlastp@rstyle{ib}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{ib}{ib+\styst@k}\@@b}
@@ -1448,8 +1469,8 @@
      \vskip\baselineskip
     \else
       \vskip\p@ram
-    \fi\egroup}
- \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
+    \fi\egroup\prevgraf=1 \cutoutcarryover}
+ \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\|=12 \catcode`\:=12 \catcode`\/=12 \catcode`\\=12 \ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
@@ -1467,8 +1488,9 @@
     \x@\x@\x@\@k\x@\scantokens\x@{\kr@ftext\ignorespaces}\endch@rstylen*%
     \ifcsname m@rknumk\ifdiglot\c@rrdstat\fi\endcsname\else\addnewm@rk{k\ifdiglot\c@rrdstat\fi}\fi%
     \getm@rknum{k\ifdiglot\c@rrdstat\fi}\x@\x@\x@\marks\x@\m@rknum\x@{\thiskmark}%Set (side-dependent) mark for k.
+    \trace{ma}{set mark(k)=\m@rknum \space to \thiskmark}%
     \r@gurgitatedfalse\p@peof%
-    \runtrigg@rs{\id@@@\ifdiglot\c@rrdstat\fi k.\kr@f}%
+    \runtrigg@rs{\id@@@\ifdiglot\ifx\c@rrdstat\d@glotl\else\c@rrdstat\fi\fi k.\kr@f}%
   }%}
  \def\k{%\k processing
    \deactiv@tecustomch@rs% no CR here
@@ -1480,17 +1502,24 @@
 \endgroup
 \catcode`0=11\def\z@ro{0}\catcode`0=12
 \newif\iftfmp \tfmpfalse
+\def\resetch@pterverse#1{%
+   \global\let\ch@pter\z@ro\global\let\v@rse\@neletter
+   \x@\global\x@\let\csname @ch@pter\@g@tdst@t#1\endcsname\ch@pter
+   \x@\global\x@\let\csname @ch@ptert@xt\@g@tdst@t#1\endcsname\ch@pter
+   \x@\global\x@\let\csname @v@rse\@g@tdst@t#1\endcsname\v@rse
+}
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}% get first 3 chars of the \id
-  \global\let\ch@pter\z@ro\global\let\v@rse\@neletter
+  \trace{d}{@@id for side \c@rrdstat\space diglot\ifdiglot true\else false\fi}%
+  \x@\resetch@pterverse\ifdiglot\c@rrdstat\fi%
   \settrig@refcv\docvhook
   \the\@idhooks
-  \ifdiglot\def\col@do##1{%
-     \x@\global\x@\let\csname @ch@pter##1\endcsname\ch@pter
-     \x@\global\x@\let\csname @ch@ptert@xt##1\endcsname\ch@pter
-     \x@\global\x@\let\csname @v@rse##1\endcsname\v@rse}\x@\each@col\diglot@list\E\col@do{}%
-  \fi}
-\def\ptx@fig #1\fig*{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
+}
+
+{\catcode`|=0 \catcode`\\=12
+|gdef|ptx@fig #1\fig*{|@ptx@fig{#1}}
+}
+\def\@ptx@fig#1{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
     \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
     \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
 %-csty_addspecialhooks
@@ -1592,12 +1621,16 @@
 \mcp@pCont{\ss@Tbl*}{\ss@Ctgy}
 \mcp@pCont{\ss@Tbl*}{\ss@Para}
 \mcp@pEnd{\ss@Tbl*}{\ss@Tbl}
+\mcp@pCont{\ss@Fig*}{\ss@Char}
+\mcp@pCont{\ss@Fig*}{\ss@ChrP}
+\mcp@pEnd{\ss@Fig*}{\ss@Fig}
 
 %No point going below these for font styling, etc.
 \def\mcb@rrier#1{\x@\let\csname isb@rrier-#1\endcsname\empty}
 \mcb@rrier{\ss@Para}
 \mcb@rrier{\ss@Note}
 \mcb@rrier{\ss@Sbar}
+\mcb@rrier{\ss@Fig}
 %Are these style modifiers (category or milestone)  or actual styles?
 \def\msm@dfyname#1{#1-is-modifyer}
 \def\msm@difyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\xdef\csname\t@@st\endcsname{Y}}
@@ -1798,6 +1831,7 @@
 
 %+csty_onetime
 \newif\ifmarginalVerseIsMargin \marginalVerseIsMarginfalse
+\newif\ifMarginalVerses \MarginalVersesfalse
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but (just) before processing the first USFM file
  \inheritb@rders % Process border-parameter inheritance
@@ -1810,12 +1844,14 @@
  \fi
  \origb@selineskip=\baselineskip
  \ifmarginalVerseIsMargin
-   \ifx\colshiftmode\l@ft
-     \ruleshift=-\columnshift
-   \else \ifx\colshiftmode\r@ght
-      \ruleshift=\columnshift
-   \fi\fi
-   \columnshift=0pt
+   \dimen0=0.5 \gutter
+   \ifdim\dimen0 > \columnshift \dimen0=\columnshift\fi
+   \advance\columnshift by -\dimen0
+%   \ifx\colshiftmode\l@ft
+%     \ruleshift=-\dimen0
+%   \else \ifx\colshiftmode\r@ght
+%      \ruleshift=\dimen0
+%   \fi\fi
  \fi
  \s@tupsizes
  \global\let\id@@@\n@ID
@@ -1910,9 +1946,11 @@
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
+ \in@ntrofalse
  \trace{d}{PageAlign=\PageAlign, IntroPageAlign=\IntroPageAlign, ifin@ntro\ifin@ntro true\else false\fi, pageno=\the\pageno, totalpages=\the\totalp@ges}%
- \ifnum 1=\ifx\PageAlign\val@odd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi \need@oddpage{\emptyoutput}\fi
+ \ifnum \ifx\PageAlign\val@dd 1\else\ifin@ntro\ifx\IntroPageAlign\val@GROUP 1\else \ifx\IntroPageAlign\val@dd 1\else 0\fi\fi\else 0\fi\fi =1 \need@oddpage{\emptyoutput}\fi
  \xdef\ptxst@rtp@ge{\the\pageno}%
+ \ifcsname @@@ifOmitChapterNumber\endcsname \endOneChapBook \let\@@@ifOmitChapterNumber\undefined\fi
  \ifOneChapBook\startOneChapBook\fi
  \let\@@fter\empty
  \ifdigl@tinuse\ifdiglot\else\let\@@fter\diglotfalse \diglottrue\fi\fi
@@ -2015,14 +2053,17 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi \ifdoingt@ble doingtable??\fi \c@tegory,\c@tprefix}%
+ \global\implicitcl@setrue
  \traceifset{ptxfile}%
  \ifhmode\endgraf\fi
  \ifdim\pagetotal>20pt \message{Pagetotal = \the\pagetotal, Trigggring endpage \the\output}\endpage\fi
  \seriesdiglotfalse % Set this so we know it's always valid
- \ifdigl@tinuse\ifdiglot
- \else
-   \seriesdiglottrue
- \fi\fi
+ \ifdigl@tinuse
+  \let\col@do\resetch@pterverse\x@\each@col\diglot@list\E
+   \ifdiglot\else
+     \seriesdiglottrue
+   \fi
+ \fi
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
@@ -2066,9 +2107,6 @@
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  \inendbooktrue 
- \ifdiglot
-  \enddigl@t
- \fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
  \let\layoutpen@lty\book@ndpenalty 
@@ -2101,7 +2139,6 @@
  \else
     \trace{o}{No bookendbox, as the book is empty}%
  \fi
- \ifOneChapBook\endOneChapBook\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
  \ifx\id@@@\n@ID\relax\else\csname bookend-\id@@@\endcsname\relax\fi
  \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookend-all\endcsname\else missing\fi}%
@@ -2292,7 +2329,7 @@
     \divide \count255 by 10\relax\global\usfm@minor=\numexpr 100000 * \count255 + (#1 - 100*\usfm@major - 10*\count255)\relax
   \fi\fi\fi
   \iftemp\else\MSG{Unable to make sense of USFM version #1.#2.#3}\fi%
-  \ifnum\usfm@minor<2 \else %
+  \ifnum\usfm@major<3 \else %
     \ifnum\usfm@minor<100000 \else %3.1 or greater:
       \global\implicitcl@sefalse%
     \fi%
@@ -2433,6 +2470,21 @@
   \fi\fi\fi
   \global #1=\dimen9
   \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+}
+
+\def\threecolwidth#1{%
+  \dimen9=\textwidth
+  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
+  \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
+    \advance \dimen9 by -\XrefNotesWidth
+    \advance \dimen9 by -\XrefNotesMargin
+    \advance \dimen9 by -0.5\gutter
+    \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
+  \fi\fi\fi
+  \divide\dimen9 by 3
+  \advance\dimen9 by -\gutter
+  \global #1=\dimen9
+  \trace{o}{setthreecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
 
 \newif\ifNoteLines \NoteLinesfalse

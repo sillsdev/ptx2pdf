@@ -2,7 +2,7 @@
 
 # Reads xdvi files and outputs a version that can be diffed.
 
-import argparse, os
+import argparse, os, sys
 from struct import unpack
 from ptxprint.font import TTFont
 
@@ -78,9 +78,14 @@ opcodes += [
 packings = ("bhxi", "BHxI")
 
 class XDviType:
-    def __init__(self, fname, diffable=False, glyphnames=False):
+    def __init__(self, fname, diffable=False, glyphnames=False, outfile=None, positions=False):
         self.fonts = {}
         self.file = open(fname, "rb")
+        if outfile is None:
+            self.ofh = sys.stdout
+        else:
+            self.ofh = open(outfile, "w", encoding="utf-8")
+        self.positions = positions
         self.stack = []
         self.diffable = diffable
         self.glyphnames = glyphnames
@@ -125,7 +130,10 @@ class XDviType:
         return "{:.2f}pt".format(res)
 
     def out(self, txt):
-        print ("pg[{}] ".format(self.pageno) + txt)
+        pref = "pg[{}]".format(self.pageno)
+        if self.positions:
+            pref += "({:.1f},{:.1f})".format(self.h/65536.+72.27, self.v/65536.+72.27)
+        self.ofh.write(pref + " " + txt + "\n")
         
     def setchar(self, opcode, parm, data):
         self.out("setchar({})".format(opcode))
@@ -152,10 +160,10 @@ class XDviType:
     def dim(self, opcode, parm, data):
         if parm in "wx":
             self.h += getattr(self, parm)
-            self.out("{} (h={})".format(parm, self.asdimen(self.h)))
+            self.out("{}[{}] (h={})".format(parm, opcode, self.asdimen(self.h)))
         elif parm in "yz":
             self.v += getattr(self, parm)
-            self.out("{} (v={})".format(parm, self.asdimen(self.v)))
+            self.out("{}[{}] (v={})".format(parm, opcode, self.asdimen(self.v)))
 
     def simple(self, opcode, parm, data):
         self.out("{}".format(parm))
@@ -170,7 +178,7 @@ class XDviType:
         for i,x in enumerate("hvwxyz"):
             setattr(self, x, vs[i])
             desc.append("{}({}={})".format(x, vs[i], self.asdimen(vs[i])))
-        self.out("{}: ".format(parm) + " ".join(desc))
+        self.out("{}({}): ".format(parm, opcode) + " ".join(desc))
 
     def bop(self, opcode, parm, data):
         self.pageno = data[0]
@@ -257,7 +265,7 @@ class XDviType:
             if ttf is not None:
                 glyphs = [ttf.ttfont.getGlyphName(g) for g in glyphs]
         res = ["{}@({}={},{})".format(glyphs[i], pos[i][0], self.asdimen(pos[i][0]), pos[i][1]) for i in range(slen)]
-        self.out('xglyphs[{}@{}]: "{}" {}'.format(width, slen, txt, res))
+        self.out('xglyphs[{:.1f}@{}]: "{}" {}'.format(width/65536., slen, txt, res))
         self.h += width
 
     def xpic(self, opcode, parm, data):
@@ -271,11 +279,13 @@ class XDviType:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("infile",help="Input xdvi file")
+    parser.add_argument("-o","--outfile",help="Output to a file")
     parser.add_argument("-d","--diffable",action="store_true",help="Output a diffable structure")
     parser.add_argument("-n","--glyphnames",action="store_true",help="Output glyph names rather than ids")
+    parser.add_argument("-p","--positions",action="store_true",help="Give x,y coordinates for each line")
     args = parser.parse_args()
 
-    dviparser = XDviType(args.infile, args.diffable, args.glyphnames)
+    dviparser = XDviType(args.infile, diffable=args.diffable, glyphnames=args.glyphnames, outfile=args.outfile, positions=args.positions)
     dviparser.parse()
 
 if __name__ ==  "__main__":

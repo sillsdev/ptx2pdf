@@ -1,0 +1,14 @@
+\id TST test file for figs with styled captions
+\usfm 3.0
+\h Test
+\toc1 Test
+\mt1 Caption Test
+\c 1
+\p
+\v 1 Some random text
+\fig This is a simple caption| src="image.jpg" pgpos="hc" scale="0.5" size="col" ref="1:1"\fig*
+\p
+\v 2 something else
+\fig This is a \+bd caption\+bd* with \wj Colour\wj* in it| src="image.jpg" size="col" pgpos="hc" scale="0.5"\fig*
+
+\endinput

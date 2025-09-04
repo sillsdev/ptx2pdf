@@ -1,5 +1,6 @@
 # File: ptx2pdf.sty
 # File of modifications to usfm.sty to fix issues
+# Only need mrktype if not in the USFM3.1 defined set
 
 \Marker k
 \OccursUnder ili ili1 ili2 ili3 ili4 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
@@ -368,14 +369,17 @@
 
 \Marker wr
 \OccursUnder ms s lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr po q q1 q2 q3 q4 qc qr qd tc1 tc2 tc3 tc4 f fe NEST
+\mrktype char
 
 \Marker wh
 \FontName Ezra SIL
 \FontScale 1
+\mrktype char
 
 \Marker wg
 \FontName Galatia SIL
 \FontScale 1
+\mrktype char
 
 \Marker wl
 \Endmarker wl*
@@ -387,6 +391,7 @@
 \StyleType Character
 \FontName Charis SIL
 \FontScale 1
+\mrktype char
 
 \Marker fig
 \FontSize 11
@@ -403,26 +408,33 @@
 \StyleType Character
 \TextProperties publishable vernacular
 \LineSpacing 0.5
+\mrktype char
 
 \Marker it
 \OccursUnder NEST cd d ef f fe im imi imq io io1 io2 io3 io4 ip ipi ipq ipr iq iq1 iq2 iq3 lf lh li li1 li2 li3 li4 lim lim1 lim2 lim3 lim4 m mi ms ms1 ms2 nb p pc ph phi pi pi1 pi2 pi3 pm pmc pmo pmr po pr q q1 q2 q3 q4 qc qd qm qm1 qm2 qm3 qr s s1 s2 s3 s4 sp tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 th1 th2 th3 th4 thr1 thr2 thr3 thr4 tr x
 \FontScale 1
+\mrktype char
 
 \Marker sc
 \OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe ef x NEST
 \FontScale 1
+\mrktype char
 
 \Marker no
 \FontScale 1
+\mrktype char
 
 \Marker bd
 \FontScale 1
+\mrktype char
 
 \Marker bdit
 \FontScale 1
+\mrktype char
 
 \Marker em
 \FontScale 1
+\mrktype char
 
 \Marker cat
 \TextProperties nonvernacular
@@ -433,6 +445,7 @@
 \Endmarker err*
 \Name OBSOLETE err...err* - Module Error
 \Description An error in a module file
+\mrktype char
 \OccursUnder id c vrs inc ref rep mod
 \TextProperties nonpublishable nonvernacular
 \TextType Other
@@ -443,6 +456,7 @@
 \Marker inc
 \Name Module Include Options
 \Description Options for including stuff in modules
+\mrktype versepara
 \Rank 4
 \TextProperties paragraph nonpublishable nonvernacular
 \TextType Other
@@ -452,6 +466,7 @@
 \Marker vrs
 \Name Module Versification 
 \Description Specifies the versification used in a module
+\mrktype otherpara
 \Rank 4
 \TextProperties paragraph nonpublishable nonvernacular
 \TextType Other
@@ -461,16 +476,30 @@
 \Marker ref
 \Name Module Verse Reference
 \Description Included verse references in modules
+\mrktype otherpara
 \OccursUnder id
 \Rank 4
 \TextProperties paragraph nonpublishable nonvernacular
 \TextType Other
 \FontSize 12
+\Attributes loc 
 \StyleType Paragraph
+
+\Marker ref
+\Name Scripture reference
+\Description Scripture reference. For marking scripture references, with an optional machine-readable target location.
+\mrktype char
+\OccursUnder xt ft p
+\Rank 4
+\TextProperties paragraph publishable nonvernacular
+\TextType Other
+\FontSize 12
+\StyleType Character
 
 \Marker refnp
 \Name Module Verse Reference No Paragraphs
 \Description Included verse references in modules with no paragraph markers
+\mrktype otherpara
 \OccursUnder id
 \Rank 4
 \TextProperties paragraph nonpublishable nonvernacular
@@ -481,6 +510,7 @@
 \Marker rep
 \Name Module Text Replacement
 \Description Replaces text included in modules
+\mrktype otherpara
 \Rank 4
 \TextProperties paragraph nonpublishable nonvernacular
 \TextType Other
@@ -490,6 +520,7 @@
 \Marker mod
 \Name Module Import
 \Description Includes another module in modules
+\mrktype otherpara
 \Rank 4
 \TextProperties paragraph nonpublishable nonvernacular
 \TextType Other
@@ -503,22 +534,28 @@
 
 \Marker ampersand
 \StyleType Standalone
+\mrktype barems
 
 \Marker asterisk
 \StyleType Standalone
+\mrktype barems
 
 \Marker circumflex
 \StyleType Standalone
+\mrktype barems
 
 \Marker dollar
 \StyleType Standalone
+\mrktype barems
 
 \Marker dopagenums
 \StyleType Standalone
+\mrktype barems
 
 \Marker zfooter
 \Name zfooter - File - Header
 \Description Running footer styling for a book (basic) if different to running header
+\mrktype header
 \OccursUnder 
 \Rank 1
 \TextType Other
@@ -527,34 +564,73 @@
 
 \Marker hash
 \StyleType Standalone
+\mrktype barems
 
 \Marker nopagenums
 \StyleType Standalone
+\mrktype barems
 
 \Marker percent
 \StyleType Standalone
+\mrktype barems
 
 \Marker resetpagenums
 \StyleType Standalone
+\mrktype barems
 
 \Marker space
 \StyleType Standalone
+\mrktype barems
 
 \Marker zNeedOddPage
 \StyleType Standalone
+\mrktype barems
 
 \Marker zNeedEvenPage
 \StyleType Standalone
+\mrktype barems
 
 \Marker zNeedQuadPage
 \StyleType Standalone
+\mrktype barems
 
 
 # local additions
 
+\Marker xtd
+\Name xtd - Cross Reference - Semantic Domain
+\Description Embedded italics references
+\Endmarker xtd*
+\mrktype char
+\OccursUnder x xt
+\TextProperties vernacular publishable
+\TextType NoteText
+\StyleType Character
+
+\Marker xtl
+\Name xtl - Cross Reference - Label
+\Description Embedded italics references
+\Endmarker xtl*
+\mrktype char
+\OccursUnder x xt
+\TextProperties vernacular publishable
+\TextType NoteText
+\StyleType Character
+
+\Marker xtn
+\Name xtn - Cross Reference - Semantic Domain Number
+\Description Embedded italics references
+\Endmarker xtn*
+\mrktype char
+\OccursUnder x xt
+\TextProperties vernacular publishable
+\TextType NoteText
+\StyleType Character
+
 \Marker xts
 \Name xts - Cross Reference - Strong's reference as 4 digit cell
 \Description Strong's 4 digit cell
+\mrktype milestone
 \OccursUnder x xt
 \TextType NoteText
 \TextProperties vernacular publishable
@@ -563,9 +639,23 @@
 \LineSpacing 0.33
 \Attributes strongs ?align ?strong 
 
+\Marker xtr
+\Name xtr - Cross Reference - Styled Reference
+\Description Embedded italics references
+\Endmarker xtr*
+\mrktype char
+\OccursUnder x xt
+\TextProperties vernacular publishable
+\TextType NoteText
+\StyleType Character
+\Italic
+
 \Marker xti
 \Name xti - Cross Reference - Embedded italics
 \Description Embedded italics references
+\Endmarker xti*
+\mrktype char
+\mrktype char
 \OccursUnder x xt
 \TextProperties vernacular publishable
 \TextType NoteText
@@ -575,6 +665,7 @@
 \Marker gloss|rb
 \Name gloss|rb - Special Text - Ruby Gloss
 \Description Gloss component of a ruby string either for interlinear or ruby
+\mrktype char
 \OccursUnder rb
 \TextProperties vernacular publishable
 \TextType VerseText 
@@ -584,6 +675,7 @@
 \Marker zthumbtab
 \Name zthumbtab - File - ThumbTab text
 \Description Book abbreviation for Thumb Tabs
+\mrktype header
 \OccursUnder id
 \Rank 1
 \TextType Other
@@ -600,6 +692,7 @@
 \Marker zimagecopyrights
 \Name zimagecopyrights - Auxiliary - Image copyrights statements
 \Description Image copyrights statements for use in FRT matter or colophon
+\mrktype otherpara
 \StyleType Paragraph
 \TextProperties paragraph publishable
 
@@ -607,6 +700,7 @@
 \Name Figure anchor
 \Name zfiga - Milestones - Anchor for peripheral pictures  
 \Description Anchor point for piclist when there are no verse refs to anchor to
+\mrktype milestone
 \OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
 \StyleType Milestone
 \Attributes id
@@ -615,6 +709,7 @@
 \Name Conditional text
 \Name zifhook - Milestones - Optional text output (ztruetext,zfalsetext) based on whether the named variable is set / non-empty
 \Description Anchor point for piclist when there are no verse refs to anchor to
+\mrktype milestone
 \OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
 \StyleType Milestone
 \Attributes var emptyok 
@@ -623,6 +718,7 @@
 \Name Conditional text
 \Name zifhook - Milestones - Optional text output (ztruetext,zfalsetext) if there are any hooks set on a marker
 \Description Anchor point for piclist when there are no verse refs to anchor to
+\mrktype milestone
 \OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
 \StyleType Milestone
 \Attributes marker 
@@ -631,6 +727,7 @@
 \Endmarker ztruetext*
 \Name ztruetext - Other - Text to output if the zifhook test is true
 \Description Conditional text - true result
+\mrktype char
 \OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
 \TextProperties vernacular publishable
 \TextType NoteText
@@ -640,6 +737,7 @@
 \Endmarker zfalsetext*
 \Name zfalsetext - Other - Text to output if the zifhook test is false
 \Description Conditional text - false result
+\mrktype char
 \OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
 \TextProperties vernacular publishable
 \TextType NoteText
@@ -647,6 +745,7 @@
 
 \Marker ztoc
 \Name ztoc - Milestones - Table Of Contents 
+\mrktype milestone
 \OccursUnder id periph
 \StyleType Milestone
 \TextProperties vernacular publishable
@@ -654,6 +753,7 @@
 
 \Marker zfillsignature
 \Name zfillsignature - Milestones - Emit empty pages until a signature is full
+\mrktype milestone
 \OccursUnder id periph
 \StyleType Milestone
 \TextProperties other publishable
@@ -661,6 +761,7 @@
 
 \Marker zvar
 \Name zvar - Milestones - Variable expansion
+\mrktype milestone
 \OccursUnder *
 \StyleType Milestone
 \TextProperties vernacular publishable
@@ -668,6 +769,7 @@
 
 \Marker zgetperiph
 \Name zgetperiph - Milestones - Peripheral inclusion
+\mrktype milestone
 \OccursUnder *
 \StyleType Milestone
 \TextProperties vernacular publishable
@@ -675,6 +777,7 @@
 
 \Marker zISBNbarcode
 \Name zISBNbarcode - Milestones - Generate ISBN barcode with optional pricecode
+\mrktype milestone
 \Description Attributes font and fontheight specifies the numbers below the barcode, to which everything is scaled. Valid height values: normal medium short, price is the text string for the price barcode, pricecode is the 5-digit EAN5 for the currency and price. Consult local standards or wikipedia.
 \OccursUnder *
 \StyleType Milestone
@@ -685,6 +788,7 @@
 \Marker x-credit
 \Name x-credit - Auxiliary - Figure credit box styling
 \Description Styles the credit box for a figure
+\mrktype char
 \TextProperties vernacular publishable
 \OccursUnder None
 \FontName Charis SIL
@@ -715,17 +819,20 @@
 \Background -
 
 \Marker toc3
+\mrktype header
 \Color xFFFFFE
 
 \Marker zbl
 \Name zbl - Milestones - Multiple Blank Lines
 \Description
+\mrktype milestone
 \OccursUnder id periph
 \StyleType Milestone
 
 \Marker zrule
 \Name zrule - Milestones - Horizontal Rule
 \Description
+\mrktype milestone
 \OccursUnder id periph mt p
 \Attributes width align
 \StyleType Milestone
@@ -735,6 +842,7 @@
 \Marker zmakeinsert
 \Name zmakeinsert - Milestones - Flag current periph as insert for separate printing.
 \Description Flags the current periph as a section to be pulled from the normal print-run separately and re-inserted. If nopagecount is "T", then page-counting halts for this item.
+\mrktype milestone
 \OccursUnder id periph mt p
 \Attributes id nopagecount
 \StyleType Milestone
@@ -752,12 +860,14 @@
 \Marker zmvm
 \Name zmvm - Chapters & Verses - In text marginal verse marker style
 \Endmarker zmvm*
+\mrktype char
 \StyleType Character
 \TextProperties publishable
 
 \Marker zqrcode
 \Name zqrcode - Milestones - Insert QR code
 \Description Generates a QR-code from attribute data (which may not contain double-quotes), with the specified size (or from FontSize, if cat is provided).  pgpos can be 'H' (a simple box, here), or any valid figure position. vmin specifies a minimum version number (complexity) for the QR code, otherwise it will autosize. At present there is an incompatibility, with the QR code generator assuming that it will get data byte by byte, but XeTeX providing it character by character.  If unicode is set to "T" (true), then the provided data will be written out to a separate file and re-read, byte by byte.
+\mrktype milestone
 \OccursUnder id periph mt p
 \Attributes data size? pgpos? vmin? vmax? unicode? cat? spacebeside? colour? color? bgcolour? bgcolor? 
 \StyleType Milestone
@@ -766,6 +876,7 @@
 \Marker zgap
 \Name zgap - Milestones - Vertical gap
 \Description
+\mrktype milestone
 \OccursUnder id periph mt p
 \Attributes dimension
 \StyleType Milestone
@@ -773,6 +884,7 @@
 \Marker zsetref
 \Name zsetref - Milestones - Set book/chapter/verse reference
 \Description Set up bookid/book/chapter/verse so that triggers can be fired correctly in modules, etc.
+\mrktype milestone
 \OccursUnder id periph mt p ef esb ili ili1 ili2 ili3 ili4 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
 \Attributes bkid? book? chapter? verse?
 \StyleType Milestone
@@ -780,6 +892,7 @@
 \Marker zlabel
 \Name zlabel - Milestones - Remember the page number for this place
 \Description
+\mrktype milestone
 \OccursUnder id periph esb
 \TextProperties vernacular publishable
 \Attributes id
@@ -788,6 +901,7 @@
 \Marker zpage
 \Name zpage - Milestones - Page number for label
 \Description
+\mrktype milestone
 \OccursUnder id periph esb
 \Attributes label
 \TextProperties vernacular publishable
@@ -796,6 +910,7 @@
 \Marker zref
 \Name zref - Milestones - Chapter/Verse for label
 \Description
+\mrktype milestone
 \OccursUnder id periph esb
 \Attributes label show?
 \TextProperties vernacular publishable
@@ -804,6 +919,7 @@
 \Marker zcustommark
 \Name zcustommark - Milestones - Remember something for header/footer/etc
 \Description
+\mrktype milestone
 \OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
 \Attributes value type?
 \StyleType Milestone
@@ -811,6 +927,7 @@
 \Marker zcustomtopmark
 \Name zcustomtopmark - Milestones - Use the custom top mark (header only)
 \Description
+\mrktype milestone
 \OccursUnder h
 \Attributes type
 \StyleType Milestone
@@ -818,6 +935,7 @@
 \Marker zcustombotmark
 \Name zcustombotmark - Milestones - Use the custom top mark (header only)
 \Description
+\mrktype milestone
 \OccursUnder h
 \Attributes type
 \StyleType Milestone
@@ -825,6 +943,7 @@
 \Marker zcustomfirstmark
 \Name zcustomfirstmark - Milestones - Use the custom bot mark (header only)
 \Description
+\mrktype milestone
 \OccursUnder h
 \Attributes type
 \StyleType Milestone
@@ -832,6 +951,7 @@
 \Marker zornament
 \Name zornament - Milestones - Insert an ornament
 \Description
+\mrktype milestone
 \OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
 \Attributes pattern size?
 \StyleType Milestone
@@ -839,6 +959,7 @@
 \Marker textborder
 \Name textborder - Other - Border around verse text of page
 \Description When publishable this puts a border around the main portion of the page. BorderStyle can be set to plain, double or ornamental styles from standardborders.sty can be used, with the ornaments plugin.
+\mrktype header
 \TextProperties nonpublishable nonvernacular
 \OccursUnder id
 \Border All
@@ -872,6 +993,7 @@
 \Marker strong-s
 \Name strong-s - Milestones - Start Strong's list context
 \Endmarker strong-e
+\mrktype milestone
 \TextProperties vernacular publishable
 \OccursUnder id
 \StyleType Milestone
@@ -944,20 +1066,22 @@
 
 \Marker zglm
 \Description Format of the floor brackets used in glossary markup
+\mrktype char
 \TextType Other
 \StyleType Character
 \Endmarker zglm*
 \Name zglm - Peripheral Ref - glossary marker floor brackets
-\Occursunder NEST id m q2 f p v q1
+\Occursunder NEST id m q2 p v q1
 \ztexFontFeatures :extend=0.9
 
 \Marker zpmkr
 \Description Format USFM marker label
+\mrktype char
 \TextType Other
 \StyleType Character
 \Endmarker zpmkr*
 \Name zpmkr - Character Styling - Format USFM marker label
-\Occursunder NEST id m q2 f p v q1
+\Occursunder NEST id m q2 p v q1
 \FontName Source Code Pro
 \FontSize 8
 \Color x7F0000
@@ -1009,6 +1133,7 @@
 \Marker ldrs
 \Endmarker ldrs*
 \Name ldrs...ldrs* - Tables - Table of Contents leaders styling
+\mrktype char
 \Description Styling for leaders in table of contents
 \OccursUnder p
 \TextType Other
@@ -1095,6 +1220,7 @@
 
 \Marker zcolsync
 \Name zcolsync - Other - Diglot forced synchronisation point
+\mrktype milestone
 \OccursUnder c periph esb id p
 \Rank 4
 \TextType Other
@@ -1193,6 +1319,7 @@
 \Marker zbn
 \Name zbn - Auxiliary - Border Numbers/Letters (dark text, dark outline)
 \Description The supplied standard map borders use this character style. 
+\mrktype char
 \FontName Gentium Plus
 \FontSize 8
 \TextProperties publishable vernacular
@@ -1205,6 +1332,7 @@
 \Marker zbn2
 \Name zbn - Auxiliary - Border Numbers/Letters (light text, dark outline)
 \Description The supplied standard map borders use this character style. 
+\mrktype char
 \FontName Gentium Plus
 \FontSize 8
 \TextProperties publishable vernacular

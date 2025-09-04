@@ -1,7 +1,7 @@
 from xml.etree import ElementTree as et
 from ptxprint.usxutils import Usfm
 from hashlib import md5
-from ptxprint.reference import Reference
+from usfmtc.reference import Ref
 from usfmtc.usxmodel import iterusx
 import re, os
 import logging
@@ -64,51 +64,62 @@ class Interlinear:
             raise SyntaxError("Bad Reference {}".format(s))
 
     def replaceusx(self, doc, curref, lexemes, linelengths, mrk="wit"):
-        lexemes.sort()
+        # breakpoint()
+        if curref[0] >= len(doc.chapters):
+            return
         parindex = doc.chapters[curref[0]]
-        def stop(e):
-            #if e.tag == "verse" and e.get("number", "") == "7-8":
-            #    breakpoint()
-            return doc.getroot()[parindex] != e and (e.tag == 'chapter' or (e.tag == 'verse' and vcmp(e.get('number', "0"), curref[1]) > 0))
-        def start(e):
-            return e.tag == "verse" and e.get('number', 0) == curref[1]
+        lexemes.sort()
+        if curref[1] == "0":
+            def stop(e):
+                return e.tag == 'verse'
+            def start(e):
+                return e.tag == "chapter"
+        else:
+            def stop(e):
+                return doc.getroot()[parindex] != e and (e.tag == 'chapter' or (e.tag == 'verse' and vcmp(e.get('number', "0"), curref[1]) > 0))
+            def start(e):
+                return e.tag == "verse" and e.get('number', 0) == curref[1]
         basepos = None
-        for eloc in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
-            #if eloc.parent.tag == "para" and eloc.parent.get("style", "") == "s":
-            #    breakpoint()
-            if eloc.head is None:       # inside an element use .text
+        for eloc, isin in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
+            if isin:
                 if basepos is None:
-                    basepos = eloc.parent.pos
-                if not eloc.parent.text:
+                    basepos = doc.getroot()[0].pos if curref == (1, "0") else eloc.pos
+                if not eloc.text:
                     continue
-                spos = getattr(eloc.parent, 'textpos', None)
+                spos = getattr(eloc, 'textpos', None)
                 if spos is None:
                     continue
-                self.replacetext(eloc, lexemes, basepos, linelengths, spos, mrk)
+                self.replacetext(eloc, isin, lexemes, basepos, linelengths, spos, mrk)
             else:                       # tail of an element
-                spos = getattr(eloc.head, 'tailpos', None)
+                spos = getattr(eloc, 'tailpos', None)
                 if spos is None:
                     continue
-                self.replacetext(eloc, lexemes, basepos, linelengths, spos, mrk)
+                self.replacetext(eloc, isin, lexemes, basepos, linelengths, spos, mrk)
 
-    def replacetext(self, eloc, lexemes, basepos, linelengths, spos, mrk):
+    def replacetext(self, eloc, isin, lexemes, basepos, linelengths, spos, mrk):
         if basepos is None:
             return
         cpos = sum(linelengths[basepos.l:spos.l]) - basepos.c + spos.c + 1
-        t = eloc.parent.text if eloc.head is None else eloc.head.tail
+        if isin:
+            t = eloc.text
+            parent = eloc
+            laste = eloc[0] if len(eloc) else None
+        else:
+            t = eloc.tail
+            parent = eloc.parent
+            laste = eloc
         cend = cpos + len(t)
         i = cpos
-        laste = eloc.head
         outt = None
         for l in ((lex[0][0], lex[0][1], lex[1]) for lex in lexemes if lex[0][0] >= cpos and lex[0][0] < cend):
             if l[0] >= i:
                 outt = t[i-cpos:l[0]-cpos]
-            newe = eloc.parent.makeelement("char", {'style': mrk, 'gloss': l[2]})
+            newe = parent.makeelement("char", {'style': mrk, 'gloss': l[2]})
             newe.text = t[l[0]-cpos:l[0]+l[1]-cpos]
             i = l[0] + l[1]
             if laste is None:
-                eloc.parent.text = outt
-                eloc.parent.insert(0, newe)
+                parent.text = outt
+                parent.insert(0, newe)
             else:
                 laste.tail = outt
                 laste.addnext(newe)
@@ -137,7 +148,7 @@ class Interlinear:
                     elif e.tag == "Lexeme":
                         lid = e.get('Id', '')
                         gid = e.get('GlossId', '')
-                        if lid.startswith('Word:'):
+                        if lid.startswith('Word:'): # or lid.startswith('Phrase:'): # not sure if we want this yet.
                             wd = self.lexicon.get(lid, {}).get(gid, '')
                             lexemes.append((currange, str(wd)))
                     elif e.tag == "AfterText":
@@ -163,6 +174,6 @@ class Interlinear:
                                 notdones.add((curref[0], v))
                 elif event == "end" and e.tag == skipping:
                     skipping = None
-        self.fails.extend([Reference(bkid, a[0], a[1]) for a in notdones if a not in dones])
+        self.fails.extend([Ref(book=bkid, chapter=a[0], verse=a[1]) for a in notdones if a not in dones])
 
 

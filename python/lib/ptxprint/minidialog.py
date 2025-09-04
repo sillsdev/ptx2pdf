@@ -60,10 +60,11 @@ if 'gi.repository.Gtk' in sys.modules:
 
 
 class MiniWidget:
-    def __init__(self, modelid, label):
+    def __init__(self, modelid, label, **kw):
         self.modelid = modelid
         self.label = label
         self.widget = None
+        self.tip = kw.get("tip", None)
 
     def get_model_val(self, view):
         return view.get(self.modelid, skipmissing=True)
@@ -74,7 +75,7 @@ class MiniWidget:
 
 class MiniCheckButton(MiniWidget):
     def __init__(self, modelid, label, **kw):
-        super().__init__(modelid, label)
+        super().__init__(modelid, label, **kw)
 
     def add_to(self, box, view):
         if self.label is not None:
@@ -83,6 +84,8 @@ class MiniCheckButton(MiniWidget):
             self.widget = Gtk.CheckButton.new()
         val = self.get_model_val(view)
         self.widget.set_active(val)
+        if self.tip is not None:
+            self.widget.set_tooltip_text(self.tip)
         box.add(self.widget)
 
     def read_val(self, view):

@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "ptxprint"
 authors = [{name = "SIL", email = "fonts@sil.org"}]
 readme = "README.md"
-license = {file = "python/LICENSE.txt"}
 description = "USFM based Bible typesetting (Xe)TeX based application"
 classifiers = [
    "Environment :: X11 Applications :: GTK",
@@ -16,13 +15,15 @@ classifiers = [
    "Topic :: Text Processing :: General"
    ]
 requires-python = ">=3.8"
-dynamic = ["version"]
+# commented out dynamic versioning for now
+# dynamic = ["version"]
+version = "2.9.4"
 
 dependencies = [
-"usfmtc",
+"usfmtc @ https://github.com/usfm-bible/usfmtc/archive/main.zip",
 "regex",
 "fonttools",
-"appdirs",
+"platformdirs",
 "Pillow",
 "numpy"
 ]
@@ -36,18 +37,21 @@ Home-Page = "https://github.com/sillsdev/ptx2pdf"
 
 [tool.setuptools]
 zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["python/lib"]
+namespaces = true
 
 [tool.setuptools.package-dir]
-"ptxprint" = "python/lib/ptxprint"
-"ptxprint.ptx2pdf" = "src"
-"ptxprint.xetex.texmf-var" = "xetex/texmf-var"
-"ptxprint.xetex.texmf-dist" = "xetex/texmf-dist"
+"" = "python/lib"
 
 [tool.setuptools.package-data]
-"ptxprint.ptx2pdf" = ["*"]
+"ptxprint" = ["ptx2pdf/**/*", "xetex/**/*"]
 
-[tool.setuptools.dynamic]
-version = {attr = "ptxprint.view.VersionStr"}
+# comment this out for now
+#[tool.setuptools.dynamic]
+#version = {attr = "ptxprint.view.VersionStr"}
 
 [tool.bdist_wheel]
 universal = true

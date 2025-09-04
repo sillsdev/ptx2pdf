@@ -42,11 +42,18 @@
 % Print the first reference from the mark data
 %
 \newif\ifOmitBookRef
-\def\s@tf@rstr@f#1{\edef\t@st{#1}%
+\def\s@tf@rstr@f#1{\traceifset{s@tf@rstr@f}\edef\t@st{#1}%
+ \trace{H}{s@tf@rstr@f #1}%
+ \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH\endcsname
  \let\@@firstref\empty
  \ifx\t@st\empty\else
   \ifx\t@st\t@tle\else\ifx\t@st\intr@\else
-    \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
+    \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax\relax
+    \ifcsname ifOmitChapterNumberRH@\detokenize{\@book}\endcsname
+      \x@\let\csname rh@ifOmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH@\detokenize{\@book}\endcsname
+    \else 
+      \trace{H}{OmitChapterNumberRH@\detokenize{\@book} doesn't exist}%
+    \fi\relax
     \edef\@@firstref{\ifx\@book\empty\else
       \ifOmitBookRef\else\@book\fi
       \ifOmitChapterNumberRH\else\bkchs@p\@chapter\fi
@@ -57,6 +64,8 @@
     \fi}%
   \fi\fi
  \fi
+ \let\ifOmitChapterNumberRH\rh@ifOmitChapterNumberRH
+ \traceifcheck{s@tf@rstr@f}%
 }
 \def\f@rstref#1{\s@tf@rstr@f{#1}\@@firstref}
 
@@ -64,22 +73,46 @@
 % Print the last reference from the mark data
 % (same as above unless there are bridged verses)
 %
-\def\l@stref#1{\edef\t@st{#1}%
+\def\l@stref#1{\traceifset{l@stref}\edef\t@st{#1}%
+ \trace{H}{l@stref #1}%
+ \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH\endcsname
  \ifx\t@st\empty\else\ifx\t@st\t@tle\else\ifx\t@st\intr@\else
-   \x@\extr@ctlast\t@st\relax
+     \x@\extr@ctlast\t@st\relax
      \ifx\@@book\empty\else
+       \ifcsname ifOmitChapterNumberRH@\detokenize{\@@book}\endcsname
+         \x@\let\x@\rh@ifOmitChapterNumberRH\csname ifOmitChapterNumberRH@\detokenize{\@@book}\endcsname
+       \fi
+       \fi
        \ifx\@@book\t@tle\else
-         \ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\bkchs@p\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\bkchs@p\else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
+         \ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\bkchs@p\@@chapter\fi
+         \ifVerseRefs\ifOmitChapterNumberRH\bkchs@p\else\cvs@p\fi\@@verse\fi
+       \fi
+       
+     \fi
+ \fi\fi\fi\traceifcheck{l@stref}%
+ \let\ifOmitChapterNumberRH\rh@ifOmitChapterNumberRH
+}
 
 %
 % Print the range of references from a pair of marks
 %
 \edef\emptym@rk{::}
 \def\r@ngerefs#1#2{%
- %\tracingassigns=1
+ \traceifset{r@ngerefs}%
+ %\tracingassigns=1\tracingifs=1
  \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi\fi
  \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi\fi
  \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
+ \let\rh@ifOmitChapterNumberRH\ifOmitChapterNumberRH
+ \let\if@OmitChapterNumberRH\ifOmitChapterNumberRH % For second book
+ \ifx\@book\relax\else
+   \ifcsname ifOmitChapterNumberRH@\detokenize{\@book}\endcsname
+     \x@\let\csname ifOmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH@\detokenize{\@book}\endcsname
+   \fi
+ \fi
+ \ifcsname ifOmitChapterNumberRH@\detokenize{\@@book}\endcsname
+   \x@\let\csname if@OmitChapterNumberRH\x@\endcsname\csname ifOmitChapterNumberRH@\detokenize{\@@book}\endcsname
+ \fi
  \ifx\@book\empty\else
   \ifOmitBookRef\else\@book\fi
   \ifVerseRefs
@@ -89,10 +122,10 @@
      \ifx\@chapter\@@chapter
       \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
      \else
-      \rangechs@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
+      \rangechs@p\if@OmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse
      \fi
     \else
-     \rangechs@p\ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\bkchs@p\@@chapter\cvs@p\@@verse\fi
+     \rangechs@p\ifOmitBookRef\else\@@book\fi\bkchs@p\if@OmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse
     \fi
    \fi
   \else
@@ -110,7 +143,7 @@
      \fi
     \fi
    \else
-    \ifOmitChapterNumberRH
+    \if@OmitChapterNumberRH
       \rangechs@p \@@book
     \else
       \bkchs@p\@chapter \rangechs@p \@@book \bkchs@p\@@chapter
@@ -118,6 +151,8 @@
    \fi
   \fi
  \fi
+ \traceifcheck{r@ngerefs}%
+ \let\ifOmitChapterNumberRH\rh@ifOmitChapterNumberRH
  %\tracingassigns=0
 }
 \newcount\c@untA \newcount\c@untB
@@ -183,6 +218,7 @@
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \trace{h}{page \the\pageno (h), first mark=\t@st \space p@geone\ifp@geone true\else false\fi}%
  \global\rhr@letrue
+ \op@ninghooks{start}{h}{h}%
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else\ifx\t@st\intr@\ifp@geone 0\else 1\fi\else 0\fi\fi =1
   \trace{h}{no p@gefirstmark (\t@st). Page 1 is \ifp@geone True\else False\fi}%
     \ifodd\pageno
@@ -206,6 +242,7 @@
     \fi
 %  \fi
  \fi
+ \cl@singhooks{end}{h}{h}%
  \mcpop
 }}
 
@@ -243,36 +280,31 @@
 	\ifx\RHtitleoddcenter\undefined\let\RH@center\RHtitlecenter\else\let\RH@center\RHtitleoddcenter\fi
 }
 
+\def\sethe@ddbl#1#2#3#4{%
+  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\hbox{\csname #4#1#2left\endcsname}}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\csname #4#1#2center\endcsname\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\hbox{\csname #4#1#2right\endcsname}}\rshiftc@lumn{\ifRTL 0\else 1\fi}}%
+}
+
+\def\sethe@dsgl#1#2#3#4{%
+  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\the\pageno}\rlap{\hbox{\csname #4#1#2left\endcsname}}\hfil\csname #4#1#2center\endcsname\hfil\llap{\hbox{\csname #4#1#2right\endcsname}}\rshiftc@lumn{\the\pageno}}%
+}
+\def\@sethe@d#1{\edef\tmp{#1}%
+  \expandafter\@@sethe@d\tmp\relax\relax\relax}
+
 \def\defineheads{
   \trace{M}{Defining heads for \mainBodyColumns \space columns}%
   \ifnum\mainBodyColumns=2
-    \oddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHoddleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RHoddcenter\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\RHoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \evenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHevenleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RHevencenter\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\RHevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \noVoddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVoddleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RHnoVoddcenter\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \noVevenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVevenleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RHnoVevencenter\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \oddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFoddleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RFoddcenter\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RFoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \evenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFevenleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RFevencenter\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RFevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \noVoddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVoddleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RFnoVoddcenter\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RFnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \noVevenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVevenleft}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RFnoVevencenter\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RFnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \titleevenfoot={\RF@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \titleoddfoot={\RF@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \titleevenhead={\RH@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
-    \titleoddhead={\RH@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@l@mn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \let\@@sethe@d\sethe@ddbl
   \else
-    \oddhead={\lshiftc@lumn{1}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}\rshiftc@lumn{1}}
-    \evenhead={\lshiftc@lumn{0}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}\rshiftc@lumn{0}}
-    \noVoddhead={\lshiftc@lumn{1}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\llap{\RHnoVoddright}\rshiftc@lumn{1}}
-    \noVevenhead={\lshiftc@lumn{0}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\llap{\RHnoVevenright}\rshiftc@lumn{0}}
-    \oddfoot={\lshiftc@lumn{1}\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\llap{\RFoddright}\rshiftc@lumn{1}}
-    \evenfoot={\lshiftc@lumn{0}\rlap{\RFevenleft}\hfil\RFevencenter\hfil\llap{\RFevenright}\rshiftc@lumn{0}}
-    \noVoddfoot={\lshiftc@lumn{1}\rlap{\RFnoVoddleft}\hfil\RFnoVoddcenter\hfil\llap{\RFnoVoddright}\rshiftc@lumn{1}}
-    \noVevenfoot={\lshiftc@lumn{0}\rlap{\RFnoVevenleft}\hfil\RFnoVevencenter\hfil\llap{\RFnoVevenright}\rshiftc@lumn{0}}
-    \titleevenfoot={\RF@even@set\lshiftc@lumn{0}\rlap{\RF@left}\hfil\RF@center\hfil\llap{\RF@right}\rshiftc@lumn{0}}
-    \titleoddfoot={\RF@odd@set\lshiftc@lumn{1}\rlap{\RF@left}\hfil\RF@center\hfil\llap{\RF@right}\rshiftc@lumn{1}}
-    \titleevenhead={\RH@even@set\lshiftc@lumn{0}\rlap{\RH@left}\hfil\RH@center\hfil\llap{\RH@right}\rshiftc@lumn{0}}
-    \titleoddhead={\RH@odd@set\lshiftc@lumn{1}\rlap{\RH@left}\hfil\RH@center\hfil\llap{\RH@right}\rshiftc@lumn{1}}
+    \let\@@sethe@d\sethe@dsgl
   \fi
+  \edef\@list{{odd}{head}{RH},{odd}{foot}{RF},{even}{head}{RH},{even}{foot}{RF}}%
+  \def\d@##1\E{%
+    \@sethe@d{{}##1}
+    \@sethe@d{{noV}##1}
+    \@sethe@d{{title}##1}
+  }\x@\cstackdown\@list,\E
 }
+
 
 % \footline is similar except it doesn't have to place a border graphic
 \footline={{%

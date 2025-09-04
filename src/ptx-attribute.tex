@@ -98,12 +98,13 @@
   \def\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
     \x@\let\csname\tmpa\endcsname\relax
   \else
-    \x@\let\csname\tmpa\endcsname\tmp
+    \x@\def\csname\tmpa\endcsname{#3}%
   \fi}
 \def\SetSpeciallAttribs#1#2#3{%\tracingassigns=1\relax%
   \FlagSpecialAttrib{#1}%
   \S@tOneSpecialAttrib{#1}{start}{#2}%
   \S@tOneSpecialAttrib{#1}{end}{#3}\tracingassigns=0\relax}%
+
 
 \def\unset@ttribs{% Remove any current attibute definitions
   \let\d@=\kill@ttrib
@@ -174,7 +175,7 @@
 \x@\let\csname https:schema\endcsname\pdfURL
 \x@\let\csname prj:schema\endcsname\pdfPRJ
 
-\def\PDFposfromattr{\ifActions\raise\the\baselineskip\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos 1.4]}}\fi}
+\def\PDFposfromattr{\ifActions\dimen0=\baselineskip\raise\the\dimen0\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos 1.4]}}\fi}
 \SetSpeciallAttribs{link-id}{\noexpand\maybePDFp@sfromattr\noexpand\makelabelfromattr}{}
 \SetSpeciallAttribs{link-href}{\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi}{\ifx\attr@b\empty\else\special{pdf:eann}\fi}
 \SetSpeciallAttribs{outline-entry}{\noexpand\m@keoutlinefromattr{\attr@b}}{}
@@ -193,13 +194,13 @@
 }
 %%%%%%%%%
 %
-\def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
+\def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\ifimplicitcl@se\if #1\ss@ChrP  +\fi\fi#2}}
 % make something that swallows everything up to a given end-marker
 \def\s@tend@marker#1{\let\end@marker\relax\let\d@\def@endm@rker\mctop\ifx\end@marker\relax\edef\end@marker{#1}\fi}
 \def\setgr@bname#1{%
   \s@tend@marker{#1}%
   \edef\gr@bname{@attr@grab-\end@marker}%
-  \trace{A}{Grab@name: \gr@bname}%
+  \trace{A}{Grab@name: (for #1) \gr@bname}%
   \x@\ifcsname \gr@bname\endcsname\else
     \trace{A}{New grabber: \gr@bname\space about to be defined, endmarker: \end@marker}%
     \x@\setup@ttr@grab\x@{\csname \end@marker\endcsname}%
@@ -294,6 +295,7 @@
 \def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="the crowd"
 \def\save@ttribute#1="#2" #3\E{%
   \trace{A}{save@ttribute '#1'="#2" #3}%
+  \attrspecialfalse
   \lowercase{\edef\attr@key{#1}}\edef\attr@val{#2}%
   \ifx\attr@val\relaxval
     \ifx\thisdefault@ttrkey\empty
@@ -365,9 +367,10 @@
 }
 
 \def\set@ttribute#1#2{%
-  \CheckSpecial{#1}\ifattrspecial\ifcsname boxed-\thiswh@tstyle\endcsname\else %
-    \MSG{A special attribute (#1) was used for \thiswh@tstyle\space but it was not listed as an attribute in the stylesheet}%
-  \fi\fi
+  \ifmst@nestyle\else% No check for milestones, it's irrelevant.
+   \CheckSpecial{#1}\ifattrspecial\ifcsname boxed-\thiswh@tstyle\endcsname\else %
+     \MSG{A special attribute (#1) was used for \thiswh@tstyle[\stylet@pe]\space but it was not listed as an attribute in the stylesheet}%
+  \fi\fi\fi
   \x@\xdef\csname attr:#1\endcsname{#2}%
   \xdef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.
 }
@@ -469,6 +472,16 @@
         \hbox to \dimen0{\alignb@x{#1}{0}}}}}
 
 \expandafter\def\csname complex-rb\endcsname{\rubyt{rb}{gloss}} % USFM-3 suggests ruby goes above. 
+\newif\ifRefLocLink\RefLocLinktrue
+\expandafter\def\csname complex-ref\endcsname{%Process loc option by turning it into a GOTO link.
+  \ifRefLocLink
+    \get@ttribute{loc}%
+    \ifx\attr@b\relax\unhbox0\else
+      \pdfGOTO{\attr@b}\unhbox0\special{pdf:eann}%
+    \fi
+  \fi
+}
+%
  
 %usfm 3.0 defaults - now loaded from stylesheet.
 %\setdefaultattrib{qt}{who}

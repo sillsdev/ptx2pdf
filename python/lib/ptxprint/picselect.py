@@ -4,13 +4,13 @@ import re
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
-import zipfile, appdirs, json
+import zipfile, json
 import logging
 
 logger = logging.getLogger(__name__)
 
-from ptxprint.utils import _, extraDataDir
-from ptxprint.reference import RefList
+from ptxprint.utils import _, extraDataDir, appdirs
+from usfmtc.reference import RefList
 
 def unpackImageset(filename, prjdir):
     with zipfile.ZipFile(filename) as zf:
@@ -193,7 +193,7 @@ class ThumbnailDialog:
 
     def update_reflist(self):
         if self.reftext is not None and len(self.reftext):
-            self.reflist = RefList.fromStr(self.reftext)
+            self.reflist = RefList(self.reftext)
         else:
             self.reflist = []
         # logger.debug(f"reflist from {s} to {self.reflist}")
@@ -202,7 +202,7 @@ class ThumbnailDialog:
         if self.imagedata is None:
             return default
         # logger.debug(f"{imgid}: {self.imagedata['images'].get(imgid,{}).get('refs')}")
-        return [RefList.fromStr(r)[0] for r in self.imagedata['images'].get(imgid, {}).get('refs', [])]
+        return [RefList(r)[0] for r in self.imagedata['images'].get(imgid, {}).get('refs', [])]
 
     def get_imgdir(self):
         imagesetdir = extraDataDir("imagesets", self.imageset)
@@ -287,6 +287,8 @@ class ThumbnailDialog:
         logger.debug(f"Image grid complete")
 
     def on_thumbnail_toggled(self, button, imageid):
+        if self.langdata is None:
+            return
         bibrefs = self.get_refs(imageid, default=[None])
         bibref = bibrefs[0] if len(bibrefs) else None
         val = (imageid, bibref, self.langdata.get(imageid, {}).get("title", ""))

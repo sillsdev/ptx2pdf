@@ -117,7 +117,7 @@ The second method that can be used to improve readability (and reduce space)
 in literal strings is to not escape parentheses.  This only works, and is
 only allowed, when the parentheses are properly balanced.  For example,
 "((Hello))" is a valid encoding for a literal string, but "((Hello)" is not;
-the latter case should be encoded "(\(Hello)"
+the latter case should be encoded "(\\(Hello)"
 
 Encoding text into strings
 ==========================
