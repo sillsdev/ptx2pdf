@@ -54,6 +54,16 @@ def getfiles(basedir, outbase, extin=[], excldirs=[]):
             res.append((f'{dp}/{f}', f'{outbase}/{dp}'))
     return res
 
+def stripbinaries(binaries, basedir):
+    allfiles = [f for dp, dn, fs in os.walk(basedir) for f in fs]
+    res = []
+    for b in binaries:
+        bf = os.path.basename(b[0])
+        if bf in allfiles:
+            continue
+        res.append(b)
+    return res
+
 # Run this every time until a sysadmin adds it to the agent
 # call([r'echo "y" | C:\msys64\usr\bin\pacman.exe -S mingw-w64-x86_64-python-numpy'], shell=True)
 
@@ -145,6 +155,8 @@ a1 = Analysis(['python/scripts/ptxprint'],
              win_no_prefer_redirects = False,
              win_private_assemblies = False,
              noarchive = False)
+a1.binaries = stripbinaries(a1.binaries, f'xetex/bin/{bindir}')
+print("Binaries:", a1.binaries)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
 app_name = 'PTXprint'
 exe1 = EXE(pyz1,
