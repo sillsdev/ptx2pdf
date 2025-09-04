@@ -82,7 +82,7 @@ elif sys.platform == "win32":
         # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
         path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
-        logger.debug(f"{path=} {newa=}")
+        logger.debug(f"{path=} {newa=}, PATH={os.getenv('PATH')}")
         kw['stdout'] = kw.get('stdout', subprocess.PIPE)
         kw['stderr'] = kw.get('stderr', subprocess.STDOUT)
         res = subprocess.run(*newa, creationflags=CREATE_NO_WINDOW, **kw)

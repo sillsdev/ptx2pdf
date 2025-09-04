@@ -100,6 +100,7 @@ def main(doitfn=None):
         def print_message(message, file=None):
             tv.print_message(message)
         parser._print_message = print_message
+        os.setenv(os.getenv("PATH")+os.pathsep+sys._MEIPASS)
 
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None
