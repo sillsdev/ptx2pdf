@@ -58,8 +58,7 @@ def stripbinaries(binaries, basedir):
     allfiles = [f for dp, dn, fs in os.walk(basedir) for f in fs]
     res = []
     for b in binaries:
-        bf = os.path.basename(b[0])
-        if bf in allfiles:
+        if b[0] in allfiles:
             continue
         res.append(b)
     return res
