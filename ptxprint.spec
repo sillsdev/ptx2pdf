@@ -51,8 +51,6 @@ def getfiles(basedir, outbase, extin=[], excldirs=[]):
         for f in fs:
             if len(extin) and os.path.splitext(f)[1] not in extin:
                 continue
-            if '.' not in f:
-                f += "."
             res.append((f'{dp}/{f}', f'{outbase}/{dp}'))
     return res
 
