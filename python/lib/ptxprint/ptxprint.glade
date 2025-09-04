@@ -27092,7 +27092,7 @@ headers and footers.</property>
                                     <property name="orientation">vertical</property>
                                     <property name="spacing">4</property>
                                     <child>
-                                      <!-- n-columns=2 n-rows=3 -->
+                                      <!-- n-columns=2 n-rows=4 -->
                                       <object class="GtkGrid" id="gr_picButtons">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -27196,6 +27196,24 @@ or to the XXM book using this dialog.</property>
                                           <packing>
                                             <property name="left-attach">0</property>
                                             <property name="top-attach">2</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_editMaps2">
+                                            <property name="label" translatable="yes">Edit Maps...</property>
+                                            <property name="name">Edit Maps module</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
+show/edit the Maps module.</property>
+                                            <property name="valign">center</property>
+                                            <signal name="clicked" handler="onEditMaps" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">3</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
