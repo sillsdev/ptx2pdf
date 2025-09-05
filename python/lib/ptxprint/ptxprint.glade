@@ -14735,6 +14735,14 @@ Ctrl + Scrollwheel - change zoom level</property>
                   <object class="GtkLabel" id="l_pdfPgsSprds">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Type page number to jump to.
+
+Shortcuts:
+Left-Arrow / PgUp - previous page/spread
+Right-Arrow / PgDn - next page/spread
+Ctrl+Home - First page/spread
+Ctrl+End - Last page/spread
+Mouse Scroll also changes pages</property>
                     <property name="halign">start</property>
                     <property name="margin-left">6</property>
                     <property name="margin-right">6</property>
@@ -14753,9 +14761,11 @@ Ctrl + Scrollwheel - change zoom level</property>
                     <property name="width-request">40</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Shortcuts:
-PgUp - previous page/spread
-PgDn - next page/spread
+                    <property name="tooltip-text" translatable="yes">Type page number to jump to.
+
+Shortcuts:
+Left-Arrow / PgUp - previous page/spread
+Right-Arrow / PgDn - next page/spread
 Ctrl+Home - First page/spread
 Ctrl+End - Last page/spread
 Mouse Scroll also changes pages</property>
@@ -14813,8 +14823,8 @@ Mouse Scroll also changes pages</property>
                     <property name="tooltip-text" translatable="yes">Type page number to jump to.
 
 Shortcuts:
-PgUp - previous page/spread
-PgDn - next page/spread
+Left-Arrow / PgUp - previous page/spread
+Right-Arrow / PgDn - next page/spread
 Ctrl+Home - First page/spread
 Ctrl+End - Last page/spread
 Mouse Scroll also changes pages</property>

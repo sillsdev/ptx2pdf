@@ -1,8 +1,16 @@
 PTXprint 2.9.5 Release Notes
-4 Sep 2025
+5 Sep 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.9.6 (5 Sep 2025)
+  * Prevent preview pane opening when other PDF view options are set
+  * Add left+right arrow keys as for PDF navigation (PgDn/Pgup)
+  * Add required gi modules for windows
+  * Add win32 and fontconfig gi typelib hooks
+  * Add hooks for poppler for pyinstaller
+  * Fix minor bug self.mainapp.win
 
 Bug fixes and Improvements in 2.9.5 (4 Sep 2025)
   * Refactor code for MacOS
