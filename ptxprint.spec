@@ -70,11 +70,7 @@ def stripbinaries(binaries, basedir):
 # including GTK, etc.
 mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):
-    binaries = [(f'C:\\msys64\\mingw64\\lib\\girepository-1.0\\{x}.typelib',
-                                            'gi_typelibs') for x in
-                    ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0', 'GdkPixbuf-2.0', 
-                     'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'Poppler-0.18')] \
-              + [(f'{mingwb}\\gspawn-win64-helper.exe', 'ptxprint')] \
+    binaries = [(f'{mingwb}\\gspawn-win64-helper.exe', 'ptxprint')] \
               + [(f'{mingwb}\\{x}.dll', '.') for x in
                     (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', anyver('libpoppler-cpp-', mingwb), 'libcurl-4',
                      'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
@@ -142,18 +138,19 @@ print("binaries:", binaries)
 print("datas:", datas)
 
 a1 = Analysis(['python/scripts/ptxprint'],
-             pathex =   ['python/lib'],
-	     binaries = binaries,
-	     datas = datas,
+            pathex =   ['python/lib'],
+	        binaries = binaries,
+	        datas = datas,
                 # The registry tends not to get included
-             hiddenimports = ['_winreg'],
-             hookspath = [],
-             runtime_hooks = [],
+            hiddenimports = (['_winreg'] if sys.platform.startswith("win") else []) \
+                + ['gi.repository.Poppler'],
+            runtime_hooks = [],
+            hookspath = [os.path.abspath("pyinstallerhooks")],
                 # These can drift in from the analysis and we don't want them
-             excludes = ['tkinter', 'scipy'],
-             win_no_prefer_redirects = False,
-             win_private_assemblies = False,
-             noarchive = False)
+            excludes = ['tkinter', 'scipy'],
+            win_no_prefer_redirects = False,
+            win_private_assemblies = False,
+            noarchive = False)
 a1.binaries = stripbinaries(a1.binaries, f'xetex/bin/{bindir}')
 print("Binaries:", a1.binaries)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
@@ -187,7 +184,7 @@ for k, v in jobs.items():
     a = Analysis([s],
              pathex = ['python/lib'],
              binaries = binaries,
-             hookspath = [],
+             hookspath = [os.path.abspath("pyinstallerhooks")],
              runtime_hooks = [],
              excludes = ['tkinter', 'scipy'],
              win_no_prefer_redirects = False,
