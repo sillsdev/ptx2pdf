@@ -340,10 +340,10 @@ def startfile(fpath):
     if os.path.exists(fpath):
         if sys.platform.startswith("win"):
             os.startfile(fpath)
-        elif sys.platform.startswith("linux"):
-            call(('xdg-open', fpath))
-        elif sys.platform == "darwin":
-            call(('open', fpath), shell=True)
+        elif sys.platform == "darwin": # macOS
+            call(['open', fpath])
+        else: # assume Linux / Unix
+            call(['xdg-open', fpath])
 
 def getPDFconfig(fname):
     if str(fname).lower().endswith(".zip"):

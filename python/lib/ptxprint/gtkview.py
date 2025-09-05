@@ -694,7 +694,7 @@ class GtkViewModel(ViewModel):
         logger.debug("Loading glade")
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder()
-        self.builder.add_from_string(xml_text)
+        self.builder.add_from_string(xml_text) # this is where the error/warning/critial msgs come from
         self.builder.connect_signals(self)
         self.mw = self.builder.get_object("ptxprint")
         logger.debug("Glade loaded in gtkview")
@@ -6816,7 +6816,7 @@ Thank you,
     def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",
-            parent=self.mw,
+            parent = self.mainapp.win,
             action=Gtk.FileChooserAction.SAVE,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                      Gtk.STOCK_SAVE,Gtk.ResponseType.OK))

@@ -872,6 +872,12 @@ class PDFViewer:
             self.set_zoom_fit_to_screen(None)
             self.show_pdf()  # Redraw the current page
             return True
+        elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
+            self.set_page(self.swap4rtl("next"))
+            return True
+        elif keyval == Gdk.KEY_Left:  # Left arrow → Previous page
+            self.set_page(self.swap4rtl("previous"))
+            return True
             
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
