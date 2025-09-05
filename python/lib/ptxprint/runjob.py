@@ -817,7 +817,8 @@ class RunJob:
         self.printer.finished(self.res == 0)
         self.busy = False
         if not self.noview and not self.args.print and self.printer.isDisplay:
-            self.printer.builder.get_object("dlg_preview").present()
+            if self.printer.showPDFmode == "preview":
+                self.printer.builder.get_object("dlg_preview").present()
             spnr = self.printer.builder.get_object("spin_preview")
             if spnr.props.active:  # Check if the spinner is running
                 spnr.stop()

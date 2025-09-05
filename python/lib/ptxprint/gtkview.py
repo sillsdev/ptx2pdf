@@ -3133,7 +3133,7 @@ class GtkViewModel(ViewModel):
             self.styleEditor.selectMarker(mkr)
             mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.builder.get_object("ptxprint").present()
+            self.mainapp.win.present()
             self.wiggleCurrentTabLabel()
 
     # def hoverOverStyleLink(self, *argv):  # signal: query_tooltip
@@ -6938,7 +6938,7 @@ Thank you,
 
     def restore_window_geometry(self):
         """Restore dialog positions and sizes from userconfig, if the monitor is available."""
-        screen = self.mw.get_screen()  # Get screen info
+        screen = self.mainapp.win.get_screen()  # Get screen info
         current_monitor_count = screen.get_n_monitors()
         prvw = self.builder.get_object("dlg_preview")
         _dialogs = {"ptxprint":    self.mainapp.win,
@@ -6960,11 +6960,11 @@ Thank you,
 
     def onSpinnerClicked(self, btn, foo):
         self.highlightwidget('s_autoupdatedelay')
-        self.builder.get_object("ptxprint").present()
+        self.mainapp.win.present()
         
     def onAnalysisSettingsClicked(self, btn, foo):
         self.highlightwidget('s_spaceEms')
-        self.builder.get_object("ptxprint").present()
+        self.mainapp.win.present()
 
     def onPreviewDeleteEvent(self, widget, event): # PDF Preview dialog (X button)
         widget.hide()  # Hide the dialog instead of destroying it

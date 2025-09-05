@@ -1416,7 +1416,7 @@ class PDFViewer:
             mpgnum = self.model.notebooks['Main'].index("tb_Pictures")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.model.builder.get_object("nbk_PicList").set_current_page(1)
-            self.model.builder.get_object("ptxprint").present()
+            self.model.mainapp.win.present()
             self.model.wiggleCurrentTabLabel()
             treeview = self.model.builder.get_object("tv_picListEdit")
             model = treeview.get_model()
@@ -1556,14 +1556,14 @@ class PDFViewer:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.model.builder.get_object("ptxprint").present()
+            self.model.mainapp.win.present()
             self.model.wiggleCurrentTabLabel()
         
     def edit_fig_style(self, widget):
         self.model.styleEditor.selectMarker('fig')
         mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
         self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.model.builder.get_object("ptxprint").present()
+        self.model.mainapp.win.present()
         self.model.wiggleCurrentTabLabel()
         
     def cleanRef(self, reference):
