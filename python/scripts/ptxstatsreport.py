@@ -8,19 +8,22 @@ current_module = sys.modules[__name__]
 # python python/scripts/ptxstatsreport.py -f projectAge -f cfgCount -f first_last_used -f intlin -f hasOT -f org -f font
 
 # --------------------------- snip ------------------------------
-
-from datetime import datetime, timedelta
 from collections import defaultdict
+from datetime import datetime, timedelta, UTC
 
-def convert_to_month(timestamp):
-    """Convert UNIX timestamp to 'YYYY-MM' format."""
-    return datetime.utcfromtimestamp(timestamp).strftime("%Y-%m")
+def convert_to_month(timestamp: float) -> str:
+    """Convert UNIX timestamp to 'YYYY-MM' format (UTC-aware)."""
+    return datetime.fromtimestamp(timestamp, UTC).strftime("%Y-%m")
 
 def filter_n_months(data):
-    """Filter data to keep only the last 60 months."""
-    current_date = datetime.utcnow()
-    cutoff_date = current_date - timedelta(days=5 * 365)  # 5 years
-    return {month: count for month, count in data.items() if datetime.strptime(month, "%Y-%m") >= cutoff_date}
+    """Filter data to keep only the last 60 months (UTC-aware)."""
+    current_date = datetime.now(UTC)
+    cutoff_date = current_date - timedelta(days=5 * 365)  # ~5 years
+    return {
+        month: count
+        for month, count in data.items()
+        if datetime.strptime(month, "%Y-%m").replace(tzinfo=UTC) >= cutoff_date
+    }
 
 def first_last_used_analyze(results, stat):
     """Analyze firstUsed and lastUsed, aggregating counts by month."""
@@ -216,7 +219,9 @@ def main(argv=None):
     afns = [getattr(current_module, f+"_analyze", duck) for f in args.find]
     rfns = [getattr(current_module, f+"_results", duck) for f in args.find]
 
+    print(f"Input:  {args.infile}")
     Pipeline(args, jsoninfile, f_(process, afns, rfns), textoutfile)
+    print(f"Output: {args.outfile}")
 
 if __name__ == "__main__":
     main()
