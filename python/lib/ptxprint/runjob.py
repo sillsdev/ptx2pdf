@@ -288,7 +288,8 @@ class RunJob:
             if info["notes/ifxrexternalist"]:
                 triggers = info.createXrefTriggers(b, self.prjdir, triggers)
             if info.dict.get("studynotes/txlinclquestions", False):
-                triggers = transcel(triggers, b, self.prjdir, info.dict.get("studynotes/txllangtag", "en-US"),
+                triggers = transcel(triggers, b, self.prjdir, info.dict.get("studynotes/txllangtag", "en-US"), 
+                                    rtl=info.dict.get("document/ifrtl", False),
                                     overview=info.dict.get("studynotes/txloverview", False),
                                     boldover=info.dict.get("studynotes/txlboldover", True),
                                     numberedQs=info.dict.get("studynotes/txlnumbered", True),
