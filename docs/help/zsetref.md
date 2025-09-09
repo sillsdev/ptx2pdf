@@ -8,6 +8,7 @@ In certain circumstances, mainly in modules, XeTeX may have no idea what book or
  This milestone is provided to supply that information.
  
 ## Attributes
-* `book` The book ID
+* `book` The book name
+* `bkid` The book ID
 * `chapter` The chapter number
 * `verse` The verse.
