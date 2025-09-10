@@ -35,7 +35,6 @@ tmpPicLists/
 *.zip
 /crowdin/
 /cygwin/
-/docs/installation/
 /fonts/
 /Output/
 /pictures/
