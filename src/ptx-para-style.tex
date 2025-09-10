@@ -1481,10 +1481,12 @@
 \def\beforechapternum#1#2#3{}
 \def\afterchapternum#1#2#3{}
 \def\AfterChapterSpaceFactor{3}
+\def\printchapter#1{#1} % Any decoration, etc, for chapter numbers
+\def\printaltchapter#1{(#1)} % Any decoration, etc, for alternative chapter numbers
+
 \def\m@kechapterbox{%
  \trace{sP}{m@kechapterbox for \ch@ptert@xt, reftooltip\ifreftooltip true\else false\fi}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
- \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
  \getp@ram{rightmargin}{c}{c}%
  \let\ch@pterrmargin\p@ram
@@ -1496,11 +1498,17 @@
  \setbox\ch@pterbox=\hbox{%
     \ifx\p@ram\r@ght
       {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
-      \s@tfont{c}{c}\printchapter%
+      \s@tfont{c}{c}\printchapter{\ch@ptert@xt}%%
+      \ifx\ch@pteraltt@xt\empty\else
+        \s@tfont{c+ca}{ca}\printaltchapter{\ch@pteraltt@xt)}%
+      \fi
     \else
       \ifx\ch@pterlmargin\relax\else\kern \ch@pterlmargin\IndentUnit\fi
       {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
-      \s@tfont{c}{c}\printchapter%
+      \s@tfont{c}{c}\printchapter{\ch@ptert@xt}%
+      \ifx\ch@pteraltt@xt\empty\else
+        \s@tfont{c+ca}{ca}\printaltchapter{\ch@pteraltt@xt}%
+      \fi
     \fi
     {\afterchapternum{\id@@@}{\book}{\ch@pter}}%
  }%
