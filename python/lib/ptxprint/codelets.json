@@ -616,6 +616,12 @@
       "Tweaks": [
         {
           "Type": "comment%",
+          "Label": "Keep the next paragraph together (\\nobreak)",
+          "Description": "Sometimes you need to make sure the current paragraph attaches to the following paragraph (for example keeping a question in the \\m line along with an expected answer in the \\li line). This simple hook takes care of that for you.",
+          "CodeSnippet": "\\sethook{after}{m}{\\nobreak}"
+        },
+        {
+          "Type": "comment%",
           "Label": "Forces better calculation of the number of lines",
           "Description": "Sometimes when your apply a +1 to a reference in an AdjList, it ends up doing a +2. To prevent this unwanted behaviour, you can force a more fine-grained adjustment at the specific verse location.",
           "CodeSnippet": "\\setcvhook{LUK7.48}{\\pretolerance=1}\n\\setcvhook{LUK8.1}{\\pretolerance=100}"
@@ -720,8 +726,8 @@
       "Tracing": [
         {
           "Type": "insert",
-          "Label": "Debug tracing",
-          "Description": "Enable tracing output",
+          "Label": "Page Output",
+          "Description": "Enable tracing page output",
           "CodeSnippet": "\\showboxdepth=300\n\\showboxbreadth=300\n\\tracingoutput=1"
         },
         {

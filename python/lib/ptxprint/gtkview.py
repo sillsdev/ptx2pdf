@@ -761,6 +761,8 @@ class GtkViewModel(ViewModel):
         self.currentPDFpath = None
         self.ufPages = []
         self.picrect = None
+        self.picframe = self.builder.get_object("fr_picPreview")
+        self._picframe_connected = False
 
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
