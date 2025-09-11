@@ -184,7 +184,7 @@ class Module:
                         if i == 0:
                             e.parent.text = (e.parent.text or "") + e.tail
                         else:
-                            e.parent[i-1].tail = (e.parent.tail or "") + e.tail
+                            e.parent[i-1].tail = (e.parent[i-1].tail or "") + e.tail
                     e.parent.remove(e)
                     break
         return res.getroot()
