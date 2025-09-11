@@ -340,7 +340,7 @@ class PTEnvironment(Environment):
         if res is None or level >= len(res):
             return bk
         else:
-            return res[self.level]
+            return res[level]
 
     def parsebook(self, bk):
         res = self.bookstrings.get(bk.lower(), None)

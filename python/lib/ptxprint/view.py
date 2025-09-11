@@ -334,11 +334,11 @@ class ViewModel:
             return []
 
     def getRefEnv(self, **kw):
-        if self.get("fcb_textDirection", "") == "rtl":
-            res = None
-        else:
-            pts = self._getPtSettings()
-            res = pts.getRefEnvironment()
+        # if self.get("fcb_textDirection", "") == "rtl":
+            # res = None
+        # else:
+        pts = self._getPtSettings()
+        res = pts.getRefEnvironment()
         if res is None:
             res = self.getScriptSnippet().getrefenv(self)
         if len(kw):

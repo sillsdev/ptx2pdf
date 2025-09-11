@@ -21,7 +21,7 @@ class ScriptSnippet:
 
     @classmethod
     def getrefenv(cls, view):
-        return cls.refenv
+        return cls.refenv()
 
     @classmethod
     def isSyllableBreaking(cls, view):
