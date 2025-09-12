@@ -3837,11 +3837,18 @@ class GtkViewModel(ViewModel):
             self.updateConfigIdentity(cfg)
         dialog.hide()
 
-    def setPrjid(self, prjid, saveCurrConfig=False):
+    def setPrjid(self, prjid, prjguid, saveCurrConfig=False):
         if not self.initialised:
             self.pendingPid = prjid
         else:
-            self.set("fcb_project", prjid)
+            w = self.builder.get_object("fcb_project")
+            m = w.get_model()
+            i = m.get_iter_first()
+            while i is not None:
+                if m.get_value(i,0) == prjid and m.get_value(i, 1) == prjguid:
+                    w.set_active_iter(i)
+                    break
+                i = m.iter_next(i)
 
     def setConfigId(self, configid, saveCurrConfig=False):
         if not configid:
@@ -3850,9 +3857,12 @@ class GtkViewModel(ViewModel):
             self.pendingConfig = configid
         else:
             self.set("ecb_savedConfig", configid)
-
-    def setPrjConfig(self, prjid, configid):
-        self.setPrjid(prjid)
+            self.doConfigNameChange(None)
+            
+    def setPrjConfig(self, prjid, prjguid, configid):
+        self.setPrjid(prjid, prjguid)
+        # while (Gtk.events_pending()):
+            # Gtk.main_iteration_do(False)        
         self.setConfigId(configid)
 
     def onProjectChange(self, cb_prj):
@@ -4531,6 +4541,7 @@ class GtkViewModel(ViewModel):
                     self.importConfig(zipdata, prefix=prefix, tgtPrj=tp, tgtCfg=tc)
                     if tp.prjid == self.project.prjid:
                         self.updateAllConfigLists()
+                    self.setPrjConfig(tp.prjid, tp.guid, tc)
                     statMsg = _("Imported Settings into: {}::{}").format(tp.prjid, tc)
                 zipdata.close()
             if zipinf is not None:

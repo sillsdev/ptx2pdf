@@ -505,12 +505,12 @@ class Usfm:
             state = self.visitall(fn, c, state=state)
         return state
 
-    def make_zsetref(self, ref, book, parent, pos):
-        attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
-        if book is not None:
-            attribs['book'] = book
-        res = self.factory("ms", attribs, parent=parent)
-        return res
+    # def make_zsetref(self, ref, book, parent, pos):
+        # attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
+        # if book is not None:
+            # attribs['book'] = book
+        # res = self.factory("ms", attribs, parent=parent)
+        # return res
 
     def getsubbook(self, refrange, removes={}, addintro=True, **kw):
         if isinstance(refrange, (Ref, RefRange)):

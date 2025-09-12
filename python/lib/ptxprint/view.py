@@ -334,9 +334,6 @@ class ViewModel:
             return []
 
     def getRefEnv(self, **kw):
-        # if self.get("fcb_textDirection", "") == "rtl":
-            # res = None
-        # else:
         pts = self._getPtSettings()
         res = pts.getRefEnvironment()
         if res is None:
@@ -2163,6 +2160,8 @@ set stack_size=32768""".format(self.cfgid)
             prefix += "/"
         if tgtPrj.guid != self.project.guid or tgtCfg != self.cfgid:
             view = self.createView(tgtPrj, tgtCfg)
+            if tgtPrj.guid == self.project.guid:
+                self.project = view.project
         else:
             view = self
         # assemble list of categories to import from ptxprint.cfg
@@ -2346,10 +2345,10 @@ set stack_size=32768""".format(self.cfgid)
             try:
                 allvars = config.options('vars')
             except configparser.NoSectionError:
-                return
+                allvars = [] # nothing to import yet
             for v in allvars:
                 if v not in getattr(view, 'pubvarlist', []):
-                    view.setvar(v, config.get("vars", v))
+                    view.setvar(v, config.get("vars", v, fallback=""))
         view.saveConfig()
 
     def updateThumbLines(self):

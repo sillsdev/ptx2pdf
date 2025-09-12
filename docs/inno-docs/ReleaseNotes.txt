@@ -1,8 +1,21 @@
 PTXprint 2.9.6 Release Notes
-5 Sep 2025
+11 Sep 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.9.7 (11 Sep 2025)
+  * Implement generic ID C:V parser and get zsetref and vid milestones using it
+  * Add a codelets for hook to keep with next para
+  * Add a debugging option to help figure out drifting notes
+  * Add sample code for icon to launch the AI Support Assistant (unimplemented)
+  * Make the installation info point to the right places
+  * Improve stats report
+  * Fix \ca processing for all 3 scenarios
+  * Fix module reference localization
+  * Fix broken footnote removal in module flattening
+  * Fix missing picture previews
+  * Fix RTL ch:verse-ranges in TXL questions
 
 Bug fixes and Improvements in 2.9.6 (5 Sep 2025)
   * Prevent preview pane opening when other PDF view options are set
