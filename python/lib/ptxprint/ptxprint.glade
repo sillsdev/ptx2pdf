@@ -4078,7 +4078,7 @@ settings for a similar project.</property>
             <property name="margin-bottom">3</property>
             <child>
               <object class="GtkButton" id="btn_getImageSet">
-                <property name="label" translatable="yes">Download Sample Image Set...</property>
+                <property name="label" translatable="yes">Download Image Set...</property>
                 <property name="name">Download an Image Set from an online source</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -27231,7 +27231,7 @@ show/edit the Maps module.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">1</property>
+                                        <property name="position">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -27316,7 +27316,7 @@ any items that match.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">2</property>
+                                        <property name="position">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -27341,7 +27341,7 @@ the PicList details just for *that* book.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">3</property>
+                                        <property name="position">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -27353,31 +27353,26 @@ the PicList details just for *that* book.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">4</property>
+                                        <property name="position">3</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton" id="btn_downloadPics">
-                                        <property name="label" translatable="yes">Download/Install Pics...</property>
-                                        <property name="name">Download Image Set (or install High Resolution images)</property>
+                                      <object class="GtkButton" id="btn_getPictures">
+                                        <property name="label" translatable="yes">Add From Catalogue...</property>
+                                        <property name="width-request">110</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">If you don't already have appropriate
-scripture illustrations, an Image Set 
-containing low-resolution illustrations
-for trial publications may be downloaded.
-
-Or if you have already downloaded a set
-of images, you can install them in an
-appropriate location using this feature.</property>
+                                        <property name="tooltip-text" translatable="yes">Browse the catalogue of commonly
+used Bible illustrations from a range
+of different artists.</property>
                                         <property name="valign">center</property>
-                                        <signal name="clicked" handler="onImageSetClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onGetPicturesClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">5</property>
+                                        <property name="position">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -27563,6 +27558,7 @@ share, but the image quality will be low.</property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">0</property>
+                                                    <property name="width">2</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -27787,25 +27783,6 @@ with a link to download the illustrations (if approved).</property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkButton" id="btn_getPictures">
-                                                    <property name="label" translatable="yes">Catalogue...</property>
-                                                    <property name="width-request">110</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">True</property>
-                                                    <property name="tooltip-text" translatable="yes">Browse the catalogue of commonly
-used Bible illustrations from a range
-of different artists.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <signal name="clicked" handler="onGetPicturesClicked" swapped="no"/>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">1</property>
-                                                    <property name="top-attach">0</property>
                                                   </packing>
                                                 </child>
                                                 <child>
