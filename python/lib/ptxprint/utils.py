@@ -433,7 +433,10 @@ def get_ptsettings():
                     continue
                 break
             else:
-                tempstr = os.path.expanduser("~/Paratext{}Projects")
+                if sys.platform.startswith("darwin"):
+                    tempstr = os.path.expanduser("~/Libraray/Application Support/paratextlite/Paratext{}Projects")
+                else:
+                    tempstr = os.path.expanduser("~/Paratext{}Projects")
                 path = tempstr.format(v)
                 if os.path.exists(path):
                     pt_settings = path
