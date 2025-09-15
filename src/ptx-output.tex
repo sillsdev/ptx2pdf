@@ -1538,6 +1538,7 @@
     \edef\lastn@tewid{0pt}%
     \global\let\l@stnoteclass\empty\let\\=\setl@stnoteclass \the\n@tecl@sses % identify the last note
     \global\f@rstnotetrue
+    \trace{fp}{Last note class is \l@stnoteclass}%
     \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
     \iff@rstnote % no notes actually occurred!
       \trace{i}{No notes}%
