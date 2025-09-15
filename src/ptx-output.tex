@@ -919,7 +919,7 @@
 \def\findsh@venotes{%Find the possible shaved lengths of the notes box
   \skip0=\l@stnotebls \dimen0=\skip0
   \ifdim\dimen0=0pt \else
-    \trace{fp}{Finding shaved note lengths}%
+    \trace{fp}{Finding shaved note lengths (bls=\the\skip0)}%
     \sh@vedim=\ht\n@tesbox % use sh@vedim as a temp. variable.
     \vbadness=10000
     \vfuzz=\maxdimen
@@ -927,7 +927,7 @@
     \dimen0=\dimexpr  \skip0 * \NoteShaveMin \relax 
     \dimen1=\dimexpr \skip0 * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
     \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minumum shave amount
-    \trace{fp}{Initial note length \the\ht\n@tesbox, first shave: \the\sh@vedim, stay: \the\dimen1 (\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
+    \trace{fp}{Initial note length \the\ht\n@tesbox, first shave: \the\sh@vedim, stay: \the\dimen1 (\the\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
     \@LOOP\ifdim \sh@vedim>\dimen1 
       %\showbox\n@tesbox
       \setbox1=\vsplit0 to \sh@vedim
@@ -1513,6 +1513,7 @@
   \global\setbox2=\vbox{%
     \edef\lastn@tewid{0pt}%
     \global\let\l@stnoteclass\empty\let\\=\setl@stnoteclass \the\n@tecl@sses % identify the last note
+    \trace{fp}{Last note class is \l@stnoteclass}%
     \f@rstnotetrue
     \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
     \iff@rstnote % no notes actually occurred!

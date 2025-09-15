@@ -860,6 +860,7 @@
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline now \the\baselineskip}%
   \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt plus 1fil%\lineskip=10pt
   \linepenalty50
+  \interlinepenalty\@MM % set default penalty to separate lines
   \getp@ram{justification}{#2}{#2}%
   \ifx\p@ram\c@nter
      \leftskip=\noteRag\rightskip=\noteRag
@@ -907,6 +908,7 @@
 % make box0 = an hbox contining all the contents of this class
 %+c_makehboxofhboxes
 \def\makehboxofhboxes{%
+  \trace{f}{makehboxofhboxes}%
   \setbox0=\hbox{}%
   \loop\unskip\dimen0=\lastkern \ifdim\dimen0=1sp \unkern\fi\unpenalty\setbox2=\lastbox\unskip \ifhbox2\setbox0=\hbox{\box2\unhbox0}\repeat} 
 %
@@ -956,7 +958,7 @@
   \disc@rds{rhh}%
   \reheighthb@xes
   \trace{n}{After adjustment box is \the\ht\n@tetmp}%
-  %\showbox\n@tetmp
+  \ifDBGshownoteboxes\showbox\n@tetmp\fi
   \unvbox\n@tetmp
 }
 \def\reheighthb@xes{%
@@ -1155,7 +1157,7 @@
        \fi
        \trace{fp}{Prevdepth \the\dimexpr -\dimen1\relax}%
        \disc@rdmvbohb
-       \trace{fp}{kern of \the\dimen0 before last line}%
+       \trace{fp}{kern of \the\dimen0 \space before last line}%
        \ifdim \dimen0=0pt % A normal skip = normal paragraph
          \penalty\interfootnotelinepenalty
          %\ifdim\dimen1=0pt\else \vskip\dimen1 \fi
@@ -1167,7 +1169,7 @@
     %\showbox3
   \fi
   %\ifnum\pageno=3 \showbox 2\fi
-  %\showbox3
+  \ifDBGshownoteboxes\showbox3 \fi
   \tracingassigns=0
   \tracingrestores=0
   \traceifcheck{vboxofhboxes}%
