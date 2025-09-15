@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-import sys, os, platform
+import sys, os, platform, logging
 from glob import glob
 from subprocess import call
 print("sys.executable: ", sys.executable)
@@ -14,6 +14,8 @@ else:
 print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
+
+logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
 #    def printme(*a, **kw):
@@ -41,7 +43,7 @@ def anyver(p, path=".", ext=".dll"):
         res = None
     return res
 
-def getfiles(basedir, outbase, extin=[], excldirs=[]):
+def getfiles(basedir, outbase, extin=[], excldirs=[], stripdir=False, debug=False):
     res = []
     for dp, dn, fs in os.walk(basedir):
         rpath = os.path.relpath(dp, basedir)
@@ -51,7 +53,9 @@ def getfiles(basedir, outbase, extin=[], excldirs=[]):
         for f in fs:
             if len(extin) and os.path.splitext(f)[1] not in extin:
                 continue
-            res.append((f'{dp}/{f}', f'{outbase}/{dp}'))
+            res.append((f'{dp}/{f}', f'{outbase}/{rpath}' if stripdir else f'{outbase}/{dp}'))
+    if debug:
+        logger.info(res)
     return res
 
 def stripbinaries(binaries, basedir):
@@ -117,7 +121,8 @@ binaries = (binaries
       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
       + getfiles('resources', 'ptxprint', extin=['.zip'])
       + getfiles(f"xetex/bin/{bindir}", "ptxprint")
-      + getfiles(f"xetex", "ptxprint", extin=[".tfm", ".pfm", ".pfb"])
+      + getfiles("xetex", "ptxprint", extin=[".tfm", ".pfm", ".pfb"])
+      + getfiles("python/graphics/icons", "share/icons", stripdir=True)
       )
 
 # data files are considered text and end up where specified by the tuple.
