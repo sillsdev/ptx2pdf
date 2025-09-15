@@ -118,61 +118,6 @@ _diglotprinter = {
 "_diglotincludexr":         "c_includeXrefs"
 }
 
-_diglot = {
-"diglot/ifusecustomsty_":    "project/ifusecustomsty",
-"diglot/ifusemodsty_":       "project/ifusemodssty",
-"diglot/ifincludefootnotes_":"notes/includefootnotes",
-"diglot/ifincludexrefs_":    "notes/includexrefs",
-"diglot/ifhavehyphenate_":   "paragraph/ifhavehyphenate",
-"diglot/ifhyphenate_":       "paragraph/ifhyphenate",
-
-"diglot/intfile":           "project/intfile",
-# "diglot/colorfonts" :       "document/ifcolorfonts",
-"diglot/diglotcolour":      "document/diglotcolour",
-"diglot/ifdiglotcolour_":   "document/ifdiglotcolour",
-"diglot/ifrtl" :            "document/ifrtl",
-"diglot/ifshow1chbooknum":  "document/ifshow1chbooknum",
-"diglot/fontfactor" :       "paper/fontfactor",
-"diglot/linespacingfactor": "paragraph/linespacingfactor",
-"diglot/afterchapterspace": "texpert/afterchapterspace",
-"diglot/afterversespace":   "texpert/afterversespace",
-"diglot/iflinebreakon" :    "document/iflinebreakon",
-"diglot/linebreaklocale" :  "document/linebreaklocale",
-
-"diglot/ifletter":          "document/ifletter",
-"diglot/letterspace":       "document/letterspace",
-"diglot/letterstretch":     "document/letterstretch",
-"diglot/lettershrink":      "document/lettershrink",
-
-"diglot/docscript" :        "document/script",
-# "diglot/docdigitmapping" :  "document/digitmapping",
-"diglot/interlinear":       "project/interlinear",
-                            
-"diglot/fontregular" :      "document/fontregular",
-"diglot/fontbold" :         "document/fontbold",
-"diglot/fontitalic" :       "document/fontitalic",
-"diglot/fontbolditalic" :   "document/fontbolditalic",
-"diglot/ifshowversenums" :  "document/ifshowversenums",
-"diglot/indentunit":        "document/indentunit",
-"diglot/ifrtl":             "document/ifrtl",
-"diglot/xrlocation" :       "notes/xrlocation",
-
-"diglot/copyright":         "project/copyright",
-"diglot/license":           "project/license",
-"diglot/ptxprintstyfile_":  "project/ptxprintstyfile_",
-
-"diglotfancy/versedecorator":       "fancy/versedecorator",
-"diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
-"diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
-"diglotfancy/versedecoratorscale":  "fancy/versedecoratorscale",
-"diglotfancy/versedecoratorisfile": "fancy/versedecoratorisfile",
-"diglotfancy/versedecoratorisayah": "fancy/versedecoratorisayah",
-"diglotfancy/endayah":              "fancy/endayah",
-"diglotfancy/sectionheader":        "fancy/sectionheader",
-"diglotfancy/sectionheadershift":   "fancy/sectionheadershift",
-"diglotfancy/sectionheaderscale":   "fancy/sectionheaderscale",
-"diglotfancy/sectionheaderpdf":     "fancy/sectionheaderpdf",
-}
 
 _joblock = None
 def lockme(job):
@@ -246,6 +191,7 @@ class RunJob:
         jobs = []       # [(bkid/module_path, False) or (RefList, True)] 
         logger.debug(f"{self.printer.bookrefs=}")
         lastbook = None
+        self.printer.wipe_usfms(self.printer.bookrefs)
         if self.printer.bookrefs is not None:
             for r in self.printer.bookrefs:
                 if r.first.book != lastbook:
@@ -342,7 +288,8 @@ class RunJob:
             if info["notes/ifxrexternalist"]:
                 triggers = info.createXrefTriggers(b, self.prjdir, triggers)
             if info.dict.get("studynotes/txlinclquestions", False):
-                triggers = transcel(triggers, b, self.prjdir, info.dict.get("studynotes/txllangtag", "en-US"),
+                triggers = transcel(triggers, b, self.prjdir, info.dict.get("studynotes/txllangtag", "en-US"), 
+                                    rtl=info.dict.get("document/ifrtl", False),
                                     overview=info.dict.get("studynotes/txloverview", False),
                                     boldover=info.dict.get("studynotes/txlboldover", True),
                                     numberedQs=info.dict.get("studynotes/txlnumbered", True),
@@ -562,7 +509,9 @@ class RunJob:
             if a not in texinputs:
                 texinputs.append(a+"//")
         miscfonts = getfontcache().fontpaths[:]
-        if sys.platform.startswith("win") and not nosysfonts:
+        if sys.platform.startswith("darwin") and not nosysfonts:
+            miscfonts.extend(["/System/Library/Fonts", "/Library/Fonts"])
+        elif sys.platform.startswith("win") and not nosysfonts:
             a = "/usr/share/ptx2pdf/texmacros"
             if a not in texinputs:
                 texinputs.append(a)
@@ -837,7 +786,10 @@ class RunJob:
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
             if not self.noview and startname is not None:
-                    self.printer.onShowPDF(path=startname)
+                if self.printer.get("c_layoutAnalysis"):
+                    self.printer.incrementProgress(inproc=True, stage="al")
+                self.printer.onShowPDF(path=startname)
+                self.printer.incrementProgress(inproc=True, stage=None)
 
         elif self.res == 3:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
@@ -866,7 +818,8 @@ class RunJob:
         self.printer.finished(self.res == 0)
         self.busy = False
         if not self.noview and not self.args.print and self.printer.isDisplay:
-            self.printer.builder.get_object("dlg_preview").present()
+            if self.printer.showPDFmode == "preview":
+                self.printer.builder.get_object("dlg_preview").present()
             spnr = self.printer.builder.get_object("spin_preview")
             if spnr.props.active:  # Check if the spinner is running
                 spnr.stop()

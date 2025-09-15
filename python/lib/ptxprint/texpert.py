@@ -211,7 +211,7 @@ texpertOptions = {
                             _("Minimum width for a bad inter character space.")),
     "PaddingWidth":       O("paddingwidth", "PRV", (0.5, -1.0, 5.0, 0.1, 0.1, 1), "", _("Collision Detection Padding (pt)"),
                             _("Minimum space between bounding boxes of glyphs before a collision is flagged.")),
-    "RiverThreshold":     O("riverthreshold", "PRV", (3, 1, 1000, 1, 10, 1), "", _("River Detection Threshold (em)"),
+    "RiverThreshold":     O("riverthreshold", "PRV", (3.0, 1.0, 1000, 0.1, 1, 1), "", _("River Detection Threshold (em)"),
                             _("The sum of all the widths in the river must be above this for the river to be detected")),
     "RiverMinMaxWidth":   O("riverminmaxwidth", "PRV", (1, 0.1, 5, 0.1, 1, 1), "", _("River Detection minimum required maximum width (em)"),
                             _("Minimum width required for the widest part of the river")),
@@ -254,7 +254,7 @@ class TeXpert:
     section = "texpert"
 
     @classmethod
-    def saveConfig(self, config, view):
+    def saveConfig(self, config, view, diff=None):
         for opt in texpertOptions.values():
             n = widgetName(opt)
             v = view.get(n)
@@ -269,7 +269,7 @@ class TeXpert:
             else:
                 incl = False
             if incl:
-                view._configset(config, "{}/{}".format(self.section, opt.ident), v)
+                view._configset(config, "{}/{}".format(self.section, opt.ident), v, diff=diff)
 
     @classmethod
     def loadConfig(self, config, view):

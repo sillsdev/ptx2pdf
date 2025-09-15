@@ -398,6 +398,11 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblistcr)
         return res
 
+    def onPicframeSize(self, widget, allocation):
+        if allocation.width <= 1 or allocation.height <= 1:
+            return
+        self.picrect = allocation
+
     def item_changed(self, w, *a):
         key = a[-1]
         if self.loading: # and key not in ("src", ):
@@ -446,10 +451,10 @@ class PicList:
                         fpath = dat[0].get('path', None)
                         logger.debug(f"Figure Path={fpath}, {dat[0]}")
                     if fpath is not None and os.path.exists(fpath):
-                        if self.picrect is None:
-                            picframe = self.builder.get_object("fr_picPreview")
-                            self.picrect = picframe.get_allocation()
-                        if self.picrect.width > 10 and self.picrect.height > 10:
+                        if not self.parent._picframe_connected:
+                            self.parent.picframe.connect("size-allocate", self.onPicframeSize)
+                            self.parent._picframe_connected = True
+                        if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
                             try:
                                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                             except GLib.GError:
@@ -505,6 +510,7 @@ class PicList:
     def onResized(self):
         picframe = self.builder.get_object("fr_picPreview")
         self.picrect = picframe.get_allocation()
+        print(f"{self.picrect.width=} {self.picrect.height=}")
         self.item_changed(None, "src")
 
     def get_row_from_items(self):

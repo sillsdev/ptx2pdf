@@ -14,7 +14,7 @@ def _replacefile(file, match, replace, dryrun=False):
     with open(file, "w", encoding="utf-8") as outf:
         for l in lines:
             outf.write(l)
-        
+
 def _git(cmd, *a, dryrun=False):
     s = ["git", cmd]+list(a)
     if dryrun:
@@ -26,7 +26,7 @@ def _dch(version, dryrun=False):
     tz = datetime.now().astimezone().tzinfo
     dt = datetime.now(tz)
     date = dt.strftime("%a, %d %b %Y %H:%M:%S %z")
-    txt = """ptxprint ({0}-1ubuntu1) bionic; urgency=medium
+    txt = """ptxprint ({0}-1ubuntu1) jammy; urgency=medium
 
   * Bumped release to {0}
 
@@ -79,7 +79,8 @@ def dch(*a, **kw):
     _dch(*a, dryrun=args.noaction, **kw)
 
 # gitversion = get_gitver()
-# replacefile("setup.py", r'(version=").*?"', r'\g<1>'+args.version+'"')
+replacefile("pyproject.toml", r'(version = ").*?"', r'\g<1>'+args.version+'"')
+replacefile("setup.cfg", r'(version = ").*?"', r'\g<1>'+args.version+'"')
 replacefile("InnoSetupPTXprint.iss", r'(#define MyAppVersion ").*?"', r'\g<1>'+args.version+'"')
 replacefile("python/lib/ptxprint/ptxprint.glade", r'(property name=\"version\">Version ).*?(<\/property>)', r'\g<1>'+args.version+r'\g<2>')
 replacefile("python/lib/ptxprint/splash.glade", r'(property name=\"label\">PTXprint \().*?(\))', r'\g<1>'+args.version+r'\g<2>')

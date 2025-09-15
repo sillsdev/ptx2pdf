@@ -8,6 +8,7 @@ from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
 from ptxprint.changes import readChanges
 from ptxprint.ptsettings import PTEnvironment
+from ptxprint.unicode.ucd import get_ucd
 from copy import deepcopy
 
 logger = logging.getLogger(__name__)
@@ -177,7 +178,7 @@ def typesFromMrk(mtype):
         return ('Note', 'NoteText')
     return (None, None)
 
-texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody zBottomRag zfiga zvar"""
+texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody zBottomRag"""
 
 def createGrammar(sheets):
     grammar = Grammar()
@@ -238,6 +239,9 @@ class UsfmCollection:
                 self.books[bk] = Usfm.readfile(bkfile, self.grammar, elfactory=ParentElement, informat="usfm")
             self.times[bk] = time.time()
         return self.books[bk]
+
+    def clear(self, bk):
+        self.times.pop(bk, None)
 
     def makeBookNames(self):
         if self.booknames is not None:
@@ -501,12 +505,12 @@ class Usfm:
             state = self.visitall(fn, c, state=state)
         return state
 
-    def make_zsetref(self, ref, book, parent, pos):
-        attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
-        if book is not None:
-            attribs['book'] = book
-        res = self.factory("ms", attribs, parent=parent)
-        return res
+    # def make_zsetref(self, ref, book, parent, pos):
+        # attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
+        # if book is not None:
+            # attribs['book'] = book
+        # res = self.factory("ms", attribs, parent=parent)
+        # return res
 
     def getsubbook(self, refrange, removes={}, addintro=True, **kw):
         if isinstance(refrange, (Ref, RefRange)):
@@ -517,12 +521,23 @@ class Usfm:
     def versesToEnd(self):
         root = self.getroot()
         addesids(root)
-        for el in root.findall('verse[eid=""]'):
-            el.parent.remove(el)
-        for el in root.findall('verse'):
-            ref = RefList(el.get('eid'))[0]
-            el.set('number', str(ref.verse) + (ref.subverse or ""))
-            del el.attrib['eid']
+        for el in root.findall('.//verse'):
+            if 'eid' in el.attrib:
+                ref = RefList(el.get('eid'))[0]
+                newel = el.parent.makeelement('char', attrib={'style': 'vp'})
+                newel.text = str(ref.verse) + (ref.subverse or "")
+                pindex = el.parent.index(el)
+                if pindex == 0 and el.parent.text:
+                    t = el.parent.text
+                    el.parent.text = el.parent.text.strip()
+                    w = t[len(el.parent.text):]
+                else:
+                    pel = el.parent[pindex-1]
+                    t = pel.tail
+                    pel.tail = pel.tail.strip()
+                    w = t[len(pel.tail):]
+                newel.tail = w
+                el.parent.insert(el.parent.index(el)+1, newel)
 
     def iterel(self, e, atend=None):
         yield e
@@ -671,6 +686,30 @@ class Usfm:
             if ellipsis and i < j + offset - 1:
                 addellipsis(root, i - 1)
         return
+
+    def findScript(self):
+        stats = {}
+        root = self.getroot()
+        for i, e in enumerate(root):
+            if e.tag == "chapter":
+                break
+        for x, isin in iterusx(root, parindex=i+1):
+            s = x.get('style', "")
+            if x.tag == "para" and self.grammar.marker_categories.get(s, "") != "versepara":
+                continue
+            t = x.text if isin else x.tail
+            if isempty(t):
+                continue
+            for c in t:
+                cs = get_ucd(ord(c), 'sc')
+                if cs not in ("Zyyy", "Zinh"):
+                    stats[cs] = stats.get(cs, 0) + 1
+                    if stats[cs] > 100:
+                        return cs
+        if not len(stats):
+            return None
+        cs, val = max(stats.items(), key=lambda x:x[1])
+        return cs
 
     def addStrongs(self, strongs, showall, script=None):
         self.addorncv()

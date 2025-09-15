@@ -38,8 +38,8 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.8.22"
-GitVersionStr = "2.8.22"
+VersionStr = "2.9.8"
+GitVersionStr = "2.9.8"
 ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -295,7 +295,7 @@ class ViewModel:
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
-        bl = RefList(self.get("ecb_booklist", ""), sep=" ", strict=False)
+        bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
@@ -304,7 +304,13 @@ class ViewModel:
                 if bname is not None and os.path.exists(os.path.join(self.project.path, bname)):
                     fromchap = round(float(self.get("t_chapfrom") or "0"))
                     tochap = round(float(self.get("t_chapto") or "200"))
-                    res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
+                    try:
+                        res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
+                    except ValueError as e:
+                        if fromchap > tochap:
+                            res = RefList((RefRange(Ref(book=bk, chapter=tochap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
+                        else:
+                            raise e
                     return self._bookrefsBooks(res, local)
             return []
         elif scope == "multiple":
@@ -328,11 +334,8 @@ class ViewModel:
             return []
 
     def getRefEnv(self, **kw):
-        if self.get("fcb_textDirection", "") == "rtl":
-            res = None
-        else:
-            pts = self._getPtSettings()
-            res = pts.getRefEnvironment()
+        pts = self._getPtSettings()
+        res = pts.getRefEnvironment()
         if res is None:
             res = self.getScriptSnippet().getrefenv(self)
         if len(kw):
@@ -706,6 +709,10 @@ class ViewModel:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
                 if self.get("t_txlQuestionsLang") == "":
                     self.set("t_txlQuestionsLang", lngCode)
+            if self.get("fcb_script", "Zyyy") == "Zyyy":
+                scr = self.analyse_script()
+                if scr is not None:
+                    self.set("fcb_script", scr)
             return float(oldVersion) >= 0
         else:
             return True
@@ -726,6 +733,25 @@ class ViewModel:
                 self.doError(_("Syntax Error Warning"), secondary=str(e), show=not self.get("c_quickRun"))
             logger.debug(f"Syntax Error in the context of stylesheets: {self.usfms.sheets.files}")
             return None
+        return res
+
+    def wipe_usfms(self, refs):
+        if refs is None:
+            return
+        self.get_usfms()
+        for r in refs:
+            if r is not None:
+                bk = r if isinstance(r, str) else r.book
+                self.usfms.clear(bk)
+
+    def analyse_script(self):
+        pts = self._getPtSettings()
+        res = None
+        bk = None
+        while res is None:
+            bk = pts.getABook(bk)
+            abook = self.get_usfm(bk)
+            res = abook.findScript()
         return res
 
     def getDialogTitle(self):
@@ -863,16 +889,16 @@ class ViewModel:
                 # except (OSError, PermissionError):
                     # pass
         if forcerewrite:
-            self.writeConfig(cfgname=cfgname, force=forcerewrite)
+            self.writeConfig(cfgname=cfgname, force=forcerewrite, diff=None)
         return oldversion
 
-    def writeConfig(self, cfgname=None, force=False):
+    def writeConfig(self, cfgname=None, force=False, diff=None):
         if not force and self.configLocked():
             return
         if cfgname is None:
             cfgname = self.cfgid or ""
         path = os.path.join(self.project.createConfigDir(cfgname), "ptxprint.cfg")
-        config = self.createConfig()
+        config = self.createConfig(diff=diff)
         if self.get('c_diglot') and not self.isDiglot:
             for k, p in self.polyglots.items():
                 p.writeConfig(config, f"diglot_{k}")
@@ -884,7 +910,7 @@ class ViewModel:
                 outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
             self.triggervcs = False
 
-    def _configset(self, config, key, value, update=True):
+    def _configset(self, config, key, value, update=True, diff=None):
         if "/" in key:
             (sect, k) = key.split("/", maxsplit=1)
         else:
@@ -896,10 +922,12 @@ class ViewModel:
             hasval = config.has_option(sect, k)
         if isinstance(value, bool):
             value = "true" if value else "false"
+        if diff is not None and diff.get(sect, k) == str(value):
+            return
         if update or not hasval:
             config.set(sect, k, str(value))
 
-    def createConfig(self):
+    def createConfig(self, diff=None):
         def sortkeys(x):
             k, v = x
             if k in self._activekeys:
@@ -921,9 +949,9 @@ class ViewModel:
                 if val is None:
                     continue
                 if v[1]:
-                    val = "\n".join(x.withvars(self) for x in val)
+                    val = "\n".join(x.withvars(self, relto=self.project.path) for x in val)
                 else:
-                    val = val.withvars(self)
+                    val = val.withvars(self, relto=self.project.path)
             elif v.widget.startswith("bl_"):
                     vfont = self.get(v.widget, skipmissing=True)
                     if vfont is None:
@@ -936,22 +964,22 @@ class ViewModel:
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
-            self._configset(config, k, str(val) if val is not None else "", update=False)
+            self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
         for k in self.allvars():
-            self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False)
+            self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
-            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False)
+            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
         # for attribute, value in vars(self.polyglots).items():
             # print(f"{attribute}: {value}")    
         # for k, v in self.polyglots.items():
             # v.writeConfig(config, f"diglot_{k}")
         if isinstance(self.polyglots, dict):  # Ensure it's a dictionary
             for k, v in self.polyglots.items():
-                v.writeConfig(config, f"diglot_{k}")
+                v.writeConfig(config, f"diglot_{k}", diff=diff)
         else:
             print("Error: self.polyglots is not a dictionary.")
 
-        TeXpert.saveConfig(config, self)
+        TeXpert.saveConfig(config, self, diff=diff)
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
@@ -2132,6 +2160,8 @@ set stack_size=32768""".format(self.cfgid)
             prefix += "/"
         if tgtPrj.guid != self.project.guid or tgtCfg != self.cfgid:
             view = self.createView(tgtPrj, tgtCfg)
+            if tgtPrj.guid == self.project.guid:
+                self.project = view.project
         else:
             view = self
         # assemble list of categories to import from ptxprint.cfg
@@ -2315,10 +2345,10 @@ set stack_size=32768""".format(self.cfgid)
             try:
                 allvars = config.options('vars')
             except configparser.NoSectionError:
-                return
+                allvars = [] # nothing to import yet
             for v in allvars:
                 if v not in getattr(view, 'pubvarlist', []):
-                    view.setvar(v, config.get("vars", v))
+                    view.setvar(v, config.get("vars", v, fallback=""))
         view.saveConfig()
 
     def updateThumbLines(self):

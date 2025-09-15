@@ -7,10 +7,16 @@ from ptxprint.pdfrw.uncompress import uncompress
 from shutil import copy2
 from inspect import currentframe
 from struct import unpack
-import contextlib, appdirs, pickle, gzip
+import contextlib, pickle, gzip
 import regex
 from subprocess import check_output, call
 import logging
+
+try:
+    import platformdirs
+    appdirs = platformdirs
+except ModuleNotFoundError:
+    import appdirs
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +144,9 @@ def setup_i18n(i18nlang):
         os.environ["LANG"] = i18nlang
         lang = i18nlang
     else:
-        lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
+        lang, enc = locale.getlocale()
+        if lang is None:
+            lang = "en"
     enc = "UTF-8"
     logger.debug(f"Loading locale for {lang}.{enc} from {localedir}")
     if sys.platform.startswith('win'):
@@ -155,7 +163,7 @@ def setup_i18n(i18nlang):
         locale.setlocale(locale.LC_ALL, '')
     else:
         locale.setlocale(locale.LC_ALL, (lang, enc))
-        locale.bindtextdomain(APP, localedir)
+        gettext.bindtextdomain(APP, localedir)
         os.environ["LANGUAGE"] = lang
         #gettext.bindtextdomain(APP, localedir)
     # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
@@ -332,8 +340,10 @@ def startfile(fpath):
     if os.path.exists(fpath):
         if sys.platform.startswith("win"):
             os.startfile(fpath)
-        elif sys.platform.startswith("linux"):
-            call(('xdg-open', fpath))
+        elif sys.platform == "darwin": # macOS
+            call(['open', fpath])
+        else: # assume Linux / Unix
+            call(['xdg-open', fpath])
 
 def getPDFconfig(fname):
     if str(fname).lower().endswith(".zip"):
@@ -356,7 +366,19 @@ def getPDFconfig(fname):
             return None
     return None
 
-if sys.platform == "linux":
+if sys.platform.startswith("win"):
+    import winreg
+
+    def openkey(path):
+        try:
+            k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
+        except FileNotFoundError:
+            k = None
+        return k
+
+    def queryvalue(base, value):
+        return winreg.QueryValueEx(base, value)[0]
+else:
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
         valuepath = os.path.join(basepath, path.lower(), "values.xml")
@@ -371,19 +393,6 @@ if sys.platform == "linux":
             return ""
         else:
             return res.text
-
-elif sys.platform.startswith("win"):
-    import winreg
-
-    def openkey(path):
-        try:
-            k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
-        except FileNotFoundError:
-            k = None
-        return k
-
-    def queryvalue(base, value):
-        return winreg.QueryValueEx(base, value)[0]
 
 def saferelpath(p, r="."):
     if p is None or not len(str(p)):
@@ -401,10 +410,7 @@ def pt_bindir():
     if not os.path.exists(basedir):
         basedir = os.path.abspath(os.path.dirname(__file__))
     res = getattr(sys, '_MEIPASS', None)
-    if res is None:
-        res = basedir
-    else:
-        res = os.path.join(res, 'ptxprint')
+    res = basedir if res is None else os.path.join(res, 'ptxprint')
     logger.debug(f"pt_bindir= {res}")
     return res
 
@@ -673,6 +679,13 @@ def extraDataDir(base, dirname, create=False):
     else:
         return None
 
+def getResourcesDir():
+    if hasattr(sys, '_MEIPASS'):
+        res = os.path.join(getattr(sys, '_MEIPASS'), 'ptxprint', 'resources')
+    else:
+        res = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources')
+    return res
+
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
         inf.seek(-12, 2)
@@ -728,7 +741,7 @@ def xdvigetfonts(xdv):
 
 varpaths = (
     ('prjdir', lambda p,v: p.path),
-    ('settingsdir', lambda p,v: os.path.join(p.path, '..')),
+    ('settingsdir', lambda p,v: p.path),
     ('workingdir', lambda p,v: p.printPath(v.cfgid)),
 )
 
@@ -759,13 +772,17 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
                 txt = str(varlib[k]) + "/" + txt[len(k)+4:]
             super().__init__(txt)
 
-    def withvars(self, aView):
+    def withvars(self, aView, relto=None):
+        if relto is None:
+            base = self.as_posix()
+        else:
+            base = os.path.join(relto, self.as_posix())
         varlib = self.create_varlib(aView)
-        bestr = self.as_posix()
+        bestr = base
         bestk = None
         for k, v in varlib.items():
             try:
-                rpath = os.path.relpath(self.as_posix(), start=v.as_posix())
+                rpath = os.path.relpath(base, start=v.as_posix())
             except (ValueError, TypeError):
                 continue
             if len(str(rpath)) < len(bestr):

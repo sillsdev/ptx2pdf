@@ -981,6 +981,7 @@
 
 \def\MakeChapterLabel#1#2{#1\ #2}
 \def\reference{\ch@pter\ChapterVerseSeparator\v@rse}%
+\global\let\ch@pteraltt@xt\empty
 
 \newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
@@ -1088,17 +1089,28 @@
  \let\@C=\c
  % Define a macro to process space delimited chapter number
  % ## is necessary because this is a nested macro definition
- \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
+ \def\@C@{%
+  \let\nxt\@@C@@
+  \ifx\mayb@cp\cp\let\nxt\@@CP@@\fi
+  \ifx\mayb@cp\ca\let\nxt\@@CA@@\fi\nxt}%
+ \def\@@CP@@\cp ##1 {\gdef\ch@ptert@xt{##1}\futurelet\mayb@cp\@C@}
+ \def\@@CA@@\ca ##1\ca*{\gdef\ch@pteraltt@xt{##1}\futurelet\mayb@cp\@C@}
+ \def\@c@ ##1 {%
    \ifx\ch@pter\z@ro
      \message{First chapter for \id@@@}\op@ninghooks{first}{c}{c+\styst@k}%
    \fi
    \gdef\ch@pter{##1}% remember chapter number
    \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
+   \global\let\ch@pteraltt@xt\empty
    \gdef\v@rse{}% clear verse number
+   \m@kedigitsletters %Must reset this before futurelet grabs anything
+   \futurelet\mayb@cp\@C@}% Check what happens next.
+ \def\@@C@@{%
    \ifdiglot
      \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
      \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
      \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
+     \x@\global\x@\let\csname @ch@pteraltt@xt\g@tdstat\endcsname\ch@pteraltt@xt
      \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
    \fi
    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
@@ -1108,7 +1120,6 @@
    \ifcsname cv-\c@rref\endcsname\csname cv-\c@rref\endcsname\fi
    \global\let\print@bleverse=\v@rse
    \op@ninghooks{start}{c}{\styst@k}%
-   \m@kedigitsletters
     % If omitting chapter number, skip this.
     % We would have to set \OmitChapterNumbertrue on a book by book basis
     % in the configuration file in order to omit chapter numbers for single chapter books.
@@ -1140,7 +1151,8 @@
          \fi
        \else % if \cl present, output chapter label here
          \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-         \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+         \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\printchapter{\ch@ptert@xt}}%
+         \ifx\ch@pteraltt@xt\empty\else{\s@tfont{cl+ca}{ca}\printaltchapter{\ch@pteraltt@xt}}\fi
          \pdfb@@kmark \pdfch@ptermark
          \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
          \spacefactor=\n@wchaptersf % prevent hanging verse number here
@@ -1148,7 +1160,8 @@
      \fi
    \fi}
  %
- \def\c{\m@kedigitsother\@c@}
+ \def\c{\ifsk@pping \egroup \fi % if we were skipping, stop it
+   \m@kedigitsother\@c@}
  \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
 %-csty_chapdef
  % set default value for drop cap chapter number size if not already set

@@ -319,7 +319,7 @@ MPINPUTS = $TEXMFDOTDIR;$TEXMF/metapost//
 % We repeat the same definition three times because of the way fmtutil
 % is implemented; if we use ${TEXFORMATS}, the mpost/mf/etc. formats
 % will not be found.
-TEXFORMATS = $TEXMFDOTDIR;$TEXMF/web2c{/$engine,}
+TEXFORMATS = $TEXMFDOTDIR;$TEXMF/web2c{/$engine,};$SELFAUTOLOC/web2c{/$engine,}
 MFBASES = $TEXMFDOTDIR;$TEXMF/web2c{/$engine,}
 MPMEMS = $TEXMFDOTDIR;$TEXMF/web2c{/$engine,}
 %
@@ -397,15 +397,16 @@ TEXPSHEADERS.gsftopk = $TEXMFDOTDIR;$TEXMF/{dvips,fonts/{enc,type1,type42,type3,
 % fonts installed on the system (outside of TeX).  An empty default
 % value would add "//" to the search paths, so we give it a dummy value.
 OSFONTDIR = /please/set/osfontdir/in/the/environment
+TEXDIST = /path/to/tex/distribution/texmf/set/in/environment
 
 % PostScript Type 1 outline fonts.
-T1FONTS = $TEXMFDOTDIR;$TEXMF/fonts/type1//;$OSFONTDIR//
+T1FONTS = $TEXMFDOTDIR;$TEXMF/fonts/{pfb,type1}//;$OSFONTDIR//;
 
 % PostScript AFM metric files.
 AFMFONTS = $TEXMFDOTDIR;$TEXMF/fonts/afm//;$OSFONTDIR//
 
 % TrueType outline fonts.
-TTFONTS = $TEXMFDOTDIR;$TEXMF/fonts/{truetype,opentype}//;$OSFONTDIR//
+TTFONTS = $TEXMFDOTDIR;$TEXMF/fonts/{truetype,opentype}//;$OSFONTDIR//;$TEXDIST/fonts/{truetype,opentype}//
 
 % OpenType outline fonts.
 OPENTYPEFONTS = $TEXMFDOTDIR;$TEXMF/fonts/{opentype,truetype}//;$OSFONTDIR//

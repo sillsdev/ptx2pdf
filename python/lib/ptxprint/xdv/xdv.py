@@ -326,6 +326,12 @@ class XDViWriter:
         for x, d in zip(opc[1], data):
             self.outval((x if x > 0 else -x), d, uint=x>0)
 
+    def push(self, opcode, parm, data):
+        self.outval(1, opcode, uint=True)
+
+    def pop(self, opcode, parm, data):
+        self.outval(1, opcode, uint=True)
+
     def finish(self):
         l = self.outf.tell() % 4
         if l == 0:

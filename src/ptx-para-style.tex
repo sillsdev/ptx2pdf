@@ -642,6 +642,7 @@
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
   \getp@ram{type}{\m@rker}{\m@rker}%
+  \global\let\typep@ram\p@ram
   \let\B@xtype\empty%
   \ifx\p@ram\t@tle
     \mark{\t@tle}\ifdiglot\x@\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
@@ -745,7 +746,13 @@
     \fi
     \nobreak
   \else\trace{sa}{headingstyle false}%
-    \ifhe@dings\endhe@dings\fi
+    \ifhe@dings\endhe@dings\fi % this potentially closes the headingsbox, and other major changes to the style stack.
+    \mcpushunderms{P}{#1}%
+    \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
+    \let\styst@k=\empty
+    \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
+    \s@tstyst@k%
+    \trace{H}{Marker type: \typep@ram, stack: \mcstack [\styst@k] \space \styst@kfirst \space toplevel: \iftoplevelp@r True\else False\fi}%
     \let\thisp@rclass\P@ra
     \s@tbaseline{\m@rker}{\styst@k}%
     \global\advance\baselineskip by \ColAdjskip
@@ -801,7 +808,9 @@
    \allowp@rindenttrue
    \def\t@st{0}%
    \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \ifdr@ppednumber \def\t@st{2}\fi\else \def\t@st{1}\fi
-   \ifnum 0=\t@st \else
+   \ifnum 0=\t@st 
+     \trace{C}{allowp@rindenttrue (normal par)}%
+   \else
      \ifversion{5}{%
        \ifIndentAtChapter\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterchap}\fi
        \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterheading}\fi\fi
@@ -1497,10 +1506,12 @@
 \def\beforechapternum#1#2#3{}
 \def\afterchapternum#1#2#3{}
 \def\AfterChapterSpaceFactor{3}
+\def\printchapter#1{#1} % Any decoration, etc, for chapter numbers
+\def\printaltchapter#1{(#1)} % Any decoration, etc, for alternative chapter numbers
+
 \def\m@kechapterbox{%
  \trace{sP}{m@kechapterbox for \ch@ptert@xt, reftooltip\ifreftooltip true\else false\fi}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
- \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
  \getp@ram{rightmargin}{c}{c}%
  \let\ch@pterrmargin\p@ram
@@ -1512,11 +1523,17 @@
  \setbox\ch@pterbox=\hbox{%
     \ifx\p@ram\r@ght
       {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
-      \s@tfont{c}{c}\printchapter%
+      \s@tfont{c}{c}\printchapter{\ch@ptert@xt}%%
+      \ifx\ch@pteraltt@xt\empty\else
+        \s@tfont{c+ca}{ca}\printaltchapter{\ch@pteraltt@xt}%
+      \fi
     \else
       \ifx\ch@pterlmargin\relax\else\kern \ch@pterlmargin\IndentUnit\fi
       {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
-      \s@tfont{c}{c}\printchapter%
+      \s@tfont{c}{c}\printchapter{\ch@ptert@xt}%
+      \ifx\ch@pteraltt@xt\empty\else
+        \s@tfont{c+ca}{ca}\printaltchapter{\ch@pteraltt@xt}%
+      \fi
     \fi
     {\afterchapternum{\id@@@}{\book}{\ch@pter}}%
  }%

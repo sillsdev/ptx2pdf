@@ -35,13 +35,11 @@ tmpPicLists/
 *.zip
 /crowdin/
 /cygwin/
-/docs/installation/
 /fonts/
 /Output/
 /pictures/
 /projects/
 /projects2/
-/resources/
 /results/
 /specials/
 /templates/
@@ -60,6 +58,7 @@ src/DiglotUIsettings.txt
 *.bz2
 *.pickle
 unique.id
+.DS_Store
 
 /examples/diglot/Gal*.usfm
 /examples/diglot/78-*.usfm

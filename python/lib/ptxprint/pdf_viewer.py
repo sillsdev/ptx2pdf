@@ -157,6 +157,9 @@ class PDFViewer:
         self.last_click_time = 0  # Timestamp of the last right-click
         self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
         self.linespacing = float(self.model.get("s_linespacing", "12"))
+        self.collisionpages = []
+        self.spacepages = []
+        self.riverpages = []
         
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -745,10 +748,13 @@ class PDFViewer:
                                         fontsize=float(self.model.get("s_fontsize", 1)))
             for (opcode, data) in xdvreader.parse():
                 pass
-            if self.showanalysis and self.spacethreshold == 0:
+            if self.spacethreshold == 0:
                 self.badspaces = self.parlocs.getnbadspaces()
                 if len(self.badspaces):
                     self.model.set("s_spaceEms", self.badspaces[0].widthem)
+            wanted = 7
+            self.spacepages, self.collisionpages, self.riverpages = \
+                self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)), float(self.model.get('s_charSpaceEms', 4)))
 
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
@@ -866,6 +872,12 @@ class PDFViewer:
             self.set_zoom_fit_to_screen(None)
             self.show_pdf()  # Redraw the current page
             return True
+        elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
+            self.set_page(self.swap4rtl("next"))
+            return True
+        elif keyval == Gdk.KEY_Left:  # Left arrow → Previous page
+            self.set_page(self.swap4rtl("previous"))
+            return True
             
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
@@ -893,30 +905,30 @@ class PDFViewer:
             current_pg = 1
         if direction == self.swap4rtl('next'):
             next_page = None
-            for pg in self.model.ufPages:
+            for pg in self.all_pages: # self.model.ufPages:
                 if pg > current_pg:
                     next_page = pg
                     break
             if next_page:
-                self.ufCurrIndex = self.model.ufPages.index(next_page) 
+                self.ufCurrIndex = self.all_pages.index(next_page)  # self.model.ufPages
         else:  # 'previous'
             prev_page = None
-            for pg in reversed(self.model.ufPages):
+            for pg in reversed(self.all_pages):
                 if pg < current_pg:
                     prev_page = pg
                     break
             if prev_page:
-                self.ufCurrIndex = self.model.ufPages.index(prev_page)
-        pg = self.model.ufPages[self.ufCurrIndex]
+                self.ufCurrIndex = self.all_pages.index(prev_page)
+        pg = self.all_pages[self.ufCurrIndex]
         pnum = self.parlocs.pnums.get(pg, pg) if self.parlocs is not None else pg
         self.show_pdf(pnum)
-
+        
     def updatePageNavigation(self):
         """Update button sensitivity and tooltips dynamically based on the current index."""
         # Get current page index and total pages
         pg = self.current_index or 1
-        num_pages = self.numpages 
-        ufPages = self.model.ufPages
+        num_pages = self.numpages
+
         is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
 
         # Get page number mapping
@@ -939,67 +951,110 @@ class PDFViewer:
         seekPrevBtn.set_sensitive(False)
         seekNextBtn.set_sensitive(False)
 
-        total_count = len(ufPages)
+        if not self.model.get('c_layoutAnalysis', False):
+            ufPages         = self.model.ufPages or []
+            collisionPages  = []
+            horizWhitespace = []
+            vertRivers      = []
+        else:
+            ufPages         = self.model.ufPages or [] if self.model.get('c_findUnbalanced', False) else []
+            collisionPages  = self.collisionpages      if self.model.get('c_findCollisions', False) else []
+            horizWhitespace = self.spacepages          if self.model.get('c_findWhitespace', False) else []
+            vertRivers      = self.riverpages          if self.model.get('c_findRivers',     False) else []
+
+        # Merge lists in order with uniqueness
+        self.all_pages = []
+        for lst in [ufPages, collisionPages, horizWhitespace, vertRivers]:
+            for p in lst:
+                if p not in self.all_pages:
+                    self.all_pages.append(p)
+        self.all_pages = sorted(self.all_pages)
+        
+        total_count = len(self.all_pages)
         self.model.builder.get_object("bx_seekPage").set_sensitive(total_count > 0)
-        for btn in ['btn_page_first', 'btn_page_previous', 'btn_page_next', 'btn_page_last', 
-                    'btn_seekPage2fill_previous', 'btn_seekPage2fill_next']:
+
+        for btn in [
+            "btn_page_first", "btn_page_previous", "btn_page_next", "btn_page_last",
+            "btn_seekPage2fill_previous", "btn_seekPage2fill_next"
+        ]:
             action = btn.split("_")[-1]
             o = self.model.builder.get_object(btn)
-            tt = o.get_tooltip_text()
+
             if not 'seekPage' in btn:
+                # Update navigation tooltips for normal page buttons
+                tt = o.get_tooltip_text()
                 o.set_tooltip_text(re.sub(action.title(), self.swap4rtl(action).title(), tt))
+                continue
+
+            # "Seek" buttons — build multi-color tooltip
+            if total_count < 1:
+                seekText = _("Locate {} issue page.{}(None identified)").format(self.swap4rtl(action), "\n")
             else:
-                if total_count < 1:
-                    seekText = _("Show {} underfilled page.{}(None identified)").format(self.swap4rtl(action), "\n")
+                curr_pos = 0
+                if pnumpg in self.all_pages:
+                    curr_pos = self.all_pages.index(pnumpg)
+
+                locatefirstPage = self.all_pages[0]
+                locatelastPage  = self.all_pages[-1]
+
+                if is_rtl:  # Fix later to include Arabic UI detection
+                    hide_prev = pnumpg >= locatelastPage or pnumpg == num_pages or not self.oneUp
+                    hide_next = pnumpg <= locatefirstPage or pnumpg == 1 or not self.oneUp
                 else:
-                    curr_pos = self.ufCurrIndex
-                    firstUFpg = ufPages[0]
-                    lastUFpg = ufPages[-1]
+                    hide_prev = pnumpg <= locatefirstPage or pnumpg == 1 or not self.oneUp
+                    hide_next = pnumpg >= locatelastPage or pnumpg == num_pages or not self.oneUp
 
-                    if is_rtl:  # Fix later to include Arabic UI detection
-                        hide_prev = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
-                        hide_next = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-                    else:
-                        hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-                        hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
+                seekPrevBtn.set_sensitive(not hide_prev)
+                seekNextBtn.set_sensitive(not hide_next)
 
-                    seekPrevBtn.set_sensitive(not hide_prev)
-                    seekNextBtn.set_sensitive(not hide_next)
+                window_size = 5  # Show 3 numbers before and after the current one
 
-                    window_size = 3  # Show 3 numbers before and after the current one
+                # Determine which pages to display
+                if total_count <= 12:
+                    display_pages = self.all_pages
+                    elipsis = ""
+                else:
+                    start_idx = max(0, curr_pos - window_size)
+                    end_idx   = min(total_count, curr_pos + window_size + 1)
+                    display_pages = self.all_pages[start_idx:end_idx]
+                    elipsis = f" (of {total_count})"
+                    if start_idx > 0:
+                        display_pages.insert(0, "...")
+                    if end_idx < total_count:
+                        display_pages.append("...")
 
-                    # --- If there are fewer than 7 pages, show all without ellipses ---
-                    if total_count <= 7:
-                        formatted_pages = list(map(str, ufPages))
-                        if curr_pos < len(formatted_pages):
-                            formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
-                        pgs = "  ".join(formatted_pages)
-                        elipsis = ""  # No "(of X)" when all numbers are shown
-                    else:
-                        # Determine sliding window bounds
-                        start_idx = max(0, curr_pos - window_size)
-                        end_idx = min(total_count, curr_pos + window_size + 1)
-                        display_pages = ufPages[start_idx:end_idx]
+                # Color-code pages
+                formatted_pages = []
+                for p in display_pages:
+                    if p == "...":
+                        formatted_pages.append("...")
+                        continue
+                    if p in collisionPages:
+                        text = f"<span foreground='red'><b>{p}</b></span>"
+                    elif p in horizWhitespace and p in vertRivers:
+                        text = f"<span foreground='lightgreen'><b>{p}</b></span>"
+                    elif p in horizWhitespace:
+                        text = f"<span foreground='lightblue'><b>{p}</b></span>"
+                    elif p in vertRivers:
+                        text = f"<span foreground='yellow'><b>{p}</b></span>"
+                    else: # if p in ufPages:
+                        text = f"<b>{p}</b>"
 
-                        # Format pages with marker `<number>`
-                        formatted_pages = list(map(str, display_pages))
-                        formatted_pages[display_pages.index(ufPages[curr_pos])] = f"<{formatted_pages[display_pages.index(ufPages[curr_pos])]}>" 
+                    # Mark current page with <>
+                    if p == pnumpg:
+                        text = f"&lt;{text}&gt;"
 
-                        # Add leading/trailing ellipses when necessary
-                        if start_idx > 0:
-                            formatted_pages.insert(0, "...")
-                        if end_idx < total_count:
-                            formatted_pages.append("...")
+                    formatted_pages.append(text)
 
-                        pgs = "  ".join(formatted_pages)
-                        elipsis = f" (of {total_count})"  # Show count only when ellipses are present
+                # RTL handling
+                if is_rtl or self.model.lang == 'ar_SA':
+                    formatted_pages = list(reversed(formatted_pages))
 
-                    if is_rtl or self.model.lang == 'ar_SA':
-                        pgs = "  ".join(reversed(pgs.split("  ")))  # Reverse order of numbers in RTL mode
+                pgs = "  ".join(formatted_pages)
+                seekText = _("Locate {} issue page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
+            # Use markup so colors are shown
+            o.set_tooltip_markup(seekText)
 
-                    seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
-                o.set_tooltip_text(seekText)
-        
     def on_button_press(self, widget, event):
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
             self.on_update_pdf(None)
@@ -1361,7 +1416,7 @@ class PDFViewer:
             mpgnum = self.model.notebooks['Main'].index("tb_Pictures")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.model.builder.get_object("nbk_PicList").set_current_page(1)
-            self.model.builder.get_object("ptxprint").present()
+            self.model.mainapp.win.present()
             self.model.wiggleCurrentTabLabel()
             treeview = self.model.builder.get_object("tv_picListEdit")
             model = treeview.get_model()
@@ -1501,14 +1556,14 @@ class PDFViewer:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.model.builder.get_object("ptxprint").present()
+            self.model.mainapp.win.present()
             self.model.wiggleCurrentTabLabel()
         
     def edit_fig_style(self, widget):
         self.model.styleEditor.selectMarker('fig')
         mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
         self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.model.builder.get_object("ptxprint").present()
+        self.model.mainapp.win.present()
         self.model.wiggleCurrentTabLabel()
         
     def cleanRef(self, reference):
@@ -1538,7 +1593,7 @@ class PDFViewer:
                 winreg.CloseKey(key)
                 logger.debug(f"Set Scr Ref in registry to: {vref}")
         except WindowsError as e:
-            logger.debug(f"Error: {e} while tryint to set ref in registry")
+            logger.debug(f"Error: {e} while trying to set ref in registry")
             return
 
         # Load user32.dll

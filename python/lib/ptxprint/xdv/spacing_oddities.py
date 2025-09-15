@@ -226,6 +226,8 @@ class GlyphCluster:
         self.glyphs.append([hmin, vmin, hmax, vmax])
     
     def glyph_topt(self, no, i):
+        if not hasattr(self.font.ttfont, 'glyphs') or no >= len(self.font.ttfont.glyphs):
+            return 0
         return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points) 
     
     def collision(self, prev_gc, threshold):

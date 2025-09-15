@@ -33,6 +33,7 @@
 %+cnote_makenote
 % We keep a list of all the note classes in \n@tecl@sses, each prefixed with \\ and enclosed in braces.
 % Then we can define \\ on the fly, and execute the \n@tecl@sses list to apply it to all classes.
+\newif\ifDBGshownoteboxes
 \newtoks\n@tecl@sses
 \newcount\n@teid % Each note should have a unique number. 
 
@@ -445,8 +446,8 @@
         %\x@\showbox\csname endn@te-#1\endcsname
         \vbox{}%Sacrificial box for makehboxofhboxes to consume
         \x@\unvbox\csname endn@te-#1\endcsname%
-        %\showbox0
         %\setbox0=\hbox{\unhbox0 \removehboxes}%
+        \ifDBGshownoteboxes\showbox0 \fi
       \fi
     \else
       \x@\ifvoid \csname endn@te-#1\endcsname
@@ -467,14 +468,14 @@
       \ifdim \dimen0>0pt \kern-\dimen0\fi
       \ifvoid\csname endn@te-#1\endcsname\else
         \setbox0=\vbox{\maken@tepara{\csname endn@te-#1\endcsname}{#1}}%
-        %\showbox0
+        \ifDBGshownoteboxes\showbox0 \fi
         \unvbox0
       \fi
     \else
       \s@tbaseline{#1}{#1}%
       {%\x@\showbox\csname endn@te-#1\endcsname
       \setbox0=\vbox{\unvbox\csname endn@te-#1\endcsname}%
-      %\showbox0
+      \ifDBGshownoteboxes\showbox0 \fi
       \unvbox0}%
     \fi
     }% Individual note placement
@@ -544,6 +545,7 @@
   \x@\xdef\csname n@te-\n@tetype-bls\endcsname{\the\baselineskip}%
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
+  \ifDBGshownoteboxes\showbox9 \fi
   \ifp@ranotes\setbox8=\copy9\setbox7=\vbox{\unvbox8\global\setbox6=\lastbox}\setbox8=\hbox{\unhbox6}%
     \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd8\string}\string{\the\ht9\string}}%
   \else

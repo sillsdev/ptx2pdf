@@ -1,7 +1,85 @@
-PTXprint 2.8.22 Release Notes
-24 Jul 2025
+PTXprint 2.9.8 Release Notes
+12 Sep 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 2.9.8 (12 Sep 2025)
+  * Implement generic ID C:V parser and get zsetref and vid milestones using it
+  * Add a codelets for hook to keep with next para
+  * Add a debugging option to help figure out drifting notes
+  * Add sample code for icon to launch the AI Support Assistant (unimplemented)
+  * Add TagableRef to picture catalogues
+  * Make the installation info point to the right places
+  * Tweak UI of Picture tab
+  * Improve stats report
+  * Update ptx2pdf-faq.md  
+  * Fix import config not saving
+  * Fix \ca processing for all 3 scenarios
+  * Fix module reference localization
+  * Fix broken footnote removal in module flattening
+  * Fix missing picture previews
+  * Fix RTL ch:verse-ranges in TXL questions
+
+Bug fixes and Improvements in 2.9.6 (5 Sep 2025)
+  * Prevent preview pane opening when other PDF view options are set
+  * Add left+right arrow keys as for PDF navigation (PgDn/Pgup)
+  * Add required gi modules for windows
+  * Add win32 and fontconfig gi typelib hooks
+  * Add hooks for poppler for pyinstaller
+  * Fix minor bug self.mainapp.win
+
+Bug fixes and Improvements in 2.9.5 (4 Sep 2025)
+  * Refactor code for MacOS
+  * Get Mac packaging working and make available on downloads page
+  * Add button to install BSB as an option in Import Scripture
+  * Enable Import to handle .zip files with either USX or USFM
+  * Tweak wording grid/baseline/graph paper in UI
+  * Move forward from appdirs which is now deprecated
+  * End of Ayahs have the space before moved after
+  * Auto analyse projects for script
+  * Update ptx-unicode to latest unicode and support U+FDD0 as interchar space inhibiter
+  * Refactor decorative boxes snippet for modern diglots
+  * Re-enable shortcut/accelerator keys after Mac refactoring
+  * Tidy up Project and Scope area of UI (stop expanding horizontally)
+  * Test guid when changing project
+  * Color Project codes from _PTXprint in purple - distinguishing them from normal projects
+  * Get accelerators (shortcut keys) working again on the main window
+  * Tidy up creation and management of XXM details for Maps
+  * Catch bad chapter ranges perhaps
+  * Reduce installer size (remove redundant binaries)
+  * Add icon to AppWindow
+  * Add support for \ca (without styling)
+  * Fix bug of processing stale data - now reloads usfm files on each print
+  * Fix parsing zvar and add early ldml lookup support
+  * Fix ptxsettings.bookNames -> bkNames
+  * Fix diglot border
+
+Bug fixes and Improvements in 2.9.4 (19 Aug 2025)
+  * Place bottom images on the baseline
+  * Provide various options for Locate... issues in PDF Viewer
+  * Improve Linux packaging toolchain
+  * Add typesetting report page numbers in pdf viewer
+  * Fix versesToEnd
+  * Disable Layout Analysis when switching configs/projects/books
+  * Fix end of ayahs
+  * Fix missing spaces in pyproject.toml version field to get auto-updated
+
+Bug fixes and Improvements in 2.9.3 (9 Aug 2025)
+  * Fix crash on Import Scripture
+  * Improve Linux packaging options
+
+Bug fixes and Improvements in 2.9.2 (8 Aug 2025)
+  * New feature: Layout Analysis in PDF Previewer
+     - highlight bad word spaces
+     - highlight bad inter character spaces
+     - highlight vertical rivers of whitespace
+     - highlight vertical glyph collisions between lines
+     - Analysis settings are configurable (Advanced > Other > Preview)
+  * Add support for inner and outer paragraphs
+  * For diglots, style secondary header material using secondary \h style
+  * Fix USFM 3.1 support for implicit closure inside notes
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 2.8.22 (24 Jul 2025)

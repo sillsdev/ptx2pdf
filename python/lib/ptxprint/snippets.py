@@ -282,36 +282,36 @@ class FancyBorders(Snippet):
 
 """
         if texmodel.dict.get("_isDiglot", False):
-            repeats = [("L", ""), ("R", "diglot")]
+            repeats = [("L", texmodel)] + list(texmodel.dict["diglots_"].items())
         else:
-            repeats = [("", "")]
-        for replaceD, replaceE in repeats:
+            repeats = [("", texmodel)]
+        for k, v in repeats:
             res += r"""
-{%E%fancy/sectionheader}\newbox\sectionheadbox%D%
-{%E%fancy/sectionheader}\def\placesectionheadbox%D%{{%
-{%E%fancy/sectionheader}  \ifvoid\sectionheadbox%D% % set up the \sectionheadbox box the first time it's needed
-{%E%fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\hbox to \hsize{{\hss \XeTeXpdffile "{%E%fancy/sectionheaderpdf}" scaled {%E%fancy/sectionheaderscale} \relax\hss}}%
-{%E%fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\vbox to 0pt
-{%E%fancy/sectionheader}        {{\kern-\ht\sectionheadbox%D% \kern {%E%fancy/sectionheadershift}pt \box\sectionheadbox \vss}}
-{%E%fancy/sectionheader}  \fi
-{%E%fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}%
-{%E%fancy/sectionheader}}}
-{%E%fancy/sectionheader}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
-{%E%fancy/sectionheader}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
-{%E%fancy/sectionheader}\sethook{{start}}{{s2%D%}}{{\placesectionheadbox}}
-{%E%fancy/sectionheader}\squashgridboxfalse
+{fancy/sectionheader}\newbox\sectionheadbox%D%
+{fancy/sectionheader}\def\placesectionheadbox%D%{{%
+{fancy/sectionheader}  \ifvoid\sectionheadbox%D% % set up the \sectionheadbox box the first time it's needed
+{fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\hbox to \hsize{{\hss \XeTeXpdffile "{fancy/sectionheaderpdf}" scaled {fancy/sectionheaderscale} \relax\hss}}%
+{fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\vbox to 0pt
+{fancy/sectionheader}        {{\kern-\ht\sectionheadbox%D% \kern {fancy/sectionheadershift}pt \box\sectionheadbox \vss}}
+{fancy/sectionheader}  \fi
+{fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}%
+{fancy/sectionheader}}}
+{fancy/sectionheader}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
+{fancy/sectionheader}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
+{fancy/sectionheader}\sethook{{start}}{{s2%D%}}{{\placesectionheadbox}}
+{fancy/sectionheader}\squashgridboxfalse
 
-{%E%fancy/versedecoratorisfile}\newbox\versestarbox%D%
-{%E%fancy/versedecoratorisfile}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{%E%fancy/versedecoratorpdf}" scaled {%E%fancy/versedecoratorscale} \relax}}
-{%E%fancy/versedecoratorisfile}\def\AdornVerseNumber%D%#1{{\beginL\rlap{{\hbox to \wd\versestarbox%D%{{\hfil #1\hfil}}}}%
-{%E%fancy/versedecoratorisfile}    \raise {%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
-{%E%fancy/versedecoratorisayah}\catcode`@=11\catcode`-=11\catcode`\~=12\lccode`\~=32\lowercase{{%
-{%E%fancy/versedecoratorisayah} \def\vp #1\vp*{{\edef\temp{{#1}}\x@\spl@tverses\temp --\relax
-{%E%fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\plainv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
-{%E%fancy/versedecoratorisayah}\catcode`@=12\catcode`=12
-{%E%fancy/versedecoratorisayah}\def\AdornVerseNumber%D%#1{{\hbox{{\char"06DD #1}}}}
-""".replace("%D%", replaceD).replace("%E%", replaceE)
-        return res.format(**texmodel.dict)
+{fancy/versedecoratorisfile}\newbox\versestarbox%D%
+{fancy/versedecoratorisfile}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{fancy/versedecoratorpdf}" scaled {fancy/versedecoratorscale} \relax}}
+{fancy/versedecoratorisfile}\def\AdornVerseNumber%D%#1{{\beginL\rlap{{\hbox to \wd\versestarbox%D%{{\hfil #1\hfil}}}}%
+{fancy/versedecoratorisfile}    \raise {fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
+{fancy/versedecoratorisayah}\catcode`@=11\catcode`-=11\catcode`\~=12\lccode`\~=32\lowercase{{%
+{fancy/versedecoratorisayah} \def\vp #1\vp*{{\edef\temp{{#1}}\x@\spl@tverses\temp --\relax
+{fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\plainv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
+{fancy/versedecoratorisayah}\catcode`@=12\catcode`=12
+{fancy/versedecoratorisayah}\def\AdornVerseNumber%D%#1{{\hbox{{\char"06DD #1}}}}
+""".replace("%D%", k)
+        return res.format(**v.dict)
 
     unusedStuff = r"""
 % Some code to allow us to kern chapter numbers

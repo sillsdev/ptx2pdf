@@ -1,10 +1,10 @@
 
-from ptxprint.utils import refSort, universalopen, print_traceback, nonScriptureBooks
+from ptxprint.utils import refSort, universalopen, print_traceback, nonScriptureBooks, appdirs
 from threading import Thread
 import configparser
 import regex, re, logging
 import os, re, random, sys
-import appdirs, traceback
+import traceback
 from typing import Dict
 
 logger = logging.getLogger(__name__)

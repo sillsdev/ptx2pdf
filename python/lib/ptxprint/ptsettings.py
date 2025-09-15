@@ -16,6 +16,19 @@ ptrefsepvals = {
 
 _versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org
 
+_ldml_paths = {
+    "month":    'dates/calendars/calendar[@type="gregorian"]/months/monthContext[@type="format"]/monthWidth[@type="{length}"]/month[@type="{num}"]',
+    "day":      'dates/calendars/calendar[@type="gregorian"]/days/dayContext[@type="format"]/dayWidth[@type="{length}"]/day[@type="{num}"]',
+}
+_ldml_lengths = {
+    "a":    "short",
+    "s":    "abbreviated",
+    "l":    "wide"
+}
+_ldml_days = "sun mon tue wed thu fri sat"
+_ldml_months = "jan feb mar apr may jun jul aug sep oct nov dec"
+_ldml_datenums = {k:i for v in (_ldml_days, _ldml_months) for i, k in enumerate(v)}
+
 class ParatextSettings:
     def __init__(self, prjdir):
         self.dict = {}
@@ -90,6 +103,21 @@ class ParatextSettings:
         else:
             self.ldml = None
 
+    def get_ldml(self, length, key):
+        b = [x.strip() for x in re.split(r'[.:]', key)]
+        if b[0] == "ldml":
+            if self.ldml is None:
+                return b[2]
+            t = b[1].lower()
+            if t in ("day", "month"):
+                parms = {   "num":      _ldml_datenums.get(b[2].lower(), 0),
+                            "length":   _ldml_lengths.get(length, "abbreviated"),
+                            "key":      b[2] }
+                val = self.ldml.findtext(_ldml_paths[t].format(**parms))
+                if val is not None:
+                    return val
+        return b[2]
+
     def read_bookNames(self, fpath):
         bkstrs = {}
         self.bookStrs = {}
@@ -110,8 +138,8 @@ class ParatextSettings:
             self.bkNames = {k:v for k,v in bkstrs.items() if v != ""}
 
     def default_bookNames(self):
-        self.bookNames = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
-        self.bookStrs = {k: [k] * 3 for k in self.bookNames.keys()}
+        self.bkNames = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
+        self.bookStrs = {k: [k] * 3 for k in self.bkNames.keys()}
 
     def getLocalBook(self, s, level=0):
         return self.bookStrs.get(s, [s]*(level+1))[level] or s
@@ -228,6 +256,18 @@ class ParatextSettings:
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
 
+    def getABook(self, bk=None):
+        try:
+            start = allbooks.index(bk)
+            start += 1
+        except ValueError:
+            start = 0
+        for i in range(start, len(allbooks)):
+            fname = self.getBookFilename(allbooks[i])
+            path = os.path.join(self.prjdir, fname)
+            if os.path.exists(path):
+                return allbooks[i]
+
     def getArchiveFiles(self):
         res = {}
         for a in ("Settings.xml", "BookNames.xml", "ptxSettings.xml"):
@@ -300,7 +340,7 @@ class PTEnvironment(Environment):
         if res is None or level >= len(res):
             return bk
         else:
-            return res[self.level]
+            return res[level]
 
     def parsebook(self, bk):
         res = self.bookstrings.get(bk.lower(), None)

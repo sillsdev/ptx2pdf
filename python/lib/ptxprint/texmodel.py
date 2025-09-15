@@ -1159,7 +1159,7 @@ class TexModel:
                 endc = int(c) + int(self.dict['slice/length'])
                 self.localChanges.append(makeChange(rf"\\c {c}\s.+?\\v {v}\s.+?({self.dict['slice/word']})", \
                                                     rf"\uFFFF\n\{self.dict['slice/marker']} \1", flags=regex.S))
-                self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf'\\zsetref|bkid="{b}" chapter="{c}" verse="{v}"\*\n', flags=regex.S))
+                self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf'\\vid|bkid="{b}" chapter="{c}" verse="{v}"\*\n', flags=regex.S))
             else:
                 try:
                     startc = int(sliceRef.split(" ",1)[-1])

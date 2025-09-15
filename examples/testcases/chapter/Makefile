@@ -18,7 +18,7 @@ bisect:
 
 auto:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do sleep 2; make test.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 2; make test.pdf ; date; done < /dev/null
 
 1:
 	rename -f 's/\./.1./' test.pdf test.parlocs test.delayed

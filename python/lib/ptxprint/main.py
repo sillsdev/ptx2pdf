@@ -1,14 +1,13 @@
 #!/usr/bin/python3
 import argparse, sys, os, re, configparser, shlex
-import appdirs
 import site, logging
 from shutil import rmtree
 from zipfile import ZipFile
 
 import ptxprint
-from ptxprint.utils import saferelpath
+from ptxprint.utils import saferelpath, appdirs
 from pathlib import Path
-import debugpy
+# import debugpy
 # debugpy.listen(("localhost", 5678))
 # print("Waiting for debugger to attach...")
 # debugpy.wait_for_client()
@@ -101,6 +100,7 @@ def main(doitfn=None):
         def print_message(message, file=None):
             tv.print_message(message)
         parser._print_message = print_message
+        os.environ['PATH'] += os.pathsep + sys._MEIPASS.replace("/","\\")
 
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None

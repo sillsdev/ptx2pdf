@@ -29,6 +29,32 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+% General purpose "book ch:V" parser.
+\def\@p@rseref#1{%
+  \edef\tmpa{#1}%
+  \edef\tmp{\x@\zap@space#1 \empty}%
+  \ifx\tmp\tmpa
+    \let\p@rsedV\relax%
+    \trace{T}{Unparsable reference "#1"}%
+  \else
+    \x@\@@p@rserefC#1::\END % First try CH:V
+    \ifx\p@rsedV\relax\x@\@@p@rserefD#1..\END\fi % if that fails, then try CH.V
+    \trace{T}{Parsed reference as '\p@rsedID' '\p@rsedC':'\p@rsedV'}%
+  \fi
+}
+
+\def\@@p@rserefC#1 #2:#3:#4\END{%
+  \def\tmp{#3}\ifx\tmp\empty\let\p@rsedV\relax\else
+    \let\p@rsedV\tmp\edef\p@rsedID{#1}\edef\p@rsedC{#2}%
+  \fi
+}
+\def\@@p@rserefD#1 #2.#3.#4\END{%
+  \def\tmp{#3}\ifx\tmp\empty\let\p@rsedV\relax\else
+    \let\p@rsedV\tmp\edef\p@rsedID{#1}\edef\p@rsedC{#2}%
+  \fi
+}
+
+
 % scantokens triggers eof, and might be used to pull in code that makes other scantokens calls.
 % Therefore it should be wrapped in these: 
 \newcount\s@vedeofdepth
@@ -195,3 +221,5 @@
 \def\save@m@rk#1{\getm@rknum{#1}\x@\xdef\csname customtopmark-#1\endcsname{\firstmarks\m@rknum}\x@\xdef\csname custombotmark-#1\endcsname{\botmarks\m@rknum}\trace{ma}{top=\csname customtopmark-#1\endcsname, bot=\csname custombotmark-#1\endcsname}}
 \def\unsavem@rks{\trace{ma}{Unsaving marks: \the\usedm@rks}\let\\=\unsave@m@rk \the\usedm@rks}
 \def\unsave@m@rk#1{\getm@rknum{#1}\ifcsname customtopmark-#1\endcsname\marks\m@rknum{\csname customtopmark-#1\endcsname}\else\trace{ma}{-skipping customtopmark-#1 (undefined)-}\fi\ifcsname custombotmark-#1\endcsname\marks\m@rknum{\csname custombotmark-#1\endcsname}\fi}
+
+

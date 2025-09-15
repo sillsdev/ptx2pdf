@@ -21,6 +21,9 @@ fontconfig_template = """<?xml version="1.0"?>
         <rejectfont>
             <glob>*.woff</glob>
         </rejectfont>
+        <rejectfont>
+            <glob>*.otf</glob>
+        </rejectfont>
 <!--        <rejectfont>
             <pattern>
                 <patelt name="variable"/>
@@ -52,6 +55,9 @@ def writefontsconf(extras, archivedir=None, testsuite=None):
         fname = os.path.join(os.getenv("LOCALAPPDATA", "/"), "SIL", "ptxprint", "fonts.conf")
     if sys.platform == "darwin":
         dirs.append(os.path.join("/System", "Library", "Fonts"))
+        dirs.append(os.path.join("/Library", "Fonts"))
+        dirs.append(os.path.join("~", "Library", "Fonts"))
+
     if archivedir is not None or not sys.platform.startswith("win"):
         if (not testsuite):
           dirs.append("/usr/share/fonts")
@@ -884,7 +890,7 @@ class TTFont:
         self.advances = metrics[0::2]
 
     def readglyf(self, inf):
-        if hasattr(self, 'glyphs'):
+        if hasattr(self, 'glyphs') or 'loca' not in self.dict:
             return
         self.readhead(inf)
         self.readmaxp(inf)
