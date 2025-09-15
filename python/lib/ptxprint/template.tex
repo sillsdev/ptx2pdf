@@ -347,7 +347,8 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
-\pageno={document/startpagenum}
+\edef\oldpageno{{\the\pageno}}% Just in case the user wants it
+\ifnum\pageno<1 \pageno={document/startpagenum}\fi
 {document/ifdiglot}\diglottrue
 \addtoendptxhooks{{\zautoBookEndDecoration}}
 % job files:

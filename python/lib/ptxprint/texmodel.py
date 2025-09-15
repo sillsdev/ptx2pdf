@@ -672,7 +672,7 @@ class TexModel:
                             if not self.dict['document/noblankpage']:
                                 res.append(r"\catcode`\@=11 \need@oddpage{\emptyoutput}\catcode`\@=12")
                             res.append(r"\edef\oldpageno{\the\pageno}% Just in case the user wants it");
-                            res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
+                            res.append(r"\ifnum\pageno<1 \pageno={}\fi".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
                                    self.asBool('document/ifshowchapternums', '%') and f in oneChbooks:
