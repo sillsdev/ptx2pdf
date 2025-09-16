@@ -172,7 +172,7 @@ class Module:
             book = None
         if book is None:
             return []
-        res = book.xml.getrefs(ref, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
+        res = book.xml.getrefs(ref, titles=False, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
                                     chapters= not any('chapter' in x[3] for x in removes))
         for e, isin in res.iterusx():
             if not isin:
