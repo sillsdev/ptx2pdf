@@ -42,6 +42,7 @@
 %
 \def\m@ken@tecl@ss#1{%
   \trace{n}{m@ken@tecl@ss #1}%
+        \trace{fp}{Penalties are ilp:\the\interlinepenalty, wp:\the\widowpenalty, cp:\the\clubpenalty}%
   \newcl@sstrue
   \def\n@wcl@ss{#1}%
   \let\\=\ch@ckifcl@ss \the\n@tecl@sses % check if this note class is already defined
@@ -361,7 +362,7 @@
       \hsize=\n@tewidth
     \fi
 %%% single-column notes:
-    \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
+    \interlinepenalty\interfootnotelinepenalty % set penalty to break lines (Typ 100. Allow the note to be broken by the page-builder
     \let\styst@k\empty
     \parfillskip=0pt plus 1fil
     \leftskip=0pt \rightskip=0pt
@@ -688,7 +689,7 @@
 \f@rstnotetrue
 \def\footnoterule{\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\n@tewidth}{%
   \FootNoteRuleLeftIndent \vrule height \FootNoteRuleThickness width \FootNoteRuleWidth\n@tewidth
-  \FootNoteRuleRightIndent}\penalty10000\hrule height 0pt depth 0pt width 0pt}% 
+  \FootNoteRuleRightIndent}\penalty10000 \hrule height 0pt depth 0pt width 0pt}% 
 
 \def\noterule#1#2#3#4{\trace{f}{noterule #1=\the#1 #2 #3 #4}{\dimen1=#1
   \ifversion{2}{\advance\dimen1 -#2}{}%
@@ -821,6 +822,8 @@
 \lastnoteparpenalty=100
 \lastnoteclubpenalty=10000
 \lastnotewidowpenalty=10000
+\newcount\earlynoteinterlinepen@lty % The penalty associated with a re-written note when NOT in the last note. Should be 10k OR MORE. Only a variable for debugging (identification) needs.
+\earlynoteinterlinepen@lty=10000
 \newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
 \newskip\noteRag\noteRag=0pt plus 36pt
 \def\setl@stnoteclass#1{%define \l@stnoteclass to be the noteclass of the last content-containing note
@@ -1067,13 +1070,14 @@
             \penalty\lastnoteparpenalty % a paragraph in the last note is a very reasonable place to break if notes are going to break.
             \interlinepenalty=\lastnoteinterlinepenalty \widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty
           \else 
-            \interlinepenalty=\interfootnotelinepenalty
+            \interlinepenalty=\earlynoteinterlinepen@lty
             \penalty12346
           \fi
         \else 
-          \interlinepenalty=\interfootnotelinepenalty
+          \interlinepenalty=\earlynoteinterlinepen@lty
           \penalty12345
         \fi
+        \trace{fp}{Penalties are ilp:\the\interlinepenalty, wp:\the\widowpenalty, cp:\the\clubpenalty}%
         %\showbox2
         \ifvoid2\else
           \vskip\dimexpr\baselineskip - \ht2\relax %reimpose topskip
@@ -1119,7 +1123,8 @@
           \fi %
           \lastn@tefalse
         \fi
-        \interlinepenalty=\interfootnotelinepenalty % set penalty to break lines
+        \interlinepenalty=\earlynoteinterlinepen@lty % set penalty to break lines
+        \trace{fp}{Penalties are ilp:\the\interlinepenalty, wp:\the\widowpenalty, cp:\the\clubpenalty}%
         \ifnum\tmpcount=1\else\lastn@tefalse\fi
       \fi
     \fi
@@ -1137,7 +1142,7 @@
       \vskip\dimexpr\baselineskip - \ht1\relax
     \fi%
     %\ifvbox2 \unvbox2\fi
-    \ifvbox0 \dimen0=\dp0 \box0 \penalty10000\prevdepth=\dimen0 \fi
+    \ifvbox0 \dimen0=\dp0 \box0 \penalty10000 \prevdepth=\dimen0 \fi
     \noindent\leavevmode\@@adj\global\let\@@adj\empty
       \unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3%
     %\nonstopmode\showbox3
@@ -1159,7 +1164,7 @@
        \disc@rdmvbohb
        \trace{fp}{kern of \the\dimen0 \space before last line}%
        \ifdim \dimen0=0pt % A normal skip = normal paragraph
-         \penalty\interfootnotelinepenalty
+         \penalty\earlynoteinterlinepen@lty
          %\ifdim\dimen1=0pt\else \vskip\dimen1 \fi
        \else % interline kern means a lastnotepar
          \penalty\lastnoteparpenalty

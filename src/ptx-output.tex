@@ -905,11 +905,13 @@
     \message{!!! Internal error: Could not identify '\l@stnoteclass' footnote insert}%
   \else 
     \advance\availht \sh@vedim
+    \trace{fp}{Shaving \the\sh@vedim \space from notesbox (excess to next page)}%
+    \ifDBGshownoteboxes\showbox\n@tesbox\fi
     \setbox0=\vsplit\n@tesbox to \dimexpr \ht\n@tesbox - \sh@vedim\relax
+    \ifDBGshownoteboxes\showbox0 \showbox\n@tesbox\fi
     \global\setbox\n@tesoverrun\vbox{\unvbox\n@tesbox\unkern\unskip}%
     \x@\addtonextshipout{\x@\insert\n@tesoverrunins{\box\n@tesoverrun}}%
     \global\setbox\n@tesbox\vbox{\unvbox0}%
-    \trace{fp}{Shaving footnote to \the\sh@vedim (excess to next page)}%
   \fi
 }
 \def\NoteShaveStay{1} % How many lines of *total notes* must stay on the main page before shaving is considered?
