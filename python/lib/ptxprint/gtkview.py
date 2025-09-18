@@ -201,7 +201,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 _ui_basic = """
 t_configName l_configNameMsg l_projectNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
-btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
+btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_mirrorpages c_pagegutter s_pagegutter
@@ -438,14 +438,14 @@ _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_createZipArchiveXtra", "btn_Generate",
                     "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot"), 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
+    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun", 
-                    "btn_addMaps2", "btn_editMaps2", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"),
+                    "btn_addMaps2", "btn_editMaps2"),
     "tinybutton":  ("col_noteLines",),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
-    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"), # "spolyfraction_", 
+    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
@@ -454,9 +454,9 @@ _object_classes = {
     "stybutton":   ("btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
-                    "btn_plGenerate", "btn_downloadPics", "btn_resetTabGroups", "btn_adjust_spacing", 
+                    "btn_plGenerate", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom",  
-                    "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats") # "btn_reloadConfig", 
+                    "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats")
 }
 
 _pgpos = {
@@ -535,12 +535,12 @@ _dlgtriggers = {
     "dlg_features":         "onFontFeaturesClicked",
     "dlg_multProjSelector": "onChooseTargetProjectsClicked",
     "dlg_gridsGuides":      "adjustGridSettings",
-    "dlg_DBLbundle":        "onDBLbundleClicked",
     "dlg_overlayCredit":    "onOverlayCreditClicked",
     "dlg_sbPosition":       "onSBpositionClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
     "dlg_generateCover":    "onGenerateCoverClicked",
     "dlg_borders":          "onSBborderClicked",
+    # "dlg_DBLbundle":        "onDBLbundleClicked",
     # "dlg_preview":          "????",
 }
 
@@ -923,10 +923,18 @@ class GtkViewModel(ViewModel):
             if os.path.exists(os.path.join(p.path, 'TermRenderings.xml')):
                 strngsfbprojects.append([prjid, guid])
 
+        ### MODIFICATION 1: Add the special "Import..." option to the end of the main projects model.
+        # We use a special GUID to identify this action item later.
+        # We also give it a distinct gray color.
+        projects.append(["Import...", "__IMPORT_PROJECT__", Pango.Weight.NORMAL, "#808080"])
+        
         # 5. Connect the styling function to the ComboBox renderer
         combo = self.builder.get_object("fcb_project")
         renderer = combo.get_cells()[0] 
         combo.set_cell_data_func(renderer, self.set_project_style)
+
+        # Connect the handler and STORE the handler ID
+        self.project_changed_handler_id = combo.connect("changed", self.on_project_changed)
 
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         combo.set_wrap_width(wide)
@@ -957,7 +965,44 @@ class GtkViewModel(ViewModel):
         # Apply the properties to the cell renderer
         cell.set_property('weight', font_weight)
         cell.set_property('foreground', fg_color)
-        
+
+    def on_project_changed(self, combo):
+        model = combo.get_model()
+        active_iter = combo.get_active_iter()
+        # Case 3: Nothing is selected. This happens after we reset the combo.
+        # Exit early to prevent a crash.
+        if active_iter is None:
+            return
+
+        # Get data for the selected row
+        prj = self.project
+        if prj is not None:
+            print(f"{prj.prjid=}, {prj.guid=}")
+        guid = model.get_value(active_iter, 1)
+
+        # Case 2: The user selected the "Import..." action item
+        if guid == "__IMPORT_PROJECT__":
+            # Block this handler to prevent an infinite loop
+            if self.project_changed_handler_id > 0:
+                combo.handler_block(self.project_changed_handler_id)
+            
+            # Reset the ComboBox so "Import..." isn't left selected
+            combo.set_active(-1)
+
+            # Unblock the handler for the next user interaction
+            if self.project_changed_handler_id > 0:
+                combo.handler_unblock(self.project_changed_handler_id)
+
+            # Call the actual import method and stop
+            if self.onImportProject():
+                return
+            # Case 1: A regular project was selected.
+            elif prj is not None:
+                self.setPrjid(prj.prjid, prj.guid)
+        else:
+            self.onProjectChange(None)
+
+            
     def initialize_uiLevel_menu(self):
         levels = self.builder.get_object("ls_uiLevel")
         btn = self.builder.get_object("btn_menu_level")
@@ -1003,7 +1048,6 @@ class GtkViewModel(ViewModel):
             menu.append(item)
         menu.show_all()
         btn.set_popup(menu)
-
 
     def _setup_digits(self):
         digits = self.builder.get_object("ls_digits")
@@ -1505,8 +1549,10 @@ class GtkViewModel(ViewModel):
         else:
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
-        for w in "l_url_usfm lb_DBLdownloads lb_openBible l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split():
+        for w in "l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split():
             self.builder.get_object(w).set_visible(not val)
+        self.builder.get_object("lb_openBible").set_sensitive(not val)
+        self.builder.get_object("lb_DBLdownloads").set_sensitive(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
         self.userconfig.set("init", "nointernet", "true" if newval else "false")
@@ -1518,8 +1564,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(not newval and adv)
         for w in ["l_techFAQ", "lb_ornaments_cat", "lb_tech_ref"]:
             self.builder.get_object(w).set_visible(adv)
-        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"]:
-            self.builder.get_object(w).set_visible(not newval)
         self.i18nizeURIs()
 
     def i18nizeURIs(self):
@@ -5289,7 +5333,7 @@ class GtkViewModel(ViewModel):
         self.set("fcb_project", prj)
         self.set_uiChangeLevel(ui)
 
-    def onDBLbundleClicked(self, btn):
+    def onImportProject(self):
         dialog = self.builder.get_object("dlg_DBLbundle")
         response = dialog.run()
         dialog.hide()
@@ -5297,6 +5341,9 @@ class GtkViewModel(ViewModel):
             prj = self.get("t_DBLprojName")
             if prj != "":
                 self._expandDBLBundle(prj, self.DBLfile)
+                return True
+        else:
+            return False
 
     def onImageSetClicked(self, btn):
         dialog = self.builder.get_object("dlg_getImageSet")
@@ -5976,7 +6023,7 @@ class GtkViewModel(ViewModel):
                     
     def onDonateClicked(self, btn):
         self.popdownMainMenu()
-        self.openURL(r"https://give.sil.org/campaign/597654/donate")
+        self.openURL(r"https://give.sil.org/campaign/725128/donate")
                     
     def deniedInternet(self):
         self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
