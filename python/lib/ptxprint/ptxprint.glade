@@ -1503,17 +1503,24 @@ the name of an existing Project.</property>
                 <child>
                   <object class="GtkLinkButton" id="lb_DBLdownloads">
                     <property name="label" translatable="yes">Primary DBL site</property>
-                    <property name="name">Visit the Digital Bible Library to download a DBL bundle</property>
+                    <property name="name">Visit the Digital Bible Library to download a DBL Scripture bundle</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">There are hundreds of DBL bundles available at
-the Digital Bible Library website which you may
-download and use in a publication.
+                    <property name="tooltip-markup" translatable="yes">There are hundreds of Scripture bundles available
+at the Digital Bible Library website which you may
+download and use in a publication. You must log in
+to the site in order to access resources.
 
-Note that you must log in to the site to access
-resources.</property>
+Use resources which contain the text
+(not just the audio) and preferably
+select the USX download option.
+
+&lt;span fgcolor="#FFFF00"&gt;Note: If this option is disabled, it is
+due to the "Disable ALL Internet Use"
+option which has been set on the
+General section of the Advanced tab.&lt;/span&gt;</property>
                     <property name="halign">center</property>
                     <property name="valign">end</property>
                     <property name="relief">none</property>
@@ -1564,17 +1571,23 @@ Online Repository</property>
                 <child>
                   <object class="GtkLinkButton" id="lb_openBible">
                     <property name="label" translatable="yes">Open.Bible site</property>
-                    <property name="name">Visit the Open.Bible site to download a DBL bundle</property>
+                    <property name="name">Visit the Open.Bible site to download a Scripture bundle</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">There are hundreds of DBL bundles available
+                    <property name="tooltip-markup" translatable="yes">There are hundreds of Scripture bundles
 at the Open.Bible website which you may
 download and use in a publication.
 
 Use resources which contain the text
-and select the USX download option.</property>
+(not just the audio) and preferably
+select the USX download option.
+
+&lt;span fgcolor="#FFFF00"&gt;Note: If this option is disabled, it is
+due to the "Disable ALL Internet Use"
+option which has been set on the
+General section of the Advanced tab.&lt;/span&gt;</property>
                     <property name="halign">center</property>
                     <property name="valign">start</property>
                     <property name="relief">none</property>
@@ -16622,7 +16635,6 @@ Multiple Books:</property>
                                     <property name="wrap-width">1</property>
                                     <property name="entry-text-column">0</property>
                                     <property name="id-column">0</property>
-                                    <signal name="changed" handler="onProjectChange" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -16787,36 +16799,11 @@ chapter number to end with.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_DBLbundleDiglot1">
-                                    <property name="label" translatable="yes">  Import Scripture  </property>
-                                    <property name="name">Get Scripture text from Open.Bible or the Digital Bible Library (DBL)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Many scripture texts are available in a 
-range of languages which can be freely
-downloaded and added to the list of
-available texts to print from. 
-
-Note that these Scripture text bundles 
-will get unpacked into a sub-folder 
-(e.g. C:\My Paratext 9 Projects\_PTXprint)
-to be used by PTXprint. The texts will not 
-be available for viewing or editing in Paratext.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">4</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="spacing">6</property>
+                                    <property name="homogeneous">True</property>
                                     <child>
                                       <object class="GtkButton" id="btn_chooseBibleModule">
                                         <property name="label" translatable="yes">Choose...</property>
@@ -30186,31 +30173,7 @@ same page.</property>
                                     <property name="can-focus">False</property>
                                     <property name="spacing">6</property>
                                     <child>
-                                      <object class="GtkButton" id="btn_DBLbundleDiglot2">
-                                        <property name="label" translatable="yes">  Import Scripture  </property>
-                                        <property name="name">Get Scripture text from Open.Bible or the Digital Bible Library (DBL)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Many scripture texts are available in a 
-range of languages which can be freely
-downloaded and added to the list of
-available texts to print from. 
-
-Note that these Scripture text bundles 
-will get unpacked into a sub-folder 
-(e.g. C:\My Paratext 9 Projects\_PTXprint)
-to be used by PTXprint. The texts will not 
-be available for viewing or editing in Paratext.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <object class="GtkToggleButton" id="btn_adjust_diglot">
