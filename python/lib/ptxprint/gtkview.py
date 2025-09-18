@@ -933,8 +933,6 @@ class GtkViewModel(ViewModel):
         renderer = combo.get_cells()[0] 
         combo.set_cell_data_func(renderer, self.set_project_style)
 
-        # Connect the handler and STORE the handler ID
-        self.project_changed_handler_id = combo.connect("changed", self.on_project_changed)
 
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         combo.set_wrap_width(wide)
@@ -966,43 +964,6 @@ class GtkViewModel(ViewModel):
         cell.set_property('weight', font_weight)
         cell.set_property('foreground', fg_color)
 
-    def on_project_changed(self, combo):
-        model = combo.get_model()
-        active_iter = combo.get_active_iter()
-        # Case 3: Nothing is selected. This happens after we reset the combo.
-        # Exit early to prevent a crash.
-        if active_iter is None:
-            return
-
-        # Get data for the selected row
-        prj = self.project
-        if prj is not None:
-            print(f"{prj.prjid=}, {prj.guid=}")
-        guid = model.get_value(active_iter, 1)
-
-        # Case 2: The user selected the "Import..." action item
-        if guid == "__IMPORT_PROJECT__":
-            # Block this handler to prevent an infinite loop
-            if self.project_changed_handler_id > 0:
-                combo.handler_block(self.project_changed_handler_id)
-            
-            # Reset the ComboBox so "Import..." isn't left selected
-            combo.set_active(-1)
-
-            # Unblock the handler for the next user interaction
-            if self.project_changed_handler_id > 0:
-                combo.handler_unblock(self.project_changed_handler_id)
-
-            # Call the actual import method and stop
-            if self.onImportProject():
-                return
-            # Case 1: A regular project was selected.
-            elif prj is not None:
-                self.setPrjid(prj.prjid, prj.guid)
-        else:
-            self.onProjectChange(None)
-
-            
     def initialize_uiLevel_menu(self):
         levels = self.builder.get_object("ls_uiLevel")
         btn = self.builder.get_object("btn_menu_level")
@@ -3919,9 +3880,14 @@ class GtkViewModel(ViewModel):
         lockBtn.set_sensitive(False)
         w = self.builder.get_object("fcb_project")
         m = w.get_model()
+        project = self.project
         aid = w.get_active_iter()
         prjid = m.get_value(aid, 0)
         guid = m.get_value(aid, 1)
+        if guid == "__IMPORT_PROJECT__":
+            if not self.onImportProject() and project is not None:
+                self.setPrjid(project.prjid, project.guid)
+            return
         cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
         # Q: Why is saveme never used below?
         saveme = self.pendingPid is None and self.pendingConfig is None
