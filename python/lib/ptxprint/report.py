@@ -437,8 +437,9 @@ class Report:
 
         if threshold == 0:
             badlist = plocs.getnbadspaces()
-            threshold = badlist[0].widthem
             count = len(badlist)
+            if count > 0:
+                threshold = badlist[0].widthem
         if len(badlist):
             bads = set([Ref(x.line.ref.replace(".", " ")) for x in badlist if x.line.ref])
             self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}\n" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")
