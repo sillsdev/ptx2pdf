@@ -205,7 +205,7 @@ texpertOptions = {
                             _("Step Value to expand text using right-click context menu adjustment.")),
     "ExpandTextLimit":    O("expandtextlimit", "PRV", (110, 105, 125, 1, 1, 0), "", _("Maximum Text Expand (%)"),
                             _("Limit how much text can expand to using right-click context menu adjustment.")),
-    "BadSpaces":          O("spaceEms", "PRV", (3, 0, 10, 0.1, 0.1, 1), "", _("Bad Space minimum width (em)"),
+    "BadSpaces":          O("spaceEms", "PRV", (1.3, 0, 10, 0.1, 0.1, 1), "", _("Bad Space minimum width (em)"),
                             _("Minimum width for a bad space. 0 says to calculate for the 20 worst spaces in the doc")),
     "BadCharSpaces":      O("charSpaceEms", "PRV", (0.3, 0, 1, 0.01, 0.1, 2), "", _("Bad intercharacter space minimum width (em)"),
                             _("Minimum width for a bad inter character space.")),
