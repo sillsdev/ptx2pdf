@@ -153,7 +153,8 @@ class PDFViewer:
             setattr(v, name, val)
         elif hasattr(self.views[0], name):
             setattr(self.views[0], name, val)
-        raise AttributeError(f"No attribute {name} setting to {val}")
+        else:
+            raise AttributeError(f"No attribute {name} setting to {val}")
 
 
 class PDFFileViewer:
@@ -1136,7 +1137,7 @@ class PDFContentViewer(PDFFileViewer):
 
     def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
         def plocs(self):
-            self.load_parlocs(self.parlocs, rtl=rtl)
+            self.load_parlocs(self.parlocfile, rtl=rtl)
             if page is not None and page in self.parlocs.pnums:
                 self.current_page = page
                 self.current_index = self.parlocs.pnums[page]
@@ -1225,7 +1226,13 @@ class PDFContentViewer(PDFFileViewer):
         super().updatePageNavigation()
 
         self.all_pages = []
+        pg = self.current_index or 1
+        pnumpg = self.parlocs.pnumorder[pg - 1] if self.parlocs and pg <= len(self.parlocs.pnumorder) else 1
+        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
+        num_pages = self.numpages
 
+        seekPrevBtn = self.model.builder.get_object("btn_seekPage2fill_previous")
+        seekNextBtn = self.model.builder.get_object("btn_seekPage2fill_next")
         if not self.model.get('c_layoutAnalysis', False):
             ufPages         = self.model.ufPages or []
             collisionPages  = []
