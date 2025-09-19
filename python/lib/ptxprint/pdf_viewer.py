@@ -109,9 +109,54 @@ def arrayImage(imarray, width, height):
         width, height, stride)
     return Gtk.Image.new_from_pixbuf(pixbuf)
 
-_boxnames = ["bx_previewPDF", "bx_previewCover", "bx_previewDiff"]
 
 class PDFViewer:
+    boxnames = ["bx_previewPDF", "bx_previewCover", "bx_previewDiff"]
+
+    def __init__(self, model, nbook, tv):
+        self.model = model
+        self.nbook = nbook
+        self.viewers = []
+        for k in self.boxnames:
+            w = model.builder.get_object(k)
+            self.viewers.append(PDFContentViewer(model, w, tv) if k == "bx_previewPDF" else PDFFileViewer(model, w))
+
+    def loadnshow(self, fname, **kw):
+        fbits = os.path.splitext(fname) if fname is not None else None
+        for i, a in enumerate(("{}{}", "{}_Cover{}", "{}_diff{}")):
+            if fbits is not None:
+                fpath = a.format(*fbits)
+            v = self.nbook.get_nth_page(i)
+            if fbits is not None and os.path.exists(fpath):
+                self.viewers[i].loadnshow(fpath, **kw)
+                v.show()
+            else:
+                v.hide()
+
+    def clear(self, widget=None):
+        for v in self.viewers:
+            v.clear(widget=widget)
+
+    def settingsChanged(self):
+        self.viewers[0].settingsChanged()
+
+    def _currview(self):
+        curr = self.nbook.get_current_page()
+        return self.viewers[curr]
+
+    def __getattr__(self, name):
+        return getattr(self._currview(), name)
+
+    def set(self, name, val):
+        v = self._currview()
+        if hasattr(v, name):
+            setattr(v, name, val)
+        elif hasattr(self.views[0], name):
+            setattr(self.views[0], name, val)
+        raise AttributeError(f"No attribute {name} setting to {val}")
+
+
+class PDFFileViewer:
     def __init__(self, model, widget): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
         self.model = model      # a view/gtkview
@@ -245,6 +290,20 @@ class PDFViewer:
         self.document = None
         if widget is not None:
             widget.set_title(_("PDF Preview:"))
+
+    def minmaxnumpages(self):
+        rmin = 0
+        rmax = self.document.get_n_pages()
+        return (rmin, rmax, rmax)
+
+    def getpnum(self, n, d):
+        return n
+
+    def closestpnum(self, pg):
+        return pg
+
+    def seekUFpage(self, direction):
+        pass
 
     def set_zoom(self, zoomLevel, scrolled=False, setz=True):
         if zoomLevel == self.zoomLevel:
@@ -509,10 +568,6 @@ class PDFViewer:
 
     def set_page(self, action):
         increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
-        canmap = self.parlocs.pnumorder is not None and len(self.parlocs.pnumorder) > 0 \
-                    and self.numpages == len(self.parlocs.pnumorder)
-        # print(f"{canmap=}  {cpage=}       {action}  RTL:{self.swap4rtl(action)}")
-        # Safeguard against invalid cpage or empty pnumorder
         pg = self.current_index
         try:
             if action == self.swap4rtl("first"):
@@ -527,7 +582,6 @@ class PDFViewer:
                 logger.error(f"Unknown action: {action}")
                 return
         except IndexError:
-            # print(f"FAILED with IndexError in set_page. {action=}  {increment=}  {cpage=}  {pg=}  {canmap=}")
             pg = 1
         logger.debug(f"page {pg=} {self.current_page=}")
         self.show_pdf(pg)
@@ -605,7 +659,7 @@ class PDFViewer:
         cairo_context.restore()
 
 
-class PDFContentViewer(PDFViewer):
+class PDFContentViewer(PDFFileViewer):
 
     def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         super().__init__(model, widget)
@@ -1274,6 +1328,27 @@ class PDFContentViewer(PDFViewer):
                 seekText = _("Locate {} issue page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
             # Use markup so colors are shown
             o.set_tooltip_markup(seekText)
+
+    def minmaxnumpages(self):
+        if self.parlocs is None or not len(self.parlocs.pnums):
+            return super().minmaxnumpages()
+        minPg = min(self.parlocs.pnums)
+        last_key = list(self.parlocs.pnums.keys())[-1]
+        numpg = len(self.parlocs.pnums)
+        return (minPg, last_key, numpg)
+
+    def getpnum(self, n, d):
+        if self.parlocs is not None:
+            return self.parlocs.pnums.get(self.pdf_viewer.current_page, d)
+        else:
+            return n
+
+    def closestpnum(self, pg):
+        if self.parlocs is not None:
+            available_pnums = self.parlocs.pnums.keys()
+            if len(available_pnums) and pg not in available_pnums:
+                pg = min(available_pnums, key=lambda p: abs(p - pg))
+        return pg
 
     def get_parloc(self, widget, event):
         x = event.x / self.zoomLevel

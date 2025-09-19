@@ -47,7 +47,7 @@ from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
 from ptxprint.hyphen import Hyphenation
 from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
-from ptxprint.pdf_viewer import PDFContentViewer, Paragraphs
+from ptxprint.pdf_viewer import PDFViewer, Paragraphs
 from ptxprint.tatweel import TatweelDialog
 from ptxprint.gtkpolyglot import PolyglotSetup
 from ptxprint.report import Report
@@ -858,7 +858,7 @@ class GtkViewModel(ViewModel):
         logger.debug("Create PicList")
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
-        self.pdf_viewer = PDFContentViewer(self, self.builder.get_object("bx_previewPDF"), self.builder.get_object("tv_pdfContents"))
+        self.pdf_viewer = PDFViewer(self, self.builder.get_object("nbk_PDFviewer"), self.builder.get_object("tv_pdfContents"))
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
@@ -6741,18 +6741,13 @@ Thank you,
         if npages is None:
             lpcount.set_label("")
         else:
-            if not self.pdf_viewer.parlocs or not self.pdf_viewer.parlocs.pnums:
+            pgmin, pgmax, pgnum = self.pdf_viewer.minmaxnumpages()
+            if npages < pgnum:
                 lpcount.set_label(f"{str(npages)}")  # Default to total pages
+            elif pgmin < 1:
+                lpcount.set_label(f"({str(abs(pgmin))})+{str(pgmax)}")
             else:
-                if npages < len(self.pdf_viewer.parlocs.pnums):
-                    lpcount.set_label(f"{str(npages)}")
-                else:
-                    minPg = min(self.pdf_viewer.parlocs.pnums)
-                    last_key = list(self.pdf_viewer.parlocs.pnums.keys())[-1]
-                    if minPg < 1:
-                        lpcount.set_label(f"({str(abs(minPg))})+{str(last_key)}")
-                    else:
-                        lpcount.set_label(f"{str(last_key)}")            
+                lpcount.set_label(f"{str(pg_max)}")
 
     def onBookViewClicked(self, widget):
         window = self.builder.get_object("dlg_preview")
@@ -6775,21 +6770,14 @@ Thank you,
             self.onPgNumChanged(None, None)
 
     def getPgNum(self):
-        if self.pdf_viewer.parlocs is not None:
-            pg = self.pdf_viewer.parlocs.pnums.get(self.pdf_viewer.current_page, 1)
-        else:
-            pg = 1
-        return pg
+        return self.pdf_viewer.getpnum(1, 1)
 
     def onPgNumChanged(self, widget, x):
         value = self.get("t_pgNum", "1").strip()
         pg = int(value) if value.isdigit() else 1
-        if self.pdf_viewer.parlocs is not None:
-            available_pnums = self.pdf_viewer.parlocs.pnums.keys()
-            if len(available_pnums) and pg not in available_pnums:
-                pg = min(available_pnums, key=lambda p: abs(p - pg))
+        pg = self.pdf_viewer.closestpnum(pg)
         self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
-        pnum = self.pdf_viewer.parlocs.pnums.get(pg, pg) if self.pdf_viewer.parlocs is not None else pg
+        pnum = self.pdf_viewer.getpnum(pg, pg)
         self.pdf_viewer.show_pdf(pnum, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
@@ -6802,9 +6790,6 @@ Thank you,
         self.pdf_viewer.setShowAnalysis(self.get("c_layoutAnalysis"), float(self.get("s_spaceEms", 3.0)))
         
     def onPrintItClicked(self, widget):
-        pages = self.pdf_viewer.numpages
-        if not pages:
-            return
         self.pdf_viewer.print_document()
 
     def onZoomLevelChanged(self, widget):
@@ -6828,8 +6813,6 @@ Thank you,
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
         self.pdf_viewer.set_page(x)
-        # print(f"No longer calling updatePageNavigation after set_page in onNavigatePageClicked")
-        # self.pdf_viewer.updatePageNavigation()
 
     def onEditingPgNum(self, w, x):  # From 'key-release' event on t_pgNum
         if self.loadingConfig:
@@ -6900,13 +6883,13 @@ Thank you,
     def showRulesClicked(self, btn):
         v = self.get("c_gridLines")
         if self.pdf_viewer is not None:
-            self.pdf_viewer.showguides = v
+            self.pdf_viewer.set('showguides', v)
             self.pdf_viewer.show_pdf()
 
     def showGridClicked(self, btn):
         v = self.get("c_gridGraph")
         if self.pdf_viewer is not None:
-            self.pdf_viewer.showgrid = v
+            self.pdf_viewer.set('showgrid', v)
             self.pdf_viewer.show_pdf()
 
     def showRulesOrGridClicked(self, btn):
