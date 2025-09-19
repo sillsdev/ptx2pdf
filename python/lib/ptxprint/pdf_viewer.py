@@ -12,6 +12,7 @@ from ptxprint.gtkpiclist import PicList
 from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
 from ptxprint.xdv.spacing_oddities import SpacingOddities
 from pathlib import Path
+from typing import Optional
 from threading import Timer
 import logging
 
@@ -108,9 +109,10 @@ def arrayImage(imarray, width, height):
         width, height, stride)
     return Gtk.Image.new_from_pixbuf(pixbuf)
 
+_boxnames = ["bx_previewPDF", "bx_previewCover", "bx_previewDiff"]
 
 class PDFViewer:
-    def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
+    def __init__(self, model, widget): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
         self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
@@ -121,46 +123,19 @@ class PDFViewer:
         
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
-        self.toctv = tv
-        self.cr = Gtk.CellRendererText()
-        tvc = Gtk.TreeViewColumn("Title", self.cr, text=0)
-        self.toctv.append_column(tvc)
-        self.toctv.connect("row-activated", self.pickToc)
         self.numpages = 0
         self.document = None
         self.fname = None
-        self.parlocfile = None
         self.current_page = None    # current folio page number
         self.current_index = None   # current pdf page index starts at 1
         self.zoomLevel = 1.0        # Initial zoom level is 100%
         self.old_zoom = 1.0
         self.spread_mode = self.model.get("c_bkView", False)
-        self.parlocs = None
-        self.widget = None
         self.psize = (0, 0)
-        # self.drag_start_x = None
-        # self.drag_start_y = None
-        self.is_dragging = False
-        self.adjlist = None
-        self.timer = None
-        self.showadjustments = True
         self.piczoom = 85
-        self.showguides = False
-        self.showgrid = False
-        self.showrects = False # self.model.get("c_pdfadjoverlay", False)
-        self.showanalysis = False
-        self.spacethreshold = 0
-        self.charthreshold = 0
-        self.ufCurrIndex = 0
-        self.currpref = None
-        self.timer_id = None  # Stores the timer reference
-        self.last_click_time = 0  # Timestamp of the last right-click
-        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
-        self.linespacing = float(self.model.get("s_linespacing", "12"))
-        self.collisionpages = []
-        self.spacepages = []
-        self.riverpages = []
-        
+        self.rtl_mode = False
+        self.widget = None
+
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
         self.hbox.add_events(Gdk.EventMask.SCROLL_MASK | Gdk.EventMask.BUTTON_PRESS_MASK)
@@ -169,28 +144,6 @@ class PDFViewer:
         self.hbox.connect("key-press-event", self.on_key_press_event)
         self.hbox.connect("scroll-event", self.on_scroll_event)
         self.hbox.set_can_focus(True)  # Ensure the widget can receive keyboard focus
-
-        # This may end up in page rendering code. Just collect data for now
-        display = Gdk.Display.get_default()
-        screen = display.get_default_screen()
-        window = screen.get_root_window()
-        scale = window.get_scale_factor()
-        logger.debug(f"Window scaling = {scale}")
-
-    def setShowAdjOverlay(self, val):
-        self.showadjustments = val
-        self.show_pdf()
-
-    def setShowParaBoxes(self, val):
-        self.showrects = val
-        self.show_pdf()
-
-    def setShowAnalysis(self, val, threshold):
-        self.showanalysis = val
-        self.spacethreshold = threshold
-        if self.showanalysis:
-            self.loadnshow(None, page=self.current_page)
-        self.show_pdf()
 
     def create_boxes(self, num):
         boxes = self.hbox.get_children()
@@ -215,7 +168,7 @@ class PDFViewer:
                     self.hbox.pack_start(event_box, False, False, 1)
                 boxes.append(event_box)
 
-    def update_boxes(self, images):
+    def update_boxes(self, images, index=0):
         self.hbox.hide()
         children = self.hbox.get_children()
         for i,c in enumerate(children):
@@ -229,6 +182,484 @@ class PDFViewer:
             c.show()
         self.hbox.show()
         self.hbox.grab_focus()
+
+    def load_pdf(self, pdf_path, **kw):
+        if pdf_path is not None and os.path.exists(pdf_path):
+            file_uri = Path(pdf_path).as_uri()
+            self.document = Poppler.Document.new_from_file(file_uri, None)
+            self.hbox.show()
+        else:
+            self.hbox.hide()
+
+    def show_pdf(self, cpage=None, rtl=False, setpnum=True):
+        """ cpage is a index (1 based) """
+        if self.document is None:
+            self.clear()
+            return
+        if cpage is None:
+            cpage = self.current_index or 1
+        page = cpage
+        images = []
+        if cpage in range(self.numpages+1):
+            self.create_boxes(1)
+            pg = self.document.get_page(cpage-1)
+            self.psize = pg.get_size()
+            images.append(render_page_image(pg, self.zoomLevel, cpage, layerfns))
+        else:
+            pg = None
+
+        self.current_page = page
+        self.current_index = cpage
+        if setpnum:
+            self.model.set("t_pgNum", str(page), mod=False)
+        self.update_boxes(images)
+        self.updatePageNavigation()
+        return pg
+
+    def loadnshow(self, fname, rtl=False, widget=None, page=None, hook=None, **kw):
+        self.rtl_mode = rtl
+        if fname is None:
+            fname = self.fname
+        if fname is None:
+            return False
+        if not self.load_pdf(fname, **kw):
+            return False
+        if hook is not None:
+            hook(self)
+        self.show_pdf(rtl=rtl)
+        pdft = os.stat(fname).st_mtime
+        mod_time = datetime.datetime.fromtimestamp(pdft)
+        formatted_time = mod_time.strftime("   %d-%b %H:%M")
+        if widget is None:
+            widget = self.widget
+        self.widget = widget
+        widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
+        self.model.set_preview_pages(self.numpages, _("Pages:"))
+        widget.show_all()
+        self.set_zoom_fit_to_screen(None)
+        self.updatePageNavigation()
+        return True
+
+    def clear(self, widget=None):
+        self.create_boxes(0)
+        self.document = None
+        if widget is not None:
+            widget.set_title(_("PDF Preview:"))
+
+    def set_zoom(self, zoomLevel, scrolled=False, setz=True):
+        if zoomLevel == self.zoomLevel:
+            return
+        if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
+            self.model.set("s_pdfZoomLevel", zoomLevel*100, mod=False)
+            return
+        self.old_zoom = self.zoomLevel
+        self.zoomLevel = zoomLevel
+        width, height = self.psize
+        width, height = int(width * self.zoomLevel), int(height * self.zoomLevel)
+
+        children = self.hbox.get_children()
+        if not len(children):
+            return self.show_pdf()
+
+        if scrolled:
+            images = []
+            for i,c in enumerate(children):
+                im = c.get_children()[0]
+                pbuf = im.get_pixbuf()
+                np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+                nim = Gtk.Image.new_from_pixbuf(np)
+                images.append(nim)
+            self.update_boxes(images)
+
+        def redraw():
+            GLib.idle_add(self.show_pdf)
+        if self.timer is not None:
+            self.timer.cancel()
+        if scrolled:
+            self.timer = Timer(0.3, redraw)
+            self.timer.start()
+        else:
+            redraw()
+
+    def on_scroll_parent_event(self, widget, event):
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+        if ctrl_pressed:
+            return False 
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, _, z = event.get_scroll_deltas()
+            if z < 0:
+                self.set_page(self.swap4rtl("previous"))
+            elif z > 0:
+                self.set_page(self.swap4rtl("next"))
+        elif event.direction == Gdk.ScrollDirection.UP:
+            self.set_page(self.swap4rtl("previous"))
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            self.set_page(self.swap4rtl("next"))
+        return True
+
+    def on_scroll_event(self, widget, event):
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+
+        if ctrl_pressed:  # Zooming with Ctrl + Scroll
+            zoom_in = event.direction == Gdk.ScrollDirection.UP
+            zoom_out = event.direction == Gdk.ScrollDirection.DOWN
+
+            # Get mouse position relative to the widget
+            mouse_x, mouse_y = event.x, event.y
+            posn = self.widgetPosition(widget) # 0=left page; 1=right page
+
+            if zoom_in:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
+            elif zoom_out:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=False)
+
+            return True  # Prevent further handling of the scroll event
+
+        # Get the parent scrolled window and its adjustments
+        scrolled_window = self.hbox.get_parent()
+        v_adjustment = scrolled_window.get_vadjustment()
+        if v_adjustment.get_upper() > v_adjustment.get_page_size():
+            return False # v_adjustment is active
+        else:
+            # Default behavior: Scroll for navigation
+            if event.direction == Gdk.ScrollDirection.UP:
+                self.set_page(self.swap4rtl("previous"))
+            elif event.direction == Gdk.ScrollDirection.DOWN:
+                self.set_page(self.swap4rtl("next"))
+            return True
+
+        return False
+
+    def widgetPosition(self, widget):
+        children = self.hbox.get_children()
+        for index, child in enumerate(children):
+            if child == widget:
+                return index  # Return the position (index) of the widget
+        return -1  # If widget is not found, return -1
+
+    def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
+        self.old_zoom = self.zoomLevel
+        zoomLevel = (min(self.zoomLevel * 1.1, 8.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
+        scale_factor = zoomLevel / self.old_zoom
+
+        self.set_zoom(zoomLevel, scrolled=True)
+        scrolled_window = self.hbox.get_parent()
+        h_adjustment = scrolled_window.get_hadjustment()
+        v_adjustment = scrolled_window.get_vadjustment()
+        h_value = h_adjustment.get_value() if h_adjustment else 0
+        v_value = v_adjustment.get_value() if v_adjustment else 0
+
+        hbox_width  = self.hbox.get_allocated_width()
+        page_width  = hbox_width / 2 if self.spread_mode else hbox_width
+        page_offset = (posn * page_width)
+        
+        new_h_value = (scale_factor - 1) * (mouse_x + page_offset) + h_value 
+        new_v_value = (scale_factor - 1) *  mouse_y                + v_value
+        h_adjustment.set_upper(h_adjustment.get_upper() * scale_factor)
+        v_adjustment.set_upper(v_adjustment.get_upper() * scale_factor)
+        h_adjustment.set_value(new_h_value)
+        v_adjustment.set_value(new_v_value)
+
+        # Redraw the canvas with the updated zoom level
+
+    # Handle keyboard shortcuts for navigation
+    def on_key_press_event(self, widget, event):
+        keyval = event.keyval
+        state = event.state
+        # Check if Control key is pressed
+        ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
+
+        if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
+            self.set_page(self.swap4rtl("first"))
+            return True
+        elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
+            self.set_page(self.swap4rtl("last"))
+            return True
+        elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
+            self.set_page(self.swap4rtl("next"))
+            return True
+        elif keyval == Gdk.KEY_Page_Up:  # Page Up (Previous page/spread)
+            self.set_page(self.swap4rtl("previous"))
+            return True
+        elif ctrl and keyval in {Gdk.KEY_equal, Gdk.KEY_plus}:  # Ctrl+Plus (Zoom In)
+            self.on_zoom_in(widget)
+            return True
+        elif ctrl and keyval in {Gdk.KEY_minus, Gdk.KEY_underscore}:  # Ctrl+Minus (Zoom Out)
+            self.on_zoom_out(widget)
+            return True
+        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
+            self.on_reset_zoom(widget)
+            return True
+        elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
+            self.set_zoom(1.0)
+            return True
+        elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
+            self.set_zoom_fit_to_screen(None)
+            self.show_pdf()  # Redraw the current page
+            return True
+        elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
+            self.set_page(self.swap4rtl("next"))
+            return True
+        elif keyval == Gdk.KEY_Left:  # Left arrow → Previous page
+            self.set_page(self.swap4rtl("previous"))
+            return True
+            
+    def updatePageNavigation(self):
+        """Update button sensitivity and tooltips dynamically based on the current index."""
+        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
+        pg = self.current_index or 1
+        num_pages = self.numpages
+
+        # Enable or disable navigation buttons based on position
+        if is_rtl:
+            self.model.builder.get_object("btn_page_first").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_previous").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_last").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_next").set_sensitive(pg > 1)
+        else:
+            self.model.builder.get_object("btn_page_first").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_previous").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_last").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_next").set_sensitive(pg < num_pages)
+
+        seekPrevBtn = self.model.builder.get_object("btn_seekPage2fill_previous")
+        seekNextBtn = self.model.builder.get_object("btn_seekPage2fill_next")
+        seekPrevBtn.set_sensitive(False)
+        seekNextBtn.set_sensitive(False)
+
+    def on_button_press(self, widget, event):
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
+            self.on_update_pdf(None)
+            return
+        if event.button == 2:
+            self.is_dragging = True
+            self.mouse_start_x = event.x_root
+            self.mouse_start_y = event.y_root
+            return True
+
+    def on_mouse_motion(self, widget, event):
+        if self.is_dragging:
+            mh = (self.mouse_start_x - event.x_root)
+            mv = (self.mouse_start_y - event.y_root)
+            self.mouse_start_x = event.x_root
+            self.mouse_start_y = event.y_root
+            self.swh.set_value(self.swh.get_value() + mh)
+            self.swv.set_value(self.swv.get_value() + mv)
+            return True
+
+    def on_button_release(self, widget, event):
+        if event.button == 2:   # middle click
+            self.is_dragging = False
+        if event.button == 3:  # Right-click (for context menu)
+            self.show_context_menu(widget, event)
+        return True
+
+    def show_context_menu(self, widget, event):
+        pass
+
+    # Zoom functionality
+    def on_zoom_in(self, widget):
+        if self.zoomLevel < 2.0:
+            zoomLevel = (1.2 * self.zoomLevel)  # Increase zoom by 20% of current level
+        elif self.zoomLevel < 5.0:
+            zoomLevel = (1.5 * self.zoomLevel)  # Increase zoom by 50% of current level
+        elif self.zoomLevel < 8.0:
+            zoomLevel = min(self.zoomLevel * 2, 8.0)  # Double zoom, cap at 8.0
+        else:
+            zoomLevel = 8.0  # Ensure max zoom is 8.0
+        self.set_zoom(zoomLevel)
+
+    def on_reset_zoom(self, widget):
+        self.set_zoom(1.0)
+
+    def on_zoom_out(self, widget):
+        min_zoom = 0.3  # Set a minimum zoom level of 30%
+        if self.zoomLevel > 5.0:
+            zoomLevel = max(self.zoomLevel / 2, 5.0)  # Halve zoom, cap at 5.0
+        elif self.zoomLevel > 2.0:
+            zoomLevel = (0.5 * self.zoomLevel)  # Decrease zoom by 50% of current level
+        elif self.zoomLevel > min_zoom:
+            zoomLevel = (0.8 * self.zoomLevel)  # Decrease zoom by 20% of current level
+            if self.zoomLevel < min_zoom:
+                zoomLevel = min_zoom  # Prevent going below 0.3
+        else:
+            zoomLevel = min_zoom  # Ensure minimum zoom is 0.3
+        self.set_zoom(zoomLevel)
+
+    def on_window_size_allocate(self, widget, allocation):
+        if self.current_page is None:
+            return
+        self.set_zoom_fit_to_screen(None)
+
+    def set_zoom_fit_to_screen(self, x):
+        if not hasattr(self, "document") or self.document is None or self.current_page is None:
+            return
+        page = self.document.get_page(self.current_page - 1)
+        try:
+            page_width, page_height = page.get_size()
+        except AttributeError:
+            return
+
+        parent_widget = self.hbox.get_parent() # .get_parent()
+        if parent_widget is not None:
+            alloc = parent_widget.get_allocation()
+            scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
+            scale_y = (alloc.height + 0) / page_height
+            self.set_zoom(min(scale_x, scale_y))
+
+    def set_page(self, action):
+        increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
+        canmap = self.parlocs.pnumorder is not None and len(self.parlocs.pnumorder) > 0 \
+                    and self.numpages == len(self.parlocs.pnumorder)
+        # print(f"{canmap=}  {cpage=}       {action}  RTL:{self.swap4rtl(action)}")
+        # Safeguard against invalid cpage or empty pnumorder
+        pg = self.current_index
+        try:
+            if action == self.swap4rtl("first"):
+                pg = 1
+            elif action == self.swap4rtl("last"):
+                pg = self.numpages
+            elif action == self.swap4rtl("next"):
+                pg = min(pg + increment, self.numpages)
+            elif action == self.swap4rtl("previous"):
+                pg = max(pg - increment, 1)
+            else:
+                logger.error(f"Unknown action: {action}")
+                return
+        except IndexError:
+            # print(f"FAILED with IndexError in set_page. {action=}  {increment=}  {cpage=}  {pg=}  {canmap=}")
+            pg = 1
+        logger.debug(f"page {pg=} {self.current_page=}")
+        self.show_pdf(pg)
+    
+    def swap4rtl(self, action):
+        # Only swap the buttons for RTL if we're NOT in Arabic UI mode
+        if (self.rtl_mode or False) and self.model.lang != 'ar_SA':
+            if action == _('first'):
+                return _('last')
+            elif action == _('last'):
+                return _('first')
+            elif action == _('next'):
+                return _('previous')
+            elif action == _('previous'):
+                return _('next')
+            else:
+                return action
+        else:
+            return action
+
+    def print_document(self, fitToPage=False):
+        if not hasattr(self, 'document') or self.document is None:
+            return
+        self.fitToPage = fitToPage
+        print_op = Gtk.PrintOperation()
+        if self.model.userconfig.has_section('printer'):
+            settings = print_op.get_print_settings()
+            if settings is not None and settings.get("printer") == self.model.userconfig.get("printer", "printer"):
+                for k, v in self.model.userconfig.items('printer'):
+                    settings.set(k, v)
+                print_op.set_print_settings(settings)
+        print_op.set_n_pages(self.numpages)
+        print_op.connect("draw_page", self.on_draw_page)
+
+        try:
+            result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
+        except Exception as e:
+            self.model.doStatus(_("An error occurred while printing: ").format(e))
+        if result == Gtk.PrintOperationResult.APPLY:
+            self.model.doStatus(_("Print job sent to printer."))
+            if not self.model.userconfig.has_section("printer"):
+                self.model.userconfig.add_section("printer")
+            settings = print_op.get_print_settings()
+            settings.foreach(self._saveSetting)
+        else:
+            self.model.doStatus(_("Print job canceled or failed."))
+
+    def on_draw_page(self, operation, context, page_number):
+        if not getattr(self, 'document', None):
+            return
+
+        pdf_page = self.document.get_page(page_number)
+
+        cairo_context = context.get_cairo_context()
+        cairo_context.save()
+        cairo_context.set_source_rgb(1, 1, 1)
+        cairo_context.paint()
+
+        pdf_width, pdf_height = pdf_page.get_size()
+        paper_width = context.get_width()
+        paper_height = context.get_height()
+
+        dpi_x = context.get_dpi_x()
+        dpi_y = context.get_dpi_y()
+        scale_x = dpi_x / 72  # Convert from PDF points per inch to printer DPI
+        scale_y = dpi_y / 72
+        scale = min(scale_x, scale_y)
+
+        offset_x = (paper_width - pdf_width * scale) / 2
+        offset_y = (paper_height - pdf_height * scale) / 2
+        cairo_context.translate(offset_x, offset_y)
+        cairo_context.scale(scale, scale)
+
+        pdf_page.render(cairo_context)
+        cairo_context.restore()
+
+
+class PDFContentViewer(PDFViewer):
+
+    def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
+        super().__init__(model, widget)
+        self.toctv = tv
+        self.cr = Gtk.CellRendererText()
+        tvc = Gtk.TreeViewColumn("Title", self.cr, text=0)
+        self.toctv.append_column(tvc)
+        self.toctv.connect("row-activated", self.pickToc)
+        self.parlocfile = None
+        self.parlocs = None
+        self.widget = None
+        # self.drag_start_x = None
+        # self.drag_start_y = None
+        self.is_dragging = False
+        self.adjlist = None
+        self.timer = None
+        self.showadjustments = True
+        self.showguides = False
+        self.showgrid = False
+        self.showrects = False # self.model.get("c_pdfadjoverlay", False)
+        self.showanalysis = False
+        self.spacethreshold = 0
+        self.charthreshold = 0
+        self.ufCurrIndex = 0
+        self.currpref = None
+        self.timer_id = None  # Stores the timer reference
+        self.last_click_time = 0  # Timestamp of the last right-click
+        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
+        self.linespacing = float(self.model.get("s_linespacing", "12"))
+        self.collisionpages = []
+        self.spacepages = []
+        self.riverpages = []
+        
+        # This may end up in page rendering code. Just collect data for now
+        display = Gdk.Display.get_default()
+        screen = display.get_default_screen()
+        window = screen.get_root_window()
+        scale = window.get_scale_factor()
+        logger.debug(f"Window scaling = {scale}")
+
+    def setShowAdjOverlay(self, val):
+        self.showadjustments = val
+        self.show_pdf()
+
+    def setShowParaBoxes(self, val):
+        self.showrects = val
+        self.show_pdf()
+
+    def setShowAnalysis(self, val, threshold):
+        self.showanalysis = val
+        self.spacethreshold = threshold
+        if self.showanalysis:
+            self.loadnshow(None, page=self.current_page)
+        self.show_pdf()
 
     def settingsChanged(self):
         self.shrinkStep = int(self.model.get('s_shrinktextstep', 2))
@@ -245,7 +676,7 @@ class PDFViewer:
         self.spacethreshold = float(self.model.get("s_spaceEms", 3.0))
         self.charthreshold = float(self.model.get("s_charSpaceEms", 0))
 
-    def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
+    def load_pdf(self, pdf_path, adjlist=None, isdiglot=False, **kw):
         self.settingsChanged()
         
         self.isdiglot = isdiglot
@@ -368,15 +799,7 @@ class PDFViewer:
             layerfns.append(self._draw_whitespace_rivers)
         
         images = []
-        if self.model.isCoverTabOpen():
-            cpage = 1
-            self.create_boxes(1)
-            pg = self.document.get_page(0)
-            self.model.set("t_pgNum", str(page), mod=False)
-            self.psize = pg.get_size()
-            images.append(render_page_image(pg, self.zoomLevel, cpage, layerfns))
-            self.parlocs.load_page(self.document, pg, cpage)
-        elif self.spread_mode:
+        if self.spread_mode:
             spread = self.get_spread(cpage, self.rtl_mode)
             self.create_boxes(len(spread))
             for i in spread:
@@ -583,7 +1006,6 @@ class PDFViewer:
             for s in r.spaces:
                 make_rect(s)
 
-
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):
         """ page is a page index"""
@@ -658,83 +1080,28 @@ class PDFViewer:
             elif info[1] != 100:
                 make_rect(context, orange, r, twidth)
 
-    def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
-        self.rtl_mode = rtl
-        if fname is None:
-            fname = self.fname
-        if fname is None:
-            return False
-        self.settingsChanged()
-        if not self.load_pdf(fname, adjlist=adjlist, isdiglot=isdiglot):
-            return False
+    def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
+        def plocs(self):
+            self.load_parlocs(self.parlocs, rtl=rtl)
+            if page is not None and page in self.parlocs.pnums:
+                self.current_page = page
+                self.current_index = self.parlocs.pnums[page]
         if parlocs is None:
             parlocs = self.parlocfile
         if parlocs is not None:
             self.parlocfile = parlocs
-            self.load_parlocs(parlocs, rtl=rtl)
-        if page is not None and page in self.parlocs.pnums:
-            self.current_page = page
-            self.current_index = self.parlocs.pnums[page]
-        self.show_pdf(rtl=rtl)
-        pdft = os.stat(fname).st_mtime
-        mod_time = datetime.datetime.fromtimestamp(pdft)
-        formatted_time = mod_time.strftime("   %d-%b %H:%M")
-        if widget is None:
-            widget = self.widget
-        self.widget = widget
-        widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
+        if not super().loadnshow(fname, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
+            return False
         self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
         self.model.set_preview_pages(self.numpages, _("Pages:") if self.oneUp else _("Spreads:"))
-        widget.show_all()
-        self.set_zoom_fit_to_screen(None)
-        self.updatePageNavigation()
-        self.model.currentPDFpath = fname
         return True
 
     def clear(self, widget=None):
-        self.create_boxes(0)
-        self.document = None
+        super().clear(widget=widget)
         m = self.toctv.get_model()
         if m:
             m.clear()
-        if widget is not None:
-            widget.set_title(_("PDF Preview:"))
         self.model.set_preview_pages(None)
-
-    def set_zoom(self, zoomLevel, scrolled=False, setz=True):
-        if zoomLevel == self.zoomLevel:
-            return
-        if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
-            self.model.set("s_pdfZoomLevel", zoomLevel*100, mod=False)
-            return
-        self.old_zoom = self.zoomLevel
-        self.zoomLevel = zoomLevel
-        width, height = self.psize
-        width, height = int(width * self.zoomLevel), int(height * self.zoomLevel)
-
-        children = self.hbox.get_children()
-        if not len(children):
-            return self.show_pdf()
-
-        if scrolled:
-            images = []
-            for i,c in enumerate(children):
-                im = c.get_children()[0]
-                pbuf = im.get_pixbuf()
-                np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-                nim = Gtk.Image.new_from_pixbuf(np)
-                images.append(nim)
-            self.update_boxes(images)
-
-        def redraw():
-            GLib.idle_add(self.show_pdf)
-        if self.timer is not None:
-            self.timer.cancel()
-        if scrolled:
-            self.timer = Timer(0.3, redraw)
-            self.timer.start()
-        else:
-            redraw()
 
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
@@ -756,129 +1123,6 @@ class PDFViewer:
             self.spacepages, self.collisionpages, self.riverpages = \
                 self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)), float(self.model.get('s_charSpaceEms', 4)))
 
-    def on_scroll_parent_event(self, widget, event):
-        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
-        if ctrl_pressed:
-            return False 
-        if event.direction == Gdk.ScrollDirection.SMOOTH:
-            _, _, z = event.get_scroll_deltas()
-            if z < 0:
-                self.set_page(self.swap4rtl("previous"))
-            elif z > 0:
-                self.set_page(self.swap4rtl("next"))
-        elif event.direction == Gdk.ScrollDirection.UP:
-            self.set_page(self.swap4rtl("previous"))
-        elif event.direction == Gdk.ScrollDirection.DOWN:
-            self.set_page(self.swap4rtl("next"))
-        return True
-
-    def on_scroll_event(self, widget, event):
-        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
-
-        if ctrl_pressed:  # Zooming with Ctrl + Scroll
-            zoom_in = event.direction == Gdk.ScrollDirection.UP
-            zoom_out = event.direction == Gdk.ScrollDirection.DOWN
-
-            # Get mouse position relative to the widget
-            mouse_x, mouse_y = event.x, event.y
-            posn = self.widgetPosition(widget) # 0=left page; 1=right page
-
-            if zoom_in:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
-            elif zoom_out:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=False)
-
-            return True  # Prevent further handling of the scroll event
-
-        # Get the parent scrolled window and its adjustments
-        scrolled_window = self.hbox.get_parent()
-        v_adjustment = scrolled_window.get_vadjustment()
-        if v_adjustment.get_upper() > v_adjustment.get_page_size():
-            return False # v_adjustment is active
-        else:
-            # Default behavior: Scroll for navigation
-            if event.direction == Gdk.ScrollDirection.UP:
-                self.set_page(self.swap4rtl("previous"))
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                self.set_page(self.swap4rtl("next"))
-            return True
-
-        return False
-
-    def widgetPosition(self, widget):
-        children = self.hbox.get_children()
-        for index, child in enumerate(children):
-            if child == widget:
-                return index  # Return the position (index) of the widget
-        return -1  # If widget is not found, return -1
-
-    def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
-        self.old_zoom = self.zoomLevel
-        zoomLevel = (min(self.zoomLevel * 1.1, 8.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
-        scale_factor = zoomLevel / self.old_zoom
-
-        self.set_zoom(zoomLevel, scrolled=True)
-        scrolled_window = self.hbox.get_parent()
-        h_adjustment = scrolled_window.get_hadjustment()
-        v_adjustment = scrolled_window.get_vadjustment()
-        h_value = h_adjustment.get_value() if h_adjustment else 0
-        v_value = v_adjustment.get_value() if v_adjustment else 0
-
-        hbox_width  = self.hbox.get_allocated_width()
-        page_width  = hbox_width / 2 if self.spread_mode else hbox_width
-        page_offset = (posn * page_width)
-        
-        new_h_value = (scale_factor - 1) * (mouse_x + page_offset) + h_value 
-        new_v_value = (scale_factor - 1) *  mouse_y                + v_value
-        h_adjustment.set_upper(h_adjustment.get_upper() * scale_factor)
-        v_adjustment.set_upper(v_adjustment.get_upper() * scale_factor)
-        h_adjustment.set_value(new_h_value)
-        v_adjustment.set_value(new_v_value)
-
-        # Redraw the canvas with the updated zoom level
-
-    # Handle keyboard shortcuts for navigation
-    def on_key_press_event(self, widget, event):
-        keyval = event.keyval
-        state = event.state
-        # Check if Control key is pressed
-        ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
-
-        if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
-            self.set_page(self.swap4rtl("first"))
-            return True
-        elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
-            self.set_page(self.swap4rtl("last"))
-            return True
-        elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
-            self.set_page(self.swap4rtl("next"))
-            return True
-        elif keyval == Gdk.KEY_Page_Up:  # Page Up (Previous page/spread)
-            self.set_page(self.swap4rtl("previous"))
-            return True
-        elif ctrl and keyval in {Gdk.KEY_equal, Gdk.KEY_plus}:  # Ctrl+Plus (Zoom In)
-            self.on_zoom_in(widget)
-            return True
-        elif ctrl and keyval in {Gdk.KEY_minus, Gdk.KEY_underscore}:  # Ctrl+Minus (Zoom Out)
-            self.on_zoom_out(widget)
-            return True
-        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
-            self.on_reset_zoom(widget)
-            return True
-        elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
-            self.set_zoom(1.0)
-            return True
-        elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
-            self.set_zoom_fit_to_screen(None)
-            self.show_pdf()  # Redraw the current page
-            return True
-        elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
-            self.set_page(self.swap4rtl("next"))
-            return True
-        elif keyval == Gdk.KEY_Left:  # Left arrow → Previous page
-            self.set_page(self.swap4rtl("previous"))
-            return True
-            
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
         logger.debug(f"get_spread({page}, {rtl=})")
@@ -924,32 +1168,9 @@ class PDFViewer:
         self.show_pdf(pnum)
         
     def updatePageNavigation(self):
-        """Update button sensitivity and tooltips dynamically based on the current index."""
-        # Get current page index and total pages
-        pg = self.current_index or 1
-        num_pages = self.numpages
+        super().updatePageNavigation()
 
-        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
-
-        # Get page number mapping
-        pnumpg = self.parlocs.pnumorder[pg - 1] if self.parlocs and pg <= len(self.parlocs.pnumorder) else 1
-
-        # Enable or disable navigation buttons based on position
-        if is_rtl:
-            self.model.builder.get_object("btn_page_first").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_previous").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_last").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_next").set_sensitive(pg > 1)
-        else:
-            self.model.builder.get_object("btn_page_first").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_previous").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_last").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_next").set_sensitive(pg < num_pages)
-
-        seekPrevBtn = self.model.builder.get_object("btn_seekPage2fill_previous")
-        seekNextBtn = self.model.builder.get_object("btn_seekPage2fill_next")
-        seekPrevBtn.set_sensitive(False)
-        seekNextBtn.set_sensitive(False)
+        self.all_pages = []
 
         if not self.model.get('c_layoutAnalysis', False):
             ufPages         = self.model.ufPages or []
@@ -963,7 +1184,6 @@ class PDFViewer:
             vertRivers      = self.riverpages          if self.model.get('c_findRivers',     False) else []
 
         # Merge lists in order with uniqueness
-        self.all_pages = []
         for lst in [ufPages, collisionPages, horizWhitespace, vertRivers]:
             for p in lst:
                 if p not in self.all_pages:
@@ -1054,33 +1274,6 @@ class PDFViewer:
                 seekText = _("Locate {} issue page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
             # Use markup so colors are shown
             o.set_tooltip_markup(seekText)
-
-    def on_button_press(self, widget, event):
-        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
-            self.on_update_pdf(None)
-            return
-        if event.button == 2:
-            self.is_dragging = True
-            self.mouse_start_x = event.x_root
-            self.mouse_start_y = event.y_root
-            return True
-
-    def on_mouse_motion(self, widget, event):
-        if self.is_dragging:
-            mh = (self.mouse_start_x - event.x_root)
-            mv = (self.mouse_start_y - event.y_root)
-            self.mouse_start_x = event.x_root
-            self.mouse_start_y = event.y_root
-            self.swh.set_value(self.swh.get_value() + mh)
-            self.swv.set_value(self.swv.get_value() + mv)
-            return True
-
-    def on_button_release(self, widget, event):
-        if event.button == 2:   # middle click
-            self.is_dragging = False
-        if event.button == 3:  # Right-click (for context menu)
-            self.show_context_menu(widget, event)
-        return True
 
     def get_parloc(self, widget, event):
         x = event.x / self.zoomLevel
@@ -1622,154 +1815,7 @@ class PDFViewer:
             raise ctypes.WinError(ctypes.get_last_error())
         logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
             
-    # Zoom functionality
-    def on_zoom_in(self, widget):
-        if self.zoomLevel < 2.0:
-            zoomLevel = (1.2 * self.zoomLevel)  # Increase zoom by 20% of current level
-        elif self.zoomLevel < 5.0:
-            zoomLevel = (1.5 * self.zoomLevel)  # Increase zoom by 50% of current level
-        elif self.zoomLevel < 8.0:
-            zoomLevel = min(self.zoomLevel * 2, 8.0)  # Double zoom, cap at 8.0
-        else:
-            zoomLevel = 8.0  # Ensure max zoom is 8.0
-        self.set_zoom(zoomLevel)
-
-    def on_reset_zoom(self, widget):
-        self.set_zoom(1.0)
-
-    def on_zoom_out(self, widget):
-        min_zoom = 0.3  # Set a minimum zoom level of 30%
-        if self.zoomLevel > 5.0:
-            zoomLevel = max(self.zoomLevel / 2, 5.0)  # Halve zoom, cap at 5.0
-        elif self.zoomLevel > 2.0:
-            zoomLevel = (0.5 * self.zoomLevel)  # Decrease zoom by 50% of current level
-        elif self.zoomLevel > min_zoom:
-            zoomLevel = (0.8 * self.zoomLevel)  # Decrease zoom by 20% of current level
-            if self.zoomLevel < min_zoom:
-                zoomLevel = min_zoom  # Prevent going below 0.3
-        else:
-            zoomLevel = min_zoom  # Ensure minimum zoom is 0.3
-        self.set_zoom(zoomLevel)
-
-    def on_window_size_allocate(self, widget, allocation):
-        if self.current_page is None:
-            return
-        self.set_zoom_fit_to_screen(None)
-
-    def set_zoom_fit_to_screen(self, x):
-        if not hasattr(self, "document") or self.document is None or self.current_page is None:
-            return
-        page = self.document.get_page(self.current_page - 1)
-        try:
-            page_width, page_height = page.get_size()
-        except AttributeError:
-            return
-
-        parent_widget = self.hbox.get_parent() # .get_parent()
-        if parent_widget is not None:
-            alloc = parent_widget.get_allocation()
-            scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
-            scale_y = (alloc.height + 0) / page_height
-            self.set_zoom(min(scale_x, scale_y))
-
-    def set_page(self, action):
-        increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
-        canmap = self.parlocs.pnumorder is not None and len(self.parlocs.pnumorder) > 0 \
-                    and self.numpages == len(self.parlocs.pnumorder)
-        # print(f"{canmap=}  {cpage=}       {action}  RTL:{self.swap4rtl(action)}")
-        # Safeguard against invalid cpage or empty pnumorder
-        pg = self.current_index
-        try:
-            if action == self.swap4rtl("first"):
-                pg = 1
-            elif action == self.swap4rtl("last"):
-                pg = self.numpages
-            elif action == self.swap4rtl("next"):
-                pg = min(pg + increment, self.numpages)
-            elif action == self.swap4rtl("previous"):
-                pg = max(pg - increment, 1)
-            else:
-                logger.error(f"Unknown action: {action}")
-                return
-        except IndexError:
-            # print(f"FAILED with IndexError in set_page. {action=}  {increment=}  {cpage=}  {pg=}  {canmap=}")
-            pg = 1
-        logger.debug(f"page {pg=} {self.current_page=}")
-        self.show_pdf(pg)
-    
-    def swap4rtl(self, action):
-        # Only swap the buttons for RTL if we're NOT in Arabic UI mode
-        if (self.rtl_mode or False) and self.model.lang != 'ar_SA':
-            if action == _('first'):
-                return _('last')
-            elif action == _('last'):
-                return _('first')
-            elif action == _('next'):
-                return _('previous')
-            elif action == _('previous'):
-                return _('next')
-            else:
-                return action
-        else:
-            return action
-
     def _saveSetting(self, key, value):
         self.model.userconfig.set('printer', key, value)
 
-    def print_document(self, fitToPage=False):
-        if not hasattr(self, 'document') or self.document is None:
-            return
-        self.fitToPage = fitToPage
-        print_op = Gtk.PrintOperation()
-        if self.model.userconfig.has_section('printer'):
-            settings = print_op.get_print_settings()
-            if settings is not None and settings.get("printer") == self.model.userconfig.get("printer", "printer"):
-                for k, v in self.model.userconfig.items('printer'):
-                    settings.set(k, v)
-                print_op.set_print_settings(settings)
-        print_op.set_n_pages(self.numpages)
-        print_op.connect("draw_page", self.on_draw_page)
-
-        try:
-            result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
-        except Exception as e:
-            self.model.doStatus(_("An error occurred while printing: ").format(e))
-        if result == Gtk.PrintOperationResult.APPLY:
-            self.model.doStatus(_("Print job sent to printer."))
-            if not self.model.userconfig.has_section("printer"):
-                self.model.userconfig.add_section("printer")
-            settings = print_op.get_print_settings()
-            settings.foreach(self._saveSetting)
-        else:
-            self.model.doStatus(_("Print job canceled or failed."))
-
-    def on_draw_page(self, operation, context, page_number):
-        if not getattr(self, 'document', None):
-            return
-
-        pdf_page = self.document.get_page(page_number)
-
-        cairo_context = context.get_cairo_context()
-        cairo_context.save()
-        cairo_context.set_source_rgb(1, 1, 1)
-        cairo_context.paint()
-
-        pdf_width, pdf_height = pdf_page.get_size()
-        paper_width = context.get_width()
-        paper_height = context.get_height()
-
-        dpi_x = context.get_dpi_x()
-        dpi_y = context.get_dpi_y()
-        scale_x = dpi_x / 72  # Convert from PDF points per inch to printer DPI
-        scale_y = dpi_y / 72
-        scale = min(scale_x, scale_y)
-
-        offset_x = (paper_width - pdf_width * scale) / 2
-        offset_y = (paper_height - pdf_height * scale) / 2
-        cairo_context.translate(offset_x, offset_y)
-        cairo_context.scale(scale, scale)
-
-        pdf_page.render(cairo_context)
-
-        cairo_context.restore()
 
