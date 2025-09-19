@@ -6747,7 +6747,7 @@ Thank you,
             elif pgmin < 1:
                 lpcount.set_label(f"({str(abs(pgmin))})+{str(pgmax)}")
             else:
-                lpcount.set_label(f"{str(pg_max)}")
+                lpcount.set_label(f"{str(pgmax)}")
 
     def onBookViewClicked(self, widget):
         window = self.builder.get_object("dlg_preview")
