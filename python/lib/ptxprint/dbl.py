@@ -190,7 +190,7 @@ def UnpackPTX(inzip, prjid, prjdir):
     inzip.extractall(path)
     if not inzip.hasbooknames:
         for f in [x for x in os.listdir(path) if x.lower().endswith("sfm")]:
-            indoc = ufmtc.readFile(f)
+            indoc = usfmtc.readFile(os.path.join(path, f))
             inzip.collectBookNames(indoc)
         inzip.outBookNames(path)
     return True

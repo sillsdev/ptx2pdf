@@ -5642,9 +5642,8 @@ class GtkViewModel(ViewModel):
     def updateColxrefSetting(self, btn):
         xrc = self.get("r_xrpos") == "centre" # i.e. Column Cross-References
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
-        if self.get("c_useXrefList"):
-            self.builder.get_object("ex_xrListSettings").set_expanded(True)
-            self.builder.get_object("ex_xrefs").set_expanded(False)
+        self.builder.get_object("ex_xrListSettings").set_expanded(self.get("c_useXrefList", False))
+        # self.builder.get_object("ex_xrefs").set_expanded(not self.get("c_useXrefList", False))
 
     def onGenerateStrongsClicked(self, btn):
         dialog = self.builder.get_object("dlg_strongsGenerate")
