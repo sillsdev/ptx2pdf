@@ -416,6 +416,14 @@ def pt_bindir():
 
 def get_ptsettings():
     pt_settings = None
+    if sys.platform.startswith("win"):
+        pt10base = ""
+    else:
+        pt10base = os.path.expanduser("~/.paratext-10-studio")
+    pt10base = os.path.join(pt10base, "projects", "Paratext 9 Projects")
+    if os.path.exists(pt10base):
+        return pt10base
+
     ptob = openkey("Paratext/8")
     if ptob is None:
         logger.debug(f"No registry key found for Paratext. Searching for data folder...")
