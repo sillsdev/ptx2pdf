@@ -15631,50 +15631,8 @@ highlighted as an issue.</property>
                         <property name="can-focus">True</property>
                         <property name="hexpand">False</property>
                         <property name="vexpand">False</property>
-                        <property name="model">ts_pdfContents</property>
-                        <property name="headers-visible">False</property>
-                        <property name="headers-clickable">False</property>
-                        <property name="level-indentation">4</property>
-                        <property name="activate-on-single-click">True</property>
-                        <child internal-child="selection">
-                          <object class="GtkTreeSelection"/>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">11</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkNotebook" id="nb_pdfViewer">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="hexpand">False</property>
-                <property name="tab-pos">right</property>
-                <child>
-                  <object class="GtkScrolledWindow" id="scr_previewPDF">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="hexpand">False</property>
-                    <property name="vexpand">False</property>
-                    <property name="shadow-type">in</property>
-                    <property name="propagate-natural-height">True</property>
-                    <child>
-                      <object class="GtkViewport">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="hexpand">False</property>
-                        <property name="vexpand">False</property>
+                        <property name="shadow-type">in</property>
+                        <property name="propagate-natural-height">True</property>
                         <child>
                           <object class="GtkViewport">
                             <property name="visible">True</property>
