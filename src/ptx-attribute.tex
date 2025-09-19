@@ -30,6 +30,8 @@
 
 \newif\ifin@ttrib
 
+\newif\ifRefLocLink\RefLocLinktrue % Does \ref generate a PDF link?
+\newif\ifhrefLink\hrefLinktrue % Does href-link="..." generate a PDF link?
 
 
 %\tracingall=1
@@ -149,22 +151,30 @@
     \trace{A}{Attributes with no keyname will be \attrkey}%
   \fi
 }
-\def\GOTOLinkBorderstyle{/S/U/W 1} % Underline
-\def\URLLinkBorderstyle{/S/U/W 1} % Underline
+\x@\def\csname LinkBorderstyle-underline\endcsname{/S/U/W 1} % Underline
+\x@\def\csname LinkBorderstyle-none\endcsname{/S/D/W 0/D[1 3]} % 
+\x@\def\csname LinkBorderstyle-solid\endcsname{/S/S/W 1} % 
+\x@\def\csname LinkBorderstyle-dashed\endcsname{/S/D/W 1/D[3 2]} % 
+\x@\def\csname LinkBorderstyle-dots\endcsname{/S/D/W 1/D[1 3]} % 
+\x@\def\csname LinkBorderstyle-unspecified\endcsname{} % 
+\def\GOTOLinkBorderstyle{underline}
+\def\URLLinkBorderstyle{underline} % Underline
 \def\GOTOLinkBorderCol{.9 .5 .5}% pale red
 \def\URLLinkBorderCol{.5 .5 .5}% Gry
+\def\set@URLLinkBorderstyle{\x@\let\x@\tmp\csname LinkBorderstyle-\URLLinkBorderstyle\endcsname\ifx\tmp\relax \let\@URLLinkBorderstyle\URLLinkBorderstyle\else\let\@URLLinkBorderstyle\tmp\fi}
+\def\set@GOTOLinkBorderstyle{\x@\let\x@\tmp\csname LinkBorderstyle-\GOTOLinkBorderstyle\endcsname\ifx\tmp\relax \let\@GOTOLinkBorderstyle\GOTOLinkBorderstyle\else\let\@GOTOLinkBorderstyle\tmp\fi}
 
 %\def\LinkBorderstyle{}
 
-\def\pdfURL#1{\trace{A}{Appyling PDFurl}\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\URLLinkBorderstyle\empty\else/BS<<\URLLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
+\def\pdfURL#1{\set@URLLinkBorderstyle\trace{A}{Appyling PDFurl}\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\@URLLinkBorderstyle\empty\else/BS<<\@URLLinkBorderstyle>>\fi/H/I\ifx\@GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
 
 \edef\h@shcatcode{\the\catcode`\#}
 \catcode`\#=12
 \def\h@sh{#}
 \catcode`\#=\h@shcatcode
 
-\def\pdfG@T@#1#2 #3\E{\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#3}\ifx\tmp\empty\edef\tmp{#1#2}\else\edef\tmp{\zap@space #1#2.#3 \empty}\fi\fi
-  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\GOTOLinkBorderstyle\empty\else/BS<<\GOTOLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\GOTOLinkBorderCol]\fi\ifActions/A<</S/GoTo/D(\tmp)>>\fi>>}%
+\def\pdfG@T@#1#2 #3\E{\set@GOTOLinkBorderstyle\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#3}\ifx\tmp\empty\edef\tmp{#1#2}\else\edef\tmp{\zap@space #1#2.#3 \empty}\fi\fi
+  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\@GOTOLinkBorderstyle\empty\else/BS<<\@GOTOLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\GOTOLinkBorderCol]\fi\ifActions/A<</S/GoTo/D(\tmp)>>\fi>>}%
   \trace{A}{link is GOTO to '\tmp'}%
 }
 \def\pdfGOTO#1{\x@\pdfG@T@#1 \E}
@@ -177,7 +187,7 @@
 
 \def\PDFposfromattr{\ifActions\dimen0=\baselineskip\raise\the\dimen0\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos 1.4]}}\fi}
 \SetSpeciallAttribs{link-id}{\noexpand\maybePDFp@sfromattr\noexpand\makelabelfromattr}{}
-\SetSpeciallAttribs{link-href}{\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi}{\ifx\attr@b\empty\else\special{pdf:eann}\fi}
+\SetSpeciallAttribs{link-href}{\ifhrefLink\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi\fi}{\ifhrefLink\ifx\attr@b\empty\else\special{pdf:eann}\fi\fi}
 \SetSpeciallAttribs{outline-entry}{\noexpand\m@keoutlinefromattr{\attr@b}}{}
 \SetSpeciallAttribs{link-title}{\noexpand\maybem@keoutlinefromattr{\attr@b}}{}
 \def\maybem@keoutlinefromattr#1{\testt@ttrn@me{link-href}\if@ttrexists\else\m@keoutlinefromattr{#1}}
@@ -472,7 +482,6 @@
         \hbox to \dimen0{\alignb@x{#1}{0}}}}}
 
 \expandafter\def\csname complex-rb\endcsname{\rubyt{rb}{gloss}} % USFM-3 suggests ruby goes above. 
-\newif\ifRefLocLink\RefLocLinktrue
 \expandafter\def\csname complex-ref\endcsname{%Process loc option by turning it into a GOTO link.
   \ifRefLocLink
     \get@ttribute{loc}%
