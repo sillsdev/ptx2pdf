@@ -123,7 +123,7 @@ class PDFViewer:
 
     def loadnshow(self, fname, **kw):
         fbits = os.path.splitext(fname) if fname is not None else None
-        for i, a in enumerate(("{}{}", "{}_Cover{}", "{}_diff{}")):
+        for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
             if fbits is not None:
                 fpath = a.format(*fbits)
             v = self.nbook.get_nth_page(i)
@@ -232,10 +232,17 @@ class PDFFileViewer:
     def load_pdf(self, pdf_path, **kw):
         if pdf_path is not None and os.path.exists(pdf_path):
             file_uri = Path(pdf_path).as_uri()
-            self.document = Poppler.Document.new_from_file(file_uri, None)
+            try:
+                self.document = Poppler.Document.new_from_file(file_uri, None)
+                self.numpages = self.document.get_n_pages()
+            except Exception as e:
+                self.model.doStatus(_("Error opening PDF: ").format(e))
+                self.document = None
+                return False
             self.hbox.show()
         else:
             self.hbox.hide()
+        return True
 
     def show_pdf(self, cpage=None, rtl=False, setpnum=True):
         """ cpage is a index (1 based) """
@@ -250,7 +257,7 @@ class PDFFileViewer:
             self.create_boxes(1)
             pg = self.document.get_page(cpage-1)
             self.psize = pg.get_size()
-            images.append(render_page_image(pg, self.zoomLevel, cpage, layerfns))
+            images.append(render_page_image(pg, self.zoomLevel, cpage, []))
         else:
             pg = None
 
