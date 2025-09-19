@@ -74,7 +74,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
             m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
             if m:
                 try:
-                    atref = RefList(m.group(1), strict=False)
+                    atref = RefList(m.group(1), strict=False, single=False)
                 except SyntaxError as e:
                     atref = []
                     atcontexts = [None]
