@@ -416,11 +416,7 @@ def pt_bindir():
 
 def get_ptsettings():
     pt_settings = None
-    if sys.platform.startswith("win"):
-        pt10base = ""
-    else:
-        pt10base = os.path.expanduser("~/.paratext-10-studio")
-    pt10base = os.path.join(pt10base, "projects", "Paratext 9 Projects")
+    pt10base = os.path.join(os.path.expanduser("~/.paratext-10-studio"), "projects", "Paratext 9 Projects")
     if os.path.exists(pt10base):
         return pt10base
 
