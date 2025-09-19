@@ -367,9 +367,12 @@ class PolyglotSetup(Gtk.Box):
                 self.view.doStatus(_("Duplicate Code not allowed"))
                 return
 
+
         prjguid = None
         if col_id == m.prj:  # Project column changed
             prjguid, available_configs = self.get_available_configs(text)
+            if prjguid is None:
+                return
             prj = text
             self.ls_treeview[row_index][m.prjguid] = prjguid
 

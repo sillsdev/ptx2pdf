@@ -201,7 +201,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 _ui_basic = """
 t_configName l_configNameMsg l_projectNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
-btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
+btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_mirrorpages c_pagegutter s_pagegutter
@@ -438,14 +438,14 @@ _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_createZipArchiveXtra", "btn_Generate",
                     "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot"), 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
+    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun", 
-                    "btn_addMaps2", "btn_editMaps2", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"),
+                    "btn_addMaps2", "btn_editMaps2"),
     "tinybutton":  ("col_noteLines",),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
-    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"), # "spolyfraction_", 
+    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
@@ -454,9 +454,9 @@ _object_classes = {
     "stybutton":   ("btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
-                    "btn_plGenerate", "btn_downloadPics", "btn_resetTabGroups", "btn_adjust_spacing", 
+                    "btn_plGenerate", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom",  
-                    "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats") # "btn_reloadConfig", 
+                    "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats")
 }
 
 _pgpos = {
@@ -535,12 +535,12 @@ _dlgtriggers = {
     "dlg_features":         "onFontFeaturesClicked",
     "dlg_multProjSelector": "onChooseTargetProjectsClicked",
     "dlg_gridsGuides":      "adjustGridSettings",
-    "dlg_DBLbundle":        "onDBLbundleClicked",
     "dlg_overlayCredit":    "onOverlayCreditClicked",
     "dlg_sbPosition":       "onSBpositionClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
     "dlg_generateCover":    "onGenerateCoverClicked",
     "dlg_borders":          "onSBborderClicked",
+    # "dlg_DBLbundle":        "onDBLbundleClicked",
     # "dlg_preview":          "????",
 }
 
@@ -858,7 +858,7 @@ class GtkViewModel(ViewModel):
         logger.debug("Create PicList")
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
-        self.pdf_viewer = PDFViewer(self, self.builder.get_object("bx_previewPDF"), self.builder.get_object("tv_pdfContents"))
+        self.pdf_viewer = PDFViewer(self, self.builder.get_object("nbk_PDFviewer"), self.builder.get_object("tv_pdfContents"))
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
@@ -923,10 +923,16 @@ class GtkViewModel(ViewModel):
             if os.path.exists(os.path.join(p.path, 'TermRenderings.xml')):
                 strngsfbprojects.append([prjid, guid])
 
+        ### MODIFICATION 1: Add the special "Import..." option to the end of the main projects model.
+        # We use a special GUID to identify this action item later.
+        # We also give it a distinct gray color.
+        projects.append(["Import...", "__IMPORT_PROJECT__", Pango.Weight.NORMAL, "#808080"])
+        
         # 5. Connect the styling function to the ComboBox renderer
         combo = self.builder.get_object("fcb_project")
         renderer = combo.get_cells()[0] 
         combo.set_cell_data_func(renderer, self.set_project_style)
+
 
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         combo.set_wrap_width(wide)
@@ -957,7 +963,7 @@ class GtkViewModel(ViewModel):
         # Apply the properties to the cell renderer
         cell.set_property('weight', font_weight)
         cell.set_property('foreground', fg_color)
-        
+
     def initialize_uiLevel_menu(self):
         levels = self.builder.get_object("ls_uiLevel")
         btn = self.builder.get_object("btn_menu_level")
@@ -1003,7 +1009,6 @@ class GtkViewModel(ViewModel):
             menu.append(item)
         menu.show_all()
         btn.set_popup(menu)
-
 
     def _setup_digits(self):
         digits = self.builder.get_object("ls_digits")
@@ -1505,8 +1510,10 @@ class GtkViewModel(ViewModel):
         else:
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
-        for w in "l_url_usfm lb_DBLdownloads lb_openBible l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split():
+        for w in "l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split():
             self.builder.get_object(w).set_visible(not val)
+        self.builder.get_object("lb_openBible").set_sensitive(not val)
+        self.builder.get_object("lb_DBLdownloads").set_sensitive(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
         self.userconfig.set("init", "nointernet", "true" if newval else "false")
@@ -1518,8 +1525,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(not newval and adv)
         for w in ["l_techFAQ", "lb_ornaments_cat", "lb_tech_ref"]:
             self.builder.get_object(w).set_visible(adv)
-        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"]:
-            self.builder.get_object(w).set_visible(not newval)
         self.i18nizeURIs()
 
     def i18nizeURIs(self):
@@ -3875,9 +3880,14 @@ class GtkViewModel(ViewModel):
         lockBtn.set_sensitive(False)
         w = self.builder.get_object("fcb_project")
         m = w.get_model()
+        project = self.project
         aid = w.get_active_iter()
         prjid = m.get_value(aid, 0)
         guid = m.get_value(aid, 1)
+        if guid == "__IMPORT_PROJECT__":
+            if not self.onImportProject() and project is not None:
+                self.setPrjid(project.prjid, project.guid)
+            return
         cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
         # Q: Why is saveme never used below?
         saveme = self.pendingPid is None and self.pendingConfig is None
@@ -5289,7 +5299,7 @@ class GtkViewModel(ViewModel):
         self.set("fcb_project", prj)
         self.set_uiChangeLevel(ui)
 
-    def onDBLbundleClicked(self, btn):
+    def onImportProject(self):
         dialog = self.builder.get_object("dlg_DBLbundle")
         response = dialog.run()
         dialog.hide()
@@ -5297,6 +5307,9 @@ class GtkViewModel(ViewModel):
             prj = self.get("t_DBLprojName")
             if prj != "":
                 self._expandDBLBundle(prj, self.DBLfile)
+                return True
+        else:
+            return False
 
     def onImageSetClicked(self, btn):
         dialog = self.builder.get_object("dlg_getImageSet")
@@ -5629,9 +5642,8 @@ class GtkViewModel(ViewModel):
     def updateColxrefSetting(self, btn):
         xrc = self.get("r_xrpos") == "centre" # i.e. Column Cross-References
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
-        if self.get("c_useXrefList"):
-            self.builder.get_object("ex_xrListSettings").set_expanded(True)
-            self.builder.get_object("ex_xrefs").set_expanded(False)
+        self.builder.get_object("ex_xrListSettings").set_expanded(self.get("c_useXrefList", False))
+        # self.builder.get_object("ex_xrefs").set_expanded(not self.get("c_useXrefList", False))
 
     def onGenerateStrongsClicked(self, btn):
         dialog = self.builder.get_object("dlg_strongsGenerate")
@@ -5976,7 +5988,7 @@ class GtkViewModel(ViewModel):
                     
     def onDonateClicked(self, btn):
         self.popdownMainMenu()
-        self.openURL(r"https://give.sil.org/campaign/597654/donate")
+        self.openURL(r"https://give.sil.org/campaign/725128/donate")
                     
     def deniedInternet(self):
         self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
@@ -6729,18 +6741,13 @@ Thank you,
         if npages is None:
             lpcount.set_label("")
         else:
-            if not self.pdf_viewer.parlocs or not self.pdf_viewer.parlocs.pnums:
+            pgmin, pgmax, pgnum = self.pdf_viewer.minmaxnumpages()
+            if npages < pgnum:
                 lpcount.set_label(f"{str(npages)}")  # Default to total pages
+            elif pgmin < 1:
+                lpcount.set_label(f"({str(abs(pgmin))})+{str(pgmax)}")
             else:
-                if npages < len(self.pdf_viewer.parlocs.pnums):
-                    lpcount.set_label(f"{str(npages)}")
-                else:
-                    minPg = min(self.pdf_viewer.parlocs.pnums)
-                    last_key = list(self.pdf_viewer.parlocs.pnums.keys())[-1]
-                    if minPg < 1:
-                        lpcount.set_label(f"({str(abs(minPg))})+{str(last_key)}")
-                    else:
-                        lpcount.set_label(f"{str(last_key)}")            
+                lpcount.set_label(f"{str(pgmax)}")
 
     def onBookViewClicked(self, widget):
         window = self.builder.get_object("dlg_preview")
@@ -6763,21 +6770,14 @@ Thank you,
             self.onPgNumChanged(None, None)
 
     def getPgNum(self):
-        if self.pdf_viewer.parlocs is not None:
-            pg = self.pdf_viewer.parlocs.pnums.get(self.pdf_viewer.current_page, 1)
-        else:
-            pg = 1
-        return pg
+        return self.pdf_viewer.getpnum(1, 1)
 
     def onPgNumChanged(self, widget, x):
         value = self.get("t_pgNum", "1").strip()
         pg = int(value) if value.isdigit() else 1
-        if self.pdf_viewer.parlocs is not None:
-            available_pnums = self.pdf_viewer.parlocs.pnums.keys()
-            if len(available_pnums) and pg not in available_pnums:
-                pg = min(available_pnums, key=lambda p: abs(p - pg))
+        pg = self.pdf_viewer.closestpnum(pg)
         self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
-        pnum = self.pdf_viewer.parlocs.pnums.get(pg, pg) if self.pdf_viewer.parlocs is not None else pg
+        pnum = self.pdf_viewer.getpnum(pg, pg)
         self.pdf_viewer.show_pdf(pnum, self.rtl, setpnum=False)
 
     def onPdfAdjOverlayChanged(self, widget):
@@ -6790,9 +6790,6 @@ Thank you,
         self.pdf_viewer.setShowAnalysis(self.get("c_layoutAnalysis"), float(self.get("s_spaceEms", 3.0)))
         
     def onPrintItClicked(self, widget):
-        pages = self.pdf_viewer.numpages
-        if not pages:
-            return
         self.pdf_viewer.print_document()
 
     def onZoomLevelChanged(self, widget):
@@ -6816,8 +6813,6 @@ Thank you,
         n = Gtk.Buildable.get_name(btn)
         x = n.split("_")[-1]
         self.pdf_viewer.set_page(x)
-        # print(f"No longer calling updatePageNavigation after set_page in onNavigatePageClicked")
-        # self.pdf_viewer.updatePageNavigation()
 
     def onEditingPgNum(self, w, x):  # From 'key-release' event on t_pgNum
         if self.loadingConfig:
@@ -6888,13 +6883,13 @@ Thank you,
     def showRulesClicked(self, btn):
         v = self.get("c_gridLines")
         if self.pdf_viewer is not None:
-            self.pdf_viewer.showguides = v
+            self.pdf_viewer.set('showguides', v)
             self.pdf_viewer.show_pdf()
 
     def showGridClicked(self, btn):
         v = self.get("c_gridGraph")
         if self.pdf_viewer is not None:
-            self.pdf_viewer.showgrid = v
+            self.pdf_viewer.set('showgrid', v)
             self.pdf_viewer.show_pdf()
 
     def showRulesOrGridClicked(self, btn):

@@ -310,6 +310,7 @@ def main(doitfn=None):
     prjTree = ProjectList()
     for p in args.projects:
         prjTree.addTreedir(p)
+        log.debug(f"Adding project tree: {p}")
 
     if args.pid:
         project = prjTree.findProject(args.pid)

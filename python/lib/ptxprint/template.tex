@@ -347,10 +347,10 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
-
-\par\vfill\penalty -10000
+\ifdim \pagetotal>0pt \par\vfill\penalty-10000 \fi
+\catcode`\@=11 \need@oddpage{{\emptyoutput}}\catcode`\@=12
 \edef\oldpageno{{\the\pageno}}% Just in case the user wants it
-\ifnum\pageno<1 \pageno={document/startpagenum}\fi
+\ifnum\pageno<1 \pageno=1\fi
 {document/ifdiglot}\diglottrue
 \addtoendptxhooks{{\zautoBookEndDecoration}}
 % job files:
