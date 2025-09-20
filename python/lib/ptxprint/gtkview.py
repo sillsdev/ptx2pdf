@@ -1734,8 +1734,7 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print4cover"]: # "b_print2ndDiglotText", "spolyfraction_"
-            self.builder.get_object(w).set_sensitive(not self.printReason)
+        self.builder.get_object("b_print").set_sensitive(not self.printReason)
         if self.gtkpolyglot is not None:    
             self.builder.get_object("btn_adjust_diglot").set_sensitive(not self.printReason and len(self.gtkpolyglot.ls_treeview) == 2)
 
@@ -7129,3 +7128,6 @@ Thank you,
             logger.debug("Done installing the Berean Standard Bible")
         dialog = self.builder.get_object("dlg_DBLbundle")
         dialog.hide()
+
+    def onPDFviewerTabChanged(self, a, b, c):
+        print(f"Yup - you've change tabs again!")
