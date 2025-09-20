@@ -15096,6 +15096,9 @@ dialog with all the settings. </property>
                 <property name="can-focus">True</property>
                 <property name="hexpand">False</property>
                 <property name="tab-pos">right</property>
+                <signal name="change-current-page" handler="onPDFviewerTabChanged" swapped="no"/>
+                <signal name="select-page" handler="onPDFviewerTabChanged" swapped="no"/>
+                <signal name="switch-page" handler="onPDFviewerTabChanged" swapped="no"/>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
@@ -36706,6 +36709,9 @@ table of variable names and values.</property>
                                         <property name="search-column">0</property>
                                         <property name="fixed-height-mode">True</property>
                                         <property name="show-expanders">False</property>
+                                        <child internal-child="selection">
+                                          <object class="GtkTreeSelection"/>
+                                        </child>
                                         <child>
                                           <object class="GtkTreeViewColumn" id="col_zvar_name">
                                             <property name="resizable">True</property>
@@ -37416,38 +37422,7 @@ can be adjusted as needed.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="b_print4cover">
-                                            <property name="label" translatable="yes">3. Print (Make Cover PDF)</property>
-                                            <property name="width-request">170</property>
-                                            <property name="visible">True</property>
-                                            <property name="sensitive">False</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="has-default">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Once 'Create Cover' is enabled, every time
-'Print (Make PDF)' is clicked, a separate 
-cover PDF will be created in addition to
-the usual text content PDF.
-
-However, if another tab (other than the Cover tab)
-is active, the text content PDF will be automatically
-opened rather than the cover PDF.
-
-Clicking this button will ensure that the cover PDF
-will be displayed once it has been created.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin-end">30</property>
-                                            <property name="resize-mode">immediate</property>
-                                            <property name="xalign">0</property>
-                                            <property name="always-show-image">True</property>
-                                            <signal name="clicked" handler="onOK" swapped="no"/>
-                                            <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">2</property>
-                                          </packing>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <object class="GtkExpander">
