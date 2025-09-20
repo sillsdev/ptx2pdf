@@ -7130,4 +7130,4 @@ Thank you,
         dialog.hide()
 
     def onPDFviewerTabChanged(self, a, b, c):
-        print(f"Yup - you've change tabs again!")
+        print(f"Yup - you've changed tabs again!")
