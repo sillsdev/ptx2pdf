@@ -144,8 +144,13 @@ class PDFViewer:
         curr = self.nbook.get_current_page()
         return self.viewers[curr]
 
-    def __getattr__(self, name):
-        return getattr(self._currview(), name)
+    def __getattr__(self, name, default=None):
+        v = self._currview()
+        if hasattr(v, name):
+            return getattr(self._currview(), name)
+        if hasattr(self.views[0], name):
+            return getattr(self.views[0], name)
+        return default
 
     def set(self, name, val):
         v = self._currview()
@@ -181,6 +186,8 @@ class PDFFileViewer:
         self.piczoom = 85
         self.rtl_mode = False
         self.widget = None
+        self.timer = None
+        self.is_dragging = False
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -681,9 +688,7 @@ class PDFContentViewer(PDFFileViewer):
         self.widget = None
         # self.drag_start_x = None
         # self.drag_start_y = None
-        self.is_dragging = False
         self.adjlist = None
-        self.timer = None
         self.showadjustments = True
         self.showguides = False
         self.showgrid = False
@@ -1353,7 +1358,7 @@ class PDFContentViewer(PDFFileViewer):
 
     def getpnum(self, n, d):
         if self.parlocs is not None:
-            return self.parlocs.pnums.get(self.pdf_viewer.current_page, d)
+            return self.parlocs.pnums.get(self.current_page, d)
         else:
             return n
 

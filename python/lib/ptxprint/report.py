@@ -396,7 +396,7 @@ class Report:
         badlist = []
         collisions_list = []
         count = 0
-        plocs = view.pdf_viewer.parlocs
+        plocs = getattr(view.pdf_viewer, 'parlocs', None)
         if plocs is None:
             return
         rivers = []
