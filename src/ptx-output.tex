@@ -80,7 +80,7 @@
   \iftextborder
     \ifdefined\textb@dr@bot@pad\kern\textb@dr@bot@pad\fi 
   \fi
-  \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
+  \def\tmpwrite##1{{\everypar{}\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}}% Kill everypar because beginL starts a par.
   \trace{b}{botomins=\the\ht\bottomins + \the\dp\bottomins, +\the\skip\bottomins}%
   \ifdim\ht\bottomins>0pt \inp@gegap \temptrue\tmpwrite{bottomins}\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
@@ -350,8 +350,10 @@
     \vskip-\lastdepth
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
     \penalty-101\ifnotransitionskip\else\vskip\baselineskip\fi % ensure blank line between single and double column material
+    \x@\tmp@everypar\x@{\the\everypar}\everypar{}%
     \layoutstylebreak
     \relax
+    \x@\everypar\x@{\the\tmp@everypar}\tmp@everypar{}%
     \trace{o}{BACK from layout}%
     \global\let\layoutstylebreak\layoutstylebreak@doublecolumn
     % if single column material already fills 3/4 page, go to next page to start double columns
@@ -897,6 +899,7 @@
 \newdimen\t@vailht
 \newdimen\sh@vedim
 \newtoks\sh@venotes
+\newtoks\tmp@everypar % Save everypar contents so it can be disabled during page output
 \def\BalanceThreshold{0}
 
 \def\applysh@ven@tes{%A previously determined shave to the notesbox has been selected. Apply it.
@@ -1970,7 +1973,9 @@
 \def\singlecolumn{%
   \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial \space \iflastpage LASTPAGE \fi \ifinendbook INENDBOOK\fi \ifendbook ENDBOOK\fi}%\tracingmacros=1
   \ifnum 1=\ifnum \c@rrentcols>1 1\else \ifendbook 1 \else 0 \fi\fi
+    \x@\tmp@everypar\x@{\the\everypar}\everypar{}%
     \layoutstylebreak % save any partially-full page into \partial
+    \x@\everypar\x@{\the\tmp@everypar}\tmp@everypar{}%
     %LOTS happens before this line is reached!
     \global\let\layoutpen@lty=\sect@ndpenalty % Back to normal
     \ifendbook
@@ -2607,7 +2612,9 @@
     \vskip-\lastdepth
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
     \penalty-101\ifnotransitionskip\else\vskip\baselineskip\fi % ensure blank line between single and double column material
+    \x@\tmp@everypar\x@{\the\everypar}\everypar{}%
     \layoutstylebreak
+    \x@\everypar\x@{\the\tmp@everypar}\tmp@everypar{}%
     \relax
     \trace{o}{BACK from layout}%
     \global\let\layoutstylebreak\layoutstylebreak@threecolumn
