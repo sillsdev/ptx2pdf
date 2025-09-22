@@ -836,13 +836,6 @@ class GtkViewModel(ViewModel):
                 imsets.append_text(m)
             imsets.set_active(0)
 
-        # for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
-                  # "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
-            # dialog = self.builder.get_object("dlg_" + d)
-            # dialog.add_buttons(
-                # Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                # Gtk.STOCK_OK, Gtk.ResponseType.OK)
-                
         self.fileViews = []
         self.buf = []
         self.uneditedText = [""] * 8
@@ -925,8 +918,8 @@ class GtkViewModel(ViewModel):
 
         ### MODIFICATION 1: Add the special "Import..." option to the end of the main projects model.
         # We use a special GUID to identify this action item later.
-        # We also give it a distinct gray color.
-        projects.append(["Import...", "__IMPORT_PROJECT__", Pango.Weight.NORMAL, "#808080"])
+        # We also give it a distinct blue (clickable) color.
+        projects.append(["Import...", "__IMPORT_PROJECT__", Pango.Weight.NORMAL, "#0000CD"])
         
         # 5. Connect the styling function to the ComboBox renderer
         combo = self.builder.get_object("fcb_project")
@@ -1068,7 +1061,8 @@ class GtkViewModel(ViewModel):
             .warning {background: lightpink;font-weight: bold; color: darkred}
             combobox.highlighted > box.linked > entry.combo { background-color: peachpuff; background: peachpuff}
             combobox.yellowlighted > box.linked > entry.combo { background-color: rgb(255,255,102); background: rgb(255,255,102)}
-            entry.progress, entry.trough {min-height: 24px} """
+            entry.progress, entry.trough {min-height: 24px} 
+        """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
