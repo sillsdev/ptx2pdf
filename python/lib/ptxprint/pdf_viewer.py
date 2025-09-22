@@ -111,7 +111,8 @@ def arrayImage(imarray, width, height):
 
 
 class PDFViewer:
-    boxnames = ["bx_previewPDF", "bx_previewCover", "bx_previewDiff"]
+    boxcodes = {v: i for i, v in enumerate("""content cover diff manual""".split())}
+    boxnames = ["bx_previewPDF", "bx_previewCover", "bx_previewDiff", "bx_previewManual"]
 
     def __init__(self, model, nbook, tv):
         self.model = model
@@ -121,17 +122,23 @@ class PDFViewer:
             w = model.builder.get_object(k)
             self.viewers.append(PDFContentViewer(model, w, tv) if k == "bx_previewPDF" else PDFFileViewer(model, w))
 
-    def loadnshow(self, fname, **kw):
+    def loadnshow(self, fname, tab=None, **kw):
         fbits = os.path.splitext(fname) if fname is not None else None
-        for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
-            if fbits is not None:
-                fpath = a.format(*fbits)
+        if tab is None:
+            for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
+                if fbits is not None:
+                    fpath = a.format(*fbits)
+                v = self.nbook.get_nth_page(i)
+                if fbits is not None and os.path.exists(fpath):
+                    self.viewers[i].loadnshow(fpath, **kw)
+                    v.show()
+                else:
+                    v.hide()
+        elif fname is not None and os.path.exists(fname):
+            i = self.boxcodes[tab]
             v = self.nbook.get_nth_page(i)
-            if fbits is not None and os.path.exists(fpath):
-                self.viewers[i].loadnshow(fpath, **kw)
-                v.show()
-            else:
-                v.hide()
+            self.viewers[i].loadnshow(fpath, **kw)
+            v.show()
 
     def clear(self, widget=None):
         for v in self.viewers:
@@ -148,8 +155,8 @@ class PDFViewer:
         v = self._currview()
         if hasattr(v, name):
             return getattr(self._currview(), name)
-        if hasattr(self.views[0], name):
-            return getattr(self.views[0], name)
+        if hasattr(self.__dict__['views'][0], name):
+            return getattr(self.__dict__['views'][0], name)
         return default
 
     def set(self, name, val):

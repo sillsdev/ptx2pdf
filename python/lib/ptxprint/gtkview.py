@@ -6560,7 +6560,7 @@ Thank you,
             logger.warn(f"Ornaments Catalogue not found: {catpdf}")
         else:
             showref = self.builder.get_object("dlg_preview")
-            self.pdf_viewer.loadnshow(catpdf, widget=showref)
+            self.pdf_viewer.loadnshow(catpdf, widget=showref, tab="manual")
             self.set("c_bkView", False, mod=False)
             self.pdf_viewer.set_zoom_fit_to_screen(None)
         logger.debug(f"{catpdf=}")
@@ -6574,7 +6574,7 @@ Thank you,
             logger.warn(f"Technical Reference not found: {techref}")
         else:
             showref = self.builder.get_object("dlg_preview")
-            self.pdf_viewer.loadnshow(techref, widget=showref)
+            self.pdf_viewer.loadnshow(techref, widget=showref, tab="manual")
             self.set("c_bkView", True, mod=False)
             self.pdf_viewer.set_zoom_fit_to_screen(None)
         logger.debug(f"{techref=}")
@@ -6712,7 +6712,12 @@ Thank you,
         if self.showPDFmode == "preview":
             prvw = self.builder.get_object("dlg_preview")
             if os.path.exists(pdffile):
-                if pdffile.endswith(("_cover.pdf", "_diff.pdf")):
+                tab = None
+                if pdffile.endswith("_cover.pdf"):
+                    pdffile = pdffile.replace("_cover.pdf", ".pdf")
+                    plocname = None
+                elif pdffile.endswith("_diff.pdf"):
+                    pdffile = pdffile.replace("_diff.pdf", ".pdf")
                     plocname = None
                 else:
                     plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
