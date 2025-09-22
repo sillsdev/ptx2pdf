@@ -1,4 +1,4 @@
-import gi, os, datetime, ctypes
+import gi, os, datetime, ctypes, math
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
@@ -117,35 +117,12 @@ class PDFViewer:
     def __init__(self, model, nbook, tv):
         self.model = model
         self.nbook = nbook
+        self.lastpage = 0
+        nbook.connect("notify::page", self.onPageChanged)
         self.viewers = []
         for k in self.boxnames:
             w = model.builder.get_object(k)
             self.viewers.append(PDFContentViewer(model, w, tv) if k == "bx_previewPDF" else PDFFileViewer(model, w))
-
-    def loadnshow(self, fname, tab=None, **kw):
-        fbits = os.path.splitext(fname) if fname is not None else None
-        if tab is None:
-            for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
-                if fbits is not None:
-                    fpath = a.format(*fbits)
-                v = self.nbook.get_nth_page(i)
-                if fbits is not None and os.path.exists(fpath):
-                    self.viewers[i].loadnshow(fpath, **kw)
-                    v.show()
-                else:
-                    v.hide()
-        elif fname is not None and os.path.exists(fname):
-            i = self.boxcodes[tab]
-            v = self.nbook.get_nth_page(i)
-            self.viewers[i].loadnshow(fpath, **kw)
-            v.show()
-
-    def clear(self, widget=None):
-        for v in self.viewers:
-            v.clear(widget=widget)
-
-    def settingsChanged(self):
-        self.viewers[0].settingsChanged()
 
     def _currview(self):
         curr = self.nbook.get_current_page()
@@ -170,6 +147,46 @@ class PDFViewer:
             setattr(self.views[0], name, val)
         else:
             raise AttributeError(f"No attribute {name} setting to {val}")
+
+    def onTabChange(self, p):
+        # called before the page is changed
+        self.lastpage = self.nbook.get_current_page()
+
+    def onPageChanged(self, widget, pspec):
+        # called after the page is changed
+        p = self.nbook.get_current_page()
+        page = self.viewers[p].current_index
+        self.model.set("t_pgNum", str(page), mod=False)
+        z = self.viewers[p].zoomLevel
+        self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
+        self.model.set_preview_pages(self.numpages, _("Pages:"))
+
+    def loadnshow(self, fname, tab=None, **kw):
+        fbits = os.path.splitext(fname) if fname is not None else None
+        if tab is None:
+            for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
+                if fbits is not None:
+                    fpath = a.format(*fbits)
+                v = self.nbook.get_nth_page(i)
+                if fbits is not None and os.path.exists(fpath):
+                    self.viewers[i].loadnshow(fpath, **kw)
+                    v.show()
+                    self.nbook.set_current_page(0)
+                else:
+                    v.hide()
+        elif fname is not None and os.path.exists(fname):
+            i = self.boxcodes[tab]
+            v = self.nbook.get_nth_page(i)
+            self.viewers[i].loadnshow(fname, **kw)
+            v.show()
+            self.nbook.set_current_page(i)
+
+    def clear(self, widget=None):
+        for v in self.viewers:
+            v.clear(widget=widget)
+
+    def settingsChanged(self):
+        self.viewers[0].settingsChanged()
 
 
 class PDFFileViewer:
@@ -280,7 +297,7 @@ class PDFFileViewer:
 
         self.current_page = page
         self.current_index = cpage
-        if setpnum:
+        if setpnum and str(page) != self.model.get("t_pgNum"):
             self.model.set("t_pgNum", str(page), mod=False)
         self.update_boxes(images)
         self.updatePageNavigation()
@@ -331,9 +348,10 @@ class PDFFileViewer:
         pass
 
     def set_zoom(self, zoomLevel, scrolled=False, setz=True):
-        if zoomLevel == self.zoomLevel:
+        if math.fabs(zoomLevel - self.zoomLevel) < 0.01:
             return
         if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
+            self.zoomLevel = zoomLevel
             self.model.set("s_pdfZoomLevel", zoomLevel*100, mod=False)
             return
         self.old_zoom = self.zoomLevel
@@ -894,7 +912,7 @@ class PDFContentViewer(PDFFileViewer):
 
         self.current_page = page
         self.current_index = cpage
-        if setpnum:
+        if setpnum and str(page) != self.model.get("t_pgNum"):
             self.model.set("t_pgNum", str(page), mod=False)
         self.update_boxes(images)
         self.updatePageNavigation()

@@ -4862,7 +4862,9 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(lambda: self.builder.get_object("t_find").set_placeholder_text(msg))
         if inproc:
             self._incrementProgress()
-            while (Gtk.events_pending()):
+            i = 0
+            while i < 10 and (Gtk.events_pending()):
+                i += 1
                 Gtk.main_iteration_do(False)
 
     def onIdle(self, fn, *args):
@@ -6771,7 +6773,8 @@ Thank you,
         value = self.get("t_pgNum", "1").strip()
         pg = int(value) if value.isdigit() else 1
         pg = self.pdf_viewer.closestpnum(pg)
-        self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
+        if value != str(pg):
+            self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
         pnum = self.pdf_viewer.getpnum(pg, pg)
         self.pdf_viewer.show_pdf(pnum, self.rtl, setpnum=False)
 
@@ -7125,5 +7128,5 @@ Thank you,
         dialog = self.builder.get_object("dlg_DBLbundle")
         dialog.hide()
 
-    def onPDFviewerTabChanged(self, a, b, c):
-        print(f"Yup - you've changed tabs again!")
+    def onPDFviewerTabChanged(self, widget, parent, page):
+        self.pdf_viewer.onTabChange(page)

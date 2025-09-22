@@ -15098,8 +15098,6 @@ dialog with all the settings. </property>
                 <property name="can-focus">True</property>
                 <property name="hexpand">False</property>
                 <property name="tab-pos">right</property>
-                <signal name="change-current-page" handler="onPDFviewerTabChanged" swapped="no"/>
-                <signal name="select-page" handler="onPDFviewerTabChanged" swapped="no"/>
                 <signal name="switch-page" handler="onPDFviewerTabChanged" swapped="no"/>
                 <child>
                   <object class="GtkBox">
