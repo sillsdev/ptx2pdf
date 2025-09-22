@@ -234,7 +234,7 @@ fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapte
 tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestionsLang t_txlQuestionsLang
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
 tb_Peripherals bx_ToC c_autoToC t_tocTitle c_frontmatter
-fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value
+gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF c_createDiff
 btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
@@ -1498,6 +1498,7 @@ class GtkViewModel(ViewModel):
         return True
 
     def toggleUIdetails(self, w, state):
+        # print(f"{w}={state}")
         if w in _ui_noToggleVisible:
             self.builder.get_object(w).set_sensitive(state)
         else:
@@ -1512,8 +1513,6 @@ class GtkViewModel(ViewModel):
         adv = (ui >= 6)
         for w in "l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split():
             self.builder.get_object(w).set_visible(not val)
-        self.builder.get_object("lb_openBible").set_sensitive(not val)
-        self.builder.get_object("lb_DBLdownloads").set_sensitive(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
         self.userconfig.set("init", "nointernet", "true" if newval else "false")
@@ -1525,6 +1524,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(not newval and adv)
         for w in ["l_techFAQ", "lb_ornaments_cat", "lb_tech_ref"]:
             self.builder.get_object(w).set_visible(adv)
+        self.builder.get_object("lb_openBible").set_sensitive(not newval)
+        self.builder.get_object("lb_DBLdownloads").set_sensitive(not newval)
         self.i18nizeURIs()
 
     def i18nizeURIs(self):
@@ -2126,48 +2127,44 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
         
     def colorTabs(self):
-        # col = "crimson"
         col = "#0000CD"
-        fs = " color='"+col+"'" if self.get("c_colorfonts") else ""
-        self.builder.get_object("lb_Font").set_markup("<span{}>".format(fs)+_("Fonts")+"</span>"+"+"+_("Scripts"))
+        def stylize(text, is_active):
+            return f"<span color='{col}'>{text}</span>" if is_active else str(text)
+        # Structure: (label_id, text_to_style, active_condition_lambda)
+        simple_labels = [
+            ("lb_Peripherals", _("Peripherals"), lambda s: any(s.get(k) for k in 
+                ["c_inclFrontMatter", "c_autoToC", "c_frontmatter", "c_inclBackMatter"])),
+            ("lb_Pictures", _("Pictures"),       lambda s: s.get("c_includeillustrations")),
+            ("lb_Diglot",   _("Diglot"),         lambda s: s.get("c_diglot")),
+            ("lb_Finishing", _("Finishing"),     lambda s: s.get("fcb_pagesPerSpread") != "1"),
+            ("lb_xrefs",  _("Cross-References"), lambda s: s.get("c_useXrefList")),
+            ("lb_Cover",    _("Cover"),          lambda s: s.get("c_makeCoverPage")),
+            ("lb_Advanced", _("Advanced"),       lambda s: any(s.get(f"c_{w}") for w in 
+                ["processScript", "usePrintDraftChanges", "usePreModsTex", "useModsTex", 
+                 "useCustomSty", "useModsSty", "interlinear"])),]
 
-        pi = " color='"+col+"'" if (self.get("c_inclFrontMatter") or self.get("c_autoToC") or \
-           self.get("c_frontmatter") or self.get("c_inclBackMatter")) else ""  # or self.get("c_colophon") 
-        self.builder.get_object("lb_Peripherals").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
+        # --- Process simple labels ---
+        for label_id, text, is_active_fn in simple_labels:
+            if lb := self.builder.get_object(label_id):
+                lb.set_markup(stylize(text, is_active_fn(self)))
 
-        ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
-        self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
+        # --- Handle labels with more complex markup structure ---
+        font_active = self.get("c_colorfonts")
+        self.builder.get_object("lb_Font").set_markup(f"{stylize(_('Fonts'), font_active)}+{_('Scripts')}")
+        xref_active = self.get("c_useXrefList")
+        self.builder.get_object("lb_NotesRefs").set_markup(f"{_('Notes+')}{stylize(_('Refs'), xref_active)}")
 
-        dg = " color='"+col+"'" if self.get("c_diglot") else ""
-        self.builder.get_object("lb_Diglot").set_markup("<span{}>".format(dg)+_("Diglot")+"</span>")
-
-        fh = " color='"+col+"'" if self.get("fcb_pagesPerSpread") != "1" else ""
-        self.builder.get_object("lb_Finishing").set_markup("<span{}>".format(fh)+_("Finishing")+"</span>")
-
-        xl = " color='"+col+"'" if self.get("c_useXrefList") else ""
-        self.builder.get_object("lb_NotesRefs").set_markup(_("Notes+")+"<span{}>".format(xl)+_("Refs")+"</span>")
-        self.builder.get_object("lb_xrefs").set_markup("<span{}>".format(xl)+_("Cross-References")+"</span>")
-
-        cv = " color='"+col+"'" if self.get("c_makeCoverPage") else ""
-        self.builder.get_object("lb_Cover").set_markup("<span{}>".format(cv)+_("Cover")+"</span>")
-
-        tb = self.get("c_thumbtabs")
-        bd = self.get("c_useOrnaments")
-        tc = "<span color='{}'>".format(col)+_("Tabs")+"</span>" if tb \
-            else _("Tabs") if self.builder.get_object("fr_tabs").get_visible() else ""
-        bc = "<span color='{}'>".format(col)+_("Borders")+"</span>" if bd \
-            else _("Borders") if self.builder.get_object("fr_borders").get_visible() else ""
-        jn = "+" if ((tb and bd) or self.uilevel >= 6) else ""
-        self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
-
-        ad = False
-        for w in ["processScript", "usePrintDraftChanges", "usePreModsTex", \
-                  "useModsTex", "useCustomSty", "useModsSty", "interlinear"]:
-            if self.get("c_" + w):
-                ad = True
-                break
-        ac = " color='"+col+"'" if ad else ""
-        self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
+        # --- Special Case: Tabs + Borders (logic is unique) ---
+        fr_tabs = self.builder.get_object("fr_tabs")
+        fr_borders = self.builder.get_object("fr_borders")
+        vis_tabs = fr_tabs.get_visible() if fr_tabs else False
+        vis_borders = fr_borders.get_visible() if fr_borders else False
+        show_fallback = not (vis_tabs or vis_borders)
+        part_data = [
+            {'text': _("Tabs"),    'show': vis_tabs or show_fallback,    'active': self.get("c_thumbtabs")},
+            {'text': _("Borders"), 'show': vis_borders or show_fallback, 'active': self.get("c_useOrnaments")},]
+        visible_parts = [stylize(p['text'], p['active']) for p in part_data if p['show']]
+        self.builder.get_object("lb_TabsBorders").set_markup("+".join(visible_parts))
 
     def paintLock(self, wid, lock, editableOverride):
         wids = []
