@@ -137,7 +137,7 @@ class PDFViewer:
         elif fname is not None and os.path.exists(fname):
             i = self.boxcodes[tab]
             v = self.nbook.get_nth_page(i)
-            self.viewers[i].loadnshow(fpath, **kw)
+            self.viewers[i].loadnshow(fname, **kw)
             v.show()
 
     def clear(self, widget=None):

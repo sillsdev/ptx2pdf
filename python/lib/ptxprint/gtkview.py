@@ -4862,7 +4862,9 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(lambda: self.builder.get_object("t_find").set_placeholder_text(msg))
         if inproc:
             self._incrementProgress()
-            while (Gtk.events_pending()):
+            i = 0
+            while i < 10 and (Gtk.events_pending()):
+                i += 1
                 Gtk.main_iteration_do(False)
 
     def onIdle(self, fn, *args):
