@@ -155,6 +155,9 @@ class PDFViewer:
         v = self._currview()
         if hasattr(v, name):
             return getattr(self._currview(), name)
+        v = self.__dict__.get('views', None)
+        if v is None or not len(v):
+            return default
         if hasattr(self.__dict__['views'][0], name):
             return getattr(self.__dict__['views'][0], name)
         return default
