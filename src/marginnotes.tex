@@ -72,6 +72,7 @@
             text = \the#4, side = #2, valign = #3, ht=\the\dimen9+\the\dp#1*\the\wd#1, hsize=\the\hsize}%
   \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
   \dimen8=\lastdepth \dimen7=\dp#1
+  \tracingmacros=1 \tracingassigns=1
   \x@\let\x@\do@djust\ifx\t@mpv\@inline\m@rgincollect\else\vadjust\fi
   \setbox0=\vbox to 0pt{\let\par=\endgraf\everypar={}%
     \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi
@@ -127,7 +128,7 @@
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
   \dimen0 = #6%
   \dimen3 = #7%
-  \trace{M}{marginnote(#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
+  \trace{M}{marginnote (#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
   %\dimen0=0pt
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
   \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
@@ -135,6 +136,15 @@
   \advance\dimen2 by \dimen3%
   %\ifx#3s \showbox#1\fi
   \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%
+}
+
+\newcount\pcount \pcount=0
+{\catcode`\~=12 \lccode`\~=32 \lowercase{
+\gdef\parmkr{\setbox0=\vbox{\hbox{\ch@rstylepls{zpmkr}~\m@rker\ch@rstylepls{zpmkr}*}}%
+    \advance\pcount by 1
+    %\llap{\copy0}%
+    \d@marginnote{0}{\the\pcount}{zpmkr}{\ifRTL right\else left\fi}{top}{0pt}{0pt}}
+}
 }
 
 %\plugin@endif
