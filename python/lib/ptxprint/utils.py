@@ -38,7 +38,7 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
         MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
         1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1 HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
-        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|999 XXB|999 XXC|999 XXD|999 XXE|999 XXF|999 XXG|999 FRT|0 BAK|999 OTH|999 XXS|0 XXM|0 ZZZ|0 
+        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|999 XXB|999 XXC|999 XXD|999 XXE|999 XXF|999 XXG|999 FRT|0 BAK|999 OTH|999 XXM|0 XXS|0 ZZZ|0 
         ZZZ|0 ZZZ|0 INT|999 CNC|999 GLO|999 TDX|999 NDX|999 DAG|14 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 LAO|1"""
         
 _hebOrder = ["GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "1SA", "2SA", "1KI", "2KI", "ISA", "JER", "EZK", "HOS", "JOL", "AMO",
@@ -46,7 +46,7 @@ _hebOrder = ["GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "1SA", "2SA", "1KI
              "DAN", "EZR", "NEH", "1CH", "2CH"]
              
 _endBkCodes = {'XXG':'100', 'FRT':'A0', 'BAK':'A1', 'OTH':'A2', 'INT':'A7', 'CNC':'A8', 'GLO':'A9',
-               'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3', 'XXS': '101', 'XXM': '102'} 
+               'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3', 'XXM': '101', 'XXS': '102'} 
 
 _allbooks = ["FRT", "INT", 
             "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST",
@@ -60,7 +60,7 @@ _allbooks = ["FRT", "INT",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
 
 nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", 
-            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS", "XXM"]
+            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXM", "XXS"]
 
 _bookCategories = {
     "Pentateuch": ["GEN", "EXO", "LEV", "NUM", "DEU"],
@@ -76,7 +76,7 @@ _bookCategories = {
     "Deuterocanon": ["TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", 
                      "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",],
     "Extra_Material": ["FRT", "INT", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "BAK", "OTH", "CNC", "GLO", "TDX", "NDX"],
-    "Unique_Extras": ["XXS", "XXM"],
+    "Unique_Extras": ["XXM", "XXS"],
 }
 
 _bookToCategory = {
