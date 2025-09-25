@@ -379,7 +379,7 @@ class Usfm:
             try:
                 curr = Ref(f"{bk} {currc}:{currv}")
             except SyntaxError:
-                currv = re.sub(r"\D", "", currv)
+                currv = re.sub(r"[^0-9-]", "", currv)
                 if not len(currv):
                     currv = "0"
                 try:
@@ -402,11 +402,10 @@ class Usfm:
         i = -1
         currpi = None
         for x, isin in iterusx(root):
-            if isin:
-                if x.tag == 'para':
-                    currp = x
-            else:
+            if not isin:
                 continue
+            if x.tag == 'para':
+                currp = x
             p = x
             if x.parent == root:
                 i += 1
