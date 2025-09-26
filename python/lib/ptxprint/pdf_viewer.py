@@ -141,6 +141,7 @@ class PDFViewer:
 
     def set(self, name, val):
         v = self._currview()
+        # print(f"viewer page={self.nbook.get_current_page()}: {name}={val}")
         if hasattr(v, name):
             setattr(v, name, val)
         elif hasattr(self.views[0], name):
@@ -208,7 +209,7 @@ class PDFFileViewer:
         self.current_index = None   # current pdf page index starts at 1
         self.zoomLevel = 1.0        # Initial zoom level is 100%
         self.old_zoom = 1.0
-        self.spread_mode = self.model.get("c_bkView", False)
+        self.spread_mode = False    # self.model.get("c_bkView", False)
         self.psize = (0, 0)
         self.piczoom = 85
         self.rtl_mode = False
@@ -335,7 +336,7 @@ class PDFFileViewer:
 
     def minmaxnumpages(self):
         rmin = 0
-        rmax = self.document.get_n_pages()
+        rmax = self.document.get_n_pages() if self.document else 0
         return (rmin, rmax, rmax)
 
     def getpnum(self, n, d):
