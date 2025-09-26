@@ -69,12 +69,14 @@
 \def\n@wnoteins@rt#1{
     \trace{n}{Creating note class #1}%
 	\x@\n@winsert\csname note-#1\endcsname
+	\x@\newb@x\csname noteb@x-#1\endcsname
 	\x@\newb@x\csname notesave1-#1\endcsname
 	\x@\newb@x\csname notesave2-#1\endcsname
         \x@\newc@unt\csname refn@te-#1\endcsname
 }
 \def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }
 \def\incn@tecount#1{\global\advance\csname refn@te-#1\endcsname by 1 }
+\def\exp@ndn@tes#1{\x@\unvcopy\csname noteb@x-#1\endcsname}
 
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
@@ -447,7 +449,7 @@
         \vbox{}%Sacrificial box for makehboxofhboxes to consume
         \x@\unvbox\csname endn@te-#1\endcsname%
         %\setbox0=\hbox{\unhbox0 \removehboxes}%
-        \ifDBGshownoteboxes\showbox0 \fi
+        %\ifDBGshownoteboxes\showbox0 \fi
       \fi
     \else
       \x@\ifvoid \csname endn@te-#1\endcsname
@@ -576,17 +578,22 @@
 \newif\ifst@dynotes
 \newif\ifnotst@dynotes
 \newif\ifonlyst@dynotes
+\newif\iffindsh@ve
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
   \checkp@ranotes{#1}\setn@tewidth{#1}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
     \ifonlyst@dynotes\let\n@xt=\n@ffin\else
       \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \fi\fi
-  \n@xt{#1}}
+  \ifversion{6}{%In v6, unwrapping happens per-notestyle. This isolates note styles from each other and allows per-notestyle shaving
+    \x@\let\x@\tnoteb@x\csname noteb@x-#1\endcsname
+    \global\setbox\tnoteb@x\vbox{%
+      \n@xt{#1}\x@\xdef\csname bls-#1\c@rrdstat\endcsname{\the\baselineskip}}\iffindsh@ve\ifx\n@xt\n@ffin\else\findsh@venotes{\tnoteb@x}{#1}\fi\fi\unvcopy\tnoteb@x}{\n@xt{#1}}}%
+
 
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
-  \def\cl@ss{#1\g@tndstat}%
-  \edef\tmp{#1}\ifx\tmp\l@stnoteclass\lastn@tetrue\else\lastn@tefalse\fi
+  \edef\cl@ss{#1\g@tndstat}%
+  \edef\tmp{#1}\ifx\tmp\l@stnoteclass\lastn@tetrue\else\ifversion{6}{\lastn@tetrue}{\lastn@tefalse}\fi
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   \trace{f}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
   % if the noteclass has content to output ...
@@ -613,7 +620,7 @@
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
-  \def\cl@ss{#1\g@tndstat}%
+  \edef\cl@ss{#1\g@tndstat}%
   \dimen0=\prevdepth
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   \trace{f}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0, c:\the\count\th@cl@ss.}%
@@ -627,11 +634,12 @@
     \penalty10000
     %\ifnum\pagenumber=8\showbox\th@cl@ss\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
-  \fi}
+  \fi
+}
 
 % insert a note class which is two column study notes style
 \def\studyins@rtn@tecl@ss#1{%
-  \def\cl@ss{#1\g@tndstat}%
+  \edef\cl@ss{#1\g@tndstat}%
   \trace{n}{studyins@rtn@tecl@ss \cl@ss \space (from #1)}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
@@ -813,7 +821,7 @@
 \newif\ifparnotesruletopskip \parnotesruletopskipfalse % Add topskip after the rule
 \newif\ifparnotesmidtopskip \parnotesmidtopskiptrue % add topskip between note styles
 
-\newif\iflastn@te % Is this the last note style that will appear on the page?
+\newif\iflastn@te % Is this the last note style that will appear on the page? (ptxv6: last one in the cluster)
 \newcount\lastnoteinterlinepenalty % interline penalties when processing the last footnote on the page(allow long note breaking).
 \newcount\lastnoteparpenalty % the penalty associated with a manual par-break in the last note.
 \newcount\lastnotewidowpenalty % the penalty associated with a widow(last line) in the last note.
@@ -837,7 +845,7 @@
   \setn@tewidth{#2}%
   \edef\tmp{#2}\ifx\tmp\l@stnoteclass\lastn@tetrue
   \else
-    \lastn@tefalse
+    \ifversion{6}{\lastn@tetrue}{\lastn@tefalse}%In ptxversion 6, always consider a note shavable
   \fi
   \ifnewparnotes\ifparnoteskillprevdepth
     \dimen0=\prevdepth\ifdim\dimen0>0pt \kern-\dimen0 \prevdepth=0pt \fi
@@ -1038,12 +1046,13 @@
         \unskip
         %\showbox2
         %\showlists
-      }
+      }%
     \fi
     \ifhbox2
       \setbox2\hbox{\unhbox2}%
       \count255=\wd2 
       \divide\count255 by \hsize 
+      \ifDBGshownoteboxes\showbox2 \fi
       %\showboxu%2
     \fi
     \tmpcount=\lastnodetype
@@ -1087,17 +1096,19 @@
         \ifvoid2 
           \ifdim\wd1>0pt 
             \trace{fp}{Expanding  \currn@tetype\space 1(\the\wd1)}%
+            %\penalty 12347
             \unhbox1  \@@adjP\global\let\@@adjP\empty
             {\removehboxes}
             %\showlists
             \endgraf
           \fi
         \else
+          \ifdim\wd1 >0pt \setbox1 \hbox{\unhbox1 {\removehboxes}}\fi%
           \trace{fp}{Joining \currn@tetype\space 2(\the\wd2) with 1(\the\wd1)}%
+          %\penalty 12348
           \noindent\leavevmode \@@adjP\global\let\@@adjP\empty
-          \unhbox2 \internotespace
-          \setbox1\hbox{\unhbox1{\removehboxes}}%
-          \unhbox1
+          \unhbox2 
+          \ifdim\wd1 >0pt \internotespace \unhbox1\fi
           %\showlists
           \endgraf
         \fi
@@ -1133,7 +1144,9 @@
       \repeat
   \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1, lnw=\lastn@tewid a:\@@adj, aP:\@@adjP}%
   \tempfalse\ifnum\tmpcount=3 \temptrue\else\ifnum\tmpcount=-1 \iff@rstnote \temptrue\fi\fi\fi
-  \ifhbox1\setbox3=\vbox{\ifnum 1=
+  \ifhbox1 \ifdim \dimexpr\wd1 +\ht1 \relax >0pt
+    \ifDBGshownoteboxes\showbox0 \showbox1 \showbox3 \fi 
+    \setbox3=\vbox{\ifnum 1=
         \iftemp \ifparnotesruletopskip 1 \else 0 \fi
       \else
         \ifparnotesmidtopskip 1 \else 0 \fi
@@ -1146,13 +1159,17 @@
     \noindent\leavevmode\@@adj\global\let\@@adj\empty
       \unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3%
     %\nonstopmode\showbox3
-  }\fi%
+  }\fi\fi%
   %\showbox5
   \lastn@tefalse 
-  \ifvoid5\else
+  \ifvoid5
+    \trace{fp}{No final line/note?? box 3 is \the\ht3}%
+  \else
     \trace{fp}{Reinstating final line/note}%
+    \ifDBGshownoteboxes\showbox5 \fi 
     \setbox3\vbox{\interlinepenalty=\lastnoteinterlinepenalty\widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty %\baselineskip=\csname n@te-\n@tetype-bls\endcsname
-       \unvbox3\setbox1\lastbox\dimen1=\lastskip\unskip
+       \unvbox3 \setbox1 \lastbox\dimen1=\lastskip\unskip
+       %\ifvoid1\ifDBGshownoteboxes\showlists\fi\fi
        %\setbox6=\lastbox\global\prevdepth=\dp6\box6 %
        \trace{fp}{skip of \the\dimen1 before last line }%
        \ifdim\ht1>0pt 
