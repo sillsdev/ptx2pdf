@@ -1973,6 +1973,7 @@ class GtkViewModel(ViewModel):
                 t = re.sub(r"\\pc ?\n?\\pc ", r"\\pc ", r"\pc " + t)
                 self.set("txbf_colophon", t)
                 self.builder.get_object("t_copyrightStatement").set_text(' ')
+                self.builder.get_object("t_copyrightStatement").set_placeholder_text(_('Copyright statement too long. See Colophon in Peripherals'))
                 self.set("c_colophon", True)
                 self.doStatus(_("Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."))
 
@@ -5281,7 +5282,7 @@ class GtkViewModel(ViewModel):
             lsp = self.builder.get_object(a)
             allprojects = [x[0] for x in lsp]
             for i, p in enumerate(allprojects):
-                if prj.casefold() > p.casefold():
+                if prj.casefold() < p.casefold():
                     lsp.insert(i, v + (extras if a == "ls_projects" else []))
                     break
             else:
