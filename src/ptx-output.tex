@@ -323,6 +323,7 @@
       \prevdepth=-1000pt % no interline glue
       \kern\dimen1
       \hbox to \textwidth{\unhbox8}%
+      %\prevdepth=0pt % normal interline glue
     \else
       \box\voidb@x
     \fi
@@ -942,10 +943,11 @@
 \def\NoteShaveShortest{2} % How long should be note be before it is considered for breaking? (Approximate only, as it is width-based)
 
 \def\findsh@venotes#1#2{%Find the possible shaved lengths of the notes box
-  \ifversion{6}{\skip0=\csname bls-#2\endcsname}{\skip0=\l@stnotebls}%
+  \trace{fp}{findsh@venotes #2}%
+  \ifversion{6}{\skip0=\csname bls-#2\c@rrdstat\endcsname}{\skip0=\l@stnotebls}%
   \dimen0=\skip0
   \ifdim\dimen0=0pt \else
-    \trace{fp}{Finding shaved note lengths (#2) \the\ht#1}%
+    \trace{fp}{Finding shaved note lengths (#2) \the\ht#1 s0=\the\skip0, bls=\the\baselineskip}%
     \sh@vedim=\ht#1 % use sh@vedim as a temp. variable.
     \vbadness=10000
     \vfuzz=\maxdimen

@@ -6,6 +6,15 @@
 \stylesheet{test.sty}
 \stylesheet{longtest.sty}
 \input "usfmTex-settings.tex"
+\def\noteruler{{\smash{\vrule height 1em width 1pt 
+  \raise 1em \hbox{\vrule height \InterNoteSpace width 1.5pt}%
+  \kern 0.5pt
+  \vrule height \baselineskip width 0.5pt
+  \raise \baselineskip \hbox{\vrule height \InterNoteSpace width 1.5pt}%
+  \setbox0\hbox{GM}%
+  \kern 0.5pt
+  \raise \ht0 \hbox{\vrule height \InterNoteSpace width 1.5pt}%
+}}}
 %\def\doLines{\doGraphPaper}
 %\input "usfmTex-ext.tex"
 %\input "hooks.tex"
