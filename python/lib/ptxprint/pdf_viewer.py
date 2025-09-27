@@ -308,6 +308,8 @@ class PDFFileViewer:
         self.rtl_mode = rtl
         if fname is None:
             fname = self.fname
+        else:
+            self.fname = fname
         if fname is None:
             return False
         if not self.load_pdf(fname, **kw):
@@ -610,8 +612,10 @@ class PDFFileViewer:
             self.set_zoom(min(scale_x, scale_y))
 
     def set_page(self, action):
+        if self.current_index is None:
+            return
         increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
-        pg = self.current_index
+        pg = min(self.current_index, self.numpages)
         try:
             if action == self.swap4rtl("first"):
                 pg = 1
