@@ -3844,7 +3844,7 @@ PDF file(s) created for this project.</property>
     <property name="tooltip-text" translatable="yes">Open the PDF in the system's
 default PDF viewer (e.g. Evince,
 Acrobat or SumatraPDF).</property>
-    <property name="icon-name">view-dual-symbolic</property>
+    <property name="icon-name">text-x-generic-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_prvOpenFolder">
@@ -3878,6 +3878,13 @@ current configuration.</property>
     <property name="tooltip-text" translatable="yes">Save a COPY of this PDF with a
 new name and/or different folder.</property>
     <property name="icon-name">document-save-as-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_prvSpread">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="tooltip-text" translatable="yes">Show the PDF as a spread.</property>
+    <property name="icon-name">view-dual-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
@@ -15116,117 +15123,7 @@ dialog with all the settings. </property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">3</property>
                         <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="margin-left">2</property>
-                            <property name="margin-right">2</property>
-                            <property name="margin-start">2</property>
-                            <property name="margin-end">2</property>
-                            <property name="spacing">6</property>
-                            <child>
-                              <object class="GtkButton" id="btn_prvOpenFolder">
-                                <property name="name">Preview Pane: Open folder containing the PDF</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">Open the folder which contains the
-PDF file(s) created for this project.</property>
-                                <property name="halign">center</property>
-                                <property name="valign">center</property>
-                                <property name="image">icon_prvOpenFolder</property>
-                                <signal name="clicked" handler="onOpenOutputFolderclicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_prvSaveAs">
-                                <property name="name">Save the PDF with a different name</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">Save a COPY of this PDF with a
-new name and/or different folder.</property>
-                                <property name="halign">center</property>
-                                <property name="valign">center</property>
-                                <property name="image">icon_prvSaveAs</property>
-                                <signal name="clicked" handler="onSavePDFasClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_prvOpen">
-                                <property name="name">Open the PDF in Default PDF Viewer</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">Open the PDF in the system's
-default PDF viewer (e.g. Evince,
-Acrobat or SumatraPDF).</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="image">icon_prvOpen</property>
-                                <signal name="clicked" handler="onOpenItClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_prvPrint">
-                                <property name="name">Print the PDF on paper</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">Print the PDF on paper using
-a physical printer connected
-to this device.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="image">icon_prvPrint</property>
-                                <signal name="clicked" handler="onPrintItClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_prvReport">
-                                <property name="name">Show Report Information</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">Display a report on the
-current configuration.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="image">icon_prvReport</property>
-                                <signal name="clicked" handler="onGenerateReportClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">4</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                         <child>
                           <object class="GtkBox">
@@ -15251,7 +15148,7 @@ This delay can be adjusted by
 clicking on the value shown here
 or refer to: Advanced &gt; Other &gt; 
 Other Miscellaneous Settings.</property>
-                                <property name="margin-top">20</property>
+                                <property name="margin-top">6</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="showRulesOrGridClicked" swapped="no"/>
@@ -15656,6 +15553,9 @@ highlighted as an issue.</property>
                                 </child>
                               </object>
                             </child>
+                            <style>
+                              <class name="graybox"/>
+                            </style>
                           </object>
                         </child>
                       </object>
@@ -15708,6 +15608,9 @@ highlighted as an issue.</property>
                             </child>
                           </object>
                         </child>
+                        <style>
+                          <class name="graybox"/>
+                        </style>
                       </object>
                     </child>
                   </object>
@@ -15757,6 +15660,9 @@ highlighted as an issue.</property>
                             </child>
                           </object>
                         </child>
+                        <style>
+                          <class name="graybox"/>
+                        </style>
                       </object>
                     </child>
                   </object>
@@ -15806,6 +15712,9 @@ highlighted as an issue.</property>
                             </child>
                           </object>
                         </child>
+                        <style>
+                          <class name="graybox"/>
+                        </style>
                       </object>
                     </child>
                   </object>
@@ -15824,6 +15733,120 @@ highlighted as an issue.</property>
                   </object>
                   <packing>
                     <property name="position">3</property>
+                    <property name="tab-fill">False</property>
+                  </packing>
+                </child>
+                <child type="action-end">
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-left">2</property>
+                    <property name="margin-right">2</property>
+                    <property name="margin-start">2</property>
+                    <property name="margin-end">2</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkButton" id="btn_prvReport">
+                        <property name="name">Show Report Information</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Display a report on the
+current configuration.</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="image">icon_prvReport</property>
+                        <signal name="clicked" handler="onGenerateReportClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_prvOpen">
+                        <property name="name">Open the PDF in Default PDF Viewer</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Open the PDF in the system's
+default PDF viewer (e.g. Evince,
+Acrobat or SumatraPDF).</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="image">icon_prvOpen</property>
+                        <signal name="clicked" handler="onOpenItClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_prvOpenFolder">
+                        <property name="name">Preview Pane: Open folder containing the PDF</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Open the folder which contains the
+PDF file(s) created for this project.</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="image">icon_prvOpenFolder</property>
+                        <signal name="clicked" handler="onOpenOutputFolderclicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_prvSaveAs">
+                        <property name="name">Save the PDF with a different name</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Save a COPY of this PDF with a
+new name and/or different folder.</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="image">icon_prvSaveAs</property>
+                        <signal name="clicked" handler="onSavePDFasClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_prvPrint">
+                        <property name="name">Print the PDF on paper</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Print the PDF on paper using
+a physical printer connected
+to this device.</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="image">icon_prvPrint</property>
+                        <signal name="clicked" handler="onPrintItClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>

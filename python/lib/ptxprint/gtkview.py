@@ -6828,7 +6828,7 @@ Thank you,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                      Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
         dialog.set_current_folder(self.userconfig.get('init', 'saveasfolder', fallback=os.path.expanduser("~")))
-        dialog.set_current_name(self.getPDFname())
+        dialog.set_current_name(self.pdf_viewer.fname)
         pdf_filter = Gtk.FileFilter()
         pdf_filter.set_name("PDF files")
         pdf_filter.add_mime_type("application/pdf")
@@ -6839,7 +6839,7 @@ Thank you,
             if not new_file_path.lower().endswith('.pdf'):
                 new_file_path += '.pdf'
             try:
-                pdffilepath = os.path.join(self.project.printPath(None), self.getPDFname())
+                pdffilepath = os.path.join(self.project.printPath(None), self.pdf_viewer.fname)
                 copy2(pdffilepath, new_file_path)
                 self.doStatus(_("PDF saved as: ") + new_file_path)
                 self.userconfig.set('init', 'saveasfolder', os.path.dirname(new_file_path).replace("\\", "/"))
@@ -6873,8 +6873,8 @@ Thank you,
         self.anchorKeypressed = False      
 
     def onOpenItClicked(self, btn):
-        if self.currentPDFpath is not None:
-            startfile(self.currentPDFpath)
+        if self.pdf_viewer.fname is not None:
+            startfile(self.pdf_viewer.fname)
 
     def onLocateDigitMappingClicked(self, btn):
         self.highlightwidget('fcb_fontdigits')

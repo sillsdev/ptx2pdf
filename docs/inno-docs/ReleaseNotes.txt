@@ -1,8 +1,37 @@
 PTXprint 2.9.8 Release Notes
-12 Sep 2025
+27 Sep 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 2.9.9 (27 Sep 2025)
+  * Refactor PDF Viewer to display mutiple PDFs
+  * Add tabs on preview pane for cover and diff
+  * Remove Print Cover button - as Cover will just appear as a tab in viewer
+  * Update zoom and page settings when switching tabs in pdf_viewer
+  * Various UI tweaks/improvements to the Peripherals tab
+  * Add automatic creation of BookNames.xml to import process (if missing)
+  * Move 'Import Scripture' from standalone button to 'Import...' option on Project selector
+  * Update BSB (Berean Standard Bible) example text shipped with PTXprint (see Import...)
+  * Add links to dynamic section heading decorations style
+  * Swap XXS and XXM numeric values 101/102
+  * Stop Spinner from making it hang
+  * Improve ColorTabs logic - especially for Basic view
+  * Turn off refs as links by default
+  * Provide options for jmp/ref link border styles; tooltips on how to change the colour
+  * Prevent report from crashing if no bad spaces
+  * Prevent inappropriate breaking of old-style notes
+  * Add ptlite support to MacOS version
+  * Re-generate style stack properly after closing a headingsbox
+  * No title stuff in module refs
+  * Fix Chapter 1 error - appearing alone at end of page (#1091)
+  * Fix open of OrnamentsCatalogue and TechRef
+  * Fix Diglot Project chooser selecting Import option
+  * Fix page numbering bug, (page numbers being reset twice)
+  * Fix 'at' changes not working for before chapter 1 in single chapter books
+  * Fix bug to enable open.bible and DBL links
+  * Fix tooltips in Preview pane
+  * Update TechRef documentation
 
 Bug fixes and Improvements in 2.9.8 (12 Sep 2025)
   * Implement generic ID C:V parser and get zsetref and vid milestones using it
