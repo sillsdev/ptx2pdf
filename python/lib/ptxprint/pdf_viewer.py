@@ -129,8 +129,6 @@ class PDFViewer:
         return self.viewers[curr]
 
     def __getattr__(self, name, default=None):
-        if name == "show_pdf":
-            print(f"{name=} {getcaller()}")
         v = self._currview()
         if hasattr(v, name):
             return getattr(self._currview(), name)
@@ -376,10 +374,13 @@ class PDFFileViewer:
                 images.append(nim)
             self.update_boxes(images)
 
+        def redraw():
+            self.show_pdf()
+
         if self.timer is not None:
             GLib.source_remove(self.timer)
         if scrolled:
-            self.timer = GLib.timeout_add(300, self.show_pdf)
+            self.timer = GLib.timeout_add(300, redraw)
         else:
             self.show_pdf()
 

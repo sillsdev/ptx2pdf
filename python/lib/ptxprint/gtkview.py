@@ -1593,8 +1593,6 @@ class GtkViewModel(ViewModel):
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
     def set(self, wid, value, skipmissing=False, useMarkup=False, sub=-1, mod=True):
-        if wid == "t_pgNum":
-            print(f"{wid=} {value=}\n{getcaller(1)}")
         if "[" in wid:
             subi = wid.index("[")
             sub = int(wid[subi+1:-1])
