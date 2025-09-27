@@ -6,7 +6,7 @@ import cairo, re, time, sys
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from ptxprint.utils import _, f2s, coltoonemax
+from ptxprint.utils import _, f2s, coltoonemax, getcaller
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
 from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
@@ -129,6 +129,8 @@ class PDFViewer:
         return self.viewers[curr]
 
     def __getattr__(self, name, default=None):
+        if name == "show_pdf":
+            print(f"{name=} {getcaller()}")
         v = self._currview()
         if hasattr(v, name):
             return getattr(self._currview(), name)
@@ -374,15 +376,12 @@ class PDFFileViewer:
                 images.append(nim)
             self.update_boxes(images)
 
-        def redraw():
-            GLib.idle_add(self.show_pdf)
         if self.timer is not None:
-            self.timer.cancel()
+            GLib.source_remove(self.timer)
         if scrolled:
-            self.timer = Timer(0.3, redraw)
-            self.timer.start()
+            self.timer = GLib.timeout_add(300, self.show_pdf)
         else:
-            redraw()
+            self.show_pdf()
 
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
@@ -1428,6 +1427,30 @@ class PDFContentViewer(PDFFileViewer):
         menu.append(res)
         return res
 
+    def hitPrint(self):
+        """ Delayed execution of print with a N-second debounce timer. """
+        if self.model.get("c_updatePDF"):
+            now = time.time()
+            self.last_click_time = now
+            if self.timer_id:
+                GLib.source_remove(self.timer_id)  # Cancel previous timer if it exists
+            # Schedule a delayed execution, but check timestamp before running
+            self.timer_id = GLib.timeout_add(self.autoUpdateDelay * 1000, self.executePrint)
+
+    def executePrint(self):
+        """ Actually triggers print only if no new clicks happened in the last N seconds. """
+        self.timer_id = None  # Reset timer reference
+        # If the last click was within the last N seconds, cancel execution
+        if time.time() - self.last_click_time < self.autoUpdateDelay:
+            return False  # Do nothing, just stop the timer
+        self.model.onOK(None)
+        self.updatePageNavigation()
+        return False
+
+    def on_update_pdf(self, x): # From middle-button click
+        self.model.onOK(None)
+        self.updatePageNavigation()
+
     def addSubMenuItem(self, parent_menu, label, submenu):
         menu_item = Gtk.MenuItem(label=label)  # Create a menu item for the parent
         menu_item.set_submenu(submenu)         # Attach the submenu
@@ -1835,30 +1858,6 @@ class PDFContentViewer(PDFFileViewer):
                 self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
         self.show_pdf()
         self.hitPrint()
-
-    def hitPrint(self):
-        """ Delayed execution of print with a N-second debounce timer. """
-        if self.model.get("c_updatePDF"):
-            now = time.time()
-            self.last_click_time = now
-            if self.timer_id:
-                GLib.source_remove(self.timer_id)  # Cancel previous timer if it exists
-            # Schedule a delayed execution, but check timestamp before running
-            self.timer_id = GLib.timeout_add(self.autoUpdateDelay * 1000, self.executePrint)
-
-    def executePrint(self):
-        """ Actually triggers print only if no new clicks happened in the last N seconds. """
-        self.timer_id = None  # Reset timer reference
-        # If the last click was within the last N seconds, cancel execution
-        if time.time() - self.last_click_time < self.autoUpdateDelay:
-            return False  # Do nothing, just stop the timer
-        self.model.onOK(None)
-        self.updatePageNavigation()
-        return False
-
-    def on_update_pdf(self, x): # From middle-button click
-        self.model.onOK(None)
-        self.updatePageNavigation()
 
     def edit_style(self, widget, a):
         (mkr, pref) = a
