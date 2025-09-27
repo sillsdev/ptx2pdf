@@ -354,7 +354,6 @@ class PDFFileViewer:
         if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
             self.zoomLevel = zoomLevel
             self.model.set("s_pdfZoomLevel", zoomLevel*100, mod=False)
-            return
         self.old_zoom = self.zoomLevel
         self.zoomLevel = zoomLevel
         width, height = self.psize
