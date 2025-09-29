@@ -14491,7 +14491,7 @@ development and maintenance of tools
 by SIL Global's Language Technology 
 Developers so that others can also benefit. 
 
-&lt;a href="https://give.sil.org/campaign/597654/donate"&gt;give.sil.org/campaign/597654/donate&lt;/a&gt;
+&lt;a href="https://give.sil.org/campaign/725128/donate"&gt;give.sil.org/campaign/725128/donate&lt;/a&gt;
 </property>
             <signal name="clicked" handler="onDonateClicked" swapped="no"/>
           </object>
@@ -15728,7 +15728,7 @@ highlighted as an issue.</property>
                     <property name="can-focus">False</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
-                    <property name="label" translatable="yes">Manual</property>
+                    <property name="label" translatable="yes">Reference</property>
                     <property name="angle">270</property>
                   </object>
                   <packing>
@@ -31337,7 +31337,7 @@ as vertical to make sure all headings fit.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">1</property>
                                     <property name="height">2</property>
                                   </packing>
                                 </child>
@@ -31579,7 +31579,7 @@ to make it fit.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">1</property>
                                     <property name="height">3</property>
                                   </packing>
                                 </child>
@@ -31690,7 +31690,7 @@ with a special graphic.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -31937,7 +31937,7 @@ either of the options shown below.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">2</property>
+                                    <property name="top-attach">3</property>
                                     <property name="height">2</property>
                                   </packing>
                                 </child>
@@ -31945,17 +31945,26 @@ either of the options shown below.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="valign">start</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-end">6</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="label" translatable="yes">Dynamic Border Around Section Headings:</property>
+                                        <property name="tooltip-text" translatable="yes">If Section Headings sometimes extend to more 
+than one line, then a static PDF section heading
+is unlikely to work. Instead, a dynamically
+generated decorative section heading needs to
+be set up to grow/shrink with the content of
+the heading. Use this link to show the special
+style, which needs to be enabled and defined.</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Dynamic Heading Borders:</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
-                                        <property name="fill">True</property>
+                                        <property name="fill">False</property>
                                         <property name="position">0</property>
                                       </packing>
                                     </child>
@@ -31966,7 +31975,13 @@ either of the options shown below.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Click to edit the \v marker's properties on the Styles tab.</property>
+                                        <property name="tooltip-text" translatable="yes">If Section Headings sometimes extend to more 
+than one line, then a static PDF section heading
+is unlikely to work. Instead, a dynamically
+generated decorative section heading needs to
+be set up to grow/shrink with the content of
+the heading. Use this link to show the special
+style, which needs to be enabled and defined.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="hexpand">True</property>
@@ -31984,7 +31999,12 @@ either of the options shown below.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="label" translatable="yes">Border around Book Titles:</property>
+                                        <property name="tooltip-text" translatable="yes">Dynamic borders can be applied to
+book titles (\mt1 and \mt2). Click on
+the link to visit the special style where
+the feature can be enabled and defined.</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Book Title Borders:</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -31999,7 +32019,10 @@ either of the options shown below.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Click to edit the \v marker's properties on the Styles tab.</property>
+                                        <property name="tooltip-text" translatable="yes">Dynamic borders can be applied to
+book titles (\mt1 and \mt2). Click on
+the link to visit the special style where
+the feature can be enabled and defined.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="hexpand">False</property>
@@ -32016,7 +32039,7 @@ either of the options shown below.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">4</property>
+                                    <property name="top-attach">0</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -32043,7 +32066,7 @@ publications.</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
