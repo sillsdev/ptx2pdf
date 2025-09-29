@@ -59,6 +59,8 @@ texpertOptions = {
                             # _("Thickness (pt) of minor notelines. Specify the colour (R G B) with \\def\\NoteLineColMinor{0.5 0 0")),
     # "NoteLineMajorDiv":   O("notelinediv", "LAY", (0, 0, 100, 1, 5, 0), r"\def{0}{{{1}}}", _("Noteline subdivisions"), 
                             # _("Major noteline happens at the start then every this many lines after.")),
+    "DoubleSided":          O("doublesided", "LAY", True, None, _("Double Sided Layout"), 
+                            _("This setting can be disabled to turn off inner/outer margins, forcing the inner/outer gutter, and Notelines to always appear on the same side of the printed page.")),
 
     "versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
     "versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
