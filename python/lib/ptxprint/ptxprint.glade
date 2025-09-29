@@ -15733,6 +15733,7 @@ highlighted as an issue.</property>
                 </child>
                 <child type="action-end">
                   <object class="GtkBox">
+                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-left">2</property>
                     <property name="margin-right">2</property>
