@@ -1193,6 +1193,8 @@ class GtkViewModel(ViewModel):
         self.doConfigNameChange(None)
         if sys.platform.startswith("win"):
             self.restore_window_geometry()
+        if self.pdf_viewer is not None:
+            self.pdf_viewer.hide_unused()
 
 
     def emission_hook(self, w, *a):

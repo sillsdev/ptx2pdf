@@ -123,6 +123,7 @@ class PDFViewer:
         for k in self.boxnames:
             w = model.builder.get_object(k)
             self.viewers.append(PDFContentViewer(model, w, tv) if k == "bx_previewPDF" else PDFFileViewer(model, w))
+        self.hide_unused()
 
     def _currview(self):
         curr = self.nbook.get_current_page()
@@ -181,6 +182,13 @@ class PDFViewer:
             self.viewers[i].loadnshow(fname, **kw)
             v.show()
             self.nbook.set_current_page(i)
+        self.hide_unused()
+
+    def hide_unused(self):
+        for i in range(1, self.nbook.get_n_pages()):
+            if i >= len(self.viewers) or self.viewers[i].document is None:
+                v = self.nbook.get_nth_page(i)
+                v.hide()
 
     def clear(self, widget=None):
         for v in self.viewers:
@@ -325,7 +333,7 @@ class PDFFileViewer:
         self.widget = widget
         widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
-        widget.show_all()
+        self.widget.show_all()
         self.set_zoom_fit_to_screen(None)
         self.updatePageNavigation()
         return True
