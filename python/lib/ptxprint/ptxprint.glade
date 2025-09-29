@@ -15620,7 +15620,6 @@ highlighted as an issue.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel">
-                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
@@ -15634,7 +15633,6 @@ highlighted as an issue.</property>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scr_previewDiff">
-                    <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="hexpand">False</property>
                     <property name="vexpand">False</property>
@@ -15672,7 +15670,6 @@ highlighted as an issue.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel">
-                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
@@ -15686,7 +15683,6 @@ highlighted as an issue.</property>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scr_previewManual">
-                    <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="hexpand">False</property>
                     <property name="vexpand">False</property>
@@ -15724,7 +15720,6 @@ highlighted as an issue.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel">
-                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
@@ -15738,7 +15733,6 @@ highlighted as an issue.</property>
                 </child>
                 <child type="action-end">
                   <object class="GtkBox">
-                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-left">2</property>
                     <property name="margin-right">2</property>
