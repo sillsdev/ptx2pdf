@@ -1068,10 +1068,9 @@ class GtkViewModel(ViewModel):
             .yellowlighted {background-color: rgb(255,255,102); background: rgb(255,255,102)}
             .attention {background-color: lightblue; background: lightblue}
             .warning {background: lightpink;font-weight: bold; color: darkred}
-            combobox.highlighted > box.linked > entry.combo { background-color: peachpuff; background: peachpuff}
-            combobox.yellowlighted > box.linked > entry.combo { background-color: rgb(255,255,102); background: rgb(255,255,102)}
             entry.progress, entry.trough {min-height: 24px} 
-        """
+            combobox.highlighted {border: 3px solid peachpuff; border-radius: 4px}
+            """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -3178,11 +3177,15 @@ class GtkViewModel(ViewModel):
         lsfonts = self.builder.get_object("ls_font")
         fc.fill_liststore(lsfonts)
 
-    def onFontRclicked(self, btn):
-        if self.getFontNameFace("bl_fontR"):
+    def onFontRclicked(self, btn, highlightWid=None):
+        if self.getFontNameFace("bl_fontR", highlightWid=highlightWid):
+            btn = self.builder.get_object("bl_fontR")
             self.onFontChanged(btn)
         self.checkFontsMissing()
-        
+
+    def onLocateDigitMappingClicked(self, btn):
+        self.onFontRclicked(None, highlightWid='fcb_fontdigits')
+
     def onFontBclicked(self, btn):
         self.getFontNameFace("bl_fontB")
         self.checkFontsMissing()
@@ -3221,7 +3224,7 @@ class GtkViewModel(ViewModel):
             style = ""
         return (name, style)
 
-    def getFontNameFace(self, btnid, noStyles=False, noFeats=False):
+    def getFontNameFace(self, btnid, noStyles=False, noFeats=False, highlightWid=None):
         btn = self.builder.get_object(btnid) if btnid is not None else None
         f = self.get(btnid) if btnid is not None else None
         lb = self.builder.get_object("tv_fontFamily")
@@ -3285,8 +3288,15 @@ class GtkViewModel(ViewModel):
         for a in ("Bold", "Italic"):
             self.builder.get_object("s_font"+a).set_sensitive(hasfake)
         # dialog.set_default_response(Gtk.ResponseType.OK)
-        
+
+        if highlightWid is not None:
+            w = self.builder.get_object(highlightWid)
+            w.get_style_context().add_class("highlighted")
+            
         response = dialog.run()
+        if highlightWid is not None:
+            w = self.builder.get_object(highlightWid)
+            w.get_style_context().remove_class("highlighted")
         if response == Gtk.ResponseType.OK:
             (name, style) = self._getSelectedFont(name)
             if self.get("c_fontFake"):
@@ -6893,9 +6903,6 @@ Thank you,
     def onOpenItClicked(self, btn):
         if self.pdf_viewer.fname is not None:
             startfile(self.pdf_viewer.fname)
-
-    def onLocateDigitMappingClicked(self, btn):
-        self.highlightwidget('fcb_fontdigits')
 
     def showRulesClicked(self, btn):
         v = self.get("c_gridLines")
