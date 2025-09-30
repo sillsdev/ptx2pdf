@@ -1038,9 +1038,10 @@
   %\tracingassigns=1
   %\tracingrestores=1
   \linec@unt=0
-  \disc@rdmvbohb % trash any trailing glue/penalties, etc.
-  \ifNoteTracing\tracingparagraphs=1\fi
   \let\@@adj\empty\let\@@adjP\empty \looseness=0
+  \disc@rdmvbohb % trash any trailing glue/penalties, etc.
+  \s@t@@adj % but apply adjustment if one was found.
+  \ifNoteTracing\tracingparagraphs=1\fi
   \loop
     \setbox2=\lastbox
     \disc@rdmvbohb
@@ -1152,10 +1153,12 @@
         \ifnum\tmpcount=1\else\lastn@tefalse\fi
       \fi
     \fi
+    \trace{fp}{box2 is \ifvoid2 void\else\ifhbox2 hbox \the\ht2+\the\dp2 x\the\wd2 \else\ifvbox2 vbox\fi\fi\fi}%
     \ifhbox2
       \setbox1=\hbox{\ifdim\wd2>0pt \unhbox2 \internotespace \fi\unhbox1}%\nonstopmode\showbox1
       \repeat
-  \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1, lnw=\lastn@tewid a:\@@adj, aP:\@@adjP}%
+  \trace{fp}{After unboxing, \the\tmpcount, b0=\l@gdims{0}, b1=\l@gdims{1}, b3=\l@gdims{3}, b5=\l@gdims{5} lnw=\lastn@tewid a:\@@adj, aP:\@@adjP}%
+  %\showlists
   \tempfalse\ifnum\tmpcount=3 \temptrue\else\ifnum\tmpcount=-1 \iff@rstnote \temptrue\fi\fi\fi
   \ifhbox1 \ifdim \dimexpr\wd1 +\ht1 \relax >0pt
     \ifDBGshownoteboxes\showbox0 \showbox1 \showbox3 \fi 
@@ -1169,8 +1172,11 @@
     \fi%
     %\ifvbox2 \unvbox2\fi
     \ifvbox0 \n@tedepth=\dp0 \box0 \penalty10000 \prevdepth=\n@tedepth \fi
-    \noindent\leavevmode\@@adj\global\let\@@adj\empty
-      \unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\n@tedepth=\prevdepth\ifdim\n@tedepth=0pt\else\kern-\n@tedepth\fi\fi\unvbox3%
+    \noindent\leavevmode
+    \ifx\@@adj\empty\else\trace{fp}{Applying adjust, b1:\the\wd1}%
+      \@@adj \global\let\@@adj\empty
+    \fi
+    \unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\n@tedepth=\prevdepth\ifdim\n@tedepth=0pt\else\kern-\n@tedepth\fi\fi\unvbox3%
     %\nonstopmode\showbox3
   }\fi\fi%
   %\showbox5
@@ -1178,7 +1184,7 @@
   \ifvoid5
     \trace{fp}{No final line/note?? box 3 is \the\ht3}%
   \else
-    \trace{fp}{Reinstating final line/note}%
+    \trace{fp}{Reinstating final line/note  a:\@@adj, aP:\@@adjP}%
     \ifDBGshownoteboxes\showbox5 \fi 
     \setbox3\vbox{\interlinepenalty=\lastnoteinterlinepenalty\widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty %\baselineskip=\csname n@te-\n@tetype-bls\endcsname
        \unvbox3 \setbox1 \lastbox\dimen1=\lastskip\unskip
