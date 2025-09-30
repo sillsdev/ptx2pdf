@@ -5294,6 +5294,8 @@ class GtkViewModel(ViewModel):
         for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
             lsp = self.builder.get_object(a)
             allprojects = [x[0] for x in lsp]
+            if any(prj.casefold() == x.casefold() for x in allprojects):
+                continue
             for i, p in enumerate(allprojects):
                 if prj.casefold() < p.casefold():
                     lsp.insert(i, v + (extras if a == "ls_projects" else []))
