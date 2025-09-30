@@ -763,6 +763,7 @@ class GtkViewModel(ViewModel):
         self.picrect = None
         self.picframe = self.builder.get_object("fr_picPreview")
         self._picframe_connected = False
+        self.fallbackPrj = None
 
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
@@ -879,11 +880,13 @@ class GtkViewModel(ViewModel):
 
         # 2. If more than 10 projects, identify the most recent 10% (max of 10) of project IDs to be highlighted
         recent_project_ids = {}
+        projects_with_time.sort(key=lambda x: x['mtime'], reverse=True)
         if len(all_projects) > 10:
             topTenPcnt = min(int(len(all_projects)/10), 10)
             # print(f"{topTenPcnt=}")
-            projects_with_time.sort(key=lambda x: x['mtime'], reverse=True)
             recent_project_ids = {d['p'].prjid for d in projects_with_time[:topTenPcnt] if d['mtime'] > 0}
+        if len(projects_with_time):
+            self.fallbackPrj = projects_with_time[0]['p']
 
         # 3. Get models and clear them
         projects = self.builder.get_object("ls_projects")
@@ -916,7 +919,7 @@ class GtkViewModel(ViewModel):
             if os.path.exists(os.path.join(p.path, 'TermRenderings.xml')):
                 strngsfbprojects.append([prjid, guid])
 
-        ### MODIFICATION 1: Add the special "Import..." option to the end of the main projects model.
+        # Add the special "Import..." option to the end of the main projects model.
         # We use a special GUID to identify this action item later.
         # We also give it a distinct blue (clickable) color.
         projects.append(["Import...", "__IMPORT_PROJECT__", Pango.Weight.NORMAL, "#0000CD"])
@@ -942,6 +945,12 @@ class GtkViewModel(ViewModel):
         logger.debug("Project list loaded")
 
         return True
+        
+    def setFallbackProject(self):
+        if self.fallbackPrj is not None:
+            self.setPrjid(self.fallbackPrj.prjid, self.fallbackPrj.guid)
+        else:
+            self.onInstallBSBclicked(None)
 
     def set_project_style(self, cell_layout, cell, model, tree_iter, data=None):
         """
@@ -5293,7 +5302,10 @@ class GtkViewModel(ViewModel):
                 lsp.append(v + (extras if a == "ls_projects" else []))
         ui = self.uilevel
         self.resetToInitValues()
-        self.set("fcb_project", prj)
+        if self.initialised:
+            self.set("fcb_project", prj)
+        else:
+            self.setPrjid(pjct.prjid, pjct.guid)
         self.set_uiChangeLevel(ui)
 
     def onImportProject(self):

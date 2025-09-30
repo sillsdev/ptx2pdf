@@ -90,7 +90,7 @@ def main(doitfn=None):
     parser.add_argument('-N', '--nointernet', action="store_true", help="Disable all internet access")
     parser.add_argument('-n', '--port', type=int, help="Port to listen on")
     parser.add_argument('-D', '--define', action=DictAction, help="Set UI component=value (repeatable)")
-    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx)")
+    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir)")
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
     parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
 
@@ -202,7 +202,7 @@ def main(doitfn=None):
     if args.lang is None:
         args.lang = getnsetlang(config)
 
-    if not len(args.projects):
+    if (args.extras & 2) != 0 or not len(args.projects):
         # print("No Paratext Settings directory found - sys.exit(1)")
         if not args.print:
             pdir = getPTDir()
@@ -390,6 +390,8 @@ def main(doitfn=None):
             if args.pid:
                 mainw.setPrjid(args.pid, project.guid)
                 mainw.setConfigId(args.config or "Default")
+            else:
+                mainw.setFallbackProject()
             if args.define is not None:
                 for k, v in args.define.items():
                     mainw.set(k, v)
