@@ -2374,6 +2374,8 @@ class GtkViewModel(ViewModel):
             self.adjView.set_model(adjl, save=True)
 
     def onBookSelectorChange(self, btn):
+        if self.project is None:        # no project selected
+            return
         if self.get("ecb_booklist") == "" and self.project.prjid is not None:
             self.updateDialogTitle()
         else:
@@ -3667,7 +3669,7 @@ class GtkViewModel(ViewModel):
             bks = self.getBooks()
         except (SyntaxError, ValueError):     # mid typing the reflist may be bad
             return
-        if len(bks):
+        if bks is not None and len(bks):
             self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
 
     def toggleBooks(self,start,end):

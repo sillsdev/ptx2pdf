@@ -285,6 +285,8 @@ class ViewModel:
         return res
 
     def getBooks(self, scope=None, files=False, local=False):
+        if self.project is None:
+            return
         if scope is None:
             scope = self.get("r_book")
         if scope == "module":
