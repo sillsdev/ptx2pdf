@@ -31318,9 +31318,10 @@ entire publication.</property>
                                                 <property name="valign">center</property>
                                                 <property name="margin-left">5</property>
                                                 <property name="margin-start">5</property>
-                                                <property name="margin-top">6</property>
                                                 <property name="draw-indicator">True</property>
                                                 <property name="group">r_sectHead_dynamic</property>
+                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                <signal name="clicked" handler="onSectHeadingsBorderClicked" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">0</property>
@@ -31342,6 +31343,8 @@ footnotes and other peripheral material).</property>
                                                 <property name="margin-start">6</property>
                                                 <property name="draw-indicator">True</property>
                                                 <property name="group">r_sectHead_legacy</property>
+                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                <signal name="clicked" handler="onSectHeadingsBorderClicked" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">0</property>
@@ -31407,6 +31410,7 @@ as vertical to make sure all headings fit.</property>
                                         <property name="valign">center</property>
                                         <property name="margin-top">4</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onSectHeadingsBorderClicked" swapped="no"/>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                     </child>
@@ -31421,10 +31425,8 @@ as vertical to make sure all headings fit.</property>
                                   <object class="GtkFrame">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="valign">start</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-end">6</property>
-                                    <property name="hexpand">True</property>
                                     <property name="label-xalign">0.029999999329447746</property>
                                     <child>
                                       <object class="GtkAlignment">
@@ -31663,9 +31665,9 @@ to make it fit.</property>
                                   <object class="GtkFrame">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="valign">start</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-end">6</property>
+                                    <property name="margin-bottom">6</property>
                                     <property name="hexpand">True</property>
                                     <property name="label-xalign">0.029999999329447746</property>
                                     <child>
@@ -31773,7 +31775,7 @@ with a special graphic.</property>
                                   <object class="GtkFrame">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="valign">start</property>
+                                    <property name="margin-bottom">6</property>
                                     <property name="label-xalign">0.019999999552965164</property>
                                     <child>
                                       <object class="GtkAlignment">
@@ -32035,7 +32037,7 @@ either of the options shown below.</property>
                                         <property name="left-padding">12</property>
                                         <child>
                                           <!-- n-columns=3 n-rows=1 -->
-                                          <object class="GtkGrid" id="gr_endOfBook1">
+                                          <object class="GtkGrid" id="gr_bookTitleBorder">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">start</property>
@@ -32053,9 +32055,11 @@ either of the options shown below.</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="focus-on-click">False</property>
                                                 <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">Adjust the styling of the dynamic borders.</property>
+                                                <property name="tooltip-text" translatable="yes">Adjust the styling of the dynamic 
+borders around book titles.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
+                                                <property name="margin-bottom">4</property>
                                                 <property name="hexpand">False</property>
                                                 <property name="relief">none</property>
                                                 <property name="uri">Click to view the Styles tab</property>
@@ -32067,7 +32071,15 @@ either of the options shown below.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <placeholder/>
+                                              <object class="GtkLabel">
+                                                <property name="width-request">22</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
+                                              </packing>
                                             </child>
                                             <child>
                                               <placeholder/>
@@ -32090,6 +32102,8 @@ can be adjusted using the link below.</property>
                                         <property name="valign">center</property>
                                         <property name="margin-top">4</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onBookTitleClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -32115,7 +32129,9 @@ such decorative features in scripture
 publications.</property>
                                 <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
+                                <signal name="clicked" handler="onBookTitleClicked" swapped="no"/>
                                 <signal name="clicked" handler="onBorderClicked" swapped="no"/>
+                                <signal name="clicked" handler="onSectHeadingsBorderClicked" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -36547,6 +36563,8 @@ after any front matter material).</property>
                                 <property name="valign">center</property>
                                 <property name="margin-start">12</property>
                                 <property name="draw-indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                <signal name="clicked" handler="updateBooklist4maps" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -36574,7 +36592,7 @@ or to the XXM book using this dialog.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="btn_editMaps">
+                              <object class="GtkButton" id="btn_editMaps1">
                                 <property name="label" translatable="yes">Edit...</property>
                                 <property name="name">Edit Maps module</property>
                                 <property name="visible">True</property>

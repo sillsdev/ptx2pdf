@@ -367,15 +367,20 @@ _sensitivities = {
     "c_letterSpacing" :        ["s_letterShrink", "s_letterStretch"],
     "c_spacing" :              ["s_minSpace", "s_maxSpace"],
     "c_inclPageBorder" :       ["gr_pageBorder"],
-    "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF", "lb_inclSectionHeader", 
+    "c_inclSectionHeader" :    ["gr_sectionHeader"],
+    "r_sectHead" : {
+        "r_sectHead_dynamic":  ["lb_style_cat:headingsbox|esb"],
+        "r_sectHead_legacy":   ["btn_selectSectionHeaderPDF", "lb_inclSectionHeader", 
                                 "l_inclSectionShift", "l_inclSectionScale", 
-                                "s_inclSectionShift", "s_inclSectionScale"],
+                                "s_inclSectionShift", "s_inclSectionScale"]},
+    "c_inclTitleBorders" :     ["lb_style_cat:titlebox|esb"],
     "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF", "lb_inclEndOfBook"],
     "c_inclVerseDecorator" :   ["gr_verseDecorator", "r_decorator_ayah", "r_decorator_file"],
     "c_fontFake":              ["s_fontBold", "s_fontItalic", "l_fontBold", "l_fontItalic"],
     "c_thumbtabs":             ["gr_thumbs"],
     "c_thumbrotate":           ["fcb_rotateTabs"],
     "c_frontmatter":           ["c_periphPageBreak", "btn_editFrontMatter"],
+    "c_inclMaps":              ["btn_addMaps1", "btn_editMaps1"],
     "c_colophon":              ["gr_colophon"],
     "c_plCreditApply2all":     ["c_plCreditOverwrite"],
     "c_rangeShowChapter":      ["c_rangeShowVerse", "l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
@@ -3994,7 +3999,7 @@ class GtkViewModel(ViewModel):
     def updateViewNedit(self):
         for a in [('c_useModsTex',           'onEditModsTeX'), 
                   ('c_usePrintDraftChanges', 'onEditChangesFile'), 
-                  ('c_inclMaps',             'onEditMaps')]:
+                  ('c_inclMaps',             'onEditMaps1')]:
             if self.get(a[0]):
                 getattr(self, a[1])(None)
         
@@ -4919,7 +4924,6 @@ class GtkViewModel(ViewModel):
         self.setPublishableTextBorder()
 
     def onOpenTextBorderDialog(self, btn):
-        # breakpoint()
         self.setPublishableTextBorder()
         self.styleEditor.sidebarBorderDialog()
         # mpgnum = self.notebooks['Main'].index("tb_TabsBorders")
@@ -4934,7 +4938,42 @@ class GtkViewModel(ViewModel):
             self.set("c_styTextProperties", False if x == "non" else True)
         except KeyError:
             return
-            
+
+    def onSectHeadingsBorderClicked(self, btn):
+        if self.loadingConfig:
+            return
+        self.onSimpleClicked(btn)
+        self.sensiVisible("c_useOrnaments")
+        self.colorTabs()
+        self.setPublishableSectionBorder()
+
+    def setPublishableSectionBorder(self):
+        x = "" if self.get("c_useOrnaments") and self.get("c_inclSectionHeader") \
+              and self.get("r_sectHead_dynamic") else "non"
+        try:
+            self.styleEditor.selectMarker("cat:headingsbox|esb")
+            self.styleEditor.setval("cat:headingsbox|esb", "TextProperties", "{}publishable verse".format(x))
+            self.set("c_styTextProperties", False if x == "non" else True)
+        except KeyError:
+            return
+
+    def onBookTitleClicked(self, btn):
+        if self.loadingConfig:
+            return
+        self.onSimpleClicked(btn)
+        self.sensiVisible("c_useOrnaments")
+        self.colorTabs()
+        self.setPublishableTitleBorder()
+
+    def setPublishableTitleBorder(self):
+        x = "" if self.get("c_useOrnaments") and self.get("c_inclTitleBorders") else "non"
+        try:
+            self.styleEditor.selectMarker("cat:titlebox|esb")
+            self.styleEditor.setval("cat:titlebox|esb", "TextProperties", "{}publishable verse".format(x))
+            self.set("c_styTextProperties", False if x == "non" else True)
+        except KeyError:
+            return
+
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
         self.sensiVisible("c_thumbtabs")
@@ -5094,13 +5133,14 @@ class GtkViewModel(ViewModel):
         
     def onstyTextPropertiesClicked(self, btn):
         self.onSimpleClicked(btn)
-        if self.styleEditor.marker == 'textborder':
-            if 'publishable' in self.styleEditor.getval('textborder', 'TextProperties'):
-                for w in ["c_useOrnaments", "c_inclPageBorder"]:
-                    self.set(w, True)
-                self.set("r_border", "text")
-            else:
-                self.set("c_inclPageBorder", False)
+        return
+        # if self.styleEditor.marker == 'textborder':
+            # if 'publishable' in self.styleEditor.getval('textborder', 'TextProperties'):
+                # for w in ["c_useOrnaments", "c_inclPageBorder"]:
+                    # self.set(w, True)
+                # self.set("r_border", "text")
+            # else:
+                # self.set("c_inclPageBorder", False)
 
     def onFontStyclicked(self, btn):
         if self.getFontNameFace("bl_font_styFontName"): #, noStyles=True)
@@ -7068,9 +7108,13 @@ Thank you,
                 with open(outfile, "w", encoding="utf-8") as outf:
                     outf.write("\\id {0} Maps index\n\\h {1}\n\\toc3 {1}\n\\mt1 {1}\n".format(mapbkid, title))
                     outf.write(new_map_usfm)
-                    
-            bkid = self.get("fcb_ptxMapBook") or "XXM"
-            lsbooks = self.builder.get_object("ls_books")
+            self.set('c_inclMaps', True)
+            self.updateBooklist4maps(None)
+
+    def updateBooklist4maps(self, btn):
+        bkid = self.get("fcb_ptxMapBook") or "XXM"
+        lsbooks = self.builder.get_object("ls_books")
+        if self.get('c_inclMaps', False):
             if bkid not in enumerate(lsbooks):
                 lsbooks.append([bkid])
             bl = self.getBooks()
@@ -7080,7 +7124,15 @@ Thank you,
                 self.set('ecb_booklist', bls)
             self.saveConfig(force=True)
             self.doStatus(_("Maps added to: {}").format(bkid))
-
+        else:
+            bl = self.getBooks()
+            if (self.get("r_book") or "multiple") and bkid in bl:
+                bls = self.get('ecb_booklist', "")
+                bls = re.sub(f"\\s?{bkid}\\s?"," ",bls)
+                self.set('ecb_booklist', bls)
+                self.saveConfig(force=True)
+                self.doStatus(_("Maps book ({}) removed from list of books to print.").format(bkid))
+    
     def onSelectMapClicked(self, btn_selectMap):
         picroot = self.project.path
         for a in ("figures", "Figures", "FIGURES"):

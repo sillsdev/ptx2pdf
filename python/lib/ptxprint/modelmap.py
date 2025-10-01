@@ -78,6 +78,7 @@ _map = {
     "project/iffrontmatter":    ("c_frontmatter", "front", lambda w,v: "" if v else "%"),
     "project/inclcoverperiphs": ("c_includeCoverSections", "cover", None),
     "project/periphpagebreak":  ("c_periphPageBreak", "front", None),
+    "project/inclmaps":         ("c_inclMaps", "front", None),
     "project/colophontext":     ("txbf_colophon", "meta", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", "meta", lambda w,v: "" if v else "%"),
@@ -138,11 +139,14 @@ _map = {
                                             if (w.pageborder is not None and w.pageborder != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 page border.pdf"),
     "fancy/sectionheader":      ("c_inclSectionHeader", "decorate", lambda w,v: "" if v else "%"),
+    "fancy/sectionborder":      ("r_sectHead", "fancy", lambda w,v : "" if v == "legacy" else "%"),
+    "fancy/sectionbordertype":  ("r_sectHead", "decorate", None),
     "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", "decorate", lambda w,v: w.sectionheader.as_posix() \
                                             if (w.sectionheader is not None and w.sectionheader != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
     "fancy/sectionheadershift": ("s_inclSectionShift", "decorate", lambda w,v: float(v or "0")),
     "fancy/sectionheaderscale": ("s_inclSectionScale", "decorate", lambda w,v: int(float(v or "1.0")*1000)),
+    "fancy/booktitleborder":    ("c_inclTitleBorders", "decorate", lambda w,v: "" if v else "%"),
     "fancy/endofbook":          ("c_inclEndOfBook", "decorate", lambda w,v: "" if v else "%"),
     "fancy/endofbookpdf":       ("btn_selectEndOfBookPDF", "decorate", lambda w,v: w.endofbook.as_posix() \
                                             if (w.endofbook is not None and w.endofbook != 'None') \
