@@ -287,19 +287,19 @@ class FancyBorders(Snippet):
             repeats = [("", texmodel)]
         for k, v in repeats:
             res += r"""
-{fancy/sectionheader}\newbox\sectionheadbox%D%
-{fancy/sectionheader}\def\placesectionheadbox%D%{{%
-{fancy/sectionheader}  \ifvoid\sectionheadbox%D% % set up the \sectionheadbox box the first time it's needed
-{fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\hbox to \hsize{{\hss \XeTeXpdffile "{fancy/sectionheaderpdf}" scaled {fancy/sectionheaderscale} \relax\hss}}%
-{fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\vbox to 0pt
-{fancy/sectionheader}        {{\kern-\ht\sectionheadbox%D% \kern {fancy/sectionheadershift}pt \box\sectionheadbox \vss}}
-{fancy/sectionheader}  \fi
-{fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}%
-{fancy/sectionheader}}}
-{fancy/sectionheader}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
-{fancy/sectionheader}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
-{fancy/sectionheader}\sethook{{start}}{{s2%D%}}{{\placesectionheadbox}}
-{fancy/sectionheader}\squashgridboxfalse
+{fancy/sectionheader}{fancy/sectionborder}\newbox\sectionheadbox%D%
+{fancy/sectionheader}{fancy/sectionborder}\def\placesectionheadbox%D%{{%
+{fancy/sectionheader}{fancy/sectionborder}  \ifvoid\sectionheadbox%D% % set up the \sectionheadbox box the first time it's needed
+{fancy/sectionheader}{fancy/sectionborder}    \global\setbox\sectionheadbox%D%=\hbox to \hsize{{\hss \XeTeXpdffile "{fancy/sectionheaderpdf}" scaled {fancy/sectionheaderscale} \relax\hss}}%
+{fancy/sectionheader}{fancy/sectionborder}    \global\setbox\sectionheadbox%D%=\vbox to 0pt
+{fancy/sectionheader}{fancy/sectionborder}        {{\kern-\ht\sectionheadbox%D% \kern {fancy/sectionheadershift}pt \box\sectionheadbox \vss}}
+{fancy/sectionheader}{fancy/sectionborder}  \fi
+{fancy/sectionheader}{fancy/sectionborder}  \vadjust{{\copy\sectionheadbox}}%
+{fancy/sectionheader}{fancy/sectionborder}}}
+{fancy/sectionheader}{fancy/sectionborder}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
+{fancy/sectionheader}{fancy/sectionborder}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
+{fancy/sectionheader}{fancy/sectionborder}\sethook{{start}}{{s2%D%}}{{\placesectionheadbox}}
+{fancy/sectionheader}{fancy/sectionborder}\squashgridboxfalse
 
 {fancy/versedecoratorisfile}\newbox\versestarbox%D%
 {fancy/versedecoratorisfile}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{fancy/versedecoratorpdf}" scaled {fancy/versedecoratorscale} \relax}}
