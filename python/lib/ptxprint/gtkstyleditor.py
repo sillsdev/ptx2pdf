@@ -360,6 +360,7 @@ class StyleEditorView(StyleEditor):
         path = self.treestore.get_path(it)
         self.treeview.expand_to_path(path)
         self.treeview.get_selection().select_path(path)
+        self.treeview.scroll_to_cell(path, None, False, 0, 0)
 
     def _searchMarker(self, model, it, marker, findall=False):
         while it is not None:
