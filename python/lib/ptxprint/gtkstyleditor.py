@@ -334,7 +334,7 @@ class StyleEditorView(StyleEditor):
                     pass
                 elif b[0] != k or any(b[0].startswith(x) for x in ('OBSOLETE', 'DEPRECATED')):
                     n = "{} - {}".format(k, " - ".join(b[1:]))
-                isdisabled = 'nonpublishable' in (x.lower() for x in self.getval(k, 'TextProperties', ""))
+                isdisabled = 'nonpublishable' not in (x.lower() for x in self.getval(k, 'TextProperties', ""))
             elif k not in self.basesheet:
                 ismarker = False
                 n = k
@@ -630,7 +630,7 @@ class StyleEditorView(StyleEditor):
             props.add(add+'publishable')
             self.sheet[self.marker]['TextProperties'] = " ".join(sorted(props))
             (model, selecti) = self.treeview.get_selection().get_selected()
-            model.set_value(selecti, 3, val)
+            model.set_value(selecti, 3, not val)
             return
         elif key in self.stylediverts:
             newk = self.stylediverts[key][0]
@@ -727,13 +727,13 @@ class StyleEditorView(StyleEditor):
         while selecti:
             r = self.treestore[selecti]
             if r[0] == cat:
-                selecti = self.treestore.append(selecti, [mrk, name, True, False])
+                selecti = self.treestore.append(selecti, [mrk, name, True, True])
                 # logger.debug(f"Inside treestore: {self.treestore.get_string_from_iter(selecti)}")
                 break
             selecti = self.treestore.iter_next(selecti)
         else:
-            selecti = self.treestore.append(None, [cat, cat, False, False])
-            selecti = self.treestore.append(selecti, [mrk, name, True, False])
+            selecti = self.treestore.append(None, [cat, cat, False, True])
+            selecti = self.treestore.append(selecti, [mrk, name, True, True])
             # logger.debug(f"one step {self.treestore.get_string_from_iter(selecti)}")
         return selecti
 
