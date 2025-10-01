@@ -409,6 +409,7 @@ _sensitivities = {
     "c_coverShading":          ["col_coverShading", "s_coverShadingAlpha", "l_coverShading"],
     "c_coverSelectImage":      ["fcb_coverImageSize", "c_coverImageFront", "s_coverImageAlpha", "btn_coverSelectImage", "lb_coverImageFilename"],
     "c_layoutAnalysis":        ["btn_findButton"],
+    "c_styTextProperties":     ["scr_styleSettings"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -421,7 +422,6 @@ _nonsensitivities = {
     "c_doublecolumn" :         ["l_colXRside", "fcb_colXRside"],
     # "c_lockFontSize2Baseline": ["l_linespacing", "s_linespacing", "btn_adjust_spacing"],
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
-    "c_styTextProperties":     ["scr_styleSettings"],
     "c_inclSpine":             ["c_coverCropMarks"],
     "c_lockUI4Layout":         ["ecb_pagesize", "c_mirrorpages", "s_indentUnit", "s_fontsize", "btn_adjust_spacing",
                                 "c_lockFontSize2Baseline", "c_pagegutter", "s_pagegutter", "s_linespacing", 
@@ -3127,7 +3127,7 @@ class GtkViewModel(ViewModel):
     def onEditStyleClicked(self, btn):
         mkr = Gtk.Buildable.get_name(btn)[9:].strip("_")
         if mkr == "toc3" and self.get("r_thumbText") == "zthumbtab":  # "c_thumbIsZthumb"):
-            self.set("c_styTextProperties", False, mod=False)  # MH: why is this being done?
+            self.set("c_styTextProperties", True, mod=False)  # MH: why is this being done?
             mkr = "zthumbtab"
         elif mkr == "x-credit|fig":
             dialog = self.builder.get_object("dlg_overlayCredit")
@@ -4931,7 +4931,7 @@ class GtkViewModel(ViewModel):
         try:
             self.styleEditor.selectMarker("textborder")
             self.styleEditor.setval("textborder", "TextProperties", "{}publishable verse".format(x))
-            self.set("c_styTextProperties", True if x == "non" else False)
+            self.set("c_styTextProperties", False if x == "non" else True)
         except KeyError:
             return
             
