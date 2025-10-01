@@ -44,7 +44,7 @@ stylemap = {
 
     '_fontsize':    ('c_styFontScale',           'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
     '_linespacing': ('c_styAbsoluteLineSpacing', 'c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing', None),
-    '_publishable': ('c_styTextProperties',      'c_styTextProperties', False, None, None)
+    '_publishable': ('c_styTextProperties',      'c_styTextProperties', True, None, None)
 }
 
 topLevelOrder = (
@@ -87,6 +87,7 @@ categorymapping = {
     'Introduction':                             (_('Introduction'), 'introductions'),
     'Chapter':                                  (_('Chapters & Verses'), 'chapters_verses'),
     'Chapter Number':                           (_('Chapters & Verses'), 'chapters_verses'),
+    'Reference':                                (_('Chapters & Verses'), 'chapters_verses'),
     'Verse Number':                             (_('Chapters & Verses'), 'chapters_verses'),
     'Paragraph':                                (_('Paragraphs'), 'paragraphs'),
     'Poetry':                                   (_('Poetry'), 'poetry'),
@@ -443,16 +444,16 @@ class StyleEditorView(StyleEditor):
                 urlmkr = re.sub(r'\d', '', urlmkr)
             elif k == '_publishable':
                 # val = 'nonpublishable' in data.get('TextProperties', '')
-                oldval = 'nonpublishable' in (x.lower() for x in old.get('textproperties', []))  # default was "nonpublishable"
+                oldval = 'nonpublishable' not in (x.lower() for x in old.get('textproperties', []))  # default was "nonpublishable"
                 props = data.get('textproperties', None)
                 if props is None:
                     val = oldval
                 else:
                     if not isinstance(props, dict):
                         props = {k:v for v,k in enumerate(props.split())}
-                    val = 'nonpublishable' in (x.lower() for x in props)
+                    val = 'nonpublishable' not in (x.lower() for x in props)
                 # oldval = 'nonpublishable' in old.get('TextProperties', '')
-                logger.debug(f"{self.marker} is {'not' if oldval else ''}publishable")
+                logger.debug(f"{self.marker} is {'' if oldval else 'non'}publishable")
             elif k.startswith("_"):
                 basekey = v[3](v[2])        # default data key e.g. "FontSize"
                 obasekey = v[3](not v[2])   # non-default data key e.g. "FontScale"
@@ -615,9 +616,9 @@ class StyleEditorView(StyleEditor):
         logger.debug(f"Style edit {key} in {self.marker} -> {val}")
         if key == '_publishable':
             if val:
-                add, rem = "non", ""
-            else:
                 add, rem = "", "non"
+            else:
+                add, rem = "non", ""
             props = set((self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', "") or "").split())
             if props is None:
                 props = set()
