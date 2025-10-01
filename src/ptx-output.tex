@@ -1259,13 +1259,16 @@
   \decr{\availht}{\bottomins}%
   \decr{\availht}{\verybottomins}%
   \trace{i}{availht before textborderadj = \the\availht}%
-  \ch@ckiftextborderadj
   \iftextborder
-    \ifdefined\textb@dr@bot@pad \advance\availht -\textb@dr@bot@pad\fi 
-  \fi
-  \iftemp
-    \advance\availht -\pretextb@rderskip  % Space reserved for text border.
-    \advance\availht -\posttextb@rderskip 
+    \ch@ckiftextborderadj
+    \ifdefined\textb@dr@bot@pad 
+      \trace{i}{textb@dr@bot@pad= \textb@dr@bot@pad}%
+      %\advance\availht -\textb@dr@bot@pad Already in posttextb@rderskip
+    \fi 
+    \iftemp
+      \advance\availht -\pretextb@rderskip  % Space reserved for text border.
+      \advance\availht -\posttextb@rderskip 
+    \fi
   \fi
   \trace{i}{availht after textborderadj = \the\availht, pre=\pretextb@rderskip, post=\posttextb@rderskip}%
   \f@rstnotetrue

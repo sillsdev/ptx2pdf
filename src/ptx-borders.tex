@@ -222,6 +222,7 @@
         \iftemp
           \trace{et}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
           \bgroup 
+            \setbox#1\vbox{\box#1\kern\fb@bpadding}%
             \def\sb@rmarker{textborder}%
             \S@tCat{\id@@@}%
             \get@border@style@params
@@ -594,3 +595,6 @@
 }
   
 
+\def\BorderTest{%A test-case for border-sizing.
+  {\def\sb@rmarker{textborder}\get@border@style@params\prepb@rderdims\mark{TST:1:1}\hbox{TOP\smash{\raise\baselineskip\hbox{\raise \fb@tpadding\hbox{\vrule height 0.5pt depth 0.5pt width 10pt\raise \border@tpadding\hbox{\vrule height \b@drwidth pt depth 0pt width 2pt}}}}}\p
+  \hbox{\setbox0\hbox{Ag}BOTTOM\smash{\raise -\dp0\hbox{\vrule height 0.3pt depth 0.3pt width 5pt\raise -\fb@bpadding\hbox{\vrule height 0.5pt depth 0.5pt width 10pt\raise -\border@bpadding\hbox{\vrule height 0pt depth \b@drwidth pt width 2pt}}}}}}}
