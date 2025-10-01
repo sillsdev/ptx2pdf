@@ -6635,14 +6635,15 @@ Thank you,
         if not os.path.exists(catpdf):
             logger.warn(f"Ornaments Catalogue not found: {catpdf}")
         else:
-            if self.showPDFmode == "preview":
+            if Gtk.Buildable.get_name(btn) == "lb_openOrnamentsCatalog" \
+               or not self.showPDFmode == "preview":
+                startfile(catpdf)
+            else:
                 showref = self.builder.get_object("dlg_preview")
                 self.pdf_viewer.loadnshow(catpdf, widget=showref, tab="manual")
                 self.set("c_bkView", False, mod=False)
                 self.pdf_viewer.set_zoom_fit_to_screen(None)
                 showref.present()
-            else:
-                startfile(catpdf)
                 
         logger.debug(f"{catpdf=}")
 
