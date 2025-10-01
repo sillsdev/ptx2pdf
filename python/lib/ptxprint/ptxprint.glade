@@ -34120,17 +34120,18 @@ Optional: ptxprint-mods.sty can be edited from the Advanced tab. Because it come
                                 </child>
                                 <child type="label">
                                   <object class="GtkCheckButton" id="c_styTextProperties">
-                                    <property name="label" translatable="yes">Hide/Exclude Contents of Marker</property>
-                                    <property name="name">Styles: Hide (or exclude) from output</property>
+                                    <property name="label" translatable="yes">Include Contents of Marker</property>
+                                    <property name="name">Styles: Include marker contents in PDF</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">If this option is checked, the marker becomes 
-"non-publishable" and the contents of this 
+                                    <property name="tooltip-text" translatable="yes">Uncheck this option to set the marker to
+"non-publishable" so the contents of this 
 marker will not be included in the output.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">start</property>
                                     <property name="image-position">right</property>
+                                    <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onstyTextPropertiesClicked" swapped="no"/>
                                   </object>
@@ -36483,6 +36484,7 @@ after any front matter material).</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
+                                <property name="valign">center</property>
                                 <property name="margin-start">12</property>
                                 <property name="draw-indicator">True</property>
                               </object>

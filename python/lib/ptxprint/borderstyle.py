@@ -58,7 +58,7 @@ def borderStyleFromStyle(tgt, mkr):
         return None
     self = BorderStyle()
     for k in fieldmap.keys():
-        val = tgt.getval(mkr, k)
+        val = tgt.getval(mkr, k, includebase=True)
         setattr(self, k, val)
     for i,k in enumerate(brdrs):
         if bitfield & (1<<i) != 0:

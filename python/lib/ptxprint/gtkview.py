@@ -2030,12 +2030,13 @@ class GtkViewModel(ViewModel):
             except OSError:
                 msg = _("Cannot delete folder from disk!") + _("Folder: ") + self.project.printPath(self.cfgid)
 
-            self.updateSavedConfigList()
             self.set("t_savedConfig", "Default")
             self.readConfig("Default")
             self.updateDialogTitle()
             self.triggervcs = True
             self.doStatus(msg)
+            self.project.configs.pop(cfg, None)
+            self.updateSavedConfigList()
         self.colorTabs()
         self.disableLayoutAnalysis()
 
@@ -3984,11 +3985,19 @@ class GtkViewModel(ViewModel):
         self.onBodyHeightChanged(None)
         self.checkFontsMissing()
         self.clearEditableBuffers()
+        self.updateViewNedit()
         logger.debug(f"Changed project to {prjid} {configName=}")
         self.builder.get_object("nbk_Main").set_current_page(0)
         self.changed(False)
         self.showmybook(True)
 
+    def updateViewNedit(self):
+        for a in [('c_useModsTex',           'onEditModsTeX'), 
+                  ('c_usePrintDraftChanges', 'onEditChangesFile'), 
+                  ('c_inclMaps',             'onEditMaps')]:
+            if self.get(a[0]):
+                getattr(self, a[1])(None)
+        
     def updateConfigIdentity(self, cfg):
         self.cfgid = cfg
         self.loadPolyglotSettings(cfg)
@@ -4255,7 +4264,8 @@ class GtkViewModel(ViewModel):
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        self._editProcFile("PrintDraftChanges.txt", "prj")
+        if btn is not None:
+            self._editProcFile("PrintDraftChanges.txt", "prj")
         self._editProcFile("changes.txt", "cfg")
         self.onRefreshViewerTextClicked(None)
         
@@ -4909,6 +4919,7 @@ class GtkViewModel(ViewModel):
         self.setPublishableTextBorder()
 
     def onOpenTextBorderDialog(self, btn):
+        # breakpoint()
         self.setPublishableTextBorder()
         self.styleEditor.sidebarBorderDialog()
         # mpgnum = self.notebooks['Main'].index("tb_TabsBorders")
