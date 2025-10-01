@@ -70,6 +70,9 @@ class Module:
                 text = runChanges(changes, None, text, self.model._changeError)
             self.doc = Usfm.readfile(text if text is not None else fname, grammar=grammar, informat="usfm")
 
+    def outUsfm(self, fname, **kw):
+        self.doc.asUsfm(file=fname, **kw)
+
     def getBookRefs(self):
         books = set()
         for e, isin in iterusx(self.doc.getroot()):

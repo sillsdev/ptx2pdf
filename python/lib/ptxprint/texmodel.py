@@ -870,7 +870,7 @@ class TexModel:
             self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         if text is not None:
             return res
-        res.xml.outUsfm(outfpath, version=[3, 1])
+        mod.outUsfm(outfpath, version=[3, 1])
         return outfpath
 
     def runConversion(self, infpath, outdir):

@@ -2,7 +2,8 @@ import re, regex, logging, os, time
 import usfmtc
 from usfmtc import _filetypes
 from usfmtc.reference import Ref, RefList, RefRange
-from usfmtc.usfmparser import Grammar
+from usfmtc.usfmparser import Grammar, Tag
+from usfmtc.usfmgenerate import Emitter
 from ptxprint.utils import universalopen, runChanges
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
@@ -80,6 +81,29 @@ def out_sty(base, outf, keyfield="Marker"):
             if isinstance(v, (set, list, tuple)):
                 v = " ".join(v)
             outf.write(f"\\{k} {v}\n")
+
+class PTXTag(Tag):
+    def __new__(cls, s, **kw):
+        if (m := re.match(r"^(\S+)\^(\d+)$", s)):
+            t = m.group(1)
+            stretch = int(m.group(2))
+        else:
+            t = s
+            stretch = None
+        res = super().__new__(cls, t, **kw)
+        if stretch is not None:
+            res.attribs = {"stretch": "{:.2f}".format(stretch / 100.)}
+        return res
+
+class PTXEmitter(Emitter):
+    def tag(self, e, sep=" "):
+        s = e.get('style', '')
+        if s is not None and len(s):
+            if 'stretch' in e.attrib:
+                s = "{}^{}".format(s, int(float(e.get("stretch")) * 100))
+            if "colspan" in e.attrib:
+                s = "{}-{}".format(s, e.get('colspan'))
+            self("\\{0}{1}".format(s, sep))
 
 
 class Sheets(dict):
@@ -336,6 +360,7 @@ def allparas(root):
         if e.tag in ("sidebar", ):
             yield from allparas(e)
 
+
 class Usfm:
 
     def __init__(self, xml, parser=None, grammar=None, book=None):
@@ -353,7 +378,7 @@ class Usfm:
             (_, ext) = os.path.splitext(fname)
             if ext not in _filetypes:
                 informat = "usfm"
-        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, **kw)
+        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, tagger=PTXTag, **kw)
         if usxdoc is None:
             return None
         book = None
@@ -365,8 +390,10 @@ class Usfm:
     def getroot(self):
         return self.xml.getroot()
 
-    def asUsfm(self, grammar=None):
-        return self.xml.outUsfm(grammar=grammar)
+    def asUsfm(self, grammar=None, file=None, **kw):
+        if grammar is None:
+            grammar = self.grammar
+        return self.xml.outUsfm(file=file, grammar=grammar, emitter=PTXEmitter, **kw)
 
     def outUsx(self, fname):
         return self.xml.outUsx(fname)
