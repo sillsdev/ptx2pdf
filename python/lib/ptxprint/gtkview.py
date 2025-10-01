@@ -6584,10 +6584,15 @@ Thank you,
         if not os.path.exists(catpdf):
             logger.warn(f"Ornaments Catalogue not found: {catpdf}")
         else:
-            showref = self.builder.get_object("dlg_preview")
-            self.pdf_viewer.loadnshow(catpdf, widget=showref, tab="manual")
-            self.set("c_bkView", False, mod=False)
-            self.pdf_viewer.set_zoom_fit_to_screen(None)
+            if self.showPDFmode == "preview":
+                showref = self.builder.get_object("dlg_preview")
+                self.pdf_viewer.loadnshow(catpdf, widget=showref, tab="manual")
+                self.set("c_bkView", False, mod=False)
+                self.pdf_viewer.set_zoom_fit_to_screen(None)
+                showref.present()
+            else:
+                startfile(catpdf)
+                
         logger.debug(f"{catpdf=}")
 
     def onTechRefClicked(self, btn):
@@ -6598,10 +6603,15 @@ Thank you,
         if not os.path.exists(techref):
             logger.warn(f"Technical Reference not found: {techref}")
         else:
-            showref = self.builder.get_object("dlg_preview")
-            self.pdf_viewer.loadnshow(techref, widget=showref, tab="manual")
-            self.set("c_bkView", True, mod=False)
-            self.pdf_viewer.set_zoom_fit_to_screen(None)
+            if self.showPDFmode == "preview":
+                showref = self.builder.get_object("dlg_preview")
+                self.pdf_viewer.loadnshow(techref, widget=showref, tab="manual")
+                self.set("c_bkView", True, mod=False)
+                self.pdf_viewer.set_zoom_fit_to_screen(None)
+                showref.present()
+            else:
+                startfile(techref)
+                
         logger.debug(f"{techref=}")
 
     def onCropMarksClicked(self, btn):
