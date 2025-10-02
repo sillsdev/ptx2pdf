@@ -46,7 +46,7 @@
   \newcl@sstrue
   \def\n@wcl@ss{#1}%
   \let\\=\ch@ckifcl@ss \the\n@tecl@sses % check if this note class is already defined
-  \ifnewcl@ss \allocatecl@ss{#1} \fi
+  \ifnewcl@ss \allocatecl@ss{#1}\fi
 }
 \def\ch@ckifcl@ss#1{\def\t@st{#1}\ifx\t@st\n@wcl@ss\newcl@ssfalse\fi}
 \newif\ifnewcl@ss
@@ -66,7 +66,7 @@
     \n@wnoteins@rt{#1}%
   \fi%
 }
-\def\n@wnoteins@rt#1{
+\def\n@wnoteins@rt#1{%
     \trace{n}{Creating note class #1}%
 	\x@\n@winsert\csname note-#1\endcsname
 	\x@\newb@x\csname noteb@x-#1\endcsname
@@ -264,7 +264,7 @@
   \set@utonum{#1}%
   \count255=0\csname \@utonum \endcsname
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
-  \advance\count255 by 96 \edef\them@rk{\char\count255}}
+  \advance\count255 by 96 \edef\them@rk{\char\count255}}%
 \fi
 \newif\ifresetallcols\resetallcolstrue
 \def\resetautonum#1{\set@utonum{#1}\x@\xdef\csname \@utonum\endcsname{0}} % Reset the current note counter (f)
@@ -340,7 +340,7 @@
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \setn@tewidth{#1} \trace{M}{noteboxwidth hsize=\the\hsize}%
+  \setn@tewidth{#1}\trace{M}{noteboxwidth hsize=\the\hsize}%
   \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 1 \fi 
     \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
   \fi
@@ -671,7 +671,7 @@
       \StudyNoteRuleLeftIndent \vrule height \StudyNoteRuleThickness width \StudyNoteRuleWidth\textwidth \StudyNoteRuleRightIndent}%
       \global\f@rstnotefalse
     \fi%\else\kern\InterNoteSpace\fi
-    \setbox11=\vbox{\unvbox11} \setbox12=\vbox{\unvbox12}
+    \setbox11=\vbox{\unvbox11}\setbox12=\vbox{\unvbox12}%
     \ifdim\ht12=0pt \setbox12=\vbox{\hbox to \wd11{}}\fi
     \dimen11=\ht11 \ifdim\dimen11<\ht12 \dimen11=\ht12\fi
     \dimen12=\dp11 \ifdim\dimen12<\dp12 \dimen12=\dp12\fi
@@ -803,7 +803,7 @@
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1 \onecolwidth{\n@tewidth}\else
       \ifcsname endn@te-#1\endcsname 
-        \ifEndNotesSingleCol \onecolwidth{\n@tewidth} \else \n@tewidth=\hsize \fi
+        \ifEndNotesSingleCol \onecolwidth{\n@tewidth}\else \n@tewidth=\hsize \fi
       \else
         \n@tewidth=\ifdiglot\csname column\c@rrdstat width\endcsname
           \else\ifColNotes\colwidth\else\textwidth\fi \fi
@@ -970,7 +970,7 @@
 \def\reheighthboxes#1#2{%
   \traceifset{reheighthboxes}%
   \trace{n}{reheighthboxes. bls=#2 (\the\baselineskip) }%
-  \setbox\n@tetmp\vbox{}
+  \setbox\n@tetmp\vbox{}%
   \let\disc@rdskip\disc@rdskip@rhh
   \let\disc@rdkern\disc@rdkern@rhh
   \let\disc@rdpenalty\disc@rdpenalty@rhh
@@ -997,7 +997,7 @@
       \trace{n}{hbox width: \the\wd1}%
       \ht2=\reheightfactor\wd1
     \fi
-    \setbox\n@tetmp\vbox{\box2\unvbox\n@tetmp}
+    \setbox\n@tetmp\vbox{\box2\unvbox\n@tetmp}%
     \disc@rds{rhh@}%
     \let\n@xt\reheighthb@xes
   \fi
@@ -1022,7 +1022,7 @@
   \ifdim\dimen0=-2sp
     \ifx\@@adj\empty\else
       \trace{fp}{2nd Adjustment request:\@@adj}%
-      \xdef\@@adjP{\@@adj} \global\let\@@adj\empty
+      \xdef\@@adjP{\@@adj}\global\let\@@adj\empty
     \fi
     \dimen0=\lastkern\unkern 
     \s@t@@adj
@@ -1114,7 +1114,7 @@
             \trace{fp}{Expanding  \currn@tetype\space 1(\the\wd1)}%
             %\penalty 12347
             \unhbox1  \@@adjP\global\let\@@adjP\empty
-            {\removehboxes}
+            {\removehboxes}%
             %\showlists
             \endgraf
           \fi
@@ -1232,7 +1232,7 @@
 \newbox\xr@fbox
 \newbox\XrefB@x
 \newdimen\XrefSkip \XrefSkip=0pt
-\def\m@ke@te@mp#1{
+\def\m@ke@te@mp#1{%
   \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip
   \advance\dimen0 by -\dimen2\advance\dimen0 by -\dp\xr@fbox
   \setbox0=\hbox{}\trace{o}{current height=\the\dimen0}%
@@ -1251,7 +1251,7 @@
     \ifdim\dimen1<#1\tempfalse\fi
     \iftemp\repeat
   \fi}
-\def\m@kexrefbox#1#2#3#4{
+\def\m@kexrefbox#1#2#3#4{%
 % #1: height, #2: xrefbox width, #3: note marker/style, returns vbox of remaineder and results in xr@fbox
 % #4: justification (only r is significant)
   \setbox\xr@fbox=\ifXrefTopfill\vbox{\vfil}\else\box\voidb@x\fi
