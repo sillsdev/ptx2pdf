@@ -1,19 +1,22 @@
-PTXprint 2.9.8 Release Notes
-27 Sep 2025
+PTXprint 2.9.9 Release Notes
+2 Oct 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.9.9 (27 Sep 2025)
+Bug fixes and Improvements in 2.9.9 (2 Oct 2025)
   * Refactor PDF Viewer to display mutiple PDFs
   * Add tabs on preview pane for cover and diff
   * Remove Print Cover button - as Cover will just appear as a tab in viewer
   * Update zoom and page settings when switching tabs in pdf_viewer
   * Various UI tweaks/improvements to the Peripherals tab
   * Add automatic creation of BookNames.xml to import process (if missing)
-  * Move 'Import Scripture' from standalone button to 'Import...' option on Project selector
+  * Move 'Import Scripture' to 'Import...' option at end of Project selector
   * Update BSB (Berean Standard Bible) example text shipped with PTXprint (see Import...)
-  * Add links to dynamic section heading decorations style
+  * Install BSB automatically if no other project is found on startup
+  * Add default font (Charis 7.0) 
+  * Don't crash if no project is selected and user chooses single book radio
+  * Improve auto-setting Project on initial run
   * Swap XXS and XXM numeric values 101/102
   * Stop Spinner from making it hang
   * Improve ColorTabs logic - especially for Basic view
@@ -22,8 +25,18 @@ Bug fixes and Improvements in 2.9.9 (27 Sep 2025)
   * Prevent report from crashing if no bad spaces
   * Prevent inappropriate breaking of old-style notes
   * Add ptlite support to MacOS version
+  * Add DoubleSided (true) option to Advanced > Other (don't swap L/R margins on odd/even pages)
   * Re-generate style stack properly after closing a headingsbox
   * No title stuff in module refs
+  * Update TechRef documentation
+  * Ensure Catalogue and TechRef open in the appropriate viewer, and come to the fore
+  * Add links to dynamic section heading decorations style
+  * Move the dynamic borders around in the UI to be more consistent.
+  * Improve UI behaviour for dynamic borders
+  * Flip 'Hide/exclude marker' to 'Show contents of marker' in Style editor
+  * Integrate tag hacking support for f^98 et al
+  * Highlight combo boxes, enabling Digit Mapping settings to be found easier
+  * Don't show unused tabs in pdf_viewer
   * Fix Chapter 1 error - appearing alone at end of page (#1091)
   * Fix open of OrnamentsCatalogue and TechRef
   * Fix Diglot Project chooser selecting Import option
@@ -31,7 +44,7 @@ Bug fixes and Improvements in 2.9.9 (27 Sep 2025)
   * Fix 'at' changes not working for before chapter 1 in single chapter books
   * Fix bug to enable open.bible and DBL links
   * Fix tooltips in Preview pane
-  * Update TechRef documentation
+  * Fix text borders
 
 Bug fixes and Improvements in 2.9.8 (12 Sep 2025)
   * Implement generic ID C:V parser and get zsetref and vid milestones using it

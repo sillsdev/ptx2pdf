@@ -30,7 +30,7 @@
 
 \newif\ifin@ttrib
 
-\newif\ifRefLocLink\RefLocLinktrue % Does \ref generate a PDF link?
+\newif\ifRefLocLink\RefLocLinkfalse % Does \ref generate a PDF link?
 \newif\ifhrefLink\hrefLinktrue % Does href-link="..." generate a PDF link?
 
 
@@ -482,7 +482,6 @@
         \hbox to \dimen0{\alignb@x{#1}{0}}}}}
 
 \expandafter\def\csname complex-rb\endcsname{\rubyt{rb}{gloss}} % USFM-3 suggests ruby goes above. 
-\newif\ifRefLocLink\RefLocLinkfalse
 \expandafter\def\csname complex-ref\endcsname{%Process loc option by turning it into a GOTO link.
   \ifRefLocLink
     \get@ttribute{loc}%
