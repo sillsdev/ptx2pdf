@@ -1262,8 +1262,9 @@
   \iftextborder
     \ch@ckiftextborderadj
     \ifdefined\textb@dr@bot@pad 
-      \trace{i}{textb@dr@bot@pad= \textb@dr@bot@pad}%
-      %\advance\availht -\textb@dr@bot@pad Already in posttextb@rderskip
+      \ifversion{6}{}{%
+        \trace{i}{textb@dr@bot@pad= \textb@dr@bot@pad}%
+        \advance\availht -\textb@dr@bot@pad }% Already in posttextb@rderskip
     \fi 
     \iftemp
       \advance\availht -\pretextb@rderskip  % Space reserved for text border.

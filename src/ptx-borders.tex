@@ -222,7 +222,7 @@
         \iftemp
           \trace{et}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
           \bgroup 
-            \setbox#1\vbox{\box#1\kern\fb@bpadding}%
+            \ifversion{6}{\setbox#1\vbox{\box#1\kern\fb@bpadding}}{}%
             \def\sb@rmarker{textborder}%
             \S@tCat{\id@@@}%
             \get@border@style@params
