@@ -1139,13 +1139,7 @@
        \ifx\ch@pl@bel\empty\relax 
          \trace{c}{No chapter label in use : \ch@pter}%
          \getp@ram{posn}{c}{c}\ifx\p@ram\loc@M
-            \setbox\ch@pterbox=\vbox{\XeTeXuseglyphmetrics=3\hbox{\cstyle{c}{\ch@pter}}}
-            \getp@ram{spacebeside}{c}{c}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
-            %\dp\ch@pterbox=\ht\ch@pterbox \ht\ch@pterbox=0pt
-            \dimen1=\dimexpr\baselineskip% -\dp\pstr@t
-            \dimen9=\lastdepth
-            \par\dimen8=\prevdepth \trace{e}{prevdepth=\the\dimen8 ->\the\dimen9}\prevdepth=\dimen9
-            \d@marginnote{\ch@pterbox}{\c@rref}{c}{\MarginNoteSide}{inline}{\the\dimen0}{\the\dimen1}%
+            \m@rginc
          \else
             \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
          \fi
@@ -1173,6 +1167,16 @@
  \def\m@rker{c}\def\@mkr{c\c@rrdstat}\defp@ram{fontsize}{\dr@psize}%
  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
 }
+\def\m@rginc{%
+  \setbox\ch@pterbox=\vbox{\XeTeXuseglyphmetrics=3\hbox{\cstyle{c}{\ch@pter}}}%
+  \getp@ram{spacebeside}{c}{c}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
+  %\dp\ch@pterbox=\ht\ch@pterbox \ht\ch@pterbox=0pt
+  \dimen1=-\dp\pstr@t
+  \dimen9=\lastdepth
+  \par\dimen8=\prevdepth \trace{e}{prevdepth=\the\dimen8 ->\the\dimen9}\prevdepth=\dimen9
+  \d@marginnote{\ch@pterbox}{\c@rref}{c}{\MarginNoteSide}{inline}{\the\dimen0}{\the\dimen1}%
+}
+
 %-csty_dropchap
 \def\bridgeVerses #1.#2-#3.{
   \addtrigger{#1.#2-preverse}{\setPrintVerse #2 #3.}

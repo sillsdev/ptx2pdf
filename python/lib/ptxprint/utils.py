@@ -568,6 +568,19 @@ def multstr(template, lang, num, text, addon=""):
         res += " " + addon
     return res
 
+def swapext(s, pref=None, ext=None, withpref=None, withext=None):
+    base, extf = os.path.splitext(s)
+    if pref is not None and base.endswith(pref):
+        base = base[:-len(pref)]
+    if withpref is not None:
+        base += withpref
+    if ext is not None and (ext.startswith(".") and extf == ext \
+                            or not ext.startswith(".") and extf[1:] == ext):
+        extf = ""
+    if withext is not None:
+        extf += withext
+    return base + extf
+
 def f2s(x, dp=3) :
     res = ("{:." + str(dp) + "f}").format(x)
     if res.endswith("." + ("0" * dp)) :

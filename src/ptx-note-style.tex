@@ -339,7 +339,7 @@
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \setn@tewidth{#1}%
+  \setn@tewidth{#1} \trace{M}{noteboxwidth hsize=\the\hsize}%
   \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 1 \fi 
     \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
   \fi
@@ -358,9 +358,9 @@
     \else
       \XeTeXuseglyphmetrics=0 % so that notes sit on the baseline based font descender not contents
     \fi
-    \ifp@ranotes
+    \ifp@ranotes\ifcsname nm-cref-#1\endcsname\else
       \hsize=\maxdimen
-    \else
+    \fi\else
       \hsize=\n@tewidth
     \fi
 %%% single-column notes:
@@ -387,9 +387,9 @@
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
     \else
-      \ifp@ranotes
+      \ifp@ranotes\ifcsname nm-cref-#1\endcsname\else
         \baselineskip=0pt
-      \else
+      \fi\else
         \s@tbaseline{#1}{#1}%
       \fi
     \fi
@@ -411,7 +411,8 @@
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
     \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
     \xdef\n@tefli{0pt}%
-    \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{n}{note(#1) firstindent: \p@ram}%
+    \ifnum 1= \ifp@ranotes\ifcsname nb-char-#1\endcsname 1\else 0\fi \else 1\fi
+      \getp@ram{firstindent}{#1}{#1}\trace{n}{note(#1) firstindent: \p@ram}%
       \dimen0=0pt \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
       \xdef\n@tefli{\the\dimen0 }%
       \ifx\p@ram\relax\else\kern\n@tefli\fi
@@ -1290,10 +1291,12 @@
 }
 \def\n@test@rt#1{\n@tewidth=\dimexpr \marginnoteswidth - \marginnotesgap\relax
   \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup\usespacebeforefalse
-    \s@tsideskips{#1}{-1pt}\hsize=\n@tewidth
+    \global\p@ranotesfalse
+    \s@tsideskips{#1}{-1pt}\n@tewidth=\marginnoteswidth \advance\n@tewidth -\marginnotesgap \hsize=\n@tewidth
     \ifdim\parfillskip>0pt\hfil\fi
 }
-\def\n@te@nd#1{\egroup% \x@\showbox\csname nm-box-#1\endcsname
+\def\n@te@nd#1{%
+  \egroup% \x@\showbox\csname nm-box-#1\endcsname
   \x@\ifx\csname nm-cref-#1\endcsname\c@rref
     \x@\advance\csname nm-count-#1\endcsname 1%
   \else \csname nm-count-#1\endcsname=0 \x@\xdef\csname nm-cref-#1\endcsname{\c@rref}\fi

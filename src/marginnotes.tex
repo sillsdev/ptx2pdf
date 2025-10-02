@@ -72,7 +72,6 @@
             text = \the#4, side = #2, valign = #3, ht=\the\dimen9+\the\dp#1*\the\wd#1, hsize=\the\hsize}%
   \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
   \dimen8=\lastdepth \dimen7=\dp#1
-  \tracingmacros=1 \tracingassigns=1
   \x@\let\x@\do@djust\ifx\t@mpv\@inline\m@rgincollect\else\vadjust\fi
   \setbox0=\vbox to 0pt{\let\par=\endgraf\everypar={}%
     \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi

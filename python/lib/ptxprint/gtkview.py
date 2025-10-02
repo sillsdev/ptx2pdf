@@ -617,7 +617,7 @@ class GtkViewModel(ViewModel):
                 action.connect("activate", getattr(self, v, None))
                 app.add_action(action)
                 parent.append(k, f"app.{v}")
-                print(f"Appending action {k} to {v}")
+                # print(f"Appending action {k} to {v}")
             else:
                 submenu = Gio.Menu()
                 self._add_mac_menu(app, menudesc=v, parent=submenu)
