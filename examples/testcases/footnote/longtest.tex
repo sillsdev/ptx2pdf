@@ -4,12 +4,23 @@
 \stylesheet{usfm.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
+\stylesheet{longtest.sty}
 \input "usfmTex-settings.tex"
+\def\noteruler{{\smash{\vrule height 1em width 1pt 
+  \raise 1em \hbox{\vrule height \InterNoteSpace width 1.5pt}%
+  \kern 0.5pt
+  \vrule height \baselineskip width 0.5pt
+  \raise \baselineskip \hbox{\vrule height \InterNoteSpace width 1.5pt}%
+  \setbox0\hbox{GM}%
+  \kern 0.5pt
+  \raise \ht0 \hbox{\vrule height \InterNoteSpace width 1.5pt}%
+}}}
 %\def\doLines{\doGraphPaper}
 %\input "usfmTex-ext.tex"
 %\input "hooks.tex"
 %\tracingmacros=1
 %\tracingassigns=1
+%\DBGshownoteboxestrue
 \tracing{f}
 \tracing{i}
 \tracing{n}
@@ -19,11 +30,11 @@
 \tracingoutput=1
 \showboxdepth=20
 \newparnotestrue
-\interfootnotelinepenalty=10000
-\lastnoteinterlinepenalty=113
-\lastnoteparpenalty=12
-\lastnoteclubpenalty=14
-\lastnotewidowpenalty=7
+\interfootnotelinepenalty=1000
+\lastnoteinterlinepenalty=1130
+\lastnoteparpenalty=1200
+\lastnoteclubpenalty=1400
+\lastnotewidowpenalty=8000
 \DBGshownoteboxestrue
 \def\NoteShaveStay{1}
 \def\NoteShaveMin{2}

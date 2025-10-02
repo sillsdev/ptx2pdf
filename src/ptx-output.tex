@@ -323,6 +323,7 @@
       \prevdepth=-1000pt % no interline glue
       \kern\dimen1
       \hbox to \textwidth{\unhbox8}%
+      %\prevdepth=0pt % normal interline glue
     \else
       \box\voidb@x
     \fi
@@ -671,7 +672,7 @@
 
 %+c_reduceavailht_para
 \def\reduceavailht@para#1{%
-  \def\cl@sss{#1\g@tndstat}%
+  \edef\cl@sss{#1\g@tndstat}%
   \trace{n}{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\trace{f}{ParaNotes[#1] empty}\else
@@ -681,7 +682,7 @@
     \global\advance\availht by -\dp0
     \iff@rstnote
       \global\advance\availht by -\AboveNoteSpace
-      \f@rstnotefalse
+      \global\f@rstnotefalse
       \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \BelowFootNoteRuleSpace}%
     \else
       \global\advance\availht by -\InterNoteSpace
@@ -720,25 +721,25 @@
     \global\advance\availht by -\dimen1
     \iff@rstnote\global\advance\availht by -\AboveNoteSpace 
       \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
-      \f@rstnotefalse
+      \global\f@rstnotefalse
     \else \global\advance\availht by -\InterNoteSpace\fi
     \trace{n}{reduced by=\the\dimen1}%
   \fi\egroup}
 
 %+c_reduceavailhtsep
 \def\reduceavailht@sep#1{%
-  \def\cl@sss{#1\g@tndstat}%
+  \edef\cl@sss{#1\g@tndstat}%
   \TRACE{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\trace{f}{Notes[#1] empty}\else
-    \f@rstnotefalse
+    \global\f@rstnotefalse
     \global\advance\availht by -\ht\th@cl@ss
     \global\advance\availht by -\dp\th@cl@ss
     \iff@rstnote\advance\availht by -\AboveNoteSpace
       \global\advance\availht by -\BelowFootNoteSpace
       \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
       \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveNoteSpace}%
-     \global\advance\availht -\dp\pstr@t \f@rstnotefalse % ensure we don't impinge on the depth
+     \global\advance\availht -\dp\pstr@t \global\f@rstnotefalse % ensure we don't impinge on the depth
     \else
       \global\advance\availht by -\InterNoteSpace
       \trace{f}{Notes[#1] cost \the\ht\th@cl@ss0+\the\dp\th@cl@ss + \the\InterNoteSpace + \the\AboveNoteSpace}%
@@ -755,7 +756,7 @@
     \advance\availht by -\dimen1
     \iff@rstnote\advance\availht by -\AboveNoteSpace
       \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
-      \f@rstnotefalse
+      \global\f@rstnotefalse
       \advance\availht -\dp\pstr@t  % ensure we don't impinge on the depth
     \else \advance\availht by -\InterNoteSpace\fi
   \fi}
@@ -903,6 +904,26 @@
 \def\BalanceThreshold{0}
 
 \def\applysh@ven@tes{%A previously determined shave to the notesbox has been selected. Apply it.
+  \ifversion{6}{\@applysh@ven@tes@sg}{\@applysh@ven@tesjt}}
+
+\def\@applysh@ven@tes@sg{% New version - specify the (single) selected note
+  \trace{fp}{@applysh@ven@tessg}%
+  \x@\global\x@\let\x@\n@tesoverrunins\csname note-\sh@venote\endcsname
+  \ifx\n@tesoverrunins\relax
+    \message{!!! Internal error: Could not identify '\sh@venote' footnote insert}%
+  \else 
+    \advance\availht \sh@vedim
+    \x@\let\x@\tnoteb@x\csname noteb@x-\sh@venote\endcsname
+    \setbox0=\vsplit\tnoteb@x to \dimexpr \ht\tnoteb@x - \sh@vedim\relax
+    \global\setbox\n@tesoverrun\vbox{\unvbox\tnoteb@x\unkern\unskip}%
+    \x@\addtonextshipout{\x@\insert\n@tesoverrunins{\box\n@tesoverrun}}%
+    \global\setbox\tnoteb@x\vbox{\unvbox0}%
+    \trace{fp}{Shaved \the\sh@vedim \space from footnote \sh@venote \space(excess to next page)}%
+    \global\setbox\n@tesbox\vbox{\let\\=\exp@ndn@tes\the\n@tecl@sses}%
+  \fi
+}
+
+\def\@applysh@ven@tesjt{% Old version - works on n@tesbox itself
   \x@\global\x@\let\x@\n@tesoverrunins\csname note-\l@stnoteclass\endcsname
   \ifx\n@tesoverrunins\relax
     \message{!!! Internal error: Could not identify '\l@stnoteclass' footnote insert}%
@@ -917,22 +938,24 @@
     \global\setbox\n@tesbox\vbox{\unvbox0}%
   \fi
 }
-\def\NoteShaveStay{1} % How many lines of *total notes* must stay on the main page before shaving is considered?
-\def\NoteShaveMin{1} % How many lines of notes are the minimum to considere moving onto the next page? 
-\def\NoteShaveShortest{1} % How long should be note be before it is considered for breaking? (Approximate only, as it is width-based)
+\def\NoteShaveStay{2} % How many lines of *total notes* must stay on the main page before shaving is considered?
+\def\NoteShaveMin{2} % How many lines of notes are the minimum to considere moving onto the next page? 
+\def\NoteShaveShortest{2} % How long should be note be before it is considered for breaking? (Approximate only, as it is width-based)
 
-\def\findsh@venotes{%Find the possible shaved lengths of the notes box
-  \skip0=\l@stnotebls \dimen0=\skip0
+\def\findsh@venotes#1#2{%Find the possible shaved lengths of the notes box
+  \trace{fp}{findsh@venotes #2}%
+  \ifversion{6}{\skip0=\csname bls-#2\c@rrdstat\endcsname}{\skip0=\l@stnotebls}%
+  \dimen0=\skip0
   \ifdim\dimen0=0pt \else
-    \trace{fp}{Finding shaved note lengths (bls=\the\skip0)}%
-    \sh@vedim=\ht\n@tesbox % use sh@vedim as a temp. variable.
+    \trace{fp}{Finding shaved note lengths (#2) \the\ht#1 s0=\the\skip0, bls=\the\baselineskip}%
+    \sh@vedim=\ht#1 % use sh@vedim as a temp. variable.
     \vbadness=10000
     \vfuzz=\maxdimen
-    \setbox0=\copy\n@tesbox
+    \setbox0=\copy#1
     \dimen0=\dimexpr  \skip0 * \NoteShaveMin \relax 
     \dimen1=\dimexpr \skip0 * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
     \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minumum shave amount
-    \trace{fp}{Initial note length \the\ht\n@tesbox, first shave: \the\sh@vedim, stay: \the\dimen1 (\the\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
+    \trace{fp}{Initial note length \the\ht\n@tesbox, first shave to: \the\sh@vedim, stay: \the\dimen1 (\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
     \@LOOP\ifdim \sh@vedim>\dimen1 
       %\showbox\n@tesbox
       \setbox1=\vsplit0 to \sh@vedim
@@ -948,13 +971,14 @@
           \fi
         \fi
         \ifvoid0
-          \trace{fp}{nothing shaved from notebox, \the\sh@vedim / - /\the\ht1}%
+          \trace{fp}{nothing shaved from note #2, \the\sh@vedim / - /\the\ht1}%
           \sh@vedim=0pt 
         \else % Something trimmed off
           %\showbox0 \showbox1
-          \trace{fp}{notebox can be shaved from \the\ht\n@tesbox to \the\sh@vedim / \the\ht0/\the\ht1}%
+          \trace{fp}{note #2 can be shaved from \the\ht#1 to \the\sh@vedim / \the\ht0/\the\ht1}%
           {\dimen0=\dimexpr \ht\n@tesbox - \sh@vedim \relax
-          \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\x@{\the\dimen0}}}%
+          \edef\p@ram{{\the\dimen0}{#2}}%
+          \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\p@ram}}%
           \setbox0=\box1
           %\sh@vedim=\the\ht0
         \fi
@@ -974,9 +998,9 @@
   \fi
 }
 
-\def\@bal@shavedn@tes#1{%
+\def\@bal@shavedn@tes#1#2{%
   \ifdim\sh@vedim=0pt 
-    \trace{fp}{Trying shave of #1}%
+    \trace{fp}{Trying shave of #1 (#2)}%
     \setbox0=\copy\s@vedpage
     \t@vailht=\availht
     %\advance\t@vailht \ht\n@tesbox
@@ -990,7 +1014,7 @@
       \iffitonpage
         \@balanced@loop
       \fi
-      \iffitonpage \sh@vedim=#1 \fi
+      \iffitonpage \sh@vedim=#1 \def\sh@venote{#2}\fi
     \else
       \global\fitonpagefalse
       \trace{fp}{shave no good: overshot by \the\ht0}%
@@ -1268,15 +1292,17 @@
     \advance\availht -\posttextb@rderskip 
   \fi
   \trace{i}{availht after textborderadj = \the\availht, pre=\pretextb@rderskip, post=\posttextb@rderskip}%
-  \f@rstnotetrue
+  \global\f@rstnotetrue
   \ifColNotes\onlyst@dynotestrue\else\onlyst@dynotesfalse\fi
   \global\def\l@stnotebls{0pt}%
-  \m@kenotebox
   \global\sh@venotes{}%
+  \ifnewparnotes \findsh@vetrue\else\findsh@vefalse\fi
+  \m@kenotebox
   \advance\availht by -\ht2\global\setbox\n@tesbox\box2
   \ifnum 1=\ifnum \lastnoteinterlinepenalty < 10000 1 \else \ifnum \lastnoteparpenalty<10000 1 \else 0\fi\fi
     %\showbox\n@tesbox
-    \findsh@venotes
+    \ifversion{6}{}{\findsh@venotes{\n@tesbox}{}}%
+    %\findsh@venotes{\n@tesbox}{}%
   \fi
   \onlyst@dynotesfalse
   \trace{i}{Notes: ht=\the\ht\n@tesbox, dp=\the\dp\n@tesbox}%
@@ -1519,7 +1545,7 @@
     \edef\lastn@tewid{0pt}%
     \global\let\l@stnoteclass\empty\let\\=\setl@stnoteclass \the\n@tecl@sses % identify the last note
     \trace{fp}{Last note class is \l@stnoteclass}%
-    \f@rstnotetrue
+    \global\f@rstnotetrue
     \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
     \iff@rstnote % no notes actually occurred!
       \trace{i}{No notes}%

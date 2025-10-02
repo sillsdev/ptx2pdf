@@ -306,6 +306,7 @@
 %\snippets
 
 \exhyphenpenalty=\hyphenpenalty
+\ifversion{{6}}{{\newparnotestrue}}{{}} % From version6 onwards, we default to newparnotestrue
 
 {project/ifcolophon}\expandafter\def\csname bookend-final\endcsname{{
 {project/ifcolophon}\layoutstylebreak

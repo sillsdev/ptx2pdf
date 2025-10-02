@@ -1434,7 +1434,7 @@
 \let\lAd@do\relax
 \let\log@ut\empty
 
-\def\l@gdims#1{\the\ht#1 + \the\dp#1 x \the\wd#1}
+\def\l@gdims#1{\the\ht#1 +\the\dp#1 x\the\wd#1}
 \def\l@gboxdims#1{\edef\lb@tmpnam{\v@lpfx#1\v@lsfx}\x@\let\x@\lb@tmptb@x\csname\lb@tmpnam\endcsname \edef\log@ut{\log@ut\space \lb@tmpnam: \the\ht\lb@tmptb@x +\the\dp\lb@tmptb@x\space x \the\wd\lb@tmptb@x}}
 % Log dimensions of all columns
 \def\l@gm@dims{\relax\let\lAd@do=\col@do\let\col@do=\l@gboxdims

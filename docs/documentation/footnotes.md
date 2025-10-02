@@ -1,4 +1,19 @@
 # Enhanced control of footnotes
+## Adjust lists
+```
+JHN 10.22 +1 [f.1.1]
+```
+The above makes an adjustment of +1 the footnote paragaph containing the note on John 10:22. More precisely, footnote type f, note 1, paragraph 1.
+This is only active for `\newparnotestrue`.
+
+## Adjusted widths
+As with main-text styles, a footnote can also have a suffixed `^97` to set it
+at 97% of its natural width. Normally it is better to only apply it to the 
+note text (e.g. `\f + \fr 1:1 \ft^97 this is the text\f*`), however 
+`\f^97 + .... \f*` is also valid. In this latter case it will apply to all
+parts of the note, including the callee (the caller in the main text is not affected).
+
+
 ## Note placement
 There are some flags that control the exact placement of paragraphed footnotes relative to other page elements. This is the beginning of an attempt to document them.
 
