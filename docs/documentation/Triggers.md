@@ -3,7 +3,7 @@
 In addition to the special-purpose `piclist` and `adjlist` files, there are now
 two methods to insert generic USFM mark-up or TeX code into the input.  Both
 methods use the same mechanism, indeed the same mechanism is used by piclists
-and adjustlits (with some behind-the-scenes modifications) and specially
+and adjustlists (with some behind-the-scenes modifications) and specially
 formated files. In a `.tex` file (e.g. `ptxprint-mods.tex`), it is possible to add
 short pieces of text or code like this:
 
