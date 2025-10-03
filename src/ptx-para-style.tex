@@ -231,7 +231,7 @@
 
 %+cpar_gridbox2
 % returns in \dimen0 how much to advance \dimen1 (y) to be an integral multiple of \dimen0 (x)
-% \dimen1 := y % x, \dimen3 := y - y % x, \dimen0 := x - y + y % x
+% \dimen1 := y - y % x, \dimen3 := y % x, \dimen0 := x - y % x
 \def\m@d{\dimen3=\dimen1\divide\dimen1 \dimen0\multiply\dimen1 \dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 \newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
@@ -252,13 +252,14 @@
       \ift@tle\lastdepth=0pt \fi
       \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth; upwardsHackDiff=\the\upwardsHackDiff}%
       \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
-      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space, y and x. z = x - y + y % x
+      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is gridding space above box, y (ht0) and x (baselineskip). z = x - y % x
       \dimen1=\ht0 \advance\dimen1 by -\headingtopspace % a = y - b
-      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0 % z = x - y + y % x - x + y - b - (y-b) % x; w = x - y + b + (y-b) % x
-      \advance\dimen2 by \headingtopspace   % (1), z = y % x - (y-b) % x
+      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0 % w = x - (y-b) % x; z = x - y % x - x + (y-b) % x; = (y-b) % x - y % x 
+      \advance\dimen2 by \headingtopspace   % (1), z = (y-b) % x - y % x
       \ifgridp@c\else\ifdiglot\else
         \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
       \fi\fi
+      \ifversion{6}{\ifdim\dimen2<0pt \advance\dimen2 by \baselineskip\fi}{}%
       \ifdim\upwardsHackDiff=0pt\else\advance\dimen2 by -\upwardsHackDiff \advance\dimen0 by \upwardsHackDiff\fi
       \ifdiglot\kern\else\vskip\fi\dimen2
       \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
