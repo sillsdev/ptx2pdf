@@ -5178,30 +5178,33 @@ class GtkViewModel(ViewModel):
     def onResetCopyrightClicked(self, btn):
         self.fillCopyrightDetails()
 
-    def copyrightTextBufferChanged(self, btn, x):
-        t = self.get("txbf_copyright", "")
+    def autoCorrectTidyUp(self, t):
         t = re.sub("</?p>", "", t)
-        t = re.sub(r"\([cC]\)", "\u00a9 ", t)
-        t = re.sub(r"\([rR]\)", "\u00ae ", t)
-        t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
-        self.set("txbf_copyright", t)
-        self.changed()
+        t = re.sub(r"\([cC]\)", "\u00a9", t)
+        t = re.sub(r"\([rR]\)", "\u00ae", t)
+        t = re.sub(r"\([tT][mM]\)", "\u2122", t)
+        return t
+
+    def copyrightTextBufferChanged(self, btn, x):
+        orig = self.get("txbf_copyright", "")
+        new = self.autoCorrectTidyUp(orig)
+        if new != orig:
+            self.set("txbf_copyright", new)
+            self.changed()
         
     def onCopyrightStatementChanged(self, btn):
         btname = Gtk.Buildable.get_name(btn)
         w = self.builder.get_object(btname)
-        t = w.get_text()
-        t = re.sub("</?p>", "", t)
-        t = re.sub(r"\([cC]\)", "\u00a9 ", t)
-        t = re.sub(r"\([rR]\)", "\u00ae ", t)
-        t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
-        if btname == 't_plCreditText' and len(t) == 3:
+        orig = w.get_text()
+        new = self.autoCorrectTidyUp(orig)
+        if btname == 't_plCreditText' and len(new) == 3:
             if self.get('c_sensitive'):
-                t = re.sub(r"(?i)dcc", "\u00a9 DCC", t)
+                new = re.sub(r"(?i)dcc", "\u00a9 DCC", new)
             else:
-                t = re.sub(r"(?i)dcc", "\u00a9 David C Cook", t)
-        w.set_text(t)
-        self.changed()
+                new = re.sub(r"(?i)dcc", "\u00a9 David C Cook", new)
+        if new != orig:
+            w.set_text(new)
+            self.changed()
         
     def onStyleAdd(self, btn):
         self.styleEditor.mkrDialog(newkey=True)
