@@ -275,7 +275,7 @@ class MarginNotes:
         return
 
     def simplexpage(self, pnum, weights=None, min_spacing = 1):
-        """ Express the collision problem as a linear programming problem:
+        r""" Express the collision problem as a linear programming problem:
             Minimize \sum w_i \dot t_i
             Subject to -s_i \lteq t_i , s_i \lteq t_i
             Let L_i = ymax + s_i ; R_i = ymin + s_i

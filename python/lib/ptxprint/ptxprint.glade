@@ -2863,9 +2863,10 @@ in your 'Downloads' folder.
 DO NOT UNZIP THE FILE - this will
 be done for you automatically.</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">Option 2: Locate an
+                    <property name="label" translatable="yes">&lt;b&gt;Option 2:&lt;/b&gt; Locate an
 Image Set .zip File
 to be installed:</property>
+                    <property name="use-markup">True</property>
                     <property name="justify">right</property>
                   </object>
                   <packing>
@@ -2905,9 +2906,10 @@ file downloaded then skip this first step.</property>
                     <property name="halign">end</property>
                     <property name="margin-left">6</property>
                     <property name="margin-start">6</property>
-                    <property name="label" translatable="yes">Option 1: Download and
+                    <property name="label" translatable="yes">&lt;b&gt;Option 1:&lt;/b&gt; Download and
 Install Image Set from 
 the Online Repository</property>
+                    <property name="use-markup">True</property>
                     <property name="justify">right</property>
                   </object>
                   <packing>
