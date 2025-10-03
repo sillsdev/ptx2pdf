@@ -16903,9 +16903,10 @@ Paratext project settings.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">It is important to include copyright and license statements on every publication.
-By default this will be set according to the Paratext project settings, but you can 
-edit it here if needed by expanding the section below.</property>
+                                        <property name="tooltip-text" translatable="yes">It is important to include copyright and license statements on 
+every publication. By default this will be set according to the 
+Paratext project settings, but you can edit it here if needed by 
+expanding the section below.</property>
                                         <property name="label" translatable="yes">Copyright &amp; Licensing</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
@@ -37665,27 +37666,6 @@ of overlap here (mm).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin-top">3</property>
-                                    <property name="margin-bottom">3</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkBox" id="bx_coverPreview">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -37701,6 +37681,7 @@ of overlap here (mm).</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="vexpand">True</property>
                                         <property name="orientation">vertical</property>
                                         <property name="spacing">6</property>
                                         <child>
@@ -37751,13 +37732,10 @@ can be adjusted as needed.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
                                           <object class="GtkExpander">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="expanded">True</property>
+                                            <property name="vexpand">True</property>
                                             <child>
                                               <!-- n-columns=2 n-rows=3 -->
                                               <object class="GtkGrid">
@@ -37767,6 +37745,7 @@ can be adjusted as needed.</property>
                                                 <property name="margin-end">6</property>
                                                 <property name="margin-top">6</property>
                                                 <property name="margin-bottom">6</property>
+                                                <property name="vexpand">True</property>
                                                 <property name="row-spacing">6</property>
                                                 <property name="column-spacing">3</property>
                                                 <child>
@@ -37904,15 +37883,18 @@ the inner backing sheet. (Units: mm)</property>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">3</property>
+                                            <property name="position">2</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <object class="GtkBox">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">center</property>
-                                            <property name="valign">center</property>
+                                            <property name="valign">end</property>
                                             <property name="margin-start">10</property>
                                             <child>
                                               <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
@@ -38328,7 +38310,7 @@ on the Styles tab for the Front Cover.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">2</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
