@@ -304,8 +304,8 @@ class Report:
         widget_map = {
             "Project Name":               ("1. Project/Overview", "l_projectFullName", 1100, \
                                             lambda v,w: (v.get("l_projectFullName", ""), logging.DEBUG)),
-            "Copyright":                  ("1. Project/Overview", "t_copyrightStatement", 1080, \
-                                            lambda v,w: (v.get("t_copyrightStatement", ""), logging.DEBUG)),
+            "Copyright":                  ("1. Project/Overview", "txbf_copyright", 1080, \
+                                            lambda v,w: (v.get("txbf_copyright", ""), logging.DEBUG)),
             "License":                    ("1. Project/Overview", "ecb_licenseText", 1060, \
                                             lambda v,w: (v.get("ecb_licenseText", ""), logging.DEBUG)),
                                                          

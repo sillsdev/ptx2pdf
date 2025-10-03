@@ -1243,7 +1243,7 @@ class ViewModel:
                 self._configset(config, f"diglot_L/fontsize", fsz)
                 lsp = config.get("paragraph", "linespacing", fallback=15)
                 self._configset(config, f"diglot_L/baseline", lsp)
-                
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")

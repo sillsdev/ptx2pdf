@@ -163,10 +163,10 @@ btn_menu_showPDF l_menu_showPDF
 btn_menu_level btn_menu_lang btn_menu_feedback  btn_menu_donate l_menu_level l_menu_uilang
 fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
-fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
+fr_scope l_project fcb_project l_projectFullName r_book_single ecb_book 
 l_chapfrom l_chapto t_chapfrom t_chapto 
 r_book_multiple btn_chooseBooks ecb_booklist 
-fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_lockunlock t_password
+fr_savedLayout l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_lockunlock t_password
 tb_Layout lb_Layout
 fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize
 fr_2colLayout c_doublecolumn gr_doubleColumn c_verticalrule 
@@ -526,7 +526,7 @@ _signals = {
     'row-activated': ("TreeView",),
 }
 
-_olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
+_olst = ["fr_savedLayout", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_Viewer", 
          "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_PoD"]  # "tb_Help"
 
@@ -681,6 +681,10 @@ class GtkViewModel(ViewModel):
                 nid = node.get('id')
                 if nid is None:
                     pass
+                elif nid == 'txbf_copyright':
+                    node.set('class', 'GtkSourceBuffer')
+                elif nid == 'textv_copyright':
+                    node.set('class', 'GtkSourceView')
                 elif nid == 'txbf_colophon':
                     node.set('class', 'GtkSourceBuffer')
                 elif nid == 'textv_colophon':
@@ -1970,6 +1974,17 @@ class GtkViewModel(ViewModel):
             self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
     def fillCopyrightDetails(self):
+        pts = self._getPtSettings()
+        if pts is not None:
+            t = pts.get('Copyright', "")
+            t = re.sub(r"\([cC]\)", "\u00a9 ", t)
+            t = re.sub(r"\([rR]\)", "\u00ae ", t)
+            t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
+            w = self.builder.get_object("txbf_copyright")
+            t = re.sub(r"</?p>", "", t)
+            self.set("txbf_copyright", t)
+
+    def old_fillCopyrightDetails(self):
         pts = self._getPtSettings()
         if pts is not None:
             t = pts.get('Copyright', "")
@@ -3923,7 +3938,7 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("l_projectFullName").set_label("")
             self.builder.get_object("l_projectFullName").set_tooltip_text("")
-        if self.get("t_copyrightStatement") == "":
+        if self.get("txbf_copyright") == "":
             self.fillCopyrightDetails()
         # print(f"In onProjectChanged. About to call onUseIllustrationsClicked {self.initialised=}  {self.loadingConfig=}")
         # self.onUseIllustrationsClicked(None) # Not sure why this was there. Removed 16-1-2025
@@ -5163,6 +5178,15 @@ class GtkViewModel(ViewModel):
     def onResetCopyrightClicked(self, btn):
         self.fillCopyrightDetails()
 
+    def copyrightTextBufferChanged(self, btn, x):
+        t = self.get("txbf_copyright", "")
+        t = re.sub("</?p>", "", t)
+        t = re.sub(r"\([cC]\)", "\u00a9 ", t)
+        t = re.sub(r"\([rR]\)", "\u00ae ", t)
+        t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
+        self.set("txbf_copyright", t)
+        self.changed()
+        
     def onCopyrightStatementChanged(self, btn):
         btname = Gtk.Buildable.get_name(btn)
         w = self.builder.get_object(btname)

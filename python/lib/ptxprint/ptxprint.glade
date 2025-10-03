@@ -16309,6 +16309,7 @@ should the Slice contain?</property>
     </columns>
   </object>
   <object class="GtkTextBuffer" id="txbf_colophon"/>
+  <object class="GtkTextBuffer" id="txbf_copyright"/>
   <object class="GtkTextBuffer" id="txbf_picNotes"/>
   <object class="GtkTextBuffer" id="txbf_styDesc"/>
   <object class="GtkDialog" id="dlg_styModsdialog">
@@ -16646,7 +16647,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                         <property name="margin-bottom">6</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkFrame" id="fr_projScope">
+                          <object class="GtkFrame" id="fr_projCopyLcns">
                             <property name="width-request">710</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -16654,11 +16655,11 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
+                            <property name="margin-top">3</property>
                             <property name="margin-bottom">6</property>
                             <property name="label-xalign">0.019999999552965164</property>
                             <child>
-                              <!-- n-columns=5 n-rows=4 -->
+                              <!-- n-columns=3 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -16666,170 +16667,22 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="row-spacing">8</property>
-                                <property name="column-spacing">8</property>
+                                <property name="hexpand">True</property>
+                                <property name="row-spacing">6</property>
+                                <property name="column-spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="l_project">
+                                    <property name="width-request">124</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Paratext Project:</property>
+                                    <property name="label" translatable="yes">Project ID:</property>
+                                    <property name="justify">right</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="ecb_book">
-                                    <property name="name">Single book chooser</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="model">ls_books</property>
-                                    <property name="wrap-width">5</property>
-                                    <property name="active">0</property>
-                                    <property name="has-entry">True</property>
-                                    <property name="entry-text-column">0</property>
-                                    <property name="id-column">0</property>
-                                    <signal name="changed" handler="onBookChange" swapped="no"/>
-                                    <child internal-child="entry">
-                                      <object class="GtkEntry">
-                                        <property name="can-focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="max-length">3</property>
-                                        <property name="width-chars">6</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_chooseBooks">
-                                    <property name="label" translatable="yes">Select Various Books...</property>
-                                    <property name="name">Multiple book selector</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Select one or more Biblical books
-to be printed from the project.</property>
-                                    <property name="valign">center</property>
-                                    <signal name="clicked" handler="onChooseBooksClicked" swapped="no"/>
-                                    <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">4</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_book_module">
-                                    <property name="label" translatable="yes">Bible Module:</property>
-                                    <property name="name">Bible module selector</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_book_single</property>
-                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_book_multiple">
-                                    <property name="label" translatable="yes">Portions or
-Multiple Books:</property>
-                                    <property name="name">Choose books or enter ranges to print</property>
-                                    <property name="width-request">110</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_book_single</property>
-                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_book_single">
-                                    <property name="label" translatable="yes">Single Book:</property>
-                                    <property name="name">Single book selector</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="active">True</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_book_multiple</property>
-                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_projectFullName">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="opacity">0.80</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="label" translatable="yes">&lt;&lt;&lt; Select a project to get started</property>
-                                    <property name="wrap">True</property>
-                                    <property name="ellipsize">end</property>
-                                    <property name="xalign">0</property>
-                                    <attributes>
-                                      <attribute name="scale" value="0.90000000000000002"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">0</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="lb_bibleModule">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="opacity">0.7019607843137254</property>
-                                    <property name="halign">start</property>
-                                    <property name="ellipsize">middle</property>
-                                    <property name="width-chars">50</property>
-                                    <property name="max-width-chars">60</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#121212121212"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">3</property>
-                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -16853,228 +16706,218 @@ Multiple Books:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBoxText" id="ecb_booklist">
+                                  <object class="GtkLabel" id="l_projectFullName">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">After selecting one or more books to be
-printed, the book codes will be listed here.
-This list is editable, so books can be re-ordered
-if need be.
-
-A list of references can also be entered manually
-for ranges of scripture to be printed. For example:
-  JHN 2:1-12
-  MRK 1-5
-  PSA 23; 100; 117
-  EXO 20:12-17 MAT 5:3-11
-  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
-
-Shortcut: Ctrl-B</property>
-                                    <property name="valign">center</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="active">0</property>
-                                    <property name="has-entry">True</property>
-                                    <property name="active-id">0</property>
-                                    <signal name="changed" handler="onBookListChanged" swapped="no"/>
-                                    <child internal-child="entry">
-                                      <object class="GtkEntry">
-                                        <property name="name">Multiple books editable list entry</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="tooltip-text" translatable="yes">A list of references can be entered if printing less
-than an entire book or chapter, or if you need to
-include portions from several books. For example:
-  JHN 2:1-12
-  MRK 1-5
-  PSA 23; 100; 117
-  EXO 20:12-17 MAT 5:3-11
-  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
-  GEN 24:1-17; 24:22-30
-
-If working on several books, use the Choose...
-button to select multiple books. For example:
-  LUK ACT GLO NDX
-prints Luke, Acts, Glossary and Names Index.
-The list is editable, so books can be re-ordered
-if need be (for example, for the Hebrew canon).
-
-Note that verse ranges spanning multiple books
-are not permitted: For example, 
-  MAT 1:1-REV 22:21   does not work.
-
-Shortcut: Ctrl-B</property>
-                                        <property name="valign">center</property>
-                                        <property name="placeholder-text" translatable="yes">e.g. GEN 1:1-2:3 JHN 1:1-5    or    LUK ACT GLO    or    GEN EXO LEV NUM DEU</property>
-                                        <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
-                                        <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
-                                      </object>
-                                    </child>
-                                    <accelerator key="b" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">2</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <!-- n-columns=4 n-rows=1 -->
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
+                                    <property name="opacity">0.80</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="column-spacing">6</property>
-                                    <child>
-                                      <object class="GtkLabel" id="l_chapfrom">
-                                        <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">From Chapter:</property>
-                                        <property name="track-visited-links">False</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_chapfrom">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="max-length">3</property>
-                                        <property name="width-chars">4</property>
-                                        <property name="max-width-chars">3</property>
-                                        <property name="xalign">0.34000000357627869</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
-                                        <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
-the entire book, enter the
-chapter number to start at.</property>
-                                        <property name="placeholder-text" translatable="yes">1</property>
-                                        <property name="input-purpose">digits</property>
-                                        <signal name="changed" handler="filter_numbers" swapped="no"/>
-                                        <signal name="focus-out-event" handler="fromChapChange" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_chapto">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="max-length">3</property>
-                                        <property name="width-chars">4</property>
-                                        <property name="max-width-chars">3</property>
-                                        <property name="xalign">0.34000000357627869</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
-                                        <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
-the entire book, enter the
-chapter number to end with.</property>
-                                        <property name="placeholder-text" translatable="yes">150</property>
-                                        <property name="input-purpose">digits</property>
-                                        <signal name="changed" handler="filter_numbers" swapped="no"/>
-                                        <signal name="focus-out-event" handler="toChapChange" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_chapto">
-                                        <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">To:</property>
-                                        <property name="track-visited-links">False</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
+                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes">&lt;&lt;&lt; Select a project to get started</property>
+                                    <property name="wrap">True</property>
+                                    <property name="ellipsize">end</property>
+                                    <property name="xalign">0</property>
+                                    <attributes>
+                                      <attribute name="scale" value="0.90000000000000002"/>
+                                    </attributes>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkExpander">
                                     <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="spacing">6</property>
-                                    <property name="homogeneous">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="margin-start">128</property>
+                                    <property name="hexpand">True</property>
                                     <child>
-                                      <object class="GtkButton" id="btn_chooseBibleModule">
-                                        <property name="label" translatable="yes">Choose...</property>
-                                        <property name="name">Bible module chooser button</property>
+                                      <!-- n-columns=3 n-rows=3 -->
+                                      <object class="GtkGrid">
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <signal name="clicked" handler="onSelectModuleClicked" swapped="no"/>
-                                        <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                                        <property name="can-focus">False</property>
+                                        <property name="margin-top">3</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="row-spacing">6</property>
+                                        <property name="column-spacing">6</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">It is important to include a copyright statement on every publication.
+By default this will be set according to the Paratext project settings, 
+but you can edit it here if needed.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">start</property>
+                                            <property name="margin-top">4</property>
+                                            <property name="label" translatable="yes">Copyright:</property>
+                                            <property name="justify">right</property>
+                                            <property name="xalign">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Select one of these licenses, or type a different license.
+
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved
+
+For more detailed information about the various
+Creative Commons licenses, refer to:
+&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">License:</property>
+                                            <property name="justify">right</property>
+                                            <property name="xalign">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_licenseText">
+                                            <property name="name">License details</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-markup" translatable="yes">Select one of these licenses, or type a different license.
+
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved
+
+For more detailed information about the various
+Creative Commons licenses, refer to:
+&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active">0</property>
+                                            <property name="has-entry">True</property>
+                                            <property name="active-id">0</property>
+                                            <items>
+                                              <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND).</item>
+                                              <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC).</item>
+                                              <item translatable="yes">This work is licensed under a Creative Commons Attribution-Sharealike 4.0 International License (CC BY-SA).</item>
+                                              <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY).</item>
+                                              <item translatable="yes">All Rights Reserved.</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="can-focus">False</property>
+                                                <property name="hexpand">True</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">2</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkScrolledWindow" id="scroll_copyright">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="vscrollbar-policy">always</property>
+                                            <property name="shadow-type">etched-in</property>
+                                            <property name="overlay-scrolling">False</property>
+                                            <child>
+                                              <object class="GtkViewport">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="margin-top">4</property>
+                                                <property name="margin-bottom">4</property>
+                                                <child>
+                                                  <object class="GtkTextView" id="textv_copyright">
+                                                    <property name="name">Copyright text entry</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="tooltip-text" translatable="yes">It is important to include a copyright statement on every publication.
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved</property>
+                                                    <property name="wrap-mode">word</property>
+                                                    <property name="buffer">txbf_copyright</property>
+                                                    <signal name="key-release-event" handler="copyrightTextBufferChanged" swapped="no"/>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">0</property>
+                                            <property name="width">2</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_resetCopyright">
+                                            <property name="label">↺</property>
+                                            <property name="name">Reload copyright from Paratext project</property>
+                                            <property name="width-request">-1</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Clicking this button will reload
+the Copyright Statement from the
+Paratext project settings.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">start</property>
+                                            <signal name="clicked" handler="onResetCopyrightClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
+                                        </child>
                                       </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
                                     </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_editModule">
-                                        <property name="label" translatable="yes">Edit...</property>
-                                        <property name="name">Edit Bible module</property>
+                                    <child type="label">
+                                      <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
-show the selected Bible module.</property>
-                                        <signal name="clicked" handler="onEditModule" swapped="no"/>
-                                        <accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">It is important to include copyright and license statements on every publication.
+By default this will be set according to the Paratext project settings, but you can 
+edit it here if needed by expanding the section below.</property>
+                                        <property name="label" translatable="yes">Copyright &amp; Licensing</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="foreground" value="#72729f9dcfcf"/>
+                                        </attributes>
                                       </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">4</property>
+                                    <property name="left-attach">0</property>
                                     <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                               </object>
@@ -17083,18 +16926,18 @@ show the selected Bible module.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Project and Scope</property>
+                                <property name="label" translatable="yes">Project</property>
                               </object>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="fr_SavedConfigSettings">
+                          <object class="GtkFrame" id="fr_savedLayout">
                             <property name="width-request">710</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -17422,7 +17265,7 @@ you can recall those settings later.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="fr_copyrightLicense">
+                          <object class="GtkFrame" id="fr_scope">
                             <property name="width-request">710</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -17430,11 +17273,11 @@ you can recall those settings later.</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
-                            <property name="margin-top">3</property>
+                            <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
                             <property name="label-xalign">0.019999999552965164</property>
                             <child>
-                              <!-- n-columns=3 n-rows=2 -->
+                              <!-- n-columns=5 n-rows=4 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -17442,140 +17285,372 @@ you can recall those settings later.</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="row-spacing">6</property>
-                                <property name="column-spacing">6</property>
+                                <property name="row-spacing">8</property>
+                                <property name="column-spacing">8</property>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="width-request">124</property>
+                                  <object class="GtkComboBox" id="ecb_book">
+                                    <property name="name">Single book chooser</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Copyright:</property>
-                                    <property name="justify">right</property>
-                                    <property name="xalign">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="t_copyrightStatement">
-                                    <property name="name">Copyright details</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">It is important to include a copyright statement on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed. 
-
-These keyboard sequences can be used:
-   (c) --&gt; ©  the copyright sign
-   (r) --&gt; ®  to denote registered trademarks
-   (tm) --&gt; ™  to denote trademarks in general
-
-Other special codes converted at print time:
-use ~ for places where a non-breaking space is needed
-use // where a line break needs to be forced
-but :// used in URLs will still be preserved</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="placeholder-text" translatable="yes">&lt;Enter copyright holder here. For example, © 2024 Wycliffe Bible Translators, Inc.&gt;</property>
-                                    <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_resetCopyright">
-                                    <property name="label">↺</property>
-                                    <property name="name">Reload copyright from Paratext project</property>
-                                    <property name="width-request">-1</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Clicking this button will reload
-the Copyright Statement from the
-Paratext project settings.</property>
-                                    <signal name="clicked" handler="onResetCopyrightClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="width-request">124</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">License:</property>
-                                    <property name="justify">right</property>
-                                    <property name="xalign">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBoxText" id="ecb_licenseText">
-                                    <property name="name">License details</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-markup" translatable="yes">Select one of these licenses, or type a different license.
-
-Note: There are several shortcuts you can use:
-   (c) --&gt; ©  the copyright sign
-   (r) --&gt; ®  to denote registered trademarks
-   (tm) --&gt; ™  to denote trademarks in general
-
-Other special codes converted at print time:
-use ~ for places where a non-breaking space is needed
-use // where a line break needs to be forced
-but :// used in URLs will still be preserved
-
-For more detailed information about the various
-Creative Commons licenses, refer to:
-&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="model">ls_books</property>
+                                    <property name="wrap-width">5</property>
                                     <property name="active">0</property>
                                     <property name="has-entry">True</property>
-                                    <property name="active-id">0</property>
-                                    <items>
-                                      <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND).</item>
-                                      <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC).</item>
-                                      <item translatable="yes">This work is licensed under a Creative Commons Attribution-Sharealike 4.0 International License (CC BY-SA).</item>
-                                      <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY).</item>
-                                      <item translatable="yes">All Rights Reserved.</item>
-                                    </items>
+                                    <property name="entry-text-column">0</property>
+                                    <property name="id-column">0</property>
+                                    <signal name="changed" handler="onBookChange" swapped="no"/>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
-                                        <property name="name">License details</property>
-                                        <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="tooltip-markup" translatable="yes">Select one of these licenses, or type a different license.
-
-Note: There are several shortcuts you can use:
-   (c) --&gt; ©  the copyright sign
-   (r) --&gt; ®  to denote registered trademarks
-   (tm) --&gt; ™  to denote trademarks in general
-
-Other special codes converted at print time:
-use ~ for places where a non-breaking space is needed
-use // where a line break needs to be forced
-but :// used in URLs will still be preserved
-
-For more detailed information about the various
-Creative Commons licenses, refer to:
-&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
-                                        <property name="placeholder-text" translatable="yes">Select one of the licenses or type in your own license statement.</property>
+                                        <property name="halign">start</property>
+                                        <property name="max-length">3</property>
+                                        <property name="width-chars">6</property>
                                       </object>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_chooseBooks">
+                                    <property name="label" translatable="yes">Select Multiple Books...</property>
+                                    <property name="name">Multiple book selector</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Select one or more Biblical books
+to be printed from the project.</property>
+                                    <property name="valign">center</property>
+                                    <signal name="clicked" handler="onChooseBooksClicked" swapped="no"/>
+                                    <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="r_book_module">
+                                    <property name="label" translatable="yes">Bible Module:</property>
+                                    <property name="name">Bible module selector</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="draw-indicator">True</property>
+                                    <property name="group">r_book_single</property>
+                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="r_book_multiple">
+                                    <property name="label" translatable="yes">Portions or
+Multiple Books:</property>
+                                    <property name="name">Choose books or enter ranges to print</property>
+                                    <property name="width-request">110</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="draw-indicator">True</property>
+                                    <property name="group">r_book_single</property>
+                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="r_book_single">
+                                    <property name="label" translatable="yes">Single Book:</property>
+                                    <property name="name">Single book selector</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="active">True</property>
+                                    <property name="draw-indicator">True</property>
+                                    <property name="group">r_book_multiple</property>
+                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lb_bibleModule">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="opacity">0.7019607843137254</property>
+                                    <property name="halign">start</property>
+                                    <property name="ellipsize">middle</property>
+                                    <property name="width-chars">50</property>
+                                    <property name="max-width-chars">60</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#121212121212"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">3</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="ecb_booklist">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">After selecting one or more books to be
+printed, the book codes will be listed here.
+This list is editable, so books can be re-ordered
+if need be.
+
+A list of references can also be entered manually
+for ranges of scripture to be printed. For example:
+  JHN 2:1-12
+  MRK 1-5
+  PSA 23; 100; 117
+  EXO 20:12-17 MAT 5:3-11
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
+
+Shortcut: Ctrl-B</property>
+                                    <property name="valign">center</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="active">0</property>
+                                    <property name="has-entry">True</property>
+                                    <property name="active-id">0</property>
+                                    <signal name="changed" handler="onBookListChanged" swapped="no"/>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="name">Multiple books editable list entry</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="tooltip-text" translatable="yes">A list of references can be entered if printing less
+than an entire book or chapter, or if you need to
+include portions from several books. For example:
+  JHN 2:1-12
+  MRK 1-5
+  PSA 23; 100; 117
+  EXO 20:12-17 MAT 5:3-11
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
+  GEN 24:1-17; 24:22-30
+
+If working on several books, use the Choose...
+button to select multiple books. For example:
+  LUK ACT GLO NDX
+prints Luke, Acts, Glossary and Names Index.
+The list is editable, so books can be re-ordered
+if need be (for example, for the Hebrew canon).
+
+Note that verse ranges spanning multiple books
+are not permitted: For example, 
+  MAT 1:1-REV 22:21   does not work.
+
+Shortcut: Ctrl-B</property>
+                                        <property name="valign">center</property>
+                                        <property name="placeholder-text" translatable="yes">e.g. GEN 1:1-2:3 JHN 1:1-5    or    LUK ACT GLO    or    GEN EXO LEV NUM DEU</property>
+                                        <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
+                                        <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
+                                      </object>
+                                    </child>
+                                    <accelerator key="b" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">2</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <!-- n-columns=4 n-rows=1 -->
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="column-spacing">6</property>
+                                    <child>
+                                      <object class="GtkLabel" id="l_chapfrom">
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">From Chapter:</property>
+                                        <property name="track-visited-links">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_chapfrom">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="max-length">3</property>
+                                        <property name="width-chars">4</property>
+                                        <property name="max-width-chars">3</property>
+                                        <property name="xalign">0.34000000357627869</property>
+                                        <property name="caps-lock-warning">False</property>
+                                        <property name="progress-pulse-step">0</property>
+                                        <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
+the entire book, enter the
+chapter number to start at.</property>
+                                        <property name="placeholder-text" translatable="yes">1</property>
+                                        <property name="input-purpose">digits</property>
+                                        <signal name="changed" handler="filter_numbers" swapped="no"/>
+                                        <signal name="focus-out-event" handler="fromChapChange" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_chapto">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="max-length">3</property>
+                                        <property name="width-chars">4</property>
+                                        <property name="max-width-chars">3</property>
+                                        <property name="xalign">0.34000000357627869</property>
+                                        <property name="caps-lock-warning">False</property>
+                                        <property name="progress-pulse-step">0</property>
+                                        <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
+the entire book, enter the
+chapter number to end with.</property>
+                                        <property name="placeholder-text" translatable="yes">150</property>
+                                        <property name="input-purpose">digits</property>
+                                        <signal name="changed" handler="filter_numbers" swapped="no"/>
+                                        <signal name="focus-out-event" handler="toChapChange" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_chapto">
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">To:</property>
+                                        <property name="track-visited-links">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="spacing">6</property>
+                                    <property name="homogeneous">True</property>
+                                    <child>
+                                      <object class="GtkButton" id="btn_chooseBibleModule">
+                                        <property name="label" translatable="yes">Choose...</property>
+                                        <property name="name">Bible module chooser button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <signal name="clicked" handler="onSelectModuleClicked" swapped="no"/>
+                                        <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editModule">
+                                        <property name="label" translatable="yes">Edit...</property>
+                                        <property name="name">Edit Bible module</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
+show the selected Bible module.</property>
+                                        <signal name="clicked" handler="onEditModule" swapped="no"/>
+                                        <accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -17583,13 +17658,13 @@ Creative Commons licenses, refer to:
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Copyright &amp; Licensing</property>
+                                <property name="label" translatable="yes">What to Print</property>
                               </object>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
