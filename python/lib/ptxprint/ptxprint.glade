@@ -40379,6 +40379,73 @@ from XeTeX processing.</property>
                         <property name="tab-fill">False</property>
                       </packing>
                     </child>
+                    <child type="action-start">
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <child>
+                          <object class="GtkMenuButton" id="btn_menu">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="focus-on-click">False</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="margin-left">6</property>
+                            <property name="margin-right">3</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">3</property>
+                            <property name="margin-top">3</property>
+                            <property name="margin-bottom">3</property>
+                            <property name="relief">none</property>
+                            <property name="draw-indicator">True</property>
+                            <property name="direction">up</property>
+                            <property name="popover">menu_main</property>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="icon-name">open-menu-symbolic</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_download_update">
+                            <property name="name">Check for updates...</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="no-show-all">True</property>
+                            <property name="tooltip-text" translatable="yes">A newer version of PTXprint is available.
+Click to visit download page on the website.</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="margin-left">3</property>
+                            <property name="margin-right">3</property>
+                            <property name="margin-start">3</property>
+                            <property name="margin-end">3</property>
+                            <property name="margin-top">3</property>
+                            <property name="margin-bottom">3</property>
+                            <property name="image">icon_download</property>
+                            <property name="relief">none</property>
+                            <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="tab-fill">False</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -40469,81 +40536,9 @@ from XeTeX processing.</property>
                 <property name="can-focus">False</property>
                 <property name="valign">end</property>
                 <child>
-                  <object class="GtkMenuButton" id="btn_menu">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="focus-on-click">False</property>
-                    <property name="receives-default">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="margin-start">6</property>
-                    <property name="margin-end">3</property>
-                    <property name="margin-top">3</property>
-                    <property name="margin-bottom">3</property>
-                    <property name="direction">up</property>
-                    <property name="popover">menu_main</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="icon-name">open-menu-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="btn_download_update">
-                    <property name="name">Check for updates...</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="no-show-all">True</property>
-                    <property name="tooltip-text" translatable="yes">A newer version of PTXprint is available.
-Click to visit download page on the website.</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="margin-start">3</property>
-                    <property name="margin-end">3</property>
-                    <property name="margin-top">3</property>
-                    <property name="margin-bottom">3</property>
-                    <property name="image">icon_download</property>
-                    <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="btn_openFolder">
-                    <property name="name">Open folder containing the PDF</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">Open the folder which contains the
-PDF file(s) created for this project.</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="margin-start">3</property>
-                    <property name="margin-end">3</property>
-                    <property name="margin-top">3</property>
-                    <property name="margin-bottom">3</property>
-                    <property name="image">icon_openFolder</property>
-                    <signal name="clicked" handler="onOpenOutputFolderclicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkEntry" id="t_find">
                     <property name="name">Find help</property>
+                    <property name="width-request">230</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">Type in a word to search for a setting 
@@ -40567,8 +40562,39 @@ Shortcut: Ctrl-F</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">0</property>
                   </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_openFolder">
+                    <property name="name">Open folder containing the PDF</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Open the folder which contains the
+PDF file(s) created for this project.</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="margin-left">3</property>
+                    <property name="margin-right">3</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">3</property>
+                    <property name="margin-top">3</property>
+                    <property name="margin-bottom">3</property>
+                    <property name="image">icon_openFolder</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onOpenOutputFolderclicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>

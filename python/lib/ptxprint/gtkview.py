@@ -1973,40 +1973,6 @@ class GtkViewModel(ViewModel):
         if self.project.prjid is not None:
             self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
-    def fillCopyrightDetails(self):
-        pts = self._getPtSettings()
-        if pts is not None:
-            t = pts.get('Copyright', "")
-            t = re.sub(r"\([cC]\)", "\u00a9 ", t)
-            t = re.sub(r"\([rR]\)", "\u00ae ", t)
-            t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
-            w = self.builder.get_object("txbf_copyright")
-            t = re.sub(r"</?p>", "", t)
-            self.set("txbf_copyright", t)
-
-    def old_fillCopyrightDetails(self):
-        pts = self._getPtSettings()
-        if pts is not None:
-            t = pts.get('Copyright', "")
-            t = re.sub(r"\([cC]\)", "\u00a9 ", t)
-            t = re.sub(r"\([rR]\)", "\u00ae ", t)
-            t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
-            if len(t) < 100:
-                t = re.sub(r"</?p>", "", t)
-                self.builder.get_object("t_copyrightStatement").set_text(t)
-            else:
-                if len(self.get("txbf_colophon")) > 100:
-                    return # Don't overwrite what has already been placed in the colophon
-                           # from an earlier run, which could also have been edited manually.
-                t = re.sub(r"<p>", r"\n\\pc ", t)
-                t = re.sub(r"</p>", "", t)
-                t = re.sub(r"\\pc ?\n?\\pc ", r"\\pc ", r"\pc " + t)
-                self.set("txbf_colophon", t)
-                self.builder.get_object("t_copyrightStatement").set_text(' ')
-                self.builder.get_object("t_copyrightStatement").set_placeholder_text(_('Copyright statement too long. See Colophon in Peripherals'))
-                self.set("c_colophon", True)
-                self.doStatus(_("Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."))
-
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.project.srcPath(cfg)
@@ -5185,6 +5151,17 @@ class GtkViewModel(ViewModel):
         t = re.sub(r"\([tT][mM]\)", "\u2122", t)
         return t
 
+    def fillCopyrightDetails(self):
+        pts = self._getPtSettings()
+        if pts is not None:
+            t = pts.get('Copyright', "")
+            if len(t):
+                self.set("txbf_copyright", self.autoCorrectTidyUp(t))
+            else:
+                self.doStatus(_("No copyright statement found in Paratext settings!"))
+        else:
+            self.doStatus(_("Paratext settings not found!"))
+
     def copyrightTextBufferChanged(self, btn, x):
         orig = self.get("txbf_copyright", "")
         new = self.autoCorrectTidyUp(orig)
@@ -5963,7 +5940,7 @@ class GtkViewModel(ViewModel):
             logger.debug(f"Update check failed: {e}")
             return # Exit silently on any error
 
-        # version = "3.0.0" # useful for testing - set a hypothetical (new) version number
+        # version = "4.2.0" # useful for testing - set a hypothetical (new) version number
         if version is None:
             logger.debug(f"Returning because version is None.")
             return
@@ -6037,6 +6014,7 @@ class GtkViewModel(ViewModel):
 
     def checkUpdates(self):
         wid = self.builder.get_object("btn_download_update")
+
         lastchecked = self.userconfig.getfloat("init", "checkedupdate", fallback=0)
         if time.time() - self.startedtime < 300: # i.e. started less than 5 mins ago
             logger.debug("Check for updates didn't run as it hasn't been 5 mins since startup")
