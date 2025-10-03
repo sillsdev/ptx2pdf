@@ -167,9 +167,10 @@ class ThumbnailDialog:
         # fill in list of artists
         model = self.view.builder.get_object("ls_artists")
         model.clear()
-        for a in sorted(self.imagedata['sets']):
-            name = self.view.copyrightInfo['copyrights'].get(a.lower(), {}).get('artist', _("Unknown"))
-            model.append([False, a.upper(), name])
+        if 'sets' in self.imagedata:
+            for a in sorted(self.imagedata['sets']):
+                name = self.view.copyrightInfo['copyrights'].get(a.lower(), {}).get('artist', _("Unknown"))
+                model.append([False, a.upper(), name])
         self.artists.clear()
         langpath = os.path.join(imagesetdir, "lang_{}.json".format(self.view.lang.lower()))
         if not os.path.exists(langpath):
@@ -227,7 +228,11 @@ class ThumbnailDialog:
 
     def update_reflist(self):
         if self.reftext is not None and len(self.reftext):
-            self.reflist = RefList(self.reftext, factory=TagableRef)
+            try:
+                self.reflist = RefList(self.reftext, factory=TagableRef)
+            except SyntaxError as e:
+                self.view.doError(_("References must only use 3 letter book codes, etc."), str(e))
+                self.reflist = []
         else:
             self.reflist = []
         # logger.debug(f"reflist from {s} to {self.reflist}")
