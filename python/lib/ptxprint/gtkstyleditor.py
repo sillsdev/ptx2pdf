@@ -408,14 +408,32 @@ class StyleEditorView(StyleEditor):
         #logger.debug(f"{model[it][0]} {path}({len(path)})   {res}")
         return res
 
+    # def old_getStyleType(self, mrk):
+        # ''' valid returns are: Character, Milestone, Note, Paragraph '''
+        # mtype = self.getval(self.marker, 'mrktype', '')
+        # if not mtype:
+            # res = self.getval(self.marker, 'StyleType')
+        # else:
+            # res = Grammar.marker_tags.get('mtype', 'Standalone')
+        # return res
+
     def getStyleType(self, mrk):
-        ''' valid returns are: Character, Milestone, Note, Paragraph '''
-        mtype = self.getval(self.marker, 'mrktype', '')
-        if not mtype:
-            res = self.getval(self.marker, 'StyleType')
-        else:
-            res = Grammar.marker_tags.get('mtype', 'Standalone')
-        return res
+        """valid returns are: Character, Milestone, Note, Paragraph"""
+        # what the .sty says
+        mtype = self.getval(mrk, 'mrktype', '')
+        # what the USFM grammar says for this marker
+        cat = Grammar.marker_categories.get(mrk, '')
+        # If mrktype is empty OR the default placeholder "Paragraph",
+        # use the grammar category when available.
+        if not mtype or mtype == 'Paragraph':
+            if cat:
+                return cat
+        # Otherwise honor the explicit mrktype
+        if mtype:
+            return mtype
+        # Last fallbacks: any saved StyleType, or Standalone
+        st = self.getval(mrk, 'StyleType')
+        return st or 'Standalone'
 
     def editMarker(self):
         if self.marker is None:
@@ -671,7 +689,7 @@ class StyleEditorView(StyleEditor):
 
         if not key.startswith("_"):
             super(self.__class__, self).setval(self.marker, key, value, mapin=False)
-            if key in ("FontSize", "FontName", "Bold", "Italic"):
+            if key in ("font", "FontSize", "FontName", "Bold", "Italic"): # ask MH if OK to add 'font'
                 fref = self.getval(self.marker, 'font')
                 if fref is None:
                     fref = self.model.get("bl_fontR")
