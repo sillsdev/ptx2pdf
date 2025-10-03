@@ -507,17 +507,18 @@ class StyleEditorView(StyleEditor):
         for w in (('Note', 'Table', 'SB')):
             if self.builder.get_object("ex_sty"+w).get_expanded():
                 self.builder.get_object("ex_styOther").set_expanded(True)
-
         if not self.model.get("c_noInternet"):
             tl = self.model.lang
             w = self.builder.get_object("l_url_usfm")
+            w.set_sensitive(True)
             w.set_label(_('More Info...'))
             tl = self.model.lang if not self.model.get("c_useEngLinks") and \
                  self.model.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th'] else ""
             m = self.marker.strip("123456789")
             path = mkr2path.get(m, None)
             if "+" in urlmkr or "|" in urlmkr or path is None:
-                w.set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
+                w.set_uri(_('No further information is available for\ncomplex/custom marker: {}').format(urlmkr))
+                w.set_sensitive(False)
             else:
                 if m.startswith("z"):
                     site = f'https://github.com/sillsdev/ptx2pdf/blob/master/docs/help/{m}.md'
