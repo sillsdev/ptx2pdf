@@ -1013,6 +1013,7 @@
   %\message{verse was \meaning\oldv@rse}% Set to empty at chapter number.
   \ifx \oldv@rse\empty
     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+    \ifOmitVerseNumberOne\c@ncelfirstversetrue\fi
   \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
@@ -1062,6 +1063,7 @@
     \trace{hv}{End of hanging verse \ch@pter:\v@rse }%
     \hangingversefalse
     \ignorespaces
+  \else\ifMarginalVerses \ignorespaces\fi
   \fi
  }
  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
@@ -1134,8 +1136,13 @@
      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
      \ifcsname hookchapter\g@tdstat\endcsname\csname hookchapter\g@tdstat\endcsname\ch@pter
      \else
-       \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+       \ifx\ch@pl@bel\empty\relax 
          \trace{c}{No chapter label in use : \ch@pter}%
+         \getp@ram{posn}{c}{c}\ifx\p@ram\loc@M
+            \m@rginc
+         \else
+            \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+         \fi
        \else % if \cl present, output chapter label here
          \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
          \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\printchapter{\ch@ptert@xt}}%
@@ -1160,6 +1167,16 @@
  \def\m@rker{c}\def\@mkr{c\c@rrdstat}\defp@ram{fontsize}{\dr@psize}%
  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
 }
+\def\m@rginc{%
+  \setbox\ch@pterbox=\vbox{\XeTeXuseglyphmetrics=3\hbox{\cstyle{c}{\ch@pter}}}%
+  \getp@ram{spacebeside}{c}{c}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
+  %\dp\ch@pterbox=\ht\ch@pterbox \ht\ch@pterbox=0pt
+  \dimen1=-\dp\pstr@t
+  \dimen9=\lastdepth
+  \par\dimen8=\prevdepth \trace{e}{prevdepth=\the\dimen8 ->\the\dimen9}\prevdepth=\dimen9
+  \d@marginnote{\ch@pterbox}{\c@rref}{c}{\MarginNoteSide}{inline}{\the\dimen0}{\the\dimen1}%
+}
+
 %-csty_dropchap
 \def\bridgeVerses #1.#2-#3.{
   \addtrigger{#1.#2-preverse}{\setPrintVerse #2 #3.}
@@ -1212,7 +1229,7 @@
 	  % divide desired height by current height
       \multiply\dimen0 by 128                                                   %(3)
       \divide\dimen0 by \dimen2
-	  % multiply by original size from \c marker in stylesheet
+	  % multiply by original size from \cmarker in stylesheet
       \trace{h}{font x-height \x@\the\fontdimen5\font, ht of digits \the\ht0, dp of digits \the\dp0, baselineskip \the\baselineskip, for dropcaps \the\dimen0\space multiply by \the\dropnumbersize}%
       \dimen3=\dimen0 % depth scale factor * 128
       \multiply\dimen0 by \dropnumbersize
@@ -1722,7 +1739,7 @@
   }\mcdown
   \global\let\tmpstyst@k\styst@k
   \global\let\tmpstyst@kfirst\styst@kfirst
-  \trace{sa}{styst@k -> (\styst@kfirst/\styst@k)}%
+  \trace{sa}{styst@k -> (\styst@kfirst/\styst@k) from \mcstack}%
 }
 \let\styst@kfirst\empty
 \let\styst@k\empty
@@ -2282,7 +2299,7 @@
 \def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{\doc@t{#1}}
 \def\doc@t#1{% Called to start categorry from all sorts of places, including footnotes. No extra parargaphs please!
-  \trace{sc}{Starting category #1, with stylet@pe=\stylet@pe, mcstack=\mcstack}%
+  \trace{e}{Starting category #1, with stylet@pe=\stylet@pe, mcstack=\mcstack}%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
     \end@llpoppedstyles{\ss@Ctgy}%pop styles closed by a start of t, in case this IS 2 cat commands

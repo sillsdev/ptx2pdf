@@ -90,7 +90,7 @@ def main(doitfn=None):
     parser.add_argument('-N', '--nointernet', action="store_true", help="Disable all internet access")
     parser.add_argument('-n', '--port', type=int, help="Port to listen on")
     parser.add_argument('-D', '--define', action=DictAction, help="Set UI component=value (repeatable)")
-    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir)")
+    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir, no config)")
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
     parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
 
@@ -164,7 +164,7 @@ def main(doitfn=None):
 
     conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
     config = configparser.ConfigParser(interpolation=None)
-    if os.path.exists(conffile):
+    if (args.extras & 4) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:
             if config.has_option("init", "project"):
@@ -178,6 +178,7 @@ def main(doitfn=None):
             pdir = config.get("init", "paratext")
             if os.path.exists(pdir):
                 args.projects.append(pdir)
+                print(f"Adding {pdir}")
         if not len(args.projects) and config.has_section("projectdirs"):
             pdirs = config.options("projectdirs")
             if len(pdirs) and re.match(r"^\d{1,2}$", pdirs[0]):
@@ -187,6 +188,7 @@ def main(doitfn=None):
             for p in ps:
                 if p not in args.projects and os.path.exists(p):
                     args.projects.append(p)
+                    print(f"Adding {p}")
     else:
         if not os.path.exists(os.path.dirname(conffile)):
             os.makedirs(os.path.dirname(conffile))
@@ -198,6 +200,7 @@ def main(doitfn=None):
         pdir = get_ptsettings()
         if pdir is not None:
             args.projects.append(pdir)
+            print(f"Adding {pdir}")
 
     if args.lang is None:
         args.lang = getnsetlang(config)

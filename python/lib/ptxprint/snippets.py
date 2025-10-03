@@ -480,13 +480,9 @@ class ParaLabelling(Snippet):
     processTex = True
     texCode = r'''
 \catcode`\@=11
+\deactiv@tecustomch@rs
 \input marginnotes.tex
-\newcount\pcount \pcount=0
-{{\catcode`\~=12 \lccode`\~=32 \lowercase{{
-\gdef\parmkr{{\setbox0=\vbox{{\hbox{{\ch@rstylepls{{zpmkr}}~\m@rker\ch@rstylepls{{zpmkr}}*}}}}%
-    \advance\pcount by 1
-    \d@marginnote{{0}}{{\the\pcount}}{{zpmkr}}{{left}}}}
-}}
 \addtoeveryparhooks{{\parmkr}}
+\activ@tecustomch@rs
 '''
 

@@ -3,7 +3,7 @@
 import argparse, zipfile, os
 from ptxprint.utils import bookcodes
 
-ptxfiles = ["BookNames.xml", "Settings.xml", "hyphenatedWords.txt", "en.ldml"]
+ptxfiles = ["BookNames.xml", "Settings.xml", "hyphenatedWords.txt", "en.ldml", "shared"]
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-b","--bsbdir",required=True,help="Directory containing BSB source usfm files")
@@ -20,6 +20,11 @@ with zipfile.ZipFile(args.outfile, "w", compression=zipfile.ZIP_BZIP2) as outz:
         outz.write(infile, outfile)
     for k in ptxfiles:
         infile = os.path.join(args.ptxdir, k)
-        if os.path.exists(infile):
+        if os.path.isdir(infile):
+            for dp, dn, fn in os.walk(infile):
+                for f in fn:
+                    k = os.path.relpath(os.path.join(dp, f), args.ptxdir)
+                    outz.write(os.path.join(dp, f), k)
+        elif os.path.exists(infile):
             outz.write(infile, k)
 

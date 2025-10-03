@@ -1314,6 +1314,7 @@ class ViewModel:
             if clearvars:
                 self.clearvars()
         varcolour = "#FFDAB9" if not clearvars else None
+        # breakpoint()
         for sect in config.sections():
             for opt in config.options(sect):
                 editableOverride = len(opt) != len(opt.strip("*"))

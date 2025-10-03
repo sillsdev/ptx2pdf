@@ -936,6 +936,7 @@
     \global\setbox\n@tesoverrun\vbox{\unvbox\n@tesbox\unkern\unskip}%
     \x@\addtonextshipout{\x@\insert\n@tesoverrunins{\box\n@tesoverrun}}%
     \global\setbox\n@tesbox\vbox{\unvbox0}%
+    \trace{fp}{Shaved \the\sh@vedim \space from footnotes (excess to next page)}%
   \fi
 }
 \def\NoteShaveStay{2} % How many lines of *total notes* must stay on the main page before shaving is considered?
