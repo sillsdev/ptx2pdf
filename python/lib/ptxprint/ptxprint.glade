@@ -3945,7 +3945,7 @@ settings for a similar project.</property>
   <object class="GtkImage" id="img_filter">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">emblem-documents-symbolic</property>
+    <property name="icon-name">x-office-document-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="lc_coverBorder1">
@@ -32404,8 +32404,14 @@ the marker you need.</property>
 only show markers that are in 
 use in the current set of books.</property>
                                         <property name="halign">end</property>
-                                        <property name="image">img_filter</property>
                                         <signal name="toggled" handler="onStyleFilter" swapped="no"/>
+                                        <child>
+                                          <object class="GtkImage">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="icon-name">view-list-bullet-symbolic</property>
+                                          </object>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -32769,6 +32775,7 @@ to Parent</property>
                                                           <object class="GtkCheckButton" id="c_styFaceSuperscript">
                                                             <property name="label" translatable="yes">Superscript</property>
                                                             <property name="name">Styles: Superscript</property>
+                                                            <property name="width-request">95</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>

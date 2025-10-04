@@ -235,21 +235,18 @@ class StyleEditorView(StyleEditor):
             signal = widgetsignals.get(pref, "changed")
             if signal is not None:
                 w.connect(signal, self.item_changed, k)
-            # if v[0].startswith("s_"):
-            #     w.connect("focus-out-event", self.item_changed, k)
         self.isLoading = False
 
     def _paint_tree_row(self, column, cell, model, treeiter, data=None):
         """
-        - Top-level rows: blue foreground (#72729f9fcfcf) and (optionally) bold.
-        - Matched rows: pale yellow background (#fff9c4).
+        - Top-level rows: blue foreground (#72729f9fcfcf) and bold.
+        - Matched rows: pale peach background (#fce8d9).
         - Everyone else: inherit theme colors.
         """
         # Clear any explicit styling first so rows not matching revert to theme
         cell.set_property('foreground-set', False)
         cell.set_property('cell-background-set', False)
-        # If you used weight before, also clear it here:
-        # cell.set_property('weight', Pango.Weight.NORMAL)
+        cell.set_property('weight', Pango.Weight.NORMAL)
 
         try:
             path = model.get_path(treeiter)   # works with GtkTreeModelFilter too
@@ -258,15 +255,14 @@ class StyleEditorView(StyleEditor):
 
         # Top-level (depth==1): blue label
         if len(path) == 1:
-            cell.set_property('foreground', '#72729f9fcfcf')
+            cell.set_property('foreground', '#72729f9fcfcf') # pale blue
             cell.set_property('foreground-set', True)
-            # Optional: make category labels bold
-            # cell.set_property('weight', Pango.Weight.BOLD)
+            cell.set_property('weight', Pango.Weight.BOLD)
 
         # Search highlight: compare stringified path
         matches = getattr(self, '_search_matches', None)
         if matches and path.to_string() in matches:
-            cell.set_property('cell-background', '#fff9c4')
+            cell.set_property('cell-background', '#fce8d9') # pale peach
             cell.set_property('cell-background-set', True)
 
     def on_search_changed(self, entry):
@@ -283,13 +279,11 @@ class StyleEditorView(StyleEditor):
         if not key.strip():
             # Make sure this exists somewhere (e.g., set() in __init__)
             self._search_matches = set()
-            # Optional: collapse everything to remove search-driven expansion
+            # collapse everything to remove search-driven expansion
             # self.treeview.collapse_all()
             self.treeview.queue_draw()
-
         # Start (or restart) the debounce timer
         self.search_timer_id = GLib.timeout_add(500, self.do_search, entry)
-
 
     def do_search(self, entry):
         """Performs the search after the 500ms delay."""
