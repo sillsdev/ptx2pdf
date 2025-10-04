@@ -9869,7 +9869,15 @@ of the Page, or at the top-left Margin.</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="hexpand">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">3</property>
+                      </packing>
                     </child>
                     <child>
                       <placeholder/>
@@ -16879,7 +16887,6 @@ but :// used in URLs will still be preserved</property>
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="btn_resetCopyright">
-                                            <property name="label">↺</property>
                                             <property name="name">Reload copyright from Paratext project</property>
                                             <property name="width-request">-1</property>
                                             <property name="visible">True</property>
@@ -16891,6 +16898,13 @@ Paratext project settings.</property>
                                             <property name="halign">end</property>
                                             <property name="valign">start</property>
                                             <signal name="clicked" handler="onResetCopyrightClicked" swapped="no"/>
+                                            <child>
+                                              <object class="GtkImage">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="icon-name">view-refresh-symbolic</property>
+                                              </object>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
@@ -17643,6 +17657,12 @@ show the selected Bible module.</property>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">1</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -19858,7 +19878,6 @@ locate the style and will fake the bold-italic style.</property>
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="btn_refreshFonts">
-                                            <property name="label" translatable="yes">↺</property>
                                             <property name="name">Refresh Font List button</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -19878,6 +19897,13 @@ And remember to Refresh the Font List again.</property>
                                             <property name="valign">end</property>
                                             <property name="hexpand">True</property>
                                             <signal name="clicked" handler="onRefreshFontsclicked" swapped="no"/>
+                                            <child>
+                                              <object class="GtkImage">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="icon-name">view-refresh-symbolic</property>
+                                              </object>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -22150,8 +22176,8 @@ Print a second time before it applies.</property>
                                             <property name="spacing">6</property>
                                             <child>
                                               <object class="GtkCheckButton" id="c_fnautocallers">
-                                                <property name="label" translatable="yes">Show Callers 
-in the Text: </property>
+                                                <property name="label" translatable="yes">Show Callers
+in the Text:</property>
                                                 <property name="name">Show Footnote Callers in the Text</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
@@ -22211,7 +22237,6 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                             </child>
                                             <child>
                                               <object class="GtkButton" id="btn_resetFNcallers">
-                                                <property name="label">↺</property>
                                                 <property name="name">Reload footnote callers from Paratext</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
@@ -22225,6 +22250,13 @@ in the Paratext project, or are already
 showing, then a default set will appear.</property>
                                                 <property name="valign">center</property>
                                                 <signal name="clicked" handler="onResetFNcallersClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">view-refresh-symbolic</property>
+                                                  </object>
+                                                </child>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -23332,8 +23364,8 @@ has been specified within the text itself.</property>
                                             <property name="spacing">6</property>
                                             <child>
                                               <object class="GtkCheckButton" id="c_xrautocallers">
-                                                <property name="label" translatable="yes">Show Callers 
-in the Text: </property>
+                                                <property name="label" translatable="yes">Show Callers
+in the Text:</property>
                                                 <property name="name">Show Cross-Reference Callers in the Text</property>
                                                 <property name="width-request">100</property>
                                                 <property name="visible">True</property>
@@ -23392,7 +23424,6 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                             </child>
                                             <child>
                                               <object class="GtkButton" id="btn_resetXRcallers">
-                                                <property name="label">↺</property>
                                                 <property name="name">Reload cross-reference callers from Paratext</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
@@ -23406,6 +23437,13 @@ in the Paratext project, or are already
 showing, then a default set will appear.</property>
                                                 <property name="valign">center</property>
                                                 <signal name="clicked" handler="onResetXRcallersClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">view-refresh-symbolic</property>
+                                                  </object>
+                                                </child>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -30409,43 +30447,11 @@ same page.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="margin-end">4</property>
                                     <property name="spacing">6</property>
                                     <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <object class="GtkToggleButton" id="btn_adjust_diglot">
-                                        <property name="name">Auto-calculate optimum widths of diglot columns</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="image">icon_adjust_diglot</property>
-                                        <property name="always-show-image">True</property>
-                                        <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="hexpand">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">True</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkLabel" id="l_diglotMergeMode">
+                                        <property name="width-request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
@@ -30466,13 +30472,16 @@ algorithms which may be used to obtain the best overall result:
   can result in a lot of breaks!
 
 Note that for polyglots, only the Scored options are available to be used.</property>
-                                        <property name="halign">end</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin-start">12</property>
                                         <property name="label" translatable="yes">Merging mode:</property>
+                                        <property name="justify">right</property>
+                                        <property name="xalign">1</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">3</property>
+                                        <property name="position">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -30534,7 +30543,38 @@ Note that for polyglots, only the Scored options are available to be used.</prop
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">4</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkToggleButton" id="btn_adjust_diglot">
+                                        <property name="name">Auto-calculate optimum widths of diglot columns</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="image">icon_adjust_diglot</property>
+                                        <property name="always-show-image">True</property>
+                                        <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">3</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -30570,6 +30610,7 @@ same page.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_diglotSerialBooks">
+                                    <property name="width-request">100</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
@@ -30578,9 +30619,12 @@ side-by-side, but instead need to occur one after the other.
 
 Add the 3-letter book codes for any books that should 
 not be merged. These will appear one after the other.</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin-start">12</property>
                                     <property name="label" translatable="yes">Use Serial Layout
 for These Books:</property>
+                                    <property name="justify">right</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -30598,6 +30642,9 @@ side-by-side, but instead need to occur one after the other.
 
 Add the 3-letter book codes for any books that should 
 not be merged. These will appear one after the other.</property>
+                                    <property name="valign">start</property>
+                                    <property name="margin-end">12</property>
+                                    <property name="hexpand">True</property>
                                     <property name="text" translatable="yes">FRT BAK GLO XXA XXB</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="placeholder-text" translatable="yes">e.g. FRT BAK GLO XXA XXB</property>
@@ -31040,7 +31087,6 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_resetTabGroups">
-                                    <property name="label">↺</property>
                                     <property name="name">Thumb tabs: Reload default book groups</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -31049,6 +31095,13 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
 default values for the Grouped Tabs.</property>
                                     <property name="halign">start</property>
                                     <signal name="clicked" handler="onResetTabGroupsClicked" swapped="no"/>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="icon-name">view-refresh-symbolic</property>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">6</property>
@@ -32498,13 +32551,19 @@ confirmation or undo!</property>
                                             </child>
                                             <child>
                                               <object class="GtkButton" id="btn_styReset">
-                                                <property name="label">↺</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">True</property>
                                                 <property name="tooltip-text" translatable="yes">Click to reset this style's
 settings to default values.</property>
                                                 <signal name="clicked" handler="onStyleRefresh" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">view-refresh-symbolic</property>
+                                                  </object>
+                                                </child>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">1</property>
@@ -36809,7 +36868,6 @@ but :// used in URLs will still be preserved</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_resetColophon">
-                                    <property name="label">↺</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -36821,6 +36879,13 @@ Illustration credits tag.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">end</property>
                                     <signal name="clicked" handler="onColophonResetClicked" swapped="no"/>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="icon-name">view-refresh-symbolic</property>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -36989,7 +37054,6 @@ file is selected, then these will appear in alphabetical order.</property>
                             <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkButton" id="btn_rescanFRTvars">
-                                <property name="label">↺</property>
                                 <property name="name">Rescan peripheral variables</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -37001,6 +37065,13 @@ table of variable names and values.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <signal name="clicked" handler="rescanFRTvarsClicked" swapped="no"/>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="icon-name">view-refresh-symbolic</property>
+                                  </object>
+                                </child>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
