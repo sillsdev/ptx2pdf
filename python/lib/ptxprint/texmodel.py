@@ -1038,7 +1038,7 @@ class TexModel:
             if doc is not None:
                 doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
 
-        if self.dict['fancy/endayah'] == "":
+        if self.dict['fancy/endayah'] == "" and self.dict["fancy/versedecoratorisayah"] == "":
             (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("versesToEnd")
             if doc is not None:
