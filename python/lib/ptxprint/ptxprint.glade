@@ -14418,6 +14418,7 @@ project's Biblical Terms renderings.</property>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
+        <property name="hexpand">True</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkMenuButton" id="btn_menu_showPDF">
@@ -14425,6 +14426,9 @@ project's Biblical Terms renderings.</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
             <property name="no-show-all">True</property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0.20000000298023224</property>
             <property name="direction">right</property>
             <property name="use-popover">False</property>
             <child>
@@ -14447,6 +14451,9 @@ project's Biblical Terms renderings.</property>
             <property name="can-focus">True</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0.20000000298023224</property>
             <property name="direction">right</property>
             <property name="use-popover">False</property>
             <child>
@@ -14455,6 +14462,7 @@ project's Biblical Terms renderings.</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">View Level</property>
                 <property name="justify">center</property>
+                <property name="xalign">0.20000000298023224</property>
               </object>
             </child>
           </object>
@@ -14470,6 +14478,9 @@ project's Biblical Terms renderings.</property>
             <property name="can-focus">True</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0.20000000298023224</property>
             <property name="direction">right</property>
             <property name="use-popover">False</property>
             <child>
@@ -14506,6 +14517,9 @@ Developers so that others can also benefit.
 
 &lt;a href="https://give.sil.org/campaign/725128/donate"&gt;give.sil.org/campaign/725128/donate&lt;/a&gt;
 </property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0</property>
             <signal name="clicked" handler="onDonateClicked" swapped="no"/>
           </object>
           <packing>
@@ -14531,6 +14545,9 @@ don't like. Tell us what you dream for in the future.
 
 Click this button to fill in the Google form or type
 this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxprintfeedback&lt;/a&gt;</property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0</property>
             <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
           </object>
           <packing>

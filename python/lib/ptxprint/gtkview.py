@@ -786,7 +786,8 @@ class GtkViewModel(ViewModel):
             label = Gtk.Label()
             if self.lang.startswith(lang_code):
                 label.set_markup(f'<span foreground="medium blue"><b>{lang_name}</b></span>')
-                self.set("l_menu_uilang", _("Language\n({})").format(lang_name))
+                # self.set("l_menu_uilang", _("Language ({})").format(lang_name))
+                self.set("l_menu_uilang", _("Language"))
             else:
                 label.set_text(lang_name)
             label.set_use_markup(True)
@@ -1468,7 +1469,8 @@ class GtkViewModel(ViewModel):
             if int(r[1]) == ui:
                 levelname = " ".join(r[0].split(" ")[:-1])  # remove (n)
                 break
-        self.set("l_menu_level", _("View Level\n({})").format(levelname) if levelname else _("View Level"))
+        # self.set("l_menu_level", _("View Level ({})").format(levelname) if levelname else _("View Level"))
+        self.set("l_menu_level", _("View Level"))
         self.initialize_uiLevel_menu()
 
         # Apply UI filtering logic
