@@ -306,10 +306,11 @@ _showActiveTabs = {
 # Order is important, as the 1st object can be told to "grab_focus"
 _sensitivities = {
     "r_decorator": {
-        "r_decorator_file":    ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "lb_style_v",
+        "r_decorator_file":    ["btn_selectVerseDecorator", "lb_inclVerseDecorator",
                                 "l_verseDecoratorShift", "l_verseDecoratorScale",
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
-        "r_decorator_ayah":    ["lb_style_v"]},
+        "r_decorator_ayah":    ["c_decorator_endayah"]},
+    "c_decorator_endayah" :    ["lb_style_vp"],
     "r_border": {
         "r_border_text":       ["lb_style_textborder"],
         "r_border_page":       ["lb_style_pageborder"],
@@ -427,6 +428,7 @@ _nonsensitivities = {
     "c_doublecolumn" :         ["l_colXRside", "fcb_colXRside"],
     # "c_lockFontSize2Baseline": ["l_linespacing", "s_linespacing", "btn_adjust_spacing"],
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
+    # "c_decorator_endayah" :    ["lb_style_v"],
     "c_inclSpine":             ["c_coverCropMarks"],
     "c_lockUI4Layout":         ["ecb_pagesize", "c_mirrorpages", "s_indentUnit", "s_fontsize", "btn_adjust_spacing",
                                 "c_lockFontSize2Baseline", "c_pagegutter", "s_pagegutter", "s_linespacing", 
