@@ -4828,8 +4828,10 @@ class GtkViewModel(ViewModel):
         dialog.hide()
 
     def onHyphenateClicked(self, w1):
+        if self.loadingConfig:
+            return
         w2 = "c_letterSpacing"
-        if self.get(w2):
+        if self.get(w2) and self.get(Gtk.Buildable.get_name(w1)):
             self.set(w2, False)
             self.highlightwidget(w2)
             self.doStatus(_("The Between Letters Spacing Adjustments have been disabled due to Hyphenate being enabled."))
@@ -7239,3 +7241,12 @@ Thank you,
 
     def onPDFviewerTabChanged(self, widget, parent, page):
         self.pdf_viewer.onTabChange(page)
+
+    def onCreateDiffClicked(self, w):
+        pass # We need to do something to remove the _diff tab on the PDF Preview dialog
+        # if not self.get("c_createDiff"):
+            # diffname = self.baseTeXPDFnames(diff=True)[1]+".pdf"
+            # diffpath = os.path.join(self.project.printPath(None), diffname)
+            # if os.path.exists(diffpath):
+                # os.remove(diffpath)
+                # self.doStatus(_("Removed _diff file"))

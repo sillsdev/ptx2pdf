@@ -1507,10 +1507,22 @@ class TexModel:
             res.append(r"\def\zimagecopyrights{}{{}}".format(k))
         return "\n".join(res)
 
+    def _page_count_for_artist(self, pgs_for_artist: dict, art_code: str) -> int:
+        """
+        Return the number of pages for a given artist, matching the way pages
+        are stored in self.printer.artpgs (coded artists store under their code,
+        others under the '' key).
+        """
+        coded = set("ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"))
+        key = art_code if art_code in coded else ''
+        return len(pgs_for_artist.get(key, []))
+
     def generateImageCopyrightText(self):
         self.printer.artpgs = {}
-        mkr='pc'
+        mkr = 'pc'
         sensitive = self['document/sensitive']
+        show_all_pages = bool(self.dict.get('texpert/allpicredits', False))
+
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
         crdts = []
         cinfo = self.printer.copyrightInfo
@@ -1518,6 +1530,7 @@ class TexModel:
             self.printer.readCopyrights()
             cinfo = self.printer.copyrightInfo
         self.analyzeImageCopyrights()
+
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()
@@ -1537,15 +1550,16 @@ class TexModel:
                         p = f[5]
                     elif a == '':
                         p = "zz"
-                        msngPgs += [f[0]] 
+                        msngPgs += [f[0]]
                     else:
                         p = a
                     self.printer.artpgs.setdefault(p, {}).setdefault(a,[]).append((int(f[0]),f[1]+f[2]))
+
             artistWithMost = ""
             if len(self.printer.artpgs):
                 artpgcmp = [a for a in self.printer.artpgs if a != 'zz']
                 if len(artpgcmp):
-                    artistWithMost = max(artpgcmp, key=lambda x: len(self.printer.artpgs[x].values()))
+                    artistWithMost = max(artpgcmp, key=lambda a: (self._page_count_for_artist(self.printer.artpgs[a], a), a))
 
         langs = set(self.imageCopyrightLangs.keys())
         langs.add("en")
@@ -1563,25 +1577,35 @@ class TexModel:
                 plstr = "" if plrls is None else plrls.get(lang, plrls["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
+
                 for art, pgs in self.printer.artpgs.items():
-                    if art != artistWithMost and art != 'zz':
-                        if len(pgs):
-                            if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
-                                pages = [x[0] for x in pgs[art]]
-                            else:
-                                pages = [x[0] for x in pgs['']]
-                            plurals = pluralstr(plstr, pages)
-                            artinfo = cinfo["copyrights"].get(art.lower(), {'copyright': {'en': art}, 'sensitive': {'en': art}})
-                            if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
-                                artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
-                                if sensitive and "sensitive" in artinfo:
-                                    artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
-                                cpystr = multstr(cpytemplate, lang, len(pages), plurals, artstr.replace("_", "\u00A0"))
-                                crdts.append("\\{} {}".format(mkr, cpystr))
-                            else:
-                                crdts.append(_("\\message{{Warning: No copyright statement found for: {} on pages {}}}")\
-                                                .format(art, plurals))
-                            hasOut = True
+                    # Skip missing bucket
+                    if art == 'zz':
+                        continue
+                    # If we are showing an “All other …” roll-up, skip that artist here
+                    if (not show_all_pages) and art == artistWithMost:
+                        continue
+
+                    if len(pgs):
+                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                            pages = [x[0] for x in pgs[art]]
+                        else:
+                            pages = [x[0] for x in pgs['']]
+                        plurals = pluralstr(plstr, pages)
+                        artinfo = cinfo["copyrights"].get(
+                            art.lower(), {'copyright': {'en': art}, 'sensitive': {'en': art}}
+                        )
+                        if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
+                            artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
+                            if sensitive and "sensitive" in artinfo:
+                                artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
+                            cpystr = multstr(cpytemplate, lang, len(pages), plurals, artstr.replace("_", "\u00A0"))
+                            crdts.append("\\{} {}".format(mkr, cpystr))
+                        else:
+                            crdts.append(_("\\message{{Warning: No copyright statement found for: {} on pages {}}}") \
+                                         .format(art, plurals))
+                        hasOut = True
+
                 if len(msngPgs):
                     plurals = pluralstr(plstr, msngPgs)
                     template = cinfo['templates']['imageExceptions'].get(lang,
@@ -1590,7 +1614,8 @@ class TexModel:
                 else:
                     exceptPgs = ""
 
-                if len(artistWithMost):
+                # Only emit the roll-up (“All other illustrations by …” / “Except …”) when NOT listing all pages
+                if (not show_all_pages) and len(artistWithMost):
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
@@ -1611,6 +1636,7 @@ class TexModel:
                                 cinfo['templates']['exceptIllustrations']['en'])
                         cpystr = template.format(artstr.replace("_", "\u00A0"), exceptPgs)
                         crdts.append("\\{} {}".format(mkr, cpystr))
+
             if self.dict['notes/ifxrexternalist']:
                 if self.dict['notes/xrlistsource'] == "standard":
                     msg = "\\{} {}".format(mkr, cinfo['templates']['openbible.info'].get(lang,

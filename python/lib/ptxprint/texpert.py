@@ -185,6 +185,8 @@ texpertOptions = {
                             _("Increase/Reduce the gap between figures and their captions")),
     "DefaultSpaceBeside": O("spbeside", "PIC", (10, 0, 100, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Default space beside picture"),
                             _("Picture horizontal margin*2")),
+    "AllPicCredits":      O("allpicredits", "PIC", False, "", _("Show comprehensive illustration credits"),
+                            _("Instead of using the catch-all phrasing 'All other illustrations by...' show a comprehensive list of every artist and all pages that contain their illustrations.")),
 
     "DropActions":        O("noactions", "PDF", False, None, _("No PDF Bookmarks"),
                             _("Don’t output PDF bookmarks")),

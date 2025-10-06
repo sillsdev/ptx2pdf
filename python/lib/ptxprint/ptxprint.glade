@@ -40784,6 +40784,7 @@ Shortcut: Ctrl-R</property>
                         <property name="margin-start">3</property>
                         <property name="margin-end">3</property>
                         <property name="draw-indicator">True</property>
+                        <signal name="toggled" handler="onCreateDiffClicked" swapped="no"/>
                         <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                       <packing>
