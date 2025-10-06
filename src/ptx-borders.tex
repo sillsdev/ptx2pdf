@@ -167,8 +167,8 @@
  \fi
 }
 
-\def\s@ttextb@rderdims{%Called per book
-  \trace{et}{s@ttextb@rderdims}%
+\def\s@ttextb@rderdims{%Called per book, **during processing**
+  \trace{et}{s@ttextb@rderdims \c@rrdstat}%
   \global\textborderfalse
   \testm@rkerexists{textborder}%
   \iftemp
@@ -190,6 +190,12 @@
         \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}%
         \global\let\textb@dr@bot@pad\b@dr@bot@pad
         \global\let\textb@dr@top@pad\b@dr@top@pad
+        \ifx\TextBorderColumns\empty\else %If we're bordering individual columns...
+          \@get@Hborder@style@params
+          \@prepHb@rderdims
+          \let\col@do\ch@ckcol@border
+          \x@\each@col\TextBorderColumns \E
+        \fi
       \else
         \xdef\pretextb@rderskip{0pt}%
         \xdef\posttextb@rderskip{0pt}%
@@ -202,18 +208,12 @@
   \fi
 }
 \addtoidhooks{\s@ttextb@rderdims}% 
-%\def\TextBorderStyle{}
-%\addtoidhooks{%
-%  \xdef\posttextb@rderskip{20pt}%
-%  \xdef\pretextb@rderskip{20pt}%
-%  }
 \def\doTextB@rder#1{% Put border around box #1
   \testm@rkerexists{textborder}%
   \iftemp
     \trace{et}{textborder style exists}%
     \t@stpublishability{textborder}%
     \ifn@npublishable\else
-    %\ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
       \ifnum\pageno>0\edef\t@st{\botmark}%
         \trace{et}{Botmark:\t@st, \the\BodyColumns/\the\IntroColumns, m@rksonpage\ifm@rksonpage true\else false\fi}%
         \ifx\t@st\intr@ \tempfalse\fi
@@ -367,6 +367,8 @@
 \def\@get@Hborder@style@params{%Read the border-related parameters
   \traceifset{@get@Hborder@style@params}%
   \trace{eb}{Reading border horiz params for \c@tprefix\sb@rmarker (page \the\whichp@ge)}%
+  \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+  \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
   \t@mptrue
   \getsbp@ram{borderpadinnerouter}\ifx\cp@ram\tr@e\ifodd\whichp@ge\else\t@mpfalse\fi\fi
   \getsbp@ram{\ift@mp borderlpadding\else borderrpadding\fi}\ifx\cp@ram\relax\xdef\border@lpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@lpadding{\cp@ram pt}\fi
@@ -382,8 +384,6 @@
   \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
   \@get@Hborder@style@params
   %\tracingassigns=1
-  \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-  \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
   \@get@Vborder@style@params
   \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
   \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
@@ -439,7 +439,15 @@
     \fi
   \fi
 }
-
+\def\@prepHb@rderdims{% Minimal set of vertical border dimensions
+  \ifnum 1=\ifhasb@rder 1 \else \ifBoxLikeBorder 1 \else 0 \fi\fi
+    \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt \else \fi\relax}%
+    \xdef\b@dr@right@pad{\the\dimexpr \fb@rpadding  \ifx\b@drright\tr@e +\border@rpadding + \b@drwidth pt\else \fi\relax}%
+  \else
+    \xdef\b@dr@left@pad{0pt}%
+    \xdef\b@dr@right@pad{0pt}%
+  \fi
+}
 \def\ch@ckhasb@rder{%
   \hasb@rderfalse\horizb@rderfalse
   \ifx\b@drleft\tr@e\hasb@rdertrue\trace{eb}{Border: left}\fi
@@ -448,20 +456,16 @@
   \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
   \ifx\b@drprop\N@nPublish@ble\hasb@rderfalse\trace{eb}{Border: nonpublishable}\else\trace{eb}{Border property: \b@drprop}\fi
 }
+
 \def\prepb@rderdims{% Prepare all b@rderbox dimensions
   \ch@ckhasb@rder
   \@prepVb@rderdims
+  \@prepHb@rderdims
   \ifhasb@rder
     %Where does is the outer-edge of the  border or box,  relative to the contents?
     \edef\b@dr@top@edge{\the\dimexpr \ifdim  \border@tpadding > -\b@drwidth pt  \border@tpadding + \b@drwidth pt  \fi  +\fb@tpadding\relax}%
     \edef\b@dr@bot@edge{\the\dimexpr \ifdim  \border@bpadding > -\b@drwidth pt  \border@bpadding + \b@drwidth pt \fi  +\fb@bpadding\relax}%
-    %Where does the border go relative to the contents? (Subtliy different to 
-    %\xdef\unble@d@lpad{\the\dimexpr -\border@lpadding+\fb@lpadding \relax }%
-    %\xdef\unble@d@lpad{\the\dimexpr \fb@lpadding+\border@lpadding\relax }%
-    %\xdef\unble@d@lpad{\the\dimexpr -\fb@lpadding - \border@lpadding \ifx\b@drleft\tr@e -\b@drwidth pt\fi}%
-    %\xdef\unble@d@rpad{\the\dimexpr -\fb@rpadding - \border@rpadding \ifx\b@drleft\tr@e -\b@drwidth pt\fi}%
-    \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt \else \fi\relax}%
-    \xdef\b@dr@right@pad{\the\dimexpr \fb@rpadding  \ifx\b@drright\tr@e +\border@rpadding + \b@drwidth pt\else \fi\relax}%
+    %Where does the border go relative to the contents? (Subtliy different to other dims.
     \xdef\b@x@lunpad{\the\dimexpr 0pt \ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \else  \fi\relax}%
     \xdef\b@x@runpad{\the\dimexpr 0pt \ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \else \fi\relax}%
     \xdef\unble@d@rpad{\the\dimexpr - \b@dr@right@pad\relax}%

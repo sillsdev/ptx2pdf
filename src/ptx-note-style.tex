@@ -785,6 +785,7 @@
      \ifdiglotSepNotes
         \ifnum 1=\ifx\c@rrdstat\empty 0\else \ifcsname column\c@rrdstat width\endcsname 1 \else 0\fi\fi
           \n@tewidth=\csname column\c@rrdstat width\endcsname
+          \advance \n@tewidth by \csname @textborder@#1\endcsname
         \else
           \trace{d}{c@rrdstat currently set to '\c@rrdstat'.  No column width}%
           \n@tewidth=\csname columnLwidth\endcsname

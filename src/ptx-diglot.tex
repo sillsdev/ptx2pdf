@@ -39,6 +39,9 @@
 \def\TRshipout#1{}
 \def\b@xbotmark{}
 
+\def\TextBorderColumns{} % If unset, then border all scripture. If set, only border the ones set. E.g. for when a 
+ % paraphrase is included.
+
 % THis is a crude hack to make main titles line up nicely. For some reason
 % they seem to already be vtops with depth info lost. 
 %
@@ -289,6 +292,9 @@
     \newsideSpecificIf{OmitVerseNumberOne#1} % global config option
     \xdef@cseq{@cur#1ht}{0pt}% 
     \xdef@cseq{@cur#1dp}{0pt}% 
+    \xdef@cseq{@textborder@#1}{0pt}% Amount of column width lost to text border
+    \xdef@cseq{textb@dr@left@pad#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{textb@dr@right@pad#1}{0pt}% Amount of column width lost on left
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
     \x@\def\csname addTo#1Hooks\endcsname{\addToSideHooks{#1}}
 }
@@ -1594,7 +1600,7 @@
   \def\col@do##1{\advance\count255 by 1}%
   \count255=0
   \x@\each@col\layout@list\E
-  \edef\colc@unt{\the\count255}
+  \xdef\colc@unt{\the\count255}
   \advance\dimen0 by -\numexpr \colc@unt - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
   \def\col@do##1{%
     \ifcsname  Diglot##1Fraction\endcsname
@@ -1701,8 +1707,14 @@
   
 \def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
     \trace{D}{@@simplecols #1}%
-    \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
-      \hss}\xdef\l@stcol{#1}}
+    \ifx\TextBorderColumns\empty
+      \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
+        \hss}%
+    \else
+      \hbox to \the\dimexpr \csname column#1width\endcsname + \csname @textborder@#1\endcsname \relax{\kern\csname textb@dr@left@pad#1\endcsname\x@\copy\csname #1box\endcsname%
+        \hss}%
+    \fi
+  \xdef\l@stcol{#1}}
   %
 \def\ck@backgrounds#1{%
   \ifcsname bg@#1@col\endcsname\iftemp\else
@@ -2304,7 +2316,10 @@
          \vss}%
      \fi
      \trace{et}{Apply border from writesimplecolumns}%
-     \doTextB@rder{\partial}%
+     \ifx\TextBorderColumns\empty
+       \doTextB@rder{\partial}%
+     \else
+     \fi
      \global\partialfr@medtrue
      \unvbox\partial%
      %\tracingifs=0
@@ -3091,15 +3106,8 @@
           \ifdim\dimen1<\baselineskip
             \setbox\partial\vbox{\unvbox\partial\kern\dimen1}%
           \else
-            %\setbox\partial\vbox{\unvbox\partial}%
           \fi
         \fi%avoid clashes with textborder and backgrounds
-        %\iftextborder
-          %\ifpartialfr@med\else
-            %\doTextB@rder{\partial}%
-            %\global\partialfr@medtrue
-          %\fi
-        %\fi
         %\ifnum\pageno=117\showbox\partial\fi
         \csname digl@t@endbook@\diglotlayout\endcsname
         \csname @savepartial@\diglotlayout\endcsname
@@ -3266,6 +3274,24 @@
 }
 \def\SetBelowBaseline#1#2#3{% Column #1 has #2 [dimension] below the baseline (which is  #3) of 
   \r@tio{#2}{#3}\trace{d}{BelowBaseline Calculated for #1 as \@@r@tio}\x@\let\csname BelowBaseline#1\endcsname\@@r@tio}
+
+\def\ch@ckcol@border#1{%
+  \trace{et}{ch@ckcol@border}%
+  \def\tmp{#1}\ifx\tmp\c@rrdstat
+    \edef\old@dim{\csname @textborder@#1\endcsname}%
+    \edef\new@dim{\the\dimexpr \b@dr@left@pad + \b@dr@right@pad \relax}%
+    %\x@\global\x@\let\csname @textborder@#1\endcsname\new@dim\relax
+    \x@\global\x@\let\csname textb@dr@left@pad#1\endcsname\b@dr@left@pad\relax
+    \x@\global\x@\let\csname textb@dr@right@pad#1\endcsname\b@dr@right@pad\relax
+    \global\csname column#1width\endcsname=\dimexpr \csname column#1width\endcsname -\new@dim + \old@dim \relax
+    \trace{et}{Column #1 has an individual border of \csname @textborder@#1\endcsname, textwidth is now \the\csname column#1width\endcsname}%  
+    \global\hsize=\csname column#1width\endcsname\relax
+  \else
+    \x@\gdef\csname textb@dr@left@pad#1\endcsname{0pt }%
+    \x@\gdef\csname textb@dr@right@pad#1\endcsname{0pt }%
+    \x@\gdef\csname @textborder@#1\endcsname{0pt }%
+  \fi
+}
 
 \x@\let\csname polyglot-simplecols@plugin@loaded\endcsname\empty 
 \endinput

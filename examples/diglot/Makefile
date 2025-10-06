@@ -22,12 +22,13 @@ bisect:
 
 engwyc2018_usfm.zip:
 	test -f $@ || wget https://ebible.org/Scriptures/engwyc2018_usfm.zip
+
 engwebp_usfm.zip:
 	test -f $@ || wget https://ebible.org/Scriptures/engwebp_usfm.zip
 
 Gal_wyc.usfm 54-GALengwyc2018.usfm: engwyc2018_usfm.zip
-	unzip $< 54-GALengwyc2018.usfm
-	perl -CSD -pe 's/\\sls/\\+sls/og' 54-GALengwyc2018.usfm > $@
+	unzip $< 78-GALengwyc2018.usfm
+	perl -CSD -pe 's/\\sls/\\+sls/og' 78-GALengwyc2018.usfm > $@
 
 Gal_web.usfm: engwebp_usfm.zip
 	unzip $< 78-GALengwebp.usfm
