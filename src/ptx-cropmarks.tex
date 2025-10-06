@@ -801,6 +801,7 @@
     \let\th@sgprule\m@jor
     \ifdiglot
       \dimen4=\csname column\btmp width\endcsname
+      \advance\dimen4 by 0.5\gutter
     \else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
     %\ifBindingGutter\if R\g@tterside\advance\dimen4 by -\BindingGutter\fi\fi
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}

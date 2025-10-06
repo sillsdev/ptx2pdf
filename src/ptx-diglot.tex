@@ -1730,6 +1730,21 @@
 }
 \def\DiglotColourPad{3pt} % How much padding to add for coloured background to diglot columns.
 
+\def\ins@borders#1{%
+  \ifx\l@stcol\empty\else\hskip \gutter\fi
+  \ifdim \csname @textborder@#1\endcsname=0pt 
+    \hskip\csname column#1width\endcsname
+  \else
+    \hskip\csname textb@dr@left@pad#1\endcsname
+    \trace{et}{Putting border on #1 (\csname @cur#1ht\endcsname + \csname @cur#1dp\endcsname)}%
+      \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
+      \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
+    \setbox0=\vbox to \dimen1 {\hbox to \csname column#1width\endcsname{\hss}\vss}
+    \doTextB@rder{0}%
+    \box0
+  \fi
+  \xdef\l@stcol{#1}%
+}
 \def\ins@backgrounds#1{%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifcsname bg@#1@col\endcsname
@@ -1744,7 +1759,11 @@
       \fi
       \dimen2=\DiglotColourPad
       \trace{D}{Colour for #1 is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
-      \hbox to 0pt {\f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height \dimen1 depth 0pt width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}}%
+      \hbox to 0pt {%
+        \ifx\TextBorderColumns\empty\else
+          \hskip\csname textb@dr@left@pad#1\endcsname
+        \fi
+        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height \dimen1 depth 0pt width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}}%
   \else
     \trace{D}{No colour for #1}%
   \fi
@@ -2291,8 +2310,12 @@
      \fi
      \box\topchunk % Top left/right insert
      \lastd@pth=\dp\partial\relax%
-     \tempfalse\let\col@do\ck@backgrounds
-     \x@\each@col\diglot@list\E% 
+     \iftextborder\ifx\TextBorderColumns\empty
+       \tempfalse\let\col@do\ck@backgrounds
+       \x@\each@col\diglot@list\E% 
+     \else
+       \temptrue
+     \fi\fi
      %\tracingassigns=1
      %\tracingcommands=3
      %\tracingifs=1
@@ -2300,7 +2323,7 @@
        \trace{d}{Applying colour backgrounds (\ifdiglotN@rmal normal:\layout@list \else reverse:\rev@layout@list\fi)}%
        \ifdiglotSepNotes
          \iftextborder
-           \def\bg@fillht{P}% Fill to textheight
+           \def\bg@fillht{P}% Fill to \ht\partial
          \else
            \def\bg@fillht{A}% Fill to availht
          \fi
@@ -2308,8 +2331,15 @@
          \def\bg@fillht{P}%
        \fi
        \ifinendbook\def\bg@fillht{P}\fi
-       \let\col@do\ins@backgrounds
+       \ifx\TextBorderColumns\empty\else
+         \let\col@do\ins@borders
+         \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
+         \vbox to 0pt{\let\l@stcol\empty%
+           \hbox{\x@\each@col\tmplist\E}%
+         \vss}%
+       \fi
        \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
+       \let\col@do\ins@backgrounds
        \vbox to 0pt{\let\l@stcol\empty%
          \iftextborder\ifdefined\textb@dr@top@pad\vskip\textb@dr@top@pad\fi\fi
          \hbox{\x@\each@col\tmplist\E}%
@@ -2319,9 +2349,21 @@
      \ifx\TextBorderColumns\empty
        \doTextB@rder{\partial}%
      \else
+       \def\v@lpfx{textb@dr@top@pad}\def\v@lsfx{}%
+       \let\col@do=\max@val\dimen1=0pt
+       \x@\each@col\layout@list\E
+       \trace{et}{biggest applied border is \the\dimen1}%
+       \vskip\dimen1
      \fi
      \global\partialfr@medtrue
      \unvbox\partial%
+     \ifx\TextBorderColumns\empty\else
+       \def\v@lpfx{textb@dr@bot@pad}\def\v@lsfx{}%
+       \let\col@do=\max@val\dimen1=0pt
+       \x@\each@col\layout@list\E
+       \trace{et}{biggest applied border is \the\dimen1}%
+       \vskip\dimen1
+     \fi
      %\tracingifs=0
      %\tracingcommands=0
      %\tracingassigns=0
@@ -3278,11 +3320,13 @@
 \def\ch@ckcol@border#1{%
   \trace{et}{ch@ckcol@border}%
   \def\tmp{#1}\ifx\tmp\c@rrdstat
+    \x@\global\x@\let\csname textb@dr@top@pad#1\endcsname\textb@dr@top@pad
+    \x@\global\x@\let\csname textb@dr@bot@pad#1\endcsname\textb@dr@bot@pad
     \edef\old@dim{\csname @textborder@#1\endcsname}%
     \edef\new@dim{\the\dimexpr \b@dr@left@pad + \b@dr@right@pad \relax}%
-    %\x@\global\x@\let\csname @textborder@#1\endcsname\new@dim\relax
-    \x@\global\x@\let\csname textb@dr@left@pad#1\endcsname\b@dr@left@pad\relax
-    \x@\global\x@\let\csname textb@dr@right@pad#1\endcsname\b@dr@right@pad\relax
+    \x@\global\x@\let\csname @textborder@#1\endcsname\new@dim
+    \x@\global\x@\let\csname textb@dr@left@pad#1\endcsname\b@dr@left@pad
+    \x@\global\x@\let\csname textb@dr@right@pad#1\endcsname\b@dr@right@pad
     \global\csname column#1width\endcsname=\dimexpr \csname column#1width\endcsname -\new@dim + \old@dim \relax
     \trace{et}{Column #1 has an individual border of \csname @textborder@#1\endcsname, textwidth is now \the\csname column#1width\endcsname}%  
     \global\hsize=\csname column#1width\endcsname\relax

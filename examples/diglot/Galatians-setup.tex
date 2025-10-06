@@ -30,7 +30,7 @@
 % Relative sizes of margins, based on the unit above
 \def\TopMarginFactor{1.0}
 \def\BottomMarginFactor{1.0}
-\def\SideMarginFactor{0.75}
+\def\SideMarginFactor{0.5}
 
 % Fonts to use for "plain", "bold", "italic", and "bold italic" from the Paratext stylesheet
 % (they need not really be italic, etc, of course)
@@ -100,9 +100,9 @@
 
 \def\ColumnGutterFactor{15} % gutter between double cols, relative to font size
 
-\BindingGuttertrue % add extra margin of \BindingGutter on binding side
+\BindingGutterfalse % add extra margin of \BindingGutter on binding side
 %\BindingGutter=10pt
-\BindingGutter=20pt
+%\BindingGutter=20pt
 \DoubleSidedtrue
 
 \GenerateTOC[Table of Contents]{toc-auto.tex}
@@ -125,6 +125,7 @@
 \stylesheet{usfm.sty}
 \stylesheet{ptx2pdf.sty}
 \stylesheet{usfmTex.sty}
+\stylesheet{standardborders.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{Galatians.sty}
 \stylesheetR{GalR.sty}
