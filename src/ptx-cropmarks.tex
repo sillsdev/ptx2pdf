@@ -778,6 +778,9 @@
         \def\atmp{L}\def\btmp{R}\else\def\atmp{R}\def\btmp{L}\fi
       \MSG{side \the\pageno, gs:\g@tterside, at:\atmp}%
       \dimen4=\csname column\atmp width\endcsname\advance\dimen4 0.5\gutter
+      \ifx\TextBorderColumns\empty\else
+        \advance\dimen4 by \csname @textborder@\atmp\endcsname
+      \fi
     \else\dimen4=0.5\textwidth\fi
     \advance\dimen4 by -\dimen2
     \ifdim\columnshift>0pt \advance\dimen4 by -\columnshift\fi % compensate for earlier added columnshift
@@ -802,6 +805,9 @@
     \ifdiglot
       \dimen4=\csname column\btmp width\endcsname
       \advance\dimen4 by 0.5\gutter
+      \ifx\TextBorderColumns\empty\else
+        \advance\dimen4 by \csname @textborder@\btmp\endcsname
+      \fi
     \else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
     %\ifBindingGutter\if R\g@tterside\advance\dimen4 by -\BindingGutter\fi\fi
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}

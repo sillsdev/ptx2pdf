@@ -276,6 +276,7 @@
 }
 
 \def\initcolumndef@ults#1{%
+    \trace{d}{Initial defaults for #1}%
     \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
     \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
     \empty@cseq{old#1mark}%last X mark 
@@ -1706,7 +1707,7 @@
 }
   
 \def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
-    \trace{D}{@@simplecols #1}%
+    \trace{D}{@@simplecols #1 \the\csname column#1width\endcsname, \csname @textborder@#1\endcsname}%
     \ifx\TextBorderColumns\empty
       \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
         \hss}%
@@ -1733,13 +1734,14 @@
 \def\ins@borders#1{%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifdim \csname @textborder@#1\endcsname=0pt 
+    \trace{et}{@textborder@#1 is zero. No border}%
     \hskip\csname column#1width\endcsname
   \else
     \hskip\csname textb@dr@left@pad#1\endcsname
     \trace{et}{Putting border on #1 (\csname @cur#1ht\endcsname + \csname @cur#1dp\endcsname)}%
       \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
       \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
-    \setbox0=\vbox to \dimen1 {\hbox to \csname column#1width\endcsname{\hss}\vss}
+    \setbox0=\vbox to \dimen1 {\hbox to \csname column#1width\endcsname{\hss}\vss}%
     \doTextB@rder{0}%
     \box0
   \fi
@@ -1767,7 +1769,11 @@
   \else
     \trace{D}{No colour for #1}%
   \fi
-  \hskip \csname column#1width\endcsname
+  \ifx\TextBorderColumns\empty
+    \hskip \csname column#1width\endcsname
+  \else
+    \hskip\dimexpr \csname column#1width\endcsname + \csname @textborder@#1\endcsname\relax
+  \fi
   \xdef\l@stcol{#1}%
 }
 
@@ -2332,6 +2338,7 @@
        \fi
        \ifinendbook\def\bg@fillht{P}\fi
        \ifx\TextBorderColumns\empty\else
+         \trace{d}{Applying per-column textborder(s)}%
          \let\col@do\ins@borders
          \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
          \vbox to 0pt{\let\l@stcol\empty%
@@ -2345,14 +2352,14 @@
          \hbox{\x@\each@col\tmplist\E}%
          \vss}%
      \fi
-     \trace{et}{Apply border from writesimplecolumns}%
      \ifx\TextBorderColumns\empty
+       \trace{et}{Apply border from writesimplecolumns}%
        \doTextB@rder{\partial}%
      \else
        \def\v@lpfx{textb@dr@top@pad}\def\v@lsfx{}%
        \let\col@do=\max@val\dimen1=0pt
        \x@\each@col\layout@list\E
-       \trace{et}{biggest applied border is \the\dimen1}%
+       \trace{et}{biggest applied top border is \the\dimen1}%
        \vskip\dimen1
      \fi
      \global\partialfr@medtrue
@@ -2361,7 +2368,7 @@
        \def\v@lpfx{textb@dr@bot@pad}\def\v@lsfx{}%
        \let\col@do=\max@val\dimen1=0pt
        \x@\each@col\layout@list\E
-       \trace{et}{biggest applied border is \the\dimen1}%
+       \trace{et}{biggest applied bottom border is \the\dimen1}%
        \vskip\dimen1
      \fi
      %\tracingifs=0
@@ -3330,10 +3337,11 @@
     \global\csname column#1width\endcsname=\dimexpr \csname column#1width\endcsname -\new@dim + \old@dim \relax
     \trace{et}{Column #1 has an individual border of \csname @textborder@#1\endcsname, textwidth is now \the\csname column#1width\endcsname}%  
     \global\hsize=\csname column#1width\endcsname\relax
-  \else
-    \x@\gdef\csname textb@dr@left@pad#1\endcsname{0pt }%
-    \x@\gdef\csname textb@dr@right@pad#1\endcsname{0pt }%
-    \x@\gdef\csname @textborder@#1\endcsname{0pt }%
+  %\else
+    %\trace{et}{Column #1 has no individual border}%
+    %\x@\gdef\csname textb@dr@left@pad#1\endcsname{0pt }%
+    %\x@\gdef\csname textb@dr@right@pad#1\endcsname{0pt }%
+    %\x@\gdef\csname @textborder@#1\endcsname{0pt }%
   \fi
 }
 
