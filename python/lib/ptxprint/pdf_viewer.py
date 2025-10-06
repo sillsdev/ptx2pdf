@@ -1091,7 +1091,7 @@ class PDFContentViewer(PDFFileViewer):
                 if s.pnum == pnum:
                     make_rect(*s.pos, s.width)
         else:
-            for s in self.parlocs.getbadspaces(pnum, threshold, self.charthreshold):
+            for s in self.parlocs.getbadspaces(pnum, threshold, self.charthreshold if self.model.get('c_letterSpacing', False) else 0.):
                 make_rect(*s.pos, s.width)
 
     def _draw_collisions(self, page, pnum, context, zoomlevel):
@@ -1228,7 +1228,8 @@ class PDFContentViewer(PDFFileViewer):
                     self.model.set("s_spaceEms", self.badspaces[0].widthem)
             wanted = 7
             self.spacepages, self.collisionpages, self.riverpages = \
-                self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)), float(self.model.get('s_charSpaceEms', 4)))
+                self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
+                        float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
 
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
