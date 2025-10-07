@@ -4849,8 +4849,10 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_useFallbackFont")
         
     def msgQuestion(self, title, question, default=False):
-        par = self.builder.get_object('ptxprint')
-        dialog = Gtk.MessageDialog(parent=par, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
+        win = getattr(self.mainapp, "win", None)
+        if win and not isinstance(win, Gtk.Window):
+            win = win.get_toplevel() if hasattr(win, "get_toplevel") else None
+        dialog = Gtk.MessageDialog(parent=win, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
         dialog.format_secondary_text(question)
         response = dialog.run()
         dialog.destroy()
