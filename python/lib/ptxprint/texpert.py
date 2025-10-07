@@ -199,8 +199,7 @@ texpertOptions = {
     "MarkAdjustPoints":   O("showadjpoints", "PDF", False, None, _("Show adjust points"),
                             _("Show adjust points in the margin of the text.")),
     "ParaLabelling":      O("showusfmcodes", "PDF", False, "", _("Show USFM codes"),
-                            _("Show the USFM marker of paragraphs.\nNote that displaying these \
-                               markers may result in changes to the layout of the text.")),
+                            _("Show the USFM markers in the margin beside paragraphs.")),
     "ShowHboxErrorBars":  O("showhboxerrorbars", "PDF", False, "", _("Show Error Bars For Overfull Lines"),
                             _("Enable this option to have TeX make overfull lines stand out."),
                             valfn = lambda v:"%" if v else ""),
