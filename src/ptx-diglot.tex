@@ -1738,12 +1738,21 @@
     \hskip\csname column#1width\endcsname
   \else
     \hskip\csname textb@dr@left@pad#1\endcsname
-    \trace{et}{Putting border on #1 (\csname @cur#1ht\endcsname + \csname @cur#1dp\endcsname)}%
-      \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
+    \trace{et}{Putting border on #1 (\l@gdims{\partial})}%
+    \def\tmpa{}\def\tmpb{}%
+    \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
+    \x@\ifx\csname BelowBaseline#1\endcsname\empty
       \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
+    \fi
     \setbox0=\vbox to \dimen1 {\hbox to \csname column#1width\endcsname{\hss}\vss}%
     \doTextB@rder{0}%
-    \box0
+    \x@\ifx\csname BelowBaseline#1\endcsname\empty
+      \box0
+    \else
+      \dimen0=\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
+      \trace{et}{Adjusting border position by \the\dimen0}%
+      \vbox{\kern \dimen0\box0 \kern-\dimen0}%
+    \fi
   \fi
   \xdef\l@stcol{#1}%
 }
@@ -1761,11 +1770,19 @@
       \fi
       \dimen2=\DiglotColourPad
       \trace{D}{Colour for #1 is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
-      \hbox to 0pt {%
+      \setbox0\hbox to 0pt {%
         \ifx\TextBorderColumns\empty\else
           \hskip\csname textb@dr@left@pad#1\endcsname
         \fi
-        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height \dimen1 depth 0pt width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}}%
+        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height \dimen1 depth 0pt width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}%
+      \x@\ifx\csname BelowBaseline#1\endcsname\empty
+        \box0
+      \else
+        \dimen0=\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
+        \trace{et}{Adjusting colour bg position by \the\dimen0}%
+        \vbox{\kern \dimen0\box0 \kern-\dimen0}%
+      \fi
+    }%
   \else
     \trace{D}{No colour for #1}%
   \fi
