@@ -168,12 +168,17 @@ def UnpackBooks(inzip, prjid, prjdir, subdir=None):
         ftype = usfmtc._filetypes.get(fext.lower(), None)
         if ftype is None:
             continue
-        if fbk in bookcodes:
-            indoc = unpackBook(inzip, f, fbk, ftype, prjid, prjdir)
+        bk = None
+        if fbk[:3].upper() in bookcodes:
+            bk = fbk[:3]
+        elif fbk[-3:].upper() in bookcodes:
+            bk = fbk[-3:]
+        if bk is not None:
+            indoc = unpackBook(inzip, f, bk, ftype, prjid, prjdir)
             inzip.collectBookNames(indoc)
     if not inzip.hasbooknames:
         inzip.outBookNames(os.path.join(prjdir, prjid))
-    return True
+    return os.path.exists(prjdir, prjid)
 
 def unpackBook(inzip, inname, bkid, informat, prjid, prjdir):
     prjpath = os.path.join(prjdir, prjid)
