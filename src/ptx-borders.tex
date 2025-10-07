@@ -159,7 +159,7 @@
 
 \def\mkb@rder@none{\setbox\b@rderbox\vbox to \b@rderbox@height{}}
 
-\def\ch@ckiftextborderadj{\trace{eb}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \ifb@dy body\fi,\pretextb@rderskip, \posttextb@rderskip}%
+\def\ch@ckiftextborderadj{\trace{et}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \ifb@dy body\fi, \pretextb@rderskip, \posttextb@rderskip}%
   \tempfalse\ifm@rksonpage
   \ifdim 0pt < \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax
     \temptrue
@@ -167,7 +167,7 @@
  \fi
 }
 
-\def\s@ttextb@rderdims{%Called per book, **during processing**
+\def\s@ttextb@rderdims{%Called per book \id, **during processing**
   \trace{et}{s@ttextb@rderdims \c@rrdstat}%
   \global\textborderfalse
   \testm@rkerexists{textborder}%
@@ -203,8 +203,11 @@
       \trace{et}{Set textborder pre/post dimensions to \pretextb@rderskip / \posttextb@rderskip}%
     \egroup
   \else
-    \xdef\pretextb@rderskip{0pt}%
-    \xdef\posttextb@rderskip{0pt}%
+    \ifdiglot\else
+      \xdef\pretextb@rderskip{0pt}%
+      \xdef\posttextb@rderskip{0pt}%
+    \fi
+    \trace{et}{No textborder (\c@rrdstat). Pre/post dimensions to \pretextb@rderskip / \posttextb@rderskip}%
   \fi
 }
 \addtoidhooks{\s@ttextb@rderdims}% 

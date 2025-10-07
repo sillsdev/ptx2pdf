@@ -75,6 +75,7 @@
 \def\n@xtbotRmark{} %First Rmark in the n@xt chunk
 \def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
+\def\m@xBelowBaseline{0pt}%
 
 %Defined penalties
 \newsp@cialpen{dgl@tPenColSwap}%
@@ -296,6 +297,8 @@
     \xdef@cseq{@textborder@#1}{0pt}% Amount of column width lost to text border
     \xdef@cseq{textb@dr@left@pad#1}{0pt}% Amount of column width lost on left
     \xdef@cseq{textb@dr@right@pad#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{textb@dr@top@pad#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{textb@dr@bot@pad#1}{0pt}% Amount of column width lost on left
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
     \x@\def\csname addTo#1Hooks\endcsname{\addToSideHooks{#1}}
 }
@@ -1746,42 +1749,39 @@
     \fi
     \setbox0=\vbox to \dimen1 {\hbox to \csname column#1width\endcsname{\hss}\vss}%
     \doTextB@rder{0}%
-    \x@\ifx\csname BelowBaseline#1\endcsname\empty
-      \box0
-    \else
-      \dimen0=\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
-      \trace{et}{Adjusting border position by \the\dimen0}%
-      \vbox{\kern \dimen0\box0 \kern-\dimen0}%
-    \fi
+    \box0
   \fi
   \xdef\l@stcol{#1}%
 }
 \def\ins@backgrounds#1{%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifcsname bg@#1@col\endcsname
-    {\if P\bg@fillht\dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
+    {\edef\tmpav{\the\availht}%
+      \if P\bg@fillht\dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
         \ifdim\dimen1>\textheight \dimen1=\textheight\fi
       \else
         \if A\bg@fillht
+          \ifloc@lht\else
+            \dglt@calc@vailht@mods %(globally) alters availht, so that needs resetting
+          \fi
+          \ifx\TextBorderColumns\empty\else
+            \advance\availht by -\dimexpr \csname textb@dr@top@pad#1\endcsname+\csname textb@dr@bot@pad#1\endcsname \relax
+          \fi
           \dimen1=\availht
         \else
           \dimen1=\textheight
         \fi
       \fi
       \dimen2=\DiglotColourPad
-      \trace{D}{Colour for #1 is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
+      \trace{D}{Colour for #1(\bg@fillht - \ifloc@lht loc\else glo\fi) is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
+      %\hbox to 0pt{\vrule height 1pt width 100pt\hss}%
       \setbox0\hbox to 0pt {%
         \ifx\TextBorderColumns\empty\else
           \hskip\csname textb@dr@left@pad#1\endcsname
         \fi
-        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height \dimen1 depth 0pt width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}%
-      \x@\ifx\csname BelowBaseline#1\endcsname\empty
-        \box0
-      \else
-        \dimen0=\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
-        \trace{et}{Adjusting colour bg position by \the\dimen0}%
-        \vbox{\kern \dimen0\box0 \kern-\dimen0}%
-      \fi
+        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height 0pt depth \dimen1 width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}%
+      \raise-\csname textb@dr@top@pad#1\endcsname\box0
+      \global\availht=\tmpav
     }%
   \else
     \trace{D}{No colour for #1}%
@@ -1980,11 +1980,7 @@
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \loc@lhtfalse\dglt@calc@vailht
-  \edef\v@lpfx{BelowBaseline}\let\v@lsfx\empty
-  \dimen1=0pt \let\col@do\max@bbl
-  %\tracingassigns=1
-  \x@\each@col\diglot@list\E% 
-  \advance\availht by -\dimen1
+  \advance\availht by -\m@xBelowBaseline
   %\tracingassigns=0
   \ifdim\availht<\@maxb@seline %
     \global\pagefulltrue%
@@ -2332,62 +2328,75 @@
         \advance\availht\dp\partial
      \fi
      \box\topchunk % Top left/right insert
-     \lastd@pth=\dp\partial\relax%
-     \iftextborder\ifx\TextBorderColumns\empty
-       \tempfalse\let\col@do\ck@backgrounds
-       \x@\each@col\diglot@list\E% 
-     \else
-       \temptrue
+     \ifdim\dp\partial=0pt \ifdim\ht\partial=0pt
+       \setbox\partial\box\voidb@x
      \fi\fi
-     %\tracingassigns=1
-     %\tracingcommands=3
-     %\tracingifs=1
-     \iftemp
-       \trace{d}{Applying colour backgrounds (\ifdiglotN@rmal normal:\layout@list \else reverse:\rev@layout@list\fi)}%
-       \ifdiglotSepNotes
-         \iftextborder
-           \def\bg@fillht{P}% Fill to \ht\partial
-         \else
-           \def\bg@fillht{A}% Fill to availht
-         \fi
+     \ifvoid\partial\else
+       \lastd@pth=\dp\partial\relax%
+       \iftextborder\ifx\TextBorderColumns\empty
+         \tempfalse\let\col@do\ck@backgrounds
+         \x@\each@col\diglot@list\E% 
        \else
-         \def\bg@fillht{P}%
-       \fi
-       \ifinendbook\def\bg@fillht{P}\fi
-       \ifx\TextBorderColumns\empty\else
-         \trace{d}{Applying per-column textborder(s)}%
-         \let\col@do\ins@borders
+         \temptrue
+       \fi\fi
+       %\tracingassigns=1
+       %\tracingcommands=3
+       %\tracingifs=1
+       \iftemp
+         \trace{d}{Applying colour backgrounds (\ifdiglotN@rmal normal:\layout@list \else reverse:\rev@layout@list\fi)}%
+         \ifdim\m@xBelowBaseline>0pt
+           \vskip\m@xBelowBaseline
+         \fi
+         \ifdiglotSepNotes
+           \iftextborder
+             \def\bg@fillht{P}% Fill to \ht\partial
+           \else
+             \def\bg@fillht{A}% Fill to availht
+           \fi
+         \else
+           \def\bg@fillht{P}%
+         \fi
+         \ifinendbook\def\bg@fillht{P}\fi
+         \ifx\TextBorderColumns\empty\else
+           \trace{d}{Applying per-column textborder(s)}%
+           \let\col@do\ins@borders
+           \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
+           \vbox to 0pt{\let\l@stcol\empty%
+             \hbox{\x@\each@col\tmplist\E}%
+           \vss}%
+         \fi
          \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
-         \vbox to 0pt{\let\l@stcol\empty%
+         %\hrule
+         \let\col@do\ins@backgrounds
+         \vbox to 0pt{\baselineskip=0pt \lineskip=0pt \let\l@stcol\empty%
+           %\iftextborder\ifdefined\textb@dr@top@pad\vskip\textb@dr@top@pad\fi\fi
+           %\hrule
            \hbox{\x@\each@col\tmplist\E}%
-         \vss}%
+           %\hrule
+           \vss}%
+         \ifdim\m@xBelowBaseline>0pt 
+           \vskip-\m@xBelowBaseline
+         \fi
        \fi
-       \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
-       \let\col@do\ins@backgrounds
-       \vbox to 0pt{\let\l@stcol\empty%
-         \iftextborder\ifdefined\textb@dr@top@pad\vskip\textb@dr@top@pad\fi\fi
-         \hbox{\x@\each@col\tmplist\E}%
-         \vss}%
-     \fi
-     \ifx\TextBorderColumns\empty
-       \trace{et}{Apply border from writesimplecolumns}%
-       \doTextB@rder{\partial}%
-     \else
-       \def\v@lpfx{textb@dr@top@pad}\def\v@lsfx{}%
-       \let\col@do=\max@val\dimen1=0pt
-       \x@\each@col\layout@list\E
-       \trace{et}{biggest applied top border is \the\dimen1}%
-       \vskip\dimen1
-     \fi
-     \global\partialfr@medtrue
-     \unvbox\partial%
-     \ifx\TextBorderColumns\empty\else
-       \def\v@lpfx{textb@dr@bot@pad}\def\v@lsfx{}%
-       \let\col@do=\max@val\dimen1=0pt
-       \x@\each@col\layout@list\E
-       \trace{et}{biggest applied bottom border is \the\dimen1}%
-       \vskip\dimen1
-     \fi
+       \ifx\TextBorderColumns\empty
+         \trace{et}{Apply border from writesimplecolumns}%
+         \doTextB@rder{\partial}%
+       \else
+         \def\v@lpfx{textb@dr@top@pad}\def\v@lsfx{}%
+         \let\col@do=\max@val\dimen1=0pt
+         \x@\each@col\layout@list\E
+         \trace{et}{biggest applied top border is \the\dimen1}%
+         \vskip\dimen1
+       \fi
+       \unvbox\partial%
+       \ifx\TextBorderColumns\empty\else
+         \def\v@lpfx{textb@dr@bot@pad}\def\v@lsfx{}%
+         \let\col@do=\max@val\dimen1=0pt
+         \x@\each@col\layout@list\E
+         \trace{et}{biggest applied bottom border is \the\dimen1}%
+         \vskip\dimen1
+       \fi
+     \fi % not void partial
      %\tracingifs=0
      %\tracingcommands=0
      %\tracingassigns=0
@@ -2831,7 +2840,13 @@
 \newif\ifnot@empty % Is this chunk empty
 \def\@tst@n@xtpartial@simplecols{%
   \ifvoid\n@xtpartial\else
-    \temptrue
+    \ifdim\dp\n@xtpartial>0pt
+      \temptrue
+    \else
+      \ifdim\ht\n@xtpartial>0pt 
+        \temptrue
+      \fi
+    \fi
   \fi
 }
 
@@ -3198,7 +3213,7 @@
 }
 
 \def\@savepartial@simplecols{%
-  \setbox\partial\vbox{\unvbox\partial
+  \setbox\partial\vbox{\lineskip=0pt \baselineskip=0pt \relax\ifpartialfr@med  \unvbox\partial\global\partialfr@medfalse\fi
     \csname @start@writep@ge@\diglotlayout\endcsname
     \setdiglotN@rmal
     \pickn@xtpartial
@@ -3207,6 +3222,8 @@
     \csname @do@writep@ge@\diglotlayout\endcsname
     \pagecontents
   }%
+  %\showbox\partial
+  \global\partialfr@medtrue
 }
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
 %rule is #1 hight, #3 deep, and fits in a box #2 high
@@ -3339,7 +3356,17 @@
   \let\ins@name=\undefined
 }
 \def\SetBelowBaseline#1#2#3{% Column #1 has #2 [dimension] below the baseline (which is  #3) of 
-  \r@tio{#2}{#3}\trace{d}{BelowBaseline Calculated for #1 as \@@r@tio}\x@\let\csname BelowBaseline#1\endcsname\@@r@tio}
+  \r@tio{#2}{#3}\trace{d}{BelowBaseline Calculated for #1 as \@@r@tio}\x@\let\csname BelowBaseline#1\endcsname\@@r@tio
+  \c@lcm@xBB
+}
+
+\def\c@lcm@xBB{%
+  \edef\v@lpfx{BelowBaseline}\let\v@lsfx\empty
+  \dimen1=0pt \let\col@do\max@bbl
+  \x@\each@col\diglot@list\E% 
+  \xdef\m@xBelowBaseline{\the\dimen1}%
+  \trace{d}{m@xBelowBaseline is \m@xBelowBaseline}%
+}
 
 \def\ch@ckcol@border#1{%
   \trace{et}{ch@ckcol@border}%
