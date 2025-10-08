@@ -3928,7 +3928,7 @@ class GtkViewModel(ViewModel):
     def updatePrjLinks(self):
         if self.project is not None:
             self.set("lb_projects_dir", '<a href="{0}">{0}</a>'.format(self.prjTree.treedirs[0]))
-            self.set("lb_ptxprintdir", '<a href="{0}">{0}</a>'.format(pt_bindir().rstrip(".exe")))
+            self.set("lb_ptxprintdir", '<a href="{0}">{0}</a>'.format(pt_bindir().rstrip("\\ptxprint.exe")))
             self.set("lb_prjdir", '<a href="{0}">{0}</a>'.format(self.project.path))
             stngdir = self.project.srcPath(self.cfgid) or ""
             self.set("lb_settings_dir", '<a href="{0}">{0}</a>'.format(stngdir))
