@@ -39707,7 +39707,7 @@ output with a previous PDF.</property>
                                 <property name="can-focus">False</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <!-- n-columns=7 n-rows=13 -->
+                                  <!-- n-columns=7 n-rows=14 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -39769,7 +39769,7 @@ included in Paratext's Send/Recv data.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">0</property>
+                                        <property name="top-attach">3</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39787,7 +39787,7 @@ this very powerful software.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">8</property>
+                                        <property name="top-attach">9</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39815,7 +39815,7 @@ latest features available in PTXprint.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">8</property>
+                                        <property name="top-attach">9</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -39834,7 +39834,7 @@ an issue using this link.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">10</property>
+                                        <property name="top-attach">11</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39853,7 +39853,7 @@ an issue using this link.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">10</property>
+                                        <property name="top-attach">11</property>
                                         <property name="width">4</property>
                                       </packing>
                                     </child>
@@ -39872,7 +39872,7 @@ an issue using this link.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">6</property>
+                                        <property name="top-attach">7</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -39891,7 +39891,7 @@ version before reporting an issue.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">6</property>
+                                        <property name="top-attach">7</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39906,7 +39906,7 @@ version before reporting an issue.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">5</property>
                                         <property name="width">7</property>
                                       </packing>
                                     </child>
@@ -39926,7 +39926,7 @@ file or the Changes.txt file as appropriate.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">9</property>
+                                        <property name="top-attach">10</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39945,7 +39945,7 @@ file or the Changes.txt file as appropriate.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
-                                        <property name="top-attach">9</property>
+                                        <property name="top-attach">10</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -39965,7 +39965,7 @@ file or the Changes.txt file as appropriate.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">4</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39995,7 +39995,7 @@ Email the ZIPped archive file to:
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">12</property>
+                                        <property name="top-attach">13</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40013,7 +40013,7 @@ Email the ZIPped archive file to:
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">6</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -40033,7 +40033,7 @@ interact with other PTXprint users and the developers.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">6</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -40045,7 +40045,6 @@ interact with other PTXprint users and the developers.</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Discover more about PTXprint.</property>
-                                        <property name="halign">start</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">3</property>
                                         <property name="margin-bottom">3</property>
@@ -40055,7 +40054,7 @@ interact with other PTXprint users and the developers.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">6</property>
-                                        <property name="top-attach">12</property>
+                                        <property name="top-attach">13</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40079,7 +40078,7 @@ by deleting unneeded files.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
-                                        <property name="top-attach">12</property>
+                                        <property name="top-attach">13</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40089,6 +40088,7 @@ by deleting unneeded files.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
                                         <property name="label">&lt;a href="working dir"&gt;working dir&lt;/a&gt;</property>
                                         <property name="use-markup">True</property>
                                         <property name="ellipsize">start</property>
@@ -40097,7 +40097,7 @@ by deleting unneeded files.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">0</property>
+                                        <property name="top-attach">3</property>
                                         <property name="width">4</property>
                                       </packing>
                                     </child>
@@ -40108,6 +40108,7 @@ by deleting unneeded files.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
                                         <property name="label">&lt;a href="prjdir"&gt;prjdir&lt;/a&gt;</property>
                                         <property name="use-markup">True</property>
                                         <property name="ellipsize">start</property>
@@ -40127,6 +40128,7 @@ by deleting unneeded files.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
                                         <property name="label">&lt;a href="settings dir"&gt;settings dir&lt;/a&gt;</property>
                                         <property name="use-markup">True</property>
                                         <property name="ellipsize">start</property>
@@ -40146,6 +40148,7 @@ by deleting unneeded files.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
                                         <property name="label">&lt;a href="docs dir"&gt;docs dir&lt;/a&gt;</property>
                                         <property name="use-markup">True</property>
                                         <property name="ellipsize">start</property>
@@ -40154,7 +40157,7 @@ by deleting unneeded files.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">4</property>
                                         <property name="width">4</property>
                                       </packing>
                                     </child>
@@ -40166,7 +40169,7 @@ by deleting unneeded files.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
-                                        <property name="top-attach">10</property>
+                                        <property name="top-attach">11</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40186,7 +40189,7 @@ don't like. Tell us what you dream for in the future.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">7</property>
+                                        <property name="top-attach">8</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -40207,7 +40210,7 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">7</property>
+                                        <property name="top-attach">8</property>
                                         <property name="width">4</property>
                                       </packing>
                                     </child>
@@ -40227,7 +40230,7 @@ so on.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">11</property>
+                                        <property name="top-attach">12</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -40255,7 +40258,7 @@ cover the latest available features.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
-                                        <property name="top-attach">8</property>
+                                        <property name="top-attach">9</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -40278,7 +40281,7 @@ the Tabs+Borders settings).</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">9</property>
+                                        <property name="top-attach">10</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40299,7 +40302,7 @@ document. (For advanced users only). </property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
-                                        <property name="top-attach">9</property>
+                                        <property name="top-attach">10</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40317,7 +40320,7 @@ document. (For advanced users only). </property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
-                                        <property name="top-attach">6</property>
+                                        <property name="top-attach">7</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -40336,7 +40339,7 @@ file which needs to be emailed to:
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">12</property>
+                                        <property name="top-attach">13</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -40361,7 +40364,7 @@ so on.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">11</property>
+                                        <property name="top-attach">12</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40379,8 +40382,77 @@ so on.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">6</property>
                                         <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_projects_dir">
+                                        <property name="width-request">250</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The PDF file created is stored in this
+folder (but should automatically open
+in your system's PDF viewer anyway).
+
+Note that ALL the files and subfolders
+in this location are TEMPORARY and 
+can be deleted. None of these files are
+included in Paratext's Send/Recv data.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="label" translatable="yes">Base Projects Directory:</property>
+                                        <property name="justify">right</property>
+                                        <property name="xalign">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="lb_projects_dir">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">16</property>
+                                        <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
+                                        <property name="label">&lt;a href="base projects dir"&gt;base projects dir&lt;/a&gt;</property>
+                                        <property name="use-markup">True</property>
+                                        <property name="ellipsize">start</property>
+                                        <property name="track-visited-links">False</property>
+                                        <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_changeProjectsDir">
+                                        <property name="label" translatable="yes">Change...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Use this button to change the
+Base Projects Directory. For
+example, to use projects from
+a different version of Paratext.
+
+Do not select a specific project
+folder, but the parent folder which
+contains one or more projects.</property>
+                                        <property name="margin-end">6</property>
+                                        <signal name="clicked" handler="onChangeProjectTreeClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">6</property>
+                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>

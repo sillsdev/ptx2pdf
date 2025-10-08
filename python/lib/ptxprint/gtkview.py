@@ -561,9 +561,12 @@ mac_menu = {
 }
 
 def getPTDir():
-    txt = _("Paratext is not installed on this system.\n" + \
-            "Please locate the directory where your USFM projects\n" +\
-            "are (or will be) stored. Or click cancel to exit.")
+    txt = _("""Please locate the base directory in which one or more
+Scripture project directories are located (or will be stored).
+
+This message indicates that a 'My Paratext Projects' folder was 
+not located but PTXprint can still run without it, so click OK 
+to choose an alternative base directory (or Cancel to Quit)""")
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
             buttons=Gtk.ButtonsType.OK_CANCEL, text=txt)
     response = dialog.run()
@@ -571,7 +574,7 @@ def getPTDir():
     if response == Gtk.ResponseType.OK:
         action = Gtk.FileChooserAction.SELECT_FOLDER
         btnlabel = "Select"
-        fdialog = Gtk.FileChooserDialog("Paratext Projects Directory", None,
+        fdialog = Gtk.FileChooserDialog("Base Projects Directory", None,
             (action),
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             (btnlabel), Gtk.ResponseType.OK))
@@ -3890,6 +3893,8 @@ class GtkViewModel(ViewModel):
         m = w.get_model()
         project = self.project
         aid = w.get_active_iter()
+        if aid is None:
+            return
         prjid = m.get_value(aid, 0)
         guid = m.get_value(aid, 1)
         if guid == "__IMPORT_PROJECT__":
@@ -3921,17 +3926,14 @@ class GtkViewModel(ViewModel):
 
     def updatePrjLinks(self):
         if self.project is not None:
-            self.set("lb_ptxprintdir", '<a href="{}">{}</a>'.format(pt_bindir(), pt_bindir()))
-
-            projdir = self.project.path
-            self.set("lb_prjdir", '<a href="{}">{}</a>'.format(projdir, projdir))
-
+            self.set("lb_projects_dir", '<a href="{0}">{0}</a>'.format(self.prjTree.treedirs[0]))
+            self.set("lb_ptxprintdir", '<a href="{0}">{0}</a>'.format(pt_bindir().rstrip(".exe")))
+            self.set("lb_prjdir", '<a href="{0}">{0}</a>'.format(self.project.path))
             stngdir = self.project.srcPath(self.cfgid) or ""
-            self.set("lb_settings_dir", '<a href="{}">{}</a>'.format(stngdir, stngdir))
-
+            self.set("lb_settings_dir", '<a href="{0}">{0}</a>'.format(stngdir))
             tmp = self.project.printPath(self.cfgid)
             outdir = tmp.rstrip(self.cfgid) or "" if tmp is not None else ""
-            self.set("lb_working_dir", '<a href="{}">{}</a>'.format(outdir, outdir))
+            self.set("lb_working_dir", '<a href="{0}">{0}</a>'.format(outdir))
             
     def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, readConfig=None):
         if prjid == getattr(self.project, 'prjid', None) and configName == self.cfgid and (getattr(self.project, 'guid', None) is None or guid == self.project.guid):
@@ -4122,12 +4124,15 @@ class GtkViewModel(ViewModel):
     def changeProjectTree(self, treedir):
         super().changeProjectTree(treedir)
         self.resetProjectsList()
-        self.resetToInitValues(updatebklist=True)
+        self.resetToInitValues(updatebklist=False)
+        self.set("lb_projects_dir", '<a href="{0}">{0}</a>'.format(str(treedir)))
 
     def onChangeProjectTreeClicked(self, btn):
         customFigFolder = self.fileChooser(_("Select the projects root folder"),
                 filters = None, multiple = False, folder = True)
-        self.changeProjectTree(customFigFolder)
+        if customFigFolder is not None and len(customFigFolder):
+            self.changeProjectTree(customFigFolder[0])
+            self.builder.get_object("nbk_Main").set_current_page(0)
 
     # def onDBLprojNameChanged(self, widget):
         # text = self.get("t_DBLprojName")
@@ -4318,6 +4323,8 @@ class GtkViewModel(ViewModel):
 
     def onChangesFileClicked(self, btn):
         self.onExtraFileClicked(btn)
+        if self.project is None:
+            return
         cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
         logger.debug(f"in onChangesFileClicked: {self.loadingConfig=} {cfile=}")
         if not os.path.exists(cfile):
@@ -6645,7 +6652,7 @@ Thank you,
             self.set('s_totalPages', self.getPageCount(), mod=False)
 
     def getPageCount(self):
-        if self.getBooks() == []:
+        if self.getBooks() == [] or self.project is None:
             return
         xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
         if os.path.exists(xdvname):
