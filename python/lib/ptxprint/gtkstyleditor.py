@@ -161,10 +161,10 @@ usfmDocsPath = {
 mkr2path = {w:k for k,v in usfmDocsPath.items() for w in v.split()}
 
 widgetsignals = {
-    "s": "value-changed",
-    "c": "toggled",
-    "bl": None,
-    "col": "color-set"
+    "s": ["value-changed", "focus-out-event"],
+    "c": ["toggled"],
+    "bl": [],
+    "col": ["color-set"]
 }
 
 dialogKeys = {
@@ -232,8 +232,8 @@ class StyleEditorView(StyleEditor):
             w = self.builder.get_object(v[0])
             #key = stylediverts.get(k, k)
             (pref, name) = v[0].split("_", 1)
-            signal = widgetsignals.get(pref, "changed")
-            if signal is not None:
+            signals = widgetsignals.get(pref, ["changed"])
+            for signal in signals:
                 w.connect(signal, self.item_changed, k)
         self.isLoading = False
 
@@ -627,6 +627,11 @@ class StyleEditorView(StyleEditor):
                     if urlmkr not in noEndmarker:
                         urlmkr += "-" + data['endmarker'].strip(r'\*')
                 urlmkr = re.sub(r'\d', '', urlmkr)
+            elif k == 'Justification':
+                oldval = self.getval(self.marker, k, v[2], baseonly=True)
+                val = self.getval(self.marker, k, v[2])
+                if val == '':
+                    val = 'Justified'
             elif k == '_publishable':
                 # val = 'nonpublishable' in data.get('TextProperties', '')
                 oldval = 'nonpublishable' not in (x.lower() for x in old.get('textproperties', []))  # default was "nonpublishable"

@@ -5122,6 +5122,7 @@ class GtkViewModel(ViewModel):
         
     def onstyTextPropertiesClicked(self, btn):
         self.onSimpleClicked(btn)
+        self.styleEditor.item_changed(btn, "_publishable")
         return
         # if self.styleEditor.marker == 'textborder':
             # if 'publishable' in self.styleEditor.getval('textborder', 'TextProperties'):
@@ -7245,10 +7246,11 @@ Thank you,
         self.pdf_viewer.onTabChange(page)
 
     def onCreateDiffClicked(self, w):
-        pass # We need to do something to remove the _diff tab on the PDF Preview dialog
-        # if not self.get("c_createDiff"):
-            # diffname = self.baseTeXPDFnames(diff=True)[1]+".pdf"
-            # diffpath = os.path.join(self.project.printPath(None), diffname)
-            # if os.path.exists(diffpath):
-                # os.remove(diffpath)
-                # self.doStatus(_("Removed _diff file"))
+        if not self.get("c_createDiff"):
+            self.pdf_viewer.clear(view="diff", remove=True)
+            diffname = self.baseTeXPDFnames(diff=True)[1]+".pdf"
+            diffpath = os.path.join(self.project.printPath(None), diffname)
+            if os.path.exists(diffpath):
+                os.remove(diffpath)
+                self.doStatus(_("Removed _diff file"))
+            self.pdf_viewer.selectTab("content")

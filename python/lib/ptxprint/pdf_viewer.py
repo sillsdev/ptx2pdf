@@ -153,6 +153,11 @@ class PDFViewer:
     def onTabChange(self, p):
         # called before the page is changed
         self.lastpage = self.nbook.get_current_page()
+        
+    def selectTab(self, name):
+        i = self.boxcodes.get(name, None)
+        if i is not None and i < len(self.viewers) and self.viewers[i] is not None:
+            self.nbook.set_current_page(i)
 
     def onPageChanged(self, widget, pspec):
         # called after the page is changed
@@ -190,9 +195,20 @@ class PDFViewer:
                 v = self.nbook.get_nth_page(i)
                 v.hide()
 
-    def clear(self, widget=None):
-        for v in self.viewers:
-            v.clear(widget=widget)
+    def clear(self, widget=None, view=None, remove=False):
+        if view is None:
+            viewIDs = range(len(self.viewers))
+        else:
+            viewIDs = [self.boxcodes.get(view, None)]
+        for i in viewIDs:
+            if i is None:
+                continue
+            v = self.viewers[i]
+            if v is not None:
+                v.clear(widget=widget)
+                if remove:
+                    t = self.nbook.get_nth_page(i)
+                    t.hide()
 
     def settingsChanged(self):
         self.viewers[0].settingsChanged()
