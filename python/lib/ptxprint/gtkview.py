@@ -1758,7 +1758,8 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        self.builder.get_object("b_print").set_sensitive(not self.printReason)
+        for b in ["b_print", "btn_saveConfig"]:
+            self.builder.get_object(b).set_sensitive(not self.printReason)
         if self.gtkpolyglot is not None:    
             self.builder.get_object("btn_adjust_diglot").set_sensitive(not self.printReason and len(self.gtkpolyglot.ls_treeview) == 2)
 
@@ -4126,6 +4127,9 @@ class GtkViewModel(ViewModel):
         self.resetProjectsList()
         self.resetToInitValues(updatebklist=False)
         self.set("lb_projects_dir", '<a href="{0}">{0}</a>'.format(str(treedir)))
+        # self.prjTree.addToConfig(self.userconfig)
+        self.set("l_projectFullName", _("<<< Select a project to get started"))
+        self.setPrintBtnStatus(1, _("No project set"))
 
     def onChangeProjectTreeClicked(self, btn):
         customFigFolder = self.fileChooser(_("Select the projects root folder"),

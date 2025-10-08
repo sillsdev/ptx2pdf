@@ -418,7 +418,7 @@ def main(doitfn=None):
             loops += 1
         if loops >= 0:
             if savetreedirs:
-                prjTree.addToConfig(config)
+                mainw.prjTree.addToConfig(config)
             with open(conffile, "w", encoding="utf-8") as outf:
                 config.write(outf)
 
