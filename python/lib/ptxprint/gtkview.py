@@ -1213,12 +1213,27 @@ class GtkViewModel(ViewModel):
 
     def first_method(self):
         """ This is called first thing after the UI is set up and all is active """
-        width = self.userconfig.getint("geometry", f"ptxprint_width", fallback=1005)
-        height = self.userconfig.getint("geometry", f"ptxprint_height", fallback=665)
+        width = self.userconfig.getint("geometry", "ptxprint_width", fallback=1005)
+        height = self.userconfig.getint("geometry", "ptxprint_height", fallback=665)
         self.mainapp.win.resize(width, height)
         self.doConfigNameChange(None)
+
+        # Hook BEFORE restore so we always save while the window is still realized
+        if not getattr(self, "_geom_delete_hooked", False):
+            self.mainapp.win.connect("delete-event", lambda *a: (self.save_window_geometry(), False))
+            self._geom_delete_hooked = True
+
         if sys.platform.startswith("win"):
             self.restore_window_geometry()
+            # Make sure preview may already be visible; now ensure main is on top initially
+            def _raise_main_once(*_):
+                try:
+                    self.mainapp.win.present()
+                except Exception:
+                    pass
+                return False  # remove handler
+            GObject.idle_add(_raise_main_once)
+
         if self.pdf_viewer is not None:
             self.pdf_viewer.hide_unused()
 
@@ -7022,71 +7037,262 @@ Thank you,
         if self.get('c_updatePDF', False):
             self.onOK(None)
             
+    def _get_monitor_geometry_for_index(self, screen, idx):
+        return screen.get_monitor_geometry(idx)  # -> Gdk.Rectangle (x,y,width,height)
+
+    def _pick_saved_monitor(self, screen, name):
+        """
+        Choose a monitor deterministically:
+          1) Try exact geometry match using saved mon_x/mon_y/mon_w/mon_h.
+          2) Else use saved index.
+          3) Else primary (0).
+        Returns (target_rect, target_idx, monitor_count).
+        """
+        nmons = screen.get_n_monitors()
+
+        # Read saved monitor geometry and index
+        gi = self.userconfig.getint
+        mon_x = gi("geometry", f"{name}_mon_x", fallback=0)
+        mon_y = gi("geometry", f"{name}_mon_y", fallback=0)
+        mon_w = gi("geometry", f"{name}_mon_w", fallback=0)
+        mon_h = gi("geometry", f"{name}_mon_h", fallback=0)
+        saved_idx = gi("geometry", f"{name}_monitor", fallback=0)
+
+        # 1) geometry match (most robust)
+        if mon_w > 0 and mon_h > 0:
+            for i in range(nmons):
+                r = screen.get_monitor_geometry(i)
+                if (r.x, r.y, r.width, r.height) == (mon_x, mon_y, mon_w, mon_h):
+                    return r, i, nmons
+
+        # 2) saved index
+        if 0 <= saved_idx < nmons:
+            r = screen.get_monitor_geometry(saved_idx)
+            return r, saved_idx, nmons
+
+        # 3) primary
+        r = screen.get_monitor_geometry(0)
+        return r, 0, nmons
+
     def onShowMainDialogClicked(self, btn):
+        prvw = self.builder.get_object("dlg_preview")
+        if prvw and not prvw.get_visible():
+            prvw.show_all()
+        # Now bring main in front
         self.mainapp.win.present()
 
     def get_dialog_geometry(self, dialog):
-        """Retrieve the position, size, and monitor details of a given GTK dialog."""
-        if dialog is None:
+        """Return client geometry + monitor + frame offsets + maximized flag for any GTK toplevel."""
+        if dialog is None or not dialog.get_realized():
             return None
 
-        # Ensure the dialog has a valid window before proceeding
-        if not dialog.get_realized():
+        gdk_win = dialog.get_window()
+        if gdk_win is None:
             return None
 
+        # Client area geometry
         x, y = dialog.get_position()
         width, height = dialog.get_size()
 
+        # Monitor info
         screen = dialog.get_screen()
-        window = dialog.get_window()
-        if window is None:
-            return None
+        monitor_num = screen.get_monitor_at_window(gdk_win)
+        mon_rect = self._get_monitor_geometry_for_index(screen, monitor_num)
 
-        monitor_num = screen.get_monitor_at_window(window)
+        # Frame extents (outer window incl. decorations)
+        try:
+            frame = gdk_win.get_frame_extents()  # Gdk.Rectangle
+            outer_w, outer_h = frame.width, frame.height
+            dx, dy = frame.x - x, frame.y - y   # decoration offsets
+        except Exception:
+            outer_w, outer_h = width, height
+            dx, dy = 0, 0
+
+        # Maximized flag
+        try:
+            maximized = bool(dialog.is_maximized()) if hasattr(dialog, "is_maximized") \
+                        else bool(gdk_win.get_state() & Gdk.WindowState.MAXIMIZED)
+        except Exception:
+            maximized = False
 
         return {
-            "x": x,
-            "y": y,
-            "width": width,
-            "height": height,
-            "monitor": monitor_num
+            "x": x, "y": y, "width": width, "height": height,
+            "monitor": monitor_num,
+            "mon_x": mon_rect.x, "mon_y": mon_rect.y, "mon_w": mon_rect.width, "mon_h": mon_rect.height,
+            "outer_w": outer_w, "outer_h": outer_h, "dx": dx, "dy": dy,
+            "maximized": maximized,
         }
 
     def save_window_geometry(self):
-        """Save positions and sizes of multiple dialogs to userconfig."""
+        """Save geometry for main + preview (including frame offsets and maximized)."""
         if not self.userconfig.has_section("geometry"):
             self.userconfig.add_section("geometry")
+
         prvw = self.builder.get_object("dlg_preview")
-        _dialogs = {"ptxprint":    self.mainapp.win,
-                    "dlg_preview": prvw }
+        dialogs = {"ptxprint": self.mainapp.win, "dlg_preview": prvw}
 
-        for name, dialog in _dialogs.items():
+        for name, dialog in dialogs.items():
             geom = self.get_dialog_geometry(dialog)
-            if geom:
-                for key in ["x", "y", "width", "height", "monitor"]:
-                    self.userconfig.set("geometry", f"{name}_{key}", str(geom[key]))
+            if not geom:
+                continue
+            for key in [
+                "x","y","width","height","monitor",
+                "mon_x","mon_y","mon_w","mon_h",
+                "outer_w","outer_h","dx","dy","maximized"
+            ]:
+                self.userconfig.set("geometry", f"{name}_{key}", str(geom.get(key, "")))
 
-        self.saveConfig(force=True)  # Ensure settings are written (not sure we want to do this every time)
+        self.saveConfig(force=True)
 
     def restore_window_geometry(self):
-        """Restore dialog positions and sizes from userconfig, if the monitor is available."""
-        screen = self.mainapp.win.get_screen()  # Get screen info
-        current_monitor_count = screen.get_n_monitors()
-        prvw = self.builder.get_object("dlg_preview")
-        _dialogs = {"ptxprint":    self.mainapp.win,
-                    "dlg_preview": prvw }
+        """
+        Simple & reliable restore:
+          • Main first, then (optionally) preview.
+          • Preview is only shown/restored when self.showPDFmode == "preview".
+          • Pick monitor by saved geometry, else index, else primary.
+          • If maximized: unmaximize → move into target monitor → wait for configure on that monitor → maximize.
+          • Keep preview independent; finally make sure main is in front.
+        """
+        from gi.repository import GObject, Gdk
 
-        for name, dialog in _dialogs.items():
-            x = self.userconfig.getint("geometry", f"{name}_x", fallback=-1)
-            y = self.userconfig.getint("geometry", f"{name}_y", fallback=-1)
-            width = self.userconfig.getint("geometry", f"{name}_width", fallback=800)
-            height = self.userconfig.getint("geometry", f"{name}_height", fallback=600)
-            saved_monitor = self.userconfig.getint("geometry", f"{name}_monitor", fallback=0)
+        screen = self.mainapp.win.get_screen()
+        prvw   = self.builder.get_object("dlg_preview")
 
-            if saved_monitor < current_monitor_count:
-                dialog.move(x, y)
-                dialog.resize(width, height)
-        
+        show_preview = (getattr(self, "showPDFmode", None) == "preview")
+
+        # windows: MAIN always; PREVIEW only if showing
+        windows = [("ptxprint", self.mainapp.win)]
+        if show_preview:
+            windows.append(("dlg_preview", prvw))
+
+        def gi(name, key, fb):
+            return self.userconfig.getint("geometry", f"{name}_{key}", fallback=fb)
+
+        def gb(name, key, fb=False):
+            return self.userconfig.get("geometry", f"{name}_{key}", fallback=str(fb)) == "True"
+
+        def restore_one(name, dialog, done_cb):
+            if not dialog:
+                return done_cb()
+
+            # Saved client geom + state
+            x  = gi(name, "x",      -1)
+            y  = gi(name, "y",      -1)
+            w  = gi(name, "width",  800)
+            h  = gi(name, "height", 600)
+            was_max = gb(name, "maximized", False)
+
+            # Choose monitor deterministically (by geometry → index → primary)
+            target_rect, target_idx, _ = self._pick_saved_monitor(screen, name)
+
+            # Helpers
+            def apply_normal():
+                try: dialog.unmaximize()
+                except Exception: pass
+                try:
+                    dialog.resize(w, h)
+                    if x >= 0 and y >= 0:
+                        dialog.move(x, y)
+                    else:
+                        dialog.move(target_rect.x + 20, target_rect.y + 20)
+                except Exception: pass
+                GObject.idle_add(done_cb)
+
+            def place_then_maximize():
+                try: dialog.unmaximize()
+                except Exception: pass
+                seed_x, seed_y = target_rect.x + 80, target_rect.y + 80
+                try: dialog.move(seed_x, seed_y)
+                except Exception: pass
+
+                state = {"hid": None, "done": False}
+                def finalize():
+                    if state["done"]:
+                        return False
+                    state["done"] = True
+                    try:
+                        if state["hid"] is not None:
+                            dialog.disconnect(state["hid"])
+                    except Exception:
+                        pass
+                    try: dialog.maximize()
+                    except Exception: pass
+                    GObject.idle_add(done_cb)
+                    return False
+
+                def on_configure(_dlg, _event):
+                    try:
+                        gdk_win = dialog.get_window()
+                        if gdk_win and screen.get_monitor_at_window(gdk_win) == target_idx:
+                            GObject.idle_add(finalize)
+                    except Exception:
+                        pass
+                    return False
+
+                try:
+                    state["hid"] = dialog.connect("configure-event", on_configure)
+                except Exception:
+                    state["hid"] = None
+
+                GObject.timeout_add(250, finalize)  # safety fallback
+
+            def start():
+                if was_max:
+                    place_then_maximize()
+                else:
+                    apply_normal()
+
+            # Only act after mapped
+            if dialog.get_realized():
+                GObject.idle_add(start)
+            else:
+                dialog.connect("map-event", lambda *a: start())
+
+        # Keep preview independent / non-intrusive (only if we’re showing it)
+        if prvw:
+            if show_preview:
+                try: prvw.set_modal(False)
+                except Exception: pass
+                try: prvw.set_keep_above(False)
+                except Exception: pass
+                try: prvw.set_transient_for(None)
+                except Exception: pass
+                try: prvw.set_focus_on_map(False)
+                except Exception: pass
+                try:
+                    if not prvw.get_visible():
+                        prvw.show_all()
+                except Exception:
+                    pass
+            else:
+                # Ensure it stays hidden when not in preview mode
+                try:
+                    if prvw.get_visible():
+                        prvw.hide()
+                except Exception:
+                    pass
+
+        # Run sequence: MAIN → (optional PREVIEW) → raise MAIN
+        def finish():
+            # stubborn raise to beat any late map/maximize from preview
+            tries = {"n": 3}
+            def tick():
+                try: self.mainapp.win.present()
+                except Exception: pass
+                tries["n"] -= 1
+                return tries["n"] > 0
+            GObject.idle_add(tick)
+            GObject.timeout_add(120, tick)
+            GObject.timeout_add(240, tick)
+
+        def maybe_restore_preview_then_finish():
+            if show_preview:
+                restore_one("dlg_preview", prvw, finish)
+            else:
+                finish()
+
+        restore_one("ptxprint", self.mainapp.win, maybe_restore_preview_then_finish)
+
     def onPolyglotLayoutFocusOut(self, a, b):
         self.gtkpolyglot.update_layout_preview()
 
