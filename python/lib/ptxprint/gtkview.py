@@ -876,6 +876,26 @@ class GtkViewModel(ViewModel):
 
         logger.debug("Static controls initialized")
 
+        self.resetProjectsList()
+        # 5. Connect the styling function to the ComboBox renderer
+        combo = self.builder.get_object("fcb_project")
+        renderer = combo.get_cells()[0] 
+        combo.set_cell_data_func(renderer, self.set_project_style)
+
+
+        # self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+        self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
+        self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
+        self.builder.get_object("scr_previewPDF").set_visible(False)
+        self.getInitValues(addtooltips=self.args.identify)
+        self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
+        self.updateFont2BaselineRatio()
+        self.tabsHorizVert()
+        logger.debug("Project list loaded")
+
+        return True
+
+    def resetProjectsList(self):
         # 1. Get all projects and their last-modified times
         all_projects = self.prjTree.projectList()
         resource_projects = []
@@ -935,29 +955,12 @@ class GtkViewModel(ViewModel):
         # We use a special GUID to identify this action item later.
         # We also give it a distinct blue (clickable) color.
         projects.append(["Import...", "__IMPORT_PROJECT__", Pango.Weight.NORMAL, "#0000CD"])
-        
-        # 5. Connect the styling function to the ComboBox renderer
         combo = self.builder.get_object("fcb_project")
-        renderer = combo.get_cells()[0] 
-        combo.set_cell_data_func(renderer, self.set_project_style)
-
-
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         combo.set_wrap_width(wide)
-        # self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
-        self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
-        self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
-        self.builder.get_object("scr_previewPDF").set_visible(False)
-        self.getInitValues(addtooltips=self.args.identify)
-        self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
-        self.updateFont2BaselineRatio()
-        self.tabsHorizVert()
-        logger.debug("Project list loaded")
 
-        return True
-        
     def setFallbackProject(self):
         if self.fallbackPrj is not None:
             self.setPrjid(self.fallbackPrj.prjid, self.fallbackPrj.guid)
@@ -4004,7 +4007,6 @@ class GtkViewModel(ViewModel):
             if config is not None:
                 self.polyglots["L"].cfg = config
             self.gtkpolyglot.load_polyglots_into_treeview()
-                
 
     def showmybook(self, isfirst=False):
         if self.otherDiglot is None and self.initialised and self.showPDFmode == "preview": # preview is on
@@ -4116,6 +4118,16 @@ class GtkViewModel(ViewModel):
 
     def onPrjFocusOutEvent(self, btn, *a):
         self.projectKeypressed = False
+
+    def changeProjectTree(self, treedir):
+        super().changeProjectTree(treedir)
+        self.resetProjectsList()
+        self.resetToInitValues(updatebklist=True)
+
+    def onChangeProjectTreeClicked(self, btn):
+        customFigFolder = self.fileChooser(_("Select the projects root folder"),
+                filters = None, multiple = False, folder = True)
+        self.changeProjectTree(customFigFolder)
 
     # def onDBLprojNameChanged(self, widget):
         # text = self.get("t_DBLprojName")

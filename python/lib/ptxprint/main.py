@@ -102,11 +102,16 @@ def main(doitfn=None):
         parser._print_message = print_message
         os.environ['PATH'] += os.pathsep + sys._MEIPASS.replace("/","\\")
 
+    conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
+    config = configparser.ConfigParser(interpolation=None)
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None
     if envopts is not None:
         opts = shlex.split(envopts)
         args = parser.parse_args(opts, args)
+    elif config.has_option('init', 'commandline'):
+        args = config.get('init', 'commandline')
+        config.remove_option('init', 'commandline')
     args = parser.parse_args(None, args)
 
     # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
@@ -162,8 +167,6 @@ def main(doitfn=None):
             args.projects.append(pdir)
         savetreedirs = True
 
-    conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
-    config = configparser.ConfigParser(interpolation=None)
     if (args.extras & 4) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:

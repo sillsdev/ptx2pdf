@@ -511,6 +511,12 @@ class ViewModel:
     def updateBookList(self):
         pass
 
+    def changeProjectTree(self, treedir):
+        self.prjTree = ProjectList()
+        self.prjTree.addTreedir(treedir)
+        self.project = None
+        self.cfgid = None
+
     def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True):
         return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=True)
 
