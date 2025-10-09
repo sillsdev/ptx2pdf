@@ -17440,6 +17440,7 @@ Multiple Books:</property>
                                     <property name="ellipsize">middle</property>
                                     <property name="width-chars">50</property>
                                     <property name="max-width-chars">60</property>
+                                    <property name="xalign">0</property>
                                     <attributes>
                                       <attribute name="foreground" value="#121212121212"/>
                                     </attributes>
@@ -27619,6 +27620,18 @@ any items that match.</property>
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="vexpand">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkCheckButton" id="c_filterPicList">
                                         <property name="label" translatable="yes">Show Active Books</property>
                                         <property name="name">Only show pictures used in the set of active books</property>
@@ -27636,18 +27649,6 @@ the PicList details just for *that* book.</property>
                                         <property name="valign">start</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onFilterPicListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="vexpand">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

@@ -4191,7 +4191,7 @@ class GtkViewModel(ViewModel):
     def updateViewNedit(self):
         for a in [('c_useModsTex',           'onEditModsTeX'), 
                   ('c_usePrintDraftChanges', 'onEditChangesFile'), 
-                  ('c_inclMaps',             'onEditMaps1')]:
+                  ('c_inclMaps',             'onEditMaps')]:
             if self.get(a[0]):
                 getattr(self, a[1])(None)
         
@@ -4476,7 +4476,8 @@ class GtkViewModel(ViewModel):
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        if btn is not None:
+        if btn is not None and self.project is not None and \
+                  os.path.exists(os.path.join(self.project.path, "PrintDraftChanges.txt")):
             self._editProcFile("PrintDraftChanges.txt", "prj")
         self._editProcFile("changes.txt", "cfg")
         self.onRefreshViewerTextClicked(None)
@@ -5566,11 +5567,11 @@ class GtkViewModel(ViewModel):
         page = nbk_PicList.get_nth_page(pgnum)
         pgid = Gtk.Buildable.get_name(page).split('_')[-1]
         filterSensitive = True if pgid == "checklist" else False
-        # self.builder.get_object("bx_activeRefresh").set_visible(False)
+        self.builder.get_object("c_filterPicList").set_visible(False)
+        self.builder.get_object("gr_picButtons").set_visible(not filterSensitive)
         self.builder.get_object("fr_plChecklistFilter").set_sensitive(filterSensitive)
         self.builder.get_object("fr_plChecklistFilter").set_visible(filterSensitive)
-        self.builder.get_object("gr_picButtons").set_visible(not filterSensitive)
-        # self.builder.get_object("bx_activeRefresh").set_visible(True)
+        self.builder.get_object("c_filterPicList").set_visible(True)
         for w in _allcols:
             if w in _selcols[pgid]:
                 self.builder.get_object("col_{}".format(w)).set_visible(True)
@@ -7366,7 +7367,7 @@ Thank you,
         bkid = self.get("fcb_ptxMapBook") or "XXM"
         lsbooks = self.builder.get_object("ls_books")
         if self.get('c_inclMaps', False):
-            if bkid not in enumerate(lsbooks):
+            if bkid not in (row[0] for row in lsbooks):
                 lsbooks.append([bkid])
             bl = self.getBooks()
             self.set("r_book", "multiple")
