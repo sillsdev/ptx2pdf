@@ -775,6 +775,7 @@
   \ifcsname figparam-cat\endcsname
     % Relying on the fact that \fig is always in a box, pretend to be in a sidebar called 'fig', and get the border parameters.
     \x@\S@tCat\x@{\csname figparam-cat\endcsname}%
+    \trace{g}{Loading border parameters for \c@tegory}%
     \def\sb@rmarker{fig}%
     \get@border@style@params
     \prepb@rderdims

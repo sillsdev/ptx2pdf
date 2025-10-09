@@ -351,12 +351,14 @@
   \ifcsname localornament@\pdf@ornamentNum @code\endcsname
     \csname localornament@\pdf@ornamentNum @code\endcsname
   \else
+    \p@sheof\everyeof={}%
     {\m@kedigitsother
       \catcode`\%=5
       \catcode`\{=1 
       \catcode`\}=2
       \input "\OrnamentsFamily\pdf@ornamentNum.pgf"%
     \m@kedigitsletters}%
+    \p@peof
   \fi
 }
 
@@ -679,7 +681,8 @@
     \def\orn@label{#1}\def\orn@labelstyle{#2}%
   \fi
 }
-\def\orn@label@set #1^#2^#3\E{\edef\tmp{#2}\ifx\tmp\relaxval
+{\catcode`\^=12
+\gdef\orn@label@set #1^#2^#3\E{\edef\tmp{#2}\ifx\tmp\relaxval
     \message{!Malformed ornament label. Closing mark (^) missing in ornament string "^#1"}%
     \@ornament@parse #1\E
   \else
@@ -688,7 +691,7 @@
     \@ornament@parse #2\E
   \fi
 }
-
+}
 \def\string@check #1"#2"#3\E{%
   \edef\tmp{#1}\ifx\tmp\empty
     \edef\tmp{#2}\ifx\tmp\empty\else
@@ -714,7 +717,9 @@
  \trace{eb}{Ornament number is "#1#2"}%
  \edef\pdf@ornamentNum{#1#2}%
 }
-\def\ornament@parse#1#2\E{%
+{
+\catcode`\^=12
+\gdef\ornament@parse#1#2\E{%
   \edef\tmp{#1}%
   \trace{orn}{Prefix is \meaning#1 (=\meaning^)?}%
   \let\orn@label\relax
@@ -725,6 +730,7 @@
   \else
     \@ornament@parse #1#2\E
   \fi
+}
 }
 \def\@ornament@parse#1|#2|#3|#4|#5|#6\E{%#6 is scrap
   \trace{orn}{ornament@parse:#1:#2:#3:#4}%
@@ -1261,14 +1267,14 @@
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
   \trace{orn}{Box side is \the\dimen1}%
-  \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
+  \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\let\par\endgraf\everypar={}\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
   %\showbox\orn@bdr@left
   \def\ornXalign{1}%
-  \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
+  \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\let\par\endgraf\everypar={}\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
   %\showboxdepth=9
   %\showboxdepth=10
   %\showbox\orn@bdr@right
-  \vbox to #2{\baselineskip=0pt \lineskip=0pt \hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
+  \vbox to #2{\let\par\endgraf\everypar={}\baselineskip=0pt \lineskip=0pt \hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
 }
 \def\OrnamentBorder#1{%
   \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
@@ -1299,7 +1305,7 @@
   \def\border@l@pad{0pt}\def\border@r@pad{0pt}%
   \setbox\orn@bdr@right\box\voidb@x
   \ifx\b@drleft\tr@e
-    \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternL}}%
+    \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\let\par\endgraf\everypar={}\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternL}}%
     \def\border@l@pad{\border@lpadding}%
     \ifx\patternL\patternR
       \ifx\b@drright\tr@e
@@ -1314,7 +1320,7 @@
   \ifx\b@drright\tr@e
     \ifvoid\orn@bdr@right
       \def\ornXalign{1}%
-      \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
+      \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\let\par\endgraf\everypar={}\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
       \def\border@r@pad{\border@rpadding}%
     \fi
   \fi
@@ -1324,7 +1330,7 @@
   \dimen7=\dimexpr\ht\orn@bdr@top+\dp\orn@bdr@top  \ifx\b@drtop\tr@e +\dimen2\fi \relax
   \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
   \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
-  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\let\par\endgraf\everypar={}\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
     \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right\kern-\b@drwidth\OrnamentUnit}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
   %\showbox#1%
   %\x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
@@ -1339,7 +1345,7 @@
 }
 
 %Stylesheet Options
-\def\t@xtbkslsh{\catcode`\\=12}
+\def\t@xtbkslsh{\catcode`\\=12 \catcode`\^=12}
 \def\sb@setcode#1#2\relax{\p@sheof\everyeof={\noexpand}\x@\edef\x@\tmp\x@{\scantokens{#2}}\r@storbkslsh\p@peof\initc@t\setsbp@ram{#1}{\tmp}}
 
 \def\BorderPatternTop{\initc@t\t@xtbkslsh\sb@setcode{borderpatterntop}}
