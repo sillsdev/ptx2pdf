@@ -133,7 +133,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
         os.rename(opath, pdffile)
     if outpdfobj is not None:
         pdffile = pdffile.replace(".pdf", ext+".pdf")
-        res[' finished'] = pdffile
+        if ext != "":
+            res[' Finished'] = pdffile
         outpdfobj.fname = pdffile
         outpdfobj.compress = True
         outpdfobj.do_compress = compress

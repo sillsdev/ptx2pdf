@@ -785,7 +785,6 @@ class PDFContentViewer(PDFFileViewer):
         self.currpref = None
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
-        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
         self.linespacing = float(self.model.get("s_linespacing", "12"))
         self.collisionpages = []
         self.spacepages = []
@@ -925,10 +924,7 @@ class PDFContentViewer(PDFFileViewer):
             return
         if cpage is None:
             cpage = self.current_index or self.parlocs.pnums.get(1, 1) if self.parlocs is not None else 1
-        if self.model.get("fcb_pagesPerSpread", "1") != "1":
-            self.spread_mode = False
-        else:
-            self.spread_mode = self.model.get("c_bkView", False)
+        self.spread_mode = self.model.get("c_bkView", False)
         # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
         if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
             page = self.parlocs.pnumorder[cpage - 1]
@@ -1244,8 +1240,7 @@ class PDFContentViewer(PDFFileViewer):
             self.parlocfile = parlocs
         if not super().loadnshow(fname, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
-        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
-        self.model.set_preview_pages(self.numpages, _("Pages:") if self.oneUp else _("Spreads:"))
+        self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
     def clear(self, widget=None):
@@ -1377,11 +1372,11 @@ class PDFContentViewer(PDFFileViewer):
                 locatelastPage  = self.all_pages[-1]
 
                 if is_rtl:  # Fix later to include Arabic UI detection
-                    hide_prev = pnumpg >= locatelastPage or pnumpg == num_pages or not self.oneUp
-                    hide_next = pnumpg <= locatefirstPage or pnumpg == 1 or not self.oneUp
+                    hide_prev = pnumpg >= locatelastPage or pnumpg == num_pages
+                    hide_next = pnumpg <= locatefirstPage or pnumpg == 1
                 else:
-                    hide_prev = pnumpg <= locatefirstPage or pnumpg == 1 or not self.oneUp
-                    hide_next = pnumpg >= locatelastPage or pnumpg == num_pages or not self.oneUp
+                    hide_prev = pnumpg <= locatefirstPage or pnumpg == 1
+                    hide_next = pnumpg >= locatelastPage or pnumpg == num_pages
 
                 seekPrevBtn.set_sensitive(not hide_prev)
                 seekNextBtn.set_sensitive(not hide_next)
@@ -1528,23 +1523,17 @@ class PDFContentViewer(PDFFileViewer):
         
         info = []
         parref = None
-        if not self.oneUp:  # self.oneUp is disabled
-            self.addMenuItem(menu, _("Context Menu Disabled!")+"\n"+ \
-                                   _("Turn off Booklet pagination")+"\n"+ \
-                                   _("on Finishing tab to re-enable"), None, sensitivity=False)
-        else:
-            parref, pgindx, annot = self.get_parloc(widget, event)
-            if isinstance(parref, ParInfo):
-                parnum = getattr(parref, 'parnum', 0) or 0
-                parnum = "["+str(parnum)+"]" if parnum > 1 else ""
-                ref = parref.ref
-                self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
-                if self.adjlist is not None:
-                    info = self.adjlist.getinfo(ref + parnum, insert=True)
-            logger.debug(f"{event.x=},{event.y=}")
+        parref, pgindx, annot = self.get_parloc(widget, event)
+        if isinstance(parref, ParInfo):
+            parnum = getattr(parref, 'parnum', 0) or 0
+            parnum = "["+str(parnum)+"]" if parnum > 1 else ""
+            ref = parref.ref
+            self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
+            if self.adjlist is not None:
+                info = self.adjlist.getinfo(ref + parnum, insert=True)
+        logger.debug(f"{event.x=},{event.y=}")
 
-        if len(info) and re.search(r'[.:]', parref.ref) and \
-            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
+        if len(info) and re.search(r'[.:]', parref.ref):
             if ref[3:4] in "LRABCDEFG":
                 pref = ref[3:4]
                 o = 4

@@ -6602,17 +6602,6 @@ class GtkViewModel(ViewModel):
     def onPagesPerSpreadChanged(self, btn):
         self.colorTabs()
         status = self.get("fcb_pagesPerSpread") != "1"
-        if status and self.showPDFmode == "preview":
-            self.set("c_bkView", False)
-            self.set("c_pdfadjoverlay", False)
-            self.set("c_pdfparabounds", False)
-            self.builder.get_object("c_pdfadjoverlay").set_sensitive(False)
-            self.builder.get_object("c_pdfparabounds").set_sensitive(False)
-            self.onBookViewClicked(None)
-        else:
-            self.builder.get_object("c_bkView").set_sensitive(True)
-            self.builder.get_object("c_pdfadjoverlay").set_sensitive(True)
-            self.builder.get_object("c_pdfparabounds").set_sensitive(True)
         for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
@@ -7077,20 +7066,7 @@ Thank you,
                 lpcount.set_label(f"{str(pgmax)}")
 
     def onBookViewClicked(self, widget):
-        window = self.builder.get_object("dlg_preview")
         bkview = self.get("c_bkView", True)
-        pgsprd = self.get("fcb_pagesPerSpread", "1")
-        allocation = window.get_allocation()
-        x = allocation.width
-        y = allocation.height
-        if pgsprd == "1" and y > x and bkview \
-           or pgsprd in ["2", "8"]:
-            sz = ((x * 2) - 167, y) # (1040, 715)
-        elif x > y and not bkview or pgsprd == "4":
-            sz = (((x - 167) / 2) + 167, y)
-        else:
-            sz = (x, y)
-        window.resize(*sz)
         step_increment = 2 if bkview else 1
         if hasattr(self, 'pdf_viewer'):
             self.pdf_viewer.set_zoom_fit_to_screen(None)

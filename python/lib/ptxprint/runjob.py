@@ -704,8 +704,10 @@ class RunJob:
             else:
                 self.res = 4 if runner else 0
             self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
-            if self.res == 0 and not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
-                self.res = 3
+            if self.res == 0:
+                self.printer.pdf_viewer.clear()
+                if not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
+                    self.res = 3
         print("Done")
 
     def done_job(self, outfname, pdfname, info):
