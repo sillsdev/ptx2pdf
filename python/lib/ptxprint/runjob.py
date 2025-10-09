@@ -161,6 +161,7 @@ class RunJob:
         # self.diffPdf = None
         self.rerunReasons = []
         self.coverfile = None
+        self.extrafiles = {}
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -542,7 +543,7 @@ class RunJob:
         outpath = os.path.join(self.tmpdir, '..', outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
-        pdffile = outpath + "{}.pdf".format(pdfext)
+        pdffile = outpath + ".pdf".format(pdfext)
         logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:
@@ -739,10 +740,7 @@ class RunJob:
                             self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
-                if self.printer.isCoverTabOpen():
-                    startname = self.coverfile or pdfname
-                else:
-                    startname = pdfname
+                startname = pdfname
 
             fname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".log"))
             logger.debug(f"Testing log file {fname}")
@@ -789,7 +787,7 @@ class RunJob:
             if not self.noview and startname is not None:
                 if self.printer.get("c_layoutAnalysis"):
                     self.printer.incrementProgress(inproc=True, stage="al")
-                self.printer.onShowPDF(path=startname)
+                self.printer.onShowPDF(path=startname, extras=self.extrafiles)
                 self.printer.incrementProgress(inproc=True, stage=None)
 
         elif self.res == 3:
@@ -923,7 +921,7 @@ class RunJob:
             return opath
         return pdffile
 
-    def procpdf(self, outfname, pdffile, info, **kw):
+    def procpdf(self, outfname, pdffile, info, cover=False, **kw):
         for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'paper/cropmarks', 'document/ifrtl'):
             if '/' in a:
                 kw[a[a.find("/")+1:]] = info[a]
@@ -935,11 +933,12 @@ class RunJob:
             report = checkoutput(["xetex", "--version"], path='xetex')
             z.writestr("_runinfo.txt", report)
             z.close()
-        self.coverfile = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, **kw)
-        if self.coverfile is False:
-            self.coverfile = None
-            return False
-        return True
+        self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, **kw)
+        if cover:
+            self.coverfile = self.extrafiles.get('cover', None)
+            return self.coverfile is not None
+        else:
+            return True
 
     def createDiff(self, pdfname, basename, outname=None, **kw):
         from ptxprint.pdf.pdfdiff import createDiff

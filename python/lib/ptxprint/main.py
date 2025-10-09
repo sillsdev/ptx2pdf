@@ -106,12 +106,15 @@ def main(doitfn=None):
     config = configparser.ConfigParser(interpolation=None)
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None
+    argsline = None
     if envopts is not None:
-        opts = shlex.split(envopts)
+        argsline = envopts
+    elif config.has_option('init', 'commandargs'):
+        argsline = config.get('init', 'commandargs')
+        config.remove_option('init', 'commandargs')
+    if argsline is not None:
+        opts = shlex.split(argsline)
         args = parser.parse_args(opts, args)
-    elif config.has_option('init', 'commandline'):
-        args = config.get('init', 'commandline')
-        config.remove_option('init', 'commandline')
     args = parser.parse_args(None, args)
 
     # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)

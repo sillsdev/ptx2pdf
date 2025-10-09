@@ -4212,7 +4212,7 @@ class GtkViewModel(ViewModel):
     def showmybook(self, isfirst=False):
         if self.otherDiglot is None and self.initialised and self.showPDFmode == "preview": # preview is on
             prvw = self.builder.get_object("dlg_preview")
-            pdffile = os.path.join(self.project.printPath(None), self.getPDFname())
+            pdffile = os.path.join(self.project.printPath(None), self.getPDFname(noext=True))
             logger.debug(f"Trying to show {pdffile} exists={os.path.exists(pdffile)}")
             if os.path.exists(pdffile):
                 pdft = os.stat(pdffile).st_mtime
@@ -7029,8 +7029,8 @@ Thank you,
         self.popdownMainMenu()
         self.onShowPDF(None)
 
-    def onShowPDF(self, path=None):
-        pdffile = os.path.join(self.project.printPath(None), self.getPDFname()) if path is None else str(path)
+    def onShowPDF(self, path=None, extras={}):
+        pdffile = os.path.join(self.project.printPath(None), self.getPDFname(noext=True)) if path is None else str(path)
         if self.showPDFmode == "preview":
             prvw = self.builder.get_object("dlg_preview")
             if os.path.exists(pdffile):
@@ -7044,7 +7044,7 @@ Thank you,
                 else:
                     plocname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0]+".parlocs")
                 self.pdf_viewer.loadnshow(pdffile, rtl=self.get("c_RTLbookBinding", False), parlocs=plocname, \
-                                          widget=prvw, page=None, isdiglot=self.get("c_diglot"))
+                                          widget=prvw, page=None, isdiglot=self.get("c_diglot"), extras=extras)
             else:
                 self.pdf_viewer.clear(widget=prvw)
 

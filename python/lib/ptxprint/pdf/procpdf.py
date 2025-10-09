@@ -23,7 +23,9 @@ _unitpts = {
 }
 
 def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
+    res = {}
     opath = outfname.replace(".tex", ".prepress.pdf")
+    ext = None
     outpdfobj = None
     coverfile = None
     if kw.get('burst', False) or kw.get('cover', False):
@@ -53,6 +55,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
                 outpdf(bpdf, bpdfname)
             else:
                 fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
+            res[k] = bpdfname
         outpdfobj = PdfWriter(None, trailer=inpdf)
     colour = None
     params = {}
@@ -70,6 +73,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
         colour = ispdfxa.lower()
     if colour is not None:
         logger.debug(f"Fixing colour for {colour}")
+        if ext is None:
+            ext = colour
         try:
             outpdfobj = fixpdffile((outpdfobj._trailer if outpdfobj else opath), None,
                         colour=colour,
@@ -78,6 +83,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             return False
     nums = int(kw.get('pgsperspread', 1))
     if nums > 1:
+        if ext is None:
+            ext = "{}up".format(nums)
         psize = kw.get('sheetsize', "21omm, 297mm (A4)").split(",")
         paper = []
         for p in psize:
@@ -119,6 +126,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
         zio.close()
 
     if outpdfobj is not None:
+        pdffile = pdffile.replace(".pdf", "_"+ext+".pdf")
+        res[' finished'] = pdffile
         outpdfobj.fname = pdffile
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
@@ -127,5 +136,5 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             os.remove(opath)
         except FileNotFound:
             pass
-    return coverfile
+    return res
 

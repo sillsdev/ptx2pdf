@@ -168,9 +168,10 @@ class PDFViewer:
         self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
 
-    def loadnshow(self, fname, tab=None, **kw):
+    def loadnshow(self, fname, tab=None, extras={}, **kw):
         fbits = os.path.splitext(fname) if fname is not None else None
         if tab is None:
+            breakpoint()
             for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
                 if fbits is not None:
                     fpath = a.format(*fbits)
@@ -181,6 +182,31 @@ class PDFViewer:
                     self.nbook.set_current_page(0)
                 else:
                     v.hide()
+            for k, v in sorted(extras.items()):
+                n = k.strip()
+                if n not in self.boxcodes:
+                    i = len(self.boxcodes)
+                    self.boxcodes[n] = i
+                    self.boxnames.append("bx_preview{}".format(n))
+                    if i >= self.nbook.get_n_pages():
+                        b = Gtk.Box()
+                        b.set_halign(Gtk.Align.CENTER)
+                        b.set_valign(Gtk.Align.CENTER)
+                        b.set_hexpand(True)
+                        b.set_vexpand(True)
+                        sc = Gtk.ScrolledWindow()
+                        sc.set_shadow_type(Gtk.ShadowType.IN)
+                        sc.set_propagate_natural_height(True)
+                        sc.add_with_viewport(b)
+                        tab = Gtk.Label(n)
+                        tab.set_angle(270)
+                        self.viewers.append(PDFFileViewer(self.model, b, alloc=self.nbook.get_nth_page(0).get_allocation()))
+                        self.nbook.append_page(sc, tab)
+                else:
+                    i = self.boxcodes[n]
+                self.viewers[i].loadnshow(v, **kw)
+                t = self.nbook.get_nth_page(i)
+                t.show()
         elif fname is not None and os.path.exists(fname):
             i = self.boxcodes[tab]
             v = self.nbook.get_nth_page(i)
@@ -215,7 +241,7 @@ class PDFViewer:
 
 
 class PDFFileViewer:
-    def __init__(self, model, widget): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
+    def __init__(self, model, widget, alloc=None): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
         self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
@@ -249,6 +275,9 @@ class PDFFileViewer:
         self.hbox.connect("key-press-event", self.on_key_press_event)
         self.hbox.connect("scroll-event", self.on_scroll_event)
         self.hbox.set_can_focus(True)  # Ensure the widget can receive keyboard focus
+        if alloc is not None:
+            self.sw.set_allocation(alloc)
+            self.hbox.set_allocation(alloc)
 
     def create_boxes(self, num):
         boxes = self.hbox.get_children()
