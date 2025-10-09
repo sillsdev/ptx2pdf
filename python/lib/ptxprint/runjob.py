@@ -722,6 +722,7 @@ class RunJob:
         self.printer.set("l_statusLine", "")
         print(f"{self.res=}")
         if self.res == 0:
+            logger.debug(f"{self.noview=} {self.printer.isDisplay=} {pdfname=} doCreateDiff={self.printer.docreatediff}")
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
                 if basename == _("Previous PDF (_1)"):
@@ -739,6 +740,7 @@ class RunJob:
                         if diffname == pdfname:
                             self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
+                startname = pdfname
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 startname = pdfname
 
@@ -784,6 +786,7 @@ class RunJob:
                                   _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
+            logger.debug(f"display {startname}")
             if not self.noview and startname is not None:
                 if self.printer.get("c_layoutAnalysis"):
                     self.printer.incrementProgress(inproc=True, stage="al")

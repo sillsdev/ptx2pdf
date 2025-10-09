@@ -2841,10 +2841,10 @@ class GtkViewModel(ViewModel):
             else:
                 self.builder.get_object(o).set_sensitive(pgid in _allpgids[1:3])
 
-        fndict = {"tb_FrontMatter" : ("", ""), "tb_AdjList" : ("AdjLists", ".adj"),
-                  "tb_FinalSFM" : ("", ""), "tb_TeXfile" : ("", ".tex"),
-                  "tb_XeTeXlog" : ("", ".log"), "tb_Settings1": ("", ""),
-                  "tb_Settings2": ("", ""), "tb_Settings3": ("", "")}
+        fndict = {"tb_FrontMatter" : ("", "", False), "tb_AdjList" : ("AdjLists", ".adj", False),
+                  "tb_FinalSFM" : ("", "", False), "tb_TeXfile" : ("", ".tex", False),
+                  "tb_XeTeXlog" : ("", ".log", True), "tb_Settings1": ("", "", False),
+                  "tb_Settings2": ("", "", False), "tb_Settings3": ("", "", False)}
 
         if pgid == "tb_FrontMatter":
             ibtn.set_sensitive(True)
@@ -2930,11 +2930,14 @@ class GtkViewModel(ViewModel):
         if os.path.exists(fpath):
             set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
-                txt = inf.read()
-                if len(txt) > 60000 and pgid not in ("tb_AdjList",):
-                    txt = txt[:60000]+_("\n\n------------------------------------- \
-                                           \n[File has been truncated for display] \
-                                           \nClick on View/Edit... button to see more.")
+                if fndict[pgid][2]:
+                    txt = inf.read(60000)
+                    if len(txt) == 60000:
+                        txt = txt[:60000]+_("\n\n------------------------------------- \
+                                               \n[File has been truncated for display] \
+                                               \nClick on View/Edit... button to see more.")
+                else:
+                    txt = inf.read()
             self.fileViews[pgnum][0].set_text(txt)
             self.uneditedText[pgnum] = txt
             self.onViewerFocus(self.fileViews[pgnum][1], None)

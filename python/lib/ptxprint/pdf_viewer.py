@@ -171,7 +171,6 @@ class PDFViewer:
     def loadnshow(self, fname, tab=None, extras={}, **kw):
         fbits = os.path.splitext(fname) if fname is not None else None
         if tab is None:
-            breakpoint()
             for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
                 if fbits is not None:
                     fpath = a.format(*fbits)
@@ -319,6 +318,7 @@ class PDFFileViewer:
 
     def load_pdf(self, pdf_path, **kw):
         if pdf_path is not None and os.path.exists(pdf_path):
+            logger.debug(f"Loading pdf: {pdf_path}")
             file_uri = Path(pdf_path).as_uri()
             try:
                 self.document = Poppler.Document.new_from_file(file_uri, None)

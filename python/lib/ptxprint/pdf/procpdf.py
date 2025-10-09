@@ -74,7 +74,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     if colour is not None:
         logger.debug(f"Fixing colour for {colour}")
         if ext is None:
-            ext = colour
+            ext = "_"+colour
         try:
             outpdfobj = fixpdffile((outpdfobj._trailer if outpdfobj else opath), None,
                         colour=colour,
@@ -84,7 +84,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     nums = int(kw.get('pgsperspread', 1))
     if nums > 1:
         if ext is None:
-            ext = "{}up".format(nums)
+            ext = "_{}up".format(nums)
         psize = kw.get('sheetsize', "21omm, 297mm (A4)").split(",")
         paper = []
         for p in psize:
@@ -107,6 +107,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
                                  title=_("Paper Size Error"), secondary=str(e), threaded=True)
             return False
     if kw.get('inclsettings', False):
+        if ext is None:
+            ext = ""
         logger.debug("Adding settings to the pdf")
         zio = cStringIO()
         createSettingsZip(zio)
@@ -125,16 +127,13 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             p.ptxprint = pdict
         zio.close()
 
+    os.rename(opath, pdffile)
     if outpdfobj is not None:
-        pdffile = pdffile.replace(".pdf", "_"+ext+".pdf")
+        pdffile = pdffile.replace(".pdf", ext+".pdf")
         res[' finished'] = pdffile
         outpdfobj.fname = pdffile
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
         outpdfobj.write()
-        try:
-            os.remove(opath)
-        except FileNotFound:
-            pass
     return res
 
