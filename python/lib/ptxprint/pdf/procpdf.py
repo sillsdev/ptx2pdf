@@ -80,7 +80,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
                         colour=colour,
                         parlocs = outfname.replace(".tex", ".parlocs"), **params)
         except ValueError:
-            return False
+            return {}
     nums = int(kw.get('pgsperspread', 1))
     if nums > 1:
         if ext is None:
@@ -105,7 +105,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             print(e)
             doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                  title=_("Paper Size Error"), secondary=str(e), threaded=True)
-            return False
+            return {}
     if kw.get('inclsettings', False):
         if ext is None:
             ext = ""

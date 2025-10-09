@@ -759,6 +759,9 @@ class PDFFileViewer:
         pdf_page.render(cairo_context)
         cairo_context.restore()
 
+    def _saveSetting(self, key, value):
+        self.model.userconfig.set('printer', key, value)
+
 
 class PDFContentViewer(PDFFileViewer):
 
@@ -1985,7 +1988,4 @@ class PDFContentViewer(PDFFileViewer):
             raise ctypes.WinError(ctypes.get_last_error())
         logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
             
-    def _saveSetting(self, key, value):
-        self.model.userconfig.set('printer', key, value)
-
 
