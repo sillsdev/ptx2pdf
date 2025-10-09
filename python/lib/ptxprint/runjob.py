@@ -706,7 +706,8 @@ class RunJob:
             self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
             if self.res == 0:
                 self.printer.pdf_viewer.clear()
-                if not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
+                if not self.procpdf(outfname, pdffile, info, burst=info['finishing/extractinserts'],
+                                    cover=info['cover/makecoverpage'] != '%'):
                     self.res = 3
         print("Done")
 
@@ -762,7 +763,7 @@ class RunJob:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
-                    if not self.noview and not self.args.print:
+                    if not self.noview and not self.args.print and not self.printer.showPDFmode == "preview":
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)

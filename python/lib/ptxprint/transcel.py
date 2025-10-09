@@ -37,7 +37,7 @@ def transcel(triggers, bk, prjdir, lang, rtl, overview, boldover, numberedQs, sh
             # txt = "\\bd " + txt + "\\bd*" if ovqs and boldover else txt
             r = ref.str(env=nobook)
             if rtl:
-                r = re.sub(r'\u200f\-',r'\u200E\-',r)
+                r = re.sub('\u200f\\-','\u200E\\-',r)
             fr = ""
             if numberedQs and showRefs:
                 fr = f"\\fr {n}. ({r}) "
