@@ -127,7 +127,10 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             p.ptxprint = pdict
         zio.close()
 
-    os.rename(opath, pdffile)
+    if opath != pdffile:
+        if os.path.exists(pdffile):
+            os.remove(pdffile)
+        os.rename(opath, pdffile)
     if outpdfobj is not None:
         pdffile = pdffile.replace(".pdf", ext+".pdf")
         res[' finished'] = pdffile
