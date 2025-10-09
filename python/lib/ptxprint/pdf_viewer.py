@@ -196,6 +196,7 @@ class PDFViewer:
                         sc = Gtk.ScrolledWindow()
                         sc.set_shadow_type(Gtk.ShadowType.IN)
                         sc.set_propagate_natural_height(True)
+                        sc.get_style_context().add_class("graybox")
                         sc.add_with_viewport(b)
                         tab = Gtk.Label(n)
                         tab.set_angle(270)

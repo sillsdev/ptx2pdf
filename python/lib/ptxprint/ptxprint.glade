@@ -15583,11 +15583,11 @@ highlighted as an issue.</property>
                                 </child>
                               </object>
                             </child>
-                            <style>
-                              <class name="graybox"/>
-                            </style>
                           </object>
                         </child>
+                        <style>
+                          <class name="graybox"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="expand">True</property>
