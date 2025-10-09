@@ -209,6 +209,7 @@
 
 %+cfig_parsesize
 \def\p@rsesize#1*#2*#3\end{%
+  \trace{g}{p@rsesize #1*#2*#3}%
   \global\def\size@ption{#1}%
   \edef\tmp{#2}%
   \if\tmp\relax\relax\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
@@ -412,7 +413,9 @@
       \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
       %\implicitcl@sefalse
+      \p@sheof
       \x@\scantokens\x@{\c@ption}\unskip
+      \p@peof
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
     \egroup
   \fi
@@ -431,7 +434,7 @@
 \def\FigCaptionAdjust{0pt}
 
 \def\setc@ptionbox{%
- \setbox\c@ptionbox\vbox{%
+ \setbox\c@ptionbox\vbox{\everypar={}\let\par\endgraf%
   \ifDoCaptions
     \ifCaptionFirst\else \prevdepth=0pt\fi %Interline glue above a low caption
     \ifpicNarrow
@@ -767,7 +770,7 @@
       \fi
     \fi
   \fi
-  \let\origc@t\c@tegory
+  \global\let\origc@t\c@tegory
   \let\orig@sbm\sb@rmarker
   \ifcsname figparam-cat\endcsname
     % Relying on the fact that \fig is always in a box, pretend to be in a sidebar called 'fig', and get the border parameters.
@@ -957,8 +960,10 @@
         \vskip0.3\baselineskip
       \fi
     \fi
-    \ifdim \border@tpadding < -\b@drwidth pt  
-      \kern\the\dimexpr -\border@tpadding - \b@drwidth pt\relax%
+    \ifhasb@rder
+      \ifdim \border@tpadding < -\b@drwidth pt  
+        \kern\the\dimexpr -\border@tpadding - \b@drwidth pt\relax%
+      \fi
     \fi
     % insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
