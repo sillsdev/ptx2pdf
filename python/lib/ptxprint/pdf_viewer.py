@@ -814,6 +814,7 @@ class PDFContentViewer(PDFFileViewer):
         self.showanalysis = val
         self.spacethreshold = threshold
         if self.showanalysis:
+            self.load_analysis(self.parlocfile)
             self.loadnshow(None, page=self.current_page)
         self.show_pdf()
 
