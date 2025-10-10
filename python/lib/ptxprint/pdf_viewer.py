@@ -377,7 +377,8 @@ class PDFFileViewer:
         if widget is None:
             widget = self.widget
         self.widget = widget
-        widget.set_title(_("PDF Preview 3.0.0") + "   [FileViewer]   " + os.path.basename(self.fname) + formatted_time)
+        if widget is not None:
+            widget.set_title(_("PDF Preview 3.0.0") + "   " + os.path.basename(self.fname) + formatted_time)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.widget.show_all()
         self.set_zoom_fit_to_screen(None)
@@ -1245,7 +1246,7 @@ class PDFContentViewer(PDFFileViewer):
         if not super().loadnshow(fname, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
         if widget is not None:
-            widget.set_title(_("PDF Preview 3.0.0") + "   [ContentViewer]   " + os.path.basename(self.fname))
+            widget.set_title(_("PDF Preview 3.0.0") + "   " + os.path.basename(self.fname))
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
