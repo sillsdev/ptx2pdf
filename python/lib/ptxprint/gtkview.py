@@ -5589,7 +5589,7 @@ class GtkViewModel(ViewModel):
         if UnpackBundle(dblfile, prj, tdir):
             self._selectProject(prj, tdir)
         else:
-            self.doError("Faulty Scripture Text Bundle", "Check if you have selected a valid scripture text bundle (ZIP) file.")
+            self.doError("Faulty Scripture Text Bundle", secondary="Check if you have selected a valid scripture text bundle (ZIP) file.")
 
     def _selectProject(self, prj, tdir):
         if self.initialised and self.project is not None:

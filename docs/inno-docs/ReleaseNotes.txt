@@ -1,7 +1,51 @@
-PTXprint 2.9.9 Release Notes
-2 Oct 2025
+PTXprint 3.0.0 Release Notes
+10 Oct 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.0.0 (10 Oct 2025)
+  * Add tabs to PDF Prview window for Content, Cover, Diff, Finished and Reference
+  * Ensure Catalogue and TechRef come to the fore after being opened in the Preview pane
+  * Improveme the Styles tab - searching, filtering, highlighting, scroll to active style
+  * Restore the extra font details (expand, slant, thickness etc.) on Styles tab
+  * Mitigate empty Justification setting in Styles editor
+  * Move menu button to top-left in main dialog
+  * Reorganize the Basic tab to be more logical
+  * Hide copyright information behind twisty; make it a multi-line control
+  * Refine layout of Diglot tab
+  * Multiple improvements to get importing from ZIP files working more predictably
+  * Improve window position restoring logic to handle unexpected situations correctly
+  * Improve UI to make it easier to enable dynamic borders
+  * Refactor marginal chapters for better spacing control
+  * Use a better 'Refresh' icon on multiple buttons
+  * Add 'DoubleSided' option to Advanced > Other > Page Layout & Spacing
+  * Change illustration credits and add option to list ALL pages
+  * Highlight combo boxes on search; enabling various settings to be found easier
+  * Tweak tooltip for 'Show USFM codes' and use SourceCodePro
+  * Improve UI around End of Ayah and add line to \va style to control appearance
+  * Don't move verses/ayahs to end if ornamental verses is disabled
+  * Install BSB automatically if no other project is found
+  * Improve auto-setting Project on initial run
+  * Disable Save and Print buttons until a project has been set
+  * Include Charis 7.0 in PTXprint installer - available by default
+  * Make sure treeDirs is updated in ptxprint_user.cfg file
+  * Add button to Help tab for changing Base Projects Directory
+  * Integrate tag hacking support for f^98 et al
+  * Only show interchar problems if letter spacing enabled
+  * View+Edit tab: only truncate .log files - let others load completely
+  * Protect figure borders from peripheral interaction, semi-solve map borders
+  * Fix a leaky space in footnote text callers
+  * Fix finishing files naming
+  * Fix saving config on BSB load
+  * Fix PTXprint path in Help tab link for Win
+  * Fix modal msgQuestion to use the right parent window
+  * Fix gridding limits?
+  * Fix subheading gridding sometimes missing some space
+  * Fix text borders
+  * Fix style strikethrough
+  * Fix unescaped \ codes
+ ***Fix segfault? when updating pdf_viewer
 _____________________________________________________________
 
 Bug fixes and Improvements in 2.9.9 (2 Oct 2025)
