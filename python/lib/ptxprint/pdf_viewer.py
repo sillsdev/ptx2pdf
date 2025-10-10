@@ -1298,7 +1298,7 @@ class PDFContentViewer(PDFFileViewer):
 
     def seekUFpage(self, direction):
         pages = self.numpages
-        if not pages or not self.model.ufPages:
+        if not pages or not self.all_pages:
             return
         pgnum = self.current_index
         try:
@@ -1308,12 +1308,12 @@ class PDFContentViewer(PDFFileViewer):
             current_pg = 1
         if direction == self.swap4rtl('next'):
             next_page = None
-            for pg in self.all_pages: # self.model.ufPages:
+            for pg in self.all_pages:
                 if pg > current_pg:
                     next_page = pg
                     break
             if next_page:
-                self.ufCurrIndex = self.all_pages.index(next_page)  # self.model.ufPages
+                self.ufCurrIndex = self.all_pages.index(next_page)
         else:  # 'previous'
             prev_page = None
             for pg in reversed(self.all_pages):
