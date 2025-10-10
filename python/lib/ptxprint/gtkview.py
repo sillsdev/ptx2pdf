@@ -1337,7 +1337,7 @@ class GtkViewModel(ViewModel):
         scroll.add(self.adjView.view)
         logger.debug("Setting project")
         if self.pendingPid is not None:
-            self.set("fcb_project", self.pendingPid)
+            self.setPrjid(*self.pendingPid)
             self.pendingPid = None
         logger.debug("Setting config")
         if self.pendingConfig is not None:
@@ -4057,7 +4057,7 @@ class GtkViewModel(ViewModel):
 
     def setPrjid(self, prjid, prjguid, saveCurrConfig=False):
         if not self.initialised:
-            self.pendingPid = prjid
+            self.pendingPid = (prjid, prjguid)
         else:
             w = self.builder.get_object("fcb_project")
             m = w.get_model()
@@ -4103,10 +4103,11 @@ class GtkViewModel(ViewModel):
             if not self.onImportProject() and project is not None:
                 self.setPrjid(project.prjid, project.guid)
             return
-        cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
-        # Q: Why is saveme never used below?
-        saveme = self.pendingPid is None and self.pendingConfig is None
-        self.updateProjectSettings(prjid, guid, saveCurrConfig=True, configName=cfgname)
+        else:
+            cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
+            # Q: Why is saveme never used below?
+            saveme = self.pendingPid is None and self.pendingConfig is None
+            self.updateProjectSettings(prjid, guid, saveCurrConfig=True, configName=cfgname)
         self.updateSavedConfigList()
         for o in _olst:
             self.builder.get_object(o).set_sensitive(True)
@@ -5591,7 +5592,10 @@ class GtkViewModel(ViewModel):
             self.doError("Faulty Scripture Text Bundle", "Check if you have selected a valid scripture text bundle (ZIP) file.")
 
     def _selectProject(self, prj, tdir):
+        if self.initialised and self.project is not None:
+            self.saveConfig()
         pjct = self.prjTree.addProject(prj, os.path.join(tdir, prj), None)
+        logger.debug(f"{prj=} {tdir=} {self.project=} {pjct=}")
         v = [getattr(pjct, a) for a in ['prjid', 'guid']]
         extras = [Pango.Weight.NORMAL, "#000000"]
         # add prj to ls_project before selecting it.
@@ -5607,13 +5611,7 @@ class GtkViewModel(ViewModel):
             else:
                 lsp.append(v + (extras if a == "ls_projects" else []))
         ui = self.uilevel
-        if self.project is not None:
-            self.saveConfig()
-        self.resetToInitValues()
-        if self.initialised:
-            self.set("fcb_project", prj)
-        else:
-            self.setPrjid(pjct.prjid, pjct.guid)
+        self.setPrjid(pjct.prjid, pjct.guid)
         self.set_uiChangeLevel(ui)
 
     def onImportProject(self):

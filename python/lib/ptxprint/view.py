@@ -911,6 +911,7 @@ class ViewModel:
             for k, p in self.polyglots.items():
                 p.writeConfig(config, f"diglot_{k}")
         self.globaliseConfig(config)
+        logger.debug(f"Writing config to {path}")
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
         if self.triggervcs:
@@ -1451,7 +1452,7 @@ class ViewModel:
 
     def saveConfig(self, force=False):
         cfgpath = os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")
-        logger.debug(f"Saving config {self.isChanged=} {cfgpath=}")
+        logger.debug(f"Saving config {self.isChanged=} {cfgpath=} {self.project=} from {getcaller()}")
         changed = self.isChanged
         changed = self.saveAdjlists(force=force) or changed
         if not os.path.exists(cfgpath):
@@ -1467,6 +1468,7 @@ class ViewModel:
             if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
+        self.isChanged = False
 
     def saveAdjlists(self, force=False):
         for bk, adj in self.adjlists.items():
