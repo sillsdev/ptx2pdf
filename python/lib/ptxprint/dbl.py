@@ -178,7 +178,7 @@ def UnpackBooks(inzip, prjid, prjdir, subdir=None):
             inzip.collectBookNames(indoc)
     if not inzip.hasbooknames:
         inzip.outBookNames(os.path.join(prjdir, prjid))
-    return os.path.exists(prjdir, prjid)
+    return os.path.exists(os.path.join(prjdir, prjid))
 
 def unpackBook(inzip, inname, bkid, informat, prjid, prjdir):
     prjpath = os.path.join(prjdir, prjid)

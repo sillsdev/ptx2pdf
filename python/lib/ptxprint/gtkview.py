@@ -5607,6 +5607,8 @@ class GtkViewModel(ViewModel):
             else:
                 lsp.append(v + (extras if a == "ls_projects" else []))
         ui = self.uilevel
+        if self.project is not None:
+            self.saveConfig()
         self.resetToInitValues()
         if self.initialised:
             self.set("fcb_project", prj)
