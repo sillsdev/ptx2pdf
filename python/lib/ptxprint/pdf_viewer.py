@@ -1262,21 +1262,24 @@ class PDFContentViewer(PDFFileViewer):
         self.parlocs.readParlocs(fname, rtl=rtl)
         self.parlocs.load_dests(self.document)
         if self.showanalysis:
-            xdvname = fname.replace(".parlocs", ".xdv")
-            print(f"Reading {xdvname}")
-            cthreshold = float(self.model.get("s_paddingwidth", 0.5))
-            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
-                                        fontsize=float(self.model.get("s_fontsize", 1)))
-            for (opcode, data) in xdvreader.parse():
-                pass
-            if self.spacethreshold == 0:
-                self.badspaces = self.parlocs.getnbadspaces()
-                if len(self.badspaces):
-                    self.model.set("s_spaceEms", self.badspaces[0].widthem)
-            wanted = 7
-            self.spacepages, self.collisionpages, self.riverpages = \
-                self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
-                        float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
+            self.load_analysis(fname)
+
+    def load_analysis(self, fname):
+        xdvname = fname.replace(".parlocs", ".xdv")
+        print(f"Reading {xdvname}")
+        cthreshold = float(self.model.get("s_paddingwidth", 0.5))
+        xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
+                                    fontsize=float(self.model.get("s_fontsize", 1)))
+        for (opcode, data) in xdvreader.parse():
+            pass
+        if self.spacethreshold == 0:
+            self.badspaces = self.parlocs.getnbadspaces()
+            if len(self.badspaces):
+                self.model.set("s_spaceEms", self.badspaces[0].widthem)
+        wanted = 7
+        self.spacepages, self.collisionpages, self.riverpages = \
+            self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
+                    float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
 
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """

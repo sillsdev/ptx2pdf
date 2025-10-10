@@ -63,6 +63,7 @@ from dataclasses import dataclass, asdict
 from zipfile import ZipFile, BadZipFile, ZIP_DEFLATED
 from usfmtc.reference import Ref, Environment
 from collections import defaultdict
+from functools import partial
 
 
 logger = logging.getLogger(__name__)
@@ -5120,8 +5121,12 @@ class GtkViewModel(ViewModel):
                 i += 1
                 Gtk.main_iteration_do(False)
 
-    def onIdle(self, fn, *args):
-        GLib.idle_add(fn, *args)
+    def onIdle(self, fn, *args, **kwargs):
+        if len(kwargs):
+            partialfn = partial(fn, **kwargs)
+        else:
+            partialfn = fn
+        GLib.idle_add(partialfn, *args)
 
     def showLogFile(self):
         mpgnum = self.notebooks['Main'].index("tb_Viewer")

@@ -793,7 +793,7 @@ class RunJob:
             if not self.noview and startname is not None:
                 if self.printer.get("c_layoutAnalysis"):
                     self.printer.incrementProgress(inproc=True, stage="al")
-                self.printer.onShowPDF(path=startname, extras=self.extrafiles)
+                self.printer.onIdle(self.printer.onShowPDF, path=startname, extras=self.extrafiles)
                 self.printer.incrementProgress(inproc=True, stage=None)
 
         elif self.res == 3:
