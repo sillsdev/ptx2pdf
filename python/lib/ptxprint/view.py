@@ -179,6 +179,9 @@ class ViewModel:
 
     def setPrintBtnStatus(self, idnty, txt=""):
         self.doStatus(txt)
+
+    def onIdle(self, fn, *args, **kw):
+        fn(*args, **kw)
         
     def msgQuestion(self, q1, q2, default=False):
         print("Answering \"no\" to: " + q1)
