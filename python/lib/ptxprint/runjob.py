@@ -705,7 +705,8 @@ class RunJob:
                 self.res = 4 if runner else 0
             self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
             if self.res == 0:
-                self.printer.pdf_viewer.clear()
+                if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+                    self.print.onIdle(self.printer.pdf_viewer.clear)
                 if not self.procpdf(outfname, pdffile, info, burst=info['finishing/extractinserts'],
                                     cover=info['cover/makecoverpage'] != '%'):
                     self.res = 3
@@ -722,7 +723,7 @@ class RunJob:
             cfgname = ""
         if pdfname is not None:
             print(pdfname)
-        self.printer.set("l_statusLine", "")
+        self.printer.onIdle(self.printer.set, "l_statusLine", "")
         print(f"{self.res=}")
         if self.res == 0:
             logger.debug(f"{self.noview=} {self.printer.isDisplay=} {pdfname=} doCreateDiff={self.printer.docreatediff}")
@@ -739,9 +740,9 @@ class RunJob:
                     diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
                                 color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
-                        self.printer.onShowPDF(path=diffname)
+                        self.printer.onIdle(self.printer.onShowPDF, path=diffname)
                         if diffname == pdfname:
-                            self.printer.set("l_statusLine", _("No differences found"))
+                            self.printer.onIdle(self.printer.set, "l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
                 startname = pdfname
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
@@ -772,7 +773,7 @@ class RunJob:
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
-                            self.printer.set("l_statusLine", chkmsg)
+                            self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
                         else:
                             sl.set_text(summaryLine)
                             sl.set_tooltip_text(msgs)
@@ -793,7 +794,7 @@ class RunJob:
             if not self.noview and startname is not None:
                 if self.printer.get("c_layoutAnalysis"):
                     self.printer.incrementProgress(inproc=True, stage="al")
-                self.printer.onShowPDF(path=startname, extras=self.extrafiles)
+                self.printer.onIdle(self.printer.onShowPDF, path=startname, extras=self.extrafiles)
                 self.printer.incrementProgress(inproc=True, stage=None)
 
         elif self.res == 3:
@@ -812,12 +813,13 @@ class RunJob:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
                     secondary="".join(loglines[-12:]),
                     title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
-        elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+        else:
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
                     secondary="".join(finalLogLines[:30]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True, copy2clip=True)
-            self.printer.onIdle(self.printer.showLogFile)
+            if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+                self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         self.printer.finished(self.res == 0)
@@ -825,7 +827,7 @@ class RunJob:
         if not self.noview and not self.args.print and self.printer.isDisplay:
             spnr = self.printer.builder.get_object("spin_preview")
             if spnr.props.active:  # Check if the spinner is running
-                spnr.stop()
+                self.printer.onIdle(spnr.stop)
             if self.printer.showPDFmode == "preview":
                 self.printer.builder.get_object("dlg_preview").present()
         r = Report()

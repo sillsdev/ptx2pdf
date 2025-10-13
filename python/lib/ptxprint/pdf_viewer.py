@@ -377,7 +377,8 @@ class PDFFileViewer:
         if widget is None:
             widget = self.widget
         self.widget = widget
-        widget.set_title(_("PDF Preview 3.0.0") + "   [FileViewer]   " + os.path.basename(self.fname) + formatted_time)
+        if widget is not None:
+            widget.set_title(_("PDF Preview 3.0.0") + "   " + os.path.basename(self.fname) + formatted_time)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.widget.show_all()
         self.set_zoom_fit_to_screen(None)
@@ -1244,7 +1245,8 @@ class PDFContentViewer(PDFFileViewer):
             self.parlocfile = parlocs
         if not super().loadnshow(fname, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
-        widget.set_title(_("PDF Preview 3.0.0") + "   [ContentViewer]   " + os.path.basename(self.fname))
+        if widget is not None:
+            widget.set_title(_("PDF Preview 3.0.0") + "   " + os.path.basename(self.fname))
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
@@ -1260,21 +1262,24 @@ class PDFContentViewer(PDFFileViewer):
         self.parlocs.readParlocs(fname, rtl=rtl)
         self.parlocs.load_dests(self.document)
         if self.showanalysis:
-            xdvname = fname.replace(".parlocs", ".xdv")
-            print(f"Reading {xdvname}")
-            cthreshold = float(self.model.get("s_paddingwidth", 0.5))
-            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
-                                        fontsize=float(self.model.get("s_fontsize", 1)))
-            for (opcode, data) in xdvreader.parse():
-                pass
-            if self.spacethreshold == 0:
-                self.badspaces = self.parlocs.getnbadspaces()
-                if len(self.badspaces):
-                    self.model.set("s_spaceEms", self.badspaces[0].widthem)
-            wanted = 7
-            self.spacepages, self.collisionpages, self.riverpages = \
-                self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
-                        float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
+            self.load_analysis(fname)
+
+    def load_analysis(self, fname):
+        xdvname = fname.replace(".parlocs", ".xdv")
+        print(f"Reading {xdvname}")
+        cthreshold = float(self.model.get("s_paddingwidth", 0.5))
+        xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
+                                    fontsize=float(self.model.get("s_fontsize", 1)))
+        for (opcode, data) in xdvreader.parse():
+            pass
+        if self.spacethreshold == 0:
+            self.badspaces = self.parlocs.getnbadspaces()
+            if len(self.badspaces):
+                self.model.set("s_spaceEms", self.badspaces[0].widthem)
+        wanted = 7
+        self.spacepages, self.collisionpages, self.riverpages = \
+            self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
+                    float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
 
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
@@ -1292,7 +1297,7 @@ class PDFContentViewer(PDFFileViewer):
 
     def seekUFpage(self, direction):
         pages = self.numpages
-        if not pages or not self.model.ufPages:
+        if not pages or not self.all_pages:
             return
         pgnum = self.current_index
         try:
@@ -1302,12 +1307,12 @@ class PDFContentViewer(PDFFileViewer):
             current_pg = 1
         if direction == self.swap4rtl('next'):
             next_page = None
-            for pg in self.all_pages: # self.model.ufPages:
+            for pg in self.all_pages:
                 if pg > current_pg:
                     next_page = pg
                     break
             if next_page:
-                self.ufCurrIndex = self.all_pages.index(next_page)  # self.model.ufPages
+                self.ufCurrIndex = self.all_pages.index(next_page)
         else:  # 'previous'
             prev_page = None
             for pg in reversed(self.all_pages):
