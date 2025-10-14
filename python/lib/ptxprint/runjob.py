@@ -706,7 +706,7 @@ class RunJob:
             self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
             if self.res == 0:
                 if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
-                    self.print.onIdle(self.printer.pdf_viewer.clear)
+                    self.printer.onIdle(self.printer.pdf_viewer.clear)
                 if not self.procpdf(outfname, pdffile, info, burst=info['finishing/extractinserts'],
                                     cover=info['cover/makecoverpage'] != '%'):
                     self.res = 3

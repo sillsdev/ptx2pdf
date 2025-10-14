@@ -129,12 +129,13 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
 
     if outpdfobj is not None:
         if opath != pdffile:
-            if os.path.exists(pdffile):
-                os.remove(pdffile)
-            try:
-                os.rename(opath, pdffile)
-            except (FileNotFoundError, PermissionError):
-                pass
+            if os.path.exists(opath):
+                if os.path.exists(pdffile):
+                    os.remove(pdffile)
+                try:
+                    os.rename(opath, pdffile)
+                except (FileNotFoundError, PermissionError):
+                    pass
         pdffile = pdffile.replace(".pdf", ext+".pdf")
         if ext != "":
             res[' Finished'] = pdffile
