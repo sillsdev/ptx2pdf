@@ -528,7 +528,7 @@
      \ifcsname startx:#1-\c@rref\endcsname
        \dimen0=\csname startx:#1-\c@rref\endcsname sp
      \else \ifcsname marginnote-\c@rref @#1:xshift\endcsname
-         \dimen0=\csname marginnote-\c@rref @#1:xshift\endcsname sp
+         \dimen0=\csname marginnote-\c@rref @#1:xshift\endcsname% sp
        \else \dimen0=0pt
      \fi\fi \ifdim\dimen0>0.5 \textwidth \def\c@l{1}\fi
      \trace{C}{\the\dimen0, c@l=\c@l}%

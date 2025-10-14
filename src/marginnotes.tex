@@ -76,18 +76,20 @@
   \setbox0=\vbox to 0pt{\let\par=\endgraf\everypar={}%
     \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi
     \trace{e}{Inside (\t@mpv) \the\ht#1+\the\dp#1*\the\wd#1}%
-    \ifx\t@mp\l@ft\llap{\box #1\kern #5\kern #4}%
-    \else\noindent\hfill\rlap{\kern #5\kern #4\box #1}%
+    \ifx\t@mp\l@ft\llap{\box #1 \kern #5\kern #4}%
+    \else\noindent\hfill\rlap{\kern #5\kern #4 \box #1}%
     \fi
     \ifx\t@mpv\@top\else\vss\fi}%
   % \ifx\t@mp\l@ft\showbox0
   \dp0=0pt
+  %\showbox0
   \do@djust{%\nointerlineskip\baselineskip=0pt
     %\ifx\t@mpv\@inline\else\nobreak\fi
     %\vskip\topskip\vskip-\dimen8
     %\vbox to 0pt{\hbox to 10pt{}}%
     %\kern -\topskip\kern\dimen8
     \trace{e}{Inside (0) \the\ht0+\the\dp0*\the\wd0}%
+    %\showbox0
     \kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9
   }%\ifx\t@mpv\@inline\nobreak\fi%
   \endgroup
@@ -129,11 +131,11 @@
   \dimen3 = #7%
   \trace{M}{marginnote (#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
   %\dimen0=0pt
-  \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
-  \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
+  \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname \else\dimen1=0pt \fi
+  \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname \else\dimen2=0pt \fi
   \xdef\wr@tet@mp{\string\@marginnote{#2}{#3}{\p@s}{#5}{\the\dimen0}{\the\wd#1}{\the\ht#1}{\the\dp#1}{\the\dimen1}{\the\dimen2}}%
   \advance\dimen2 by \dimen3%
-  %\ifx#3s \showbox#1\fi
+  %\showbox#1
   \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%
 }
 
