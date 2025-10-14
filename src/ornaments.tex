@@ -393,6 +393,7 @@
   \x@\newb@x\csname \ornUUID\endcsname
 }
 \newbox\theornament
+\newbox\theorngroup
 \def\orn@do@ornament{\bgroup%
     \traceifset{orn@do@ornament}%
     \ifpdf@ornament@stretch
@@ -692,6 +693,21 @@
   \fi
 }
 }
+{\catcode`\(=12
+\gdef\orn@group@set #1))#2,#3))#4\E{\edef\tmp{#2#3}\ifx\tmp\relaxval
+    \message{!Malformed ornament group. Closing mark '))' missing in ornament string "((#1"}%
+  \else
+    \trace{orn}{Starting ornament group (#1)|#2}%
+    \def\orn@group{#2}% What stretch or repeatclass is this group?
+    \setbox\theorngroup\box\voidb@x
+    \@orn@an@ornament #1,\E
+    \@orn@a@group #1,\E
+    \let\orn@group\relax% What stretch or repeatclass is this group?
+    \orn@an@ornament #3,\E
+  \fi
+}
+}
+
 \def\string@check #1"#2"#3\E{%
   \edef\tmp{#1}\ifx\tmp\empty
     \edef\tmp{#2}\ifx\tmp\empty\else
@@ -717,8 +733,10 @@
  \trace{eb}{Ornament number is "#1#2"}%
  \edef\pdf@ornamentNum{#1#2}%
 }
-{
+{%catcode containment
 \catcode`\^=12
+\catcode`\(=12
+
 \gdef\ornament@parse#1#2\E{%
   \edef\tmp{#1}%
   \trace{orn}{Prefix is \meaning#1 (=\meaning^)?}%
@@ -731,9 +749,10 @@
     \@ornament@parse #1#2\E
   \fi
 }
-}
+}%catcode containment
+
 \def\@ornament@parse#1|#2|#3|#4|#5|#6\E{%#6 is scrap
-  \trace{orn}{ornament@parse:#1:#2:#3:#4}%
+  \trace{orn}{@ornament@parse:#1:#2:#3:#4}%
   \stringornamentfalse
   \string@check#1""\E
   \def\@djYalign{#5}%
@@ -760,15 +779,18 @@
     %\tracingassigns=0
   \fi
   \edef\tmp{#3}%
-  \ifx\tmp\empty\else
-    \ifx\tmp\ptn@minus
-      \pdf@ornament@stretchtrue
-      \trace{orn}{Stretchd #1}%
-    \else
+  \ifx\tmp\ptn@minus
+    \pdf@ornament@stretchtrue
+    \trace{orn}{Stretchd #1}%
+  \else
+    \ifx\orn@group\relax \else
+      \let\tmp\orn@group
+    \fi
+    \ifx\tmp\empty\else
       \ifx\tmp\ptn@ex% No variable, xleader-fill
 	\pdf@ornament@repeattrue
       \else
-	\x@\chk@cplx#3\E %Split off first code
+	\x@\chk@cplx\tmp\E %Split off first code
         %\uppercase{\edef\tmpu{\tmpb}}%
         \ifx\tmpb\tmpu\else % variable needs to be  upper case 
           \trace{orn}{\tmpb\space is lowercase! Treat as \tmpu}%
@@ -828,14 +850,50 @@
   \x@\edef\csname mult@repeat@max@\orn@repeat@class\endcsname{#3}%
 }
 
-\def\orn@an@ornament#1,#2\E{%Possibly without changing the scale, output several ornaments
+\let\orn@group=\relax
+\def\orn@an@ornament#1#2#3\E{%Possibly without changing the scale, output several ornaments
+  \let\orn@group=\relax
+  \def\tmp{#1}\def\tmpb{#2}\ifx\tmp\tmpb
+    \ifx\tmp\br@Ltr
+    \orn@group@set #3)),\relax))\E
+  \else
+    \@orn@an@ornament#1#2#3\E
+  \fi
+}
+
+\def\@orn@an@ornament#1,#2\E{%Possibly without changing the scale, output several ornaments
+  \def\@orn@this{#1}\def\@orn@nxt{#2}%
   \advance\orn@seq@num by 1
   \x@\ornament@parse#1|||||\E%
   \ifornscale
     \setorn@scale
   \fi
   %\x@\let\csname orn@label@\the\orn@seq@num\endcsname\orn@label
-  \ifpdf@ornament@repeat
+  \ifx\orn@group\relax
+    \@@orn@an@ornament
+  \else
+    \setbox\theorngroup=\hbox{\unhbox\theorngroup\@@orn@an@ornament}%
+  \fi
+}
+
+\def\@orn@a@group{%
+  \ifx\orn@repeat@class\empty
+    \trace{orn}{Repeating ornament group using xleaders for \orn@repeat@class}%
+    \xleaders\box\theorngroup\hskip 0pt plus 1 fil\relax
+  \else
+    \x@\let\x@\tmp \csname best@mult@class@num@\orn@repeat@class\endcsname
+    \ifx\tmp\relax
+      \trace{orn}{Repeating ornament group using xleaders for \orn@repeat@class}%
+      \xleaders\box\theorngroup\hskip 0pt plus 1 fil\relax
+      \trace{orn}{Repeating ornament group \@orn@this (\tmp times)}%
+      \bgroup\setbox1=\box\theorngroup\count255=\tmp
+        \loop\ifnum\count255>0 \copy1 \advance\count255 by -1 \repeat\egroup%
+    \fi
+  \fi
+}
+
+\def\@@orn@an@ornament{%
+  \ifnum 1=\ifpdf@ornament@repeat 1 \else \ifx\orn@group\relax 0 \else 1\fi\fi
     \orn@do@ornament
     \ifXformOrnaments
       \ifholdXobjects\else\ifvoid\ornXobjects\else
@@ -853,21 +911,20 @@
 	\trace{orn}{Repeating ornament using xleaders for \orn@repeat@class}%
 	\xleaders\box\theornament\hskip 0pt plus 1 fil\relax
       \else
-	\trace{orn}{Repeating ornament #1 (\tmp times)}%
+	\trace{orn}{Repeating ornament \@orn@this (\tmp times)}%
 	\bgroup\setbox1=\box\theornament\count255=\tmp\loop\ifnum\count255>0\copy1\advance\count255 by -1\repeat\egroup%
       \fi
     \fi
   \else
-    \trace{orn}{Simple ornament #1}%
+    \trace{orn}{Simple ornament \@orn@this}%
     \orn@do@ornament
   \fi
-  \def\tmp{#2}%
-  \ifx\tmp\empty
+  \ifx\@orn@nxt\empty
     \let\nxt=\endstack
   \else
     \let\nxt\orn@an@ornament
   \fi
-  \x@\nxt\tmp\E
+  \x@\nxt\@orn@nxt\E
 }
 
 \def\Ornaments#1{%
