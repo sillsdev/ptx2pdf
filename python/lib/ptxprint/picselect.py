@@ -45,6 +45,18 @@ class TagableRef(Ref):
         coffset = self.vrs[books[self.book]][self.chap-1] + (self.chap - 1) * chapshift if self.chap > 1 else 0
         return self.vrs[books[self.book]][0] + coffset + self.verse
 
+    def numverses(self):
+        if self.verse is not None:
+            return 1
+        vrs = self.first.versification or Ref.loadversification()
+        if self.chapter is None:
+            firstc = 0
+            lastc = len(vrs.vnums[self.book])
+        else:
+            firstc = self.chapter
+            lastc = self.chapter + 1
+        return vrs.vnums[self.book][lastc] - vrs.vnums[self.book][firstc]
+
 
 def unpackImageset(filename, prjdir):
     with zipfile.ZipFile(filename) as zf:
