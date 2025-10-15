@@ -21154,6 +21154,7 @@ line up vertically on the margin, and
 Verse Bridges (3-4) also stack vertically.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -21405,7 +21406,6 @@ and also adjust the width of that
 column to fit the verse numbers.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onMarginalVersesClicked" swapped="no"/>
                                           </object>

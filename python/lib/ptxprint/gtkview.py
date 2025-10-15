@@ -2491,9 +2491,9 @@ class GtkViewModel(ViewModel):
         self.picListView.onRadioChanged()
         val = self.get("s_indentUnit")
         if btn.get_active():
-            val = float(val) / 2
+            val = float(val) / 1.5
         else:
-            val = float(val) * 2
+            val = float(val) * 1.5
         self.set("s_indentUnit", val)
         # for fx in ("fn", "xr"): 
             # if not btn.get_active() and self.get("r_{}pos".format(fx)) == "column":
