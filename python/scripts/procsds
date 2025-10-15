@@ -387,7 +387,8 @@ class SemDomData:
         for e in doc.findall(".//sd"):
             code = e.get("code")
             if code.startswith("_"):
-                self.namecount = max(self.namecount, int(code[1:]))
+                bs = code[1:].split("_")
+                self.namecount = max(self.namecount, int(bs[0]))
             rs = e.find(".//refs")
             if rs is not None:
                 self.sdrefs[code] = set(RefList(rs.text))
