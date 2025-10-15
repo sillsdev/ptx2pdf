@@ -8,18 +8,18 @@ page-borders (note that these extend beyond the normal text area).
 
 ### Sources of ornaments
 #### pgfornament package
-There is a LaTeX package called pgfornament (based on an earlier package 
-psvectorian), which provides access to pen-and-ink style vector-based artwork
-such as ornamental borders. Some of the artwork is unsuitable for use in
+PTXprint now includes the ornaments, (both 'Vectorian' and 'Han' sets)
+from version 1.2 of a LaTeX package called pgfornament (vector-based artwork).
+.
+Some of the artwork is unsuitable for use in
 scripture or scripture-based products, but, chosen carefully with a view to
-local cultural preferences, some of them may be of use.  The 
-original Victorian-era inspired 'vectorian' illustrations fall into categories 
+local cultural preferences, some of them may be of use.  
+The Victorian-era inspired 'vectorian' illustrations fall into categories 
 of geometric and botanical drawings, corner-pieces, linear features, animals,
 hands, and objects. 
-
-Recent versions (1.2, Oct 2020) of the package now also include the
-pgfornament-han images, from LianTse Lim and Chennan Zhang, to provide some of
+The 'han' images, from LianTse Lim and Chennan Zhang, provide some of
 the traditional patterns of the Han style using the same mechanism.
+
 
 Adding alternative graphical elements is also possible. Each
 'ornament' resides in its own file, (but with dimensions defined separately).
@@ -27,15 +27,17 @@ The images are loaded on use and transcribed (as vector drawings) into the PDF
 file. 
 
 The stroke colour, stroke-width and fill colour may be selected at load-time.
-The current code provides for borders around sidebars, with the parameters
-described within the style sheet.
+The current code provides for borders around sidebars, the text area, 
+and figures, with the parameters described within the style sheet. Ornamental 
+rules (`\zrule | cat="ornament" width="0.5" \*`) are also supported.
 
-PTXprint now includes the ornaments from version 1.2 of the package.
 
 #### Locally defined ornaments
 Simple lines and other features can easily be hand-coded, using the same
 mechanisms as above. For future-compatibility these have been given negative
-numbers.  (See section on additional ornaments, below).
+numbers, or numbers starting above 100 (See section on additional ornaments, below).
+The supplied additional ornament elements, include spaces, simple lines, and some
+corner-pieces to suppliement the above are also included.
 
 #### Border or dingbat fonts
 There are two mechanisms to access font-based border elements. Either:
@@ -47,26 +49,31 @@ auto-generates an ornament number).
 If font-based elements are used, then only the (fill) colour can be specified.
 
 #### Border elements from graphic files
-The most recent addition (May 2022) implements graphics files as an image type.
-The graphic can be rotated and almost certainly stretched too, but cannot be
+Graphic files (bitmaps formats understoot by XeTeX such as JPEG and PNG) can
+also be used.  The graphic can be rotated and stretched, but cannot be
 recoloured.
 
 ### This does not implement pgf!
-While using the images from the above packages, the ornament-including code is
+While using the images from the LaTeX pgf packages, the ornament-including code is
 in no way intended to be a version of the large and complex pgf-drawing
 environment. It only replicates fragments of code that are necessary to
 draw the ornaments in PDFs. Almost all of the documentation from the latex package is
 therefore entirely irrelevant to using the ornaments with PTXprint.
 
-### What this plugin adds
-The ornaments plugin can be instructed to stretch or repeat ornaments to
-hopefully provide a pleasing result, no matter what the final size of the
-side-bar is.  Repeated elements can have matching or dissimilar counts.
-Counts determined from the top of the box can be re-used by other edges.
+### What this plugin adds to pgf
+The ornaments plugin can be instructed to stretch or repeat ornaments or 
+groups of elements to hopefully provide a pleasing result, no matter what the
+final size of the side-bar / rule / border  is. Repeated elements can have
+matching or dissimilar counts.  Counts determined from the top of the box can
+be re-used by other edges.
 
 ## Using the module
 The PTXprint user-interface can now select plugins. Enter `ornaments` in the plugins 
-text box on the advanced tab. 
+text box on the advanced tab.  The standard border style sheet will normally be
+automatically included when ornamental borders are selected, but if you are
+only using ornamental rules, it may be that 
+your particular configuration still requires `\stylesheet{standardborders}` 
+in your `ptxprint-mods.tex` file.
 
 ## Specifying that a border or sidebar should use ornaments
 The relevant stylesheet entry to use the ornaments package is
@@ -134,6 +141,25 @@ The code determines the natural length of objects using the same variable, and
 then determines the values of the variables that give the best result (minimum 
 stretch or shrink required).
 
+#### Grouping elements
+Sometimes it is desirable that rather than a single element gets repeated, the repetition 
+applies to a sequence of elements. The group is designated by `((` ... `))`.
+E.g. `((1|||,1|h|))*a` will repeat and stretch the group which comprises `1||`
+(element 1, normal orientation) and `1|h|` (element 1, horizontally mirrored).
+
+#### Map grid reference
+Sometimes, is is desirable to overprint elements with a label, especially to locate places on a map.
+An automatic label can be added with the *prefix* of `^text^`  or `^text|style^` before the marker number.
+`style` is the marker style (without preceding backslash) that should be used
+for the map-border labels. e.g. `^\zSEQ|zbl1^1|v|||`) If, as in the preceding example,
+ `\zSEQ` is given as the `text` portion of the prefix, then that will become the relevant 
+entry from `\MapBorderXLabels` where `X` is `T`, `B`, `L`, and `R` (top,
+bottom, left and right) if they have been defined, or, if not, falling back to
+the default lists with X taking values `H` for horizontal edges and `V` for vertical edges.
+
+Presumably, the grid will be referenced in text, but nevertheless, it also works for 
+*grouped* border elements. 
+
 #### Scaling 
 A numerical scaling factor or a named scale factor. 
 If a numerical value is to be supplied, it must include a decimal point.
@@ -169,7 +195,7 @@ be 0.5pt / natural unit in both dimensions (and if applied to ornament 32, it wi
 \OrnamentScaleRef a:y|32,b:y|33,c:X|33:y|32
 ```
 As with normal style-sheet entries, only one `\OrnamentScaleRef` is in force at any time and a second will overwrite it.
-##### Parsing grammar
+##### Parsing grammar for OrnamentScaleRef
 ```
  settings:= setting  -or-  setting,settings
  setting:= name:key2|ornament -or- name:key1|ornament:key1|ornament

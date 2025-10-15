@@ -656,7 +656,7 @@
 }% 
 
   
-\def\endstack\E{}
+\def\endstack#1\E{}
 \def\E{}
 
 \setgeomtransform{u}
@@ -665,7 +665,7 @@
 \def\ptn@ast{*}
 \def\ptn@plus{+}
 \def\ptn@quest{?}
-\def\ptn@range{(}
+{\catcode`\(=12 \gdef\ptn@range{(}}
 \def\ptn@eq{=}
 \def\ptn@sim{"} % Ditto mars
 \def\ptn@ex{x}
@@ -704,7 +704,8 @@
     \def\orn@group{#2}% What stretch or repeatclass is this group?
     \setbox\theorngroup\box\voidb@x
     \@orn@an@ornament #1,\E
-    \@orn@a@group
+    \@orn@a@group #1,\E
+    \trace{orn}{End of group}%
     \let\orn@group\relax% What stretch or repeatclass is this group?
     \def\tmp{#3}\ifx\tmp\empty\else
       \x@\orn@an@ornament #3,\E
@@ -714,9 +715,10 @@
 \gdef\orn@group@meas #1))#2,#3))#4\E{\edef\tmp{#2#3}\ifx\tmp\relaxval
     \message{!Malformed ornament group. Closing mark '))' missing in ornament string "((#1"}%
   \else
-    \trace{orn}{Starting ornament group (#1)|#2}%
+    \trace{orn}{Starting measuring group (#1)|#2}%
     \def\orn@group{#2}% What stretch or repeatclass is this group?
     \@orn@meas@ornament #1,\E
+    \trace{orn}{End of group}%
     \let\orn@group\relax% What stretch or repeatclass is this group?
     \def\tmp{#3}\ifx\tmp\empty\else
       \x@\@orn@meas@ornament #3,\E
@@ -797,9 +799,10 @@
   \edef\tmp{#3}%
   \ifx\tmp\ptn@minus
     \pdf@ornament@stretchtrue
-    \trace{orn}{Stretchd #1}%
+    \trace{orn}{Stretched #1}%
   \else
     \ifx\orn@group\relax \else
+      \trace{orn}{Group repeat code:\orn@group}%
       \let\tmp\orn@group
     \fi
     \ifx\tmp\empty\else
@@ -889,31 +892,43 @@
     \setorn@scale
   \fi
   %\x@\let\csname orn@label@\the\orn@seq@num\endcsname\orn@label
-  \ifx\orn@group\relax
-    \@@orn@an@ornament
-  \else
-    \setbox\theorngroup=\hbox{\unhbox\theorngroup\@@orn@an@ornament}%
-  \fi
+  \@@orn@an@ornament
 }
 
-\def\@orn@a@group{%
+\def\@orn@a@group#1\E{%
   \ifx\orn@repeat@class\empty
-    \trace{orn}{Repeating ornament group using xleaders for \orn@repeat@class}%
+    \trace{orn}{Repeating ornament group using xleaders for class:\orn@repeat@class (1)}%
     \xleaders\box\theorngroup\hskip 0pt plus 1 fil\relax
   \else
-    \x@\let\x@\tmp \csname best@mult@class@num@\orn@repeat@class\endcsname
-    \ifx\tmp\relax
-      \trace{orn}{Repeating ornament group using xleaders for \orn@repeat@class}%
+    \x@\let\x@\o@g@count \csname best@mult@class@num@\orn@repeat@class\endcsname
+    \ifnum 1=\ifx\o@g@count\relax 1 \else \ifx\o@g@count\empty 1 \else 0 \fi\fi
+      \trace{orn}{Repeating ornament group using xleaders for class:\orn@repeat@class (2)}%
       \xleaders\box\theorngroup\hskip 0pt plus 1 fil\relax
-      \trace{orn}{Repeating ornament group \@orn@this (\tmp times)}%
-      \bgroup\setbox1=\box\theorngroup\count255=\tmp
-        \loop\ifnum\count255>0 \copy1 \advance\count255 by -1 \repeat\egroup%
+    \else 
+      \trace{orn}{Repeating ornament group #1 (\o@g@count \space times)}%
+      \ifnum\o@g@count>0 
+        \box\theorngroup
+        \@@orn@a@group#1\E
+      \fi
     \fi
   \fi
 }
 
+\def\@@orn@a@group#1\E{%
+  \trace{orn}{Repeating group \o@g@count \space more times}%
+  \ifnum \o@g@count>0
+    \edef\o@g@count{\the\numexpr \o@g@count -1 \relax}%
+    \box\theorngroup
+    \@orn@an@ornament #1\E
+    \let\nxt\@@orn@a@group
+  \else
+    \let\nxt=\endstack
+  \fi
+  \nxt#1\E
+}
+    
 \def\@@orn@an@ornament{%
-  \ifnum 1=\ifpdf@ornament@repeat 1 \else \ifx\orn@group\relax 0 \else 1\fi\fi
+  \ifnum 1=\ifx\orn@group\relax \ifpdf@ornament@repeat 1 \else 0 \fi \else 0\fi
     \orn@do@ornament
     \ifXformOrnaments
       \ifholdXobjects\else\ifvoid\ornXobjects\else
@@ -938,11 +953,15 @@
   \else
     \trace{orn}{Simple ornament \@orn@this}%
     \orn@do@ornament
+    \ifx\orn@group\relax\else
+      \trace{orn}{Adding to group box \l@gdims\theorngroup}%
+      \global\setbox\theorngroup=\hbox{\unhbox\theorngroup\box\theornament}%
+    \fi
   \fi
   \ifx\@orn@nxt\empty
     \let\nxt=\endstack
   \else
-    \let\nxt\orn@an@ornament
+    \let\nxt\@orn@an@ornament
   \fi
   \x@\nxt\@orn@nxt\E
 }
@@ -1188,7 +1207,7 @@
   \ifx\tmp\empty
     \let\nxt=\endstack
   \else
-    \let\nxt\orn@meas@ornament
+    \let\nxt\@orn@meas@ornament
   \fi
   \x@\nxt\tmp\E
 }
@@ -1600,17 +1619,19 @@
   \egroup
 }
 
+% Users should define these 2 below or MapBorderTlabels (and B L R versions) if so desired.
 \def\MapBorderHlabels{A,B,C,D,E,F,G,H,I,J,K}
 \def\MapBorderVlabels{1,2,3,4,5,6,7,8,9}
-\def\m@b@fallbackL{V}
-\def\m@b@fallbackR{V}
-\def\m@b@fallbackT{H}
-\def\m@b@fallbackB{H}
+% Internal use. Don't alter.
+\def\m@b@fallbackL{V}\def\m@b@fallbackR{V}
+\def\m@b@fallbackT{H}\def\m@b@fallbackB{H}
 \def\orn@Side{}
 \def\zSEQ{%
-  \trace{orn}{zSEQ \orn@Side, \the\orn@seq@num}%
-  \ifx\orn@Side\undefined\error{!zSEQ called without a defined side}\fi
-  \ifx\orn@Side\relax\error{!zSEQ called without a valid side}\fi
+  \ifnum 1= 1\ifx\orn@Side\undefined 0\fi\ifx\ifx\orn@Side\relax 0\fi\ifx\orn@Side\empty 0\fi\else
+    \trace{orn}{!zSEQ called without a defined side. Defaulting to H}
+    \def\orn@Side{H}%
+  \fi
+  \trace{orn}{zSEQ '\orn@Side', \the\orn@seq@num}%
   \ifcsname MapBorder\orn@Side labels\endcsname\x@\let\x@\@list\csname MapBorder\orn@Side labels\endcsname \let\tmp\orn@Side\else
     \x@\let\x@\tmp\csname m@b@fallback\orn@Side\endcsname
     \x@\let\x@\@list\csname MapBorder\tmp labels\endcsname
@@ -1620,6 +1641,7 @@
       \edef\c@llers{\@list,}%
       \count255=\orn@seq@num
       \x@\if\csname m@b@fallback\orn@Side\endcsname H% Horizontal borders have a corner piece.
+        \trace{orn}{Applying corner correction}%
         \advance\count255 by -1
       \fi
       \loop\ifnum\count255>1
