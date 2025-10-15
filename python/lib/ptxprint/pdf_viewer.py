@@ -6,6 +6,7 @@ import cairo, re, time, sys
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
+from ptxprint.view import VersionStr
 from ptxprint.utils import _, f2s, coltoonemax, getcaller
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
@@ -377,8 +378,8 @@ class PDFFileViewer:
         if widget is None:
             widget = self.widget
         self.widget = widget
-        if widget is not None:
-            widget.set_title(_("PDF Preview 3.0.0") + "   " + os.path.basename(self.fname) + formatted_time)
+        # if widget is not None:
+        #    widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.widget.show_all()
         self.set_zoom_fit_to_screen(None)
@@ -1245,8 +1246,11 @@ class PDFContentViewer(PDFFileViewer):
             self.parlocfile = parlocs
         if not super().loadnshow(fname, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
+        pdft = os.stat(fname).st_mtime
+        mod_time = datetime.datetime.fromtimestamp(pdft)
+        formatted_time = mod_time.strftime("   %d-%b %H:%M")
         if widget is not None:
-            widget.set_title(_("PDF Preview 3.0.0") + "   " + os.path.basename(self.fname))
+            widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
