@@ -16752,9 +16752,10 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkExpander">
+                                  <object class="GtkExpander" id="ex_copyright">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="no-show-all">True</property>
                                     <property name="margin-start">128</property>
                                     <property name="hexpand">True</property>
                                     <child>
@@ -21404,6 +21405,7 @@ and also adjust the width of that
 column to fit the verse numbers.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onMarginalVersesClicked" swapped="no"/>
                                           </object>
@@ -32523,8 +32525,9 @@ use in the current set of books.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <property name="no-show-all">True</property>
                                             <property name="relief">none</property>
-                                            <property name="uri">https://docs.usfm.bible/usfm-usx-docs/latest/index.html</property>
+                                            <property name="uri">https://docs.usfm.bible/usfm/latest/introduction.html</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
@@ -39778,6 +39781,7 @@ included in Paratext's Send/Recv data.</property>
                                       <object class="GtkLabel" id="l_trainingVideos">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">There is a growing range of videos
 to teach you how to use some of
 the more advanced features of
@@ -39800,6 +39804,7 @@ this very powerful software.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">There is a growing range of videos
 to teach you how to use some of
 the more advanced features of
@@ -39823,6 +39828,7 @@ latest features available in PTXprint.</property>
                                       <object class="GtkLabel" id="l_reportBugs">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by recently
 enhanced XeTeX macros with a long and reliable history.
@@ -39847,6 +39853,7 @@ an issue using this link.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -39866,6 +39873,7 @@ an issue using this link.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -39881,6 +39889,7 @@ an issue using this link.</property>
                                       <object class="GtkLabel" id="l_homePage">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">PTXprint does not have an auto-updating
 feature, so you are encouraged to check
 for new updates at the Home Page.
@@ -40007,6 +40016,7 @@ Email the ZIPped archive file to:
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -40023,6 +40033,7 @@ Email the ZIPped archive file to:
                                         <property name="width-request">250</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">Scripture Software Community site where you can 
 interact with other PTXprint users and the developers.</property>
                                         <property name="halign">end</property>
@@ -40177,6 +40188,7 @@ by deleting unneeded files.</property>
                                       <object class="GtkLabel" id="l_giveFeedback">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
 You could help us make PTXprint better!
 
@@ -40202,6 +40214,7 @@ don't like. Tell us what you dream for in the future.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">Click this link to fill in the Google form or type
 this in a browser: http://tiny.cc/ptxprintfeedback</property>
                                         <property name="halign">start</property>
@@ -40243,6 +40256,7 @@ so on.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">There is a growing range of videos
 to teach you how to use some of
 the more advanced features of
@@ -40314,6 +40328,7 @@ document. (For advanced users only). </property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -40370,12 +40385,13 @@ so on.</property>
                                     </child>
                                     <child>
                                       <object class="GtkLinkButton" id="lb_chatBot">
-                                        <property name="label" translatable="yes">NEW! Chatbot Support</property>
-                                        <property name="name">Use the PTXprint Support ChatBot to answer your questions instantly</property>
+                                        <property name="label" translatable="yes">Support Agent</property>
+                                        <property name="name">Use the PTXprint Support Agent (AI chatbot) to answer your questions instantly</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>

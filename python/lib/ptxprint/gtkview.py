@@ -164,6 +164,7 @@ btn_menu_showPDF l_menu_showPDF
 btn_menu_level btn_menu_lang btn_menu_feedback  btn_menu_donate l_menu_level l_menu_uilang
 fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
+fr_projCopyLcns
 fr_scope l_project fcb_project l_projectFullName r_book_single ecb_book 
 l_chapfrom l_chapto t_chapfrom t_chapto 
 r_book_multiple btn_chooseBooks ecb_booklist 
@@ -186,6 +187,7 @@ btn_showSettings
 """.split() # btn_reloadConfig   btn_imgClearSelection
 
 _ui_enable4diglot2ndary = """
+ex_copyright ecb_licenseText
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
 tb_NotesRefs lb_NotesRefs tb_general
 tb_footnotes c_includeFootnotes l_fnPos  c_fneachnewline
@@ -277,12 +279,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_PoD", "lb_Expert",
-                  "bx_statusMsgBar", "fr_plChecklistFilter", "l_picListWarn1", "l_picListWarn2", "col_noteLines", 
-                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
-                  # "col_dibackcol", "fcb_diglotSecProject", "ecb_diglotSecConfig", "c_diglot2captions", 
-                  # "spolyfraction_", "btn_diglotSwitch", "btn_adjust_diglot", "l_diglotSecProject",
-                  # "l_dibackcol", "l_diglotSecConfig", "lpolyfraction_", "tb_diglotSwitch"]  # "c_pdfGridlines" "bx_imageMsgBar", 
+_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_PoD lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
 
 _uiLevels = {
     2 : _ui_minimal,
