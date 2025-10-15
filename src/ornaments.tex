@@ -694,6 +694,9 @@
 }
 }
 {\catcode`\(=12
+
+}
+
 \gdef\orn@group@set #1))#2,#3))#4\E{\edef\tmp{#2#3}\ifx\tmp\relaxval
     \message{!Malformed ornament group. Closing mark '))' missing in ornament string "((#1"}%
   \else
@@ -701,11 +704,24 @@
     \def\orn@group{#2}% What stretch or repeatclass is this group?
     \setbox\theorngroup\box\voidb@x
     \@orn@an@ornament #1,\E
-    \@orn@a@group #1,\E
+    \@orn@a@group
     \let\orn@group\relax% What stretch or repeatclass is this group?
-    \orn@an@ornament #3,\E
+    \def\tmp{#3}\ifx\tmp\empty\else
+      \x@\orn@an@ornament #3,\E
+    \fi
   \fi
 }
+\gdef\orn@group@meas #1))#2,#3))#4\E{\edef\tmp{#2#3}\ifx\tmp\relaxval
+    \message{!Malformed ornament group. Closing mark '))' missing in ornament string "((#1"}%
+  \else
+    \trace{orn}{Starting ornament group (#1)|#2}%
+    \def\orn@group{#2}% What stretch or repeatclass is this group?
+    \@orn@meas@ornament #1,\E
+    \let\orn@group\relax% What stretch or repeatclass is this group?
+    \def\tmp{#3}\ifx\tmp\empty\else
+      \x@\@orn@meas@ornament #3,\E
+    \fi
+  \fi
 }
 
 \def\string@check #1"#2"#3\E{%
@@ -852,10 +868,14 @@
 
 \let\orn@group=\relax
 \def\orn@an@ornament#1#2#3\E{%Possibly without changing the scale, output several ornaments
+  \trace{orn}{orn@an@ornament #1,#2,#3}%
   \let\orn@group=\relax
   \def\tmp{#1}\def\tmpb{#2}\ifx\tmp\tmpb
     \ifx\tmp\br@Ltr
-    \orn@group@set #3)),\relax))\E
+      \orn@group@set #3)),\relax))\E
+    \else
+      \@orn@an@ornament#1#2#3\E
+    \fi
   \else
     \@orn@an@ornament#1#2#3\E
   \fi
@@ -1100,7 +1120,21 @@
 \def\E{}
 \def\add@mult@class#1{\x@\mult@classes\x@{\the\mult@classes\D@{#1}}}
 \newif\iftemp
-\def\orn@meas@ornament#1,#2\E{%
+\def\orn@meas@ornament#1#2#3\E{%
+  \trace{orn}{orn@meas@ornament #1,#2,#3}%
+  \let\orn@group=\relax
+  \def\tmp{#1}\def\tmpb{#2}\ifx\tmp\tmpb
+    \ifx\tmp\br@Ltr
+      \orn@group@meas #3)),\relax))\E
+    \else
+      \@orn@meas@ornament#1#2#3\E
+    \fi
+  \else
+    \@orn@meas@ornament#1#2#3\E
+  \fi
+}
+
+\def\@orn@meas@ornament#1,#2\E{%
   \advance\orn@seq@num by 1
   \x@\ornament@parse#1|||||\E %Set relevant transform matrix and various bools
   \ifornscale
@@ -1402,7 +1436,7 @@
 }
 
 %Stylesheet Options
-\def\t@xtbkslsh{\catcode`\\=12 \catcode`\^=12}
+\def\t@xtbkslsh{\catcode`\\=12 \catcode`\^=12 \catcode`\(=12 }
 \def\sb@setcode#1#2\relax{\p@sheof\everyeof={\noexpand}\x@\edef\x@\tmp\x@{\scantokens{#2}}\r@storbkslsh\p@peof\initc@t\setsbp@ram{#1}{\tmp}}
 
 \def\BorderPatternTop{\initc@t\t@xtbkslsh\sb@setcode{borderpatterntop}}
@@ -1469,6 +1503,7 @@
 \edef\b@rderparameters{\b@rderparameters,borderstyleextra,borderpatterntop,borderpatternleft,borderpatternright,borderpatternbot,ornamentscaleref}
 
 \x@\def\csname drawzrule-ornaments\endcsname{%
+  \traceifset{drawzrule-ornaments}%
   \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
   \getp@ram{borderpatterntop}{zrule}{\styst@k}%
   \ifx\p@ram\relax
@@ -1534,6 +1569,7 @@
     \trace{m}{Restoring \oldOrnamentsFamily (from \OrnamentsFamily)}%
     \SwitchOrnamentsFamily{\oldOrnamentsFamily}%
   \fi
+  \traceifcheck{drawzrule-ornaments}%
 }
 
 \def\r@und#1.#2\E{\ifdim .#2 pt < .5pt  #1\else\the\numexpr #1+1\relax\fi}

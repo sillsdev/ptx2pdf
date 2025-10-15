@@ -46,9 +46,9 @@ We are now inside a qt-s..qt-e block \nd*
 \qt-e\* And out of the block again
 \p This is an ornamental rule (0.9 wide, 5pt high, right-aligned), followed by a normal rule:
 \zrule |cat="ornaments" width="0.9" align="r"\*
-\endinput
-\rem \zrule |cat="annotated" width="0.9" align="r"\*
+\zrule |cat="annotated" width="0.9" align="r"\*
 
+\zrule |cat="ornaments3" width="0.9" align="r"\*
 \p This is another ornamental rule of the same style (at it's normal width, alignment etc are controlled by the style's margins):
 \zrule |cat="ornaments" \*
 
