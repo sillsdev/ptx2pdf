@@ -37,7 +37,7 @@
 \BorderFillColour 0.5 0.5 0.5
 \BorderStyleExtra pgfhan
 \BorderWidth 10
-\BorderPatternTop ((^\zSEQ|zbn^105|||,^\zSEQ|zbn^105|v|))(5-7)a
+\BorderPatternTop 105|v|-,((^\zSEQ|zbn^105|||,^\zSEQ|zbn^105|v|))(5-7)a,105||-
 %\BorderFillColour xFFC000
 %\Raise 3
 %\VerticalAlign b
@@ -61,12 +61,18 @@
 \BoxPadding 0
 %\Alpha 1
 %\BorderPadding -10
+
 \Marker cat:annotated2|fig
+\BorderRef MapEdge8
 \BorderFillColour 0 .7 0
-\BorderPatternTop 101|r||1.0,^\zSEQ|zbn2^105|v|-,^\zSEQ|zbn2^105||-,^\zSEQ|zbn2^105|v|-,^\zSEQ|zbn2^105||-,^\zSEQ|zbn2^105|v|-,101|R
-\BorderPatternBot 100|v||,^\zSEQ|zbn^31||-,^\zSEQ|zbn^32||-,^\zSEQ|zbn^31||-,^\zSEQ|zbn^32||-,^\zSEQ|zbn^31||-,100|d
-\BorderPatternRight ^\zSEQ|zbn2^32|l|-,^\zSEQ|zbn2^31|l|-,^\zSEQ|zbn2^32|l|-,^\zSEQ|zbn2^31|l|-,^\zSEQ|zbn2^32|l|-
-\BorderPatternLeft ^\zSEQ|zbn^32|r|-,^\zSEQ|zbn^31|r|-,^\zSEQ|zbn^32|r|-,^\zSEQ|zbn^31|r|-,^\zSEQ|zbn^32|r|-
+\BorderPatternTop 101|r||1.0,((^\zSEQ|zbn2^105|v|-,^\zSEQ|zbn2^105||-))(2-5)a,^\zSEQ|zbn2^105|v|-,101|R
+\BorderPatternBot 100|v||,((^\zSEQ|zbn^31||-,^\zSEQ|zbn^32||-,))=a,^\zSEQ|zbn^31||-,100|d
+\BorderPatternLeft ((^\zSEQ|zbn^32|r|-,^\zSEQ|zbn^31|r|-))*b
+\BorderPatternRight ((^\zSEQ|zbn2^32|l|,^\zSEQ|zbn2^31|l|))=b
+\BorderWidth 5
+\Border all
+\BorderStyle ornaments
+\BorderStyleExtra pgfhan
 
 \Marker cat:MapEdge14c|fig
 \BorderRef MapEdge14

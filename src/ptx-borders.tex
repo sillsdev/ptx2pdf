@@ -111,7 +111,7 @@
 }
 
 \def\overthin@fix#1#2#3#4{% If #2 is a space, then use = assignment, else use edef, (maybe with units)
-  \tracingassigns=1
+  %\tracingassigns=1
   \def\tmp{#2}\ifx\tmp\empty
     \edef#1{\the\csname min\thinlinest@ndard line\endcsname}%
   \else
@@ -124,7 +124,7 @@
         \message{!! The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref. Cannot fix because of unexpected units.}%
     \fi\fi
   \fi
-  \tracingassigns=0
+  %\tracingassigns=0
 }
 \gdef\overthin@warn#1#2#3#4{%
   \message{The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref}%
