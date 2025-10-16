@@ -828,7 +828,11 @@
     \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen0  %(+)
   \ifLogFonts
     \edef\f@ntl@gmsg{font<\f@ntstyle>=\typef@ce\space at \the \dimen0}%
-    \x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (page \the\pageno)}%
+    \ifb@xedstyle % a write node breaks word-by-word underlining and other boxedstyle things.
+      \x@\immediate\x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (at or after page \the\pageno)}%
+    \else
+      \x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (page \the\pageno)}%
+    \fi
   \fi
   \xdef\f@ntlist{\f@ntlist,\f@ntstyle}%
   \x@\ifcsname \typef@ce _spacefactor\endcsname
