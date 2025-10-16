@@ -2059,6 +2059,10 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_find").set_placeholder_text("Search for settings")
             self.builder.get_object("t_find").set_text("")
 
+    def onMainAppWinDeleted(self, widget, event): # Main App dialog (X button)
+        self.onDestroy(widget)
+
+
     def onCancel(self, btn):
         self.onDestroy(btn)
 
@@ -2491,9 +2495,9 @@ class GtkViewModel(ViewModel):
         self.picListView.onRadioChanged()
         val = self.get("s_indentUnit")
         if btn.get_active():
-            val = float(val) / 1.5
+            val = float(val) / 2.0
         else:
-            val = float(val) * 1.5
+            val = float(val) * 2.0
         self.set("s_indentUnit", val)
         # for fx in ("fn", "xr"): 
             # if not btn.get_active() and self.get("r_{}pos".format(fx)) == "column":

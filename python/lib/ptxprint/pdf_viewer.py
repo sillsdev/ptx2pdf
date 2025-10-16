@@ -1,4 +1,4 @@
-import gi, os, datetime, ctypes, math
+import gi, os, datetime, ctypes, math, gc
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
@@ -236,6 +236,7 @@ class PDFViewer:
                 if remove:
                     t = self.nbook.get_nth_page(i)
                     t.hide()
+        gc.collect()
 
     def settingsChanged(self):
         self.viewers[0].settingsChanged()
@@ -390,7 +391,7 @@ class PDFFileViewer:
         self.create_boxes(0)
         self.document = None
         if widget is not None:
-            widget.set_title(_("PDF Preview:"))
+            widget.set_title(_("PDF Preview {}").format(VersionStr))
 
     def minmaxnumpages(self):
         rmin = 0
@@ -896,7 +897,7 @@ class PDFContentViewer(PDFFileViewer):
 
         # Expand nodes conditionally based on top-level count
         num_top_level_nodes = self._count_top_level_nodes(res)
-        if num_top_level_nodes < 8:
+        if num_top_level_nodes == 1:
             self._expand_all_nodes(treeview, res)
 
         return res

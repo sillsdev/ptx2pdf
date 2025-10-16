@@ -1118,9 +1118,10 @@ class TexModel:
         doc.xml.canonicalise(version="3.1")
         if doc.xml.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
-            errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors])
-            secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
-            self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
+            errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
+            if len(errors):
+                secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
+                self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
         return doc  
 
     def makelocalChanges(self, printer, bk, chaprange=None):
