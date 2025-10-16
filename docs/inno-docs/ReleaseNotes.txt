@@ -1,10 +1,10 @@
 PTXprint 3.0.0 Release Notes
-10 Oct 2025
+16 Oct 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.0 (10 Oct 2025)
+Bug fixes and Improvements in 3.0.0 (16 Oct 2025)
   * Add tabs to PDF Prview window for Content, Cover, Diff, Finished and Reference
   * Ensure Catalogue and TechRef come to the fore after being opened in the Preview pane
   * Improveme the Styles tab - searching, filtering, highlighting, scroll to active style
@@ -35,6 +35,17 @@ Bug fixes and Improvements in 3.0.0 (10 Oct 2025)
   * Only show interchar problems if letter spacing enabled
   * View+Edit tab: only truncate .log files - let others load completely
   * Protect figure borders from peripheral interaction, semi-solve map borders
+  * Suppress unknown tag error messages
+  * Introduce garbage collection to prevent locked file when being cleared
+  * Add various Codelets
+  * Change poetry settings again
+  * Update procsds to cltk 2.0
+  * Change default poetry indents
+  * Add numverses to TagableRef
+  * Get rid of spurious sp inserted in 2 col margin notes
+  * Avoid a prevdepth usage error
+  * Change heading styles defaults
+  * Correct Vectorian1 border
   * Fix a leaky space in footnote text callers
   * Fix finishing files naming
   * Fix saving config on BSB load
@@ -45,7 +56,11 @@ Bug fixes and Improvements in 3.0.0 (10 Oct 2025)
   * Fix text borders
   * Fix style strikethrough
   * Fix unescaped \ codes
- ***Fix segfault? when updating pdf_viewer
+  * Fix bug where 'NoInternet' was still leaving some links clickable
+  * Fix missing Project settings for Mini & Basic view level
+  * Fix segfault crashes when trying to update PDF viewer
+  * Fix procpdf filename handling problems
+  * Fix time and version on title of pdf viewer
 _____________________________________________________________
 
 Bug fixes and Improvements in 2.9.9 (2 Oct 2025)
