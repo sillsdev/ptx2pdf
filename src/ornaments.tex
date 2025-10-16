@@ -702,9 +702,11 @@
     \message{!Malformed ornament group. Closing mark '))' missing in ornament string "((#1"}%
     \let\nxt=\endstack
   \else
-    \trace{orn}{Starting ornament group (#1)|#2}%
+    \ifinner \def\tmp{inner }\else\def\tmp{outer }\fi
+    \ifhmode \edef\tmp{\tmp hmode }\setbox\theorngroup\hbox{}\fi%
+    \ifvmode \edef\tmp{\tmp vmode }\setbox\theorngroup\vbox{}\fi%
+    \trace{orn}{Starting ornament group (#1)|#2 - \tmp}%
     \def\orn@group{#2}% What stretch or repeatclass is this group?
-    \setbox\theorngroup\box\voidb@x
     \@orn@an@ornament #1,\E
     \@orn@a@group #1,\E
     \trace{orn}{End of group}%
@@ -924,8 +926,8 @@
     \else 
       \trace{orn}{Repeating ornament group #1 (\o@g@count \space times)}%
       \ifnum\o@g@count>0 
-        \box\theorngroup
         \@@orn@a@group#1\E
+        \box\theorngroup
       \fi
     \fi
   \fi
@@ -933,10 +935,10 @@
 
 \def\@@orn@a@group#1\E{%
   \trace{orn}{Repeating group \o@g@count \space more times}%
+  \edef\o@g@count{\the\numexpr \o@g@count -1 \relax}%
   \ifnum \o@g@count>0
-    \edef\o@g@count{\the\numexpr \o@g@count -1 \relax}%
-    \box\theorngroup
     \@orn@an@ornament #1\E
+    %\box\theorngroup
     \let\nxt\@@orn@a@group
   \else
     \let\nxt=\endstack
@@ -971,8 +973,13 @@
     \trace{orn}{Simple ornament \@orn@this}%
     \orn@do@ornament
     \ifx\orn@group\relax\else
-      \trace{orn}{Adding to group box \l@gdims\theorngroup}%
-      \global\setbox\theorngroup=\hbox{\unhbox\theorngroup\box\theornament}%
+      \trace{orn}{Adding to group box \l@gdims\theorngroup\ifvbox\theorngroup vert\fi}%
+      \ifvbox\theorngroup
+        \global\setbox\theorngroup=\vbox{\everypar={}\let\par\endgraf\unvbox\theorngroup\box\theornament}%
+        \showbox\theorngroup
+      \else
+        \global\setbox\theorngroup=\hbox{\unhbox\theorngroup\box\theornament}%
+      \fi
     \fi
   \fi
   \ifx\@orn@nxt\empty
@@ -992,6 +999,10 @@
 }
 
 \def\Ornaments#1{%
+  \ifinner \def\tmp{inner }\else\def\tmp{outer }\fi
+  \ifhmode \edef\tmp{\tmp hmode }\fi%
+  \ifvmode \edef\tmp{\tmp vmode }\fi%
+  \trace{orn}{Ornaments \tmp #1}%
   \begingroup
     \def\orn@rpt@c@missing{0}%
     \orn@seq@num=0
