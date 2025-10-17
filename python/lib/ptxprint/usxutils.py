@@ -475,7 +475,7 @@ class Usfm:
                     self.kpars[v] = currp
             if curr is not None:
                 p.pos = RefPos(p.pos, curr)
-        self.chapters.append(i)
+        # self.chapters.append(i)
         for s in sections:
             _addorncv_hierarchy(s, curr)
         self.cvaddorned = True
