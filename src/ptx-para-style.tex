@@ -261,11 +261,14 @@
       \fi\fi
       \ifversion{6}{\ifdim\dimen2<-\dimen0 \advance\dimen2 by \baselineskip\fi}{}%
       \ifdim\upwardsHackDiff=0pt\else\advance\dimen2 by -\upwardsHackDiff \advance\dimen0 by \upwardsHackDiff\fi
-      \ifdiglot\kern\else\vskip\fi\dimen2
-      \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
-      \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
-      \ifrotate\prevdepth=\baselineskip\fi
-      \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
+      \ifsquashgridbox
+        \ifdiglot\kern\else\vskip\fi\dimen2
+      \else\vbox\bgroup\kern\headingtopspace\fi
+        \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
+        \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
+        \ifrotate\prevdepth=\baselineskip\fi
+        \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
+      \ifsquashgridbox\else\egroup\fi
       %\ifdim\oldprevdepth<-999pt \prevdepth=\oldprevdepth\fi % DON"T restore old prevdepth. For some reason this puts things off grid.
   \fi
 }

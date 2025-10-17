@@ -704,7 +704,7 @@ class TexModel:
                         res.append(r"% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o")
                         res.append(r"% 12 (size) comes from \p size")
                         res.append(r'\def\extraregular{{"{}"}}'.format(self.dict["document/fontextraregular"]))
-                        res.append(r"\catcode`\@=11")
+                        res.append(r"\catcode`\@=11\catcode`\^=7")
                         res.append(r"\def\do@xtrafont{\x@\s@textrafont\ifx\thisch@rstyle\undefined\m@rker\else\thisch@rstyle\fi}")
                         for a,b in c:
                             res.append(r"\def\@ctive{}{{\leavevmode{{\do@xtrafont {}{}}}}}".format(a, '^'*len(b), b))

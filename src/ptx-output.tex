@@ -1201,11 +1201,11 @@
   \fi
   \dimen9=\availht\advance\dimen9 by \bmg@p
   \trace{o}{fitting columns to \the\dimen9, coln@tes=\the\ht\xr@fbox}%
-  \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\ifdim\ht7>0pt \vfil\cl@rfinalsp@ce7\fi}\dp\colA=\lastd@pth
+  \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\ifdim\ht7>0pt \vfill\cl@rfinalsp@ce7\fi}\dp\colA=\lastd@pth
   \ifdim\ht\colB<1pt \setbox\colB\vbox to 0pt{\hbox to \hsize{}}\else
     \ifcolbfull\ifdim\lastd@pth<\dp\colB \lastd@pth=\dp\colB\fi\else\lastd@pth=\dp\colB\fi
   \fi
-  \setbox\colB=\vbox to \dimen9{\unvbox6\unvbox\colB\ifdim\ht8>0pt \vfil\cl@rfinalsp@ce8\fi}\dp\colB=\lastd@pth
+  \setbox\colB=\vbox to \dimen9{\unvbox6\unvbox\colB\ifdim\ht8>0pt \vfill\cl@rfinalsp@ce8\fi}\dp\colB=\lastd@pth
   \ifdim\colhtA>\colhtB \dimen3=\colhtA
     \ifcolbfull\lastd@pth=\dp\colA\dp\colB=\lastd@pth\fi
   \else
@@ -1481,13 +1481,13 @@
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
       \setbox\colA=\vbox{\hbox to \dimen5{\noindent
           % No \beginR does not result in the boxes coming out in document order
-          \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{1}%
+          \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB\vfil}\rshiftc@lumn{1}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-            \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+            \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
           \else 
-            \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+            \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-            \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+            \vbox to \dimen3{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
         \kern\lastd@pth}%
       \trace{et}{Apply border from savepartialpaged (writing partial)}%
       \doTextB@rder{\colA}%
@@ -1670,9 +1670,9 @@
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%
       \setbox\colA\hbox to \dimen1{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB\vfil}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
         \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
           \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}

@@ -2061,7 +2061,8 @@
  \ifdiglot
    \global\let\gridb@x\diglotgr@db@x
  \else
-   \ifsquashgridbox\global\let\gridb@x\gr@db@@x\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
+   %\ifsquashgridbox
+   \global\let\gridb@x\gr@db@@x%\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
    \ifNoGrid\global\let\gridb@x\ungr@db@x\fi
  \fi
  \@netimesetuplater
