@@ -1673,9 +1673,9 @@
         \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB\vfil}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
           \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \trace{et}{Apply border from twocoltrial (shipout)}%
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 
