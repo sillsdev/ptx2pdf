@@ -219,8 +219,8 @@
 
 \def\setup@ttr@grab#1{%
   \x@\xdef\csname \gr@bname\endcsname{\liter@lkerns\catcode`\/=12\relax % FIXME other active chars too?
-    \csname @@\gr@bname\endcsname\sm@rtquotes}%
-  \x@\gdef\csname @@\gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}#1}%
+    \csname @@\gr@bname\endcsname}%Note this is grabbing atttributes, don't put anything after
+  \x@\gdef\csname @@\gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}\sm@rtquotes#1}%
 }
 
 \def\proc@ttribs{%
