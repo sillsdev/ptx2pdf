@@ -265,7 +265,7 @@
       \t@mpfalse
       \ifnum\ifsquashgridbox 1\else\ifgridp@c 1\else 0\fi\fi =1%
         \ifdiglot\kern\else\vskip\fi\dimen2
-      \else\vbox\bgroup\t@mptrue\vskip\dimen2\fi
+      \else\vbox\bgroup\topskip=0pt\t@mptrue\vskip\dimen2\fi
         \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
       \ift@mp\egroup\fi
       \ifrotate\prevdepth=\baselineskip\fi
