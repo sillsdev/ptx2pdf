@@ -5,7 +5,7 @@ from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, Indire
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from io import BytesIO as cStringIO
-import os, re
+import os, re, time
 import logging
 
 logger = logging.getLogger(__name__)

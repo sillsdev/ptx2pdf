@@ -7103,6 +7103,8 @@ Thank you,
         self.pdf_viewer.print_document()
 
     def onZoomLevelChanged(self, widget):
+        if self.loadingConfig:
+            return
         adj_zl = max(30, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True, setz=False)
@@ -7234,21 +7236,26 @@ Thank you,
 
         self._setupPreviewWindow(prvw, showPreview)
 
-        tasks = [("ptxprint", self.mainapp.win)]
+        tasks = [("ptxprint", self.mainapp.win, None)]
         if showPreview:
-            tasks.append(("dlg_preview", prvw))
+            tasks.append(("dlg_preview", prvw, self.pdf_viewer))
 
         def runNextTask(iterator):
             try:
-                name, dialog = next(iterator)
+                name, dialog, view = next(iterator)
                 savedGeom = WindowGeometry.fromConfig(self.userconfig, name)
                 # Chain the next task in the callback
-                restorer = WindowRestorer(screen, dialog, savedGeom, onDoneCallback=lambda: runNextTask(iterator))
+                restorer = WindowRestorer(screen, dialog, savedGeom, onDoneCallback=lambda: windowCB(iterator, view))
                 restorer.run()
             except StopIteration:
                 # All tasks are done, now ensure main window has focus
                 self._finishAndPresentMain()
-
+                
+        def windowCB(iterator, view):
+            if view is not None:
+                view.onmaximized()
+            runNextTask(iterator)
+            
         runNextTask(iter(tasks))
 
     def _setupPreviewWindow(self, prvw, showPreview):
