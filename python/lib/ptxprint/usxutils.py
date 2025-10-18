@@ -369,6 +369,7 @@ class Usfm:
         self.grammar = grammar
         self.cvaddorned = False
         self.book = book
+        self.chapters = []          # the starting paragraph index for each chapter and the final paragraph index at the end
 
     @classmethod
     def readfile(cls, fname, grammar=None, sheet=None, elfactory=None, informat=None, **kw):       # can also take the data straight
@@ -475,7 +476,7 @@ class Usfm:
                     self.kpars[v] = currp
             if curr is not None:
                 p.pos = RefPos(p.pos, curr)
-        # self.chapters.append(i)
+        self.chapters.append(i)
         for s in sections:
             _addorncv_hierarchy(s, curr)
         self.cvaddorned = True
