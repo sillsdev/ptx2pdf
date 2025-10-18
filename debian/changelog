@@ -1,3 +1,9 @@
+ptxprint (3.0-1ubuntu1) jammy; urgency=medium
+
+  * Bumped release to 3.0
+
+ -- Martin Hosken <martin_hosken@sil.org>  Sat, 18 Oct 2025 21:35:21 +1300
+
 ptxprint (2.9.9-1ubuntu1) jammy; urgency=medium
 
   * Bumped release to 2.9.9
