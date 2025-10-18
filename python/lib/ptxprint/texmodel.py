@@ -1232,7 +1232,7 @@ class TexModel:
         gloStyle = self._glossarymarkup.get(v, v)
         if v is not None and v != 'ai':
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
-                self.localChanges.append(makeChange(r"\\\+?w ([^|]+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
+                self.localChanges.append(makeChange(r"\\\+?w ((?:[^|\\]|\\xts .*?\\xts\*)+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
 
         if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
