@@ -1018,6 +1018,16 @@ class TexModel:
             doc = self.flattenModule(infpath, outfpath, text=dat)
             dat = None
 
+        if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
+                    and self.dict["notes/ifxrexternalist"] and isCanon:
+            (dat, doc) = self._getDoc(dat, doc, bk)
+            logger.debug("Add strongs numbers to text")
+            script = (printer.get("fcb_script") or "").title()
+            try:
+                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
+            except SyntaxError as e:
+                self.printer.doError("Processing Strongs", secondary=str(e))
+
         if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
             dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
@@ -1048,16 +1058,6 @@ class TexModel:
             (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Remove filtered gloss entries")
             if doc is not None:
                 doc.removeGlosses(self.found_glosses)
-
-        if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
-                    and self.dict["notes/ifxrexternalist"] and isCanon:
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("Add strongs numbers to text")
-            script = (printer.get("fcb_script") or "").title()
-            try:
-                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
-            except SyntaxError as e:
-                self.printer.doError("Processing Strongs", secondary=str(e))
 
         if self.asBool("paragraph/ifhyphenate") and self.asBool("document/ifletter") and printer.hyphenation:
             (dat, doc) = self._getDoc(dat, doc, bk)
