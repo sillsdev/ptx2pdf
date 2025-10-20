@@ -738,10 +738,13 @@ class WindowRestorer:
         
         try:
             self.dialog.resize(self.geom.width, self.geom.height)
-            if self.geom.x >= 0 and self.geom.y >= 0:
-                self.dialog.move(self.geom.x, self.geom.y)
-            else:
-                self.dialog.move(self.targetRect.x + 20, self.targetRect.y + 20)
+            self.geom.width, self.geom.height = self.dialog.get_size()
+            self.geom.x, self.geom.y = self.dialog.get_position()
+            posx = max(self.geom.x, self.target.x)
+            posx = min(posx, self.target.x + self.target.width - self.geom.width)
+            posy = max(self.geom.y, self.target.y)
+            posy = min(posy, self.target.y + self.target.height - self.geom.height)
+            self.dialog.move(posx, posy)
         except Exception as e: logging.debug(f"Failed to move/resize: {e}")
         
         self._finish()
