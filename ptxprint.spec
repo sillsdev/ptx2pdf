@@ -274,42 +274,40 @@ if sys.platform == "darwin":
     ], check=True)
 
     skip_notarize = os.environ.get("SKIP_NOTARIZE") == "1"
-    if skip_notarize:
-        sys.exit(0)
-
-    #
-    # Notarize the DMG using xcrun notarytool
-    #
-    apple_id = os.environ.get("NOTARIZATION_USERNAME")
-    password = os.environ.get("NOTARIZATION_PASSWORD")
-    team_id = os.environ.get("NOTARIZATION_TEAM")
-    if apple_id and password and team_id:
-        try:
-            # Run xcrun notarytool submit and capture output
-            print(f"Notarizing {dmg_path}")
-            import json
-            result = subprocess.run([
-                "xcrun", "notarytool", "submit", dmg_path,
-                "--apple-id", apple_id,
-                "--password", password,
-                "--team-id", team_id,
-                "--output-format", "json"
-            ], check=True, capture_output=True, text=True)
-            output_json = json.loads(result.stdout)
-            request_id = output_json.get("id")
-            if not request_id:
-                raise Exception("No request ID found in notarytool output.")
-            print(f"Notarization RequestID: {request_id}")
-            # Run the mac-check-notarized.sh script with dmg path and request_id
-            script_path = os.path.abspath("mac-check-notarized.sh")
-            if not os.path.exists(script_path):
-                raise Exception("No check notarized script found")
-            subprocess.run(["bash", script_path, dmg_path, request_id], check=True)
-            print("Notarization check script complete.")
-        except Exception as e:
-            print(f"Notarization failed: {e}")
-    else:
-        print("Notarization skipped: NOTARIZATION_TEAM, NOTARIZATION_USERNAME, or NOTARIZATION_PASSWORD not set in environment.")
+    if not skip_notarize:
+        #
+        # Notarize the DMG using xcrun notarytool
+        #
+        apple_id = os.environ.get("NOTARIZATION_USERNAME")
+        password = os.environ.get("NOTARIZATION_PASSWORD")
+        team_id = os.environ.get("NOTARIZATION_TEAM")
+        if apple_id and password and team_id:
+            try:
+                # Run xcrun notarytool submit and capture output
+                print(f"Notarizing {dmg_path}")
+                import json
+                result = subprocess.run([
+                    "xcrun", "notarytool", "submit", dmg_path,
+                    "--apple-id", apple_id,
+                    "--password", password,
+                    "--team-id", team_id,
+                    "--output-format", "json"
+                ], check=True, capture_output=True, text=True)
+                output_json = json.loads(result.stdout)
+                request_id = output_json.get("id")
+                if not request_id:
+                    raise Exception("No request ID found in notarytool output.")
+                print(f"Notarization RequestID: {request_id}")
+                # Run the mac-check-notarized.sh script with dmg path and request_id
+                script_path = os.path.abspath("mac-check-notarized.sh")
+                if not os.path.exists(script_path):
+                    raise Exception("No check notarized script found")
+                subprocess.run(["bash", script_path, dmg_path, request_id], check=True)
+                print("Notarization check script complete.")
+            except Exception as e:
+                print(f"Notarization failed: {e}")
+        else:
+            print("Notarization skipped: NOTARIZATION_TEAM, NOTARIZATION_USERNAME, or NOTARIZATION_PASSWORD not set in environment.")
     
     # Clean up the staging directory
     shutil.rmtree(dmg_staging)
@@ -332,3 +330,4 @@ if sys.platform == "darwin":
         "file": "{dmg_path!s}",
     }}
     ''')
+    print(f"Created download_info file: {dmg_path}.download_info")
