@@ -736,15 +736,13 @@ class WindowRestorer:
         try: self.dialog.unmaximize()
         except Exception as e: logging.debug(f"Failed to unmaximize: {e}")
         
-        try:
-            self.dialog.resize(self.geom.width, self.geom.height)
-            self.geom.width, self.geom.height = self.dialog.get_size()
-            self.geom.x, self.geom.y = self.dialog.get_position()
-            posx = max(self.geom.x, self.target.x)
-            posx = min(posx, self.target.x + self.target.width - self.geom.width)
-            posy = max(self.geom.y, self.target.y)
-            posy = min(posy, self.target.y + self.target.height - self.geom.height)
-            self.dialog.move(posx, posy)
+        self.dialog.resize(self.geom.width, self.geom.height)
+        self.geom.width, self.geom.height = self.dialog.get_size()
+        posx = max(self.geom.x, self.targetRect.x)
+        posx = min(posx, self.targetRect.x + self.targetRect.width - self.geom.width)
+        posy = max(self.geom.y, self.targetRect.y)
+        posy = min(posy, self.targetRect.y + self.targetRect.height - self.geom.height)
+        try: self.dialog.move(posx, posy)
         except Exception as e: logging.debug(f"Failed to move/resize: {e}")
         
         self._finish()
