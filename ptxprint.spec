@@ -327,7 +327,7 @@ if sys.platform == "darwin":
         "type": "dmg",
         "name": "PTXPrint",
         "size": "{os.stat(dmg_path).st_size!s}"
-        "file": "{dmg_path!s}",
+        "file": "{app_name}_{version!s}.dmg",
     }}
     ''')
     print(f"Created download_info file: {dmg_path}.download_info")
