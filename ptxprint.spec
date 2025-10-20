@@ -15,6 +15,7 @@ print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
 
+version="3.0"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -265,7 +266,7 @@ if sys.platform == "darwin":
     #
     # Create the DMG from dist/dmg
     #
-    dmg_path = os.path.join(DISTPATH, f"{app_name}.dmg")
+    dmg_path = os.path.join(DISTPATH, f"{app_name}_{version}.dmg")
     print(f"Creating {app_name}.dmg")
     subprocess.run([
         "hdiutil", "create", "-volname", f"{app_name}",
@@ -312,3 +313,22 @@ if sys.platform == "darwin":
     
     # Clean up the staging directory
     shutil.rmtree(dmg_staging)
+
+    #
+    # Generate download_info file
+    #
+    import datetime
+    open(f"{dmg_path}.download_info", "wt").write(f'''
+    {{
+        "description": "PTXprint macOS dmg"
+        "date": "{datetime.date.today().isoformat()}",
+        "version": "{version!s}",
+        "category": "installer",
+        "architecture": "{platform.machine()}",
+        "platform": "{platform.system()}",
+        "type": "dmg",
+        "name": "PTXPrint",
+        "size": "{os.stat(dmg_path).st_size!s}"
+        "file": "{dmg_path!s}",
+    }}
+    ''')
