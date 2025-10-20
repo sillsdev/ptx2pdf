@@ -323,7 +323,7 @@ if sys.platform == "darwin":
         "version": "{version!s}",
         "category": "installer",
         "architecture": "{platform.machine()}",
-        "platform": "{platform.system()}",
+        "platform": "mac",
         "type": "dmg",
         "name": "PTXPrint",
         "size": "{os.stat(dmg_path).st_size!s}"
