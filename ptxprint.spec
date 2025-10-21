@@ -266,7 +266,7 @@ if sys.platform == "darwin":
     #
     # Create the DMG from dist/dmg
     #
-    for old in glob('*.dmg') + glob('*.download_info'): os.remove(old)
+    for old in glob('*.dmg', DISTPATH) + glob('*.download_info', DISTPATH): os.remove(old)
     dmg_path = os.path.join(DISTPATH, f"{app_name}_{version}.dmg")
     print(f"Creating {app_name}.dmg")
     subprocess.run([
