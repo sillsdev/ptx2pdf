@@ -266,6 +266,7 @@ if sys.platform == "darwin":
     #
     # Create the DMG from dist/dmg
     #
+    for old in glob('*.dmg') + glob('*.download_info'): os.remove(old)
     dmg_path = os.path.join(DISTPATH, f"{app_name}_{version}.dmg")
     print(f"Creating {app_name}.dmg")
     subprocess.run([
@@ -273,8 +274,7 @@ if sys.platform == "darwin":
         "-srcfolder", dmg_staging, "-ov", "-format", "UDZO", dmg_path
     ], check=True)
 
-    skip_notarize = os.environ.get("SKIP_NOTARIZE") == "1"
-    if not skip_notarize:
+    if not os.environ.get("SKIP_NOTARIZE") == "1":
         #
         # Notarize the DMG using xcrun notarytool
         #
