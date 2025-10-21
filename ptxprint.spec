@@ -266,7 +266,7 @@ if sys.platform == "darwin":
     #
     # Create the DMG from dist/dmg
     #
-    for old in glob('*.dmg', root_dir=DISTPATH) + glob('*.download_info', root_dir=DISTPATH): os.remove(old)
+    for old in glob('*.dmg', root_dir=DISTPATH): os.remove(os.path.join(DISTPATH, old))
     dmg_path = os.path.join(DISTPATH, f"{app_name}_{version}.dmg")
     print(f"Creating {app_name}.dmg")
     subprocess.run([
@@ -316,6 +316,7 @@ if sys.platform == "darwin":
     # Generate download_info file
     #
     import datetime
+    for old in glob('*.download_info', root_dir=DISTPATH): os.remove(os.path.join(DISTPATH, old))
     open(f"{dmg_path}.download_info", "wt").write(f'''
     {{
         "description": "PTXprint macOS dmg"
