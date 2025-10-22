@@ -257,6 +257,21 @@
     \trace{sa}{using newch@rstyle (\newch@rstyle) at nesting (\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
+    \ifColorFonts
+      \ifInterWordSpaceShapingBug
+        \ifnum\XeTeXinterwordspaceshaping=2 
+          \edef\newch@rfont{\fontname\font}%
+          \ifx\oldch@rfont\newch@rfont % So-far this (SEGV) bug has only been seen with . \em* \em ..., but *actually* compare font.
+            \ifcsname \styst@k h@scolour\endcsname
+              \trace{s}{Applying work-around for interwordspaceshaping bug(\newch@rstyle)}%
+              \kern0pt 
+            \else
+              \message{\styst@k\space has no colour}%
+            \fi % Work-around bug with colour and intercharwordspaceshaping
+          \fi
+        \fi
+      \fi
+    \fi
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
     \t@gstart{Span}{\newch@rstyle}%
@@ -545,6 +560,7 @@
 %\lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \def\d@##1+##2+##3\E{\xdef\oldch@rstyle{##2}}\mctopnoms
+   \xdef\@ldch@rf@nt{\fontname\font}%
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \tempfalse
    \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
@@ -620,6 +636,7 @@
      \else \global\advance\p@ranesting by -1
      \fi
      \egroup % end the style's group, so formatting reverts             %(2)
+     \let\oldch@rfont\@ldch@rf@nt
      \let\newch@rstyle\@newch@rstyle
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
@@ -806,6 +823,7 @@
   \ifColorFonts\ifx\p@ram\relax\else
     \let\colp@ram\p@ram
     \x@\ParseColor\colp@ram\end
+    \x@\global\x@\let\csname #2h@scolour\endcsname\tr@e
     \temptrue % Apply here?
     \getp@ram{shadow}{#1}{#2}\ifx\p@ram\relax\else\tempfalse\fi
     \getp@ram{outline}{#1}{#2}\ifx\p@ram\relax\else\tempfalse\fi

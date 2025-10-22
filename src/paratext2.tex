@@ -48,11 +48,20 @@
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
 
+% Version .999995 (and presumably lower) SEGVs with 
+% XeTeXinterwordspaceshaping=2 (apply shaping across word boundaries on
+% shipout), when a coloured font is stopped and restarted ( ... \em* \em ....) The work-around
+% prevents shaping in that case (by a kern0pt), and so probably has unwanted side-effects. 
+\newif\ifInterWordSpaceShapingBug \InterWordSpaceShapingBugtrue
+
 % Version .999992 (? or 3) changed pdfsavepos page position (+cur_h_offset) to use pdftex's definition (+473628)
 \def\XeTeXvcheck#1.#2\E{\message{This is xetex "#1" "#2"}\ifnum #2 > 999991
     \global\let\adjustpdfXsavepos\empty\else
     \gdef\adjustpdfXsavepos{\advance\dimen0 1in}%
     \gdef\adjustpdfYsavepos{\advance\dimen1 1in}%
+  \fi
+  \ifnum #2 > 999995 % Maybe it'll be fixed one day?
+    %\InterWordSpaceShapingBugfalse
   \fi
 }
 \x@\x@\x@\XeTeXvcheck\x@\the\x@\XeTeXversion\XeTeXrevision\E
