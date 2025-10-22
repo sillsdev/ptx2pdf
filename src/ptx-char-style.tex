@@ -259,7 +259,7 @@
     \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
     \ifColorFonts
       \ifInterWordSpaceShapingBug
-        \ifnum\XeTeXinterwordspaceshaping=2 
+        \ifnum\XeTeXinterwordspaceshaping=0 \else 
           \edef\newch@rfont{\fontname\font}%
           \ifx\oldch@rfont\newch@rfont % So-far this (SEGV) bug has only been seen with . \em* \em ..., but *actually* compare font.
             \ifcsname \styst@k h@scolour\endcsname
