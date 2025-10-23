@@ -169,6 +169,11 @@ class PDFViewer:
         self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
 
+    def onmaximized(self):
+        c = self.nbook.get_current_page()
+        for i,p in enumerate(self.viewers):
+            p.set_zoom_fit_to_screen(c==i)
+
     def loadnshow(self, fname, tab=None, extras={}, **kw):
         fbits = os.path.splitext(fname) if fname is not None else None
         if tab is None:
@@ -177,7 +182,7 @@ class PDFViewer:
                     fpath = a.format(*fbits)
                 v = self.nbook.get_nth_page(i)
                 if fbits is not None and os.path.exists(fpath):
-                    self.viewers[i].loadnshow(fpath, **kw)
+                    self.viewers[i].loadnshow(fpath, i==self.nbook.get_current_page(), **kw)
                     v.show()
                     self.nbook.set_current_page(0)
                 else:
@@ -205,13 +210,13 @@ class PDFViewer:
                         self.nbook.append_page(sc, tab)
                 else:
                     i = self.boxcodes[n]
-                self.viewers[i].loadnshow(v, **kw)
+                self.viewers[i].loadnshow(v, i==self.nbook.get_current_page(), **kw)
                 t = self.nbook.get_nth_page(i)
                 t.show()
         elif fname is not None and os.path.exists(fname):
             i = self.boxcodes[tab]
             v = self.nbook.get_nth_page(i)
-            self.viewers[i].loadnshow(fname, **kw)
+            self.viewers[i].loadnshow(fname, i==self.nbook.get_current_page(), **kw)
             v.show()
             self.nbook.set_current_page(i)
         self.hide_unused()
@@ -360,7 +365,7 @@ class PDFFileViewer:
         self.updatePageNavigation()
         return pg
 
-    def loadnshow(self, fname, rtl=False, widget=None, page=None, hook=None, **kw):
+    def loadnshow(self, fname, iscurrent, rtl=False, widget=None, page=None, hook=None, **kw):
         self.rtl_mode = rtl
         if fname is None:
             fname = self.fname
@@ -383,7 +388,7 @@ class PDFFileViewer:
         #    widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.widget.show_all()
-        self.set_zoom_fit_to_screen(None)
+        self.set_zoom_fit_to_screen(iscurrent)
         self.updatePageNavigation()
         return True
 
@@ -412,7 +417,7 @@ class PDFFileViewer:
             return
         if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
             self.zoomLevel = zoomLevel
-            self.model.set("s_pdfZoomLevel", zoomLevel*100, mod=False)
+            self.model.set("s_pdfZoomLevel", str(int(zoomLevel * 100)), mod=False)
         self.old_zoom = self.zoomLevel
         self.zoomLevel = zoomLevel
         width, height = self.psize
@@ -434,6 +439,7 @@ class PDFFileViewer:
 
         def redraw():
             self.show_pdf()
+            self.timer = None
 
         if self.timer is not None:
             GLib.source_remove(self.timer)
@@ -555,7 +561,7 @@ class PDFFileViewer:
             self.set_zoom(1.0)
             return True
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
-            self.set_zoom_fit_to_screen(None)
+            self.set_zoom_fit_to_screen(True)
             self.show_pdf()  # Redraw the current page
             return True
         elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
@@ -650,9 +656,9 @@ class PDFFileViewer:
     def on_window_size_allocate(self, widget, allocation):
         if self.current_page is None:
             return
-        self.set_zoom_fit_to_screen(None)
+        self.set_zoom_fit_to_screen(False)
 
-    def set_zoom_fit_to_screen(self, x):
+    def set_zoom_fit_to_screen(self, iscurrent):
         if not hasattr(self, "document") or self.document is None or self.current_page is None:
             return
         page = self.document.get_page(self.current_page - 1)
@@ -660,13 +666,14 @@ class PDFFileViewer:
             page_width, page_height = page.get_size()
         except AttributeError:
             return
-
+        if page_width < 10 or page_height < 10:
+            return
         parent_widget = self.hbox.get_parent() # .get_parent()
         if parent_widget is not None:
             alloc = parent_widget.get_allocation()
             scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
             scale_y = (alloc.height + 0) / page_height
-            self.set_zoom(min(scale_x, scale_y))
+            self.set_zoom(min(scale_x, scale_y), setz=iscurrent)
 
     def set_page(self, action):
         if self.current_index is None:
@@ -816,7 +823,7 @@ class PDFContentViewer(PDFFileViewer):
         self.showanalysis = val
         self.spacethreshold = threshold
         if self.showanalysis:
-            self.loadnshow(None, page=self.current_page)
+            self.loadnshow(None, True, page=self.current_page)
         self.show_pdf()
 
     def settingsChanged(self):
@@ -1235,7 +1242,7 @@ class PDFContentViewer(PDFFileViewer):
             elif info[1] != 100:
                 make_rect(context, orange, r, twidth)
 
-    def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
+    def loadnshow(self, fname, iscurrent, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
         def plocs(self):
             self.load_parlocs(self.parlocfile, rtl=rtl)
             if page is not None and page in self.parlocs.pnums:
@@ -1245,7 +1252,7 @@ class PDFContentViewer(PDFFileViewer):
             parlocs = self.parlocfile
         if parlocs is not None:
             self.parlocfile = parlocs
-        if not super().loadnshow(fname, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
+        if not super().loadnshow(fname, iscurrent, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
@@ -1528,7 +1535,10 @@ class PDFContentViewer(PDFFileViewer):
     def clear_menu(self, menu):
         for child in menu.get_children():
             child.destroy()
-
+            
+    def menuFitToScreen(self, x):
+        self.set_zoom_fit_to_screen(True)
+        
     def show_context_menu(self, widget, event):
         self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         self.last_click_time = time.time()
@@ -1602,7 +1612,7 @@ class PDFContentViewer(PDFFileViewer):
                 self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
 
             # self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.set_zoom_fit_to_screen)
+            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen)
             if not self.model.get("c_updatePDF"):
                 # self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)

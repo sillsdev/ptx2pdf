@@ -1,31 +1,39 @@
-PTXprint 3.0.0 Release Notes
-16 Oct 2025
+PTXprint 3.0.1 Release Notes
+20 Oct 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.0 (16 Oct 2025)
-  * Add tabs to PDF Prview window for Content, Cover, Diff, Finished and Reference
+WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
+
+Bug fixes and Improvements in 3.0.1 (20 Oct 2025)
+  * Add version number to macOS installer
+  * Fix Windows dialog positioning
+
+Bug fixes and Improvements in 3.0 (18 Oct 2025)
+  * Change default poetry indents
+  * Change heading styles defaults
+  * Reorganize the Basic tab to be more logical
+  * Hide copyright information behind twisty; make it a multi-line control
+  * Install BSB automatically if no other project is found
+  * Add tabs to PDF Preview window for Content, Cover, Diff, Finished and Reference
   * Ensure Catalogue and TechRef come to the fore after being opened in the Preview pane
-  * Improveme the Styles tab - searching, filtering, highlighting, scroll to active style
+  * Improve the Styles tab - searching, filtering, highlighting, scroll to active style
+  * Improve UI to make it easier to enable dynamic borders
   * Restore the extra font details (expand, slant, thickness etc.) on Styles tab
   * Mitigate empty Justification setting in Styles editor
   * Move menu button to top-left in main dialog
-  * Reorganize the Basic tab to be more logical
-  * Hide copyright information behind twisty; make it a multi-line control
   * Refine layout of Diglot tab
   * Multiple improvements to get importing from ZIP files working more predictably
   * Improve window position restoring logic to handle unexpected situations correctly
-  * Improve UI to make it easier to enable dynamic borders
   * Refactor marginal chapters for better spacing control
   * Use a better 'Refresh' icon on multiple buttons
-  * Add 'DoubleSided' option to Advanced > Other > Page Layout & Spacing
+  * Add 'DoubleSided' (2-sided unmirrored) option to Advanced > Other > Page Layout & Spacing
   * Change illustration credits and add option to list ALL pages
   * Highlight combo boxes on search; enabling various settings to be found easier
   * Tweak tooltip for 'Show USFM codes' and use SourceCodePro
   * Improve UI around End of Ayah and add line to \va style to control appearance
   * Don't move verses/ayahs to end if ornamental verses is disabled
-  * Install BSB automatically if no other project is found
   * Improve auto-setting Project on initial run
   * Disable Save and Print buttons until a project has been set
   * Include Charis 7.0 in PTXprint installer - available by default
@@ -38,14 +46,15 @@ Bug fixes and Improvements in 3.0.0 (16 Oct 2025)
   * Suppress unknown tag error messages
   * Introduce garbage collection to prevent locked file when being cleared
   * Add various Codelets
-  * Change poetry settings again
-  * Update procsds to cltk 2.0
-  * Change default poetry indents
-  * Add numverses to TagableRef
   * Get rid of spurious sp inserted in 2 col margin notes
   * Avoid a prevdepth usage error
-  * Change heading styles defaults
   * Correct Vectorian1 border
+  * Process Strongs before localChanges regexes and allow \xts inside \w for keyword marking
+  * Remove crash on print stopping PDF updating
+  * Gridding righteousness partially restored
+  * Don't put list chapter index when not a chapter
+  * Refactor runptxchanges to use changes.py
+  * Avoid *some* parts of #1110
   * Fix a leaky space in footnote text callers
   * Fix finishing files naming
   * Fix saving config on BSB load
@@ -61,7 +70,10 @@ Bug fixes and Improvements in 3.0.0 (16 Oct 2025)
   * Fix segfault crashes when trying to update PDF viewer
   * Fix procpdf filename handling problems
   * Fix time and version on title of pdf viewer
-_____________________________________________________________
+  * Fix Zoom level on multiple tabs
+  * Fix chapters for interlinear
+  * Fix vid and zsetref for modules
+  * Fix bottom margin aligning pictures, not removing top space, active characters
 
 Bug fixes and Improvements in 2.9.9 (2 Oct 2025)
   * Refactor PDF Viewer to display mutiple PDFs

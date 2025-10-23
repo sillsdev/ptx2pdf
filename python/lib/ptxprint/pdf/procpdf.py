@@ -5,7 +5,7 @@ from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, Indire
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from io import BytesIO as cStringIO
-import os, re
+import os, re, time
 import logging
 
 logger = logging.getLogger(__name__)
@@ -130,9 +130,9 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     if outpdfobj is not None:
         if opath != pdffile:
             if os.path.exists(opath):
-                if os.path.exists(pdffile):
-                    os.remove(pdffile)
                 try:
+                    if os.path.exists(pdffile):
+                        os.remove(pdffile)
                     os.rename(opath, pdffile)
                 except (FileNotFoundError, PermissionError):
                     pass

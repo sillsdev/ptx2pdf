@@ -704,7 +704,7 @@ class TexModel:
                         res.append(r"% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o")
                         res.append(r"% 12 (size) comes from \p size")
                         res.append(r'\def\extraregular{{"{}"}}'.format(self.dict["document/fontextraregular"]))
-                        res.append(r"\catcode`\@=11")
+                        res.append(r"\catcode`\@=11\catcode`\^=7")
                         res.append(r"\def\do@xtrafont{\x@\s@textrafont\ifx\thisch@rstyle\undefined\m@rker\else\thisch@rstyle\fi}")
                         for a,b in c:
                             res.append(r"\def\@ctive{}{{\leavevmode{{\do@xtrafont {}{}}}}}".format(a, '^'*len(b), b))
@@ -1018,6 +1018,16 @@ class TexModel:
             doc = self.flattenModule(infpath, outfpath, text=dat)
             dat = None
 
+        if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
+                    and self.dict["notes/ifxrexternalist"] and isCanon:
+            (dat, doc) = self._getDoc(dat, doc, bk)
+            logger.debug("Add strongs numbers to text")
+            script = (printer.get("fcb_script") or "").title()
+            try:
+                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
+            except SyntaxError as e:
+                self.printer.doError("Processing Strongs", secondary=str(e))
+
         if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
             dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
@@ -1048,16 +1058,6 @@ class TexModel:
             (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Remove filtered gloss entries")
             if doc is not None:
                 doc.removeGlosses(self.found_glosses)
-
-        if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
-                    and self.dict["notes/ifxrexternalist"] and isCanon:
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("Add strongs numbers to text")
-            script = (printer.get("fcb_script") or "").title()
-            try:
-                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
-            except SyntaxError as e:
-                self.printer.doError("Processing Strongs", secondary=str(e))
 
         if self.asBool("paragraph/ifhyphenate") and self.asBool("document/ifletter") and printer.hyphenation:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -1232,7 +1232,7 @@ class TexModel:
         gloStyle = self._glossarymarkup.get(v, v)
         if v is not None and v != 'ai':
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
-                self.localChanges.append(makeChange(r"\\\+?w ([^|]+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
+                self.localChanges.append(makeChange(r"\\\+?w ((?:[^|\\]|\\xts.*?\\\*)+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
 
         if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on

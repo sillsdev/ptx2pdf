@@ -70,7 +70,7 @@ elif sys.platform == "win32":
         if 'path' in kw:
             if kw['path'] == 'xetex':
                 # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-                path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]+".exe").replace("\\", "/")
+                path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]+".exe").replace("/", "\\")
                 a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
             del kw['path']
         else:
