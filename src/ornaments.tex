@@ -827,7 +827,7 @@
       \trace{orn}{Parsing group repeat code:\orn@group}%
       \let\tmp\orn@group
     \fi
-    \ifx\tmp\empty\else
+    \ifnum 1=\ifx\tmp\empty 1 \else\ifx\tmp\ptn@minus 1 \else 0 \fi\fi\else
       \x@\chk@cplx\tmp\E %Split off first code
       %\uppercase{\edef\tmpu{\tmpb}}%
       \ifx\tmpb\tmpu\else % variable needs to be  upper case 
@@ -865,7 +865,7 @@
                     \set@repeat@class{\tmpb}{1}{}%
                   \fi
                 \else
-                  \message{Ornamental border: unrecognised control char '#3'}%
+                  \message{Ornamental border: unrecognised control char '#3' \x@\the\x@\catcode\x@`\tmpa}%
                 \fi
               \fi
             \fi
