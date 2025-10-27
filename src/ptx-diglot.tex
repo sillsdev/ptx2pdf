@@ -76,6 +76,8 @@
 \def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
 \def\m@xBelowBaseline{0pt}%
+\def\@fnLht{0pt}
+\def\@fnRht{0pt}
 
 %Defined penalties
 \newsp@cialpen{dgl@tPenColSwap}%
@@ -465,7 +467,7 @@
   \dimen9=\dp\galley
   \unvbox\galley\count255=\lastpenalty\unpenalty
   \tmpcount=\lastnodetype
-  \ifnum\tmpcount=12\else\kern-\dimen9\fi%\lastnotedype=12 is eTeX test for kern (see above for longer list
+  \ifnum\tmpcount=12\else\kern-\dimen9\fi%\lastnodetype=12 is eTeX test for kern (see above for longer list
   \ifVisTraceExtra\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi
   \traceNum{D}{removed penalty \the\count255, replacing with \the\galleypenalty. lnt:\the\tmpcount (\decod@lastnode{\tmpcount})}%
   \ifvoid\galleyexc@ss\else
@@ -1709,13 +1711,14 @@
     \x@\checkh@x #2\end\x@\xdef\csname bg@#1@col\endcsname{\rgb@out}\fi
 }
   
-\def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
+\def\@@simplecols#1{%Set the columns. TextBorderColumns might have 2 widths, e.g. bordered main text (narrow) and unbordered notes (full column width)
+    \hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
     \trace{D}{@@simplecols #1 \the\csname column#1width\endcsname, \csname @textborder@#1\endcsname}%
     \ifx\TextBorderColumns\empty
       \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
         \hss}%
     \else
-      \hbox to \the\dimexpr \csname column#1width\endcsname + \csname @textborder@#1\endcsname \relax{\kern\csname textb@dr@left@pad#1\endcsname\x@\copy\csname #1box\endcsname%
+      \hbox to \the\dimexpr \csname column#1width\endcsname + \csname @textborder@#1\endcsname \relax{\ifm@intextcolumn \kern\csname textb@dr@left@pad#1\endcsname\fi\x@\copy\csname #1box\endcsname%
         \hss}%
     \fi
   \xdef\l@stcol{#1}}
@@ -1741,15 +1744,23 @@
     \hskip\csname column#1width\endcsname
   \else
     \hskip\csname textb@dr@left@pad#1\endcsname
-    \trace{et}{Putting border on #1 (\l@gdims{\partial})}%
+    \trace{et}{Putting border on #1 (\bg@fillht\space\l@gdims{\partial} - \csname textb@dr@bot@pad#1\endcsname - \csname @fn#1ht\endcsname)}%
     \def\tmpa{}\def\tmpb{}%
     \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
+    \if \bg@fillht T\relax\dimen1=\dimexpr \csname @cur#1ht\endcsname + \oldp@rtial \relax
+      \ifdim\csname @fn#1ht\endcsname>0pt
+        \advance\dimen1 -\AboveNoteSpace\relax
+      \else
+        %\advance\dimen1 -\dimexpr \csname textb@dr@bot@pad#1\endcsname + \csname @fn#1ht\endcsname
+      \fi
+    \fi
     \x@\ifx\csname BelowBaseline#1\endcsname\empty
       \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
     \fi
-    \setbox0=\vbox to \dimen1 {\hbox to \csname column#1width\endcsname{\hss}\vss}%
+    \setbox0=\vtop to \dimen1 {\hbox to \csname column#1width\endcsname{\hss}\vss}%
     \doTextB@rder{0}%
-    \box0
+    \ht0=0pt
+    \box0\hskip\csname textb@dr@right@pad#1\endcsname
   \fi
   \xdef\l@stcol{#1}%
 }
@@ -1757,8 +1768,9 @@
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifcsname bg@#1@col\endcsname
     {\edef\tmpav{\the\availht}%
-      \if P\bg@fillht\dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
+      \ifnum 1=\if \bg@fillht P 1 \else \if \bg@fillht T 1 \else 0 \fi\fi \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
         \ifdim\dimen1>\textheight \dimen1=\textheight\fi
+        \if \bg@fillht T \advance\dimen1 -\dimexpr \csname textb@dr@bot@pad#1\endcsname + \csname @fn#1ht\endcsname \relax\fi
       \else
         \if A\bg@fillht
           \ifloc@lht\else
@@ -2104,16 +2116,19 @@
   \dimen8=\dimen7
 }
 
+\newif\ifm@intextcolumn\m@intextcolumntrue
 \def\@do@balnotes@simplecols{%
   \setbox1\hbox{\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
   \setbox0=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
   \hbox to\columnshift{}%
+  \m@intextcolumnfalse
   \ifdiglotN@rmal%are the sides swapped?
     \x@\each@col\layout@list\E
   \else
     \x@\each@col\rev@layout@list\E
   \fi
+  \m@intextcolumntrue
   }%
   \global\setbox\partial=\vbox{\unvbox\partial\box0}%
 }
@@ -2160,11 +2175,13 @@
   \setbox1\hbox{\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
    \setbox\notechunk\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+    \m@intextcolumnfalse
     \ifdiglotN@rmal%are the sides swapped?
       \x@\each@col\layout@list\E
     \else%
       \x@\each@col\rev@layout@list\E
     \fi%
+    \m@intextcolumntrue
   }%
   \trace{f}{Adjusting footnotebox}%
   \advance\dimen3 by \dimen9
@@ -2194,7 +2211,7 @@
     \let\col@do=\diglot@fill@sep@note@box
     \x@\each@col\diglot@list\E% 
     \setLRspecific % c@rrdstat is restored by diglot@fill@sep@note@box.
-    \ifLRf@@tnotes%
+    \ifLRf@@tnotes% Are there notes?
       \ifdiglotBalNotes%
       \trace{f}{Balanced notes}%
         % \kern\lastd@pth % This, if at all valid for anything, is from the last note.
@@ -2213,7 +2230,10 @@
         %\tracingmacros=0
       \fi %BalNotes
     \else%
-      \trace{f}{No footnotes}%
+      \def\v@lpfx{@fn}%
+      \let\col@do=\forget@boxdim
+      \x@\each@col\diglot@list\E
+      \trace{f}{No footnotes (clearing values)}%
     \fi %LRf@@tnotes
   \else %SepNotes
     \trace{f}{Merged notes}%
@@ -2349,12 +2369,12 @@
          \fi
          \ifdiglotSepNotes
            \iftextborder
-             \def\bg@fillht{P}% Fill to \ht\partial
+             \def\bg@fillht{T}% Fill to text (not note)
            \else
              \def\bg@fillht{A}% Fill to availht
            \fi
          \else
-           \def\bg@fillht{P}%
+           \def\bg@fillht{P}% Fill to \ht\partial
          \fi
          \ifinendbook\def\bg@fillht{P}\fi
          \ifx\TextBorderColumns\empty\else
@@ -2793,6 +2813,10 @@
   \x@\let\x@\t@stb\csname \v@lpfxb#1ht\endcsname
   \dimen0=\dimen2
   \trace{Df}{Notesep: (#1) d2:\the\dimen2\space -\t@st\space -\t@stb}%
+  \ifx\TextBorderColumns\empty\else\ifcsname textb@dr@bot@pad#1\endcsname
+      \trace{Df}{Border: \the\dimen2\space -\t@st\space -\t@stb - \csname textb@dr@bot@pad#1\endcsname}%
+      \advance\dimen0 by -\csname textb@dr@bot@pad#1\endcsname
+  \fi\fi
   \advance\dimen0 by -\t@st\relax
   \advance\dimen0 by -\t@stb\relax
   \ifdim\dimen1>\dimen0
@@ -2855,6 +2879,7 @@
   \tempfalse
   \csname @tst@n@xtpartial@\diglotlayout\endcsname
   \iftemp
+    \xdef\oldp@rtial{\the\dimexpr \ht\partial+\dp\partial}%
     \csname @add@n@xtpartial@\diglotlayout\endcsname
     \csname @after@add@n@xtpartial@\diglotlayout\endcsname
   \fi
@@ -3332,6 +3357,8 @@
     \x@\newc@unt\csname p@rnum#1\endcsname % Used for adjust-lists
     \x@\newc@unt\csname dropped@ther@lines#1\endcsname % Used for parlocs analysis
     \x@\gdef\x@\digl@tc@ntent@xcs\x@{\digl@tc@ntent@xcs\csname digl@txcs#1\endcsname}%
+    \x@\xdef\csname \v@lpfx#1ht\endcsname{0pt}%
+    \x@\xdef\csname \v@lpfx#1dp\endcsname{0pt}%
     \initcolumndef@ults{#1}%
 %TODO:
 %FIXMEs needing for polyglot processing:
