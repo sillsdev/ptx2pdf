@@ -111,7 +111,6 @@
 }
 
 \def\overthin@fix#1#2#3#4{% If #2 is a space, then use = assignment, else use edef, (maybe with units)
-  \tracingassigns=1
   \def\tmp{#2}\ifx\tmp\empty
     \edef#1{\the\csname min\thinlinest@ndard line\endcsname}%
   \else
@@ -124,7 +123,6 @@
         \message{!! The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref. Cannot fix because of unexpected units.}%
     \fi\fi
   \fi
-  \tracingassigns=0
 }
 \gdef\overthin@warn#1#2#3#4{%
   \message{The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref}%
@@ -159,7 +157,7 @@
 
 \def\mkb@rder@none{\setbox\b@rderbox\vbox to \b@rderbox@height{}}
 
-\def\ch@ckiftextborderadj{\trace{et}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \ifb@dy body\fi, \pretextb@rderskip, \posttextb@rderskip}%
+\def\ch@ckiftextborderadj{\trace{et}{ch@ckiftextborder \c@rrdstat: \ifm@rksonpage marks\fi, \ifb@dy body\fi, \pretextb@rderskip, \posttextb@rderskip}%
   \tempfalse\ifm@rksonpage
   \ifdim 0pt < \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax
     \temptrue
@@ -210,10 +208,11 @@
   \fi
 }
 \addtoidhooks{\s@ttextb@rderdims}% 
+\newcount\TextBorderMode % 0 Normal. 1. - diglots skip introductions 2. Diglots use full-width introductions
 \def\doTextB@rder#1{% Put border around box #1
   \testm@rkerexists{textborder}%
   \iftemp
-    \trace{et}{textborder style exists}%
+    \trace{et}{textborder style exists \c@rrdstat}%
     \t@stpublishability{textborder}%
     \ifn@npublishable\else
       \ifnum\pageno>0\edef\t@st{\botmark}%

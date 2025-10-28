@@ -2011,10 +2011,13 @@
    \message{Setting up column-specific values for columns: \diglot@list}%
    \global\baselineDelta=-\maxdimen
    \xdef\@minb@seline{\the\baselineskip}%
+   \global\diglotb@dyfalse
+   \global\diglotfirstb@dyfalse
    \def\col@do##1{% Per-column setup
      \setc@rdstat{##1}%
      \showLRspecific
      \setLRspecific\s@tb@dyb@seline{##1}%
+     \x@\global\x@\let\csname isb@dy##1\endcsname\false
      \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
      \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
        \global\baselineDelta=\csname baselineDelta##1\endcsname

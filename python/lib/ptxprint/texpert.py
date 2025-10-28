@@ -172,7 +172,9 @@ texpertOptions = {
                             _("Add extra information to diglot trace marks")),
     "DiglotColourPad":    O("diglotcolourpad", "DIG", (3, -20, 20, 1, 1, 0), r"\def{0}{{{1}pt}}", _("Diglot Shading Padding"),
                             _("The amount of side padding (pt) on the shaded background of a diglot")),
-
+    "TextBorderMode":     O("textbordermode", "DIG",
+                            {"1": _("Borders start at body text"), "0": _("Borders include book intros"), "2": _("Wide book intros for per-column textborders")}, r"{0}={1}",
+                            _("How does text-border behave in diglots?"), _("Historically, diglot text-borders put the border around book introductions. This control allows that (substandard) behaviour to be chosen, and also allows  experimental code to make books with per-column textborders use full-width text for introductory text.")),
     "figlocleft":         O("figleft", "PIC", True, None, _("Default Figures Top Left"),
                             _("Default figure positions to top left")),
     "CaptionRefFirst":    O("captreffirst", "PIC", False, None, _("Ref Before Caption"),

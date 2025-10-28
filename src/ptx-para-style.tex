@@ -114,6 +114,12 @@
   \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi
   \else\ifnum\BodyColumns=3 \threecolwidth{\hsize}\fi\fi
  \fi\fi
+  \ifdiglot\iftextborder  \ifnum \TextBorderMode>1
+  \ifdim\pagetotal=0pt \x@\ifx\csname isb@dy\c@rrdstat\endcsname\false 
+      \trace{d}{Body width changed for \c@rrdstat\space at \c@rref}%
+      \global\hsize=\csname column\c@rrdstat width\endcsname\relax
+    \fi\fi
+  \fi\fi\fi
   \traceifcheck{st@rtbody}%
 }
 
