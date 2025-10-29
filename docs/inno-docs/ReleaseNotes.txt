@@ -6,6 +6,12 @@ _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
 
+Bug fixes and Improvements in 3.0.2 (TBD)
+  * Allow textborder in diglots to appear around just selected column(s) (e.g. original Greek) via \def\TextBorderColumns{L}
+  * Improved behaviour of textborder in diglots - they can now surround just verse text when there's a book intro.
+  * Implement new expert control \TextBorderMode for selecting textborder behaviour (in diglots)
+  * Allow ornament patterns to define a group of ornaments to be repeated as a group
+
 Bug fixes and Improvements in 3.0.1 (20 Oct 2025)
   * Add version number to macOS installer
   * Fix Windows dialog positioning

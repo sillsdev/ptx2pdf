@@ -1779,6 +1779,51 @@
     \setbox#1\vbox to \ht#1{\baselineskip=0pt\lineskip=0pt\vbox to 0pt{\vskip\f@rstb@dy\box0\vss}\box#1}%
   \fi
 } 
+\def\bg@calcns#1#2{%
+  \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
+  \if \bg@fillht T\relax
+    \trace{et}{Putting #2 #1 (\bg@fillht\space \the\dimen1\space (\the\ht\partial+\the\dp\partial) or \the\textheight\space or \oldp@rtial+\csname @cur#1ht\endcsname}%
+    \def\wh@t{partial}%
+    \ifdim\csname @cur#1ht\endcsname>\textheight \else
+       \dimen1=\dimexpr \csname @cur#1ht\endcsname + \oldp@rtial \relax\def\wh@t{oldpartial + c@r#1ht}%
+    \fi
+    \ifdim\dimen1>\textheight \dimen1=\textheight \def\wh@t{textht}\fi
+    \ifdim\csname @fn#1ht\endcsname>0pt
+      \advance\dimen1 -\AboveNoteSpace\relax
+      \edef\wh@t{\wh@t - \the\AboveNoteSpace}%
+    \else
+      %\advance\dimen1 -\dimexpr \csname textb@dr@bot@pad#1\endcsname + \csname @fn#1ht\endcsname
+    \fi
+  \else
+    \if \bg@fillht P\relax
+      \trace{et}{Putting #2 #1 (\bg@fillht\space\l@gdims{\partial} - \csname textb@dr@bot@pad#1\endcsname - \csname @fn#1ht\endcsname)}%
+      \def\wh@t{partial}%
+    \else
+      \if A\bg@fillht
+        \ifloc@lht\else
+          \dglt@calc@vailht@mods %(globally) alters availht, so that needs resetting
+        \fi
+        \ifx\TextBorderColumns\empty\else
+          \advance\availht by -\dimexpr \csname textb@dr@top@pad#1\endcsname+\csname textb@dr@bot@pad#1\endcsname \relax
+        \fi
+        \dimen1=\availht
+      \else
+        \dimen1=\textheight
+      \fi
+    \fi
+  \fi
+  \x@\ifx\csname BelowBaseline#1\endcsname\empty
+    \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
+    \edef\wh@t{\wh@t + 0.5 lines}%
+  \fi
+  \ifdiglotb@dy
+    \ifdim\f@rstb@dy>0pt
+      \advance\dimen1 - \f@rstb@dy
+      \advance\dimen1 - \csname textb@dr@top@pad#1\endcsname
+    \fi
+  \fi
+}
+
 \def\ins@borders#1{%
   \def\c@rrdstat{#1}%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
@@ -1788,69 +1833,32 @@
   \else
     \hskip\csname textb@dr@left@pad#1\endcsname
     \def\tmpa{}\def\tmpb{}%
-    \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
-    \if \bg@fillht T\relax
-      \trace{et}{Putting border on #1 (\bg@fillht\space \the\dimen1\space (\the\ht\partial+\the\dp\partial) or \the\textheight\space or \csname @cur#1ht\endcsname + \oldp@rtial}%
-      \def\wh@t{partial}%
-      \ifdim\csname @cur#1ht\endcsname>\textheight \else
-         \dimen1=\dimexpr \csname @cur#1ht\endcsname + \oldp@rtial \relax\def\wh@t{c@r#1ht+oldpartial}%
-      \fi
-      \ifdim\dimen1>\textheight \dimen1=\textheight \def\wh@t{textht}\fi
-      \ifdim\csname @fn#1ht\endcsname>0pt
-        \advance\dimen1 -\AboveNoteSpace\relax
-        \edef\wh@t{\wh@t - \the\AboveNoteSpace}%
-      \else
-        %\advance\dimen1 -\dimexpr \csname textb@dr@bot@pad#1\endcsname + \csname @fn#1ht\endcsname
-      \fi
-    \else
-      \trace{et}{Putting border on #1 (\bg@fillht\space\l@gdims{\partial} - \csname textb@dr@bot@pad#1\endcsname - \csname @fn#1ht\endcsname)}%
-      \def\wh@t{partial}%
-    \fi
-    \x@\ifx\csname BelowBaseline#1\endcsname\empty
-      \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
-      \edef\wh@t{\wh@t + 0.5 lines}%
-    \fi
-    \ifdiglotb@dy
-      \ifdim\f@rstb@dy>0pt
-        \advance\dimen1 - \f@rstb@dy
-      \fi
-    \fi
+    \bg@calcns{#1}{border on}%
     \setbox0=\vtop to \dimen1 {\baselineskip=0pt\hbox to \csname column#1width\endcsname{\hss}\vss}%
-    \trace{et}{box is (\l@gdims 0) according to \wh@t}%
+    \trace{et}{box is (\l@gdims 0) according to \wh@t - \f@rstb@dy}%
     \def\c@rrdstat{#1}\doTextB@rder{0}%
     \ht0=0pt
     \ifdim\f@rstb@dy>0pt\lower\f@rstb@dy\fi\box0\hskip\csname textb@dr@right@pad#1\endcsname
   \fi
   \xdef\l@stcol{#1}%
 }
+
 \def\ins@backgrounds#1{%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifcsname bg@#1@col\endcsname
     {\edef\tmpav{\the\availht}%
-      \ifnum 1=\if \bg@fillht P 1 \else \if \bg@fillht T 1 \else 0 \fi\fi \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
-        \ifdim\dimen1>\textheight \dimen1=\textheight\fi
-        \if \bg@fillht T \advance\dimen1 -\dimexpr \csname textb@dr@bot@pad#1\endcsname + \csname @fn#1ht\endcsname \relax\fi
-      \else
-        \if A\bg@fillht
-          \ifloc@lht\else
-            \dglt@calc@vailht@mods %(globally) alters availht, so that needs resetting
-          \fi
-          \ifx\TextBorderColumns\empty\else
-            \advance\availht by -\dimexpr \csname textb@dr@top@pad#1\endcsname+\csname textb@dr@bot@pad#1\endcsname \relax
-          \fi
-          \dimen1=\availht
-        \else
-          \dimen1=\textheight
-        \fi
-      \fi
+      \bg@calcns{#1}{bg for}%
+      \trace{et}{background is \the\dimen1 according to \wh@t - \f@rstb@dy}%
       \dimen2=\DiglotColourPad
+      \ifdim \csname @fn#1ht\endcsname>0pt \advance\dimen1 by 2\dimen2 \fi % certainly needed when calculating by oldpartian+@curXht, not sure about other times.
       \trace{D}{Colour for #1(\bg@fillht - \ifloc@lht loc\else glo\fi) is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
       %\hbox to 0pt{\vrule height 1pt width 100pt\hss}%
       \setbox0\hbox to 0pt {%
         \ifx\TextBorderColumns\empty\else
           \hskip\csname textb@dr@left@pad#1\endcsname
         \fi
-        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height 0pt depth \dimen1 width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}%
+        \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\f@rstb@dy}\else\let\pf@x\empty\fi
+        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\pf@x\hbox{\vrule height 0pt depth \dimen1 width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}}\hss}%
       \raise-\csname textb@dr@top@pad#1\endcsname\box0
       \global\availht=\tmpav
     }%
@@ -2506,6 +2514,7 @@
      \ifvoid\verybottomins\else % \kern-\dimen0
        \trace{i}{Using verybottomins \the\ht\verybottomins x\the\wd\verybottomins}%
        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \makefootbox
      }%pagecontents
    \holdinginserts=1
    \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
@@ -2545,6 +2554,8 @@
   \x@\each@col\diglot@list\E% 
   \def\v@lpfx{@cur}%
   \let\col@do=\forget@boxdim
+  \x@\each@col\diglot@list\E
+  \def\v@lpfx{@fn}%
   \x@\each@col\diglot@list\E
   \def\v@lpfx{}\def\v@lsfx{box}%
   \let\col@do=\void@boxes %
@@ -2757,12 +2768,13 @@
 \def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
   % ifdiglot@ecols is set up by check@nxtht
   \def\errt@st{#1}\ifx\errt@st\empty\errmessage{set@ht passed null value}\fi
-  \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
+  \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname\relax
   \ifdiglot@ecols %one at least is empty
     \ifdim \dimen1 =0pt
-      \x@\dimen1\x@=\csname @cur#1ht\endcsname % new height = old height
-    \else
       \advance\dimen1 by \m@xht\relax
+      %\x@\dimen1\x@=\csname @cur#1ht\endcsname\relax % new height = old height
+    \else
+      %\advance\dimen1 by \m@xht\relax
     \fi
   \fi
   \trace{dP}{set@ht @cur#1ht set to \the\dimen1 \space \ifdiglot@ecols d@ecolstrue m@xht=\m@xht\else d@ecolsfalse\fi}%
