@@ -102,10 +102,18 @@ def main(doitfn=None):
         parser._print_message = print_message
         os.environ['PATH'] += os.pathsep + sys._MEIPASS.replace("/","\\")
 
+    conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
+    config = configparser.ConfigParser(interpolation=None)
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None
+    argsline = None
     if envopts is not None:
-        opts = shlex.split(envopts)
+        argsline = envopts
+    elif config.has_option('init', 'commandargs'):
+        argsline = config.get('init', 'commandargs')
+        config.remove_option('init', 'commandargs')
+    if argsline is not None:
+        opts = shlex.split(argsline)
         args = parser.parse_args(opts, args)
     args = parser.parse_args(None, args)
 
@@ -162,8 +170,6 @@ def main(doitfn=None):
             args.projects.append(pdir)
         savetreedirs = True
 
-    conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
-    config = configparser.ConfigParser(interpolation=None)
     if (args.extras & 4) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:
@@ -415,7 +421,7 @@ def main(doitfn=None):
             loops += 1
         if loops >= 0:
             if savetreedirs:
-                prjTree.addToConfig(config)
+                mainw.prjTree.addToConfig(config)
             with open(conffile, "w", encoding="utf-8") as outf:
                 config.write(outf)
 

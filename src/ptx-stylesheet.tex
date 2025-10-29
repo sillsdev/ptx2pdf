@@ -1886,7 +1886,7 @@
  \global\let\id@@@\n@ID
  \defineheads
  \ifnum 1=\ifVisTrace 1 \else \ifVisTraceExtra 1 \else 0\fi\fi 
-   \font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
+   \font\VisTracefont="Source Code Pro":color=3f7f3f at 6pt\fi
  \ifdiglot\setc@rdstat{L}%
  \fi
  \let\@@realrem\rem
@@ -1945,6 +1945,7 @@
  \deactiv@tecustomch@rs
  \catcode13=5
  \catcode`\/=12
+ \catcode`\^=7 % restore tex meaning
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
  \catcode`+=\pl@scatcode % don't treat as letter any more
@@ -2066,7 +2067,8 @@
  \ifdiglot
    \global\let\gridb@x\diglotgr@db@x
  \else
-   \ifsquashgridbox\global\let\gridb@x\gr@db@@x\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
+   %\ifsquashgridbox
+   \global\let\gridb@x\gr@db@@x%\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
    \ifNoGrid\global\let\gridb@x\ungr@db@x\fi
  \fi
  \@netimesetuplater

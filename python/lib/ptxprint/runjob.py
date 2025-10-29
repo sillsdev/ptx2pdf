@@ -161,6 +161,7 @@ class RunJob:
         # self.diffPdf = None
         self.rerunReasons = []
         self.coverfile = None
+        self.extrafiles = {}
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -542,7 +543,7 @@ class RunJob:
         outpath = os.path.join(self.tmpdir, '..', outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
-        pdffile = outpath + "{}.pdf".format(pdfext)
+        pdffile = outpath + ".pdf".format(pdfext)
         logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:
@@ -703,8 +704,12 @@ class RunJob:
             else:
                 self.res = 4 if runner else 0
             self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
-            if self.res == 0 and not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
-                self.res = 3
+            if self.res == 0:
+                if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+                    self.printer.onIdle(self.printer.pdf_viewer.clear)
+                if not self.procpdf(outfname, pdffile, info, burst=info['finishing/extractinserts'],
+                                    cover=info['cover/makecoverpage'] != '%'):
+                    self.res = 3
         print("Done")
 
     def done_job(self, outfname, pdfname, info):
@@ -718,9 +723,10 @@ class RunJob:
             cfgname = ""
         if pdfname is not None:
             print(pdfname)
-        self.printer.set("l_statusLine", "")
+        self.printer.onIdle(self.printer.set, "l_statusLine", "")
         print(f"{self.res=}")
         if self.res == 0:
+            logger.debug(f"{self.noview=} {self.printer.isDisplay=} {pdfname=} doCreateDiff={self.printer.docreatediff}")
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
                 if basename == _("Previous PDF (_1)"):
@@ -734,15 +740,13 @@ class RunJob:
                     diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
                                 color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
-                        self.printer.onShowPDF(path=diffname)
+                        self.printer.onIdle(self.printer.onShowPDF, path=diffname)
                         if diffname == pdfname:
-                            self.printer.set("l_statusLine", _("No differences found"))
+                            self.printer.onIdle(self.printer.set, "l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
+                startname = pdfname
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
-                if self.printer.isCoverTabOpen():
-                    startname = self.coverfile or pdfname
-                else:
-                    startname = pdfname
+                startname = pdfname
 
             fname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".log"))
             logger.debug(f"Testing log file {fname}")
@@ -760,7 +764,7 @@ class RunJob:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
-                    if not self.noview and not self.args.print:
+                    if not self.noview and not self.args.print and not self.printer.showPDFmode == "preview":
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
@@ -769,7 +773,7 @@ class RunJob:
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
-                            self.printer.set("l_statusLine", chkmsg)
+                            self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
                         else:
                             sl.set_text(summaryLine)
                             sl.set_tooltip_text(msgs)
@@ -786,10 +790,11 @@ class RunJob:
                                   _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
+            logger.debug(f"display {startname}")
             if not self.noview and startname is not None:
                 if self.printer.get("c_layoutAnalysis"):
                     self.printer.incrementProgress(inproc=True, stage="al")
-                self.printer.onShowPDF(path=startname)
+                self.printer.onIdle(self.printer.onShowPDF, path=startname, extras=self.extrafiles)
                 self.printer.incrementProgress(inproc=True, stage=None)
 
         elif self.res == 3:
@@ -808,12 +813,13 @@ class RunJob:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
                     secondary="".join(loglines[-12:]),
                     title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
-        elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+        else:
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
                     secondary="".join(finalLogLines[:30]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True, copy2clip=True)
-            self.printer.onIdle(self.printer.showLogFile)
+            if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+                self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         self.printer.finished(self.res == 0)
@@ -821,7 +827,7 @@ class RunJob:
         if not self.noview and not self.args.print and self.printer.isDisplay:
             spnr = self.printer.builder.get_object("spin_preview")
             if spnr.props.active:  # Check if the spinner is running
-                spnr.stop()
+                self.printer.onIdle(spnr.stop)
             if self.printer.showPDFmode == "preview":
                 self.printer.builder.get_object("dlg_preview").present()
         r = Report()
@@ -923,7 +929,7 @@ class RunJob:
             return opath
         return pdffile
 
-    def procpdf(self, outfname, pdffile, info, **kw):
+    def procpdf(self, outfname, pdffile, info, cover=False, **kw):
         for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'paper/cropmarks', 'document/ifrtl'):
             if '/' in a:
                 kw[a[a.find("/")+1:]] = info[a]
@@ -935,11 +941,12 @@ class RunJob:
             report = checkoutput(["xetex", "--version"], path='xetex')
             z.writestr("_runinfo.txt", report)
             z.close()
-        self.coverfile = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, **kw)
-        if self.coverfile is False:
-            self.coverfile = None
-            return False
-        return True
+        self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, **kw)
+        if cover:
+            self.coverfile = self.extrafiles.get('cover', None)
+            return self.coverfile is not None
+        else:
+            return True
 
     def createDiff(self, pdfname, basename, outname=None, **kw):
         from ptxprint.pdf.pdfdiff import createDiff

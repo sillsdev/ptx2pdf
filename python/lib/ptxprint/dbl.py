@@ -168,20 +168,26 @@ def UnpackBooks(inzip, prjid, prjdir, subdir=None):
         ftype = usfmtc._filetypes.get(fext.lower(), None)
         if ftype is None:
             continue
-        if fbk in bookcodes:
-            indoc = unpackBook(inzip, f, fbk, ftype, prjid, prjdir)
-            inzip.collectBookNames(indoc)
+        bk = None
+        if fbk[:3].upper() in bookcodes:
+            bk = fbk[:3]
+        elif fbk[-3:].upper() in bookcodes:
+            bk = fbk[-3:]
+        indoc = unpackBook(inzip, f, bk, ftype, prjid, prjdir)
+        inzip.collectBookNames(indoc)
     if not inzip.hasbooknames:
         inzip.outBookNames(os.path.join(prjdir, prjid))
-    return True
+    return os.path.exists(os.path.join(prjdir, prjid))
 
 def unpackBook(inzip, inname, bkid, informat, prjid, prjdir):
     prjpath = os.path.join(prjdir, prjid)
-    outfname = "{}{}{}.USFM".format(bookcodes.get(bkid, "ZZ"), bkid, prjid)
-    outpath = os.path.join(prjpath, outfname)
     os.makedirs(prjpath, exist_ok=True)
     with io.TextIOWrapper(inzip.open(inname), encoding="utf-8") as inf:
         indoc = usfmtc.readFile(inf, informat=informat)
+    if bkid is None:
+        bkid = indoc.book
+    outfname = "{}{}{}.USFM".format(bookcodes.get(bkid, "ZZ"), bkid, prjid)
+    outpath = os.path.join(prjpath, outfname)
     indoc.saveAs(outpath)
     return indoc
 

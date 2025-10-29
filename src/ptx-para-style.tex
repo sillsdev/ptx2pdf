@@ -237,7 +237,7 @@
 
 %+cpar_gridbox2
 % returns in \dimen0 how much to advance \dimen1 (y) to be an integral multiple of \dimen0 (x)
-% \dimen1 := y % x, \dimen3 := y - y % x, \dimen0 := x - y + y % x
+% \dimen1 := y - y % x, \dimen3 := y % x, \dimen0 := x - y % x
 \def\m@d{\dimen3=\dimen1\divide\dimen1 \dimen0\multiply\dimen1 \dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 \newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
@@ -258,17 +258,22 @@
       \ift@tle\lastdepth=0pt \fi
       \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth; upwardsHackDiff=\the\upwardsHackDiff}%
       \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
-      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space, y and x. z = x - y + y % x
+      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is gridding space above box, y (ht0) and x (baselineskip). z = x - y % x
       \dimen1=\ht0 \advance\dimen1 by -\headingtopspace % a = y - b
-      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0 % z = x - y + y % x - x + y - b - (y-b) % x; w = x - y + b + (y-b) % x
-      \advance\dimen2 by \headingtopspace   % (1), z = y % x - (y-b) % x
+      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0 % w = x - (y-b) % x; z = x - y % x - x + (y-b) % x; = (y-b) % x - y % x 
+      \advance\dimen2 by \headingtopspace   % (1), z = (y-b) % x - y % x
       \ifgridp@c\else\ifdiglot\else
-        \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
+        \ifdim\lastdepth>0pt \vskip -\lastdepth\fi
       \fi\fi
+      \ifversion{6}{\ifdim\dimen2<-\dimen0 \advance\dimen2 by \baselineskip\fi}{}%
       \ifdim\upwardsHackDiff=0pt\else\advance\dimen2 by -\upwardsHackDiff \advance\dimen0 by \upwardsHackDiff\fi
-      \ifdiglot\kern\else\vskip\fi\dimen2
       \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
-      \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
+      \t@mpfalse
+      \ifnum\ifsquashgridbox 1\else\ifgridp@c 1\else 0\fi\fi =1%
+        \ifdiglot\kern\else\vskip\fi\dimen2
+      \else\vbox\bgroup\topskip=0pt\t@mptrue\vskip\dimen2\fi
+        \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
+      \ift@mp\egroup\fi
       \ifrotate\prevdepth=\baselineskip\fi
       \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
       %\ifdim\oldprevdepth<-999pt \prevdepth=\oldprevdepth\fi % DON"T restore old prevdepth. For some reason this puts things off grid.
@@ -533,7 +538,7 @@
      \ifcsname startx:#1-\c@rref\endcsname
        \dimen0=\csname startx:#1-\c@rref\endcsname sp
      \else \ifcsname marginnote-\c@rref @#1:xshift\endcsname
-         \dimen0=\csname marginnote-\c@rref @#1:xshift\endcsname sp
+         \dimen0=\csname marginnote-\c@rref @#1:xshift\endcsname% sp
        \else \dimen0=0pt
      \fi\fi \ifdim\dimen0>0.5 \textwidth \def\c@l{1}\fi
      \trace{C}{\the\dimen0, c@l=\c@l}%
@@ -563,6 +568,7 @@
 
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
  \edef\newp@rstyle{#1}%
+ \global\let\oldch@rfont\empty % By 'definition' a para style clears oldch@rfont, as it's only here to check font-runs.
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  \catcode`\^=12

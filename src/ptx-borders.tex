@@ -111,6 +111,7 @@
 }
 
 \def\overthin@fix#1#2#3#4{% If #2 is a space, then use = assignment, else use edef, (maybe with units)
+  %\tracingassigns=1
   \def\tmp{#2}\ifx\tmp\empty
     \edef#1{\the\csname min\thinlinest@ndard line\endcsname}%
   \else
@@ -123,6 +124,7 @@
         \message{!! The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref. Cannot fix because of unexpected units.}%
     \fi\fi
   \fi
+  %\tracingassigns=0
 }
 \gdef\overthin@warn#1#2#3#4{%
   \message{The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref}%
@@ -392,7 +394,7 @@
   \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bordercolour}\let\b@drcol\cp@ram
   \getsbp@ram{properties}\let\b@drprop\cp@ram
-  \trace{eb}{Params finished}%
+  \trace{eb}{Params finished w:\b@drlinewidth \space lrtb:\b@drleft\b@drright\b@drtop\b@drbottom}%
 }
 \def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderlpadding,borderrpadding,bordertpadding,borderbpadding,boxlpadding,boxrpadding,boxtpadding,boxbpadding,raise,verticalalign,borderpadinnerouter,boxpadinnerouter}
 %raise and verticalalign are not used by borders, but is by zrules

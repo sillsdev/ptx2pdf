@@ -369,6 +369,7 @@ class Usfm:
         self.grammar = grammar
         self.cvaddorned = False
         self.book = book
+        self.chapters = []          # the starting paragraph index for each chapter and the final paragraph index at the end
 
     @classmethod
     def readfile(cls, fname, grammar=None, sheet=None, elfactory=None, informat=None, **kw):       # can also take the data straight

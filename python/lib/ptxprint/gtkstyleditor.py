@@ -161,10 +161,10 @@ usfmDocsPath = {
 mkr2path = {w:k for k,v in usfmDocsPath.items() for w in v.split()}
 
 widgetsignals = {
-    "s": "value-changed",
-    "c": "toggled",
-    "bl": None,
-    "col": "color-set"
+    "s": ["value-changed", "focus-out-event"],
+    "c": ["toggled"],
+    "bl": [],
+    "col": ["color-set"]
 }
 
 dialogKeys = {
@@ -216,6 +216,9 @@ class StyleEditorView(StyleEditor):
         cr = Gtk.CellRendererText()
         tvc = Gtk.TreeViewColumn("Marker", cr, text=1, strikethrough=3)
         self.treeview.append_column(tvc)
+        # initialize the search match set and attach painter
+        self._search_matches = set()
+        tvc.set_cell_data_func(cr, self._paint_tree_row)
         tself = self.treeview.get_selection()
         tself.connect("changed", self.onSelected)
         # The original interactive search caused issues. We now use a manual, delayed search.
@@ -229,27 +232,71 @@ class StyleEditorView(StyleEditor):
             w = self.builder.get_object(v[0])
             #key = stylediverts.get(k, k)
             (pref, name) = v[0].split("_", 1)
-            signal = widgetsignals.get(pref, "changed")
-            if signal is not None:
+            signals = widgetsignals.get(pref, ["changed"])
+            for signal in signals:
                 w.connect(signal, self.item_changed, k)
-            # if v[0].startswith("s_"):
-            #     w.connect("focus-out-event", self.item_changed, k)
         self.isLoading = False
+
+    def _paint_tree_row(self, column, cell, model, treeiter, data=None):
+        """
+        - Top-level rows: blue foreground (#72729f9fcfcf) and bold.
+        - Matched rows: pale peach background (#fce8d9).
+        - Everyone else: inherit theme colors.
+        """
+        # Clear any explicit styling first so rows not matching revert to theme
+        cell.set_property('foreground-set', False)
+        cell.set_property('cell-background-set', False)
+        cell.set_property('weight', Pango.Weight.NORMAL)
+
+        try:
+            path = model.get_path(treeiter)   # works with GtkTreeModelFilter too
+        except Exception:
+            return
+
+        # Top-level (depth==1): blue label
+        if len(path) == 1:
+            cell.set_property('foreground', '#72729f9fcfcf') # pale blue
+            cell.set_property('foreground-set', True)
+            cell.set_property('weight', Pango.Weight.BOLD)
+
+        # Search highlight: compare stringified path
+        matches = getattr(self, '_search_matches', None)
+        if matches and path.to_string() in matches:
+            cell.set_property('cell-background', '#fce8d9') # pale peach
+            cell.set_property('cell-background-set', True)
 
     def on_search_changed(self, entry):
         """Debounces search entry changes to avoid rapid, repeated searches."""
-        if self.search_timer_id is not None:
+        # Read the current text FIRST
+        key = entry.get_text()
+
+        # If a previous timer is pending, cancel it
+        if getattr(self, "search_timer_id", None) is not None:
             GLib.source_remove(self.search_timer_id)
+            self.search_timer_id = None
+
+        # If the box is empty, clear highlights immediately
+        if not key.strip():
+            # Make sure this exists somewhere (e.g., set() in __init__)
+            self._search_matches = set()
+            # collapse everything to remove search-driven expansion
+            # self.treeview.collapse_all()
+            self.treeview.queue_draw()
+        # Start (or restart) the debounce timer
         self.search_timer_id = GLib.timeout_add(500, self.do_search, entry)
 
     def do_search(self, entry):
         """Performs the search after the 500ms delay."""
+        # Clear the timer id since we're firing now
         self.search_timer_id = None
-        key = entry.get_text()
+
+        key = entry.get_text().strip()
         if not key:
-            return False  # Stop the timer if the search box is empty
+            # Nothing to search; keep highlights cleared by on_search_changed
+            return False  # stop the timer
+
         self.tree_search(self.treeview.get_model(), 0, key, None)
-        return False  # Returning False ensures the timer only runs once
+        return False  # ensure the timer only runs once
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None, mapin=True):
         super().setval(mrk, key, val, ifunchanged=ifunchanged, parm=parm, mapin=mapin)
@@ -379,19 +426,125 @@ class StyleEditorView(StyleEditor):
 
     def tree_search(self, model, colmn, key, rowiter):
         root = model.get_iter_first()
-        it = self._searchMarker(model, root, self.normalizeSearchKey(key))
-        # doselect = True
+        norm_key = self.normalizeSearchKey(key)
+
+        # Find first match (your existing behavior)
+        it = self._searchMarker(model, root, norm_key)
         if it is None:
-            # doselect = False
-            it = self._searchMarker(model, root, self.normalizeSearchKey(key), findall=True)
+            it = self._searchMarker(model, root, norm_key, findall=True)
+            if it is None:
+                # No matches → clear highlights and return
+                self._search_matches = set()
+                self.treeview.queue_draw()
+                return False
+
+        # --- NEW: collect ALL matches for highlighting ---
+        matches = set()
+
+        def collect_all(start_it):
+            it2 = start_it
+            while it2 is not None:
+                try:
+                    label = str(model[it2][1]).lower()
+                    marker = str(model[it2][0]).lower()
+                except Exception:
+                    label = str(model.get_value(it2, 1)).lower()
+                    marker = str(model.get_value(it2, 0)).lower()
+
+                if marker == norm_key or (norm_key and norm_key in label):
+                    matches.add(model.get_path(it2).to_string())
+
+                if model.iter_has_child(it2):
+                    collect_all(model.iter_children(it2))
+                it2 = model.iter_next(it2)
+
+        collect_all(root)
+        self._search_matches = matches
+        # -------------------------------------------------
+
+        # Collapse everything, then expand only top-level categories that match
+        self.treeview.collapse_all()
+        top = model.get_iter_first()
+        while top is not None:
+            top_matches = False
+
+            try:
+                label = str(model[top][1])
+            except Exception:
+                label = str(model.get_value(top, 1))
+
+            if norm_key and label and norm_key in label.lower():
+                top_matches = True
+            else:
+                if model.iter_has_child(top):
+                    child = model.iter_children(top)
+                    if self._searchMarker(model, child, norm_key, findall=True) is not None:
+                        top_matches = True
+
+            if top_matches:
+                self.treeview.expand_row(model.get_path(top), False)
+
+            top = model.iter_next(top)
+
+        # Jump to the first match, as before
+        path = model.get_path(it)
+        if path is None:
+            self.treeview.queue_draw()
+            return False
+
+        self.treeview.expand_to_path(path)
+        self.treeview.scroll_to_cell(path)
+        self.treeview.get_selection().select_path(path)
+
+        # Force repaint so highlights show immediately
+        self.treeview.queue_draw()
+        return True
+
+    def old_tree_search(self, model, colmn, key, rowiter):
+        root = model.get_iter_first()
+        norm_key = self.normalizeSearchKey(key)
+
+        # 1) Find the first match (keeps your existing behavior)
+        it = self._searchMarker(model, root, norm_key)
+        if it is None:
+            it = self._searchMarker(model, root, norm_key, findall=True)
             if it is None:
                 return False
+
+        # 2) Collapse everything, then expand only top-level categories that match
+        self.treeview.collapse_all()
+
+        top = model.get_iter_first()
+        while top is not None:
+            top_matches = False
+
+            # Try to read the category label (column 1) safely
+            try:
+                label = str(model[top][1])
+            except Exception:
+                label = str(model.get_value(top, 1))
+
+            # a) top-level row's own label matches?
+            if norm_key and label and norm_key in label.lower():
+                top_matches = True
+            else:
+                # b) OR any descendant matches?
+                if model.iter_has_child(top):
+                    child = model.iter_children(top)
+                    if self._searchMarker(model, child, norm_key, findall=True) is not None:
+                        top_matches = True
+
+            if top_matches:
+                self.treeview.expand_row(model.get_path(top), False)
+
+            top = model.iter_next(top)
+
+        # 3) Jump to the first match as before
         path = model.get_path(it)
         if path is None:
             return False
         self.treeview.expand_to_path(path)
         self.treeview.scroll_to_cell(path)
-        # if doselect:
         self.treeview.get_selection().select_path(path)
         return True
 
@@ -399,6 +552,19 @@ class StyleEditorView(StyleEditor):
         self.filter_state = state
         self.mrkrlist = mrkrset
         self.filter.refilter()
+
+        if state:
+            # Expand ALL top-level categories in the (filtered) model
+            model = self.treeview.get_model()      # GtkTreeModelFilter
+            it = model.get_iter_first()
+            while it:
+                path = model.get_path(it)
+                if len(path) == 1:                 # top-level only
+                    self.treeview.expand_row(path, False)
+                it = model.iter_next(it)
+        else:
+            # Filter turned OFF → collapse everything (so top level is closed)
+            self.treeview.collapse_all()
 
     def apply_filter(self, model, it, data):
         if not self.filter_state:
@@ -408,14 +574,32 @@ class StyleEditorView(StyleEditor):
         #logger.debug(f"{model[it][0]} {path}({len(path)})   {res}")
         return res
 
+    # def old_getStyleType(self, mrk):
+        # ''' valid returns are: Character, Milestone, Note, Paragraph '''
+        # mtype = self.getval(self.marker, 'mrktype', '')
+        # if not mtype:
+            # res = self.getval(self.marker, 'StyleType')
+        # else:
+            # res = Grammar.marker_tags.get('mtype', 'Standalone')
+        # return res
+
     def getStyleType(self, mrk):
-        ''' valid returns are: Character, Milestone, Note, Paragraph '''
-        mtype = self.getval(self.marker, 'mrktype', '')
-        if not mtype:
-            res = self.getval(self.marker, 'StyleType')
-        else:
-            res = Grammar.marker_tags.get('mtype', 'Standalone')
-        return res
+        """valid returns are: Character, Milestone, Note, Paragraph"""
+        # what the .sty says
+        mtype = self.getval(mrk, 'mrktype', '')
+        # what the USFM grammar says for this marker
+        cat = Grammar.marker_categories.get(mrk, '')
+        # If mrktype is empty OR the default placeholder "Paragraph",
+        # use the grammar category when available.
+        if not mtype or mtype == 'Paragraph':
+            if cat:
+                return cat
+        # Otherwise honor the explicit mrktype
+        if mtype:
+            return mtype
+        # Last fallbacks: any saved StyleType, or Standalone
+        st = self.getval(mrk, 'StyleType')
+        return st or 'Standalone'
 
     def editMarker(self):
         if self.marker is None:
@@ -443,6 +627,11 @@ class StyleEditorView(StyleEditor):
                     if urlmkr not in noEndmarker:
                         urlmkr += "-" + data['endmarker'].strip(r'\*')
                 urlmkr = re.sub(r'\d', '', urlmkr)
+            elif k == 'Justification':
+                oldval = self.getval(self.marker, k, v[2], baseonly=True)
+                val = self.getval(self.marker, k, v[2])
+                if val == '':
+                    val = 'Justified'
             elif k == '_publishable':
                 # val = 'nonpublishable' in data.get('TextProperties', '')
                 oldval = 'nonpublishable' not in (x.lower() for x in old.get('textproperties', []))  # default was "nonpublishable"
@@ -507,17 +696,18 @@ class StyleEditorView(StyleEditor):
         for w in (('Note', 'Table', 'SB')):
             if self.builder.get_object("ex_sty"+w).get_expanded():
                 self.builder.get_object("ex_styOther").set_expanded(True)
-
         if not self.model.get("c_noInternet"):
             tl = self.model.lang
             w = self.builder.get_object("l_url_usfm")
+            w.set_sensitive(True)
             w.set_label(_('More Info...'))
             tl = self.model.lang if not self.model.get("c_useEngLinks") and \
                  self.model.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th'] else ""
             m = self.marker.strip("123456789")
             path = mkr2path.get(m, None)
             if "+" in urlmkr or "|" in urlmkr or path is None:
-                w.set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
+                w.set_uri(_('No further information is available for\ncomplex/custom marker: {}').format(urlmkr))
+                w.set_sensitive(False)
             else:
                 if m.startswith("z"):
                     site = f'https://github.com/sillsdev/ptx2pdf/blob/master/docs/help/{m}.md'
@@ -670,7 +860,7 @@ class StyleEditorView(StyleEditor):
 
         if not key.startswith("_"):
             super(self.__class__, self).setval(self.marker, key, value, mapin=False)
-            if key in ("FontSize", "FontName", "Bold", "Italic"):
+            if key in ("font", "FontSize", "FontName", "Bold", "Italic"): # ask MH if OK to add 'font'
                 fref = self.getval(self.marker, 'font')
                 if fref is None:
                     fref = self.model.get("bl_fontR")

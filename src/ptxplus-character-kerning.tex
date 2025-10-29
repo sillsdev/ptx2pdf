@@ -42,8 +42,8 @@
 \DefineActiveChar{^^^^2019}{\futurelet\knext\noexpand\scqtest}
 \DefineActiveChar{^^^^201c}{\futurelet\knext\noexpand\doqtest}
 \DefineActiveChar{^^^^201d}{\futurelet\knext\noexpand\dcqtest}
-%\def\liter@lkerns{%\edef^^^^2018{\soq}\edef^^^^201c{\doq}\edef^^^^2019{\scq}\edef^^^^201d{\dcq}%
-  %\catcode"2018=12 \catcode"201C=12 \catcode"2019=12 \catcode"201D=12}
-%\def\sm@rtquotes{\catcode"2018=\active \catcode"201C=\active \catcode"2019=\active \catcode"201D=\active}
+\def\liter@lkerns{%\edef^^^^2018{\soq}\edef^^^^201c{\doq}\edef^^^^2019{\scq}\edef^^^^201d{\dcq}%
+  \catcode"2018=12 \catcode"201C=12 \catcode"2019=12 \catcode"201D=12}
+\def\sm@rtquotes{\catcode"2018=\active \catcode"201C=\active \catcode"2019=\active \catcode"201D=\active}
 %\sm@rtquotes
 

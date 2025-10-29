@@ -159,7 +159,7 @@ class ParatextSettings:
         return self.ldml.find(path)
 
     def inferValues(self, forced=False):
-        if forced or 'FileNameBookNameForm' not in self.dict:
+        if forced or 'FileNameBookNameForm' not in self.dict and os.path.exists(self.prjdir):
             sfmfiles = [x for x in os.listdir(self.prjdir) if x.lower().endswith("sfm")]
             for f in sfmfiles:
                 m = re.search(r"(\d{2})", f)

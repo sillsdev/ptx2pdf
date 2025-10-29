@@ -329,6 +329,7 @@ OTFeatNames = {
     "dlig": "Discretionary Ligatures",
     "dtls": "Dotless Forms",
     "expt": "Expert Forms",
+    "frac": "Fractional forms",
     "halt": "Alternate Half Widths",
     "hist": "Historical Forms",
     "hkna": "Horizontal Kana Alternates",
@@ -386,7 +387,7 @@ OTFeatNames = {
 
 OTInternalFeats = { "abvf", "abvm", "abvs", "akhn", "blwf", "blwm", "blws", "calt", "ccmp",
                     "cfar", "chws", "cjct", "clig", "curs", "dnom", "dist", "falt", "fin2", "fin3",
-                    "fina", "flac", "frac", "fwid", "half", "haln", "hngl", "hwid", "init",
+                    "fina", "flac", "fwid", "half", "haln", "hngl", "hwid", "init",
                     "isol", "lfbd", "liga", "locl", "ltra", "ltrm", "mark", "med2", "medi",
                     "mkmk", "mset", "nukt", "numr", "opbd", "pref", "pres", "pstf", "psts",
                     "rand", "rclt", "rlig", "rphf", "rtbd", "rtla", "rtlm", "vatu", "vjmo"}

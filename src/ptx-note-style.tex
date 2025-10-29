@@ -395,7 +395,7 @@
       \fi
     \fi
     \ifp@ranotes\else
-      \prevdepth=0pt % Ensure that we start with a baselineskip.
+      \ifvmode \prevdepth=0pt \fi % Ensure that we start with a baselineskip.
       \ifusespacebefore\getp@ram{spacebefore}{#1}{#1}\trace{n}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi\fi
 %      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
 %      \ifdim\dimen0<\baselineskip

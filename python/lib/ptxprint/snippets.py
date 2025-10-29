@@ -299,7 +299,7 @@ class FancyBorders(Snippet):
 {fancy/sectionheader}{fancy/sectionborder}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
 {fancy/sectionheader}{fancy/sectionborder}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
 {fancy/sectionheader}{fancy/sectionborder}\sethook{{start}}{{s2%D%}}{{\placesectionheadbox}}
-{fancy/sectionheader}{fancy/sectionborder}\squashgridboxfalse
+%{fancy/sectionheader}{fancy/sectionborder}\squashgridboxfalse
 
 {fancy/versedecoratorisfile}\newbox\versestarbox%D%
 {fancy/versedecoratorisfile}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{fancy/versedecoratorpdf}" scaled {fancy/versedecoratorscale} \relax}}

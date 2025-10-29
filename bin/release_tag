@@ -81,6 +81,7 @@ def dch(*a, **kw):
 # gitversion = get_gitver()
 replacefile("pyproject.toml", r'(version = ").*?"', r'\g<1>'+args.version+'"')
 replacefile("setup.cfg", r'(version = ").*?"', r'\g<1>'+args.version+'"')
+replacefile("ptxprint.spec", r'(version=").*?"', r'\g<1>'+args.version+'"')
 replacefile("InnoSetupPTXprint.iss", r'(#define MyAppVersion ").*?"', r'\g<1>'+args.version+'"')
 replacefile("python/lib/ptxprint/ptxprint.glade", r'(property name=\"version\">Version ).*?(<\/property>)', r'\g<1>'+args.version+r'\g<2>')
 replacefile("python/lib/ptxprint/splash.glade", r'(property name=\"label\">PTXprint \().*?(\))', r'\g<1>'+args.version+r'\g<2>')

@@ -1,4 +1,4 @@
-import gi, os, datetime, ctypes, math
+import gi, os, datetime, ctypes, math, gc
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
@@ -6,6 +6,7 @@ import cairo, re, time, sys
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
+from ptxprint.view import VersionStr
 from ptxprint.utils import _, f2s, coltoonemax, getcaller
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
@@ -153,6 +154,11 @@ class PDFViewer:
     def onTabChange(self, p):
         # called before the page is changed
         self.lastpage = self.nbook.get_current_page()
+        
+    def selectTab(self, name):
+        i = self.boxcodes.get(name, None)
+        if i is not None and i < len(self.viewers) and self.viewers[i] is not None:
+            self.nbook.set_current_page(i)
 
     def onPageChanged(self, widget, pspec):
         # called after the page is changed
@@ -163,7 +169,12 @@ class PDFViewer:
         self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
 
-    def loadnshow(self, fname, tab=None, **kw):
+    def onmaximized(self):
+        c = self.nbook.get_current_page()
+        for i,p in enumerate(self.viewers):
+            p.set_zoom_fit_to_screen(c==i)
+
+    def loadnshow(self, fname, tab=None, extras={}, **kw):
         fbits = os.path.splitext(fname) if fname is not None else None
         if tab is None:
             for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
@@ -171,15 +182,41 @@ class PDFViewer:
                     fpath = a.format(*fbits)
                 v = self.nbook.get_nth_page(i)
                 if fbits is not None and os.path.exists(fpath):
-                    self.viewers[i].loadnshow(fpath, **kw)
+                    self.viewers[i].loadnshow(fpath, i==self.nbook.get_current_page(), **kw)
                     v.show()
                     self.nbook.set_current_page(0)
                 else:
                     v.hide()
+            for k, v in sorted(extras.items()):
+                n = k.strip()
+                if n not in self.boxcodes:
+                    i = len(self.boxcodes)
+                    self.boxcodes[n] = i
+                    self.boxnames.append("bx_preview{}".format(n))
+                    if i >= self.nbook.get_n_pages():
+                        b = Gtk.Box()
+                        b.set_halign(Gtk.Align.CENTER)
+                        b.set_valign(Gtk.Align.CENTER)
+                        b.set_hexpand(True)
+                        b.set_vexpand(True)
+                        sc = Gtk.ScrolledWindow()
+                        sc.set_shadow_type(Gtk.ShadowType.IN)
+                        sc.set_propagate_natural_height(True)
+                        sc.get_style_context().add_class("graybox")
+                        sc.add_with_viewport(b)
+                        tab = Gtk.Label(n)
+                        tab.set_angle(270)
+                        self.viewers.append(PDFFileViewer(self.model, b, alloc=self.nbook.get_nth_page(0).get_allocation()))
+                        self.nbook.append_page(sc, tab)
+                else:
+                    i = self.boxcodes[n]
+                self.viewers[i].loadnshow(v, i==self.nbook.get_current_page(), **kw)
+                t = self.nbook.get_nth_page(i)
+                t.show()
         elif fname is not None and os.path.exists(fname):
             i = self.boxcodes[tab]
             v = self.nbook.get_nth_page(i)
-            self.viewers[i].loadnshow(fname, **kw)
+            self.viewers[i].loadnshow(fname, i==self.nbook.get_current_page(), **kw)
             v.show()
             self.nbook.set_current_page(i)
         self.hide_unused()
@@ -190,16 +227,28 @@ class PDFViewer:
                 v = self.nbook.get_nth_page(i)
                 v.hide()
 
-    def clear(self, widget=None):
-        for v in self.viewers:
-            v.clear(widget=widget)
+    def clear(self, widget=None, view=None, remove=False):
+        if view is None:
+            viewIDs = range(len(self.viewers))
+        else:
+            viewIDs = [self.boxcodes.get(view, None)]
+        for i in viewIDs:
+            if i is None:
+                continue
+            v = self.viewers[i]
+            if v is not None:
+                v.clear(widget=widget)
+                if remove:
+                    t = self.nbook.get_nth_page(i)
+                    t.hide()
+        gc.collect()
 
     def settingsChanged(self):
         self.viewers[0].settingsChanged()
 
 
 class PDFFileViewer:
-    def __init__(self, model, widget): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
+    def __init__(self, model, widget, alloc=None): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
         self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
@@ -233,6 +282,9 @@ class PDFFileViewer:
         self.hbox.connect("key-press-event", self.on_key_press_event)
         self.hbox.connect("scroll-event", self.on_scroll_event)
         self.hbox.set_can_focus(True)  # Ensure the widget can receive keyboard focus
+        if alloc is not None:
+            self.sw.set_allocation(alloc)
+            self.hbox.set_allocation(alloc)
 
     def create_boxes(self, num):
         boxes = self.hbox.get_children()
@@ -274,6 +326,7 @@ class PDFFileViewer:
 
     def load_pdf(self, pdf_path, **kw):
         if pdf_path is not None and os.path.exists(pdf_path):
+            logger.debug(f"Loading pdf: {pdf_path}")
             file_uri = Path(pdf_path).as_uri()
             try:
                 self.document = Poppler.Document.new_from_file(file_uri, None)
@@ -312,7 +365,7 @@ class PDFFileViewer:
         self.updatePageNavigation()
         return pg
 
-    def loadnshow(self, fname, rtl=False, widget=None, page=None, hook=None, **kw):
+    def loadnshow(self, fname, iscurrent, rtl=False, widget=None, page=None, hook=None, **kw):
         self.rtl_mode = rtl
         if fname is None:
             fname = self.fname
@@ -331,10 +384,11 @@ class PDFFileViewer:
         if widget is None:
             widget = self.widget
         self.widget = widget
-        widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
+        # if widget is not None:
+        #    widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.widget.show_all()
-        self.set_zoom_fit_to_screen(None)
+        self.set_zoom_fit_to_screen(iscurrent)
         self.updatePageNavigation()
         return True
 
@@ -342,7 +396,7 @@ class PDFFileViewer:
         self.create_boxes(0)
         self.document = None
         if widget is not None:
-            widget.set_title(_("PDF Preview:"))
+            widget.set_title(_("PDF Preview {}").format(VersionStr))
 
     def minmaxnumpages(self):
         rmin = 0
@@ -363,7 +417,7 @@ class PDFFileViewer:
             return
         if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
             self.zoomLevel = zoomLevel
-            self.model.set("s_pdfZoomLevel", zoomLevel*100, mod=False)
+            self.model.set("s_pdfZoomLevel", str(int(zoomLevel * 100)), mod=False)
         self.old_zoom = self.zoomLevel
         self.zoomLevel = zoomLevel
         width, height = self.psize
@@ -385,6 +439,7 @@ class PDFFileViewer:
 
         def redraw():
             self.show_pdf()
+            self.timer = None
 
         if self.timer is not None:
             GLib.source_remove(self.timer)
@@ -506,7 +561,7 @@ class PDFFileViewer:
             self.set_zoom(1.0)
             return True
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
-            self.set_zoom_fit_to_screen(None)
+            self.set_zoom_fit_to_screen(True)
             self.show_pdf()  # Redraw the current page
             return True
         elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
@@ -601,9 +656,9 @@ class PDFFileViewer:
     def on_window_size_allocate(self, widget, allocation):
         if self.current_page is None:
             return
-        self.set_zoom_fit_to_screen(None)
+        self.set_zoom_fit_to_screen(False)
 
-    def set_zoom_fit_to_screen(self, x):
+    def set_zoom_fit_to_screen(self, iscurrent):
         if not hasattr(self, "document") or self.document is None or self.current_page is None:
             return
         page = self.document.get_page(self.current_page - 1)
@@ -611,13 +666,14 @@ class PDFFileViewer:
             page_width, page_height = page.get_size()
         except AttributeError:
             return
-
+        if page_width < 10 or page_height < 10:
+            return
         parent_widget = self.hbox.get_parent() # .get_parent()
         if parent_widget is not None:
             alloc = parent_widget.get_allocation()
             scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
             scale_y = (alloc.height + 0) / page_height
-            self.set_zoom(min(scale_x, scale_y))
+            self.set_zoom(min(scale_x, scale_y), setz=iscurrent)
 
     def set_page(self, action):
         if self.current_index is None:
@@ -713,6 +769,9 @@ class PDFFileViewer:
         pdf_page.render(cairo_context)
         cairo_context.restore()
 
+    def _saveSetting(self, key, value):
+        self.model.userconfig.set('printer', key, value)
+
 
 class PDFContentViewer(PDFFileViewer):
 
@@ -740,7 +799,6 @@ class PDFContentViewer(PDFFileViewer):
         self.currpref = None
         self.timer_id = None  # Stores the timer reference
         self.last_click_time = 0  # Timestamp of the last right-click
-        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
         self.linespacing = float(self.model.get("s_linespacing", "12"))
         self.collisionpages = []
         self.spacepages = []
@@ -765,7 +823,7 @@ class PDFContentViewer(PDFFileViewer):
         self.showanalysis = val
         self.spacethreshold = threshold
         if self.showanalysis:
-            self.loadnshow(None, page=self.current_page)
+            self.loadnshow(None, True, page=self.current_page)
         self.show_pdf()
 
     def settingsChanged(self):
@@ -846,7 +904,7 @@ class PDFContentViewer(PDFFileViewer):
 
         # Expand nodes conditionally based on top-level count
         num_top_level_nodes = self._count_top_level_nodes(res)
-        if num_top_level_nodes < 8:
+        if num_top_level_nodes == 1:
             self._expand_all_nodes(treeview, res)
 
         return res
@@ -880,10 +938,7 @@ class PDFContentViewer(PDFFileViewer):
             return
         if cpage is None:
             cpage = self.current_index or self.parlocs.pnums.get(1, 1) if self.parlocs is not None else 1
-        if self.model.get("fcb_pagesPerSpread", "1") != "1":
-            self.spread_mode = False
-        else:
-            self.spread_mode = self.model.get("c_bkView", False)
+        self.spread_mode = self.model.get("c_bkView", False)
         # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
         if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
             page = self.parlocs.pnumorder[cpage - 1]
@@ -1091,7 +1146,7 @@ class PDFContentViewer(PDFFileViewer):
                 if s.pnum == pnum:
                     make_rect(*s.pos, s.width)
         else:
-            for s in self.parlocs.getbadspaces(pnum, threshold, self.charthreshold):
+            for s in self.parlocs.getbadspaces(pnum, threshold, self.charthreshold if self.model.get('c_letterSpacing', False) else 0.):
                 make_rect(*s.pos, s.width)
 
     def _draw_collisions(self, page, pnum, context, zoomlevel):
@@ -1187,7 +1242,7 @@ class PDFContentViewer(PDFFileViewer):
             elif info[1] != 100:
                 make_rect(context, orange, r, twidth)
 
-    def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
+    def loadnshow(self, fname, iscurrent, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
         def plocs(self):
             self.load_parlocs(self.parlocfile, rtl=rtl)
             if page is not None and page in self.parlocs.pnums:
@@ -1197,10 +1252,14 @@ class PDFContentViewer(PDFFileViewer):
             parlocs = self.parlocfile
         if parlocs is not None:
             self.parlocfile = parlocs
-        if not super().loadnshow(fname, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
+        if not super().loadnshow(fname, iscurrent, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
-        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
-        self.model.set_preview_pages(self.numpages, _("Pages:") if self.oneUp else _("Spreads:"))
+        pdft = os.stat(fname).st_mtime
+        mod_time = datetime.datetime.fromtimestamp(pdft)
+        formatted_time = mod_time.strftime("   %d-%b %H:%M")
+        if widget is not None:
+            widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
+        self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
     def clear(self, widget=None):
@@ -1215,20 +1274,24 @@ class PDFContentViewer(PDFFileViewer):
         self.parlocs.readParlocs(fname, rtl=rtl)
         self.parlocs.load_dests(self.document)
         if self.showanalysis:
-            xdvname = fname.replace(".parlocs", ".xdv")
-            print(f"Reading {xdvname}")
-            cthreshold = float(self.model.get("s_paddingwidth", 0.5))
-            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
-                                        fontsize=float(self.model.get("s_fontsize", 1)))
-            for (opcode, data) in xdvreader.parse():
-                pass
-            if self.spacethreshold == 0:
-                self.badspaces = self.parlocs.getnbadspaces()
-                if len(self.badspaces):
-                    self.model.set("s_spaceEms", self.badspaces[0].widthem)
-            wanted = 7
-            self.spacepages, self.collisionpages, self.riverpages = \
-                self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)), float(self.model.get('s_charSpaceEms', 4)))
+            self.load_analysis(fname)
+
+    def load_analysis(self, fname):
+        xdvname = fname.replace(".parlocs", ".xdv")
+        print(f"Reading {xdvname}")
+        cthreshold = float(self.model.get("s_paddingwidth", 0.5))
+        xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
+                                    fontsize=float(self.model.get("s_fontsize", 1)))
+        for (opcode, data) in xdvreader.parse():
+            pass
+        if self.spacethreshold == 0:
+            self.badspaces = self.parlocs.getnbadspaces()
+            if len(self.badspaces):
+                self.model.set("s_spaceEms", self.badspaces[0].widthem)
+        wanted = 7
+        self.spacepages, self.collisionpages, self.riverpages = \
+            self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
+                    float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
 
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
@@ -1246,7 +1309,7 @@ class PDFContentViewer(PDFFileViewer):
 
     def seekUFpage(self, direction):
         pages = self.numpages
-        if not pages or not self.model.ufPages:
+        if not pages or not self.all_pages:
             return
         pgnum = self.current_index
         try:
@@ -1256,12 +1319,12 @@ class PDFContentViewer(PDFFileViewer):
             current_pg = 1
         if direction == self.swap4rtl('next'):
             next_page = None
-            for pg in self.all_pages: # self.model.ufPages:
+            for pg in self.all_pages:
                 if pg > current_pg:
                     next_page = pg
                     break
             if next_page:
-                self.ufCurrIndex = self.all_pages.index(next_page)  # self.model.ufPages
+                self.ufCurrIndex = self.all_pages.index(next_page)
         else:  # 'previous'
             prev_page = None
             for pg in reversed(self.all_pages):
@@ -1331,11 +1394,11 @@ class PDFContentViewer(PDFFileViewer):
                 locatelastPage  = self.all_pages[-1]
 
                 if is_rtl:  # Fix later to include Arabic UI detection
-                    hide_prev = pnumpg >= locatelastPage or pnumpg == num_pages or not self.oneUp
-                    hide_next = pnumpg <= locatefirstPage or pnumpg == 1 or not self.oneUp
+                    hide_prev = pnumpg >= locatelastPage or pnumpg == num_pages
+                    hide_next = pnumpg <= locatefirstPage or pnumpg == 1
                 else:
-                    hide_prev = pnumpg <= locatefirstPage or pnumpg == 1 or not self.oneUp
-                    hide_next = pnumpg >= locatelastPage or pnumpg == num_pages or not self.oneUp
+                    hide_prev = pnumpg <= locatefirstPage or pnumpg == 1
+                    hide_next = pnumpg >= locatelastPage or pnumpg == num_pages
 
                 seekPrevBtn.set_sensitive(not hide_prev)
                 seekNextBtn.set_sensitive(not hide_next)
@@ -1472,7 +1535,10 @@ class PDFContentViewer(PDFFileViewer):
     def clear_menu(self, menu):
         for child in menu.get_children():
             child.destroy()
-
+            
+    def menuFitToScreen(self, x):
+        self.set_zoom_fit_to_screen(True)
+        
     def show_context_menu(self, widget, event):
         self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         self.last_click_time = time.time()
@@ -1482,23 +1548,17 @@ class PDFContentViewer(PDFFileViewer):
         
         info = []
         parref = None
-        if not self.oneUp:  # self.oneUp is disabled
-            self.addMenuItem(menu, _("Context Menu Disabled!")+"\n"+ \
-                                   _("Turn off Booklet pagination")+"\n"+ \
-                                   _("on Finishing tab to re-enable"), None, sensitivity=False)
-        else:
-            parref, pgindx, annot = self.get_parloc(widget, event)
-            if isinstance(parref, ParInfo):
-                parnum = getattr(parref, 'parnum', 0) or 0
-                parnum = "["+str(parnum)+"]" if parnum > 1 else ""
-                ref = parref.ref
-                self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
-                if self.adjlist is not None:
-                    info = self.adjlist.getinfo(ref + parnum, insert=True)
-            logger.debug(f"{event.x=},{event.y=}")
+        parref, pgindx, annot = self.get_parloc(widget, event)
+        if isinstance(parref, ParInfo):
+            parnum = getattr(parref, 'parnum', 0) or 0
+            parnum = "["+str(parnum)+"]" if parnum > 1 else ""
+            ref = parref.ref
+            self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
+            if self.adjlist is not None:
+                info = self.adjlist.getinfo(ref + parnum, insert=True)
+        logger.debug(f"{event.x=},{event.y=}")
 
-        if len(info) and re.search(r'[.:]', parref.ref) and \
-            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
+        if len(info) and re.search(r'[.:]', parref.ref):
             if ref[3:4] in "LRABCDEFG":
                 pref = ref[3:4]
                 o = 4
@@ -1552,7 +1612,7 @@ class PDFContentViewer(PDFFileViewer):
                 self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
 
             # self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.set_zoom_fit_to_screen)
+            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen)
             if not self.model.get("c_updatePDF"):
                 # self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
@@ -1948,8 +2008,4 @@ class PDFContentViewer(PDFFileViewer):
         if not success:
             raise ctypes.WinError(ctypes.get_last_error())
         logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
-            
-    def _saveSetting(self, key, value):
-        self.model.userconfig.set('printer', key, value)
-
 

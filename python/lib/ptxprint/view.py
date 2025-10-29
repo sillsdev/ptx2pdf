@@ -38,8 +38,8 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.9.9"
-GitVersionStr = "2.9.9"
+VersionStr = "3.0.1"
+GitVersionStr = "3.0.1"
 ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -179,6 +179,9 @@ class ViewModel:
 
     def setPrintBtnStatus(self, idnty, txt=""):
         self.doStatus(txt)
+
+    def onIdle(self, fn, *args, **kw):
+        fn(*args, **kw)
         
     def msgQuestion(self, q1, q2, default=False):
         print("Answering \"no\" to: " + q1)
@@ -266,13 +269,13 @@ class ViewModel:
         else:
             return [fname]
 
-    def getPDFname(self, bks=None):
+    def getPDFname(self, bks=None, noext=False):
         bases = self.baseTeXPDFnames(bks=bks)
         if bases is None or not len(bases):
             return ""
         base = bases[0]
         pdfext = _outputPDFtypes.get(self.get("fcb_outputFormat", "")) or ""
-        res = base + ("_"+pdfext if pdfext != "" else "") + ".pdf"
+        res = base + ("_"+pdfext if not noext and pdfext != "" else "") + ".pdf"
         return res
         
     def _bookrefsBooks(self, bl, local):
@@ -510,6 +513,12 @@ class ViewModel:
 
     def updateBookList(self):
         pass
+
+    def changeProjectTree(self, treedir):
+        self.prjTree = ProjectList()
+        self.prjTree.addTreedir(treedir)
+        self.project = None
+        self.cfgid = None
 
     def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True):
         return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=True)
@@ -905,6 +914,7 @@ class ViewModel:
             for k, p in self.polyglots.items():
                 p.writeConfig(config, f"diglot_{k}")
         self.globaliseConfig(config)
+        logger.debug(f"Writing config to {path}")
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
         if self.triggervcs:
@@ -1243,7 +1253,7 @@ class ViewModel:
                 self._configset(config, f"diglot_L/fontsize", fsz)
                 lsp = config.get("paragraph", "linespacing", fallback=15)
                 self._configset(config, f"diglot_L/baseline", lsp)
-                
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
@@ -1445,7 +1455,7 @@ class ViewModel:
 
     def saveConfig(self, force=False):
         cfgpath = os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")
-        logger.debug(f"Saving config {self.isChanged=} {cfgpath=}")
+        logger.debug(f"Saving config {self.isChanged=} {cfgpath=} {self.project=} from {getcaller()}")
         changed = self.isChanged
         changed = self.saveAdjlists(force=force) or changed
         if not os.path.exists(cfgpath):
@@ -1461,6 +1471,7 @@ class ViewModel:
             if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
+        self.isChanged = False
 
     def saveAdjlists(self, force=False):
         for bk, adj in self.adjlists.items():

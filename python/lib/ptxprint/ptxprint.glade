@@ -1652,7 +1652,7 @@ General section of the Advanced tab.&lt;/span&gt;</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.9.9</property>
+    <property name="version">Version 3.0.1</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -3945,7 +3945,7 @@ settings for a similar project.</property>
   <object class="GtkImage" id="img_filter">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">emblem-documents-symbolic</property>
+    <property name="icon-name">x-office-document-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="lc_coverBorder1">
@@ -9869,7 +9869,15 @@ of the Page, or at the top-left Margin.</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="hexpand">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">3</property>
+                      </packing>
                     </child>
                     <child>
                       <placeholder/>
@@ -14410,6 +14418,7 @@ project's Biblical Terms renderings.</property>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
+        <property name="hexpand">True</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkMenuButton" id="btn_menu_showPDF">
@@ -14417,6 +14426,9 @@ project's Biblical Terms renderings.</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
             <property name="no-show-all">True</property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0.20000000298023224</property>
             <property name="direction">right</property>
             <property name="use-popover">False</property>
             <child>
@@ -14439,6 +14451,9 @@ project's Biblical Terms renderings.</property>
             <property name="can-focus">True</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0.20000000298023224</property>
             <property name="direction">right</property>
             <property name="use-popover">False</property>
             <child>
@@ -14447,6 +14462,7 @@ project's Biblical Terms renderings.</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">View Level</property>
                 <property name="justify">center</property>
+                <property name="xalign">0.20000000298023224</property>
               </object>
             </child>
           </object>
@@ -14462,6 +14478,9 @@ project's Biblical Terms renderings.</property>
             <property name="can-focus">True</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0.20000000298023224</property>
             <property name="direction">right</property>
             <property name="use-popover">False</property>
             <child>
@@ -14498,6 +14517,9 @@ Developers so that others can also benefit.
 
 &lt;a href="https://give.sil.org/campaign/725128/donate"&gt;give.sil.org/campaign/725128/donate&lt;/a&gt;
 </property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0</property>
             <signal name="clicked" handler="onDonateClicked" swapped="no"/>
           </object>
           <packing>
@@ -14523,6 +14545,9 @@ don't like. Tell us what you dream for in the future.
 
 Click this button to fill in the Google form or type
 this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxprintfeedback&lt;/a&gt;</property>
+            <property name="hexpand">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0</property>
             <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
           </object>
           <packing>
@@ -15558,11 +15583,11 @@ highlighted as an issue.</property>
                                 </child>
                               </object>
                             </child>
-                            <style>
-                              <class name="graybox"/>
-                            </style>
                           </object>
                         </child>
+                        <style>
+                          <class name="graybox"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -16309,6 +16334,7 @@ should the Slice contain?</property>
     </columns>
   </object>
   <object class="GtkTextBuffer" id="txbf_colophon"/>
+  <object class="GtkTextBuffer" id="txbf_copyright"/>
   <object class="GtkTextBuffer" id="txbf_picNotes"/>
   <object class="GtkTextBuffer" id="txbf_styDesc"/>
   <object class="GtkDialog" id="dlg_styModsdialog">
@@ -16604,6 +16630,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
   <object class="GtkApplicationWindow" id="mainapp_win">
     <property name="can-focus">False</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <signal name="delete-event" handler="onMainAppWinDeleted" swapped="no"/>
     <child>
       <object class="GtkBox" id="ptxprint">
         <property name="can-focus">False</property>
@@ -16646,7 +16673,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                         <property name="margin-bottom">6</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkFrame" id="fr_projScope">
+                          <object class="GtkFrame" id="fr_projCopyLcns">
                             <property name="width-request">710</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -16654,11 +16681,11 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
+                            <property name="margin-top">3</property>
                             <property name="margin-bottom">6</property>
                             <property name="label-xalign">0.019999999552965164</property>
                             <child>
-                              <!-- n-columns=5 n-rows=4 -->
+                              <!-- n-columns=3 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -16666,170 +16693,22 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="row-spacing">8</property>
-                                <property name="column-spacing">8</property>
+                                <property name="hexpand">True</property>
+                                <property name="row-spacing">6</property>
+                                <property name="column-spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="l_project">
+                                    <property name="width-request">124</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Paratext Project:</property>
+                                    <property name="label" translatable="yes">Project ID:</property>
+                                    <property name="justify">right</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="ecb_book">
-                                    <property name="name">Single book chooser</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="model">ls_books</property>
-                                    <property name="wrap-width">5</property>
-                                    <property name="active">0</property>
-                                    <property name="has-entry">True</property>
-                                    <property name="entry-text-column">0</property>
-                                    <property name="id-column">0</property>
-                                    <signal name="changed" handler="onBookChange" swapped="no"/>
-                                    <child internal-child="entry">
-                                      <object class="GtkEntry">
-                                        <property name="can-focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="max-length">3</property>
-                                        <property name="width-chars">6</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_chooseBooks">
-                                    <property name="label" translatable="yes">Select Various Books...</property>
-                                    <property name="name">Multiple book selector</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Select one or more Biblical books
-to be printed from the project.</property>
-                                    <property name="valign">center</property>
-                                    <signal name="clicked" handler="onChooseBooksClicked" swapped="no"/>
-                                    <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">4</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_book_module">
-                                    <property name="label" translatable="yes">Bible Module:</property>
-                                    <property name="name">Bible module selector</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_book_single</property>
-                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_book_multiple">
-                                    <property name="label" translatable="yes">Portions or
-Multiple Books:</property>
-                                    <property name="name">Choose books or enter ranges to print</property>
-                                    <property name="width-request">110</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_book_single</property>
-                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_book_single">
-                                    <property name="label" translatable="yes">Single Book:</property>
-                                    <property name="name">Single book selector</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="active">True</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_book_multiple</property>
-                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_projectFullName">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="opacity">0.80</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="label" translatable="yes">&lt;&lt;&lt; Select a project to get started</property>
-                                    <property name="wrap">True</property>
-                                    <property name="ellipsize">end</property>
-                                    <property name="xalign">0</property>
-                                    <attributes>
-                                      <attribute name="scale" value="0.90000000000000002"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">0</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="lb_bibleModule">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="opacity">0.7019607843137254</property>
-                                    <property name="halign">start</property>
-                                    <property name="ellipsize">middle</property>
-                                    <property name="width-chars">50</property>
-                                    <property name="max-width-chars">60</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#121212121212"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">3</property>
-                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -16853,228 +16732,226 @@ Multiple Books:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBoxText" id="ecb_booklist">
+                                  <object class="GtkLabel" id="l_projectFullName">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">After selecting one or more books to be
-printed, the book codes will be listed here.
-This list is editable, so books can be re-ordered
-if need be.
-
-A list of references can also be entered manually
-for ranges of scripture to be printed. For example:
-  JHN 2:1-12
-  MRK 1-5
-  PSA 23; 100; 117
-  EXO 20:12-17 MAT 5:3-11
-  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
-
-Shortcut: Ctrl-B</property>
-                                    <property name="valign">center</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="active">0</property>
-                                    <property name="has-entry">True</property>
-                                    <property name="active-id">0</property>
-                                    <signal name="changed" handler="onBookListChanged" swapped="no"/>
-                                    <child internal-child="entry">
-                                      <object class="GtkEntry">
-                                        <property name="name">Multiple books editable list entry</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="tooltip-text" translatable="yes">A list of references can be entered if printing less
-than an entire book or chapter, or if you need to
-include portions from several books. For example:
-  JHN 2:1-12
-  MRK 1-5
-  PSA 23; 100; 117
-  EXO 20:12-17 MAT 5:3-11
-  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
-  GEN 24:1-17; 24:22-30
-
-If working on several books, use the Choose...
-button to select multiple books. For example:
-  LUK ACT GLO NDX
-prints Luke, Acts, Glossary and Names Index.
-The list is editable, so books can be re-ordered
-if need be (for example, for the Hebrew canon).
-
-Note that verse ranges spanning multiple books
-are not permitted: For example, 
-  MAT 1:1-REV 22:21   does not work.
-
-Shortcut: Ctrl-B</property>
-                                        <property name="valign">center</property>
-                                        <property name="placeholder-text" translatable="yes">e.g. GEN 1:1-2:3 JHN 1:1-5    or    LUK ACT GLO    or    GEN EXO LEV NUM DEU</property>
-                                        <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
-                                        <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
-                                      </object>
-                                    </child>
-                                    <accelerator key="b" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">2</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <!-- n-columns=4 n-rows=1 -->
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
+                                    <property name="opacity">0.80</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="column-spacing">6</property>
-                                    <child>
-                                      <object class="GtkLabel" id="l_chapfrom">
-                                        <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">From Chapter:</property>
-                                        <property name="track-visited-links">False</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_chapfrom">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="max-length">3</property>
-                                        <property name="width-chars">4</property>
-                                        <property name="max-width-chars">3</property>
-                                        <property name="xalign">0.34000000357627869</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
-                                        <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
-the entire book, enter the
-chapter number to start at.</property>
-                                        <property name="placeholder-text" translatable="yes">1</property>
-                                        <property name="input-purpose">digits</property>
-                                        <signal name="changed" handler="filter_numbers" swapped="no"/>
-                                        <signal name="focus-out-event" handler="fromChapChange" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_chapto">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="max-length">3</property>
-                                        <property name="width-chars">4</property>
-                                        <property name="max-width-chars">3</property>
-                                        <property name="xalign">0.34000000357627869</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
-                                        <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
-the entire book, enter the
-chapter number to end with.</property>
-                                        <property name="placeholder-text" translatable="yes">150</property>
-                                        <property name="input-purpose">digits</property>
-                                        <signal name="changed" handler="filter_numbers" swapped="no"/>
-                                        <signal name="focus-out-event" handler="toChapChange" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_chapto">
-                                        <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">To:</property>
-                                        <property name="track-visited-links">False</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
+                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes">&lt;&lt;&lt; Select a project to get started</property>
+                                    <property name="wrap">True</property>
+                                    <property name="ellipsize">end</property>
+                                    <property name="xalign">0</property>
+                                    <attributes>
+                                      <attribute name="scale" value="0.90000000000000002"/>
+                                    </attributes>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkExpander" id="ex_copyright">
                                     <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="spacing">6</property>
-                                    <property name="homogeneous">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="no-show-all">True</property>
+                                    <property name="margin-start">128</property>
+                                    <property name="hexpand">True</property>
                                     <child>
-                                      <object class="GtkButton" id="btn_chooseBibleModule">
-                                        <property name="label" translatable="yes">Choose...</property>
-                                        <property name="name">Bible module chooser button</property>
+                                      <!-- n-columns=3 n-rows=3 -->
+                                      <object class="GtkGrid">
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <signal name="clicked" handler="onSelectModuleClicked" swapped="no"/>
-                                        <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                                        <property name="can-focus">False</property>
+                                        <property name="margin-top">3</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="row-spacing">6</property>
+                                        <property name="column-spacing">6</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">It is important to include a copyright statement on every publication.
+By default this will be set according to the Paratext project settings, 
+but you can edit it here if needed.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">start</property>
+                                            <property name="margin-top">4</property>
+                                            <property name="label" translatable="yes">Copyright:</property>
+                                            <property name="justify">right</property>
+                                            <property name="xalign">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Select one of these licenses, or type a different license.
+
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved
+
+For more detailed information about the various
+Creative Commons licenses, refer to:
+&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">License:</property>
+                                            <property name="justify">right</property>
+                                            <property name="xalign">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_licenseText">
+                                            <property name="name">License details</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-markup" translatable="yes">Select one of these licenses, or type a different license.
+
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved
+
+For more detailed information about the various
+Creative Commons licenses, refer to:
+&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active">0</property>
+                                            <property name="has-entry">True</property>
+                                            <property name="active-id">0</property>
+                                            <items>
+                                              <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND).</item>
+                                              <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC).</item>
+                                              <item translatable="yes">This work is licensed under a Creative Commons Attribution-Sharealike 4.0 International License (CC BY-SA).</item>
+                                              <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY).</item>
+                                              <item translatable="yes">All Rights Reserved.</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="can-focus">False</property>
+                                                <property name="hexpand">True</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">2</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkScrolledWindow" id="scroll_copyright">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="vscrollbar-policy">always</property>
+                                            <property name="shadow-type">etched-in</property>
+                                            <property name="overlay-scrolling">False</property>
+                                            <child>
+                                              <object class="GtkViewport">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="margin-top">4</property>
+                                                <property name="margin-bottom">4</property>
+                                                <child>
+                                                  <object class="GtkTextView" id="textv_copyright">
+                                                    <property name="name">Copyright text entry</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="tooltip-text" translatable="yes">It is important to include a copyright statement on every publication.
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved</property>
+                                                    <property name="wrap-mode">word</property>
+                                                    <property name="buffer">txbf_copyright</property>
+                                                    <signal name="key-release-event" handler="copyrightTextBufferChanged" swapped="no"/>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">0</property>
+                                            <property name="width">2</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_resetCopyright">
+                                            <property name="name">Reload copyright from Paratext project</property>
+                                            <property name="width-request">-1</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Clicking this button will reload
+the Copyright Statement from the
+Paratext project settings.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">start</property>
+                                            <signal name="clicked" handler="onResetCopyrightClicked" swapped="no"/>
+                                            <child>
+                                              <object class="GtkImage">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="icon-name">view-refresh-symbolic</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
+                                        </child>
                                       </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
                                     </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_editModule">
-                                        <property name="label" translatable="yes">Edit...</property>
-                                        <property name="name">Edit Bible module</property>
+                                    <child type="label">
+                                      <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
-show the selected Bible module.</property>
-                                        <signal name="clicked" handler="onEditModule" swapped="no"/>
-                                        <accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">It is important to include copyright and license statements on 
+every publication. By default this will be set according to the 
+Paratext project settings, but you can edit it here if needed by 
+expanding the section below.</property>
+                                        <property name="label" translatable="yes">Copyright &amp; Licensing</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="foreground" value="#72729f9dcfcf"/>
+                                        </attributes>
                                       </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">4</property>
+                                    <property name="left-attach">0</property>
                                     <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                               </object>
@@ -17083,18 +16960,18 @@ show the selected Bible module.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Project and Scope</property>
+                                <property name="label" translatable="yes">Project</property>
                               </object>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="fr_SavedConfigSettings">
+                          <object class="GtkFrame" id="fr_savedLayout">
                             <property name="width-request">710</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -17422,7 +17299,7 @@ you can recall those settings later.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="fr_copyrightLicense">
+                          <object class="GtkFrame" id="fr_scope">
                             <property name="width-request">710</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -17430,11 +17307,11 @@ you can recall those settings later.</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
-                            <property name="margin-top">3</property>
+                            <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
                             <property name="label-xalign">0.019999999552965164</property>
                             <child>
-                              <!-- n-columns=3 n-rows=2 -->
+                              <!-- n-columns=5 n-rows=4 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -17442,140 +17319,379 @@ you can recall those settings later.</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="row-spacing">6</property>
-                                <property name="column-spacing">6</property>
+                                <property name="row-spacing">8</property>
+                                <property name="column-spacing">8</property>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="width-request">124</property>
+                                  <object class="GtkComboBox" id="ecb_book">
+                                    <property name="name">Single book chooser</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Copyright:</property>
-                                    <property name="justify">right</property>
-                                    <property name="xalign">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="t_copyrightStatement">
-                                    <property name="name">Copyright details</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">It is important to include a copyright statement on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed. 
-
-These keyboard sequences can be used:
-   (c) --&gt; ©  the copyright sign
-   (r) --&gt; ®  to denote registered trademarks
-   (tm) --&gt; ™  to denote trademarks in general
-
-Other special codes converted at print time:
-use ~ for places where a non-breaking space is needed
-use // where a line break needs to be forced
-but :// used in URLs will still be preserved</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="placeholder-text" translatable="yes">&lt;Enter copyright holder here. For example, © 2024 Wycliffe Bible Translators, Inc.&gt;</property>
-                                    <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_resetCopyright">
-                                    <property name="label">↺</property>
-                                    <property name="name">Reload copyright from Paratext project</property>
-                                    <property name="width-request">-1</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Clicking this button will reload
-the Copyright Statement from the
-Paratext project settings.</property>
-                                    <signal name="clicked" handler="onResetCopyrightClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="width-request">124</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">License:</property>
-                                    <property name="justify">right</property>
-                                    <property name="xalign">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBoxText" id="ecb_licenseText">
-                                    <property name="name">License details</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-markup" translatable="yes">Select one of these licenses, or type a different license.
-
-Note: There are several shortcuts you can use:
-   (c) --&gt; ©  the copyright sign
-   (r) --&gt; ®  to denote registered trademarks
-   (tm) --&gt; ™  to denote trademarks in general
-
-Other special codes converted at print time:
-use ~ for places where a non-breaking space is needed
-use // where a line break needs to be forced
-but :// used in URLs will still be preserved
-
-For more detailed information about the various
-Creative Commons licenses, refer to:
-&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="model">ls_books</property>
+                                    <property name="wrap-width">5</property>
                                     <property name="active">0</property>
                                     <property name="has-entry">True</property>
-                                    <property name="active-id">0</property>
-                                    <items>
-                                      <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND).</item>
-                                      <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC).</item>
-                                      <item translatable="yes">This work is licensed under a Creative Commons Attribution-Sharealike 4.0 International License (CC BY-SA).</item>
-                                      <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY).</item>
-                                      <item translatable="yes">All Rights Reserved.</item>
-                                    </items>
+                                    <property name="entry-text-column">0</property>
+                                    <property name="id-column">0</property>
+                                    <signal name="changed" handler="onBookChange" swapped="no"/>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
-                                        <property name="name">License details</property>
-                                        <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="tooltip-markup" translatable="yes">Select one of these licenses, or type a different license.
-
-Note: There are several shortcuts you can use:
-   (c) --&gt; ©  the copyright sign
-   (r) --&gt; ®  to denote registered trademarks
-   (tm) --&gt; ™  to denote trademarks in general
-
-Other special codes converted at print time:
-use ~ for places where a non-breaking space is needed
-use // where a line break needs to be forced
-but :// used in URLs will still be preserved
-
-For more detailed information about the various
-Creative Commons licenses, refer to:
-&lt;a href="https://creativecommons.org/licenses/"&gt;https://creativecommons.org/licenses/&lt;/a&gt;</property>
-                                        <property name="placeholder-text" translatable="yes">Select one of the licenses or type in your own license statement.</property>
+                                        <property name="halign">start</property>
+                                        <property name="max-length">3</property>
+                                        <property name="width-chars">6</property>
                                       </object>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_chooseBooks">
+                                    <property name="label" translatable="yes">Select Multiple Books...</property>
+                                    <property name="name">Multiple book selector</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Select one or more Biblical books
+to be printed from the project.</property>
+                                    <property name="valign">center</property>
+                                    <signal name="clicked" handler="onChooseBooksClicked" swapped="no"/>
+                                    <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="r_book_module">
+                                    <property name="label" translatable="yes">Bible Module:</property>
+                                    <property name="name">Bible module selector</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="draw-indicator">True</property>
+                                    <property name="group">r_book_single</property>
+                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="r_book_multiple">
+                                    <property name="label" translatable="yes">Portions or
+Multiple Books:</property>
+                                    <property name="name">Choose books or enter ranges to print</property>
+                                    <property name="width-request">110</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="draw-indicator">True</property>
+                                    <property name="group">r_book_single</property>
+                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="r_book_single">
+                                    <property name="label" translatable="yes">Single Book:</property>
+                                    <property name="name">Single book selector</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="active">True</property>
+                                    <property name="draw-indicator">True</property>
+                                    <property name="group">r_book_multiple</property>
+                                    <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lb_bibleModule">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="opacity">0.7019607843137254</property>
+                                    <property name="halign">start</property>
+                                    <property name="ellipsize">middle</property>
+                                    <property name="width-chars">50</property>
+                                    <property name="max-width-chars">60</property>
+                                    <property name="xalign">0</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#121212121212"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">3</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="ecb_booklist">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">After selecting one or more books to be
+printed, the book codes will be listed here.
+This list is editable, so books can be re-ordered
+if need be.
+
+A list of references can also be entered manually
+for ranges of scripture to be printed. For example:
+  JHN 2:1-12
+  MRK 1-5
+  PSA 23; 100; 117
+  EXO 20:12-17 MAT 5:3-11
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
+
+Shortcut: Ctrl-B</property>
+                                    <property name="valign">center</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="active">0</property>
+                                    <property name="has-entry">True</property>
+                                    <property name="active-id">0</property>
+                                    <signal name="changed" handler="onBookListChanged" swapped="no"/>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="name">Multiple books editable list entry</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="tooltip-text" translatable="yes">A list of references can be entered if printing less
+than an entire book or chapter, or if you need to
+include portions from several books. For example:
+  JHN 2:1-12
+  MRK 1-5
+  PSA 23; 100; 117
+  EXO 20:12-17 MAT 5:3-11
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
+  GEN 24:1-17; 24:22-30
+
+If working on several books, use the Choose...
+button to select multiple books. For example:
+  LUK ACT GLO NDX
+prints Luke, Acts, Glossary and Names Index.
+The list is editable, so books can be re-ordered
+if need be (for example, for the Hebrew canon).
+
+Note that verse ranges spanning multiple books
+are not permitted: For example, 
+  MAT 1:1-REV 22:21   does not work.
+
+Shortcut: Ctrl-B</property>
+                                        <property name="valign">center</property>
+                                        <property name="placeholder-text" translatable="yes">e.g. GEN 1:1-2:3 JHN 1:1-5    or    LUK ACT GLO    or    GEN EXO LEV NUM DEU</property>
+                                        <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
+                                        <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
+                                      </object>
+                                    </child>
+                                    <accelerator key="b" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">2</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <!-- n-columns=4 n-rows=1 -->
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="column-spacing">6</property>
+                                    <child>
+                                      <object class="GtkLabel" id="l_chapfrom">
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">From Chapter:</property>
+                                        <property name="track-visited-links">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_chapfrom">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="max-length">3</property>
+                                        <property name="width-chars">4</property>
+                                        <property name="max-width-chars">3</property>
+                                        <property name="xalign">0.34000000357627869</property>
+                                        <property name="caps-lock-warning">False</property>
+                                        <property name="progress-pulse-step">0</property>
+                                        <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
+the entire book, enter the
+chapter number to start at.</property>
+                                        <property name="placeholder-text" translatable="yes">1</property>
+                                        <property name="input-purpose">digits</property>
+                                        <signal name="changed" handler="filter_numbers" swapped="no"/>
+                                        <signal name="focus-out-event" handler="fromChapChange" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_chapto">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="max-length">3</property>
+                                        <property name="width-chars">4</property>
+                                        <property name="max-width-chars">3</property>
+                                        <property name="xalign">0.34000000357627869</property>
+                                        <property name="caps-lock-warning">False</property>
+                                        <property name="progress-pulse-step">0</property>
+                                        <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
+the entire book, enter the
+chapter number to end with.</property>
+                                        <property name="placeholder-text" translatable="yes">150</property>
+                                        <property name="input-purpose">digits</property>
+                                        <signal name="changed" handler="filter_numbers" swapped="no"/>
+                                        <signal name="focus-out-event" handler="toChapChange" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_chapto">
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">To:</property>
+                                        <property name="track-visited-links">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="spacing">6</property>
+                                    <property name="homogeneous">True</property>
+                                    <child>
+                                      <object class="GtkButton" id="btn_chooseBibleModule">
+                                        <property name="label" translatable="yes">Choose...</property>
+                                        <property name="name">Bible module chooser button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <signal name="clicked" handler="onSelectModuleClicked" swapped="no"/>
+                                        <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editModule">
+                                        <property name="label" translatable="yes">Edit...</property>
+                                        <property name="name">Edit Bible module</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
+show the selected Bible module.</property>
+                                        <signal name="clicked" handler="onEditModule" swapped="no"/>
+                                        <accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -17583,13 +17699,13 @@ Creative Commons licenses, refer to:
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Copyright &amp; Licensing</property>
+                                <property name="label" translatable="yes">What to Print</property>
                               </object>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
@@ -19782,7 +19898,6 @@ locate the style and will fake the bold-italic style.</property>
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="btn_refreshFonts">
-                                            <property name="label" translatable="yes">↺</property>
                                             <property name="name">Refresh Font List button</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -19802,6 +19917,13 @@ And remember to Refresh the Font List again.</property>
                                             <property name="valign">end</property>
                                             <property name="hexpand">True</property>
                                             <signal name="clicked" handler="onRefreshFontsclicked" swapped="no"/>
+                                            <child>
+                                              <object class="GtkImage">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="icon-name">view-refresh-symbolic</property>
+                                              </object>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -21033,6 +21155,7 @@ line up vertically on the margin, and
 Verse Bridges (3-4) also stack vertically.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -22074,8 +22197,8 @@ Print a second time before it applies.</property>
                                             <property name="spacing">6</property>
                                             <child>
                                               <object class="GtkCheckButton" id="c_fnautocallers">
-                                                <property name="label" translatable="yes">Show Callers 
-in the Text: </property>
+                                                <property name="label" translatable="yes">Show Callers
+in the Text:</property>
                                                 <property name="name">Show Footnote Callers in the Text</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
@@ -22135,7 +22258,6 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                             </child>
                                             <child>
                                               <object class="GtkButton" id="btn_resetFNcallers">
-                                                <property name="label">↺</property>
                                                 <property name="name">Reload footnote callers from Paratext</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
@@ -22149,6 +22271,13 @@ in the Paratext project, or are already
 showing, then a default set will appear.</property>
                                                 <property name="valign">center</property>
                                                 <signal name="clicked" handler="onResetFNcallersClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">view-refresh-symbolic</property>
+                                                  </object>
+                                                </child>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -23256,8 +23385,8 @@ has been specified within the text itself.</property>
                                             <property name="spacing">6</property>
                                             <child>
                                               <object class="GtkCheckButton" id="c_xrautocallers">
-                                                <property name="label" translatable="yes">Show Callers 
-in the Text: </property>
+                                                <property name="label" translatable="yes">Show Callers
+in the Text:</property>
                                                 <property name="name">Show Cross-Reference Callers in the Text</property>
                                                 <property name="width-request">100</property>
                                                 <property name="visible">True</property>
@@ -23316,7 +23445,6 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                             </child>
                                             <child>
                                               <object class="GtkButton" id="btn_resetXRcallers">
-                                                <property name="label">↺</property>
                                                 <property name="name">Reload cross-reference callers from Paratext</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
@@ -23330,6 +23458,13 @@ in the Paratext project, or are already
 showing, then a default set will appear.</property>
                                                 <property name="valign">center</property>
                                                 <signal name="clicked" handler="onResetXRcallersClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">view-refresh-symbolic</property>
+                                                  </object>
+                                                </child>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -27488,6 +27623,18 @@ any items that match.</property>
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="vexpand">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkCheckButton" id="c_filterPicList">
                                         <property name="label" translatable="yes">Show Active Books</property>
                                         <property name="name">Only show pictures used in the set of active books</property>
@@ -27505,18 +27652,6 @@ the PicList details just for *that* book.</property>
                                         <property name="valign">start</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onFilterPicListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="vexpand">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -30333,43 +30468,11 @@ same page.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="margin-end">4</property>
                                     <property name="spacing">6</property>
                                     <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <object class="GtkToggleButton" id="btn_adjust_diglot">
-                                        <property name="name">Auto-calculate optimum widths of diglot columns</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="image">icon_adjust_diglot</property>
-                                        <property name="always-show-image">True</property>
-                                        <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="hexpand">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">True</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkLabel" id="l_diglotMergeMode">
+                                        <property name="width-request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
@@ -30390,13 +30493,16 @@ algorithms which may be used to obtain the best overall result:
   can result in a lot of breaks!
 
 Note that for polyglots, only the Scored options are available to be used.</property>
-                                        <property name="halign">end</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin-start">12</property>
                                         <property name="label" translatable="yes">Merging mode:</property>
+                                        <property name="justify">right</property>
+                                        <property name="xalign">1</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">3</property>
+                                        <property name="position">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -30458,7 +30564,38 @@ Note that for polyglots, only the Scored options are available to be used.</prop
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">4</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkToggleButton" id="btn_adjust_diglot">
+                                        <property name="name">Auto-calculate optimum widths of diglot columns</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="image">icon_adjust_diglot</property>
+                                        <property name="always-show-image">True</property>
+                                        <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">3</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -30494,6 +30631,7 @@ same page.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_diglotSerialBooks">
+                                    <property name="width-request">100</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Back Matter, etc.)
@@ -30502,9 +30640,12 @@ side-by-side, but instead need to occur one after the other.
 
 Add the 3-letter book codes for any books that should 
 not be merged. These will appear one after the other.</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin-start">12</property>
                                     <property name="label" translatable="yes">Use Serial Layout
 for These Books:</property>
+                                    <property name="justify">right</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -30522,6 +30663,9 @@ side-by-side, but instead need to occur one after the other.
 
 Add the 3-letter book codes for any books that should 
 not be merged. These will appear one after the other.</property>
+                                    <property name="valign">start</property>
+                                    <property name="margin-end">12</property>
+                                    <property name="hexpand">True</property>
                                     <property name="text" translatable="yes">FRT BAK GLO XXA XXB</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="placeholder-text" translatable="yes">e.g. FRT BAK GLO XXA XXB</property>
@@ -30964,7 +31108,6 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_resetTabGroups">
-                                    <property name="label">↺</property>
                                     <property name="name">Thumb tabs: Reload default book groups</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -30973,6 +31116,13 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
 default values for the Grouped Tabs.</property>
                                     <property name="halign">start</property>
                                     <signal name="clicked" handler="onResetTabGroupsClicked" swapped="no"/>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="icon-name">view-refresh-symbolic</property>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">6</property>
@@ -31846,8 +31996,8 @@ fit within the graphic.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLinkButton" id="lb_style_v">
-                                                <property name="label">\v</property>
+                                              <object class="GtkLinkButton" id="lb_style_vp">
+                                                <property name="label">\vp</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="focus-on-click">False</property>
@@ -31976,14 +32126,31 @@ to the end of the verse. </property>
                                                 <property name="margin-top">6</property>
                                                 <property name="draw-indicator">True</property>
                                                 <signal name="clicked" handler="onMoveEndOfAyahClicked" swapped="no"/>
+                                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">3</property>
+                                                <property name="top-attach">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLinkButton" id="lb_style_v">
+                                                <property name="label">\v</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="focus-on-click">False</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Click to edit the \v marker's properties on the Styles tab.</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="relief">none</property>
+                                                <property name="uri">Click to view the Styles tab</property>
+                                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">1</property>
                                                 <property name="top-attach">0</property>
                                               </packing>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
                                             </child>
                                             <child>
                                               <placeholder/>
@@ -32241,8 +32408,14 @@ the marker you need.</property>
 only show markers that are in 
 use in the current set of books.</property>
                                         <property name="halign">end</property>
-                                        <property name="image">img_filter</property>
                                         <signal name="toggled" handler="onStyleFilter" swapped="no"/>
+                                        <child>
+                                          <object class="GtkImage">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="icon-name">view-list-bullet-symbolic</property>
+                                          </object>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -32353,8 +32526,9 @@ use in the current set of books.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <property name="no-show-all">True</property>
                                             <property name="relief">none</property>
-                                            <property name="uri">https://docs.usfm.bible/usfm-usx-docs/latest/index.html</property>
+                                            <property name="uri">https://docs.usfm.bible/usfm/latest/introduction.html</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
@@ -32422,13 +32596,19 @@ confirmation or undo!</property>
                                             </child>
                                             <child>
                                               <object class="GtkButton" id="btn_styReset">
-                                                <property name="label">↺</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">True</property>
                                                 <property name="tooltip-text" translatable="yes">Click to reset this style's
 settings to default values.</property>
                                                 <signal name="clicked" handler="onStyleRefresh" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">view-refresh-symbolic</property>
+                                                  </object>
+                                                </child>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">1</property>
@@ -32600,6 +32780,7 @@ to Parent</property>
                                                           <object class="GtkCheckButton" id="c_styFaceSuperscript">
                                                             <property name="label" translatable="yes">Superscript</property>
                                                             <property name="name">Styles: Superscript</property>
+                                                            <property name="width-request">95</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
@@ -36733,7 +36914,6 @@ but :// used in URLs will still be preserved</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_resetColophon">
-                                    <property name="label">↺</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -36745,6 +36925,13 @@ Illustration credits tag.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">end</property>
                                     <signal name="clicked" handler="onColophonResetClicked" swapped="no"/>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="icon-name">view-refresh-symbolic</property>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -36913,7 +37100,6 @@ file is selected, then these will appear in alphabetical order.</property>
                             <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkButton" id="btn_rescanFRTvars">
-                                <property name="label">↺</property>
                                 <property name="name">Rescan peripheral variables</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -36925,6 +37111,13 @@ table of variable names and values.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <signal name="clicked" handler="rescanFRTvarsClicked" swapped="no"/>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="icon-name">view-refresh-symbolic</property>
+                                  </object>
+                                </child>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -37590,27 +37783,6 @@ of overlap here (mm).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin-top">3</property>
-                                    <property name="margin-bottom">3</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkBox" id="bx_coverPreview">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -37626,6 +37798,7 @@ of overlap here (mm).</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="vexpand">True</property>
                                         <property name="orientation">vertical</property>
                                         <property name="spacing">6</property>
                                         <child>
@@ -37676,13 +37849,10 @@ can be adjusted as needed.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
                                           <object class="GtkExpander">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="expanded">True</property>
+                                            <property name="vexpand">True</property>
                                             <child>
                                               <!-- n-columns=2 n-rows=3 -->
                                               <object class="GtkGrid">
@@ -37692,6 +37862,7 @@ can be adjusted as needed.</property>
                                                 <property name="margin-end">6</property>
                                                 <property name="margin-top">6</property>
                                                 <property name="margin-bottom">6</property>
+                                                <property name="vexpand">True</property>
                                                 <property name="row-spacing">6</property>
                                                 <property name="column-spacing">3</property>
                                                 <child>
@@ -37829,15 +38000,18 @@ the inner backing sheet. (Units: mm)</property>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">3</property>
+                                            <property name="position">2</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <object class="GtkBox">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">center</property>
-                                            <property name="valign">center</property>
+                                            <property name="valign">end</property>
                                             <property name="margin-start">10</property>
                                             <child>
                                               <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
@@ -38253,7 +38427,7 @@ on the Styles tab for the Front Cover.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">2</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -39538,7 +39712,7 @@ output with a previous PDF.</property>
                                 <property name="can-focus">False</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <!-- n-columns=7 n-rows=13 -->
+                                  <!-- n-columns=7 n-rows=14 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -39600,7 +39774,7 @@ included in Paratext's Send/Recv data.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">0</property>
+                                        <property name="top-attach">3</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39608,6 +39782,7 @@ included in Paratext's Send/Recv data.</property>
                                       <object class="GtkLabel" id="l_trainingVideos">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">There is a growing range of videos
 to teach you how to use some of
 the more advanced features of
@@ -39618,7 +39793,7 @@ this very powerful software.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">8</property>
+                                        <property name="top-attach">9</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39630,6 +39805,7 @@ this very powerful software.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">There is a growing range of videos
 to teach you how to use some of
 the more advanced features of
@@ -39646,13 +39822,14 @@ latest features available in PTXprint.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">8</property>
+                                        <property name="top-attach">9</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_reportBugs">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by recently
 enhanced XeTeX macros with a long and reliable history.
@@ -39665,7 +39842,7 @@ an issue using this link.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">10</property>
+                                        <property name="top-attach">11</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39677,6 +39854,7 @@ an issue using this link.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -39684,7 +39862,7 @@ an issue using this link.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">10</property>
+                                        <property name="top-attach">11</property>
                                         <property name="width">4</property>
                                       </packing>
                                     </child>
@@ -39696,6 +39874,7 @@ an issue using this link.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -39703,7 +39882,7 @@ an issue using this link.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">6</property>
+                                        <property name="top-attach">7</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -39711,6 +39890,7 @@ an issue using this link.</property>
                                       <object class="GtkLabel" id="l_homePage">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">PTXprint does not have an auto-updating
 feature, so you are encouraged to check
 for new updates at the Home Page.
@@ -39722,7 +39902,7 @@ version before reporting an issue.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">6</property>
+                                        <property name="top-attach">7</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39737,7 +39917,7 @@ version before reporting an issue.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">5</property>
                                         <property name="width">7</property>
                                       </packing>
                                     </child>
@@ -39757,7 +39937,7 @@ file or the Changes.txt file as appropriate.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">9</property>
+                                        <property name="top-attach">10</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39776,7 +39956,7 @@ file or the Changes.txt file as appropriate.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
-                                        <property name="top-attach">9</property>
+                                        <property name="top-attach">10</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -39796,7 +39976,7 @@ file or the Changes.txt file as appropriate.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">4</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39826,7 +40006,7 @@ Email the ZIPped archive file to:
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">12</property>
+                                        <property name="top-attach">13</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -39837,6 +40017,7 @@ Email the ZIPped archive file to:
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -39844,7 +40025,7 @@ Email the ZIPped archive file to:
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">6</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -39853,6 +40034,7 @@ Email the ZIPped archive file to:
                                         <property name="width-request">250</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">Scripture Software Community site where you can 
 interact with other PTXprint users and the developers.</property>
                                         <property name="halign">end</property>
@@ -39864,7 +40046,7 @@ interact with other PTXprint users and the developers.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">6</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -39876,7 +40058,6 @@ interact with other PTXprint users and the developers.</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Discover more about PTXprint.</property>
-                                        <property name="halign">start</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">3</property>
                                         <property name="margin-bottom">3</property>
@@ -39886,7 +40067,7 @@ interact with other PTXprint users and the developers.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">6</property>
-                                        <property name="top-attach">12</property>
+                                        <property name="top-attach">13</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -39910,7 +40091,7 @@ by deleting unneeded files.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
-                                        <property name="top-attach">12</property>
+                                        <property name="top-attach">13</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -39920,6 +40101,7 @@ by deleting unneeded files.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
                                         <property name="label">&lt;a href="working dir"&gt;working dir&lt;/a&gt;</property>
                                         <property name="use-markup">True</property>
                                         <property name="ellipsize">start</property>
@@ -39928,7 +40110,7 @@ by deleting unneeded files.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">0</property>
+                                        <property name="top-attach">3</property>
                                         <property name="width">4</property>
                                       </packing>
                                     </child>
@@ -39939,6 +40121,7 @@ by deleting unneeded files.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
                                         <property name="label">&lt;a href="prjdir"&gt;prjdir&lt;/a&gt;</property>
                                         <property name="use-markup">True</property>
                                         <property name="ellipsize">start</property>
@@ -39958,6 +40141,7 @@ by deleting unneeded files.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
                                         <property name="label">&lt;a href="settings dir"&gt;settings dir&lt;/a&gt;</property>
                                         <property name="use-markup">True</property>
                                         <property name="ellipsize">start</property>
@@ -39977,6 +40161,7 @@ by deleting unneeded files.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
                                         <property name="label">&lt;a href="docs dir"&gt;docs dir&lt;/a&gt;</property>
                                         <property name="use-markup">True</property>
                                         <property name="ellipsize">start</property>
@@ -39985,7 +40170,7 @@ by deleting unneeded files.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">4</property>
                                         <property name="width">4</property>
                                       </packing>
                                     </child>
@@ -39997,13 +40182,14 @@ by deleting unneeded files.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
-                                        <property name="top-attach">10</property>
+                                        <property name="top-attach">11</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_giveFeedback">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
 You could help us make PTXprint better!
 
@@ -40017,7 +40203,7 @@ don't like. Tell us what you dream for in the future.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">7</property>
+                                        <property name="top-attach">8</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -40029,6 +40215,7 @@ don't like. Tell us what you dream for in the future.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">Click this link to fill in the Google form or type
 this in a browser: http://tiny.cc/ptxprintfeedback</property>
                                         <property name="halign">start</property>
@@ -40038,7 +40225,7 @@ this in a browser: http://tiny.cc/ptxprintfeedback</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">7</property>
+                                        <property name="top-attach">8</property>
                                         <property name="width">4</property>
                                       </packing>
                                     </child>
@@ -40058,7 +40245,7 @@ so on.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">11</property>
+                                        <property name="top-attach">12</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -40070,6 +40257,7 @@ so on.</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">There is a growing range of videos
 to teach you how to use some of
 the more advanced features of
@@ -40086,7 +40274,7 @@ cover the latest available features.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
-                                        <property name="top-attach">8</property>
+                                        <property name="top-attach">9</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -40109,7 +40297,7 @@ the Tabs+Borders settings).</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">9</property>
+                                        <property name="top-attach">10</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40130,7 +40318,7 @@ document. (For advanced users only). </property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
-                                        <property name="top-attach">9</property>
+                                        <property name="top-attach">10</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40141,6 +40329,7 @@ document. (For advanced users only). </property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -40148,7 +40337,7 @@ document. (For advanced users only). </property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
-                                        <property name="top-attach">6</property>
+                                        <property name="top-attach">7</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -40167,7 +40356,7 @@ file which needs to be emailed to:
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">12</property>
+                                        <property name="top-attach">13</property>
                                         <property name="width">3</property>
                                       </packing>
                                     </child>
@@ -40192,17 +40381,18 @@ so on.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">11</property>
+                                        <property name="top-attach">12</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkLinkButton" id="lb_chatBot">
-                                        <property name="label" translatable="yes">NEW! Chatbot Support</property>
-                                        <property name="name">Use the PTXprint Support ChatBot to answer your questions instantly</property>
+                                        <property name="label" translatable="yes">Support Agent</property>
+                                        <property name="name">Use the PTXprint Support Agent (AI chatbot) to answer your questions instantly</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="focus-on-click">False</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
@@ -40210,8 +40400,77 @@ so on.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">6</property>
                                         <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_projects_dir">
+                                        <property name="width-request">250</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The PDF file created is stored in this
+folder (but should automatically open
+in your system's PDF viewer anyway).
+
+Note that ALL the files and subfolders
+in this location are TEMPORARY and 
+can be deleted. None of these files are
+included in Paratext's Send/Recv data.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="label" translatable="yes">Base Projects Directory:</property>
+                                        <property name="justify">right</property>
+                                        <property name="xalign">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="lb_projects_dir">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">16</property>
+                                        <property name="margin-start">16</property>
+                                        <property name="margin-end">6</property>
+                                        <property name="label">&lt;a href="base projects dir"&gt;base projects dir&lt;/a&gt;</property>
+                                        <property name="use-markup">True</property>
+                                        <property name="ellipsize">start</property>
+                                        <property name="track-visited-links">False</property>
+                                        <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_changeProjectsDir">
+                                        <property name="label" translatable="yes">Change...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Use this button to change the
+Base Projects Directory. For
+example, to use projects from
+a different version of Paratext.
+
+Do not select a specific project
+folder, but the parent folder which
+contains one or more projects.</property>
+                                        <property name="margin-end">6</property>
+                                        <signal name="clicked" handler="onChangeProjectTreeClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">6</property>
+                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40322,6 +40581,73 @@ from XeTeX processing.</property>
                         <property name="tab-fill">False</property>
                       </packing>
                     </child>
+                    <child type="action-start">
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <child>
+                          <object class="GtkMenuButton" id="btn_menu">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="focus-on-click">False</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="margin-left">6</property>
+                            <property name="margin-right">3</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">3</property>
+                            <property name="margin-top">3</property>
+                            <property name="margin-bottom">3</property>
+                            <property name="relief">none</property>
+                            <property name="draw-indicator">True</property>
+                            <property name="direction">up</property>
+                            <property name="popover">menu_main</property>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="icon-name">open-menu-symbolic</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_download_update">
+                            <property name="name">Check for updates...</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="no-show-all">True</property>
+                            <property name="tooltip-text" translatable="yes">A newer version of PTXprint is available.
+Click to visit download page on the website.</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="margin-left">3</property>
+                            <property name="margin-right">3</property>
+                            <property name="margin-start">3</property>
+                            <property name="margin-end">3</property>
+                            <property name="margin-top">3</property>
+                            <property name="margin-bottom">3</property>
+                            <property name="image">icon_download</property>
+                            <property name="relief">none</property>
+                            <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="tab-fill">False</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -40412,81 +40738,9 @@ from XeTeX processing.</property>
                 <property name="can-focus">False</property>
                 <property name="valign">end</property>
                 <child>
-                  <object class="GtkMenuButton" id="btn_menu">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="focus-on-click">False</property>
-                    <property name="receives-default">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="margin-start">6</property>
-                    <property name="margin-end">3</property>
-                    <property name="margin-top">3</property>
-                    <property name="margin-bottom">3</property>
-                    <property name="direction">up</property>
-                    <property name="popover">menu_main</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="icon-name">open-menu-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="btn_download_update">
-                    <property name="name">Check for updates...</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="no-show-all">True</property>
-                    <property name="tooltip-text" translatable="yes">A newer version of PTXprint is available.
-Click to visit download page on the website.</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="margin-start">3</property>
-                    <property name="margin-end">3</property>
-                    <property name="margin-top">3</property>
-                    <property name="margin-bottom">3</property>
-                    <property name="image">icon_download</property>
-                    <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="btn_openFolder">
-                    <property name="name">Open folder containing the PDF</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">Open the folder which contains the
-PDF file(s) created for this project.</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="margin-start">3</property>
-                    <property name="margin-end">3</property>
-                    <property name="margin-top">3</property>
-                    <property name="margin-bottom">3</property>
-                    <property name="image">icon_openFolder</property>
-                    <signal name="clicked" handler="onOpenOutputFolderclicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkEntry" id="t_find">
                     <property name="name">Find help</property>
+                    <property name="width-request">230</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">Type in a word to search for a setting 
@@ -40510,8 +40764,39 @@ Shortcut: Ctrl-F</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">0</property>
                   </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_openFolder">
+                    <property name="name">Open folder containing the PDF</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Open the folder which contains the
+PDF file(s) created for this project.</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="margin-left">3</property>
+                    <property name="margin-right">3</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">3</property>
+                    <property name="margin-top">3</property>
+                    <property name="margin-bottom">3</property>
+                    <property name="image">icon_openFolder</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="onOpenOutputFolderclicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
@@ -40589,6 +40874,7 @@ Shortcut: Ctrl-R</property>
                         <property name="margin-start">3</property>
                         <property name="margin-end">3</property>
                         <property name="draw-indicator">True</property>
+                        <signal name="toggled" handler="onCreateDiffClicked" swapped="no"/>
                         <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                       <packing>
