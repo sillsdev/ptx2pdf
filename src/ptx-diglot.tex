@@ -361,7 +361,6 @@
    \trace{Dh}{after part1:\the\availht}%
    \ifcsname @nxtchunkLht\endcsname
      \ifdim\availht=\textheight\relax \else % joint calcs only apply if the page has content!
-      
        {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht} \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}%
          \x@\def\x@\tmsg\x@{\tmsg}%
          \trace{Dh}{dglt@calc@vailht:  \tmsg}
@@ -1578,6 +1577,9 @@
 \def\joinb@xes#1#2{%Called (ONLY) by pagebuilder. Join a vtop/vbox and a vbox/vbox together and preserve baselineskip%
  %\showbox#1\showbox#2%
  \bgroup
+  \ifnum\TRACEcount=\diglotDbgJoinboxes
+    \showbox#1\showbox#2
+  \fi\relax
   \setbox0=\box#1
   \setbox1=\box#2
   \dimen0=0pt \relax
@@ -1638,7 +1640,7 @@
 
 \def\@do@jointcalc@simplecols#1{%
     % step 0 what maxbaselineskip applies?
-    {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
+    {\edef\tmsg{@cur}\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
     \x@\def\x@\tmsg\x@{\tmsg}%
     \trace{dP}{do@joint@calc: \tmsg}
     }%
@@ -1680,7 +1682,7 @@
       \divide \dimen1 by \curactivecols % dimen1 is now average of Lht, Rht, heights.
       \let\col@do\update@cumulative@delta % Add (Lht - dimen1) to cumulativeDeltaL
       \x@\each@col\cts@list\E
-      \ifdiglotb@dy\else
+      \ifdiglotb@dy\else% Notice if the chunk is the fist body chunk
         \global\diglotfirstb@dyfalse
         \def\col@do##1{\x@\ifx \csname isb@dy##1\endcsname\tr@e \global\diglotfirstb@dytrue\fi}%
         \x@\each@col\cts@list\E
@@ -1746,12 +1748,12 @@
   
 \def\@@simplecols#1{%Set the columns. TextBorderColumns might have 2 widths, e.g. bordered main text (narrow) and unbordered notes (full column width)
     \hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
-    \trace{D}{@@simplecols #1 \the\csname column#1width\endcsname, \csname @textborder@#1\endcsname}%
+    \trace{D}{@@simplecols #1 \the\csname column#1width\endcsname, bdr:\csname @textborder@#1\endcsname, box:\the\ht\csname #1box\endcsname+\the\dp\csname #1box\endcsname}%
     \ifx\TextBorderColumns\empty
       \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
         \hss}%
     \else
-      \hbox to \the\dimexpr \csname column#1width\endcsname + \csname @textborder@#1\endcsname \relax{\ifm@intextcolumn \kern\csname textb@dr@left@pad#1\endcsname\fi\x@\copy\csname #1box\endcsname%
+      \hbox to \csname column#1fullwidth\endcsname{\ifm@intextcolumn \kern\csname textb@dr@left@pad#1\endcsname\fi\x@\copy\csname #1box\endcsname%indent if a main text column
         \hss}%
     \fi
   \xdef\l@stcol{#1}}
@@ -1782,10 +1784,10 @@
 \def\bg@calcns#1#2{%
   \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
   \if \bg@fillht T\relax
-    \trace{et}{Putting #2 #1 (\bg@fillht\space \the\dimen1\space (\the\ht\partial+\the\dp\partial) or \the\textheight\space or \oldp@rtial+\csname @cur#1ht\endcsname}%
+    \trace{et}{Putting #2 #1 (\bg@fillht\space \the\dimen1\space (\the\ht\partial+\the\dp\partial) or \the\textheight\space or \oldp@rtial+\csname @nxtchunk#1ht\endcsname}%
     \def\wh@t{partial}%
-    \ifdim\csname @cur#1ht\endcsname>\textheight \else
-       \dimen1=\dimexpr \csname @cur#1ht\endcsname + \oldp@rtial \relax\def\wh@t{oldpartial + c@r#1ht}%
+    \ifdim\csname @nxtchunk#1ht\endcsname>\textheight \else
+       \dimen1=\dimexpr \csname @nxtchunk#1ht\endcsname + \oldp@rtial \relax\def\wh@t{oldpartial + nxtchunk#1ht}%
     \fi
     \ifdim\dimen1>\textheight \dimen1=\textheight \def\wh@t{textht}\fi
     \ifdim\csname @fn#1ht\endcsname>0pt
@@ -1837,6 +1839,8 @@
     \setbox0=\vtop to \dimen1 {\baselineskip=0pt\hbox to \csname column#1width\endcsname{\hss}\vss}%
     \trace{et}{box is (\l@gdims 0) according to \wh@t - \f@rstb@dy}%
     \def\c@rrdstat{#1}\doTextB@rder{0}%
+    \trace{D}{Adjusting @cur#1ht by border padding}%
+    \x@\xdef\csname @cur#1ht\endcsname{\the\dimexpr\csname textb@dr@bot@pad#1\endcsname + \csname @cur#1ht\endcsname\relax}%
     \ht0=0pt
     \ifdim\f@rstb@dy>0pt\lower\f@rstb@dy\fi\box0\hskip\csname textb@dr@right@pad#1\endcsname
   \fi
@@ -1927,8 +1931,6 @@
 
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
   \traceNum{d}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
-  \let\ac@d@=\d@
-  \let\ac@col@do=\col@do
   \ifVisTrace
     \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
       \doVisTraceT{\ifcsname m@x@at@col\endcsname\m@x@at@col\else L\fi}% sets box0, used @do@layout@... in lines below
@@ -2223,7 +2225,7 @@
   \trace{Df}{Finding min note sep \v@lpfxb Xht}%
   \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
   \x@\each@col\diglot@list\E
-  \trace{Df}{=\the\dimen1}%
+  \trace{Df}{Note adjust=\the\dimen1}%
   \dimen3=\dimen1
   %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
   \edef\v@lpfx{@fn}%
@@ -2252,10 +2254,11 @@
     \fi%
     \m@intextcolumntrue
   }%
-  \trace{f}{Adjusting footnotebox}%
+  \trace{f}{Adjusting footnotebox \the\dimen3 + \the\dimen9}%
   \advance\dimen3 by \dimen9
   \trace{D}{Raising footnotebox by \the\dimen3 \space note:\l@gdims{\notechunk}, partial:\l@gdims{\partial}}%
   \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\notechunk}%
+  \ifnum\diglotDbgJoinboxes=\TRACEcount \showbox\partial\fi
 }%
 
 \def\@writep@ge{%
@@ -2765,16 +2768,17 @@
     \temptrue
   \fi
 }
-\def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
+\def\set@ht#1{%Set the values of curXht, adding or resetting based on \ifdiglot@ecols  (anything on the page is current by definition)
   % ifdiglot@ecols is set up by check@nxtht
   \def\errt@st{#1}\ifx\errt@st\empty\errmessage{set@ht passed null value}\fi
-  \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname\relax
-  \ifdiglot@ecols %one at least is empty
+  \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname\relax\relax
+  \ifdiglot@ecols %one at least is empty, add to column height
+    \trace{dP}{set@ht nextchunk is \the\dimen1}%
     \ifdim \dimen1 =0pt
-      \advance\dimen1 by \m@xht\relax
-      %\x@\dimen1\x@=\csname @cur#1ht\endcsname\relax % new height = old height
+      \x@\dimen1\x@=\csname @cur#1ht\endcsname\relax % new current height = old height
     \else
-      %\advance\dimen1 by \m@xht\relax
+      % New content starts at wherever the old content ended (i.e. m@xht)
+      \advance\dimen1 by \m@xht\relax
     \fi
   \fi
   \trace{dP}{set@ht @cur#1ht set to \the\dimen1 \space \ifdiglot@ecols d@ecolstrue m@xht=\m@xht\else d@ecolsfalse\fi}%
@@ -3006,10 +3010,10 @@
     % Column height (depth) calcs:
     \diglot@ecolsfalse
     \trace{Df}{Checking for empty boxes}%
-    \let\col@do=\check@nxtht %sets iftemp=true if any box is empty
+    \let\col@do=\check@nxtht %sets ifdiglot@ecols=true if any box is empty
     \x@\each@col\diglot@list\E
     \ifdiglot@ecols
-      \def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}%
+      \def\v@lpfx{@cur}\def\v@lsfx{ht}%
       \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
       \let\col@do=\max@val\dimen1=0pt
       \x@\each@col\diglot@list\E
@@ -3017,8 +3021,12 @@
     \else
       \edef\m@xht{0pt}%
     \fi
-    \trace{Df}{Saving new Xht values}%
+    \trace{Df}{Saving new Xht values}% @curXht is the total visual content in the column.
     \trace{D}{LBP:\the\Lboxpenalty, RBP:\the\Rboxpenalty,  plp:\the\partialLpenalty, prp:\the\partialRpenalty}%
+    {\edef\tmsg{@cur}\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
+    \x@\def\x@\tmsg\x@{\tmsg}%
+    \trace{dP}{@aanp: \tmsg}
+    }%
     \let\col@do=\set@ht %uses iftemp and m@xht
     \x@\each@col\diglot@list\E
     %
