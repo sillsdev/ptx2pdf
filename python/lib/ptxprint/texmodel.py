@@ -888,7 +888,7 @@ class TexModel:
                 hasrun = False
                 with open(script, encoding="utf-8") as scriptf:
                     l = scriptf.readline().replace("\uFEFF", "")
-                    if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python", l):
+                    if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python3?", l):
                         scriptf.seek(0)
                         gs = globals().copy()
                         gs["__name__"] = "__main__"
