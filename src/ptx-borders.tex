@@ -169,13 +169,33 @@
 
 \def\s@ttextb@rderdims{%Called per book \id, **during processing**
   \trace{et}{s@ttextb@rderdims \c@rrdstat}%
+  \let\stb@dstat\c@rrdstat
   \testm@rkerexists{textborder}%
   \iftemp
     \t@stpublishability{textborder}%
     \ifn@npublishable
       \tempfalse
+      \ifdiglot\ifx\TextBorderColumns\empty\else\if\c@rrdstat L\relax\else      \def\c@rrdstat{L}%
+        \t@stpublishability{textborder}%
+        \ifn@npublishable\else
+          {\let\ds@ffix\stb@dstat
+          \setp@ram{properties}{textborder}{publishable}}% Override normal setting
+          \let\c@rrdstat\stb@dstat
+          \remember@xists{textborder\stb@dstat}%
+          \remember@xists{id:\id@@@|textborder\stb@dstat}%
+          \remember@xists{cat:\id@@@|textborder\stb@dstat}%
+          \should@xist{cat:\id@@@|}{textborder}%
+          \setpossParams{textborder}{textborder}%
+          \let\pptmp\p@ssParams
+          \setpp@name{cat:\id@@@|textborder}%
+          \trace{sC}{Breaking normal rules for \pp@name (\pptmp)}\x@\global\x@\let\csname \pp@name\endcsname\undefined%Invalidate old cache for simple version
+          \x@\xdef\csname \pp@name\endcsname{textborder\stb@dstat,textborderL,textborder,\pptmp}%
+          \temptrue
+        \fi
+      \fi\fi\fi
     \fi
   \fi
+  \let\c@rrdstat\stb@dstat
   \iftemp\bgroup
       \def\sb@rmarker{textborder}%
       \@get@Vborder@style@params
@@ -208,6 +228,7 @@
     \fi
     \trace{et}{No textborder (\c@rrdstat). Pre/post dimensions to \pretextb@rderskip / \posttextb@rderskip}%
   \fi
+  \let\c@rrdstat\stb@dstat
 }
 \addtoidhooks{\s@ttextb@rderdims}% 
 \newcount\TextBorderMode % 0 old normal. 1. - diglots skip introductions 2. Diglots use full-width introductions
@@ -226,10 +247,10 @@
         \ifm@rksonpage\else\tempfalse\fi
         \ifx\t@st\empty\tempfalse\fi
         \iftemp
-          \trace{et}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
           \bgroup 
             \ifversion{6}{\setbox#1\vbox{\box#1\kern\fb@bpadding}}{}%
             \def\sb@rmarker{textborder}%
+            \trace{et}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
             \S@tCat{\id@@@}%
             \get@border@style@params
             %\let\b@drtop\tr@e\let\b@drbottom\tr@e
@@ -551,7 +572,7 @@
   \def\ds@ffix{#2}%
   \let\c@rrdstat\ds@ffix
   \dgetp@r@m{borderref}{\m@rker}%
-  \trace{ebi}{Trying to process \m@rker <-\p@ram}%
+  \trace{ebi}{Trying to process \m@rker(\ds@ffix) <-\p@ram}%
   \ifx\p@ram\relax\else
     \ifx\p@ram\empty\else
       \let\p@rent\p@ram

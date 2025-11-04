@@ -45,8 +45,8 @@
   \s@tc@tpr@fix%
 }
 \gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
-
-\def\setsbp@ram#1#2{\trace{sc}{Styling \m@rker:#1 #2}\setp@ram{#1}{\m@rker}{#2}}
+\x@\let\csname p@rcolumn-textborder\endcsname\tr@e% Does this
+\def\setsbp@ram#1#2{\trace{sc}{Styling \m@rker:#1 #2}\ifx\csname p@rcolumn-\m@rker\endcsname\tr@e\let\hideds@ffix\ds@ffix\else\let\hideds@ffix\relax \fi\setp@ram{#1}{\m@rker}{#2}\ifx\hideds@ffix\relax\else\let\ds@ffix\hideds@ffix\fi}
 \def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
 \def\getsbp@ramNoInh#1{\edef\d@sf{\g@tdstat}%
   \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}{\c@tprefix\sb@rmarker}\fi
@@ -1259,6 +1259,7 @@
     \edef\t@stname{\c@tprefix \m@rker\ds@ffix:is_defined}%
   \fi
   \x@\xdef\csname m@rkerexists-\c@tprefix\m@rker\endcsname{t}%
+  \x@\xdef\csname m@rkerexists-\@mkr\endcsname{t}%
   \x@\let\x@\t@st\csname \t@stname\endcsname
   \ifx\t@st\relax 
     \trace{e}{First definition of \c@tprefix\m@rker\ds@ffix}%

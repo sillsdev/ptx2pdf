@@ -217,8 +217,8 @@
 %} % expand now, not later
 
 \def\setp@ram#1#2#3{\relax\edef\@mkr{\x@\cstackpeek #2,\E}% Potentialy we have a fake stack. Save as uppermost
-  \ifx\ds@ffix\empty\x@\@set@mkr\@mkr++\E\fi
-  \trace{sC}{Setting parameter for #1/\c@tprefix#2/#3}%
+  \ifx\ds@ffix\empty\else\x@\@set@mkr\@mkr++\E\fi
+  \trace{sC}{Setting parameter for #1/[#2 (\ds@ffix)]->\@mkr/#3}%
   \x@\xdef\csname\c@tprefix\@mkr:#1\endcsname{#3}\trace{sa}{set \c@tprefix\@mkr:#1 -> #3}%
   \ifx\c@tprefix\empty\else\should@xist{\c@tprefix}{\@mkr}\fi%Ensure that the marker is in the exists list
 }
@@ -540,11 +540,13 @@
   \let\p@ram\relax
   \ifcsname #2\c@rrdstat:#1\endcsname
     \x@\let\x@\p@ram\csname#2\c@rrdstat:#1\endcsname
+    \trace{sa}{dgetp@r@m: #2\c@rrdstat:#1 -> \p@ram}%
   \fi
   \ifx\p@ram\relax
     \trace{spv}{#2\c@rrdstat:#1 undefined}
     \ifcsname #2:#1\endcsname
       \x@\let\x@\p@ram\csname#2:#1\endcsname
+      \trace{sa}{dgetp@r@m: #2:#1 -> \p@ram}%
     \fi
   \fi
   \ifx\p@ram\relax
