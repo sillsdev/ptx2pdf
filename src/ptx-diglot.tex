@@ -305,6 +305,8 @@
     \xdef@cseq{textb@dr@right@pad#1}{0pt}% Amount of column width lost on left
     \xdef@cseq{textb@dr@top@pad#1}{0pt}% Amount of column width lost on left
     \xdef@cseq{textb@dr@bot@pad#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{pretextb@rderskip#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{posttextb@rderskip#1}{0pt}% Amount of column width lost on left
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
     \x@\def\csname addTo#1Hooks\endcsname{\addToSideHooks{#1}}
 }
@@ -401,9 +403,9 @@
    \fi
    \ch@ckiftextborderadj
    \iftemp
-     \trace{Dh}{Border: \pretextb@rderskip, \posttextb@rderskip}%
-     \global\advance\availht -\pretextb@rderskip  % Space reserved for text border.
-     \global\advance\availht -\posttextb@rderskip 
+     \trace{Dh}{Border: \csname pretextb@rderskip\c@rrdstat\endcsname, \csname posttextb@rderskip\c@rrdstat\endcsname}%
+     \ifdim\f@rstb@dy=0pt \global\advance\availht -\pretextb@rderskip \fi % Space reserved for text border.
+     \global\advance\availht -\csname posttextb@rderskip\c@rrdstat\endcsname
    \fi
    \x@\global\x@\csname availht@com\endcsname=\availht
    \ifloc@lht
@@ -1778,7 +1780,7 @@
     \setbox0=\vtop to \dimen1 {\hbox to \wd#1{\hss}\vss}%
     \doTextB@rder{0}%
     \ht0=0pt
-    \setbox#1\vbox to \ht#1{\baselineskip=0pt\lineskip=0pt\vbox to 0pt{\vskip\f@rstb@dy\box0\vss}\box#1}%
+    \setbox#1\vbox to \ht#1{\baselineskip=0pt\lineskip=0pt\vbox to 0pt{\ifdim\f@rstb@dy=0pt \else\vskip\f@rstb@dy\fi\box0\vss}\ifdim\f@rstb@dy=0pt\vskip\textb@dr@top@pad\fi\box#1\vss}%
   \fi
 } 
 \def\bg@calcns#1#2{%
@@ -1857,13 +1859,16 @@
       \ifdim \csname @fn#1ht\endcsname>0pt \advance\dimen1 by 2\dimen2 \fi % certainly needed when calculating by oldpartian+@curXht, not sure about other times.
       \trace{D}{Colour for #1(\bg@fillht - \ifloc@lht loc\else glo\fi) is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
       %\hbox to 0pt{\vrule height 1pt width 100pt\hss}%
-      \setbox0\hbox to 0pt {%
-        \ifx\TextBorderColumns\empty\else
+      \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\dimexpr\f@rstb@dy+\csname textb@dr@top@pad#1\endcsname \relax}\else\let\pf@x\empty\fi
+      \hbox to 0pt {%
+        \iftextborder\ifx\TextBorderColumns\empty
+          \ifnum\TextBorderMode>0 \ifdim \f@rstb@dy>0pt
+            \advance \dimen1 -\textb@dr@top@pad
+          \fi\fi
+        \else
           \hskip\csname textb@dr@left@pad#1\endcsname
-        \fi
-        \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\f@rstb@dy}\else\let\pf@x\empty\fi
+        \fi\fi
         \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\pf@x\hbox{\vrule height 0pt depth \dimen1 width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}}\hss}%
-      \raise-\csname textb@dr@top@pad#1\endcsname\box0
       \global\availht=\tmpav
     }%
   \else
@@ -2150,7 +2155,7 @@
      \x@\the\csname diglot#1ho@ks\endcsname
      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
   \iff@rstnote
-      \trace{f}{No footnotes for #1}%
+      \trace{f}{No footnotes for #1 (\csname @prev#1dp\endcsname)}%
   \else\LRf@@tnotestrue
     \trace{Df}{Notes for #1 \x@\the\x@\ht\csname #1box\endcsname, bls=\the\baselineskip, lsl=\the\lineskiplimit}%
     %\x@\ifdim\x@\ht\csname #1box\endcsname<\AboveNoteSpace
@@ -2257,7 +2262,7 @@
   \trace{f}{Adjusting footnotebox \the\dimen3 + \the\dimen9}%
   \advance\dimen3 by \dimen9
   \trace{D}{Raising footnotebox by \the\dimen3 \space note:\l@gdims{\notechunk}, partial:\l@gdims{\partial}}%
-  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\notechunk}%
+  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \dimen0=\dp\notechunk\box\notechunk}%
   \ifnum\diglotDbgJoinboxes=\TRACEcount \showbox\partial\fi
 }%
 
@@ -2424,10 +2429,11 @@
        \setbox\partial\box\voidb@x
      \fi\fi
      \ifvoid\partial\else
+       \tempfalse\let\col@do\ck@backgrounds
+       \x@\each@col\diglot@list\E%
+       \let\if@@bg\iftemp% Pseudoif
        \lastd@pth=\dp\partial\relax%
        \iftextborder\ifx\TextBorderColumns\empty
-         \tempfalse\let\col@do\ck@backgrounds
-         \x@\each@col\diglot@list\E% 
        \else
          \temptrue
        \fi\fi
@@ -2461,13 +2467,16 @@
          \fi
          \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
          %\hrule
-         \let\col@do\ins@backgrounds
-         \vbox to 0pt{\baselineskip=0pt \lineskip=0pt \let\l@stcol\empty%
-           %\iftextborder\ifdefined\textb@dr@top@pad\vskip\textb@dr@top@pad\fi\fi
-           %\hrule
-           \hbox{\x@\each@col\tmplist\E}%
-           %\hrule
-           \vss}%
+         \if@@bg
+           \let\col@do\ins@backgrounds
+           \setbox\partial\vbox{\everypar{}\baselineskip=0pt \lineskip=0pt 
+              \vbox to 0pt{\baselineskip=0pt \lineskip=0pt \let\l@stcol\empty%
+                \ifx\TextBorderColumns\empty\ifnum\TextBorderMode>0\ifdim \f@rstb@dy>0pt
+                  \kern\textb@dr@top@pad
+                \fi\fi\fi
+             \hbox{\x@\each@col\tmplist\E}%
+             \vss}\unvbox\partial}%
+         \fi
          \ifdim\m@xBelowBaseline>0pt 
            \vskip-\m@xBelowBaseline
          \fi
@@ -3491,6 +3500,8 @@
   \def\tmp{#1}\ifx\tmp\c@rrdstat
     \x@\global\x@\let\csname textb@dr@top@pad#1\endcsname\textb@dr@top@pad
     \x@\global\x@\let\csname textb@dr@bot@pad#1\endcsname\textb@dr@bot@pad
+    \x@\global\x@\let\csname pretextb@rderskip#1\endcsname\pretextb@rderskip
+    \x@\global\x@\let\csname posttextb@rderskip#1\endcsname\posttextb@rderskip
     \edef\old@dim{\csname @textborder@#1\endcsname}%
     \edef\new@dim{\the\dimexpr \b@dr@left@pad + \b@dr@right@pad \relax}%
     \x@\global\x@\let\csname @textborder@#1\endcsname\new@dim

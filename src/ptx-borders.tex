@@ -210,7 +210,8 @@
   \fi
 }
 \addtoidhooks{\s@ttextb@rderdims}% 
-\newcount\TextBorderMode % 0 Normal. 1. - diglots skip introductions 2. Diglots use full-width introductions
+\newcount\TextBorderMode % 0 old normal. 1. - diglots skip introductions 2. Diglots use full-width introductions
+\TextBorderMode=1 % Sane default
 \def\doTextB@rder#1{% Put border around box #1
   \testm@rkerexists{textborder}%
   \iftemp
