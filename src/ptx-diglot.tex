@@ -1057,8 +1057,7 @@
     %\showlists
     \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}%
   \fi
-  \ifb@dy\ifdim \pagetotal>0pt \x@\global\x@\let\csname isb@dy\c@rrdstat\endcsname\tr@e\fi\fi
-  \traceNum{D}{Initial savepenalty \the\savedpenalty, \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname}%
+  \traceNum{D}{Initial savepenalty \the\savedpenalty, \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
   \IfTr@ce{C}{{%
     \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
     \x@\let\x@\tmpL\csname ch@pterwaiting\endcsname\ifx\tmpL\relax\let\tmpL\space\fi
@@ -1084,7 +1083,10 @@
       \showlists
     \fi
   \fi%
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal}%
+  \ifb@dy\ifdim \pagetotal>0pt 
+      \x@\global\x@\let\csname isb@dy\c@rrdstat\endcsname\tr@e
+  \fi\fi
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal, \csname isb@dy\c@rrdstat\endcsname}%
   \checkfort@c % as good a place as any
   %\ifnum\outputpenalty=-10000 %User-pagebreak
     %\global\savedpenalty=\outputpenalty
@@ -1685,6 +1687,7 @@
       \let\col@do\update@cumulative@delta % Add (Lht - dimen1) to cumulativeDeltaL
       \x@\each@col\cts@list\E
       \ifdiglotb@dy\else% Notice if the chunk is the fist body chunk
+        \trace{D}{Checking if there's bodytext here}%
         \global\diglotfirstb@dyfalse
         \def\col@do##1{\x@\ifx \csname isb@dy##1\endcsname\tr@e \global\diglotfirstb@dytrue\fi}%
         \x@\each@col\cts@list\E
