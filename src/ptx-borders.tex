@@ -167,6 +167,8 @@
  \fi
 }
 
+\xdef\mxpretextb@rderskip{0pt}%
+\xdef\mxtextb@dr@top@pad{0pt}%
 \def\s@ttextb@rderdims{%Called per book \id, **during processing**
   \trace{et}{s@ttextb@rderdims \c@rrdstat}%
   \let\stb@dstat\c@rrdstat
@@ -205,6 +207,12 @@
         \global\textbordertrue
         \getsbp@ram{spacebefore}%
         \xdef\pretextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}%
+        \ifdim\b@dr@bot@pad > \mxtextb@dr@top@pad
+          \global\let\mxtextb@dr@top@pad\b@dr@top@pad
+        \fi
+        \ifdim\pretextb@rderskip > \mxpretextb@rderskip
+          \global\let\mxpretextb@rderskip\pretextb@rderskip
+        \fi
         \getsbp@ram{spaceafter}%
         \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}%
         \global\let\textb@dr@bot@pad\b@dr@bot@pad

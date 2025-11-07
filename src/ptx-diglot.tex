@@ -403,8 +403,8 @@
    \fi
    \ch@ckiftextborderadj
    \iftemp
-     \trace{Dh}{Border: \csname pretextb@rderskip\c@rrdstat\endcsname, \csname posttextb@rderskip\c@rrdstat\endcsname}%
-     \ifdim\f@rstb@dy=0pt \global\advance\availht -\pretextb@rderskip \fi % Space reserved for text border.
+     \trace{Dh}{Border: \mxpretextb@rderskip \csname pretextb@rderskip\c@rrdstat\endcsname, \csname posttextb@rderskip\c@rrdstat\endcsname}%
+     \ifdim\f@rstb@dy=0pt \global\advance\availht -\mxpretextb@rderskip \fi % Space reserved for text border.
      \global\advance\availht -\csname posttextb@rderskip\c@rrdstat\endcsname
    \fi
    \x@\global\x@\csname availht@com\endcsname=\availht
@@ -1708,9 +1708,10 @@
       \ifx\TextBorderColumns\empty
         \dimen1=\textb@dr@top@pad
       \else
-        \def\v@lpfx{textb@dr@top@pad}\def\v@lsfx{}%
-        \let\col@do=\max@val\dimen1=0pt
-        \x@\each@col\layout@list\E
+        %\def\v@lpfx{textb@dr@top@pad}\def\v@lsfx{}%
+        %\let\col@do=\max@val\dimen1=0pt
+        %\x@\each@col\layout@list\E
+        \dimen1=\mxpretextb@rderskip
       \fi
       \advance\dimen1 0.2\dimexpr \@maxb@seline\relax
       \advance\thisjointDelta \dimen1
@@ -1789,7 +1790,7 @@
 \def\bg@calcns#1#2{%
   \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
   \if \bg@fillht T\relax
-    \trace{et}{Putting #2 #1 (\bg@fillht\space \the\dimen1\space (\the\ht\partial+\the\dp\partial) or \the\textheight\space or \oldp@rtial+\csname @nxtchunk#1ht\endcsname}%
+    \trace{et}{Putting #2 #1 (\bg@fillht\space \the\dimen1\space (\the\ht\partial+\the\dp\partial) or \the\textheight\space or \oldp@rtial+\csname @nxtchunk#1ht\endcsname + \csname @nxtchunk#1dp\endcsname}%
     \def\wh@t{partial}%
     \ifdim\csname @nxtchunk#1ht\endcsname>\textheight \else
        \dimen1=\dimexpr \csname @nxtchunk#1ht\endcsname + \oldp@rtial \relax\def\wh@t{oldpartial + nxtchunk#1ht}%
@@ -1823,15 +1824,19 @@
     \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
     \edef\wh@t{\wh@t + 0.5 lines}%
   \fi
+  \def\tbskip@jd{0pt}%
   \ifdiglotb@dy
     \ifdim\f@rstb@dy>0pt
-      \advance\dimen1 - \f@rstb@dy
+      \edef\tbskip@jd{\dimexpr  \mxpretextb@rderskip -\csname textb@dr@top@pad#1\endcsname \relax}%
+      \advance\dimen1 - \dimexpr \f@rstb@dy + \tbskip@jd\relax
       \advance\dimen1 - \csname textb@dr@top@pad#1\endcsname
+      \edef\wh@t{\wh@t -\f@rstb@dy - skip adj(\csname pretextb@rderskip#1\endcsname-\mxpretextb@rderskip)}%
     \fi
   \fi
+  \trace{et}{Basic border/bg calcs result \the\dimen1 \space according to \wh@t}%
 }
 
-\def\ins@borders#1{%
+\def\ins@borders#1{% This inserts the borders, positioned relative to the top of the page.
   \def\c@rrdstat{#1}%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifdim \csname @textborder@#1\endcsname=0pt 
@@ -1841,13 +1846,23 @@
     \hskip\csname textb@dr@left@pad#1\endcsname
     \def\tmpa{}\def\tmpb{}%
     \bg@calcns{#1}{border on}%
-    \setbox0=\vtop to \dimen1 {\baselineskip=0pt\hbox to \csname column#1width\endcsname{\hss}\vss}%
+    \setbox0=\vtop to \dimen1 {\prevdepth=0pt \baselineskip=0pt\hbox to \csname column#1width\endcsname{\hss}\vss}%
     \trace{et}{box is (\l@gdims 0) according to \wh@t - \f@rstb@dy}%
     \def\c@rrdstat{#1}\doTextB@rder{0}%
+    %\setbox0\vtop{\baselineskip=0pt \lineskip=0pt \box0\vss}%
+    \setbox0\hbox{\vbox to 0pt{\baselineskip=0pt \lineskip=0pt
+        \dimen1=\dimexpr \f@rstb@dy + \csname mxpretextb@rderskip\endcsname - \csname textb@dr@top@pad\endcsname \relax
+        \trace{et}{Preborder skip #1 is \the\dimen1 (\f@rstb@dy + \csname pretextb@rderskip#1\endcsname - \csname textb@dr@top@pad#1\endcsname)}%
+        \vskip\dimen1
+        %\hbox{%\smash{\hbox{\vrule depth \f@rstb@dy width 1pt}}}\hrule
+        \box0
+        %\hrule
+        \vss}}%
     \trace{D}{Adjusting @cur#1ht by border padding}%
     \x@\xdef\csname @cur#1ht\endcsname{\the\dimexpr\csname textb@dr@bot@pad#1\endcsname + \csname @cur#1ht\endcsname\relax}%
-    \ht0=0pt
-    \ifdim\f@rstb@dy>0pt\lower\f@rstb@dy\fi\box0\hskip\csname textb@dr@right@pad#1\endcsname
+    %\ht0=0pt
+    %\ifdim\f@rstb@dy>0pt\lower\f@rstb@dy\fi\box0\hskip\csname textb@dr@right@pad#1\endcsname
+    \box0\hskip\csname textb@dr@right@pad#1\endcsname
   \fi
   \xdef\l@stcol{#1}%
 }
@@ -1862,7 +1877,7 @@
       \ifdim \csname @fn#1ht\endcsname>0pt \advance\dimen1 by 2\dimen2 \fi % certainly needed when calculating by oldpartian+@curXht, not sure about other times.
       \trace{D}{Colour for #1(\bg@fillht - \ifloc@lht loc\else glo\fi) is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
       %\hbox to 0pt{\vrule height 1pt width 100pt\hss}%
-      \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\dimexpr\f@rstb@dy+\csname textb@dr@top@pad#1\endcsname \relax}\else\let\pf@x\empty\fi
+      \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\dimexpr\f@rstb@dy+\tbskip@jd+\csname textb@dr@top@pad#1\endcsname \relax}\else\let\pf@x\empty\fi
       \hbox to 0pt {%
         \iftextborder\ifx\TextBorderColumns\empty
           \ifnum\TextBorderMode>0 \ifdim \f@rstb@dy>0pt
@@ -2463,9 +2478,11 @@
            \let\c@rrdstattmp\c@rrdstat
            \let\col@do\ins@borders
            \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
-           \vbox to 0pt{\let\l@stcol\empty%
+           \setbox0\vtop to 0pt{\let\l@stcol\empty%
              \hbox{\x@\each@col\tmplist\E}%
            \vss}%
+           %\showbox0
+           \box0
            \let\c@rrdstat\c@rrdstattmp
          \fi
          \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
@@ -2481,21 +2498,21 @@
              \vss}\unvbox\partial}%
          \fi
          \ifdim\m@xBelowBaseline>0pt 
-           \vskip-\m@xBelowBaseline
+             \vskip-\m@xBelowBaseline
          \fi
        \fi
        \ifx\TextBorderColumns\empty
-         \trace{et}{Apply border from writesimplecolumns}%
+         \trace{et}{Apply border from writesimplecolumns. f@rstb@dy is \f@rstb@dy}%
          \ifnum\TextBorderMode=0
            \doTextB@rder{\partial}% Dumb, border around everything
          \else
            \smartB@rder{\partial}% Adjust border to skip book-intro
          \fi
        \else
-         \def\v@lpfx{textb@dr@top@pad}\def\v@lsfx{}%
+         \def\v@lpfx{pretextb@rderskip}\def\v@lsfx{}%
          \let\col@do=\max@val\dimen1=0pt
          \x@\each@col\layout@list\E
-         \trace{et}{biggest applied top border is \the\dimen1}%
+         \trace{et}{biggest applied top border is \the\dimen1, f@rstb@dy is \f@rstb@dy}%
          \ifdim\f@rstb@dy=0pt 
            \vskip\dimen1
          \fi
