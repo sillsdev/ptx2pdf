@@ -89,8 +89,11 @@ class PicChecks:
                         hasdata = True
                 if not hasdata:
                     a[2].remove_section(s)
-            with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
-                a[2].write(outf)
+            try:
+                with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
+                    a[2].write(outf)
+            except FileNotFoundError:
+                pass
         res = self.changed
         self.changed = False
         return res
