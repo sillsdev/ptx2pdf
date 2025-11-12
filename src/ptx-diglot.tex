@@ -3477,8 +3477,7 @@
     \x@\newc@unt\csname p@rnum#1\endcsname % Used for adjust-lists
     \x@\newc@unt\csname dropped@ther@lines#1\endcsname % Used for parlocs analysis
     \x@\gdef\x@\digl@tc@ntent@xcs\x@{\digl@tc@ntent@xcs\csname digl@txcs#1\endcsname}%
-    \x@\xdef\csname \v@lpfx#1ht\endcsname{0pt}%
-    \x@\xdef\csname \v@lpfx#1dp\endcsname{0pt}%
+    \def\v@lpfx{@fn}\forget@boxdim{#1}% @fn#1 ht/dp
     \initcolumndef@ults{#1}%
 %TODO:
 %FIXMEs needing for polyglot processing:
@@ -3494,6 +3493,7 @@
   \ifcsname \ins@name\endcsname\else
     \xdef\columnins@rts{\columnins@rts\ins@name,}%
     \x@\newins@rt\csname \ins@name\endcsname
+    \trace{d}{\ins@name \space defined as \the\csname \ins@name\endcsname}%
     \x@\global\x@\count\csname \ins@name\endcsname=0
     \x@\global\x@\dimen\csname \ins@name\endcsname=\maxdimen
     \xdef\ins@rts{\columnins@rts\pageins@rts}%

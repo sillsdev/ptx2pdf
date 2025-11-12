@@ -517,7 +517,7 @@
   \ifnum\sb@numcuts>0
     \save@cutouts{esb}%
   \fi
-  \mcpush{\ss@Sbar}{#1}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
+  \mcpush{\ss@Sbar}{#1}\trace{e}{ESB \the\@numcuts}\setbox\extb@x\vbox\bgroup\cancelcutouts
     \edef\sb@rnum{\the\im@gecount}%
     \edef\sb@rfirstskip{0pt}% If the sidebar starts with a heading, how much skip did it have?
     \let\thisp@rclass\empty % Signal to gridbox that there's nothing above this.
@@ -550,6 +550,7 @@
     \s@tsb@rwidth
   \fi
   \trace{e}{startESB \the\sb@rwidth,\the\hsize (ble@dthisbar\ifble@dthisbar true\else false\fi)}%
+  \trace{C}{@numcuts now \the\@numcuts}%
   \kill@PossParamCache
   \sb@rchunkh@ight=\maxdimen
   \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
@@ -1238,6 +1239,7 @@
   \fi
   \ifnum \sb@numcuts>0
     \@numcuts=\sb@numcuts
+    \trace{C}{@numcuts now \the\@numcuts after sidebar}%
     \trace{e}{Re-doing cutouts for \sb@numcuts}%
     \restore@cutouts{esb}%
     \makecutouts

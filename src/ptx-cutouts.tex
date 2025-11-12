@@ -51,7 +51,7 @@
 
 \def\save@cutouts#1{%
   \@index=0
-  \loop \ifnum\@index<\@numcuts \advance\@index by 1
+  \loop \ifnum\@index<\@numcuts \relax\advance\@index by 1
     \trace{C}{Saving cutout \the\@index: \csname cut@side\the\@index\endcsname/\csname cut@width\the\@index\endcsname/\csname cut@lines\the\@index\endcsname}%
     \expandafter\global\expandafter\let\csname cut@side\the\@index#1\x@\endcsname\csname cut@side\the\@index\endcsname
     \expandafter\global\expandafter\let\csname cut@width\the\@index#1\x@\endcsname\csname cut@width\the\@index\endcsname
@@ -64,7 +64,7 @@
 \def\restore@cutouts#1{%
   \@index=0
   \ifcsname cut@numcuts#1\endcsname
-    \global\@numcuts=\csname cut@numcuts#1\endcsname
+    \global\@numcuts=\csname cut@numcuts#1\endcsname \relax
     \trace{C}{Restoring \the\@numcuts \space cutouts for #1}%
     \loop \ifnum\@index<\@numcuts \advance\@index by 1
       \x@\global\x@\let\csname cut@side\the\@index\x@\endcsname\csname cut@side\the\@index#1\endcsname
@@ -92,7 +92,7 @@
   \trace{C}{cutoutcarryover \the\@numcuts}%
   \ifnum\@numcuts>0
     \count@=\@numcuts \@numcuts=0
-    \@index=0
+    \@index=0 \relax
     \loop \ifnum\@index<\count@ \advance\@index by 1
       \@after=\csname cut@after\the\@index\endcsname
       \advance\@after by -\prevgraf
@@ -131,6 +131,7 @@
   \else \@parshapelines=\hangafter \fi
   \@index=0
   \loop \ifnum\@index<\@numcuts \advance\@index by 1
+    \trace{C}{makecutouts (\c@rrdstat) \the\@index, \the\@numcuts}%
     \count@=\csname cut@after\the\@index\endcsname
     \advance\count@ by \csname cut@lines\the\@index\endcsname \relax
     \ifnum\count@>\@parshapelines \@parshapelines=\count@ \fi
@@ -159,7 +160,7 @@
 %+ccut_cutthisline
 \def\@cutthisline{%
   \@index=0
-  {\loop \ifnum\@index<\@numcuts
+  {\loop \ifnum\@index<\@numcuts \relax
     \advance\@index by 1
     \@after=\csname cut@after\the\@index\endcsname
     \@until=\csname cut@lines\the\@index\endcsname
@@ -225,7 +226,7 @@
    \edef\pending@items{\tmp,}\else\edef\pending@items{\pending@items\tmp,}\fi}
 
 % Having added pending items they are run with run@pending
-\def\run@pending{\trace{C}{run@pending: \pending@items}%
+\def\run@pending{\trace{C}{run@pending: \pending@items (\the\@numcuts)}%
   \ifnum\dropped@ther@lines<0\dropped@ther@lines=0\fi
   \ifx\pending@items\cstackempty\else
     \def\D@IT{%\ifnum\thing@after<1 
@@ -241,7 +242,7 @@
     \x@\cstackdown\pending@items\E
     \let\d@\relax
     \let\pending@items\cstackempty
-  \fi
+  \fi\trace{C}{run@pending: done}%
 }
 
 \def\write@delayedthing#1#2#3#4#5#6{%
