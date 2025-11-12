@@ -221,7 +221,31 @@ page-set.
 ## Other efficiency gains possible
 * **E<sub>2</sub>**  When a column contains no notes or other inserts, then trimming the column cannot add more notes. Thus vsplit is sufficient, and  there is no need to reprocess the content.
 * **E<sub>3</sub>** Rather than successively trimming one line from the galley at a time before reprocessing, a binary search pattern could be used. This would, however, require some modification of the loop, changing from 'first fill that fits' to a more complex method of scoring.
-* **E<sub>4</sub>** Cache old results rather than discard them. Rationale: with the potential for multiple solutions inherent in a page with multiple texts, the code is performing, in effect, a multivariable optimisation, in which returning to a previously tested state for one or more columns might be the best solution. Eg. After run *N*, the page is too long by 1 line, with the  longer columns being `L` and `A`. `L` is shortened by 1 line and reprocessed removing a long footnote, producing a large gap. A better solution is to shorten `A`, return `L` to what it was at run *N*.   This need for back-tracking also strongly implies that the algorithm given above is overly simplistic. 
+* **E<sub>4</sub>** Cache old results rather than discard them. Rationale: with the potential for multiple solutions inherent in a page with multiple texts, the code is performing, in effect, a multivariable optimisation, in which returning to a previously tested state for one or more columns might be the best solution. Eg. After run *N*, the page is too long by 1 line, with the  longer columns being `L` and `A`. `L` is shortened by 1 line and reprocessed removing a long footnote, producing a large gap. A better solution is to shorten `A`, return `L` to what it was at run *N*.   This need for back-tracking also strongly implies that the algorithm given above is overly simplistic.
+
+## Scoring 
+* **E<sub>5</sub>**  *If notes are not per-column*, then some kind of table of vsplit length -> final verse and layout acceptability  could be generated for each column. This could generate a preference-score for different arrangements to try actually expanding. E.g.: for the layout `A/LL,RR`, having  a spare 170pt on page 1 and 180pt on page 2: we might consider:
+
+| Col/Cut-length|Final_verse|Unbalance|Text_length|Note length 
+|-------|----------|------|---|---|
+|A/50|4:13|0|50pt|
+|A/60|4:14|0|60pt|
+|A/70|4:15|0|70pt|
+|A/80|4:16|0|80pt|
+|L/140|4:13|0|70pt
+|L/150|4:15|1|80pt|
+|L/160|4:16|0|80pt|
+|R/320|4:15|0|160pt|
+|R/330|4:16|1|170pt|
+|R/340|4:16|0|170pt|
+|R/350|4:17|1|180pt|
+|R/360|4:18|0|180pt|
+
+If whitespace has a *cost* of 0.5/pt  on any side, and 1/pt of odd/even unbalance, unbalanced columns  have a cost of 50, and out-of-sync verses have a cost of 20, then we get the following scores:
+
+|Pattern|Page-length cost|Verse cost|total cost|
+|------------|-----------------------|-|-|
+|L/160+A/80+R/360|0+20*1|2*20 |50 
 
 
 # Whitespace removal *vs* verse tracking

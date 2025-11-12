@@ -1,0 +1,156 @@
+\input paratext2.tex
+\XeTeXuseglyphmetrics=0
+\FontSizeUnit=1pt
+\font\T "Gentium Plus" at 10pt
+\PaperHeight=296mm
+\PaperWidth=210mm
+\baselineskip=12pt
+\stylesheet{usfm_sb.sty}
+\def\LineSpacingFactor{1.0}
+\def\VerticalSpaceFactor{1}
+\everypar{}
+\let\par\endgraf
+\T
+\newPolyglotCol{L}
+\newPolyglotCol{R}
+\newPolyglotCol{A}
+\setbox\Lbox\vbox{\hsize=100pt
+\mark{1}Sapiente eum quasi qui eligendi quasi atque delectus in. \mark{2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
+\vbox{\hbox{Hi}\vskip 2em}\penalty10000
+\mark{6}Dolores nostrum nihil vel placeat. \mark{7}Expedita voluptatem iusto dolorem. \mark{8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{9}Eveniet quia sed voluptatem. \mark{10}Voluptatum eaque pariatur id eveniet ratione. \mark{11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{12}Delectus molestiae eveniet odit magnam magni. \mark{13}Itaque sed corporis aut autem dignissimos maxime.}
+\setbox\Rbox\vbox{\hsize=100pt 
+. \mark{1}Repellat nihil autem quod doloremque adipisci illum officia laudantium. \mark{2}Voluptate dignissimos itaque odit. \mark{3}Et omnis veritatis magnam rem doloremque. \mark{4}Pariatur laudantium iusto illo. \mark{5}A eos corporis ab quae iure non.Porro et necessitatibus quam. \mark{6}Culpa dolor est porro error voluptatem enim non. \mark{7}Nulla tempore quia praesentium facere dolores omnis. \mark{8}Quam ut asperiores magni in expedita aut qui. \mark{9}Quos sit voluptas accusantium non doloremque fugiat placeat voluptas.Perspiciatis quis odio facere ad velit exercitationem deserunt. \mark{10}Temporibus fuga non omnis harum ut voluptates explicabo. \mark{11}Nulla rerum quia consequatur. \mark{12}Ut dolor aspernatur porro dicta quod. \mark{13}Quo eos qui mollitia. \mark{14}Aut ratione voluptate debitis et vero est.}
+\setbox\Abox\vbox{\hsize=200pt 
+. \mark{1}Illum cupiditate velit repellendus aliquid impedit. \mark{2}Beatae et ut quod a doloribus. \mark{3}Sunt ut et eos aut sunt tempore. \mark{4}Sit quaerat quae tempore molestiae delectus ratione non. \mark{5}Est cum atque numquam minus non nesciunt et.Nisi modi eaque inventore architecto eveniet repudiandae. \mark{6}Amet ut quo impedit molestiae. \mark{7}Voluptatem dolorem reiciendis ut voluptas explicabo qui quo. \mark{8}Corrupti et dolore in et tenetur et cupiditate autem. \mark{9}Similique et et delectus.Ut quam mollitia voluptatem ipsa id. \mark{10}Velit quas maiores temporibus dolore. \mark{11}Sequi autem facere omnis et dicta totam est hic. \mark{12}Id sed unde similique mollitia sed aliquid.}
+\ptxfile{}
+\makeatletter
+\MSG{\l@gdims\Lbox}
+\MSG{\l@gdims\Rbox}
+\MSG{\l@gdims\Abox}
+
+\newcount\cols
+\newdimen\max
+
+\def\try#1{\count255=1 \max=0pt
+  \setbox0\copy\csname#1box\endcsname
+  \let\dims\empty
+  \loop
+    \setbox\count255=\vsplit0 to \dimen1\setbox \count255\vbox{\unvbox\count255}%
+    \ifdim\max<\ht\count255 \max=\ht\count255 \fi
+    \edef\dims{\ifx\dims\empty\else\dims,\fi \the\count255:\the\ht\count255}
+    \x@\edef\csname #1bot\endcsname{\splitbotmark}%
+  \ifnum \count255<\cols
+    \advance\count255 by 1
+    \repeat
+  \count255=1 
+  \dimen0=0pt
+  \loop
+    \advance\dimen0\dimexpr\max-\ht\count255\relax
+  \ifnum \count255<\cols
+    \advance\count255 by 1
+    \repeat
+  \x@\let\x@\tmp\csname #1list\endcsname  
+  \edef\tryid{#1/\the\dimen1}
+  \x@\edef\csname #1list\endcsname{\ifx\tmp\relax\else\tmp\fi\tryid,}
+  \edef\tmp{\the\max|\the\dimen0|\dims|\csname #1bot\endcsname}\tryid|\tmp\par
+  \x@\let\csname \tryid\endcsname\tmp
+}
+\def\@ption#1#2\E{\bgroup
+  \MSG{@option #1 #2}%
+  \edef\nxt@ptions{#2}
+  \x@\let\x@\l@st\csname #1list\endcsname
+  \x@\suboptions\l@st\E
+  %\ifx\nxt@ptions\empty
+    %\global\let\@nxt\cstackrelax
+  %\else\global\let\@nxt\@ption\fi
+  %\x@\@nxt\nxt@ptions\E
+  \egroup
+}
+\def\suboptions#1,#2\E{%
+  \edef\s@tmp{#2}%
+  \bgroup
+    \edef\path{\path\psep#1}%
+    \def\psep{,}
+    \MSG{scoring suboption #1 : \path (#2)}%
+    \sc@re{#1}
+  \egroup%
+  \ifx\s@tmp\empty\let\n@xt\cstackrelax
+  \else\let\n@xt\suboptions\fi
+  \n@xt#2\E
+}
+\def\p@rsetry#1|#2|#3|#4\E{%
+  \def\p@rsemx{#1}\def\p@rseunbal{#2}\def\p@rsev{#4}%
+}
+
+\def\unbalVcost{200} % cost per verse
+\def\unbalLcost{5} % cost per pt
+\def\WScost{0.2} % cost per pt of whitespace
+\def\maxv{0}
+\def\minv{999}
+\def\sc@re#1{%
+  \x@\let\x@\tmp\csname#1\endcsname
+  \x@\p@rsetry\tmp\E
+  \advance\tryscore by \unbalLcost\dimexpr\p@rseunbal\relax\relax
+  \ifnum\p@rsev>\maxv \let\maxv\p@rsev \fi
+  \ifnum\p@rsev<\minv \let\minv\p@rsev \fi
+  %\MSG{\p@rsev: min,max = \minv,\maxv}%
+  \advance\dimen0 by -\p@rsemx\relax
+  \ifdim\dimen0<0pt
+    \MSG{STOP}
+  \else
+    \ifx\nxt@ptions\empty
+      \dimen1=\unbalVcost\dimexpr \maxv pt - \minv pt\relax
+      \advance\tryscore by \dimen1
+      \advance\tryscore by \dimexpr \dimen0
+      \edef\tmp{Path \path: \the\tryscore|\the\dimen0|\minv|\maxv}\MSG{\tmp}\tmp\par
+      \ifdim\tryscore<\bestscore
+        \xdef\bestscore{\the\tryscore}
+        \xdef\bestpath{\tmp}
+      \fi
+    \else
+      \MSG{next chunk:\nxt@ptions}%
+      \x@\@ption\nxt@ptions\E
+    \fi 
+  \fi
+}
+
+\newdimen\tryscore
+\def\options#1{%
+  \dimen0=\tot
+  \edef\bestscore{\the\maxdimen}
+  \def\path{}\def\psep{}\tryscore=0pt
+  \x@\@ption#1\E
+}
+\l@gdims0 \l@gdims\Lbox
+
+\cols=2 \dimen1=\ht\Lbox \divide\dimen1 by \cols
+\try{L}
+\try{R}
+\advance\dimen1 by -\baselineskip
+\try{L}
+\try{R}
+\advance\dimen1 by -\baselineskip
+\try{L}
+\try{R}
+\advance\dimen1 by -\baselineskip
+\try{L}
+\try{R}
+\cols=1 \dimen1=\ht\Abox\try{A}
+\advance\dimen1 by -\baselineskip
+\try{A}
+
+\edef\tot{\the\dimexpr 0.9\ht\Lbox}%
+
+L:\Llist\par
+R:\Rlist
+A:\Alist
+
+%\tracingassigns=1
+\the\XeTeXelapsedtime 
+\options{LR}%
+BEST: \bestpath\par
+
+%\showbox\Lbox
+\par
+\box\Lbox
+\bye
