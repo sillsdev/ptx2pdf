@@ -224,29 +224,35 @@ page-set.
 * **E<sub>4</sub>** Cache old results rather than discard them. Rationale: with the potential for multiple solutions inherent in a page with multiple texts, the code is performing, in effect, a multivariable optimisation, in which returning to a previously tested state for one or more columns might be the best solution. Eg. After run *N*, the page is too long by 1 line, with the  longer columns being `L` and `A`. `L` is shortened by 1 line and reprocessed removing a long footnote, producing a large gap. A better solution is to shorten `A`, return `L` to what it was at run *N*.   This need for back-tracking also strongly implies that the algorithm given above is overly simplistic.
 
 ## Scoring 
-* **E<sub>5</sub>**  *If notes are not per-column*, then some kind of table of vsplit length -> final verse and layout acceptability  could be generated for each column. This could generate a preference-score for different arrangements to try actually expanding. E.g.: for the layout `A/LL,RR`, having  a spare 170pt on page 1 and 180pt on page 2: we might consider:
+* **E<sub>5</sub>**  *If notes are not per-column, or as an initial phase*, then a table of vsplit length -> final verse and layout acceptability  could be generated for each column. This can be used generate a preference-score for different arrangements to try actually expanding. E.g.: in a given chunk of text, (one version including a section heading),  for the layout `LL/RR`, having  573.99 pt of space, we might consider:
 
-| Col/Cut-length|Final_verse|Unbalance|Text_length|Note length 
+| Col/Cut-length|Max length|Unbalance|Final_verse|Note length
 |-------|----------|------|---|---|
-|A/50|4:13|0|50pt|
-|A/60|4:14|0|60pt|
-|A/70|4:15|0|70pt|
-|A/80|4:16|0|80pt|
-|L/140|4:13|0|70pt
-|L/150|4:15|1|80pt|
-|L/160|4:16|0|80pt|
-|R/320|4:15|0|160pt|
-|R/330|4:16|1|170pt|
-|R/340|4:16|0|170pt|
-|R/350|4:17|1|180pt|
-|R/360|4:18|0|180pt|
+L/286.9958pt|283.6716pt|23.6621pt|13||
+L/272.9958pt|266.37476pt|21.01367pt|12
+L/258.9958pt|251.72633pt|6.36525pt|11
+L/244.9958pt|237.07791pt|21.01367pt|10
+R/286.9958pt|274.65793pt|29.29684pt|14
+R/272.9958pt|260.0095pt|0.0pt|14
+R/258.9958pt|245.36108pt|0.0pt|14
+R/244.9958pt|230.71266pt|0.0pt|12
 
-If whitespace has a *cost* of 0.5/pt  on any side, and 1/pt of odd/even unbalance, unbalanced columns  have a cost of 50, and out-of-sync verses have a cost of 20, then we get the following scores:
+If whitespace has a *cost* of 1/pt  on any side, and 20/pt of unbalance within the chunk, and out-of-sync verses have a cost of 50, then we get the following scores:
 
-|Pattern|Page-length cost|Verse cost|total cost|
-|------------|-----------------------|-|-|
-|L/160+A/80+R/360|0+20*1|2*20 |50 
+|Pattern|v-R|v-L|Whitespace|total cost|Comment|
+|------------|--------------|---------|-|-|-|
+L/286.9958pt,R/244.9958pt|12|13|2.20468pt|1204|Fullest page, but unbalanced (see L/286.99  above)
+L/272.9958pt,R/258.9958pt|12|14|4.8531pt|1093
+L/272.9958pt,R/244.9958pt|12|12|19.50153pt|1060| Matching verses, but unbalanced column
+L/258.9958pt,R/272.9958pt|11|14|4.8531pt|380
+L/258.9958pt,R/258.9958pt|11|14|19.50153pt|388
+L/258.9958pt,R/244.9958pt|11|12|34.14995pt|355 | Only 1 verse different
+L/244.9958pt,R/286.9958pt|10|14|4.8531pt|2597
+L/244.9958pt,R/272.9958pt|10|14|19.50153pt|1140
+L/244.9958pt,R/258.9958pt|10|14|34.14995pt|1147
+L/244.9958pt,R/244.9958pt|10|12|48.79837pt|1115
 
+Clearly, the different scoring weights will decide which option is preferred by the algorithm.
 
 # Whitespace removal *vs* verse tracking
 In 1xN layout, then verse tracking is easily possible, as the column heights

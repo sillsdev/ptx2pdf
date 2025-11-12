@@ -5,18 +5,18 @@
 \PaperHeight=296mm
 \PaperWidth=210mm
 \baselineskip=12pt
+\newPolyglotCol{L}
+\newPolyglotCol{R}
+\newPolyglotCol{A}
 \stylesheet{usfm_sb.sty}
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1}
 \everypar{}
 \let\par\endgraf
 \T
-\newPolyglotCol{L}
-\newPolyglotCol{R}
-\newPolyglotCol{A}
 \setbox\Lbox\vbox{\hsize=100pt
 \mark{1}Sapiente eum quasi qui eligendi quasi atque delectus in. \mark{2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
-\vbox{\hbox{Hi}\vskip 2em}\penalty10000
+\vbox to 3\baselineskip{\hbox{Hi}\vfill}\penalty10000
 \mark{6}Dolores nostrum nihil vel placeat. \mark{7}Expedita voluptatem iusto dolorem. \mark{8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{9}Eveniet quia sed voluptatem. \mark{10}Voluptatum eaque pariatur id eveniet ratione. \mark{11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{12}Delectus molestiae eveniet odit magnam magni. \mark{13}Itaque sed corporis aut autem dignissimos maxime.}
 \setbox\Rbox\vbox{\hsize=100pt 
 . \mark{1}Repellat nihil autem quod doloremque adipisci illum officia laudantium. \mark{2}Voluptate dignissimos itaque odit. \mark{3}Et omnis veritatis magnam rem doloremque. \mark{4}Pariatur laudantium iusto illo. \mark{5}A eos corporis ab quae iure non.Porro et necessitatibus quam. \mark{6}Culpa dolor est porro error voluptatem enim non. \mark{7}Nulla tempore quia praesentium facere dolores omnis. \mark{8}Quam ut asperiores magni in expedita aut qui. \mark{9}Quos sit voluptas accusantium non doloremque fugiat placeat voluptas.Perspiciatis quis odio facere ad velit exercitationem deserunt. \mark{10}Temporibus fuga non omnis harum ut voluptates explicabo. \mark{11}Nulla rerum quia consequatur. \mark{12}Ut dolor aspernatur porro dicta quod. \mark{13}Quo eos qui mollitia. \mark{14}Aut ratione voluptate debitis et vero est.}
@@ -33,11 +33,11 @@
 
 \def\try#1{\count255=1 \max=0pt
   \setbox0\copy\csname#1box\endcsname
-  \let\dims\empty
+  %\let\dims\empty
   \loop
     \setbox\count255=\vsplit0 to \dimen1\setbox \count255\vbox{\unvbox\count255}%
     \ifdim\max<\ht\count255 \max=\ht\count255 \fi
-    \edef\dims{\ifx\dims\empty\else\dims,\fi \the\count255:\the\ht\count255}
+    %\edef\dims{\ifx\dims\empty\else\dims,\fi \the\count255:\the\ht\count255}
     \x@\edef\csname #1bot\endcsname{\splitbotmark}%
   \ifnum \count255<\cols
     \advance\count255 by 1
@@ -52,7 +52,7 @@
   \x@\let\x@\tmp\csname #1list\endcsname  
   \edef\tryid{#1/\the\dimen1}
   \x@\edef\csname #1list\endcsname{\ifx\tmp\relax\else\tmp\fi\tryid,}
-  \edef\tmp{\the\max|\the\dimen0|\dims|\csname #1bot\endcsname}\tryid|\tmp\par
+  \edef\tmp{\the\max|\the\dimen0|\csname #1bot\endcsname}\tryid|\tmp\par
   \x@\let\csname \tryid\endcsname\tmp
 }
 \def\@ption#1#2\E{\bgroup
@@ -78,13 +78,13 @@
   \else\let\n@xt\suboptions\fi
   \n@xt#2\E
 }
-\def\p@rsetry#1|#2|#3|#4\E{%
-  \def\p@rsemx{#1}\def\p@rseunbal{#2}\def\p@rsev{#4}%
+\def\p@rsetry#1|#2|#3\E{%
+  \def\p@rsemx{#1}\def\p@rseunbal{#2}\def\p@rsev{#3}%
 }
 
-\def\unbalVcost{200} % cost per verse
-\def\unbalLcost{5} % cost per pt
-\def\WScost{0.2} % cost per pt of whitespace
+\def\unbalVcost{20} % cost per verse
+\def\unbalLcost{50} % cost per pt
+\def\WScost{0.5} % cost per pt of whitespace
 \def\maxv{0}
 \def\minv{999}
 \def\sc@re#1{%
@@ -101,8 +101,8 @@
     \ifx\nxt@ptions\empty
       \dimen1=\unbalVcost\dimexpr \maxv pt - \minv pt\relax
       \advance\tryscore by \dimen1
-      \advance\tryscore by \dimexpr \dimen0
-      \edef\tmp{Path \path: \the\tryscore|\the\dimen0|\minv|\maxv}\MSG{\tmp}\tmp\par
+      \advance\tryscore by \WScost\dimexpr \dimen0\relax
+      \edef\tmp{\path|\minv|\maxv|\the\dimen0|\the\tryscore}\MSG{\tmp}\tmp\par
       \ifdim\tryscore<\bestscore
         \xdef\bestscore{\the\tryscore}
         \xdef\bestpath{\tmp}
@@ -123,6 +123,7 @@
 }
 \l@gdims0 \l@gdims\Lbox
 
+\edef\start{\the\elapsedtime}
 \cols=2 \dimen1=\ht\Lbox \divide\dimen1 by \cols
 \try{L}
 \try{R}
@@ -138,6 +139,8 @@
 \cols=1 \dimen1=\ht\Abox\try{A}
 \advance\dimen1 by -\baselineskip
 \try{A}
+\edef\stop{\the\elapsedtime}
+\message{Splitting: \the\numexpr\stop-\start\relax}
 
 \edef\tot{\the\dimexpr 0.9\ht\Lbox}%
 
@@ -146,8 +149,10 @@ R:\Rlist
 A:\Alist
 
 %\tracingassigns=1
-\the\XeTeXelapsedtime 
+\edef\start{\the\elapsedtime}
 \options{LR}%
+\edef\stop{\the\elapsedtime}
+\message{Scoring: \the\numexpr\stop-\start\relax}
 BEST: \bestpath\par
 
 %\showbox\Lbox
