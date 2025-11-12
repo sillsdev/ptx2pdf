@@ -1305,8 +1305,8 @@ class FontRef:
             m = re.match("^mappings/(.*?)digits", v)
             if m:
                 return re.sub(r"(^|[\-])([a-z])", lambda n: n.group(1) + n.group(2).upper(), m.group(1))
-            elif m.startswith("mappings/"):
-                return m[9:]
+            elif v.startswith("mappings/"):
+                return v[9:]
         return "Default"
 
     def asPango(self, fallbacks, size=None):

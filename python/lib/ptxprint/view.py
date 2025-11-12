@@ -976,7 +976,8 @@ class ViewModel:
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
-            self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
+            if val is not None:
+                self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
         for k in self.allvars():
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
@@ -1830,7 +1831,7 @@ class ViewModel:
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
                   'c_usePrintDraftChanges': "PrintDraftChanges.txt",
-                  'c_strongsShowInText': "TermRenderings.xml",
+                  'c_strongsShowInText': ["TermRenderings.xml", "WordAnalysis.xml"],
                   None: "picChecks.txt"}
         res = {}
         cfgchanges = {}
