@@ -1365,7 +1365,16 @@ class GtkViewModel(ViewModel):
         self.set("c_useEngLinks", el)
         # expert = self.userconfig.getboolean('init', 'expert', fallback=False)
         # self.set("c_showAdvancedOptions", not expert)
-        # self.onShowAdvancedOptionsClicked(None)
+        # self.onShowAdvancedOptionsClicked(None)\
+        if sys.platform == "darwin":
+            try:
+                settings = Gtk.Settings.get_default()
+                packages = settings.get_property("gtk-mac-treat-file-as-package")
+                new_packages = [p for p in packages if p.lower() != 'zip']
+                settings.set_property("gtk-mac-treat-file-as-package", new_packages)
+            except Exception as e:
+                logger.debug(f"Could not modify GTK macOS setting: {e}")
+        
         sys.excepthook = self.doSysError
         lsfonts = self.builder.get_object("ls_font")
         tvfonts = self.builder.get_object("tv_fontFamily")
