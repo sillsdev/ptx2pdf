@@ -1207,7 +1207,7 @@
   \fi
 }
 
-\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}%
+\def\zglot#1|#2\*{\edef\tmp{\zap@space #2 \empty}%
   \ifx\tmp\empty\diglotfalse
     \ifinptxfile\else\gdef\atn@xtptxfile{\message{starting monglot file with no specific side (\c@rrdstat)}}\fi
     \global\let\c@rrdstat\empty
@@ -1446,7 +1446,7 @@
 \def\makevtop#1{%There is a strong posibility that a vbox has a depth that
 %is unrecoverable on changing it to a vtop, e.g. if the last item in the
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
-\global%the depth of the box. We therefore *assume* the box will be joined and if
+%the depth of the box. We therefore *assume* the box will be joined and if
 %the depth is not recoverable we add a kern to remove the orignial depth.
  \s@tbaseline{p}{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
