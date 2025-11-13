@@ -1,3 +1,9 @@
+ptxprint (3.0.2-1ubuntu1) jammy; urgency=medium
+
+  * Bumped release to 3.0.2
+
+ -- Martin Hosken <martin_hosken@sil.org>  Thu, 13 Nov 2025 21:27:43 +0530
+
 ptxprint (3.0.1-1ubuntu2) noble; urgency=medium
 
   * Added python3-gi-cairo dependency explicitely (it gets installed by the *desktop profiles but not when choosing minimal)
