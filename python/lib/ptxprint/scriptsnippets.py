@@ -282,7 +282,8 @@ class beng(ScriptSnippet):
         res = [
             #makeChange("(?<=\\s)([\u0985-\u09CC](?![\u09C7-\u09CC])[^\\\\\\s]*?"
             #           "[\u09C7-\u09CC][^\\\\\\s]*?)(?=\\s)", "\uFDEC\\1\uFDED")
-            makeChange("(?<=[\u0980-\u09CC\u09CE-\u09FF])([\u0985-\u09B9]\u09BC?"
+            if view.get("c_letterSpacing"):
+                makeChange("(?<=[\u0980-\u09CC\u09CE-\u09FF])([\u0985-\u09B9]\u09BC?"
                         "(?:\u09CD[\u0985-\u09B9]\u09BC?)*)(?=[\u09C7-\u09CC])",
                         "\uFDD0\\1", context=onlybody)
             ]
