@@ -597,7 +597,7 @@
     \global\holdinginserts=0
     %Make sure partialX (last galley) is dropped or recycled ...
     \iflate@stage@reflow
-      \trace{D}{restoring notes, re-flowing (\refl@wlist) partial\c@rrdstat\space and excess\c@rrdstat,}%
+      \trace{D}{restoring notes, re-flowing (\refl@wlist) partial\c@rrdstat\space and excess\c@rrdstat, trigger:\late@stage@trigger}%
       \r@storenotes{\g@tndstat}{1}%
       %\showbox\p@rtl
       \ifvoid\p@rtl\else
@@ -605,6 +605,7 @@
         % be here, but surely it ought to be?
         % 2024-dec: one case where merging is wrong - duplicated chunk.
         \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with NoMergeReflow\ifNoMergeReflow false\else true\fi}%
+        \trace{d}{p@rtl:\l@gdims{\p@rtl}, @xcs:\l@gdims{\@xcs}}%
         \ifNoMergeReflow\else
           \global\setbox\@xcs\vbox{\joinboxes{\p@rtl}{\@xcs}{2}{0}}%
           \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
@@ -615,13 +616,12 @@
       \s@venotes{\g@tndstat}{1}%
     \fi
     \s@veinserts{col}%
-    %grab 1st trialheight from excessX
     \ifnum\diglotDbgJoinboxes=\TRACEcount
       \showbox\@xcs
     \fi
     \dimen0=\ht\@xcs\advance\dimen0 by \dp\@xcs \relax
     \ifdim\dimen0<\trialheight
-      \global\trialheight=\dimen0 %save useless trims.
+      %\global\trialheight=\dimen0 %save useless trims. FIXME: Better without this, but it's still getting things wrong.
     \fi
     \ifdiglotDebugFollowContents
       \trace{D}{Showing xcs before split}%
@@ -659,7 +659,12 @@
     }%
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\global\@ftergalleyskip=\lastskip\unskip\penalty\endtri@lpen@lty}%
-    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip}%
+    \ifdim\ht\@xcs>0pt 
+      \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{\the\dimexpr \the\trialheight -\the\ht\galley\relax}% The trial already rejected this much content, don't re-try it.
+    \else
+      \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{0pt}%
+    \fi
+    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip, tsr:\csname tri@lsplitRej\c@rrdstat\endcsname}%
     \ifdim\ht\galley=0pt \ifdim\dp\galley=0pt
       \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
       \ifnum\interactionmode=2
@@ -972,13 +977,14 @@
       \trace{D}{Initial content fits(th:\the\trialheight, av:\the\availht, box:\the\ht\trialbox d:\the\TempDim)}%
       \ifdim \TempDim > 2\@bls
         \vsize=\TempDim
+        \global\trialheight=\vsize
       \fi
     \fi
   \else
     \advance\TempDim by -\ht\trialbox\relax
     \advance\TempDim by -\dp\trialbox\relax
     \ifdim\TempDim<-0.3\@bls 
-      \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255}%
+      \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255 (trial failed)}%
       \ifnum\outputpenalty=\endtri@lpen@lty\relax\else
         %\showbox\trialbox
         %\showbox\galley
@@ -996,7 +1002,7 @@
         \dimen1=\csname baselineDelta\c@rrdstat\endcsname 
         \advance\dimen1 -\baselineDelta
         \global\extr@contenttrue
-        \trace{d}{Extra material found, which also fits (\the\ht255+\the\dp255) - \the\dimen1 \space \the\TempDim remaining. \show@dstat}%
+        \trace{d}{Extra material found, which also fits (\the\ht255+\the\dp255)-bld(\the\dimen1). (trial sz \the\trialheight \space  was wrong)  \space \the\TempDim remains. \show@dstat}%
         \setbox255=\vbox{\vskip\dimen1\unvbox255}%
         \global\setbox\trialbox=\vbox{\joinboxes{\trialbox}{255}{5}{0}}%
         \ifdim \TempDim > 2\@bls
@@ -2092,11 +2098,16 @@
     \global\pagefulltrue%
     \trace{D}{Declaring page full}%
   \else%
-    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true\else false\fi}%
+    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true \else false \fi tsr=\csname tri@lsplitRej\c@rrdstat\endcsname}%
     \ifpagefull\ifendbook\ifendbooknoeject
       \trace{d}{some space and end of a book, cancelling pagefull}%
       \global\pagefullfalse
     \fi\fi\fi
+    \ifdim\availht>\dimexpr \csname tri@lsplitRej\c@rrdstat\endcsname \ifnum \csname saved\c@rrdstat penalty\endcsname>9999 +2\baselineskip\fi \relax
+    \else
+      \trace{D}{But the vsplit rejected any more (\csname tri@lsplitRej\c@rrdstat\endcsname, \csname saved\c@rrdstat penalty\endcsname)}%
+      \global\pagefulltrue
+    \fi
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
@@ -3065,6 +3076,7 @@
 \def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
+  \gdef\late@stage@trigger{postponen@xt@partial}%
   \def\col@do##1{\r@storenotes{\@g@tndstat{##1}}{1}}%Restore footnotes on all columns.
   \x@\each@col\diglot@list\E% 
   \let\col@do=\restore@storedmarks
@@ -3093,6 +3105,7 @@
     \loc@lhttrue\dglt@calc@vailht
     \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<-2pt 1 \else 0 \fi\fi
       \late@stage@reflowtrue
+      \gdef\late@stage@trigger{ch@ckcontents}%
       \xdef\refl@wlist{\refl@wlist\c@rrdstat}%
       \trace{D}{No space (\the\availht) for material (now, was \oldavht) reflow:\refl@wlist}%
     %\else

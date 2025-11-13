@@ -181,13 +181,11 @@
     \fi
     \let\lastp@rclass\tmppcl@ss%
   \fi
-  \ifvoid\he@dingnotes
-    \ifnormalhe@dings\else\penalty10\fi
-    \trace{h}{\oldm@rker: Outputting \ifnormalhe@dings normal \fi end-headings penalty}%
-  \else
-    \unvbox\he@dingnotes
-    \ifnormalhe@dings\penalty10000 \else\penalty10 \fi
+  \ifvoid\he@dingnotes\else
+    \penalty10000\unvbox\he@dingnotes
   \fi
+  \ifnormalhe@dings\penalty10000 \else\penalty10 \fi
+  \trace{h}{\oldm@rker: Outputting \ifnormalhe@dings normal \else endnote \fi end-of-headings penalty}%
   \global\first@fterheadingtrue
   \global\he@dingsfalse
   \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
