@@ -11,8 +11,9 @@ Bug fixes and Improvements in 3.0.2 (13 Nov 2025)
   * Improved behaviour of textborder in diglots - they can now surround just verse text when there's a book intro.
   * Implement new expert control \TextBorderMode for selecting textborder behaviour (in diglots)
   * Allow ornament patterns to define a group of ornaments to be repeated as a group
-  * Make sure MacOS doesn't open up the ZIP file when selected in file-chooser dialog
-  * Only inhibit spaces if interchar spacing enabled (affecting beng scriptsnippet)
+  * Make sure MacOS doesn't open up the ZIP file when selecting it in file-chooser dialog
+  * Increase resilience against garbled input
+  * Only inhibit spaces if interchar spacing enabled (affects beng scriptsnippet)
   * Register all polyglot boxes as inserts (most are) so that when insert counts are set up they do not mangle other values
   * Don't output empty config entries
   * More maths corrections for textborders
@@ -30,7 +31,6 @@ Bug fixes and Improvements in 3.0.2 (13 Nov 2025)
   * Work-around for intercharwordspacespacing bug
   * fix: mac: dmg cleaning not looking in the correct directory
   * fix: mac: Delete old dmg images from previous runs
-  * gitignore egg-info dirs wherever they occur
 
 Bug fixes and Improvements in 3.0.1 (20 Oct 2025)
   * Add version number to macOS installer
