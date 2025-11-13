@@ -1636,6 +1636,15 @@
 \mcp@pCont{\ss@Ctgy}{\ss@Ctgy}% new cat pops old cat
 \mcp@pCont{\ss@Para}{\ss@ParCtgy}% new paragraph pops old parcat
 \mcnp@pSt@re{*}{\ss@Mstn}% Milestones are always stored.
+\mcp@pCont{\ss@File}{\ss@Mstn}% Except at the end of a file
+\mcp@pCont{\ss@File}{\ss@MstnS}% Except at the end of a file
+\mcp@pCont{\ss@File}{\ss@Para}% file end pops all
+\mcp@pCont{\ss@File}{\ss@Char}% file end pops all
+\mcp@pCont{\ss@File}{\ss@ChrP}% file end pops all
+\mcp@pCont{\ss@File}{\ss@Note}% file end pops all
+\mcp@pCont{\ss@File}{\ss@Sbar}% file end pops all
+\mcp@pCont{\ss@File}{\ss@Tbl}% file end pops all
+\mcp@pCont{\ss@File}{\ss@File}% file end pops all
 %Style end pops:
 \mcp@pCont{\ss@Sbar*}{\ss@Ctgy}% sidebar end pops caT
 \mcp@pCont{\ss@Sbar*}{\ss@Para}% sidebar end pops Paragraph
@@ -1975,6 +1984,7 @@
 \def\preptxfile{
  \outputpenalty=0
  \filehasversesfalse\gdef\fileh@sverses{\global\filehasversestrue\global\let\fileh@sverses\relax}% Set filehasverses once then done, no need to repeat it every single verse.
+ \edef\ptx@ntrygrouplevel{\the\currentgrouplevel}%
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
@@ -2132,6 +2142,18 @@
  \traceifcheck{ptxfile}%
  \postptxfile
 }
+\def\p@stptxfileendgroups{%
+  \ifnum\currentgrouptype=14 
+    \message{+}\let\@@@EG\endgroup
+  \else
+    \message{-}\let\@@@EG\egroup
+  \fi
+  \@@@EG
+  \ifnum\currentgrouplevel>\ptx@ntrygrouplevel
+    \let\nxt\p@stptxfileendgroups \else\let\nxt\relax
+  \fi
+  \nxt
+}
 \gdef\atn@xtptxfile{}
 %-csty_ptxfile_start
 %+csty_ptxfile_end
@@ -2139,11 +2161,16 @@
 \newsp@cialpen{sect@ndpenalty}
 \def\postptxfile{%
  \inptxfilefalse  
- \trace{o}{postptxfile \iflastptxfile LAST file \fi pg=\the\pagegoal, pt=\the\pagetotal}%
+ \trace{o}{postptxfile \iflastptxfile LAST file \fi pg=\the\pagegoal, pt=\the\pagetotal, gl=\the\currentgrouplevel, egl=\ptx@ntrygrouplevel}%
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
  \endt@ble
+ \end@llpoppedstyles{F}%
+ \ifnum\ptx@ntrygrouplevel<\currentgrouplevel
+   \message{!! ptxfile ended \the\currentgrouplevel \space groups deep. Expected: \ptx@ntrygrouplevel}%
+   \p@stptxfileendgroups
+ \fi
  \inendbooktrue 
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
