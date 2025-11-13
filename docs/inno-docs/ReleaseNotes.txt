@@ -1,16 +1,36 @@
-PTXprint 3.0.1 Release Notes
-20 Oct 2025
+PTXprint 3.0.2 Release Notes
+13 Nov 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
 
-Bug fixes and Improvements in 3.0.2 (TBD)
+Bug fixes and Improvements in 3.0.2 (13 Nov 2025)
   * Allow textborder in diglots to appear around just selected column(s) (e.g. original Greek) via \def\TextBorderColumns{L}
   * Improved behaviour of textborder in diglots - they can now surround just verse text when there's a book intro.
   * Implement new expert control \TextBorderMode for selecting textborder behaviour (in diglots)
   * Allow ornament patterns to define a group of ornaments to be repeated as a group
+  * Make sure MacOS doesn't open up the ZIP file when selected in file-chooser dialog
+  * Only inhibit spaces if interchar spacing enabled (affecting beng scriptsnippet)
+  * Register all polyglot boxes as inserts (most are) so that when insert counts are set up they do not mangle other values
+  * Don't output empty config entries
+  * More maths corrections for textborders
+  * Check for intro->body swapping in a better place
+  * Introduce per-column catergories, make textborder one
+  * Solve some issues with diglot background position/size
+  * Add a couple of snippets to the docs
+  * Find footnote placement bug
+  * Correct some more maths in diglot
+  * Add TextBorderMode control, apply to pagewide borders
+  * Correct positioning with notes for individual textborders
+  * Avoid triggering some confusing errors
+  * Re-jig tracing
+  * Bug also triggered on XeTeXinterwordspaceshaping=1
+  * Work-around for intercharwordspacespacing bug
+  * fix: mac: dmg cleaning not looking in the correct directory
+  * fix: mac: Delete old dmg images from previous runs
+  * gitignore egg-info dirs wherever they occur
 
 Bug fixes and Improvements in 3.0.1 (20 Oct 2025)
   * Add version number to macOS installer
