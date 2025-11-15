@@ -2461,6 +2461,9 @@ class GtkViewModel(ViewModel):
                 self.onViewerChangePage(None, None, 0, forced=True)
         else:
             self.set('c_colophon', True)
+            if self.get('c_makeCoverPage'):
+                self.doStatus(_("The Cover is disabled because Local Front Matter is turned off."))
+                self.set('c_makeCoverPage', False)
     
     def onFnPosChanged(self, btn):
         if self.get("r_fnpos") == "column" and self.get("r_xrpos") == "normal":
@@ -6646,7 +6649,9 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_txlExample").set_label(l)
 
     def onCoverSettingsChanged(self, btn):
-        self.sensiVisible("c_makeCoverPage")
+        if self.sensiVisible("c_makeCoverPage") and not self.get('c_frontmatter'):
+            self.doStatus(_("Local Front Matter has been enabled as it is required for printing a Cover."))
+            self.set('c_frontmatter', True)
         self.colorTabs()
         hbx = self.builder.get_object("bx_coverPreview")
         b = self.builder.get_object("vp_coverBack")
