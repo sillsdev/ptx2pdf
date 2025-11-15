@@ -1,12 +1,17 @@
-PTXprint 3.0.2 Release Notes
-13 Nov 2025
+PTXprint 3.0.3 Release Notes
+15 Nov 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
 
-Bug fixes and Improvements in 3.0.2 (13 Nov 2025)
+Bug fixes and Improvements in 3.0.3 (15 Nov 2025)
+  * Ensure Local Front Matter is enabled if Cover is selected; and vice versa
+  * Get PDF borders working again
+  * Work towards better trial lengths
+
+Bug fixes and Improvements in 3.0.2 (13 Nov 2025 - unreleased)
   * Allow textborder in diglots to appear around just selected column(s) (e.g. original Greek) via \def\TextBorderColumns{L}
   * Improved behaviour of textborder in diglots - they can now surround just verse text when there's a book intro.
   * Implement new expert control \TextBorderMode for selecting textborder behaviour (in diglots)
