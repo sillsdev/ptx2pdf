@@ -21,6 +21,9 @@ fontconfig_template = """<?xml version="1.0"?>
         <rejectfont>
             <glob>*.woff</glob>
         </rejectfont>
+        <rejectfont>
+            <glob>*.otf</glob>
+        </rejectfont>
 <!--        <rejectfont>
             <pattern>
                 <patelt name="variable"/>
@@ -52,6 +55,9 @@ def writefontsconf(extras, archivedir=None, testsuite=None):
         fname = os.path.join(os.getenv("LOCALAPPDATA", "/"), "SIL", "ptxprint", "fonts.conf")
     if sys.platform == "darwin":
         dirs.append(os.path.join("/System", "Library", "Fonts"))
+        dirs.append(os.path.join("/Library", "Fonts"))
+        dirs.append(os.path.join("~", "Library", "Fonts"))
+
     if archivedir is not None or not sys.platform.startswith("win"):
         if (not testsuite):
           dirs.append("/usr/share/fonts")
@@ -169,7 +175,7 @@ class TTFontCache:
                 continue
             try:
                 (path, full) = f.strip().split(": ")
-                if path[-4:].lower() not in (".ttf", ".otf"):
+                if path[-4:].lower() not in (".ttf", ".otf", ".ttc"):
                     continue
                 if ":style=" in full:
                     (name, style) = full.split(':style=')
@@ -217,7 +223,7 @@ class TTFontCache:
             logger.debug(f"Add font path: {path}")
             self.fontpaths.append(path)
         for fname in os.listdir(path):
-            if fname.lower().endswith(".ttf"):
+            if fname.lower()[-4:] in (".ttf", ".ttc"):
                 fpath = os.path.join(path, fname)
                 f = TTFont(None, filename=fpath)
                 f.usepath = True
@@ -268,9 +274,9 @@ class TTFontCache:
             return f
         if style is None or len(style) == 0:
             style = "Regular"
-        res = f.get(style, None)
+        res = f.get(style, None) or f.get(style.lower(), None)
         if res is None and "Oblique" in style:
-            res = f.get(style.replace("Oblique", "Italic"), None)
+            res = f.get(style.replace("Oblique", "Italic").lower(), None)
         return res
 
     def iscore(self, name, style=None):
@@ -323,6 +329,7 @@ OTFeatNames = {
     "dlig": "Discretionary Ligatures",
     "dtls": "Dotless Forms",
     "expt": "Expert Forms",
+    "frac": "Fractional forms",
     "halt": "Alternate Half Widths",
     "hist": "Historical Forms",
     "hkna": "Horizontal Kana Alternates",
@@ -380,7 +387,7 @@ OTFeatNames = {
 
 OTInternalFeats = { "abvf", "abvm", "abvs", "akhn", "blwf", "blwm", "blws", "calt", "ccmp",
                     "cfar", "chws", "cjct", "clig", "curs", "dnom", "dist", "falt", "fin2", "fin3",
-                    "fina", "flac", "frac", "fwid", "half", "haln", "hngl", "hwid", "init",
+                    "fina", "flac", "fwid", "half", "haln", "hngl", "hwid", "init",
                     "isol", "lfbd", "liga", "locl", "ltra", "ltrm", "mark", "med2", "medi",
                     "mkmk", "mset", "nukt", "numr", "opbd", "pref", "pres", "pstf", "psts",
                     "rand", "rclt", "rlig", "rphf", "rtbd", "rtla", "rtlm", "vatu", "vjmo"}
@@ -649,27 +656,57 @@ class TTFont:
         if k not in TTFont.cache:
             TTFont.cache[k] = self
 
-    def readfont(self):
+    def _read_dir(self, inf, numtables):
+        res = {}
+        dat = inf.read(numtables * 16)
+        for i in range(numtables):
+            (tag, csum, offset, length) = struct.unpack(">4sLLL", dat[i * 16: (i+1) * 16])
+            try:
+                res[tag.decode("ascii")] = [offset, length]
+            except UnicodeDecodeError:      # messed up tag
+                pass
+        return res
+
+    def readfont(self, withglyphs=False, ttcindex=None):
         self.dict = {}
         if self.filename == "":
             return
         with open(self.filename, "rb") as inf:
             dat = inf.read(12)
-            (_, numtables) = struct.unpack(">4sH", dat[:6])
-            dat = inf.read(numtables * 16)
-            for i in range(numtables):
-                (tag, csum, offset, length) = struct.unpack(">4sLLL", dat[i * 16: (i+1) * 16])
-                try:
-                    self.dict[tag.decode("ascii")] = [offset, length]
-                except UnicodeDecodeError:      # messed up tag
-                    return False
-            self.readNames(inf)
+            (fid, numtables) = struct.unpack(">4sH", dat[:6])
+            if fid == b"ttcf":
+                numc = struct.unpack(">L", dat[8:])[0]
+                ttcdat = inf.read(numc * 4)
+                if ttcindex is None:
+                    for i in range(numc):
+                        offset = struct.unpack(">L", ttcdat[4*i:4*(i+1)])[0]
+                        inf.seek(offset)
+                        dat = inf.read(12)
+                        numtables = struct.unpack(">H", dat[4:6])[0]
+                        thisdir = self._read_dir(inf, numtables)
+                        thisnames = self.readNames(inf, dirdic=thisdir)
+                        if thisnames[1] == self.family:
+                            self.dict = thisdir
+                            ttcindex = i
+                            break
+                else:
+                    offset = struct.unpack(">L", ttcdat[4*ttcindex:4*(ttcindex+1)])[0]
+                    inf.seek(offset)
+                    dat = inf.read(12)
+                    numtables = struct.unpack(">H", dat[4:6])[0]
+                    self.dict = self.read_dir(inf, numtables)
+            else:
+                self.dict = self._read_dir(inf, numtables)
+            self.names = self.readNames(inf)
             self.readFeat(inf)
             self.readSill(inf)
             self.readOTFeats(inf)
             self.readOTLangs(inf)
             self.readhhea(inf)
             self.readhead(inf)
+            if withglyphs:
+                self.readhmtx(inf)
+                self.readglyf(inf)
         self.isGraphite = 'Silf' in self.dict
         return True
 
@@ -803,12 +840,14 @@ class TTFont:
                     for l in OTToLangs.get(tag, ["hbot-"+tag]):
                         self.otLangs[l] = l
             
-    def readNames(self, inf):
-        self.names = {}
-        if 'name' not in self.dict:
+    def readNames(self, inf, dirdic=None):
+        names = {}
+        if dirdic is None:
+            dirdic = self.dict
+        if 'name' not in dirdic:
             return
-        inf.seek(self.dict['name'][0])
-        data = inf.read(self.dict['name'][1])
+        inf.seek(dirdic['name'][0])
+        data = inf.read(dirdic['name'][1])
         fmt, n, stringOffset = struct.unpack(b">HHH", data[:6])
         stringData = data[stringOffset:]
         data = data[6:]
@@ -818,17 +857,58 @@ class TTFont:
             (pid, eid, lid, nid, length, offset) = struct.unpack(b">HHHHHH", data[12*i:12*(i+1)])
             # only get unicode strings (US English)
             if (pid == 0 and lid == 0) or (pid == 3 and (eid < 2 or eid == 10) and lid == 1033):
-                self.names[nid] = stringData[offset:offset+length].decode("utf_16_be")
+                names[nid] = stringData[offset:offset+length].decode("utf_16_be")
+        return names
 
     def readhhea(self, inf):
         inf.seek(self.dict['hhea'][0])
-        data = inf.read(8)
-        self.ascent, self.descent = struct.unpack(b">Hh", data[4:])
+        data = inf.read(36)
+        self.ascent, self.descent = struct.unpack(b">Hh", data[4:8])
+        self.numhmetrics = struct.unpack(b">H", data[34:])[0]
 
     def readhead(self, inf):
+        if self.upem != 1:
+            return
         inf.seek(self.dict['head'][0])
-        data = inf.read(20)
-        self.upem = struct.unpack(b">H", data[18:])[0]
+        data = inf.read(52)
+        fields = struct.unpack(">17H", data[18:])
+        for n,i in {'upem':0, 'xmin':9, 'ymin':10, 'xmax':11, 'ymax':12, 'locatype':16}.items():
+            setattr(self, n, fields[i])
+
+    def readmaxp(self, inf):
+        if hasattr(self, 'numglyphs'):
+            return
+        inf.seek(self.dict['maxp'][0])
+        data = inf.read(6)
+        self.numglyphs = struct.unpack(b">H", data[4:])[0]
+
+    def readhmtx(self, inf):
+        if hasattr(self, 'advances'):
+            return
+        inf.seek(self.dict['hmtx'][0])
+        data = inf.read(self.numhmetrics * 4)
+        metrics = struct.unpack(">{}H".format(self.numhmetrics * 2), data)
+        self.advances = metrics[0::2]
+
+    def readglyf(self, inf):
+        if hasattr(self, 'glyphs') or 'loca' not in self.dict:
+            return
+        self.readhead(inf)
+        self.readmaxp(inf)
+        inf.seek(self.dict['loca'][0])
+        if self.locatype == 0:      # short format
+            data = inf.read(self.numglyphs * 2 + 2)
+            ls = [2 * x for x in struct.unpack(">"+str(self.numglyphs+1)+"H", data)]
+        else:
+            data = inf.read(self.numglyphs * 4 + 4)
+            ls = struct.unpack(">"+str(self.numglyphs+1)+"L", data)
+        locas = [(z[0], z[1]-z[0]) for z in zip(ls, ls[1:])]
+        self.glyphs = []
+        for i in range(self.numglyphs):
+            inf.seek(self.dict['glyf'][0] + locas[i][0])
+            data = inf.read(10)
+            self.glyphs.append(struct.unpack(">4h", data[2:]))  # xMin, yMin, xMax, yMax
+
 
     # def style2str(self, style):
     #     return pango_styles.get(style, str(style))
@@ -1079,8 +1159,9 @@ class FontRef:
                 if 'slant' in res.feats:
                     del res.feats['slant']
                 return res
+        logger.debug(f"Seeking font {self.name}")
         f = fontcache.get(self.name)
-        if f is None:
+        if f is None:           # base font not in the cache so don't return a derivative
             return None
         res.style = None
         if bold and 'embolden' not in res.feats:
@@ -1224,8 +1305,8 @@ class FontRef:
             m = re.match("^mappings/(.*?)digits", v)
             if m:
                 return re.sub(r"(^|[\-])([a-z])", lambda n: n.group(1) + n.group(2).upper(), m.group(1))
-            elif m.startswith("mappings/"):
-                return m[9:]
+            elif v.startswith("mappings/"):
+                return v[9:]
         return "Default"
 
     def asPango(self, fallbacks, size=None):

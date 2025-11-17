@@ -9,13 +9,12 @@
 *.precommit
 *.picpages
 *.fontusage
+**.egg-info/
 NestedStyles*.sty
 __pycache__/
 temp/
 /python/dist/
 /python/build/
-/python/lib/PTXprint.egg-info/
-/python/lib/ptxprint.egg-info/
 /wine/
 /ptx2pdf_wine/
 /dev/
@@ -35,13 +34,11 @@ tmpPicLists/
 *.zip
 /crowdin/
 /cygwin/
-/docs/installation/
 /fonts/
 /Output/
 /pictures/
 /projects/
 /projects2/
-/resources/
 /results/
 /specials/
 /templates/
@@ -60,6 +57,7 @@ src/DiglotUIsettings.txt
 *.bz2
 *.pickle
 unique.id
+.DS_Store
 
 /examples/diglot/Gal*.usfm
 /examples/diglot/78-*.usfm

@@ -59,7 +59,7 @@ class ProjectList:
                             if '<Guid>' in l:
                                 guid = l[l.find("<Guid>")+6:l.rfind("<")]
             if guid is None:
-                if any(x.lower().endswith("sfm") for x in os.listdir(p)):
+                if any(x.lower().endswith("sfm") and not os.path.isdir(os.path.join(p, x)) for x in os.listdir(p)):
                     addme = True
                 if addme:
                     pt = ParatextSettings(p)
@@ -85,8 +85,6 @@ class ProjectList:
                     pt = ParatextSettings(path)
                 guid = pt.createGuid()
                 pt.saveAs(os.path.join(path, 'ptxSettings.xml'))
-            else:
-                return None
         p = ProjectDir(prjid, guid, path)
         logger.debug(f"Adding project {p}")
         self.projects[guid] = p
@@ -119,9 +117,28 @@ class ProjectList:
                 return p
         return None
 
+    def _ensure_readme(self, folder):
+        readme_text = \
+        """This folder contains (downloaded) resource projects for PTXprint. These projects
+are NOT visible in Paratext, but appear in purple in the list of selectable projects 
+in PTXprint. You may safely delete any projects in here that are no longer required. 
+Note that this folder is NOT included in Paratext's Send/Recv operation, so if you 
+have carefully crafted PTXprint settings [in the 'shared' subfolder], you will need 
+to back these up yourself."""
+        
+        readme_path = os.path.join(folder, "ReadMe.txt")
+        if os.path.isfile(readme_path):
+            return
+        try:
+            with open(readme_path, "w", encoding="utf-8", newline="\n") as f:
+                f.write(readme_text + "\n")
+        except OSError:
+            pass
+
     def findWriteable(self):
         for t in self.treedirs:
             if "_PTXprint" in t:
+                self._ensure_readme(t)
                 return t
         for d in self.treedirs:
             t = os.path.join(d, "_PTXprint")
@@ -129,6 +146,7 @@ class ProjectList:
                 os.makedirs(t, exist_ok=True)
             except OSError:
                 continue
+            self._ensure_readme(t)
             self.addTreedir(t)
             break
         else:
@@ -144,7 +162,7 @@ class ProjectList:
 
 class Project:
     shareddir = "shared/ptxprint"
-    localdir = "local/shared/ptxprint"
+    localdir = "local/ptxprint"
     printdir = "local/ptxprint"
 
     def __init__(self, prjdir):
@@ -159,6 +177,8 @@ class Project:
         return f"{self.prjid}[{self.guid}] {self.path}"
 
     def findConfigs(self, path):
+        if not os.path.exists(os.path.join(path, self.shareddir)) and os.path.exists(os.path.join(path, "shared/PTXprint")):
+            self.shareddir = 'shared/PTXprint'
         for a in (self.shareddir, self.localdir):
             cpath = os.path.join(path, a)
             if not os.path.exists(cpath) or not os.path.isdir(cpath):
@@ -200,8 +220,8 @@ class Project:
 
     def createConfigDir(self, cfgid, shared=True, test=False):
         testres = False
-        if cfgid not in self.configs:
-            ddir = os.path.join(self.path, self.shareddir if shared else self.localdir, cfgid)
+        ddir = os.path.join(self.path, self.shareddir if shared else self.localdir, cfgid)
+        if cfgid not in self.configs or not os.path.exists(ddir):
             testres = not os.path.exists(ddir)
             os.makedirs(ddir, exist_ok=True)
             self.configs[cfgid] = ConfigDir(cfgid, ddir)

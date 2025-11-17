@@ -3,18 +3,31 @@ import xml.etree.ElementTree as et
 import regex, logging
 from ptxprint.utils import allbooks, books, bookcodes, chaps
 from ptxprint.unicode.UnicodeSets import flatten
-from ptxprint.reference import RefSeparators
+from usfmtc.reference import Environment
 
 logger = logging.getLogger(__name__)
 
 ptrefsepvals = {
-    'books': 'BookSequenceSeparator',
-    'chaps': 'ChapterNumberSeparator',
-    'cv': 'ChapterVerseSeparator',
-    'range': 'RangeIndicator',
+    'booksep': 'BookSequenceSeparator',
+    'chapsep': 'ChapterNumberSeparator',
+    'cvsep': 'ChapterVerseSeparator',
+    'rangemk': 'RangeIndicator',
 }
 
 _versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org
+
+_ldml_paths = {
+    "month":    'dates/calendars/calendar[@type="gregorian"]/months/monthContext[@type="format"]/monthWidth[@type="{length}"]/month[@type="{num}"]',
+    "day":      'dates/calendars/calendar[@type="gregorian"]/days/dayContext[@type="format"]/dayWidth[@type="{length}"]/day[@type="{num}"]',
+}
+_ldml_lengths = {
+    "a":    "short",
+    "s":    "abbreviated",
+    "l":    "wide"
+}
+_ldml_days = "sun mon tue wed thu fri sat"
+_ldml_months = "jan feb mar apr may jun jul aug sep oct nov dec"
+_ldml_datenums = {k:i for v in (_ldml_days, _ldml_months) for i, k in enumerate(v)}
 
 class ParatextSettings:
     def __init__(self, prjdir):
@@ -48,7 +61,7 @@ class ParatextSettings:
             self.default_bookNames()
             self.hasLocalBookNames = False
         self.collation = None
-        self.refsep = False     # tristate: (False=undef), None, RefSeparator
+        self.refenv = False     # tristate: (False=undef), None, PTEnvironment
         self.set_versification()
         return self
 
@@ -90,6 +103,21 @@ class ParatextSettings:
         else:
             self.ldml = None
 
+    def get_ldml(self, length, key):
+        b = [x.strip() for x in re.split(r'[.:]', key)]
+        if b[0] == "ldml":
+            if self.ldml is None:
+                return b[2]
+            t = b[1].lower()
+            if t in ("day", "month"):
+                parms = {   "num":      _ldml_datenums.get(b[2].lower(), 0),
+                            "length":   _ldml_lengths.get(length, "abbreviated"),
+                            "key":      b[2] }
+                val = self.ldml.findtext(_ldml_paths[t].format(**parms))
+                if val is not None:
+                    return val
+        return b[2]
+
     def read_bookNames(self, fpath):
         bkstrs = {}
         self.bookStrs = {}
@@ -110,8 +138,8 @@ class ParatextSettings:
             self.bkNames = {k:v for k,v in bkstrs.items() if v != ""}
 
     def default_bookNames(self):
-        self.bookNames = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
-        self.bookStrs = {k: [k] * 3 for k in self.bookNames.keys()}
+        self.bkNames = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
+        self.bookStrs = {k: [k] * 3 for k in self.bkNames.keys()}
 
     def getLocalBook(self, s, level=0):
         return self.bookStrs.get(s, [s]*(level+1))[level] or s
@@ -131,7 +159,7 @@ class ParatextSettings:
         return self.ldml.find(path)
 
     def inferValues(self, forced=False):
-        if forced or 'FileNameBookNameForm' not in self.dict:
+        if forced or 'FileNameBookNameForm' not in self.dict and os.path.exists(self.prjdir):
             sfmfiles = [x for x in os.listdir(self.prjdir) if x.lower().endswith("sfm")]
             for f in sfmfiles:
                 m = re.search(r"(\d{2})", f)
@@ -228,6 +256,18 @@ class ParatextSettings:
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
 
+    def getABook(self, bk=None):
+        try:
+            start = allbooks.index(bk)
+            start += 1
+        except ValueError:
+            start = 0
+        for i in range(start, len(allbooks)):
+            fname = self.getBookFilename(allbooks[i])
+            path = os.path.join(self.prjdir, fname)
+            if os.path.exists(path):
+                return allbooks[i]
+
     def getArchiveFiles(self):
         res = {}
         for a in ("Settings.xml", "BookNames.xml", "ptxSettings.xml"):
@@ -253,22 +293,20 @@ class ParatextSettings:
         res = list(flatten(s))
         return res
 
-    def getRefSeparators(self):
-        if self.refsep is not False:
-            return self.refsep
+    def getRefEnvironment(self):
+        if self.refenv is not False:
+            return self.refenv
         foundsetting = False
         vals = {}
+        self.refenv = PTEnvironment()
+        self.refenv.setBookNames(self.bookStrs, self.bkNames)
         for k, v in ptrefsepvals.items():
             if v in self.dict:
                 foundsetting = True
-                vals[k] = re.sub(r"^(.*?)(\|.*)?$", r"\1", self.dict[v])
-        if not foundsetting:
-            self.refsep = None
-        else:
-            if self.dict.get('NoSpaceBetweenBookAndChapter', False):
-                vals['bkc'] = ''
-            self.refsep = RefSeparators(**vals)
-        return self.refsep
+                setattr(self.refenv, k, re.sub(r"^(.*?)(\|.*)?$", r"\1", self.dict[v]))
+        if self.dict.get('NoSpaceBetweenBookAndChapter', "False") == "True":
+            self.refenv.bookspace = ''
+        return self.refenv
 
     def saveAs(self, fname):
         import xml.etree.ElementTree as et
@@ -282,3 +320,57 @@ class ParatextSettings:
         n.tail = "\n"
         with open(fname, "wb") as outf:
             outf.write(et.tostring(settings, encoding="utf-8"))
+
+
+class PTEnvironment(Environment):
+
+    def __init__(self):
+        self.booknames = {}
+        self.level = 2
+        self.bookstrings = {}
+
+    def setBookNames(self, booknames, bookstrings):
+        self.booknames = booknames
+        self.bookstrings = bookstrings
+
+    def localbook(self, bk, level=-1):
+        if level == -1:
+            level = self.level
+        res = self.booknames.get(bk, None)
+        if res is None or level >= len(res):
+            return bk
+        else:
+            return res[level]
+
+    def parsebook(self, bk):
+        res = self.bookstrings.get(bk.lower(), None)
+        if res is None:
+            return super().parsebook(bk)
+        return res
+
+    def readBookNames(self, fpath):
+        from xml.etree import ElementTree as et
+        doc = et.parse(fpath)
+        for b in doc.findall(".//book"):
+            bkid = b.get("code")
+            strs = [b.get(a) for a in ("abbr", "short", "long")]
+            self.addBookName(bkid, *strs)
+
+    def addBookName(self, bkid, *strs):
+        self.booknames[bkid] = bkid
+        self.bookstrings[bkid] = strs
+        bkstrs = {}
+        for s in strs:
+            for i in range(len(s)):
+                if s[i] is None or s[i] == " ":
+                    break
+                bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
+                self.booknames.update({k:v for k,v in bkstrs.items() if v != ""})
+
+
+    def copy(self, **kw):
+        res = super().copy(**kw)
+        for a in "booknames bookstrings level".split():
+            setattr(res, a, getattr(self, a))
+        return res
+

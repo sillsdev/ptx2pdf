@@ -74,10 +74,12 @@ _map = {
     "project/ruby":             ("c_ruby", "advanced", lambda w,v : "t" if v else "b"),
     "project/plugins":          ("t_plugins", "advanced", lambda w,v: v or ""),
     "project/license":          ("ecb_licenseText", "meta", lambda w,v: texprotect(str(v))),
-    "project/copyright":        ("t_copyrightStatement", "meta", lambda w,v: texprotect(v or "")),
+    # "project/copyright":        ("t_copyrightStatement", "meta", lambda w,v: texprotect(v or "")),
+    "project/copyright":        ("txbf_copyright", "meta", lambda w,v: texprotect(v or "")),
     "project/iffrontmatter":    ("c_frontmatter", "front", lambda w,v: "" if v else "%"),
     "project/inclcoverperiphs": ("c_includeCoverSections", "cover", None),
     "project/periphpagebreak":  ("c_periphPageBreak", "front", None),
+    "project/inclmaps":         ("c_inclMaps", "front", None),
     "project/colophontext":     ("txbf_colophon", "meta", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", "meta", lambda w,v: "" if v else "%"),
@@ -130,7 +132,7 @@ _map = {
     
     "fancy/enableornaments":    ("c_useOrnaments", None, lambda w,v: "" if v else "%"),
     "fancy/pageborders":        ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Border"
-    "fancy/pageborder":         ("r_border", "fancy", lambda w,v : "" if v == "pdf" else "%"),
+    "fancy/pageborder":         ("r_border_pdf", "fancy", lambda w,v : "" if v else "%"),
     "fancy/pagebordertype":     ("r_border", "decorate", None),
     "fancy/pageborderfullpage": ("c_borderPageWide", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pagebordernfullpage_": ("c_borderPageWide", "decorate", lambda w,v: "%" if v else ""),
@@ -138,11 +140,14 @@ _map = {
                                             if (w.pageborder is not None and w.pageborder != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 page border.pdf"),
     "fancy/sectionheader":      ("c_inclSectionHeader", "decorate", lambda w,v: "" if v else "%"),
+    "fancy/sectionborder":      ("r_sectHead", "fancy", lambda w,v : "" if v == "legacy" else "%"),
+    "fancy/sectionbordertype":  ("r_sectHead", "decorate", None),
     "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", "decorate", lambda w,v: w.sectionheader.as_posix() \
                                             if (w.sectionheader is not None and w.sectionheader != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
     "fancy/sectionheadershift": ("s_inclSectionShift", "decorate", lambda w,v: float(v or "0")),
     "fancy/sectionheaderscale": ("s_inclSectionScale", "decorate", lambda w,v: int(float(v or "1.0")*1000)),
+    "fancy/booktitleborder":    ("c_inclTitleBorders", "decorate", lambda w,v: "" if v else "%"),
     "fancy/endofbook":          ("c_inclEndOfBook", "decorate", lambda w,v: "" if v else "%"),
     "fancy/endofbookpdf":       ("btn_selectEndOfBookPDF", "decorate", lambda w,v: w.endofbook.as_posix() \
                                             if (w.endofbook is not None and w.endofbook != 'None') \
@@ -439,6 +444,12 @@ _map = {
     "snippets/fancyborders":    ("c_useOrnaments", "decorate", None),
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
+    # "viewer/layoutanalysis":    ("c_layoutAnalysis", None, None),
+    "viewer/findunbalanced":    ("c_findUnbalanced", None, None),
+    "viewer/findcollisions":    ("c_findCollisions", None, None),
+    "viewer/findwhitespace":    ("c_findWhitespace", None, None),
+    "viewer/findrivers":        ("c_findRivers", None, None),
+    "viewer/spacetoobig":       ("s_spaceEms", None, None),
     
     "thumbtabs/ifthumbtabs":    ("c_thumbtabs", "tabsborders", None),
     "thumbtabs/numtabs":        ("s_thumbtabs", "tabsborders", None),
@@ -456,6 +467,8 @@ _map = {
     "scripts/arab/lrcolon":     ("c_scrarabrefs", "fontscript", None),
     "scripts/indic/syllables":  ("c_scrindicSyllable", "fontscript", None),
     "scripts/indic/showhyphen": ("c_scrindicshowhyphen", "fontscript", None),
+    "scripts/cjk/grid":         ("c_scrcjkgrid", "fontscript", None),
+    "scripts/cjk/halfpunc":     ("c_scrcjkhalfpunc", "fontscript", None),
 
     "strongsndx/showintext":    ("c_strongsShowInText", "strongs", None),
     "strongsndx/showall":       ("c_strongsShowAll", "strongs", None),

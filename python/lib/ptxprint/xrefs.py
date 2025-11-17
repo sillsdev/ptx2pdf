@@ -1,11 +1,12 @@
 
-from ptxprint.utils import cachedData, pycodedir, regex_localiser
-from ptxprint.reference import RefList, RefRange, Reference, RefSeparators, BaseBooks
+from ptxprint.utils import cachedData, pycodedir, regex_localiser, nonSpacingScripts
+from usfmtc.reference import RefList, RefRange, Ref
 from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored, get_ces
 from usfmtc.versification import cached_versification
 from unicodedata import normalize
 from functools import reduce
 import xml.etree.ElementTree as et
+import regex
 import re, os, gc
 import logging
 
@@ -79,35 +80,36 @@ def revrsf(ref, vrsf):
         return ref
     if engvrs is None:
         engvrs = cached_versification("eng")
-    if isinstance(ref, list):
+    vrs = cached_versification(vrsf)
+    if isinstance(ref, (list, RefList)):
         res = RefList()
         for r in ref:
-            oref = engvrs.remap(ref, reverse=True)
-            res.append(vrsf.remap(oref))
+            oref = engvrs.remap(r, None, reverse=True)
+            res.append(vrs.remap(oref, None))
     else:
-        oref = engvrs.remap(ref, reverse=True)
-        res = vrsf.remap(oref)
+        oref = engvrs.remap(ref, None, reverse=True)
+        res = vrs.remap(oref, None)
     return res
 
 class BaseXrefs:
     template = "\\x - \\cat strongs\\cat*\\xo {colnobook}\u00A0\\xt {refs}\\x*"
-    addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=usfmmark, bksp="\u00A0")
-    dotsep = RefSeparators(cv=".", onechap=True)
+    #addsep = Environment(booksep="; ", chapsep=";\u200A", versesep=",\u200A", bookspace="\u2000", mark=usfmmark)
+    #dotsep = Environment(cvsep=".", nochap=True)
 
-    def __init__(self, scriptsep, rtl=False, shortrefs=False):
-        if scriptsep is not None:
-            self.addsep = RefSeparators(**scriptsep)
-            self.addsep.update(dict(books="; ", chaps=";\u200B", verses=",\u200B", bkc="\u00A0", mark=usfmmark, bksp="\u00A0"))
+    def __init__(self, scriptenv, rtl=False, shortrefs=False):
+        if scriptenv is not None:
+            self.env = scriptenv.copy(booksep="; ", chapsep=";\u200B", versesep=",\u200B", bookspace="\u00A0", mark=usfmmark)
         if rtl:
-            self.addsep.update(dict(books="\u061B ", chaps="\u061B\u200B"))
-        logger.debug(self.addsep)
+            self.env.booksep="\u061B "
+            self.env.chapsepchaps="\u061B\u200B"
+        logger.debug(self.env)
         self.rtl = rtl
         self.shortrefs = shortrefs
 
 
 class XrefFileXrefs(BaseXrefs):
-    def __init__(self, xrfile, filters, separators=None, context=None, listsize=0, rtl=False, shortrefs=False):
-        super().__init__(separators, rtl, shortrefs=shortrefs)
+    def __init__(self, xrfile, filters, env=None, context=None, listsize=0, rtl=False, shortrefs=False):
+        super().__init__(env, rtl, shortrefs=shortrefs)
         self.filters = filters
         self.xrlistsize = listsize
         self.xrefdat = cachedData(xrfile, self.readdat)
@@ -117,21 +119,24 @@ class XrefFileXrefs(BaseXrefs):
         for l in inf.readlines():
             if '=' in l:
                 (k, v) = l.split("=", maxsplit=1)
-                if k.strip() == "attribution":
+                if k.strip().lower in ("attribution", "copyright"):
                     self.xrefcopyright = v.strip()
+                continue
             v = RefList()
-            for d in re.sub(r"[{}]", "", l).split():
-                v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
+            for d in re.sub(r"[{}]+", "", l).split():
+                if not d.strip():
+                    continue
+                v.extend(RefList(d.replace(" ", ";").replace(".", " "), marks="+", strict=False))
             k = v.pop(0)
-            xrefdat.setdefault(k.first.book, {})[k] = [v]
+            xrefdat.setdefault(k.first.book, {})[k] = v
         return xrefdat
 
     def _addranges(self, results, usfm):
         for ra in usfm.bridges.values():
-            acc = []
-            for r in ra.allrefs():
+            acc = RefList()
+            for r in ra:
                 if r in results:
-                    acc = RefList(acc + results[r])
+                    acc.extend(results[r])
                     del results[r]
             if len(acc):
                 results[ra] = acc
@@ -140,24 +145,27 @@ class XrefFileXrefs(BaseXrefs):
     def process(self, bk, triggers, owner, usfm=None, vrsf=None):
         results = {}
         for k, v in self.xrefdat.get(bk, {}).items():
-            outl = v[0]
+            outl = RefList(v[0])
             if len(v) > 1 and self.xrlistsize > 1:
-                outl = sum(v[0:self.xrlistsize], RefList())
+                outl = sum(v[1:self.xrlistsize], outl)
             results[k] = outl
         if usfm is not None:
             self._addranges(results, usfm)
         if len(results):
+            nbenv = self.env.copy(nobook=True)
             for k, v in sorted(results.items()):
+                if isinstance(v, list):
+                    v = RefList(v)
                 if self.filters is not None:
-                    v.filterBooks(self.filters)
+                    v[:] = [r for r in v if r.first.book in self.filters]
                 v.simplify()
                 if not len(v):
                     continue
                 kf = revrsf(k.first, vrsf)
                 shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
                 info = {
-                    "colnobook":    revrsf(k, vrsf).str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
-                    "refs":         revrsf(v, vrsf).str(owner.parent.ptsettings, addsep=self.addsep, level=2)
+                    "colnobook":    revrsf(k, vrsf).str(env=nbenv) if not self.shortrefs else shortref,
+                    "refs":         revrsf(v, vrsf).str(env=self.env, level=2)
                 }
                 triggers[kf] = triggers.get(kf, "") + self.template.format(**info)
         return triggers
@@ -167,9 +175,9 @@ class StandardXrefs(XrefFileXrefs):
     def readdat(self, inf):
         results = {}
         for l in inf.readlines():
-            d = l.split("|")
-            v = [RefList.fromStr(s) for s in d]
-            results.setdefault(v[0][0].first.book, {})[v[0][0]] = v[1:]
+            d = l.strip().split("|")
+            v = [RefList(s, strict=False) for s in d]
+            results.setdefault(v[0][0].first.book, {})[v[0][0]] = RefList(v[1:])
         return results
 
 
@@ -177,9 +185,9 @@ class RefGroup(list):
     pass
 
 class XMLXrefs(BaseXrefs):
-    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
+    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, env=None,
                  context=None, listsize=None, shownums=True, rtl=False, shortrefs=False):
-        super().__init__(separators, rtl=rtl, shortrefs=shortrefs)
+        super().__init__(env, rtl=rtl, shortrefs=shortrefs)
         self.filters = filters
         self.context = context or BaseBooks
         self.shownums = shownums
@@ -191,7 +199,7 @@ class XMLXrefs(BaseXrefs):
         for e in xr:
             st = e.get('strongs', None)
             if e.tag == "ref" and e.text is not None:
-                r = RefList.fromStr(e.text, marks=("+", "\u203A"))
+                r = RefList(e.text, marks=("+", "\u203A"), strict=False)
                 a.append((st, e.get('style', None), r))
             elif e.tag == "refgroup":
                 a.append((st, None, RefGroup(self._unpackxml(e))))
@@ -200,7 +208,7 @@ class XMLXrefs(BaseXrefs):
     def simplify(self, groups):
         results = []
         for g in groups:
-            if isinstance(g[2][0], (Reference, RefRange)):
+            if isinstance(g[2][0], (Ref, RefRange)):
                 # demote top level ref under implicit refgroup
                 self._updatedat(results, [(None, None, [g])], None)
             else:
@@ -211,7 +219,7 @@ class XMLXrefs(BaseXrefs):
         doc = et.parse(inf)
         xmldat = {}
         for xr in doc.findall('.//xref'):
-            k = RefList.fromStr(xr.get('ref'))[0]
+            k = RefList(xr.get('ref'))[0]
             a = self._unpackxml(xr)
             if len(a):
                 xmldat.setdefault(k.first.book, {})[k.first] = self.simplify(a)
@@ -246,7 +254,7 @@ class XMLXrefs(BaseXrefs):
             if ra in dat:
                 continue
             newdat = []
-            for r in ra.allrefs():
+            for r in ra:
                 if r in dat:
                     self._updatedat(newdat, dat[r], r)
                     del dat[r]
@@ -259,13 +267,13 @@ class XMLXrefs(BaseXrefs):
             st = e[0]
             if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
                 continue
-            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("GH")) if st is not None and self.shownums else ""
+            s = '\\xts|strongs="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("GH")) if st is not None and self.shownums else ""
             if isinstance(e[2], RefList):
                 r = e[2]
                 if self.filters is not None:
-                    r.filterBooks(self.filters)
+                    r = RefList([f for f in r if f.first.book in self.filters])
                 r.simplify()
-                rs = revrsf(r, vrsf).str(context=self.context, addsep=self.addsep, level=2, this=baseref.last)
+                rs = revrsf(r, vrsf).str(env=self.env, level=2, context=baseref.last, start="verse")
                 if len(rs) and e[1] in ('backref', 'crossref'):
                     a.append(s + "\\+xti " + rs + "\\+xti*")
                 elif len(rs):
@@ -280,17 +288,17 @@ class XMLXrefs(BaseXrefs):
     def process(self, bk, triggers, owner, usfm=None, vrsf=None):
         xmldat = self.xmldat.get(bk, {})
         if len(xmldat):
-            #import pdb; pdb.set_trace()
             if usfm is not None:
                 self._addranges(xmldat, usfm)
+            nbkenv = self.env.copy(nobook=True)
             for k, v in xmldat.items():
                 res = self._procnested(v, k, vrsf=vrsf)
                 kf = revrsf(k.first, vrsf)
-                shortref = str(kf.verse) if k.first.verse == k.last.verse else "{}-{}".format(kf.verse, revrsf(k.last.verse, vrsf))
+                shortref = str(kf.verse) if k.first.verse == k.last.verse else "{}-{}".format(kf.verse, revrsf(k.last, vrsf).str(kf, env=nbkenv))
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):
                     info = {
-                        "colnobook":    revrsf(k, vrsf).str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
+                        "colnobook":    revrsf(k, vrsf).str(env=nbkenv) if not self.shortrefs else shortref,
                         "refs":         res,
                         "brtl":         r"\beginR" if self.rtl else "",
                         "ertl":         r"\endR" if self.rtl else ""
@@ -309,9 +317,9 @@ components = [
 ]
 
 class StrongsXrefs(XMLXrefs):
-    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
+    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, env=None,
                  context=None, shownums=True, rtl=False, shortrefs=False, wanal=None):
-        super().__init__(xrfile, filters, localfile=localfile, ptsettings=ptsettings, separators=separators,
+        super().__init__(xrfile, filters, localfile=localfile, ptsettings=ptsettings, env=env,
                  context=context, shownums=shownums, rtl=rtl, shortrefs=shortrefs)
         self.regexes = {}
         self.btmap = None
@@ -402,7 +410,7 @@ class StrongsXrefs(XMLXrefs):
         if wordanalysisfile is not None:
             self._readWordAnalysis(wordanalysisfile)
 
-    def addregexes(self, st):
+    def addregexes(self, st, script=None):
         if self.strongs is None:
             return ""
         wds = self.strongs.get(st,{}).get('local', [])
@@ -428,6 +436,12 @@ class StrongsXrefs(XMLXrefs):
                     p = r"\ba"
                 else:
                     t = t[:-1]
+                if script in nonSpacingScripts and "\u200B" not in t:
+                    y = regex.split(r"((?=\p{{sc={}}})\p{{L}}\p{{M}}*)".format(script), t)
+                    for i in range(2, len(y)-2, 2):
+                        if y[i] == "":
+                            y[i] = "[\u200B]?"
+                    t = "".join(y)
                 if "/" in t:            # allows two words in either order
                     (a, b) = t.split("/")
                     t = a
@@ -445,7 +459,7 @@ class StrongsXrefs(XMLXrefs):
                 pending += r + s + p
             reg.append(pending)
         res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
-        res = regex_localiser(res)
+        res = regex_localiser(res, script=script)
         logger.debug(f"strongs regexes {st} = {res}")
         self.regexes[st] = res
         return res
@@ -533,18 +547,18 @@ class Xrefs:
         if not parent.ptsettings.hasLocalBookNames:
             usfms = parent.printer.get_usfms()
             usfms.makeBookNames()
-            parent.ptsettings.bookStrs = usfms.booknames.bookStrs
-            parent.ptsettings.bookNames = usfms.booknames.bookNames
+            parent.ptsettings.bookStrs = usfms.booknames.bookstrings
+            parent.ptsettings.bookNames = usfms.booknames.booknames
             parent.hasLocalBookNames = True
         rtl = parent['document/ifrtl'] == 'true'
         logger.debug(f"Source: {source}, {rtl=}")
-        seps = parent.printer.getRefSeparators().copy()
-        seps['verseonly'] = parent.printer.getvar('verseident') or "v"
+        self.env = parent.printer.getRefEnv().copy()
+        self.env.verseid = parent.printer.getvar('verseident') or "v"
         if source.startswith("strongs"):
             self.xrefs = getattr(parent.printer, 'strongs', None)
             if self.xrefs is None:
                 self.xrefs = StrongsXrefs(os.path.join(pycodedir(), 'xrefs', "strongs.xml"), filters,
-                        localfile, separators=seps, context=parent.ptsettings,
+                        localfile, env=self.env, context=parent.ptsettings,
                         shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
         else:
             testf = os.path.join(pycodedir(), 'xrefs', source) if xrfile is None else xrfile
@@ -559,18 +573,19 @@ class Xrefs:
                         break
                 else:
                     t = None
-            self.xrefs = t(fp, filters, separators=seps, context=parent.ptsettings,
+            self.xrefs = t(fp, filters, env=self.env, context=parent.ptsettings,
                         listsize=listsize, rtl=rtl, shortrefs=shortrefs) if t is not None else None
         gc.collect()
 
     def process(self, bk, triggers, usfm=None):
         if self.parent.ptsettings.versification is not None and self.parent.ptsettings.versification != "eng":
-            vrsf = self.parent.ptsettings.versification
+            vrsf = os.path.join(self.parent.printer.project.path, self.parent.ptsettings.versification)
         else:
             vrsf = None
         if usfm is not None:
             usfm.addorncv()
         if self.xrefs is not None:
+            logger.debug(f"Processing xrefs for {bk}")
             return self.xrefs.process(bk, triggers, self, usfm=usfm, vrsf=vrsf)
         return triggers
 

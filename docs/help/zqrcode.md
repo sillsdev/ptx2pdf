@@ -6,6 +6,8 @@ A milestone that will generate a QR code
 
 \zqrcode|pgpos="H" background="1 1 0.5" colour="0 0 .5" vmax="2" unicode="T" size="1.5cm" data="http://somewhere.com/țară.html"\*
 
+\def\beforechapternum#1#2#3{\zqrcode|pgpos="H" size="0.75\dropnumbersize" novpadding="T" nohpadding="l" data="MYBIBLE.ORG/BIBLE/#1.#3"\*}
+
 ```
 ## Description
  Generates a QR-code from attribute data (which may not contain double-quotes), with the specified size (or from FontSize, if cat is provided). 
@@ -23,6 +25,8 @@ While the ISO standard allows codes to be as small as 1cm, and the code can gene
 *  `colour="R G B"` set the foreground colour for the QR code (overriding the stylesheet `color` setting). `R` `G` and `B` are decimals in the range of 0 to 1, e.g. `colour="0.1 1 0.3" . American spelling is also accepted.
 * `background="R G B"` set the background colour for the QR code.
 * `spacebeside="5pt"` Specify the `spacebeside` value for this QR code - a horizontal measurement tweaking the position/spacing of the QR code (see figure documentation).   If not given the  stylesheet's `spacebeside` setting will be used (or `0pt`).
+* `novpadding="T"`If "T", then no vertical padding (quiet zone) is provided.
+* `nohpadding="T"`If "T", then no horizontal padding (quiet zone) is provided. If "l", then no padding will occur on the left, if "r", then no padding will occur on the right.
 
 ## QR code Versions
 The QR code generator does its work automatically. I.e. you probably don't need to know this. What follows is to help the typesetter understand what's going on and why, and how to get the most out of the capabilities.

@@ -4,9 +4,3 @@ pubclear = unchecked
 pubnoise = unchecked
 pubaccept = Unknown
 
-[image]
-approved = false
-notes = 
-pubclear = yes
-pubnoise = yes
-

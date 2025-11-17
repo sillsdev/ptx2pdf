@@ -12,48 +12,53 @@
   \ifdim\VerseBoxWidth=0pt \getverseboxwidth\fi
   \trace{v}{position is \colshiftmode, VerseBoxWidth=\the\VerseBoxWidth}%
   \ifnum\c@rrentcols=1 \edef\t@mpa{page}\else\edef\t@mpa{col}\fi
-  \ifx\v@rsefrom\v@rseto\edef\t@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\t@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
-  \ifcsname marginnote-\t@mp @v:\t@mpa no\endcsname \count10=\csname marginnote-\t@mp @v:\t@mpa no\endcsname
-    \trace{v}{from marginnote-\t@mp @v:\t@mpa no, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
-  \else\trace{v}{no marginnote-\t@mp @v:\t@mpa no, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
+  \ifx\v@rsefrom\v@rseto\edef\mt@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\mt@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
+  \ifcsname marginnote-\mt@mp @v:\t@mpa no\endcsname \count10=\csname marginnote-\mt@mp @v:\t@mpa no\endcsname
+    \trace{v}{from marginnote-\mt@mp @v:\t@mpa no, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
+  \else\trace{v}{no marginnote-\mt@mp @v:\t@mpa no, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
   \trace{v}{pagenumber is \ift@mp odd\else even\fi, and side is \colshiftmode, value=\the\count10, mcstack=\mcstack}%
   \ifnum \ifx\colshiftmode\@nner\ift@mp 0\else 1\fi\else\ifx\colshiftmode\@uter\ift@mp 1\else 0\fi\else\ifx\colshiftmode\r@ght 1\else 0\fi\fi\fi =0
     \rsh@fttrue\else\rsh@ftfalse
   \fi
-  \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{%
+  \ifx\v@rsefrom\v@rseto \setbox2=\vtop{\everypar={}\hbox to \VerseBoxWidth{%
         \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\mysimpleprintv@rse
         \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
     \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ifrsh@ft left\else right\fi, pad to \the\VerseBoxWidth}%
+    \def\t@@mp{bottom}%
   \else
-    \s@tsideskips{v}%
+    \s@tsideskips{v}{-1pt}%
     \ifrsh@ft \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
     \trace{v}{leftskip=\the\leftskip, rightskip=\the\rightskip}%
     \myh@ngprintv@rse{2}%
-    \setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{%
+    \setbox2=\vtop{\everypar={}\hbox to \VerseBoxWidth{%
         \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\box2
         \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
+    \def\t@@mp{top}%
   \fi
-  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ifrsh@ft left\else right\fi}%
-  \d@marginnote{2}{\t@mp}{v}{\colshiftmode}%
+  \trace{v}{verse \mt@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ifrsh@ft left\else right\fi}%
+  \getp@ram{spacebeside}{v}{v+\styst@k}%
+  \ifx\p@ram\relax \getp@ram{spacebefore}{v}{v+\styst@k}%
+    \ifx\p@ram\relax \dimen0=1pt\else\dimen0=\p@ram\IndentUnit \divide\dimen0 by 12\fi
+  \else \dimen0=\p@ram\fi
+  \ifversion{5}{\d@marginnote{2}{\mt@mp}{v}{\colshiftmode}{\t@@mp}{\the\dimen0}{-\dp\pstr@t}}{\d@marginnote{2}{\mt@mp}{v}{\colshiftmode}{center}{\the\dimen0}{0pt}}%
   \outputmvmkr
 }
 
 \def\mysimpleprintv@rse{\cstyle{v}{\plainv@rse}}
 \let\defaultprintverse=\mymarginpverse
 \let\printverse\defaultprintverse
-\newif\ifversehyphen \versehyphentrue
-\newif\ifversehyphenup \versehyphenupfalse
+\MarginalVersestrue
 \def\myh@ngprintv@rse#1{%
     \p@sheof
-    \setbox1=\hbox{\p@sheof\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}
+    \setbox1=\hbox{\p@sheof\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}%
         \global\c@untA=0\tmp \xdef\tmp{\x@\scantokens\x@{\v@rseto\noexpand}} \global\c@untB=0\tmp \p@peof}%\advance\c@untA by 1
     \ifversehyphenup
       \setbox1=\hbox{\cstyle{v}{\adornv{\v@rsefrom}\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi}}%
       \dimen0=\wd1
-      \setbox#1=\vtop{\box1\s@tbaseline{v}{v}\hbox to \dimen0{\cstyle{v}{\adornv{\v@rseto}}\hfil}}%
+      \setbox#1=\vtop{\box1\s@tbaseline{v}{v}\hbox to \dimen0{\ifrsh@ft\hfil\fi\cstyle{v}{\adornv{\v@rseto}}\ifrsh@ft\else\hfil\fi}}%
     \else
       \setbox1=\hbox{\cstyle{v}{\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi\adornv{\v@rseto}}}%
-      \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\cstyle{v}{\adornv{\v@rsefrom}}}\box1}%
+      \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\ifrsh@ft\hfil\fi\cstyle{v}{\adornv{\v@rsefrom}}\ifrsh@ft\else\hfil\fi}\box1}%
     \fi
     \p@peof}
 

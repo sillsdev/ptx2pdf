@@ -197,6 +197,29 @@ You can also specify a font definition like this directly in a stylesheet marker
 *   \def\AdornVerseNumber#1{```(```#1```)```} – Put parentheses around the verse number (which is represented by #1)
 *   \def\AfterVerseSpaceFactor{```0```} – Remove extra space after verse numbers, when you have set them to be "invisible", or a very small size, such as \Marker v \FontSize 0.0001
 *   ```\def\MakeChapterLabel#1#2{#1\ #2}```   – If there is a global (before `\c 1`) `\cl`, how should that be combined with the chapter number. The default is to put the label (`#1`) before the number (`#2`). Altering this macro would to `\def\MakeChapterLabel#1#2{#2. #1}`  will make Hungarian-style numbering (`23. Zsoltár`) the default rather than English-style (`Psalm 23`).
+*  ```\def\printchapter#1{#1}``` – No decoration of chapter numbers by default. This macro is used for drop-caps and global `\cl` titles. It is not used for e.g. `\c 23 \cl The Twenty-third Psalm` 
+*  ```\def\printaltchapter#1{(#1)}``` – Put brackets around alternative chapter numbers by default. This macro is used for drop-caps and global `\cl` titles, assuming a ```\ca NN\ca* ``` is given. It will not have an effect on ```\c 102 \cl The 102nd (\ca 103rd\ca*) Pslam` 
+*  `\def\beforechapternum#1#2#3{\zqrcode|pgpos="H" size="0.75\dropnumbersize" novpadding="T" nohpadding="l" data="MYBIBLE.ORG/ZYXBIBLE/#1.#3"\*}` - Insert a QR code just before the drop-cap chapter number. The parameters are: #1 Book code (e.g. Gen), #2 Book name (may include spaces!), #3 Chapter number. This is only triggered by drop-cap chapter numbers, not by `\cl` chapters. `\cl` chapter numbers can use \MakeChapterLabel instead`
+*  `\def\afterchapternum#1#2#3{}` As above, but inserts something (e.g. QR code) immediately after the drop-cap chapter number.
+*  `\def\everyfirstverse#1#2#3{\zqrcode|pgpos="cr0.0"`
+size="0.75\dropnumbersize" novpadding="T" nohpadding="T" spacebeside="3pt" 
+data="MYBIBLE.ORG/ZYXBIBLE/#1.#3"\*}` - When first meeting a verse after a 
+chapter number, generate a QR code to put in a cutout on the right-hand side 
+of the page. Other positions (such as "hc" or "cl") can also be given, but 
+note that when a mid-paragraph chapter (i.e. \nb) occurs, the QR code may clash with
+the chapter number if the cutouts are on the same side. 
+
+Given the notes above, a solution for all 3 varieties of chapter mark might involve setting and checking a global variable, as follows:
+
+```
+\def\beforechapternum#1#2#3{\zqrcode|pgpos="H" size="0.75\dropnumbersize" novpadding="T" nohpadding="l" spacebeside="0pt" data="TRVBIBLE.LK/BIBLE/#1.#3"\*\xdef\lastQRchap{#3}}
+\def\everyfirstverse#1#2#3{\edef\tmp{#3}\ifx\tmp\lastQRchap\else\zqrcode|pgpos="cl" size="0.78\dropnumbersize" novpadding="T" nohpadding="T" spacebeside="3pt" autoquietzone="false" data="TRVBIBLE.LK/BIBLE/#1.#3"\*\fi\global\let\lastQRchap\empty}
+```
+
+This makes use of the fact that beforechapter is run except when a `\cl` chapter
+label is not in use. Thus, everyfirstverse does not normally insert a chapter
+QR code, but when lastQRchap has not been set, (i.e. a cl chapter),
+everyfirstverse knows is should provide one.
 
 ## <a name="ptx2pdf-MacroSetupParameters-RunningHeader/Footer">Running Header/Footer</a>
 
@@ -309,6 +332,7 @@ Items such as rangeref, firstref, etc. need to know how to construct a scripture
 ## <a name="ptx2pdf-MacroSetupParameters-Other">Other</a>
 
 *   \IndentAfterHeading```true``` – Remove paragraph indentation on the first paragraph after a section heading (default = false)
+* `\deflk
 
 ## <a name="ptx2pdf-MacroSetupParameters-Notes">Notes</a>
 
@@ -578,6 +602,11 @@ the price (digits 2-5). Wikipedia states that the currency digit should be: 0 or
 1: GBP, 3: AUD, 4: NZD, 5: USD, 6: CAD.
 
 If the pricecode is not supplied, then no price barcode will be generated.
+
+### QR codes
+`\zqrcode| data="HTTPS://WEBSITE.ORG/BIBLE/MYVERSION" size="2cm" pgpos="hc"\*
+Create a QR-code. This requires the optional plugin `QR`. Full documentation is 
+[here](../help/zqrcode.html)
 
 
 ### Misc. milestones

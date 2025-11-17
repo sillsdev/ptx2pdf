@@ -33,7 +33,7 @@
 \def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all trigger-generating milestones represent unique locations-> keep the trigger around.
 \def\IsTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\undefined} 
 \let\attr@b\relax
-\NotTriggerPoint{xts} %Strongs numbers like 'ms:xtx=5447' not trigger points by default.
+\NotTriggerPoint{xts} %Strongs numbers like 'ms:xts=5447' not trigger points by default.
 \NotTriggerPoint{zcustombotmark}
 \NotTriggerPoint{zcustomtopmark}
 \NotTriggerPoint{zcustomfirstmark}
@@ -447,7 +447,7 @@
     \ifx\attr@b\relax\else\x@\s@tc@tprefix\x@{\attr@b}\fi
     \get@ttribute{width}%A
     \ifx\attr@b\relax
-      \s@tsideskips{zrule}%
+      \s@tsideskips{zrule}{-1pt}%
       \edef\rule@wid{\the\dimexpr \hsize - \leftskip - \rightskip\relax}%
     \else
       \m@kenumber{\attr@b}%
@@ -558,37 +558,83 @@
 }
 
 \x@\def\csname MS:zsetref\endcsname{%
-  \get@ttribute{book}\ifx\attr@b\relax\else
-    \x@\ifx\csname book\g@tdstat\endcsname\attr@b\else
-      {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
-      \x@\global\x@\let\csname book\g@tdstat\endcsname\attr@b
+  %\trace{M}{This is zsetref "\attribsus@d"}%
+  \tempfalse % Did an actual reference get set properly, or was this called with an unattributed string reference 
+  \def\tmp{bkid}\ifx\attribsus@d\tmp\tempfalse%  Is this called normally, or just with the default arg?
+  \else
+    \temptrue
+    \get@ttribute{book}\ifx\attr@b\relax\else
+      \x@\ifx\csname book\g@tdstat\endcsname\attr@b\else
+        \x@\global\x@\let\csname book\g@tdstat\endcsname\attr@b
+        {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+      \fi
     \fi
-  \fi
+    \get@ttribute{chapter}\ifx\attr@b\relax\else
+      \global\let\ch@pter\attr@b
+    \fi
+    \get@ttribute{verse}\ifx\attr@b\relax\else
+      \global\let\v@rse\attr@b
+    \fi
+  \fi 
   \get@ttribute{bkid}\ifx\attr@b\relax\else
     \ifx\id@@@\attr@b\else
-      \global\let\id@@@\attr@b
+      \iftemp % standard calling notation used
+        \global\let\id@@@\attr@b
+        \trace{M}{Book ID will now be \attr@b}%
+        {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+      \else % try to parse as "Book Ch:V"
+        \trace{M}{Unexpected format for a book ID (\attr@b). Trying to parse it like a reference}%
+        \@p@rseref{\attr@b}%
+        \ifx\p@rsedV\relax
+          \global\let\id@@@\attr@b
+          \trace{M}{Book ID will now be \attr@b}%
+          {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+        \else
+          \global\let\ch@pter\p@rsedC
+          \global\let\v@rse\p@rsedV
+          \ifx\id@@@\p@rsedID\else
+            \global\let\id@@@\p@rsedID
+            {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+          \fi
+        \fi
+      \fi
+  \fi
+  \let\attr@b\relax
+}
+
+\x@\def\csname MS:vid\endcsname{%
+  \get@ttribute{h}\ifx\attr@b\relax\else
+    \x@\ifx\csname book\g@tdstat\endcsname\attr@b\else
+      \x@\global\x@\let\csname book\g@tdstat\endcsname\attr@b
       {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
     \fi
   \fi
-  \get@ttribute{chapter}\ifx\attr@b\relax\else
-    \global\let\ch@pter\attr@b
+  \get@ttribute{ref}\ifx\attr@b\relax\else
+  \x@\@p@rseref\x@{\attr@b}%
+  \ifx\p@rsedV\relax
+    \message{Could not parse reference '\attr@b'}%
+  \else
+    \global\let\ch@pter\p@rsedC
+    \global\let\v@rse\p@rsedV
+    \ifx\id@@@\p@rsedID\else
+      \global\let\id@@@\p@rsedID
+      {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+    \fi
   \fi
-  \get@ttribute{verse}\ifx\attr@b\relax\else
-    \global\let\v@rse\attr@b
-  \fi
+  \let\attr@b\relax
 }
 
 \x@\def\csname MS:zcustombotmark\endcsname{%
-  \getcustomm@rknum
-  \botmarks\m@rknum
+\getcustomm@rknum
+\botmarks\m@rknum
 }
 \x@\def\csname MS:zcustomfirstmark\endcsname{%
-  \getcustomm@rknum
-  \firstmarks\m@rknum
+\getcustomm@rknum
+\firstmarks\m@rknum
 }
 \x@\def\csname MS:zcustomtopmark\endcsname{%
-  \getcustomm@rknum
-  \topmarks\m@rknum
+\getcustomm@rknum
+\topmarks\m@rknum
 }
 
 \NotTriggerPoint{zgap}
@@ -915,7 +961,7 @@
 \def\proc@strong#1{%
   \get@ttribute{align}%
   \ifx\attr@b\relax \let\al@gn\@lignLeft\else\let\al@gn\attr@b\fi
-  \get@ttribute{strong}%
+  \get@ttribute{strongs}%
   \trace{m}{Got strongs \attr@b}%
   \ifx\attr@b\relax \else\edef\tmpz{#1}%
     \x@\dostr@ngs\x@{\x@\tmpz\x@}\x@{\x@\al@gn\x@}\attr@b+++\E

@@ -218,6 +218,39 @@ We then run this code over various key markers that we want to have verse
 numbers on. Notice we don't do this for all paragraph markers, since we aren't
 interested in tracking verse numbers in `\\q2` for example.
 
+## Technique: Kerning digits in a chapter number
+
+Digits are typically designed to be monospaced so that they layout out nicely in
+tables. But in some scripts, some digits are significantly narrower than others
+and it would be nice to kern those digits more tightly in chapter numbers. This
+is only really noticeable in the book of Psalms.
+
+To do this we create some magic characters that will insert the negative kerns:
+
+```tex
+\catcode"005E=7
+\catcode"E123=\active
+\def^^^^e123{\nobreak\kern-0.2em\relax}
+\catcode"E124=\active
+\def^^^^e124{\nobreak\kern-0.4em\relax}
+```
+
+In effect we are making two negative spaces. Now in the changes file we want to
+insert those special spaces around the digits 0 and 1 for chapter numbers.
+
+```perl
+at PSA "\\c\s(\d*[10]\d*)" > "\\c \1\n\\cp \\beginL \1 \\endL\n"
+in "\\cp\s+\\beginL \d+ \\endL": "([01])" > "\uE123\1\uE123"
+"\uE123\uE123" > "\uE124"
+```
+
+The first rule copies the chapter number to a published chapter string if it
+contains a 0 or a 1. It also marks it as being output left to right, since
+Arabic digits are output left to right in right to left text. The second rule
+takes that publishable chapter and inserts a negative space before and after
+ever 0 or 1 in the string. The last rule merges adjacent pairs of negative widths
+into a single doubly narrow width.
+
 ## Technique: Setting style parameters in ptxprint-mods.tex
 
 This snippet is less a snippet as a technique. It shows two ways of setting
@@ -338,6 +371,32 @@ For before
 
 \ztocafter....
 ```
+
+## Two Columns Table of Contents
+
+This snippet can be used for the contents peripheral in FRTlocal.SFM:
+
+```tex
+\periph Table of Contents|id="contents"
+\mt \zvar|contentsheader\*
+\is Old Testament
+\zgap|-18pt\*
+\doublecolumns
+\ztoc|ot\*
+\singlecolumn
+\is ~
+\is New Testament
+\zgap|-18pt\*
+\doublecolumns
+\ztoc|nt\*
+\b
+\ztoc|post\*
+\singlecolumn
+```
+
+The negative zgap amount may need adjusting according to taste, and the headings
+will need translating.
+
 ## Set a larger space before footnote caller in the text
 
 If the space before a footnote caller (defined by style zcf) needs to be
@@ -346,6 +405,25 @@ increased, then this can be done by adding the following line.
 ```tex
 \sethook{start}{zcf}{\hskip 0.1em}
 ```
+
+## Don't break before q2 and friends
+
+This snippet keeps q1 based groups of poetry lines together. Insert into the
+ptxprint-mods.tex.
+
+```tex
+\sethook{before}{q2}{\nobreak}
+\sethook{before}{q3}{\nobreak}
+```
+
+### Implementation
+
+The `before` hook is run after the previous paragraph is finished. We assume the
+previous paragraph is a q1. `\\nobreak` tells TeX not to allow a page break at
+this position. If you have long sequences of q2 without a q1, then be careful
+because you may have page break problems. Notice that the use of the `before`
+hook does not interfere with the `start` hooks used for hanging verse numbers.
+
 
 ## Move the qr word up to the end of previous line (if space permits)
 

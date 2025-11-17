@@ -1,10 +1,10 @@
 
-from ptxprint.utils import refSort, universalopen, print_traceback, nonScriptureBooks
+from ptxprint.utils import refSort, universalopen, print_traceback, nonScriptureBooks, appdirs
 from threading import Thread
 import configparser
 import regex, re, logging
 import os, re, random, sys
-import appdirs, traceback
+import traceback
 from typing import Dict
 
 logger = logging.getLogger(__name__)
@@ -89,8 +89,11 @@ class PicChecks:
                         hasdata = True
                 if not hasdata:
                     a[2].remove_section(s)
-            with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
-                a[2].write(outf)
+            try:
+                with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
+                    a[2].write(outf)
+            except FileNotFoundError:
+                pass
         res = self.changed
         self.changed = False
         return res
@@ -434,15 +437,16 @@ class Piclist:
         if not sync:
             for p in self.pics.values():
                 if p.sync(pic, suffix=suffix):
-                    return
+                    return p
         self.pics[pic.key] = pic
+        return pic
 
-    def addpic(self, suffix="", **kw):
+    def addpic(self, suffix="", sync=False, **kw):
         m = kw['anchor'].split(' ', 1)
         suffix = suffix or ""
         kw['anchor'] = m[0] + suffix + " " + m[1]
         p = Picture(**kw)
-        self.add_picture(p)
+        return self.add_picture(p)
 
     def get(self, k, default):
         return self.pics.get(k, default)
@@ -714,7 +718,9 @@ class Piclist:
             if k:
                 lines.append("{} {}|{}".format(k, caption, vals))
 
-        if len(lines):
+        if fpath is None:
+            return lines
+        elif len(lines):
             logger.debug(f"Saving pics to {fpath} with {len(lines)} lines")
             dat = "\n".join(lines)+"\n"
             with open(fpath, "w", encoding="utf-8") as outf:

@@ -152,13 +152,13 @@ class TestXetex:
     def test_pdf(self, updatedata):
         if self.pdf is None:
             return
-        msfg = None
+        msg = None
         if self.pdf.result == 2:
             msg = "missing base pdf"
         elif os.path.exists(self.pdf.diffpath):
             msg = "pdfs are inconsistent"
-        else:
-            return
+        #else:
+        #    return
         if updatedata:
             shutil.copy(self.pdf.pdfpath, self.pdf.stdpath)
 

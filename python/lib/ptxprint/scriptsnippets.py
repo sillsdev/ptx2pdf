@@ -1,15 +1,15 @@
-import re, traceback
+import regex, traceback
 from ptxprint.minidialog import MiniCheckButton
-from ptxprint.reference import RefSeparators
+from usfmtc.reference import Environment
 from ptxprint.utils import _
 
 def makeChange(pattern, to, flags=0, context=None):
     frame =  traceback.extract_stack(limit=2)[0]
-    return (context, re.compile(pattern, flags), to, f"{frame.filename} line {frame.lineno}")
+    return (context, regex.compile(pattern, flags), to, f"{frame.filename} line {frame.lineno}")
 
 class ScriptSnippet:
     dialogstruct = None
-    refseparators = RefSeparators()
+    refenv = Environment
 
     @classmethod
     def regexes(cls, view):
@@ -20,8 +20,8 @@ class ScriptSnippet:
         return ""
 
     @classmethod
-    def getrefseps(cls, view):
-        return cls.refseparators
+    def getrefenv(cls, view):
+        return cls.refenv()
 
     @classmethod
     def isSyllableBreaking(cls, view):
@@ -60,7 +60,7 @@ nonbodymarkers = ("id", "h", "h1")    # keep in toc to allow wrapping
 def onlybody(fn, bj, dat):
     res = []
     for l in dat.split("\n"):
-        m = re.match(r"^\\(\S+) ", l)
+        m = regex.match(r"^\\(\S+) ", l)
         if m:
             if m.group(1) in nonbodymarkers:
                 res.append(l)
@@ -71,7 +71,7 @@ def onlybody(fn, bj, dat):
 def nonbody(fn, bj, dat):
     res = []
     for l in dat.split("\n"):
-        m = re.match(r"^\\(\S+) ", l)
+        m = regex.match(r"^\\(\S+) ", l)
         if m:
             if m.group(1) not in nonbodymarkers:
                 res.append(l)
@@ -82,7 +82,7 @@ def nonbody(fn, bj, dat):
 def notattrib(fn, bj, dat):
     #if "/" in dat:
     #    import pdb; pdb.set_trace()
-    b = re.split(r"((?<!\\)\|.*?\\[a-z*])", dat)
+    b = regex.split(r"((?<!\\)\|.*?\\[a-z*])", dat)
     for i, w in enumerate(b[0::2]):
         b[2*i] = fn(w)
     return "".join(b)
@@ -109,9 +109,9 @@ class mymr(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
         res = [makeChange(r'(\s)/', r'\1'),
-               makeChange('([\u00AB\u2018\u201B\u201C\u201F\u2039\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20])/', r'\1', re.S),
-               makeChange('/([\u00BB\u2019\u201D\u203A\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21])', r'\1', re.S),
-               makeChange('/([\\s\u104A\u104B])', r'\1', re.S),
+               makeChange('([\u00AB\u2018\u201B\u201C\u201F\u2039\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20])/', r'\1', regex.S),
+               makeChange('/([\u00BB\u2019\u201D\u203A\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21])', r'\1', regex.S),
+               makeChange('/([\\s\u104A\u104B])', r'\1', regex.S),
                makeChange(r'/', "\u200B", context=notattrib),
                makeChange('\u200B', "", context=nonbody)]
         if view.get("c_scrmymrSyllable"):
@@ -161,17 +161,18 @@ class lana(ScriptSnippet):
 class talu(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
-        res = [makeChange(r'/', "\u200B", context=noattrib),
+        res = [makeChange(r'/', "\u200B", context=notattrib),
                makeChange(r'([^\u1980-\u19DF])\u200B', r'\1'),
                makeChange(r'\u200B([^\\\u1980-\u19DF])', r'\1'),
                makeChange('\u200B', "", context=nonbody)]
+        return res
 
 class arab(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrarabrefs", _("First verse on left"))
     ]
-    refseparators = (RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "),
-                     RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "))
+    refseparators = (Environment(rangemk="\u200F-", cvsep="\u200F:", versesep="\u060C ", chapsep="\u061B "),
+                     Environment(rangemk="\u200F-", cvsep="\u200F:", versesep="\u060C ", chapsep="\u061B "))
 
     @classmethod
     def getrefseps(cls, view):
@@ -278,9 +279,49 @@ class orya(Indic):
 class beng(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
-        res = [
-            makeChange("(?<=\\s)([\u0985-\u09CC](?![\u09C7-\u09CC])[^\\\\\\s]*?"
-                       "[\u09C7-\u09CC][^\\\\\\s]*?)(?=\\s)", "\uFDEC\\1\uFDED")
+        if view.get("c_letterSpacing"):
+            res = [
+            #makeChange("(?<=\\s)([\u0985-\u09CC](?![\u09C7-\u09CC])[^\\\\\\s]*?"
+            #           "[\u09C7-\u09CC][^\\\\\\s]*?)(?=\\s)", "\uFDEC\\1\uFDED")
+                makeChange("(?<=[\u0980-\u09CC\u09CE-\u09FF])([\u0985-\u09B9]\u09BC?"
+                        "(?:\u09CD[\u0985-\u09B9]\u09BC?)*)(?=[\u09C7-\u09CC])",
+                        "\uFDD0\\1", context=onlybody)
             ]
+        else:
+            res = []
         return res
+
+class hans(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrcjkgrid", _("Enabling horizontal gridding"),
+                tip=_("Align chapter numbers with grid and remove spaces before verses")),
+        MiniCheckButton("c_scrcjkhalfpunc", _("Automatic halfwidth punctuation pairs"),
+                tip=_("Adjust spacing of punctuation pairs so they take up a single full width character"))
+    ]
+    @classmethod
+    def regexes(cls, view):
+        res = []
+        if view.get("c_scrcjkgrid", False):
+            res.append(makeChange(r"(?<!\\\S+)\s+(?=\\v\s)", ""))
+        if view.get("c_scrcjkhalfpunc", False):
+            res.append(makeChange(r"([\p{Po}\p{Pe}\p{Pf}--[*\\]])(\\f\s(?:.(?!\\f\*))*.\\f\*)([\p{Po}\p{Pe}\p{Pf}--[*\\]])", r"\1\3\2", flags=regex.V1))
+            res.append(makeChange(r"([\p{Pe}\p{Pf}\p{Po}--[*\\]])([\p{Ps}\p{Pi}])", r"\\cjksqm\1\2", flags=regex.V1))
+            res.append(makeChange(r"([\p{Ps}\p{Pi}])([\p{Ps}\p{Po}\p{Pi}--[*\\]])", r"\\cjksq\1\2", flags=regex.V1))
+            res.append(makeChange(r"([\p{Pe}\p{Pf}])([\p{Pe}\p{Pf}\p{Po}--[*\\]])", r"\\cjksq\1\2", flags=regex.V1))
+            res.append(makeChange(r"([\p{Po}--[*\\]])([\p{Pe}\p{Pf}])", r"\\cjksq\1\2", flags=regex.V1))
+        return res
+
+    @classmethod
+    def tex(cls, view):
+        res = []
+        if view.get("c_scrcjkgrid", False):
+            res.append(r"\cjkgridchapterbox")
+        if view.get("c_scrcjkhalfpunc", False):
+            res.append(r"\def\cjksq#1#2{#1\kern-.5em #2\kern-.5em}")
+            res.append(r"\def\cjksqm#1#2{#1\kern-1em #2}")
+        return "\n".join(res)
+
+class hant(hans):
+    pass
+
 

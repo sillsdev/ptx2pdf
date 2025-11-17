@@ -71,6 +71,7 @@
 \def\loc@Par{p}% post-paragrpah
 \def\loc@Page{P}% Page (with headers/footers)
 \def\loc@Full{F}% FullPage (no headers/footers)
+\def\loc@M{m}% Margin
 \def\@lignInner{i}
 \def\@lignOuter{o}
 \def\@lignLeft{l}
@@ -146,8 +147,10 @@
 {\catcode`+=11 
  \catcode`-=11
  \catcode`\^=12 
+ \catcode`\(=12
  \gdef\pl@sLtr{+}
  \gdef\m@nusLtr{-}
+ \gdef\br@Ltr{(}
  \global\let\cflexLtr ^
 }
 \def\c@lon{:}
@@ -166,6 +169,7 @@
 \def\ss@Sbar{s}%
 \def\ss@Tbl{b}% table 
 \def\ss@Fig{f}% figure 
+\def\ss@File{F}% start/end of file 
 
 %Barcode
 \def\bc@short{short}
@@ -184,6 +188,9 @@
 %Margin notes positions
 \def\@uter{outer}
 \def\@nner{inner}
+\def\@top{top}
+\def\@bottom{bottom}
+\def\@inline{inline}
 % Rule types for graphpaper, grid, etc.
 \def\m@jor{Major}
 \def\m@nor{Minor}

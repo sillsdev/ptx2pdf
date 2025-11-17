@@ -1,14 +1,16 @@
 #!/usr/bin/python3
-
 import argparse, sys, os, re, configparser, shlex
-import appdirs
 import site, logging
 from shutil import rmtree
 from zipfile import ZipFile
 
 import ptxprint
-from ptxprint.utils import saferelpath
+from ptxprint.utils import saferelpath, appdirs
 from pathlib import Path
+# import debugpy
+# debugpy.listen(("localhost", 5678))
+# print("Waiting for debugger to attach...")
+# debugpy.wait_for_client()
 
 def getnsetlang(config):
     envlang = os.getenv("LANG", None)
@@ -39,7 +41,7 @@ class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/ques
     def flush(self):
         pass
 
-def main():
+def main(doitfn=None):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
 
@@ -88,7 +90,7 @@ def main():
     parser.add_argument('-N', '--nointernet', action="store_true", help="Disable all internet access")
     parser.add_argument('-n', '--port', type=int, help="Port to listen on")
     parser.add_argument('-D', '--define', action=DictAction, help="Set UI component=value (repeatable)")
-    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx)")
+    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir, no config)")
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
     parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
 
@@ -98,11 +100,20 @@ def main():
         def print_message(message, file=None):
             tv.print_message(message)
         parser._print_message = print_message
+        os.environ['PATH'] += os.pathsep + sys._MEIPASS.replace("/","\\")
 
+    conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
+    config = configparser.ConfigParser(interpolation=None)
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None
+    argsline = None
     if envopts is not None:
-        opts = shlex.split(envopts)
+        argsline = envopts
+    elif config.has_option('init', 'commandargs'):
+        argsline = config.get('init', 'commandargs')
+        config.remove_option('init', 'commandargs')
+    if argsline is not None:
+        opts = shlex.split(argsline)
         args = parser.parse_args(opts, args)
     args = parser.parse_args(None, args)
 
@@ -159,9 +170,7 @@ def main():
             args.projects.append(pdir)
         savetreedirs = True
 
-    conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
-    config = configparser.ConfigParser(interpolation=None)
-    if os.path.exists(conffile):
+    if (args.extras & 4) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:
             if config.has_option("init", "project"):
@@ -175,6 +184,7 @@ def main():
             pdir = config.get("init", "paratext")
             if os.path.exists(pdir):
                 args.projects.append(pdir)
+                print(f"Adding {pdir}")
         if not len(args.projects) and config.has_section("projectdirs"):
             pdirs = config.options("projectdirs")
             if len(pdirs) and re.match(r"^\d{1,2}$", pdirs[0]):
@@ -184,6 +194,7 @@ def main():
             for p in ps:
                 if p not in args.projects and os.path.exists(p):
                     args.projects.append(p)
+                    print(f"Adding {p}")
     else:
         if not os.path.exists(os.path.dirname(conffile)):
             os.makedirs(os.path.dirname(conffile))
@@ -195,11 +206,12 @@ def main():
         pdir = get_ptsettings()
         if pdir is not None:
             args.projects.append(pdir)
+            print(f"Adding {pdir}")
 
     if args.lang is None:
         args.lang = getnsetlang(config)
 
-    if not len(args.projects):
+    if (args.extras & 2) != 0 or not len(args.projects):
         # print("No Paratext Settings directory found - sys.exit(1)")
         if not args.print:
             pdir = getPTDir()
@@ -272,20 +284,24 @@ def main():
     elif not getattr(sys, 'frozen', False) and not os.path.exists(macrosdir):
         macrosdir = os.path.join(scriptsdir, "..", "..", "..", "src")
 
-    def doit(printer, maxruns=0, noview=False, nothreads=False, forcedlooseness=None):
-        if not isLocked():
-            if maxruns > 0:
-                oldruns = args.runs
-                args.runs = maxruns
-            runjob = RunJob(printer, scriptsdir, macrosdir, args)
-            runjob.nothreads = nothreads
-            runjob.forcedlooseness = forcedlooseness
-            runjob.doit(noview=noview)
-            if maxruns > 0:
-                args.runs = oldruns
-            return runjob
-        else:
-            return None
+    if doitfn is None:
+        def doit(printer, maxruns=0, noview=False, nothreads=False, forcedlooseness=None):
+            if not isLocked():
+                if maxruns > 0:
+                    oldruns = args.runs
+                    args.runs = maxruns
+                runjob = RunJob(printer, scriptsdir, macrosdir, args)
+                runjob.nothreads = nothreads
+                runjob.forcedlooseness = forcedlooseness
+                runjob.doit(noview=noview)
+                if maxruns > 0:
+                    args.runs = oldruns
+                return runjob
+            else:
+                return None
+    else:
+        def doit(printer, **kw):
+            return doitfn(printer, scriptsdir, macrosdir, args, **kw)
 
     if args.fontpath is not None:
         for p in args.fontpath:
@@ -303,6 +319,7 @@ def main():
     prjTree = ProjectList()
     for p in args.projects:
         prjTree.addTreedir(p)
+        log.debug(f"Adding project tree: {p}")
 
     if args.pid:
         project = prjTree.findProject(args.pid)
@@ -350,7 +367,7 @@ def main():
             else:
                 res = 0
         if args.action:
-            getattr(mainw, args.action)()
+            print(getattr(mainw, args.action)())
         print(f"{res=}")
         sys.exit(res)
     else:
@@ -382,6 +399,8 @@ def main():
             if args.pid:
                 mainw.setPrjid(args.pid, project.guid)
                 mainw.setConfigId(args.config or "Default")
+            else:
+                mainw.setFallbackProject()
             if args.define is not None:
                 for k, v in args.define.items():
                     mainw.set(k, v)
@@ -402,7 +421,7 @@ def main():
             loops += 1
         if loops >= 0:
             if savetreedirs:
-                prjTree.addToConfig(config)
+                mainw.prjTree.addToConfig(config)
             with open(conffile, "w", encoding="utf-8") as outf:
                 config.write(outf)
 

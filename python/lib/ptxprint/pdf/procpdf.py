@@ -5,7 +5,7 @@ from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, Indire
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from io import BytesIO as cStringIO
-import os, re
+import os, re, time
 import logging
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,9 @@ _unitpts = {
 }
 
 def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
+    res = {}
     opath = outfname.replace(".tex", ".prepress.pdf")
+    ext = None
     outpdfobj = None
     coverfile = None
     if kw.get('burst', False) or kw.get('cover', False):
@@ -53,6 +55,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
                 outpdf(bpdf, bpdfname)
             else:
                 fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
+            res[k] = bpdfname
         outpdfobj = PdfWriter(None, trailer=inpdf)
     colour = None
     params = {}
@@ -70,14 +73,18 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
         colour = ispdfxa.lower()
     if colour is not None:
         logger.debug(f"Fixing colour for {colour}")
+        if ext is None:
+            ext = "_"+colour
         try:
             outpdfobj = fixpdffile((outpdfobj._trailer if outpdfobj else opath), None,
                         colour=colour,
                         parlocs = outfname.replace(".tex", ".parlocs"), **params)
         except ValueError:
-            return False
+            return {}
     nums = int(kw.get('pgsperspread', 1))
     if nums > 1:
+        if ext is None:
+            ext = "_{}up".format(nums)
         psize = kw.get('sheetsize', "21omm, 297mm (A4)").split(",")
         paper = []
         for p in psize:
@@ -98,8 +105,10 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             print(e)
             doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                  title=_("Paper Size Error"), secondary=str(e), threaded=True)
-            return False
+            return {}
     if kw.get('inclsettings', False):
+        if ext is None:
+            ext = ""
         logger.debug("Adding settings to the pdf")
         zio = cStringIO()
         createSettingsZip(zio)
@@ -119,13 +128,20 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
         zio.close()
 
     if outpdfobj is not None:
+        if opath != pdffile:
+            if os.path.exists(opath):
+                try:
+                    if os.path.exists(pdffile):
+                        os.remove(pdffile)
+                    os.rename(opath, pdffile)
+                except (FileNotFoundError, PermissionError):
+                    pass
+        pdffile = pdffile.replace(".pdf", ext+".pdf")
+        if ext != "":
+            res[' Finished'] = pdffile
         outpdfobj.fname = pdffile
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
         outpdfobj.write()
-        try:
-            os.remove(opath)
-        except FileNotFound:
-            pass
-    return coverfile
+    return res
 

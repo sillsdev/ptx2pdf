@@ -1,0 +1,245 @@
+\id TST Test file
+\h small test file
+\global\IndentAtChaptertrue\global\IndentAfterHeadingfalse
+\c 1
+\s1 IndentAfterHeadingfalse
+\s2 IndentAtChaptertrue
+\p
+\v 1 This is normal text. 
+\p New par. Dolorem
+ad 
+\p New par. Ducimus quia ducimus
+minima aperiam ab saepe qui
+\c 2
+\p
+\v 2 This para runs into three lines. I wonder what happens. 
+\s3 A title
+\p
+\c 3
+\v 1 This para also runs into three lines, and follows a title. 
+\c 4
+\q1
+\v 3 New q1 para, 
+\q2 Reiciendis voluptatem ut qui ex officiis. 
+\q1 Qui a qui omnis....
+\p
+\global\IndentAtChapterfalse
+\p
+\s2 IndentAtChapterfalse 
+\p
+\c 5
+\p
+\v 1 This is normal text. 
+\p New par. Dolorem
+ad 
+\p New par. Ducimus quia ducimus
+minima aperiam ab saepe qui
+\c 6
+\p
+\v 2 This para runs into three lines. I wonder what happens. 
+\s3 A title
+\p
+\c 8
+\v 1 This para also runs into three lines, and follows a title. 
+\c 9
+\q1
+\v 3 New q1 para, 
+\q2 Reiciendis voluptatem ut qui ex officiis. 
+\q1 Qui a qui omnis....
+
+\global\IndentAtChaptertrue
+\global\IndentAfterHeadingtrue
+\c 1
+\s1 IndentAfterHeadingtrue
+\s2 IndentAtChaptertrue
+\p
+\v 1 This is normal text. 
+\p New par. Dolorem
+ad 
+\p New par. Ducimus quia ducimus
+minima aperiam ab saepe qui
+\c 2
+\p
+\v 2 This para runs into three lines. I wonder what happens. 
+\s3 A title
+\p
+\c 3
+\v 1 This para also runs into three lines, and follows a title. 
+\c 4
+\q1
+\v 3 New q1 para, 
+\q2 Reiciendis voluptatem ut qui ex officiis. 
+\q1 Qui a qui omnis....
+\p
+\global\IndentAtChapterfalse
+\p
+\s2 IndentAtChapterfalse 
+\p
+\c 5
+\p
+\v 1 This is normal text. 
+\p New par. Dolorem ad 
+\p New par. Ducimus quia ducimus
+minima aperiam ab saepe qui
+\c 6
+\p
+\v 2 This para runs into three lines. I wonder what happens. 
+\s3 A title
+\p
+\c 8
+\v 1 This para also runs into three lines, and follows a title. 
+\c 9
+\q1
+\v 3 New q1 para, 
+\q2 Reiciendis voluptatem ut qui ex officiis. 
+\q1 Qui a qui omnis....
+\p
+\s1 Version 4
+\p
+\vfour
+\global\IndentAtChaptertrue\global\IndentAfterHeadingfalse
+\c 1
+\s1 IndentAfterHeadingfalse
+\s2 IndentAtChaptertrue
+\p
+\v 1 This is normal text. 
+\p New par. Dolorem
+ad 
+\p New par. Ducimus quia ducimus
+minima aperiam ab saepe qui
+\c 2
+\p
+\v 2 This para runs into three lines. I wonder what happens. 
+\s3 A title
+\p
+\c 3
+\v 1 This para also runs into three lines, and follows a title. 
+\c 4
+\q1
+\v 3 New q1 para, 
+\q2 Reiciendis voluptatem ut qui ex officiis. 
+\q1 Qui a qui omnis....
+\p
+\global\IndentAtChapterfalse
+\p
+\s2 IndentAtChapterfalse 
+\p
+\SHOWSTUFF
+\c 5
+\p
+\v 1 This is normal text. 
+\p New par. Dolorem
+ad 
+\p New par. Ducimus quia ducimus
+minima aperiam ab saepe qui
+\c 6
+\p
+\v 2 This para runs into three lines. I wonder what happens. 
+\s3 A title
+\p
+\c 8
+\v 1 This para also runs into three lines, and follows a title. 
+\c 9
+\q1
+\v 3 New q1 para, 
+\q2 Reiciendis voluptatem ut qui ex officiis. 
+\q1 Qui a qui omnis....
+
+\s1 Version 4
+\p
+\global\IndentAtChaptertrue
+\global\IndentAfterHeadingtrue
+\c 1
+\s1 IndentAfterHeadingtrue
+\s2 IndentAtChaptertrue
+\p
+\v 1 This is normal text. 
+\p New par. Dolorem
+ad 
+\p New par. Ducimus quia ducimus
+minima aperiam ab saepe qui
+\c 2
+\p
+\v 2 This para runs into three lines. I wonder what happens. 
+\s3 A title
+\p
+\c 3
+\v 1 This para also runs into three lines, and follows a title. 
+\c 4
+\q1
+\v 4 New q1 para, 
+\q2 Reiciendis voluptatem ut qui ex officiis. 
+\q1 Qui a qui omnis....
+\p
+\global\IndentAtChapterfalse
+\p
+\s2 IndentAtChapterfalse 
+\p
+\SHOWSTUFF
+\c 5
+\p
+\v 1 This is normal text. 
+\p New par. Dolorem ad 
+\p New par. Ducimus quia ducimus
+minima aperiam ab saepe qui
+\c 6
+\p
+\v 2 This para runs into three lines. I wonder what happens. 
+\s3 A title
+\p
+\c 8
+\v 1 This para also runs into three lines, and follows a title. 
+\c 9
+\q1
+\v 3 New q1 para, 
+\q2 Reiciendis voluptatem ut qui ex officiis. 
+\q1 Qui a qui omnis....
+\p
+\fig What it looked like | src="pre-update.png" size="span" pgpos="h" border="All" \fig*
+\pb
+\vnormal
+
+\IndentAtChaptertrue
+\c 10
+\s1 IndentAtChaptertrue (Normal)
+\li1 Test line 1 li1
+\li1 Test line 2 li1
+\li1 Test line 3 li1
+\p
+\vnormal
+
+\IndentAtChapterfalse
+\c 11
+\s1 IndentAtChapterfalse (Normal)
+\li1 Test line 1 li1
+\li1 Test line 2 li1
+\li1 Test line 3 li1
+\p
+
+\vfour
+\IndentAtChaptertrue
+
+\c 12
+\s1 IndentAtChaptertrue (Version 4)
+\li1 Test line 1 li1
+\li1 Test line 2 li1
+\li1 Test line 3 li1
+\p
+
+\c 13
+\IndentAtChapterfalse
+\s1 IndentAtChapterfalse (Version 4)
+\li1 Test line 1 li1
+\li1 Test line 2 li1
+\li1 Test line 3 li1
+\p
+\fig What both li1 indents looked like before fixes | src="li_v4.png" size="col" scale="0.7" pgpos="h" border="All"\fig*
+\p
+\c 14 \ca 15\ca*
+\p This chapter number has an alternate
+\c 16
+\cl The 15th \ca (16th)\ca* Psalm
+\d And behold, working now!
+\cl Psalm
+\c 16 \ca 17\ca*
+\d What happens with a chapter line?

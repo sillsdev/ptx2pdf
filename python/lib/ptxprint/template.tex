@@ -132,6 +132,7 @@
 {document/ifshowchapternums}\OmitChapterNumbertrue
 \def\AfterChapterSpaceFactor{{{texpert/afterchapterspace}}}
 {document/ifshowversenums}\def\AfterVerseSpaceFactor{{{texpert/afterversespace}}}
+\OmitAllVersestrue {document/ifshowversenums}\OmitAllVersesfalse
 
 %%% Poetry - Hang Verse Numbers
 {document/hangpoetry}\catcode`\@=11
@@ -305,6 +306,7 @@
 %\snippets
 
 \exhyphenpenalty=\hyphenpenalty
+\ifversion{{6}}{{\newparnotestrue}}{{}} % From version6 onwards, we default to newparnotestrue
 
 {project/ifcolophon}\expandafter\def\csname bookend-final\endcsname{{
 {project/ifcolophon}\layoutstylebreak
@@ -346,7 +348,10 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
-\pageno={document/startpagenum}
+\ifdim \pagetotal>0pt \par\vfill\penalty-10000 \fi
+\catcode`\@=11 \need@oddpage{{\emptyoutput}}\catcode`\@=12
+\edef\oldpageno{{\the\pageno}}% Just in case the user wants it
+\ifnum\pageno<1 \pageno=1\fi
 {document/ifdiglot}\diglottrue
 \addtoendptxhooks{{\zautoBookEndDecoration}}
 % job files:

@@ -351,12 +351,12 @@ class StyleEditor:
             res.update({k:v for k, v in self.sheet.get(m, {}).items()})
         return res
 
-    def getval(self, mrk, key, default=None, baseonly=False):
-        if mrk not in self.sheet:
+    def getval(self, mrk, key, default=None, baseonly=False, includebase=False):
+        if not includebase and mrk not in self.sheet:
             return default
-        res = self.sheet[mrk].get(key.lower(), None) if not baseonly else None
+        res = self.sheet.get(mrk, {}).get(key.lower(), None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
-            res = self.basesheet[mrk].get(key.lower(), default) if mrk in self.basesheet else default
+            res = self.basesheet.get(mrk, {}).get(key.lower(), default) if mrk in self.basesheet else default
         logger.log(8, f"Getting {mrk=} {key=} {res=}")
         return res
 
@@ -452,7 +452,7 @@ class StyleEditor:
         return val
 
     def _eq_val(self, a, b, key=""):
-        if (b is None) ^ (a is None):
+        if (b is None) != (a is None):
             return False
         elif key.lower() in absolutes:
             fa = asFloatPts(self, str(a))
@@ -532,6 +532,20 @@ class StyleEditor:
                     continue
                 if nv != bv:
                     self.setval(m, k, nv)
+
+    def haschanged(self, mrk, styleonly=False):
+        res = []
+        keys = set([x for x in self.allValueKeys(mrk) if not x.startswith(" ")])
+        if styleonly:
+            keys.difference_update(set("name description occursunder rank textproperties".split()))
+        bs = self.basesheet.get(mrk, {})
+        ss = self.sheet.get(mrk, {})
+        for k in keys:
+            vb = bs.get(k, None)
+            vs = ss.get(k, None)
+            if vb != vs and vs is not None:
+                res.append(k)
+        return res
 
     def mergein(self, newse, force=False, exclfields=None):
         allstyles = self.allStyles()

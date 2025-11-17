@@ -1,7 +1,7 @@
 from xml.etree import ElementTree as et
 from ptxprint.usxutils import Usfm
 from hashlib import md5
-from ptxprint.reference import Reference
+from usfmtc.reference import Ref
 from usfmtc.usxmodel import iterusx
 import re, os
 import logging
@@ -64,7 +64,8 @@ class Interlinear:
             raise SyntaxError("Bad Reference {}".format(s))
 
     def replaceusx(self, doc, curref, lexemes, linelengths, mrk="wit"):
-        if curref[0] >= len(doc.chapters):
+        # breakpoint()
+        if curref[0] >= len(doc.chapters) - 1:
             return
         parindex = doc.chapters[curref[0]]
         lexemes.sort()
@@ -82,7 +83,7 @@ class Interlinear:
         for eloc, isin in iterusx(doc.getroot(), parindex=parindex, start=start, until=stop):
             if isin:
                 if basepos is None:
-                    basepos = doc.getroot()[0].pos if curref == (1, "0") else eloc.parent.pos
+                    basepos = doc.getroot()[0].pos if curref == (1, "0") else eloc.pos
                 if not eloc.text:
                     continue
                 spos = getattr(eloc, 'textpos', None)
@@ -99,11 +100,16 @@ class Interlinear:
         if basepos is None:
             return
         cpos = sum(linelengths[basepos.l:spos.l]) - basepos.c + spos.c + 1
-        t = eloc.text if isin else eloc.tail
-        parent = eloc if isin else eloc.parent
+        if isin:
+            t = eloc.text
+            parent = eloc
+            laste = eloc[0] if len(eloc) else None
+        else:
+            t = eloc.tail
+            parent = eloc.parent
+            laste = eloc
         cend = cpos + len(t)
         i = cpos
-        laste = eloc
         outt = None
         for l in ((lex[0][0], lex[0][1], lex[1]) for lex in lexemes if lex[0][0] >= cpos and lex[0][0] < cend):
             if l[0] >= i:
@@ -168,6 +174,6 @@ class Interlinear:
                                 notdones.add((curref[0], v))
                 elif event == "end" and e.tag == skipping:
                     skipping = None
-        self.fails.extend([Reference(bkid, a[0], a[1]) for a in notdones if a not in dones])
+        self.fails.extend([Ref(book=bkid, chapter=a[0], verse=a[1]) for a in notdones if a not in dones])
 
 

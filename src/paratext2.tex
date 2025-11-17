@@ -48,11 +48,20 @@
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
 
+% Version .999995 (and presumably lower) SEGVs with 
+% XeTeXinterwordspaceshaping=2 (apply shaping across word boundaries on
+% shipout), when a coloured font is stopped and restarted ( ... \em* \em ....) The work-around
+% prevents shaping in that case (by a kern0pt), and so probably has unwanted side-effects. 
+\newif\ifInterWordSpaceShapingBug \InterWordSpaceShapingBugtrue
+
 % Version .999992 (? or 3) changed pdfsavepos page position (+cur_h_offset) to use pdftex's definition (+473628)
 \def\XeTeXvcheck#1.#2\E{\message{This is xetex "#1" "#2"}\ifnum #2 > 999991
     \global\let\adjustpdfXsavepos\empty\else
     \gdef\adjustpdfXsavepos{\advance\dimen0 1in}%
     \gdef\adjustpdfYsavepos{\advance\dimen1 1in}%
+  \fi
+  \ifnum #2 > 999995 % Maybe it'll be fixed one day?
+    %\InterWordSpaceShapingBugfalse
   \fi
 }
 \x@\x@\x@\XeTeXvcheck\x@\the\x@\XeTeXversion\XeTeXrevision\E
@@ -115,15 +124,15 @@
 %+c_evenpage
 % Some things need to start on an odd-numbered page, others on an even numbered page
 \def\TPILB{}
-\def\tp@lbout{\pagecontents{\vfill\TPILB}\plainoutput}
+\def\tp@lbout{\def\pagecontents{\everypar{}\bgroup\vfill\TPILB\egroup}\plainoutput\let\pagecontents\empty}
 \def\zEmptyPage{\outemptyp@ge{\tp@lbout}}
-\def\outemptyp@ge#1{\message{Blank page for \the\pageno}\ifp@geone\temptrue\else\tempfalse\fi\bgroup\m@rksonpagefalse #1 \egroup\iftemp\global\p@geonetrue\fi}
+\def\outemptyp@ge#1{\message{Blank page for \the\totalp@ges}\ifp@geone\temptrue\else\tempfalse\fi\bgroup\m@rksonpagefalse #1 \egroup\iftemp\global\p@geonetrue\fi}
 \def\need@oddpage#1{\endgraf\ifodd\totalp@ges \outemptyp@ge{#1}\fi}
 \def\need@evenpage#1{\endgraf\ifodd\totalp@ges\else\outemptyp@ge{#1}\fi}
 \def\need@quadpage#1{\endgraf\ifodd\totalp@ges\else\outemptyp@ge{#1}\need@quadpage\fi \ifodd\numexpr \XeTeXpdfpagecount/2\relax \outemptyp@ge{#1}\outemptyp@ge{#1}\fi}
-\def\zNeedEvenPage{\need@evenpage{\tp@lbout}}
-\def\zNeedOddPage{\need@oddpage{\tp@lbout}}
-\def\zNeedQuadPage{\need@quadpage{\tp@lbout}}
+\def\zNeedEvenPage{\message{Even page wanted on \the\pageno}\need@evenpage{\tp@lbout}}
+\def\zNeedOddPage{\message{Odd page wanted on \the\pageno}\need@oddpage{\tp@lbout}}
+\def\zNeedQuadPage{\message{Quad page wanted on \the\pageno}\need@quadpage{\tp@lbout}}
 %-c_evenpage
 \def\ptxversion{0}
 \def\ifversion#1#2#3{\ifnum\ptxversion=0\relax #2\else
@@ -161,6 +170,7 @@
 \input ptx-labels.tex % \zlabel and friends
 \input ptx-output.tex % output routines
 \input ptx-plugins.tex % Load optional plugins based on contents of \pluginlist, if defined
+\input marginnotes
 %-c_imports
 
 %+c_fonts-basic
@@ -412,6 +422,10 @@
 \lccode"2011="2011
 \catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
 \catcode`\@=12
+
+% Other reserved characters:
+% "FDD0 - Remove interchar space
+\catcode"FDD0=11
 
 
 \def\asterisk{*}

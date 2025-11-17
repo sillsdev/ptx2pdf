@@ -247,7 +247,7 @@
     \ifx\ch@rfontextend\empty\else
      \m@kenumber{\ch@rfontextend}%
       \ifx\f@ntextend\empty\let\f@ntextend\@@result
-      \else 
+      \else
         \bgroup\dimen0=\f@ntextend pt\xdef\tmpv@l{\strip@pt{\dimexpr \@@result \dimen0\relax}}%
         \egroup
         \let\f@ntextend\tmpv@l
@@ -257,6 +257,21 @@
     \trace{sa}{using newch@rstyle (\newch@rstyle) at nesting (\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
+    \ifColorFonts
+      \ifInterWordSpaceShapingBug
+        \ifnum\XeTeXinterwordspaceshaping=0 \else 
+          \edef\newch@rfont{\fontname\font}%
+          \ifx\oldch@rfont\newch@rfont % So-far this (SEGV) bug has only been seen with . \em* \em ..., but *actually* compare font.
+            \ifcsname \styst@k h@scolour\endcsname
+              \trace{s}{Applying work-around for interwordspaceshaping bug(\newch@rstyle)}%
+              \kern0pt 
+            \else
+              \message{\styst@k\space has no colour}%
+            \fi % Work-around bug with colour and intercharwordspaceshaping
+          \fi
+        \fi
+      \fi
+    \fi
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
     \t@gstart{Span}{\newch@rstyle}%
@@ -481,7 +496,9 @@
   \b@xedstylefalse
   \getp@ram{raise}{#1}{#2}%
   \global\let\char@raise\p@ram
-  \ifx\p@ram\relax\else\ifdim\char@raise=0pt \else \b@xedstyletrue\fi\fi
+  \ifx\p@ram\relax\else
+     {\setbox0\hbox{\count255=\numexpr \p@ram}\ifdim\wd0>0pt \else \xdef\char@raise{\p@ram \FontSizeUnit}\fi}%
+     \ifdim\char@raise=0pt \else \b@xedstyletrue\fi\fi
      \ifb@ckgroundelsewhere\global\let\char@background\relax
       \b@ckgroundelsewherefalse
      \else
@@ -545,6 +562,7 @@
 %\lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \def\d@##1+##2+##3\E{\xdef\oldch@rstyle{##2}}\mctopnoms
+   \xdef\@ldch@rf@nt{\fontname\font}%
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \tempfalse
    \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
@@ -620,6 +638,7 @@
      \else \global\advance\p@ranesting by -1
      \fi
      \egroup % end the style's group, so formatting reverts             %(2)
+     \let\oldch@rfont\@ldch@rf@nt
      \let\newch@rstyle\@newch@rstyle
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
@@ -806,6 +825,7 @@
   \ifColorFonts\ifx\p@ram\relax\else
     \let\colp@ram\p@ram
     \x@\ParseColor\colp@ram\end
+    \x@\global\x@\let\csname #2h@scolour\endcsname\tr@e
     \temptrue % Apply here?
     \getp@ram{shadow}{#1}{#2}\ifx\p@ram\relax\else\tempfalse\fi
     \getp@ram{outline}{#1}{#2}\ifx\p@ram\relax\else\tempfalse\fi
@@ -828,9 +848,18 @@
     \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen0  %(+)
   \ifLogFonts
     \edef\f@ntl@gmsg{font<\f@ntstyle>=\typef@ce\space at \the \dimen0}%
-    \x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (page \the\pageno)}%
+    \ifb@xedstyle % a write node breaks word-by-word underlining and other boxedstyle things.
+      \x@\immediate\x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (at or after page \the\pageno)}%
+    \else
+      \x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (page \the\pageno)}%
+    \fi
   \fi
   \xdef\f@ntlist{\f@ntlist,\f@ntstyle}%
+  \x@\ifcsname \typef@ce _spacefactor\endcsname
+    \dimen0=\x@\csname \typef@ce _spacefactor\endcsname \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
+    \trace{F}{\typef@ce _spacefactor = \the\dimen0}%
+    \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname=\dimen0
+  \fi
   \ifx\SpaceStretchFactor\empty\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
     \x@\x@\fontdimen3\csname font<\f@ntstyle>\endcsname=\dimen0

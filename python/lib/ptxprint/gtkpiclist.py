@@ -35,6 +35,8 @@ _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "
                   "disabled", "cleardest", "key", "media", "x-xetex"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
+_sizekeys = {"P": "page", "F": "full", "c": "col", "s": "span"}
+
 _comblist = ['pgpos', 'hpos', 'nlines']
 _comblistcr = ['crVpos', 'crHpos']
 
@@ -145,6 +147,37 @@ class PicList:
         self.view.set_model(self.model)
         self.model.refilter()
 
+    def _loadrow(self, pic):
+        row = []
+        #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
+        defaultmedia = self.parent.readCopyrights().get(pic.get('src', '')[:2].lower(),
+            { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
+        for e in _piclistfields:
+            if e == 'key':
+                val = pic.key
+            elif e == "scale":
+                try:
+                    val = float(pic.get(e, 1)) * 100
+                except (ValueError, TypeError):
+                    val = 100.
+            elif e == 'cleardest':
+                val = False
+            elif e == "disabled":
+                val = pic.get(e, False)
+            elif e == 'captionR':
+                val = pic.get(e, pic.get('captionL', ""))
+            elif e == "media":
+                val = pic.get(e, None)
+                if val is None:
+                    val = self.parent.picMedia(pic.get('src', ''))[0]
+                else:
+                    limit = self.parent.picMedia(pic.get('src',''))[1]
+                    val = "".join(x for x in val if x in limit)
+            else:
+                val = pic.get(e, "")
+            row.append(val)
+        return row
+
     def load(self, picinfo, bks=None):
         self.loading = True
         self.picinfo = picinfo
@@ -156,34 +189,7 @@ class PicList:
             for v in sorted(picinfo.get_pics(), key=lambda x:refSort(x['anchor'])):
                 if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
-                row = []
-                #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
-                defaultmedia = self.parent.readCopyrights().get(v.get('src', '')[:2].lower(),
-                    { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
-                for e in _piclistfields:
-                    if e == 'key':
-                        val = v.key
-                    elif e == "scale":
-                        try:
-                            val = float(v.get(e, 1)) * 100
-                        except (ValueError, TypeError):
-                            val = 100.
-                    elif e == 'cleardest':
-                        val = False
-                    elif e == "disabled":
-                        val = v.get(e, False)
-                    elif e == 'captionR':
-                        val = v.get(e, v.get('captionL', ""))
-                    elif e == "media":
-                        val = v.get(e, None)
-                        if val is None:
-                            val = self.parent.picMedia(v.get('src', ''))[0]
-                        else:
-                            limit = self.parent.picMedia(v.get('src',''))[1]
-                            val = "".join(x for x in val if x in limit)
-                    else:
-                        val = v.get(e, "")
-                    row.append(val)
+                row = self._loadrow(v)
                 self.coremodel.append(row)
         #self.view.set_model(self.model)
         self.loading = False
@@ -272,13 +278,13 @@ class PicList:
         if not currow[_pickeys['pgpos']]:
             pgpos = ""
         else:
-            pgpos = re.sub(r'^([PF])([lcrio])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
+            pgpos = re.sub(r'^([PF])([lcrio])([tfb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         # self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             # print(j, k, v)
             if k == 'pgpos':
-                val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
+                val = pgpos[1:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
                 if currow[_pickeys['size']] == "span":
                     val = "-"
@@ -302,6 +308,9 @@ class PicList:
                 status = True if len(re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?", figname)) else False
                 self.builder.get_object('l_autoCopyAttrib').set_visible(status)
                 self.builder.get_object(v).set_visible(not status)
+            elif k == 'size':
+                val = pgpos[0:1] if pgpos[0:1] in "PF" else ("c" if any(x in pgpos for x in "rl") else "s")
+                val = _sizekeys.get(val, "span")
             else:
                 try:
                     val = currow[j]
@@ -389,6 +398,11 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblistcr)
         return res
 
+    def onPicframeSize(self, widget, allocation):
+        if allocation.width <= 1 or allocation.height <= 1:
+            return
+        self.picrect = allocation
+
     def item_changed(self, w, *a):
         key = a[-1]
         if self.loading: # and key not in ("src", ):
@@ -437,10 +451,10 @@ class PicList:
                         fpath = dat[0].get('path', None)
                         logger.debug(f"Figure Path={fpath}, {dat[0]}")
                     if fpath is not None and os.path.exists(fpath):
-                        if self.picrect is None:
-                            picframe = self.builder.get_object("fr_picPreview")
-                            self.picrect = picframe.get_allocation()
-                        if self.picrect.width > 10 and self.picrect.height > 10:
+                        if not self.parent._picframe_connected:
+                            self.parent.picframe.connect("size-allocate", self.onPicframeSize)
+                            self.parent._picframe_connected = True
+                        if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
                             try:
                                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                             except GLib.GError:
@@ -496,6 +510,7 @@ class PicList:
     def onResized(self):
         picframe = self.builder.get_object("fr_picPreview")
         self.picrect = picframe.get_allocation()
+        print(f"{self.picrect.width=} {self.picrect.height=}")
         self.item_changed(None, "src")
 
     def get_row_from_items(self):
@@ -505,7 +520,7 @@ class PicList:
         row[_piclistfields.index('pgpos')] = self.get_pgpos()
         return row
 
-    def add_row(self):
+    def add_row(self, pic=None):
         global newrowcounter
         model, sel = self.selection.get_selected_rows()
         #if sel is not None and len(sel):
@@ -513,12 +528,16 @@ class PicList:
         #if sel is not None and len(self.model) > 0:
         #    row = self.model[self.model.get_iter(sel)][:]
         #else:
-        row = self.get_row_from_items()
-        key = "row{}".format(newrowcounter)
+        if pic is None:
+            key = "row{}".format(newrowcounter)
+            newrowcounter += 1
+            row = self.get_row_from_items()
+        else:
+            key = pic.key
+            row = self._loadrow(pic)
         row[_pickeys['key']] = key
-        self.picinfo[key] = Picture()
-        logger.debug(f"{row[_pickeys['key']]}", sorted([k for k, v in self.picinfo.items()]))
-        newrowcounter += 1
+        self.picinfo[key] = pic or Picture()
+        logger.debug(f"{row[_pickeys['key']]}"+", ".join(sorted([k for k, v in self.picinfo.items()])))
         self.coremodel.append(row)
         self.select_row(len(self.model)-1)
         self.row_select(self.selection)

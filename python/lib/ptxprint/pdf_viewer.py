@@ -1,4 +1,4 @@
-import gi, os, datetime, ctypes
+import gi, os, datetime, ctypes, math, gc
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
@@ -6,11 +6,14 @@ import cairo, re, time, sys
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from ptxprint.utils import _, refSort, f2s, coltoonemax
+from ptxprint.view import VersionStr
+from ptxprint.utils import _, f2s, coltoonemax, getcaller
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
+from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
+from ptxprint.xdv.spacing_oddities import SpacingOddities
 from pathlib import Path
-from dataclasses import dataclass, InitVar, field
+from typing import Optional
 from threading import Timer
 import logging
 
@@ -109,9 +112,145 @@ def arrayImage(imarray, width, height):
 
 
 class PDFViewer:
-    def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
-        self.hbox = widget
+    boxcodes = {v: i for i, v in enumerate("""content cover diff manual""".split())}
+    boxnames = ["bx_previewPDF", "bx_previewCover", "bx_previewDiff", "bx_previewManual"]
+
+    def __init__(self, model, nbook, tv):
         self.model = model
+        self.nbook = nbook
+        self.lastpage = 0
+        nbook.connect("notify::page", self.onPageChanged)
+        self.viewers = []
+        for k in self.boxnames:
+            w = model.builder.get_object(k)
+            self.viewers.append(PDFContentViewer(model, w, tv) if k == "bx_previewPDF" else PDFFileViewer(model, w))
+        self.hide_unused()
+
+    def _currview(self):
+        curr = self.nbook.get_current_page()
+        return self.viewers[curr]
+
+    def __getattr__(self, name, default=None):
+        v = self._currview()
+        if hasattr(v, name):
+            return getattr(self._currview(), name)
+        v = self.__dict__.get('views', None)
+        if v is None or not len(v):
+            return default
+        if hasattr(self.__dict__['views'][0], name):
+            return getattr(self.__dict__['views'][0], name)
+        return default
+
+    def set(self, name, val):
+        v = self._currview()
+        # print(f"viewer page={self.nbook.get_current_page()}: {name}={val}")
+        if hasattr(v, name):
+            setattr(v, name, val)
+        elif hasattr(self.views[0], name):
+            setattr(self.views[0], name, val)
+        else:
+            raise AttributeError(f"No attribute {name} setting to {val}")
+
+    def onTabChange(self, p):
+        # called before the page is changed
+        self.lastpage = self.nbook.get_current_page()
+        
+    def selectTab(self, name):
+        i = self.boxcodes.get(name, None)
+        if i is not None and i < len(self.viewers) and self.viewers[i] is not None:
+            self.nbook.set_current_page(i)
+
+    def onPageChanged(self, widget, pspec):
+        # called after the page is changed
+        p = self.nbook.get_current_page()
+        page = self.viewers[p].current_index
+        self.model.set("t_pgNum", str(page), mod=False)
+        z = self.viewers[p].zoomLevel
+        self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
+        self.model.set_preview_pages(self.numpages, _("Pages:"))
+
+    def onmaximized(self):
+        c = self.nbook.get_current_page()
+        for i,p in enumerate(self.viewers):
+            p.set_zoom_fit_to_screen(c==i)
+
+    def loadnshow(self, fname, tab=None, extras={}, **kw):
+        fbits = os.path.splitext(fname) if fname is not None else None
+        if tab is None:
+            for i, a in enumerate(("{}{}", "{}_cover{}", "{}_diff{}")):
+                if fbits is not None:
+                    fpath = a.format(*fbits)
+                v = self.nbook.get_nth_page(i)
+                if fbits is not None and os.path.exists(fpath):
+                    self.viewers[i].loadnshow(fpath, i==self.nbook.get_current_page(), **kw)
+                    v.show()
+                    self.nbook.set_current_page(0)
+                else:
+                    v.hide()
+            for k, v in sorted(extras.items()):
+                n = k.strip()
+                if n not in self.boxcodes:
+                    i = len(self.boxcodes)
+                    self.boxcodes[n] = i
+                    self.boxnames.append("bx_preview{}".format(n))
+                    if i >= self.nbook.get_n_pages():
+                        b = Gtk.Box()
+                        b.set_halign(Gtk.Align.CENTER)
+                        b.set_valign(Gtk.Align.CENTER)
+                        b.set_hexpand(True)
+                        b.set_vexpand(True)
+                        sc = Gtk.ScrolledWindow()
+                        sc.set_shadow_type(Gtk.ShadowType.IN)
+                        sc.set_propagate_natural_height(True)
+                        sc.get_style_context().add_class("graybox")
+                        sc.add_with_viewport(b)
+                        tab = Gtk.Label(n)
+                        tab.set_angle(270)
+                        self.viewers.append(PDFFileViewer(self.model, b, alloc=self.nbook.get_nth_page(0).get_allocation()))
+                        self.nbook.append_page(sc, tab)
+                else:
+                    i = self.boxcodes[n]
+                self.viewers[i].loadnshow(v, i==self.nbook.get_current_page(), **kw)
+                t = self.nbook.get_nth_page(i)
+                t.show()
+        elif fname is not None and os.path.exists(fname):
+            i = self.boxcodes[tab]
+            v = self.nbook.get_nth_page(i)
+            self.viewers[i].loadnshow(fname, i==self.nbook.get_current_page(), **kw)
+            v.show()
+            self.nbook.set_current_page(i)
+        self.hide_unused()
+
+    def hide_unused(self):
+        for i in range(1, self.nbook.get_n_pages()):
+            if i >= len(self.viewers) or self.viewers[i].document is None:
+                v = self.nbook.get_nth_page(i)
+                v.hide()
+
+    def clear(self, widget=None, view=None, remove=False):
+        if view is None:
+            viewIDs = range(len(self.viewers))
+        else:
+            viewIDs = [self.boxcodes.get(view, None)]
+        for i in viewIDs:
+            if i is None:
+                continue
+            v = self.viewers[i]
+            if v is not None:
+                v.clear(widget=widget)
+                if remove:
+                    t = self.nbook.get_nth_page(i)
+                    t.hide()
+        gc.collect()
+
+    def settingsChanged(self):
+        self.viewers[0].settingsChanged()
+
+
+class PDFFileViewer:
+    def __init__(self, model, widget, alloc=None): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
+        self.hbox = widget
+        self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
         self.sw.connect("button-press-event", self.on_button_press)
         self.sw.connect("button-release-event", self.on_button_release)
@@ -120,36 +259,21 @@ class PDFViewer:
         
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
-        self.toctv = tv
-        self.cr = Gtk.CellRendererText()
-        tvc = Gtk.TreeViewColumn("Title", self.cr, text=0)
-        self.toctv.append_column(tvc)
-        self.toctv.connect("row-activated", self.pickToc)
         self.numpages = 0
         self.document = None
+        self.fname = None
         self.current_page = None    # current folio page number
         self.current_index = None   # current pdf page index starts at 1
         self.zoomLevel = 1.0        # Initial zoom level is 100%
         self.old_zoom = 1.0
-        self.spread_mode = self.model.get("c_bkView", False)
-        self.parlocs = None
+        self.spread_mode = False    # self.model.get("c_bkView", False)
         self.psize = (0, 0)
-        # self.drag_start_x = None
-        # self.drag_start_y = None
-        self.is_dragging = False
-        self.adjlist = None
-        self.timer = None
-        self.showadjustments = True
         self.piczoom = 85
-        self.showguides = False
-        self.showgrid = False
-        self.showrects = False # self.model.get("c_pdfadjoverlay", False)
-        self.ufCurrIndex = 0
-        self.currpref = None
-        self.timer_id = None  # Stores the timer reference
-        self.last_click_time = 0  # Timestamp of the last right-click
-        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
-        
+        self.rtl_mode = False
+        self.widget = None
+        self.timer = None
+        self.is_dragging = False
+
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
         self.hbox.add_events(Gdk.EventMask.SCROLL_MASK | Gdk.EventMask.BUTTON_PRESS_MASK)
@@ -158,21 +282,9 @@ class PDFViewer:
         self.hbox.connect("key-press-event", self.on_key_press_event)
         self.hbox.connect("scroll-event", self.on_scroll_event)
         self.hbox.set_can_focus(True)  # Ensure the widget can receive keyboard focus
-
-        # This may end up in page rendering code. Just collect data for now
-        display = Gdk.Display.get_default()
-        screen = display.get_default_screen()
-        window = screen.get_root_window()
-        scale = window.get_scale_factor()
-        logger.debug(f"Window scaling = {scale}")
-
-    def setShowAdjOverlay(self, val):
-        self.showadjustments = val
-        self.show_pdf()
-
-    def setShowParaBoxes(self, val):
-        self.showrects = val
-        self.show_pdf()
+        if alloc is not None:
+            self.sw.set_allocation(alloc)
+            self.hbox.set_allocation(alloc)
 
     def create_boxes(self, num):
         boxes = self.hbox.get_children()
@@ -197,7 +309,7 @@ class PDFViewer:
                     self.hbox.pack_start(event_box, False, False, 1)
                 boxes.append(event_box)
 
-    def update_boxes(self, images):
+    def update_boxes(self, images, index=0):
         self.hbox.hide()
         children = self.hbox.get_children()
         for i,c in enumerate(children):
@@ -212,11 +324,525 @@ class PDFViewer:
         self.hbox.show()
         self.hbox.grab_focus()
 
-    def load_pdf(self, pdf_path, adjlist=None, isdiglot=False):
+    def load_pdf(self, pdf_path, **kw):
+        if pdf_path is not None and os.path.exists(pdf_path):
+            logger.debug(f"Loading pdf: {pdf_path}")
+            file_uri = Path(pdf_path).as_uri()
+            try:
+                self.document = Poppler.Document.new_from_file(file_uri, None)
+                self.numpages = self.document.get_n_pages()
+            except Exception as e:
+                self.model.doStatus(_("Error opening PDF: ").format(e))
+                self.document = None
+                return False
+            self.hbox.show()
+        else:
+            self.hbox.hide()
+        return True
+
+    def show_pdf(self, cpage=None, rtl=False, setpnum=True):
+        """ cpage is a index (1 based) """
+        if self.document is None:
+            self.clear()
+            return
+        if cpage is None:
+            cpage = self.current_index or 1
+        page = cpage
+        images = []
+        if cpage in range(self.numpages+1):
+            self.create_boxes(1)
+            pg = self.document.get_page(cpage-1)
+            self.psize = pg.get_size()
+            images.append(render_page_image(pg, self.zoomLevel, cpage, []))
+        else:
+            pg = None
+
+        self.current_page = page
+        self.current_index = cpage
+        if setpnum and str(page) != self.model.get("t_pgNum"):
+            self.model.set("t_pgNum", str(page), mod=False)
+        self.update_boxes(images)
+        self.updatePageNavigation()
+        return pg
+
+    def loadnshow(self, fname, iscurrent, rtl=False, widget=None, page=None, hook=None, **kw):
+        self.rtl_mode = rtl
+        if fname is None:
+            fname = self.fname
+        else:
+            self.fname = fname
+        if fname is None:
+            return False
+        if not self.load_pdf(fname, **kw):
+            return False
+        if hook is not None:
+            hook(self)
+        self.show_pdf(rtl=rtl)
+        pdft = os.stat(fname).st_mtime
+        mod_time = datetime.datetime.fromtimestamp(pdft)
+        formatted_time = mod_time.strftime("   %d-%b %H:%M")
+        if widget is None:
+            widget = self.widget
+        self.widget = widget
+        # if widget is not None:
+        #    widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
+        self.model.set_preview_pages(self.numpages, _("Pages:"))
+        self.widget.show_all()
+        self.set_zoom_fit_to_screen(iscurrent)
+        self.updatePageNavigation()
+        return True
+
+    def clear(self, widget=None):
+        self.create_boxes(0)
+        self.document = None
+        if widget is not None:
+            widget.set_title(_("PDF Preview {}").format(VersionStr))
+
+    def minmaxnumpages(self):
+        rmin = 0
+        rmax = self.document.get_n_pages() if self.document else 0
+        return (rmin, rmax, rmax)
+
+    def getpnum(self, n, d):
+        return n
+
+    def closestpnum(self, pg):
+        return pg
+
+    def seekUFpage(self, direction):
+        pass
+
+    def set_zoom(self, zoomLevel, scrolled=False, setz=True):
+        if math.fabs(zoomLevel - self.zoomLevel) < 0.01:
+            return
+        if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
+            self.zoomLevel = zoomLevel
+            self.model.set("s_pdfZoomLevel", str(int(zoomLevel * 100)), mod=False)
+        self.old_zoom = self.zoomLevel
+        self.zoomLevel = zoomLevel
+        width, height = self.psize
+        width, height = int(width * self.zoomLevel), int(height * self.zoomLevel)
+
+        children = self.hbox.get_children()
+        if not len(children):
+            return self.show_pdf()
+
+        if scrolled:
+            images = []
+            for i,c in enumerate(children):
+                im = c.get_children()[0]
+                pbuf = im.get_pixbuf()
+                np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+                nim = Gtk.Image.new_from_pixbuf(np)
+                images.append(nim)
+            self.update_boxes(images)
+
+        def redraw():
+            self.show_pdf()
+            self.timer = None
+
+        if self.timer is not None:
+            GLib.source_remove(self.timer)
+        if scrolled:
+            self.timer = GLib.timeout_add(300, redraw)
+        else:
+            self.show_pdf()
+
+    def on_scroll_parent_event(self, widget, event):
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+        if ctrl_pressed:
+            return False 
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, _, z = event.get_scroll_deltas()
+            if z < 0:
+                self.set_page(self.swap4rtl("previous"))
+            elif z > 0:
+                self.set_page(self.swap4rtl("next"))
+        elif event.direction == Gdk.ScrollDirection.UP:
+            self.set_page(self.swap4rtl("previous"))
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            self.set_page(self.swap4rtl("next"))
+        return True
+
+    def on_scroll_event(self, widget, event):
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+
+        if ctrl_pressed:  # Zooming with Ctrl + Scroll
+            zoom_in = event.direction == Gdk.ScrollDirection.UP
+            zoom_out = event.direction == Gdk.ScrollDirection.DOWN
+
+            # Get mouse position relative to the widget
+            mouse_x, mouse_y = event.x, event.y
+            posn = self.widgetPosition(widget) # 0=left page; 1=right page
+
+            if zoom_in:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
+            elif zoom_out:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=False)
+
+            return True  # Prevent further handling of the scroll event
+
+        # Get the parent scrolled window and its adjustments
+        scrolled_window = self.hbox.get_parent()
+        v_adjustment = scrolled_window.get_vadjustment()
+        if v_adjustment.get_upper() > v_adjustment.get_page_size():
+            return False # v_adjustment is active
+        else:
+            # Default behavior: Scroll for navigation
+            if event.direction == Gdk.ScrollDirection.UP:
+                self.set_page(self.swap4rtl("previous"))
+            elif event.direction == Gdk.ScrollDirection.DOWN:
+                self.set_page(self.swap4rtl("next"))
+            return True
+
+        return False
+
+    def widgetPosition(self, widget):
+        children = self.hbox.get_children()
+        for index, child in enumerate(children):
+            if child == widget:
+                return index  # Return the position (index) of the widget
+        return -1  # If widget is not found, return -1
+
+    def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
+        self.old_zoom = self.zoomLevel
+        zoomLevel = (min(self.zoomLevel * 1.1, 8.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
+        scale_factor = zoomLevel / self.old_zoom
+
+        self.set_zoom(zoomLevel, scrolled=True)
+        scrolled_window = self.hbox.get_parent()
+        h_adjustment = scrolled_window.get_hadjustment()
+        v_adjustment = scrolled_window.get_vadjustment()
+        h_value = h_adjustment.get_value() if h_adjustment else 0
+        v_value = v_adjustment.get_value() if v_adjustment else 0
+
+        hbox_width  = self.hbox.get_allocated_width()
+        page_width  = hbox_width / 2 if self.spread_mode else hbox_width
+        page_offset = (posn * page_width)
+        
+        new_h_value = (scale_factor - 1) * (mouse_x + page_offset) + h_value 
+        new_v_value = (scale_factor - 1) *  mouse_y                + v_value
+        h_adjustment.set_upper(h_adjustment.get_upper() * scale_factor)
+        v_adjustment.set_upper(v_adjustment.get_upper() * scale_factor)
+        h_adjustment.set_value(new_h_value)
+        v_adjustment.set_value(new_v_value)
+
+        # Redraw the canvas with the updated zoom level
+
+    # Handle keyboard shortcuts for navigation
+    def on_key_press_event(self, widget, event):
+        keyval = event.keyval
+        state = event.state
+        # Check if Control key is pressed
+        ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
+
+        if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
+            self.set_page(self.swap4rtl("first"))
+            return True
+        elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
+            self.set_page(self.swap4rtl("last"))
+            return True
+        elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
+            self.set_page(self.swap4rtl("next"))
+            return True
+        elif keyval == Gdk.KEY_Page_Up:  # Page Up (Previous page/spread)
+            self.set_page(self.swap4rtl("previous"))
+            return True
+        elif ctrl and keyval in {Gdk.KEY_equal, Gdk.KEY_plus}:  # Ctrl+Plus (Zoom In)
+            self.on_zoom_in(widget)
+            return True
+        elif ctrl and keyval in {Gdk.KEY_minus, Gdk.KEY_underscore}:  # Ctrl+Minus (Zoom Out)
+            self.on_zoom_out(widget)
+            return True
+        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
+            self.on_reset_zoom(widget)
+            return True
+        elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
+            self.set_zoom(1.0)
+            return True
+        elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
+            self.set_zoom_fit_to_screen(True)
+            self.show_pdf()  # Redraw the current page
+            return True
+        elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
+            self.set_page(self.swap4rtl("next"))
+            return True
+        elif keyval == Gdk.KEY_Left:  # Left arrow → Previous page
+            self.set_page(self.swap4rtl("previous"))
+            return True
+            
+    def updatePageNavigation(self):
+        """Update button sensitivity and tooltips dynamically based on the current index."""
+        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
+        pg = self.current_index or 1
+        num_pages = self.numpages
+
+        # Enable or disable navigation buttons based on position
+        if is_rtl:
+            self.model.builder.get_object("btn_page_first").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_previous").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_last").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_next").set_sensitive(pg > 1)
+        else:
+            self.model.builder.get_object("btn_page_first").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_previous").set_sensitive(pg > 1)
+            self.model.builder.get_object("btn_page_last").set_sensitive(pg < num_pages)
+            self.model.builder.get_object("btn_page_next").set_sensitive(pg < num_pages)
+
+        seekPrevBtn = self.model.builder.get_object("btn_seekPage2fill_previous")
+        seekNextBtn = self.model.builder.get_object("btn_seekPage2fill_next")
+        seekPrevBtn.set_sensitive(False)
+        seekNextBtn.set_sensitive(False)
+
+    def on_button_press(self, widget, event):
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
+            self.on_update_pdf(None)
+            return
+        if event.button == 2:
+            self.is_dragging = True
+            self.mouse_start_x = event.x_root
+            self.mouse_start_y = event.y_root
+            return True
+
+    def on_mouse_motion(self, widget, event):
+        if self.is_dragging:
+            mh = (self.mouse_start_x - event.x_root)
+            mv = (self.mouse_start_y - event.y_root)
+            self.mouse_start_x = event.x_root
+            self.mouse_start_y = event.y_root
+            self.swh.set_value(self.swh.get_value() + mh)
+            self.swv.set_value(self.swv.get_value() + mv)
+            return True
+
+    def on_button_release(self, widget, event):
+        if event.button == 2:   # middle click
+            self.is_dragging = False
+        if event.button == 3:  # Right-click (for context menu)
+            self.show_context_menu(widget, event)
+        return True
+
+    def show_context_menu(self, widget, event):
+        pass
+
+    # Zoom functionality
+    def on_zoom_in(self, widget):
+        if self.zoomLevel < 2.0:
+            zoomLevel = (1.2 * self.zoomLevel)  # Increase zoom by 20% of current level
+        elif self.zoomLevel < 5.0:
+            zoomLevel = (1.5 * self.zoomLevel)  # Increase zoom by 50% of current level
+        elif self.zoomLevel < 8.0:
+            zoomLevel = min(self.zoomLevel * 2, 8.0)  # Double zoom, cap at 8.0
+        else:
+            zoomLevel = 8.0  # Ensure max zoom is 8.0
+        self.set_zoom(zoomLevel)
+
+    def on_reset_zoom(self, widget):
+        self.set_zoom(1.0)
+
+    def on_zoom_out(self, widget):
+        min_zoom = 0.3  # Set a minimum zoom level of 30%
+        if self.zoomLevel > 5.0:
+            zoomLevel = max(self.zoomLevel / 2, 5.0)  # Halve zoom, cap at 5.0
+        elif self.zoomLevel > 2.0:
+            zoomLevel = (0.5 * self.zoomLevel)  # Decrease zoom by 50% of current level
+        elif self.zoomLevel > min_zoom:
+            zoomLevel = (0.8 * self.zoomLevel)  # Decrease zoom by 20% of current level
+            if self.zoomLevel < min_zoom:
+                zoomLevel = min_zoom  # Prevent going below 0.3
+        else:
+            zoomLevel = min_zoom  # Ensure minimum zoom is 0.3
+        self.set_zoom(zoomLevel)
+
+    def on_window_size_allocate(self, widget, allocation):
+        if self.current_page is None:
+            return
+        self.set_zoom_fit_to_screen(False)
+
+    def set_zoom_fit_to_screen(self, iscurrent):
+        if not hasattr(self, "document") or self.document is None or self.current_page is None:
+            return
+        page = self.document.get_page(self.current_page - 1)
+        try:
+            page_width, page_height = page.get_size()
+        except AttributeError:
+            return
+        if page_width < 10 or page_height < 10:
+            return
+        parent_widget = self.hbox.get_parent() # .get_parent()
+        if parent_widget is not None:
+            alloc = parent_widget.get_allocation()
+            scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
+            scale_y = (alloc.height + 0) / page_height
+            self.set_zoom(min(scale_x, scale_y), setz=iscurrent)
+
+    def set_page(self, action):
+        if self.current_index is None:
+            return
+        increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
+        pg = min(self.current_index, self.numpages)
+        try:
+            if action == self.swap4rtl("first"):
+                pg = 1
+            elif action == self.swap4rtl("last"):
+                pg = self.numpages
+            elif action == self.swap4rtl("next"):
+                pg = min(pg + increment, self.numpages)
+            elif action == self.swap4rtl("previous"):
+                pg = max(pg - increment, 1)
+            else:
+                logger.error(f"Unknown action: {action}")
+                return
+        except IndexError:
+            pg = 1
+        logger.debug(f"page {pg=} {self.current_page=}")
+        self.show_pdf(pg)
+    
+    def swap4rtl(self, action):
+        # Only swap the buttons for RTL if we're NOT in Arabic UI mode
+        if (self.rtl_mode or False) and self.model.lang != 'ar_SA':
+            if action == _('first'):
+                return _('last')
+            elif action == _('last'):
+                return _('first')
+            elif action == _('next'):
+                return _('previous')
+            elif action == _('previous'):
+                return _('next')
+            else:
+                return action
+        else:
+            return action
+
+    def print_document(self, fitToPage=False):
+        if not hasattr(self, 'document') or self.document is None:
+            return
+        self.fitToPage = fitToPage
+        print_op = Gtk.PrintOperation()
+        if self.model.userconfig.has_section('printer'):
+            settings = print_op.get_print_settings()
+            if settings is not None and settings.get("printer") == self.model.userconfig.get("printer", "printer"):
+                for k, v in self.model.userconfig.items('printer'):
+                    settings.set(k, v)
+                print_op.set_print_settings(settings)
+        print_op.set_n_pages(self.numpages)
+        print_op.connect("draw_page", self.on_draw_page)
+
+        try:
+            result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
+        except Exception as e:
+            self.model.doStatus(_("An error occurred while printing: ").format(e))
+        if result == Gtk.PrintOperationResult.APPLY:
+            self.model.doStatus(_("Print job sent to printer."))
+            if not self.model.userconfig.has_section("printer"):
+                self.model.userconfig.add_section("printer")
+            settings = print_op.get_print_settings()
+            settings.foreach(self._saveSetting)
+        else:
+            self.model.doStatus(_("Print job canceled or failed."))
+
+    def on_draw_page(self, operation, context, page_number):
+        if not getattr(self, 'document', None):
+            return
+
+        pdf_page = self.document.get_page(page_number)
+
+        cairo_context = context.get_cairo_context()
+        cairo_context.save()
+        cairo_context.set_source_rgb(1, 1, 1)
+        cairo_context.paint()
+
+        pdf_width, pdf_height = pdf_page.get_size()
+        paper_width = context.get_width()
+        paper_height = context.get_height()
+
+        dpi_x = context.get_dpi_x()
+        dpi_y = context.get_dpi_y()
+        scale_x = dpi_x / 72  # Convert from PDF points per inch to printer DPI
+        scale_y = dpi_y / 72
+        scale = min(scale_x, scale_y)
+
+        offset_x = (paper_width - pdf_width * scale) / 2
+        offset_y = (paper_height - pdf_height * scale) / 2
+        cairo_context.translate(offset_x, offset_y)
+        cairo_context.scale(scale, scale)
+
+        pdf_page.render(cairo_context)
+        cairo_context.restore()
+
+    def _saveSetting(self, key, value):
+        self.model.userconfig.set('printer', key, value)
+
+
+class PDFContentViewer(PDFFileViewer):
+
+    def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
+        super().__init__(model, widget)
+        self.toctv = tv
+        self.cr = Gtk.CellRendererText()
+        tvc = Gtk.TreeViewColumn("Title", self.cr, text=0)
+        self.toctv.append_column(tvc)
+        self.toctv.connect("row-activated", self.pickToc)
+        self.parlocfile = None
+        self.parlocs = None
+        self.widget = None
+        # self.drag_start_x = None
+        # self.drag_start_y = None
+        self.adjlist = None
+        self.showadjustments = True
+        self.showguides = False
+        self.showgrid = False
+        self.showrects = False # self.model.get("c_pdfadjoverlay", False)
+        self.showanalysis = False
+        self.spacethreshold = 0
+        self.charthreshold = 0
+        self.ufCurrIndex = 0
+        self.currpref = None
+        self.timer_id = None  # Stores the timer reference
+        self.last_click_time = 0  # Timestamp of the last right-click
+        self.linespacing = float(self.model.get("s_linespacing", "12"))
+        self.collisionpages = []
+        self.spacepages = []
+        self.riverpages = []
+        
+        # This may end up in page rendering code. Just collect data for now
+        display = Gdk.Display.get_default()
+        screen = display.get_default_screen()
+        window = screen.get_root_window()
+        scale = window.get_scale_factor()
+        logger.debug(f"Window scaling = {scale}")
+
+    def setShowAdjOverlay(self, val):
+        self.showadjustments = val
+        self.show_pdf()
+
+    def setShowParaBoxes(self, val):
+        self.showrects = val
+        self.show_pdf()
+
+    def setShowAnalysis(self, val, threshold):
+        self.showanalysis = val
+        self.spacethreshold = threshold
+        if self.showanalysis:
+            self.loadnshow(None, True, page=self.current_page)
+        self.show_pdf()
+
+    def settingsChanged(self):
         self.shrinkStep = int(self.model.get('s_shrinktextstep', 2))
         self.expandStep = int(self.model.get('s_expandtextstep', 3))
         self.shrinkLimit = int(self.model.get('s_shrinktextlimit', 90))
         self.expandLimit = int(self.model.get('s_expandtextlimit', 110))
+        self.riverparms = {
+            'max_v_gap': float(self.model.get("s_rivergap", 0.4)),
+            'min_h': float(self.model.get('s_riverminwidth', 0.5)),
+            'min_overlap': float(self.model.get('s_riveroverlap', 0.4)),
+            'minmax_h': float(self.model.get('s_riverminmaxwidth', 1)),
+            'total_width': float(self.model.get("s_riverthreshold", 3)),
+        }
+        self.spacethreshold = float(self.model.get("s_spaceEms", 3.0))
+        self.charthreshold = float(self.model.get("s_charSpaceEms", 0))
+
+    def load_pdf(self, pdf_path, adjlist=None, isdiglot=False, **kw):
+        self.settingsChanged()
         
         self.isdiglot = isdiglot
         if pdf_path is None or not os.path.exists(pdf_path):
@@ -224,6 +850,7 @@ class PDFViewer:
             return False
 
         file_uri = Path(pdf_path).as_uri()
+        self.fname = pdf_path
         try:
             self.document = Poppler.Document.new_from_file(file_uri, None)
             self.numpages = self.document.get_n_pages()
@@ -277,7 +904,7 @@ class PDFViewer:
 
         # Expand nodes conditionally based on top-level count
         num_top_level_nodes = self._count_top_level_nodes(res)
-        if num_top_level_nodes < 8:
+        if num_top_level_nodes == 1:
             self._expand_all_nodes(treeview, res)
 
         return res
@@ -311,10 +938,7 @@ class PDFViewer:
             return
         if cpage is None:
             cpage = self.current_index or self.parlocs.pnums.get(1, 1) if self.parlocs is not None else 1
-        if self.model.get("fcb_pagesPerSpread", "1") != "1":
-            self.spread_mode = False
-        else:
-            self.spread_mode = self.model.get("c_bkView", False)
+        self.spread_mode = self.model.get("c_bkView", False)
         # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
         if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
             page = self.parlocs.pnumorder[cpage - 1]
@@ -331,17 +955,13 @@ class PDFViewer:
             layerfns.append(self.add_hints)
         if self.showrects:
             layerfns.append(self._draw_rectangles)
+        if self.showanalysis:
+            layerfns.append(self._draw_spaces)
+            layerfns.append(self._draw_collisions)
+            layerfns.append(self._draw_whitespace_rivers)
         
         images = []
-        if self.model.isCoverTabOpen():
-            cpage = 1
-            self.create_boxes(1)
-            pg = self.document.get_page(0)
-            self.model.set("t_pgNum", str(page), mod=False)
-            self.psize = pg.get_size()
-            images.append(render_page_image(pg, self.zoomLevel, cpage, layerfns))
-            self.parlocs.load_page(self.document, pg, cpage)
-        elif self.spread_mode:
+        if self.spread_mode:
             spread = self.get_spread(cpage, self.rtl_mode)
             self.create_boxes(len(spread))
             for i in spread:
@@ -359,7 +979,7 @@ class PDFViewer:
 
         self.current_page = page
         self.current_index = cpage
-        if setpnum:
+        if setpnum and str(page) != self.model.get("t_pgNum"):
             self.model.set("t_pgNum", str(page), mod=False)
         self.update_boxes(images)
         self.updatePageNavigation()
@@ -511,6 +1131,43 @@ class PDFViewer:
         for p, r in self.parlocs.getParas(pnum):
             make_rect(r, 1)
 
+    def _draw_spaces(self, page, pnum, context, zoomlevel):
+        def make_rect(x, y, width, col=(0.2, 0.7, 0.8, 0.5), height=6):
+            context.set_source_rgba(*col)
+            context.rectangle(x, y - height, width, height)
+            context.fill()
+        threshold = self.spacethreshold
+        if threshold == 0:
+            if not hasattr(self, 'badspaces'):
+                self.badspaces = self.parlocs.getnbadspaces()
+            if len(self.badspaces):
+                self.model.set("s_spaceEms", self.badspaces[0].widthem)
+            for s in self.badspaces:
+                if s.pnum == pnum:
+                    make_rect(*s.pos, s.width)
+        else:
+            for s in self.parlocs.getbadspaces(pnum, threshold, self.charthreshold if self.model.get('c_letterSpacing', False) else 0.):
+                make_rect(*s.pos, s.width)
+
+    def _draw_collisions(self, page, pnum, context, zoomlevel):
+        def make_rect(r, col=(1.0, 0, 0.2, 0.6)):
+            context.set_source_rgba(*col)
+            context.rectangle(*r)
+            context.fill()
+
+        for c in self.parlocs.getcollisions(pnum):
+            make_rect(c)
+            
+    def _draw_whitespace_rivers(self, page, pnum, context, zoomlevel):
+        def make_rect(r, col=(1, 1, 0.1, 0.4)):
+            context.set_source_rgba(*col)
+            context.rectangle(*r)
+            context.fill()
+            
+        for r in self.parlocs.getrivers(pnum, **self.riverparms):
+            for s in r.spaces:
+                make_rect(s)
+
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):
         """ page is a page index"""
@@ -585,196 +1242,57 @@ class PDFViewer:
             elif info[1] != 100:
                 make_rect(context, orange, r, twidth)
 
-    def loadnshow(self, fname, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False):
-        self.rtl_mode = rtl
-        if fname is None:
+    def loadnshow(self, fname, iscurrent, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
+        def plocs(self):
+            self.load_parlocs(self.parlocfile, rtl=rtl)
+            if page is not None and page in self.parlocs.pnums:
+                self.current_page = page
+                self.current_index = self.parlocs.pnums[page]
+        if parlocs is None:
+            parlocs = self.parlocfile
+        if parlocs is not None:
+            self.parlocfile = parlocs
+        if not super().loadnshow(fname, iscurrent, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
-        if not self.load_pdf(fname, adjlist=adjlist, isdiglot=isdiglot):
-            return False
-        self.load_parlocs(parlocs, rtl=rtl)
-        if page is not None and page in self.parlocs.pnums:
-            self.current_page = page
-            self.current_index = self.parlocs.pnums[page]
-        self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b %H:%M")
-        widget.set_title(_("PDF Preview:") + " " + os.path.basename(fname) + formatted_time)
-        self.oneUp = self.model.get("fcb_pagesPerSpread", "1") == "1"
-        self.model.set_preview_pages(self.numpages, _("Pages:") if self.oneUp else _("Spreads:"))
-        widget.show_all()
-        self.set_zoom_fit_to_screen(None)
-        self.updatePageNavigation()
-        self.model.currentPDFpath = fname
+        if widget is not None:
+            widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
+        self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
     def clear(self, widget=None):
-        self.create_boxes(0)
-        self.document = None
+        super().clear(widget=widget)
         m = self.toctv.get_model()
         if m:
             m.clear()
-        if widget is not None:
-            widget.set_title(_("PDF Preview:"))
         self.model.set_preview_pages(None)
-
-    def set_zoom(self, zoomLevel, scrolled=False, setz=True):
-        if zoomLevel == self.zoomLevel:
-            return
-        if setz and self.model.get("s_pdfZoomLevel") != str(int(zoomLevel * 100)):
-            self.model.set("s_pdfZoomLevel", zoomLevel*100, mod=False)
-            return
-        self.old_zoom = self.zoomLevel
-        self.zoomLevel = zoomLevel
-        width, height = self.psize
-        width, height = int(width * self.zoomLevel), int(height * self.zoomLevel)
-
-        children = self.hbox.get_children()
-        if not len(children):
-            return self.show_pdf()
-
-        if scrolled:
-            images = []
-            for i,c in enumerate(children):
-                im = c.get_children()[0]
-                pbuf = im.get_pixbuf()
-                np = pbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-                nim = Gtk.Image.new_from_pixbuf(np)
-                images.append(nim)
-            self.update_boxes(images)
-
-        def redraw():
-            GLib.idle_add(self.show_pdf)
-        if self.timer is not None:
-            self.timer.cancel()
-        if scrolled:
-            self.timer = Timer(0.3, redraw)
-            self.timer.start()
-        else:
-            redraw()
 
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(fname, rtl=rtl)
         self.parlocs.load_dests(self.document)
+        if self.showanalysis:
+            self.load_analysis(fname)
 
-    def on_scroll_parent_event(self, widget, event):
-        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
-        if ctrl_pressed:
-            return False 
-        if event.direction == Gdk.ScrollDirection.SMOOTH:
-            _, _, z = event.get_scroll_deltas()
-            if z < 0:
-                self.set_page(self.swap4rtl("previous"))
-            elif z > 0:
-                self.set_page(self.swap4rtl("next"))
-        elif event.direction == Gdk.ScrollDirection.UP:
-            self.set_page(self.swap4rtl("previous"))
-        elif event.direction == Gdk.ScrollDirection.DOWN:
-            self.set_page(self.swap4rtl("next"))
-        return True
+    def load_analysis(self, fname):
+        xdvname = fname.replace(".parlocs", ".xdv")
+        print(f"Reading {xdvname}")
+        cthreshold = float(self.model.get("s_paddingwidth", 0.5))
+        xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
+                                    fontsize=float(self.model.get("s_fontsize", 1)))
+        for (opcode, data) in xdvreader.parse():
+            pass
+        if self.spacethreshold == 0:
+            self.badspaces = self.parlocs.getnbadspaces()
+            if len(self.badspaces):
+                self.model.set("s_spaceEms", self.badspaces[0].widthem)
+        wanted = 7
+        self.spacepages, self.collisionpages, self.riverpages = \
+            self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
+                    float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
 
-    def on_scroll_event(self, widget, event):
-        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
-
-        if ctrl_pressed:  # Zooming with Ctrl + Scroll
-            zoom_in = event.direction == Gdk.ScrollDirection.UP
-            zoom_out = event.direction == Gdk.ScrollDirection.DOWN
-
-            # Get mouse position relative to the widget
-            mouse_x, mouse_y = event.x, event.y
-            posn = self.widgetPosition(widget) # 0=left page; 1=right page
-
-            if zoom_in:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
-            elif zoom_out:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=False)
-
-            return True  # Prevent further handling of the scroll event
-
-        # Get the parent scrolled window and its adjustments
-        scrolled_window = self.hbox.get_parent()
-        v_adjustment = scrolled_window.get_vadjustment()
-        if v_adjustment.get_upper() > v_adjustment.get_page_size():
-            return False # v_adjustment is active
-        else:
-            # Default behavior: Scroll for navigation
-            if event.direction == Gdk.ScrollDirection.UP:
-                self.set_page(self.swap4rtl("previous"))
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                self.set_page(self.swap4rtl("next"))
-            return True
-
-        return False
-
-    def widgetPosition(self, widget):
-        children = self.hbox.get_children()
-        for index, child in enumerate(children):
-            if child == widget:
-                return index  # Return the position (index) of the widget
-        return -1  # If widget is not found, return -1
-
-    def zoom_at_point(self, mouse_x, mouse_y, posn, zoom_in):
-        self.old_zoom = self.zoomLevel
-        zoomLevel = (min(self.zoomLevel * 1.1, 8.0) if zoom_in else max(self.zoomLevel * 0.9, 0.3))
-        scale_factor = zoomLevel / self.old_zoom
-
-        self.set_zoom(zoomLevel, scrolled=True)
-        scrolled_window = self.hbox.get_parent()
-        h_adjustment = scrolled_window.get_hadjustment()
-        v_adjustment = scrolled_window.get_vadjustment()
-        h_value = h_adjustment.get_value() if h_adjustment else 0
-        v_value = v_adjustment.get_value() if v_adjustment else 0
-
-        hbox_width  = self.hbox.get_allocated_width()
-        page_width  = hbox_width / 2 if self.spread_mode else hbox_width
-        page_offset = (posn * page_width)
-        
-        new_h_value = (scale_factor - 1) * (mouse_x + page_offset) + h_value 
-        new_v_value = (scale_factor - 1) *  mouse_y                + v_value
-        h_adjustment.set_upper(h_adjustment.get_upper() * scale_factor)
-        v_adjustment.set_upper(v_adjustment.get_upper() * scale_factor)
-        h_adjustment.set_value(new_h_value)
-        v_adjustment.set_value(new_v_value)
-
-        # Redraw the canvas with the updated zoom level
-
-    # Handle keyboard shortcuts for navigation
-    def on_key_press_event(self, widget, event):
-        keyval = event.keyval
-        state = event.state
-        # Check if Control key is pressed
-        ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
-
-        if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
-            self.set_page(self.swap4rtl("first"))
-            return True
-        elif ctrl and keyval == Gdk.KEY_End:  # Ctrl+End (Go to last page)
-            self.set_page(self.swap4rtl("last"))
-            return True
-        elif keyval == Gdk.KEY_Page_Down:  # Page Down (Next page/spread)
-            self.set_page(self.swap4rtl("next"))
-            return True
-        elif keyval == Gdk.KEY_Page_Up:  # Page Up (Previous page/spread)
-            self.set_page(self.swap4rtl("previous"))
-            return True
-        elif ctrl and keyval in {Gdk.KEY_equal, Gdk.KEY_plus}:  # Ctrl+Plus (Zoom In)
-            self.on_zoom_in(widget)
-            return True
-        elif ctrl and keyval in {Gdk.KEY_minus, Gdk.KEY_underscore}:  # Ctrl+Minus (Zoom Out)
-            self.on_zoom_out(widget)
-            return True
-        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
-            self.on_reset_zoom(widget)
-            return True
-        elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
-            self.set_zoom(1.0)
-            return True
-        elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
-            self.set_zoom_fit_to_screen(None)
-            self.show_pdf()  # Redraw the current page
-            return True
-            
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
         logger.debug(f"get_spread({page}, {rtl=})")
@@ -791,7 +1309,7 @@ class PDFViewer:
 
     def seekUFpage(self, direction):
         pages = self.numpages
-        if not pages or not self.model.ufPages:
+        if not pages or not self.all_pages:
             return
         pgnum = self.current_index
         try:
@@ -801,138 +1319,158 @@ class PDFViewer:
             current_pg = 1
         if direction == self.swap4rtl('next'):
             next_page = None
-            for pg in self.model.ufPages:
+            for pg in self.all_pages:
                 if pg > current_pg:
                     next_page = pg
                     break
             if next_page:
-                self.ufCurrIndex = self.model.ufPages.index(next_page) 
+                self.ufCurrIndex = self.all_pages.index(next_page)
         else:  # 'previous'
             prev_page = None
-            for pg in reversed(self.model.ufPages):
+            for pg in reversed(self.all_pages):
                 if pg < current_pg:
                     prev_page = pg
                     break
             if prev_page:
-                self.ufCurrIndex = self.model.ufPages.index(prev_page)
-        pg = self.model.ufPages[self.ufCurrIndex]
+                self.ufCurrIndex = self.all_pages.index(prev_page)
+        pg = self.all_pages[self.ufCurrIndex]
         pnum = self.parlocs.pnums.get(pg, pg) if self.parlocs is not None else pg
         self.show_pdf(pnum)
-
+        
     def updatePageNavigation(self):
-        """Update button sensitivity and tooltips dynamically based on the current index."""
-        # Get current page index and total pages
+        super().updatePageNavigation()
+
+        self.all_pages = []
         pg = self.current_index or 1
-        num_pages = self.numpages 
-        ufPages = self.model.ufPages
-        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
-
-        # Get page number mapping
         pnumpg = self.parlocs.pnumorder[pg - 1] if self.parlocs and pg <= len(self.parlocs.pnumorder) else 1
-
-        # Enable or disable navigation buttons based on position
-        if is_rtl:
-            self.model.builder.get_object("btn_page_first").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_previous").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_last").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_next").set_sensitive(pg > 1)
-        else:
-            self.model.builder.get_object("btn_page_first").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_previous").set_sensitive(pg > 1)
-            self.model.builder.get_object("btn_page_last").set_sensitive(pg < num_pages)
-            self.model.builder.get_object("btn_page_next").set_sensitive(pg < num_pages)
+        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
+        num_pages = self.numpages
 
         seekPrevBtn = self.model.builder.get_object("btn_seekPage2fill_previous")
         seekNextBtn = self.model.builder.get_object("btn_seekPage2fill_next")
-        seekPrevBtn.set_sensitive(False)
-        seekNextBtn.set_sensitive(False)
+        if not self.model.get('c_layoutAnalysis', False):
+            ufPages         = self.model.ufPages or []
+            collisionPages  = []
+            horizWhitespace = []
+            vertRivers      = []
+        else:
+            ufPages         = self.model.ufPages or [] if self.model.get('c_findUnbalanced', False) else []
+            collisionPages  = self.collisionpages      if self.model.get('c_findCollisions', False) else []
+            horizWhitespace = self.spacepages          if self.model.get('c_findWhitespace', False) else []
+            vertRivers      = self.riverpages          if self.model.get('c_findRivers',     False) else []
 
-        total_count = len(ufPages)
+        # Merge lists in order with uniqueness
+        for lst in [ufPages, collisionPages, horizWhitespace, vertRivers]:
+            for p in lst:
+                if p not in self.all_pages:
+                    self.all_pages.append(p)
+        self.all_pages = sorted(self.all_pages)
+        
+        total_count = len(self.all_pages)
         self.model.builder.get_object("bx_seekPage").set_sensitive(total_count > 0)
-        for btn in ['btn_page_first', 'btn_page_previous', 'btn_page_next', 'btn_page_last', 
-                    'btn_seekPage2fill_previous', 'btn_seekPage2fill_next']:
+
+        for btn in [
+            "btn_page_first", "btn_page_previous", "btn_page_next", "btn_page_last",
+            "btn_seekPage2fill_previous", "btn_seekPage2fill_next"
+        ]:
             action = btn.split("_")[-1]
             o = self.model.builder.get_object(btn)
-            tt = o.get_tooltip_text()
+
             if not 'seekPage' in btn:
+                # Update navigation tooltips for normal page buttons
+                tt = o.get_tooltip_text()
                 o.set_tooltip_text(re.sub(action.title(), self.swap4rtl(action).title(), tt))
+                continue
+
+            # "Seek" buttons — build multi-color tooltip
+            if total_count < 1:
+                seekText = _("Locate {} issue page.{}(None identified)").format(self.swap4rtl(action), "\n")
             else:
-                if total_count < 1:
-                    seekText = _("Show {} underfilled page.{}(None identified)").format(self.swap4rtl(action), "\n")
+                curr_pos = 0
+                if pnumpg in self.all_pages:
+                    curr_pos = self.all_pages.index(pnumpg)
+
+                locatefirstPage = self.all_pages[0]
+                locatelastPage  = self.all_pages[-1]
+
+                if is_rtl:  # Fix later to include Arabic UI detection
+                    hide_prev = pnumpg >= locatelastPage or pnumpg == num_pages
+                    hide_next = pnumpg <= locatefirstPage or pnumpg == 1
                 else:
-                    curr_pos = self.ufCurrIndex
-                    firstUFpg = ufPages[0]
-                    lastUFpg = ufPages[-1]
+                    hide_prev = pnumpg <= locatefirstPage or pnumpg == 1
+                    hide_next = pnumpg >= locatelastPage or pnumpg == num_pages
 
-                    if is_rtl:  # Fix later to include Arabic UI detection
-                        hide_prev = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
-                        hide_next = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-                    else:
-                        hide_prev = pnumpg <= firstUFpg or pnumpg == 1 or not self.oneUp
-                        hide_next = pnumpg >= lastUFpg or pnumpg == num_pages or not self.oneUp
+                seekPrevBtn.set_sensitive(not hide_prev)
+                seekNextBtn.set_sensitive(not hide_next)
 
-                    seekPrevBtn.set_sensitive(not hide_prev)
-                    seekNextBtn.set_sensitive(not hide_next)
+                window_size = 5  # Show 3 numbers before and after the current one
 
-                    window_size = 3  # Show 3 numbers before and after the current one
+                # Determine which pages to display
+                if total_count <= 12:
+                    display_pages = self.all_pages
+                    elipsis = ""
+                else:
+                    start_idx = max(0, curr_pos - window_size)
+                    end_idx   = min(total_count, curr_pos + window_size + 1)
+                    display_pages = self.all_pages[start_idx:end_idx]
+                    elipsis = f" (of {total_count})"
+                    if start_idx > 0:
+                        display_pages.insert(0, "...")
+                    if end_idx < total_count:
+                        display_pages.append("...")
 
-                    # --- If there are fewer than 7 pages, show all without ellipses ---
-                    if total_count <= 7:
-                        formatted_pages = list(map(str, ufPages))
-                        formatted_pages[curr_pos] = f"<{formatted_pages[curr_pos]}>"
-                        pgs = "  ".join(formatted_pages)
-                        elipsis = ""  # No "(of X)" when all numbers are shown
-                    else:
-                        # Determine sliding window bounds
-                        start_idx = max(0, curr_pos - window_size)
-                        end_idx = min(total_count, curr_pos + window_size + 1)
-                        display_pages = ufPages[start_idx:end_idx]
+                # Color-code pages
+                formatted_pages = []
+                for p in display_pages:
+                    if p == "...":
+                        formatted_pages.append("...")
+                        continue
+                    if p in collisionPages:
+                        text = f"<span foreground='red'><b>{p}</b></span>"
+                    elif p in horizWhitespace and p in vertRivers:
+                        text = f"<span foreground='lightgreen'><b>{p}</b></span>"
+                    elif p in horizWhitespace:
+                        text = f"<span foreground='lightblue'><b>{p}</b></span>"
+                    elif p in vertRivers:
+                        text = f"<span foreground='yellow'><b>{p}</b></span>"
+                    else: # if p in ufPages:
+                        text = f"<b>{p}</b>"
 
-                        # Format pages with marker `<number>`
-                        formatted_pages = list(map(str, display_pages))
-                        formatted_pages[display_pages.index(ufPages[curr_pos])] = f"<{formatted_pages[display_pages.index(ufPages[curr_pos])]}>" 
+                    # Mark current page with <>
+                    if p == pnumpg:
+                        text = f"&lt;{text}&gt;"
 
-                        # Add leading/trailing ellipses when necessary
-                        if start_idx > 0:
-                            formatted_pages.insert(0, "...")
-                        if end_idx < total_count:
-                            formatted_pages.append("...")
+                    formatted_pages.append(text)
 
-                        pgs = "  ".join(formatted_pages)
-                        elipsis = f" (of {total_count})"  # Show count only when ellipses are present
+                # RTL handling
+                if is_rtl or self.model.lang == 'ar_SA':
+                    formatted_pages = list(reversed(formatted_pages))
 
-                    if is_rtl or self.model.lang == 'ar_SA':
-                        pgs = "  ".join(reversed(pgs.split("  ")))  # Reverse order of numbers in RTL mode
+                pgs = "  ".join(formatted_pages)
+                seekText = _("Locate {} issue page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
+            # Use markup so colors are shown
+            o.set_tooltip_markup(seekText)
 
-                    seekText = _("Show {} underfilled page.").format(self.swap4rtl(action)) + "\n" + pgs + elipsis
-                o.set_tooltip_text(seekText)
-        
-    def on_button_press(self, widget, event):
-        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
-            self.on_update_pdf(None)
-            return
-        if event.button == 2:
-            self.is_dragging = True
-            self.mouse_start_x = event.x_root
-            self.mouse_start_y = event.y_root
-            return True
+    def minmaxnumpages(self):
+        if self.parlocs is None or not len(self.parlocs.pnums):
+            return super().minmaxnumpages()
+        minPg = min(self.parlocs.pnums)
+        last_key = list(self.parlocs.pnums.keys())[-1]
+        numpg = len(self.parlocs.pnums)
+        return (minPg, last_key, numpg)
 
-    def on_mouse_motion(self, widget, event):
-        if self.is_dragging:
-            mh = (self.mouse_start_x - event.x_root)
-            mv = (self.mouse_start_y - event.y_root)
-            self.mouse_start_x = event.x_root
-            self.mouse_start_y = event.y_root
-            self.swh.set_value(self.swh.get_value() + mh)
-            self.swv.set_value(self.swv.get_value() + mv)
-            return True
+    def getpnum(self, n, d):
+        if self.parlocs is not None:
+            return self.parlocs.pnums.get(self.current_page, d)
+        else:
+            return n
 
-    def on_button_release(self, widget, event):
-        if event.button == 2:   # middle click
-            self.is_dragging = False
-        if event.button == 3:  # Right-click (for context menu)
-            self.show_context_menu(widget, event)
-        return True
+    def closestpnum(self, pg):
+        if self.parlocs is not None:
+            available_pnums = self.parlocs.pnums.keys()
+            if len(available_pnums) and pg not in available_pnums:
+                pg = min(available_pnums, key=lambda p: abs(p - pg))
+        return pg
 
     def get_parloc(self, widget, event):
         x = event.x / self.zoomLevel
@@ -948,7 +1486,7 @@ class PDFViewer:
         a = self.hbox.get_allocation()
 
         if self.parlocs is not None:
-            p, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
+            p, r, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
         return p, pnum, a
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
@@ -964,6 +1502,30 @@ class PDFViewer:
         menu.append(res)
         return res
 
+    def hitPrint(self):
+        """ Delayed execution of print with a N-second debounce timer. """
+        if self.model.get("c_updatePDF"):
+            now = time.time()
+            self.last_click_time = now
+            if self.timer_id:
+                GLib.source_remove(self.timer_id)  # Cancel previous timer if it exists
+            # Schedule a delayed execution, but check timestamp before running
+            self.timer_id = GLib.timeout_add(self.autoUpdateDelay * 1000, self.executePrint)
+
+    def executePrint(self):
+        """ Actually triggers print only if no new clicks happened in the last N seconds. """
+        self.timer_id = None  # Reset timer reference
+        # If the last click was within the last N seconds, cancel execution
+        if time.time() - self.last_click_time < self.autoUpdateDelay:
+            return False  # Do nothing, just stop the timer
+        self.model.onOK(None)
+        self.updatePageNavigation()
+        return False
+
+    def on_update_pdf(self, x): # From middle-button click
+        self.model.onOK(None)
+        self.updatePageNavigation()
+
     def addSubMenuItem(self, parent_menu, label, submenu):
         menu_item = Gtk.MenuItem(label=label)  # Create a menu item for the parent
         menu_item.set_submenu(submenu)         # Attach the submenu
@@ -973,7 +1535,10 @@ class PDFViewer:
     def clear_menu(self, menu):
         for child in menu.get_children():
             child.destroy()
-
+            
+    def menuFitToScreen(self, x):
+        self.set_zoom_fit_to_screen(True)
+        
     def show_context_menu(self, widget, event):
         self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         self.last_click_time = time.time()
@@ -983,23 +1548,17 @@ class PDFViewer:
         
         info = []
         parref = None
-        if not self.oneUp:  # self.oneUp is disabled
-            self.addMenuItem(menu, _("Context Menu Disabled!")+"\n"+ \
-                                   _("Turn off Booklet pagination")+"\n"+ \
-                                   _("on Finishing tab to re-enable"), None, sensitivity=False)
-        else:
-            parref, pgindx, annot = self.get_parloc(widget, event)
-            if isinstance(parref, ParInfo):
-                parnum = getattr(parref, 'parnum', 0) or 0
-                parnum = "["+str(parnum)+"]" if parnum > 1 else ""
-                ref = parref.ref
-                self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
-                if self.adjlist is not None:
-                    info = self.adjlist.getinfo(ref + parnum, insert=True)
-            logger.debug(f"{event.x=},{event.y=}")
+        parref, pgindx, annot = self.get_parloc(widget, event)
+        if isinstance(parref, ParInfo):
+            parnum = getattr(parref, 'parnum', 0) or 0
+            parnum = "["+str(parnum)+"]" if parnum > 1 else ""
+            ref = parref.ref
+            self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
+            if self.adjlist is not None:
+                info = self.adjlist.getinfo(ref + parnum, insert=True)
+        logger.debug(f"{event.x=},{event.y=}")
 
-        if len(info) and re.search(r'[.:]', parref.ref) and \
-            self.model.get("fcb_pagesPerSpread", "1") == "1": # don't allow when 2-up or 4-up is enabled!
+        if len(info) and re.search(r'[.:]', parref.ref):
             if ref[3:4] in "LRABCDEFG":
                 pref = ref[3:4]
                 o = 4
@@ -1053,7 +1612,7 @@ class PDFViewer:
                 self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
 
             # self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.set_zoom_fit_to_screen)
+            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen)
             if not self.model.get("c_updatePDF"):
                 # self.addMenuItem(menu, None, None)
                 self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
@@ -1268,7 +1827,7 @@ class PDFViewer:
             mpgnum = self.model.notebooks['Main'].index("tb_Pictures")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.model.builder.get_object("nbk_PicList").set_current_page(1)
-            self.model.builder.get_object("ptxprint").present()
+            self.model.mainapp.win.present()
             self.model.wiggleCurrentTabLabel()
             treeview = self.model.builder.get_object("tv_picListEdit")
             model = treeview.get_model()
@@ -1372,30 +1931,6 @@ class PDFViewer:
         self.show_pdf()
         self.hitPrint()
 
-    def hitPrint(self):
-        """ Delayed execution of print with a N-second debounce timer. """
-        if self.model.get("c_updatePDF"):
-            now = time.time()
-            self.last_click_time = now
-            if self.timer_id:
-                GLib.source_remove(self.timer_id)  # Cancel previous timer if it exists
-            # Schedule a delayed execution, but check timestamp before running
-            self.timer_id = GLib.timeout_add(self.autoUpdateDelay * 1000, self.executePrint)
-
-    def executePrint(self):
-        """ Actually triggers print only if no new clicks happened in the last N seconds. """
-        self.timer_id = None  # Reset timer reference
-        # If the last click was within the last N seconds, cancel execution
-        if time.time() - self.last_click_time < self.autoUpdateDelay:
-            return False  # Do nothing, just stop the timer
-        self.model.onOK(None)
-        self.updatePageNavigation()
-        return False
-
-    def on_update_pdf(self, x): # From middle-button click
-        self.model.onOK(None)
-        self.updatePageNavigation()
-
     def edit_style(self, widget, a):
         (mkr, pref) = a
         if pref != self.currpref:
@@ -1408,14 +1943,14 @@ class PDFViewer:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
             self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.model.builder.get_object("ptxprint").present()
+            self.model.mainapp.win.present()
             self.model.wiggleCurrentTabLabel()
         
     def edit_fig_style(self, widget):
         self.model.styleEditor.selectMarker('fig')
         mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
         self.model.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.model.builder.get_object("ptxprint").present()
+        self.model.mainapp.win.present()
         self.model.wiggleCurrentTabLabel()
         
     def cleanRef(self, reference):
@@ -1445,7 +1980,7 @@ class PDFViewer:
                 winreg.CloseKey(key)
                 logger.debug(f"Set Scr Ref in registry to: {vref}")
         except WindowsError as e:
-            logger.debug(f"Error: {e} while tryint to set ref in registry")
+            logger.debug(f"Error: {e} while trying to set ref in registry")
             return
 
         # Load user32.dll
@@ -1473,597 +2008,4 @@ class PDFViewer:
         if not success:
             raise ctypes.WinError(ctypes.get_last_error())
         logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
-            
-    # Zoom functionality
-    def on_zoom_in(self, widget):
-        if self.zoomLevel < 2.0:
-            zoomLevel = (1.2 * self.zoomLevel)  # Increase zoom by 20% of current level
-        elif self.zoomLevel < 5.0:
-            zoomLevel = (1.5 * self.zoomLevel)  # Increase zoom by 50% of current level
-        elif self.zoomLevel < 8.0:
-            zoomLevel = min(self.zoomLevel * 2, 8.0)  # Double zoom, cap at 8.0
-        else:
-            zoomLevel = 8.0  # Ensure max zoom is 8.0
-        self.set_zoom(zoomLevel)
-
-    def on_reset_zoom(self, widget):
-        self.set_zoom(1.0)
-
-    def on_zoom_out(self, widget):
-        min_zoom = 0.3  # Set a minimum zoom level of 30%
-        if self.zoomLevel > 5.0:
-            zoomLevel = max(self.zoomLevel / 2, 5.0)  # Halve zoom, cap at 5.0
-        elif self.zoomLevel > 2.0:
-            zoomLevel = (0.5 * self.zoomLevel)  # Decrease zoom by 50% of current level
-        elif self.zoomLevel > min_zoom:
-            zoomLevel = (0.8 * self.zoomLevel)  # Decrease zoom by 20% of current level
-            if self.zoomLevel < min_zoom:
-                zoomLevel = min_zoom  # Prevent going below 0.3
-        else:
-            zoomLevel = min_zoom  # Ensure minimum zoom is 0.3
-        self.set_zoom(zoomLevel)
-
-    def on_window_size_allocate(self, widget, allocation):
-        if self.current_page is None:
-            return
-        self.set_zoom_fit_to_screen(None)
-
-    def set_zoom_fit_to_screen(self, x):
-        if not hasattr(self, "document") or self.document is None or self.current_page is None:
-            return
-        page = self.document.get_page(self.current_page - 1)
-        try:
-            page_width, page_height = page.get_size()
-        except AttributeError:
-            return
-
-        parent_widget = self.hbox.get_parent() # .get_parent()
-        if parent_widget is not None:
-            alloc = parent_widget.get_allocation()
-            scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
-            scale_y = (alloc.height + 0) / page_height
-            self.set_zoom(min(scale_x, scale_y))
-
-    def set_page(self, action):
-        increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
-        canmap = self.parlocs.pnumorder is not None and len(self.parlocs.pnumorder) > 0 \
-                    and self.numpages == len(self.parlocs.pnumorder)
-        # print(f"{canmap=}  {cpage=}       {action}  RTL:{self.swap4rtl(action)}")
-        # Safeguard against invalid cpage or empty pnumorder
-        pg = self.current_index
-        try:
-            if action == self.swap4rtl("first"):
-                pg = 1
-            elif action == self.swap4rtl("last"):
-                pg = self.numpages
-            elif action == self.swap4rtl("next"):
-                pg = min(pg + increment, self.numpages)
-            elif action == self.swap4rtl("previous"):
-                pg = max(pg - increment, 1)
-            else:
-                logger.error(f"Unknown action: {action}")
-                return
-        except IndexError:
-            # print(f"FAILED with IndexError in set_page. {action=}  {increment=}  {cpage=}  {pg=}  {canmap=}")
-            pg = 1
-        logger.debug(f"page {pg=} {self.current_page=}")
-        self.show_pdf(pg)
-    
-    def swap4rtl(self, action):
-        # Only swap the buttons for RTL if we're NOT in Arabic UI mode
-        if (self.rtl_mode or False) and self.model.lang != 'ar_SA':
-            if action == _('first'):
-                return _('last')
-            elif action == _('last'):
-                return _('first')
-            elif action == _('next'):
-                return _('previous')
-            elif action == _('previous'):
-                return _('next')
-            else:
-                return action
-        else:
-            return action
-
-    def _saveSetting(self, key, value):
-        self.model.userconfig.set('printer', key, value)
-
-    def print_document(self, fitToPage=False):
-        if not hasattr(self, 'document') or self.document is None:
-            return
-        self.fitToPage = fitToPage
-        print_op = Gtk.PrintOperation()
-        if self.model.userconfig.has_section('printer'):
-            settings = print_op.get_print_settings()
-            if settings is not None and settings.get("printer") == self.model.userconfig.get("printer", "printer"):
-                for k, v in self.model.userconfig.items('printer'):
-                    settings.set(k, v)
-                print_op.set_print_settings(settings)
-        print_op.set_n_pages(self.numpages)
-        print_op.connect("draw_page", self.on_draw_page)
-
-        try:
-            result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
-        except Exception as e:
-            self.model.doStatus(_("An error occurred while printing: ").format(e))
-        if result == Gtk.PrintOperationResult.APPLY:
-            self.model.doStatus(_("Print job sent to printer."))
-            if not self.model.userconfig.has_section("printer"):
-                self.model.userconfig.add_section("printer")
-            settings = print_op.get_print_settings()
-            settings.foreach(self._saveSetting)
-        else:
-            self.model.doStatus(_("Print job canceled or failed."))
-
-    def on_draw_page(self, operation, context, page_number):
-        if not getattr(self, 'document', None):
-            return
-
-        pdf_page = self.document.get_page(page_number)
-
-        cairo_context = context.get_cairo_context()
-        cairo_context.save()
-        cairo_context.set_source_rgb(1, 1, 1)
-        cairo_context.paint()
-
-        pdf_width, pdf_height = pdf_page.get_size()
-        paper_width = context.get_width()
-        paper_height = context.get_height()
-
-        dpi_x = context.get_dpi_x()
-        dpi_y = context.get_dpi_y()
-        scale_x = dpi_x / 72  # Convert from PDF points per inch to printer DPI
-        scale_y = dpi_y / 72
-        scale = min(scale_x, scale_y)
-
-        offset_x = (paper_width - pdf_width * scale) / 2
-        offset_y = (paper_height - pdf_height * scale) / 2
-        cairo_context.translate(offset_x, offset_y)
-        cairo_context.scale(scale, scale)
-
-        pdf_page.render(cairo_context)
-
-        cairo_context.restore()
-
-def readpts(s):
-    s = re.sub(r"(?:\s*(?:plus|minus)\s+[-\d.]+\s*(?:pt|in|sp|em))+$", "", s)
-    if s.endswith("pt"):
-        return float(s[:-2])
-    elif s.endswith("in"):
-        return float(s[:-2]) * 72
-    elif s.endswith("sp"):
-        return float(s[:-2]) / 65536.
-    else:
-        try:
-            return float(s) / 65536.
-        except ValueError:
-            return 0
-
-@dataclass
-class ParRect:
-    pagenum:    int
-    xstart:     float
-    ystart:     float       # Usually > yend
-    xend:       float = 0.
-    yend:       float = 0.
-    dests:      InitVar[None] = None
-    lastdest:   InitVar[None] = None
-    firstdest:  InitVar[None] = None
-    
-    def __str__(self):
-        return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
-
-    def __repr__(self):
-        return self.__str__()
-
-    def get_dest(self, x, y, baseline):
-        if self.dests is None or baseline is None:
-            return None
-        ydiff = None
-        xdiff = None
-        curra = None
-        for a in self.dests:
-            logger.log(5, f"Testing ({x}, {y}) against {a}")
-            if a[1][1] > y and (ydiff is None or a[1][1] - y < ydiff):
-                ydiff = a[1][1] - y
-                curra = a
-            if ydiff is not None and ydiff < baseline and a[1][1] > y and a[1][0] <= x and (xdiff is None or x - a[1][0] < xdiff):
-                xdiff = x - a[1][0]
-                curra = a
-        res = None if curra is None else curra[0]
-        logger.log(5, f"Found {curra}")
-        return res
-
-
-@dataclass
-class ParDest:
-    name:       str
-    pagenum:    int
-    x:          float
-    y:          float
-
-    def __gt__(self, other):
-        return self.y < other.y or self.y == other.y and self.x > other.x
-
-    def __lt__(self, other):
-        return self.y > other.y or self.y == other.y and self.x < other.x
-
-@dataclass
-class ParInfo:
-    ref:        str
-    partype:    str
-    mrk:        str
-    baseline:   float
-    rects:      InitVar[None] = None
-    lines:      int = 0
-
-    def __str__(self):
-        return f"{self.ref}[{getattr(self, 'parnum', '')}] {self.lines} @ {self.baseline} {self.rects}"
-
-    def __repr__(self):
-        return self.__str__()
-
-    def sortKey(self):
-        return (self.rects[-1].pagenum, refSort(self.ref), getattr(self, 'parnum', 0))
-
-@dataclass
-class FigInfo:
-    ref:    str
-    src:    str
-    size:   (int, int)
-    limit:  bool
-    wide:   bool
-    rects:  InitVar[None] = None
-
-    def __str__(self):
-        return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
-
-    def __repr__(self):
-        return self.__str__()
-
-    def sortKey(self):
-        return (self.rects[-1].pagenum, refSort(self.ref), 0)       # must sort with ParInfo
-
-class ParlocLinesIterator:
-    def __init__(self, fname):
-        self.fname = fname
-        self.collection = []
-        self.replay = False
-
-    def __iter__(self):
-        if self.fname is not None and os.path.exists(self.fname):
-            with open(self.fname, encoding="utf-8") as inf:
-                self.lines = inf.readlines()
-        else:
-            self.lines = []
-        return self
-
-    def __next__(self):
-        if self.replay:
-            if len(self.collection):
-                return self.collection.pop(0)
-            else:
-                self.replay = False
-        if not len(self.lines):
-            raise StopIteration
-        return self.lines.pop(0)
-
-    def collectuntil(self, limit, lines):
-        self.collection = lines
-        while len(self.lines):
-            l = self.lines.pop(0)
-            self.collection.append(l)
-            if l.startswith(limit):
-                break
-
-    def startreplay(self):
-        if len(self.collection):
-            self.replay = True
-            logger.log(7, "Starting replay of {len(self.collection)} lines")
-
-
-
-class PopplerDest(ctypes.Structure):
-    _fields_ = [
-        ("type", ctypes.c_int),
-        ("page_num", ctypes.c_int),
-        ("left", ctypes.c_double),
-        ("bottom", ctypes.c_double),
-        ("right", ctypes.c_double),
-        ("top", ctypes.c_double),
-        ("zoom", ctypes.c_double),
-        ("named_dest", ctypes.c_char_p),
-        ("change_left", ctypes.c_uint, 1),
-        ("change_top", ctypes.c_uint, 1),
-        ("change_zoom", ctypes.c_uint, 1),
-    ]
-
-
-class Paragraphs(list):
-    parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
-
-    def readParlocs(self, fname, rtl=False):
-        self.pindex = []
-        self.pnums = {}
-        self.pnumorder = []
-        if fname is None:
-            return
-        currp = None
-        currpic = None
-        currr = None
-        endpar = True
-        inpage = False
-        pnum = 0
-        lastyend = 0
-        polycol = "L"
-        currps = {polycol: None}
-        colinfos = {}
-        innote = False
-        pwidth = 0.
-        lines = ParlocLinesIterator(fname)
-        for l in lines:
-            m = self.parlinere.match(l)
-            if not m:
-                continue
-            logger.log(5, l[:-1])
-            c = m.group(1)
-            p = m.group(2).split("}{")
-            if c == "pgstart":          # pageno, available height, pagewidth, pageheight
-                pnum += 1
-                npnum = int(p[0])
-                if npnum not in self.pnums:
-                    self.pnums[npnum] = pnum
-                self.pnumorder.append(npnum)
-                if len(p) > 3:
-                    pwidth = readpts(p[2])
-                else:
-                    pwidth = 0.
-                self.pindex.append(len(self))
-                inpage = True
-                #cinfo = [readpts(x) for x in p[1:4]]
-                #if len(cinfo) > 2:
-                #    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
-                lastyend = 0
-            elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
-                pginfo = [readpts(x) for x in p[:2]] + [p[2]]
-                inpage = False
-            elif c == "colstart":       # col height, col depth, col width, topx, topy
-                cinfo = [readpts(x) for x in p]
-                logger.log(5, f"Test replay: {lines.replay} {pwidth=} width={cinfo[2]} left={cinfo[3]}")
-                if rtl and not lines.replay and ((pwidth == 0. and cinfo[3] > cinfo[2]) or (cinfo[3] + cinfo[2]) * 2 < pwidth):
-                    # right column. So swap it
-                    logger.debug(f"Start column swap at {cinfo}")
-                    lines.collectuntil("\\@colstop", [l])
-                    continue
-                colinfos[polycol] = cinfo
-                if currps.get(polycol, None) is not None:
-                    if currr is not None and currr.yend == 0:
-                        currps[polycol].rects.pop()
-                    currr = ParRect(pnum, cinfo[3], cinfo[4])
-                    currps[polycol].rects.append(currr)
-                lastyend = 0
-            elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
-                if currr is not None:
-                    cinfo = colinfos.get(polycol, None)
-                    currr.xend = cinfo[3] + cinfo[2] if cinfo is not None else readpts(p[0])
-                    currr.yend = readpts(p[1])
-                    currr = None
-                colinfos[polycol] = None
-                lines.startreplay()
-                lastyend = 0
-            elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
-                if len(p) == 5:
-                    p.insert(0, "")
-                logger.log(5, f"Starting para {p[0]}")
-                cinfo = colinfos.get(polycol, None)
-                if cinfo is None or len(cinfo) < 4:
-                    continue
-                if currr is not None:
-                    currr.xend = cinfo[3]
-                    currr.yend = readpts(p[5])
-                currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
-                currp.rects = []
-                ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
-                currr = ParRect(pnum, cinfo[3], ystart)
-                currp.rects.append(currr)
-                currps[polycol] = currp
-                self.append(currp)
-            elif c == "parend":         # badness, bottomx, bottomy
-                cinfo = colinfos.get(polycol, None)
-                ps = currps.get(polycol, None)
-                if ps is None or not len(ps.rects):
-                    continue
-                if currr is None:
-                    currr = ps.rects[-1]
-                if cinfo is None or currr is None:
-                    continue
-                currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
-                if len(p) > 2:
-                    ps.lines = int(p[0])
-                    currr.yend = readpts(p[2])
-                else:
-                    currr.yend = readpts(p[1])
-                if len(p) > 3:
-                    currr.yend -= readpts(p[3])
-                lastyend = currr.yend
-                endpar = True
-            elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
-                if not endpar or not inpage:
-                    continue
-                endpar = False
-                currp = currps.get(polycol, None)
-                if currp is None:
-                    continue
-                currp.lastref = p[0]
-                if "k." in p[0]:
-                    currp.ref = p[0]
-                currp.parnum = int(p[1])
-                currp.lines = int(p[2]) # this seems to be the current number of lines in para
-                # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
-                logger.log(5, f"Stopping para {p[0]}")
-                currps[polycol] = None
-                currr = None
-            elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
-                polycol = p[5]
-                colinfos[polycol] = [readpts(x) for x in p[:-1]]
-                cinfo = colinfos[polycol]
-                if polycol not in currps:
-                    currps[polycol] = None
-                if currps[polycol] is not None:
-                    currr = ParRect(pnum, cinfo[3], cinfo[4])
-                    currps[polycol].rects.append(currr)
-            elif c == "parpicstart":     # ref, src (filename or type), x, y
-                cinfo = colinfos.get(polycol, None)
-                xstart = readpts(p[2]) if cinfo is None else cinfo[3]
-                if currr is not None:
-                    currr.yend = readpts(p[3])
-                    currr.xend = cinfo[3]
-                currpic = FigInfo(p[0], p[1], (0, 0), False, False)
-                currpic.rects = []
-                currr = ParRect(pnum, xstart, readpts(p[3]))
-                currpic.rects.append(currr)
-                self.append(currpic)
-                lastyend = 0
-            elif c == "parpicstop":     # ref, src (filename or type), width, height, x, y
-                currpic = None
-                cinfo = colinfos.get(polycol, None)
-                if currr is None:
-                    continue
-                currr.xend = currr.xstart + readpts(p[2])
-                currr.yend = currr.ystart - readpts(p[3])
-                if currp is not None:
-                    currpr = currr
-                    if not len(currp.rects) or currp.rects[-1].xend > 0:
-                        currr = ParRect(pnum, currpr.xstart, currpr.yend)
-                        currp.rects.append(currr)
-                    else:
-                        currr = currp.rects[-1]
-                        currr.xstart = currpr.xstart
-                        currr.ystart = currpr.yend
-                else:
-                    currr = None
-                lastyend = 0
-            elif c == "parpicsize":
-                if len(p) < 4:
-                    (w, h) = readpts(p[0]), readpts(p[1])
-                else:
-                    (w, h) = readpts(p[2]), readpts(p[3])
-                    # if p[0] == "height":
-                    #     (w, h) = (h, w)
-                    if currpic is not None:
-                        currpic.size = (w, h)
-                        if p[0] == "width":
-                            currpic.wide = True
-                        if p[1] == "heightlimit":
-                            currpic.limit = True
-                
-            # "parnote":        # type, callerx, callery
-            # "notebox":        # type, width, height
-            # "parlines":       # numlines in previous paragraph (occurs after @parlen)
-            # "nontextstart":   # x, y
-            # "nontextstop":    # x, y
-        self.sort(key=lambda x:x.sortKey())
-        logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
-        logger.debug(f"{self.pnums=}, {self.pnumorder=}")
-        
-    def isEmpty(self):
-        return not len(self.pindex)
-        
-    def findPos(self, pnum, x, y, rtl=False):
-        """ returns a page index (not folio) """
-        # just iterate over paragraphs on this page
-        if pnum > len(self.pindex): # need some other test here 
-            return (None, None)
-        e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
-
-        for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
-            for i,r in enumerate(p.rects):
-                if r.pagenum != pnum:
-                    continue
-                logger.log(7, f"Testing {r} against ({x},{y})")
-                if r.xstart <= x and x <= r.xend and r.ystart >= y and r.yend <= y:
-                    return (p, r.get_dest(x, y, getattr(p, 'baseline', None)))
-        return (None, None)
-
-    def getParas(self, pnum, inclast=False):
-        if pnum > len(self.pindex):
-            return
-        e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
-
-        start = max(self.pindex[pnum-1], 0)
-        if inclast and pnum > 1:        # pnum is 1 based
-            done = False
-            for p in self[start:-1:-1]:
-                for r in reversed(p.rects):
-                    if r.pagenum == pnum - 1:
-                        yield (p, r)
-                        done = True
-                        break
-                if done:
-                    break
-        start = max(start - 2, 0)
-        for p in self[start:e+2]:
-            for r in p.rects:
-                if r.pagenum == pnum:
-                    yield (p, r)
-
-    def getParasByColumnOrParref(self, pnum=None, parref=None, column=None):
-        """Returns paragraphs from a specific column on a page OR all paragraphs 
-        in the same column as a given paragraph reference."""
-        if parref:
-            if not hasattr(parref, "rects") or not parref.rects:
-                return
-            pnum = parref.rects[0].pagenum
-
-        if not pnum or pnum >= len(self.pindex):
-            return
-        x_values = [r.xstart for p, r in self.getParas(pnum)]
-        
-        if not x_values:
-            return  # No paragraphs found, exit early
-        threshold = (min(x_values) + max(x_values)) / 2
-        if parref and column is None:
-            column = 1 if parref.rects[0].xstart < threshold else 2
-        for p, r in self.getParas(pnum):
-            if (column == 1 and r.xstart < threshold) or (column == 2 and r.xstart >= threshold):
-                yield (p, r)
-
-    def get_folio(self, pindex):
-        if self.pnumorder is None or not len(self.pnumorder):
-            return pindex
-        if pindex is None or pindex > len(self.pnumorder):
-            return None
-        else:
-            return self.pnumorder[pindex - 1]
-
-    def load_dests(self, doc):
-        dests_tree = doc.create_dests_tree()
-        self.dests = {}
-        n = dests_tree.node_first()
-        while n is not None:
-            adest = ctypes.cast(n.value(), ctypes.POINTER(PopplerDest)).contents
-            akey = ctypes.cast(n.key(), ctypes.c_char_p).value
-            self.dests.setdefault(adest.page_num, []).append(ParDest(str(akey.decode("utf-8").replace(".", " ").replace(":", ".") if akey else ""), adest.page_num, adest.left, adest.top))
-            n = n.next()
-        dests_tree.destroy()
-        logger.debug(f"{len(self.dests)=}")
-
-    def load_page(self, doc, page, pindex):
-        currlast = None
-        for p, r in self.getParas(pindex, inclast=True):
-            logger.log(5, f"load_page processing {p=} {r=}")
-            if r.pagenum < pindex:
-                opg = doc.get_page(r.pagenum)
-                if r.dests is None and opg is not None:
-                    self.load_page(doc, opg, r.pagenum)
-                currlast = max(r.dests)
-                continue
-            if r.dests is None:
-                r.dests = [(currlast.name, (r.xstart, r.ystart))] if currlast is not None else []
-            else:
-                continue
-            for a in self.dests.get(pindex, []):
-                if a.x >= r.xstart and a.x <= r.xend and a.y >= r.yend and a.y <= r.ystart:
-                    r.dests.append((a.name, (a.x, a.y)))
-                    currlast = max(currlast, a) if currlast is not None else a
 
