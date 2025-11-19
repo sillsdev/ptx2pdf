@@ -120,7 +120,7 @@ class GtkTester:
                     shutil.copyfileobj(src, tgt)
         self.runeventidx = 0
 
-    def run_action(self):
+    def run_action(self, noclose):
         while self.runeventidx < len(self.runevents):
             e = self.runevents[self.runeventidx]
             # print(f"{self.runeventidx}: {e}")
@@ -132,6 +132,8 @@ class GtkTester:
                 goround = False
             elif e[1] == "signal":
                 signal = e[2]
+                if w == "b_close" and signal == "clicked":
+                    continue
                 widget = self.view.builder.get_object(w)
                 widget.emit(signal, *e[3:])
                 goround = True
@@ -140,7 +142,7 @@ class GtkTester:
                 if m is not None:
                     goround = m(w, *e[2:])
             if goround and self.runeventidx < len(self.runevents):
-                GLib.idle_add(self.run_action)
+                GLib.idle_add(self.run_action, noclose)
                 return
 
     def run_finalise(self):

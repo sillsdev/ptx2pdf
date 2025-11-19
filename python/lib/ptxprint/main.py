@@ -70,13 +70,18 @@ def run_broadway(wnum):
 
 def runtest(prjTree, config, macrosdir, project, doit, args):
     args.quiet = True
-    broadway_display = 5
-    server = run_broadway(broadway_display)
-    os.environ['GDK_BACKEND'] = "broadway"
-    os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
-    from ptxprint.gtkview import GtkViewModel
+    server = None
+    if not args.testwithgui:
+        broadway_display = 5
+        server = run_broadway(broadway_display)
+        os.environ['GDK_BACKEND'] = "broadway"
+        os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
+    from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
     from ptxprint.gtktesting import GtkTester
+    from ptxprint.utils import setup_i18n
     from gi.repository import GLib
+    setup_i18n(args.lang)
+    reset_gtk_direction()
     mainw = GtkViewModel(prjTree, config, macrosdir, args)
     mainw.setup_ini()
     if args.nointernet:
@@ -93,7 +98,7 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     else:
         mainw.setFallbackProject()
     if tester is not None:
-        GLib.idle_add(tester.run_action)
+        GLib.idle_add(tester.run_action, args.testwithgui)
     mainw.run(doit)
     if tester is not None:
         results = tester.run_finalise()
@@ -128,7 +133,9 @@ def main(doitfn=None):
     parser.add_argument('-m', '--macros', help="Directory containing TeX macros (paratext2.tex)")
     parser.add_argument('-M', '--module', help="Specify module to print")
     parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
+    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
     parser.add_argument('-t','--test',help="test file to run interactive test against")
+    parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
     
     # Performance & Debugging
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
@@ -136,7 +143,6 @@ def main(doitfn=None):
     parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
     parser.add_argument('--timeout', type=int, default=1200, help="XeTeX runtime timeout (seconds)")
     parser.add_argument('--debug', action="store_true", help="Enable debug output")
-    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
 
     # Font Settings
     parser.add_argument('-f', '--fontpath', action='append', help="Specify directories containing fonts (repeatable)")
