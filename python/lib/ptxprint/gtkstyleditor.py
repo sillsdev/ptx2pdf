@@ -607,6 +607,8 @@ class StyleEditorView(StyleEditor):
         if self.marker in aliases:
             self.marker += "1"
         oldisLoading = getattr(self, 'isLoading', False)
+        if self.model.testing is not None:
+            self.model.testing.pause()
         # logger.debug(f"Start editing style {self.marker}, {oldisLoading}")
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
@@ -727,6 +729,8 @@ class StyleEditorView(StyleEditor):
             widget = self.builder.get_object(w)
             widget.set_sensitive(self.marker != "p")
         self.isLoading = oldisLoading
+        if self.model.testing is not None:
+            self.model.testing.unpause()
 
     def splitURL(self, url):
         # Find the index of the first '/' after the initial '//'

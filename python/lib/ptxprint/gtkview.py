@@ -51,6 +51,7 @@ from ptxprint.pdf_viewer import PDFViewer, Paragraphs
 from ptxprint.tatweel import TatweelDialog
 from ptxprint.gtkpolyglot import PolyglotSetup
 from ptxprint.report import Report
+from ptxprint.gtktesting import GtkTester
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -945,7 +946,7 @@ class GtkViewModel(ViewModel):
         self.otherDiglot = None
         self.notebooks = {}
         self.pendingerror = None
-        self.logfile = None
+        self.testing = None
         self.highlight = False
         self.rtl = False
         self.isDiglotMeasuring = False
@@ -1069,7 +1070,6 @@ class GtkViewModel(ViewModel):
         combo = self.builder.get_object("fcb_project")
         renderer = combo.get_cells()[0] 
         combo.set_cell_data_func(renderer, self.set_project_style)
-
 
         # self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
@@ -1351,16 +1351,17 @@ class GtkViewModel(ViewModel):
 
         self.mw.show_all()
         self.set_uiChangeLevel(self.uilevel)
+        self.setupTeXOptions()
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
-            self.logfile = open(self.args.capture, "w")
-            self.logfile.write("<?xml version='1.0'?>\n<actions>\n")
+            self.testing = GtkTester(self.args.capture, self)
             self.starttime = time.time()
             for k, v in _signals.items():
                 for w in v:
                     # print(f"{k=} {w=}")
-                    GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
-            self.logactive = True
+                    o = getattr(Gtk, w)
+                    sigid = GObject.signal_lookup(k, o)
+                    GObject.add_emission_hook(o, k, self.emission_hook, k)
         el = self.userconfig.getboolean('init', 'englinks', fallback=False)
         self.set("c_useEngLinks", el)
         # expert = self.userconfig.getboolean('init', 'expert', fallback=False)
@@ -1381,7 +1382,6 @@ class GtkViewModel(ViewModel):
         tvfonts.set_model(None)
         lsfonts.clear()
         tvfonts.set_model(lsfonts)
-        self.setupTeXOptions()
         self.builder.get_object('c_variableLineSpacing').set_sensitive(self.get("c_noGrid"))
 
         w = self.builder.get_object("col_noteLines")
@@ -1428,13 +1428,14 @@ class GtkViewModel(ViewModel):
         if self.pdf_viewer is not None:
             self.pdf_viewer.hide_unused()
 
-    def emission_hook(self, w, *a):
-        if not self.logactive:
+    def emission_hook(self, w, *a):     # sigid, detail, self, *a):
+        if self.testing is None or self.testing.paused:
             return True
+        sigid = a[-1]
         name = Gtk.Buildable.get_name(w)
-        self.logfile.write('    <event w="{}" s="{}" t="{}"/>\n'.format(name, a[0],
-                            time.time()-self.starttime))
-        logger.debug(f'event: {name=} {a[0]=}')
+        val = self.get(name, skipmissing=True) if name is not None else None
+        t = time.time()-self.starttime
+        self.testing.addEvent(name, sigid, t, val, a[:-1])
         return True
 
     def pause_logging(self):
@@ -1912,9 +1913,8 @@ class GtkViewModel(ViewModel):
             # self.sbcatlist.clear()
 
     def onDestroy(self, btn, *a):
-        if self.logfile != None:
-            self.logfile.write("</actions>\n")
-            self.logfile.close()
+        if self.testing is not None:
+            self.testing.finalise()
         self.mainapp.quit()
 
     def onKeyPress(self, dlg, event):
@@ -4154,7 +4154,12 @@ class GtkViewModel(ViewModel):
             self.set("lb_working_dir", '<a href="{0}">{0}</a>'.format(outdir))
             
     def updateProjectSettings(self, prjid, guid, saveCurrConfig=False, configName=None, readConfig=None):
+        if self.testing is not None:
+            self.testing.pause()
         if prjid == getattr(self.project, 'prjid', None) and configName == self.cfgid and (getattr(self.project, 'guid', None) is None or guid == self.project.guid):
+            if self.testing is not None:
+                self.testing.setid(self.project, self.cfgid)
+                self.testing.unpause()
             return True
         self.picListView.clear()
         if self.picinfos is not None:
@@ -4203,6 +4208,9 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(0)
         self.changed(False)
         self.showmybook(True)
+        if self.testing is not None:
+            self.testing.setid(self.project, self.cfgid)
+            self.testing.unpause()
 
     def updateViewNedit(self):
         for a in [('c_useModsTex',           'onEditModsTeX'), 

@@ -21,7 +21,6 @@ from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
 from ptxprint.polyglot import PolyglotConfig
 from ptxprint.report import Report
-import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
@@ -396,6 +395,7 @@ class ViewModel:
         return ptsettings.getBookFilename(bk)
 
     def getScriptSnippet(self):
+        import ptxprint.scriptsnippets as scriptsnippets
         script = self.get("fcb_script")
         gclass = getattr(scriptsnippets, script.lower(), None)
         if gclass is None:

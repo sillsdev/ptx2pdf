@@ -10,7 +10,6 @@ from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multst
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect
 from ptxprint.dimension import Dimension
-import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 from usfmtc.reference import Ref, RefRange, RefList
 from ptxprint.xrefs import Xrefs
@@ -605,6 +604,7 @@ class TexModel:
         return res
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", diglots=False):
+        import ptxprint.scriptsnippets as scriptsnippets
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -1125,6 +1125,7 @@ class TexModel:
         return doc  
 
     def makelocalChanges(self, printer, bk, chaprange=None):
+        import ptxprint.scriptsnippets as scriptsnippets
         self.localChanges = []
         script = self.dict["document/script"]
         if len(script):
