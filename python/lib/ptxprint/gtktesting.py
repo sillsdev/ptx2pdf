@@ -21,6 +21,8 @@ class GtkTester:
             return
         e = None
         laste = None
+        if w in ("button",):
+            return
         if val is not None and not w.startswith("btn_"):
             e = (w, 'set', val)
             if e == laste:
@@ -48,45 +50,61 @@ class GtkTester:
     def setid(self, project, cfgid):
         self.currid = (project, cfgid)
 
+    def mkzipdir(self, name):
+        if not name.endswith("/"):
+            name += "/"
+        try:
+            self.zip.getinfo(name)
+        except KeyError:
+            self.zip.mkdir(name)
+
     def addid(self, project, cfgid):
         if self.zip is None and self.fname is not None:
             self.zip = zipfile.ZipFile(self.fname, mode="w", compression=zipfile.ZIP_BZIP2)
             self.zip.mkdir("before")
         if self.zip is None:
             return
-        self.zip.mkdir("before/{}".format(project.prjid))
+            self.mkzipdir("before/{}".format(project.prjid))
         for a in ("Settings.xml", "PTXSettings.xml"):
             fname = os.path.join(project.path, a)
-            if os.path.exists(fname):
-                self.zip.write(fname, "before/{}/{}".format(project.prjid, a))
+            if self.writefile(a, "before", project):
                 break
         for a in ("ptxprint.cfg", "ptxprint.sty"):
             self.writefile(a, "before", project, cfgid)
         self.projects[project.prjid] = project
 
-    def writefile(self, name, side, project, cfgid):
-        fname = os.path.join(project.configs[cfgid].path, name)
-        if os.path.exists(fname):
-            self.zip.write(fname, "{}/{}/{}/{}".format(side, project.prjid, cfgid, name))
+    def writefile(self, name, side, project, cfgid=None):
+        if cfgid is None:
+            fname = os.path.join(project.path, name)
+        else:
+            fname = os.path.join(project.configs[cfgid].path, name)
+        outpath = "{}/{}{}/{}".format(side, project.prjid, "/"+cfgid if cfgid else "", name)
+        exists = True
+        try:
+            self.zip.getinfo(outpath)
+        except KeyError:
+            exists = False
+        if os.path.exists(fname) and not exists:
+            self.zip.write(fname, outpath)
+            return True
+        return False
 
     def finalise(self):
         if self.zip is None:
             return
-        self.zip.mkdir("after")
-        for f in self.zip.namelist():
-            if not f.startswith("before/"):
+
+        self.mkzipdir("after")
+        for f in self.zip.infolist():
+            if not f.filename.startswith("before/") or f.is_dir():
                 continue
-            b = f.split("/", 3)
+            b = f.filename.split("/", 3)
             if len(b) < 4:
                 continue
             project = self.projects[b[1]]
             cfgid = b[2]
-            if "after/{}".format(b[1]) not in self.zip.namelist():
-                self.zip.mkdir("after/{}".format(b[1]))
-            if "after/{}/{}".format(b[1], b[2]) not in self.zip.namelist():
-                self.zip.mkdir("after/{}/{}".format(b[1], b[2]))
-            a = b[3]
-            self.writefile(a, "after", project, cfgid)
+            self.mkzipdir("after/{}".format(b[1]))
+            self.mkzipdir("after/{}/{}".format(b[1], b[2]))
+            self.writefile(b[3], "after", project, cfgid)
         events = json.dumps({"events": self.events}, ensure_ascii=False, indent=4)
         self.zip.writestr("events.json", events)
         self.zip.close()

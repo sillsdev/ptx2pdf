@@ -608,6 +608,7 @@ class StyleEditorView(StyleEditor):
             self.marker += "1"
         oldisLoading = getattr(self, 'isLoading', False)
         if self.model.testing is not None:
+            ispaused = self.model.testing.paused
             self.model.testing.pause()
         # logger.debug(f"Start editing style {self.marker}, {oldisLoading}")
         self.isLoading = True
@@ -730,7 +731,8 @@ class StyleEditorView(StyleEditor):
             widget.set_sensitive(self.marker != "p")
         self.isLoading = oldisLoading
         if self.model.testing is not None:
-            self.model.testing.unpause()
+            if not ispaused:
+                self.model.testing.unpause()
 
     def splitURL(self, url):
         # Find the index of the first '/' after the initial '//'
