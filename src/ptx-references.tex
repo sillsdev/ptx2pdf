@@ -194,8 +194,7 @@
 \def\ranges@p{\hbox{\RangeSeparator}} % box this to avoid possible bidi problems
 \def\rangechs@p{\hbox{\RangeChapSeparator}} % box this to avoid possible bidi problems
 \def\bkchs@p{\hbox{\BookChapSeparator}} % box this to avoid possible bidi problems
-%\def\pairs@p{,\kern.2em}
-\let\pairs@p\ranges@p % box to use when it's e.g. 1,2 (normally the same as 1-3)
+\let\pairs@p{\hbox{\ChapPairSeparator}} % Boxed to avoid bidi problems
 \def\cvs@p{\hbox{\ChapterVerseSeparator}}
 \def\endash{\char"2013\relax}
 \let\RangeChar\endash
@@ -204,6 +203,7 @@
 \def\RangeChapSeparator{\kern.1em\RangeChar\kern.1em} % what to put between first - last of a range, when it's chapter:verse-chapter:verse
 
 \def\ChapterVerseSeparator{\kern.02em.\kern.02em} % what to put between chapter:verse
+\def\ChapPairSeparator{\kern.1em\RangeChar\kern.1em} % What to put when chapters are adjacent
 
 %
 % Running headers/footers that may use the references defined above
