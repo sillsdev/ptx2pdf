@@ -26,11 +26,12 @@
 \makeatletter
 \MSG{\l@gdims\Lbox}
 \MSG{\l@gdims\Rbox}
-\MSG{\l@gdims\Abox}
+%\MSG{\l@gdims\Abox}
 
 \newcount\cols
 \newdimen\max
 
+\MSG{bls:\the\baselineskip}
 \def\try#1{\count255=1 \max=0pt
   \setbox0\copy\csname#1box\endcsname
   %\let\dims\empty
@@ -51,12 +52,12 @@
     \repeat
   \x@\let\x@\tmp\csname #1list\endcsname  
   \edef\tryid{#1/\the\dimen1}
-  \x@\edef\csname #1list\endcsname{\ifx\tmp\relax\else\tmp\fi\tryid,}
-  \edef\tmp{\the\max|\the\dimen0|\csname #1bot\endcsname}\tryid|\tmp\par
+  \x@\xdef\csname #1list\endcsname{\ifx\tmp\relax\else\tmp\fi\tryid,}
+  \edef\tmp{\the\max|\the\numexpr \dimexpr \dimen0\relax /\baselineskip\relax|\csname #1bot\endcsname}\trace{Cx}{\tryid|\tmp}\par
   \x@\let\csname \tryid\endcsname\tmp
 }
 \def\@ption#1#2\E{\bgroup
-  \MSG{@option #1 #2}%
+  \trace{Cx}{@option #1 #2}%
   \edef\nxt@ptions{#2}
   \x@\let\x@\l@st\csname #1list\endcsname
   \x@\suboptions\l@st\E
@@ -71,7 +72,7 @@
   \bgroup
     \edef\path{\path\psep#1}%
     \def\psep{,}
-    \MSG{scoring suboption #1 : \path (#2)}%
+    \trace{Cx}{scoring suboption #1 : \path (#2)}%
     \sc@re{#1}
   \egroup%
   \ifx\s@tmp\empty\let\n@xt\cstackrelax
@@ -82,33 +83,34 @@
   \def\p@rsemx{#1}\def\p@rseunbal{#2}\def\p@rsev{#3}%
 }
 
-\def\unbalVcost{20} % cost per verse
-\def\unbalLcost{50} % cost per pt
-\def\WScost{0.5} % cost per pt of whitespace
+\def\unbalVcost{10} % cost per verse
+\def\unbalLcost{100} % cost per unblanced line
+\def\WScost{2} % cost per pt of whitespace
 \def\maxv{0}
 \def\minv{999}
 \def\sc@re#1{%
   \x@\let\x@\tmp\csname#1\endcsname
   \x@\p@rsetry\tmp\E
-  \advance\tryscore by \unbalLcost\dimexpr\p@rseunbal\relax\relax
+  \advance\tryscore by \unbalLcost\dimexpr\p@rseunbal pt\relax\relax
+  \edef\ubal{\ubal+\p@rseunbal}%
   \ifnum\p@rsev>\maxv \let\maxv\p@rsev \fi
   \ifnum\p@rsev<\minv \let\minv\p@rsev \fi
-  %\MSG{\p@rsev: min,max = \minv,\maxv}%
+  \trace{Cx}{\p@rsev: min,max = \minv,\maxv}%
   \advance\dimen0 by -\p@rsemx\relax
   \ifdim\dimen0<0pt
-    \MSG{STOP}
+    \trace{Cx}{STOP}
   \else
     \ifx\nxt@ptions\empty
       \dimen1=\unbalVcost\dimexpr \maxv pt - \minv pt\relax
       \advance\tryscore by \dimen1
       \advance\tryscore by \WScost\dimexpr \dimen0\relax
-      \edef\tmp{\path|\minv|\maxv|\the\dimen0|\the\tryscore}\MSG{\tmp}\tmp\par
+      \edef\tmp{\path|\minv|\maxv|\the\dimen0|\ubal|\the\tryscore}\trace{Cx}{\tmp}\tmp\par
       \ifdim\tryscore<\bestscore
         \xdef\bestscore{\the\tryscore}
         \xdef\bestpath{\tmp}
       \fi
     \else
-      \MSG{next chunk:\nxt@ptions}%
+      \trace{Cx}{next chunk:\nxt@ptions}%
       \x@\@ption\nxt@ptions\E
     \fi 
   \fi
@@ -119,34 +121,52 @@
   \dimen0=\tot
   \edef\bestscore{\the\maxdimen}
   \def\path{}\def\psep{}\tryscore=0pt
+  \def\ubal{}
   \x@\@ption#1\E
 }
-\l@gdims0 \l@gdims\Lbox
+%\l@gdims0 \l@gdims\Lbox
 
+\newcount\trynum
+\def\presplit#1{%
+  \trynum=#1
+  \advance\dimen1 by -#1\baselineskip
+  \@presplit
+}
+
+\def\@presplit{
+  \splittask
+  \advance\dimen1 by \baselineskip
+  \advance\trynum by -1
+  \ifnum\trynum>0
+    \let\@nxt=\@presplit
+  \else
+    \let\@nxt\relax
+  \fi
+  \@nxt
+}
+  
+
+\tracing{Cx}  
+%\def\MSG#1{}
+\count255=0
 \edef\start{\the\elapsedtime}
 \cols=2 \dimen1=\ht\Lbox \divide\dimen1 by \cols
-\try{L}
-\try{R}
-\advance\dimen1 by -\baselineskip
-\try{L}
-\try{R}
-\advance\dimen1 by -\baselineskip
-\try{L}
-\try{R}
-\advance\dimen1 by -\baselineskip
-\try{L}
-\try{R}
-\cols=1 \dimen1=\ht\Abox\try{A}
-\advance\dimen1 by -\baselineskip
-\try{A}
-\edef\stop{\the\elapsedtime}
-\message{Splitting: \the\numexpr\stop-\start\relax}
+\def\splittask{\try{L}\try{R}}
+%\loop\bgroup
+  \let\Llist\relax\let\Rlist\relax
+  \presplit{10}
+%%\egroup\advance\count255 by 1 \relax 
+  %\ifnum\count255<100\repeat
 
+\edef\stop{\the\elapsedtime}
+\MSG{Splitting: \the\numexpr\stop-\start\relax}
+
+%\bye \endinput
 \edef\tot{\the\dimexpr 0.9\ht\Lbox}%
 
 L:\Llist\par
 R:\Rlist
-A:\Alist
+%A:\Alist
 
 %\tracingassigns=1
 \edef\start{\the\elapsedtime}
