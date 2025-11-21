@@ -565,6 +565,12 @@
           "Label": "Set custom Footers",
           "Description": "Regular scripture publications do not use the footer area as that is used for notes and cross-references. However, it is possible to set these as well.",
           "CodeSnippet": "\\def\\RHtitleevenleft{\\pagenumber}\n\\let\\RHtitleoddright=\\RHtitleevenleft\n"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Set chapter pair separator",
+          "Description": "If you want to distinguish between a range of chapters and two chapters that are adjacent, then use this. The example uses a comma just before the \\kern - which can be modified as needed.",
+          "CodeSnippet": "\\def\\ChapPairSeparator{,\\kern0.2em}\n"
         }
       ],
       "Chapters": [

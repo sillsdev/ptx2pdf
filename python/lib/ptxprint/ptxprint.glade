@@ -28333,6 +28333,9 @@ the Header+Footer tab for details).
                                             <property name="wrap">True</property>
                                             <property name="selectable">True</property>
                                             <property name="max-width-chars">90</property>
+                                            <attributes>
+                                              <attribute name="foreground" value="#e0e01b1b2424"/>
+                                            </attributes>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
