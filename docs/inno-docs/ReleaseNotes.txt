@@ -1,10 +1,21 @@
-PTXprint 3.0.3 Release Notes
-15 Nov 2025
+PTXprint 3.0.4 Release Notes
+21 Nov 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
+
+Bug fixes and Improvements in 3.0.4 (21 Nov 2025)
+  * Use maintitle for PDF if available (instead of Project Fullname)
+  * Fix pictures in MODules
+  * Fix spacing of paragraphed footnotes
+  * Quit gracefully if specified -p dir doesn't exist
+  * Use other range separators specified in Paratext settings
+  * User-settable chapter pair separator - using TeX codelet
+  * Stop testing zipfile writing from winging
+  * First attempt at broadway integration on windows
+  * Add --testwithgui for UI regression testing (linux only testing atm)
 
 Bug fixes and Improvements in 3.0.3 (15 Nov 2025)
   * Ensure Local Front Matter is enabled if Cover is selected; and vice versa
