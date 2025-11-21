@@ -60,7 +60,8 @@ def run_broadway(wnum):
         # logger.info("Broadway is already running")
         return None
     else:
-        server = popen(["broadwayd", "-p", str(pnum), ":"+str(wnum)])
+        bwname = "broadwayd" + ".exe" if sys.platform in ("win32", "cygwin") else ""
+        server = popen([bwname, "-p", str(pnum), ":"+str(wnum)])
     if testport("127.0.0.1", pnum):
         return server
     elif server is not None and server.poll() is None:

@@ -73,9 +73,9 @@ def stripbinaries(binaries, basedir):
 
 # add all the library dependency dlls (not python ones, but the dlls they typically call)
 # including GTK, etc.
-mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):
-    binaries = [(f'{mingwb}\\gspawn-win64-helper.exe', 'ptxprint')] \
+    mingwb = r'C:\msys64\mingw64\bin'
+    binaries = [(f'{mingwb}\\{x}', 'ptxprint') for x in ('gspawn-win64-helper.exe', 'broadwayd.exe')] \
               + [(f'{mingwb}\\{x}.dll', '.') for x in
                     (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', anyver('libpoppler-cpp-', mingwb), 'libcurl-4',
                      'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
