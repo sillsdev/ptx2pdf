@@ -120,21 +120,29 @@ class Module:
             elif eloc.tag == "ref":
                 s = "ref"
             elif eloc.tag == "figure":
-                # breakpoint()
                 src = eloc.get("src", eloc.get("file", None))
+                anchor = None
+
+                # If we have a piclist and a src, try to find an existing anchor
                 if piclist is not None and src is not None:
                     anchor = piclist.getAnchor(src, "MOD")
-                if anchor is None:
-                    if piclist is not None:
+
+                    # Not in the list yet: create a new entry
+                    if anchor is None:
                         anchor = piclist.emptyAnchor("MOD")
-                    else:
-                        anchor = f"{count:03d}"
-                        count += 1
-                    p = piclist.add_from_fig("MOD", anchor, eloc)
-                    p["src"] = src
-                    p.set_position(2 if self.model.printer.get("c_doublecolumn") else 1)
+                        p = piclist.add_from_fig("MOD", anchor, eloc)
+                        p["src"] = src
+                        p.set_position(
+                            2 if self.model.printer.get("c_doublecolumn") else 1
+                        )
+
+                # No piclist or no src: fall back to a simple running anchor
+                if anchor is None:
+                    anchor = f"MOD{count:03d}"
+                    count += 1
+
                 eloc.tag = "ms"
-                eloc.attrib = {"style": "zfiga", "id": anchor}
+                eloc.attrib = {"style": "zfiga", "id": anchor[4:]}
                 eloc.text = None
             else:
                 continue
