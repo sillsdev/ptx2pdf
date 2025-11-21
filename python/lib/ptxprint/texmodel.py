@@ -336,7 +336,7 @@ class TexModel:
         self.dict['chvssep_'] = self.ptsettings.get('ChapterVerseSeparator', chvssep) if chvssep == ':' else chvssep
         rsep = re.sub(r"^.*\|", "", self.ptsettings.get('RangeIndicator', '-'))
         self.dict['rangesep_'] = "\u2013" if rsep == "-" else rsep
-        rsep = re.sub(r"^.*\|", "", self.ptsettings.get('ChapterRangeSeparator', '-'))
+        rsep = re.sub(r"^.*\|", "", self.ptsettings.get('ChapterRangeSeparator', '-')) or rsep
         self.dict['chaprangesep_'] = "\u2013" if rsep == "-" else rsep
         bsep = self.ptsettings.get('BookChapterSeparator')
         if bsep == " " or bsep is None:

@@ -273,6 +273,9 @@ def main(doitfn=None):
         if pdir is not None:
             args.projects.append(pdir)
             print(f"Adding {pdir}")
+    elif not any(os.path.isdir(p) for p in args.projects):
+        print(f"Projects directories do not exist in {args.projects}. Quitting")
+        sys.exit(1)
 
     if args.lang is None:
         args.lang = getnsetlang(config)
