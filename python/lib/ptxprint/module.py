@@ -1,4 +1,4 @@
-import re, traceback
+import re, traceback, os
 from ptxprint.usxutils import Usfm
 from ptxprint.utils import runChanges
 from usfmtc.reference import RefList, RefRange
