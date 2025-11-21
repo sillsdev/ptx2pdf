@@ -100,6 +100,7 @@ class Module:
         return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))
 
     def parse(self, piclist=None):
+        logger.log(5, self.doc.xml.outUsx(None))
         self.doc.xml.book = "MOD"
         count = 0
         self.removes = set((e for e in exclusionmap.values() if self.testexclude(e)))
@@ -119,16 +120,19 @@ class Module:
             elif eloc.tag == "ref":
                 s = "ref"
             elif eloc.tag == "figure":
-                src = eloc.get("src", elog.get("file", None))
+                # breakpoint()
+                src = eloc.get("src", eloc.get("file", None))
                 if piclist is not None and src is not None:
                     anchor = piclist.getAnchor(src, "MOD")
                 if anchor is None:
                     if piclist is not None:
                         anchor = piclist.emptyAnchor("MOD")
-                        piclist.add_from_fig("MOD", anchor, eloc)
                     else:
                         anchor = f"{count:03d}"
                         count += 1
+                    p = piclist.add_from_fig("MOD", anchor, eloc)
+                    p["src"] = src
+                    p.set_position(2 if self.model.printer.get("c_doublecolumn") else 1)
                 eloc.tag = "ms"
                 eloc.attrib = {"style": "zfiga", "id": anchor}
                 eloc.text = None

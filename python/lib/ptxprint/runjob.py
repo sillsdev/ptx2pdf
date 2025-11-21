@@ -1002,7 +1002,7 @@ class RunJob:
             # print("NoFigs")
             return []
         picinfos.build_searchlist()
-        books = [r[0][0].first.book if r[1] else r[0] for r in jobs] + ["FRT","COV"]
+        books = [r[0][0].first.book if r[1] else "MOD" for r in jobs] + ["FRT","COV"]
         exclusive = self.printer.get("c_exclusiveFiguresFolder")
         fldr      = self.printer.get("lb_selectFigureFolder", "") if self.printer.get("c_useCustomFolder") else ""
         imgorder  = self.printer.get("t_imageTypeOrder")

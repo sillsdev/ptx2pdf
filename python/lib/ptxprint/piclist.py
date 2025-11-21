@@ -614,6 +614,7 @@ class Piclist:
             pic["media"] = "paw"       # do better
         p = Picture(**pic)
         self.pics[p.key] = p
+        return p
 
     def rmdups(self):
         ''' Makes sure there are not two entries with the same anchor and same image source'''
