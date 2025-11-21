@@ -870,7 +870,7 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-        mod.parse()
+        mod.parse(self.printer.picinfos)
         res = mod.doc
         if res.xml.errors:
             self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))

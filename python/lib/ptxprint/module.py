@@ -13,15 +13,15 @@ def read_module(inf, sheets):
         lines.insert(0, "\\id MOD Module\n")
     return Usfm(lines, sheets)
 
-#    e: ([mkrs], modelmap entry, invert_test)
-#    If entry is not empty include the marker
+#    e: ([mkrs], modelmap entry, invert_test, element tag)
+#    If modelmap entry is not empty test the marker, using invert_test
 exclusionmap = {
 #    'v': (None, "document/ifshowversenums", False, 'verse'),    # opposite use of %
     'x': (('x',), "notes/includexrefs", True, 'note'),
     'f': (('f',), "notes/includefootnotes", True, 'note'), 
     's': (('s', 's1', 's2', 'r'), "document/sectionheads", True, 'para'),
 #    'c': (None, 'document/ifshowchapternums', True, 'chapter'),
-    'p': (None, None, False, 'figure')
+    'p': (None, None, False, 'figure'),
 }
 
 _abbrevmodes = {
@@ -99,7 +99,9 @@ class Module:
     def testexclude(self, einfo):
         return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))
 
-    def parse(self):
+    def parse(self, piclist=None):
+        self.doc.xml.book = "MOD"
+        count = 0
         self.removes = set((e for e in exclusionmap.values() if self.testexclude(e)))
         skipme = 0
         for eloc, isin in iterusx(self.doc.getroot()):
@@ -116,6 +118,20 @@ class Module:
                 s = eloc.get("style", None)
             elif eloc.tag == "ref":
                 s = "ref"
+            elif eloc.tag == "figure":
+                src = eloc.get("src", elog.get("file", None))
+                if piclist is not None and src is not None:
+                    anchor = piclist.getAnchor(src, "MOD")
+                if anchor is None:
+                    if piclist is not None:
+                        anchor = piclist.emptyAnchor("MOD")
+                        piclist.add_from_fig("MOD", anchor, eloc)
+                    else:
+                        anchor = f"{count:03d}"
+                        count += 1
+                eloc.tag = "ms"
+                eloc.attrib = {"style": "zfiga", "id": anchor}
+                eloc.text = None
             else:
                 continue
             if s == "ref" or s == "refnp":
@@ -177,6 +193,9 @@ class Module:
             return []
         res = book.xml.getrefs(ref, titles=False, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
                                     chapters= not any('chapter' in x[3] for x in removes))
+        if True:        # this should be a filter test
+            firstp = res.getroot()[0]
+            firstp.attrib.pop('vid', None)
         for e, isin in res.iterusx():
             if not isin:
                 continue

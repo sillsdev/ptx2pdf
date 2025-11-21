@@ -368,6 +368,8 @@ class ViewModel:
             fp = os.path.join(self.project.path, f)
             if os.path.exists(fp):
                 res[bk] = fp
+        if self.moduleFile is not None:
+            res["MOD"] = self.moduleFile
         return res
 
     def _getPtSettings(self, prjid=None):
