@@ -8,8 +8,8 @@ rmdir /s /q dist
 rmdir /s /q Output
 
 REM Call PyInstaller to create the "dist" folder
-REM pyinstaller --log-level DEBUG --clean ptxprint.spec
-pyinstaller ptxprint.spec
+pyinstaller --log-level DEBUG --clean ptxprint.spec
+REM pyinstaller ptxprint.spec
 mkdir dist\ptxprint\share
 xcopy /s /i /y /q C:\msys64\mingw64\share\locale dist\ptxprint\share\locale
 xcopy /s /i /y /q C:\msys64\mingw64\share\fontconfig dist\ptxprint\share\fontconfig
