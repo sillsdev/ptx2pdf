@@ -1,7 +1,7 @@
 
 from gi.repository import Gtk, GObject, GLib
 import os, zipfile, json, shutil
-from configparser.ConfigParser
+from configparser import ConfigParser
 from ptxprint.usxutils import simple_parse
 from difflib import context_diff
 
