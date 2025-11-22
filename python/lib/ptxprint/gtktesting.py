@@ -1,6 +1,7 @@
 
 from gi.repository import Gtk, GObject, GLib
-import os, zipfile, json, shutil, configparser
+import os, zipfile, json, shutil
+from configparser.ConfigParser
 from ptxprint.usxutils import simple_parse
 from difflib import context_diff
 
@@ -173,7 +174,7 @@ class GtkTester:
             if len(b) < 4:
                 continue        # only want configuration files
             ext = os.path.splitext(b[3])
-            m = self.getattr("compare_"+ext[1:].lower(), None)
+            m = getattr(self, "compare_"+ext[1:].lower(), None)
             if m is None:
                 m = self.diffcompare
             if b[1] not in projects:
