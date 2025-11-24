@@ -36,15 +36,14 @@ jobs:
           python-pyopenssl:p
           python-regex:p
 
-    - name: Setup PyInstaller
-      run: pip install --upgrade pyinstaller
-
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Setup ptxprint dependencies
+    - name: Setup PyInstaller & ptxprint dependencies
       shell: msys2 {0}
-      run: "pip install --only-binary=:all: --break-system-packages .[gui]"
+      run: |
+        pip install --upgrade pyinstaller
+        pip install --only-binary=:all: --break-system-packages .[gui]
 
     - name: Build Windows executable
       shell: msys2 {0}
