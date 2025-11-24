@@ -143,6 +143,40 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
 print("binaries:", binaries)
 print("datas:", datas)
 
+#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+jobs = {
+    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]}
+}
+tcolls = []
+for k, v in jobs.items():
+    s = v.pop('py')
+    a = Analysis([s],
+             pathex = ['python/lib'],
+             binaries = binaries,
+             hookspath = [os.path.abspath("pyinstallerhooks")],
+             runtime_hooks = [],
+             excludes = ['tkinter', 'scipy'],
+             win_no_prefer_redirects = False,
+             win_private_assemblies = False,
+             noarchive = False,
+             **v)
+    pz = PYZ(a.pure, a.zipped_data)
+    e = EXE(pz, a.scripts, [],
+          exclude_binaries=True,
+          name = k,
+          debug = False,
+          bootloader_ignore_signals = False,
+          strip = False,
+          upx = False,
+          onefile = False,
+          upx_exclude = ['tcl'],
+          runtime_tmpdir = None,
+          contents_directory = '.',
+          windowed=True,
+          console = False)
+    a.binaries = stripbinaries(a.binaries, f'xetex/bin/{bindir}')
+    tcolls.append([e, a.binaries, a.zipfiles, a.datas])
+
 a1 = Analysis(['python/scripts/ptxprint'],
             pathex =   ['python/lib'],
 	        binaries = binaries,
@@ -179,40 +213,7 @@ exe1 = EXE(pyz1,
           icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
 
 # one has to do an analysis and exe for every application (what a pain)
-colls = [[exe1, a1.binaries, a1.zipfiles, a1.datas]]
-
-#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
-jobs = {
-    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]}
-}
-for k, v in jobs.items():
-    s = v.pop('py')
-    a = Analysis([s],
-             pathex = ['python/lib'],
-             binaries = binaries,
-             hookspath = [os.path.abspath("pyinstallerhooks")],
-             runtime_hooks = [],
-             excludes = ['tkinter', 'scipy'],
-             win_no_prefer_redirects = False,
-             win_private_assemblies = False,
-             noarchive = False,
-             **v)
-    pz = PYZ(a.pure, a.zipped_data)
-    e = EXE(pz, a.scripts, [],
-          exclude_binaries=True,
-          name = k,
-          debug = False,
-          bootloader_ignore_signals = False,
-          strip = False,
-          upx = False,
-          onefile = False,
-          upx_exclude = ['tcl'],
-          runtime_tmpdir = None,
-          contents_directory = '.',
-          windowed=True,
-          console = False)
-    a.binaries = stripbinaries(a.binaries, f'xetex/bin/{bindir}')
-    colls.append([e, a.binaries, a.zipfiles, a.datas])
+colls = [[exe1, a1.binaries, a1.zipfiles, a1.datas]] + tcolls
 allcolls = sum(colls, [])
 
 # Then bring all the bits together here for the final build
