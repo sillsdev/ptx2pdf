@@ -1254,6 +1254,10 @@ class PDFContentViewer(PDFFileViewer):
             self.parlocfile = parlocs
         if not super().loadnshow(fname, iscurrent, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
+        if fname is None:
+            fname = self.fname
+        if fname is None:
+            return False
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b %H:%M")
