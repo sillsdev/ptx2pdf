@@ -43,7 +43,7 @@ jobs:
     - name: Setup ptxprint and it's dependencies.
       shell: msys2 {0}
       run: |
-        pip install --only-binary=:all: --break-system-packages .[gui]
+        pip install --user --only-binary=:all: .[gui]
 
     - name: Build Windows executable
       shell: msys2 {0}
