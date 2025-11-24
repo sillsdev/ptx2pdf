@@ -17,24 +17,24 @@ jobs:
         release: false
         cache: true
         pacboy: >-
-          python:p
-          python-pip:p
-          gtksourceview3:p
-          python-pillow:p
-          python-fonttools:p
-          python-regex:p
-          python-cairo:p
-          python-gobject:p
-          gtk3:p
-          glib2:p
-          libffi:p
+          adwaita-icon-theme:p
           gcc:p
           glade:p
-          python-pyopenssl:p
+          glib2:p
+          gtk3:p
+          gtksourceview3:p
+          libffi:p
           poppler:p
-          python-numpy:p
-          adwaita-icon-theme:p
+          python:p
+          python-cairo:p
+          python-fonttools:p
+          python-gobject:p
           python-lxml:p
+          python-numpy:p
+          python-pillow:p
+          python-pip:p
+          python-pyopenssl:p
+          python-regex:p
 
     - name: Setup PyInstaller
       run: pip install --upgrade pyinstaller
@@ -47,7 +47,7 @@ jobs:
       run: "pip install --only-binary=:all: --break-system-packages .[gui]"
 
     - name: Build Windows executable
-      shell: cmd
+      shell: msys2 {0}
       env:
         MSYS2_DIR: ${{ steps.msys2.outputs.msys2-location }}\${{env.MSYSTEM}}
         LOG_LEVEL: ${{ runner.debug == '1' && 'DEBUG' || 'INFO' }}
