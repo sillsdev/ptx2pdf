@@ -34,6 +34,7 @@ jobs:
           python-numpy:p
           python-pillow:p
           python-pip:p
+          python-platformdirs:p
           python-pyopenssl:p
           python-regex:p
 
