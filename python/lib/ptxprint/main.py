@@ -105,7 +105,8 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         results = tester.run_finalise()
         for k, v in results:
             if len(v):
-                print(f"{k}: {'\n    '.join(v)}")
+                resv = "\n    ".join(v)
+                print(f"{k}: {resv}")
     if server is not None:
         server.terminate()
         server.wait()
