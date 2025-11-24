@@ -1,12 +1,12 @@
 
-import os
+import os, re
 import xml.etree.ElementTree as et
 from usfmtc.reference import Ref, RefRange, Environment
 import logging
 
 logger = logging.getLogger(__name__)
 
-def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRefs, usfm=None):
+def transcel(triggers, bk, prjdir, lang, rtl, overview, boldover, numberedQs, showRefs, usfm=None):
     tfile = os.path.join(prjdir, "pluginData", "Transcelerator", "Transcelerator",
                          "Translated Checking Questions for {}.xml".format(bk))
     logger.debug(f"Importing transcelerator data from {tfile}")
@@ -35,7 +35,9 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
         if txt is not None and len(txt):
             n += 1
             # txt = "\\bd " + txt + "\\bd*" if ovqs and boldover else txt
-            r = ref.str(env=nobook) 
+            r = ref.str(env=nobook)
+            if rtl:
+                r = re.sub('\u200f\\-','\u200E\\-',r)
             fr = ""
             if numberedQs and showRefs:
                 fr = f"\\fr {n}. ({r}) "

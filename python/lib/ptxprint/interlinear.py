@@ -65,7 +65,7 @@ class Interlinear:
 
     def replaceusx(self, doc, curref, lexemes, linelengths, mrk="wit"):
         # breakpoint()
-        if curref[0] >= len(doc.chapters):
+        if curref[0] >= len(doc.chapters) - 1:
             return
         parindex = doc.chapters[curref[0]]
         lexemes.sort()

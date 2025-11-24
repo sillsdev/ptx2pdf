@@ -21,7 +21,7 @@ class ScriptSnippet:
 
     @classmethod
     def getrefenv(cls, view):
-        return cls.refenv
+        return cls.refenv()
 
     @classmethod
     def isSyllableBreaking(cls, view):
@@ -279,13 +279,16 @@ class orya(Indic):
 class beng(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
-        res = [
+        if view.get("c_letterSpacing"):
+            res = [
             #makeChange("(?<=\\s)([\u0985-\u09CC](?![\u09C7-\u09CC])[^\\\\\\s]*?"
             #           "[\u09C7-\u09CC][^\\\\\\s]*?)(?=\\s)", "\uFDEC\\1\uFDED")
-            makeChange("(?<=[\u0980-\u09CC\u09CE-\u09FF])([\u0985-\u09B9]\u09BC?"
+                makeChange("(?<=[\u0980-\u09CC\u09CE-\u09FF])([\u0985-\u09B9]\u09BC?"
                         "(?:\u09CD[\u0985-\u09B9]\u09BC?)*)(?=[\u09C7-\u09CC])",
                         "\uFDD0\\1", context=onlybody)
             ]
+        else:
+            res = []
         return res
 
 class hans(ScriptSnippet):

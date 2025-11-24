@@ -113,7 +113,7 @@
   \x@\global\x@\let\csname #1\endcsname\tmp@ins
 } %Point the normal insert name to the page-numbered version
 
-\def\m@kepolyb@x#1\E{\x@\newb@x\csname #1\p@lyp@gesuffx\endcsname}
+\def\m@kepolyb@x#1\E{\x@\newins@rt\csname #1\p@lyp@gesuffx\endcsname}% Not all are inserts, but most.
 \def\switch@polypage#1{%Switch to the relevant page for the column selected.
   \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
   \ifnum\p@lyp@geno=\sp@lynum\relax

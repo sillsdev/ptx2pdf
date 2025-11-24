@@ -304,8 +304,8 @@ class Report:
         widget_map = {
             "Project Name":               ("1. Project/Overview", "l_projectFullName", 1100, \
                                             lambda v,w: (v.get("l_projectFullName", ""), logging.DEBUG)),
-            "Copyright":                  ("1. Project/Overview", "t_copyrightStatement", 1080, \
-                                            lambda v,w: (v.get("t_copyrightStatement", ""), logging.DEBUG)),
+            "Copyright":                  ("1. Project/Overview", "txbf_copyright", 1080, \
+                                            lambda v,w: (v.get("txbf_copyright", ""), logging.DEBUG)),
             "License":                    ("1. Project/Overview", "ecb_licenseText", 1060, \
                                             lambda v,w: (v.get("ecb_licenseText", ""), logging.DEBUG)),
                                                          
@@ -396,7 +396,7 @@ class Report:
         badlist = []
         collisions_list = []
         count = 0
-        plocs = view.pdf_viewer.parlocs
+        plocs = getattr(view.pdf_viewer, 'parlocs', None)
         if plocs is None:
             return
         rivers = []
@@ -437,8 +437,9 @@ class Report:
 
         if threshold == 0:
             badlist = plocs.getnbadspaces()
-            threshold = badlist[0].widthem
             count = len(badlist)
+            if count > 0:
+                threshold = badlist[0].widthem
         if len(badlist):
             bads = set([Ref(x.line.ref.replace(".", " ")) for x in badlist if x.line.ref])
             self.add("2. Layout", f"Bad spaces [{threshold} em] {len(badlist)}/{count}\n" + " ".join((str(s) for s in sorted(bads))), severity=logging.WARN, txttype="text")

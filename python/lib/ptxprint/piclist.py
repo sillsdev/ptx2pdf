@@ -89,8 +89,11 @@ class PicChecks:
                         hasdata = True
                 if not hasdata:
                     a[2].remove_section(s)
-            with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
-                a[2].write(outf)
+            try:
+                with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
+                    a[2].write(outf)
+            except FileNotFoundError:
+                pass
         res = self.changed
         self.changed = False
         return res
@@ -602,6 +605,17 @@ class Piclist:
                         key = None
                         self._readpics(s, bk, c, lastv, isperiph, parent, sync=sync, fn=fn)
 
+    def add_from_fig(self, bk, anchor, fige):
+        pic = {"anchor": f"{bk} {anchor}"}
+        for k, v in fige.attrib.items():
+            if k not in ("style", "vid"):
+                pic[k] = v
+        if "media" not in pic:
+            pic["media"] = "paw"       # do better
+        p = Picture(**pic)
+        self.pics[p.key] = p
+        return p
+
     def rmdups(self):
         ''' Makes sure there are not two entries with the same anchor and same image source'''
         anchormap = {}
@@ -852,6 +866,16 @@ class Piclist:
         else:
             res = None
         return res
+
+    def emptyAnchor(self, bk, suffix=""):
+        allanchors = set([p['anchor'] for p in self.pics.values() if p['anchor'].startswith(bk+suffix)])
+        res = 0
+        while True:
+            tv = f"{res:03d}"
+            ta = f"{bk}{suffix} {tv}"
+            if ta not in allanchors:
+                return tv
+            res += 1
 
     def find(self, **kw):
         ''' find all the pics (so returns a list) whose attributes match those given '''

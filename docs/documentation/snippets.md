@@ -371,6 +371,32 @@ For before
 
 \ztocafter....
 ```
+
+## Two Columns Table of Contents
+
+This snippet can be used for the contents peripheral in FRTlocal.SFM:
+
+```tex
+\periph Table of Contents|id="contents"
+\mt \zvar|contentsheader\*
+\is Old Testament
+\zgap|-18pt\*
+\doublecolumns
+\ztoc|ot\*
+\singlecolumn
+\is ~
+\is New Testament
+\zgap|-18pt\*
+\doublecolumns
+\ztoc|nt\*
+\b
+\ztoc|post\*
+\singlecolumn
+```
+
+The negative zgap amount may need adjusting according to taste, and the headings
+will need translating.
+
 ## Set a larger space before footnote caller in the text
 
 If the space before a footnote caller (defined by style zcf) needs to be
@@ -379,6 +405,25 @@ increased, then this can be done by adding the following line.
 ```tex
 \sethook{start}{zcf}{\hskip 0.1em}
 ```
+
+## Don't break before q2 and friends
+
+This snippet keeps q1 based groups of poetry lines together. Insert into the
+ptxprint-mods.tex.
+
+```tex
+\sethook{before}{q2}{\nobreak}
+\sethook{before}{q3}{\nobreak}
+```
+
+### Implementation
+
+The `before` hook is run after the previous paragraph is finished. We assume the
+previous paragraph is a q1. `\\nobreak` tells TeX not to allow a page break at
+this position. If you have long sequences of q2 without a q1, then be careful
+because you may have page break problems. Notice that the use of the `before`
+hook does not interfere with the `start` hooks used for hanging verse numbers.
+
 
 ## Move the qr word up to the end of previous line (if space permits)
 

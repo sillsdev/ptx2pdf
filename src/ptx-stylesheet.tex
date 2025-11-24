@@ -217,8 +217,8 @@
 %} % expand now, not later
 
 \def\setp@ram#1#2#3{\relax\edef\@mkr{\x@\cstackpeek #2,\E}% Potentialy we have a fake stack. Save as uppermost
-  \ifx\ds@ffix\empty\x@\@set@mkr\@mkr++\E\fi
-  \trace{sC}{Setting parameter for #1/\c@tprefix#2/#3}%
+  \ifx\ds@ffix\empty\else\x@\@set@mkr\@mkr++\E\fi
+  \trace{sC}{Setting parameter for #1/[#2 (\ds@ffix)]->\@mkr/#3}%
   \x@\xdef\csname\c@tprefix\@mkr:#1\endcsname{#3}\trace{sa}{set \c@tprefix\@mkr:#1 -> #3}%
   \ifx\c@tprefix\empty\else\should@xist{\c@tprefix}{\@mkr}\fi%Ensure that the marker is in the exists list
 }
@@ -540,11 +540,13 @@
   \let\p@ram\relax
   \ifcsname #2\c@rrdstat:#1\endcsname
     \x@\let\x@\p@ram\csname#2\c@rrdstat:#1\endcsname
+    \trace{sa}{dgetp@r@m: #2\c@rrdstat:#1 -> \p@ram}%
   \fi
   \ifx\p@ram\relax
     \trace{spv}{#2\c@rrdstat:#1 undefined}
     \ifcsname #2:#1\endcsname
       \x@\let\x@\p@ram\csname#2:#1\endcsname
+      \trace{sa}{dgetp@r@m: #2:#1 -> \p@ram}%
     \fi
   \fi
   \ifx\p@ram\relax
@@ -908,7 +910,8 @@
   \ifx\tmp\relax
     \getp@r@m{endmarker}{\m@rker}%
     \ifx\p@ram\relax
-      \x@\def\csname#1\endcsname{\def\milestoneOp{}\mst@nestyle{#1}}%
+      \trace{M}{\string\\def \string\\ #1}%
+      \x@\gdef\csname#1\endcsname{\trace{m}{Firing #1}\def\milestoneOp{}\mst@nestyle{#1}}%
     \else
       \x@\def\csname\p@ram\endcsname{\def\milestoneOp{e}\mst@nestyle{#1}}%
       \x@\def\csname#1\endcsname{\def\milestoneOp{s}\mst@nestyle{#1}}%
@@ -981,6 +984,7 @@
 
 \def\MakeChapterLabel#1#2{#1\ #2}
 \def\reference{\ch@pter\ChapterVerseSeparator\v@rse}%
+\global\let\ch@pteraltt@xt\empty
 
 \newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
@@ -1012,6 +1016,7 @@
   %\message{verse was \meaning\oldv@rse}% Set to empty at chapter number.
   \ifx \oldv@rse\empty
     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
+    \ifOmitVerseNumberOne\c@ncelfirstversetrue\fi
   \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
@@ -1061,6 +1066,7 @@
     \trace{hv}{End of hanging verse \ch@pter:\v@rse }%
     \hangingversefalse
     \ignorespaces
+  \else\ifMarginalVerses \ignorespaces\fi
   \fi
  }
  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
@@ -1086,17 +1092,28 @@
  \let\@C=\c
  % Define a macro to process space delimited chapter number
  % ## is necessary because this is a nested macro definition
- \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
+ \def\@C@{%
+  \let\nxt\@@C@@
+  \ifx\mayb@cp\cp\let\nxt\@@CP@@\fi
+  \ifx\mayb@cp\ca\let\nxt\@@CA@@\fi\nxt}%
+ \def\@@CP@@\cp ##1 {\gdef\ch@ptert@xt{##1}\futurelet\mayb@cp\@C@}
+ \def\@@CA@@\ca ##1\ca*{\gdef\ch@pteraltt@xt{##1}\futurelet\mayb@cp\@C@}
+ \def\@c@ ##1 {%
    \ifx\ch@pter\z@ro
      \message{First chapter for \id@@@}\op@ninghooks{first}{c}{c+\styst@k}%
    \fi
    \gdef\ch@pter{##1}% remember chapter number
    \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
+   \global\let\ch@pteraltt@xt\empty
    \gdef\v@rse{}% clear verse number
+   \m@kedigitsletters %Must reset this before futurelet grabs anything
+   \futurelet\mayb@cp\@C@}% Check what happens next.
+ \def\@@C@@{%
    \ifdiglot
      \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
      \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
      \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
+     \x@\global\x@\let\csname @ch@pteraltt@xt\g@tdstat\endcsname\ch@pteraltt@xt
      \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
    \fi
    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
@@ -1106,7 +1123,6 @@
    \ifcsname cv-\c@rref\endcsname\csname cv-\c@rref\endcsname\fi
    \global\let\print@bleverse=\v@rse
    \op@ninghooks{start}{c}{\styst@k}%
-   \m@kedigitsletters
     % If omitting chapter number, skip this.
     % We would have to set \OmitChapterNumbertrue on a book by book basis
     % in the configuration file in order to omit chapter numbers for single chapter books.
@@ -1123,11 +1139,17 @@
      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
      \ifcsname hookchapter\g@tdstat\endcsname\csname hookchapter\g@tdstat\endcsname\ch@pter
      \else
-       \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+       \ifx\ch@pl@bel\empty\relax 
          \trace{c}{No chapter label in use : \ch@pter}%
+         \getp@ram{posn}{c}{c}\ifx\p@ram\loc@M
+            \m@rginc
+         \else
+            \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+         \fi
        \else % if \cl present, output chapter label here
          \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-         \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+         \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\printchapter{\ch@ptert@xt}}%
+         \ifx\ch@pteraltt@xt\empty\else{\s@tfont{cl+ca}{ca}\printaltchapter{\ch@pteraltt@xt}}\fi
          \pdfb@@kmark \pdfch@ptermark
          \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
          \spacefactor=\n@wchaptersf % prevent hanging verse number here
@@ -1135,9 +1157,9 @@
      \fi
    \fi}
  %
- \def\c{\m@kedigitsother\@c@}
+ \def\c{\ifsk@pping \egroup \fi % if we were skipping, stop it
+   \m@kedigitsother\@c@}
  \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
- \def\ca ##1\ca*{\xdef\ch@ptert@xt{\ch@ptert@xt (##1)}}
 %-csty_chapdef
  % set default value for drop cap chapter number size if not already set
 %+csty_dropchap
@@ -1148,6 +1170,16 @@
  \def\m@rker{c}\def\@mkr{c\c@rrdstat}\defp@ram{fontsize}{\dr@psize}%
  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
 }
+\def\m@rginc{%
+  \setbox\ch@pterbox=\vbox{\XeTeXuseglyphmetrics=3\hbox{\cstyle{c}{\ch@pter}}}%
+  \getp@ram{spacebeside}{c}{c}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
+  %\dp\ch@pterbox=\ht\ch@pterbox \ht\ch@pterbox=0pt
+  \dimen1=-\dp\pstr@t
+  \dimen9=\lastdepth
+  \par\dimen8=\prevdepth \trace{e}{prevdepth=\the\dimen8 ->\the\dimen9}\prevdepth=\dimen9
+  \d@marginnote{\ch@pterbox}{\c@rref}{c}{\MarginNoteSide}{inline}{\the\dimen0}{\the\dimen1}%
+}
+
 %-csty_dropchap
 \def\bridgeVerses #1.#2-#3.{
   \addtrigger{#1.#2-preverse}{\setPrintVerse #2 #3.}
@@ -1200,7 +1232,7 @@
 	  % divide desired height by current height
       \multiply\dimen0 by 128                                                   %(3)
       \divide\dimen0 by \dimen2
-	  % multiply by original size from \c marker in stylesheet
+	  % multiply by original size from \cmarker in stylesheet
       \trace{h}{font x-height \x@\the\fontdimen5\font, ht of digits \the\ht0, dp of digits \the\dp0, baselineskip \the\baselineskip, for dropcaps \the\dimen0\space multiply by \the\dropnumbersize}%
       \dimen3=\dimen0 % depth scale factor * 128
       \multiply\dimen0 by \dropnumbersize
@@ -1605,6 +1637,15 @@
 \mcp@pCont{\ss@Ctgy}{\ss@Ctgy}% new cat pops old cat
 \mcp@pCont{\ss@Para}{\ss@ParCtgy}% new paragraph pops old parcat
 \mcnp@pSt@re{*}{\ss@Mstn}% Milestones are always stored.
+\mcp@pCont{\ss@File}{\ss@Mstn}% Except at the end of a file
+\mcp@pCont{\ss@File}{\ss@MstnS}% Except at the end of a file
+\mcp@pCont{\ss@File}{\ss@Para}% file end pops all
+\mcp@pCont{\ss@File}{\ss@Char}% file end pops all
+\mcp@pCont{\ss@File}{\ss@ChrP}% file end pops all
+\mcp@pCont{\ss@File}{\ss@Note}% file end pops all
+\mcp@pCont{\ss@File}{\ss@Sbar}% file end pops all
+\mcp@pCont{\ss@File}{\ss@Tbl}% file end pops all
+\mcp@pCont{\ss@File}{\ss@File}% file end pops all
 %Style end pops:
 \mcp@pCont{\ss@Sbar*}{\ss@Ctgy}% sidebar end pops caT
 \mcp@pCont{\ss@Sbar*}{\ss@Para}% sidebar end pops Paragraph
@@ -1710,7 +1751,7 @@
   }\mcdown
   \global\let\tmpstyst@k\styst@k
   \global\let\tmpstyst@kfirst\styst@kfirst
-  \trace{sa}{styst@k -> (\styst@kfirst/\styst@k)}%
+  \trace{sa}{styst@k -> (\styst@kfirst/\styst@k) from \mcstack}%
 }
 \let\styst@kfirst\empty
 \let\styst@k\empty
@@ -1857,7 +1898,7 @@
  \global\let\id@@@\n@ID
  \defineheads
  \ifnum 1=\ifVisTrace 1 \else \ifVisTraceExtra 1 \else 0\fi\fi 
-   \font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
+   \font\VisTracefont="Source Code Pro":color=3f7f3f at 6pt\fi
  \ifdiglot\setc@rdstat{L}%
  \fi
  \let\@@realrem\rem
@@ -1916,6 +1957,7 @@
  \deactiv@tecustomch@rs
  \catcode13=5
  \catcode`\/=12
+ \catcode`\^=7 % restore tex meaning
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
  \catcode`+=\pl@scatcode % don't treat as letter any more
@@ -1943,6 +1985,7 @@
 \def\preptxfile{
  \outputpenalty=0
  \filehasversesfalse\gdef\fileh@sverses{\global\filehasversestrue\global\let\fileh@sverses\relax}% Set filehasverses once then done, no need to repeat it every single verse.
+ \edef\ptx@ntrygrouplevel{\the\currentgrouplevel}%
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
@@ -1968,6 +2011,7 @@
   \global\let\LRspecificCount\LRspecificCountFixed %Properly track paragraph numbers in diglots.
  \fi
  \@netimesetup
+ \global\textborderfalse
  \global\let\periph@@@\empty
  \ifdigl@tinuse\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \ifx\PDFBookMarkColumn\relax
@@ -1981,10 +2025,13 @@
    \message{Setting up column-specific values for columns: \diglot@list}%
    \global\baselineDelta=-\maxdimen
    \xdef\@minb@seline{\the\baselineskip}%
+   \global\diglotb@dyfalse
+   \global\diglotfirstb@dyfalse
    \def\col@do##1{% Per-column setup
      \setc@rdstat{##1}%
      \showLRspecific
      \setLRspecific\s@tb@dyb@seline{##1}%
+     \x@\global\x@\let\csname isb@dy##1\endcsname\false
      \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
      \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
        \global\baselineDelta=\csname baselineDelta##1\endcsname
@@ -2010,6 +2057,7 @@
      }%
      \trace{d}{DiglotSides = \diglot@list}%
      \x@\each@col\diglot@list\E
+     \c@lcm@xBB
    \egroup
  \fi
  % Check supplied line thicknesses (user might change them, e.g. after FRT):
@@ -2032,7 +2080,8 @@
  \ifdiglot
    \global\let\gridb@x\diglotgr@db@x
  \else
-   \ifsquashgridbox\global\let\gridb@x\gr@db@@x\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
+   %\ifsquashgridbox
+   \global\let\gridb@x\gr@db@@x%\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
    \ifNoGrid\global\let\gridb@x\ungr@db@x\fi
  \fi
  \@netimesetuplater
@@ -2094,6 +2143,18 @@
  \traceifcheck{ptxfile}%
  \postptxfile
 }
+\def\p@stptxfileendgroups{%
+  \ifnum\currentgrouptype=14 
+    \message{+}\let\@@@EG\endgroup
+  \else
+    \message{-}\let\@@@EG\egroup
+  \fi
+  \@@@EG
+  \ifnum\currentgrouplevel>\ptx@ntrygrouplevel
+    \let\nxt\p@stptxfileendgroups \else\let\nxt\relax
+  \fi
+  \nxt
+}
 \gdef\atn@xtptxfile{}
 %-csty_ptxfile_start
 %+csty_ptxfile_end
@@ -2101,11 +2162,16 @@
 \newsp@cialpen{sect@ndpenalty}
 \def\postptxfile{%
  \inptxfilefalse  
- \trace{o}{postptxfile \iflastptxfile LAST file \fi pg=\the\pagegoal, pt=\the\pagetotal}%
+ \trace{o}{postptxfile \iflastptxfile LAST file \fi pg=\the\pagegoal, pt=\the\pagetotal, gl=\the\currentgrouplevel, egl=\ptx@ntrygrouplevel}%
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
  \endt@ble
+ \end@llpoppedstyles{F}%
+ \ifnum\ptx@ntrygrouplevel<\currentgrouplevel
+   \message{!! ptxfile ended \the\currentgrouplevel \space groups deep. Expected: \ptx@ntrygrouplevel}%
+   \p@stptxfileendgroups
+ \fi
  \inendbooktrue 
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \global\d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
@@ -2270,7 +2336,7 @@
 \def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{\doc@t{#1}}
 \def\doc@t#1{% Called to start categorry from all sorts of places, including footnotes. No extra parargaphs please!
-  \trace{sc}{Starting category #1, with stylet@pe=\stylet@pe, mcstack=\mcstack}%
+  \trace{e}{Starting category #1, with stylet@pe=\stylet@pe, mcstack=\mcstack}%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
     \end@llpoppedstyles{\ss@Ctgy}%pop styles closed by a start of t, in case this IS 2 cat commands

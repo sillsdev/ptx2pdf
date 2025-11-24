@@ -1,3 +1,4 @@
+\def\pluginlist{ornaments}
 \input paratext2.tex
 %\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
 %\VisTracetrue% Every chunk joined, mark with the current trace number
@@ -10,7 +11,7 @@
 \showboxbreadth=100
 %\tracingifs=1
 %\tracingoutput=1
-%\diglotInnerOutertrue
+\diglotInnerOutertrue
 \XeTeXuseglyphmetrics=0
 \ColumnGutterRuletrue
 %\def\BelowFootNoteRuleSpace{5pt}
@@ -25,7 +26,8 @@
 %\def\bg@R@col{0.9 1.0 0.9}
 %\def\bg@R@alpha{0.5}
 %\SetDiglotBGColour{L}{0.9 0.9 1.0}{}
-\SetDiglotBGColour{R}{xffffff}{0.8}
+\SetDiglotBGColour{R}{x7f7fff}{0.5}
+\def\TextBorderColumns{L}
 
 \input Galatians-setup.tex
 \iftrue
@@ -42,6 +44,7 @@
  \VisTracetrue
  %\VisTraceExtratrue
  \tracing{D}
+ \tracing{et}
 \fi
 
 \XeTeXuseglyphmetrics=0

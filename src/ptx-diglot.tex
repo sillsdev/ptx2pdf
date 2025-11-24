@@ -39,6 +39,10 @@
 \def\TRshipout#1{}
 \def\b@xbotmark{}
 
+\xdef\f@rstb@dy{0pt}%
+\def\TextBorderColumns{} % If unset, then border all scripture. If set, only border the ones set. E.g. for when a 
+ % paraphrase is included.
+
 % THis is a crude hack to make main titles line up nicely. For some reason
 % they seem to already be vtops with depth info lost. 
 %
@@ -56,6 +60,8 @@
 \newif\ifdiglotcolh@scontent % Set false at start of column, made true by \everyparhooks
 \newif\ifdiglot@pos@top % Set if the current chunk is at the top of the page.
 \newif\ifdiglot@ecols % set if there are any empty columns
+\newif\ifdiglotb@dy % set if the diglot file is processing body text
+\newif\ifdiglotfirstb@dy % set if the diglot file is processing body text for the first time this loop.
 \addtoeveryparhooks{\global\diglotcolh@scontenttrue}
 \useLeftMarkstrue
 \useRightMarkstrue
@@ -72,6 +78,9 @@
 \def\n@xtbotRmark{} %First Rmark in the n@xt chunk
 \def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
+\def\m@xBelowBaseline{0pt}%
+\def\@fnLht{0pt}
+\def\@fnRht{0pt}
 
 %Defined penalties
 \newsp@cialpen{dgl@tPenColSwap}%
@@ -107,7 +116,8 @@
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitVerseNumberOne,MakeChapterLabel,ColAdjskip,intercharspace}
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
-%LRspecificVarIf lists **internal boolean variables** that need to carry over from one paragraph to the next. For global config values, insert name in LRspecificDef, and add line(s) for newsideSpecificIf into initcolumndef@ults
+%LRspecificVarIf lists **internal boolean variables** that need to carry over from one paragraph to the next. 
+%For global config values, insert name in LRspecificDef, and add line(s) for newsideSpecificIf into initcolumndef@ults
 \def\LRspecificVarIf{dr@ppednumber,dr@ppedother}
 \def\LRspecificVarDef{ch@pterc@tnum} % \def based variables that need to carry over from one par to the next
 
@@ -273,6 +283,7 @@
 }
 
 \def\initcolumndef@ults#1{%
+    \trace{d}{Initial defaults for #1}%
     \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
     \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
     \empty@cseq{old#1mark}%last X mark 
@@ -289,6 +300,13 @@
     \newsideSpecificIf{OmitVerseNumberOne#1} % global config option
     \xdef@cseq{@cur#1ht}{0pt}% 
     \xdef@cseq{@cur#1dp}{0pt}% 
+    \xdef@cseq{@textborder@#1}{0pt}% Amount of column width lost to text border
+    \xdef@cseq{textb@dr@left@pad#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{textb@dr@right@pad#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{textb@dr@top@pad#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{textb@dr@bot@pad#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{pretextb@rderskip#1}{0pt}% Amount of column width lost on left
+    \xdef@cseq{posttextb@rderskip#1}{0pt}% Amount of column width lost on left
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
     \x@\def\csname addTo#1Hooks\endcsname{\addToSideHooks{#1}}
 }
@@ -345,7 +363,6 @@
    \trace{Dh}{after part1:\the\availht}%
    \ifcsname @nxtchunkLht\endcsname
      \ifdim\availht=\textheight\relax \else % joint calcs only apply if the page has content!
-      
        {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht} \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}%
          \x@\def\x@\tmsg\x@{\tmsg}%
          \trace{Dh}{dglt@calc@vailht:  \tmsg}
@@ -386,9 +403,9 @@
    \fi
    \ch@ckiftextborderadj
    \iftemp
-     \trace{Dh}{Border: \pretextb@rderskip, \posttextb@rderskip}%
-     \global\advance\availht -\pretextb@rderskip  % Space reserved for text border.
-     \global\advance\availht -\posttextb@rderskip 
+     \trace{Dh}{Border: \mxpretextb@rderskip \csname pretextb@rderskip\c@rrdstat\endcsname, \csname posttextb@rderskip\c@rrdstat\endcsname}%
+     \ifdim\f@rstb@dy=0pt \global\advance\availht -\mxpretextb@rderskip \fi % Space reserved for text border.
+     \global\advance\availht -\csname posttextb@rderskip\c@rrdstat\endcsname
    \fi
    \x@\global\x@\csname availht@com\endcsname=\availht
    \ifloc@lht
@@ -455,7 +472,7 @@
   \dimen9=\dp\galley
   \unvbox\galley\count255=\lastpenalty\unpenalty
   \tmpcount=\lastnodetype
-  \ifnum\tmpcount=12\else\kern-\dimen9\fi%\lastnotedype=12 is eTeX test for kern (see above for longer list
+  \ifnum\tmpcount=12\else\kern-\dimen9\fi%\lastnodetype=12 is eTeX test for kern (see above for longer list
   \ifVisTraceExtra\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi
   \traceNum{D}{removed penalty \the\count255, replacing with \the\galleypenalty. lnt:\the\tmpcount (\decod@lastnode{\tmpcount})}%
   \ifvoid\galleyexc@ss\else
@@ -580,7 +597,7 @@
     \global\holdinginserts=0
     %Make sure partialX (last galley) is dropped or recycled ...
     \iflate@stage@reflow
-      \trace{D}{restoring notes, re-flowing (\refl@wlist) partial\c@rrdstat\space and excess\c@rrdstat,}%
+      \trace{D}{restoring notes, re-flowing (\refl@wlist) partial\c@rrdstat\space and excess\c@rrdstat, trigger:\late@stage@trigger}%
       \r@storenotes{\g@tndstat}{1}%
       %\showbox\p@rtl
       \ifvoid\p@rtl\else
@@ -588,6 +605,7 @@
         % be here, but surely it ought to be?
         % 2024-dec: one case where merging is wrong - duplicated chunk.
         \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with NoMergeReflow\ifNoMergeReflow false\else true\fi}%
+        \trace{d}{p@rtl:\l@gdims{\p@rtl}, @xcs:\l@gdims{\@xcs}}%
         \ifNoMergeReflow\else
           \global\setbox\@xcs\vbox{\joinboxes{\p@rtl}{\@xcs}{2}{0}}%
           \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
@@ -598,13 +616,12 @@
       \s@venotes{\g@tndstat}{1}%
     \fi
     \s@veinserts{col}%
-    %grab 1st trialheight from excessX
     \ifnum\diglotDbgJoinboxes=\TRACEcount
       \showbox\@xcs
     \fi
     \dimen0=\ht\@xcs\advance\dimen0 by \dp\@xcs \relax
     \ifdim\dimen0<\trialheight
-      \global\trialheight=\dimen0 %save useless trims.
+      %\global\trialheight=\dimen0 %save useless trims. FIXME: Better without this, but it's still getting things wrong.
     \fi
     \ifdiglotDebugFollowContents
       \trace{D}{Showing xcs before split}%
@@ -642,7 +659,12 @@
     }%
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\global\@ftergalleyskip=\lastskip\unskip\penalty\endtri@lpen@lty}%
-    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip}%
+    \ifdim\ht\@xcs>0pt 
+      \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{\the\dimexpr \the\trialheight -\the\ht\galley\relax}% The trial already rejected this much content, don't re-try it.
+    \else
+      \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{0pt}%
+    \fi
+    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip, tsr:\csname tri@lsplitRej\c@rrdstat\endcsname}%
     \ifdim\ht\galley=0pt \ifdim\dp\galley=0pt
       \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
       \ifnum\interactionmode=2
@@ -955,13 +977,14 @@
       \trace{D}{Initial content fits(th:\the\trialheight, av:\the\availht, box:\the\ht\trialbox d:\the\TempDim)}%
       \ifdim \TempDim > 2\@bls
         \vsize=\TempDim
+        \global\trialheight=\vsize
       \fi
     \fi
   \else
     \advance\TempDim by -\ht\trialbox\relax
     \advance\TempDim by -\dp\trialbox\relax
     \ifdim\TempDim<-0.3\@bls 
-      \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255}%
+      \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255 (trial failed)}%
       \ifnum\outputpenalty=\endtri@lpen@lty\relax\else
         %\showbox\trialbox
         %\showbox\galley
@@ -979,7 +1002,7 @@
         \dimen1=\csname baselineDelta\c@rrdstat\endcsname 
         \advance\dimen1 -\baselineDelta
         \global\extr@contenttrue
-        \trace{d}{Extra material found, which also fits (\the\ht255+\the\dp255) - \the\dimen1 \space \the\TempDim remaining. \show@dstat}%
+        \trace{d}{Extra material found, which also fits (\the\ht255+\the\dp255)-bld(\the\dimen1). (trial sz \the\trialheight \space  was wrong)  \space \the\TempDim remains. \show@dstat}%
         \setbox255=\vbox{\vskip\dimen1\unvbox255}%
         \global\setbox\trialbox=\vbox{\joinboxes{\trialbox}{255}{5}{0}}%
         \ifdim \TempDim > 2\@bls
@@ -1040,7 +1063,7 @@
     %\showlists
     \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}%
   \fi
-  \traceNum{D}{Initial savepenalty \the\savedpenalty}%
+  \traceNum{D}{Initial savepenalty \the\savedpenalty, \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
   \IfTr@ce{C}{{%
     \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
     \x@\let\x@\tmpL\csname ch@pterwaiting\endcsname\ifx\tmpL\relax\let\tmpL\space\fi
@@ -1066,7 +1089,10 @@
       \showlists
     \fi
   \fi%
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal}%
+  \ifb@dy\ifdim \pagetotal>0pt 
+      \x@\global\x@\let\csname isb@dy\c@rrdstat\endcsname\tr@e
+  \fi\fi
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal, \csname isb@dy\c@rrdstat\endcsname}%
   \checkfort@c % as good a place as any
   %\ifnum\outputpenalty=-10000 %User-pagebreak
     %\global\savedpenalty=\outputpenalty
@@ -1161,10 +1187,10 @@
 
 \def\polyglotendcols{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
+  \pr@sideswitch{endcols}{\empty}% MUST precede any write/trace nodes
   \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
   \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
   \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
-  \pr@sideswitch{endcols}{\empty}%
   \diglot@run@trials
   \global\allNeedEmptyingfalse
 }
@@ -1187,7 +1213,7 @@
   \fi
 }
 
-\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}%
+\def\zglot#1|#2\*{\edef\tmp{\zap@space #2 \empty}%
   \ifx\tmp\empty\diglotfalse
     \ifinptxfile\else\gdef\atn@xtptxfile{\message{starting monglot file with no specific side (\c@rrdstat)}}\fi
     \global\let\c@rrdstat\empty
@@ -1345,7 +1371,15 @@
      \cutoutcarryover
    \fi
  \fi
- \x@\let\x@\w@dth\csname column#1width\endcsname
+ \ifdiglotb@dy
+   \x@\let\x@\w@dth\csname column#1width\endcsname
+ \else
+   \ifnum \TextBorderMode>1
+     \x@\let\x@\w@dth\csname column#1fullwidth\endcsname
+   \else
+     \x@\let\x@\w@dth\csname column#1width\endcsname
+   \fi
+ \fi
  \global\hsize=\w@dth\relax
  \global\diglotcolh@scontentfalse
  \trace{D}{end of swap@diglot: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip}%
@@ -1370,6 +1404,7 @@
   \x@\stystacksplit\styst@k+\E
   \x@\global\x@\let\x@\ch@pter\csname @ch@pter\g@tdstat\endcsname
   \x@\global\x@\let\x@\ch@ptert@xt\csname @ch@ptert@xt\g@tdstat\endcsname
+  \x@\global\x@\let\x@\ch@pteraltt@xt\csname @ch@pteraltt@xt\g@tdstat\endcsname
   \x@\global\x@\let\x@\v@rse\csname @v@rse\g@tdstat\endcsname
   \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
   \p@rstyle@everypar{\m@rker}\ifx\m@rker\empty\else\s@tfont{\m@rker}{\m@rker}\fi
@@ -1417,7 +1452,7 @@
 \def\makevtop#1{%There is a strong posibility that a vbox has a depth that
 %is unrecoverable on changing it to a vtop, e.g. if the last item in the
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
-\global%the depth of the box. We therefore *assume* the box will be joined and if
+%the depth of the box. We therefore *assume* the box will be joined and if
 %the depth is not recoverable we add a kern to remove the orignial depth.
  \s@tbaseline{p}{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
@@ -1433,7 +1468,7 @@
 \let\lAd@do\relax
 \let\log@ut\empty
 
-\def\l@gdims#1{\the\ht#1 + \the\dp#1 x \the\wd#1}
+\def\l@gdims#1{\the\ht#1 +\the\dp#1 x\the\wd#1}
 \def\l@gboxdims#1{\edef\lb@tmpnam{\v@lpfx#1\v@lsfx}\x@\let\x@\lb@tmptb@x\csname\lb@tmpnam\endcsname \edef\log@ut{\log@ut\space \lb@tmpnam: \the\ht\lb@tmptb@x +\the\dp\lb@tmptb@x\space x \the\wd\lb@tmptb@x}}
 % Log dimensions of all columns
 \def\l@gm@dims{\relax\let\lAd@do=\col@do\let\col@do=\l@gboxdims
@@ -1552,6 +1587,9 @@
 \def\joinb@xes#1#2{%Called (ONLY) by pagebuilder. Join a vtop/vbox and a vbox/vbox together and preserve baselineskip%
  %\showbox#1\showbox#2%
  \bgroup
+  \ifnum\TRACEcount=\diglotDbgJoinboxes
+    \showbox#1\showbox#2
+  \fi\relax
   \setbox0=\box#1
   \setbox1=\box#2
   \dimen0=0pt \relax
@@ -1593,7 +1631,7 @@
   \def\col@do##1{\advance\count255 by 1}%
   \count255=0
   \x@\each@col\layout@list\E
-  \edef\colc@unt{\the\count255}
+  \xdef\colc@unt{\the\count255}
   \advance\dimen0 by -\numexpr \colc@unt - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
   \def\col@do##1{%
     \ifcsname  Diglot##1Fraction\endcsname
@@ -1603,6 +1641,7 @@
       \message{Diglot##1 fraction not supplied. assuming value of 1/\colc@unt}%
       \csname column##1width\endcsname=\dimen0 \x@\divide \csname column##1width\endcsname by \colc@unt
     \fi
+    \x@\xdef\csname column##1fullwidth\x@\endcsname\x@{\x@\the\csname column##1width\endcsname}%May be needed if there's a textborder
     \traceNum{dP}{Setting column##1width to \the\csname column##1width\endcsname}}%
   \x@\each@col\layout@list\E
   %\columnLwidth=\DiglotLeftFraction\dimen0
@@ -1611,7 +1650,7 @@
 
 \def\@do@jointcalc@simplecols#1{%
     % step 0 what maxbaselineskip applies?
-    {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
+    {\edef\tmsg{@cur}\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
     \x@\def\x@\tmsg\x@{\tmsg}%
     \trace{dP}{do@joint@calc: \tmsg}
     }%
@@ -1643,10 +1682,9 @@
     \fi
     \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1 \space jd:\the\thisjointDelta}%
 }
-
 \def\@prepare@layout@simplecols{%
     \bgroup
-      \trace{d}{@prepare@layout@simplecols \l@gdims{\partial}}%
+      \trace{d}{@prepare@layout@simplecols \l@gdims{\partial} \ifdiglotb@dy body\else intro\fi}%
       % caclulate column deltas.
       \def\v@lpfx{}\def\v@lsfx{ht}\dimen1=0pt%
       \let\col@do\sum@val
@@ -1654,6 +1692,12 @@
       \divide \dimen1 by \curactivecols % dimen1 is now average of Lht, Rht, heights.
       \let\col@do\update@cumulative@delta % Add (Lht - dimen1) to cumulativeDeltaL
       \x@\each@col\cts@list\E
+      \ifdiglotb@dy\else% Notice if the chunk is the fist body chunk
+        \trace{D}{Checking if there's bodytext here}%
+        \global\diglotfirstb@dyfalse
+        \def\col@do##1{\x@\ifx \csname isb@dy##1\endcsname\tr@e \global\diglotfirstb@dytrue\fi}%
+        \x@\each@col\cts@list\E
+      \fi
     \egroup
     %Calculate how much extra space we need:
     \csname @do@jointcalc@\diglotlayout\endcsname{@cur}%
@@ -1665,6 +1709,22 @@
     %save Lht and Rht (as "nxtchunkXht) and reset Xht
     \let\col@do\save@reset@ht
     \x@\each@col\diglot@list\E
+    \ifdiglotfirstb@dy\iftextborder\ifnum\TextBorderMode>0 
+      \ifdim\thisjointDelta<0pt \thisjointDelta=0pt\fi
+      \ifx\TextBorderColumns\empty
+        \dimen1=\textb@dr@top@pad
+      \else
+        %\def\v@lpfx{textb@dr@top@pad}\def\v@lsfx{}%
+        %\let\col@do=\max@val\dimen1=0pt
+        %\x@\each@col\layout@list\E
+        \dimen1=\mxpretextb@rderskip
+      \fi
+      \advance\dimen1 0.2\dimexpr \@maxb@seline\relax
+      \advance\thisjointDelta \dimen1
+      \xdef\f@rstb@dy{\the\dimexpr \ht\partial + \dp\partial + \ht\n@xtpartial +0.3\dimexpr \@maxb@seline\relax\relax}%
+      \trace{et}{TextBorder to be applied near \c@rref,  max applied top border is \the\dimen1, to be applied after \f@rstb@dy}%
+      \global\diglotfirstb@dyfalse\global\diglotb@dytrue
+    \fi\fi\fi
     \dimen8=0pt
     \ifdim\thisjointDelta>0pt
       \advance\dimen8 by \thisjointDelta\relax
@@ -1698,10 +1758,17 @@
     \x@\checkh@x #2\end\x@\xdef\csname bg@#1@col\endcsname{\rgb@out}\fi
 }
   
-\def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
-    \trace{D}{@@simplecols #1}%
-    \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
-      \hss}\xdef\l@stcol{#1}}
+\def\@@simplecols#1{%Set the columns. TextBorderColumns might have 2 widths, e.g. bordered main text (narrow) and unbordered notes (full column width)
+    \hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
+    \trace{D}{@@simplecols #1 \the\csname column#1width\endcsname, bdr:\csname @textborder@#1\endcsname, box:\the\ht\csname #1box\endcsname+\the\dp\csname #1box\endcsname}%
+    \ifx\TextBorderColumns\empty
+      \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
+        \hss}%
+    \else
+      \hbox to \csname column#1fullwidth\endcsname{\ifm@intextcolumn \kern\csname textb@dr@left@pad#1\endcsname\fi\x@\copy\csname #1box\endcsname%indent if a main text column
+        \hss}%
+    \fi
+  \xdef\l@stcol{#1}}
   %
 \def\ck@backgrounds#1{%
   \ifcsname bg@#1@col\endcsname\iftemp\else
@@ -1717,25 +1784,125 @@
 }
 \def\DiglotColourPad{3pt} % How much padding to add for coloured background to diglot columns.
 
+\def\smartB@rder#1{%
+  \ifdiglotb@dy
+    \dimen1=\dimexpr\ht#1 + \dp#1 - \f@rstb@dy\relax
+    \setbox0=\vtop to \dimen1 {\hbox to \wd#1{\hss}\vss}%
+    \doTextB@rder{0}%
+    \ht0=0pt
+    \setbox#1\vbox to \ht#1{\baselineskip=0pt\lineskip=0pt\vbox to 0pt{\ifdim\f@rstb@dy=0pt \else\vskip\f@rstb@dy\fi\box0\vss}\ifdim\f@rstb@dy=0pt\vskip\textb@dr@top@pad\fi\box#1\vss}%
+  \fi
+} 
+\def\bg@calcns#1#2{%
+  \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
+  \if \bg@fillht T\relax
+    \trace{et}{Putting #2 #1 (\bg@fillht\space \the\dimen1\space (\the\ht\partial+\the\dp\partial) or \the\textheight\space or \oldp@rtial+\csname @nxtchunk#1ht\endcsname + \csname @nxtchunk#1dp\endcsname}%
+    \def\wh@t{partial}%
+    \ifdim\csname @nxtchunk#1ht\endcsname>\textheight \else
+       \dimen1=\dimexpr \csname @nxtchunk#1ht\endcsname + \oldp@rtial \relax\def\wh@t{oldpartial + nxtchunk#1ht}%
+    \fi
+    \ifdim\dimen1>\textheight \dimen1=\textheight \def\wh@t{textht}\fi
+    \ifdim\csname @fn#1ht\endcsname>0pt
+      \advance\dimen1 -\AboveNoteSpace\relax
+      \edef\wh@t{\wh@t - \the\AboveNoteSpace}%
+    \else
+      %\advance\dimen1 -\dimexpr \csname textb@dr@bot@pad#1\endcsname + \csname @fn#1ht\endcsname
+    \fi
+  \else
+    \if \bg@fillht P\relax
+      \trace{et}{Putting #2 #1 (\bg@fillht\space\l@gdims{\partial} - \csname textb@dr@bot@pad#1\endcsname - \csname @fn#1ht\endcsname)}%
+      \def\wh@t{partial}%
+    \else
+      \if A\bg@fillht
+        \ifloc@lht\else
+          \dglt@calc@vailht@mods %(globally) alters availht, so that needs resetting
+        \fi
+        \ifx\TextBorderColumns\empty\else
+          \advance\availht by -\dimexpr \csname textb@dr@top@pad#1\endcsname+\csname textb@dr@bot@pad#1\endcsname \relax
+        \fi
+        \dimen1=\availht
+      \else
+        \dimen1=\textheight
+      \fi
+    \fi
+  \fi
+  \x@\ifx\csname BelowBaseline#1\endcsname\empty
+    \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
+    \edef\wh@t{\wh@t + 0.5 lines}%
+  \fi
+  \def\tbskip@jd{0pt}%
+  \ifdiglotb@dy
+    \ifdim\f@rstb@dy>0pt
+      \edef\tbskip@jd{\dimexpr  \mxpretextb@rderskip -\csname textb@dr@top@pad#1\endcsname \relax}%
+      \advance\dimen1 - \dimexpr \f@rstb@dy + \tbskip@jd\relax
+      \advance\dimen1 - \csname textb@dr@top@pad#1\endcsname
+      \edef\wh@t{\wh@t -\f@rstb@dy - skip adj(\csname pretextb@rderskip#1\endcsname-\mxpretextb@rderskip)}%
+    \fi
+  \fi
+  \trace{et}{Basic border/bg calcs result \the\dimen1 \space according to \wh@t}%
+}
+
+\def\ins@borders#1{% This inserts the borders, positioned relative to the top of the page.
+  \def\c@rrdstat{#1}%
+  \ifx\l@stcol\empty\else\hskip \gutter\fi
+  \ifdim \csname @textborder@#1\endcsname=0pt 
+    \trace{et}{@textborder@#1 is zero. No border}%
+    \hskip\csname column#1width\endcsname
+  \else
+    \hskip\csname textb@dr@left@pad#1\endcsname
+    \def\tmpa{}\def\tmpb{}%
+    \bg@calcns{#1}{border on}%
+    \setbox0=\vtop to \dimen1 {\prevdepth=0pt \baselineskip=0pt\hbox to \csname column#1width\endcsname{\hss}\vss}%
+    \trace{et}{box is (\l@gdims 0) according to \wh@t - \f@rstb@dy}%
+    \def\c@rrdstat{#1}\doTextB@rder{0}%
+    %\setbox0\vtop{\baselineskip=0pt \lineskip=0pt \box0\vss}%
+    \setbox0\hbox{\vbox to 0pt{\baselineskip=0pt \lineskip=0pt
+        \dimen1=\dimexpr \f@rstb@dy + \csname mxpretextb@rderskip\endcsname - \csname textb@dr@top@pad\endcsname \relax
+        \trace{et}{Preborder skip #1 is \the\dimen1 (\f@rstb@dy + \csname pretextb@rderskip#1\endcsname - \csname textb@dr@top@pad#1\endcsname)}%
+        \vskip\dimen1
+        %\hbox{%\smash{\hbox{\vrule depth \f@rstb@dy width 1pt}}}\hrule
+        \box0
+        %\hrule
+        \vss}}%
+    \trace{D}{Adjusting @cur#1ht by border padding}%
+    \x@\xdef\csname @cur#1ht\endcsname{\the\dimexpr\csname textb@dr@bot@pad#1\endcsname + \csname @cur#1ht\endcsname\relax}%
+    %\ht0=0pt
+    %\ifdim\f@rstb@dy>0pt\lower\f@rstb@dy\fi\box0\hskip\csname textb@dr@right@pad#1\endcsname
+    \box0\hskip\csname textb@dr@right@pad#1\endcsname
+  \fi
+  \xdef\l@stcol{#1}%
+}
+
 \def\ins@backgrounds#1{%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifcsname bg@#1@col\endcsname
-    {\if P\bg@fillht\dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
-        \ifdim\dimen1>\textheight \dimen1=\textheight\fi
-      \else
-        \if A\bg@fillht
-          \dimen1=\availht
-        \else
-          \dimen1=\textheight
-        \fi
-      \fi
+    {\edef\tmpav{\the\availht}%
+      \bg@calcns{#1}{bg for}%
+      \trace{et}{background is \the\dimen1 according to \wh@t - \f@rstb@dy}%
       \dimen2=\DiglotColourPad
-      \trace{D}{Colour for #1 is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
-      \hbox to 0pt {\f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\vrule height \dimen1 depth 0pt width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}\hss}}%
+      \ifdim \csname @fn#1ht\endcsname>0pt \advance\dimen1 by 2\dimen2 \fi % certainly needed when calculating by oldpartian+@curXht, not sure about other times.
+      \trace{D}{Colour for #1(\bg@fillht - \ifloc@lht loc\else glo\fi) is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
+      %\hbox to 0pt{\vrule height 1pt width 100pt\hss}%
+      \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\dimexpr\f@rstb@dy+\tbskip@jd+\csname textb@dr@top@pad#1\endcsname \relax}\else\let\pf@x\empty\fi
+      \hbox to 0pt {%
+        \iftextborder\ifx\TextBorderColumns\empty
+          \ifnum\TextBorderMode>0 \ifdim \f@rstb@dy>0pt
+            \advance \dimen1 -\textb@dr@top@pad
+          \fi\fi
+        \else
+          \hskip\csname textb@dr@left@pad#1\endcsname
+        \fi\fi
+        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\pf@x\hbox{\vrule height 0pt depth \dimen1 width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}}\hss}%
+      \global\availht=\tmpav
+    }%
   \else
     \trace{D}{No colour for #1}%
   \fi
-  \hskip \csname column#1width\endcsname
+  \ifx\TextBorderColumns\empty
+    \hskip \csname column#1width\endcsname
+  \else
+    \hskip\dimexpr \csname column#1width\endcsname + \csname @textborder@#1\endcsname\relax
+  \fi
   \xdef\l@stcol{#1}%
 }
 
@@ -1748,6 +1915,7 @@
   \let\col@do=\@@simplecols
   % Skip calculations:
   \dimen6=0pt
+  \ifdiglotb@dy \m@intextcolumntrue\else \ifnum\TextBorderMode>1 \m@intextcolumnfalse\fi\fi
   \ifdiglot@pos@top % Is this the top of the page? If so, (only) apply skip based on columngutterruleskip (set by @prepare@layout...
     \dimen6=\ColumnGutterRuleSkip
   \else
@@ -1771,6 +1939,7 @@
       \vrule height \dimen7 depth \dimen9 width 0pt
     }%
   }%
+  \m@intextcolumntrue
   \let\l@stcol\empty %Reset this so that @@simplecols behaves properly
   \global\setbox\n@xtpartialRev\vtop{%For the next page, thus no joint delta considerations
     \ifdim\dimen6=0pt \else
@@ -1791,8 +1960,6 @@
 
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
   \traceNum{d}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
-  \let\ac@d@=\d@
-  \let\ac@col@do=\col@do
   \ifVisTrace
     \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
       \doVisTraceT{\ifcsname m@x@at@col\endcsname\m@x@at@col\else L\fi}% sets box0, used @do@layout@... in lines below
@@ -1925,21 +2092,22 @@
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \loc@lhtfalse\dglt@calc@vailht
-  \edef\v@lpfx{BelowBaseline}\let\v@lsfx\empty
-  \dimen1=0pt \let\col@do\max@bbl
-  %\tracingassigns=1
-  \x@\each@col\diglot@list\E% 
-  \advance\availht by -\dimen1
+  \advance\availht by -\m@xBelowBaseline
   %\tracingassigns=0
   \ifdim\availht<\@maxb@seline %
     \global\pagefulltrue%
     \trace{D}{Declaring page full}%
   \else%
-    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true\else false\fi}%
+    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true \else false \fi tsr=\csname tri@lsplitRej\c@rrdstat\endcsname}%
     \ifpagefull\ifendbook\ifendbooknoeject
       \trace{d}{some space and end of a book, cancelling pagefull}%
       \global\pagefullfalse
     \fi\fi\fi
+    \ifdim\availht>\dimexpr \csname tri@lsplitRej\c@rrdstat\endcsname \ifnum \csname saved\c@rrdstat penalty\endcsname>9999 +2\baselineskip\fi \relax
+    \else
+      \trace{D}{But the vsplit rejected any more (\csname tri@lsplitRej\c@rrdstat\endcsname, \csname saved\c@rrdstat penalty\endcsname)}%
+      \global\pagefulltrue
+    \fi
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
@@ -2016,7 +2184,7 @@
      \x@\the\csname diglot#1ho@ks\endcsname
      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
   \iff@rstnote
-      \trace{f}{No footnotes for #1}%
+      \trace{f}{No footnotes for #1 (\csname @prev#1dp\endcsname)}%
   \else\LRf@@tnotestrue
     \trace{Df}{Notes for #1 \x@\the\x@\ht\csname #1box\endcsname, bls=\the\baselineskip, lsl=\the\lineskiplimit}%
     %\x@\ifdim\x@\ht\csname #1box\endcsname<\AboveNoteSpace
@@ -2053,16 +2221,19 @@
   \dimen8=\dimen7
 }
 
+\newif\ifm@intextcolumn\m@intextcolumntrue
 \def\@do@balnotes@simplecols{%
   \setbox1\hbox{\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
   \setbox0=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
   \hbox to\columnshift{}%
+  \m@intextcolumnfalse
   \ifdiglotN@rmal%are the sides swapped?
     \x@\each@col\layout@list\E
   \else
     \x@\each@col\rev@layout@list\E
   \fi
+  \m@intextcolumntrue
   }%
   \global\setbox\partial=\vbox{\unvbox\partial\box0}%
 }
@@ -2088,7 +2259,7 @@
   \trace{Df}{Finding min note sep \v@lpfxb Xht}%
   \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
   \x@\each@col\diglot@list\E
-  \trace{Df}{=\the\dimen1}%
+  \trace{Df}{Note adjust=\the\dimen1}%
   \dimen3=\dimen1
   %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
   \edef\v@lpfx{@fn}%
@@ -2109,16 +2280,19 @@
   \setbox1\hbox{\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
    \setbox\notechunk\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+    \m@intextcolumnfalse
     \ifdiglotN@rmal%are the sides swapped?
       \x@\each@col\layout@list\E
     \else%
       \x@\each@col\rev@layout@list\E
     \fi%
+    \m@intextcolumntrue
   }%
-  \trace{f}{Adjusting footnotebox}%
+  \trace{f}{Adjusting footnotebox \the\dimen3 + \the\dimen9}%
   \advance\dimen3 by \dimen9
   \trace{D}{Raising footnotebox by \the\dimen3 \space note:\l@gdims{\notechunk}, partial:\l@gdims{\partial}}%
-  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\notechunk}%
+  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \dimen0=\dp\notechunk\box\notechunk}%
+  \ifnum\diglotDbgJoinboxes=\TRACEcount \showbox\partial\fi
 }%
 
 \def\@writep@ge{%
@@ -2143,7 +2317,7 @@
     \let\col@do=\diglot@fill@sep@note@box
     \x@\each@col\diglot@list\E% 
     \setLRspecific % c@rrdstat is restored by diglot@fill@sep@note@box.
-    \ifLRf@@tnotes%
+    \ifLRf@@tnotes% Are there notes?
       \ifdiglotBalNotes%
       \trace{f}{Balanced notes}%
         % \kern\lastd@pth % This, if at all valid for anything, is from the last note.
@@ -2162,7 +2336,10 @@
         %\tracingmacros=0
       \fi %BalNotes
     \else%
-      \trace{f}{No footnotes}%
+      \def\v@lpfx{@fn}%
+      \let\col@do=\forget@boxdim
+      \x@\each@col\diglot@list\E
+      \trace{f}{No footnotes (clearing values)}%
     \fi %LRf@@tnotes
   \else %SepNotes
     \trace{f}{Merged notes}%
@@ -2202,13 +2379,13 @@
   \setbox\topchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
     \hbox to\columnshift{}%
     \ifdiglotN@rmal%Are the sides swapped?
-      \hbox to\columnLwidth{\box\topleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnLfullwidth{\box\topleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
       \hbox to\columnshift{}%
-      \hbox to\columnRwidth{\box\toprightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+      \hbox to\columnRfullwidth{\box\toprightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     \else%
-      \hbox to\columnRwidth{\box\toprightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnRfullwidth{\box\toprightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
       \hbox to\columnshift{}%
-      \hbox to\columnLwidth{\box\topleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+      \hbox to\columnLfullwidth{\box\topleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     \fi%
   }%
 %
@@ -2277,35 +2454,89 @@
         \advance\availht\dp\partial
      \fi
      \box\topchunk % Top left/right insert
-     \lastd@pth=\dp\partial\relax%
-     \tempfalse\let\col@do\ck@backgrounds
-     \x@\each@col\diglot@list\E% 
-     %\tracingassigns=1
-     %\tracingcommands=3
-     %\tracingifs=1
-     \iftemp
-       \trace{d}{Applying colour backgrounds (\ifdiglotN@rmal normal:\layout@list \else reverse:\rev@layout@list\fi)}%
-       \ifdiglotSepNotes
-         \iftextborder
-           \def\bg@fillht{P}% Fill to textheight
+     \ifdim\dp\partial=0pt \ifdim\ht\partial=0pt
+       \setbox\partial\box\voidb@x
+     \fi\fi
+     \ifvoid\partial\else
+       \tempfalse\let\col@do\ck@backgrounds
+       \x@\each@col\diglot@list\E%
+       \let\if@@bg\iftemp% Pseudoif
+       \lastd@pth=\dp\partial\relax%
+       \iftextborder\ifx\TextBorderColumns\empty
+       \else
+         \temptrue
+       \fi\fi
+       %\tracingassigns=1
+       %\tracingcommands=3
+       %\tracingifs=1
+       \iftemp
+         \trace{d}{Applying colour backgrounds (\ifdiglotN@rmal normal:\layout@list \else reverse:\rev@layout@list\fi)}%
+         \ifdim\m@xBelowBaseline>0pt
+           \vskip\m@xBelowBaseline
+         \fi
+         \ifdiglotSepNotes
+           \iftextborder
+             \def\bg@fillht{T}% Fill to text (not note)
+           \else
+             \def\bg@fillht{A}% Fill to availht
+           \fi
          \else
-           \def\bg@fillht{A}% Fill to availht
+           \def\bg@fillht{P}% Fill to \ht\partial
+         \fi
+         \ifinendbook\def\bg@fillht{P}\fi
+         \ifx\TextBorderColumns\empty\else
+           \trace{d}{Applying per-column textborder(s)}%
+           \let\c@rrdstattmp\c@rrdstat
+           \let\col@do\ins@borders
+           \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
+           \setbox0\vtop to 0pt{\let\l@stcol\empty%
+             \hbox{\x@\each@col\tmplist\E}%
+           \vss}%
+           %\showbox0
+           \box0
+           \let\c@rrdstat\c@rrdstattmp
+         \fi
+         \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
+         %\hrule
+         \if@@bg
+           \let\col@do\ins@backgrounds
+           \setbox\partial\vbox{\everypar{}\baselineskip=0pt \lineskip=0pt 
+              \vbox to 0pt{\baselineskip=0pt \lineskip=0pt \let\l@stcol\empty%
+                \ifx\TextBorderColumns\empty\ifnum\TextBorderMode>0\ifdim \f@rstb@dy>0pt
+                  \kern\textb@dr@top@pad
+                \fi\fi\fi
+             \hbox{\x@\each@col\tmplist\E}%
+             \vss}\unvbox\partial}%
+         \fi
+         \ifdim\m@xBelowBaseline>0pt 
+             \vskip-\m@xBelowBaseline
+         \fi
+       \fi
+       \ifx\TextBorderColumns\empty
+         \trace{et}{Apply border from writesimplecolumns. f@rstb@dy is \f@rstb@dy}%
+         \ifnum\TextBorderMode=0
+           \doTextB@rder{\partial}% Dumb, border around everything
+         \else
+           \smartB@rder{\partial}% Adjust border to skip book-intro
          \fi
        \else
-         \def\bg@fillht{P}%
+         \def\v@lpfx{pretextb@rderskip}\def\v@lsfx{}%
+         \let\col@do=\max@val\dimen1=0pt
+         \x@\each@col\layout@list\E
+         \trace{et}{biggest applied top border is \the\dimen1, f@rstb@dy is \f@rstb@dy}%
+         \ifdim\f@rstb@dy=0pt 
+           \vskip\dimen1
+         \fi
        \fi
-       \ifinendbook\def\bg@fillht{P}\fi
-       \let\col@do\ins@backgrounds
-       \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
-       \vbox to 0pt{\let\l@stcol\empty%
-         \iftextborder\ifdefined\textb@dr@top@pad\vskip\textb@dr@top@pad\fi\fi
-         \hbox{\x@\each@col\tmplist\E}%
-         \vss}%
-     \fi
-     \trace{et}{Apply border from writesimplecolumns}%
-     \doTextB@rder{\partial}%
-     \global\partialfr@medtrue
-     \unvbox\partial%
+       \unvbox\partial%
+       \ifx\TextBorderColumns\empty\else
+         \def\v@lpfx{textb@dr@bot@pad}\def\v@lsfx{}%
+         \let\col@do=\max@val\dimen1=0pt
+         \x@\each@col\layout@list\E
+         \trace{et}{biggest applied bottom border is \the\dimen1}%
+         \vskip\dimen1
+       \fi
+     \fi % not void partial
      %\tracingifs=0
      %\tracingcommands=0
      %\tracingassigns=0
@@ -2326,6 +2557,7 @@
      \ifvoid\verybottomins\else % \kern-\dimen0
        \trace{i}{Using verybottomins \the\ht\verybottomins x\the\wd\verybottomins}%
        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \makefootbox
      }%pagecontents
    \holdinginserts=1
    \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
@@ -2356,6 +2588,7 @@
   \global\availht=\textheight%
   \global\chunkDelta=0pt
   \global\pagefullfalse%
+  \xdef\f@rstb@dy{0pt}%
   \p@gestartfalse
   \xdef\p@gefirstmark{\nextp@gefirstmark}%
   \xdef\p@gebotmark{}%
@@ -2364,6 +2597,8 @@
   \x@\each@col\diglot@list\E% 
   \def\v@lpfx{@cur}%
   \let\col@do=\forget@boxdim
+  \x@\each@col\diglot@list\E
+  \def\v@lpfx{@fn}%
   \x@\each@col\diglot@list\E
   \def\v@lpfx{}\def\v@lsfx{box}%
   \let\col@do=\void@boxes %
@@ -2573,14 +2808,16 @@
     \temptrue
   \fi
 }
-\def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
+\def\set@ht#1{%Set the values of curXht, adding or resetting based on \ifdiglot@ecols  (anything on the page is current by definition)
   % ifdiglot@ecols is set up by check@nxtht
   \def\errt@st{#1}\ifx\errt@st\empty\errmessage{set@ht passed null value}\fi
-  \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
-  \ifdiglot@ecols %one at least is empty
+  \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname\relax\relax
+  \ifdiglot@ecols %one at least is empty, add to column height
+    \trace{dP}{set@ht nextchunk is \the\dimen1}%
     \ifdim \dimen1 =0pt
-      \x@\dimen1\x@=\csname @cur#1ht\endcsname % new height = old height
+      \x@\dimen1\x@=\csname @cur#1ht\endcsname\relax % new current height = old height
     \else
+      % New content starts at wherever the old content ended (i.e. m@xht)
       \advance\dimen1 by \m@xht\relax
     \fi
   \fi
@@ -2702,6 +2939,10 @@
   \x@\let\x@\t@stb\csname \v@lpfxb#1ht\endcsname
   \dimen0=\dimen2
   \trace{Df}{Notesep: (#1) d2:\the\dimen2\space -\t@st\space -\t@stb}%
+  \ifx\TextBorderColumns\empty\else\ifcsname textb@dr@bot@pad#1\endcsname
+      \trace{Df}{Border: \the\dimen2\space -\t@st\space -\t@stb - \csname textb@dr@bot@pad#1\endcsname}%
+      \advance\dimen0 by -\csname textb@dr@bot@pad#1\endcsname
+  \fi\fi
   \advance\dimen0 by -\t@st\relax
   \advance\dimen0 by -\t@stb\relax
   \ifdim\dimen1>\dimen0
@@ -2749,7 +2990,13 @@
 \newif\ifnot@empty % Is this chunk empty
 \def\@tst@n@xtpartial@simplecols{%
   \ifvoid\n@xtpartial\else
-    \temptrue
+    \ifdim\dp\n@xtpartial>0pt
+      \temptrue
+    \else
+      \ifdim\ht\n@xtpartial>0pt 
+        \temptrue
+      \fi
+    \fi
   \fi
 }
 
@@ -2758,6 +3005,7 @@
   \tempfalse
   \csname @tst@n@xtpartial@\diglotlayout\endcsname
   \iftemp
+    \xdef\oldp@rtial{\the\dimexpr \ht\partial+\dp\partial}%
     \csname @add@n@xtpartial@\diglotlayout\endcsname
     \csname @after@add@n@xtpartial@\diglotlayout\endcsname
   \fi
@@ -2796,15 +3044,16 @@
     \let\col@do=\p@rtialmarks
     \x@\each@col\diglot@list\E
     \ifm@rksonpage \ifoldm@rksonpage\else
+      \trace{d}{now m@rksonpage where there previously weren't}%
       \loc@lhtfalse\dglt@calc@vailht
     \fi\fi
     % Column height (depth) calcs:
     \diglot@ecolsfalse
     \trace{Df}{Checking for empty boxes}%
-    \let\col@do=\check@nxtht %sets iftemp=true if any box is empty
+    \let\col@do=\check@nxtht %sets ifdiglot@ecols=true if any box is empty
     \x@\each@col\diglot@list\E
     \ifdiglot@ecols
-      \def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}%
+      \def\v@lpfx{@cur}\def\v@lsfx{ht}%
       \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
       \let\col@do=\max@val\dimen1=0pt
       \x@\each@col\diglot@list\E
@@ -2812,8 +3061,12 @@
     \else
       \edef\m@xht{0pt}%
     \fi
-    \trace{Df}{Saving new Xht values}%
+    \trace{Df}{Saving new Xht values}% @curXht is the total visual content in the column.
     \trace{D}{LBP:\the\Lboxpenalty, RBP:\the\Rboxpenalty,  plp:\the\partialLpenalty, prp:\the\partialRpenalty}%
+    {\edef\tmsg{@cur}\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
+    \x@\def\x@\tmsg\x@{\tmsg}%
+    \trace{dP}{@aanp: \tmsg}
+    }%
     \let\col@do=\set@ht %uses iftemp and m@xht
     \x@\each@col\diglot@list\E
     %
@@ -2823,6 +3076,7 @@
 \def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
+  \gdef\late@stage@trigger{postponen@xt@partial}%
   \def\col@do##1{\r@storenotes{\@g@tndstat{##1}}{1}}%Restore footnotes on all columns.
   \x@\each@col\diglot@list\E% 
   \let\col@do=\restore@storedmarks
@@ -2851,6 +3105,7 @@
     \loc@lhttrue\dglt@calc@vailht
     \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<-2pt 1 \else 0 \fi\fi
       \late@stage@reflowtrue
+      \gdef\late@stage@trigger{ch@ckcontents}%
       \xdef\refl@wlist{\refl@wlist\c@rrdstat}%
       \trace{D}{No space (\the\availht) for material (now, was \oldavht) reflow:\refl@wlist}%
     %\else
@@ -3090,15 +3345,8 @@
           \ifdim\dimen1<\baselineskip
             \setbox\partial\vbox{\unvbox\partial\kern\dimen1}%
           \else
-            %\setbox\partial\vbox{\unvbox\partial}%
           \fi
         \fi%avoid clashes with textborder and backgrounds
-        %\iftextborder
-          %\ifpartialfr@med\else
-            %\doTextB@rder{\partial}%
-            %\global\partialfr@medtrue
-          %\fi
-        %\fi
         %\ifnum\pageno=117\showbox\partial\fi
         \csname digl@t@endbook@\diglotlayout\endcsname
         \csname @savepartial@\diglotlayout\endcsname
@@ -3123,7 +3371,7 @@
 }
 
 \def\@savepartial@simplecols{%
-  \setbox\partial\vbox{\unvbox\partial
+  \setbox\partial\vbox{\lineskip=0pt \baselineskip=0pt \relax\ifpartialfr@med  \unvbox\partial\global\partialfr@medfalse\fi
     \csname @start@writep@ge@\diglotlayout\endcsname
     \setdiglotN@rmal
     \pickn@xtpartial
@@ -3132,6 +3380,8 @@
     \csname @do@writep@ge@\diglotlayout\endcsname
     \pagecontents
   }%
+  %\showbox\partial
+  \global\partialfr@medtrue
 }
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
 %rule is #1 hight, #3 deep, and fits in a box #2 high
@@ -3240,6 +3490,7 @@
     \x@\newc@unt\csname p@rnum#1\endcsname % Used for adjust-lists
     \x@\newc@unt\csname dropped@ther@lines#1\endcsname % Used for parlocs analysis
     \x@\gdef\x@\digl@tc@ntent@xcs\x@{\digl@tc@ntent@xcs\csname digl@txcs#1\endcsname}%
+    \def\v@lpfx{@fn}\forget@boxdim{#1}% @fn#1 ht/dp
     \initcolumndef@ults{#1}%
 %TODO:
 %FIXMEs needing for polyglot processing:
@@ -3255,6 +3506,7 @@
   \ifcsname \ins@name\endcsname\else
     \xdef\columnins@rts{\columnins@rts\ins@name,}%
     \x@\newins@rt\csname \ins@name\endcsname
+    \trace{d}{\ins@name \space defined as \the\csname \ins@name\endcsname}%
     \x@\global\x@\count\csname \ins@name\endcsname=0
     \x@\global\x@\dimen\csname \ins@name\endcsname=\maxdimen
     \xdef\ins@rts{\columnins@rts\pageins@rts}%
@@ -3264,7 +3516,39 @@
   \let\ins@name=\undefined
 }
 \def\SetBelowBaseline#1#2#3{% Column #1 has #2 [dimension] below the baseline (which is  #3) of 
-  \r@tio{#2}{#3}\trace{d}{BelowBaseline Calculated for #1 as \@@r@tio}\x@\let\csname BelowBaseline#1\endcsname\@@r@tio}
+  \r@tio{#2}{#3}\trace{d}{BelowBaseline Calculated for #1 as \@@r@tio}\x@\let\csname BelowBaseline#1\endcsname\@@r@tio
+  \c@lcm@xBB
+}
+
+\def\c@lcm@xBB{%
+  \edef\v@lpfx{BelowBaseline}\let\v@lsfx\empty
+  \dimen1=0pt \let\col@do\max@bbl
+  \x@\each@col\diglot@list\E% 
+  \xdef\m@xBelowBaseline{\the\dimen1}%
+  \trace{d}{m@xBelowBaseline is \m@xBelowBaseline}%
+}
+
+\def\ch@ckcol@border#1{% Called from s@ttextb@rderdims, called by \id
+  \trace{et}{ch@ckcol@border}%
+  \def\tmp{#1}\ifx\tmp\c@rrdstat
+    \x@\global\x@\let\csname textb@dr@top@pad#1\endcsname\textb@dr@top@pad
+    \x@\global\x@\let\csname textb@dr@bot@pad#1\endcsname\textb@dr@bot@pad
+    \x@\global\x@\let\csname pretextb@rderskip#1\endcsname\pretextb@rderskip
+    \x@\global\x@\let\csname posttextb@rderskip#1\endcsname\posttextb@rderskip
+    \edef\old@dim{\csname @textborder@#1\endcsname}%
+    \edef\new@dim{\the\dimexpr \b@dr@left@pad + \b@dr@right@pad \relax}%
+    \x@\global\x@\let\csname @textborder@#1\endcsname\new@dim
+    \x@\global\x@\let\csname textb@dr@left@pad#1\endcsname\b@dr@left@pad
+    \x@\global\x@\let\csname textb@dr@right@pad#1\endcsname\b@dr@right@pad
+    \global\csname column#1width\endcsname=\dimexpr \csname column#1width\endcsname -\new@dim + \old@dim \relax
+    \trace{et}{Column #1 has an individual border of \csname @textborder@#1\endcsname, textwidth is now \the\csname column#1width\endcsname}%  
+    \ifnum \TextBorderMode>1
+      \global\hsize=\csname column#1fullwidth\endcsname\relax
+    \else
+      \global\hsize=\csname column#1width\endcsname\relax
+    \fi
+  \fi
+}
 
 \x@\let\csname polyglot-simplecols@plugin@loaded\endcsname\empty 
 \endinput

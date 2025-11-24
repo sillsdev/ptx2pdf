@@ -214,6 +214,8 @@
 {header/ifrhrule}\RHruleposition={paper/ruleposition}pt
 \def\RangeSeparator{{\kern.1em{rangesep_}\kern.1em}} % what to put between first - last of a reference range
 \def\ChapterVerseSeparator{{\kern.02em{chvssep_}\kern.02em}} % what to put between chapter:verse
+\def\RangeChapSeparator{{\kern.1em{chaprangesep_}\kern.1em}}
+\def\BookChapSeparator{{{bksep_}}}
 
 %% Even Header
 \def\RHevenleft{{{header/evenleft}}}
@@ -306,6 +308,7 @@
 %\snippets
 
 \exhyphenpenalty=\hyphenpenalty
+\ifversion{{6}}{{\newparnotestrue}}{{}} % From version6 onwards, we default to newparnotestrue
 
 {project/ifcolophon}\expandafter\def\csname bookend-final\endcsname{{
 {project/ifcolophon}\layoutstylebreak
@@ -347,7 +350,10 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
-\pageno={document/startpagenum}
+\ifdim \pagetotal>0pt \par\vfill\penalty-10000 \fi
+\catcode`\@=11 \need@oddpage{{\emptyoutput}}\catcode`\@=12
+\edef\oldpageno{{\the\pageno}}% Just in case the user wants it
+\ifnum\pageno<1 \pageno=1\fi
 {document/ifdiglot}\diglottrue
 \addtoendptxhooks{{\zautoBookEndDecoration}}
 % job files:

@@ -329,7 +329,7 @@ In some error situations, the picture will not be on the same page as the anchor
 
 ## Headers and footers
 
-###Can I have Roman numerals for preface material and normal (arabic) numerals for the scripture text?
+### Can I have Roman numerals for preface material and normal (arabic) numerals for the scripture text?
 Certainly!
 In the .tex file, before you include any front-matter, include:
 ```
@@ -340,7 +340,7 @@ And before you start with the scripture text, include:
 \pageno=1
 ```
 
-###What controls are there (from TeX) over the header and footer? 
+### What controls are there (from TeX) over the header and footer? 
 
 There are a series of definable macros that the TeX macros pick from to build the header and footer. These have 
 the form ```\def\RHoddcenter{value}```,  *value* may contain either text, other macros (normally the header/footer macros such as ```\date``` or ```\pagenumber```), or a combination of both.

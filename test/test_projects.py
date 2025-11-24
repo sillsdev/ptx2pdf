@@ -136,15 +136,16 @@ def pdf(request, projectsdir, project, config, starttime, logging, maxSize):
             pass
     pdfptxcmd = ptxcmd[:-1] + ["-P", "-F", stdpath, "--diffpages=50"] + ptxcmd[-1:]
     res = call(pdfptxcmd)
-    assert res != 1
-    arcpath = os.path.join(pdftpath, config, "ptxprintArchive.zip")
-    aptxcmd = ptxcmd[:-1] + ["-A", "createArchive"] + ptxcmd[-1:]
-    try:
-        os.remove(arcpath)
-    except FileNotFoundError:
-        pass
-    resa = call(aptxcmd)
-    assert resa == 0
+    resa = 0
+    arcpath = None
+    if res == 0:
+        arcpath = os.path.join(pdftpath, config, "ptxprintArchive.zip")
+        aptxcmd = ptxcmd[:-1] + ["-A", "createArchive"] + ptxcmd[-1:]
+        try:
+            os.remove(arcpath)
+        except FileNotFoundError:
+            pass
+        resa = call(aptxcmd)
     request.cls.pdf = PdfInfo(project, config, pdfpath, stdpath, diffpath, arcpath, ptxcmd, res, resa)
 
 @pytest.mark.usefixtures("pdf")
@@ -152,31 +153,39 @@ class TestXetex:
     def test_pdf(self, updatedata):
         if self.pdf is None:
             return
-        msfg = None
+        msg = None
         if self.pdf.result == 2:
-            msg = "missing base pdf"
+            msg = f"pdfs are different"
+        elif self.pdf.result == 3:
+            msg = f"Faulty PDF perhaps cover is missing"
+        elif self.pdf.result != 0:
+            pytest.fail(f"Main ptxprint run failed with {self.pdf.result}")
+        elif self.pdf.resulta != 0:
+            pytest.fail(f"Archive run returned {self.pdf.resulta}")
         elif os.path.exists(self.pdf.diffpath):
             msg = "pdfs are inconsistent"
-        else:
-            return
+        #else:
+        #    return
         if updatedata:
             shutil.copy(self.pdf.pdfpath, self.pdf.stdpath)
 
-        outfname = os.path.join(os.path.dirname(self.pdf.arcpath), "testArchive_diff.pdf")
-        print(f"{outfname=}")
-        try:
-            os.remove(outfname)
-        except FileNotFoundError:
-            pass
-        ptxcmd = self.pdf.ptxcmd
-        # ptxprint -p basedir ... <project>
-        ptxcmd = ptxcmd[:2] + ["tmp"] + ptxcmd[3:-1] + ["-Z", self.pdf.arcpath, "-F", self.pdf.pdfpath,
-                                "--diffpages=50", "--diffoutfile="+outfname, "-P"] + ptxcmd[-1:]
-        print(f"exists({os.path.dirname(self.pdf.arcpath)}) = {os.path.exists(os.path.dirname(self.pdf.arcpath))}")
-        res = call(ptxcmd)
-        assert res != 1
-        if os.path.exists(outfname):
-            msg = "archive pdf is different"
+        if self.pdf.arcpath is not None:
+            outfname = os.path.join(os.path.dirname(self.pdf.arcpath), "testArchive_diff.pdf")
+            print(f"{outfname=}")
+            try:
+                os.remove(outfname)
+            except FileNotFoundError:
+                pass
+            ptxcmd = self.pdf.ptxcmd
+            # ptxprint -p basedir ... <project>
+            ptxcmd = ptxcmd[:2] + ["tmp"] + ptxcmd[3:-1] + ["-Z", self.pdf.arcpath, "-F", self.pdf.pdfpath,
+                                    "--diffpages=50", "--diffoutfile="+outfname, "-P"] + ptxcmd[-1:]
+            print(f"exists({os.path.dirname(self.pdf.arcpath)}) = {os.path.exists(os.path.dirname(self.pdf.arcpath))}")
+            res = call(ptxcmd)
+            if res == 1:
+                pytest.fail(f"ptxprint on archive failed {res=}")
+            if os.path.exists(outfname):
+                msg = "archive pdf is different"
         if msg is not None:
             pytest.xfail(msg)
 

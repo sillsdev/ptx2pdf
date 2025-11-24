@@ -74,10 +74,12 @@ _map = {
     "project/ruby":             ("c_ruby", "advanced", lambda w,v : "t" if v else "b"),
     "project/plugins":          ("t_plugins", "advanced", lambda w,v: v or ""),
     "project/license":          ("ecb_licenseText", "meta", lambda w,v: texprotect(str(v))),
-    "project/copyright":        ("t_copyrightStatement", "meta", lambda w,v: texprotect(v or "")),
+    # "project/copyright":        ("t_copyrightStatement", "meta", lambda w,v: texprotect(v or "")),
+    "project/copyright":        ("txbf_copyright", "meta", lambda w,v: texprotect(v or "")),
     "project/iffrontmatter":    ("c_frontmatter", "front", lambda w,v: "" if v else "%"),
     "project/inclcoverperiphs": ("c_includeCoverSections", "cover", None),
     "project/periphpagebreak":  ("c_periphPageBreak", "front", None),
+    "project/inclmaps":         ("c_inclMaps", "front", None),
     "project/colophontext":     ("txbf_colophon", "meta", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", "meta", lambda w,v: "" if v else "%"),
@@ -130,7 +132,7 @@ _map = {
     
     "fancy/enableornaments":    ("c_useOrnaments", None, lambda w,v: "" if v else "%"),
     "fancy/pageborders":        ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Border"
-    "fancy/pageborder":         ("r_border", "fancy", lambda w,v : "" if v == "pdf" else "%"),
+    "fancy/pageborder":         ("r_border_pdf", "fancy", lambda w,v : "" if v else "%"),
     "fancy/pagebordertype":     ("r_border", "decorate", None),
     "fancy/pageborderfullpage": ("c_borderPageWide", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pagebordernfullpage_": ("c_borderPageWide", "decorate", lambda w,v: "%" if v else ""),
@@ -138,11 +140,14 @@ _map = {
                                             if (w.pageborder is not None and w.pageborder != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 page border.pdf"),
     "fancy/sectionheader":      ("c_inclSectionHeader", "decorate", lambda w,v: "" if v else "%"),
+    "fancy/sectionborder":      ("r_sectHead", "fancy", lambda w,v : "" if v == "legacy" else "%"),
+    "fancy/sectionbordertype":  ("r_sectHead", "decorate", None),
     "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", "decorate", lambda w,v: w.sectionheader.as_posix() \
                                             if (w.sectionheader is not None and w.sectionheader != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
     "fancy/sectionheadershift": ("s_inclSectionShift", "decorate", lambda w,v: float(v or "0")),
     "fancy/sectionheaderscale": ("s_inclSectionScale", "decorate", lambda w,v: int(float(v or "1.0")*1000)),
+    "fancy/booktitleborder":    ("c_inclTitleBorders", "decorate", lambda w,v: "" if v else "%"),
     "fancy/endofbook":          ("c_inclEndOfBook", "decorate", lambda w,v: "" if v else "%"),
     "fancy/endofbookpdf":       ("btn_selectEndOfBookPDF", "decorate", lambda w,v: w.endofbook.as_posix() \
                                             if (w.endofbook is not None and w.endofbook != 'None') \
@@ -172,7 +177,7 @@ _map = {
     "paragraph/missingchars":   ("t_missingChars", "fontscript", lambda w,v: v or ""),
 
     "document/sensitive":       ("c_sensitive", "meta", None),
-    "document/title":           (None, "meta", lambda w,v: "[Unknown]" if w.get("c_sensitive") else w.ptsettings.get('FullName', "[Unknown]")),
+    "document/title":           (None, "meta", lambda w,v: "[Unknown]" if w.get("c_sensitive") else w.getvar("maintitle", default=w.ptsettings.get('FullName', "[Unknown]"))),
     "document/subject":         ("ecb_booklist", "meta", lambda w,v: v if w.get("r_book") == "multiple" else w.get("ecb_book")),
     "document/author":          (None, "meta", lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 

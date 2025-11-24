@@ -235,3 +235,11 @@ minima aperiam ab saepe qui
 \p
 \fig What both li1 indents looked like before fixes | src="li_v4.png" size="col" scale="0.7" pgpos="h" border="All"\fig*
 \p
+\c 14 \ca 15\ca*
+\p This chapter number has an alternate
+\c 16
+\cl The 15th \ca (16th)\ca* Psalm
+\d And behold, working now!
+\cl Psalm
+\c 16 \ca 17\ca*
+\d What happens with a chapter line?

@@ -35,7 +35,7 @@
 \newif\ifm@rginnotesopen 
 \newif\ifm@rginalnotesw@rn
 \newwrite\m@rginnotes
-\plugin@startif{marginnotes}
+%\plugin@startif{marginnotes}
 
 \def\@marginnote#1#2#3#4#5#6#7#8{%
 % #1 = reference, #2 = marker, #3 = side, #4 = valign, #5 = distance from text,
@@ -56,20 +56,42 @@
   \trace{M}{defining marginnote-#1@#2:pageno = #5, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1 (smf=\SideMarginFactor x\the\MarginUnit, tw=\the\textwidth, bg=\the\BindingGutter)}%
 }
 
+\newbox\m@rginboxes
+\def\m@rgincollect#1{\setbox1=\vbox{#1}\trace{e}{vadj adding box \the\ht1+\the\dp1*\the\wd1}\global\setbox\m@rginboxes=\vbox{\box1\unvbox\m@rginboxes}\trace{e}{Adding vadj for \the\wd\m@rginboxes}}
+\def\m@rginvadj{\ifnum\currentgrouptype=0 \ifvoid\m@rginboxes\else\trace{e}{vadjusting boxes in mode \the\currentgrouptype}\loop
+    \global\setbox\m@rginboxes=\vbox{\unvbox\m@rginboxes \global\setbox0=\lastbox}%
+    \ifvoid0 \tempfalse\else\temptrue\fi \iftemp\trace{e}{vadjusting a box wd=\the\wd0}\vadjust{\unvbox0}%
+  \repeat
+  \global\setbox\m@rginboxes=\box\voidb@x\fi\fi}
+
 \def\pl@cemnote#1#2#3#4#5#6{%
 % #1 = vbox, #2 = side, #3 = valign, #4 = distance from text, #5 = x-shift, #6 = y-shift
   \edef\t@mp{#2}\edef\t@mpv{#3}%
   \dimen9=\ht#1
-  \trace{M}{kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6, text = \the#4, side = #2, valign = #3, ht=\the\dimen9}%
+  \trace{M}{\t@mpv, \t@mp \space kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6,
+            text = \the#4, side = #2, valign = #3, ht=\the\dimen9+\the\dp#1*\the\wd#1, hsize=\the\hsize}%
   \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
-  \setbox0=\vbox to 0pt{\let\par=\endgraf
-    \ifx\t@mpv\@bottom\else\vss\fi
-    \ifx\t@mp\l@ft\llap{\box #1\kern #5\kern #4}%
-    \else\noindent\hfill\rlap{\kern #5\kern #4\box #1}%
+  \dimen8=\lastdepth \dimen7=\dp#1
+  \x@\let\x@\do@djust\ifx\t@mpv\@inline\m@rgincollect\else\vadjust\fi
+  \setbox0=\vbox to 0pt{\let\par=\endgraf\everypar={}%
+    \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi
+    \trace{e}{Inside (\t@mpv) \the\ht#1+\the\dp#1*\the\wd#1}%
+    \ifx\t@mp\l@ft\llap{\box #1 \kern #5\kern #4}%
+    \else\noindent\hfill\rlap{\kern #5\kern #4 \box #1}%
     \fi
     \ifx\t@mpv\@top\else\vss\fi}%
   % \ifx\t@mp\l@ft\showbox0
-  \dp0=0pt\vadjust {\kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9}%
+  \dp0=0pt
+  %\showbox0
+  \do@djust{%\nointerlineskip\baselineskip=0pt
+    %\ifx\t@mpv\@inline\else\nobreak\fi
+    %\vskip\topskip\vskip-\dimen8
+    %\vbox to 0pt{\hbox to 10pt{}}%
+    %\kern -\topskip\kern\dimen8
+    \trace{e}{Inside (0) \the\ht0+\the\dp0*\the\wd0}%
+    %\showbox0
+    \kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9
+  }%\ifx\t@mpv\@inline\nobreak\fi%
   \endgroup
 }
 
@@ -83,36 +105,47 @@
     \openout\m@rginnotes="#1"
     \m@rginnotesopentrue
     \addtoendhooks{\finishm@rginnotes "#1"}
+    \addtoeveryparhooks{\m@rginvadj}
   \fi
 }
 
 \m@rginnotesopenfalse
 \def\writem@rginnote{%
   \pdfsavepos
-  \x@\write\x@\m@rginnotes\x@{\wr@tet@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
+  \x@\write\x@\m@rginnotes\x@{\wr@tet@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\nobreak% since ther emay be baselineskip glue following
 }
 
-\def\d@marginnote#1#2#3#4#5#6{%
-% #1 = vbox, #2 = reference, #3 = marker #4 = side #5 = valign #6 = y-shift
+\newdimen\marginnotesgap     % distance from edge of text to start of notes. Not enforced here
+\newdimen\marginnoteswidth   % width of marginal notes allocation - marginnotesgap
+\def\d@marginnote#1#2#3#4#5#6#7{%
+% #1 = vbox, #2 = reference, #3 = marker #4 = side #5 = valign #6 = x-shift #7 = y-shift
   \edef\p@s{#4}%
   \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
   \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else
     \ifm@rginalnotesw@rn\else\MSG{*** marginnotes: no marginal note for #2-#3; re-run for accurate note positions}\global\m@rginalnotesw@rntrue\fi
     \edef\p@geno{\the\pageno}\fi
-  \ifx\p@s\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
-  \else\ifx\p@s\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
+  \ifx\p@s\@uter \ifodd\p@geno \ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi \else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
+  \else\ifx\p@s\@nner\ifodd\p@geno \ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi \else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
-  \getp@ram{spacebefore}{#3}{#3+\styst@k}%
-  \ifx\p@ram\relax \dimen0=1pt\else\dimen0=\p@ram\IndentUnit \divide\dimen0 by 12\fi
-  \dimen3 = #6
-  \trace{M}{marginnote(#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
+  \dimen0 = #6%
+  \dimen3 = #7%
+  \trace{M}{marginnote (#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
   %\dimen0=0pt
-  \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
-  \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
+  \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname \else\dimen1=0pt \fi
+  \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname \else\dimen2=0pt \fi
   \xdef\wr@tet@mp{\string\@marginnote{#2}{#3}{\p@s}{#5}{\the\dimen0}{\the\wd#1}{\the\ht#1}{\the\dp#1}{\the\dimen1}{\the\dimen2}}%
   \advance\dimen2 by \dimen3%
-  %\ifx#3s \showbox#1\fi
+  %\showbox#1
   \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%
 }
 
-\plugin@endif
+\newcount\pcount \pcount=0
+{\catcode`\~=12 \lccode`\~=32 \lowercase{
+\gdef\parmkr{\setbox0=\vbox{\hbox{\ch@rstylepls{zpmkr}~\m@rker\ch@rstylepls{zpmkr}*}}%
+    \advance\pcount by 1
+    %\llap{\copy0}%
+    \d@marginnote{0}{\the\pcount}{zpmkr}{\ifRTL right\else left\fi}{top}{0pt}{0pt}}
+}
+}
+
+%\plugin@endif

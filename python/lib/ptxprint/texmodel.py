@@ -10,7 +10,6 @@ from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multst
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect
 from ptxprint.dimension import Dimension
-import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 from usfmtc.reference import Ref, RefRange, RefList
 from ptxprint.xrefs import Xrefs
@@ -85,7 +84,7 @@ _periphids = {
 
 
 class TexModel:
-    _ptxversion = 5
+    _ptxversion = 6
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
@@ -337,6 +336,12 @@ class TexModel:
         self.dict['chvssep_'] = self.ptsettings.get('ChapterVerseSeparator', chvssep) if chvssep == ':' else chvssep
         rsep = re.sub(r"^.*\|", "", self.ptsettings.get('RangeIndicator', '-'))
         self.dict['rangesep_'] = "\u2013" if rsep == "-" else rsep
+        rsep = re.sub(r"^.*\|", "", self.ptsettings.get('ChapterRangeSeparator', '-')) or rsep
+        self.dict['chaprangesep_'] = "\u2013" if rsep == "-" else rsep
+        bsep = self.ptsettings.get('BookChapterSeparator')
+        if bsep == " " or bsep is None:
+            bsep = "\\ "
+        self.dict['bksep_'] = bsep
 
     def updatefields(self, a):
         modelmap.get = lambda k: self[k]
@@ -605,6 +610,7 @@ class TexModel:
         return res
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", diglots=False):
+        import ptxprint.scriptsnippets as scriptsnippets
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -670,9 +676,10 @@ class TexModel:
                                 beforelast.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in nonScriptureBooks: 
                             if not self.dict['document/noblankpage']:
+                                res.append(r"\par\ifdim\pagetotal>0pt \pagebreak\fi")
                                 res.append(r"\catcode`\@=11 \need@oddpage{\emptyoutput}\catcode`\@=12")
                             res.append(r"\edef\oldpageno{\the\pageno}% Just in case the user wants it");
-                            res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
+                            res.append(r"\ifnum\pageno<1 \pageno={}\fi".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
                                    self.asBool('document/ifshowchapternums', '%') and f in oneChbooks:
@@ -703,7 +710,7 @@ class TexModel:
                         res.append(r"% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o")
                         res.append(r"% 12 (size) comes from \p size")
                         res.append(r'\def\extraregular{{"{}"}}'.format(self.dict["document/fontextraregular"]))
-                        res.append(r"\catcode`\@=11")
+                        res.append(r"\catcode`\@=11\catcode`\^=7")
                         res.append(r"\def\do@xtrafont{\x@\s@textrafont\ifx\thisch@rstyle\undefined\m@rker\else\thisch@rstyle\fi}")
                         for a,b in c:
                             res.append(r"\def\@ctive{}{{\leavevmode{{\do@xtrafont {}{}}}}}".format(a, '^'*len(b), b))
@@ -863,13 +870,13 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-        mod.parse()
+        mod.parse(self.printer.picinfos)
         res = mod.doc
         if res.xml.errors:
             self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         if text is not None:
             return res
-        res.xml.outUsfm(outfpath, version=[3, 1])
+        mod.outUsfm(outfpath, version=[3, 1])
         return outfpath
 
     def runConversion(self, infpath, outdir):
@@ -887,7 +894,7 @@ class TexModel:
                 hasrun = False
                 with open(script, encoding="utf-8") as scriptf:
                     l = scriptf.readline().replace("\uFEFF", "")
-                    if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python", l):
+                    if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python3?", l):
                         scriptf.seek(0)
                         gs = globals().copy()
                         gs["__name__"] = "__main__"
@@ -1017,6 +1024,16 @@ class TexModel:
             doc = self.flattenModule(infpath, outfpath, text=dat)
             dat = None
 
+        if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
+                    and self.dict["notes/ifxrexternalist"] and isCanon:
+            (dat, doc) = self._getDoc(dat, doc, bk)
+            logger.debug("Add strongs numbers to text")
+            script = (printer.get("fcb_script") or "").title()
+            try:
+                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
+            except SyntaxError as e:
+                self.printer.doError("Processing Strongs", secondary=str(e))
+
         if 'default' in self.changes:
             (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
             dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
@@ -1037,7 +1054,7 @@ class TexModel:
             if doc is not None:
                 doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
 
-        if self.dict['fancy/endayah'] == "":
+        if self.dict['fancy/endayah'] == "" and self.dict["fancy/versedecoratorisayah"] == "":
             (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("versesToEnd")
             if doc is not None:
@@ -1047,16 +1064,6 @@ class TexModel:
             (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Remove filtered gloss entries")
             if doc is not None:
                 doc.removeGlosses(self.found_glosses)
-
-        if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
-                    and self.dict["notes/ifxrexternalist"] and isCanon:
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("Add strongs numbers to text")
-            script = (printer.get("fcb_script") or "").title()
-            try:
-                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
-            except SyntaxError as e:
-                self.printer.doError("Processing Strongs", secondary=str(e))
 
         if self.asBool("paragraph/ifhyphenate") and self.asBool("document/ifletter") and printer.hyphenation:
             (dat, doc) = self._getDoc(dat, doc, bk)
@@ -1117,12 +1124,14 @@ class TexModel:
         doc.xml.canonicalise(version="3.1")
         if doc.xml.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
-            errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors])
-            secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
-            self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
+            errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
+            if len(errors):
+                secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
+                self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
         return doc  
 
     def makelocalChanges(self, printer, bk, chaprange=None):
+        import ptxprint.scriptsnippets as scriptsnippets
         self.localChanges = []
         script = self.dict["document/script"]
         if len(script):
@@ -1159,7 +1168,7 @@ class TexModel:
                 endc = int(c) + int(self.dict['slice/length'])
                 self.localChanges.append(makeChange(rf"\\c {c}\s.+?\\v {v}\s.+?({self.dict['slice/word']})", \
                                                     rf"\uFFFF\n\{self.dict['slice/marker']} \1", flags=regex.S))
-                self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf'\\zsetref|bkid="{b}" chapter="{c}" verse="{v}"\*\n', flags=regex.S))
+                self.localChanges.append(makeChange(r"\\mt\d?\s*.+\uFFFF\n", rf'\\vid|bkid="{b}" chapter="{c}" verse="{v}"\*\n', flags=regex.S))
             else:
                 try:
                     startc = int(sliceRef.split(" ",1)[-1])
@@ -1230,7 +1239,7 @@ class TexModel:
         gloStyle = self._glossarymarkup.get(v, v)
         if v is not None and v != 'ai':
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
-                self.localChanges.append(makeChange(r"\\\+?w ([^|]+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
+                self.localChanges.append(makeChange(r"\\\+?w ((?:[^|\\]|\\xts.*?\\\*)+?)(\|[^|]+?)?\\\+?w\*", gloStyle, flags=regex.M))
 
         if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
@@ -1506,10 +1515,22 @@ class TexModel:
             res.append(r"\def\zimagecopyrights{}{{}}".format(k))
         return "\n".join(res)
 
+    def _page_count_for_artist(self, pgs_for_artist: dict, art_code: str) -> int:
+        """
+        Return the number of pages for a given artist, matching the way pages
+        are stored in self.printer.artpgs (coded artists store under their code,
+        others under the '' key).
+        """
+        coded = set("ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"))
+        key = art_code if art_code in coded else ''
+        return len(pgs_for_artist.get(key, []))
+
     def generateImageCopyrightText(self):
         self.printer.artpgs = {}
-        mkr='pc'
+        mkr = 'pc'
         sensitive = self['document/sensitive']
+        show_all_pages = bool(self.dict.get('texpert/allpicredits', False))
+
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
         crdts = []
         cinfo = self.printer.copyrightInfo
@@ -1517,6 +1538,7 @@ class TexModel:
             self.printer.readCopyrights()
             cinfo = self.printer.copyrightInfo
         self.analyzeImageCopyrights()
+
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()
@@ -1536,15 +1558,16 @@ class TexModel:
                         p = f[5]
                     elif a == '':
                         p = "zz"
-                        msngPgs += [f[0]] 
+                        msngPgs += [f[0]]
                     else:
                         p = a
                     self.printer.artpgs.setdefault(p, {}).setdefault(a,[]).append((int(f[0]),f[1]+f[2]))
+
             artistWithMost = ""
             if len(self.printer.artpgs):
                 artpgcmp = [a for a in self.printer.artpgs if a != 'zz']
                 if len(artpgcmp):
-                    artistWithMost = max(artpgcmp, key=lambda x: len(self.printer.artpgs[x].values()))
+                    artistWithMost = max(artpgcmp, key=lambda a: (self._page_count_for_artist(self.printer.artpgs[a], a), a))
 
         langs = set(self.imageCopyrightLangs.keys())
         langs.add("en")
@@ -1562,25 +1585,35 @@ class TexModel:
                 plstr = "" if plrls is None else plrls.get(lang, plrls["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
+
                 for art, pgs in self.printer.artpgs.items():
-                    if art != artistWithMost and art != 'zz':
-                        if len(pgs):
-                            if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
-                                pages = [x[0] for x in pgs[art]]
-                            else:
-                                pages = [x[0] for x in pgs['']]
-                            plurals = pluralstr(plstr, pages)
-                            artinfo = cinfo["copyrights"].get(art.lower(), {'copyright': {'en': art}, 'sensitive': {'en': art}})
-                            if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
-                                artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
-                                if sensitive and "sensitive" in artinfo:
-                                    artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
-                                cpystr = multstr(cpytemplate, lang, len(pages), plurals, artstr.replace("_", "\u00A0"))
-                                crdts.append("\\{} {}".format(mkr, cpystr))
-                            else:
-                                crdts.append(_("\\message{{Warning: No copyright statement found for: {} on pages {}}}")\
-                                                .format(art, plurals))
-                            hasOut = True
+                    # Skip missing bucket
+                    if art == 'zz':
+                        continue
+                    # If we are showing an “All other …” roll-up, skip that artist here
+                    if (not show_all_pages) and art == artistWithMost:
+                        continue
+
+                    if len(pgs):
+                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                            pages = [x[0] for x in pgs[art]]
+                        else:
+                            pages = [x[0] for x in pgs['']]
+                        plurals = pluralstr(plstr, pages)
+                        artinfo = cinfo["copyrights"].get(
+                            art.lower(), {'copyright': {'en': art}, 'sensitive': {'en': art}}
+                        )
+                        if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
+                            artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
+                            if sensitive and "sensitive" in artinfo:
+                                artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
+                            cpystr = multstr(cpytemplate, lang, len(pages), plurals, artstr.replace("_", "\u00A0"))
+                            crdts.append("\\{} {}".format(mkr, cpystr))
+                        else:
+                            crdts.append(_("\\message{{Warning: No copyright statement found for: {} on pages {}}}") \
+                                         .format(art, plurals))
+                        hasOut = True
+
                 if len(msngPgs):
                     plurals = pluralstr(plstr, msngPgs)
                     template = cinfo['templates']['imageExceptions'].get(lang,
@@ -1589,7 +1622,8 @@ class TexModel:
                 else:
                     exceptPgs = ""
 
-                if len(artistWithMost):
+                # Only emit the roll-up (“All other illustrations by …” / “Except …”) when NOT listing all pages
+                if (not show_all_pages) and len(artistWithMost):
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
@@ -1610,6 +1644,7 @@ class TexModel:
                                 cinfo['templates']['exceptIllustrations']['en'])
                         cpystr = template.format(artstr.replace("_", "\u00A0"), exceptPgs)
                         crdts.append("\\{} {}".format(mkr, cpystr))
+
             if self.dict['notes/ifxrexternalist']:
                 if self.dict['notes/xrlistsource'] == "standard":
                     msg = "\\{} {}".format(mkr, cinfo['templates']['openbible.info'].get(lang,

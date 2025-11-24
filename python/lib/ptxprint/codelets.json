@@ -274,6 +274,12 @@
         },
         {
           "Type": "insert",
+          "Label": "'codepoint A' > 'codepoint B'",
+          "Description": "Simple find and replace of Unicode codepoints.",
+          "CodeSnippet": "'\\u00A0' > '\\u0020'"
+        },
+        {
+          "Type": "insert",
           "Label": "at JHN 3:16 'world' > 'people of the world'",
           "Description": "Location-specific find and replace.",
           "CodeSnippet": "at JHN 14:32 'old' > 'new'"
@@ -449,6 +455,38 @@
           "CodeSnippet": "at JHN 16:0 ACT 8:0 1CO 11:0 2CO 2:0,6:0,7:0 COL 2:0,4:0 HEB 10:0 '\\\\p' > '\\\\nb'"
         }
       ],
+      "Sections": [
+        {
+          "Type": "insert",
+          "Label": "Peripheral",
+          "Description": "Apply to peripheral (non-scripture) books only",
+          "CodeSnippet": "sections(periph)"
+        },
+        {
+          "Type": "insert",
+          "Label": "Initial",
+          "Description": "Apply changes before USFM parsing",
+          "CodeSnippet": "sections(initial)"
+        },
+        {
+          "Type": "insert",
+          "Label": "Default",
+          "Description": "Normal processing (after subsetting, interlinearizing, and module flattening)",
+          "CodeSnippet": "sections(default)"
+        },
+        {
+          "Type": "insert",
+          "Label": "Final",
+          "Description": "After all other processing, just before TeX processing (but before diglot merging)",
+          "CodeSnippet": "sections(final)"
+        },
+        {
+          "Type": "insert",
+          "Label": "Merged",
+          "Description": "Diglot/polyglot only, after merging",
+          "CodeSnippet": "sections(merged)"
+        }
+      ],
       "Arabic": [
         {
           "Type": "method",
@@ -527,6 +565,12 @@
           "Label": "Set custom Footers",
           "Description": "Regular scripture publications do not use the footer area as that is used for notes and cross-references. However, it is possible to set these as well.",
           "CodeSnippet": "\\def\\RHtitleevenleft{\\pagenumber}\n\\let\\RHtitleoddright=\\RHtitleevenleft\n"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Set chapter pair separator",
+          "Description": "If you want to distinguish between a range of chapters and two chapters that are adjacent, then use this. The example uses a comma just before the \\kern - which can be modified as needed.",
+          "CodeSnippet": "\\def\\ChapPairSeparator{,\\kern0.2em}\n"
         }
       ],
       "Chapters": [
@@ -614,6 +658,12 @@
         }
       ],
       "Tweaks": [
+        {
+          "Type": "comment%",
+          "Label": "Keep the next paragraph together (\\nobreak)",
+          "Description": "Sometimes you need to make sure the current paragraph attaches to the following paragraph (for example keeping a question in the \\m line along with an expected answer in the \\li line). This simple hook takes care of that for you.",
+          "CodeSnippet": "\\sethook{after}{m}{\\nobreak}"
+        },
         {
           "Type": "comment%",
           "Label": "Forces better calculation of the number of lines",
@@ -720,8 +770,8 @@
       "Tracing": [
         {
           "Type": "insert",
-          "Label": "Debug tracing",
-          "Description": "Enable tracing output",
+          "Label": "Page Output",
+          "Description": "Enable tracing page output",
           "CodeSnippet": "\\showboxdepth=300\n\\showboxbreadth=300\n\\tracingoutput=1"
         },
         {

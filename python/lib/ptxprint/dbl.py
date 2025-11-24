@@ -3,8 +3,40 @@ import xml.etree.ElementTree as et
 import re, os, shutil, io
 from zipfile import ZipFile
 from ptxprint.ptsettings import books, allbooks, bookcodes
-from ptxprint.utils import get_ptsettings
+from ptxprint.utils import get_ptsettings, booknumbers
 import usfmtc
+
+class BundleZip(ZipFile):
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        self.hasbooknames = False
+        for f in self.namelist():
+            if f.lower().endswith("booknames.xml"):
+                self.hasbooknames = True
+                break
+        self.booknames = {}
+
+    def collectBookNames(self, indoc):
+        if not self.hasbooknames and indoc is not None:
+            self.booknames[indoc.book] = [indoc.getroot().findtext('.//para[@style="toc{}"]'.format(i)) for i in range(1,4)]
+
+    def outBookNames(self, path):
+        if not len(self.booknames) or all(all(x is None for x in v) for v in self.booknames.values()):
+            return
+        fieldnames = "long short abbr".split()
+        with open(os.path.join(path, "BookNames.xml"), "w", encoding="utf-8") as outf:
+            outf.write("""<?xml version="1.0" encoding="utf-8"?>
+<BookNames>
+""")
+            for b, v in sorted(self.booknames.items(), key=lambda k:booknumbers.get(k[0], 1000)):
+                if all(x is None for x in v):
+                    continue
+                outf.write('  <book code="{}"'.format(b))
+                for i, c in enumerate(v):
+                    if c is not None:
+                        outf.write(' {}="{}"'.format(fieldnames[i], c))
+                outf.write('/>\n')
+            outf.write("</BookNames>\n")
 
 def proc_start_ms(el, tag, pref, emit, ws):
     if "style" not in el.attrib:
@@ -118,7 +150,7 @@ def GetDBLName(dblfile):
     return None
 
 def UnpackBundle(dblfile, prjid, prjdir):
-    with ZipFile(dblfile) as dblzip:
+    with BundleZip(dblfile) as dblzip:
         fnames = dblzip.namelist()
         if any(f.endswith("metadata.xml") for f in fnames):
             return UnpackDBL(dblzip, prjid, prjdir)
@@ -136,21 +168,37 @@ def UnpackBooks(inzip, prjid, prjdir, subdir=None):
         ftype = usfmtc._filetypes.get(fext.lower(), None)
         if ftype is None:
             continue
-        if fbk in bookcodes:
-            unpackBook(inzip, f, fbk, ftype, prjid, prjdir)
-    return True
+        bk = None
+        if fbk[:3].upper() in bookcodes:
+            bk = fbk[:3]
+        elif fbk[-3:].upper() in bookcodes:
+            bk = fbk[-3:]
+        indoc = unpackBook(inzip, f, bk, ftype, prjid, prjdir)
+        inzip.collectBookNames(indoc)
+    if not inzip.hasbooknames:
+        inzip.outBookNames(os.path.join(prjdir, prjid))
+    return os.path.exists(os.path.join(prjdir, prjid))
 
 def unpackBook(inzip, inname, bkid, informat, prjid, prjdir):
     prjpath = os.path.join(prjdir, prjid)
-    outfname = "{}{}{}.USFM".format(bookcodes.get(bkid, "ZZ"), bkid, prjid)
-    outpath = os.path.join(prjpath, outfname)
     os.makedirs(prjpath, exist_ok=True)
     with io.TextIOWrapper(inzip.open(inname), encoding="utf-8") as inf:
         indoc = usfmtc.readFile(inf, informat=informat)
-        indoc.saveAs(outpath)
+    if bkid is None:
+        bkid = indoc.book
+    outfname = "{}{}{}.USFM".format(bookcodes.get(bkid, "ZZ"), bkid, prjid)
+    outpath = os.path.join(prjpath, outfname)
+    indoc.saveAs(outpath)
+    return indoc
 
 def UnpackPTX(inzip, prjid, prjdir):
-    inzip.extractall(os.path.join(prjdir, prjid))
+    path = os.path.join(prjdir, prjid)
+    inzip.extractall(path)
+    if not inzip.hasbooknames:
+        for f in [x for x in os.listdir(path) if x.lower().endswith("sfm")]:
+            indoc = usfmtc.readFile(os.path.join(path, f))
+            inzip.collectBookNames(indoc)
+        inzip.outBookNames(path)
     return True
 
 def UnpackDBL(inzip, prjid, prjdir):
@@ -195,13 +243,15 @@ def UnpackDBL(inzip, prjid, prjdir):
         for contentel in metacontents.findall('content'):
             bkid = contentel.get("role")
             infname = contentel.get("src")
-            unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
+            inbook = unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
+            inzip.collectBookNames(inbook)
     else:
         metacontents = meta.find('contents/bookList[@default="true"]/books')
         for contentel in metacontents.findall('book'):
             bkid = contentel.get('code')
             infname = 'USX_1/{}.usx'.format(bkid)
-            unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
+            inbook = unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
+            inzip.collectBookNames(inbook)
     bkindex = books.get(bkid)+1
     bookshere[bkindex-1] = 1
 
@@ -226,4 +276,6 @@ def UnpackDBL(inzip, prjid, prjdir):
     n.tail = "\n"
     with open(os.path.join(prjpath, "ptxSettings.xml"), "wb") as outf:
         outf.write(et.tostring(settings, encoding="utf-8"))
+    if not inzip.hasbooknames:
+        inzip.outBookNames(prjpath)
     return True

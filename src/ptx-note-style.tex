@@ -33,6 +33,7 @@
 %+cnote_makenote
 % We keep a list of all the note classes in \n@tecl@sses, each prefixed with \\ and enclosed in braces.
 % Then we can define \\ on the fly, and execute the \n@tecl@sses list to apply it to all classes.
+\newif\ifDBGshownoteboxes
 \newtoks\n@tecl@sses
 \newcount\n@teid % Each note should have a unique number. 
 
@@ -41,10 +42,11 @@
 %
 \def\m@ken@tecl@ss#1{%
   \trace{n}{m@ken@tecl@ss #1}%
+        \trace{fp}{Penalties are ilp:\the\interlinepenalty, wp:\the\widowpenalty, cp:\the\clubpenalty}%
   \newcl@sstrue
   \def\n@wcl@ss{#1}%
   \let\\=\ch@ckifcl@ss \the\n@tecl@sses % check if this note class is already defined
-  \ifnewcl@ss \allocatecl@ss{#1} \fi
+  \ifnewcl@ss \allocatecl@ss{#1}\fi
 }
 \def\ch@ckifcl@ss#1{\def\t@st{#1}\ifx\t@st\n@wcl@ss\newcl@ssfalse\fi}
 \newif\ifnewcl@ss
@@ -64,15 +66,17 @@
     \n@wnoteins@rt{#1}%
   \fi%
 }
-\def\n@wnoteins@rt#1{
+\def\n@wnoteins@rt#1{%
     \trace{n}{Creating note class #1}%
 	\x@\n@winsert\csname note-#1\endcsname
+	\x@\newb@x\csname noteb@x-#1\endcsname
 	\x@\newb@x\csname notesave1-#1\endcsname
 	\x@\newb@x\csname notesave2-#1\endcsname
         \x@\newc@unt\csname refn@te-#1\endcsname
 }
 \def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }
 \def\incn@tecount#1{\global\advance\csname refn@te-#1\endcsname by 1 }
+\def\exp@ndn@tes#1{\x@\unvcopy\csname noteb@x-#1\endcsname}
 
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
@@ -115,6 +119,7 @@
 \newdimen\InterNoteSpace \InterNoteSpace=3.5pt
 \newdimen\NoteCallerWidth %Now set in 1timesetup \NoteCallerWidth=1.1ex %Minimum width for callers/callees, helps alignment.
 \newdimen\NoteCallerSpace \NoteCallerSpace=.2em
+\newdimen\n@tedepth
 %-cnote_initnotes
 
 %
@@ -232,7 +237,7 @@
  \end@llpoppedstyles{N*}%end any character styles within the note
  \ifskipn@testyle \else
   \csname end-\newn@testyle\endcsname % execute <end> hook
-   \ifp@ranotes\else\ifhmode\endgraf\fi\ifvmode \dimen0=\prevdepth\kern-\dimen0 \fi\fi% Kill decenders at the end of the note
+   \ifp@ranotes\else\ifhmode\endgraf\fi\ifvmode \n@tedepth=\prevdepth\kern-\n@tedepth \fi\fi% Kill decenders at the end of the note
  \fi
  \egroup % end the insert (started in \m@kenote) 
  \ifx\@wrap\empty\else\egroup\let\@wrap\empty\fi%\@wrap would have started a box
@@ -259,7 +264,7 @@
   \set@utonum{#1}%
   \count255=0\csname \@utonum \endcsname
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
-  \advance\count255 by 96 \edef\them@rk{\char\count255}}
+  \advance\count255 by 96 \edef\them@rk{\char\count255}}%
 \fi
 \newif\ifresetallcols\resetallcolstrue
 \def\resetautonum#1{\set@utonum{#1}\x@\xdef\csname \@utonum\endcsname{0}} % Reset the current note counter (f)
@@ -335,7 +340,7 @@
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \setn@tewidth{#1}%
+  \setn@tewidth{#1}\trace{M}{noteboxwidth hsize=\the\hsize}%
   \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 1 \fi 
     \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
   \fi
@@ -354,42 +359,44 @@
     \else
       \XeTeXuseglyphmetrics=0 % so that notes sit on the baseline based font descender not contents
     \fi
-    \ifp@ranotes
+    \ifp@ranotes\ifcsname nm-cref-#1\endcsname\else
       \hsize=\maxdimen
-    \else
+    \fi\else
       \hsize=\n@tewidth
     \fi
 %%% single-column notes:
-    \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
+    \interlinepenalty\interfootnotelinepenalty % set penalty to break lines (Typ 100. Allow the note to be broken by the page-builder
     \let\styst@k\empty
-    \parfillskip=0pt plus 1fil
-    \leftskip=0pt \rightskip=0pt
-    \getp@ram{justification}{#1}{#1}%
-    \ifx\p@ram\c@nter
-     \leftskip=\noteRag \rightskip=\leftskip \parfillskip=0pt
-    \else\ifx\p@ram\l@ftb@l
-     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
-    \else\ifx\p@ram\l@ft
-     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
-    \else\ifx\p@ram\r@ght
-     \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
-    \fi\fi\fi\fi
-    \getp@ram{leftmargin}{#1}{#1}%
-    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-    \getp@ram{rightmargin}{#1}{#1}%
-    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+    \ifp@ranotes\leftskip=0pt\rightskip=0pt\parfillskip=0pt\else
+    \s@tsideskips{#1}{\noteRag}\fi
+%    \parfillskip=0pt plus 1fil
+%    \leftskip=0pt \rightskip=0pt
+%    \getp@ram{justification}{#1}{#1}%
+%    \ifx\p@ram\c@nter
+%     \leftskip=\noteRag \rightskip=\leftskip \parfillskip=0pt
+%    \else\ifx\p@ram\l@ftb@l
+%     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
+%    \else\ifx\p@ram\l@ft
+%     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
+%    \else\ifx\p@ram\r@ght
+%     \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
+%    \fi\fi\fi\fi
+%    \getp@ram{leftmargin}{#1}{#1}%
+%    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+%    \getp@ram{rightmargin}{#1}{#1}%
+%    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \trace{n}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
     \else
-      \ifp@ranotes
+      \ifp@ranotes\ifcsname nm-cref-#1\endcsname\else
         \baselineskip=0pt
-      \else
+      \fi\else
         \s@tbaseline{#1}{#1}%
       \fi
     \fi
     \ifp@ranotes\else
-      \prevdepth=0pt % Ensure that we start with a baselineskip.
+      \ifvmode \prevdepth=0pt \fi % Ensure that we start with a baselineskip.
       \ifusespacebefore\getp@ram{spacebefore}{#1}{#1}\trace{n}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi\fi
 %      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
 %      \ifdim\dimen0<\baselineskip
@@ -406,7 +413,8 @@
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
     \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
     \xdef\n@tefli{0pt}%
-    \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{n}{note(#1) firstindent: \p@ram}%
+    \ifnum 1= \ifp@ranotes\ifcsname nb-char-#1\endcsname 1\else 0\fi \else 1\fi
+      \getp@ram{firstindent}{#1}{#1}\trace{n}{note(#1) firstindent: \p@ram}%
       \dimen0=0pt \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
       \xdef\n@tefli{\the\dimen0 }%
       \ifx\p@ram\relax\else\kern\n@tefli\fi
@@ -444,8 +452,8 @@
         %\x@\showbox\csname endn@te-#1\endcsname
         \vbox{}%Sacrificial box for makehboxofhboxes to consume
         \x@\unvbox\csname endn@te-#1\endcsname%
-        %\showbox0
         %\setbox0=\hbox{\unhbox0 \removehboxes}%
+        %\ifDBGshownoteboxes\showbox0 \fi
       \fi
     \else
       \x@\ifvoid \csname endn@te-#1\endcsname
@@ -459,21 +467,21 @@
   \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endn@te-#1\endcsname\vbox}%
   \x@\gdef\csname ztestnotes-#1\endcsname{% Set the @ndnotesfound flag based on one type of note. 
       \ifvoid\csname endn@te-#1\endcsname\@ndnotesfoundfalse\else\@ndnotesfoundtrue\fi}%
-  \x@\gdef\csname zplacenotes-#1\endcsname{\ifvmode\else\par\fi \dimen0=\prevdepth %
+  \x@\gdef\csname zplacenotes-#1\endcsname{\ifvmode\else\par\fi \n@tedepth=\prevdepth %
     %\showbox\csname endn@te-#1\endcsname
     \checkp@ranotes{#1}%
     \ifp@ranotes
-      \ifdim \dimen0>0pt \kern-\dimen0\fi
+      \ifdim \n@tedepth>0pt \kern-\n@tedepth\fi
       \ifvoid\csname endn@te-#1\endcsname\else
         \setbox0=\vbox{\maken@tepara{\csname endn@te-#1\endcsname}{#1}}%
-        %\showbox0
+        \ifDBGshownoteboxes\showbox0 \fi
         \unvbox0
       \fi
     \else
       \s@tbaseline{#1}{#1}%
       {%\x@\showbox\csname endn@te-#1\endcsname
       \setbox0=\vbox{\unvbox\csname endn@te-#1\endcsname}%
-      %\showbox0
+      \ifDBGshownoteboxes\showbox0 \fi
       \unvbox0}%
     \fi
     }% Individual note placement
@@ -543,6 +551,7 @@
   \x@\xdef\csname n@te-\n@tetype-bls\endcsname{\the\baselineskip}%
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
+  \ifDBGshownoteboxes\showbox9 \fi
   \ifp@ranotes\setbox8=\copy9\setbox7=\vbox{\unvbox8\global\setbox6=\lastbox}\setbox8=\hbox{\unhbox6}%
     \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd8\string}\string{\the\ht9\string}}%
   \else
@@ -573,17 +582,22 @@
 \newif\ifst@dynotes
 \newif\ifnotst@dynotes
 \newif\ifonlyst@dynotes
+\newif\iffindsh@ve
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
   \checkp@ranotes{#1}\setn@tewidth{#1}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
     \ifonlyst@dynotes\let\n@xt=\n@ffin\else
       \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \fi\fi
-  \n@xt{#1}}
+  \ifversion{6}{%In v6, unwrapping happens per-notestyle. This isolates note styles from each other and allows per-notestyle shaving
+    \x@\let\x@\tnoteb@x\csname noteb@x-#1\endcsname
+    \global\setbox\tnoteb@x\vbox{%
+      \n@xt{#1}\x@\xdef\csname bls-#1\c@rrdstat\endcsname{\the\baselineskip}}\iffindsh@ve\ifx\n@xt\n@ffin\else\findsh@venotes{\tnoteb@x}{#1}\fi\fi\unvcopy\tnoteb@x}{\n@xt{#1}}}%
+
 
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
-  \def\cl@ss{#1\g@tndstat}%
-  \edef\tmp{#1}\ifx\tmp\l@stnoteclass\lastn@tetrue\else\lastn@tefalse\fi
+  \edef\cl@ss{#1\g@tndstat}%
+  \edef\tmp{#1}\ifx\tmp\l@stnoteclass\lastn@tetrue\else\ifversion{6}{\lastn@tetrue}{\lastn@tefalse}\fi
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   \trace{f}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
   % if the noteclass has content to output ...
@@ -594,9 +608,9 @@
     %\fi
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\else\kern\InterNoteSpace\fi\penalty10000
-    \setbox0\box\voidb@x
-    \vbox{%
-    \ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss
+    \setbox0\vbox{%
+      \ifversion{6}{\penalty0}{}%This will be discarded by the vsplit!
+      \ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss
       \iflastn@te%\showlists
         {\count255=\lastnodetype \trace{fp}{separateins@rtn@tecl@ss lnt:\the\count255 \space \decod@lastnode{\count255}}}%
         \count255=\lastpenalty
@@ -605,30 +619,35 @@
         \setbox0\lastbox\penalty\lastnoteclubpenalty \box0\kern\dimen0
         \xdef\l@stnotebls{\the\baselineskip}%
       \fi
-    }% This would permit breaking the last paragraph. Unfortunately it also permits breaking before the last note.: \setbox0\lastbox\unvbox0 %\showlists
+    }%
+    \ifversion{6}{\setbox1\vsplit 0 to 0pt  % Remove initial discardable items.
+      \box0 %
+    }{\box0 }%
     \fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
-  \def\cl@ss{#1\g@tndstat}%
-  \dimen0=\prevdepth
+  \edef\cl@ss{#1\g@tndstat}%
+  \n@tedepth=\prevdepth
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
-  \trace{f}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0, c:\the\count\th@cl@ss.}%
+  \trace{f}{parains@rtn@tecl@ss \cl@ss, pd=\the\n@tedepth, c:\the\count\th@cl@ss.}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote%\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-      \footnoterule\global\f@rstnotefalse % output rule before first note
+      \footnoterule% output rule before first note
     \else
       \kern\InterNoteSpace
     \fi
     \penalty10000
     %\ifnum\pagenumber=8\showbox\th@cl@ss\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
-  \fi}
+    \global\f@rstnotefalse 
+  \fi
+}
 
 % insert a note class which is two column study notes style
 \def\studyins@rtn@tecl@ss#1{%
-  \def\cl@ss{#1\g@tndstat}%
+  \edef\cl@ss{#1\g@tndstat}%
   \trace{n}{studyins@rtn@tecl@ss \cl@ss \space (from #1)}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
@@ -653,7 +672,7 @@
       \StudyNoteRuleLeftIndent \vrule height \StudyNoteRuleThickness width \StudyNoteRuleWidth\textwidth \StudyNoteRuleRightIndent}%
       \global\f@rstnotefalse
     \fi%\else\kern\InterNoteSpace\fi
-    \setbox11=\vbox{\unvbox11} \setbox12=\vbox{\unvbox12}
+    \setbox11=\vbox{\unvbox11}\setbox12=\vbox{\unvbox12}%
     \ifdim\ht12=0pt \setbox12=\vbox{\hbox to \wd11{}}\fi
     \dimen11=\ht11 \ifdim\dimen11<\ht12 \dimen11=\ht12\fi
     \dimen12=\dp11 \ifdim\dimen12<\dp12 \dimen12=\dp12\fi
@@ -686,7 +705,7 @@
 \f@rstnotetrue
 \def\footnoterule{\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\n@tewidth}{%
   \FootNoteRuleLeftIndent \vrule height \FootNoteRuleThickness width \FootNoteRuleWidth\n@tewidth
-  \FootNoteRuleRightIndent}\penalty10000\hrule height 0pt depth 0pt width 0pt}% 
+  \FootNoteRuleRightIndent}\penalty10000 \hrule height 0pt depth 0pt width 0pt}% 
 
 \def\noterule#1#2#3#4{\trace{f}{noterule #1=\the#1 #2 #3 #4}{\dimen1=#1
   \ifversion{2}{\advance\dimen1 -#2}{}%
@@ -723,7 +742,7 @@
     \toks0=\everypar\everypar={}\parskip=0pt \parindent=0pt \let\par=\endgraf\parfillskip=0pt %
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
     \par
-    \dimen0=\prevdepth\ifdim \dimen0>0pt \kern-\dimen0\fi
+    \n@tedepth=\prevdepth\ifdim \n@tedepth>0pt \kern-\n@tedepth\fi
     \vbox{\kern 0.5\baselineskip
       \EndNoteSeparator
       \kern 0.5\baselineskip}%
@@ -765,10 +784,10 @@
    \ifdiglot
      \trace{d}{setn@tewidth (\show@dstat)}%
      \ifdiglotSepNotes
-        \ifnum 1=\ifx\c@rrdstat\empty 0\else \ifcsname column\c@rrdstat width\endcsname 1 \else 0\fi\fi
-          \n@tewidth=\csname column\c@rrdstat width\endcsname
+        \ifnum 1=\ifx\c@rrdstat\empty 0\else \ifcsname column\c@rrdstat fullwidth\endcsname 1 \else 0\fi\fi
+          \n@tewidth=\csname column\c@rrdstat fullwidth\endcsname
         \else
-          \trace{d}{c@rrdstat currently set to '\c@rrdstat'.  No column width}%
+          \trace{d}{c@rrdstat currently set to '\c@rrdstat'.  No column fullwidth}%
           \n@tewidth=\csname columnLwidth\endcsname
         \fi
      \else\n@tewidth=\textwidth\fi
@@ -785,7 +804,7 @@
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1 \onecolwidth{\n@tewidth}\else
       \ifcsname endn@te-#1\endcsname 
-        \ifEndNotesSingleCol \onecolwidth{\n@tewidth} \else \n@tewidth=\hsize \fi
+        \ifEndNotesSingleCol \onecolwidth{\n@tewidth}\else \n@tewidth=\hsize \fi
       \else
         \n@tewidth=\ifdiglot\csname column\c@rrdstat width\endcsname
           \else\ifColNotes\colwidth\else\textwidth\fi \fi
@@ -810,7 +829,7 @@
 \newif\ifparnotesruletopskip \parnotesruletopskipfalse % Add topskip after the rule
 \newif\ifparnotesmidtopskip \parnotesmidtopskiptrue % add topskip between note styles
 
-\newif\iflastn@te % Is this the last note style that will appear on the page?
+\newif\iflastn@te % Is this the last note style that will appear on the page? (ptxv6: last one in the cluster)
 \newcount\lastnoteinterlinepenalty % interline penalties when processing the last footnote on the page(allow long note breaking).
 \newcount\lastnoteparpenalty % the penalty associated with a manual par-break in the last note.
 \newcount\lastnotewidowpenalty % the penalty associated with a widow(last line) in the last note.
@@ -819,6 +838,8 @@
 \lastnoteparpenalty=100
 \lastnoteclubpenalty=10000
 \lastnotewidowpenalty=10000
+\newcount\earlynoteinterlinepen@lty % The penalty associated with a re-written note when NOT in the last note. Should be 10k OR MORE. Only a variable for debugging (identification) needs.
+\earlynoteinterlinepen@lty=10000
 \newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
 \newskip\noteRag\noteRag=0pt plus 36pt
 \def\setl@stnoteclass#1{%define \l@stnoteclass to be the noteclass of the last content-containing note
@@ -830,13 +851,20 @@
 \def\maken@tepara#1#2{%
   % set appropriate hsize width for diglot or not.
   \setn@tewidth{#2}%
-  \edef\tmp{#2}\ifx\tmp\l@stnoteclass\lastn@tetrue
+  \edef\tmp{#2}\let\th@snoteclass\tmp\ifx\tmp\l@stnoteclass\lastn@tetrue
   \else
-    \lastn@tefalse
+    \ifversion{6}{\lastn@tetrue}{\lastn@tefalse}%In ptxversion 6, always consider a note shavable
   \fi
+  \n@tedepth=\prevdepth
+  \dimen0=0pt
+  \trace{f}{maken@tepara #2 f@rstnote\iff@rstnote true \else false \fi falseparnoteskillprevdepth\ifparnoteskillprevdepth true \else false \fi parnoteskilldepth\ifparnoteskilldepth true \else false \fi FootNoteGlyphMetrics\ifFootNoteGlyphMetrics true \else false \fi pd=\the\n@tedepth}%
   \ifnewparnotes\ifparnoteskillprevdepth
-    \dimen0=\prevdepth\ifdim\dimen0>0pt \kern-\dimen0 \prevdepth=0pt \fi
+    \ifdim\n@tedepth>0pt \kern-\n@tedepth \fi
   \fi\fi % Prevdepth correction, because makevboxofhboxes won't (can't) obey it.
+  \ifnewparnotes\else
+    \iff@rstnote\else\prevdepth=0pt \fi
+  \fi%
+  \n@tedepth=0pt
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \getp@ram{firstindent}{#2}{#2}\let\notef@rstindent=\p@ram
@@ -858,6 +886,7 @@
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline now \the\baselineskip}%
   \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt plus 1fil%\lineskip=10pt
   \linepenalty50
+  \interlinepenalty\@MM % set default penalty to separate lines
   \getp@ram{justification}{#2}{#2}%
   \ifx\p@ram\c@nter
      \leftskip=\noteRag\rightskip=\noteRag
@@ -882,7 +911,6 @@
     \penalty 10000 % Prevent breaking before par!
     \noindent % starting making new paragraph
     \ifNoteTracing\tracingparagraphs=1\fi
-    %\ifnum\pagenumber=8\showbox0\fi
     \unhbox0 % unbox the text so it can be line-wrapped
   \fi
   \unskip\unpenalty\unskip\unskip % remove internote skip info after last note
@@ -894,7 +922,8 @@
   \else
     \global\prevdepth=\dimen1
   \fi
-  \ifparnoteskilldepth
+  \ifnum 1=\ifparnoteskilldepth 1 \else \ifx\th@snoteclass\l@stnoteclass 0 \else \ifparnoteskillprevdepth 1 \else 0 \fi\fi\fi
+    \trace{f}{removing \the\dimen1 becasue we don't want prevdepth getting in the way}%
     \kern-\dimen1
     \global\prevdepth=0pt
   \fi
@@ -905,6 +934,7 @@
 % make box0 = an hbox contining all the contents of this class
 %+c_makehboxofhboxes
 \def\makehboxofhboxes{%
+  \trace{f}{makehboxofhboxes}%
   \setbox0=\hbox{}%
   \loop\unskip\dimen0=\lastkern \ifdim\dimen0=1sp \unkern\fi\unpenalty\setbox2=\lastbox\unskip \ifhbox2\setbox0=\hbox{\box2\unhbox0}\repeat} 
 %
@@ -941,7 +971,7 @@
 \def\reheighthboxes#1#2{%
   \traceifset{reheighthboxes}%
   \trace{n}{reheighthboxes. bls=#2 (\the\baselineskip) }%
-  \setbox\n@tetmp\vbox{}
+  \setbox\n@tetmp\vbox{}%
   \let\disc@rdskip\disc@rdskip@rhh
   \let\disc@rdkern\disc@rdkern@rhh
   \let\disc@rdpenalty\disc@rdpenalty@rhh
@@ -954,7 +984,7 @@
   \disc@rds{rhh}%
   \reheighthb@xes
   \trace{n}{After adjustment box is \the\ht\n@tetmp}%
-  %\showbox\n@tetmp
+  \ifDBGshownoteboxes\showbox\n@tetmp\fi
   \unvbox\n@tetmp
 }
 \def\reheighthb@xes{%
@@ -968,7 +998,7 @@
       \trace{n}{hbox width: \the\wd1}%
       \ht2=\reheightfactor\wd1
     \fi
-    \setbox\n@tetmp\vbox{\box2\unvbox\n@tetmp}
+    \setbox\n@tetmp\vbox{\box2\unvbox\n@tetmp}%
     \disc@rds{rhh@}%
     \let\n@xt\reheighthb@xes
   \fi
@@ -993,7 +1023,7 @@
   \ifdim\dimen0=-2sp
     \ifx\@@adj\empty\else
       \trace{fp}{2nd Adjustment request:\@@adj}%
-      \xdef\@@adjP{\@@adj} \global\let\@@adj\empty
+      \xdef\@@adjP{\@@adj}\global\let\@@adj\empty
     \fi
     \dimen0=\lastkern\unkern 
     \s@t@@adj
@@ -1011,8 +1041,10 @@
   %\tracingassigns=1
   %\tracingrestores=1
   \linec@unt=0
+  \let\@@adj\empty\let\@@adjP\empty \looseness=0
   \disc@rdmvbohb % trash any trailing glue/penalties, etc.
-  \s@t@@adj
+  \s@t@@adj % but apply adjustment if one was found.
+  \ifNoteTracing\tracingparagraphs=1\fi
   \loop
     \setbox2=\lastbox
     \disc@rdmvbohb
@@ -1031,12 +1063,13 @@
         \unskip
         %\showbox2
         %\showlists
-      }
+      }%
     \fi
     \ifhbox2
       \setbox2\hbox{\unhbox2}%
       \count255=\wd2 
       \divide\count255 by \hsize 
+      \ifDBGshownoteboxes\showbox2 \fi
       %\showboxu%2
     \fi
     \tmpcount=\lastnodetype
@@ -1063,13 +1096,14 @@
             \penalty\lastnoteparpenalty % a paragraph in the last note is a very reasonable place to break if notes are going to break.
             \interlinepenalty=\lastnoteinterlinepenalty \widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty
           \else 
-            \interlinepenalty=\interfootnotelinepenalty
+            \interlinepenalty=\earlynoteinterlinepen@lty
             \penalty12346
           \fi
         \else 
-          \interlinepenalty=\interfootnotelinepenalty
+          \interlinepenalty=\earlynoteinterlinepen@lty
           \penalty12345
         \fi
+        \trace{fp}{Penalties are ilp:\the\interlinepenalty, wp:\the\widowpenalty, cp:\the\clubpenalty}%
         %\showbox2
         \ifvoid2\else
           \vskip\dimexpr\baselineskip - \ht2\relax %reimpose topskip
@@ -1079,23 +1113,25 @@
         \ifvoid2 
           \ifdim\wd1>0pt 
             \trace{fp}{Expanding  \currn@tetype\space 1(\the\wd1)}%
+            %\penalty 12347
             \unhbox1  \@@adjP\global\let\@@adjP\empty
-            {\removehboxes}
+            {\removehboxes}%
             %\showlists
             \endgraf
           \fi
         \else
+          \ifdim\wd1 >0pt \setbox1 \hbox{\unhbox1 {\removehboxes}}\fi%
           \trace{fp}{Joining \currn@tetype\space 2(\the\wd2) with 1(\the\wd1)}%
+          %\penalty 12348
           \noindent\leavevmode \@@adjP\global\let\@@adjP\empty
-          \unhbox2 \internotespace
-          \setbox1\hbox{\unhbox1{\removehboxes}}%
-          \unhbox1
+          \unhbox2 
+          \ifdim\wd1 >0pt \internotespace \unhbox1\fi
           %\showlists
           \endgraf
         \fi
         \let\notef@rstindent\onotef@rstindent
-        \ifdim\ht3>0pt \dimen0=\prevdepth
-        \ifdim\dimen0=0pt \else\kern-\dimen0\fi\fi
+        \ifdim\ht3>0pt \n@tedepth=\prevdepth
+        \ifdim\n@tedepth=0pt \else\kern-\n@tedepth\fi\fi
         \unvbox3}%
         %\setbox1\hbox{\box2
           %\unhbox1}%
@@ -1115,16 +1151,21 @@
           \fi %
           \lastn@tefalse
         \fi
-        \interlinepenalty=\interfootnotelinepenalty % set penalty to break lines
+        \interlinepenalty=\earlynoteinterlinepen@lty % set penalty to break lines
+        \trace{fp}{Penalties are ilp:\the\interlinepenalty, wp:\the\widowpenalty, cp:\the\clubpenalty}%
         \ifnum\tmpcount=1\else\lastn@tefalse\fi
       \fi
     \fi
+    \trace{fp}{box2 is \ifvoid2 void\else\ifhbox2 hbox \the\ht2+\the\dp2 x\the\wd2 \else\ifvbox2 vbox\fi\fi\fi}%
     \ifhbox2
       \setbox1=\hbox{\ifdim\wd2>0pt \unhbox2 \internotespace \fi\unhbox1}%\nonstopmode\showbox1
       \repeat
-  \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1, lnw=\lastn@tewid a:\@@adj, aP:\@@adjP}%
+  \trace{fp}{After unboxing, \the\tmpcount, b0=\l@gdims{0}, b1=\l@gdims{1}, b3=\l@gdims{3}, b5=\l@gdims{5} lnw=\lastn@tewid a:\@@adj, aP:\@@adjP}%
+  %\showlists
   \tempfalse\ifnum\tmpcount=3 \temptrue\else\ifnum\tmpcount=-1 \iff@rstnote \temptrue\fi\fi\fi
-  \ifhbox1\setbox3=\vbox{\ifnum 1=
+  \ifhbox1 \ifdim \dimexpr\wd1 +\ht1 \relax >0pt
+    \ifDBGshownoteboxes\showbox0 \showbox1 \showbox3 \fi 
+    \setbox3=\vbox{\ifnum 1=
         \iftemp \ifparnotesruletopskip 1 \else 0 \fi
       \else
         \ifparnotesmidtopskip 1 \else 0 \fi
@@ -1133,17 +1174,24 @@
       \vskip\dimexpr\baselineskip - \ht1\relax
     \fi%
     %\ifvbox2 \unvbox2\fi
-    \ifvbox0 \dimen0=\dp0 \box0 \penalty10000\prevdepth=\dimen0 \fi
-    \noindent\leavevmode\@@adj\global\let\@@adj\empty
-      \unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3%
+    \ifvbox0 \n@tedepth=\dp0 \box0 \penalty10000 \prevdepth=\n@tedepth \fi
+    \noindent\leavevmode
+    \ifx\@@adj\empty\else\trace{fp}{Applying adjust, b1:\the\wd1}%
+      \@@adj \global\let\@@adj\empty
+    \fi
+    \unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\n@tedepth=\prevdepth\ifdim\n@tedepth=0pt\else\kern-\n@tedepth\fi\fi\unvbox3%
     %\nonstopmode\showbox3
-  }\fi%
+  }\fi\fi%
   %\showbox5
   \lastn@tefalse 
-  \ifvoid5\else
-    \trace{fp}{Reinstating final line/note}%
+  \ifvoid5
+    \trace{fp}{No final line/note?? box 3 is \the\ht3}%
+  \else
+    \trace{fp}{Reinstating final line/note  a:\@@adj, aP:\@@adjP}%
+    \ifDBGshownoteboxes\showbox5 \fi 
     \setbox3\vbox{\interlinepenalty=\lastnoteinterlinepenalty\widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty %\baselineskip=\csname n@te-\n@tetype-bls\endcsname
-       \unvbox3\setbox1\lastbox\dimen1=\lastskip\unskip
+       \unvbox3 \setbox1 \lastbox\dimen1=\lastskip\unskip
+       %\ifvoid1\ifDBGshownoteboxes\showlists\fi\fi
        %\setbox6=\lastbox\global\prevdepth=\dp6\box6 %
        \trace{fp}{skip of \the\dimen1 before last line }%
        \ifdim\ht1>0pt 
@@ -1153,19 +1201,22 @@
        \fi
        \trace{fp}{Prevdepth \the\dimexpr -\dimen1\relax}%
        \disc@rdmvbohb
-       \trace{fp}{kern of \the\dimen0 before last line}%
+       \trace{fp}{kern of \the\dimen0 \space before last line}%
        \ifdim \dimen0=0pt % A normal skip = normal paragraph
-         \penalty\interfootnotelinepenalty
+         \penalty\earlynoteinterlinepen@lty
          %\ifdim\dimen1=0pt\else \vskip\dimen1 \fi
        \else % interline kern means a lastnotepar
          \penalty\lastnoteparpenalty
        \fi
        %\hrule\penalty10000
+       \ifDBGshownoteboxes\showbox1 \showbox5 \fi
+       \penalty 12340
        \leavevmode\unkern \@@adj\global\let\@@adj\@@adjP\global\let\@@adjP\empty\ifdim\ht1 >0pt  \unhbox 1{\removehboxes}\internotespace\else\fi \unhbox5}%
+    \ifDBGshownoteboxes\showbox3 \fi
     %\showbox3
   \fi
   %\ifnum\pageno=3 \showbox 2\fi
-  %\showbox3
+  \ifDBGshownoteboxes\showbox3 \fi
   \tracingassigns=0
   \tracingrestores=0
   \traceifcheck{vboxofhboxes}%
@@ -1182,7 +1233,7 @@
 \newbox\xr@fbox
 \newbox\XrefB@x
 \newdimen\XrefSkip \XrefSkip=0pt
-\def\m@ke@te@mp#1{
+\def\m@ke@te@mp#1{%
   \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip
   \advance\dimen0 by -\dimen2\advance\dimen0 by -\dp\xr@fbox
   \setbox0=\hbox{}\trace{o}{current height=\the\dimen0}%
@@ -1201,7 +1252,7 @@
     \ifdim\dimen1<#1\tempfalse\fi
     \iftemp\repeat
   \fi}
-\def\m@kexrefbox#1#2#3#4{
+\def\m@kexrefbox#1#2#3#4{%
 % #1: height, #2: xrefbox width, #3: note marker/style, returns vbox of remaineder and results in xr@fbox
 % #4: justification (only r is significant)
   \setbox\xr@fbox=\ifXrefTopfill\vbox{\vfil}\else\box\voidb@x\fi
@@ -1250,7 +1301,53 @@
   \prevdepth=-10000pt \maken@tepara{1}{#3}%
 }
 %-c_makehboxofhboxes
+%+c_notedbgruler
+\def\noteDBGruler{\message{noteruler: \the\AboveNoteSpace, \the\dimexpr \BelowFootNoteRuleSpace\relax, \the\InterNoteSpace}{\smash{\special{color push rgb 1 0 0}\vrule height \dimexpr \baselineskip + \BelowFootNoteRuleSpace \relax depth 0pt width 0.5pt
+  \raise \baselineskip \hbox{\vrule height \AboveNoteSpace width 1pt}\special{color pop}%
+  \setbox0\hbox{GMl984}%
+  \special{color push rgb \ifFootNoteGlyphMetrics 0 1 0\else 0 .3 1\fi}%
+  \vrule height \dimexpr \ht0 + \BelowFootNoteRuleSpace \relax depth 0pt width 0.5pt 
+  \raise \ht0 \hbox{\vrule height \AboveNoteSpace width 1pt}%
+  \special{color pop}%
+  \kern 0.5pt
+  \special{color push rgb 0.5 0 0}%
+  \vrule height \baselineskip width 0.5pt
+  \raise \baselineskip \hbox{\vrule height \InterNoteSpace width 1.5pt}%
+  \special{color pop}%
+  \kern 0.5pt
+  \special{color push rgb \ifFootNoteGlyphMetrics 0 .5 0\else 0 0 .5\fi}%
+  \raise \ht0 \hbox{\vrule height \InterNoteSpace width 1.5pt}%
+  \vrule height\ht0 depth\dp0 width 0.5pt
+  \special{color pop}%
+}}}
+%-c_notedbgruler
 
+% Marginal notes
+\def\marginaln@te#1{\x@\gdef\csname note-no-insert-#1\endcsname{\n@test@rt{#1}}%
+  \x@\gdef\csname endnote-no-insert-#1\endcsname{\n@te@nd{#1}}%
+  \x@\newb@x\csname nm-box-#1\endcsname
+  \x@\gdef\csname nm-cref-#1\endcsname{#1}%
+  \x@\newc@unt\csname nm-count-#1\endcsname
+}
+\def\n@test@rt#1{\n@tewidth=\dimexpr \marginnoteswidth - \marginnotesgap\relax
+  \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup\usespacebeforefalse
+    \global\p@ranotesfalse
+    \s@tsideskips{#1}{-1pt}\n@tewidth=\marginnoteswidth \advance\n@tewidth -\marginnotesgap \hsize=\n@tewidth
+    \ifdim\parfillskip>0pt\hfil\fi
+}
+\def\n@te@nd#1{%
+  \egroup% \x@\showbox\csname nm-box-#1\endcsname
+  \x@\ifx\csname nm-cref-#1\endcsname\c@rref
+    \x@\advance\csname nm-count-#1\endcsname 1%
+  \else \csname nm-count-#1\endcsname=0 \x@\xdef\csname nm-cref-#1\endcsname{\c@rref}\fi
+  \x@\ifnum\csname nm-count-#1\endcsname=0\relax \edef\t@@mp{\c@rref}\else \edef\t@@mp{\c@rref!#1[\x@\the\csname nm-count-#1\endcsname]}\fi
+  \skip1=\baselineskip \s@tbaseline{#1}{#1}%
+  \getp@ram{spacebeside}{#1}{#1}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
+  \advance\dimen0 \marginnotesgap
+  \trace{M}{nm-box-#1 \x@\the\x@\ht\csname nm-box-#1\endcsname+\x@\the\x@\dp\csname nm-box-#1\endcsname*\x@\the\x@\wd\csname nm-box-#1\endcsname}%
+  \d@marginnote{\x@\the\csname nm-box-#1\endcsname}{\t@@mp}{#1}{\MarginNoteSide}{bottom}{\the\dimen0}{\dimexpr -\dp\pstr@t -\baselineskip}%
+  \baselineskip=\skip1
+}
 
 %+cnote_declare
 \edef\pl@scatcode{\the\catcode`+}

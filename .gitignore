@@ -17,8 +17,6 @@ __pycache__/
 temp/
 /python/dist/
 /python/build/
-/python/lib/PTXprint.egg-info/
-/python/lib/ptxprint.egg-info/
 /wine/
 /ptx2pdf_wine/
 /dev/
@@ -38,7 +36,6 @@ tmpPicLists/
 *.zip
 /crowdin/
 /cygwin/
-/docs/installation/
 /fonts/
 /Output/
 /pictures/

@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 import argparse, sys, os, re, configparser, shlex
-import site, logging
+import site, logging, time, socket
 from shutil import rmtree
 from zipfile import ZipFile
 
 import ptxprint
 from ptxprint.utils import saferelpath, appdirs
+from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
 # debugpy.listen(("localhost", 5678))
@@ -41,6 +42,74 @@ class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/ques
     def flush(self):
         pass
 
+def testport(host, port, timeout=10):
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(1)
+                s.connect((host, port))
+                return True
+        except (socket.error, ConnectionRefusedError, socket.timeout):
+            pass
+    return False
+
+def run_broadway(wnum):
+    pnum = 8880 + wnum
+    if testport("127.0.0.1", pnum, timeout=0.5):
+        # logger.info("Broadway is already running")
+        return None
+    else:
+        bwname = "broadwayd" + ".exe" if sys.platform in ("win32", "cygwin") else ""
+        server = popen([bwname, "-p", str(pnum), ":"+str(wnum)])
+    if testport("127.0.0.1", pnum):
+        return server
+    elif server is not None and server.poll() is None:
+        server.terminate()
+        server.wait()
+    return None
+
+def runtest(prjTree, config, macrosdir, project, doit, args):
+    args.quiet = True
+    server = None
+    if not args.testwithgui:
+        broadway_display = 5
+        server = run_broadway(broadway_display)
+        os.environ['GDK_BACKEND'] = "broadway"
+        os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
+    from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
+    from ptxprint.gtktesting import GtkTester
+    from ptxprint.utils import setup_i18n
+    from gi.repository import GLib
+    setup_i18n(args.lang)
+    reset_gtk_direction()
+    mainw = GtkViewModel(prjTree, config, macrosdir, args)
+    mainw.setup_ini()
+    if args.nointernet:
+        mainw.set('c_noInternet', True)
+        mainw.noInt = True
+    tester = None
+    if args.test is not None:
+        # copy files before loading config
+        tester = GtkTester(None, mainw)
+        tester.setuprun(args.test, mainw)
+    if args.pid:
+        mainw.setPrjid(args.pid, project.guid)
+        mainw.setConfigId(args.config or "Default")
+    else:
+        mainw.setFallbackProject()
+    if tester is not None:
+        GLib.idle_add(tester.run_action, args.testwithgui)
+    mainw.run(doit)
+    if tester is not None:
+        results = tester.run_finalise()
+        for k, v in results:
+            if len(v):
+                print(f"{k}: {'\n    '.join(v)}")
+    if server is not None:
+        server.terminate()
+        server.wait()
+
 def main(doitfn=None):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
@@ -65,6 +134,9 @@ def main(doitfn=None):
     parser.add_argument('-m', '--macros', help="Directory containing TeX macros (paratext2.tex)")
     parser.add_argument('-M', '--module', help="Specify module to print")
     parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
+    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
+    parser.add_argument('-t','--test',help="test file to run interactive test against")
+    parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
     
     # Performance & Debugging
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
@@ -72,7 +144,6 @@ def main(doitfn=None):
     parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
     parser.add_argument('--timeout', type=int, default=1200, help="XeTeX runtime timeout (seconds)")
     parser.add_argument('--debug', action="store_true", help="Enable debug output")
-    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
 
     # Font Settings
     parser.add_argument('-f', '--fontpath', action='append', help="Specify directories containing fonts (repeatable)")
@@ -90,7 +161,7 @@ def main(doitfn=None):
     parser.add_argument('-N', '--nointernet', action="store_true", help="Disable all internet access")
     parser.add_argument('-n', '--port', type=int, help="Port to listen on")
     parser.add_argument('-D', '--define', action=DictAction, help="Set UI component=value (repeatable)")
-    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx)")
+    parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir, no config)")
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
     parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
 
@@ -102,10 +173,18 @@ def main(doitfn=None):
         parser._print_message = print_message
         os.environ['PATH'] += os.pathsep + sys._MEIPASS.replace("/","\\")
 
+    conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
+    config = configparser.ConfigParser(interpolation=None)
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None
+    argsline = None
     if envopts is not None:
-        opts = shlex.split(envopts)
+        argsline = envopts
+    elif config.has_option('init', 'commandargs'):
+        argsline = config.get('init', 'commandargs')
+        config.remove_option('init', 'commandargs')
+    if argsline is not None:
+        opts = shlex.split(argsline)
         args = parser.parse_args(opts, args)
     args = parser.parse_args(None, args)
 
@@ -144,10 +223,6 @@ def main(doitfn=None):
 
     fontconfig_path = writefontsconf(args.fontpath,testsuite=args.testsuite)
     putenv("FONTCONFIG_FILE", fontconfig_path)
-    if not args.print and not args.action:
-        from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
-        from ptxprint.ipcserver import make_server
-        #from ptxprint.restserver import startRestServer
 
     from ptxprint.view import ViewModel, VersionStr, doError
     from ptxprint.runjob import RunJob, isLocked
@@ -162,9 +237,7 @@ def main(doitfn=None):
             args.projects.append(pdir)
         savetreedirs = True
 
-    conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
-    config = configparser.ConfigParser(interpolation=None)
-    if os.path.exists(conffile):
+    if (args.extras & 4) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:
             if config.has_option("init", "project"):
@@ -178,6 +251,7 @@ def main(doitfn=None):
             pdir = config.get("init", "paratext")
             if os.path.exists(pdir):
                 args.projects.append(pdir)
+                print(f"Adding {pdir}")
         if not len(args.projects) and config.has_section("projectdirs"):
             pdirs = config.options("projectdirs")
             if len(pdirs) and re.match(r"^\d{1,2}$", pdirs[0]):
@@ -187,6 +261,7 @@ def main(doitfn=None):
             for p in ps:
                 if p not in args.projects and os.path.exists(p):
                     args.projects.append(p)
+                    print(f"Adding {p}")
     else:
         if not os.path.exists(os.path.dirname(conffile)):
             os.makedirs(os.path.dirname(conffile))
@@ -198,13 +273,18 @@ def main(doitfn=None):
         pdir = get_ptsettings()
         if pdir is not None:
             args.projects.append(pdir)
+            print(f"Adding {pdir}")
+    elif not any(os.path.isdir(p) for p in args.projects):
+        print(f"Projects directories do not exist in {args.projects}. Quitting")
+        sys.exit(1)
 
     if args.lang is None:
         args.lang = getnsetlang(config)
 
-    if not len(args.projects):
+    if (args.extras & 2) != 0 or not len(args.projects):
         # print("No Paratext Settings directory found - sys.exit(1)")
-        if not args.print:
+        if not args.print and args.test is None:
+            from ptxprint.gtkview import getPTDir
             pdir = getPTDir()
             if pdir is None:
                 sys.exit(1)
@@ -310,6 +390,7 @@ def main(doitfn=None):
     prjTree = ProjectList()
     for p in args.projects:
         prjTree.addTreedir(p)
+        log.debug(f"Adding project tree: {p}")
 
     if args.pid:
         project = prjTree.findProject(args.pid)
@@ -320,7 +401,9 @@ def main(doitfn=None):
             if project is None or project.srcPath(args.config) is None:
                 args.config = None
 
-    if args.print or args.action is not None:
+    if args.test is not None:
+        runtest(prjTree, config, macrosdir, project, doit, args)
+    elif args.print or args.action is not None:
         mainw = ViewModel(prjTree, config, macrosdir, args)
         mainw.setup_ini()
         if args.pid:
@@ -361,6 +444,9 @@ def main(doitfn=None):
         print(f"{res=}")
         sys.exit(res)
     else:
+        from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
+        from ptxprint.ipcserver import make_server
+        #from ptxprint.restserver import startRestServer
         goround = True
         loops = 0
         while (goround):
@@ -389,6 +475,8 @@ def main(doitfn=None):
             if args.pid:
                 mainw.setPrjid(args.pid, project.guid)
                 mainw.setConfigId(args.config or "Default")
+            else:
+                mainw.setFallbackProject()
             if args.define is not None:
                 for k, v in args.define.items():
                     mainw.set(k, v)
@@ -409,7 +497,7 @@ def main(doitfn=None):
             loops += 1
         if loops >= 0:
             if savetreedirs:
-                prjTree.addToConfig(config)
+                mainw.prjTree.addToConfig(config)
             with open(conffile, "w", encoding="utf-8") as outf:
                 config.write(outf)
 

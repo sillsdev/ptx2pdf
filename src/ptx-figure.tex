@@ -209,6 +209,7 @@
 
 %+cfig_parsesize
 \def\p@rsesize#1*#2*#3\end{%
+  \trace{g}{p@rsesize #1*#2*#3}%
   \global\def\size@ption{#1}%
   \edef\tmp{#2}%
   \if\tmp\relax\relax\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
@@ -382,6 +383,7 @@
     \xdef\pic@lign{\l@cspec@b}\xdef\picV@lign{\l@cspec@c}%
     \trace{g}{Experimental page / full-page \w@tsit (\pic@lign|\picV@lign)}%
   \fi
+  \ifx\l@cspec@a\loc@M\global\picUsesInsfalse\fi
 }
 %-cfig_parsepicuse
 
@@ -411,7 +413,9 @@
       \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
       %\implicitcl@sefalse
+      \p@sheof
       \x@\scantokens\x@{\c@ption}\unskip
+      \p@peof
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
     \egroup
   \fi
@@ -430,7 +434,7 @@
 \def\FigCaptionAdjust{0pt}
 
 \def\setc@ptionbox{%
- \setbox\c@ptionbox\vbox{%
+ \setbox\c@ptionbox\vbox{\everypar={}\let\par\endgraf%
   \ifDoCaptions
     \ifCaptionFirst\else \prevdepth=0pt\fi %Interline glue above a low caption
     \ifpicNarrow
@@ -766,11 +770,12 @@
       \fi
     \fi
   \fi
-  \let\origc@t\c@tegory
+  \global\let\origc@t\c@tegory
   \let\orig@sbm\sb@rmarker
   \ifcsname figparam-cat\endcsname
     % Relying on the fact that \fig is always in a box, pretend to be in a sidebar called 'fig', and get the border parameters.
     \x@\S@tCat\x@{\csname figparam-cat\endcsname}%
+    \trace{g}{Loading border parameters for \c@tegory}%
     \def\sb@rmarker{fig}%
     \get@border@style@params
     \prepb@rderdims
@@ -956,8 +961,10 @@
         \vskip0.3\baselineskip
       \fi
     \fi
-    \ifdim \border@tpadding < -\b@drwidth pt  
-      \kern\the\dimexpr -\border@tpadding - \b@drwidth pt\relax%
+    \ifhasb@rder
+      \ifdim \border@tpadding < -\b@drwidth pt  
+        \kern\the\dimexpr -\border@tpadding - \b@drwidth pt\relax%
+      \fi
     \fi
     % insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
@@ -1233,9 +1240,9 @@
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
     \fi
-  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
-  \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
-  \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
+    \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
+    \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+    \penalty\ifinn@te 10000\else\p@stpenalty\fi\relax
   }%
   \ifvmode \picc@ntents
   \else 
@@ -1508,6 +1515,21 @@
           \pdfsavepos\write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
           }%
 }
+
+\def\MarginNoteSide{outer}
+\def\d@figureMargin#1{%Stick the figure in the margin
+  \dimen0 = \dimexpr \sp@cebeside + \marginnotesgap
+  \getsbp@ram{baseline} \dimen1=0pt %\ifx\cp@ram\relax -\baselineskip\else -\cp@ram\fi
+  \advance\dimen1 -\dp\pstr@t
+  \lastdepth=\prevdepth
+  %\kern-\baselineskip
+  \setbox#1=\vtop{\unvbox#1}
+  \trace{e}{Margin figure x=\the\dimen0, y=\the\dimen1, ht=\the\ht#1+\the\dp#1*\the\wd#1, lastdepth=\the\lastdepth}%
+  \d@marginnote{#1}{\c@rref}{\sb@rmarker}{\MarginNoteSide}{inline}{\the\dimen0}{\the\dimen1}%
+  \prevdepth=\lastdepth
+  \trace{e}{prevdepth=\the\lastdepth}%
+}
+
 %-cfig_dofigure_7
 
 \newtoks\PicPath % directory containing picture files

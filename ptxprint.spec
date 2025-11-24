@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-import sys, os, platform
+import sys, os, platform, logging
 from glob import glob
 from subprocess import call
 print("sys.executable: ", sys.executable)
@@ -14,6 +14,9 @@ else:
 print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
+
+version="3.0.4"
+logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
 #    def printme(*a, **kw):
@@ -41,7 +44,7 @@ def anyver(p, path=".", ext=".dll"):
         res = None
     return res
 
-def getfiles(basedir, outbase, extin=[], excldirs=[]):
+def getfiles(basedir, outbase, extin=[], excldirs=[], stripdir=False, debug=False):
     res = []
     for dp, dn, fs in os.walk(basedir):
         rpath = os.path.relpath(dp, basedir)
@@ -51,7 +54,18 @@ def getfiles(basedir, outbase, extin=[], excldirs=[]):
         for f in fs:
             if len(extin) and os.path.splitext(f)[1] not in extin:
                 continue
-            res.append((f'{dp}/{f}', f'{outbase}/{dp}'))
+            res.append((f'{dp}/{f}', f'{outbase}/{rpath}' if stripdir else f'{outbase}/{dp}'))
+    if debug:
+        logger.info(res)
+    return res
+
+def stripbinaries(binaries, basedir):
+    allfiles = [f for dp, dn, fs in os.walk(basedir) for f in fs]
+    res = []
+    for b in binaries:
+        if b[0] in allfiles:
+            continue
+        res.append(b)
     return res
 
 # Run this every time until a sysadmin adds it to the agent
@@ -59,13 +73,9 @@ def getfiles(basedir, outbase, extin=[], excldirs=[]):
 
 # add all the library dependency dlls (not python ones, but the dlls they typically call)
 # including GTK, etc.
-mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):
-    binaries = [(f'C:\\msys64\\mingw64\\lib\\girepository-1.0\\{x}.typelib',
-                                            'gi_typelibs') for x in
-                    ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0', 'GdkPixbuf-2.0', 
-                     'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'Poppler-0.18')] \
-              + [(f'{mingwb}\\gspawn-win64-helper.exe', 'ptxprint')] \
+    mingwb = r'C:\msys64\mingw64\bin'
+    binaries = [(f'{mingwb}\\{x}', 'ptxprint') for x in ('gspawn-win64-helper.exe', 'broadwayd.exe')] \
               + [(f'{mingwb}\\{x}.dll', '.') for x in
                     (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', anyver('libpoppler-cpp-', mingwb), 'libcurl-4',
                      'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
@@ -112,7 +122,8 @@ binaries = (binaries
       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
       + getfiles('resources', 'ptxprint', extin=['.zip'])
       + getfiles(f"xetex/bin/{bindir}", "ptxprint")
-      + getfiles(f"xetex", "ptxprint", extin=[".tfm", ".pfm", ".pfb"])
+      + getfiles("xetex", "ptxprint", extin=[".tfm", ".pfm", ".pfb"])
+      + getfiles("python/graphics/icons", "share/icons", stripdir=True)
       )
 
 # data files are considered text and end up where specified by the tuple.
@@ -133,18 +144,21 @@ print("binaries:", binaries)
 print("datas:", datas)
 
 a1 = Analysis(['python/scripts/ptxprint'],
-             pathex =   ['python/lib'],
-	     binaries = binaries,
-	     datas = datas,
+            pathex =   ['python/lib'],
+	        binaries = binaries,
+	        datas = datas,
                 # The registry tends not to get included
-             hiddenimports = ['_winreg'],
-             hookspath = [],
-             runtime_hooks = [],
+            hiddenimports = (['_winreg', 'gi.repository.win32'] if sys.platform.startswith("win") else []) \
+                + ['gi.repository.fontconfig', 'gi.repository.Poppler'],
+            runtime_hooks = [],
+            hookspath = [os.path.abspath("pyinstallerhooks")],
                 # These can drift in from the analysis and we don't want them
-             excludes = ['tkinter', 'scipy'],
-             win_no_prefer_redirects = False,
-             win_private_assemblies = False,
-             noarchive = False)
+            excludes = ['tkinter', 'scipy'],
+            win_no_prefer_redirects = False,
+            win_private_assemblies = False,
+            noarchive = False)
+a1.binaries = stripbinaries(a1.binaries, f'xetex/bin/{bindir}')
+print("Binaries:", a1.binaries)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
 app_name = 'PTXprint'
 exe1 = EXE(pyz1,
@@ -176,7 +190,7 @@ for k, v in jobs.items():
     a = Analysis([s],
              pathex = ['python/lib'],
              binaries = binaries,
-             hookspath = [],
+             hookspath = [os.path.abspath("pyinstallerhooks")],
              runtime_hooks = [],
              excludes = ['tkinter', 'scipy'],
              win_no_prefer_redirects = False,
@@ -197,6 +211,7 @@ for k, v in jobs.items():
           contents_directory = '.',
           windowed=True,
           console = False)
+    a.binaries = stripbinaries(a.binaries, f'xetex/bin/{bindir}')
     colls.append([e, a.binaries, a.zipfiles, a.datas])
 allcolls = sum(colls, [])
 
@@ -251,50 +266,69 @@ if sys.platform == "darwin":
     #
     # Create the DMG from dist/dmg
     #
-    dmg_path = os.path.join(DISTPATH, f"{app_name}.dmg")
+    for old in glob('*.dmg', root_dir=DISTPATH): os.remove(os.path.join(DISTPATH, old))
+    dmg_path = os.path.join(DISTPATH, f"{app_name}_{version}.dmg")
     print(f"Creating {app_name}.dmg")
     subprocess.run([
         "hdiutil", "create", "-volname", f"{app_name}",
         "-srcfolder", dmg_staging, "-ov", "-format", "UDZO", dmg_path
     ], check=True)
 
-    skip_notarize = os.environ.get("SKIP_NOTARIZE") == "1"
-    if skip_notarize:
-        sys.exit(0)
-
-    #
-    # Notarize the DMG using xcrun notarytool
-    #
-    apple_id = os.environ.get("NOTARIZATION_USERNAME")
-    password = os.environ.get("NOTARIZATION_PASSWORD")
-    team_id = os.environ.get("NOTARIZATION_TEAM")
-    if apple_id and password and team_id:
-        try:
-            # Run xcrun notarytool submit and capture output
-            print(f"Notarizing {dmg_path}")
-            import json
-            result = subprocess.run([
-                "xcrun", "notarytool", "submit", dmg_path,
-                "--apple-id", apple_id,
-                "--password", password,
-                "--team-id", team_id,
-                "--output-format", "json"
-            ], check=True, capture_output=True, text=True)
-            output_json = json.loads(result.stdout)
-            request_id = output_json.get("id")
-            if not request_id:
-                raise Exception("No request ID found in notarytool output.")
-            print(f"Notarization RequestID: {request_id}")
-            # Run the mac-check-notarized.sh script with dmg path and request_id
-            script_path = os.path.abspath("mac-check-notarized.sh")
-            if not os.path.exists(script_path):
-                raise Exception("No check notarized script found")
-            subprocess.run(["bash", script_path, dmg_path, request_id], check=True)
-            print("Notarization check script complete.")
-        except Exception as e:
-            print(f"Notarization failed: {e}")
-    else:
-        print("Notarization skipped: NOTARIZATION_TEAM, NOTARIZATION_USERNAME, or NOTARIZATION_PASSWORD not set in environment.")
+    if not os.environ.get("SKIP_NOTARIZE") == "1":
+        #
+        # Notarize the DMG using xcrun notarytool
+        #
+        apple_id = os.environ.get("NOTARIZATION_USERNAME")
+        password = os.environ.get("NOTARIZATION_PASSWORD")
+        team_id = os.environ.get("NOTARIZATION_TEAM")
+        if apple_id and password and team_id:
+            try:
+                # Run xcrun notarytool submit and capture output
+                print(f"Notarizing {dmg_path}")
+                import json
+                result = subprocess.run([
+                    "xcrun", "notarytool", "submit", dmg_path,
+                    "--apple-id", apple_id,
+                    "--password", password,
+                    "--team-id", team_id,
+                    "--output-format", "json"
+                ], check=True, capture_output=True, text=True)
+                output_json = json.loads(result.stdout)
+                request_id = output_json.get("id")
+                if not request_id:
+                    raise Exception("No request ID found in notarytool output.")
+                print(f"Notarization RequestID: {request_id}")
+                # Run the mac-check-notarized.sh script with dmg path and request_id
+                script_path = os.path.abspath("mac-check-notarized.sh")
+                if not os.path.exists(script_path):
+                    raise Exception("No check notarized script found")
+                subprocess.run(["bash", script_path, dmg_path, request_id], check=True)
+                print("Notarization check script complete.")
+            except Exception as e:
+                print(f"Notarization failed: {e}")
+        else:
+            print("Notarization skipped: NOTARIZATION_TEAM, NOTARIZATION_USERNAME, or NOTARIZATION_PASSWORD not set in environment.")
     
     # Clean up the staging directory
     shutil.rmtree(dmg_staging)
+
+    #
+    # Generate download_info file
+    #
+    import datetime
+    for old in glob('*.download_info', root_dir=DISTPATH): os.remove(os.path.join(DISTPATH, old))
+    open(f"{dmg_path}.download_info", "wt").write(f'''
+    {{
+        "description": "PTXprint macOS dmg"
+        "date": "{datetime.date.today().isoformat()}",
+        "version": "{version!s}",
+        "category": "installer",
+        "architecture": "{platform.machine()}",
+        "platform": "mac",
+        "type": "dmg",
+        "name": "PTXPrint",
+        "size": "{os.stat(dmg_path).st_size!s}"
+        "file": "{app_name}_{version!s}.dmg",
+    }}
+    ''')
+    print(f"Created download_info file: {dmg_path}.download_info")

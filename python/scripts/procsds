@@ -1,11 +1,10 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import argparse, json, heapq, os, re, csv, sys
 import xml.etree.ElementTree as et
 from usfmtc.reference import Ref, RefRange, RefList, Environment, allbooks, bookcodes
 from ptxprint.ptsettings import ParatextSettings
-from cltk.lemmatize.grc import GreekBackoffLemmatizer
-from cltk.alphabet.text_normalization import cltk_normalize
+from cltk.nlp import NLP
 from math import log2, sqrt, log
 from bisect import bisect
 from typing import List
@@ -32,9 +31,9 @@ def write_csv(fpath, data=[], headings=None, delimiter='\t', **kw):
             csvw.writerow(d)
 
 def grcrootl(lem, *s):
-    s = [cltk_normalize(w) for w in s]
-    res = lem.lemmatize(s)
-    return [z[1] for z in res]
+    #s = [cltk_normalize(w) for w in s]
+    res = lem.analyze(s)
+    return res.lemmata
 
 def grcroot(lem, s):
     return grcrootl(lem, s)[0]
@@ -124,6 +123,7 @@ class Sense:
     sd:     List[str]
     gloss:  str
     defshrt:    str
+    numrefs: int
 
 class SemDomData:
 
@@ -197,7 +197,7 @@ class SemDomData:
             s = normalize("NFC", re.sub(r"\s", "", s))
             return s
         if self.lem is None:
-            self.lem = GreekBackoffLemmatizer()
+            self.lem = NLP(language="grc", backend="stanza")
         self.sdtemplatebits = self.otsdtemplatebits
         self._read_lexicon(args)
         self.mkeys = {}
@@ -306,7 +306,7 @@ class SemDomData:
 
     def mapping(self, args):
         if self.lem is None:
-            self.lem = GreekBackoffLemmatizer()
+            self.lem = NLP(langauge="grc", backend="stanza")
         self._read_lexicon(args)
         hebmap = {h[0]: h[1] for h in read_csv(args.map)} if args.map else {}
         heblexitems = []
@@ -341,12 +341,12 @@ class SemDomData:
                 m.sd = None
             elif len(newcodes):
                 # what if more than one sd?
-                m.sd = [s for s in newcodes if s not in self.namecodes]
+                m.hsd = [s for s in newcodes if s not in self.namecodes]
                 goods.append((lexeme, m))
             else:
                 bads.append((lexeme, m))
                 m.sd = None
-        res = [[m.sid, l, m.gloss] + sorted(m.sd, key=float) for l, m in goods]
+        res = [[m.sid, str(m.numrefs), l, m.gloss, ", ".join(m.sd),  ", ".join(sorted(m.hsd, key=float))] for l, m in goods]
         write_csv(args.outfile, res)
         print(f"{len(res)}/{len(self.meanings)} mappings")
         print(f"{len(names)}/{len(self.meanings)} names")
@@ -387,7 +387,8 @@ class SemDomData:
         for e in doc.findall(".//sd"):
             code = e.get("code")
             if code.startswith("_"):
-                self.namecount = max(self.namecount, int(code[1:]))
+                bs = code[1:].split("_")
+                self.namecount = max(self.namecount, int(bs[0]))
             rs = e.find(".//refs")
             if rs is not None:
                 self.sdrefs[code] = set(RefList(rs.text))
@@ -478,7 +479,8 @@ class SemDomData:
                             break
                 defshrt = sense.findtext(".//DefinitionShort")
                 gloss = sense.findtext(".//Gloss")
-                lmeaning = Sense(lemma, lid, code, gloss, defshrt)
+                numrefs = len(sense.findall(".//LEXReference"))
+                lmeaning = Sense(lemma, lid, code, gloss, defshrt, numrefs)
                 target.append(lmeaning)
                 for syn in sense.findall(".//LEXSynonym"):
                     alt.setdefault(syn.text.strip(), []).append(lmeaning)

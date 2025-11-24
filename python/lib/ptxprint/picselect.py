@@ -9,8 +9,54 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from ptxprint.utils import _, extraDataDir, appdirs
-from usfmtc.reference import RefList
+from ptxprint.utils import _, extraDataDir, appdirs, allbooks, chaps
+from usfmtc.reference import RefList, Ref
+from functools import reduce
+
+startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 999],
+                      reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999), [0])))
+startchaps += [("special", startchaps[-1][1]+1)]
+startbooks = dict(startchaps)
+
+class TagableRef(Ref):
+
+    subversecodes = "!@#$%^&*()"
+    b64codes = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz|~"
+    b64lkup = {b:i for i, b in enumerate(b64codes)}
+
+    def astag(self):
+        subverse = ""
+        if self.subverse:
+            subind = ord(self.subverse) - 0x61
+            if subind < 10:
+                subverse = self.subversecodes[subind]
+        if self.book == "PSA" and self.chapter == 119 and self.verse > 126:
+            c = startbooks["special"] + 1
+            v = self.verse - 126
+        else:
+            c = startbooks[self.book] + self.chapter
+            v = min(self.verse, 127)
+        vals = [(c >> 5) & 63, ((v & 64) >> 6) + ((c & 31) << 1), v & 63]
+        return subverse + "".join(self.b64codes[v] for v in vals)
+
+    def asint(self, chapshift=1):
+        if self.vrs is None:
+            self.loadvrs()
+        coffset = self.vrs[books[self.book]][self.chap-1] + (self.chap - 1) * chapshift if self.chap > 1 else 0
+        return self.vrs[books[self.book]][0] + coffset + self.verse
+
+    def numverses(self):
+        if self.verse is not None:
+            return 1
+        vrs = self.first.versification or Ref.loadversification()
+        if self.chapter is None:
+            firstc = 0
+            lastc = len(vrs.vnums[self.book])
+        else:
+            firstc = self.chapter
+            lastc = self.chapter + 1
+        return vrs.vnums[self.book][lastc] - vrs.vnums[self.book][firstc]
+
 
 def unpackImageset(filename, prjdir):
     with zipfile.ZipFile(filename) as zf:
@@ -133,9 +179,10 @@ class ThumbnailDialog:
         # fill in list of artists
         model = self.view.builder.get_object("ls_artists")
         model.clear()
-        for a in sorted(self.imagedata['sets']):
-            name = self.view.copyrightInfo['copyrights'].get(a.lower(), {}).get('artist', _("Unknown"))
-            model.append([False, a.upper(), name])
+        if 'sets' in self.imagedata:
+            for a in sorted(self.imagedata['sets']):
+                name = self.view.copyrightInfo['copyrights'].get(a.lower(), {}).get('artist', _("Unknown"))
+                model.append([False, a.upper(), name])
         self.artists.clear()
         langpath = os.path.join(imagesetdir, "lang_{}.json".format(self.view.lang.lower()))
         if not os.path.exists(langpath):
@@ -193,7 +240,11 @@ class ThumbnailDialog:
 
     def update_reflist(self):
         if self.reftext is not None and len(self.reftext):
-            self.reflist = RefList(self.reftext)
+            try:
+                self.reflist = RefList(self.reftext, factory=TagableRef)
+            except SyntaxError as e:
+                self.view.doError(_("References must only use 3 letter book codes, etc."), str(e))
+                self.reflist = []
         else:
             self.reflist = []
         # logger.debug(f"reflist from {s} to {self.reflist}")
@@ -202,7 +253,7 @@ class ThumbnailDialog:
         if self.imagedata is None:
             return default
         # logger.debug(f"{imgid}: {self.imagedata['images'].get(imgid,{}).get('refs')}")
-        return [RefList(r)[0] for r in self.imagedata['images'].get(imgid, {}).get('refs', [])]
+        return [RefList(r, factory=TagableRef)[0] for r in self.imagedata['images'].get(imgid, {}).get('refs', [])]
 
     def get_imgdir(self):
         imagesetdir = extraDataDir("imagesets", self.imageset)

@@ -21,7 +21,6 @@ from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
 from ptxprint.polyglot import PolyglotConfig
 from ptxprint.report import Report
-import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
@@ -38,8 +37,8 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.9.4"
-GitVersionStr = "2.9.4"
+VersionStr = "3.0.4"
+GitVersionStr = "3.0.4"
 ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -179,6 +178,9 @@ class ViewModel:
 
     def setPrintBtnStatus(self, idnty, txt=""):
         self.doStatus(txt)
+
+    def onIdle(self, fn, *args, **kw):
+        fn(*args, **kw)
         
     def msgQuestion(self, q1, q2, default=False):
         print("Answering \"no\" to: " + q1)
@@ -266,13 +268,13 @@ class ViewModel:
         else:
             return [fname]
 
-    def getPDFname(self, bks=None):
+    def getPDFname(self, bks=None, noext=False):
         bases = self.baseTeXPDFnames(bks=bks)
         if bases is None or not len(bases):
             return ""
         base = bases[0]
         pdfext = _outputPDFtypes.get(self.get("fcb_outputFormat", "")) or ""
-        res = base + ("_"+pdfext if pdfext != "" else "") + ".pdf"
+        res = base + ("_"+pdfext if not noext and pdfext != "" else "") + ".pdf"
         return res
         
     def _bookrefsBooks(self, bl, local):
@@ -285,6 +287,8 @@ class ViewModel:
         return res
 
     def getBooks(self, scope=None, files=False, local=False):
+        if self.project is None:
+            return
         if scope is None:
             scope = self.get("r_book")
         if scope == "module":
@@ -334,11 +338,8 @@ class ViewModel:
             return []
 
     def getRefEnv(self, **kw):
-        if self.get("fcb_textDirection", "") == "rtl":
-            res = None
-        else:
-            pts = self._getPtSettings()
-            res = pts.getRefEnvironment()
+        pts = self._getPtSettings()
+        res = pts.getRefEnvironment()
         if res is None:
             res = self.getScriptSnippet().getrefenv(self)
         if len(kw):
@@ -367,6 +368,8 @@ class ViewModel:
             fp = os.path.join(self.project.path, f)
             if os.path.exists(fp):
                 res[bk] = fp
+        if self.moduleFile is not None:
+            res["MOD"] = self.moduleFile
         return res
 
     def _getPtSettings(self, prjid=None):
@@ -394,6 +397,7 @@ class ViewModel:
         return ptsettings.getBookFilename(bk)
 
     def getScriptSnippet(self):
+        import ptxprint.scriptsnippets as scriptsnippets
         script = self.get("fcb_script")
         gclass = getattr(scriptsnippets, script.lower(), None)
         if gclass is None:
@@ -511,6 +515,12 @@ class ViewModel:
 
     def updateBookList(self):
         pass
+
+    def changeProjectTree(self, treedir):
+        self.prjTree = ProjectList()
+        self.prjTree.addTreedir(treedir)
+        self.project = None
+        self.cfgid = None
 
     def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True):
         return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=True)
@@ -906,6 +916,7 @@ class ViewModel:
             for k, p in self.polyglots.items():
                 p.writeConfig(config, f"diglot_{k}")
         self.globaliseConfig(config)
+        logger.debug(f"Writing config to {path}")
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
         if self.triggervcs:
@@ -967,7 +978,8 @@ class ViewModel:
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
-            self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
+            if val is not None:
+                self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
         for k in self.allvars():
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
@@ -1244,7 +1256,7 @@ class ViewModel:
                 self._configset(config, f"diglot_L/fontsize", fsz)
                 lsp = config.get("paragraph", "linespacing", fallback=15)
                 self._configset(config, f"diglot_L/baseline", lsp)
-                
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
@@ -1315,6 +1327,7 @@ class ViewModel:
             if clearvars:
                 self.clearvars()
         varcolour = "#FFDAB9" if not clearvars else None
+        # breakpoint()
         for sect in config.sections():
             for opt in config.options(sect):
                 editableOverride = len(opt) != len(opt.strip("*"))
@@ -1445,7 +1458,7 @@ class ViewModel:
 
     def saveConfig(self, force=False):
         cfgpath = os.path.join(self.project.srcPath(self.cfgid), "ptxprint.cfg")
-        logger.debug(f"Saving config {self.isChanged=} {cfgpath=}")
+        logger.debug(f"Saving config {self.isChanged=} {cfgpath=} {self.project=} from {getcaller()}")
         changed = self.isChanged
         changed = self.saveAdjlists(force=force) or changed
         if not os.path.exists(cfgpath):
@@ -1461,6 +1474,7 @@ class ViewModel:
             if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
+        self.isChanged = False
 
     def saveAdjlists(self, force=False):
         for bk, adj in self.adjlists.items():
@@ -1819,7 +1833,7 @@ class ViewModel:
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
                   'c_usePrintDraftChanges': "PrintDraftChanges.txt",
-                  'c_strongsShowInText': "TermRenderings.xml",
+                  'c_strongsShowInText': ["TermRenderings.xml", "WordAnalysis.xml"],
                   None: "picChecks.txt"}
         res = {}
         cfgchanges = {}
@@ -2163,6 +2177,8 @@ set stack_size=32768""".format(self.cfgid)
             prefix += "/"
         if tgtPrj.guid != self.project.guid or tgtCfg != self.cfgid:
             view = self.createView(tgtPrj, tgtCfg)
+            if tgtPrj.guid == self.project.guid:
+                self.project = view.project
         else:
             view = self
         # assemble list of categories to import from ptxprint.cfg
@@ -2346,10 +2362,10 @@ set stack_size=32768""".format(self.cfgid)
             try:
                 allvars = config.options('vars')
             except configparser.NoSectionError:
-                return
+                allvars = [] # nothing to import yet
             for v in allvars:
                 if v not in getattr(view, 'pubvarlist', []):
-                    view.setvar(v, config.get("vars", v))
+                    view.setvar(v, config.get("vars", v, fallback=""))
         view.saveConfig()
 
     def updateThumbLines(self):

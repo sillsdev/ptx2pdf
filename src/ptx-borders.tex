@@ -111,7 +111,7 @@
 }
 
 \def\overthin@fix#1#2#3#4{% If #2 is a space, then use = assignment, else use edef, (maybe with units)
-  \tracingassigns=1
+  %\tracingassigns=1
   \def\tmp{#2}\ifx\tmp\empty
     \edef#1{\the\csname min\thinlinest@ndard line\endcsname}%
   \else
@@ -124,7 +124,7 @@
         \message{!! The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref. Cannot fix because of unexpected units.}%
     \fi\fi
   \fi
-  \tracingassigns=0
+  %\tracingassigns=0
 }
 \gdef\overthin@warn#1#2#3#4{%
   \message{The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref}%
@@ -157,7 +157,9 @@
 \endbc@l}%
 }
 
-\def\ch@ckiftextborderadj{\trace{eb}{ch@ckiftextborder: \ifm@rksonpage marks\fi, \ifb@dy body\fi,\pretextb@rderskip, \posttextb@rderskip}%
+\def\mkb@rder@none{\setbox\b@rderbox\vbox to \b@rderbox@height{}}
+
+\def\ch@ckiftextborderadj{\trace{et}{ch@ckiftextborder \c@rrdstat: \ifm@rksonpage marks\fi, \ifb@dy body\fi, \pretextb@rderskip, \posttextb@rderskip}%
   \tempfalse\ifm@rksonpage
   \ifdim 0pt < \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax
     \temptrue
@@ -165,16 +167,37 @@
  \fi
 }
 
-\def\s@ttextb@rderdims{%Called per book
-  \trace{et}{s@ttextb@rderdims}%
-  \global\textborderfalse
+\xdef\mxpretextb@rderskip{0pt}%
+\xdef\mxtextb@dr@top@pad{0pt}%
+\def\s@ttextb@rderdims{%Called per book \id, **during processing**
+  \trace{et}{s@ttextb@rderdims \c@rrdstat}%
+  \let\stb@dstat\c@rrdstat
   \testm@rkerexists{textborder}%
   \iftemp
     \t@stpublishability{textborder}%
     \ifn@npublishable
       \tempfalse
+      \ifdiglot\ifx\TextBorderColumns\empty\else\if\c@rrdstat L\relax\else      \def\c@rrdstat{L}%
+        \t@stpublishability{textborder}%
+        \ifn@npublishable\else
+          {\let\ds@ffix\stb@dstat
+          \setp@ram{properties}{textborder}{publishable}}% Override normal setting
+          \let\c@rrdstat\stb@dstat
+          \remember@xists{textborder\stb@dstat}%
+          \remember@xists{id:\id@@@|textborder\stb@dstat}%
+          \remember@xists{cat:\id@@@|textborder\stb@dstat}%
+          \should@xist{cat:\id@@@|}{textborder}%
+          \setpossParams{textborder}{textborder}%
+          \let\pptmp\p@ssParams
+          \setpp@name{cat:\id@@@|textborder}%
+          \trace{sC}{Breaking normal parameter rules for \pp@name (\pptmp)}\x@\global\x@\let\csname \pp@name\endcsname\undefined%Invalidate old cache for simple version
+          \x@\xdef\csname \pp@name\endcsname{textborder\stb@dstat,textborderL,textborder,\pptmp}%
+          \temptrue
+        \fi
+      \fi\fi\fi
     \fi
   \fi
+  \let\c@rrdstat\stb@dstat
   \iftemp\bgroup
       \def\sb@rmarker{textborder}%
       \@get@Vborder@style@params
@@ -184,10 +207,22 @@
         \global\textbordertrue
         \getsbp@ram{spacebefore}%
         \xdef\pretextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}%
+        \ifdim\b@dr@bot@pad > \mxtextb@dr@top@pad
+          \global\let\mxtextb@dr@top@pad\b@dr@top@pad
+        \fi
+        \ifdim\pretextb@rderskip > \mxpretextb@rderskip
+          \global\let\mxpretextb@rderskip\pretextb@rderskip
+        \fi
         \getsbp@ram{spaceafter}%
         \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}%
         \global\let\textb@dr@bot@pad\b@dr@bot@pad
         \global\let\textb@dr@top@pad\b@dr@top@pad
+        \ifx\TextBorderColumns\empty\else %If we're bordering individual columns...
+          \@get@Hborder@style@params
+          \@prepHb@rderdims
+          \let\col@do\ch@ckcol@border
+          \x@\each@col\TextBorderColumns \E
+        \fi
       \else
         \xdef\pretextb@rderskip{0pt}%
         \xdef\posttextb@rderskip{0pt}%
@@ -195,23 +230,23 @@
       \trace{et}{Set textborder pre/post dimensions to \pretextb@rderskip / \posttextb@rderskip}%
     \egroup
   \else
-    \xdef\pretextb@rderskip{0pt}%
-    \xdef\posttextb@rderskip{0pt}%
+    \ifdiglot\else
+      \xdef\pretextb@rderskip{0pt}%
+      \xdef\posttextb@rderskip{0pt}%
+    \fi
+    \trace{et}{No textborder (\c@rrdstat). Pre/post dimensions to \pretextb@rderskip / \posttextb@rderskip}%
   \fi
+  \let\c@rrdstat\stb@dstat
 }
 \addtoidhooks{\s@ttextb@rderdims}% 
-%\def\TextBorderStyle{}
-%\addtoidhooks{%
-%  \xdef\posttextb@rderskip{20pt}%
-%  \xdef\pretextb@rderskip{20pt}%
-%  }
+\newcount\TextBorderMode % 0 old normal. 1. - diglots skip introductions 2. Diglots use full-width introductions
+\TextBorderMode=1 % Sane default
 \def\doTextB@rder#1{% Put border around box #1
   \testm@rkerexists{textborder}%
   \iftemp
-    \trace{et}{textborder style exists}%
+    \trace{et}{textborder style exists \c@rrdstat}%
     \t@stpublishability{textborder}%
     \ifn@npublishable\else
-    %\ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
       \ifnum\pageno>0\edef\t@st{\botmark}%
         \trace{et}{Botmark:\t@st, \the\BodyColumns/\the\IntroColumns, m@rksonpage\ifm@rksonpage true\else false\fi}%
         \ifx\t@st\intr@ \tempfalse\fi
@@ -220,9 +255,10 @@
         \ifm@rksonpage\else\tempfalse\fi
         \ifx\t@st\empty\tempfalse\fi
         \iftemp
-          \trace{et}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
           \bgroup 
+            \ifversion{6}{\setbox#1\vbox{\box#1\kern\fb@bpadding}}{}%
             \def\sb@rmarker{textborder}%
+            \trace{et}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
             \S@tCat{\id@@@}%
             \get@border@style@params
             %\let\b@drtop\tr@e\let\b@drbottom\tr@e
@@ -364,6 +400,8 @@
 \def\@get@Hborder@style@params{%Read the border-related parameters
   \traceifset{@get@Hborder@style@params}%
   \trace{eb}{Reading border horiz params for \c@tprefix\sb@rmarker (page \the\whichp@ge)}%
+  \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+  \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
   \t@mptrue
   \getsbp@ram{borderpadinnerouter}\ifx\cp@ram\tr@e\ifodd\whichp@ge\else\t@mpfalse\fi\fi
   \getsbp@ram{\ift@mp borderlpadding\else borderrpadding\fi}\ifx\cp@ram\relax\xdef\border@lpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@lpadding{\cp@ram pt}\fi
@@ -379,8 +417,6 @@
   \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
   \@get@Hborder@style@params
   %\tracingassigns=1
-  \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-  \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
   \@get@Vborder@style@params
   \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
   \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
@@ -388,7 +424,7 @@
   \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bordercolour}\let\b@drcol\cp@ram
   \getsbp@ram{properties}\let\b@drprop\cp@ram
-  \trace{eb}{Params finished}%
+  \trace{eb}{Params finished w:\b@drlinewidth \space lrtb:\b@drleft\b@drright\b@drtop\b@drbottom}%
 }
 \def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderlpadding,borderrpadding,bordertpadding,borderbpadding,boxlpadding,boxrpadding,boxtpadding,boxbpadding,raise,verticalalign,borderpadinnerouter,boxpadinnerouter}
 %raise and verticalalign are not used by borders, but is by zrules
@@ -436,7 +472,15 @@
     \fi
   \fi
 }
-
+\def\@prepHb@rderdims{% Minimal set of vertical border dimensions
+  \ifnum 1=\ifhasb@rder 1 \else \ifBoxLikeBorder 1 \else 0 \fi\fi
+    \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt \else \fi\relax}%
+    \xdef\b@dr@right@pad{\the\dimexpr \fb@rpadding  \ifx\b@drright\tr@e +\border@rpadding + \b@drwidth pt\else \fi\relax}%
+  \else
+    \xdef\b@dr@left@pad{0pt}%
+    \xdef\b@dr@right@pad{0pt}%
+  \fi
+}
 \def\ch@ckhasb@rder{%
   \hasb@rderfalse\horizb@rderfalse
   \ifx\b@drleft\tr@e\hasb@rdertrue\trace{eb}{Border: left}\fi
@@ -445,20 +489,16 @@
   \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
   \ifx\b@drprop\N@nPublish@ble\hasb@rderfalse\trace{eb}{Border: nonpublishable}\else\trace{eb}{Border property: \b@drprop}\fi
 }
+
 \def\prepb@rderdims{% Prepare all b@rderbox dimensions
   \ch@ckhasb@rder
   \@prepVb@rderdims
+  \@prepHb@rderdims
   \ifhasb@rder
     %Where does is the outer-edge of the  border or box,  relative to the contents?
     \edef\b@dr@top@edge{\the\dimexpr \ifdim  \border@tpadding > -\b@drwidth pt  \border@tpadding + \b@drwidth pt  \fi  +\fb@tpadding\relax}%
     \edef\b@dr@bot@edge{\the\dimexpr \ifdim  \border@bpadding > -\b@drwidth pt  \border@bpadding + \b@drwidth pt \fi  +\fb@bpadding\relax}%
-    %Where does the border go relative to the contents? (Subtliy different to 
-    %\xdef\unble@d@lpad{\the\dimexpr -\border@lpadding+\fb@lpadding \relax }%
-    %\xdef\unble@d@lpad{\the\dimexpr \fb@lpadding+\border@lpadding\relax }%
-    %\xdef\unble@d@lpad{\the\dimexpr -\fb@lpadding - \border@lpadding \ifx\b@drleft\tr@e -\b@drwidth pt\fi}%
-    %\xdef\unble@d@rpad{\the\dimexpr -\fb@rpadding - \border@rpadding \ifx\b@drleft\tr@e -\b@drwidth pt\fi}%
-    \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt \else \fi\relax}%
-    \xdef\b@dr@right@pad{\the\dimexpr \fb@rpadding  \ifx\b@drright\tr@e +\border@rpadding + \b@drwidth pt\else \fi\relax}%
+    %Where does the border go relative to the contents? (Subtliy different to other dims.
     \xdef\b@x@lunpad{\the\dimexpr 0pt \ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \else  \fi\relax}%
     \xdef\b@x@runpad{\the\dimexpr 0pt \ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \else \fi\relax}%
     \xdef\unble@d@rpad{\the\dimexpr - \b@dr@right@pad\relax}%
@@ -540,7 +580,7 @@
   \def\ds@ffix{#2}%
   \let\c@rrdstat\ds@ffix
   \dgetp@r@m{borderref}{\m@rker}%
-  \trace{ebi}{Trying to process \m@rker <-\p@ram}%
+  \trace{ebi}{Trying to process \m@rker(\ds@ffix) <-\p@ram}%
   \ifx\p@ram\relax\else
     \ifx\p@ram\empty\else
       \let\p@rent\p@ram
@@ -594,3 +634,6 @@
 }
   
 
+\def\BorderTest{%A test-case for border-sizing.
+  {\def\sb@rmarker{textborder}\get@border@style@params\prepb@rderdims\mark{TST:1:1}\hbox{TOP\smash{\raise\baselineskip\hbox{\raise \fb@tpadding\hbox{\vrule height 0.5pt depth 0.5pt width 10pt\raise \border@tpadding\hbox{\vrule height \b@drwidth pt depth 0pt width 2pt}}}}}\p
+  \hbox{\setbox0\hbox{Ag}BOTTOM\smash{\raise -\dp0\hbox{\vrule height 0.3pt depth 0.3pt width 5pt\raise -\fb@bpadding\hbox{\vrule height 0.5pt depth 0.5pt width 10pt\raise -\border@bpadding\hbox{\vrule height 0pt depth \b@drwidth pt width 2pt}}}}}}}

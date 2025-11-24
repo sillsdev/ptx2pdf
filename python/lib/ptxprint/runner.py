@@ -23,6 +23,9 @@ if sys.platform == "linux":
     def call(*a, **kw):
         return subprocess.call(*a, **kw)
 
+    def popen(*a, **kw):
+        return subprocess.Popen(*a, **kw)
+
 elif sys.platform == "darwin":
 
     def fclist(family, pattern):
@@ -55,6 +58,9 @@ elif sys.platform == "darwin":
         res = subprocess.run(*newa, **kw)
         return res
 
+    def popen(*a, **kw):
+        return subprocess.Popen(*a, **kw)
+
 elif sys.platform == "win32":
     CREATE_NO_WINDOW = 0x08000000
 
@@ -70,7 +76,7 @@ elif sys.platform == "win32":
         if 'path' in kw:
             if kw['path'] == 'xetex':
                 # os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
-                path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]+".exe").replace("\\", "/")
+                path = os.path.join(pt_bindir(), "xetex", "bin", bindir, a[0][0]+".exe").replace("/", "\\")
                 a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
             del kw['path']
         else:
@@ -87,4 +93,7 @@ elif sys.platform == "win32":
         kw['stderr'] = kw.get('stderr', subprocess.STDOUT)
         res = subprocess.run(*newa, creationflags=CREATE_NO_WINDOW, **kw)
         return res
+
+    def popen(*a, **kw):
+        return subprocess.Popen(*a, **kw)
 

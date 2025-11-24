@@ -1,10 +1,190 @@
-PTXprint 2.9.4 Release Notes
-3 Sep 2025
+PTXprint 3.0.4 Release Notes
+21 Nov 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 2.9.5 (3 Sep 2025)
+WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
+
+Bug fixes and Improvements in 3.0.4 (21 Nov 2025)
+  * Use maintitle for PDF if available (instead of Project Fullname)
+  * Fix pictures in MODules
+  * Fix spacing of paragraphed footnotes
+  * Quit gracefully if specified -p dir doesn't exist
+  * Use other range separators specified in Paratext settings
+  * User-settable chapter pair separator - using TeX codelet
+  * Stop testing zipfile writing from winging
+  * First attempt at broadway integration on windows
+  * Add --testwithgui for UI regression testing (linux only testing atm)
+
+Bug fixes and Improvements in 3.0.3 (15 Nov 2025)
+  * Ensure Local Front Matter is enabled if Cover is selected; and vice versa
+  * Get PDF borders working again
+  * Work towards better trial lengths
+
+Bug fixes and Improvements in 3.0.2 (13 Nov 2025 - unreleased)
+  * Allow textborder in diglots to appear around just selected column(s) (e.g. original Greek) via \def\TextBorderColumns{L}
+  * Improved behaviour of textborder in diglots - they can now surround just verse text when there's a book intro.
+  * Implement new expert control \TextBorderMode for selecting textborder behaviour (in diglots)
+  * Allow ornament patterns to define a group of ornaments to be repeated as a group
+  * Make sure MacOS doesn't open up the ZIP file when selecting it in file-chooser dialog
+  * Increase resilience against garbled input
+  * Only inhibit spaces if interchar spacing enabled (affects beng scriptsnippet)
+  * Register all polyglot boxes as inserts (most are) so that when insert counts are set up they do not mangle other values
+  * Don't output empty config entries
+  * More maths corrections for textborders
+  * Check for intro->body swapping in a better place
+  * Introduce per-column catergories, make textborder one
+  * Solve some issues with diglot background position/size
+  * Add a couple of snippets to the docs
+  * Find footnote placement bug
+  * Correct some more maths in diglot
+  * Add TextBorderMode control, apply to pagewide borders
+  * Correct positioning with notes for individual textborders
+  * Avoid triggering some confusing errors
+  * Re-jig tracing
+  * Bug also triggered on XeTeXinterwordspaceshaping=1
+  * Work-around for intercharwordspacespacing bug
+  * fix: mac: dmg cleaning not looking in the correct directory
+  * fix: mac: Delete old dmg images from previous runs
+
+Bug fixes and Improvements in 3.0.1 (20 Oct 2025)
+  * Add version number to macOS installer
+  * Fix Windows dialog positioning
+
+Bug fixes and Improvements in 3.0 (18 Oct 2025)
+  * Change default poetry indents
+  * Change heading styles defaults
+  * Reorganize the Basic tab to be more logical
+  * Hide copyright information behind twisty; make it a multi-line control
+  * Install BSB automatically if no other project is found
+  * Add tabs to PDF Preview window for Content, Cover, Diff, Finished and Reference
+  * Ensure Catalogue and TechRef come to the fore after being opened in the Preview pane
+  * Improve the Styles tab - searching, filtering, highlighting, scroll to active style
+  * Improve UI to make it easier to enable dynamic borders
+  * Restore the extra font details (expand, slant, thickness etc.) on Styles tab
+  * Mitigate empty Justification setting in Styles editor
+  * Move menu button to top-left in main dialog
+  * Refine layout of Diglot tab
+  * Multiple improvements to get importing from ZIP files working more predictably
+  * Improve window position restoring logic to handle unexpected situations correctly
+  * Refactor marginal chapters for better spacing control
+  * Use a better 'Refresh' icon on multiple buttons
+  * Add 'DoubleSided' (2-sided unmirrored) option to Advanced > Other > Page Layout & Spacing
+  * Change illustration credits and add option to list ALL pages
+  * Highlight combo boxes on search; enabling various settings to be found easier
+  * Tweak tooltip for 'Show USFM codes' and use SourceCodePro
+  * Improve UI around End of Ayah and add line to \va style to control appearance
+  * Don't move verses/ayahs to end if ornamental verses is disabled
+  * Improve auto-setting Project on initial run
+  * Disable Save and Print buttons until a project has been set
+  * Include Charis 7.0 in PTXprint installer - available by default
+  * Make sure treeDirs is updated in ptxprint_user.cfg file
+  * Add button to Help tab for changing Base Projects Directory
+  * Integrate tag hacking support for f^98 et al
+  * Only show interchar problems if letter spacing enabled
+  * View+Edit tab: only truncate .log files - let others load completely
+  * Protect figure borders from peripheral interaction, semi-solve map borders
+  * Suppress unknown tag error messages
+  * Introduce garbage collection to prevent locked file when being cleared
+  * Add various Codelets
+  * Get rid of spurious sp inserted in 2 col margin notes
+  * Avoid a prevdepth usage error
+  * Correct Vectorian1 border
+  * Process Strongs before localChanges regexes and allow \xts inside \w for keyword marking
+  * Remove crash on print stopping PDF updating
+  * Gridding righteousness partially restored
+  * Don't put list chapter index when not a chapter
+  * Refactor runptxchanges to use changes.py
+  * Avoid *some* parts of #1110
+  * Fix a leaky space in footnote text callers
+  * Fix finishing files naming
+  * Fix saving config on BSB load
+  * Fix PTXprint path in Help tab link for Win
+  * Fix modal msgQuestion to use the right parent window
+  * Fix gridding limits?
+  * Fix subheading gridding sometimes missing some space
+  * Fix text borders
+  * Fix style strikethrough
+  * Fix unescaped \ codes
+  * Fix bug where 'NoInternet' was still leaving some links clickable
+  * Fix missing Project settings for Mini & Basic view level
+  * Fix segfault crashes when trying to update PDF viewer
+  * Fix procpdf filename handling problems
+  * Fix time and version on title of pdf viewer
+  * Fix Zoom level on multiple tabs
+  * Fix chapters for interlinear
+  * Fix vid and zsetref for modules
+  * Fix bottom margin aligning pictures, not removing top space, active characters
+
+Bug fixes and Improvements in 2.9.9 (2 Oct 2025)
+  * Refactor PDF Viewer to display mutiple PDFs
+  * Add tabs on preview pane for cover and diff
+  * Remove Print Cover button - as Cover will just appear as a tab in viewer
+  * Update zoom and page settings when switching tabs in pdf_viewer
+  * Various UI tweaks/improvements to the Peripherals tab
+  * Add automatic creation of BookNames.xml to import process (if missing)
+  * Move 'Import Scripture' to 'Import...' option at end of Project selector
+  * Update BSB (Berean Standard Bible) example text shipped with PTXprint (see Import...)
+  * Install BSB automatically if no other project is found on startup
+  * Add default font (Charis 7.0) 
+  * Don't crash if no project is selected and user chooses single book radio
+  * Improve auto-setting Project on initial run
+  * Swap XXS and XXM numeric values 101/102
+  * Stop Spinner from making it hang
+  * Improve ColorTabs logic - especially for Basic view
+  * Turn off refs as links by default
+  * Provide options for jmp/ref link border styles; tooltips on how to change the colour
+  * Prevent report from crashing if no bad spaces
+  * Prevent inappropriate breaking of old-style notes
+  * Add ptlite support to MacOS version
+  * Add DoubleSided (true) option to Advanced > Other (don't swap L/R margins on odd/even pages)
+  * Re-generate style stack properly after closing a headingsbox
+  * No title stuff in module refs
+  * Update TechRef documentation
+  * Ensure Catalogue and TechRef open in the appropriate viewer, and come to the fore
+  * Add links to dynamic section heading decorations style
+  * Move the dynamic borders around in the UI to be more consistent.
+  * Improve UI behaviour for dynamic borders
+  * Flip 'Hide/exclude marker' to 'Show contents of marker' in Style editor
+  * Integrate tag hacking support for f^98 et al
+  * Highlight combo boxes, enabling Digit Mapping settings to be found easier
+  * Don't show unused tabs in pdf_viewer
+  * Fix Chapter 1 error - appearing alone at end of page (#1091)
+  * Fix open of OrnamentsCatalogue and TechRef
+  * Fix Diglot Project chooser selecting Import option
+  * Fix page numbering bug, (page numbers being reset twice)
+  * Fix 'at' changes not working for before chapter 1 in single chapter books
+  * Fix bug to enable open.bible and DBL links
+  * Fix tooltips in Preview pane
+  * Fix text borders
+
+Bug fixes and Improvements in 2.9.8 (12 Sep 2025)
+  * Implement generic ID C:V parser and get zsetref and vid milestones using it
+  * Add a codelets for hook to keep with next para
+  * Add a debugging option to help figure out drifting notes
+  * Add sample code for icon to launch the AI Support Assistant (unimplemented)
+  * Add TagableRef to picture catalogues
+  * Make the installation info point to the right places
+  * Tweak UI of Picture tab
+  * Improve stats report
+  * Update ptx2pdf-faq.md  
+  * Fix import config not saving
+  * Fix \ca processing for all 3 scenarios
+  * Fix module reference localization
+  * Fix broken footnote removal in module flattening
+  * Fix missing picture previews
+  * Fix RTL ch:verse-ranges in TXL questions
+
+Bug fixes and Improvements in 2.9.6 (5 Sep 2025)
+  * Prevent preview pane opening when other PDF view options are set
+  * Add left+right arrow keys as for PDF navigation (PgDn/Pgup)
+  * Add required gi modules for windows
+  * Add win32 and fontconfig gi typelib hooks
+  * Add hooks for poppler for pyinstaller
+  * Fix minor bug self.mainapp.win
+
+Bug fixes and Improvements in 2.9.5 (4 Sep 2025)
   * Refactor code for MacOS
   * Get Mac packaging working and make available on downloads page
   * Add button to install BSB as an option in Import Scripture
@@ -20,8 +200,11 @@ Bug fixes and Improvements in 2.9.5 (3 Sep 2025)
   * Test guid when changing project
   * Color Project codes from _PTXprint in purple - distinguishing them from normal projects
   * Get accelerators (shortcut keys) working again on the main window
+  * Tidy up creation and management of XXM details for Maps
   * Catch bad chapter ranges perhaps
+  * Reduce installer size (remove redundant binaries)
   * Add icon to AppWindow
+  * Add support for \ca (without styling)
   * Fix bug of processing stale data - now reloads usfm files on each print
   * Fix parsing zvar and add early ldml lookup support
   * Fix ptxsettings.bookNames -> bkNames

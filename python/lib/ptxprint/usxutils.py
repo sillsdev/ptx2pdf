@@ -2,7 +2,8 @@ import re, regex, logging, os, time
 import usfmtc
 from usfmtc import _filetypes
 from usfmtc.reference import Ref, RefList, RefRange
-from usfmtc.usfmparser import Grammar
+from usfmtc.usfmparser import Grammar, Tag
+from usfmtc.usfmgenerate import Emitter
 from ptxprint.utils import universalopen, runChanges
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids
@@ -80,6 +81,29 @@ def out_sty(base, outf, keyfield="Marker"):
             if isinstance(v, (set, list, tuple)):
                 v = " ".join(v)
             outf.write(f"\\{k} {v}\n")
+
+class PTXTag(Tag):
+    def __new__(cls, s, **kw):
+        if (m := re.match(r"^(\S+)\^(\d+)$", s)):
+            t = m.group(1)
+            stretch = int(m.group(2))
+        else:
+            t = s
+            stretch = None
+        res = super().__new__(cls, t, **kw)
+        if stretch is not None:
+            res.attribs = {"stretch": "{:.2f}".format(stretch / 100.)}
+        return res
+
+class PTXEmitter(Emitter):
+    def tag(self, e, sep=" "):
+        s = e.get('style', '')
+        if s is not None and len(s):
+            if 'stretch' in e.attrib:
+                s = "{}^{}".format(s, int(float(e.get("stretch")) * 100))
+            if "colspan" in e.attrib:
+                s = "{}-{}".format(s, e.get('colspan'))
+            self("\\{0}{1}".format(s, sep))
 
 
 class Sheets(dict):
@@ -336,6 +360,7 @@ def allparas(root):
         if e.tag in ("sidebar", ):
             yield from allparas(e)
 
+
 class Usfm:
 
     def __init__(self, xml, parser=None, grammar=None, book=None):
@@ -344,6 +369,7 @@ class Usfm:
         self.grammar = grammar
         self.cvaddorned = False
         self.book = book
+        self.chapters = []          # the starting paragraph index for each chapter and the final paragraph index at the end
 
     @classmethod
     def readfile(cls, fname, grammar=None, sheet=None, elfactory=None, informat=None, **kw):       # can also take the data straight
@@ -353,7 +379,7 @@ class Usfm:
             (_, ext) = os.path.splitext(fname)
             if ext not in _filetypes:
                 informat = "usfm"
-        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, **kw)
+        usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, tagger=PTXTag, **kw)
         if usxdoc is None:
             return None
         book = None
@@ -365,8 +391,10 @@ class Usfm:
     def getroot(self):
         return self.xml.getroot()
 
-    def asUsfm(self, grammar=None):
-        return self.xml.outUsfm(grammar=grammar)
+    def asUsfm(self, grammar=None, file=None, **kw):
+        if grammar is None:
+            grammar = self.grammar
+        return self.xml.outUsfm(file=file, grammar=grammar, emitter=PTXEmitter, **kw)
 
     def outUsx(self, fname):
         return self.xml.outUsx(fname)
@@ -379,7 +407,7 @@ class Usfm:
             try:
                 curr = Ref(f"{bk} {currc}:{currv}")
             except SyntaxError:
-                currv = re.sub(r"\D", "", currv)
+                currv = re.sub(r"[^0-9-]", "", currv)
                 if not len(currv):
                     currv = "0"
                 try:
@@ -402,11 +430,10 @@ class Usfm:
         i = -1
         currpi = None
         for x, isin in iterusx(root):
-            if isin:
-                if x.tag == 'para':
-                    currp = x
-            else:
+            if not isin:
                 continue
+            if x.tag == 'para':
+                currp = x
             p = x
             if x.parent == root:
                 i += 1
@@ -505,12 +532,12 @@ class Usfm:
             state = self.visitall(fn, c, state=state)
         return state
 
-    def make_zsetref(self, ref, book, parent, pos):
-        attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
-        if book is not None:
-            attribs['book'] = book
-        res = self.factory("ms", attribs, parent=parent)
-        return res
+    # def make_zsetref(self, ref, book, parent, pos):
+        # attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
+        # if book is not None:
+            # attribs['book'] = book
+        # res = self.factory("ms", attribs, parent=parent)
+        # return res
 
     def getsubbook(self, refrange, removes={}, addintro=True, **kw):
         if isinstance(refrange, (Ref, RefRange)):

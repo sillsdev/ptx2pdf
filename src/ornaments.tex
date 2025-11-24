@@ -351,12 +351,14 @@
   \ifcsname localornament@\pdf@ornamentNum @code\endcsname
     \csname localornament@\pdf@ornamentNum @code\endcsname
   \else
+    \p@sheof\everyeof={}%
     {\m@kedigitsother
       \catcode`\%=5
       \catcode`\{=1 
       \catcode`\}=2
       \input "\OrnamentsFamily\pdf@ornamentNum.pgf"%
     \m@kedigitsletters}%
+    \p@peof
   \fi
 }
 
@@ -391,6 +393,7 @@
   \x@\newb@x\csname \ornUUID\endcsname
 }
 \newbox\theornament
+\newbox\theorngroup
 \def\orn@do@ornament{\bgroup%
     \traceifset{orn@do@ornament}%
     \ifpdf@ornament@stretch
@@ -653,7 +656,7 @@
 }% 
 
   
-\def\endstack\E{}
+\def\endstack#1\E{}
 \def\E{}
 
 \setgeomtransform{u}
@@ -662,7 +665,7 @@
 \def\ptn@ast{*}
 \def\ptn@plus{+}
 \def\ptn@quest{?}
-\def\ptn@range{(}
+{\catcode`\(=12 \gdef\ptn@range{(}}
 \def\ptn@eq{=}
 \def\ptn@sim{"} % Ditto mars
 \def\ptn@ex{x}
@@ -679,14 +682,67 @@
     \def\orn@label{#1}\def\orn@labelstyle{#2}%
   \fi
 }
-\def\orn@label@set #1^#2^#3\E{\edef\tmp{#2}\ifx\tmp\relaxval
+{\catcode`\^=12
+\gdef\orn@label@set #1^#2^#3\E{\edef\tmp{#2}\ifx\tmp\relaxval
     \message{!Malformed ornament label. Closing mark (^) missing in ornament string "^#1"}%
     \@ornament@parse #1\E
   \else
+    \trace{orn}{Found label for ornament #1}%
     \def\orn@label{#1}%
     \@orn@label@set #1||\E
     \@ornament@parse #2\E
   \fi
+}
+}
+{\catcode`\(=12
+
+}
+
+\gdef\orn@group@set #1))#2,#3))#4\E{\edef\tmp{#2#3}\ifx\tmp\relaxval
+    \message{!Malformed ornament group. Closing mark '))' missing in ornament string "((#1"}%
+    \let\nxt=\endstack
+  \else
+    \ifinner \def\tmp{inner }\else\def\tmp{outer }\fi
+    \ifhmode \edef\tmp{\tmp hmode }\setbox\theorngroup\hbox{}\fi%
+    \ifvmode \edef\tmp{\tmp vmode }\setbox\theorngroup\vbox{}\fi%
+    \trace{orn}{Starting ornament group (#1)|#2 - \tmp}%
+    \def\orn@group{#2}% What stretch or repeatclass is this group?
+    \@orn@an@ornament #1,\E
+    \@orn@a@group #1,\E
+    \trace{orn}{End of group}%
+    \let\orn@group\relax% What stretch or repeatclass is this group?
+    \def\tmp{#3}\ifx\tmp\empty
+      \let\nxt=\endstack
+    \else
+      \ifx\tmp\cstackempty
+        \let\nxt=\endstack
+      \else
+        \let\nxt\orn@an@ornament
+      \fi
+    \fi
+  \fi
+  \nxt #3,\E\E\E
+}
+\gdef\orn@group@meas #1))#2,#3))#4\E{\edef\tmp{#2#3}\ifx\tmp\relaxval
+    \message{!Malformed ornament group. Closing mark '))' missing in ornament string "((#1"}%
+    \let\nxt=\endstack
+  \else
+    \trace{orn}{Starting measuring group (#1)|#2}%
+    \def\orn@group{#2}% What stretch or repeatclass is this group?
+    \@orn@meas@ornament #1,\E
+    \trace{orn}{End of group}%
+    \let\orn@group\relax% What stretch or repeatclass is this group?
+    \def\tmp{#3}\ifx\tmp\empty
+      \let\nxt=\endstack
+    \else
+      \ifx\tmp\cstackempty
+        \let\nxt=\endstack
+      \else
+        \let\nxt\orn@meas@ornament
+      \fi
+    \fi
+  \fi
+  \nxt #3,\E\E\E
 }
 
 \def\string@check #1"#2"#3\E{%
@@ -714,20 +770,26 @@
  \trace{eb}{Ornament number is "#1#2"}%
  \edef\pdf@ornamentNum{#1#2}%
 }
-\def\ornament@parse#1#2\E{%
+{%catcode containment
+\catcode`\^=12
+\catcode`\(=12
+
+\gdef\ornament@parse#1#2\E{%
   \edef\tmp{#1}%
   \trace{orn}{Prefix is \meaning#1 (=\meaning^)?}%
   \let\orn@label\relax
   \let\orn@labelstyle\empty
   \ifx#1^\trace{orn}{Found prefix}%
-    \orn@label@set #2^\relax^\E
+    \orn@label@set #2^\relax^\E % Drops through to @ornament@parse
     \trace{orn}{Label:\orn@label, style: \orn@labelstyle}%
   \else
     \@ornament@parse #1#2\E
   \fi
 }
+}%catcode containment
+
 \def\@ornament@parse#1|#2|#3|#4|#5|#6\E{%#6 is scrap
-  \trace{orn}{ornament@parse:#1:#2:#3:#4}%
+  \trace{orn}{@ornament@parse :#1:#2:#3:#4 \orn@group}%
   \stringornamentfalse
   \string@check#1""\E
   \def\@djYalign{#5}%
@@ -754,62 +816,66 @@
     %\tracingassigns=0
   \fi
   \edef\tmp{#3}%
-  \ifx\tmp\empty\else
+  \ifx\tmp\ptn@ex% No variable, xleader-fill
+    \pdf@ornament@repeattrue
+  \else
     \ifx\tmp\ptn@minus
       \pdf@ornament@stretchtrue
-      \trace{orn}{Stretchd #1}%
-    \else
-      \ifx\tmp\ptn@ex% No variable, xleader-fill
-	\pdf@ornament@repeattrue
-      \else
-	\x@\chk@cplx#3\E %Split off first code
-        %\uppercase{\edef\tmpu{\tmpb}}%
-        \ifx\tmpb\tmpu\else % variable needs to be  upper case 
-          \trace{orn}{\tmpb\space is lowercase! Treat as \tmpu}%
-          \let\tmpb\tmpu %make it upper
-          \pdf@ornament@stretchtrue
+      \trace{orn}{Stretched #1}%
+    \fi
+    \ifx\orn@group\relax \else
+      \trace{orn}{Parsing group repeat code:\orn@group}%
+      \let\tmp\orn@group
+    \fi
+    \ifnum 1=\ifx\tmp\empty 1 \else\ifx\tmp\ptn@minus 1 \else 0 \fi\fi\else
+      \x@\chk@cplx\tmp\E %Split off first code
+      %\uppercase{\edef\tmpu{\tmpb}}%
+      \ifx\tmpb\tmpu\else % variable needs to be  upper case 
+        \trace{orn}{\tmpb\space is lowercase! Treat as \tmpu}%
+        \let\tmpb\tmpu %make it upper
+        \pdf@ornament@stretchtrue
+      \fi
+      \ifx\tmpa\ptn@sim
+        \pdf@ornament@repeattrue
+        \edef\orn@repeat@class{\tmpb}% Varable, range set elsewhere
+      \else 
+        \ifx\tmpa\ptn@ast % Any number
+          \pdf@ornament@repeattrue
+          \set@repeat@class{\tmpb}{0}{}%
+        \else
+          \ifx\tmpa\ptn@plus % 1 or more
+            \pdf@ornament@repeattrue
+            \set@repeat@class{\tmpb}{1}{}%
+          \else
+            \ifx\tmpa\ptn@quest % 0 or 1
+              \pdf@ornament@repeattrue
+              \set@repeat@class{\tmpb}{0}{1}%
+            \else
+              \ifx\tmpa\ptn@range % Range
+                \pdf@ornament@repeattrue
+                \x@\parse@repeat@class\tmpb\E
+              \else
+                \ifx\tmpa\ptn@eq % Preserve variable
+                  \pdf@ornament@repeattrue
+                  \ifcsname best@mult@class@num@\tmpb\endcsname
+                    \x@\let\x@\tmp\csname best@mult@class@num@\tmpb\endcsname
+                    \set@repeat@class{\tmpb}{\tmp}{\tmp}%
+                  \else
+                    \errmessage{Cannot re-use undefined variable \tmpb}%
+                    \set@repeat@class{\tmpb}{1}{}%
+                  \fi
+                \else
+                  \message{Ornamental border: unrecognised control char '#3' \x@\the\x@\catcode\x@`\tmpa}%
+                \fi
+              \fi
+            \fi
+          \fi
         \fi
-        \ifx\tmpa\ptn@sim
-	  \pdf@ornament@repeattrue
-	  \edef\orn@repeat@class{\tmpb}% Varable, range set elsewhere
-	\else 
-	  \ifx\tmpa\ptn@ast % Any number
-	    \pdf@ornament@repeattrue
-	    \set@repeat@class{\tmpb}{0}{}%
-	  \else
-	    \ifx\tmpa\ptn@plus % 1 or more
-	      \pdf@ornament@repeattrue
-	      \set@repeat@class{\tmpb}{1}{}%
-	    \else
-	      \ifx\tmpa\ptn@quest % 0 or 1
-		\pdf@ornament@repeattrue
-		\set@repeat@class{\tmpb}{0}{1}%
-	      \else
-		\ifx\tmpa\ptn@range % Range
-		  \pdf@ornament@repeattrue
-		  \x@\parse@repeat@class\tmpb\E
-		\else
-		  \ifx\tmpa\ptn@eq % Preserve variable
-		    \pdf@ornament@repeattrue
-		    \ifcsname best@mult@class@num@\tmpb\endcsname
-		      \x@\let\x@\tmp\csname best@mult@class@num@\tmpb\endcsname
-		      \set@repeat@class{\tmpb}{\tmp}{\tmp}%
-		    \else
-		      \errmessage{Cannot re-use undefined variable \tmpb}%
-		      \set@repeat@class{\tmpb}{1}{}%
-		    \fi
-		  \else
-		    \message{Ornamental border: unrecognised control char '#3'}%
-		  \fi
-		\fi
-	      \fi
-	    \fi
-	  \fi
-	\fi
       \fi
     \fi
   \fi
 }
+
 \def\orn@rpt@c@missing{0}
 
 \def\set@repeat@class#1#2#3{\edef\orn@repeat@class{#1}%
@@ -822,14 +888,66 @@
   \x@\edef\csname mult@repeat@max@\orn@repeat@class\endcsname{#3}%
 }
 
-\def\orn@an@ornament#1,#2\E{%Possibly without changing the scale, output several ornaments
+\let\orn@group=\relax
+\def\orn@an@ornament#1#2#3\E{%Possibly without changing the scale, output several ornaments
+  \trace{orn}{orn@an@ornament #1,#2,#3}%
+  \let\orn@group=\relax
+  \def\tmp{#1}\def\tmpb{#2}\ifx\tmp\tmpb
+    \ifx\tmp\br@Ltr
+      \orn@group@set #3)),\relax))\E
+    \else
+      \@orn@an@ornament#1#2#3\E
+    \fi
+  \else
+    \@orn@an@ornament#1#2#3\E
+  \fi
+}
+
+\def\@orn@an@ornament#1,#2\E{%Possibly without changing the scale, output several ornaments
+  \def\@orn@this{#1}\def\@orn@nxt{#2}%
   \advance\orn@seq@num by 1
   \x@\ornament@parse#1|||||\E%
   \ifornscale
     \setorn@scale
   \fi
   %\x@\let\csname orn@label@\the\orn@seq@num\endcsname\orn@label
-  \ifpdf@ornament@repeat
+  \@@orn@an@ornament
+}
+
+\def\@orn@a@group#1\E{%
+  \ifx\orn@repeat@class\empty
+    \trace{orn}{Repeating ornament group using xleaders for class:\orn@repeat@class (1)}%
+    \xleaders\box\theorngroup\hskip 0pt plus 1 fil\relax
+  \else
+    \x@\let\x@\o@g@count \csname best@mult@class@num@\orn@repeat@class\endcsname
+    \ifnum 1=\ifx\o@g@count\relax 1 \else \ifx\o@g@count\empty 1 \else 0 \fi\fi
+      \trace{orn}{Repeating ornament group using xleaders for class:\orn@repeat@class (2)}%
+      \xleaders\box\theorngroup\hskip 0pt plus 1 fil\relax
+    \else 
+      \trace{orn}{Repeating ornament group #1 (\o@g@count \space times)}%
+      \ifnum\o@g@count>0 
+        \@@orn@a@group#1\E
+        \box\theorngroup
+      \fi
+    \fi
+  \fi
+}
+
+\def\@@orn@a@group#1\E{%
+  \trace{orn}{Repeating group \o@g@count \space more times}%
+  \edef\o@g@count{\the\numexpr \o@g@count -1 \relax}%
+  \ifnum \o@g@count>0
+    \@orn@an@ornament #1\E
+    %\box\theorngroup
+    \let\nxt\@@orn@a@group
+  \else
+    \let\nxt=\endstack
+  \fi
+  \nxt#1\E\E\E
+}
+    
+\def\@@orn@an@ornament{%
+  \ifnum 1=\ifx\orn@group\relax \ifpdf@ornament@repeat 1 \else 0 \fi \else 0\fi
     \orn@do@ornament
     \ifXformOrnaments
       \ifholdXobjects\else\ifvoid\ornXobjects\else
@@ -847,24 +965,44 @@
 	\trace{orn}{Repeating ornament using xleaders for \orn@repeat@class}%
 	\xleaders\box\theornament\hskip 0pt plus 1 fil\relax
       \else
-	\trace{orn}{Repeating ornament #1 (\tmp times)}%
+	\trace{orn}{Repeating ornament \@orn@this (\tmp times)}%
 	\bgroup\setbox1=\box\theornament\count255=\tmp\loop\ifnum\count255>0\copy1\advance\count255 by -1\repeat\egroup%
       \fi
     \fi
   \else
-    \trace{orn}{Simple ornament #1}%
+    \trace{orn}{Simple ornament \@orn@this}%
     \orn@do@ornament
+    \ifx\orn@group\relax\else
+      \trace{orn}{Adding to group box \l@gdims\theorngroup\ifvbox\theorngroup vert\fi}%
+      \ifvbox\theorngroup
+        \global\setbox\theorngroup=\vbox{\everypar={}\let\par\endgraf\unvbox\theorngroup\box\theornament}%
+        \showbox\theorngroup
+      \else
+        \global\setbox\theorngroup=\hbox{\unhbox\theorngroup\box\theornament}%
+      \fi
+    \fi
   \fi
-  \def\tmp{#2}%
-  \ifx\tmp\empty
+  \ifx\@orn@nxt\empty
     \let\nxt=\endstack
   \else
-    \let\nxt\orn@an@ornament
+    \ifx\@orn@nxt\cstackempty
+      \let\nxt=\endstack
+    \else
+      \ifx\orn@group\relax
+        \let\nxt=\orn@an@ornament
+      \else
+        \let\nxt=\@orn@an@ornament
+      \fi
+    \fi
   \fi
-  \x@\nxt\tmp\E
+  \x@\nxt\@orn@nxt\E\E\E
 }
 
 \def\Ornaments#1{%
+  \ifinner \def\tmp{inner }\else\def\tmp{outer }\fi
+  \ifhmode \edef\tmp{\tmp hmode }\fi%
+  \ifvmode \edef\tmp{\tmp vmode }\fi%
+  \trace{orn}{Ornaments \tmp #1}%
   \begingroup
     \def\orn@rpt@c@missing{0}%
     \orn@seq@num=0
@@ -1037,7 +1175,21 @@
 \def\E{}
 \def\add@mult@class#1{\x@\mult@classes\x@{\the\mult@classes\D@{#1}}}
 \newif\iftemp
-\def\orn@meas@ornament#1,#2\E{%
+\def\orn@meas@ornament#1#2#3\E{%
+  \trace{orn}{orn@meas@ornament #1,#2,#3}%
+  \let\orn@group=\relax
+  \def\tmp{#1}\def\tmpb{#2}\ifx\tmp\tmpb
+    \ifx\tmp\br@Ltr
+      \orn@group@meas #3)),\relax))\E
+    \else
+      \@orn@meas@ornament#1#2#3\E
+    \fi
+  \else
+    \@orn@meas@ornament#1#2#3\E
+  \fi
+}
+
+\def\@orn@meas@ornament#1,#2\E{%
   \advance\orn@seq@num by 1
   \x@\ornament@parse#1|||||\E %Set relevant transform matrix and various bools
   \ifornscale
@@ -1091,7 +1243,15 @@
   \ifx\tmp\empty
     \let\nxt=\endstack
   \else
-    \let\nxt\orn@meas@ornament
+    \ifx\tmp\cstackempty
+      \let\nxt=\endstack
+    \else
+      \ifx\orn@group\relax
+        \let\nxt=\orn@meas@ornament
+      \else
+        \let\nxt=\@orn@meas@ornament
+      \fi
+    \fi
   \fi
   \x@\nxt\tmp\E
 }
@@ -1261,14 +1421,14 @@
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
   \trace{orn}{Box side is \the\dimen1}%
-  \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
+  \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\let\par\endgraf\everypar={}\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
   %\showbox\orn@bdr@left
   \def\ornXalign{1}%
-  \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
+  \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\let\par\endgraf\everypar={}\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
   %\showboxdepth=9
   %\showboxdepth=10
   %\showbox\orn@bdr@right
-  \vbox to #2{\baselineskip=0pt \lineskip=0pt \hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
+  \vbox to #2{\let\par\endgraf\everypar={}\baselineskip=0pt \lineskip=0pt \hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
 }
 \def\OrnamentBorder#1{%
   \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
@@ -1299,7 +1459,7 @@
   \def\border@l@pad{0pt}\def\border@r@pad{0pt}%
   \setbox\orn@bdr@right\box\voidb@x
   \ifx\b@drleft\tr@e
-    \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternL}}%
+    \def\orn@Side{L}\orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\let\par\endgraf\everypar={}\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternL}}%
     \def\border@l@pad{\border@lpadding}%
     \ifx\patternL\patternR
       \ifx\b@drright\tr@e
@@ -1314,7 +1474,7 @@
   \ifx\b@drright\tr@e
     \ifvoid\orn@bdr@right
       \def\ornXalign{1}%
-      \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
+      \def\orn@Side{R}\orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\let\par\endgraf\everypar={}\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
       \def\border@r@pad{\border@rpadding}%
     \fi
   \fi
@@ -1324,7 +1484,7 @@
   \dimen7=\dimexpr\ht\orn@bdr@top+\dp\orn@bdr@top  \ifx\b@drtop\tr@e +\dimen2\fi \relax
   \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
   \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
-  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\let\par\endgraf\everypar={}\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
     \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right\kern-\b@drwidth\OrnamentUnit}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
   %\showbox#1%
   %\x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
@@ -1339,7 +1499,7 @@
 }
 
 %Stylesheet Options
-\def\t@xtbkslsh{\catcode`\\=12}
+\def\t@xtbkslsh{\catcode`\\=12 \catcode`\^=12 \catcode`\(=12 }
 \def\sb@setcode#1#2\relax{\p@sheof\everyeof={\noexpand}\x@\edef\x@\tmp\x@{\scantokens{#2}}\r@storbkslsh\p@peof\initc@t\setsbp@ram{#1}{\tmp}}
 
 \def\BorderPatternTop{\initc@t\t@xtbkslsh\sb@setcode{borderpatterntop}}
@@ -1406,6 +1566,7 @@
 \edef\b@rderparameters{\b@rderparameters,borderstyleextra,borderpatterntop,borderpatternleft,borderpatternright,borderpatternbot,ornamentscaleref}
 
 \x@\def\csname drawzrule-ornaments\endcsname{%
+  \traceifset{drawzrule-ornaments}%
   \ifdim\OrnamentUnit=0pt \ifversion{2}{\global\OrnamentUnit=1pt}{\global\OrnamentUnit=1\FontSizeUnit}\fi
   \getp@ram{borderpatterntop}{zrule}{\styst@k}%
   \ifx\p@ram\relax
@@ -1471,6 +1632,7 @@
     \trace{m}{Restoring \oldOrnamentsFamily (from \OrnamentsFamily)}%
     \SwitchOrnamentsFamily{\oldOrnamentsFamily}%
   \fi
+  \traceifcheck{drawzrule-ornaments}%
 }
 
 \def\r@und#1.#2\E{\ifdim .#2 pt < .5pt  #1\else\the\numexpr #1+1\relax\fi}
@@ -1501,17 +1663,19 @@
   \egroup
 }
 
+% Users should define these 2 below or MapBorderTlabels (and B L R versions) if so desired.
 \def\MapBorderHlabels{A,B,C,D,E,F,G,H,I,J,K}
 \def\MapBorderVlabels{1,2,3,4,5,6,7,8,9}
-\def\m@b@fallbackL{V}
-\def\m@b@fallbackR{V}
-\def\m@b@fallbackT{H}
-\def\m@b@fallbackB{H}
+% Internal use. Don't alter.
+\def\m@b@fallbackL{V}\def\m@b@fallbackR{V}
+\def\m@b@fallbackT{H}\def\m@b@fallbackB{H}
 \def\orn@Side{}
 \def\zSEQ{%
-  \trace{orn}{zSEQ \orn@Side, \the\orn@seq@num}%
-  \ifx\orn@Side\undefined\error{!zSEQ called without a defined side}\fi
-  \ifx\orn@Side\relax\error{!zSEQ called without a valid side}\fi
+  \ifnum 1= 1\ifx\orn@Side\undefined 0\fi\ifx\ifx\orn@Side\relax 0\fi\ifx\orn@Side\empty 0\fi\else
+    \trace{orn}{!zSEQ called without a defined side. Defaulting to H}
+    \def\orn@Side{H}%
+  \fi
+  \trace{orn}{zSEQ '\orn@Side', \the\orn@seq@num}%
   \ifcsname MapBorder\orn@Side labels\endcsname\x@\let\x@\@list\csname MapBorder\orn@Side labels\endcsname \let\tmp\orn@Side\else
     \x@\let\x@\tmp\csname m@b@fallback\orn@Side\endcsname
     \x@\let\x@\@list\csname MapBorder\tmp labels\endcsname
@@ -1521,6 +1685,7 @@
       \edef\c@llers{\@list,}%
       \count255=\orn@seq@num
       \x@\if\csname m@b@fallback\orn@Side\endcsname H% Horizontal borders have a corner piece.
+        \trace{orn}{Applying corner correction}%
         \advance\count255 by -1
       \fi
       \loop\ifnum\count255>1

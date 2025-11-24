@@ -12,6 +12,8 @@ ptrefsepvals = {
     'chapsep': 'ChapterNumberSeparator',
     'cvsep': 'ChapterVerseSeparator',
     'rangemk': 'RangeIndicator',
+    'chaprange': 'ChapterRangeSeparator',
+    'bookcsep': 'BookChapterSeparator'
 }
 
 _versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org
@@ -159,7 +161,7 @@ class ParatextSettings:
         return self.ldml.find(path)
 
     def inferValues(self, forced=False):
-        if forced or 'FileNameBookNameForm' not in self.dict:
+        if forced or 'FileNameBookNameForm' not in self.dict and os.path.exists(self.prjdir):
             sfmfiles = [x for x in os.listdir(self.prjdir) if x.lower().endswith("sfm")]
             for f in sfmfiles:
                 m = re.search(r"(\d{2})", f)
@@ -340,7 +342,7 @@ class PTEnvironment(Environment):
         if res is None or level >= len(res):
             return bk
         else:
-            return res[self.level]
+            return res[level]
 
     def parsebook(self, bk):
         res = self.bookstrings.get(bk.lower(), None)

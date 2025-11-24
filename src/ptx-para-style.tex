@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
 % written by Jonathan Kew
@@ -114,6 +114,12 @@
   \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi
   \else\ifnum\BodyColumns=3 \threecolwidth{\hsize}\fi\fi
  \fi\fi
+  \ifdiglot\iftextborder  \ifnum \TextBorderMode>1
+    \ifdim\pagetotal=0pt \x@\ifx\csname isb@dy\c@rrdstat\endcsname\false 
+      \trace{d}{Body width changed for \c@rrdstat\space at \c@rref}%
+      \global\hsize=\csname column\c@rrdstat width\endcsname\relax
+    \fi\fi
+  \fi\fi\fi
   \traceifcheck{st@rtbody}%
 }
 
@@ -175,14 +181,12 @@
     \fi
     \let\lastp@rclass\tmppcl@ss%
   \fi
-  \ifvoid\he@dingnotes
-    \ifnormalhe@dings\else\penalty10\fi
-    \trace{h}{\oldm@rker: Outputting \ifnormalhe@dings normal \fi end-headings penalty}%
-  \else
-    \unvbox\he@dingnotes
-    \ifnormalhe@dings\penalty10000 \else\penalty10 \fi
+  \ifvoid\he@dingnotes\else
+    \penalty10000\unvbox\he@dingnotes
   \fi
-    \global\first@fterheadingtrue
+  \ifnormalhe@dings\penalty10000 \else\penalty10 \fi
+  \trace{h}{\oldm@rker: Outputting \ifnormalhe@dings normal \else endnote \fi end-of-headings penalty}%
+  \global\first@fterheadingtrue
   \global\he@dingsfalse
   \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
  \fi
@@ -231,7 +235,7 @@
 
 %+cpar_gridbox2
 % returns in \dimen0 how much to advance \dimen1 (y) to be an integral multiple of \dimen0 (x)
-% \dimen1 := y % x, \dimen3 := y - y % x, \dimen0 := x - y + y % x
+% \dimen1 := y - y % x, \dimen3 := y % x, \dimen0 := x - y % x
 \def\m@d{\dimen3=\dimen1\divide\dimen1 \dimen0\multiply\dimen1 \dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 \newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
@@ -252,17 +256,22 @@
       \ift@tle\lastdepth=0pt \fi
       \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth; upwardsHackDiff=\the\upwardsHackDiff}%
       \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
-      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space, y and x. z = x - y + y % x
+      \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is gridding space above box, y (ht0) and x (baselineskip). z = x - y % x
       \dimen1=\ht0 \advance\dimen1 by -\headingtopspace % a = y - b
-      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0 % z = x - y + y % x - x + y - b - (y-b) % x; w = x - y + b + (y-b) % x
-      \advance\dimen2 by \headingtopspace   % (1), z = y % x - (y-b) % x
+      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0 % w = x - (y-b) % x; z = x - y % x - x + (y-b) % x; = (y-b) % x - y % x 
+      \advance\dimen2 by \headingtopspace   % (1), z = (y-b) % x - y % x
       \ifgridp@c\else\ifdiglot\else
-        \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
+        \ifdim\lastdepth>0pt \vskip -\lastdepth\fi
       \fi\fi
+      \ifversion{6}{\ifdim\dimen2<-\dimen0 \advance\dimen2 by \baselineskip\fi}{}%
       \ifdim\upwardsHackDiff=0pt\else\advance\dimen2 by -\upwardsHackDiff \advance\dimen0 by \upwardsHackDiff\fi
-      \ifdiglot\kern\else\vskip\fi\dimen2
       \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
-      \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
+      \t@mpfalse
+      \ifnum\ifsquashgridbox 1\else\ifgridp@c 1\else 0\fi\fi =1%
+        \ifdiglot\kern\else\vskip\fi\dimen2
+      \else\vbox\bgroup\topskip=0pt\t@mptrue\vskip\dimen2\fi
+        \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
+      \ift@mp\egroup\fi
       \ifrotate\prevdepth=\baselineskip\fi
       \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
       %\ifdim\oldprevdepth<-999pt \prevdepth=\oldprevdepth\fi % DON"T restore old prevdepth. For some reason this puts things off grid.
@@ -289,7 +298,7 @@
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook. Normally called from inside endlastp@rstyle
 \def\par{%
-  \trace{sP}{par! n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
+  \trace{sP}{par! n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi, \styst@k}%
   \ifhmode
    \ifb@xedparstyle \trace{s}{b@xedstyle met in par! \styst@k}%
     \set@endb@xedstyle{\styst@kfirst}{\styst@k}\egroup\apply@endb@xedstyle{\tmpctsb@x}%
@@ -333,10 +342,10 @@
    \fi\fi
    \cutoutcarryover 
    \ifversion{3}{\do@ndofthispar}{}%
- \else
-  \global\l@stparbadness=\badness
- \fi
- \ifversion{3}{}{\do@ndofthispar}%
+  \else
+   \global\l@stparbadness=\badness
+  \fi
+  \ifversion{3}{}{\do@ndofthispar}%
 }
 %-cpar_par
 % No blank line here!
@@ -523,23 +532,31 @@
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
    \ifRTL\beginR\fi
-   \def\c@l{0}\ifnum\c@rrentcols>1 \relax \ifcsname startx:#1-\c@rref\endcsname
-     \dimen0=\csname startx:#1-\c@rref\endcsname sp
-     \ifdim\dimen0>0.5 \textwidth \def\c@l{1}\fi
-     \trace{C}{startx:#1-\c@rref=\csname startx:#1-\c@rref\endcsname, c@l=\c@l}\fi
+   \def\c@l{0}\ifnum\c@rrentcols>1 \relax
+     \ifcsname startx:#1-\c@rref\endcsname
+       \dimen0=\csname startx:#1-\c@rref\endcsname sp
+     \else \ifcsname marginnote-\c@rref @#1:xshift\endcsname
+         \dimen0=\csname marginnote-\c@rref @#1:xshift\endcsname% sp
+       \else \dimen0=0pt
+     \fi\fi \ifdim\dimen0>0.5 \textwidth \def\c@l{1}\fi
+     \trace{C}{\the\dimen0, c@l=\c@l}%
    \else % single column
-     \ifodd\pageno \def\c@l{1}\fi\fi
+     \let\p@num\pageno \ifcsname pnum:#1-\c@rref\endcsname \x@\let\x@\p@num\csname pnum:#1-\c@rref\endcsname
+     \else\ifcsname marginnote-\c@rref @#1:pageno\endcsname \x@\let\x@\p@num\csname marginnote-\c@rref @#1:pageno\endcsname\fi\fi
+     \ifodd\p@num \def\c@l{1}\fi
+   \fi
    \getp@ram{justification}{#1}{\tmpstyst@k}%
    \ifx\p@ram\@nner \ifnum\c@l=0 \let\p@ram\r@ght\else\let\p@ram\l@ft\fi
    \else\ifx\p@ram\@uter \ifnum\c@l=0 \let\p@ram\l@ft\else\let\p@ram\r@ght\fi\fi\fi
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
    \else\ifx\p@ram\l@ftb@l
-    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \parfillskip=0pt plus \gl@e
+    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \parfillskip=1sp plus \gl@e
    \else\ifx\p@ram\l@ft
-    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \parfillskip=0pt plus 1fil
+    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \parfillskip=1sp plus 1fil
    \else\ifx\p@ram\r@ght
     \ifRTL\rightskip\else\leftskip\fi=0pt plus \gl@e \parfillskip=0pt
+   \ifRTL \leftskip\else\rightskip\fi =0pt
    \fi\fi\fi\fi
    \getp@ram{leftmargin}{#1}{\tmpstyst@k}%
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
@@ -550,6 +567,7 @@
 
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
  \edef\newp@rstyle{#1}%
+ \global\let\oldch@rfont\empty % By 'definition' a para style clears oldch@rfont, as it's only here to check font-runs.
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  \catcode`\^=12
@@ -608,6 +626,7 @@
 \def\@p@rstyled@mp#1#2{\@p@rstyle{#1}}
 \def\@p@rstyle#1{%
  \global\let\oldm@rker\m@rker
+ \trace{H}{Starting par style #1 and ending the previous}%
  \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
   \ifx\thisp@rcl@ss\undefined\else
@@ -634,6 +653,7 @@
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
   \getp@ram{type}{\m@rker}{\m@rker}%
+  \global\let\typep@ram\p@ram
   \let\B@xtype\empty%
   \ifx\p@ram\t@tle
     \mark{\t@tle}\ifdiglot\x@\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
@@ -684,7 +704,7 @@
       \trace{eh}{Style exists for \m@rker box}%
     \fi
     \trace{eh}{Starting \B@xtype box for \m@rker}%
-    \x@\@sb\x@\cat\B@xtype box\cat*
+    \@sb\x@\cat\B@xtype box\cat*
     \let\m@rker\tmphb
   \fi
   \mcpushunderms{P}{#1}%
@@ -692,7 +712,7 @@
   \let\styst@k=\empty
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
   \s@tstyst@k%
-  \trace{H}{Marker type: \p@ram, stack: \mcstack [\styst@k] \space toplevel: \iftoplevelp@r True\else False\fi}%
+  \trace{H}{Marker type: \p@ram, stack: \mcstack [\styst@k] \space \styst@kfirst \space toplevel: \iftoplevelp@r True\else False\fi}%
   \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\global\headingmidspace=0pt \else
     \global\headingmidspace=\p@ram\verticalsp@ceunit
   \fi
@@ -736,7 +756,13 @@
     \fi
     \nobreak
   \else\trace{sa}{headingstyle false}%
-    \ifhe@dings\endhe@dings\fi
+    \ifhe@dings\endhe@dings\fi % this potentially closes the headingsbox, and other major changes to the style stack.
+    \mcpushunderms{P}{#1}%
+    \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
+    \let\styst@k=\empty
+    \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
+    \s@tstyst@k%
+    \trace{H}{Marker type: \typep@ram, stack: \mcstack [\styst@k] \space \styst@kfirst \space toplevel: \iftoplevelp@r True\else False\fi}%
     \let\thisp@rclass\P@ra
     \s@tbaseline{\m@rker}{\styst@k}%
     \global\advance\baselineskip by \ColAdjskip
@@ -768,7 +794,7 @@
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar (#1)}%
   \everypar={%
-   \trace{sP}{everypar! (#1) n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
+   \trace{sP}{everypar! (#1) n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi\space \styst@kfirst\space mode=\the\currentgrouptype}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
@@ -792,7 +818,9 @@
    \allowp@rindenttrue
    \def\t@st{0}%
    \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \ifdr@ppednumber \def\t@st{2}\fi\else \def\t@st{1}\fi
-   \ifnum 0=\t@st \else
+   \ifnum 0=\t@st 
+     \trace{C}{allowp@rindenttrue (normal par)}%
+   \else
      \ifversion{5}{%
        \ifIndentAtChapter\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterchap}\fi
        \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \trace{C}{\ptxversion v>=5 afterheading}\fi\fi
@@ -807,9 +835,11 @@
    %
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
+   %\getp@ram{firstindent}{\m@rker}{\styst@k}\let\f@rstindent=\p@ram
    \getp@ram{firstindent}{\styst@kfirst}{\styst@k}\let\f@rstindent=\p@ram
-   \dimen3=\ifx\p@ram\relax 0\else\f@rstindent\fi \IndentUnit
+   \dimen3=\ifx\p@ram\relax 0\else\p@ram\fi \IndentUnit
    \ifversion{5}{\ifallowp@rindent\else\ifdim \dimen3>0pt \dimen3=0pt \fi\fi}{}%
+   \trace{C}{\m@rker\space at \c@rref\space allowp@rindent=\ifallowp@rindent true\else false\fi, dimen3=\the\dimen3\space \styst@kfirst/\styst@k}%
    %In the code below...
    % dimen3 is first line indent
    % dimen2 is the par indent.
@@ -952,6 +982,8 @@
                       % (note that we don't suppress negative indents, as in \q1 etc)
      \trace{Ds}{\m@rker\ifdiglot\c@rrdstat\fi\space  First indent \f@rstindent * \the\IndentUnit, kern by \the\dimen3}%
      \kern\dimen3                                              %(1)
+    \else
+     \trace{Ds}{No par indent in \m@rker \space at \c@rref \space by \the\dimen3}%
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
@@ -1149,6 +1181,7 @@
 }
 
 \def\@parstart#1#2#3#4#5#6{%
+% #1 curref, #2 type, #3 mrkr, #4 baselineskip, #5 xstart, #6 ystart
   \prev@y=#6\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
@@ -1157,12 +1190,14 @@
   \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty
   \getp@ram{justification}{#3}{#3}%
   \ifnum \ifx\p@ram\@nner 1\else\ifx\p@ram\@uter 1\else 0\fi\fi =1
-    \immediate\write\delayf@le{\string\ParPos{#3}{#1}{#5}}\fi
+    \immediate\write\delayf@le{\string\ParPos{#3}{#1}{\this@pgno}{#5}}\fi
 }
 
-\def\ParPos#1#2#3{
-%   #1 mrkr, #2 c@rref, #3 start xpos
-  \x@\xdef\csname startx:#1-#2\endcsname{#3}%\trace{C}{startx:#1-#2 = #3}%
+\def\ParPos#1#2#3#4{
+%   #1 mrkr, #2 c@rref, #3 pageno, #4 start xpos
+  \x@\xdef\csname startx:#1-#2\endcsname{#4}%
+  \x@\xdef\csname pnum:#1-#2\endcsname{#3}%
+  %\trace{C}{startx:#1-#2 = [#3] #4}%
 }
 
 \def\@parend#1#2#3#4{%
@@ -1195,7 +1230,7 @@
 }%
 
 \def\@pgstart#1#2#3#4{%
-  \edef\this@pgno{#1}}
+  \xdef\this@pgno{#1}}
 
 \newif\ifp@rlengthimportant
 
@@ -1481,10 +1516,12 @@
 \def\beforechapternum#1#2#3{}
 \def\afterchapternum#1#2#3{}
 \def\AfterChapterSpaceFactor{3}
+\def\printchapter#1{#1} % Any decoration, etc, for chapter numbers
+\def\printaltchapter#1{(#1)} % Any decoration, etc, for alternative chapter numbers
+
 \def\m@kechapterbox{%
  \trace{sP}{m@kechapterbox for \ch@ptert@xt, reftooltip\ifreftooltip true\else false\fi}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
- \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
  \getp@ram{rightmargin}{c}{c}%
  \let\ch@pterrmargin\p@ram
@@ -1496,11 +1533,17 @@
  \setbox\ch@pterbox=\hbox{%
     \ifx\p@ram\r@ght
       {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
-      \s@tfont{c}{c}\printchapter%
+      \s@tfont{c}{c}\printchapter{\ch@ptert@xt}%%
+      \ifx\ch@pteraltt@xt\empty\else
+        \s@tfont{c+ca}{ca}\printaltchapter{\ch@pteraltt@xt}%
+      \fi
     \else
       \ifx\ch@pterlmargin\relax\else\kern \ch@pterlmargin\IndentUnit\fi
       {\beforechapternum{\id@@@}{\book}{\ch@pter}}%
-      \s@tfont{c}{c}\printchapter%
+      \s@tfont{c}{c}\printchapter{\ch@ptert@xt}%
+      \ifx\ch@pteraltt@xt\empty\else
+        \s@tfont{c+ca}{ca}\printaltchapter{\ch@pteraltt@xt}%
+      \fi
     \fi
     {\afterchapternum{\id@@@}{\book}{\ch@pter}}%
  }%
