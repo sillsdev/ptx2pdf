@@ -43,8 +43,8 @@ jobs:
       shell: msys2 {0}
       run: >-
         pip install --only-binary=:all: --break-system-packages 
-          pyinstaller 
-          .[gui]
+        pyinstaller
+        .[gui]
 
     - name: Build Windows executable
       shell: msys2 {0}
