@@ -41,10 +41,9 @@ jobs:
 
     - name: Setup PyInstaller & ptxprint dependencies
       shell: msys2 {0}
-      run: >-
-        pip install --only-binary=:all: --break-system-packages 
-        pyinstaller
-        .[gui]
+      run: |
+        pip install --break-system-packages pyinstaller
+        pip install --only-binary=:all: --break-system-packages .[gui]
 
     - name: Build Windows executable
       shell: msys2 {0}
