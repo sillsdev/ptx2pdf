@@ -25,6 +25,7 @@ jobs:
           gtksourceview3:p
           libffi:p
           poppler:p
+          pyinstaller:p
           python:p
           python-cairo:p
           python-fonttools:p
@@ -39,10 +40,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Setup PyInstaller & ptxprint dependencies
+    - name: Setup ptxprint and it's dependencies.
       shell: msys2 {0}
       run: |
-        pip install --break-system-packages pyinstaller
         pip install --only-binary=:all: --break-system-packages .[gui]
 
     - name: Build Windows executable
@@ -50,8 +50,7 @@ jobs:
       env:
         MSYS2_DIR: ${{ steps.msys2.outputs.msys2-location }}\${{env.MSYSTEM}}
         LOG_LEVEL: ${{ runner.debug == '1' && 'DEBUG' || 'INFO' }}
-      run: |
-        pyinstaller --log-level $LOG_LEVEL ptxprint.spec
+      run: pyinstaller --log-level $LOG_LEVEL ptxprint.spec
       
     - name: Build installer
       shell: cmd
