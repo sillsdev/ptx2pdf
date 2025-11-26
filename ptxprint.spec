@@ -4,6 +4,8 @@ block_cipher = None
 import sys, os, platform, logging
 from glob import glob
 from subprocess import call
+import xml.etree.ElementTree as et
+
 print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
@@ -67,6 +69,134 @@ def stripbinaries(binaries, basedir):
             continue
         res.append(b)
     return res
+
+def findall(root, fname, exts):
+    for dp, dn, fn in os.walk(root or "."):
+        if fname in fn:
+            yield (fname, dp)
+        for e in exts:
+            f = fname + e
+            if f in fn:
+                yield (f, dp)
+
+def parseglade(fname):
+    doc = et.parse(fname)
+    res = set()
+    for e in doc.findall('.//object'):
+        isstock = False
+        for c in e:
+            if c.tag == "property":
+                n = c.get("name")
+                if n == "label":
+                    l = c.text
+                elif n in ["use_stock", "use-stock"]:
+                    isstock = True if c.text == "True" else False
+        if isstock and l in icon_mappings:
+            res.add(icon_mappings.get(l, l))
+    return res
+
+def process_icons(icons, src, dest, outf):
+    if outf is not None:
+        outf.write("[Files]\n")
+    for i in sorted(icons):
+        foundit = False
+        for (f, p) in findall(src, i, ["-symbolic.symbolic.png", ".symbolic.png", ".png", ".svg"]):
+            foundit = True
+            p = p[p.find(src) + len(src) + 1:].replace("/",r"\\")
+            d = dest + "\\" + p if dest else p
+            s = src.replace("/", "\\") + "\\" + p + "\\" + f if args.source != "." else p + "\\" + f #"
+            if outf is not None:
+                outf.write('Source: "{}"; DestDir: "{}"\n'.format(s, d))
+
+
+icon_mappings = {
+"gtk-dialog-authentication": "dialog-password",
+"gtk-dialog-error": "dialog-error",
+"gtk-dialog-info": "dialog-information",
+"gtk-dialog-question": "dialog-question",
+"gtk-dialog-warning": "dialog-warning",
+"gtk-close": "window-close",
+"gtk-add": "list-add",
+"gtk-justify-center": "format-justify-center",
+"gtk-justify-fill": "format-justify-fill",
+"gtk-justify-left": "format-justify-left",
+"gtk-justify-right": "format-justify-right",
+"gtk-goto-bottom": "go-bottom",
+"gtk-cdrom": "media-optical",
+"gtk-copy": "edit-copy",
+"gtk-cut": "edit-cut",
+"gtk-go-down": "go-down",
+"gtk-execute": "system-run",
+"gtk-quit": "application-exit",
+"gtk-goto-first": "go-first",
+"gtk-fullscreen": "view-fullscreen",
+"gtk-leave-fullscreen": "view-restore",
+"gtk-harddisk": "drive-harddisk",
+"gtk-help": "help-contents",
+"gtk-home": "go-home",
+"gtk-info": "dialog-information",
+"gtk-jump-to": "go-jump",
+"gtk-goto-last": "go-last",
+"gtk-go-back": "go-previous",
+"gtk-missing-image": "image-missing",
+"gtk-network": "network-idle",
+"gtk-new": "document-new",
+"gtk-open": "document-open",
+"gtk-print": "document-print",
+"gtk-print-error": "printer-error",
+"gtk-print-paused": "printer-paused",
+"gtk-print-preview": "document-print-preview",
+"gtk-print-report": "printer-info",
+"gtk-print-warning": "printer-warning",
+"gtk-properties": "document-properties",
+"gtk-redo": "edit-redo",
+"gtk-remove": "list-remove",
+"gtk-refresh": "view-refresh",
+"gtk-revert-to-saved": "document-revert",
+"gtk-go-forward": "go-next",
+"gtk-save": "document-save",
+"gtk-floppy": "media-floppy",
+"gtk-save-as": "document-save-as",
+"gtk-find": "edit-find",
+"gtk-find-and-replace": "edit-find-replace",
+"gtk-sort-descending": "view-sort-descending",
+"gtk-sort-ascending": "view-sort-ascending",
+"gtk-spell-check": "tools-check-spelling",
+"gtk-stop": "process-stop",
+"gtk-bold": "format-text-bold",
+"gtk-italic": "format-text-italic",
+"gtk-strikethrough": "format-text-strikethrough",
+"gtk-underline": "format-text-underline",
+"gtk-indent": "format-indent-more",
+"gtk-unindent": "format-indent-less",
+"gtk-goto-top": "go-top",
+"gtk-delete": "edit-delete",
+"gtk-undo": "edit-undo",
+"gtk-go-up": "go-up",
+"gtk-file": "text-x-generic",
+"gtk-directory": "folder",
+"gtk-about": "help-about",
+"gtk-media-forward": "media-seek-forward",
+"gtk-media-next": "media-skip-forward",
+"gtk-media-pause": "media-playback-pause",
+"gtk-media-play": "media-playback-start",
+"gtk-media-previous": "media-skip-backward",
+"gtk-media-record": "media-record",
+"gtk-media-rewind": "media-seek-backward",
+"gtk-media-stop": "media-playback-stop",
+"gtk-zoom-100": "zoom-original",
+"gtk-zoom-in": "zoom-in",
+"gtk-zoom-out": "zoom-out",
+"gtk-zoom-fit": "zoom-fit-best",
+"gtk-select-all": "edit-select-all",
+"gtk-clear": "edit-clear",
+}
+
+icons = set("""applications-system-symbolic changes-allow changes-prevent document-print-symbolic document-revert document-save-as-symbolic edit-clear edit-clear-rtl edit-clear-symbolic-rtl emblem-documents view-list-bullet-symbolic folder-documents folder-download folder-music folder-new-symbolic folder-open folder-open-symbolic folder-pictures-symbolic folder-videos-symbolic format-justify-fill go-bottom go-first-symbolic go-previous-symbolic go-next-symbolic go-last-symbolic go-top help-about-symbolic list-add list-remove media-seek-backward-symbolic media-seek-forward-symbolic object-select open-menu pan-down pan-end pan-up preferences-system-sharing printer software-update-available system-run user-desktop user-home x-office-document-symbolic text-x-generic-symbolic view-refresh-symbolic view-dual view-grid view-fullscreen-symbolic media-seek-backward-symbolic-rtl.symbolic media-seek-forward-symbolic-rtl.symbolic process-working-symbolic.svg""".split())
+
+icons.update([icon_mappings["gtk-"+i] for i in \
+        ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
+icons.update(parseglade("python/lib/ptxprint/ptxprint.glade"))
 
 # Run this every time until a sysadmin adds it to the agent
 # call([r'echo "y" | C:\msys64\usr\bin\pacman.exe -S mingw-w64-x86_64-python-numpy'], shell=True)
@@ -191,6 +321,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             win_no_prefer_redirects = False,
             win_private_assemblies = False,
             noarchive = False)
+
 a1.binaries = stripbinaries(a1.binaries, f'xetex/bin/{bindir}')
 print("Binaries:", a1.binaries)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
@@ -223,7 +354,11 @@ coll = COLLECT(*allcolls,
                upx_exclude=['tcl'],
                name=app_name)
 
-if sys.platform == "darwin":
+if sys.platform in ("win32", "cygwin"):
+    with open("AdwaitaIcons.txt", "w", encoding="utf-8") as outf:
+        process_icons(icons, "dist/ptxprint", "{app}", outf)
+
+elif sys.platform == "darwin":
     import shutil
     import subprocess
     app = BUNDLE(coll,

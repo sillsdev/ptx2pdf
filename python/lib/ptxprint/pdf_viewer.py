@@ -1275,8 +1275,11 @@ class PDFContentViewer(PDFFileViewer):
 
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
-        self.parlocs.readParlocs(fname, rtl=rtl)
-        self.parlocs.load_dests(self.document)
+        try:
+            self.parlocs.readParlocs(fname, rtl=rtl)
+            self.parlocs.load_dests(self.document)
+        except (IndexError,):
+            pass
         if self.showanalysis:
             self.load_analysis(fname)
 

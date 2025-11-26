@@ -254,7 +254,8 @@
 \def\clearthenbackup{%Clear any held-over inserts.
   \trace{o}{clearthenbackup \the\outputpenalty, \the\ht255, ip=\the\insertpenalties}% ip counts the whole/partial inserts held over
   %\showbox255
-  \setbox0\vbox{\pagediscards\global\aftergalleyskip=\lastskip\ifdim\aftergalleyskip=0pt \unskip\global\aftergalleyskip=\lastskip\fi}%\showbox0%
+  \setbox0\vbox{%\pagediscards  % causes problems when a figure is anchored as the first thing on a page.
+    \global\aftergalleyskip=\lastskip\ifdim\aftergalleyskip=0pt \unskip\global\aftergalleyskip=\lastskip\fi}%\showbox0%
   \setbox0\box255
   \ifnum\insertpenalties>0
     \box\voidb@x
