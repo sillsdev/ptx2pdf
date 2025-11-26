@@ -1,9 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-import sys, os, platform, logging
+import sys, os, platform, logging, shutil, datetime, json
 from glob import glob
-from subprocess import call
+from subprocess import call, run
 import xml.etree.ElementTree as et
 
 print("sys.executable: ", sys.executable)
@@ -102,11 +102,77 @@ def process_icons(icons, src, dest, outf):
         foundit = False
         for (f, p) in findall(src, i, ["-symbolic.symbolic.png", ".symbolic.png", ".png", ".svg"]):
             foundit = True
-            p = p[p.find(src) + len(src) + 1:].replace("/",r"\\")
+            t = p[p.find(src) + len(src) + 1:].replace("/",r"\\")
             d = dest + "\\" + p if dest else p
             s = src.replace("/", "\\") + "\\" + p + "\\" + f if args.source != "." else p + "\\" + f #"
             if outf is not None:
                 outf.write('Source: "{}"; DestDir: "{}"\n'.format(s, d))
+
+# mac build functions
+def create_dmg_staging(app_name):
+    # Create DMG staging directory in dist/dmg
+    dmg_staging = os.path.join(DISTPATH, "dmg")
+    if os.path.exists(dmg_staging):
+        shutil.rmtree(dmg_staging)
+    os.makedirs(dmg_staging)
+    # Copy the .app bundle to dist/dmg
+    shutil.copytree(os.path.join(DISTPATH, f"{app_name}.app"), os.path.join(dmg_staging, f"{app_name}.app"), symlinks=True)
+    # Create Applications symlink in dist/dmg
+    applications_link = os.path.join(dmg_staging, "Applications")
+    if not os.path.exists(applications_link):
+        os.symlink("/Applications", applications_link)
+    return dmg_staging
+
+def code_sign(app_name, dmg_staging):
+    # Sign all Mach-O binaries
+    print("Codesigning all binaries")
+    sign_script = os.path.abspath("mac-sign-all-binaries.sh")
+    app_bundle_path = os.path.join(dmg_staging, f"{app_name}.app")
+    if not os.path.exists(sign_script):
+        raise Exception(f"Signing script not found: {sign_script}")
+    run(["bash", sign_script, app_bundle_path], check=True)
+
+def create_dmg(app_name, version):
+    for old in glob('*.dmg', root_dir=DISTPATH): os.remove(os.path.join(DISTPATH, old))
+    dmg_path = os.path.join(DISTPATH, f"{app_name}_{version}.dmg")
+    print(f"Creating {app_name}.dmg")
+    run([
+        "hdiutil", "create", "-volname", f"{app_name}",
+        "-srcfolder", dmg_staging, "-ov", "-format", "UDZO", dmg_path
+    ], check=True)
+    return dmg_path
+
+def notarize(dmg_path):
+    # Notarize the DMG using xcrun notarytool
+    apple_id = os.environ.get("NOTARIZATION_USERNAME")
+    password = os.environ.get("NOTARIZATION_PASSWORD")
+    team_id = os.environ.get("NOTARIZATION_TEAM")
+    if apple_id and password and team_id:
+        try:
+            # Run xcrun notarytool submit and capture output
+            print(f"Notarizing {dmg_path}")
+            result = run([
+                "xcrun", "notarytool", "submit", dmg_path,
+                "--apple-id", apple_id,
+                "--password", password,
+                "--team-id", team_id,
+                "--output-format", "json"
+            ], check=True, capture_output=True, text=True)
+            output_json = json.loads(result.stdout)
+            request_id = output_json.get("id")
+            if not request_id:
+                raise Exception("No request ID found in notarytool output.")
+            print(f"Notarization RequestID: {request_id}")
+            # Run the mac-check-notarized.sh script with dmg path and request_id
+            script_path = os.path.abspath("mac-check-notarized.sh")
+            if not os.path.exists(script_path):
+                raise Exception("No check notarized script found")
+            run(["bash", script_path, dmg_path, request_id], check=True)
+            print("Notarization check script complete.")
+        except Exception as e:
+            print(f"Notarization failed: {e}")
+    else:
+        print("Notarization skipped: NOTARIZATION_TEAM, NOTARIZATION_USERNAME, or NOTARIZATION_PASSWORD not set in environment.")
 
 
 icon_mappings = {
@@ -355,12 +421,12 @@ coll = COLLECT(*allcolls,
                name=app_name)
 
 if sys.platform in ("win32", "cygwin"):
+    for a in ('locale', 'fontconfig', 'glib-2.0', 'gtksourceview-1.0', 'icons', 'themes'):
+        shutil.copytree(f"C:/msys64/mingw64/share/{a}", f"dist/ptxprint/share/{a}")
     with open("AdwaitaIcons.txt", "w", encoding="utf-8") as outf:
-        process_icons(icons, "dist/ptxprint", "{app}", outf)
+        process_icons(icons, "dist/PTXprint", "{app}", outf)
 
 elif sys.platform == "darwin":
-    import shutil
-    import subprocess
     app = BUNDLE(coll,
                 name=f"{app_name}.app",
                 icon='icon/Google-Noto-Emoji-Objects-62859-open-book.ico',
@@ -375,96 +441,29 @@ elif sys.platform == "darwin":
     if  skip_codesign:
         sys.exit(0)
 
-    #
-    # Create DMG staging directory in dist/dmg
-    #
-    dmg_staging = os.path.join(DISTPATH, "dmg")
-    if os.path.exists(dmg_staging):
-        shutil.rmtree(dmg_staging)
-    os.makedirs(dmg_staging)
-    # Copy the .app bundle to dist/dmg
-    shutil.copytree(os.path.join(DISTPATH, f"{app_name}.app"), os.path.join(dmg_staging, f"{app_name}.app"), symlinks=True)
-    # Create Applications symlink in dist/dmg
-    applications_link = os.path.join(dmg_staging, "Applications")
-    if not os.path.exists(applications_link):
-        os.symlink("/Applications", applications_link)
-
-    #
-    # Sign all Mach-O binaries
-    #
-    print("Codesigning all binaries")
-    sign_script = os.path.abspath("mac-sign-all-binaries.sh")
-    app_bundle_path = os.path.join(dmg_staging, f"{app_name}.app")
-    if not os.path.exists(sign_script):
-        raise Exception(f"Signing script not found: {sign_script}")
-    subprocess.run(["bash", sign_script, app_bundle_path], check=True)
-
-    #
-    # Create the DMG from dist/dmg
-    #
-    for old in glob('*.dmg', root_dir=DISTPATH): os.remove(os.path.join(DISTPATH, old))
-    dmg_path = os.path.join(DISTPATH, f"{app_name}_{version}.dmg")
-    print(f"Creating {app_name}.dmg")
-    subprocess.run([
-        "hdiutil", "create", "-volname", f"{app_name}",
-        "-srcfolder", dmg_staging, "-ov", "-format", "UDZO", dmg_path
-    ], check=True)
-
+    dmg_staging = create_dmg_staging(app_name)
+    code_sign(app_name, dmg_staging)
+    dmg_path = create_dmg(app_name, version)
     if not os.environ.get("SKIP_NOTARIZE") == "1":
-        #
-        # Notarize the DMG using xcrun notarytool
-        #
-        apple_id = os.environ.get("NOTARIZATION_USERNAME")
-        password = os.environ.get("NOTARIZATION_PASSWORD")
-        team_id = os.environ.get("NOTARIZATION_TEAM")
-        if apple_id and password and team_id:
-            try:
-                # Run xcrun notarytool submit and capture output
-                print(f"Notarizing {dmg_path}")
-                import json
-                result = subprocess.run([
-                    "xcrun", "notarytool", "submit", dmg_path,
-                    "--apple-id", apple_id,
-                    "--password", password,
-                    "--team-id", team_id,
-                    "--output-format", "json"
-                ], check=True, capture_output=True, text=True)
-                output_json = json.loads(result.stdout)
-                request_id = output_json.get("id")
-                if not request_id:
-                    raise Exception("No request ID found in notarytool output.")
-                print(f"Notarization RequestID: {request_id}")
-                # Run the mac-check-notarized.sh script with dmg path and request_id
-                script_path = os.path.abspath("mac-check-notarized.sh")
-                if not os.path.exists(script_path):
-                    raise Exception("No check notarized script found")
-                subprocess.run(["bash", script_path, dmg_path, request_id], check=True)
-                print("Notarization check script complete.")
-            except Exception as e:
-                print(f"Notarization failed: {e}")
-        else:
-            print("Notarization skipped: NOTARIZATION_TEAM, NOTARIZATION_USERNAME, or NOTARIZATION_PASSWORD not set in environment.")
-    
-    # Clean up the staging directory
+        notarize(dmg_path)
     shutil.rmtree(dmg_staging)
 
-    #
     # Generate download_info file
-    #
-    import datetime
-    for old in glob('*.download_info', root_dir=DISTPATH): os.remove(os.path.join(DISTPATH, old))
-    open(f"{dmg_path}.download_info", "wt").write(f'''
-    {{
-        "description": "PTXprint macOS dmg"
-        "date": "{datetime.date.today().isoformat()}",
-        "version": "{version!s}",
-        "category": "installer",
-        "architecture": "{platform.machine()}",
-        "platform": "mac",
-        "type": "dmg",
-        "name": "PTXPrint",
-        "size": "{os.stat(dmg_path).st_size!s}"
-        "file": "{app_name}_{version!s}.dmg",
-    }}
-    ''')
+    for old in glob('*.download_info', root_dir=DISTPATH):
+        os.remove(os.path.join(DISTPATH, old))
+    with open(f"{dmg_path}.download_info", "wt") as outf:
+        out.write(f'''
+            {{
+                "description": "PTXprint macOS dmg"
+                "date": "{datetime.date.today().isoformat()}",
+                "version": "{version!s}",
+                "category": "installer",
+                "architecture": "{platform.machine()}",
+                "platform": "mac",
+                "type": "dmg",
+                "name": "PTXPrint",
+                "size": "{os.stat(dmg_path).st_size!s}"
+                "file": "{app_name}_{version!s}.dmg",
+            }}
+        ''')
     print(f"Created download_info file: {dmg_path}.download_info")
