@@ -95,18 +95,16 @@ def parseglade(fname):
             res.add(icon_mappings.get(l, l))
     return res
 
-def process_icons(icons, src, dest, outf):
-    if outf is not None:
-        outf.write("[Files]\n")
+def process_icons(icons, src, dest):
     for i in sorted(icons):
         foundit = False
         for (f, p) in findall(src, i, ["-symbolic.symbolic.png", ".symbolic.png", ".png", ".svg"]):
             foundit = True
             t = p[p.find(src) + len(src) + 1:].replace("/",r"\\")
-            d = dest + "\\" + p if dest else p
-            s = src.replace("/", "\\") + "\\" + p + "\\" + f if args.source != "." else p + "\\" + f #"
-            if outf is not None:
-                outf.write('Source: "{}"; DestDir: "{}"\n'.format(s, d))
+            d = dest + "\\" + t if dest else t
+            s = src.replace("/", "\\") + "\\" + t + "\\" + f if args.source != "." else t + "\\" + f #"
+        if not foundit:
+            print(f"Failed to find source for {i}")
 
 # mac build functions
 def create_dmg_staging(app_name):
@@ -421,10 +419,13 @@ coll = COLLECT(*allcolls,
                name=app_name)
 
 if sys.platform in ("win32", "cygwin"):
-    for a in ('locale', 'fontconfig', 'glib-2.0', 'gtksourceview-1.0', 'icons', 'themes'):
-        shutil.copytree(f"C:/msys64/mingw64/share/{a}", f"dist/ptxprint/share/{a}")
-    with open("AdwaitaIcons.txt", "w", encoding="utf-8") as outf:
-        process_icons(icons, "dist/PTXprint", "{app}", outf)
+    srcdir = "C:/msys64/mingw64/share"
+    for a in ('locale', 'fontconfig', 'glib-2.0', 'gtksourceview-1.0', 'themes'):
+        shutil.copytree(f"{srcdir}/{a}", f"dist/ptxprint/share/{a}")
+    process_icons(icons, f"{srcdir}/icons", "dist/PTXprint/share/icons")
+    shutil.copy(f"{srcdir}/icons/Adwaita/index.theme", "dist/PTXprint/share/icons/Adwaita/index.theme")
+    innosetup_path = os.getenv("INNOSETUP_PATH", "C:/Program Files (x86)/Inno Setup 6")
+    run([f"{innosetup_path}/ISCC.exe", "InnoSetupPTXprint.iss"])
 
 elif sys.platform == "darwin":
     app = BUNDLE(coll,
@@ -452,7 +453,7 @@ elif sys.platform == "darwin":
     for old in glob('*.download_info', root_dir=DISTPATH):
         os.remove(os.path.join(DISTPATH, old))
     with open(f"{dmg_path}.download_info", "wt") as outf:
-        out.write(f'''
+        outf.write(f'''
             {{
                 "description": "PTXprint macOS dmg"
                 "date": "{datetime.date.today().isoformat()}",
