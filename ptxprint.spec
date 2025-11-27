@@ -102,7 +102,8 @@ def process_icons(icons, src, dest):
             foundit = True
             t = p[p.find(src) + len(src) + 1:].replace("/",r"\\")
             d = dest + "\\" + t if dest else t
-            s = src.replace("/", "\\") + "\\" + t + "\\" + f if args.source != "." else t + "\\" + f #"
+            s = src.replace("/", "\\") + "\\" + t + "\\" + f
+
         if not foundit:
             print(f"Failed to find source for {i}")
 
@@ -420,8 +421,8 @@ coll = COLLECT(*allcolls,
 
 if sys.platform in ("win32", "cygwin"):
     srcdir = "C:/msys64/mingw64/share"
-    for a in ('locale', 'fontconfig', 'glib-2.0', 'gtksourceview-1.0', 'themes'):
-        shutil.copytree(f"{srcdir}/{a}", f"dist/ptxprint/share/{a}")
+    for a in ('locale', 'fontconfig', 'glib-2.0', 'gtksourceview-3.0', 'themes'):
+        shutil.copytree(f"{srcdir}/{a}", f"dist/ptxprint/share/{a}", dirs_exist_ok=True)
     process_icons(icons, f"{srcdir}/icons", "dist/PTXprint/share/icons")
     shutil.copy(f"{srcdir}/icons/Adwaita/index.theme", "dist/PTXprint/share/icons/Adwaita/index.theme")
     innosetup_path = os.getenv("INNOSETUP_PATH", "C:/Program Files (x86)/Inno Setup 6")

@@ -1,12 +1,24 @@
-PTXprint 3.0.4 Release Notes
-21 Nov 2025
+PTXprint 3.0.5 Release Notes
+26 Nov 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
 
-Bug fixes and Improvements in 3.0.4 (21 Nov 2025)
+Bug fixes and Improvements in 3.0.5 (26 Nov 2025)
+  * Fix Diglot trialheight issue
+  * Run the whole windows build from pyinstaller
+  * Refactor mac build code into functions
+  * Refactor icons into ptxprint.spec
+  * Fix analysing non files
+  * Fix syntax error (for python 3.11) no backslash allowed in f-string
+  * Reorder build internally to pyinstaller to help with debugging
+  * Fix minor import syntax error
+  * Add DEBUG log to pyinstaller
+  * Fix typos in gtktester
+
+Bug fixes and Improvements in 3.0.4 (21 Nov 2025 - Linux only release)
   * Use maintitle for PDF if available (instead of Project Fullname)
   * Fix pictures in MODules
   * Fix spacing of paragraphed footnotes

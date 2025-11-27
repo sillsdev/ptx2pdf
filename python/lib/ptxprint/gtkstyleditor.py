@@ -404,6 +404,8 @@ class StyleEditorView(StyleEditor):
     def selectMarker(self, marker):
         root = self.treestore.get_iter_first()
         it = self._searchMarker(self.treestore, root, marker)
+        if it is None:
+            return
         path = self.treestore.get_path(it)
         self.treeview.expand_to_path(path)
         self.treeview.get_selection().select_path(path)

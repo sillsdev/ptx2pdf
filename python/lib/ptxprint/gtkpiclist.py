@@ -504,8 +504,9 @@ class PicList:
         fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
         imgorder  = self.parent.get("t_imageTypeOrder")
         lowres    = self.parent.get("r_pictureRes") == "Low"
-        self.picinfo.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
-        self.item_changed(None, "src")
+        if self.picinfo is not None:
+            self.picinfo.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
+            self.item_changed(None, "src")
 
     def onResized(self):
         picframe = self.builder.get_object("fr_picPreview")
