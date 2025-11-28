@@ -292,22 +292,22 @@ else:
                 # These end up where specified (each entry is a 2 tuple: (source, target dir)
 binaries = (binaries 
       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
-	    ('A5 section head border.pdf', 'A5 section head border 2 column.pdf', 'A5 section head border-RTL-taller.pdf',
-	     'A5 page border.pdf', 'A5 page border - no footer.pdf', 'Verse number star.pdf', 'decoration.pdf',
-	     'Verse number rounded box.pdf')]
+        ('A5 section head border.pdf', 'A5 section head border 2 column.pdf', 'A5 section head border-RTL-taller.pdf',
+         'A5 page border.pdf', 'A5 page border - no footer.pdf', 'Verse number star.pdf', 'decoration.pdf',
+         'Verse number rounded box.pdf')]
       + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
-	    ('A4-Draft.pdf', 'A5-Draft.pdf', 'A5-EBAUCHE.pdf',
-	     '5.8x8.7-Draft.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
+        ('A4-Draft.pdf', 'A5-Draft.pdf', 'A5-EBAUCHE.pdf',
+         '5.8x8.7-Draft.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-	    ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
-	     'picLocationPreviews.png', 'marginNotesPreviews.png', 'sakura.css',
-	     'FRTtemplateBasic.txt', 'FRTtemplateAdvanced.txt',
-	     'top1col.png', 'top2col.png', 'topblue.png', 'topgreen.png', 'topgrid.png', 
-	     'tophrule.png', 'toporange.png', 'toppurple.png', 'topred.png', 'topvrule.png',
-	     'bot1col.png', 'bot2col.png', 'botblue.png', 'botgrid.png', 
-	     'botpurple.png', 'botred.png', 'botvrule.png', 
-	     'nibot1col.png', 'nibot2col.png', 'nibotblue.png', 'nibotgrid.png', 
-	     'nibotpurple.png', 'nibotred.png', 'nibotvrule.png')]
+        ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
+         'picLocationPreviews.png', 'marginNotesPreviews.png', 'sakura.css',
+         'FRTtemplateBasic.txt', 'FRTtemplateAdvanced.txt',
+         'top1col.png', 'top2col.png', 'topblue.png', 'topgreen.png', 'topgrid.png', 
+         'tophrule.png', 'toporange.png', 'toppurple.png', 'topred.png', 'topvrule.png',
+         'bot1col.png', 'bot2col.png', 'botblue.png', 'botgrid.png', 
+         'botpurple.png', 'botred.png', 'botvrule.png', 
+         'nibot1col.png', 'nibot2col.png', 'nibotblue.png', 'nibotgrid.png', 
+         'nibotpurple.png', 'nibotred.png', 'nibotvrule.png')]
       + [('python/lib/ptxprint/unicode/*.bz2', 'ptxprint/unicode')]
       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
       + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
@@ -323,12 +323,12 @@ binaries = (binaries
 
 # data files are considered text and end up where specified by the tuple.
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-	    ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
+        ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'pdfrw', 'pdfrw/objects')]
       + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
-			  + [(f'src{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
-			  + [(f'src/mappings/*.map', f'ptxprint/ptx2pdf/mappings')]
+              + [(f'src{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
+              + [(f'src/mappings/*.map', f'ptxprint/ptx2pdf/mappings')]
       + [('python/lib/ptxprint/unicode/*.txt', 'ptxprint/unicode')]
       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
       + [('docs/inno-docs/*.txt', 'ptxprint')]
@@ -374,11 +374,11 @@ for k, v in jobs.items():
 
 a1 = Analysis(['python/scripts/ptxprint'],
             pathex =   ['python/lib'],
-	        binaries = binaries,
-	        datas = datas,
+            binaries = binaries,
+            datas = datas,
                 # The registry tends not to get included
             hiddenimports = (['_winreg', 'gi.repository.win32'] if sys.platform.startswith("win") else []) \
-                + ['gi.repository.fontconfig', 'gi.repository.Poppler'],
+                + ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._core._exceptions'],
             runtime_hooks = [],
             hookspath = [os.path.abspath("pyinstallerhooks")],
                 # These can drift in from the analysis and we don't want them
