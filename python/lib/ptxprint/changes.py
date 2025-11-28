@@ -26,7 +26,6 @@ def make_contextsfn(bk, *changes):
 def printError(msg, **kw):
     print(msg)
 
-propreg = re.compile(r"\\([pP])\{(.*?)\}")
 def _makecat_props(grammar):
     res = {}
     for m, c in grammar.marker_categories.items():
@@ -69,6 +68,8 @@ def _convprop(m, cats):
     else:
         r = m.group(0)
     return r
+
+propreg = re.compile(r"\\([pP])\{(.*?)\}")
 
 def _transreg(s, cats):
     def _c(m):
