@@ -893,7 +893,10 @@ class RunJob:
                                 for s in sorted(self.printer.styleEditor.allStyles()):
                                     if self.printer.styleEditor.getval(s, 'fontname', None, includebase=True) == mn:
                                         mkrs.append(s)
-                                finalLogLines.append("\n" + f"Font: '{mn}' was found in marker(s): {', '.join(mkrs)}" + "\n")
+                                if len(mkrs):
+                                    finalLogLines.append("\n" + f"Font: '{mn}' was found in Style settings for marker(s): {', '.join(mkrs)}" + "\n")
+                                else:
+                                    finalLogLines.append("\n" + f"Font: '{mn}' specified in Fonts+Scripts was not found" + "\n")
                         foundmsg = True
                         break
         if not foundmsg:
