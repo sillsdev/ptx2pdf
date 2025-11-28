@@ -83,6 +83,7 @@
 % | sko |  Style stack option-list building
 % | S | side-dependent swapping 
 % | t | Tables and table of contents
+% | tim | Timing
 % | T | Triggers
 % | u | 'Unprintable' pages (e.g. triggered images  don't fit)
 % | V | verse numbers
@@ -120,6 +121,9 @@
 \def\traceifcheck#1{\xdef\tr@ceiflevel{\the\currentiflevel}\trace{I}{Ifcheck: #1 \tr@ceiflevel==\csname checkif@#1\endcsname}\x@\ifnum\csname checkif@#1\endcsname=\tr@ceiflevel\else
     \message{IF CHECK #1 Failed. Entered at \csname checkif@#1\endcsname \space != exit at \tr@ceiflevel}\fi}
 % verbose tracing on/off macros to help with fault isolation
+\def\tracetimset#1{\x@\ifx\csname tr@cemode-tim\endcsname\y@s \x@\xdef\csname @t-#1@\endcsname{\the\elapsedtime}\fi}
+\def\tracetimcheck#1#2{\x@\ifx\csname tr@cemode-tim\endcsname\y@s \relax\edef\tim@check{\the\numexpr \elapsedtime - \csname @t-#1@\endcsname \relax}\tr@ceout{tim}{[#1] #2 \tim@check}\fi}
+
 \def\ztmon{\tracingassigns=1 \tracingmacros=1}
 \def\ztmoff{\tracingassigns=0 \tracingmacros=0}
 \def\ztvalon{\tracinggroups=1 \tracingassigns=1 \tracingrestores=1}
