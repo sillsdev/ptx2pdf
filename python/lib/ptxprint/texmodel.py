@@ -944,7 +944,8 @@ class TexModel:
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 def printError(msg, **kw):
                     self.printer.doError(msg, show=not self.printer.get("c_quickRun"))
-                self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk, doError=self.printer.doError)
+                self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
+                                            bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
         #adjlistfile = printer.getAdjListFilename(bk)
         #if adjlistfile is not None:
         #    adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
