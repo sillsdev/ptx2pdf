@@ -26,7 +26,7 @@ exclusionmap = {
 
 _abbrevmodes = {
     "Abbreviation": "a",
-    "ShortNames": "s",
+    "ShortName": "s",
     "LongName": "l",
 }
 
