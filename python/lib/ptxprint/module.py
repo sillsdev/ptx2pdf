@@ -162,6 +162,7 @@ class Module:
                     refs = RefList(eloc.text.strip(), booknames=self.usfms.booknames)
                 except SyntaxError as e:
                     raise SyntaxError(f"{e} at {s} at line {eloc.pos.l} char {eloc.pos.c}")
+                currp = None
                 for r in refs:
                     p = self.get_passage(r, removes=self.removes, strippara= s=="refnp")
                     if not len(p):
@@ -170,10 +171,11 @@ class Module:
                     for pe in reversed(p):
                         pe.parent = currp
                         currp.insert(curri, pe)
-                    currp.remove(eloc)
                     skipme += 1
                     if len(reps):
                         self.doc.transform_text(*reps, parts=p)
+                if currp is not None:
+                    currp.remove(eloc)
             elif s == 'inc':
                 values = [v for v in eloc.text.split() if v.strip()]
                 # breakpoint()
