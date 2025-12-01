@@ -14,7 +14,6 @@ from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonSc
         saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, \
         runChanges, swapext
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
-from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.procpdf import procpdf
 from ptxprint.pdfrw import PdfReader, PdfWriter
@@ -680,7 +679,7 @@ class RunJob:
             tmppdf = self.procpdfFile(outfname, pdffile, info)
             if info["finishing/extraxdvproc"]:
                 self.processxdv(swapext(outfname, ext=".tex", withext=".xdv"), self.getxdvname(outfname, info), info)
-            cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", tmppdf]
+            cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
             if self.args.extras & 7:

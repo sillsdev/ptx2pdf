@@ -24,7 +24,7 @@ _unitpts = {
 
 def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     res = {}
-    opath = outfname.replace(".tex", ".prepress.pdf")
+    opath = pdffile
     ext = None
     outpdfobj = None
     coverfile = None
@@ -139,6 +139,11 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
         pdffile = pdffile.replace(".pdf", ext+".pdf")
         if ext != "":
             res[' Finished'] = pdffile
+        elif opath == pdffile:
+            opath = outfname.replace(".tex", ".prepress.pdf")
+            if os.path.exists(opath):
+                os.remove(opath)
+            os.rename(pdffile, opath)
         outpdfobj.fname = pdffile
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
