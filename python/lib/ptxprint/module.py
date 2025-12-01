@@ -42,7 +42,7 @@ class Module:
 
     #localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+(?::[^)\s]+)?\s*(?:-\s*\d+(?::[^)*\s]+)*)*)\)")
     localise_re = re.compile(r"\$([asl]?)\((.*?)\)")
-    localcodes = {'a': 0, 's': 1, 'l': 2}
+    localcodes = {'a': 2, 's': 1, 'l': 0}
 
     def __init__(self, fname, usfms, model, usfm=None, text=None, changes=[]):
         self.fname = fname
