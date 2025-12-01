@@ -69,7 +69,7 @@ _errmsghelp = {
                                            "Try turning off Hyphenate option located on the Fonts+Scripts tab"),
 "! Font \\extrafont":                     _("Fallback Font issue - set a font on the Fonts+Scripts tab.\n" +\
                                            "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
-"! Font":                                _("Cannot fint the Font specified. Install it, restart PTXprint and try again\n" +\
+"! Font":                                _("Cannot find the Font specified. Install it, restart PTXprint and try again\n" +\
                                           "or change the font to one that is already installed. More details below."),
 "! Improper `at' size":                  _("Font size setting issue. Check to see if the font size in a style\n" +\
                                           "in or near the reference below is incorrect (maybe it is set to 0.00)."),

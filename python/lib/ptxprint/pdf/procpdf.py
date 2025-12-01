@@ -22,6 +22,14 @@ _unitpts = {
     'pt': 1
 }
 
+def safeRename(infile, outfile):
+    try:
+        if os.path.exists(outfile):
+            os.remove(outfile)
+        os.rename(infile, outfile)
+    except (FileNotFoundError, PermissionError):
+        pass
+
 def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     res = {}
     opath = pdffile
@@ -130,20 +138,13 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     if outpdfobj is not None:
         if opath != pdffile:
             if os.path.exists(opath):
-                try:
-                    if os.path.exists(pdffile):
-                        os.remove(pdffile)
-                    os.rename(opath, pdffile)
-                except (FileNotFoundError, PermissionError):
-                    pass
+                self.safeRename(opath, pdffile)
         pdffile = pdffile.replace(".pdf", ext+".pdf")
         if ext != "":
             res[' Finished'] = pdffile
         elif opath == pdffile:
             opath = outfname.replace(".tex", ".prepress.pdf")
-            if os.path.exists(opath):
-                os.remove(opath)
-            os.rename(pdffile, opath)
+            self.safeRename(pddfile, opath)
         outpdfobj.fname = pdffile
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
