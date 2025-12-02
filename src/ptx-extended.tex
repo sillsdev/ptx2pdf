@@ -39,6 +39,7 @@
 \def\c@tegory{}
 \let\DebugBorderCat\undefined %  Set this to showbox the specified category just after the border is added
 \newif\ifBoxLikeBorder\BoxLikeBordertrue % Set to false for old behaviour: the box does not affect the spacing of boxes.
+\newif\ifearlybgim@ge
 
 \def\S@tCat#1{\trace{sc}{Started Category #1}%
   \edef\c@tegory{#1}%
@@ -862,7 +863,7 @@
     \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
   \fi
   %
-  \earlybgimagefalse
+  \earlybgim@gefalse
   \ifx\bgf@gsp@c\relax
     \let\t@mpfigspec\relax
   \else
@@ -891,10 +892,10 @@
     \def\sb@rchunkheight{\the\maxdimen}% Background images and page-broken chunks are incompatible 
     \tempfalse
     \if\bgf@gl@w F%
-      \earlybgimagetrue
+      \earlybgim@getrue
     \fi
     \if\h@scol F%
-      \earlybgimagetrue
+      \earlybgim@getrue
     \fi
   \fi
   \let\w@tsit\sb@rb@x % Make sure the item is identified properly - used in debugging and .delayed file
@@ -951,7 +952,7 @@
         \unvbox\extb@x}%
     \fi
   \fi
-  \ifearlybgimage
+  \ifearlybgim@ge
     %modify the esbbox to include the picture
     \trace{e}{Including background image below contents: \t@mpfigspec}%
     \ifx\sb@rheightspec\empty
