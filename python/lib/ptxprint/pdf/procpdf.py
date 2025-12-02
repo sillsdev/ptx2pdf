@@ -138,13 +138,13 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     if outpdfobj is not None:
         if opath != pdffile:
             if os.path.exists(opath):
-                self.safeRename(opath, pdffile)
+                safeRename(opath, pdffile)
         pdffile = pdffile.replace(".pdf", ext+".pdf")
         if ext != "":
             res[' Finished'] = pdffile
         elif opath == pdffile:
             opath = outfname.replace(".tex", ".prepress.pdf")
-            self.safeRename(pddfile, opath)
+            safeRename(pdffile, opath)
         outpdfobj.fname = pdffile
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
