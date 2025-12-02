@@ -141,7 +141,7 @@
     \@ndcell
     \st@rtcell
     \xdef\mytmp{#2}%
-    \getp@ram{justification}{#1\ifdiglot \c@rrdstat\fi}{#1+tr}%
+    \getp@ram{justification}{#1\ifdiglot \c@rrdstat\fi}{#1}%
     \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
     \s@ttc@lign
     \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = \mytmp\space in style #1}%
@@ -155,7 +155,7 @@
     \st@rtcell%\st@rtsp@n{#3}{#4}%
     \xdef\mytmp{#2}%default justification
     \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
-    \getp@ram{justification}{#1}{#1+#1+tr}%
+    \getp@ram{justification}{#1}{#1+#1}%
     \s@ttc@lign
     \trace{t}{Define spanning cell [\the\tabler@ws, \the\tablec@l - #4] = \mytmp\space in style #1}%
     \m@kenumber{#4}\x@\xdef\csname span-\the\tabler@ws-\the\tablec@l\endcsname{\@@result}%
@@ -193,12 +193,12 @@
     %\ifRTL\beginR\fi
     \dimen255=0pt
     \edef\tc@ll{tc\the\tablec@l}%
-    \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax \else \trace{t}{leftmargin of \tc@ll is \p@ram *\the\IndentUnit}\advance\dimen255 \p@ram\IndentUnit \fi
+    %\getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
+    %\ifx\p@ram\relax \else \trace{t}{leftmargin of \tc@ll is \p@ram *\the\IndentUnit}\advance\dimen255 \p@ram\IndentUnit \fi
     \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
-    \trace{t}{Kern for start of \the\tablec@l, \the\dimen255, firstindent=\p@ram}% 
-    \ifdim\dimen255=0pt\else\kern\dimen255\fi
+    \ifx\p@ram\relax \else \kern \p@ram\IndentUnit \fi
+    %\trace{t}{Kern for start of \the\tablec@l, \the\dimen255, firstindent=\p@ram}% 
+    %\ifdim\dimen255=0pt\else\kern\dimen255\fi
     \s@tfont{tc\the\tablec@l}{\tc@ll+\styst@k}%
     \global\advance\p@ranesting by 1
     \@celltrue}
@@ -214,9 +214,9 @@
     \global\let\p@r@m\p@ram %preserve against endgroups
     \end@llpoppedstyles{tc*}%
     \let\p@ram\p@r@m
-    \ifx\p@ram\relax\else\ifx\p@ram\z@ero\else
-      \trace{t}{rightkern(tc\the\tablec@l) \p@ram, from tc\the\tablec@l}\kern\p@ram\IndentUnit
-    \fi\fi
+    %\ifx\p@ram\relax\else\ifx\p@ram\z@ero\else
+    %  \trace{t}{rightkern(tc\the\tablec@l) \p@ram, from tc\the\tablec@l}\kern\p@ram\IndentUnit
+    %\fi\fi
     \parfillskip=0pt
     \egroup
     \setbox0=\vbox{\parfillskip=0pt\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
@@ -328,9 +328,9 @@
         \c@rrentcolwidth=\wd\c@rrentcolbox
         \edef\tc@ll{tc\the\@col}%
         \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
-        \ifx\p@ram\relax \else \advance \c@rrentcolwidth\p@ram \IndentUnit\fi
+        %\ifx\p@ram\relax \else \advance \c@rrentcolwidth \p@ram \IndentUnit\fi
         \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
-        \ifx\p@ram\relax \else \advance \c@rrentcolwidth\p@ram \IndentUnit\fi
+        %\ifx\p@ram\relax \else \advance \c@rrentcolwidth \p@ram \IndentUnit\fi
       \else
         \bgroup\count255=\c@rrentcolwidth \trace{t}{c@rrentcolwidth is \the\count255 sp}\egroup%
       \fi
@@ -360,10 +360,10 @@
 %      \ifdim\c@rrentcolwidth<\wd\c@rrentcolbox
 %        (wrapped, natural was \the\wd\c@rrentcolbox)\fi}%
 %  }%
-  \getp@ram{justification}{tr}{\styst@k}%
-  \ifx\p@ram\r@ght
-    \ifRTL\RTLfalse\else\RTLtrue\fi
-  \fi
+  %\getp@ram{justification}{tr}{\styst@k}%
+  %\ifx\p@ram\r@ght
+  %  \ifRTL\RTLfalse\else\RTLtrue\fi
+  %\fi
   \f@reachcol{\wr@pcolumn}%Wrap the cells in each columns.
   \dimen0=0pt \trmargin=0pt
   \getp@ram{leftmargin}{tr}{\styst@k}%
@@ -371,6 +371,9 @@
   \getp@ram{rightmargin}{tr}{\styst@k}%
   \ifx\p@ram\relax\else\advance\ifRTL\dimen0\else\trmargin\fi by \p@ram\IndentUnit\fi
   \trace{t}{Row margins: left=\the\dimen0, right=\the\trmargin}%
+  \getp@ram{justification}{tr}{\styst@k}%
+  \ifx\p@ram\empty\let\tr@lign\c@nter\else\let\tr@lign\p@ram\fi
+  \trace{t}{Row alignment is \tr@lign}%
   \f@reachrow{%
     \ifnum\@row=2 \nobreak \fi
     \ifnum\@row=\tabler@ws \nobreak \fi
@@ -382,9 +385,13 @@
       \advance\nth@line by 1
       \line{\hskip\dimen0
         \ifRTL
-          \hfil\lochcaer@f{\csname \c@tprefix tc\the\@col :fill\endcsname\getnth@line}\hfil
+          \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftbal\hfil\fi\fi\fi
+          \lochcaer@f{\csname \c@tprefix tc\the\@col :fill\endcsname\getnth@line}%
+          \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\r@ght\hfil\fi\fi
         \else
-          \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil
+          \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\r@ght\hfil\fi\fi
+          \f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}%
+          \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftbal\hfil\fi\fi\fi
         \fi
         \hskip\trmargin}%
       \ifnum\nth@line<\linec@unt \nobreak \fi
@@ -433,31 +440,34 @@
     \leftskip=0pt\rightskip=0pt
     \ifRTL\dimen2=0pt \beginR\fi
     \edef\tc@ll{tc\the\@col}%
-    %\getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
-    %\ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
-    %\getp@ram{firstindent}{\tc@ll}{\tc@ll}%
-    %\ifx\p@ram\relax\else \dimen3=\p@ram \IndentUnit
-    %  \ifRTL \dimen2=\dimen3 \else\ifdim\dimen3=0pt\else\kern \dimen3\fi\fi
-    %\fi
-    %\getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
-    %\ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
+    \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
+    \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
+    \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
+    \ifx\p@ram\relax\else \dimen3=\p@ram \IndentUnit
+      \ifRTL \dimen2=\dimen3 \else\ifdim\dimen3=0pt\else\kern \dimen3\fi\fi
+    \fi
+    \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
+    \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
+    \ifx\the@lign\relax \getp@ram{justification}{\tc@ll}{\tc@ll}\s@ttc@lign\let\the@lign\mytmp\fi
+    \ifx\the@lign\empty \let\the@lign\cell@l\fi
     \trace{t}{Pre(\c@tprefix \tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \edef\l@drsl{}\edef\l@drsr{}%
     \ifx\the@lign\cell@r
       \parfillskip=0pt
-      \ifRTL \let\n@xt=\rightskip \edef\l@drsl{r}\else
-        \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
-        \let\n@xt=\leftskip \edef\l@drsl{r}%
+      \edef\l@drsl{r}%
+      \ifRTL \let\n@xt=\rightskip \else
+        %\skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
+        \let\n@xt=\leftskip
       \fi
     \else\ifx\the@lign\cell@c
-      \parfillskip=0pt
+      %\parfillskip=0pt
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
-     \else
-      \parfillskip=0pt
+    \else
+      \edef\l@drsr{r}%
       \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
-        \let\n@xt=\leftskip \edef\l@drsr{r}% \parfillskip=0pt
-      \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\def\l@drsr{r}\fi
+        \let\n@xt=\leftskip
+      \else\let\n@xt=\parfillskip\trace{t}{n@xt=rightskip}\fi
     \fi\fi
     \trace{t}{r=\l@drsr, l=\l@drsl, \c@tprefix =\c@ttoc}%
     \advance\n@xt by 0pt plus 1fil
@@ -469,7 +479,7 @@
     \edef\mytmp{\c@tprefix leaders-tc\l@drsl\the\@col}%
     \ifcsname \mytmp\endcsname
       \trace{t}{Remove space for leaders}%
-      \parfillskip=0pt% \hskip\rightskip \rightskip=0pt
+      \parfillskip=-\rightskip% \hskip\rightskip \rightskip=0pt
       \nobreak\csname \mytmp\endcsname \hfil
       \trace{t}{Final... \mytmp}\def\f@nish{\unskip\unskip}%
     \else \def\f@nish{}\fi
