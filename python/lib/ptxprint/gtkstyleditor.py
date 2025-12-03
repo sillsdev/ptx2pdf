@@ -404,6 +404,8 @@ class StyleEditorView(StyleEditor):
     def selectMarker(self, marker):
         root = self.treestore.get_iter_first()
         it = self._searchMarker(self.treestore, root, marker)
+        if it is None:
+            return
         path = self.treestore.get_path(it)
         self.treeview.expand_to_path(path)
         self.treeview.get_selection().select_path(path)
@@ -607,6 +609,9 @@ class StyleEditorView(StyleEditor):
         if self.marker in aliases:
             self.marker += "1"
         oldisLoading = getattr(self, 'isLoading', False)
+        if self.model.testing is not None:
+            ispaused = self.model.testing.paused
+            self.model.testing.pause()
         # logger.debug(f"Start editing style {self.marker}, {oldisLoading}")
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
@@ -727,6 +732,9 @@ class StyleEditorView(StyleEditor):
             widget = self.builder.get_object(w)
             widget.set_sensitive(self.marker != "p")
         self.isLoading = oldisLoading
+        if self.model.testing is not None:
+            if not ispaused:
+                self.model.testing.unpause()
 
     def splitURL(self, url):
         # Find the index of the first '/' after the initial '//'

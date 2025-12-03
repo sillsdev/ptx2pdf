@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 import argparse, sys, os, re, configparser, shlex
-import site, logging
+import site, logging, time, socket
 from shutil import rmtree
 from zipfile import ZipFile
 
 import ptxprint
 from ptxprint.utils import saferelpath, appdirs
+from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
 # debugpy.listen(("localhost", 5678))
@@ -41,6 +42,75 @@ class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/ques
     def flush(self):
         pass
 
+def testport(host, port, timeout=10):
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(1)
+                s.connect((host, port))
+                return True
+        except (socket.error, ConnectionRefusedError, socket.timeout):
+            pass
+    return False
+
+def run_broadway(wnum):
+    pnum = 8880 + wnum
+    if testport("127.0.0.1", pnum, timeout=0.5):
+        # logger.info("Broadway is already running")
+        return None
+    else:
+        bwname = "broadwayd" + ".exe" if sys.platform in ("win32", "cygwin") else ""
+        server = popen([bwname, "-p", str(pnum), ":"+str(wnum)])
+    if testport("127.0.0.1", pnum):
+        return server
+    elif server is not None and server.poll() is None:
+        server.terminate()
+        server.wait()
+    return None
+
+def runtest(prjTree, config, macrosdir, project, doit, args):
+    args.quiet = True
+    server = None
+    if not args.testwithgui:
+        broadway_display = 5
+        server = run_broadway(broadway_display)
+        os.environ['GDK_BACKEND'] = "broadway"
+        os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
+    from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
+    from ptxprint.gtktesting import GtkTester
+    from ptxprint.utils import setup_i18n
+    from gi.repository import GLib
+    setup_i18n(args.lang)
+    reset_gtk_direction()
+    mainw = GtkViewModel(prjTree, config, macrosdir, args)
+    mainw.setup_ini()
+    if args.nointernet:
+        mainw.set('c_noInternet', True)
+        mainw.noInt = True
+    tester = None
+    if args.test is not None:
+        # copy files before loading config
+        tester = GtkTester(None, mainw)
+        tester.setuprun(args.test, mainw)
+    if args.pid:
+        mainw.setPrjid(args.pid, project.guid)
+        mainw.setConfigId(args.config or "Default")
+    else:
+        mainw.setFallbackProject()
+    if tester is not None:
+        GLib.idle_add(tester.run_action, args.testwithgui)
+    mainw.run(doit)
+    if tester is not None:
+        results = tester.run_finalise()
+        for k, v in results:
+            if len(v):
+                resv = "\n    ".join(v)
+                print(f"{k}: {resv}")
+    if server is not None:
+        server.terminate()
+        server.wait()
+
 def main(doitfn=None):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
@@ -65,6 +135,9 @@ def main(doitfn=None):
     parser.add_argument('-m', '--macros', help="Directory containing TeX macros (paratext2.tex)")
     parser.add_argument('-M', '--module', help="Specify module to print")
     parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
+    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
+    parser.add_argument('-t','--test',help="test file to run interactive test against")
+    parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
     
     # Performance & Debugging
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
@@ -72,7 +145,6 @@ def main(doitfn=None):
     parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
     parser.add_argument('--timeout', type=int, default=1200, help="XeTeX runtime timeout (seconds)")
     parser.add_argument('--debug', action="store_true", help="Enable debug output")
-    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
 
     # Font Settings
     parser.add_argument('-f', '--fontpath', action='append', help="Specify directories containing fonts (repeatable)")
@@ -152,10 +224,6 @@ def main(doitfn=None):
 
     fontconfig_path = writefontsconf(args.fontpath,testsuite=args.testsuite)
     putenv("FONTCONFIG_FILE", fontconfig_path)
-    if not args.print and not args.action:
-        from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
-        from ptxprint.ipcserver import make_server
-        #from ptxprint.restserver import startRestServer
 
     from ptxprint.view import ViewModel, VersionStr, doError
     from ptxprint.runjob import RunJob, isLocked
@@ -207,13 +275,17 @@ def main(doitfn=None):
         if pdir is not None:
             args.projects.append(pdir)
             print(f"Adding {pdir}")
+    elif not any(os.path.isdir(p) for p in args.projects):
+        print(f"Projects directories do not exist in {args.projects}. Quitting")
+        sys.exit(1)
 
     if args.lang is None:
         args.lang = getnsetlang(config)
 
     if (args.extras & 2) != 0 or not len(args.projects):
         # print("No Paratext Settings directory found - sys.exit(1)")
-        if not args.print:
+        if not args.print and args.test is None:
+            from ptxprint.gtkview import getPTDir
             pdir = getPTDir()
             if pdir is None:
                 sys.exit(1)
@@ -330,7 +402,9 @@ def main(doitfn=None):
             if project is None or project.srcPath(args.config) is None:
                 args.config = None
 
-    if args.print or args.action is not None:
+    if args.test is not None:
+        runtest(prjTree, config, macrosdir, project, doit, args)
+    elif args.print or args.action is not None:
         mainw = ViewModel(prjTree, config, macrosdir, args)
         mainw.setup_ini()
         if args.pid:
@@ -371,6 +445,9 @@ def main(doitfn=None):
         print(f"{res=}")
         sys.exit(res)
     else:
+        from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
+        from ptxprint.ipcserver import make_server
+        #from ptxprint.restserver import startRestServer
         goround = True
         loops = 0
         while (goround):

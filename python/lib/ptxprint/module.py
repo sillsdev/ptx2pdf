@@ -1,4 +1,4 @@
-import re, traceback
+import re, traceback, os
 from ptxprint.usxutils import Usfm
 from ptxprint.utils import runChanges
 from usfmtc.reference import RefList, RefRange
@@ -13,20 +13,20 @@ def read_module(inf, sheets):
         lines.insert(0, "\\id MOD Module\n")
     return Usfm(lines, sheets)
 
-#    e: ([mkrs], modelmap entry, invert_test)
-#    If entry is not empty include the marker
+#    e: ([mkrs], modelmap entry, invert_test, element tag)
+#    If modelmap entry is not empty test the marker, using invert_test
 exclusionmap = {
 #    'v': (None, "document/ifshowversenums", False, 'verse'),    # opposite use of %
     'x': (('x',), "notes/includexrefs", True, 'note'),
     'f': (('f',), "notes/includefootnotes", True, 'note'), 
     's': (('s', 's1', 's2', 'r'), "document/sectionheads", True, 'para'),
 #    'c': (None, 'document/ifshowchapternums', True, 'chapter'),
-    'p': (None, None, False, 'figure')
+    'p': (None, None, False, 'figure'),
 }
 
 _abbrevmodes = {
     "Abbreviation": "a",
-    "ShortNames": "s",
+    "ShortName": "s",
     "LongName": "l",
 }
 
@@ -42,7 +42,7 @@ class Module:
 
     #localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+(?::[^)\s]+)?\s*(?:-\s*\d+(?::[^)*\s]+)*)*)\)")
     localise_re = re.compile(r"\$([asl]?)\((.*?)\)")
-    localcodes = {'a': 0, 's': 1, 'l': 2}
+    localcodes = {'a': 2, 's': 1, 'l': 0}
 
     def __init__(self, fname, usfms, model, usfm=None, text=None, changes=[]):
         self.fname = fname
@@ -99,7 +99,10 @@ class Module:
     def testexclude(self, einfo):
         return einfo[1] is not None and (self.model is None or (self.model[einfo[1]] in (None, "")) ^ (not einfo[2]))
 
-    def parse(self):
+    def parse(self, piclist=None):
+        logger.log(5, self.doc.xml.outUsx(None))
+        self.doc.xml.book = "MOD"
+        count = 0
         self.removes = set((e for e in exclusionmap.values() if self.testexclude(e)))
         skipme = 0
         for eloc, isin in iterusx(self.doc.getroot()):
@@ -116,6 +119,31 @@ class Module:
                 s = eloc.get("style", None)
             elif eloc.tag == "ref":
                 s = "ref"
+            elif eloc.tag == "figure":
+                src = eloc.get("src", eloc.get("file", None))
+                anchor = None
+
+                # If we have a piclist and a src, try to find an existing anchor
+                if piclist is not None and src is not None:
+                    anchor = piclist.getAnchor(src, "MOD")
+
+                    # Not in the list yet: create a new entry
+                    if anchor is None:
+                        anchor = piclist.emptyAnchor("MOD")
+                        p = piclist.add_from_fig("MOD", anchor, eloc)
+                        p["src"] = src
+                        p.set_position(
+                            2 if self.model.printer.get("c_doublecolumn") else 1
+                        )
+
+                # No piclist or no src: fall back to a simple running anchor
+                if anchor is None:
+                    anchor = f"MOD{count:03d}"
+                    count += 1
+
+                eloc.tag = "ms"
+                eloc.attrib = {"style": "zfiga", "id": anchor[4:]}
+                eloc.text = None
             else:
                 continue
             if s == "ref" or s == "refnp":
@@ -134,6 +162,7 @@ class Module:
                     refs = RefList(eloc.text.strip(), booknames=self.usfms.booknames)
                 except SyntaxError as e:
                     raise SyntaxError(f"{e} at {s} at line {eloc.pos.l} char {eloc.pos.c}")
+                currp = None
                 for r in refs:
                     p = self.get_passage(r, removes=self.removes, strippara= s=="refnp")
                     if not len(p):
@@ -142,10 +171,11 @@ class Module:
                     for pe in reversed(p):
                         pe.parent = currp
                         currp.insert(curri, pe)
-                    currp.remove(eloc)
                     skipme += 1
                     if len(reps):
                         self.doc.transform_text(*reps, parts=p)
+                if currp is not None:
+                    currp.remove(eloc)
             elif s == 'inc':
                 values = [v for v in eloc.text.split() if v.strip()]
                 # breakpoint()
@@ -177,6 +207,9 @@ class Module:
             return []
         res = book.xml.getrefs(ref, titles=False, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
                                     chapters= not any('chapter' in x[3] for x in removes))
+        if True:        # this should be a filter test
+            firstp = res.getroot()[0]
+            firstp.attrib.pop('vid', None)
         for e, isin in res.iterusx():
             if not isin:
                 continue

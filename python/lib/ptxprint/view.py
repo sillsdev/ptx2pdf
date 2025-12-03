@@ -21,7 +21,6 @@ from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
 from ptxprint.polyglot import PolyglotConfig
 from ptxprint.report import Report
-import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
@@ -38,8 +37,8 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "3.0.3"
-GitVersionStr = "3.0.3"
+VersionStr = "3.0.5"
+GitVersionStr = "3.0.5"
 ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -369,6 +368,8 @@ class ViewModel:
             fp = os.path.join(self.project.path, f)
             if os.path.exists(fp):
                 res[bk] = fp
+        if self.moduleFile is not None:
+            res["MOD"] = self.moduleFile
         return res
 
     def _getPtSettings(self, prjid=None):
@@ -396,6 +397,7 @@ class ViewModel:
         return ptsettings.getBookFilename(bk)
 
     def getScriptSnippet(self):
+        import ptxprint.scriptsnippets as scriptsnippets
         script = self.get("fcb_script")
         gclass = getattr(scriptsnippets, script.lower(), None)
         if gclass is None:

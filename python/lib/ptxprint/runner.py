@@ -23,6 +23,9 @@ if sys.platform == "linux":
     def call(*a, **kw):
         return subprocess.call(*a, **kw)
 
+    def popen(*a, **kw):
+        return subprocess.Popen(*a, **kw)
+
 elif sys.platform == "darwin":
 
     def fclist(family, pattern):
@@ -54,6 +57,9 @@ elif sys.platform == "darwin":
         kw['stderr'] = kw.get('stderr', subprocess.STDOUT)
         res = subprocess.run(*newa, **kw)
         return res
+
+    def popen(*a, **kw):
+        return subprocess.Popen(*a, **kw)
 
 elif sys.platform == "win32":
     CREATE_NO_WINDOW = 0x08000000
@@ -87,4 +93,7 @@ elif sys.platform == "win32":
         kw['stderr'] = kw.get('stderr', subprocess.STDOUT)
         res = subprocess.run(*newa, creationflags=CREATE_NO_WINDOW, **kw)
         return res
+
+    def popen(*a, **kw):
+        return subprocess.Popen(*a, **kw)
 

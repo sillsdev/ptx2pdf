@@ -367,7 +367,8 @@
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines (Typ 100. Allow the note to be broken by the page-builder
     \let\styst@k\empty
-    \s@tsideskips{#1}{\noteRag}%
+    \ifp@ranotes\leftskip=0pt\rightskip=0pt\parfillskip=0pt\else
+    \s@tsideskips{#1}{\noteRag}\fi
 %    \parfillskip=0pt plus 1fil
 %    \leftskip=0pt \rightskip=0pt
 %    \getp@ram{justification}{#1}{#1}%

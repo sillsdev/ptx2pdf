@@ -12,6 +12,8 @@ ptrefsepvals = {
     'chapsep': 'ChapterNumberSeparator',
     'cvsep': 'ChapterVerseSeparator',
     'rangemk': 'RangeIndicator',
+    'chaprange': 'ChapterRangeSeparator',
+    'bookcsep': 'BookChapterSeparator'
 }
 
 _versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org

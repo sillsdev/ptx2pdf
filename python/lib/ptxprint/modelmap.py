@@ -177,7 +177,7 @@ _map = {
     "paragraph/missingchars":   ("t_missingChars", "fontscript", lambda w,v: v or ""),
 
     "document/sensitive":       ("c_sensitive", "meta", None),
-    "document/title":           (None, "meta", lambda w,v: "[Unknown]" if w.get("c_sensitive") else w.ptsettings.get('FullName', "[Unknown]")),
+    "document/title":           (None, "meta", lambda w,v: "[Unknown]" if w.get("c_sensitive") else w.getvar("maintitle", default=w.ptsettings.get('FullName', "[Unknown]"))),
     "document/subject":         ("ecb_booklist", "meta", lambda w,v: v if w.get("r_book") == "multiple" else w.get("ecb_book")),
     "document/author":          (None, "meta", lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 

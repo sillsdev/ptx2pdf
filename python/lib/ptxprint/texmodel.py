@@ -10,7 +10,6 @@ from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multst
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect
 from ptxprint.dimension import Dimension
-import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 from usfmtc.reference import Ref, RefRange, RefList
 from ptxprint.xrefs import Xrefs
@@ -337,6 +336,12 @@ class TexModel:
         self.dict['chvssep_'] = self.ptsettings.get('ChapterVerseSeparator', chvssep) if chvssep == ':' else chvssep
         rsep = re.sub(r"^.*\|", "", self.ptsettings.get('RangeIndicator', '-'))
         self.dict['rangesep_'] = "\u2013" if rsep == "-" else rsep
+        rsep = re.sub(r"^.*\|", "", self.ptsettings.get('ChapterRangeSeparator', '-')) or rsep
+        self.dict['chaprangesep_'] = "\u2013" if rsep == "-" else rsep
+        bsep = self.ptsettings.get('BookChapterSeparator')
+        if bsep == " " or bsep is None:
+            bsep = "\\ "
+        self.dict['bksep_'] = bsep
 
     def updatefields(self, a):
         modelmap.get = lambda k: self[k]
@@ -605,6 +610,7 @@ class TexModel:
         return res
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", diglots=False):
+        import ptxprint.scriptsnippets as scriptsnippets
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -864,7 +870,7 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-        mod.parse()
+        mod.parse(self.printer.picinfos)
         res = mod.doc
         if res.xml.errors:
             self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
@@ -938,7 +944,8 @@ class TexModel:
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 def printError(msg, **kw):
                     self.printer.doError(msg, show=not self.printer.get("c_quickRun"))
-                self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'), bk, doError=self.printer.doError)
+                self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
+                                            bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
         #adjlistfile = printer.getAdjListFilename(bk)
         #if adjlistfile is not None:
         #    adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
@@ -1125,6 +1132,7 @@ class TexModel:
         return doc  
 
     def makelocalChanges(self, printer, bk, chaprange=None):
+        import ptxprint.scriptsnippets as scriptsnippets
         self.localChanges = []
         script = self.dict["document/script"]
         if len(script):

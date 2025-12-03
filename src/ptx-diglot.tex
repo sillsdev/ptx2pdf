@@ -557,6 +557,7 @@
   \global\vsize=\availht
   \global\setbox\trialbox=\box\voidb@x
   \global\output={\diglot@any@trial}%calls \whichtrial on success
+  \tracetimset{any@trial}%
   \unvcopy\galley\relax %process newly-shrunk galley
   \ifdiglotDebugFollowContents
     \trace{D}{Showing galley Locn 1}%
@@ -669,6 +670,7 @@
         \showbox\galley
       \fi
     \fi\fi
+    \tracetimset{any@trial}%
     \global\output{\diglot@any@trial}
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 4}%
@@ -697,6 +699,7 @@
   % partialL contains *galley* for typeset material
   % excessL contains surplus material
   % Lboxpenalty contains penalty for a break after Lbox
+  \tracetimset{a@a@trial}%
   \traceNum{d}{after@a@trial \c@rrdstat, \the\holdinginserts, Op:\the\outputpenalty,
     tb:\the\ht\trialbox+\the\dp\trialbox,
     LBP:\the\Lboxpenalty, PLP:\the\partialLpenalty, SLP:\savedLpenalty,
@@ -785,6 +788,7 @@
     \trace{D}{End of after@a@trial (\c@rrdstat) LB:\the\ht\Lbox+\the\dp\Lbox (\the\Lboxpenalty), RB:\the\ht\Rbox+\the\dp\Rbox (\the\Rboxpenalty)}%
     %\showlists
   \fi
+  \tracetimcheck{a@a@trial}{end}%
   \after@this
 }
 
@@ -886,6 +890,7 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
+  \tracetimcheck{any@trial}{output}%
   \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
   \@bls=\csname b@selineskip\c@rrdstat\endcsname
   \ifnum\holdinginserts=0\relax\else
@@ -975,7 +980,7 @@
       \trace{D}{Initial content fits(th:\the\trialheight, av:\the\availht, box:\the\ht\trialbox d:\the\TempDim)}%
       \ifdim \TempDim > 2\@bls
         \vsize=\TempDim
-        \global\trialheight=\vsize
+%        \global\trialheight=\vsize
       \fi
     \fi
   \else
@@ -1043,6 +1048,7 @@
       %\global\setbox\galleyexc@ss\vbox{\undog@lley}% This didn't help
     \fi
   \fi
+  \tracetimcheck{any@trial}{-}%
   \after@this
 }
 

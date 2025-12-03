@@ -268,11 +268,11 @@
   \t@ccount=0
   \loop
     \advance\t@ccount by 1
-    \d@ftoc{\the\t@ccount}{rightmargin}{\rm@}
-    \ifnum\t@ccount>1 \d@ftoc{\the\t@ccount}{leftmargin}{\rm@}\fi
+    %\d@ftoc{\the\t@ccount}{rightmargin}{\rm@}
+    \ifnum\t@ccount>1 \ifcsname \tcb@se{\the\t@ccount}:rightmargin\endcsname\else \d@ftoc{\the\t@ccount}{rightmargin}{\rm@}\fi\fi
     \trace{t}{Setting leaders-tc\the\t@ccount}%
 %    \d@ftocx{leaders-tcr\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tcr\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
-    \d@ftocx{leaders-tc\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
+    \d@ftocx{leaders-tc\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else{\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill}\fi}
 %    \d@ftocx{leaders-tcc\the\t@ccount}{\ifx\l@drscts\relax\relax\l@drs\else\rightskip=0pt \leftskip=0pt \xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tcc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}
     \trace{t}{Filling \tcb@se{\the\t@ccount} with leaders}%
     \d@ftoc{\the\t@ccount}{fill}{\ifx\l@drscts\relax\l@drs\else\xleaders\hbox{\noexpand\s@tfont{ldrs}{ldrs+tc\the\t@ccount+\noexpand\styst@k}\l@drscts}\hfill\fi}

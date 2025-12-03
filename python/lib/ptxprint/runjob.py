@@ -14,7 +14,6 @@ from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonSc
         saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, \
         runChanges, swapext
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
-from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.procpdf import procpdf
 from ptxprint.pdfrw import PdfReader, PdfWriter
@@ -70,8 +69,8 @@ _errmsghelp = {
                                            "Try turning off Hyphenate option located on the Fonts+Scripts tab"),
 "! Font \\extrafont":                     _("Fallback Font issue - set a font on the Fonts+Scripts tab.\n" +\
                                            "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
-"! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
-                                          "the selected font has not been installed for all users. See FAQ."),
+"! Font":                                _("Cannot find the Font specified. Install it, restart PTXprint and try again\n" +\
+                                          "or change the font to one that is already installed. More details below."),
 "! Improper `at' size":                  _("Font size setting issue. Check to see if the font size in a style\n" +\
                                           "in or near the reference below is incorrect (maybe it is set to 0.00)."),
 "! Too many }'s":                        _("Possibly a TeX macro issue - contact support, or post a bug report"),
@@ -680,7 +679,7 @@ class RunJob:
             tmppdf = self.procpdfFile(outfname, pdffile, info)
             if info["finishing/extraxdvproc"]:
                 self.processxdv(swapext(outfname, ext=".tex", withext=".xdv"), self.getxdvname(outfname, info), info)
-            cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", tmppdf]
+            cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
             if self.args.extras & 7:
@@ -885,6 +884,18 @@ class RunJob:
                 for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
                     if m in l or l.startswith(m):
                         finalLogLines.append(_errmsghelp[m]+"\n")
+                        if m == "! Font":
+                            mf = re.match(r'.*?=(?:"([^:/"]+)|([^:/]+))', l)
+                            if mf is not None:
+                                mkrs = []
+                                mn = mf.group(1) or mf.group(2)
+                                for s in sorted(self.printer.styleEditor.allStyles()):
+                                    if self.printer.styleEditor.getval(s, 'fontname', None, includebase=True) == mn:
+                                        mkrs.append(s)
+                                if len(mkrs):
+                                    finalLogLines.append("\n" + f"Font: '{mn}' was found in Style settings for marker(s): {', '.join(mkrs)}" + "\n")
+                                else:
+                                    finalLogLines.append("\n" + f"Font: '{mn}' specified in Fonts+Scripts was not found" + "\n")
                         foundmsg = True
                         break
         if not foundmsg:
@@ -1002,7 +1013,7 @@ class RunJob:
             # print("NoFigs")
             return []
         picinfos.build_searchlist()
-        books = [r[0][0].first.book if r[1] else r[0] for r in jobs] + ["FRT","COV"]
+        books = [r[0][0].first.book if r[1] else "MOD" for r in jobs] + ["FRT","COV"]
         exclusive = self.printer.get("c_exclusiveFiguresFolder")
         fldr      = self.printer.get("lb_selectFigureFolder", "") if self.printer.get("c_useCustomFolder") else ""
         imgorder  = self.printer.get("t_imageTypeOrder")

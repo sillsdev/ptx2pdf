@@ -910,7 +910,8 @@
   \ifx\tmp\relax
     \getp@r@m{endmarker}{\m@rker}%
     \ifx\p@ram\relax
-      \x@\def\csname#1\endcsname{\def\milestoneOp{}\mst@nestyle{#1}}%
+      \trace{M}{\string\\def \string\\ #1}%
+      \x@\gdef\csname#1\endcsname{\trace{m}{Firing #1}\def\milestoneOp{}\mst@nestyle{#1}}%
     \else
       \x@\def\csname\p@ram\endcsname{\def\milestoneOp{e}\mst@nestyle{#1}}%
       \x@\def\csname#1\endcsname{\def\milestoneOp{s}\mst@nestyle{#1}}%
