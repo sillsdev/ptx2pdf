@@ -23,6 +23,7 @@ stylemap = {
     'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    False, None, None),
     'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', False, None, None),
     'Raise':        ('s_styRaise',          'l_styRaise',       0, None, None, None),
+    'Underline':    ('c_styFaceUnderline',  None,               False, None, None),    
     'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),
     'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
     'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  0, None, None),

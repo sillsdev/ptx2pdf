@@ -172,6 +172,27 @@ def fromBool(self, s, mrk=None, model=None):
 def toBool(self, v, mrk=None, model=None, parm=None):
     return "" if v else "-"
 
+def fromtri(self, s, mrk=None, model=None):
+    if s is None:
+        return 1
+    if not isinstance(s, str):
+        return s
+    if s.strip() == "-":
+        return 0
+    else:
+        try:
+            return int(s, 10)
+        except ValueError:
+            return 0
+
+def totri(self, v, mrk=None, model=None, parm=None):
+    if v == 0:
+        return "-"
+    elif v == 1:
+        return ""
+    else:
+        return str(v)
+
 def fromSet(self, s, mrk=None, model=None):
     if isinstance(s, dict):
         return s
@@ -248,6 +269,7 @@ _fieldmap = {
     'italic':           (fromBool, toBool, None),
     'superscript':      (fromBool, toBool, None),
     'smallcaps':        (fromBool, toBool, None),
+    'underline':        (fromtri, totri, None),
     'firstlineindent':  (fromFloat, toFloat, 0.),
     'leftmargin':       (fromFloat, toFloat, 0.),
     'rightmargin':      (fromFloat, toFloat, 0.),
