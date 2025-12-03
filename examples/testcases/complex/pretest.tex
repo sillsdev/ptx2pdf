@@ -1,4 +1,5 @@
 \newif\iflua\luafalse
+\def\pluginlist{polyglot-complexpages}
 \input paratext2.tex
 \XeTeXuseglyphmetrics=0
 \FontSizeUnit=1pt
@@ -13,12 +14,15 @@
 \newPolyglotCol{L}
 \newPolyglotCol{R}
 \newPolyglotCol{A}
+\diglottrue
 \stylesheet{usfm_sb.sty}
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1}
 \everypar{}
 \let\par\endgraf
 \T
+\count\topleftins=1000
+\floatingpenalty=10000
 \setbox\Lbox\vbox{\hsize=100pt
 \mark{1}Sapiente eum quasi qui\insert\topleftins{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\vbox{another line}} \mark{2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
 \vbox to 3\baselineskip{\hbox{Hi}\vfill}\penalty10000
@@ -28,11 +32,10 @@
 \setbox\Abox\vbox{\hsize=200pt 
 . \mark{1}Illum cupiditate velit repellendus aliquid impedit. \mark{2}Beatae et ut quod a doloribus. \mark{3}Sunt ut et eos aut sunt tempore. \mark{4}Sit quaerat quae tempore molestiae delectus ratione non. \mark{5}Est cum atque numquam minus non nesciunt et.Nisi modi eaque inventore architecto eveniet repudiandae. \mark{6}Amet ut quo impedit molestiae. \mark{7}Voluptatem dolorem reiciendis ut voluptas explicabo qui quo. \mark{8}Corrupti et dolore in et tenetur et cupiditate autem. \mark{9}Similique et et delectus.Ut quam mollitia voluptatem ipsa id. \mark{10}Velit quas maiores temporibus dolore. \mark{11}Sequi autem facere omnis et dicta totam est hic. \mark{12}Id sed unde similique mollitia sed aliquid.}
 \endgraf
-
+\def\minitrialpenalty{-10010}
 %\tracingmacros=1
 %\tracingassigns=1
 \ptxfile{}\everypar{}\let\par\endgraf
-\makeatletter
 \MSG{\l@gdims\Lbox}
 \MSG{\l@gdims\Rbox}
 %\MSG{\l@gdims\Abox}
@@ -48,12 +51,17 @@
   \cols=\csname cols#1\endcsname
   \setbox0\copy\csname#1box\endcsname
   \let\dims\empty
+  \let\ins@rtl@st\empty
+  \def\insht{0pt}%
   \loop
     \setbox\count255=\vsplit0 to \dimen1\setbox \count255\vbox{\unvbox\count255}%
     \ifdim\max<\ht\count255 \max=\ht\count255 \fi
     \edef\dims{\ifx\dims\empty\else\dims,\fi \the\count255:\the\ht\count255}
     \x@\edef\csname #1bot\endcsname{\splitbotmark}%
-    \iflua\directlua{measure_ins(\the\count255)}\fi
+    %\iflua\directlua{measure_ins(\the\count255)}\else
+      \me@sureins{#1}{\the\count255}%
+    %\fi
+    \edef\ins@rtl@st{\ifx\ins@rtl@st\empty\else\ins@rtl@st+\fi\insht}%
   \ifnum \count255<\cols
     \advance\count255 by 1
     \repeat
@@ -68,8 +76,69 @@
   \x@\let\x@\tmp\csname #1list\endcsname  
   \edef\tryid{#1/\the\dimen1}
   \x@\xdef\csname #1list\endcsname{\ifx\tmp\relax\else\tmp\fi\tryid,}
-  \edef\tmp{\the\max|\the\numexpr \dimexpr \dimen0\relax /\baselineskip\relax|\csname #1bot\endcsname|}\trace{Cx}{\tryid|\tmp}\par
+  \edef\tmp{\the\max|\the\numexpr \dimexpr \dimen0\relax /\baselineskip\relax|\csname #1bot\endcsname|\ins@rtl@st}\trace{Cx}{\tryid|\tmp}\par
   \x@\let\csname \tryid\endcsname\tmp
+}
+\newif\ifminitrialfull
+
+\def\@me@sureins#1#2{
+  \ifminitrialfull
+    \holdinginserts= 0
+    \s@veinserts{minitrial}%
+    \x@\s@venotes\x@{\@g@tndstat{#1}}{1}%
+  \else 
+    \holdinginserts= 1 
+  \fi
+  \trace{Cxt}{Running \ifminitrialfull full \else quick \fi trial for #1 #2}%
+  \unvbox#2
+  \penalty\minitrialpenalty
+  \relax
+  \ifminitrialfull
+    \r@storenotes{\@g@tndstat{#1}}{1}%
+    \r@storeinserts{minitrial}
+  \fi
+}
+
+
+\def\me@sureins#1#2{%
+  \x@\toks0\x@{\the\output}%
+  \bgroup
+    \output{\minitrial}%
+    \edef\premtht{10000pt}%
+    \vsize=\premtht
+    %{\nonstopmode\showbox#2}%
+    %\tracingpages=1
+    \hsize=\wd#2
+    \minitrialfullfalse
+    \@me@sureins{#1}{#2}%
+    \ifminitrialfull\else
+      \ifdim\minitrial@result>0pt
+        \minitrialfulltrue
+        \@me@sureins{#1}{#2}%
+      \fi
+    \fi
+  \egroup
+  \xdef\insht{\minitrial@result}%
+  \trace{Cxt}{minitrial@result=\insht(\mintrialins@dims)}%
+}
+
+\def\me@sureinserts#1\E{%
+  \ifdim\ht\csname #1\endcsname>0pt
+    \xdef\mintrialins@dims{\ifx\mintrialins@dims\empty\else\mintrialins@dims,\fi#1:\the\ht\csname #1\endcsname}%
+  \fi
+}
+
+\def\minitrial{%
+  \xdef\minitrial@result{\the\dimexpr \premtht-\the\pagegoal\relax}%
+  \setbox255\vbox{\unvbox255}
+  \global\let\mintrialins@dims\empty%
+  \ifminitrialfull
+    \ifdim\minitrial@result>0pt
+      \let\d@\me@sureinserts
+      \x@\cstackdown \ins@rts\E
+    \fi
+  \fi
+  %\trace{Cxt}{minitrial: \the\ht255, \minitrial@result}%
 }
 \def\@ption#1#2\E{\bgroup
   \trace{Cx}{@option #1 #2}%
@@ -96,7 +165,7 @@
   \n@xt#2\E
 }
 \def\p@rsetry#1|#2|#3|#4\E{%
-  \def\p@rsemx{#1}\def\p@rseunbal{#2}\def\p@rsev{#3}%
+  \def\p@rsemx{#1}\def\p@rseunbal{#2}\def\p@rsev{#3}\def\p@rsins{#4}%
 }
 
 \def\p@rsepathstr#1|#2\E{%remove logging info from a pathstring
@@ -106,6 +175,7 @@
 \def\cplx@apply#1{%
   \x@\p@rsepatstr#1|\E% | is so we can cope if the logging info is ever removed
 }  
+
 \def\unbalVcost{10} % cost per verse-difference
 \def\unbalLcost{100} % cost per unblanced line
 \def\WScost{3} % cost per pt of whitespace
@@ -128,7 +198,7 @@
     \ifx\nxt@ptions\empty
       \advance\tryscore by \dimen1
       \advance\tryscore by \WScost\dimexpr \dimen0\relax
-      \edef\tmp{\path|\minv|\maxv|\the\dimen0|\ubal|\the\tryscore}\trace{Cx}{\tmp}\tmp\par
+      \edef\tmp{\path|\minv|\maxv|\the\dimen0|\ubal|\the\tryscore}\trace{Cx}{\tmp}%\tmp\par
       \ifdim\tryscore<\bestscore
         \xdef\bestscore{\the\tryscore}
         \xdef\bestpath{\tmp}
@@ -174,6 +244,7 @@
   
 
 \tracing{Cx}  
+\tracing{Cxt}  
 %\def\MSG#1{}
 \count255=0
 \edef\start{\the\elapsedtime}
@@ -187,7 +258,7 @@
   %\ifnum\count255<100\repeat
 
 \edef\stop{\the\elapsedtime}
-\MSG{Splitting: \the\numexpr\stop-\start\relax}
+\MSG{Splitting: \the\dimexpr \numexpr\stop-\start\relax pt / 65536\relax}
 
 %\bye \endinput
 \edef\tot{\the\dimexpr 0.9\ht\Lbox}%
@@ -204,10 +275,15 @@ A:\Alist
 \MSG{Target: \tot}
 \MSG{Best score: \bestscore}
 \MSG{Best path: \bestpath} 
-BEST: \bestpath\par
+\let\par\endgraf
+%BEST: \bestpath\par
 %\cplx@apply{\bestpath}
 
 %\showbox\Lbox
 \par
+%\tracing{d}
+%\tracing{o}
+%%\SHOWSTUFF
+%\tracingmacros=1
 \box\Lbox
 \bye

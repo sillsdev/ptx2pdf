@@ -34,6 +34,7 @@
 
 \plugin@startif{polyglot-complexpages}
 \plugins@needed{polyglot-simplepages} % 
+\xdef\s@veclasses{\s@veclasses minitrial,}% Additional save box.
 
 \def\new@followon#1{%
   \count255=`Z
@@ -137,7 +138,7 @@
     \global\advance\p@lyp@geno by 1
   }
     
-\catcode47=\active
+%\catcode47=\active
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e}% Various 'column codes' are not connected to any input. Use ifcsname to check for them
@@ -337,14 +338,14 @@
 }
 
 
-\@@cplx@measure#1\E{%Measure the current row height of the row #1 
+\def\@@cplx@measure#1\E{%Measure the current row height of the row #1 
   \let\col@do\max@boxsz\def\v@lpfx{}\def\v@lsfx{box}\dimen1=0pt
   \x@\let\x@\tmp\csname cts@#1\endcsname
   \x@\each@col\tmp\E
   \csname #1@ht\endcsname=\dimen1
   \advance\dimen0 by \dimen1
 }
-\@cplx@measure{%Measure the current page sizes of the assigned chunks
+\def\@cplx@measure{%Measure the current page sizes of the assigned chunks
   \dimen0=0pt
   \let\d@\@@cplx@measure
   \x@\cstackdown\p@gestrings\E
