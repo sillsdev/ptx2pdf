@@ -222,6 +222,10 @@ def fromFont(self, s, mrk=None, model=None):
 
 def toFont(self, v, mrk=None, model=None, parm=None):
     if v is None:
+        # if mrk == 's':
+            # breakpoint()
+        self.sheet.setdefault(mrk, {})['fontname'] = None
+        self.sheet.setdefault(mrk, {})['font'] = None
         return
     if mrk is None:
         mrk = self.marker

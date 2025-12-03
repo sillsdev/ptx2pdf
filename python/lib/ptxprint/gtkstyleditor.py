@@ -1070,5 +1070,10 @@ class StyleEditorView(StyleEditor):
             if newval is not None:
                 self._setFieldVal(k, stylemap[newk], newval, newval)
         oldval = self.getval(self.marker, k, v[2], baseonly=True)
+        # breakpoint()
         self._setFieldVal(k, v, oldval, oldval)
+        if k == 'font':
+            self.setval(self.marker, k, oldval)
+            if oldval is None:
+                self.setval(self.marker, 'fontname', None)
 

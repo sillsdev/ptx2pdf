@@ -32966,13 +32966,8 @@ Factor:</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
-                                                            <property name="tooltip-text" translatable="yes">Underlining printed text is actively
-discouraged. If you have a strong
-use-case for why this is needed for
-your typesetting job, then get in
-touch for details on how to achieve
-this using a .tex snippet.
-Email: ptxprint_support@sil.org</property>
+                                                            <property name="tooltip-text" translatable="yes">Note that underlining in printed scripture
+text is actively discouraged.</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
