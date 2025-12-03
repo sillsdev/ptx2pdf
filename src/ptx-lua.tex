@@ -1,0 +1,33 @@
+\message{LuaTeX is not yet supported}
+% Not in Luatex
+%  beginL, beginR <-> bodydir/linedir
+%  XeTeXpdffile, XeTeXpicfile - needs alternative code
+%  XeTeXinterchartoks - needs lua code: https://tex.stackexchange.com/questions/21604/is-there-a-luatex-analogue-to-xetexinterchartoks
+%  TeXXeTstate - not needed.
+%  Ucharcat
+%  XeTeX*
+%  strcmp shellescape mdfivesum  - NOT USED
+% Named differently
+%  pdfpageheight, pdfpagewidth, pdfsavepos, pdflastxpos, pdflastypos
+
+\let\pdfpageheight\pageheight
+\let\pdfpagewidth\pagewidth
+\let\pdfsavepos\savepos
+\let\pdflastxpos\lastxpos
+\let\pdflastypos\lastypos
+% Line direction (other directions also available; also see docs on \textdir)
+\def\beginL{\linedir TLT\relax}
+\def\beginR{\linedir TLT\relax}
+\def\endL{}
+\def\endR{}
+% \shapemode gives option to mirror L and R for hangindent  and parshape.
+\newcount\TeXXeTstate
+\newcount\XeTeXuseglyphmetrics
+\newcount\XeTeXinterchartokenstate  
+\newcount\XeTeXdashbreakstate 
+\newcount\XeTeXupwardsmode 
+\newcount\XeTeXinterwordspaceshaping 
+\def\XeTeXdefaultencoding "#1"{}
+\directlua{pdfelapsedtimer_basetime=0}
+\protected\def\elapsedtime{\numexpr\directlua{tex.print(math.floor((os.clock()-pdfelapsedtimer_basetime)*65536+0.5))}\relax}
+\input luaotfload.sty

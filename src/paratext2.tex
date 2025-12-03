@@ -32,10 +32,20 @@
 
 %+c_pt_intro
 % Here we declare generic useful stuff. Including log output routines.
-\TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
 \catcode`\@=11
-\count11=20 \count14=20 % need more temporary dimens and boxes
 \let\x@=\expandafter
+\relax
+\def\LETIF#1#2{\x@\let \csname if#1\x@\endcsname\csname if#2\endcsname}
+
+\ifcsname directlua\endcsname \LETIF{lua}{true}%
+  \else\LETIF{lua}{false}\fi
+
+\iflua
+\input ptx-lua.tex
+\fi
+
+\TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
+\count11=20 \count14=20 % need more temporary dimens and boxes
 \newif\iftemp \tempfalse
 \def\stripqu@tes#1"#2"#3\relax{#2}% Strip quotes if present
 \edef\t@mp{\jobname}%
@@ -64,8 +74,9 @@
     %\InterWordSpaceShapingBugfalse
   \fi
 }
+\iflua\else
 \x@\x@\x@\XeTeXvcheck\x@\the\x@\XeTeXversion\XeTeXrevision\E
-
+\fi
 
 % This lot has to be early
 \newif\ifinn@te\inn@tefalse
@@ -162,7 +173,9 @@
 \input ptx-figure.tex % figure-handling
 % Additional modules that are not part of the normal ptx2pdf module
 \input ptxplus-character-kerning.tex
-\input ptx-unicode.tex
+\iflua\else
+  \input ptx-unicode.tex
+\fi
 % We want to import this module here, but it has to come after the stylesheet is loaded.
 %\input ptxplus-marginalverses.tex
 \input ptx-extended.tex % \esb and friends.
