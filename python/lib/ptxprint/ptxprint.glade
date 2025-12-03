@@ -2372,7 +2372,10 @@ edit the front matter to make use of PTXprint-specific
 \zvar|variables\* but note that none of these edits will
 be reflected in Paratext. In addition, if you edit the FRT
 book in Paratext, those changes will not be reflected
-here until you regenerate this (local) Front Matter.</property>
+here until you regenerate this (local) Front Matter.
+
+If option is disabled, it is due to not having a FRT book
+in the Paratext project (so there is nothing to import).</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="draw-indicator">True</property>
@@ -27456,7 +27459,6 @@ will need to fill in all the details in the area below.</property>
                                             <property name="label" translatable="yes">Refresh List</property>
                                             <property name="name">Refresh (reload) picture captions from Paratext</property>
                                             <property name="visible">True</property>
-                                            <property name="sensitive">False</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
                                             <property name="tooltip-text" translatable="yes">Refresh Captions:
@@ -32962,10 +32964,8 @@ Factor:</property>
                                                             <property name="label" translatable="yes">Underline</property>
                                                             <property name="name">Styles: Underline</property>
                                                             <property name="visible">True</property>
-                                                            <property name="sensitive">False</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
-                                                            <property name="no-show-all">True</property>
                                                             <property name="tooltip-text" translatable="yes">Underlining printed text is actively
 discouraged. If you have a strong
 use-case for why this is needed for
