@@ -1,10 +1,15 @@
+\newif\iflua\luafalse
 \input paratext2.tex
 \XeTeXuseglyphmetrics=0
 \FontSizeUnit=1pt
 \font\T "Gentium Plus" at 10pt
+\def\regular{"Gentium Plus"}
+\def\bold{"Gentium Plus/B"}
+\def\italic{"Gentium Plus/I"}
 \PaperHeight=296mm
 \PaperWidth=210mm
 \baselineskip=12pt
+\showboxbreadth=100
 \newPolyglotCol{L}
 \newPolyglotCol{R}
 \newPolyglotCol{A}
@@ -15,35 +20,45 @@
 \let\par\endgraf
 \T
 \setbox\Lbox\vbox{\hsize=100pt
-\mark{1}Sapiente eum quasi qui eligendi quasi atque delectus in. \mark{2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
+\mark{1}Sapiente eum quasi qui\insert\topleftins{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\vbox{another line}} \mark{2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
 \vbox to 3\baselineskip{\hbox{Hi}\vfill}\penalty10000
-\mark{6}Dolores nostrum nihil vel placeat. \mark{7}Expedita voluptatem iusto dolorem. \mark{8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{9}Eveniet quia sed voluptatem. \mark{10}Voluptatum eaque pariatur id eveniet ratione. \mark{11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{12}Delectus molestiae eveniet odit magnam magni. \mark{13}Itaque sed corporis aut autem dignissimos maxime.}
+\insert\topleftins{\vbox{another line}}\mark{6}Dolores nostrum nihil vel placeat. \mark{7}Expedita voluptatem iusto dolorem. \mark{8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{9}Eveniet quia sed voluptatem. \mark{10}Voluptatum eaque pariatur id eveniet ratione. \mark{11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{12}Delectus molestiae eveniet odit magnam magni. \mark{13}Itaque sed corporis aut autem dignissimos maxime.}
 \setbox\Rbox\vbox{\hsize=100pt 
 . \mark{1}Repellat nihil autem quod doloremque adipisci illum officia laudantium. \mark{2}Voluptate dignissimos itaque odit. \mark{3}Et omnis veritatis magnam rem doloremque. \mark{4}Pariatur laudantium iusto illo. \mark{5}A eos corporis ab quae iure non.Porro et necessitatibus quam. \mark{6}Culpa dolor est porro error voluptatem enim non. \mark{7}Nulla tempore quia praesentium facere dolores omnis. \mark{8}Quam ut asperiores magni in expedita aut qui. \mark{9}Quos sit voluptas accusantium non doloremque fugiat placeat voluptas.Perspiciatis quis odio facere ad velit exercitationem deserunt. \mark{10}Temporibus fuga non omnis harum ut voluptates explicabo. \mark{11}Nulla rerum quia consequatur. \mark{12}Ut dolor aspernatur porro dicta quod. \mark{13}Quo eos qui mollitia. \mark{14}Aut ratione voluptate debitis et vero est.}
 \setbox\Abox\vbox{\hsize=200pt 
 . \mark{1}Illum cupiditate velit repellendus aliquid impedit. \mark{2}Beatae et ut quod a doloribus. \mark{3}Sunt ut et eos aut sunt tempore. \mark{4}Sit quaerat quae tempore molestiae delectus ratione non. \mark{5}Est cum atque numquam minus non nesciunt et.Nisi modi eaque inventore architecto eveniet repudiandae. \mark{6}Amet ut quo impedit molestiae. \mark{7}Voluptatem dolorem reiciendis ut voluptas explicabo qui quo. \mark{8}Corrupti et dolore in et tenetur et cupiditate autem. \mark{9}Similique et et delectus.Ut quam mollitia voluptatem ipsa id. \mark{10}Velit quas maiores temporibus dolore. \mark{11}Sequi autem facere omnis et dicta totam est hic. \mark{12}Id sed unde similique mollitia sed aliquid.}
-\ptxfile{}
+\endgraf
+
+%\tracingmacros=1
+%\tracingassigns=1
+\ptxfile{}\everypar{}\let\par\endgraf
 \makeatletter
 \MSG{\l@gdims\Lbox}
 \MSG{\l@gdims\Rbox}
 %\MSG{\l@gdims\Abox}
-
 \newcount\cols
 \newdimen\max
-
+\iflua
+\directlua{
+  require("measurebox.lua")
+}
+\fi
 \MSG{bls:\the\baselineskip}
 \def\try#1{\count255=1 \max=0pt
+  \cols=\csname cols#1\endcsname
   \setbox0\copy\csname#1box\endcsname
-  %\let\dims\empty
+  \let\dims\empty
   \loop
     \setbox\count255=\vsplit0 to \dimen1\setbox \count255\vbox{\unvbox\count255}%
     \ifdim\max<\ht\count255 \max=\ht\count255 \fi
-    %\edef\dims{\ifx\dims\empty\else\dims,\fi \the\count255:\the\ht\count255}
+    \edef\dims{\ifx\dims\empty\else\dims,\fi \the\count255:\the\ht\count255}
     \x@\edef\csname #1bot\endcsname{\splitbotmark}%
+    \iflua\directlua{measure_ins(\the\count255)}\fi
   \ifnum \count255<\cols
     \advance\count255 by 1
     \repeat
   \count255=1 
+  % Sum (maxht - column ht) for all columns. - measure of unevenness
   \dimen0=0pt
   \loop
     \advance\dimen0\dimexpr\max-\ht\count255\relax
@@ -53,7 +68,7 @@
   \x@\let\x@\tmp\csname #1list\endcsname  
   \edef\tryid{#1/\the\dimen1}
   \x@\xdef\csname #1list\endcsname{\ifx\tmp\relax\else\tmp\fi\tryid,}
-  \edef\tmp{\the\max|\the\numexpr \dimexpr \dimen0\relax /\baselineskip\relax|\csname #1bot\endcsname}\trace{Cx}{\tryid|\tmp}\par
+  \edef\tmp{\the\max|\the\numexpr \dimexpr \dimen0\relax /\baselineskip\relax|\csname #1bot\endcsname|}\trace{Cx}{\tryid|\tmp}\par
   \x@\let\csname \tryid\endcsname\tmp
 }
 \def\@ption#1#2\E{\bgroup
@@ -67,6 +82,7 @@
   %\x@\@nxt\nxt@ptions\E
   \egroup
 }
+\def\n@more{\let\s@tmp\empty}
 \def\suboptions#1,#2\E{%
   \edef\s@tmp{#2}%
   \bgroup
@@ -79,13 +95,20 @@
   \else\let\n@xt\suboptions\fi
   \n@xt#2\E
 }
-\def\p@rsetry#1|#2|#3\E{%
+\def\p@rsetry#1|#2|#3|#4\E{%
   \def\p@rsemx{#1}\def\p@rseunbal{#2}\def\p@rsev{#3}%
 }
 
-\def\unbalVcost{10} % cost per verse
+\def\p@rsepathstr#1|#2\E{%remove logging info from a pathstring
+  \def\p@th{#1}%
+}
+
+\def\cplx@apply#1{%
+  \x@\p@rsepatstr#1|\E% | is so we can cope if the logging info is ever removed
+}  
+\def\unbalVcost{10} % cost per verse-difference
 \def\unbalLcost{100} % cost per unblanced line
-\def\WScost{2} % cost per pt of whitespace
+\def\WScost{3} % cost per pt of whitespace
 \def\maxv{0}
 \def\minv{999}
 \def\sc@re#1{%
@@ -98,24 +121,29 @@
   \trace{Cx}{\p@rsev: min,max = \minv,\maxv}%
   \advance\dimen0 by -\p@rsemx\relax
   \ifdim\dimen0<0pt
-    \trace{Cx}{STOP}
+    \trace{Cx}{STOP: \the\dimen0} % Don't go deeper, there's no space
+    \aftergroup\n@more
   \else
+    \dimen1=\unbalVcost\dimexpr \maxv pt - \minv pt\relax
     \ifx\nxt@ptions\empty
-      \dimen1=\unbalVcost\dimexpr \maxv pt - \minv pt\relax
       \advance\tryscore by \dimen1
       \advance\tryscore by \WScost\dimexpr \dimen0\relax
       \edef\tmp{\path|\minv|\maxv|\the\dimen0|\ubal|\the\tryscore}\trace{Cx}{\tmp}\tmp\par
       \ifdim\tryscore<\bestscore
         \xdef\bestscore{\the\tryscore}
         \xdef\bestpath{\tmp}
+        \trace{Cx}{new bestscore:\bestscore}%
       \fi
     \else
-      \trace{Cx}{next chunk:\nxt@ptions}%
-      \x@\@ption\nxt@ptions\E
+      \trace{Cx}{current:\the\tryscore+\the\dimen1 \space next chunk:\nxt@ptions}%
+      \ifdim\dimexpr \tryscore+\dimen1\relax > \bestscore
+        \trace{Cx}{STOP:Already worse}%
+      \else
+        \x@\@ption\nxt@ptions\E
+      \fi
     \fi 
   \fi
 }
-
 \newdimen\tryscore
 \def\options#1{%
   \dimen0=\tot
@@ -125,7 +153,6 @@
   \x@\@ption#1\E
 }
 %\l@gdims0 \l@gdims\Lbox
-
 \newcount\trynum
 \def\presplit#1{%
   \trynum=#1
@@ -150,8 +177,9 @@
 %\def\MSG#1{}
 \count255=0
 \edef\start{\the\elapsedtime}
-\cols=2 \dimen1=\ht\Lbox \divide\dimen1 by \cols
-\def\splittask{\try{L}\try{R}}
+\def\colsL{2}\def\colsR{2}\def\colsA{1}
+\dimen1=\ht\Lbox \divide\dimen1 by \colsL
+\def\splittask{\try{L}\try{R}\try{A}}
 %\loop\bgroup
   \let\Llist\relax\let\Rlist\relax
   \presplit{10}
@@ -165,15 +193,19 @@
 \edef\tot{\the\dimexpr 0.9\ht\Lbox}%
 
 L:\Llist\par
-R:\Rlist
-%A:\Alist
+R:\Rlist\par
+A:\Alist
 
 %\tracingassigns=1
 \edef\start{\the\elapsedtime}
-\options{LR}%
+\options{LRA}%
 \edef\stop{\the\elapsedtime}
-\message{Scoring: \the\numexpr\stop-\start\relax}
+\message{Scoring: \the\dimexpr(\numexpr \stop -\start \relax pt)/65536\relax}
+\MSG{Target: \tot}
+\MSG{Best score: \bestscore}
+\MSG{Best path: \bestpath} 
 BEST: \bestpath\par
+%\cplx@apply{\bestpath}
 
 %\showbox\Lbox
 \par

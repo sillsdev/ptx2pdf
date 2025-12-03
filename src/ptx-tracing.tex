@@ -129,4 +129,5 @@
 \def\ztmoff{\tracingassigns=0 \tracingmacros=0}
 \def\ztvalon{\tracinggroups=1 \tracingassigns=1 \tracingrestores=1}
 \def\ztvaloff{\tracinggroups=0 \tracingassigns=0 \tracingrestores=0}
+\def\DBGhvm@de#1{\message{\ifhmode h\fi\ifvmode v\fi mode #1}} % Useful tool to bisect code to answer: what on earth is triggering that vmode->hmode  transition?
 %-tracing-support
