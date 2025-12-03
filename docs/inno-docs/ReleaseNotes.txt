@@ -1,10 +1,26 @@
-PTXprint 3.0.5 Release Notes
-28 Nov 2025
+PTXprint 3.0.6 Release Notes
+3 Dec 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
+
+Bug fixes and Improvements in 3.0.6 (3 Dec 2025)
+  * Re-instate refresh picture captions functionality
+  * Handle right indents correctly in tables and tocs
+  * Handle multiple references in module refs
+  * Make sure Diglot merge mode is remembered
+  * Enforce cover and FRT synchronization
+  * Make sure prepress file can be renamed (procpdf). fix typo in runjob
+  * Refactor where the intermediate generated pdf goes
+  * Add underline control to Styles
+  * Update tech ref to 3.0.4
+  * Start adding timing checks
+  * Cherry pick extended changes from dev
+  * Fix Font Reset in Styles
+  * Fix faulty calculation scaling maximum
+  * Fix Paratext shortcodes typo
 
 Bug fixes and Improvements in 3.0.5 (28 Nov 2025)
   * When missing a font, inform user about which styles use that font (making it easier to fix)
