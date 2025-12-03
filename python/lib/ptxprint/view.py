@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "3.0.5"
 GitVersionStr = "3.0.5"
-ConfigVersion = "2.24"
+ConfigVersion = "2.25"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1235,9 +1235,9 @@ class ViewModel:
                     val = config.get("document", f"diglot{a}", fallback=None)
                     if val is not None:
                         self._configset(config, f"diglot_R/{k}", val)
-                for k,v in {"page": "1", "weight": "50"}.items():
-                    self._configset(config, f"diglot_L/{k}", v)
-                    self._configset(config, f"diglot_R/{k}", v)
+                for k, a in {"page": "1", "weight": "50"}.items():
+                    self._configset(config, f"diglot_L/{k}", a)
+                    self._configset(config, f"diglot_R/{k}", a)
                 val = config.get("document", "diglotprifraction", fallback=50)
                 self._configset(config, f"poly/fraction", val)
                 self._configset(config, f"diglot_L/fraction", val)
@@ -1256,6 +1256,11 @@ class ViewModel:
                 self._configset(config, f"diglot_L/fontsize", fsz)
                 lsp = config.get("paragraph", "linespacing", fallback=15)
                 self._configset(config, f"diglot_L/baseline", lsp)
+
+        if v < 2.25:
+            if not config.getboolean("cover", "makecoverpage") or not config.getboolean("project", "iffrontmatter"):
+                self._configset(config, 'cover/makecoverpage', False)
+                self._configset(config, 'project/iffrontmatter', False)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
