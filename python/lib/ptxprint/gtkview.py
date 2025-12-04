@@ -1828,6 +1828,8 @@ class GtkViewModel(ViewModel):
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
     def set(self, wid, value, skipmissing=False, useMarkup=False, sub=-1, mod=True):
+        # if wid == 'fcb_diglotMerge':
+            # print(f"{wid=} {value=}, {getcaller()}")
         if "[" in wid:
             subi = wid.index("[")
             sub = int(wid[subi+1:-1])
@@ -2643,14 +2645,14 @@ class GtkViewModel(ViewModel):
             pref = ""
         newpics = Piclist(self)
         newpics.threadUsfms(self, nosave=True)
-        self.picinfos.merge(newpics, pref, mergeCaptions=True, bkanchors=True)
+        self.picinfos.merge(newpics, pref, mergeCaptions=self.mergeCaptions, bkanchors=True)
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
                 if v is None:
                     continue
                 digpics = Piclist(v)
                 digpics.threadUsfms(v, nosave=True)     # is this safe?
-                self.picinfos.merge(digpics, k, mergeCaptions=True, bkanchors=True)
+                self.picinfos.merge(digpics, k, mergeCaptions=self.mergeCaptions, bkanchors=True)
         self.updatePicList()
         self.picListView.unpause()
         self.doStatus(_("Done! Picture Captions have been updated."))
@@ -7332,6 +7334,7 @@ Thank you,
     def update_diglot_polyglot_UI(self):
         dglt = True if len(self.gtkpolyglot.ls_treeview) < 3 else False
         self.builder.get_object("btn_adjust_diglot").set_sensitive(dglt)
+        orig = self.get("fcb_diglotMerge", "scores")
         merge_types = {
             _("Document based"):   "doc",
             _("Chapter Verse"):    "simple",
@@ -7341,7 +7344,6 @@ Thank you,
             }
         mrgtyplist = self.builder.get_object("ls_diglotMerge")
         mrgtyplist.clear()
-        orig = self.get("fcb_diglotMerge", "scores")
         for desc, code in merge_types.items():
             if dglt or code.startswith("scores"):
                 mrgtyplist.append([desc, code])

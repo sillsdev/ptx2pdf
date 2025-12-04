@@ -1490,9 +1490,10 @@
         \csname bookstart-\id@@@\endcsname
         \runtrigg@rsother{bookstart}%
         }%
- \def\ide{\bgroup\obeylines
-   \let\aftergr@b\@boringheader\gr@btomacro}%
- \def\@boringheader##1{\egroup}
+ % Not sure what this was about, so I'm commenting it out for now.
+ %\def\ide{\bgroup\obeylines
+ %  \let\aftergr@b\@boringheader\gr@btomacro}%
+ %\def\@boringheader##1{\egroup}
  %
  \def\b{\global\dr@ppednumberfalse\endlastp@rstyle{b}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{b}{b+\styst@k}\@@b}
