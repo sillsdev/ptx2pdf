@@ -33,6 +33,7 @@
 %+c_onecol
 \global\output={\onecol}
 \global\holdinginserts=1
+\xdef\s@veclasses{\s@veclasses i@m@t,}% Additional save box.
 \def\underf@ll#1#2#3{%
   \ifdim#1<\dimexpr #2 - \baselineskip\relax\ifinendbook\else
     \immediate\write-1{Underfill[#3]: [\the\pageno] \the #1 \the #2}%
@@ -2685,3 +2686,70 @@
   \fi\traceifcheck{threecolumns}}
 %-c_threecolumns
 
+%+c_measureins
+% An output routine purely to measure what the insert situation is. Written for polyglot-complexpages, but applicable for other situations too.
+\newif\ifins@meas@trialfull
+\newif\ifins@meas@trialnofull
+\newsp@cialpen{ins@meas@trialpenalty}
+
+\def\me@sureins@trial#1#2{%DONT run this whith anything on the page!
+  % May be run in 2 modes: ins@meas@trialfulltrue will always do a full check, ins@meas@trialfullfalse will run the check without the full analysis, and re-run it if there's any inserts.
+  \bgroup
+    \output{\ins@meas@trial}% Not global, just here.
+    \edef\premtht{10000pt}% 3.5 metres should be enough, since this is aiming for a single page...
+    \vsize=\premtht
+    %{\nonstopmode\showbox#2}%
+    %\tracingpages=1
+    \hsize=\wd#2
+    \@me@sureins@trial{#1}{#2}%
+    \relax
+    \ifins@meas@trialfull\else
+      \ifdim\ins@meas@trial@result>0pt
+        \ins@meas@trialfulltrue
+        \@me@sureins@trial{#1}{#2}%
+        \relax
+      \fi
+    \fi
+  \egroup
+  \trace{Cxt}{ins@meas@trial@result=\ins@meas@trial@result(\ins@meas@trial@dims)}%
+  \global\deadcycles=0 % Cycles were deliberately dead.
+}
+\def\me@sureinserts#1\E{%
+  \ifdim\ht\csname #1\endcsname>0pt
+    \xdef\ins@meas@trial@dims{\ifx\ins@meas@trial@dims\empty\else\ins@meas@trial@dims,\fi#1:\the\ht\csname #1\endcsname}%
+  \fi
+}
+
+\def\ins@meas@trial{%
+  \xdef\ins@meas@trial@result{\the\dimexpr \premtht-\the\pagegoal\relax}%
+  \setbox255\vbox{\unvbox255}
+  \global\let\ins@meas@trial@dims\empty%
+  \ifins@meas@trialfull
+    \ifdim\ins@meas@trial@result>0pt
+      \let\d@\me@sureinserts
+      \x@\cstackdown \ins@rts\E
+    \fi
+  \fi
+  \setbox255\box\voidb@x
+  %\trace{Cxt}{ins@meas@trial: \the\ht255, \ins@meas@trial@result}%
+}
+
+\def\@me@sureins@trial#1#2{
+  \ifins@meas@trialfull
+    \holdinginserts= 0
+    \s@veinserts{i@m@t}%
+    \x@\s@venotes\x@{\@g@tndstat{#1}}{1}%
+  \else 
+    \holdinginserts= 1 
+  \fi
+  \trace{Cxt}{Running \ifins@meas@trialfull full \else quick \fi trial for #1 #2}%
+  \unvcopy#2
+  \penalty\ins@meas@trialpenalty
+  \relax
+  \ifins@meas@trialfull
+    \r@storenotes{\@g@tndstat{#1}}{1}%
+    \r@storeinserts{i@m@t}
+  \fi
+}
+
+%-c_measureins

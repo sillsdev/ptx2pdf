@@ -1,5 +1,5 @@
 \newif\iflua\luafalse
-\def\pluginlist{polyglot-complexpages}
+%\def\pluginlist{polyglot-complexpages}
 \input paratext2.tex
 \XeTeXuseglyphmetrics=0
 \FontSizeUnit=1pt
@@ -32,7 +32,7 @@
 \setbox\Abox\vbox{\hsize=200pt 
 . \mark{1}Illum cupiditate velit repellendus aliquid impedit. \mark{2}Beatae et ut quod a doloribus. \mark{3}Sunt ut et eos aut sunt tempore. \mark{4}Sit quaerat quae tempore molestiae delectus ratione non. \mark{5}Est cum atque numquam minus non nesciunt et.Nisi modi eaque inventore architecto eveniet repudiandae. \mark{6}Amet ut quo impedit molestiae. \mark{7}Voluptatem dolorem reiciendis ut voluptas explicabo qui quo. \mark{8}Corrupti et dolore in et tenetur et cupiditate autem. \mark{9}Similique et et delectus.Ut quam mollitia voluptatem ipsa id. \mark{10}Velit quas maiores temporibus dolore. \mark{11}Sequi autem facere omnis et dicta totam est hic. \mark{12}Id sed unde similique mollitia sed aliquid.}
 \endgraf
-\def\minitrialpenalty{-10010}
+\def\ins@meas@trialpenalty{-10010}
 %\tracingmacros=1
 %\tracingassigns=1
 \ptxfile{}\everypar{}\let\par\endgraf
@@ -52,16 +52,22 @@
   \setbox0\copy\csname#1box\endcsname
   \let\dims\empty
   \let\ins@rtl@st\empty
-  \def\insht{0pt}%
+  \def\ins@meas@trial@result{0pt}%
+  \def\ins@meas@trial@dims{}%
+  \let\ins@rtsplitlist\empty
   \loop
     \setbox\count255=\vsplit0 to \dimen1\setbox \count255\vbox{\unvbox\count255}%
     \ifdim\max<\ht\count255 \max=\ht\count255 \fi
-    \edef\dims{\ifx\dims\empty\else\dims,\fi \the\count255:\the\ht\count255}
+    \edef\dims{\ifx\dims\empty\else\dims,\fi \the\ht\count255}%
     \x@\edef\csname #1bot\endcsname{\splitbotmark}%
-    %\iflua\directlua{measure_ins(\the\count255)}\else
-      \me@sureins{#1}{\the\count255}%
-    %\fi
-    \edef\ins@rtl@st{\ifx\ins@rtl@st\empty\else\ins@rtl@st+\fi\insht}%
+    \iflua\directlua{measure_ins(\the\count255)}
+      \trace{Cxt}{ins@meas@trial@result=\ins@meas@trial@result(\ins@meas@trial@dims)}%
+    \else
+      \ins@meas@trialfullfalse
+      \me@sureins@trial{#1}{\the\count255}%
+    \fi
+    \edef\ins@rtl@st{\ifx\ins@rtl@st\empty\else\ins@rtl@st+\fi\ins@meas@trial@result}%
+    \edef\ins@rtsplitlist{\ifx\ins@rtsplitlist\empty\else\ins@rtsplitlist+\fi\ins@meas@trial@dims}%
   \ifnum \count255<\cols
     \advance\count255 by 1
     \repeat
@@ -76,97 +82,14 @@
   \x@\let\x@\tmp\csname #1list\endcsname  
   \edef\tryid{#1/\the\dimen1}
   \x@\xdef\csname #1list\endcsname{\ifx\tmp\relax\else\tmp\fi\tryid,}
-  \edef\tmp{\the\max|\the\numexpr \dimexpr \dimen0\relax /\baselineskip\relax|\csname #1bot\endcsname|\ins@rtl@st}\trace{Cx}{\tryid|\tmp}\par
+  \edef\tmp{\the\max|\number\dimexpr 10\dimen0 /\baselineskip\relax|\csname #1bot\endcsname|\dims|\ins@rtl@st|\ins@rtsplitlist}\trace{Cx}{\tryid: \tmp}\par
   \x@\let\csname \tryid\endcsname\tmp
 }
-\newif\ifminitrialfull
-
-\def\@me@sureins#1#2{
-  \ifminitrialfull
-    \holdinginserts= 0
-    \s@veinserts{minitrial}%
-    \x@\s@venotes\x@{\@g@tndstat{#1}}{1}%
-  \else 
-    \holdinginserts= 1 
-  \fi
-  \trace{Cxt}{Running \ifminitrialfull full \else quick \fi trial for #1 #2}%
-  \unvbox#2
-  \penalty\minitrialpenalty
-  \relax
-  \ifminitrialfull
-    \r@storenotes{\@g@tndstat{#1}}{1}%
-    \r@storeinserts{minitrial}
-  \fi
-}
 
 
-\def\me@sureins#1#2{%
-  \x@\toks0\x@{\the\output}%
-  \bgroup
-    \output{\minitrial}%
-    \edef\premtht{10000pt}%
-    \vsize=\premtht
-    %{\nonstopmode\showbox#2}%
-    %\tracingpages=1
-    \hsize=\wd#2
-    \minitrialfullfalse
-    \@me@sureins{#1}{#2}%
-    \ifminitrialfull\else
-      \ifdim\minitrial@result>0pt
-        \minitrialfulltrue
-        \@me@sureins{#1}{#2}%
-      \fi
-    \fi
-  \egroup
-  \xdef\insht{\minitrial@result}%
-  \trace{Cxt}{minitrial@result=\insht(\mintrialins@dims)}%
-}
 
-\def\me@sureinserts#1\E{%
-  \ifdim\ht\csname #1\endcsname>0pt
-    \xdef\mintrialins@dims{\ifx\mintrialins@dims\empty\else\mintrialins@dims,\fi#1:\the\ht\csname #1\endcsname}%
-  \fi
-}
 
-\def\minitrial{%
-  \xdef\minitrial@result{\the\dimexpr \premtht-\the\pagegoal\relax}%
-  \setbox255\vbox{\unvbox255}
-  \global\let\mintrialins@dims\empty%
-  \ifminitrialfull
-    \ifdim\minitrial@result>0pt
-      \let\d@\me@sureinserts
-      \x@\cstackdown \ins@rts\E
-    \fi
-  \fi
-  %\trace{Cxt}{minitrial: \the\ht255, \minitrial@result}%
-}
-\def\@ption#1#2\E{\bgroup
-  \trace{Cx}{@option #1 #2}%
-  \edef\nxt@ptions{#2}
-  \x@\let\x@\l@st\csname #1list\endcsname
-  \x@\suboptions\l@st\E
-  %\ifx\nxt@ptions\empty
-    %\global\let\@nxt\cstackrelax
-  %\else\global\let\@nxt\@ption\fi
-  %\x@\@nxt\nxt@ptions\E
-  \egroup
-}
-\def\n@more{\let\s@tmp\empty}
-\def\suboptions#1,#2\E{%
-  \edef\s@tmp{#2}%
-  \bgroup
-    \edef\path{\path\psep#1}%
-    \def\psep{,}
-    \trace{Cx}{scoring suboption #1 : \path (#2)}%
-    \sc@re{#1}
-  \egroup%
-  \ifx\s@tmp\empty\let\n@xt\cstackrelax
-  \else\let\n@xt\suboptions\fi
-  \n@xt#2\E
-}
-\def\p@rsetry#1|#2|#3|#4\E{%
-  \def\p@rsemx{#1}\def\p@rseunbal{#2}\def\p@rsev{#3}\def\p@rsins{#4}%
-}
+
 
 \def\p@rsepathstr#1|#2\E{%remove logging info from a pathstring
   \def\p@th{#1}%
@@ -176,8 +99,8 @@
   \x@\p@rsepatstr#1|\E% | is so we can cope if the logging info is ever removed
 }  
 
-\def\unbalVcost{10} % cost per verse-difference
-\def\unbalLcost{100} % cost per unblanced line
+\def\unbalVcost{10} % cost per verse^2-difference (an unbalanced line is 10 * worse than a verse or 2's imbalance, but 1 unbalanced line is not worth 10 verses delta)
+\def\unbalLcost{10} % cost per 1/10 of an unblanced line -> 1 line unbalanced is worth 10 verses??
 \def\WScost{3} % cost per pt of whitespace
 \def\maxv{0}
 \def\minv{999}
@@ -194,7 +117,7 @@
     \trace{Cx}{STOP: \the\dimen0} % Don't go deeper, there's no space
     \aftergroup\n@more
   \else
-    \dimen1=\unbalVcost\dimexpr \maxv pt - \minv pt\relax
+    \dimen1=\unbalVcost\dimexpr \numexpr (\maxv-\minv)*(\maxv-\minv)\relax pt\relax
     \ifx\nxt@ptions\empty
       \advance\tryscore by \dimen1
       \advance\tryscore by \WScost\dimexpr \dimen0\relax
@@ -242,6 +165,39 @@
   \@nxt
 }
   
+\def\@ption#1#2\E{\bgroup
+  \trace{Cx}{@option #1 #2}%
+  \edef\nxt@ptions{#2}
+  \x@\let\x@\l@st\csname #1list\endcsname
+  \x@\suboptions\l@st\E
+  %\ifx\nxt@ptions\empty
+    %\global\let\@nxt\cstackrelax
+  %\else\global\let\@nxt\@ption\fi
+  %\x@\@nxt\nxt@ptions\E
+  \egroup
+}
+\def\n@more{\let\s@tmp\empty}
+\def\suboptions#1,#2\E{%
+  \edef\s@tmp{#2}%
+  \bgroup
+    \edef\path{\path\psep#1}%
+    \def\psep{,}
+    \trace{Cx}{scoring suboption #1 : \path (#2)}%
+    \sc@re{#1}
+  \egroup%
+  \ifx\s@tmp\empty\let\n@xt\cstackrelax
+  \else\let\n@xt\suboptions\fi
+  \n@xt#2\E
+}
+
+\def\p@rsetry#1|#2|#3|#4|#5|#6\E{%
+  \def\p@rsemx{#1}% The maximum height of a column (and thus of this column block)
+  \def\p@rseunbal{#2}% Unbalanced columns, in deci-baselineskips
+  \def\p@rsev{#3}% Verse difference     
+  \def\p@rsecoldims{#4}% Actual column differences
+  \def\p@rsins{#5}% column insert measurements
+  \def\p@rsinssplit{#6}% detailed insert numbers
+}
 
 \tracing{Cx}  
 \tracing{Cxt}  
@@ -284,6 +240,6 @@ A:\Alist
 %\tracing{d}
 %\tracing{o}
 %%\SHOWSTUFF
-%\tracingmacros=1
+%\tracingall
 \box\Lbox
 \bye
