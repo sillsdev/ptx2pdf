@@ -1258,9 +1258,8 @@ class ViewModel:
                 self._configset(config, f"diglot_L/baseline", lsp)
 
         if v < 2.25:
-            if not config.getboolean("cover", "makecoverpage", fallback=False) or not config.getboolean("project", "iffrontmatter", fallback=False):
+            if not config.getboolean("project", "iffrontmatter", fallback=False):
                 self._configset(config, 'cover/makecoverpage', False)
-                self._configset(config, 'project/iffrontmatter', False)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
