@@ -2438,6 +2438,7 @@
   \ifunprintable 
     \abortpage
   \else
+    \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
     \def\pagecontents{%
      \setdiglotN@rmal
      \pickn@xtpartial
@@ -2554,6 +2555,7 @@
        % RTLness will have been asserted (or not) when the note was defined.
        \ifactually@write\else \vfill\fi
        \iftrue
+        \tmpwrite{notes}%
         \box\notechunk
        \else
          \ifvoid\notechunk\else\box\notechunk\fi
@@ -2561,7 +2563,9 @@
      \fi%
      \ifvoid\verybottomins\else % \kern-\dimen0
        \trace{i}{Using verybottomins \the\ht\verybottomins x\the\wd\verybottomins}%
+       \tmpwrite{verybottomins}%
        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \tmpwrite{pageend}%
       \makefootbox
      }%pagecontents
    \holdinginserts=1

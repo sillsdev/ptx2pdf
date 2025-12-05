@@ -23,6 +23,7 @@ stylemap = {
     'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    False, None, None),
     'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', False, None, None),
     'Raise':        ('s_styRaise',          'l_styRaise',       0, None, None, None),
+    'Underline':    ('c_styFaceUnderline',  None,               False, None, None),    
     'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),
     'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
     'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  0, None, None),
@@ -1069,5 +1070,10 @@ class StyleEditorView(StyleEditor):
             if newval is not None:
                 self._setFieldVal(k, stylemap[newk], newval, newval)
         oldval = self.getval(self.marker, k, v[2], baseonly=True)
+        # breakpoint()
         self._setFieldVal(k, v, oldval, oldval)
+        if k == 'font':
+            self.setval(self.marker, k, oldval)
+            if oldval is None:
+                self.setval(self.marker, 'fontname', None)
 

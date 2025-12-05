@@ -8,7 +8,7 @@ from ptxprint.pdf.pdfimage import PDFImage
 from PIL.ImageCms import applyTransform, buildTransform
 from PIL import Image
 from ptxprint.utils import pycodedir
-from colorsys import rgb_to_hsv, hsv_to_rgb
+from colorsys import rgb_to_hsv, hsv_to_rgb, rgb_to_yiq
 from math import isclose
 import logging
 
@@ -255,8 +255,9 @@ class PageDuoToneStateWrite(PdfStreamParser):
             newops = ["/CS1", tocase("CS"), "{:.2f}".format(black), "{:.2f}".format(spot), tocase("SCN")]
             self.usesColour = True
         else:
+            yiq = rgb_to_yiq(*rgb)
             spot = 0
-            black = hsv[2]
+            black = yiq[0]
             newops = ["{:.2f}".format(black), tocase("G")]
         return newops
 

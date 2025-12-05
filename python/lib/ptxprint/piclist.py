@@ -775,6 +775,7 @@ class Piclist:
                             s['caption'+suffix] = v['caption']
                         if v.get('ref', '') != '':
                             s['ref'+suffix] = v['ref']
+                        merged.add(s.key)
                         addme = False
                     break
             if addme:
