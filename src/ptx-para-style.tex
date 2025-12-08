@@ -1381,9 +1381,8 @@
   \trace{C}{... -\the\dimen1}% 
   \advance\tmp@lines by -\dimen1
   \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
-  \tmp@lines=\prev@y
-  \advance\tmp@lines by -\thing@y
-  \divide\tmp@lines by \baselineskip
+  \tmp@lines=\numexpr (\prev@y - \thing@y) / \number\baselineskip\relax % numexpr division rounds properly, rather than truncation
+  \trace{C}{(\the\prev@y - \the\thing@y) / \the\baselineskip = \the\tmp@lines}%
   \advance\tmp@lines by #6
   \advance\tmp@lines by \p@rlinesgone
   \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
