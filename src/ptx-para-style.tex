@@ -1185,6 +1185,7 @@
   \prev@y=#6\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
+  \edef\@@parlocsref{#1}%
   \trace{C}{@parstart #3 \tot@col@ht - \the\dimen1 = \prev@col@ht}%
   \csname inp@r-\c@rrdstat true\endcsname
   \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty
@@ -1286,7 +1287,7 @@
   \trace{C}{parlines: \the\thispar@lines =\the\p@rlinesgone?}%
   \ifnum \thispar@lines=\p@rlinesgone\else
     \ifp@rlengthimportant\let\tmp\MSG\else\let\tmp\message\fi
-    \tmp{*** Mismatch between calculated (\the\thispar@lines) and reported (\the\p@rlinesgone) lines on page \this@pgno.  for Cutouts may not have been calculated properly}%
+    \tmp{*** Mismatch between calculated (\the\p@rlinesgone) and reported (\the\thispar@lines) lines for paragraph starting \@@parlocsref, on page \this@pgno.  Cutouts may not have been calculated properly}%
     \let\tmp\undefined
   \fi
   \ifx\pending@items\cstackempty\else
