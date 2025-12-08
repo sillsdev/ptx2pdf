@@ -34,7 +34,6 @@
 
 \plugin@startif{polyglot-complexpages}
 \plugins@needed{polyglot-simplepages} % 
-\xdef\s@veclasses{\s@veclasses minitrial,}% Additional save box.
 
 \def\new@followon#1{%
   \count255=`Z
@@ -111,36 +110,6 @@
 }
 
 \newcount\p@lyr@wno
-%%%%%%%%%%%%%%%%%%%%%%%%% code that needs slash to not be active.  
-\catcode47=\tw@lve
-
-  \def\sstackup#1/#2\E{\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackup\fi\n@x #2\E\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi}                  %(1)
-  \def\sstackdown#1/#2\E{\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackdown\fi\n@x #2\E}
-  \def\sstackrelax#1\E{}
-    
-  \def\complexs@tpolyp@ges#1\E{%page processing (#1 is a page
-    \p@lyr@wno=0
-    \let\d@@\@complexs@tpolyp@ges
-    \sstackdown#1/\E
-    \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
-    \global\advance\p@lyp@geno by 1
-  }
-  \def\complexr@vpolyp@ges#1\E{%reverse processing
-    \p@lyr@wno=0
-    \let\d@@=\@complexr@vpolyp@ges % Do the mirrored-version
-    \sstackdown#1/\E
-    \global\advance\p@lyp@geno by 1
-  }
-  \def\complexcheck@polyp@ges#1\E{
-    \p@lyr@wno=0
-    \let\d@@\@complexcheck@polyp@ges
-    \sstackdown#1/\E
-    \global\advance\p@lyp@geno by 1
-  }
-    
-%\catcode47=\active
-%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e}% Various 'column codes' are not connected to any input. Use ifcsname to check for them
 \inactive@col@code{-} % A blank column or page
 \inactive@col@code{=} % Lines
@@ -345,7 +314,6 @@
   \x@\each@col\diglot@list\E
 }
 
-
 \def\@@cplx@measure#1\E{%Measure the current row height of the row #1 
   \let\col@do\max@boxsz\def\v@lpfx{}\def\v@lsfx{box}\dimen1=0pt
   \x@\let\x@\tmp\csname cts@#1\endcsname
@@ -358,5 +326,36 @@
   \let\d@\@@cplx@measure
   \x@\cstackdown\p@gestrings\E
 }
-  
+
+%%%%%%%%%%%%%%%%%%%%%%%%% code that needs slash to not be active.  
+\catcode47=\tw@lve
+
+  \def\sstackup#1/#2\E{\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackup\fi\n@x #2\E\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi}                  %(1)
+  \def\sstackdown#1/#2\E{\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackdown\fi\n@x #2\E}
+  \def\sstackrelax#1\E{}
+    
+  \def\complexs@tpolyp@ges#1\E{%page processing (#1 is a page
+    \p@lyr@wno=0
+    \let\d@@\@complexs@tpolyp@ges
+    \sstackdown#1/\E
+    \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
+    \global\advance\p@lyp@geno by 1
+  }
+  \def\complexr@vpolyp@ges#1\E{%reverse processing
+    \p@lyr@wno=0
+    \let\d@@=\@complexr@vpolyp@ges % Do the mirrored-version
+    \sstackdown#1/\E
+    \global\advance\p@lyp@geno by 1
+  }
+  \def\complexcheck@polyp@ges#1\E{
+    \p@lyr@wno=0
+    \let\d@@\@complexcheck@polyp@ges
+    \sstackdown#1/\E
+    \global\advance\p@lyp@geno by 1
+  }
+    
+\catcode47=\active
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ 
 \plugin@endif

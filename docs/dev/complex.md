@@ -253,26 +253,42 @@ L/244.9958pt,R/258.9958pt|10|14|34.14995pt|1147
 L/244.9958pt,R/244.9958pt|10|12|48.79837pt|1115
 
 Clearly, the different scoring weights will decide which option is preferred by the algorithm.
+Further testing will show if one or other of the parameters would be better
+squared. (A difference of 1 verse, or 1 line of whitespace doesn't matter much,
+but avoiding the text becoming 5 verses out of sync, or a solution leaving quarter of a
+page of whitespace are worth quite a lot of imbalance on 1 column if there are many.
+
 
 # Whitespace removal *vs* verse tracking
 In 1xN layout, then verse tracking is easily possible, as the column heights
 can be adjusted. In any other layout there will be whitespace when the 
-column lengths disagree. For a layout `L/RA`, there are several processing options:
+column lengths disagree. For a layout `L/RA`, there are several processing options. 
+Users might well have a preference, and so the scoring parameters should be accessible. Perhaps some 'standard values' should be made available.
 
-Starting on a page with avail left, `htL+max(ht(L),ht(R)) > avail`.
+Starting on a page with avail left, `ht(L)+max(ht(R),ht(A)) > avail`.
 
 *    **No verse info**:  Calculate `factor= avail / ( ht(L) + max(ht(R),ht(A)) )`  initial guess: `factor * ht(L)`  for `L`, etc. If inserts reduce `avail`, shrink one or more row heights  by something and repeat. 
 *    **Verses, strict parallel**: as before, but the galley contents are tweaked until botmarks agree +/- 1 verse before each run.
 *    **Verses, loose parallel**: If `ht(R)` and `ht(A)` don't agree very well, allow their botmarks to get out of sync by, say, 3 verses.
 *    **Verses, min whitespace**:  if `ht(R)` and `ht(A)` don't agree, then try to make it that they do, pushing all R/A imbalance to the  end of the chunk.
 
-# Necessary routines
+
+# Considerations for splitting L/RR,L/AA 
+Any time content is  moved from L1 to L2 that might move a note or other
+insert. A full split is more efficient if we know that there are notes/inserts.
+If all the notes/inserts are in the first half, then a full split on L1 is
+appropriate and a minimal split appropriate on L2. Therefore, we want at least
+a partial list of line-no/insert measurements.
+
+# Summary of necessary routines
 * Process layout string and reversal string [DONE]  [TESTED]
      *  add/remove follow-on connections and create relevant boxes / dims
      * self-check routine
-* Identify which inputs end up in repeated columns.
+* Identify which inputs end up in repeated columns, especially cross-page.
+* Something to determine possible split heights [DONE]
 * Determine total galley lengths
-* Determine initial split lengths
 * Split into sub-galleys, with chaining through follow-ons
-* ?? Something to determine possible split heights?? 
-* 
+* Analyse how inserts affect layout 
+* Determine initial split lengths **COMPLEX**
+ 
+

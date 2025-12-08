@@ -2692,8 +2692,14 @@
 \newif\ifins@meas@trialnofull
 \newsp@cialpen{ins@meas@trialpenalty}
 
+% Do we need a 'save current page state?' May be needed e.g. for run-on inserts
+% But they're surely doomed/handled in \partial as a result of normal polyglot
+% collection, etc. anyway??
+
 \def\me@sureins@trial#1#2{%DONT run this whith anything on the page!
-  % May be run in 2 modes: ins@meas@trialfulltrue will always do a full check, ins@meas@trialfullfalse will run the check without the full analysis, and re-run it if there's any inserts.
+  % May be run in 2 modes: ins@meas@trialfulltrue will always do a full check,
+  % ins@meas@trialfullfalse will run the check without the full analysis, and
+  % re-run it if there's any inserts.
   \bgroup
     \output{\ins@meas@trial}% Not global, just here.
     \edef\premtht{10000pt}% 3.5 metres should be enough, since this is aiming for a single page...
@@ -2703,11 +2709,13 @@
     \hsize=\wd#2
     \@me@sureins@trial{#1}{#2}%
     \relax
-    \ifins@meas@trialfull\else
-      \ifdim\ins@meas@trial@result>0pt
-        \ins@meas@trialfulltrue
-        \@me@sureins@trial{#1}{#2}%
-        \relax
+    \ifins@meas@trialnofull\else
+      \ifins@meas@trialfull\else
+        \ifdim\ins@meas@trial@result>0pt
+          \ins@meas@trialfulltrue
+          \@me@sureins@trial{#1}{#2}%
+          \relax
+        \fi
       \fi
     \fi
   \egroup

@@ -1,6 +1,9 @@
 \newif\iflua\luafalse
 %\def\pluginlist{polyglot-complexpages}
 \input paratext2.tex
+\tracing{Cx}  
+\tracing{Cxt}  
+
 \XeTeXuseglyphmetrics=0
 \FontSizeUnit=1pt
 \font\T "Gentium Plus" at 10pt
@@ -46,6 +49,8 @@
   require("measurebox.lua")
 }
 \fi
+
+
 \MSG{bls:\the\baselineskip}
 \def\try#1{\count255=1 \max=0pt
   \cols=\csname cols#1\endcsname
@@ -104,8 +109,8 @@
 \def\WScost{3} % cost per pt of whitespace
 \def\maxv{0}
 \def\minv{999}
-\def\sc@re#1{%
-  \x@\let\x@\tmp\csname#1\endcsname
+\def\sc@re#1{% Determine a 'cost' for a the option-tree so-far, plus this final split
+  \x@\let\x@\tmp\csname#1\endcsname % 
   \x@\p@rsetry\tmp\E
   \advance\tryscore by \unbalLcost\dimexpr\p@rseunbal pt\relax\relax
   \edef\ubal{\ubal+\p@rseunbal}%
@@ -164,7 +169,92 @@
   \fi
   \@nxt
 }
-  
+
+\newcount\nsplit
+\def\rsplit#1{%
+  \setbox0\copy\csname #1box\endcsname%
+  \dimen1=\ht0
+  \nsplit=\dimexpr \dimen1 / \baselineskip\relax
+  \message{#1 has \the\nsplit\space lines}
+  \x@\locdimenblk\csname @insheightsL\endcsname{\numexpr \the\nsplit+1}
+  \def\insheightsL##1{\dimen\numexpr \@insheightsL+##1\relax}
+  \count255=\nsplit \loop\insheightsL{\count255}=-1sp \advance\count255 by -1 \ifnum\count255>0 \repeat
+ % \tracingall=1
+  %\insheightsL{1}=10pt
+  \message{\the\insheightsL{1}}
+  \bgroup
+    \ins@meas@trialfullfalse
+    \ins@meas@trialnofulltrue
+    \@rsplit{\the\nsplit}{0}{0}%
+  \egroup
+  \loop
+    \advance\count255 by 1
+    \message{heightsL{\the\count255}=\the\insheightsL{\count255}}%
+  \ifnum\count255<\nsplit \repeat
+}
+\def\@rsplit#1#2#3#4{%
+  \ifnum #1>2
+    %\tracingassigns=1
+    \count255=#1\relax
+    \trace{Cx}{a:\the\count255 \space #1}%
+    \divide\count255 by 2
+    \trace{Cx}{a/2:\the\count255 \space #1}%
+    \edef\@sp{\the\count255}%
+    \edef\@npb{\the\numexpr #2+#1 \relax}%
+    \edef\@np{\the\numexpr #2+\count255 \relax}%
+    \trace{Cx}{rsplit #1 #2 #3 #4(\@np, \@npb)}%
+    %\tracingassigns=0 \relax
+    \setbox1=\vsplit 0 to \@sp\baselineskip
+    \setbox1\vbox{\unvbox1}%
+    \trace{Cx}{Split into \@sp results in \number\dimexpr\ht1/\baselineskip\relax / \number\dimexpr \ht0/\baselineskip\relax}%
+    \edef\tmpa{\the\insheightsL{\@np}}%
+    \ifdim\tmpa =-1sp
+      \me@sureins@trial{L}{1}%
+      \let\tmpa\ins@meas@trial@result
+      \message{\@np -> \tmpa}%
+      \global\insheightsL{\@np}=\tmpa
+    \fi
+    \let\ncv@l\tmpa
+    \ifnum\@npb <\nsplit 
+      \edef\ncv@l{\the\insheightsL{\@npb+1}}%
+    \else
+      \let\@npb\nsplit \edef\ncv@l{\the\insheightsL{\nsplit}}
+    \fi
+    \ifdim\insheightsL{\@npb}=-1sp
+      \me@sureins@trial{L}{0}%
+      \let\tmpb\ins@meas@trial@result
+      \message{\@npb -> \tmpb+\tmpa}%
+      \global\insheightsL{\@npb}=\dimexpr \tmpa+\tmpb\relax
+    \fi
+    % Process the tail first.
+    \ifdim\tmpb=0pt
+      \count255=\@npb
+      \trace{Cx}{rsplit + no change between \@np and \@npb}%
+      \tmpb=\ncv@l
+      \loop 
+        \advance\count255 -1
+        \ifnum\count255>\@np 
+          \global\insheightsL{\count255}=#4
+      \repeat
+    \fi
+    \ifdim \tmpa=0pt
+      \count255=\@sp
+      \trace{Cx}{rsplit - no change between #2 and \@np}%
+      \loop \global\insheightsL{#2+\count255}=#4
+        \advance\count255 -1
+      \ifnum \count255>0 \repeat
+    \fi
+    \ifdim\tmpa=0pt \else\bgroup
+      \edef\@rgs{{\@sp}{#2}{1}{\the\dimexpr #4-\tmpb\relax}}%
+      \x@\@rsplit\@rgs
+    \egroup\fi
+    \ifdim\tmpb=\ncv@l \relax \else\bgroup
+      \edef\@rgs{{\@sp}{\@np}{0}{#4}}%
+      \x@\@rsplit\@rgs
+    \egroup\fi
+  \fi  
+}
+\rsplit L
 \def\@ption#1#2\E{\bgroup
   \trace{Cx}{@option #1 #2}%
   \edef\nxt@ptions{#2}
@@ -199,7 +289,6 @@
   \def\p@rsinssplit{#6}% detailed insert numbers
 }
 
-\tracing{Cx}  
 \tracing{Cxt}  
 %\def\MSG#1{}
 \count255=0
