@@ -1016,7 +1016,7 @@
   %\message{verse was \meaning\oldv@rse}% Set to empty at chapter number.
   \ifx \oldv@rse\empty
     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
-    \ifOmitVerseNumberOne\c@ncelfirstversetrue\fi
+    %\ifOmitVerseNumberOne\c@ncelfirstversetrue\fi % FIXME: Martin added this for marginal verses, but it breaks other things. What's the marginal verses test?
   \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.

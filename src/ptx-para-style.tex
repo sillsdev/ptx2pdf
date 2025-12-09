@@ -1185,6 +1185,7 @@
   \prev@y=#6\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
+  \edef\@@parlocsref{#1}%
   \trace{C}{@parstart #3 \tot@col@ht - \the\dimen1 = \prev@col@ht}%
   \csname inp@r-\c@rrdstat true\endcsname
   \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty
@@ -1286,7 +1287,7 @@
   \trace{C}{parlines: \the\thispar@lines =\the\p@rlinesgone?}%
   \ifnum \thispar@lines=\p@rlinesgone\else
     \ifp@rlengthimportant\let\tmp\MSG\else\let\tmp\message\fi
-    \tmp{*** Mismatch between calculated (\the\thispar@lines) and reported (\the\p@rlinesgone) lines on page \this@pgno.  for Cutouts may not have been calculated properly}%
+    \tmp{*** Mismatch between calculated (\the\p@rlinesgone) and reported (\the\thispar@lines) lines for paragraph starting \@@parlocsref, on page \this@pgno.  Cutouts may not have been calculated properly}%
     \let\tmp\undefined
   \fi
   \ifx\pending@items\cstackempty\else
@@ -1381,9 +1382,8 @@
   \trace{C}{... -\the\dimen1}% 
   \advance\tmp@lines by -\dimen1
   \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
-  \tmp@lines=\prev@y
-  \advance\tmp@lines by -\thing@y
-  \divide\tmp@lines by \baselineskip
+  \tmp@lines=\numexpr (\prev@y - \thing@y) / \number\baselineskip\relax % numexpr division rounds properly, rather than truncation
+  \trace{C}{(\the\prev@y - \the\thing@y) / \the\baselineskip = \the\tmp@lines}%
   \advance\tmp@lines by #6
   \advance\tmp@lines by \p@rlinesgone
   \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.

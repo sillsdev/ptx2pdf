@@ -1,10 +1,15 @@
-PTXprint 3.0.6 Release Notes
-3 Dec 2025
+PTXprint 3.0.7 Release Notes
+6 Dec 2025
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
+
+Bug fixes and Improvements in 3.0.7 (6 Dec 2025)
+  * solve IF problems from diglot headers
+  * Add parlocs end-of-page logging
+  * Only disable covers if frt not set
 
 Bug fixes and Improvements in 3.0.6 (3 Dec 2025)
   * Re-instate refresh picture captions functionality
