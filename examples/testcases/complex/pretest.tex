@@ -1,11 +1,14 @@
 \newif\iflua\luafalse
-%\def\pluginlist{polyglot-complexpages}
+\def\pluginlist{polyglot-complexpages}
 \input paratext2.tex
-\tracing{Cx}  
-\tracing{Cxt}  
-
+\pagebreak
+\bye
+\tracing{dmc}  
+%\tracing{dmc}  
+\tracing{tim}  
 \XeTeXuseglyphmetrics=0
 \FontSizeUnit=1pt
+\catcode`\/=12
 \font\T "Gentium Plus" at 10pt
 \def\regular{"Gentium Plus"}
 \def\bold{"Gentium Plus/B"}
@@ -17,6 +20,11 @@
 \newPolyglotCol{L}
 \newPolyglotCol{R}
 \newPolyglotCol{A}
+\def\DiglotLFraction{0.5}
+\def\DiglotRFraction{0.5}
+\def\DiglotAFraction{1}
+\polyglotpages{LL/A,RR/A}
+
 \diglottrue
 \stylesheet{usfm_sb.sty}
 \def\LineSpacingFactor{1.0}
@@ -24,16 +32,17 @@
 \everypar{}
 \let\par\endgraf
 \T
+\makeatletter
 \count\topleftins=1000
 \floatingpenalty=10000
 \setbox\Lbox\vbox{\hsize=100pt
-\mark{1}Sapiente eum quasi qui\insert\topleftins{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\vbox{another line}} \mark{2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
+\mark{a:1:1}\penalty10000 Sapiente eum quasi qui\insert\topleftins{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\vbox{another line}} \mark{a:1:2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{a:1:3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{a:1:4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{a:1:5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
 \vbox to 3\baselineskip{\hbox{Hi}\vfill}\penalty10000
-\insert\topleftins{\vbox{another line}}\mark{6}Dolores nostrum nihil vel placeat. \mark{7}Expedita voluptatem iusto dolorem. \mark{8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{9}Eveniet quia sed voluptatem. \mark{10}Voluptatum eaque pariatur id eveniet ratione. \mark{11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{12}Delectus molestiae eveniet odit magnam magni. \mark{13}Itaque sed corporis aut autem dignissimos maxime.}
+\insert\topleftins{\vbox{another line}}\mark{a:1:6}Dolores nostrum nihil vel placeat. \mark{a:1:7}Expedita voluptatem iusto dolorem. \mark{a:1:8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{a:1:9}Eveniet quia sed voluptatem. \mark{a:1:10}Voluptatum eaque pariatur id eveniet ratione. \mark{a:1:11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{a:1:12}Delectus molestiae eveniet odit magnam magni. \mark{a:1:13}Itaque sed corporis aut autem dignissimos maxime.}
 \setbox\Rbox\vbox{\hsize=100pt 
-. \mark{1}Repellat nihil autem quod doloremque adipisci illum officia laudantium. \mark{2}Voluptate dignissimos itaque odit. \mark{3}Et omnis veritatis magnam rem doloremque. \mark{4}Pariatur laudantium iusto illo. \mark{5}A eos corporis ab quae iure non.Porro et necessitatibus quam. \mark{6}Culpa dolor est porro error voluptatem enim non. \mark{7}Nulla tempore quia praesentium facere dolores omnis. \mark{8}Quam ut asperiores magni in expedita aut qui. \mark{9}Quos sit voluptas accusantium non doloremque fugiat placeat voluptas.Perspiciatis quis odio facere ad velit exercitationem deserunt. \mark{10}Temporibus fuga non omnis harum ut voluptates explicabo. \mark{11}Nulla rerum quia consequatur. \mark{12}Ut dolor aspernatur porro dicta quod. \mark{13}Quo eos qui mollitia. \mark{14}Aut ratione voluptate debitis et vero est.}
+. \mark{a:1:1}Repellat nihil autem quod doloremque adipisci illum officia laudantium. \mark{a:1:2}Voluptate dignissimos itaque odit. \mark{a:1:3}Et omnis veritatis magnam rem doloremque. \mark{a:1:4}Pariatur laudantium iusto illo. \mark{a:1:5}A eos corporis ab quae iure non.Porro et necessitatibus quam. \mark{a:1:6}Culpa dolor est porro error voluptatem enim non. \mark{a:1:7}Nulla tempore quia praesentium facere dolores omnis. \mark{a:1:8}Quam ut asperiores magni in expedita aut qui. \mark{a:1:9}Quos sit voluptas accusantium non doloremque fugiat placeat voluptas.Perspiciatis quis odio facere ad velit exercitationem deserunt. \mark{a:1:10}Temporibus fuga non omnis harum ut voluptates explicabo. \mark{a:1:11}Nulla rerum quia consequatur. \mark{a:1:12}Ut dolor aspernatur porro dicta quod. \mark{a:1:13}Quo eos qui mollitia. \mark{a:1:14}Aut ratione voluptate debitis et vero est.}
 \setbox\Abox\vbox{\hsize=200pt 
-. \mark{1}Illum cupiditate velit repellendus aliquid impedit. \mark{2}Beatae et ut quod a doloribus. \mark{3}Sunt ut et eos aut sunt tempore. \mark{4}Sit quaerat quae tempore molestiae delectus ratione non. \mark{5}Est cum atque numquam minus non nesciunt et.Nisi modi eaque inventore architecto eveniet repudiandae. \mark{6}Amet ut quo impedit molestiae. \mark{7}Voluptatem dolorem reiciendis ut voluptas explicabo qui quo. \mark{8}Corrupti et dolore in et tenetur et cupiditate autem. \mark{9}Similique et et delectus.Ut quam mollitia voluptatem ipsa id. \mark{10}Velit quas maiores temporibus dolore. \mark{11}Sequi autem facere omnis et dicta totam est hic. \mark{12}Id sed unde similique mollitia sed aliquid.}
+. \mark{a:1:1}Illum cupiditate velit repellendus aliquid impedit. \mark{a:1:2}Beatae et ut quod a doloribus. \mark{a:1:3}Sunt ut et eos aut sunt tempore. \mark{a:1:4}Sit quaerat quae tempore molestiae delectus ratione non. \mark{a:1:5}Est cum atque numquam minus non nesciunt et.Nisi modi eaque inventore architecto eveniet repudiandae. \mark{a:1:6}Amet ut quo impedit molestiae. \mark{a:1:7}Voluptatem dolorem reiciendis ut voluptas explicabo qui quo. \mark{a:1:8}Corrupti et dolore in et tenetur et cupiditate autem. \mark{a:1:9}Similique et et delectus.Ut quam mollitia voluptatem ipsa id. \mark{a:1:10}Velit quas maiores temporibus dolore. \mark{a:1:11}Sequi autem facere omnis et dicta totam est hic. \mark{a:1:12}Id sed unde similique mollitia sed aliquid.}
 \endgraf
 \def\ins@meas@trialpenalty{-10010}
 %\tracingmacros=1
@@ -64,9 +73,15 @@
     \setbox\count255=\vsplit0 to \dimen1\setbox \count255\vbox{\unvbox\count255}%
     \ifdim\max<\ht\count255 \max=\ht\count255 \fi
     \edef\dims{\ifx\dims\empty\else\dims,\fi \the\ht\count255}%
-    \x@\edef\csname #1bot\endcsname{\splitbotmark}%
+    \edef\tmp{\splitbotmark}
+    \ifx\tmp\empty
+      \x@\edef\csname #1bot\endcsname{0}%
+    \else
+      \x@\extr@ctfirst\splitbotmark\relax
+      \x@\edef\csname #1bot\endcsname{\v@rsefrom}%
+    \fi
     \iflua\directlua{measure_ins(\the\count255)}
-      \trace{Cxt}{ins@meas@trial@result=\ins@meas@trial@result(\ins@meas@trial@dims)}%
+      \trace{imt}{ins@meas@trial@result=\ins@meas@trial@result(\ins@meas@trial@dims)}%
     \else
       \ins@meas@trialfullfalse
       \me@sureins@trial{#1}{\the\count255}%
@@ -87,7 +102,7 @@
   \x@\let\x@\tmp\csname #1list\endcsname  
   \edef\tryid{#1/\the\dimen1}
   \x@\xdef\csname #1list\endcsname{\ifx\tmp\relax\else\tmp\fi\tryid,}
-  \edef\tmp{\the\max|\number\dimexpr 10\dimen0 /\baselineskip\relax|\csname #1bot\endcsname|\dims|\ins@rtl@st|\ins@rtsplitlist}\trace{Cx}{\tryid: \tmp}\par
+  \edef\tmp{\the\max|\number\dimexpr 10\dimen0 /\baselineskip\relax|\csname #1bot\endcsname|\dims|\ins@rtl@st|\ins@rtsplitlist}\trace{dmc}{\tryid: \tmp}\par
   \x@\let\csname \tryid\endcsname\tmp
 }
 
@@ -116,26 +131,26 @@
   \edef\ubal{\ubal+\p@rseunbal}%
   \ifnum\p@rsev>\maxv \let\maxv\p@rsev \fi
   \ifnum\p@rsev<\minv \let\minv\p@rsev \fi
-  \trace{Cx}{\p@rsev: min,max = \minv,\maxv}%
+  \trace{dmc}{\p@rsev: min,max = \minv,\maxv}%
   \advance\dimen0 by -\p@rsemx\relax
   \ifdim\dimen0<0pt
-    \trace{Cx}{STOP: \the\dimen0} % Don't go deeper, there's no space
+    \trace{dmc}{STOP: \the\dimen0} % Don't go deeper, there's no space
     \aftergroup\n@more
   \else
     \dimen1=\unbalVcost\dimexpr \numexpr (\maxv-\minv)*(\maxv-\minv)\relax pt\relax
     \ifx\nxt@ptions\empty
       \advance\tryscore by \dimen1
       \advance\tryscore by \WScost\dimexpr \dimen0\relax
-      \edef\tmp{\path|\minv|\maxv|\the\dimen0|\ubal|\the\tryscore}\trace{Cx}{\tmp}%\tmp\par
+      \edef\tmp{\path|\minv|\maxv|\the\dimen0|\ubal|\the\tryscore}\trace{dmc}{\tmp}%\tmp\par
       \ifdim\tryscore<\bestscore
         \xdef\bestscore{\the\tryscore}
         \xdef\bestpath{\tmp}
-        \trace{Cx}{new bestscore:\bestscore}%
+        \trace{dmc}{new bestscore:\bestscore}%
       \fi
     \else
-      \trace{Cx}{current:\the\tryscore+\the\dimen1 \space next chunk:\nxt@ptions}%
+      \trace{dmc}{current:\the\tryscore+\the\dimen1 \space next chunk:\nxt@ptions}%
       \ifdim\dimexpr \tryscore+\dimen1\relax > \bestscore
-        \trace{Cx}{STOP:Already worse}%
+        \trace{dmc}{STOP:Already worse}%
       \else
         \x@\@ption\nxt@ptions\E
       \fi
@@ -171,92 +186,43 @@
 }
 
 \newcount\nsplit
-\def\rsplit#1{%
-  \setbox0\copy\csname #1box\endcsname%
-  \dimen1=\ht0
-  \nsplit=\dimexpr \dimen1 / \baselineskip\relax
-  \message{#1 has \the\nsplit\space lines}
-  \x@\locdimenblk\csname @insheightsL\endcsname{\numexpr \the\nsplit+1}
-  \def\insheightsL##1{\dimen\numexpr \@insheightsL+##1\relax}
-  \count255=\nsplit \loop\insheightsL{\count255}=-1sp \advance\count255 by -1 \ifnum\count255>0 \repeat
- % \tracingall=1
-  %\insheightsL{1}=10pt
-  \message{\the\insheightsL{1}}
-  \bgroup
-    \ins@meas@trialfullfalse
-    \ins@meas@trialnofulltrue
-    \@rsplit{\the\nsplit}{0}{0}%
-  \egroup
-  \loop
-    \advance\count255 by 1
-    \message{heightsL{\the\count255}=\the\insheightsL{\count255}}%
-  \ifnum\count255<\nsplit \repeat
-}
-\def\@rsplit#1#2#3#4{%
-  \ifnum #1>2
-    %\tracingassigns=1
-    \count255=#1\relax
-    \trace{Cx}{a:\the\count255 \space #1}%
-    \divide\count255 by 2
-    \trace{Cx}{a/2:\the\count255 \space #1}%
-    \edef\@sp{\the\count255}%
-    \edef\@npb{\the\numexpr #2+#1 \relax}%
-    \edef\@np{\the\numexpr #2+\count255 \relax}%
-    \trace{Cx}{rsplit #1 #2 #3 #4(\@np, \@npb)}%
-    %\tracingassigns=0 \relax
-    \setbox1=\vsplit 0 to \@sp\baselineskip
-    \setbox1\vbox{\unvbox1}%
-    \trace{Cx}{Split into \@sp results in \number\dimexpr\ht1/\baselineskip\relax / \number\dimexpr \ht0/\baselineskip\relax}%
-    \edef\tmpa{\the\insheightsL{\@np}}%
-    \ifdim\tmpa =-1sp
-      \me@sureins@trial{L}{1}%
-      \let\tmpa\ins@meas@trial@result
-      \message{\@np -> \tmpa}%
-      \global\insheightsL{\@np}=\tmpa
-    \fi
-    \let\ncv@l\tmpa
-    \ifnum\@npb <\nsplit 
-      \edef\ncv@l{\the\insheightsL{\@npb+1}}%
-    \else
-      \let\@npb\nsplit \edef\ncv@l{\the\insheightsL{\nsplit}}
-    \fi
-    \ifdim\insheightsL{\@npb}=-1sp
-      \me@sureins@trial{L}{0}%
-      \let\tmpb\ins@meas@trial@result
-      \message{\@npb -> \tmpb+\tmpa}%
-      \global\insheightsL{\@npb}=\dimexpr \tmpa+\tmpb\relax
-    \fi
-    % Process the tail first.
-    \ifdim\tmpb=0pt
-      \count255=\@npb
-      \trace{Cx}{rsplit + no change between \@np and \@npb}%
-      \tmpb=\ncv@l
-      \loop 
-        \advance\count255 -1
-        \ifnum\count255>\@np 
-          \global\insheightsL{\count255}=#4
-      \repeat
-    \fi
-    \ifdim \tmpa=0pt
-      \count255=\@sp
-      \trace{Cx}{rsplit - no change between #2 and \@np}%
-      \loop \global\insheightsL{#2+\count255}=#4
-        \advance\count255 -1
-      \ifnum \count255>0 \repeat
-    \fi
-    \ifdim\tmpa=0pt \else\bgroup
-      \edef\@rgs{{\@sp}{#2}{1}{\the\dimexpr #4-\tmpb\relax}}%
-      \x@\@rsplit\@rgs
-    \egroup\fi
-    \ifdim\tmpb=\ncv@l \relax \else\bgroup
-      \edef\@rgs{{\@sp}{\@np}{0}{#4}}%
-      \x@\@rsplit\@rgs
-    \egroup\fi
-  \fi  
-}
-\rsplit L
+\tracingstats=1
+\nonstopmode
+\tracetimset{rsplit}\relax
+%\tracingassigns=1
+\complex@rsplit L
+%\tracingassigns=0
+\tracetimcheck{rsplit}{recursive L}
+
+\def\ssr@sult{}
+\tracetimset{ssplit}\relax
+\complex@ssplit L
+\trace{dmc}{\ssr@sult}
+\tracetimcheck{ssplit}{sequential L}
+
+\tracetimset{rsplit}\relax
+\complex@rsplit R
+\tracetimcheck{rsplit}{recursive R}
+\def\ssr@sult{}
+\tracetimset{ssplit}\relax
+\complex@ssplit R
+\trace{dmc}{\ssr@sult}
+\tracetimcheck{ssplit}{sequential R}
+\newbox\Cbox
+\setbox\Cbox\vbox{\unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox}
+%\setbox\Cbox\vbox{\unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox}
+\tracetimset{rsplit}\relax
+\complex@rsplit C
+\tracetimcheck{rsplit}{recursive C}
+\def\ssr@sult{}
+\tracetimset{ssplit}\relax
+\complex@ssplit C
+\trace{dmc}{\ssr@sult}
+\tracetimcheck{ssplit}{sequential C}
+
+\trace{dmc}{---------------------------------}
 \def\@ption#1#2\E{\bgroup
-  \trace{Cx}{@option #1 #2}%
+  \trace{dmc}{@option #1 #2}%
   \edef\nxt@ptions{#2}
   \x@\let\x@\l@st\csname #1list\endcsname
   \x@\suboptions\l@st\E
@@ -272,7 +238,7 @@
   \bgroup
     \edef\path{\path\psep#1}%
     \def\psep{,}
-    \trace{Cx}{scoring suboption #1 : \path (#2)}%
+    \trace{dmc}{scoring suboption #1 : \path (#2)}%
     \sc@re{#1}
   \egroup%
   \ifx\s@tmp\empty\let\n@xt\cstackrelax
@@ -289,7 +255,7 @@
   \def\p@rsinssplit{#6}% detailed insert numbers
 }
 
-\tracing{Cxt}  
+\tracing{dmc}  
 %\def\MSG#1{}
 \count255=0
 \edef\start{\the\elapsedtime}
@@ -330,5 +296,13 @@ A:\Alist
 %\tracing{o}
 %%\SHOWSTUFF
 %\tracingall
-\box\Lbox
+%\box\Lbox
+\def\digl@tc@ntentlist{LRA}
+\tracing{imt}
+\setbox\excessL\box\Lbox
+\setbox\excessA\box\Abox
+\setbox\excessR\box\Rbox
+\message{dim: xL \l@gdims{\excessL}, xR \l@gdims{\excessR}, xA \l@gdims{\excessA}}%
+\diglot@run@trials@complexpages
+\relax
 \bye

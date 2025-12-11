@@ -2688,8 +2688,8 @@
 
 %+c_measureins
 % An output routine purely to measure what the insert situation is. Written for polyglot-complexpages, but applicable for other situations too.
-\newif\ifins@meas@trialfull
-\newif\ifins@meas@trialnofull
+\newif\ifins@meas@trialfull % Should the trial do a full measure (holdinginserts=0) right from the start? (Or start with a quick measure).
+\newif\ifins@meas@trialnofull % If a quick measure shows inserts, is dropping through to a full measure suppressed?
 \newsp@cialpen{ins@meas@trialpenalty}
 
 % Do we need a 'save current page state?' May be needed e.g. for run-on inserts
@@ -2697,9 +2697,12 @@
 % collection, etc. anyway??
 
 \def\me@sureins@trial#1#2{%DONT run this whith anything on the page!
-  % May be run in 2 modes: ins@meas@trialfulltrue will always do a full check,
+  % May be run in 3 modes: 
+  % If ins@meas@trialnofulltrue, then it will not do the full check. Otherwise:
+  % ins@meas@trialfulltrue will always do a full check,
   % ins@meas@trialfullfalse will run the check without the full analysis, and
-  % re-run it if there's any inserts.
+  % re-run it if there's any inserts (the full check is several times slower,
+  % so this is worthwhile, unless it's known to be an insert-heavy box.
   \bgroup
     \output{\ins@meas@trial}% Not global, just here.
     \edef\premtht{10000pt}% 3.5 metres should be enough, since this is aiming for a single page...
@@ -2719,7 +2722,7 @@
       \fi
     \fi
   \egroup
-  \trace{Cxt}{ins@meas@trial@result=\ins@meas@trial@result(\ins@meas@trial@dims)}%
+  \trace{imt}{ins@meas@trial@result=\ins@meas@trial@result(\ins@meas@trial@dims)}%
   \global\deadcycles=0 % Cycles were deliberately dead.
 }
 \def\me@sureinserts#1\E{%
@@ -2728,7 +2731,7 @@
   \fi
 }
 
-\def\ins@meas@trial{%
+\def\ins@meas@trial{%The actual trial output routint
   \xdef\ins@meas@trial@result{\the\dimexpr \premtht-\the\pagegoal\relax}%
   \setbox255\vbox{\unvbox255}
   \global\let\ins@meas@trial@dims\empty%
@@ -2739,10 +2742,10 @@
     \fi
   \fi
   \setbox255\box\voidb@x
-  %\trace{Cxt}{ins@meas@trial: \the\ht255, \ins@meas@trial@result}%
+  %\trace{imt}{ins@meas@trial: \the\ht255, \ins@meas@trial@result}%
 }
 
-\def\@me@sureins@trial#1#2{
+\def\@me@sureins@trial#1#2{% argumnets: column, box
   \ifins@meas@trialfull
     \holdinginserts= 0
     \s@veinserts{i@m@t}%
@@ -2750,7 +2753,7 @@
   \else 
     \holdinginserts= 1 
   \fi
-  \trace{Cxt}{Running \ifins@meas@trialfull full \else quick \fi trial for #1 #2}%
+  \trace{imt}{Running \ifins@meas@trialfull full \else quick \fi trial for #1 #2}%
   \unvcopy#2
   \penalty\ins@meas@trialpenalty
   \relax

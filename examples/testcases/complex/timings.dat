@@ -398,3 +398,2385 @@ Splitting: 0.01239pt
 Scoring: 0.00958pt
 Splitting: 0.01434pt
 Scoring: 0.01083pt
+Splitting: 0.00885pt
+Scoring: 0.00877pt
+Splitting: 0.00932pt
+Scoring: 0.00693pt
+Splitting: 0.00865pt
+Scoring: 0.00662pt
+Splitting: 0.00806pt
+Scoring: 0.00935pt
+Splitting: 0.00958pt
+Scoring: 0.00752pt
+Splitting: 0.00822pt
+Scoring: 0.00726pt
+Splitting: 0.00885pt
+Scoring: 0.00763pt
+Splitting: 0.009pt
+Scoring: 0.00616pt
+Splitting: 0.01009pt
+Scoring: 0.00706pt
+Splitting: 0.01036pt
+Scoring: 0.0077pt
+Splitting: 0.01115pt
+Scoring: 0.01038pt
+Splitting: 0.01038pt
+Scoring: 0.0105pt
+Splitting: 0.00916pt
+Scoring: 0.00783pt
+Splitting: 0.00958pt
+Scoring: 0.00636pt
+Splitting: 0.00888pt
+Scoring: 0.00725pt
+Splitting: 0.01003pt
+Scoring: 0.0093pt
+Splitting: 0.00932pt
+Scoring: 0.00665pt
+Splitting: 0.00906pt
+Scoring: 0.0075pt
+Splitting: 0.00845pt
+Scoring: 0.01013pt
+Splitting: 0.01077pt
+Scoring: 0.00822pt
+Splitting: 0.00993pt
+Scoring: 0.00667pt
+Splitting: 0.00914pt
+Scoring: 0.00717pt
+Splitting: 0.00624pt
+Scoring: 0.00775pt
+Splitting: 0.00684pt
+Scoring: 0.00844pt
+Splitting: 0.00734pt
+Scoring: 0.00655pt
+Splitting: 0.00822pt
+Scoring: 0.00781pt
+Splitting: 0.0061pt
+Scoring: 0.00706pt
+Splitting: 0.00732pt
+Scoring: 0.00812pt
+Splitting: 0.00629pt
+Scoring: 0.00609pt
+Splitting: 0.00711pt
+Scoring: 0.0059pt
+Splitting: 0.00642pt
+Scoring: 0.00616pt
+Splitting: 0.00603pt
+Scoring: 0.00615pt
+Splitting: 0.0061pt
+Scoring: 0.00659pt
+Splitting: 0.0061pt
+Scoring: 0.00623pt
+Splitting: 0.00618pt
+Scoring: 0.00603pt
+Splitting: 0.0059pt
+Scoring: 0.00606pt
+Splitting: 0.00601pt
+Scoring: 0.00598pt
+Splitting: 0.0078pt
+Scoring: 0.0078pt
+Splitting: 0.00621pt
+Scoring: 0.0064pt
+Splitting: 0.0076pt
+Scoring: 0.00749pt
+Splitting: 0.00809pt
+Scoring: 0.00778pt
+Splitting: 0.00726pt
+Scoring: 0.0074pt
+Splitting: 0.01418pt
+Scoring: 0.01538pt
+Splitting: 0.01364pt
+Scoring: 0.01088pt
+Splitting: 0.00752pt
+Scoring: 0.0111pt
+Splitting: 0.00758pt
+Scoring: 0.00969pt
+Splitting: 0.00903pt
+Scoring: 0.01004pt
+Splitting: 0.00717pt
+Scoring: 0.00896pt
+Splitting: 0.00687pt
+Scoring: 0.00705pt
+Splitting: 0.00781pt
+Scoring: 0.00783pt
+Splitting: 0.00766pt
+Scoring: 0.01363pt
+Splitting: 0.00703pt
+Scoring: 0.0071pt
+Splitting: 0.00775pt
+Scoring: 0.00934pt
+Splitting: 0.00708pt
+Scoring: 0.00864pt
+Splitting: 0.00735pt
+Scoring: 0.00732pt
+Splitting: 0.00732pt
+Scoring: 0.00742pt
+Splitting: 0.00725pt
+Scoring: 0.00793pt
+Splitting: 0.00687pt
+Scoring: 0.00967pt
+tim> [rsplit] recursive L 91
+tim> [xp] Reporting 1
+tim> [ssplit] sequential L 315
+tim> [rsplit] recursive R 56
+tim> [xp] Reporting 0
+tim> [ssplit] sequential R 254
+tim> [rsplit] recursive C 420
+tim> [xp] Reporting 0
+tim> [ssplit] sequential C 4361
+tim> [rsplit] recursive L 102
+tim> [xp] Reporting 0
+tim> [ssplit] sequential L 312
+tim> [rsplit] recursive R 57
+tim> [xp] Reporting 0
+tim> [ssplit] sequential R 169
+tim> [rsplit] recursive C 390
+tim> [xp] Reporting 1
+tim> [ssplit] sequential C 4197
+tim> [rsplit] recursive L 87
+tim> [xp] Reporting 0
+tim> [ssplit] sequential L 285
+tim> [rsplit] recursive R 57
+tim> [xp] Reporting 0
+tim> [ssplit] sequential R 260
+tim> [rsplit] recursive C 408
+tim> [xp] Reporting 0
+tim> [ssplit] sequential C 4465
+Splitting: 0.0076pt
+Scoring: 0.00925pt
+tim> [rsplit] recursive L 90
+tim> [xp] Reporting 0
+tim> [ssplit] sequential L 242
+tim> [rsplit] recursive R 57
+tim> [xp] Reporting 1
+tim> [ssplit] sequential R 191
+tim> [rsplit] recursive C 423
+tim> [xp] Reporting 0
+tim> [ssplit] sequential C 5092
+Splitting: 0.0077pt
+Scoring: 0.0103pt
+tim> [rsplit] recursive L 83
+tim> [xp] Reporting 0
+tim> [ssplit] sequential L 171
+tim> [rsplit] recursive R 50
+tim> [xp] Reporting 0
+tim> [ssplit] sequential R 146
+tim> [rsplit] recursive C 364
+tim> [xp] Reporting 0
+tim> [ssplit] sequential C 4469
+Splitting: 0.00757pt
+Scoring: 0.00732pt
+tim> [rsplit] recursive L 90
+tim> [ssplit] sequential L 283
+tim> [rsplit] recursive R 55
+tim> [ssplit] sequential R 250
+tim> [rsplit] recursive C 412
+tim> [ssplit] sequential C 4687
+Splitting: 0.00726pt
+Scoring: 0.00835pt
+tim> [rsplit] recursive L 90
+tim> [ssplit] sequential L 296
+tim> [rsplit] recursive R 55
+tim> [ssplit] sequential R 248
+tim> [rsplit] recursive C 459
+tim> [ssplit] sequential C 4819
+Splitting: 0.00711pt
+Scoring: 0.00812pt
+tim> [rsplit] recursive L 115
+tim> [rsplit] recursive L 90
+tim> [ssplit] sequential L 313
+tim> [rsplit] recursive R 56
+tim> [ssplit] sequential R 246
+tim> [rsplit] recursive C 404
+tim> [ssplit] sequential C 4541
+Splitting: 0.0072pt
+Scoring: 0.00931pt
+tim> [rsplit] recursive L 119
+tim> [ssplit] sequential L 300
+tim> [rsplit] recursive R 68
+tim> [ssplit] sequential R 235
+tim> [rsplit] recursive C 448
+tim> [ssplit] sequential C 4331
+Splitting: 0.00714pt
+Scoring: 0.0073pt
+tim> [rsplit] recursive L 84
+tim> [ssplit] sequential L 183
+tim> [rsplit] recursive R 49
+tim> [ssplit] sequential R 139
+tim> [rsplit] recursive C 356
+tim> [ssplit] sequential C 4579
+Splitting: 0.00772pt
+Scoring: 0.00816pt
+tim> [rsplit] recursive L 134
+tim> [ssplit] sequential L 226
+tim> [rsplit] recursive R 63
+tim> [ssplit] sequential R 221
+tim> [rsplit] recursive C 445
+tim> [ssplit] sequential C 4696
+Splitting: 0.0081pt
+Scoring: 0.00848pt
+tim> [rsplit] recursive L 87
+tim> [ssplit] sequential L 338
+tim> [rsplit] recursive R 57
+tim> [ssplit] sequential R 262
+tim> [rsplit] recursive C 444
+tim> [ssplit] sequential C 5004
+Splitting: 0.00772pt
+Scoring: 0.00746pt
+tim> [rsplit] recursive L 85
+tim> [ssplit] sequential L 329
+tim> [rsplit] recursive R 54
+tim> [ssplit] sequential R 286
+tim> [rsplit] recursive C 404
+tim> [ssplit] sequential C 5564
+Splitting: 0.00763pt
+Scoring: 0.00911pt
+tim> [rsplit] recursive L 89
+tim> [ssplit] sequential L 363
+tim> [rsplit] recursive R 54
+tim> [ssplit] sequential R 280
+tim> [rsplit] recursive C 414
+tim> [ssplit] sequential C 5643
+Splitting: 0.0101pt
+Scoring: 0.00783pt
+tim> [rsplit] recursive L 86
+tim> [ssplit] sequential L 218
+tim> [rsplit] recursive R 52
+tim> [ssplit] sequential R 158
+tim> [rsplit] recursive C 366
+tim> [ssplit] sequential C 5723
+Splitting: 0.00778pt
+Scoring: 0.00786pt
+tim> [rsplit] recursive L 81
+tim> [ssplit] sequential L 194
+tim> [rsplit] recursive R 47
+tim> [ssplit] sequential R 139
+tim> [rsplit] recursive C 359
+tim> [ssplit] sequential C 4770
+Splitting: 0.00781pt
+Scoring: 0.00763pt
+tim> [rsplit] recursive L 92
+tim> [ssplit] sequential L 216
+tim> [rsplit] recursive R 52
+tim> [ssplit] sequential R 155
+tim> [rsplit] recursive C 26
+tim> [ssplit] sequential C 15
+Splitting: 0.00606pt
+Scoring: 0.01163pt
+tim> [rsplit] recursive L 159
+tim> [ssplit] sequential L 482
+tim> [rsplit] recursive R 111
+tim> [ssplit] sequential R 328
+tim> [rsplit] recursive C 668
+tim> [ssplit] sequential C 11832
+Splitting: 0.01021pt
+Scoring: 0.00926pt
+tim> [rsplit] recursive L 96
+tim> [ssplit] sequential L 362
+tim> [rsplit] recursive R 69
+tim> [ssplit] sequential R 237
+tim> [rsplit] recursive C 422
+tim> [ssplit] sequential C 5028
+Splitting: 0.0071pt
+Scoring: 0.0071pt
+tim> [rsplit] recursive L 97
+tim> [ssplit] sequential L 350
+tim> [rsplit] recursive R 65
+tim> [ssplit] sequential R 262
+tim> [rsplit] recursive C 462
+tim> [ssplit] sequential C 5251
+Splitting: 0.0074pt
+Scoring: 0.00946pt
+tim> [rsplit] recursive L 96
+tim> [ssplit] sequential L 237
+tim> [rsplit] recursive R 55
+tim> [ssplit] sequential R 261
+tim> [rsplit] recursive C 461
+tim> [ssplit] sequential C 5209
+Splitting: 0.00703pt
+Scoring: 0.00868pt
+tim> [rsplit] recursive L 79
+tim> [ssplit] sequential L 205
+tim> [rsplit] recursive R 41
+tim> [ssplit] sequential R 136
+tim> [rsplit] recursive C 424
+tim> [ssplit] sequential C 4991
+Splitting: 0.00713pt
+Scoring: 0.01013pt
+tim> [rsplit] recursive L 63
+tim> [ssplit] sequential L 284
+tim> [rsplit] recursive R 57
+tim> [ssplit] sequential R 249
+tim> [rsplit] recursive C 373
+tim> [ssplit] sequential C 5385
+Splitting: 0.00777pt
+Scoring: 0.01175pt
+tim> [rsplit] recursive L 95
+tim> [ssplit] sequential L 198
+tim> [rsplit] recursive R 51
+tim> [ssplit] sequential R 139
+tim> [rsplit] recursive C 375
+tim> [ssplit] sequential C 5109
+Splitting: 0.00711pt
+Scoring: 0.00722pt
+tim> [rsplit] recursive L 129
+tim> [ssplit] sequential L 236
+tim> [rsplit] recursive R 63
+tim> [ssplit] sequential R 174
+tim> [rsplit] recursive C 449
+tim> [ssplit] sequential C 5347
+Splitting: 0.00761pt
+Scoring: 0.00768pt
+tim> [rsplit] recursive L 91
+tim> [ssplit] sequential L 194
+tim> [rsplit] recursive R 50
+tim> [ssplit] sequential R 138
+tim> [rsplit] recursive C 379
+tim> [ssplit] sequential C 5145
+Splitting: 0.00732pt
+Scoring: 0.0074pt
+tim> [rsplit] recursive L 82
+tim> [ssplit] sequential L 250
+tim> [rsplit] recursive R 49
+tim> [ssplit] sequential R 212
+tim> [rsplit] recursive C 345
+tim> [ssplit] sequential C 4123
+Splitting: 0.00589pt
+Scoring: 0.0083pt
+tim> [rsplit] recursive L 77
+tim> [ssplit] sequential L 204
+tim> [rsplit] recursive R 46
+tim> [ssplit] sequential R 208
+tim> [rsplit] recursive C 404
+tim> [ssplit] sequential C 4284
+Splitting: 0.00647pt
+Scoring: 0.00665pt
+tim> [rsplit] recursive L 77
+tim> [ssplit] sequential L 271
+tim> [rsplit] recursive R 59
+tim> [ssplit] sequential R 207
+tim> [rsplit] recursive C 357
+tim> [ssplit] sequential C 4084
+Splitting: 0.00587pt
+Scoring: 0.00734pt
+tim> [rsplit] recursive L 74
+tim> [ssplit] sequential L 152
+tim> [rsplit] recursive R 45
+tim> [ssplit] sequential R 115
+tim> [rsplit] recursive C 302
+tim> [ssplit] sequential C 3964
+Splitting: 0.00606pt
+Scoring: 0.006pt
+tim> [rsplit] recursive L 81
+tim> [ssplit] sequential L 281
+tim> [rsplit] recursive R 60
+tim> [ssplit] sequential R 206
+tim> [rsplit] recursive C 397
+tim> [ssplit] sequential C 3930
+Splitting: 0.00601pt
+Scoring: 0.00848pt
+tim> [rsplit] recursive L 85
+tim> [ssplit] sequential L 234
+tim> [rsplit] recursive R 49
+tim> [ssplit] sequential R 145
+tim> [rsplit] recursive C 409
+tim> [ssplit] sequential C 4120
+Splitting: 0.00616pt
+Scoring: 0.0077pt
+tim> [rsplit] recursive L 65
+tim> [ssplit] sequential L 149
+tim> [rsplit] recursive R 34
+tim> [ssplit] sequential R 125
+tim> [rsplit] recursive C 241
+tim> [ssplit] sequential C 4003
+Splitting: 0.00616pt
+Scoring: 0.0061pt
+tim> [rsplit] recursive L 103
+tim> [ssplit] sequential L 272
+tim> [rsplit] recursive R 61
+tim> [ssplit] sequential R 202
+tim> [rsplit] recursive C 425
+tim> [ssplit] sequential C 4198
+Splitting: 0.0061pt
+Scoring: 0.0063pt
+tim> [rsplit] recursive L 79
+tim> [ssplit] sequential L 150
+tim> [rsplit] recursive R 47
+tim> [ssplit] sequential R 114
+tim> [rsplit] recursive C 357
+tim> [ssplit] sequential C 3995
+Splitting: 0.00618pt
+Scoring: 0.00615pt
+tim> [rsplit] recursive L 102
+tim> [ssplit] sequential L 173
+tim> [rsplit] recursive R 47
+tim> [ssplit] sequential R 115
+tim> [rsplit] recursive C 306
+tim> [ssplit] sequential C 3897
+Splitting: 0.0059pt
+Scoring: 0.006pt
+tim> [rsplit] recursive L 79
+tim> [ssplit] sequential L 173
+tim> [rsplit] recursive R 45
+tim> [ssplit] sequential R 111
+tim> [rsplit] recursive C 320
+tim> [ssplit] sequential C 4100
+Splitting: 0.00609pt
+Scoring: 0.0062pt
+tim> [rsplit] recursive L 82
+tim> [ssplit] sequential L 274
+tim> [rsplit] recursive R 61
+tim> [ssplit] sequential R 209
+tim> [rsplit] recursive C 361
+tim> [ssplit] sequential C 4302
+Splitting: 0.00598pt
+Scoring: 0.00595pt
+tim> [rsplit] recursive L 77
+tim> [ssplit] sequential L 276
+tim> [rsplit] recursive R 57
+tim> [ssplit] sequential R 206
+tim> [rsplit] recursive C 362
+tim> [ssplit] sequential C 4023
+Splitting: 0.00635pt
+Scoring: 0.00604pt
+tim> [rsplit] recursive L 83
+tim> [ssplit] sequential L 280
+tim> [rsplit] recursive R 52
+tim> [ssplit] sequential R 177
+tim> [rsplit] recursive C 303
+tim> [ssplit] sequential C 4116
+Splitting: 0.00609pt
+Scoring: 0.00784pt
+tim> [rsplit] recursive L 87
+tim> [ssplit] sequential L 279
+tim> [rsplit] recursive R 64
+tim> [ssplit] sequential R 210
+tim> [rsplit] recursive C 368
+tim> [ssplit] sequential C 4278
+Splitting: 0.00638pt
+Scoring: 0.00798pt
+tim> [rsplit] recursive L 88
+tim> [ssplit] sequential L 195
+tim> [rsplit] recursive R 50
+tim> [ssplit] sequential R 206
+tim> [rsplit] recursive C 417
+tim> [ssplit] sequential C 4001
+Splitting: 0.00598pt
+Scoring: 0.006pt
+tim> [rsplit] recursive L 83
+tim> [ssplit] sequential L 181
+tim> [rsplit] recursive R 50
+tim> [ssplit] sequential R 215
+tim> [rsplit] recursive C 327
+tim> [ssplit] sequential C 4187
+Splitting: 0.0063pt
+Scoring: 0.00594pt
+tim> [rsplit] recursive L 83
+tim> [ssplit] sequential L 178
+tim> [rsplit] recursive R 45
+tim> [ssplit] sequential R 116
+tim> [rsplit] recursive C 355
+tim> [ssplit] sequential C 4057
+Splitting: 0.00587pt
+Scoring: 0.0087pt
+tim> [rsplit] recursive L 86
+tim> [ssplit] sequential L 173
+tim> [rsplit] recursive R 49
+tim> [ssplit] sequential R 193
+tim> [rsplit] recursive C 326
+tim> [ssplit] sequential C 4416
+Splitting: 0.00595pt
+Scoring: 0.00604pt
+tim> [rsplit] recursive L 83
+tim> [ssplit] sequential L 154
+tim> [rsplit] recursive R 44
+tim> [ssplit] sequential R 121
+tim> [rsplit] recursive C 302
+tim> [ssplit] sequential C 3862
+Splitting: 0.006pt
+Scoring: 0.00616pt
+tim> [rsplit] recursive L 82
+tim> [ssplit] sequential L 218
+tim> [rsplit] recursive R 46
+tim> [ssplit] sequential R 206
+tim> [rsplit] recursive C 321
+tim> [ssplit] sequential C 4275
+Splitting: 0.00612pt
+Scoring: 0.00774pt
+tim> [rsplit] recursive L 81
+tim> [ssplit] sequential L 264
+tim> [rsplit] recursive R 48
+tim> [ssplit] sequential R 206
+tim> [rsplit] recursive C 333
+tim> [ssplit] sequential C 4229
+Splitting: 0.006pt
+Scoring: 0.00749pt
+tim> [rsplit] recursive L 82
+tim> [ssplit] sequential L 276
+tim> [rsplit] recursive R 57
+tim> [ssplit] sequential R 143
+tim> [rsplit] recursive C 313
+tim> [ssplit] sequential C 3893
+Splitting: 0.006pt
+Scoring: 0.00867pt
+tim> [rsplit] recursive L 78
+tim> [ssplit] sequential L 276
+tim> [rsplit] recursive R 60
+tim> [ssplit] sequential R 202
+tim> [rsplit] recursive C 339
+tim> [ssplit] sequential C 4099
+Splitting: 0.00589pt
+Scoring: 0.00674pt
+tim> [rsplit] recursive L 102
+tim> [ssplit] sequential L 162
+tim> [rsplit] recursive R 44
+tim> [ssplit] sequential R 158
+tim> [rsplit] recursive C 334
+tim> [ssplit] sequential C 3990
+Splitting: 0.00594pt
+Scoring: 0.00858pt
+tim> [rsplit] recursive L 107
+tim> [ssplit] sequential L 153
+tim> [rsplit] recursive R 46
+tim> [ssplit] sequential R 139
+tim> [rsplit] recursive C 583
+tim> [ssplit] sequential C 3846
+Splitting: 0.00603pt
+Scoring: 0.00595pt
+tim> [rsplit] recursive L 114
+tim> [ssplit] sequential L 146
+tim> [rsplit] recursive R 46
+tim> [ssplit] sequential R 130
+tim> [rsplit] recursive C 582
+tim> [ssplit] sequential C 3982
+Splitting: 0.00603pt
+Scoring: 0.006pt
+tim> [rsplit] recursive L 98
+tim> [ssplit] sequential L 173
+tim> [rsplit] recursive R 62
+tim> [ssplit] sequential R 169
+tim> [rsplit] recursive C 565
+tim> [ssplit] sequential C 4089
+Splitting: 0.00627pt
+Scoring: 0.00728pt
+tim> [rsplit] recursive L 92
+tim> [ssplit] sequential L 273
+tim> [rsplit] recursive R 52
+tim> [ssplit] sequential R 212
+tim> [rsplit] recursive C 495
+tim> [ssplit] sequential C 3980
+Splitting: 0.00598pt
+Scoring: 0.0091pt
+tim> [rsplit] recursive L 93
+tim> [ssplit] sequential L 274
+tim> [rsplit] recursive R 65
+tim> [ssplit] sequential R 203
+tim> [rsplit] recursive C 597
+tim> [ssplit] sequential C 3992
+Splitting: 0.0059pt
+Scoring: 0.00754pt
+tim> [rsplit] recursive L 103
+tim> [ssplit] sequential L 162
+tim> [rsplit] recursive R 56
+tim> [ssplit] sequential R 122
+tim> [rsplit] recursive C 520
+tim> [ssplit] sequential C 3967
+Splitting: 0.00694pt
+Scoring: 0.00763pt
+tim> [rsplit] recursive L 99
+tim> [ssplit] sequential L 192
+tim> [rsplit] recursive R 52
+tim> [ssplit] sequential R 210
+tim> [rsplit] recursive C 604
+tim> [ssplit] sequential C 4197
+Splitting: 0.00598pt
+Scoring: 0.00706pt
+tim> [rsplit] recursive L 110
+tim> [ssplit] sequential L 207
+tim> [rsplit] recursive R 54
+tim> [ssplit] sequential R 198
+tim> [rsplit] recursive C 572
+tim> [ssplit] sequential C 4044
+Splitting: 0.00604pt
+Scoring: 0.00954pt
+tim> [rsplit] recursive L 99
+tim> [ssplit] sequential L 260
+tim> [rsplit] recursive R 65
+tim> [ssplit] sequential R 198
+tim> [rsplit] recursive C 538
+tim> [ssplit] sequential C 4166
+Splitting: 0.00594pt
+Scoring: 0.00595pt
+tim> [rsplit] recursive L 87
+tim> [ssplit] sequential L 141
+tim> [rsplit] recursive R 48
+tim> [ssplit] sequential R 107
+tim> [rsplit] recursive C 375
+tim> [ssplit] sequential C 3832
+Splitting: 0.00609pt
+Scoring: 0.00642pt
+tim> [rsplit] recursive L 67
+tim> [ssplit] sequential L 146
+tim> [rsplit] recursive R 47
+tim> [ssplit] sequential R 112
+tim> [rsplit] recursive C 289
+tim> [ssplit] sequential C 3860
+Splitting: 0.00592pt
+Scoring: 0.00597pt
+tim> [rsplit] recursive L 65
+tim> [ssplit] sequential L 156
+tim> [rsplit] recursive R 51
+tim> [ssplit] sequential R 202
+tim> [rsplit] recursive C 334
+tim> [ssplit] sequential C 4091
+Splitting: 0.00615pt
+Scoring: 0.00856pt
+tim> [rsplit] recursive L 92
+tim> [ssplit] sequential L 266
+tim> [rsplit] recursive R 57
+tim> [ssplit] sequential R 204
+tim> [rsplit] recursive C 590
+tim> [ssplit] sequential C 4056
+Splitting: 0.00586pt
+Scoring: 0.01021pt
+tim> [rsplit] recursive L 113
+tim> [ssplit] sequential L 153
+tim> [rsplit] recursive R 49
+tim> [ssplit] sequential R 108
+tim> [rsplit] recursive C 623
+tim> [ssplit] sequential C 3862
+Splitting: 0.00603pt
+Scoring: 0.00592pt
+tim> [rsplit] recursive L 118
+tim> [ssplit] sequential L 264
+tim> [rsplit] recursive R 55
+tim> [ssplit] sequential R 205
+tim> [rsplit] recursive C 661
+tim> [ssplit] sequential C 4088
+Splitting: 0.00644pt
+Scoring: 0.00612pt
+tim> [rsplit] recursive L 141
+tim> [ssplit] sequential L 266
+tim> [rsplit] recursive R 61
+tim> [ssplit] sequential R 207
+tim> [rsplit] recursive C 1017
+tim> [ssplit] sequential C 3868
+Splitting: 0.00603pt
+Scoring: 0.00656pt
+tim> [rsplit] recursive L 127
+tim> [ssplit] sequential L 172
+tim> [rsplit] recursive R 57
+tim> [ssplit] sequential R 199
+tim> [rsplit] recursive C 679
+tim> [ssplit] sequential C 4008
+Splitting: 0.00613pt
+Scoring: 0.00616pt
+tim> [rsplit] recursive L 124
+tim> [ssplit] sequential L 268
+tim> [rsplit] recursive R 69
+tim> [ssplit] sequential R 194
+tim> [rsplit] recursive C 670
+tim> [ssplit] sequential C 4263
+Splitting: 0.00607pt
+Scoring: 0.00917pt
+tim> [rsplit] recursive L 177
+tim> [ssplit] sequential L 265
+tim> [rsplit] recursive R 67
+tim> [ssplit] sequential R 201
+tim> [rsplit] recursive C 918
+tim> [ssplit] sequential C 4054
+Splitting: 0.006pt
+Scoring: 0.00597pt
+tim> [rsplit] recursive L 112
+tim> [ssplit] sequential L 255
+tim> [rsplit] recursive R 64
+tim> [ssplit] sequential R 195
+tim> [rsplit] recursive C 685
+tim> [ssplit] sequential C 4073
+Splitting: 0.00627pt
+Scoring: 0.00659pt
+tim> [rsplit] recursive L 121
+tim> [ssplit] sequential L 260
+tim> [rsplit] recursive R 55
+tim> [ssplit] sequential R 197
+tim> [rsplit] recursive C 659
+tim> [ssplit] sequential C 3932
+Splitting: 0.006pt
+Scoring: 0.00594pt
+tim> [rsplit] recursive L 127
+tim> [ssplit] sequential L 139
+tim> [rsplit] recursive R 50
+tim> [ssplit] sequential R 105
+tim> [rsplit] recursive C 611
+tim> [ssplit] sequential C 3871
+Splitting: 0.00604pt
+Scoring: 0.00758pt
+tim> [rsplit] recursive L 159
+tim> [ssplit] sequential L 262
+tim> [rsplit] recursive R 73
+tim> [ssplit] sequential R 198
+tim> [rsplit] recursive C 899
+tim> [ssplit] sequential C 4231
+Splitting: 0.00606pt
+Scoring: 0.00613pt
+tim> [rsplit] recursive L 174
+tim> [ssplit] sequential L 149
+tim> [rsplit] recursive R 70
+tim> [ssplit] sequential R 110
+tim> [rsplit] recursive C 807
+tim> [ssplit] sequential C 4029
+Splitting: 0.0061pt
+Scoring: 0.00636pt
+tim> [rsplit] recursive L 251
+tim> [rsplit] recursive L 247
+tim> [rsplit] recursive L 225
+tim> [rsplit] recursive L 329
+tim> [rsplit] recursive L 320
+tim> [rsplit] recursive L 342
+tim> [rsplit] recursive L 299
+tim> [rsplit] recursive L 210
+tim> [rsplit] recursive L 195
+tim> [rsplit] recursive L 203
+tim> [rsplit] recursive L 165
+tim> [rsplit] recursive L 147
+tim> [ssplit] sequential L 230
+tim> [rsplit] recursive R 103
+tim> [ssplit] sequential R 218
+tim> [rsplit] recursive C 889
+tim> [ssplit] sequential C 4213
+Splitting: 0.00606pt
+Scoring: 0.00977pt
+tim> [rsplit] recursive L 157
+tim> [ssplit] sequential L 282
+tim> [rsplit] recursive L 242
+tim> [ssplit] sequential L 235
+tim> [rsplit] recursive L 226
+tim> [ssplit] sequential L 288
+tim> [rsplit] recursive L 236
+tim> [ssplit] sequential L 220
+tim> [rsplit] recursive L 256
+tim> [ssplit] sequential L 282
+tim> [rsplit] recursive L 229
+tim> [ssplit] sequential L 297
+tim> [rsplit] recursive L 212
+tim> [ssplit] sequential L 275
+tim> [rsplit] recursive L 233
+tim> [ssplit] sequential L 223
+tim> [rsplit] recursive L 225
+tim> [ssplit] sequential L 282
+tim> [rsplit] recursive L 213
+tim> [ssplit] sequential L 285
+tim> [rsplit] recursive L 222
+tim> [ssplit] sequential L 211
+tim> [rsplit] recursive L 201
+tim> [ssplit] sequential L 282
+tim> [rsplit] recursive L 238
+tim> [ssplit] sequential L 245
+tim> [rsplit] recursive L 218
+tim> [ssplit] sequential L 283
+tim> [rsplit] recursive L 216
+tim> [ssplit] sequential L 283
+tim> [rsplit] recursive L 239
+tim> [ssplit] sequential L 280
+tim> [rsplit] recursive L 212
+tim> [ssplit] sequential L 285
+tim> [rsplit] recursive L 217
+tim> [ssplit] sequential L 286
+tim> [rsplit] recursive L 3
+tim> [ssplit] sequential L 3
+tim> [rsplit] recursive L 6
+tim> [ssplit] sequential L 5
+tim> [rsplit] recursive L 6
+tim> [ssplit] sequential L 7
+tim> [rsplit] recursive L 229
+tim> [ssplit] sequential L 272
+tim> [rsplit] recursive L 134
+tim> [ssplit] sequential L 264
+tim> [rsplit] recursive L 55
+tim> [ssplit] sequential L 135
+tim> [rsplit] recursive L 53
+tim> [ssplit] sequential L 139
+tim> [rsplit] recursive R 21
+tim> [ssplit] sequential R 103
+tim> [rsplit] recursive C 286
+tim> [ssplit] sequential C 3876
+Splitting: 0.00604pt
+Scoring: 0.00812pt
+tim> [rsplit] recursive L 55
+tim> [ssplit] sequential L 136
+tim> [rsplit] recursive R 21
+tim> [ssplit] sequential R 100
+tim> [rsplit] recursive C 285
+tim> [ssplit] sequential C 3910
+Splitting: 0.00613pt
+Scoring: 0.00592pt
+tim> [rsplit] recursive L 53
+tim> [ssplit] sequential L 134
+tim> [rsplit] recursive R 20
+tim> [ssplit] sequential R 106
+tim> [rsplit] recursive C 286
+tim> [ssplit] sequential C 3877
+Splitting: 0.0059pt
+Scoring: 0.01016pt
+tim> [rsplit] recursive L 51
+tim> [ssplit] sequential L 133
+tim> [rsplit] recursive R 20
+tim> [ssplit] sequential R 101
+tim> [rsplit] recursive C 289
+tim> [ssplit] sequential C 3904
+Splitting: 0.00616pt
+Scoring: 0.00587pt
+tim> [rsplit] recursive L 64
+tim> [ssplit] sequential L 164
+tim> [rsplit] recursive R 25
+tim> [ssplit] sequential R 126
+tim> [rsplit] recursive C 342
+tim> [ssplit] sequential C 4365
+Splitting: 0.00667pt
+Scoring: 0.00725pt
+tim> [rsplit] recursive L 6440
+tim> [ssplit] sequential L 3217
+tim> [rsplit] recursive L 478
+tim> [ssplit] sequential L 216
+tim> [rsplit] recursive R 395
+tim> [ssplit] sequential R 256
+tim> [rsplit] recursive L 483
+tim> [ssplit] sequential L 335
+tim> [rsplit] recursive R 394
+tim> [ssplit] sequential R 258
+tim> [rsplit] recursive L 393
+tim> [ssplit] sequential L 273
+tim> [rsplit] recursive R 311
+tim> [ssplit] sequential R 182
+tim> [rsplit] recursive L 362
+tim> [ssplit] sequential L 152
+tim> [rsplit] recursive R 277
+tim> [ssplit] sequential R 136
+tim> [rsplit] recursive L 390
+tim> [ssplit] sequential L 265
+tim> [rsplit] recursive R 311
+tim> [ssplit] sequential R 205
+tim> [rsplit] recursive L 58
+tim> [ssplit] sequential L 132
+tim> [rsplit] recursive R 28
+tim> [ssplit] sequential R 107
+tim> [rsplit] recursive C 320
+tim> [ssplit] sequential C 3913
+Splitting: 0.0059pt
+Scoring: 0.00629pt
+tim> [local@split@defs] 1000 223
+tim> [rsplit] recursive L 284
+tim> [local@split@defs] 1000 218
+tim> [ssplit] sequential L 359
+tim> [local@split@defs] 1000 204
+tim> [rsplit] recursive R 232
+tim> [local@split@defs] 1000 213
+tim> [ssplit] sequential R 323
+tim> [local@split@defs] 1000 204
+tim> [rsplit] recursive C 519
+tim> [local@split@defs] 1000 196
+tim> [ssplit] sequential C 4209
+Splitting: 0.00607pt
+Scoring: 0.00603pt
+tim> [local@split@defs] 1000 203
+tim> [rsplit] recursive L 263
+tim> [local@split@defs] 1000 197
+tim> [ssplit] sequential L 329
+tim> [local@split@defs] 1000 204
+tim> [rsplit] recursive R 232
+tim> [local@split@defs] 1000 195
+tim> [ssplit] sequential R 312
+tim> [local@split@defs] 1000 228
+tim> [rsplit] recursive C 560
+tim> [local@split@defs] 1000 201
+tim> [ssplit] sequential C 4116
+Splitting: 0.00609pt
+Scoring: 0.00917pt
+tim> [local@split@defs] 5000 1201
+tim> [rsplit] recursive L 1265
+tim> [local@split@defs] 5000 990
+tim> [ssplit] sequential L 1125
+tim> [local@split@defs] 5000 1010
+tim> [rsplit] recursive R 1037
+tim> [local@split@defs] 5000 1136
+tim> [ssplit] sequential R 1254
+tim> [local@split@defs] 5000 1007
+tim> [rsplit] recursive C 1340
+tim> [local@split@defs] 5000 966
+tim> [ssplit] sequential C 4974
+Splitting: 0.0061pt
+Scoring: 0.00597pt
+tim> [local@split@defs] sh 5000 1620
+tim> [rsplit] recursive L 1685
+tim> [local@split@defs] sh 5000 1523
+tim> [ssplit] sequential L 1660
+tim> [local@split@defs] sh 5000 1542
+tim> [rsplit] recursive R 1570
+tim> [local@split@defs] sh 5000 1472
+tim> [ssplit] sequential R 1578
+tim> [local@split@defs] sh 5000 1544
+tim> [rsplit] recursive C 1864
+tim> [local@split@defs] sh 5000 1465
+tim> [ssplit] sequential C 5233
+Splitting: 0.00586pt
+Scoring: 0.00589pt
+tim> [local@split@defs] nocsn 5000 1256
+tim> [rsplit] recursive L 1314
+tim> [local@split@defs] nocsn 5000 1195
+tim> [ssplit] sequential L 1330
+tim> [local@split@defs] nocsn 5000 1233
+tim> [rsplit] recursive R 1260
+tim> [local@split@defs] nocsn 5000 1181
+tim> [ssplit] sequential R 1288
+tim> [local@split@defs] nocsn 5000 1233
+tim> [rsplit] recursive C 1555
+tim> [local@split@defs] nocsn 5000 1200
+tim> [ssplit] sequential C 4983
+Splitting: 0.006pt
+Scoring: 0.00821pt
+tim> [local@split@defs] nocsn 5000 1293
+tim> [rsplit] recursive L 1351
+tim> [local@split@defs] nocsn 5000 1199
+tim> [ssplit] sequential L 1333
+tim> [local@split@defs] nocsn 5000 1240
+tim> [rsplit] recursive R 1267
+tim> [local@split@defs] nocsn 5000 1242
+tim> [ssplit] sequential R 1436
+tim> [local@split@defs] nocsn 5000 1265
+tim> [rsplit] recursive C 1610
+tim> [local@split@defs] nocsn 5000 1195
+tim> [ssplit] sequential C 5055
+Splitting: 0.00589pt
+Scoring: 0.00609pt
+tim> [local@split@defs] prs 5000 1004
+tim> [rsplit] recursive L 1062
+tim> [local@split@defs] prs 5000 952
+tim> [ssplit] sequential L 1084
+tim> [local@split@defs] prs 5000 993
+tim> [rsplit] recursive R 1021
+tim> [local@split@defs] prs 5000 947
+tim> [ssplit] sequential R 1056
+tim> [local@split@defs] prs 5000 1105
+tim> [rsplit] recursive C 1453
+tim> [local@split@defs] prs 5000 950
+tim> [ssplit] sequential C 4622
+Splitting: 0.00581pt
+Scoring: 0.00687pt
+tim> [local@split@defs] prs 5000 1002
+tim> [rsplit] recursive L 1065
+tim> [local@split@defs] prs 5000 985
+tim> [ssplit] sequential L 1121
+tim> [local@split@defs] prs 5000 1006
+tim> [rsplit] recursive R 1032
+tim> [local@split@defs] prs 5000 955
+tim> [ssplit] sequential R 1062
+tim> [local@split@defs] prs 5000 1005
+tim> [rsplit] recursive C 1334
+tim> [local@split@defs] prs 5000 957
+tim> [ssplit] sequential C 4693
+Splitting: 0.006pt
+Scoring: 0.00938pt
+tim> [local@split@defs] prs 5000 1003
+tim> [rsplit] recursive L 1063
+tim> [local@split@defs] prs 5000 1003
+tim> [ssplit] sequential L 1150
+tim> [local@split@defs] prs 5000 1007
+tim> [rsplit] recursive R 1036
+tim> [local@split@defs] prs 5000 942
+tim> [ssplit] sequential R 1050
+tim> [local@split@defs] prs 5000 1082
+tim> [rsplit] recursive C 1414
+tim> [local@split@defs] prs 5000 961
+tim> [ssplit] sequential C 4711
+Splitting: 0.00595pt
+Scoring: 0.00932pt
+tim> [local@split@defs] prs 5000 1030
+tim> [rsplit] recursive L 1088
+tim> [local@split@defs] prs 5000 979
+tim> [ssplit] sequential L 1114
+tim> [local@split@defs] prs 5000 1008
+tim> [rsplit] recursive R 1034
+tim> [local@split@defs] prs 5000 974
+tim> [ssplit] sequential R 1083
+tim> [local@split@defs] prs 5000 1016
+tim> [rsplit] recursive C 1338
+tim> [local@split@defs] prs 5000 979
+tim> [ssplit] sequential C 4663
+Splitting: 0.00583pt
+Scoring: 0.0062pt
+tim> [local@split@defs] mone 5000 1057
+tim> [rsplit] recursive L 1115
+tim> [local@split@defs] mone 5000 973
+tim> [ssplit] sequential L 1108
+tim> [local@split@defs] mone 5000 1042
+tim> [rsplit] recursive R 1071
+tim> [local@split@defs] mone 5000 1020
+tim> [ssplit] sequential R 1134
+tim> [local@split@defs] mone 5000 1026
+tim> [rsplit] recursive C 1348
+tim> [local@split@defs] mone 5000 968
+tim> [ssplit] sequential C 4698
+Splitting: 0.00598pt
+Scoring: 0.00876pt
+tim> [local@split@defs] mone2 5000 1009
+tim> [rsplit] recursive L 1066
+tim> [local@split@defs] mone2 5000 946
+tim> [ssplit] sequential L 1084
+tim> [local@split@defs] mone2 5000 1074
+tim> [rsplit] recursive R 1104
+tim> [local@split@defs] mone2 5000 948
+tim> [ssplit] sequential R 1058
+tim> [local@split@defs] mone2 5000 982
+tim> [rsplit] recursive C 1316
+tim> [local@split@defs] mone2 5000 938
+tim> [ssplit] sequential C 4929
+Splitting: 0.00702pt
+Scoring: 0.00615pt
+tim> [local@split@defs] mone2 5000 998
+tim> [rsplit] recursive L 1059
+tim> [local@split@defs] mone2 5000 1051
+tim> [ssplit] sequential L 1182
+tim> [local@split@defs] mone2 5000 977
+tim> [rsplit] recursive R 1004
+tim> [local@split@defs] mone2 5000 982
+tim> [ssplit] sequential R 1093
+tim> [local@split@defs] mone2 5000 969
+tim> [rsplit] recursive C 1290
+tim> [local@split@defs] mone2 5000 938
+tim> [ssplit] sequential C 4759
+Splitting: 0.00635pt
+Scoring: 0.00844pt
+tim> [local@split@defs] seq 5000 329440
+tim> [rsplit] recursive L 329506
+tim> [local@split@defs] seq 5000 350449
+tim> [ssplit] sequential L 350626
+tim> [local@split@defs] seq 5000 360100
+tim> [rsplit] recursive R 360156
+tim> [local@split@defs] seq 5000 398463
+tim> [ssplit] sequential R 398627
+tim> [local@split@defs] seq 5000 423293
+tim> [rsplit] recursive C 423682
+tim> [local@split@defs] seq 5000 466071
+tim> [ssplit] sequential C 470062
+Splitting: 0.00626pt
+Scoring: 0.00757pt
+tim> [local@split@defs] 2seq 5000 455219
+tim> [rsplit] recursive L 455290
+tim> [local@split@defs] 2seq 5000 518155
+tim> [ssplit] sequential L 518355
+tim> [local@split@defs] 2seq 5000 553301
+tim> [rsplit] recursive R 553376
+tim> [local@split@defs] 2seq 5000 782341
+tim> [ssplit] sequential R 782587
+tim> [local@split@defs] 2seq 5000 815245
+tim> [rsplit] recursive C 815722
+tim> [local@split@defs] 2seq 5000 1000142
+tim> [ssplit] sequential C 1004512
+Splitting: 0.00616pt
+Scoring: 0.00653pt
+tim> [local@split@defs] 2seq 5000 457447
+tim> [rsplit] recursive L 457508
+tim> [local@split@defs] 2seq 5000 528804
+tim> [ssplit] sequential L 529008
+tim> [local@split@defs] 2seq 5000 541702
+tim> [rsplit] recursive R 541779
+tim> [local@split@defs] 2seq 5000 777117
+tim> [ssplit] sequential R 777473
+tim> [local@split@defs] 2seq 5000 790967
+tim> [rsplit] recursive C 791441
+tim> [local@split@defs] 2seq 5000 991691
+tim> [ssplit] sequential C 996117
+Splitting: 0.00633pt
+Scoring: 0.00647pt
+tim> [local@split@defs] 2seq 5000 478214
+tim> [local@split@defs] 2seqR 500 560259
+tim> [rsplit] recursive L 560322
+tim> [local@split@defs] 2seq 5000 514904
+tim> [local@split@defs] 2seqR 500 595957
+tim> [ssplit] sequential L 596167
+tim> [local@split@defs] 2seq 5000 531727
+tim> [local@split@defs] 2seqR 500 638504
+tim> [rsplit] recursive R 638581
+tim> [local@split@defs] 2seq 5000 739772
+tim> [local@split@defs] 2seqR 500 858085
+tim> [ssplit] sequential R 858335
+tim> [local@split@defs] 2seq 5000 734987
+tim> [local@split@defs] 2seqR 500 896567
+tim> [rsplit] recursive C 897026
+tim> [local@split@defs] 2seq 5000 995691
+tim> [local@split@defs] 2seqR 500 1154042
+tim> [ssplit] sequential C 1158357
+Splitting: 0.00633pt
+Scoring: 0.01108pt
+tim> [local@split@defs] 2seq 500 4133
+tim> [local@split@defs] 2seq 500 4229
+tim> [local@split@defs] 2seq 500 4356
+tim> [local@split@defs] 2seq 500 4462
+Splitting: 0.00264pt
+Scoring: 0.00629pt
+tim> [local@split@defs] 2seq-m 500 4140
+tim> [local@split@defs] 2seq-mR 200 6636
+tim> [rsplit] recursive L 6699
+tim> [local@split@defs] 2seq-m 500 4199
+tim> [local@split@defs] 2seq-mR 200 6844
+tim> [ssplit] sequential L 6989
+tim> [local@split@defs] 2seq-m 500 4197
+tim> [local@split@defs] 2seq-mR 200 6868
+tim> [rsplit] recursive R 6904
+tim> [local@split@defs] 2seq-m 500 4486
+tim> [local@split@defs] 2seq-mR 200 7194
+tim> [ssplit] sequential R 7309
+tim> [local@split@defs] 2seq-m 500 4430
+tim> [local@split@defs] 2seq-mR 200 7298
+tim> [rsplit] recursive C 7635
+tim> [local@split@defs] 2seq-m 500 4699
+tim> [local@split@defs] 2seq-mR 200 7525
+tim> [ssplit] sequential C 11460
+Splitting: 0.00623pt
+Scoring: 0.00627pt
+tim> [local@split@defs] cseq 5000 854
+tim> [rsplit] recursive L 913
+tim> [local@split@defs] cseq 5000 626
+tim> [ssplit] sequential L 773
+tim> [local@split@defs] cseq 5000 563
+tim> [rsplit] recursive R 591
+tim> [local@split@defs] cseq 5000 541
+tim> [ssplit] sequential R 666
+tim> [local@split@defs] cseq 5000 557
+tim> [rsplit] recursive C 873
+tim> [local@split@defs] cseq 5000 564
+tim> [ssplit] sequential C 4588
+Splitting: 0.00618pt
+Scoring: 0.00778pt
+tim> [local@split@defs] cseq 5000 698
+tim> [rsplit] recursive L 762
+tim> [local@split@defs] cseq 5000 629
+tim> [ssplit] sequential L 786
+tim> [local@split@defs] cseq 5000 572
+tim> [rsplit] recursive R 601
+tim> [local@split@defs] cseq 5000 563
+tim> [ssplit] sequential R 684
+tim> [local@split@defs] cseq 5000 557
+tim> [rsplit] recursive C 876
+tim> [local@split@defs] cseq 5000 545
+tim> [ssplit] sequential C 4364
+Splitting: 0.00606pt
+Scoring: 0.00867pt
+tim> [local@split@defs] cseq3 5000 1712
+tim> [rsplit] recursive L 1774
+tim> [local@split@defs] cseq3 5000 1727
+tim> [ssplit] sequential L 1885
+tim> [local@split@defs] cseq3 5000 1640
+tim> [rsplit] recursive R 1668
+tim> [local@split@defs] cseq3 5000 1628
+tim> [ssplit] sequential R 1751
+tim> [local@split@defs] cseq3 5000 1629
+tim> [rsplit] recursive C 1948
+tim> [local@split@defs] cseq3 5000 1660
+tim> [ssplit] sequential C 5451
+Splitting: 0.00587pt
+Scoring: 0.00589pt
+tim> [local@split@defs] cseq3 5000 1705
+tim> [rsplit] recursive L 1769
+tim> [local@split@defs] cseq3 5000 1714
+tim> [ssplit] sequential L 1871
+tim> [local@split@defs] cseq3 5000 1777
+tim> [rsplit] recursive R 1811
+tim> [local@split@defs] cseq3 5000 1634
+tim> [ssplit] sequential R 1757
+tim> [local@split@defs] cseq3 5000 1673
+tim> [rsplit] recursive C 2012
+tim> [local@split@defs] cseq3 5000 1636
+tim> [ssplit] sequential C 5431
+Splitting: 0.00606pt
+Scoring: 0.00598pt
+tim> [local@split@defs] cseq3 5000 1711
+tim> [local@split@defs] cseq3-inc 200 2994
+tim> [rsplit] recursive L 3056
+tim> [local@split@defs] cseq3 5000 1715
+tim> [local@split@defs] cseq3-inc 200 2973
+tim> [ssplit] sequential L 3142
+tim> [local@split@defs] cseq3 5000 1697
+tim> [local@split@defs] cseq3-inc 200 2963
+tim> [rsplit] recursive R 2994
+tim> [local@split@defs] cseq3 5000 1663
+tim> [local@split@defs] cseq3-inc 200 2941
+tim> [ssplit] sequential R 3091
+tim> [local@split@defs] cseq3 5000 1681
+tim> [local@split@defs] cseq3-inc 200 2949
+tim> [rsplit] recursive C 3283
+tim> [local@split@defs] cseq3 5000 1668
+tim> [local@split@defs] cseq3-inc 200 2908
+tim> [ssplit] sequential C 7322
+Splitting: 0.00642pt
+Scoring: 0.00862pt
+tim> [local@split@defs] cseq3 5000 2229
+tim> [local@split@defs] cseq3-inc 200 3665
+tim> [rsplit] recursive L 3732
+tim> [local@split@defs] cseq3 5000 1741
+tim> [local@split@defs] cseq3-inc 200 2992
+tim> [ssplit] sequential L 3167
+tim> [local@split@defs] cseq3 5000 1662
+tim> [local@split@defs] cseq3-inc 200 2896
+tim> [rsplit] recursive R 2925
+tim> [local@split@defs] cseq3 5000 1644
+tim> [local@split@defs] cseq3-inc 200 2904
+tim> [ssplit] sequential R 3059
+tim> [local@split@defs] cseq3 5000 1679
+tim> [local@split@defs] cseq3-inc 200 2923
+tim> [rsplit] recursive C 3250
+tim> [local@split@defs] cseq3 5000 1665
+tim> [local@split@defs] cseq3-inc 200 3030
+tim> [ssplit] sequential C 7641
+Splitting: 0.00745pt
+Scoring: 0.00838pt
+tim> [local@split@defs] cseq 5000 622
+tim> [local@split@defs] cseq 5000 618
+tim> [local@split@defs] cseq 5000 555
+tim> [local@split@defs] cseq 5000 567
+Splitting: 0.00462pt
+Scoring: 0.00896pt
+tim> [local@split@defs] cseq 5000 598
+tim> [local@split@defs] cseq 5000 727
+tim> [local@split@defs] cseq 5000 553
+tim> [local@split@defs] cseq 5000 555
+Splitting: 0.00264pt
+Scoring: 0.0061pt
+tim> [local@split@defs] cseq 5000 701
+tim> [local@split@defs] cseq 5000 596
+tim> [local@split@defs] cseq 5000 550
+tim> [local@split@defs] cseq 5000 678
+Splitting: 0.00264pt
+Scoring: 0.00587pt
+tim> [local@split@defs] cseq 5000 596
+tim> [local@split@defs] cseq 5000 604
+tim> [local@split@defs] cseq 5000 540
+tim> [local@split@defs] cseq 5000 581
+Splitting: 0.00291pt
+Scoring: 0.00873pt
+tim> [local@split@defs] cseq 5000 598
+tim> [local@split@defs] cseq-inc 5000 2047
+tim> [rsplit] recursive L 2109
+tim> [local@split@defs] cseq 5000 601
+tim> [local@split@defs] cseq-inc 5000 2050
+tim> [ssplit] sequential L 2201
+tim> [local@split@defs] cseq 5000 557
+tim> [local@split@defs] cseq-inc 5000 2108
+tim> [rsplit] recursive R 2137
+tim> [local@split@defs] cseq 5000 547
+tim> [local@split@defs] cseq-inc 5000 1984
+tim> [ssplit] sequential R 2107
+tim> [local@split@defs] cseq 5000 565
+tim> [local@split@defs] cseq-inc 5000 2000
+tim> [rsplit] recursive C 2319
+tim> [local@split@defs] cseq 5000 536
+tim> [local@split@defs] cseq-inc 5000 1992
+tim> [ssplit] sequential C 5938
+Splitting: 0.00598pt
+Scoring: 0.00594pt
+tim> [local@split@defs] cseq 5000 593
+tim> [local@split@defs] cseq-inc 5000 2059
+tim> [rsplit] recursive L 2120
+tim> [local@split@defs] cseq 5000 624
+tim> [local@split@defs] cseq-inc 5000 2131
+tim> [ssplit] sequential L 2289
+tim> [local@split@defs] cseq 5000 549
+tim> [local@split@defs] cseq-inc 5000 2018
+tim> [rsplit] recursive R 2047
+tim> [local@split@defs] cseq 5000 536
+tim> [local@split@defs] cseq-inc 5000 1978
+tim> [ssplit] sequential R 2099
+tim> [local@split@defs] cseq 5000 561
+tim> [local@split@defs] cseq-inc 5000 2022
+tim> [rsplit] recursive C 2359
+tim> [local@split@defs] cseq 5000 538
+tim> [local@split@defs] cseq-inc 5000 2009
+tim> [ssplit] sequential C 5830
+Splitting: 0.00595pt
+Scoring: 0.00601pt
+tim> [local@split@defs] cseq 5000 789
+tim> [local@split@defs] cseq-inc 5000 2293
+tim> [rsplit] recursive L 2357
+tim> [local@split@defs] cseq 5000 700
+tim> [local@split@defs] cseq-inc 5000 2314
+tim> [ssplit] sequential L 2465
+tim> [local@split@defs] cseq 5000 571
+tim> [local@split@defs] cseq-inc 5000 2036
+tim> [rsplit] recursive R 2064
+tim> [local@split@defs] cseq 5000 533
+tim> [local@split@defs] cseq-inc 5000 1975
+tim> [ssplit] sequential R 2096
+tim> [local@split@defs] cseq 5000 570
+tim> [local@split@defs] cseq-inc 5000 2007
+tim> [rsplit] recursive C 2326
+tim> [local@split@defs] cseq 5000 540
+tim> [local@split@defs] cseq-inc 5000 1980
+tim> [ssplit] sequential C 5793
+Splitting: 0.00594pt
+Scoring: 0.00597pt
+tim> [local@split@defs] cseq 5000 603
+tim> [local@split@defs] cseq-inc 5000 2130
+tim> [rsplit] recursive L 2192
+tim> [local@split@defs] cseq 5000 597
+tim> [local@split@defs] cseq-inc 5000 2048
+tim> [ssplit] sequential L 2198
+tim> [local@split@defs] cseq 5000 548
+tim> [local@split@defs] cseq-inc 5000 2001
+tim> [rsplit] recursive R 2029
+tim> [local@split@defs] cseq 5000 529
+tim> [local@split@defs] cseq-inc 5000 2069
+tim> [ssplit] sequential R 2191
+tim> [local@split@defs] cseq 5000 550
+tim> [local@split@defs] cseq-inc 5000 2007
+tim> [rsplit] recursive C 2323
+tim> [local@split@defs] cseq 5000 537
+tim> [local@split@defs] cseq-inc 5000 1980
+tim> [ssplit] sequential C 5846
+Splitting: 0.00604pt
+Scoring: 0.00592pt
+tim> [local@split@defs] cseq 5000 621
+tim> [local@split@defs] cseq-inc 5000 2091
+tim> [rsplit] recursive L 2150
+tim> [local@split@defs] cseq 5000 595
+tim> [local@split@defs] cseq-inc 5000 2106
+tim> [ssplit] sequential L 2262
+tim> [local@split@defs] cseq 5000 553
+tim> [local@split@defs] cseq-inc 5000 2084
+tim> [rsplit] recursive R 2118
+tim> [local@split@defs] cseq 5000 553
+tim> [local@split@defs] cseq-inc 5000 2044
+tim> [ssplit] sequential R 2166
+tim> [local@split@defs] cseq 5000 551
+tim> [local@split@defs] cseq-inc 5000 2014
+tim> [rsplit] recursive C 2332
+tim> [local@split@defs] cseq 5000 534
+tim> [local@split@defs] cseq-inc 5000 1976
+tim> [ssplit] sequential C 5803
+Splitting: 0.00632pt
+Scoring: 0.00603pt
+tim> [local@split@defs] var 5000 979
+tim> [local@split@defs] var-inc 5000 1389
+tim> [rsplit] recursive L 1472
+tim> [local@split@defs] var 5000 1335
+tim> [local@split@defs] var-inc 5000 1736
+tim> [ssplit] sequential L 2043
+tim> [local@split@defs] var 5000 1223
+tim> [local@split@defs] var-inc 5000 1627
+tim> [rsplit] recursive R 1665
+tim> [local@split@defs] var 5000 1599
+tim> [local@split@defs] var-inc 5000 2000
+tim> [ssplit] sequential R 2280
+tim> [local@split@defs] var 5000 2239
+tim> [local@split@defs] var-inc 5000 2755
+tim> [rsplit] recursive C 3343
+tim> [local@split@defs] var 5000 2017
+tim> [local@split@defs] var-inc 5000 3573
+tim> [ssplit] sequential C 10055
+Splitting: 0.00626pt
+Scoring: 0.00616pt
+tim> [local@split@defs] var 5000 994
+tim> [local@split@defs] var-inc 5000 1399
+tim> [rsplit] recursive L 1482
+tim> [local@split@defs] var 5000 1344
+tim> [local@split@defs] var-inc 5000 1747
+tim> [ssplit] sequential L 2054
+tim> [local@split@defs] var 5000 1199
+tim> [local@split@defs] var-inc 5000 1602
+tim> [rsplit] recursive R 1643
+tim> [local@split@defs] var 5000 1662
+tim> [local@split@defs] var-inc 5000 2056
+tim> [ssplit] sequential R 2356
+tim> [local@split@defs] var 5000 2331
+tim> [local@split@defs] var-inc 5000 2740
+tim> [rsplit] recursive C 3340
+tim> [local@split@defs] var 5000 1839
+tim> [local@split@defs] var-inc 5000 3684
+tim> [ssplit] sequential C 9750
+Splitting: 0.00607pt
+Scoring: 0.00609pt
+tim> [local@split@defs] var 5000 1009
+tim> [rsplit] recursive L 1068
+tim> [local@split@defs] var 5000 936
+tim> [ssplit] sequential L 1067
+tim> [local@split@defs] var 5000 1050
+tim> [rsplit] recursive R 1081
+tim> [local@split@defs] var 5000 971
+tim> [ssplit] sequential R 1082
+tim> [local@split@defs] var 5000 991
+tim> [rsplit] recursive C 1313
+tim> [local@split@defs] var 5000 930
+tim> [ssplit] sequential C 4618
+Splitting: 0.00604pt
+Scoring: 0.00589pt
+tim> [local@split@defs] var 10000 2066
+tim> [rsplit] recursive L 2136
+tim> [local@split@defs] var 10000 1888
+tim> [ssplit] sequential L 2027
+tim> [local@split@defs] var 10000 2083
+tim> [rsplit] recursive L 2156
+tim> [local@split@defs] var 10000 1902
+tim> [ssplit] sequential L 2039
+tim> [local@split@defs] var 10000 80
+tim> [local@split@defs] var 1000 205
+tim> [rsplit] recursive L 263
+tim> [local@split@defs] var 1000 192
+tim> [ssplit] sequential L 335
+tim> [local@split@defs] var 1000 195
+tim> [rsplit] recursive R 237
+tim> [local@split@defs] var 1000 298
+tim> [ssplit] sequential R 402
+tim> [local@split@defs] var 1000 211
+tim> [rsplit] recursive C 529
+tim> [local@split@defs] var 1000 187
+tim> [ssplit] sequential C 3863
+Splitting: 0.0059pt
+Scoring: 0.00592pt
+tim> [local@split@defs] var 1000 204
+tim> [rsplit] recursive L 351
+tim> [local@split@defs] var 1000 232
+tim> [ssplit] sequential L 485
+tim> [local@split@defs] var 1000 196
+tim> [rsplit] recursive R 304
+tim> [local@split@defs] var 1000 195
+tim> [ssplit] sequential R 426
+tim> [local@split@defs] var 1000 238
+tim> [rsplit] recursive C 722
+tim> [local@split@defs] var 1000 186
+tim> [ssplit] sequential C 4599
+Splitting: 0.006pt
+Scoring: 0.00589pt
+tim> [local@split@defs] var 1000 200
+tim> [local@split@defs] var-inc 1000 403
+tim> [rsplit] recursive L 464
+tim> [local@split@defs] var 1000 190
+tim> [local@split@defs] var-inc 1000 359
+tim> [ssplit] sequential L 528
+tim> [local@split@defs] var 1000 198
+tim> [local@split@defs] var-inc 1000 379
+tim> [rsplit] recursive R 410
+tim> [local@split@defs] var 1000 264
+tim> [local@split@defs] var-inc 1000 422
+tim> [ssplit] sequential R 568
+tim> [local@split@defs] var 1000 237
+tim> [local@split@defs] var-inc 1000 424
+tim> [rsplit] recursive C 804
+tim> [local@split@defs] var 1000 201
+tim> [local@split@defs] var-inc 1000 357
+tim> [ssplit] sequential C 4557
+Splitting: 0.00801pt
+Scoring: 0.00764pt
+tim> [local@split@defs] var 1000 204
+tim> [local@split@defs] var-inc 1000 294
+tim> [rsplit] recursive L 365
+tim> [local@split@defs] var 1000 232
+tim> [local@split@defs] var-inc 1000 334
+tim> [ssplit] sequential L 605
+tim> [local@split@defs] var 1000 197
+tim> [local@split@defs] var-inc 1000 279
+tim> [rsplit] recursive R 310
+tim> [local@split@defs] var 1000 197
+tim> [local@split@defs] var-inc 1000 279
+tim> [ssplit] sequential R 425
+tim> [local@split@defs] var 1000 241
+tim> [local@split@defs] var-inc 1000 321
+tim> [rsplit] recursive C 710
+tim> [local@split@defs] var 1000 186
+tim> [local@split@defs] var-inc 1000 273
+tim> [ssplit] sequential C 5053
+Splitting: 0.00609pt
+Scoring: 0.00609pt
+tim> [local@split@defs] var 1000 203
+tim> [local@split@defs] var-inc 1000 383
+tim> [rsplit] recursive L 455
+tim> [local@split@defs] var 1000 193
+tim> [local@split@defs] var-inc 1000 361
+tim> [ssplit] sequential L 529
+tim> [local@split@defs] var 1000 207
+tim> [local@split@defs] var-inc 1000 368
+tim> [rsplit] recursive R 398
+tim> [local@split@defs] var 1000 261
+tim> [local@split@defs] var-inc 1000 412
+tim> [ssplit] sequential R 556
+tim> [local@split@defs] var 1000 232
+tim> [local@split@defs] var-inc 1000 408
+tim> [rsplit] recursive C 875
+tim> [local@split@defs] var 1000 266
+tim> [local@split@defs] var-inc 1000 507
+tim> [ssplit] sequential C 4882
+Splitting: 0.00587pt
+Scoring: 0.00664pt
+tim> [local@split@defs] var 1000 207
+tim> [local@split@defs] var-inc2 1000 460
+tim> [rsplit] recursive L 553
+tim> [local@split@defs] var 1000 348
+tim> [local@split@defs] var-inc2 1000 658
+tim> [ssplit] sequential L 952
+tim> [local@split@defs] var 1000 215
+tim> [local@split@defs] var-inc2 1000 381
+tim> [rsplit] recursive R 414
+tim> [local@split@defs] var 1000 279
+tim> [local@split@defs] var-inc2 1000 435
+tim> [ssplit] sequential R 588
+tim> [local@split@defs] var 1000 236
+tim> [local@split@defs] var-inc2 1000 401
+tim> [rsplit] recursive C 801
+tim> [local@split@defs] var 1000 189
+tim> [local@split@defs] var-inc2 1000 347
+tim> [ssplit] sequential C 4768
+Splitting: 0.00592pt
+Scoring: 0.00912pt
+tim> [local@split@defs] var 1000 202
+tim> [local@split@defs] var-inc2 1000 386
+tim> [rsplit] recursive L 452
+tim> [local@split@defs] var 1000 186
+tim> [local@split@defs] var-inc2 1000 353
+tim> [ssplit] sequential L 629
+tim> [local@split@defs] var 1000 251
+tim> [local@split@defs] var-inc2 1000 458
+tim> [rsplit] recursive R 494
+tim> [local@split@defs] var 1000 316
+tim> [local@split@defs] var-inc2 1000 469
+tim> [ssplit] sequential R 620
+tim> [local@split@defs] var 1000 238
+tim> [local@split@defs] var-inc2 1000 407
+tim> [rsplit] recursive C 788
+tim> [local@split@defs] var 1000 195
+tim> [local@split@defs] var-inc2 1000 346
+tim> [ssplit] sequential C 4618
+Splitting: 0.00612pt
+Scoring: 0.00606pt
+tim> [local@split@defs] cseq 5000 633
+tim> [local@split@defs] cseq-inc 5000 2228
+tim> [rsplit] recursive L 2288
+tim> [local@split@defs] cseq 5000 599
+tim> [local@split@defs] cseq-inc 5000 2091
+tim> [ssplit] sequential L 2254
+tim> [local@split@defs] cseq 5000 571
+tim> [local@split@defs] cseq-inc 5000 2027
+tim> [rsplit] recursive R 2056
+tim> [local@split@defs] cseq 5000 562
+tim> [local@split@defs] cseq-inc 5000 2015
+tim> [ssplit] sequential R 2145
+tim> [local@split@defs] cseq 5000 562
+tim> [local@split@defs] cseq-inc 5000 2029
+tim> [rsplit] recursive C 2346
+tim> [local@split@defs] cseq 5000 550
+tim> [local@split@defs] cseq-inc 5000 1994
+tim> [ssplit] sequential C 5788
+Splitting: 0.00603pt
+Scoring: 0.0059pt
+tim> [local@split@defs] cseq 5000 635
+tim> [local@split@defs] cseq-inc 5000 2137
+tim> [rsplit] recursive L 2197
+tim> [local@split@defs] cseq 5000 601
+tim> [local@split@defs] cseq-inc 5000 2126
+tim> [ssplit] sequential L 2384
+tim> [local@split@defs] cseq 5000 623
+tim> [local@split@defs] cseq-inc 5000 2098
+tim> [rsplit] recursive R 2130
+tim> [local@split@defs] cseq 5000 700
+tim> [local@split@defs] cseq-inc 5000 2216
+tim> [ssplit] sequential R 2340
+tim> [local@split@defs] cseq 5000 560
+tim> [local@split@defs] cseq-inc 5000 2044
+tim> [rsplit] recursive C 2370
+tim> [local@split@defs] cseq 5000 612
+tim> [local@split@defs] cseq-inc 5000 2196
+tim> [ssplit] sequential C 6690
+Splitting: 0.00645pt
+Scoring: 0.00609pt
+tim> [local@split@defs] cseq 5000 660
+tim> [local@split@defs] cseq-inc 5000 2181
+tim> [rsplit] recursive L 2246
+tim> [local@split@defs] cseq 5000 603
+tim> [local@split@defs] cseq-inc 5000 2105
+tim> [ssplit] sequential L 2269
+tim> [local@split@defs] cseq 5000 554
+tim> [local@split@defs] cseq-inc 5000 2036
+tim> [rsplit] recursive R 2063
+tim> [local@split@defs] cseq 5000 626
+tim> [local@split@defs] cseq-inc 5000 2109
+tim> [ssplit] sequential R 2237
+tim> [local@split@defs] cseq 5000 549
+tim> [local@split@defs] cseq-inc 5000 2051
+tim> [rsplit] recursive C 2372
+tim> [local@split@defs] cseq 5000 676
+tim> [local@split@defs] cseq-inc 5000 2309
+tim> [ssplit] sequential C 6233
+Splitting: 0.00601pt
+Scoring: 0.00598pt
+tim> [local@split@defs] cseq 5000 610
+tim> [local@split@defs] cseq-inc 5000 2105
+tim> [rsplit] recursive L 2165
+tim> [local@split@defs] cseq 5000 611
+tim> [local@split@defs] cseq-inc 5000 2084
+tim> [ssplit] sequential L 2237
+tim> [local@split@defs] cseq 5000 572
+tim> [local@split@defs] cseq-inc 5000 2050
+tim> [rsplit] recursive R 2082
+tim> [local@split@defs] cseq 5000 605
+tim> [local@split@defs] cseq-inc 5000 2103
+tim> [ssplit] sequential R 2226
+tim> [local@split@defs] cseq 5000 562
+tim> [local@split@defs] cseq-inc 5000 2048
+tim> [rsplit] recursive C 2368
+tim> [local@split@defs] cseq 5000 630
+tim> [local@split@defs] cseq-inc 5000 2107
+tim> [ssplit] sequential C 6037
+Splitting: 0.00609pt
+Scoring: 0.00836pt
+tim> [local@split@defs] cseq 5000 622
+tim> [local@split@defs] cseq-inc 5000 2095
+tim> [rsplit] recursive L 2159
+tim> [local@split@defs] cseq 5000 601
+tim> [local@split@defs] cseq-inc 5000 2079
+tim> [ssplit] sequential L 2229
+tim> [local@split@defs] cseq 5000 593
+tim> [local@split@defs] cseq-inc 5000 2075
+tim> [rsplit] recursive R 2103
+tim> [local@split@defs] cseq 5000 617
+tim> [local@split@defs] cseq-inc 5000 2087
+tim> [ssplit] sequential R 2216
+tim> [local@split@defs] cseq 5000 562
+tim> [local@split@defs] cseq-inc 5000 2044
+tim> [rsplit] recursive C 2364
+tim> [local@split@defs] cseq 5000 609
+tim> [local@split@defs] cseq-inc 5000 2094
+tim> [ssplit] sequential C 6273
+Splitting: 0.00798pt
+Scoring: 0.00609pt
+tim> [local@split@defs] cseq 5000 619
+tim> [local@split@defs] cseq-inc 5000 2110
+tim> [rsplit] recursive L 2170
+tim> [local@split@defs] cseq 5000 606
+tim> [local@split@defs] cseq-inc 5000 2088
+tim> [ssplit] sequential L 2241
+tim> [local@split@defs] cseq 5000 561
+tim> [local@split@defs] cseq-inc 5000 2095
+tim> [rsplit] recursive R 2124
+tim> [local@split@defs] cseq 5000 606
+tim> [local@split@defs] cseq-inc 5000 2100
+tim> [ssplit] sequential R 2223
+tim> [local@split@defs] cseq 5000 555
+tim> [local@split@defs] cseq-inc 5000 2062
+tim> [rsplit] recursive C 2381
+tim> [local@split@defs] cseq 5000 692
+tim> [local@split@defs] cseq-inc 5000 2187
+tim> [ssplit] sequential C 6088
+Splitting: 0.00607pt
+Scoring: 0.00595pt
+tim> [local@split@defs] cseq 5000 669
+tim> [local@split@defs] cseq-inc 5000 2158
+tim> [rsplit] recursive L 2220
+tim> [local@split@defs] cseq 5000 604
+tim> [local@split@defs] cseq-inc 5000 2066
+tim> [ssplit] sequential L 2215
+tim> [local@split@defs] cseq 5000 563
+tim> [local@split@defs] cseq-inc 5000 2063
+tim> [rsplit] recursive R 2092
+tim> [local@split@defs] cseq 5000 608
+tim> [local@split@defs] cseq-inc 5000 2117
+tim> [ssplit] sequential R 2240
+tim> [local@split@defs] cseq 5000 554
+tim> [local@split@defs] cseq-inc 5000 2042
+tim> [rsplit] recursive C 2358
+tim> [local@split@defs] cseq 5000 611
+tim> [local@split@defs] cseq-inc 5000 2211
+tim> [ssplit] sequential C 6004
+Splitting: 0.00597pt
+Scoring: 0.00594pt
+tim> [local@split@defs] cseq 5000 1170
+tim> [local@split@defs] cseq-inc 5000 3274
+tim> [rsplit] recursive L 3374
+tim> [local@split@defs] cseq 5000 794
+tim> [local@split@defs] cseq-inc 5000 2632
+tim> [ssplit] sequential L 2813
+tim> [local@split@defs] cseq 5000 671
+tim> [local@split@defs] cseq-inc 5000 2406
+tim> [rsplit] recursive R 2438
+tim> [local@split@defs] cseq 5000 719
+tim> [local@split@defs] cseq-inc 5000 2642
+tim> [ssplit] sequential R 2791
+tim> [local@split@defs] cseq 5000 721
+tim> [local@split@defs] cseq-inc 5000 2590
+tim> [rsplit] recursive C 2987
+tim> [local@split@defs] cseq 5000 874
+tim> [local@split@defs] cseq-inc 5000 2954
+tim> [ssplit] sequential C 7547
+Splitting: 0.00703pt
+Scoring: 0.01031pt
+tim> [local@split@defs] cseq 5000 1359
+tim> [local@split@defs] cseq-inc 5000 3489
+tim> [rsplit] recursive L 3578
+tim> [local@split@defs] cseq 5000 826
+tim> [local@split@defs] cseq-inc 5000 2701
+tim> [ssplit] sequential L 2922
+tim> [local@split@defs] cseq 5000 735
+tim> [local@split@defs] cseq-inc 5000 2587
+tim> [rsplit] recursive R 2622
+tim> [local@split@defs] cseq 5000 749
+tim> [local@split@defs] cseq-inc 5000 2659
+tim> [ssplit] sequential R 2820
+tim> [local@split@defs] cseq 5000 715
+tim> [local@split@defs] cseq-inc 5000 2541
+tim> [rsplit] recursive C 2933
+tim> [local@split@defs] cseq 5000 748
+tim> [local@split@defs] cseq-inc 5000 2593
+tim> [ssplit] sequential C 7295
+Splitting: 0.0075pt
+Scoring: 0.0109pt
+tim> [local@split@defs] MaxComplexLines 17
+tim> [rsplit] recursive L 510
+tim> [local@split@defs] MaxComplexLines 17
+tim> [ssplit] sequential L 253
+tim> [local@split@defs] MaxComplexLines 15
+tim> [rsplit] recursive R 104
+tim> [local@split@defs] MaxComplexLines 19
+tim> [ssplit] sequential R 203
+tim> [local@split@defs] MaxComplexLines 97
+tim> [rsplit] recursive C 1308
+tim> [local@split@defs] MaxComplexLines 96
+tim> [ssplit] sequential C 4980
+Splitting: 0.01645pt
+Scoring: 0.01332pt
+tim> [local@split@defs] MaxComplexLines 10
+tim> [rsplit] recursive L 444
+tim> [local@split@defs] MaxComplexLines 11
+tim> [ssplit] sequential L 190
+tim> [local@split@defs] MaxComplexLines 10
+tim> [rsplit] recursive R 83
+tim> [local@split@defs] MaxComplexLines 9
+tim> [ssplit] sequential R 144
+tim> [local@split@defs] MaxComplexLines 60
+tim> [rsplit] recursive C 1215
+tim> [local@split@defs] MaxComplexLines 60
+tim> [ssplit] sequential C 4434
+Splitting: 0.0069pt
+Scoring: 0.00833pt
+tim> [local@split@defs] MaxComplexLines 11
+tim> [rsplit] recursive L 530
+tim> [local@split@defs] MaxComplexLines 10
+tim> [ssplit] sequential L 185
+tim> [local@split@defs] MaxComplexLines 10
+tim> [rsplit] recursive R 91
+tim> [local@split@defs] MaxComplexLines 16
+tim> [ssplit] sequential R 271
+tim> [local@split@defs] MaxComplexLines 72
+tim> [rsplit] recursive C 1330
+tim> [local@split@defs] MaxComplexLines 67
+tim> [ssplit] sequential C 4909
+Splitting: 0.00732pt
+Scoring: 0.00887pt
+tim> [local@split@defs] \split@defs@L  11
+tim> [rsplit] recursive L 551
+tim> [local@split@defs] \split@defs@L  17
+tim> [ssplit] sequential L 207
+tim> [local@split@defs] \split@defs@R  10
+tim> [rsplit] recursive R 84
+tim> [local@split@defs] \split@defs@R  16
+tim> [ssplit] sequential R 286
+tim> [local@split@defs] \split@defs@C  63
+tim> [rsplit] recursive C 1289
+tim> [local@split@defs] \split@defs@C  101
+tim> [ssplit] sequential C 5074
+Splitting: 0.00713pt
+Scoring: 0.00816pt
+tim> [local@split@defs] \split@defs@L  12
+tim> [rsplit] recursive L 503
+tim> [local@split@defs] \split@defs@L  19
+tim> [ssplit] sequential L 381
+tim> [local@split@defs] \split@defs@R  16
+tim> [rsplit] recursive R 111
+tim> [local@split@defs] \split@defs@R  16
+tim> [ssplit] sequential R 215
+tim> [local@split@defs] \split@defs@C  66
+tim> [rsplit] recursive C 1350
+tim> [local@split@defs] \split@defs@C  104
+tim> [ssplit] sequential C 4802
+Splitting: 0.0075pt
+Scoring: 0.00795pt
+tim> [local@split@defs] 41 12
+tim> [rsplit] recursive L 541
+tim> [local@split@defs] 41 18
+tim> [ssplit] sequential L 245
+tim> [local@split@defs] 37 16
+tim> [rsplit] recursive R 104
+tim> [local@split@defs] 37 16
+tim> [ssplit] sequential R 276
+tim> [local@split@defs] 248 87
+tim> [rsplit] recursive C 1110
+tim> [local@split@defs] 248 61
+tim> [ssplit] sequential C 4474
+Splitting: 0.00679pt
+Scoring: 0.00893pt
+tim> [local@split@defs] 41 11
+tim> [rsplit] recursive L 447
+tim> [local@split@defs] 41 10
+tim> [ssplit] sequential L 186
+tim> [local@split@defs] 37 9
+tim> [rsplit] recursive R 83
+tim> [local@split@defs] 37 13
+tim> [ssplit] sequential R 147
+tim> [local@split@defs] 248 62
+tim> [rsplit] recursive C 984
+tim> [local@split@defs] 248 60
+tim> [ssplit] sequential C 4456
+Splitting: 0.00699pt
+Scoring: 0.00705pt
+tim> [local@split@defs] 41 10
+tim> [rsplit] recursive L 544
+tim> [local@split@defs] 41 17
+tim> [ssplit] sequential L 355
+tim> [local@split@defs] 37 10
+tim> [rsplit] recursive R 87
+tim> [local@split@defs] 37 15
+tim> [ssplit] sequential R 272
+tim> [local@split@defs] 248 102
+tim> [rsplit] recursive C 1193
+tim> [local@split@defs] 248 60
+tim> [ssplit] sequential C 4630
+Splitting: 0.00706pt
+Scoring: 0.01001pt
+tim> [local@split@defs] 41 23
+tim> [rsplit] recursive L 58
+tim> [local@split@defs] 41 35
+tim> [ssplit] sequential L 365
+tim> [local@split@defs] 37 30
+tim> [rsplit] recursive R 63
+tim> [local@split@defs] 37 35
+tim> [ssplit] sequential R 289
+tim> [local@split@defs] 248 32
+tim> [rsplit] recursive C 172
+tim> [local@split@defs] 248 31
+tim> [ssplit] sequential C 4828
+Splitting: 0.00684pt
+Scoring: 0.0085pt
+tim> [local@split@defs] L 41 28
+tim> [rsplit] recursive L 63
+tim> [local@split@defs] L 41 36
+tim> [ssplit] sequential L 335
+tim> [local@split@defs] R 37 27
+tim> [rsplit] recursive R 57
+tim> [local@split@defs] R 37 33
+tim> [ssplit] sequential R 296
+tim> [local@split@defs] C 248 36
+tim> [rsplit] recursive C 194
+tim> [local@split@defs] C 248 38
+tim> [ssplit] sequential C 4764
+Splitting: 0.00703pt
+Scoring: 0.0096pt
+tim> [local@split@defs] L 41 21
+tim> [rsplit] recursive L 44
+tim> [local@split@defs] L 41 33
+tim> [ssplit] sequential L 365
+tim> [local@split@defs] R 37 30
+tim> [rsplit] recursive R 61
+tim> [local@split@defs] R 37 33
+tim> [ssplit] sequential R 249
+tim> [local@split@defs] C 248 29
+tim> [rsplit] recursive C 170
+tim> [local@split@defs] C 248 34
+tim> [ssplit] sequential C 5138
+Splitting: 0.00703pt
+Scoring: 0.0094pt
+tim> [local@split@defs] L 41 28
+tim> [rsplit] recursive L 60
+tim> [local@split@defs] L 41 27
+tim> [ssplit] sequential L 214
+tim> [local@split@defs] R 37 24
+tim> [rsplit] recursive R 55
+tim> [local@split@defs] R 37 28
+tim> [ssplit] sequential R 167
+tim> [local@split@defs] C 248 26
+tim> [rsplit] recursive C 124
+tim> [local@split@defs] C 248 27
+tim> [ssplit] sequential C 4699
+Splitting: 0.00703pt
+Scoring: 0.00708pt
+tim> [local@split@defs] L 41 33
+tim> [rsplit] recursive L 70
+tim> [local@split@defs] L 41 30
+tim> [ssplit] sequential L 220
+tim> [local@split@defs] R 37 33
+tim> [rsplit] recursive R 63
+tim> [local@split@defs] R 37 37
+tim> [ssplit] sequential R 195
+tim> [local@split@defs] C 248 29
+tim> [rsplit] recursive C 181
+tim> [local@split@defs] C 248 34
+tim> [ssplit] sequential C 4891
+Splitting: 0.00693pt
+Scoring: 0.01024pt
+tim> [local@split@defs] L 41 11
+tim> [rsplit] recursive L 518
+tim> [local@split@defs] L 41 17
+tim> [ssplit] sequential L 338
+tim> [local@split@defs] R 37 9
+tim> [rsplit] recursive R 64
+tim> [local@split@defs] R 37 9
+tim> [ssplit] sequential R 143
+tim> [local@split@defs] C 248 80
+tim> [rsplit] recursive C 1146
+tim> [local@split@defs] C 248 60
+tim> [ssplit] sequential C 4867
+Splitting: 0.00708pt
+Scoring: 0.0082pt
+tim> [local@split@defs] L 42 12
+tim> [rsplit] recursive L 560
+tim> [local@split@defs] L 42 17
+tim> [ssplit] sequential L 363
+tim> [local@split@defs] R 38 10
+tim> [rsplit] recursive R 100
+tim> [local@split@defs] R 38 16
+tim> [ssplit] sequential R 236
+tim> [local@split@defs] C 249 63
+tim> [rsplit] recursive C 1082
+tim> [local@split@defs] C 249 61
+tim> [ssplit] sequential C 4717
+Splitting: 0.0071pt
+Scoring: 0.00987pt
+tim> [local@split@defs] L 42 12
+tim> [rsplit] recursive L 541
+tim> [local@split@defs] L 42 18
+tim> [ssplit] sequential L 291
+tim> [local@split@defs] R 38 16
+tim> [rsplit] recursive R 86
+tim> [local@split@defs] R 38 16
+tim> [ssplit] sequential R 273
+tim> [local@split@defs] C 249 102
+tim> [rsplit] recursive C 1173
+tim> [local@split@defs] C 249 63
+tim> [ssplit] sequential C 4637
+Splitting: 0.0074pt
+Scoring: 0.00703pt
+tim> [local@split@defs] L 42 12
+tim> [rsplit] recursive L 1006
+tim> [local@split@defs] L 42 19
+tim> [ssplit] sequential L 274
+tim> [local@split@defs] R 38 10
+tim> [rsplit] recursive R 168
+tim> [local@split@defs] R 38 16
+tim> [ssplit] sequential R 254
+tim> [local@split@defs] C 249 65
+tim> [rsplit] recursive C 4383
+tim> [local@split@defs] C 249 106
+tim> [ssplit] sequential C 4769
+Splitting: 0.00693pt
+Scoring: 0.00902pt
+tim> [local@split@defs] L 42 11
+tim> [rsplit] recursive L 981
+tim> [local@split@defs] L 42 11
+tim> [ssplit] sequential L 194
+tim> [local@split@defs] R 38 10
+tim> [rsplit] recursive R 157
+tim> [local@split@defs] R 38 17
+tim> [ssplit] sequential R 283
+tim> [local@split@defs] C 249 92
+tim> [rsplit] recursive C 3855
+tim> [local@split@defs] C 249 92
+tim> [ssplit] sequential C 4628
+Splitting: 0.00697pt
+Scoring: 0.00725pt
+tim> [local@split@defs] L 42 16
+tim> [rsplit] recursive L 925
+tim> [local@split@defs] L 42 18
+tim> [ssplit] sequential L 374
+tim> [local@split@defs] R 38 16
+tim> [rsplit] recursive R 195
+tim> [local@split@defs] R 38 16
+tim> [ssplit] sequential R 287
+tim> [local@split@defs] C 249 107
+tim> [rsplit] recursive C 4204
+tim> [local@split@defs] C 249 63
+tim> [ssplit] sequential C 4643
+Splitting: 0.01227pt
+Scoring: 0.01118pt
+tim> [local@split@defs] L 42 11
+tim> [rsplit] recursive L 720
+tim> [local@split@defs] L 42 10
+tim> [ssplit] sequential L 188
+tim> [local@split@defs] R 38 10
+tim> [rsplit] recursive R 109
+tim> [local@split@defs] R 38 10
+tim> [ssplit] sequential R 155
+tim> [local@split@defs] C 249 63
+tim> [rsplit] recursive C 3408
+tim> [local@split@defs] C 249 60
+tim> [ssplit] sequential C 4557
+Splitting: 0.0134pt
+Scoring: 0.00652pt
+tim> [local@split@defs] L 42 12
+tim> [local@split@defs] L 42 11
+tim> [local@split@defs] L 42 12
+tim> [rsplit] recursive L 68
+tim> [local@split@defs] L 42 13
+tim> [ssplit] sequential L 183
+tim> [local@split@defs] R 38 10
+tim> [rsplit] recursive R 31
+tim> [local@split@defs] R 38 9
+tim> [ssplit] sequential R 160
+tim> [local@split@defs] C 249 62
+tim> [rsplit] recursive C 571
+tim> [local@split@defs] C 249 102
+tim> [ssplit] sequential C 4741
+tim> [local@split@defs] L 42 13
+tim> [rsplit] recursive L 88
+tim> [local@split@defs] L 42 13
+tim> [ssplit] sequential L 245
+tim> [local@split@defs] R 38 11
+tim> [rsplit] recursive R 37
+tim> [local@split@defs] R 38 11
+tim> [ssplit] sequential R 168
+tim> [local@split@defs] C 249 71
+tim> [rsplit] recursive C 447
+tim> [local@split@defs] C 249 77
+tim> [ssplit] sequential C 5412
+Splitting: 0.01779pt
+Scoring: 0.02068pt
+tim> [local@split@defs] L 42 11
+tim> [rsplit] recursive L 66
+tim> [local@split@defs] L 42 11
+tim> [ssplit] sequential L 218
+tim> [local@split@defs] R 38 14
+tim> [rsplit] recursive R 47
+tim> [local@split@defs] R 38 16
+tim> [ssplit] sequential R 149
+tim> [local@split@defs] C 249 59
+tim> [rsplit] recursive C 354
+tim> [local@split@defs] C 249 61
+tim> [ssplit] sequential C 4375
+Splitting: 0.00688pt
+Scoring: 0.00967pt
+tim> [local@split@defs] L 42 13
+tim> [rsplit] recursive L 92
+tim> [local@split@defs] L 42 13
+tim> [ssplit] sequential L 193
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 24
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 111
+tim> [local@split@defs] C 249 58
+tim> [rsplit] recursive C 311
+tim> [local@split@defs] C 249 46
+tim> [ssplit] sequential C 3693
+Splitting: 0.00574pt
+Scoring: 0.00601pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 57
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 139
+tim> [local@split@defs] R 38 8
+tim> [rsplit] recursive R 23
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 112
+tim> [local@split@defs] C 249 55
+tim> [rsplit] recursive C 308
+tim> [local@split@defs] C 249 46
+tim> [ssplit] sequential C 3706
+Splitting: 0.00568pt
+Scoring: 0.00606pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 58
+tim> [local@split@defs] L 42 9
+tim> [ssplit] sequential L 161
+tim> [local@split@defs] R 38 15
+tim> [rsplit] recursive R 44
+tim> [local@split@defs] R 38 10
+tim> [ssplit] sequential R 137
+tim> [local@split@defs] C 249 73
+tim> [rsplit] recursive C 509
+tim> [local@split@defs] C 249 50
+tim> [ssplit] sequential C 4373
+Splitting: 0.00595pt
+Scoring: 0.00735pt
+tim> [local@split@defs] L 42 12
+tim> [rsplit] recursive L 58
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 145
+tim> [local@split@defs] R 38 8
+tim> [rsplit] recursive R 24
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 112
+tim> [local@split@defs] C 249 52
+tim> [rsplit] recursive C 299
+tim> [local@split@defs] C 249 49
+tim> [ssplit] sequential C 4682
+Splitting: 0.00568pt
+Scoring: 0.01093pt
+tim> [local@split@defs] L 42 13
+tim> [rsplit] recursive L 90
+tim> [local@split@defs] L 42 13
+tim> [ssplit] sequential L 156
+tim> [local@split@defs] R 38 8
+tim> [rsplit] recursive R 25
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 132
+tim> [local@split@defs] C 249 50
+tim> [rsplit] recursive C 309
+tim> [local@split@defs] C 249 48
+tim> [ssplit] sequential C 3744
+Splitting: 0.00568pt
+Scoring: 0.01068pt
+tim> [local@split@defs] L 42 16
+tim> [rsplit] recursive L 92
+tim> [local@split@defs] L 42 9
+tim> [ssplit] sequential L 229
+tim> [local@split@defs] R 38 13
+tim> [rsplit] recursive R 41
+tim> [local@split@defs] R 38 14
+tim> [ssplit] sequential R 214
+tim> [local@split@defs] C 249 102
+tim> [rsplit] recursive C 460
+tim> [local@split@defs] C 249 85
+tim> [ssplit] sequential C 4812
+Splitting: 0.00665pt
+Scoring: 0.00867pt
+tim> [local@split@defs] L 42 16
+tim> [rsplit] recursive L 100
+tim> [local@split@defs] L 42 14
+tim> [ssplit] sequential L 255
+tim> [local@split@defs] R 38 8
+tim> [rsplit] recursive R 29
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 115
+tim> [local@split@defs] C 249 50
+tim> [rsplit] recursive C 303
+tim> [local@split@defs] C 249 49
+tim> [ssplit] sequential C 3882
+Splitting: 0.0057pt
+Scoring: 0.0064pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 58
+tim> [local@split@defs] L 42 10
+tim> [ssplit] sequential L 153
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 28
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 117
+tim> [local@split@defs] C 249 51
+tim> [rsplit] recursive C 337
+tim> [local@split@defs] C 249 65
+tim> [ssplit] sequential C 4476
+Splitting: 0.00595pt
+tim> [local@split@defs] L 42 11
+tim> [rsplit] recursive L 59
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 153
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 26
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 115
+tim> [local@split@defs] C 249 60
+tim> [rsplit] recursive C 337
+tim> [local@split@defs] C 249 48
+tim> [ssplit] sequential C 3787
+Splitting: 0.00568pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 63
+tim> [local@split@defs] L 42 9
+tim> [ssplit] sequential L 152
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 26
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 115
+tim> [local@split@defs] C 249 55
+tim> [rsplit] recursive C 313
+tim> [local@split@defs] C 249 54
+tim> [ssplit] sequential C 3886
+Splitting: 0.00589pt
+Scoring: 0.00607pt
+tim> [local@split@defs] L 42 14
+tim> [rsplit] recursive L 77
+tim> [local@split@defs] L 42 13
+tim> [ssplit] sequential L 151
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 26
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 117
+tim> [local@split@defs] C 249 54
+tim> [rsplit] recursive C 356
+tim> [local@split@defs] C 249 53
+tim> [ssplit] sequential C 3792
+Splitting: 0.0059pt
+Scoring: 0.00668pt
+tim> [local@split@defs] L 42 10
+tim> [rsplit] recursive L 58
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 179
+tim> [local@split@defs] R 38 8
+tim> [rsplit] recursive R 25
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 117
+tim> [local@split@defs] C 249 51
+tim> [rsplit] recursive C 345
+tim> [local@split@defs] C 249 110
+tim> [ssplit] sequential C 4482
+Splitting: 0.0067pt
+Scoring: 0.00687pt
+tim> [local@split@defs] L 42 10
+tim> [rsplit] recursive L 55
+tim> [local@split@defs] L 42 9
+tim> [ssplit] sequential L 143
+tim> [local@split@defs] R 38 8
+tim> [rsplit] recursive R 26
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 116
+tim> [local@split@defs] C 249 50
+tim> [rsplit] recursive C 302
+tim> [local@split@defs] C 249 46
+tim> [ssplit] sequential C 3802
+Splitting: 0.00594pt
+Scoring: 0.00603pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 56
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 147
+tim> [local@split@defs] R 38 9
+tim> [rsplit] recursive R 27
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 111
+tim> [local@split@defs] C 249 47
+tim> [rsplit] recursive C 302
+tim> [local@split@defs] C 249 49
+tim> [ssplit] sequential C 3751
+Splitting: 0.00597pt
+Scoring: 0.00604pt
+tim> [local@split@defs] L 42 15
+tim> [rsplit] recursive L 105
+tim> [local@split@defs] L 42 15
+tim> [ssplit] sequential L 262
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 25
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 115
+tim> [local@split@defs] C 249 54
+tim> [rsplit] recursive C 366
+tim> [local@split@defs] C 249 79
+tim> [ssplit] sequential C 4233
+Splitting: 0.00607pt
+Scoring: 0.00623pt
+tim> [local@split@defs] L 42 8
+tim> [rsplit] recursive L 61
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 143
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 24
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 112
+tim> [local@split@defs] C 249 47
+tim> [rsplit] recursive C 300
+tim> [local@split@defs] C 249 46
+tim> [ssplit] sequential C 3742
+Splitting: 0.00604pt
+Scoring: 0.00618pt
+tim> [local@split@defs] L 42 14
+tim> [rsplit] recursive L 86
+tim> [local@split@defs] L 42 14
+tim> [ssplit] sequential L 271
+tim> [local@split@defs] R 38 13
+tim> [rsplit] recursive R 42
+tim> [local@split@defs] R 38 14
+tim> [ssplit] sequential R 215
+tim> [local@split@defs] C 249 81
+tim> [rsplit] recursive C 418
+tim> [local@split@defs] C 249 46
+tim> [ssplit] sequential C 3821
+Splitting: 0.0062pt
+Scoring: 0.00797pt
+tim> [local@split@defs] L 42 12
+tim> [rsplit] recursive L 67
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 155
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 24
+tim> [local@split@defs] R 38 10
+tim> [ssplit] sequential R 115
+tim> [local@split@defs] C 249 49
+tim> [rsplit] recursive C 299
+tim> [local@split@defs] C 249 46
+tim> [ssplit] sequential C 3733
+Splitting: 0.00592pt
+Scoring: 0.00607pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 56
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 142
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 36
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 112
+tim> [local@split@defs] C 249 50
+tim> [rsplit] recursive C 294
+tim> [local@split@defs] C 249 47
+tim> [ssplit] sequential C 3739
+Splitting: 0.00601pt
+Scoring: 0.00888pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 57
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 140
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 24
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 122
+tim> [local@split@defs] C 249 48
+tim> [rsplit] recursive C 295
+tim> [local@split@defs] C 249 49
+tim> [ssplit] sequential C 3722
+Splitting: 0.006pt
+Scoring: 0.00624pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 56
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 145
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 24
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 110
+tim> [local@split@defs] C 249 51
+tim> [rsplit] recursive C 294
+tim> [local@split@defs] C 249 49
+tim> [ssplit] sequential C 3748
+Splitting: 0.00607pt
+Scoring: 0.00626pt
+tim> [local@split@defs] L 42 10
+tim> [rsplit] recursive L 60
+tim> [local@split@defs] L 42 9
+tim> [ssplit] sequential L 179
+tim> [local@split@defs] R 38 8
+tim> [rsplit] recursive R 38
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 123
+tim> [local@split@defs] C 249 51
+tim> [rsplit] recursive C 355
+tim> [local@split@defs] C 249 49
+tim> [ssplit] sequential C 4050
+Splitting: 0.00601pt
+Scoring: 0.00604pt
+tim> [local@split@defs] L 42 9
+tim> [rsplit] recursive L 57
+tim> [local@split@defs] L 42 11
+tim> [ssplit] sequential L 146
+tim> [local@split@defs] R 38 7
+tim> [rsplit] recursive R 26
+tim> [local@split@defs] R 38 7
+tim> [ssplit] sequential R 115
+tim> [local@split@defs] C 249 55
+tim> [rsplit] recursive C 302
+tim> [local@split@defs] C 249 48
+tim> [ssplit] sequential C 3843
+Splitting: 0.00597pt
+Scoring: 0.00601pt
+tim> [local@split@defs] L 42 12
+tim> [rsplit] recursive L 57
+tim> [local@split@defs] L 42 8
+tim> [ssplit] sequential L 152
+tim> [local@split@defs] R 38 8
+tim> [rsplit] recursive R 25
+tim> [local@split@defs] R 38 8
+tim> [ssplit] sequential R 114
+tim> [local@split@defs] C 249 50
+tim> [rsplit] recursive C 296
+tim> [local@split@defs] C 249 50
+tim> [ssplit] sequential C 3764
+Splitting: 0.0059pt
+Scoring: 0.00609pt

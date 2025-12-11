@@ -1195,7 +1195,7 @@
   \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
   \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
   \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
-  \diglot@run@trials
+  \csname diglot@run@trials@\diglotlayout\endcsname
   \global\allNeedEmptyingfalse
 }
 
@@ -2213,7 +2213,7 @@
 \def\@prepare@balnotes@simplecols{%
   \dimen1=0pt
   \let\col@do=\max@boxht\def\v@lpfx{}\def\v@lsfx{box}%
-  \x@\each@col\diglot@list\E% 
+  \x@\each@col\diglotlist\E% 
   \let\col@do=\reb@xht
   \x@\each@col\diglot@list\E% 
   \dimen7=\dimen1
@@ -2679,7 +2679,7 @@
     \setbox255=\vbox{\x@\vskip\csname baselineDelta\c@rrdstat\endcsname\penalty10000\unvbox255}%
     \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
-  \global\setbox\csname whole\c@rrdstat\endcsname\copy\destb@x % Save the current input box to avoid need to re-attach things to excessX
+  \global\setbox\csname whole\c@rrdstat\endcsname\copy\destb@x % Save the current input box to avoid need to re-attach things to excessX (bits get chopped off it)
   \ifnum\tmpcount<-10000 \ifnum\tmpcount>\numexpr \sp@cialpen -1\relax 
     \tmpcount=0
   \fi\fi
@@ -2687,7 +2687,7 @@
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi\ifintrial IN trial??\fi}%
     \ifallNeedEmptying
-      \global\let\n@xtc@mmand=\diglot@run@trials
+      \x@\global\x@\let\x@\n@xtc@mmand\x@=\csname diglot@run@trials@\diglotlayout\endcsname
       \global\allNeedEmptyingfalse
     \fi
   \fi
@@ -3213,7 +3213,7 @@
 
 \newcount\triall@@pcount
 
-\def\diglot@run@trials{% for X as L, R, (eventually others)
+\def\diglot@run@trials@simplecols{% for X as L, R, (eventually others)
   %expects: collected input in partialX, excessX empty
   %Process: cycle through chunks  
   \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist) sp=\the\savedpenalty}%
@@ -3235,6 +3235,7 @@
   \let\col@do=\delta@val
   \x@\each@col\diglot@list\E % Find 'skip' after each chunk
 }
+
 
 \def\empty@partials{%Empty (eventually store?) partialX
   \ifx\tri@llist\empty\else 
@@ -3331,13 +3332,13 @@
       \ifhe@dings\endhe@dings\fi%
       \eject
       \global\allNeedEmptyingtrue
-      \diglot@run@trials
+      \csname diglot@run@trials@\diglotlayout\endcsname
       \penalty\dgl@tPenColSwap
       \global\allNeedEmptyingtrue
     \fi
     \x@\ch@ckcontents\diglot@list\E%Sets not@empty if there's stuff to output
     \trace{d}{enddigl@t 2nd run \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist)}%
-    \diglot@run@trials
+    \csname diglot@run@trials@\diglotlayout\endcsname
     \ifnum\interactionmode=2
       \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
     \fi

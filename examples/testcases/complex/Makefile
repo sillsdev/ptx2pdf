@@ -8,8 +8,9 @@ TPATH=.:${DIR}//
 	xdvipdfmx -o $@ $*.xdv
 	
 
+pretest.pdf: pretest.tex  $(DIR)/*.tex *.sty $(DIR)/*.sty
 test.pdf: test.tex  test.usfm $(DIR)/*.tex *.sty $(DIR)/*.sty
-subtest.log: subtest.tex $(DIR)/*.tex cat.usfm *.sty Makefile
+subtest.log: subtest.tex $(DIR)/*.tex  Makefile
 
 bisect:
 	-mkdir ../bisect || rm -f ../bisect/*
@@ -17,7 +18,7 @@ bisect:
 
 auto:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make test.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make pretest.pdf ; done < /dev/null
 
 averages.txt: Makefile timings.dat
 	awk 'function f(a){n=num[a]>0?num[a]:1; print a, 1000*r[a]/n "ms";}/#/{A=$$2;print A;N[names++]=$$2;}/Splitting/{r[A] += $$2;num[A]+=1;}END{while (names>0) {names-- ; f(N[names]);} ;}' < timings.dat | tee averages.txt

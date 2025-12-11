@@ -34,10 +34,14 @@
 
 \plugin@startif{polyglot-complexpages}
 \plugins@needed{polyglot-simplepages} % 
+\newcount\f@llow@n % Global register of 'invented' columns
 
 \def\new@followon#1{%
-  \count255=`Z
-  \advance\count255 -63 % We know it'll be reduced by 1 later on...
+  \ifnum\f@llow@n=0
+    \global\f@llow@n=`Z
+    \global\advance\f@llow@n -63 % We know it'll be reduced by 1 later on...
+  \fi
+  \count255=\f@llow@n
   \edef\s@ffix{#1}%
   \loop% Get to the last f@llow@n of the parent
     \tempfalse\ifcsname f@llow@n\s@ffix\endcsname
@@ -50,27 +54,23 @@
       \fi\fi
     \fi
   \iftemp\repeat
-  \trace{dmc}{Last in #1 chain is \s@ffix}%
+  \trace{dmc}{Last in #1 chain is \s@ffix, \the\count255}%
   \advance\count255 -1
   \edef\x@fch@r{\@Alph{\count255}}%
-  \@new@followon{#1}{\s@ffix}% x@fch@r is passed implicitly
+  \@new@followon{#1}{\s@ffix}% Sanity-check the suggestion. x@fch@r is passed implicitly 
 } 
  
-\def\@new@followon#1#2{% source, following-on. x@fch@r provides the character
+\def\@new@followon#1#2{% source, following-on. x@fch@r provides the character. Sanity check the suggestion.
   \trace{dmc}{@new@followon #1 #2 \x@fch@r}%
   %\tracingmacros=1 \tracingcommands=1 \tracingassigns=1
   \temptrue
   \ifcsname \x@fch@r isDiglotColumn\endcsname\tempfalse\fi
-  \ifcsname \x@fch@r isFollowOn\endcsname
+  \ifcsname f@llowing\x@fch@r\endcsname
     \def\tmp{#1}%
     \x@\let\x@\tmpb\csname f@llowing\x@fch@r\endcsname
-    \trace{dmc}{\x@fch@r\space is following \tmpb}% 
-    \ifx\tmp\tmpb
-      \trace{dmc}{Follow-on for \x@fch@r\space is \csname f@llow@n\x@fch@r\endcsname, but it's not in the current chain.}% So we can ignore that fact.
-      %\x@\ifx\csname f@llow@n\x@fch@r\empty\else
-        %\tempfalse
-      %\fi 
+    \ifx\tmp\tmpb %Chains don't go backwards, so this must be from an uncleared old chain. Reuse it
     \else
+      \trace{dmc}{\x@fch@r\space is following \tmpb}% 
       \tempfalse
     \fi
   \fi
@@ -79,6 +79,7 @@
     \x@\xdef\csname f@llowing\x@fch@r\endcsname{#1}\x@\global\x@\let\csname \x@fch@r isFolowOn\endcsname\tr@e
     \x@\xdef\csname f@llow@n#2\endcsname{\x@fch@r}%
     \x@\xdef\csname f@llow@n\x@fch@r\endcsname{}%
+    \global\f@llow@n=\count255
     \let\n@xt\sw@llowtwo
   \else
     \advance\count255 -1
@@ -88,18 +89,41 @@
   \n@xt{#1}{#2}%
 }
 \def\cle@rf@llow@ns#1{
+  \trace{dmc}{cle@rf@llow@ns #1}%
+  %\tracingassigns=1
+  \x@\let\x@\tmp\csname f@llow@n#1\endcsname
   \x@\let\csname f@llow@n#1\endcsname\empty
   \x@\global\x@\let\csname layout@#1\endcsname\empty
-  \x@\global\x@\def\csname @max@cols@#1\endcsname{0}
-  \x@\global\x@\let\csname f@llows#1\endcsname\empty
+  \x@\global\x@\def\csname @max@cols@#1\endcsname{0}% Max columns #1 this is part of 
+  \x@\global\x@\let\csname f@llowing#1\endcsname\undefined
   \cle@rtmpnum{#1}%
+  \ifx\relax\tmp\else \ifx\empty\tmp\else
+    \x@\cle@rf@llow@ns\x@{\tmp}%
+  \fi\fi
+  %\tracingassigns=0
 }
 \def\cle@rtmpnum#1{%
   \x@\global\x@\def\csname @tmpnum@#1\endcsname{0}%
 }
+\def\t@ginsertnames#1\E{%
+  \x@\let\csname #1is@p@geins\endcsname\tr@e
+  \mktmpinsdim@n{#1}%
+}
+\def\@mktmpinsdim@n#1\E{% Versiion for cstackdown, etc.
+  \mktmpinsdim@n{#1}}
+\def\mktmpinsdim@n#1{%Normal version
+  \ifcsname #1ht\endcsname\else\relax
+    \x@\newdim@n\csname #1ht\endcsname
+  \fi
+}
+
 \def\polyglot@eachtime@setup@complexpages{%
   \ifx\diglot@list\empty\else
+    \global\f@llow@n=0
     \let\col@do\cle@rf@llow@ns\x@\each@col\diglot@list\E% Stop all chains.
+    %\let\col@do\local@split@defs\x@\each@col\diglot@list\E % Ensure that all columms have a block of dimensions.
+    \let\d@\t@ginsertnames \x@\cstackdown\pageins@rts\E
+    \let\d@\@mktmpinsdim@n \x@\cstackdown\columnins@rts\E
   \fi
 }
 
@@ -118,10 +142,7 @@
 
 \def\col@active@count#1{\ifcsname in@ctive@col@#1\endcsname\else\advance\count255 by 1 \fi}% 
 \def\@@complexr@vpolyp@ges#1{%
- % \tracingmacros=1 
   %\trace{dmc}{  @@complexr@vpolyp@ges #1}%
-  %\tracingcommands=1 
-  %\tracingassigns=1
   \count255=\csname @tmpnum@#1\endcsname
   \advance\count255 by 1
   \edef\@tmpnam{decode@#1\the\count255}%
@@ -133,7 +154,6 @@
   \else
     \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{\csname revp@lyp@gecols\p@lyp@gestring\endcsname\x@fch@r}%
   \fi
-  %\tracingmacros=0 \tracingcommands=0 \tracingassigns=0
 }
 \def\@complexr@vpolyp@ges#1\E{%Row-of-columns processing
   \trace{dmc}{@complexr@vpolyp@ges #1, row=\the\p@lyr@wno}%
@@ -155,18 +175,15 @@
   \advance\p@lyr@wno by 1 
 }
 \def\mkn@wht#1\E{\newdim@n#1}
-\def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing (#1 describes a row)
+\def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing (#1 describes a user's view of a row)
   \trace{dmc}{@complexs@tpolyp@ges #1}%
   \edef\this@p@lyp@gestring{\p@lyp@gestring}% Expand once and cache
-  \x@\def\csname cts@\this@p@lyp@gestring\endcsname{#1}% What columns are in this row?
-  \x@\xdef\x@\p@gestrings\x@{\p@gestrings,#1}% % What is the complete list of sections?
   \count255=0
   \let\col@do\col@count
   \x@\each@col#1\E
   \edef\@cspptotcols{\the\count255}%
   \count255=0
   \let\col@do\col@active@count
-  %\tracingmacros=1
   \x@\each@col#1\E
   \edef\@csppactcols{\the\count255}%
   \trace{dmc}{blank \ifBookOpenLeft rev\fi p@lyp@gecols\this@p@lyp@gestring}%
@@ -191,11 +208,27 @@
   \else
     \trace{dmc}{p@lyp@gecols\this@p@lyp@gestring\space is \csname p@lyp@gecols\this@p@lyp@gestring\endcsname}%
   \fi
+  \x@\def\csname cts@\this@p@lyp@gestring\endcsname{#1}% What columns are in this row?
+  \x@\xdef\x@\p@gestring\x@{\ifx\p@gestring\empty\else \p@gestring,\fi\this@p@lyp@gestring}% % What is the complete list of sections on this page?
   \global\advance\p@lyr@wno by 1
   \let\@cspptotcols\undefined
   \let\@csppactcols\undefined
 }
 
+\newdimen\t@stone
+\newdimen\t@sttwo
+\newdimen\t@sttri
+\newdimen\t@stfou
+\newdimen\t@stfiv
+\def\m@xtwo#1#2#3{\t@stone=\dimexpr #2\relax \t@sttwo=\dimexpr #3\relax \ifdim \t@stone> \t@sttwo \t@stone=\t@sttwo \fi#1=\t@stone}
+\def\m@xthree#1#2#3#4{\t@stone=\dimexpr #2\relax \t@sttwo=\dimexpr #3\relax \t@sttri=\dimexpr #4\relax
+  \ifdim \t@stone< \t@sttwo \t@stone=\t@sttwo\fi \ifdim \t@stone< \t@sttri \t@stone=\t@sttri\fi #1=\t@stone}
+\def\m@xfour#1#2#3#4#5{\t@stone=\dimexpr #2\relax \t@sttwo=\dimexpr #3\relax \t@sttri=\dimexpr #4\relax \t@stfou=\dimexpr #5\relax 
+  \ifdim \t@stone< \t@sttwo \t@stone=\t@sttwo\fi \ifdim \t@stone< \t@sttri \t@stone=\t@sttri\fi\ifdim \t@stone< \t@stfou \t@stone=\t@stfou \fi#1=\t@stone}
+\def\m@xfive#1#2#3#4#5#6{\t@stone=\dimexpr #2\relax \t@sttwo=\dimexpr #3\relax \t@sttri=\dimexpr #4\relax \t@stfou=\dimexpr #5\relax \t@stfiv=\dimexpr #6\relax
+  \ifdim \t@stone< \t@sttwo \t@stone=\t@sttwo\fi \ifdim \t@stone< \t@sttri \t@stone=\t@sttri\fi\ifdim \t@stone< \t@stfou \t@stone=\t@stfou \fi\ifdim \t@stone< \t@stfiv \t@stone=\t@stfiv \fi#1=\t@stone}
+
+  
 \def\@complexcheck@polyp@ges#1\E{%Check for Row-of-columns processing
   \edef\tmp{#1}%
   \edef\tmpnam{\checkmode p@lyp@gecols\p@lyp@gestring}%
@@ -209,6 +242,7 @@
 }
 \def\p@lyp@gestring{\the\p@lyp@geno-\the\p@lyr@wno}
 \def\p@lyp@gesuffx{@poly@\p@lyp@gestring}
+\def\p@rsep@gestring#1-#2\E{\p@lyp@geno=#1 \p@lyr@wno=#2\relax}
 
 \def\@@complexs@tpolyp@ges#1{%column processing
   \traceifset{@@cspp}%
@@ -225,15 +259,17 @@
       \x@\let\csname layout@#1\endcsname\gr@dnone % No sync
     \fi
     \ifnum\@@cspptmp <\@cspptotcols
-      \x@\xdef\csname @max@cols@#1\endcsname{\@cspptotcols}%Used in determining the column width: Actual column widths get reduced by inter-column gaps, and so chunk that co-occurs in a tripple pane will be smaller than if it occured only in a double-pane. This is a pain. 
+      \x@\xdef\csname @max@cols@#1\endcsname{\@cspptotcols}%Used in determining the column width: Actual column widths get reduced by inter-column gaps, and so chunk that co-occurs in a tripple pane will be smaller than if it occured only in a double-pane. This is a pain.
     \fi
-    \x@\let\x@\@@cspptmp\csname @max@cols@#1\endcsname
+    %Needless? \x@\let\x@\@@cspptmp\csname @max@cols@#1\endcsname
     \ifBookOpenLeft
       \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{\x@fch@r\csname revp@lyp@gecols\p@lyp@gestring\endcsname}%
     \else
       \xdef@cseq{p@lyp@gecols\p@lyp@gestring}{\csname p@lyp@gecols\p@lyp@gestring\endcsname\x@fch@r}%
     \fi
     \count255=\csname @tmpnum@#1\endcsname
+    \x@\edef\csname lastcell#1-\the\p@lyp@geno\endcsname{\p@lyp@gestring} % Where do notes for L/R go on this page?
+    \x@\edef\csname lastcol#1-\the\p@lyp@geno\endcsname{\x@fch@r} % Where do notes for L/R go on this page?
     \advance\count255 by 1
     \edef\@tmpnam{decode@#1\the\count255}%
     \trace{dmc}{... #1\the\count255\space -> \x@fch@r}%
@@ -252,7 +288,7 @@
   \catcode47=\tw@lve\relax
   \@checkpolypages
 }
-\def\@checkpolypages#1#2{
+\def\@checkpolypages#1#2{% Testing code - check the calculated result agrees with the known result
   \p@lyp@geno=0
   \def\checkreport{}%
   \let\d@\complexcheck@polyp@ges
@@ -281,14 +317,19 @@
   \def\p@gestrings{}%
   \let\d@=\complexs@tpolyp@ges
   \cstackdown#1,\E
-  \x@\xdef\csname p@lypgcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
-  \x@\gdef\csname p@lypght-\the\p@lyp@geno\x@\endcsname{\x@\dimexpr\pg@hts\relax}%
-  \trace{dmc}{page \the\p@lyp@geno \space height is \csname p@lypght-\the\p@lyp@geno\endcsname}%
   \reset@colindexes
   \p@lyp@geno=0
   \let\d@=\complexr@vpolyp@ges
   \cstackup#1,\E
-  \catcode47=\sl@shcode\relax
+  \trace{dmc}{Page string list is:\p@gestrings}%
+  \def\tmp{0-0}%Just one column? that's simplecols
+  \ifx\p@gestrings\tmp
+    \edef\diglotlayout{simplecols}
+  \else %Anything else is considered a complex page. complexpages doesn't sync page-to-page, while simplepages does.
+    \edef\diglotlayout{complexpages}
+  \fi
+  % Restore catcodes
+  \catcode47=\sl@shcode\relax 
   \catcode`\-=\d@shcode\relax
 }
 
@@ -314,6 +355,55 @@
   \x@\each@col\diglot@list\E
 }
 
+\def\MaxComplexLines{1000} % Should be enough for any set of pages, surely?
+
+\newcount\@@m@one \@@m@one=-1
+\newcount\@@zero \@@zero=0
+%\def\seta#1#2{\def\tmp##1#1=(##2)##3\E{\edef\STOREa{##1#1=(#2)##3}}\x@\tmp\STOREa\E}
+\def\local@split@defs#1#2{% #1=L/R/A, etc. #2=lines. This allocates and clears
+  % blocks of dims/counts ready for use. It also sets the shortcuts to the specified
+  % column, saving a few cycles. The  number parameter specifies how many rows actually 
+  % need clearing, providing a speed-up.
+  \def\STOREa{)}%
+  \def\STOREb{)}%
+  \def\STOREc{)}%
+  \ifcsname split@defs@#1\endcsname
+    \count255=\csname split@defs@#1\endcsname
+    \ifnum\count255<#2 \count255=#2 \advance\count255 by 1 \fi
+  \else
+    \count255=#2
+    \advance\count255 by 1 
+  \fi
+  \ifnum \count255 >\MaxComplexLines 
+    \def\MaxComplexLines{\the\count255}
+    \message{#1 has \the\numexpr #2\relax lines. That's more than the code expected. Ideally, alter \MaxComplexLines.}%
+    % FIXME if this is the only place they're used, we should deallocate/move the old blocks. Otherwise ensure they're only local definitions.
+    % Current bodge is to just reallocate.
+    \x@\let\csname split@heights#1\endcsname\undefined
+  \fi  
+  \x@\edef\csname split@defs@#1\endcsname{\the\count255}%
+  \ifcsname split@heights#1\endcsname\else
+    \x@\locdimenblk\csname @@@split@heights#1\endcsname{\MaxComplexLines}
+    \x@\locdimenblk\csname @@@split@insheights#1\endcsname{\MaxComplexLines}
+    \x@\loccountblk\csname @@@split@vrs#1\endcsname{\MaxComplexLines}
+    \x@\def\csname split@heights#1\endcsname##1{\x@\dimen\x@\numexpr \csname @@@split@heights#1\endcsname+##1\relax}
+    \x@\def\csname split@insheights#1\endcsname##1{\x@\dimen\numexpr \csname @@@split@insheights#1\endcsname+##1\relax}
+    \x@\def\csname split@vrs#1\endcsname##1{\x@\count\numexpr \csname @@@split@vrs#1\endcsname+##1\relax}
+  \fi
+  \x@\let\x@\split@vrs\csname split@vrs#1\endcsname
+  \x@\let\x@\split@heights\csname split@heights#1\endcsname
+  \x@\let\x@\split@insheights\csname split@insheights#1\endcsname
+  \dimen1=-1sp
+  \tracetimset{local@split@defs}%
+  \advance \count255 by \@@m@one
+  \loop
+    \split@insheights{\count255}=\dimen1
+    \split@heights{\count255}=\dimen1
+    \split@vrs{\count255}=\@@m@one
+    \advance\count255 by \@@m@one \ifnum\count255>\@@zero \repeat
+  \tracetimcheck{local@split@defs}{#1 \csname split@defs@#1\endcsname}%
+}
+
 \def\@@cplx@measure#1\E{%Measure the current row height of the row #1 
   \let\col@do\max@boxsz\def\v@lpfx{}\def\v@lsfx{box}\dimen1=0pt
   \x@\let\x@\tmp\csname cts@#1\endcsname
@@ -327,21 +417,272 @@
   \x@\cstackdown\p@gestrings\E
 }
 
+
+
+\def\complex@ssplit#1{% Slow, but reliable.
+  \bgroup % Keep redefinitions local
+    \ins@meas@trialfullfalse
+    \ins@meas@trialnofulltrue
+    \vfuzz=\maxdimen
+      \setbox0\copy\csname #1box\endcsname%
+    \dimen1=\ht0
+    \dimen2=0pt
+    \dimen3=0pt
+    \nsplit=\dimexpr \dimen1 / \baselineskip\relax
+    %\message{#1 has \the\nsplit\space lines}
+    \local@split@defs{#1}{\nsplit}%
+    \count255=1
+    \loop
+      \setbox0\copy\csname #1box\endcsname%
+      \setbox1\vsplit 0 to \count255\baselineskip  
+      %\ifnum\count255=1 \showbox1\fi
+      \me@sureins@trial{#1}{1}%
+      %\advance\dimen3 by \ht1
+      %\advance\dimen2 by \ins@meas@trial@result
+      \x@\global\csname split@insheights#1\endcsname{\count255}=\ins@meas@trial@result
+      \x@\global\csname split@heights#1\endcsname{\count255}=\ht1
+      %\xdef\ssr@sult{\ssr@sult \space \the\count255 (\the\csname split@heights#1\endcsname{\count255}): \the\csname split@insheights#1\endcsname{\count255}}%
+      \xdef\ssr@sult{\ssr@sult \space \the\count255: \the\csname split@insheights#1\endcsname{\count255}}%
+      \advance \count255 by 1
+    \unless\ifnum\count255>\nsplit \repeat
+    %\tracetimset{xp}%
+    %\x@\def\x@\ssr@sult\x@{%
+      %\loop\advance\count255 -1
+        %.\space \the\count255 (\x@\the\csname height#1\endcsname{\count255}): \the\csname split@insheights#1\endcsname{\count255} %
+      %\ifnum\count255>0 \repeat}
+    %%\tracetimcheck{xp}{Reporting}%
+  \egroup
+}
+  
+\def\complex@rsplit#1{%
+  \vfuzz=\maxdimen
+  \setbox0\copy\csname #1box\endcsname%
+  \dimen1=\ht0
+  \nsplit=\dimexpr \dimen1 / \baselineskip\relax
+  \local@split@defs{#1}{\nsplit}% Generate (if needed) and flag as unused values. Also sets \split@insheights etc.  
+  \bgroup
+    \ins@meas@trialfullfalse
+    \ins@meas@trialnofulltrue
+    \@complex@rsplit{#1}{\the\nsplit}{0}{0}{-1sp}%
+  \egroup
+  \loop
+    \advance\count255 by 1
+    %\message{insheights#1{\the\count255}=\the\csname split@insheights#1\endcsname{\count255}}%
+  \ifnum\count255<\nsplit \repeat
+}
+\newbox\tmpb@x
+\def\@complex@rsplit#1#2#3#4#5{%
+  \edef\ncv@lb{#5}%
+  \setbox\tmpb@x\copy#4
+  \count255=#2\relax
+  \advance\count255 by -#3%
+  \divide\count255 by 2
+  \ifnum \count255>0
+    \edef\@sp{\the\count255}%
+    %\tracingassigns=1
+    \edef\@npb{\the\numexpr #2 \relax}%
+    \edef\@np{\the\numexpr #3+\count255 \relax}%
+    \trace{dmc}{rsplit #1 #2 #3 #4 #5(\@np, \@npb) (\the\ht#4)}%
+    %\tracingassigns=0 \relax
+    \setbox 0\box\tmpb@x
+    %\ifx\@sp\@ne \showbox 0 \fi
+    \setbox1=\vsplit 0 to \@sp\baselineskip
+    \setbox1\vbox{\unvbox1}%
+    %\trace{dmc}{split into \@sp results in \number\dimexpr\ht1/\baselineskip\relax / \number\dimexpr \ht0/\baselineskip\relax}%
+    \edef\tmpa{\x@\the\split@insheights{\@np}}%
+    \ifdim\tmpa =-1sp
+      \me@sureins@trial{#1}{1}%
+      \let\tmpa\ins@meas@trial@result
+      \ifnum #3=0 
+        %\trace{dmc}{\@np -> \tmpa}%
+        \global\split@insheights{\@np}=\tmpa
+      \else
+        \edef\lval{\the\split@insheights{#3}}%
+        \ifdim\lval=-1sp\else
+          %\trace{dmc}{** \@np -> \tmpa+\lval}%
+          \x@\global\split@insheights{\@np}=\dimexpr\tmpa+\lval\relax
+        \fi
+      \fi
+      %\trace{dmc}{rsplit - \tmpa\space between #3 and \@np}%
+    \else
+      %\trace{dmc}{- No measuring needed for \@np ??}%
+    \fi
+    \ifnum\@npb <\nsplit 
+      %\edef\ncv@l{\the\csname split@insheights#1\endcsname{\@npb+1}}% set the no change value
+    \else
+      \edef\@npb{\the\nsplit}%
+      \edef\ncv@lb{\the\split@insheights{\nsplit}} %set the no change value
+    \fi
+    \dimen0=\split@insheights{\@npb}%
+    \ifdim \dimen0=-1sp
+      \me@sureins@trial{#1}{0}%
+      \let\tmpb\ins@meas@trial@result
+      %\trace{dmc}{rsplit + \tmpb\space between \@np and \@npb}%
+      \ifdim\ncv@lb=-1sp
+        \edef\ncv@lb{\the\dimexpr \tmpa+\tmpb\relax}%
+        %\message{\@npb -> \tmpb+\tmpa =\ncv@lb}%
+        \x@\global\split@insheights{\@npb}=\ncv@lb
+      \fi
+    \else
+      \edef\tmpb{\the\dimexpr#5-\dimen0 \relax}%
+      %\trace{dmc}{+ No measuring needed for \@np-\@npb: calculated \tmpb}%
+    \fi
+    \let\ncv@l\ncv@lb
+    % process the tail first.
+    \ifdim\tmpb=0pt
+     % \ifdim #5=-1sp \def\ncv@lb{0pt}\fi% Only occurs at the 1st call, so if there's nothing, then there's nothing in the upper half.
+      \count255=\@npb
+      %\trace{dmc}{rsplit + no change between \@np and \@npb: \ncv@lb}%
+      \loop 
+        %\message{\the\count255 -> \ncv@lb}%
+        \x@\global\split@insheights{\count255}=\ncv@lb
+        \advance\count255 -1
+        \ifnum\count255>\@np 
+      \repeat
+    \else
+      %\trace{dmc}{rsplit + \tmpb\space between \@np and \@npb}%
+      \edef\ncv@l{\the\dimexpr \ncv@lb-\tmpb\relax}%
+    \fi
+    \ifdim \tmpa=0pt
+      %\trace{dmc}{rsplit - no change between #3 and \@np: \ncv@l }%
+      \count255=\@np
+      \loop 
+        \ifdim \split@insheights{\count255}=-1sp
+          \x@\global\split@insheights{\count255}=\ncv@l
+          %\message{\the\count255 -> \ncv@l}%
+        \fi
+        \advance\count255 -1
+      \ifnum \count255>#3 \repeat
+    \else\bgroup
+      \edef\@rgs{{#1}{\@np}{#3}{1}{\ncv@l}}%
+      \x@\@complex@rsplit\@rgs
+    \egroup\fi
+    \ifdim\tmpb=0pt\else\bgroup
+      \edef\@rgs{{#1}{\@npb}{\@np}{0}{\ncv@lb}}%
+      \x@\@complex@rsplit\@rgs
+    \egroup\fi
+  \fi  
+}
+\def\complex@split#1{%
+  \ifdim\ht\csname #1box\endcsname > 10\baselineskip % Arbitray value needs firming up
+    \complex@rsplit{#1}%
+  \else
+    \complex@ssplit{#1}%
+  \fi
+}
+
+\def\@prepare@layout@complexpages{%
+  \trace{d}{@prepare@layout@complexpages \l@gdims{\partial} \ifdiglotb@dy body\else intro\fi}%
+  \@prepare@layout@simplecols 
+}
+
+\def\cplx@pre@me@sureins@trial#1{%
+  %\x@\let\x@\tb@x
+  \me@sureins@trial{#1}{\csname excess#1\endcsname}%
+  \x@\let\csname pre@meas@#1@result\endcsname\ins@meas@trial@result
+  \x@\let\csname pre@meas@#1@dims\endcsname\ins@meas@trial@dims
+  \ifx\ins@meas@trial@dims\empty\else\let\inserts@npage\tr@e\fi %Notice that there are inserts.
+}
+
+\def\g@nchunkhtfunction#1#2\E{%generate an optimised chunk height macro (max(#1,...) for all cols in a row
+  \x@\let\x@\p@gehtcalcs\csname p@gehtcalcs-\the\p@lyp@geno\endcsname
+  \mkchunktr@iling{#1}%
+  \edef\tmp{\tmpdim=\dimexpr \ht\csname #1box\endcsname+\dp\csname #1box\endcsname 
+    \chunktr@iling
+    \relax}%
+  \x@\fntoks\x@{\tmp}%
+  \let\col@do\@genhtfunction
+  \x@\each@col#2\E
+  \x@\def\csname htfunction\x@\x@\x@\endcsname\x@\x@\x@{\x@\the\x@\fntoks\x@}
+  \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\p@gehtcalcs
+}
+
+\def\@genhtfunction#1{%
+  \edef\tmpf{\dimen0=\dimexpr \ht\csname #1box\endcsname+\dp\csname #1box\endcsname\relax }%
+  \mkchunktr@iling{#1}%
+  \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmpf\relax \ifdim\dimen0>\tmpdim \tmpdim=\dimen0 \fi}%
+}
+
+\newdimen\thisp@gehtloss
+
+\def\mk@chunktr@iling#1:#2\E{%Generate *optimised* height calcs for each insert used
+  \ifcsname #1is@p@geins\endcsname
+    \x@\def\x@\p@gehtcalcs\x@{\p@gehtcalcs\dimen0=\csname #1ht\endcsname \ifdim \dimen0>0pt \advance\thisp@gehtloss \dimexpr \dimen0+\dimen\csname #1\endcsname\relax\fi }% FIXME: Probably done elsewhere??
+  \else
+    \edef\btmp{\dimen1=\csname #1ht\endcsname}%
+    \x@\extendchunkc@lc\x@{\x@\dimen\csname #1\endcsname}% Save some cycles by expanding the csname once, here.
+  \fi
+}
+\def\extendchunkc@lc#1{%
+    \x@\x@\x@\def\x@\x@\x@\tmpf\x@\x@\x@{\x@\tmpf \btmp \ifdim\dimen1>0pt \advance\dimen0\dimexpr \dimen1+#1\relax\fi}%
+}
+
+\def\mkchunktr@iling#1{%define any (potential) extra column height for column #1 as \chunktr@iling.
+  \def\tmpa{#1}\edef\tmpb{#1}%
+  \x@\ifx\csname #1isFolowOn\endcsname\tr@e \x@\let\x@\tmpa\csname f@llowing#1\endcsname\fi
+  \let\chunktr@iling\empty
+  \x@\ifx\csname lastcol\tmpa-\the\p@lyp@geno\endcsname\tmpb  % Is this the right column for #1 notes?
+    \x@\ifx\csname pre@meas@\tmpa @dims\endcsname\empty\else
+      \let\d@\mk@chunktr@iling
+      \x@\x@\x@\cstackdown\csname pre@meas@\tmpa @dims\endcsname\E
+      \trace{dmc}{chunktrailing #1(\tmpa) is \chunktr@iling}%
+    \fi
+  \fi
+}
+\x@\newdimen\csname p@geloss-0\endcsname
+\x@\newdimen\csname p@geloss-1\endcsname
+
+\def\diglot@run@trials@complexpages{% This receives control after all columns are gathered.
+  %As columns are gathered via the output routine, by definition the currentpage must be empty
+  %Material to typeset is in excessX and wholeX (intially equal in content)
+  % 1. measure the heigths of each box *and inserts*
+  \trace{dmc}{Running trials for active content:\digl@tc@ntentlist}% 
+  \let\inserts@npage\f@lse
+  \let\col@do\cplx@pre@me@sureins@trial
+  \ins@meas@trialnofullfalse \ins@meas@trialfullfalse
+  \x@\each@col\digl@tc@ntentlist\E
+  \trace{dmc}{Done. Resetting calcs}% 
+  % 2.using the page structure, define code to measure the (potentially) active bits of the layout (i.e, if there's no figures or column notes, then don't bother with column-note calcs), one-per-defined page. 
+  \ifx\inserts@npage\tr@e
+    \p@lyp@geno=0 \loop
+      \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\empty
+      \csname p@gehtloss-\the\p@lyp@geno\endcsname=0pt
+      \advance\p@lyp@geno by 1 \ifnum\p@lyp@geno<\p@lyp@ges \repeat
+    \let\d@\polyp@gestack \let\each@col\g@nchunkhtfunction 
+    \x@\cstackdown\p@gestrings\E
+  \fi
+  \trace{dmc}{Page height calcs(last page):\meaning\p@gehtcalcs}%
+}
+\newtoks\fntoks
+
+%%%%%%%%%%%%%% Generic 'do everything to everyrow function
+
+\def\polyp@gestack#1\E{%Gets an element of the page-strings list (page-row).
+  \x@\p@rsep@gestring #1\E
+  \x@\x@\x@\each@col\csname p@lyp@gecols#1\endcsname\E
+}%
+
 %%%%%%%%%%%%%%%%%%%%%%%%% code that needs slash to not be active.  
 \catcode47=\tw@lve
-
+  % Slash-separated stack, works roughly like comma-separated stack, but with slashes instead of commas, and the slash-stack uses \d@@
   \def\sstackup#1/#2\E{\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackup\fi\n@x #2\E\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi}                  %(1)
   \def\sstackdown#1/#2\E{\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackdown\fi\n@x #2\E}
   \def\sstackrelax#1\E{}
     
   \def\complexs@tpolyp@ges#1\E{%page processing (#1 is a page
     \p@lyr@wno=0
+    \def\p@gestring{}%
     \let\d@@\@complexs@tpolyp@ges
     \sstackdown#1/\E
     \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
-    \global\advance\p@lyp@geno by 1
+    \x@\xdef\csname p@lypgcts-\the\p@lyp@geno\endcsname{\p@gestring}% Contents of this page (in terms of page-row)
+    \x@\gdef\csname p@lypght-\the\p@lyp@geno\x@\endcsname{\x@\dimexpr\pg@hts\relax}%
+    \x@\xdef\x@\p@gestrings\x@{\ifx\p@gestrings\empty\else \p@gestrings,\fi\p@gestring}% % What is the complete list of sections (in terms of page-row)?
+  \trace{dmc}{page \the\p@lyp@geno \space height is \csname p@lypght-\the\p@lyp@geno\endcsname}%
+    \global\advance\p@lyp@geno by 1\relax
+    \xdef\p@lyp@ges{\p@lyp@geno}%
   }
-  \def\complexr@vpolyp@ges#1\E{%reverse processing
+  \def\complexr@vpolyp@ges#1\E{%reverse processing. There may be repeated columns, and 'reversed column order' doesn't affect reading order. Thus it does not equate to an inversion (LLR becomes LZR forward and  RLZ when reversed.)
     \p@lyr@wno=0
     \let\d@@=\@complexr@vpolyp@ges % Do the mirrored-version
     \sstackdown#1/\E

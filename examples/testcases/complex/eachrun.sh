@@ -1,2 +1,2 @@
 #!/bin/sh
-egrep 'Splitting|Scoring' $1.log >> timings.dat
+egrep 'tim>|Splitting|Scoring' $1.log >> timings.dat
