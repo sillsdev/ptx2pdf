@@ -574,6 +574,49 @@ page. The second line puts the normal colophon including code after any included
 \sethook{final}{afterincludes}{\layoutstylebreak\singlecolumn\zcolophon}
 ```
 
+## Side Aligned Notes
+
+It is possible with the PTXprint macros to have notes side aligned in the side
+margins. Until we have a button for that, here is how you can achieve it. We
+will put the cross references in the margin while keeping the footnotes as notes
+in the text.
+
+First set up the margins to be wide enough for the notes. Getting this right
+takes some thought because too much and your columns get too narrow and too
+narrow and the notes all wrap and look bad. To be honest A5 is probably too
+narrow a page to get 2 columns and side notes in. Something like 9" x 6" is
+probably better. But for single column, it should be fine. For single column
+layout we add extra space typically to the outer margin. For double column, the
+inner and outer margins are typically the same, and true gutters can be used to
+account for binding. For single column, to set up the
+margins, set the margin width to be the inner margin including its binding gutter. Then
+set the gutter to be the extra space you want on the outer page and enable the
+"Outer Gutter". For example, a margin of 15mm, a binding gutter of 36mm.
+
+The TeX magic is relatively simple:
+
+```tex
+\catcode`\@=11
+\marginaln@te{x}
+\marginnotesgap = 6pt
+\marginnoteswidth = \dimexpr 1.5in + \marginnotesgap
+\def\MarginNoteSide{outer}
+```
+We need to allow @ in names so we catcode @ to be a letter. Then we say that we
+want `x` to be treated as a marginal note. The marginnotesgap is the space
+between the edge of the note at the text. How far from the text should the notes
+be. The marginnoteswidth is the width of the marginnote including its gap. Here
+I have said I want a 1.5in note and then added the gap on. We can say where we
+want the margin notes: inner, outer, left, right
+
+Enabling decorations isn't essential (and we hope to remove the need) but it
+does quieten some errors.
+
+If you use quick print, that only runs the job once, you may find that side
+notes crash into each other. A quick reprint doesn't fix this. To get the notes
+correctly positioned you need to run a full non quick print.
+
+
 ## Fancy headers
 
 There is a style of headers in which each page has the page number on the outer
