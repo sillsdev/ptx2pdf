@@ -89,6 +89,11 @@
 % | V | verse numbers
 % | v | marginal verses
 % | x | Processes run at exit
+%
+% Magic command to build tracelist. from above. in vim, go to colon in the next line and type "ay$@a
+% :/| *a *|/+1,.! awk -F\| '(NF==3){b=$2;gsub("[ \t]","",b);A=A b ","}{print}END{print "%\n\\def\\tracelist{" A "}\n"}'
+\def\tracelist{A,b,B,C,c,ch,cov,d,dP,D,De,Df,Dh,Ds,dm,dmp,dmc,e,eg,eb,ebi,eh,et,f,fp,F,Fe,g,G,gI,h,hv,H,i,imt,I,j,m,mx,M,ma,n,nS,o,oh,orn,p,pt,P,per,s,sa,sb,spv,ss,sP,sc,sC,sh,sk,sko,S,t,tim,T,u,V,v,x,}
+
 %-tracing-codes
 
 %+tracing
@@ -100,8 +105,23 @@
 \def\notr@cer#1#2{\relax}%
 \untracing{a} % Fallback is nothing happens
 
-\def\tr@cer#1#2{%
-    \ifcsname tr@ce-#1\endcsname\csname tr@ce-#1\endcsname{#1}{#2}\else\csname tr@ce-a\endcsname{#1}{#2}\fi}
+%Make registered tracing codes call tr@ce-a by default 
+\def\RegisterTrace#1{\def\tmpa{a}\def\tmp{#1}\ifx\tmp\tmpa\else\message{#1}\x@\def\csname tr@ce-#1\endcsname{\csname tr@ce-a\endcsname}\fi}
+\def\trdefaults#1,#2\E{\RegisterTrace{#1}\def\tmp{#2}\ifx\tmp\empty\else \trdefaults#2\E\fi}
+\message{Tracing routines registered for:}\x@\trdefaults\tracelist\E
+\def\FastTracing{\let\trace\tr@cerfast}
+
+\addtoendhooks{\ifx\trace\tr@cer\ifx\tracemoan\empty\message{No unregistered trace flags. \string\FastTracing\space can be used}\else\message{*** Unregistered trace flags: \tracemoan. Don't use \string\FastTracing}\fi\fi}
+
+\def\tracemoan{}
+%\def\tr@cer#1#2{%
+%    \ifcsname tr@ce-#1\endcsname\csname tr@ce-#1\endcsname{#1}{#2}\else\csname tr@ce-a\endcsname{#1}{#2}\fi}
+%\def\tr@cer#1#2{%
+    %\ifcsname tr@ce-#1\endcsname\csname tr@ce-#1\endcsname{#1}{#2}\else\edef\tracemoan{\tracemoan,#1}\csname tr@ce-a\endcsname{#1}{#2}\fi}
+\def\tr@cer#1{%
+    \ifcsname tr@ce-#1\endcsname\x@\let\x@\tr@cetmp\csname tr@ce-#1\endcsname\else\edef\tracemoan{\tracemoan,#1}\x@\let\x@\tr@cetmp\csname tr@ce-a\endcsname\x@\let\csname tr@ce-#1\endcsname\tr@cetmp\fi\tr@cetmp{#1}}
+\def\tr@cerfast#1{\csname tr@ce-#1\endcsname{#1}} % Faster, but no fallback
+
 \def\tr@ceout#1#2{%
     \immediate\write-1{#1> #2}}%
 \def\traceNum#1#2{\global\advance\TRACEcount by 1\trace{#1}{+\the\TRACEcount: #2}}

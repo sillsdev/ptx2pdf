@@ -403,6 +403,8 @@
   \def\BADBREAK{^^^^2064}%
 }
 
+\addtoendhooks{\edef\@time{\strip@pt{\dimexpr \elapsedtime sp\relax}}\message{Elapsed time: \@time s}}
+
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
 \catcode"AD=\active   \def^^ad{\pr@tect\SFTHYPHEN}
 \catcode"200B=\active \def^^^^200b{\pr@tect\ZWSP}
