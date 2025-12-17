@@ -297,7 +297,7 @@
 \newif\ifb@xedparstyle
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook. Normally called from inside endlastp@rstyle
-\def\par{%
+\def\standardpar{%
   \trace{sP}{par! n=\the\p@rnum ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' \c@rref/\dc@rref (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi, \styst@k}%
   \ifhmode
    \ifb@xedparstyle \trace{s}{b@xedstyle met in par! \styst@k}%

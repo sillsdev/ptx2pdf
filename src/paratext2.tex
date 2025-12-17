@@ -134,6 +134,9 @@
 \def\zNeedOddPage{\message{Odd page wanted on \the\pageno}\need@oddpage{\tp@lbout}}
 \def\zNeedQuadPage{\message{Quad page wanted on \the\pageno}\need@quadpage{\tp@lbout}}
 %-c_evenpage
+\newcount\p@rnum %used by triggers, figures, etc. 
+\let\c@rref\empty
+\let\dc@rref\empty
 \def\ptxversion{0}
 \def\ifversion#1#2#3{\ifnum\ptxversion=0\relax #2\else
     \ifnum\ptxversion < #1\relax #3\else #2\fi\fi}
@@ -436,6 +439,7 @@
 \catcode`\^=12 \def\circumflex{^}\catcode`\^=7
 \catcode`\|=12 \def\pipe{^^7c}
 
+\let\par\standardpar
 \parskip=0pt
 \lineskip=0pt
 % NOTE: The baselineskip is set negative here. Later on it will
