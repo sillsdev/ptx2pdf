@@ -2703,6 +2703,9 @@
   % ins@meas@trialfullfalse will run the check without the full analysis, and
   % re-run it if there's any inserts (the full check is several times slower,
   % so this is worthwhile, unless it's known to be an insert-heavy box.
+  \ifdim\pagetotal>0pt \message{me@sureins@trial cannot be called with content on the page}\pagebreak\relax\fi
+  \def\ins@meas@trial@result{0pt}%
+  \def\ins@meas@trial@dims{}%
   \bgroup
     \output{\ins@meas@trial}% Not global, just here.
     \edef\premtht{10000pt}% 3.5 metres should be enough, since this is aiming for a single page...
@@ -2730,19 +2733,22 @@
     \xdef\ins@meas@trial@dims{\ifx\ins@meas@trial@dims\empty\else\ins@meas@trial@dims,\fi#1:\the\ht\csname #1\endcsname}%
   \fi
 }
-
-\def\ins@meas@trial{%The actual trial output routint
+%The actual trial output routine. \ins@rts is a list of all (figure, etc)
+%inserts, \alln@tes is a list of all classes of note. 
+%The assumption is that each note class will either add at least a whole line
+%or move elsewhere, so they all need counting separately.
+\def\ins@meas@trial{%
   \xdef\ins@meas@trial@result{\the\dimexpr \premtht-\the\pagegoal\relax}%
   \setbox255\vbox{\unvbox255}
   \global\let\ins@meas@trial@dims\empty%
   \ifins@meas@trialfull
     \ifdim\ins@meas@trial@result>0pt
       \let\d@\me@sureinserts
-      \x@\cstackdown \ins@rts\E
+      \x@\x@\x@\cstackdown \x@\ins@rts\alln@tes\E
     \fi
   \fi
   \setbox255\box\voidb@x
-  %\trace{imt}{ins@meas@trial: \the\ht255, \ins@meas@trial@result}%
+  \trace{imt}{ins@meas@trial: \the\ht255, \ins@meas@trial@result, p:\the\outputpenalty}%
 }
 
 \def\@me@sureins@trial#1#2{% argumnets: column, box

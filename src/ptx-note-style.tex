@@ -51,9 +51,11 @@
 \def\ch@ckifcl@ss#1{\def\t@st{#1}\ifx\t@st\n@wcl@ss\newcl@ssfalse\fi}
 \newif\ifnewcl@ss
 
+\def\alln@tes{,} % A list of note *names* (comma-separated)
 % new note class: append to the list in \n@tecl@sses, and allocate an \insert number
 \def\allocatecl@ss#1{%
   \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
+  \edef\alln@tes{note-#1,\alln@tes}%
   \ifcsname zplacenotes-#1\endcsname\else% zplacenotes-#1 is an endnote macro. (as is ztestnotes-#1) Trigger a warning rather than leave an undefined macro.
     \x@\gdef\csname zplacenotes-#1\endcsname{\write1{WARNING: p.\the\pageno: zplacenotes-#1 used in text when #1 is a footnote, not an endnote.}}%
     \x@\gdef\csname ztestnotes-#1\endcsname{\write1{WARNING: p.\the\pageno: ztestnotes-#1 used in text when #1 is a footnote, not an endnote.}\@ndnotesfoundfalse}%
@@ -68,11 +70,11 @@
 }
 \def\n@wnoteins@rt#1{%
     \trace{n}{Creating note class #1}%
-	\x@\n@winsert\csname note-#1\endcsname
-	\x@\newb@x\csname noteb@x-#1\endcsname
-	\x@\newb@x\csname notesave1-#1\endcsname
-	\x@\newb@x\csname notesave2-#1\endcsname
-        \x@\newc@unt\csname refn@te-#1\endcsname
+    \x@\n@winsert\csname note-#1\endcsname
+    \x@\newb@x\csname noteb@x-#1\endcsname
+    \x@\newb@x\csname notesave1-#1\endcsname
+    \x@\newb@x\csname notesave2-#1\endcsname
+    \x@\newc@unt\csname refn@te-#1\endcsname
 }
 \def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }
 \def\incn@tecount#1{\global\advance\csname refn@te-#1\endcsname by 1 }

@@ -222,19 +222,33 @@
 
 \def\@s@tbaseline#1#2{%
   \getp@ram{baseline}{#1}{#2}\ifx\p@ram\relax
-    \getp@ram{fontsize}{#1}{#2}\ifx\p@ram\relax\else
-      \def\s@urce{calcn:\f@ntstyle}%
-      \dimen0=\p@ram\le@dingunit
-      \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
-      \trace{F}{baseline [\f@ntstyle] (#1,#2) = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
-      \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0
-      \should@xist{}{\f@ntstyle}%
-    \fi
+    \@@s@tb@seline{#1}{#1}%
+    \baselineskip=\dimen0
   \else
     \def\s@urce{store:\f@ntstyle}%
     \baselineskip=\p@ram\fi
   \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
-
+    
+\def\@@s@tb@seline#1#2{%
+  \getp@ram{fontsize}{#1}{#2}\ifx\p@ram\relax
+    \def\s@urce{carryover}%
+    \dimen0=\baselineskip
+  \else
+    \def\s@urce{calcn:\f@ntstyle}%
+    \dimen0=\p@ram\le@dingunit
+    \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
+    \trace{F}{baseline [\f@ntstyle] (#1,#2) = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
+    \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}
+    \should@xist{}{\f@ntstyle}%
+  \fi
+}
+\def\@@g@tb@seline#1#2{%Get, don't set baseline.
+  \getp@ram{baseline}{#1}{#2}\ifx\p@ram\relax
+    \@@s@tb@seline{#1}{#1}%
+  \else
+    \dimen0=\p@ram
+  \fi
+}
 \def\n@ffin#1{} %  Utility function
 
 \def\includeifpresent#1{%

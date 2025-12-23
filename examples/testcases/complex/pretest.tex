@@ -1,8 +1,7 @@
 \newif\iflua\luafalse
 \def\pluginlist{polyglot-complexpages}
 \input paratext2.tex
-\pagebreak
-\bye
+\FastTracing
 \tracing{dmc}  
 %\tracing{dmc}  
 \tracing{tim}  
@@ -23,10 +22,10 @@
 \def\DiglotLFraction{0.5}
 \def\DiglotRFraction{0.5}
 \def\DiglotAFraction{1}
-\polyglotpages{LL/A,RR/A}
 
 \diglottrue
 \stylesheet{usfm_sb.sty}
+\polyglotpages{LL/A,RR/A}
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1}
 \everypar{}
@@ -36,7 +35,7 @@
 \count\topleftins=1000
 \floatingpenalty=10000
 \setbox\Lbox\vbox{\hsize=100pt
-\mark{a:1:1}\penalty10000 Sapiente eum quasi qui\insert\topleftins{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\vbox{another line}} \mark{a:1:2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{a:1:3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{a:1:4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{a:1:5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
+\mark{a:1:1}\penalty10000 Sapiente eum quasi qui\insert\csname note-f\endcsname{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\vbox{another line}} \mark{a:1:2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{a:1:3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{a:1:4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{a:1:5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
 \vbox to 3\baselineskip{\hbox{Hi}\vfill}\penalty10000
 \insert\topleftins{\vbox{another line}}\mark{a:1:6}Dolores nostrum nihil vel placeat. \mark{a:1:7}Expedita voluptatem iusto dolorem. \mark{a:1:8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{a:1:9}Eveniet quia sed voluptatem. \mark{a:1:10}Voluptatum eaque pariatur id eveniet ratione. \mark{a:1:11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{a:1:12}Delectus molestiae eveniet odit magnam magni. \mark{a:1:13}Itaque sed corporis aut autem dignissimos maxime.}
 \setbox\Rbox\vbox{\hsize=100pt 
@@ -48,8 +47,8 @@
 %\tracingmacros=1
 %\tracingassigns=1
 \ptxfile{}\everypar{}\let\par\endgraf
-\MSG{\l@gdims\Lbox}
-\MSG{\l@gdims\Rbox}
+\MSG{L: \l@gdims\Lbox}
+\MSG{A: \l@gdims\Rbox}
 %\MSG{\l@gdims\Abox}
 \newcount\cols
 \newdimen\max
@@ -299,10 +298,13 @@ A:\Alist
 %\box\Lbox
 \def\digl@tc@ntentlist{LRA}
 \tracing{imt}
+\ifdim\pagetotal>0pt \pagebreak \fi
 \setbox\excessL\box\Lbox
 \setbox\excessA\box\Abox
 \setbox\excessR\box\Rbox
 \message{dim: xL \l@gdims{\excessL}, xR \l@gdims{\excessR}, xA \l@gdims{\excessA}}%
+\showbox\excessL
+%\FastTracing
 \diglot@run@trials@complexpages
 \relax
 \bye
