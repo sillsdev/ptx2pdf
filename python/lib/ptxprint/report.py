@@ -264,11 +264,15 @@ class Report:
                 passed.append(bk)
             else:
                 for e in doc.xml.errors:
-                    (msg, pos, ref) = e #pos.l, pos.c = char num
-                    if pos is None:
-                        continue
-                    emsg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
-                    failed.setdefault(bk, []).append(emsg)
+                    if len(e) == 1:     # simple string
+                        msg = e[0]
+                        pos = None
+                        ref = None
+                    else:
+                        (msg, pos, ref) = e #pos.l, pos.c = char num
+                    if pos is not None:
+                        msg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
+                    failed.setdefault(bk, []).append(msg)
         if len(passed):
             self.add("3. USFM/Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
         if len(failed):
