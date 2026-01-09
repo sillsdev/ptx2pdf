@@ -708,6 +708,7 @@
   \n@xtmff #2\E
 }
 
+\def\und@fit#1\E{\x@\let\csname #1\endcsname\undefined}%
 \def\endf@aturemaths#1\E{}
 \def\fe@turemaths #1[#2] #3\E{%
   \trace{sa}{Feature maths #1.#2.#3}%
@@ -727,7 +728,7 @@
         \ifx\f@atureset\cstackempty\else
           \trace{sa}{Deleting prior features \f@atureset}%
           %\tracingassigns=1
-          \def\d@##1\E{\x@\let\csname ##1\endcsname\undefined}%
+          \let\d@\und@fit
           \x@\cstackdown \f@atureset,\E
           %\tracingassigns=0
           \let\d@\addf@ature

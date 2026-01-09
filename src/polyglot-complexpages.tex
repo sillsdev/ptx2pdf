@@ -96,6 +96,8 @@
   \x@\let\csname f@llow@n#1\endcsname\empty
   \x@\global\x@\let\csname layout@#1\endcsname\empty
   \x@\global\x@\def\csname @max@cols@#1\endcsname{0}% Max columns #1 this is part of 
+  \x@\global\x@\def\csname @firstpage@#1\endcsname{0}% First page #1 is on
+  \x@\global\x@\def\csname @lastpage@#1\endcsname{0}% Last page #1 is on
   \x@\global\x@\let\csname f@llowing#1\endcsname\undefined
   \cle@rtmpnum{#1}%
   \ifx\relax\tmp\else \ifx\empty\tmp\else
@@ -104,14 +106,17 @@
   \global\let\all@list\empty
   %\tracingassigns=0
 }
+
 \def\cle@rtmpnum#1{%
   \x@\global\x@\def\csname @tmpnum@#1\endcsname{0}%
   \x@\global\x@\def\csname pre@meas@#1@result\endcsname{0}%
 }
+
 \def\t@gpageinsertnames#1\E{%
   \x@\let\csname #1is@p@geins\endcsname\tr@e
   \mktmpinsdim@n{#1}%
 }
+
 \def\@mktmpinsdim@n#1\E{% Versiion for cstackdown, etc.
   \mktmpinsdim@n{#1}}
 \def\mktmpinsdim@n#1{%Normal version
@@ -119,31 +124,39 @@
     \x@\newdim@n\csname #1ht\endcsname
   \fi
 }
-\def\@t@gcolinsertnames#1{%
+
+\def\@t@gcolinsertnames#1{%top and bottom column inserts...
+  \@@t@gcolinsertnames{t#1}{#1}%
+  \@@t@gcolinsertnames{b#1}{#1}%
+}
+  
+\def\@@t@gcolinsertnames#1#2{%
   \edef\ins@name{\colinsert@name{#1}}%
-  \ifcsname \ins@name-col\endcsname\else
-    \trace{dmc}{defining \ins@name-col as #1}%
-    \x@\xdef\csname \ins@name-col\endcsname{#1}%Map from column name to column, so we don't need to try to parse the name
-  \fi
+  \trace{dmc}{defining \ins@name-col as #2}%
+  \x@\xdef\csname \ins@name-col\endcsname{#2}%Map from column name to column, so we don't need to try to parse the name
 }
 
 \def\@@clsfynotes#1{%
   \@@g@tb@seline{\tmpn@te}{#1}\x@\edef\csname @n-\tmpn@te#1@bls\endcsname{\the\dimen0}%
 }
-\def\@@l@stcolonly#1{
+
+\def\@@l@stcolonly#1{%
   \x@\ifx\csname lastcol\tmpa-\the\p@lyp@geno\endcsname\tmpb  % Is this the right column for #1 notes?
+    \trace{dmc}{#1 applied for \tmpb/\csname lastcol\tmpa-\the\p@lyp@geno\endcsname}%
+    \let\tgtc@l\tmpb
     \let\tmp@r\tr@e
   \else
     \trace{dmc}{#1 skipped \tmpb/\csname lastcol\tmpa-\the\p@lyp@geno\endcsname}%
   \fi
 }
+
 \def\@clsfynotes#1\E{%Classify footnote types: notes might be: in this box (or the final follow-on) 'n'ormal; shifted to an xrefs column, but overflowing to here 'x'ref, 
   %or affecting the whole page 'p'. There's also a category 'i'gnore, used for notes that don't get counted.
   \edef\tmpn@te{#1}%
   \ifdiglotSepNotes
-    \def\tmp@n@tetyp{n}%
+    \def\tmp@n@tetyp{n}% Normal note- end of last column on page
   \else
-    \def\tmp@n@tetyp{p}%
+    \def\tmp@n@tetyp{p}% Bottom of page
   \fi
   \ifx\tmp\XrefNotes\edef\tmp@n@tetyp{x}\fi%
   \ifcsname endn@te-#1\endcsname 
@@ -154,13 +167,17 @@
   \trace{dmc}{Recording @n-\tmpn@te @typ as \tmp@n@tetyp}%
   \let\col@do\@@clsfynotes \x@\each@col\all@list\E
 }
-
+\def\t@rgetcols{}
 \def\polyglot@eachtime@setup@complexpages{%
+  \trace{dmc}{polyglot@eachtime@setup@complexpages}%
+  \ifx\t@rgetcols\empty\else
+    \let\d@\und@fit
+    \x@\cstackdown\t@rgetcols,\E
+  \fi
   \ifx\diglot@list\empty\else
     \global\f@llow@n=0
     \let\col@do\cle@rf@llow@ns\x@\each@col\diglot@list\E% Stop all chains.
     %\let\col@do\local@split@defs\x@\each@col\diglot@list\E % Ensure that all columms have a block of dimensions.
-    \let\col@do\@t@gcolinsertnames \x@\each@col\all@list\E
     \let\d@\t@gpageinsertnames \x@\cstackdown\pageins@rts\E
     \let\d@\@mktmpinsdim@n \x@\cstackdown\columnins@rts\E
     \let\d@\@clsfynotes \x@\cstackdown\alln@tes,\E
@@ -294,11 +311,14 @@
     %\ifx\@@cspptmp\z@ro \message{@@cspptmp is not zero}\fi
     \ifnum \@@cspptmp =0 % This must be the first occurance
       \ifnum\@csppactcols>1 \x@\let\csname layout@#1\endcsname\gr@dnormal % Normal 
+      \x@\edef\csname @firstpage@#1\endcsname{\the\p@lyp@geno}%
+      \x@\edef\csname @lastpage@#1\endcsname{\the\p@lyp@geno}%
       \else\x@\let\csname layout@#1\endcsname\gr@dnone \fi % No sync
       \xdef\all@list{\all@list#1}%Extend the list of all real & virtual columns.
     \else
       \new@followon{#1}%
       \x@\let\csname layout@#1\endcsname\gr@dnone % No sync
+      \x@\edef\csname @lastpage@#1\endcsname{\the\p@lyp@geno}%
     \fi
     \ifnum\@@cspptmp <\@cspptotcols
       \x@\xdef\csname @max@cols@#1\endcsname{\@cspptotcols}%Used in determining the column width: Actual column widths get reduced by inter-column gaps, and so chunk that co-occurs in a tripple pane will be smaller than if it occured only in a double-pane. This is a pain.
@@ -359,7 +379,6 @@
   \edef\tmp{#1}%
   \ifx\tmp\empty\errmessage{polyglotpages called with empty argument. That's an error}\fi
   \E\E
-  \relax\def\pg@hts{0pt}%
   \def\p@gestrings{}%
   \let\d@=\complexs@tpolyp@ges
   \cstackdown#1,\E
@@ -377,6 +396,7 @@
   % Restore catcodes
   \catcode47=\sl@shcode\relax 
   \catcode`\-=\d@shcode\relax
+  \let\col@do\@t@gcolinsertnames \x@\each@col\all@list\E
 }
 
 \def\polyglotpages{% Just in case, switch some catcodes.
@@ -630,31 +650,43 @@
 }
 \newdimen\tmpdim
 \def\g@ncolhtfunctions#1{
-  \mkchunktr@iling{#1}%
+  \edef\tmp{\tmpdim=\dimexpr \ht\csname #1box\endcsname+\dp\csname #1box\endcsname \relax }%
+  \x@\fntoks\x@{\tmp}%
+  \add@tr@iling{#1}%
+  \x@\def\csname tmp#1htfn\x@\x@\x@\endcsname\x@\x@\x@{\x@\the\x@\fntoks\x@\edef\csname tmp#1ht\endcsname{\the\tmpdim}}%
+  \trace{dmc}{tmp#1htfn defined as \x@\meaning\csname tmp#1htfn\endcsname}%
+}
+\def\us@tmphtfn#1{\x@\let\x@\tmp\csname tmp#1htfn\endcsname\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
 }
 \def\add@tr@iling#1{%add tr@ling#1 to definintion of \tmp
   \x@\ifx\csname tr@iling#1\endcsname\relax\else
     \x@\ifx\csname tr@iling#1\endcsname\empty\else
       \x@\let\x@\tmpb\csname tr@iling#1\endcsname
-      \x@\x@\x@\def\x@\x@\x@\tmp{\x@\tmp\tmpb}%
+      \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmpb}%
     \fi
   \fi
 }
+
 \def\g@nchunkhtfunctions#1#2\E{%generate an optimised chunk height macro (max(#1,...) for all cols in a row
   \let\gchd@\d@
   \relax\trace{dmc}{g@nchunkhtfunction #1#2}%
   \x@\let\x@\p@gehtcalcs\csname p@gehtcalcs-\the\p@lyp@geno\endcsname% Updating is easier without the csname mess
-  \edef\tmp{\tmpdim=\dimexpr \ht\csname #1box\endcsname+\dp\csname #1box\endcsname }%
-  \x@\fntoks\x@{\tmp}%
-  \add@tr@iling{#1}%
-  \trace{dmc}{fntoks:\the\fntoks}%{
+  \fntoks{}%
+  \let\col@do\us@tmphtfn \x@\each@col#1#2\E
+  \x@\let\csname tmp#1ht\endcsname\relax
   \def\tmpb{#2}%
-  \ifx\tmpb\empty\else %Extend the function
+  \ifx\tmpb\empty
+  \else %Extend the function
+    \edef\tmp{\tmpdim=\csname tmp#1ht\endcsname\relax}%
+    \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
+    \trace{dmc}{fntoks(\p@lyp@gestring):\the\fntoks}%{
     \let\col@do\@genhtfunction
     \x@\each@col#2\E
   \fi
-  \trace{dmc}{htfunction-\p@lyp@gestring:\the\fntoks}%
   %\x@\def\csname p@gehtcalcs\x@\x@\x@\endcsname\x@\x@\x@{\x@\p@gehtcalcs\the\fntoks}%
+  \edef\tmp{\csname \p@lyp@gestring @ht\endcsname=\tmpdim}%
+  \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
+  \trace{dmc}{htfunction-\p@lyp@gestring:\the\fntoks}%
   \x@\def\csname htfunction-\the\p@lyp@geno-\the\p@lyr@wno\x@\endcsname\x@{\the\fntoks}%
   \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\p@gehtcalcs\relax % Save the possibly-updated version
   \relax
@@ -663,7 +695,8 @@
 
 \def\@genhtfunction#1{%
   \trace{dmc}{@genhtfunction #1}%
-  \edef\tmp{\dimen0=\dimexpr \ht\csname #1box\endcsname+\dp\csname #1box\endcsname\relax }%
+  \x@\let\csname tmp#1ht\endcsname\relax
+  \edef\tmp{\dimen0=\csname tmp#1ht\endcsname\relax}%
   \add@tr@iling{#1}%
   \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp\relax \ifdim\dimen0>\tmpdim \tmpdim=\dimen0 \fi}%
   \trace{dmc}{@ghf->\the\fntoks}%
@@ -671,53 +704,68 @@
 
 \newdimen\thisp@gehtloss
 
-
 \def\mk@chunktr@iling#1:#2\E{%Generate *optimised* height based on each insert actually used. Note that #1 might be a figure insert or some class of footnote. 
   \x@\let\x@\typ@\csname @n-#1@typ\endcsname
-  \trace{dmc}{mk@chunktr@iling #1:#2 (\typ@)}%
+  \edef\active@inserts{#1,\active@inserts}%
+  \ifx\m@ltip@ge\tr@e
+    \x@\let\x@\tmp\csname perpg@inserts\the\p@lyp@geno\endcsname
+    \ifx\tmp\relax\let\tmp\empty\fi
+    \x@\edef\csname perpg@inserts\the\p@lyp@geno\endcsname{#1,\tmp}%Inserts shared between multiple pages.
+  \fi
   \let\tmp@r\false % Do we record this chunk?
   \ifx\typ@\relax \def\typ@{I}%Insert 
     \ifcsname #1is@p@geins\endcsname  \def\typ{p}\fi%
     \let\tmp@r\tr@e
   \fi
+  \trace{dmc}{mk@chunktr@iling #1:#2 (\typ@)}%
   \if p\typ@\relax 
       \x@\def\x@\p@gehtcalcs\x@{\p@gehtcalcs\dimen0=\csname #1ht\endcsname \ifdim \dimen0>0pt \advance\thisp@gehtloss \dimexpr \dimen0+\dimen\csname #1\endcsname\relax\fi }% FIXME: Do we get duplicates?? If so, then the calc should probably be built separately, and elsewhere.
   \else
     \if n\typ@\relax
       \@@l@stcolonly{#1}%
-      \let\tgtc@l\tmpa
     \else
       \if x\typ@\relax
-        \@@l@stcolonly{#1}%%FIXME: do some kind of trial layout and maths to calculate a box width -> column height ratio.
+        \@@l@stcolonly{#1}%
       \fi %Other 
     \fi
     \if \tmp@r\tr@e\relax
       \if I\typ@
-        \x@\let\x@\tgtc@l\csname #1-col\endcsname %Find what the target column is
+        \x@\let\x@\tgtc@l\csname #1-col\endcsname %Find what the target column is, or if it's for here-top/bottom
         \ifx\tgtc@l\relax\let\tgtc@l\col@tmp\message{Could not identify column for insert #1 (#1-col), defaulting to \col@tmp}\fi%
       \fi
-      \trace{dmc}{insert (total #2) #1 will show in column \tgtc@l}%
-      \x@\let\x@\tmpf\csname tr@iling\tgtc@l\endcsname
-      \edef\btmp{\dimen1=\csname #1ht\endcsname}%What's the insert height?
-      \x@\extendchunkc@lc\x@{\x@\dimen\csname #1\endcsname}% Save some cycles overall by expanding the extra csname once-for-many, here.
-      \x@\let\csname tr@iling\tgtc@l\endcsname\tmpf
+      \ifcsname \tgtc@l-col-#1\endcsname
+        \trace{dmc}{insert #1 (total #2) already accounted for in column \tgtc@l}%
+      \else
+        \trace{dmc}{insert #1 (total #2) will show in column \tgtc@l}%
+        \xdef\t@rgetcols{\t@rgetcols\tgtc@l-col-#1,}% Keep a list
+        \x@\let\csname \tgtc@l-col-#1\endcsname\relax
+        \x@\let\x@\tmpf\csname tr@iling\tgtc@l\endcsname
+        \ifx\tmpf\relax\let\tmpf\empty\fi
+        \edef\btmp{\dimen1=\csname #1ht\endcsname}%What's the insert height?
+        \x@\extendchunkc@lc\x@{\x@\dimen\csname #1\endcsname}% Save some cycles overall by expanding the extra csname once-for-many, here.
+        \x@\let\csname tr@iling\tgtc@l\endcsname\tmpf
+      \fi
     \fi
   \fi
 }
 
 \def\extendchunkc@lc#1{%
-  \x@\x@\x@\def\x@\x@\x@\tmpf\x@\x@\x@{\x@\tmpf \btmp \ifdim\dimen1>0pt \advance\dimen0\dimexpr \dimen1+#1\relax\fi}%
+  \x@\x@\x@\def\x@\x@\x@\tmpf\x@\x@\x@{\x@\tmpf \btmp \ifdim\dimen1>0pt \advance\tmpdim\dimexpr \dimen1+#1\relax\fi}%
 }
 
-\def\mkchunktr@iling#1{%define any (potential) extra column height for column #1 
+\def\g@ncolhtadditions#1{%define any (potential) extra column height for column #1 
   \def\col@tmp{#1}\def\tmpa{#1}\edef\tmpb{#1}%
-  \trace{dmc}{mkchunktr@iling #1}%
+  \trace{dmc}{g@ncolhtadditions #1}%
+  \let\m@ltip@ge\false
   \x@\ifx\csname #1isFolowOn\endcsname\tr@e \x@\let\x@\tmpa\csname f@llowing#1\endcsname\fi
   \p@lyp@geno=\csname thep@geno#1\endcsname
   \x@\let\x@\p@gehtcalcs\csname p@gehtcalcs-\the\p@lyp@geno\endcsname% Updating is easier without the csname mess
   \x@\ifx\csname pre@meas@\tmpa @dims\endcsname\empty
     \trace{dmc}{#1 empty}%
   \else
+    \x@\ifx\csname @firstpage@\tmpa\x@\endcsname\csname @lastpage@\tmpa\endcsname\else
+      \let\m@ltip@ge\tr@e
+    \fi
     \trace{dmc}{#1 (\tmpa) -> \csname pre@meas@\tmpa @dims\endcsname}%
     \let\d@\mk@chunktr@iling
     \x@\x@\x@\cstackdown\csname pre@meas@\tmpa @dims\endcsname,\E
@@ -730,9 +778,9 @@
 \def\diglot@run@trials@complexpages{% This receives control after all columns are gathered.
   %As columns are gathered via the output routine, by definition the currentpage must be empty
   %Material to typeset is in excessX and wholeX (intially equal in content)
-  % 1. measure the heigths of each box *and inserts*
   \trace{dmc}{Running trials for active content:\digl@tc@ntentlist}% 
   \let\inserts@npage\false
+  \let\active@inserts\empty
   \let\col@do\cplx@pre@me@sureins@trial
   \ins@meas@trialnofullfalse \ins@meas@trialfullfalse
   \x@\each@col\digl@tc@ntentlist\E
@@ -742,14 +790,19 @@
     \p@lyp@geno=0 \loop
       \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\empty
       \csname p@gehtloss-\the\p@lyp@geno\endcsname=0pt
+      \x@\let\csname perpg@inserts-\the\p@lyp@geno\endcsname\empty
       \advance\p@lyp@geno by 1 \ifnum\p@lyp@geno<\p@lyp@ges \repeat
     % As some users will probably be confusewd if they can't figures into wherever column, triggered in whatever column they feel like
-    % there needs to to be a 2 step process: (a) allocate figure heights, etc, to whatever column. (b) build the column functions
-    \let\col@do\g@ncolhtfunctions 
+    % there needs to to be a 3 step process: (a) allocate figure heights, etc, to whatever column.
+    % (b) define tmpLht, etc as the sum of the column and inserts for a given chunk, also building a list of page-dependant inserts.
+    % (c) build the column functions (calculating and referencing tstLht and friends)
+    \let\col@do\g@ncolhtadditions 
     \x@\each@col\all@list\E % step (a)
+    \let\col@do\g@ncolhtfunctions 
+    \x@\each@col\all@list\E % step (b)
     \let\d@\polyp@gestack 
     \let\pd@\g@nchunkhtfunctions
-    \x@\cstackdown\p@gestrings,\E %step(b)
+    \x@\cstackdown\p@gestrings,\E %step(c)
   \fi
   \trace{dmc}{Page height calcs(last page):\meaning\p@gehtcalcs}%
 }
@@ -777,6 +830,8 @@
   \def\complexs@tpolyp@ges#1\E{%page processing (#1 is a page
     \p@lyr@wno=0
     \def\p@gestring{}%
+    \x@\let\csname ins@rts-\the\p@lyp@geno\endcsname\relax
+    \edef\pg@hts{\csname ins@rts-\the\p@lyp@geno\endcsname}%
     \let\d@@\@complexs@tpolyp@ges
     \x@\sstackdown#1/\E
     \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page

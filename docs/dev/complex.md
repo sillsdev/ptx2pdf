@@ -286,9 +286,11 @@ a partial list of line-no/insert measurements.
      * self-check routine
 * Identify which inputs end up in repeated columns, especially cross-page.
 * Something to determine possible split heights [DONE]
+* Analyse how inserts affect layout [DONE?]
+* Determine initial split lengths based on ratios. **COMPLEX**
 * Determine total galley lengths
 * Split into sub-galleys, with chaining through follow-ons
-* Analyse how inserts affect layout 
-* Determine initial split lengths **COMPLEX**
- 
+
+* Eventually add a 'top-here', 'bottom-here' pseudo-column inserts, to supplement
+tL, etc. These can apply in monoglot dual columns too. Will go top/bottom exactly in the triggering column (measuring code is almost in place - see 'Could not identify column ...' message in code. To implement, may need to apply a pseudo-name to the insert dimensions).
 
