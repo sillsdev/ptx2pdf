@@ -7017,7 +7017,7 @@ Thank you,
     def onMoveEndOfAyahClicked(self, wid):
         self.set('c_verseNumbers', not self.get("c_decorator_endayah"))
         
-    def onGridSettingChanged(self, wid, x):
+    def onGridSettingChanged(self, wid, status):
         if self.loadingConfig:
             return
         status = self.get("c_noGrid")
