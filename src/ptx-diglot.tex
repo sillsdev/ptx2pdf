@@ -673,14 +673,16 @@
       \fi
     \fi\fi
     \tracetimset{any@trial}%
-    \global\output{\diglot@any@trial}
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 4}%
       \showbox\galley
     \fi
+    \global\output{\diglot@any@trial}
     \unvcopy\galley
     \unpenalty
+    \traceifset{run@a@trial}%
     \penalty\endtri@lpen@lty
+    \traceifcheck{run@a@trial}%
     \relax\relax
     \let\after@run@a@trial=\relax
   \else
@@ -893,6 +895,7 @@
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
   \tracetimcheck{any@trial}{output}%
+  \traceifset{diglot@any@trial}%
   \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
   \@bls=\csname b@selineskip\c@rrdstat\endcsname
   \ifnum\holdinginserts=0\relax\else
@@ -1051,6 +1054,7 @@
     \fi
   \fi
   \tracetimcheck{any@trial}{-}%
+  \traceifcheck{diglot@any@trial}%
   \after@this
 }
 
@@ -2353,6 +2357,7 @@
 }
 
 \newif\ifactually@write
+\newif\if@@bg
 \def\@do@writep@ge@simplecols{
   \trace{d}{do@writep@ge@simplecols \the\pageno (\the\MaxPages) actually@write\ifactually@write true\else false\fi}%
   \IfTr@ce{gI}{%
@@ -2439,7 +2444,7 @@
   \ifunprintable 
     \abortpage
   \else
-    \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
+    \def\tmpwrite##1{\ifhmode\beginL\fi\pdfsavepos \write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\ifhmode\endL\fi}%
     \def\pagecontents{%
      \setdiglotN@rmal
      \pickn@xtpartial
@@ -2467,7 +2472,8 @@
      \ifvoid\partial\else
        \tempfalse\let\col@do\ck@backgrounds
        \x@\each@col\diglot@list\E%
-       \let\if@@bg\iftemp% Pseudoif
+       %\let\if@@bg\iftemp% Pseudoif
+       \iftemp\@@bgtrue\else\@@bgfalse\fi
        \lastd@pth=\dp\partial\relax%
        \iftextborder\ifx\TextBorderColumns\empty
        \else

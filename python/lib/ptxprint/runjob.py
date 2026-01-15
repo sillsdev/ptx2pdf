@@ -751,7 +751,10 @@ class RunJob:
             logger.debug(f"Testing log file {fname}")
             if os.path.exists(fname):
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                    log = logfile.read()
+                    p = logfile.seek(0, 2)
+                    p = max(p - 60000, 0)
+                    logfile.seek(p, 0)
+                    log = logfile.read(60000)
                 smry, msgList, ufPages = summarizeTexLog(log)
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0

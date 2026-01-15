@@ -1040,7 +1040,7 @@ class TexModel:
             dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
         if self.dict['project/canonicalise']:
-            (dat, doc) = self._getDoc(dat, doc, bk)
+            (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Canonicalising")
             dat = None
 
         if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
