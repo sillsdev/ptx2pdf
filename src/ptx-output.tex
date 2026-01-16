@@ -945,9 +945,12 @@
 \def\NoteShaveShortest{2} % How long should be note be before it is considered for breaking? (Approximate only, as it is width-based)
 
 \def\findsh@venotes#1#2{%Find the possible shaved lengths of the notes box
-  \trace{fp}{findsh@venotes #2}%
+  \trace{fp}{findsh@venotes #2 \the\ht#1}%
   \ifversion{6}{\skip0=\csname bls-#2\c@rrdstat\endcsname}{\skip0=\l@stnotebls}%
   \dimen0=\skip0
+  \ifdim\ht0=0pt \dimen0=0pt \fi
+  %\ifnum\pageno=-6 \showbox\n@tesbox \fi
+  \bgroup
   \ifdim\dimen0=0pt \else
     \trace{fp}{Finding shaved note lengths (#2) \the\ht#1 s0=\the\skip0, bls=\the\baselineskip}%
     \sh@vedim=\ht#1 % use sh@vedim as a temp. variable.
@@ -958,39 +961,48 @@
     \dimen1=\dimexpr \skip0 * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
     \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minumum shave amount
     \trace{fp}{Initial note length \the\ht\n@tesbox, first shave to: \the\sh@vedim, stay: \the\dimen1 (\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
-    \@LOOP\ifdim \sh@vedim>\dimen1 
-      %\showbox\n@tesbox
-      \setbox1=\vsplit0 to \sh@vedim
-      %\ifnum\badness<1000000 %Don't continue if the box is overfull 
-        \setbox1=\vbox{\unvbox1}%
-        \ifvoid0\else
-          \setbox0=\vbox{\unvbox0}%
-          \ifdim\ht0<\dimen0
-            \trace{fp}{\the\ht0 < \the\dimen0 : Treating as nothing shaved.}%
-            \setbox0\box\voidb@x
-          \else
-            \advance\dimen0-\ht0
-          \fi
-        \fi
-        \ifvoid0
-          \trace{fp}{nothing shaved from note #2, \the\sh@vedim / - /\the\ht1}%
-          \sh@vedim=0pt 
-        \else % Something trimmed off
-          %\showbox0 \showbox1
-          \trace{fp}{note #2 can be shaved from \the\ht#1 to \the\sh@vedim / \the\ht0/\the\ht1}%
-          {\dimen0=\dimexpr \ht\n@tesbox - \sh@vedim \relax
-          \edef\p@ram{{\the\dimen0}{#2}}%
-          \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\p@ram}}%
-          \setbox0=\box1
-          %\sh@vedim=\the\ht0
-        \fi
-      %\fi
-      \advance\sh@vedim by -\skip0
-      %\trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
-    \@REPEAT
+    \def\@sh@venotebox{#1}\def\@sh@venoteid{#1}%
+    \@findsh@venotes
   \fi
-  \sh@vedim=0pt
+  \egroup
 } 
+
+
+\def\@findsh@venotes{%
+  \ifdim \sh@vedim>\dimen1 
+     \setbox1=\vsplit0 to \sh@vedim
+    %\ifnum\badness<1000000 %Don't continue if the box is overfull 
+      \setbox1=\vbox{\unvbox1}%
+      \ifvoid0\else
+        \setbox0=\vbox{\unvbox0}%
+        \ifdim\ht0<\dimen0
+          \trace{fp}{\the\ht0 < \the\dimen0 : Treating as nothing shaved.}%
+          \setbox0\box\voidb@x
+        \else
+          \advance\dimen0-\ht0
+        \fi
+      \fi
+      \ifvoid0
+        \trace{fp}{nothing shaved from note \@sh@venoteid, \the\sh@vedim / - /\the\ht1}%
+        \sh@vedim=0pt 
+      \else % Something trimmed off
+        %\showbox0 \showbox1
+        \trace{fp}{note \@sh@venoteid can be shaved from \the\ht\@sh@venotebox to \the\sh@vedim / \the\ht0/\the\ht1}%
+        {\dimen0=\dimexpr \ht\n@tesbox - \sh@vedim \relax
+        \edef\p@ram{{\the\dimen0}{\@sh@venoteid}}%
+        \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\p@ram}}%
+        \setbox0=\box1
+        %\sh@vedim=\the\ht0
+      \fi
+    %\fi
+    \advance\sh@vedim by -\skip0
+    %\trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
+    \let\@@findsh@venotes\@findsh@venotes
+  \else\let\@@findsh@venotes\relax
+  \fi
+  \@@findsh@venotes% Loop without using a \loop construct.
+}
+
 \def\bal@shavedn@tes{%Try rebalancing with shaved footnotes
   \sh@vedim=0pt
   \trace{fp}{Shaving candidates: \the\sh@venotes}%
