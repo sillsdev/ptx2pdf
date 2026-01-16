@@ -10,55 +10,66 @@ logger = logging.getLogger(__name__)
 refmtfn = regex.compile(r"(?<!\\)\$([a-z]+)\{((?:(?R)|\\\}|[^}])*)\}|(?<!\\)\\(\d)")
 
 functions = {
-    "upper":    (1, lambda s:s.upper()),
-    "lower":    (1, lambda s:s.lower()),
-    "title":    (1, lambda s:s.title())
+    "upper":    (1, lambda self,s:s.upper()),
+    "lower":    (1, lambda self,s:s.lower()),
+    "title":    (1, lambda self,s:s.title()),
+    "v":        (1, lambda self,s:self.vars.get(s, "")),
+    "set":      (2, lambda self,v,s:self.setvar(v, s))
 }
 
-def _procfn(m, p):
+def _procfn(self, m, p):
     if m.group(3):
         return p.group(int(m.group(3)))
     c = m.group(2)
-    pc = refmtfn.sub(lambda x:_procfn(x, p), c)
+    pc = refmtfn.sub(lambda x:_procfn(self, x, p), c)
     t = m.group(1)
     n, f = functions.get(t, (1, lambda s:s))
     if n > 1:
         b = regex.split(r"\s*,\s*", pc, n-1)
     else:
         b = [pc]
-    return f(*b)
+    return f(self, *b)
 
-def complex_format(t, m):
-    return refmtfn.sub(lambda x:_procfn(x, m), t)
+def complex_format(self, t, m):
+    return refmtfn.sub(lambda x:_procfn(self, x, m), t)
 
-def runChanges(changes, dat, bk=None, errorfn=None):
-    if dat is None:
-        return dat
-    def wrap(t, l):
-        def proc(m):
-            res = m.expand(t) if isinstance(t, str) else t(m)
-            logger.log(5, "match({0},{1})={2}->{3} at {4}".format(m.start(), m.end(), m.string[m.start():m.end()], res, l))
-            return res
-        return proc
-    for c in changes:
-        if bk is not None:
-            logger.debug("at {} Change: {}".format(bk, c))
-        try:
-            if c[0] is None:
-                dat = c[1].sub(wrap(c[2], c[3]), dat)
-            elif isinstance(c[0], str):
-                if c[0] == bk:
+class runChanges:
+    def __init__(self, changes, dat, **kw):
+        self.vars = {"bk": kw.get("bk", "")}
+        self.res = self.run(changes, dat, **kw)
+
+    def run(self, changes, dat, bk=None, errorfn=None):
+        if dat is None:
+            return dat
+        def wrap(t, l):
+            def proc(m):
+                res = m.expand(t) if isinstance(t, str) else t(self, m)
+                logger.log(5, "match({0},{1})={2}->{3} at {4}".format(m.start(), m.end(), m.string[m.start():m.end()], res, l))
+                return res
+            return proc
+        for c in changes:
+            if bk is not None:
+                logger.debug("at {} Change: {}".format(bk, c))
+            try:
+                if c[0] is None:
                     dat = c[1].sub(wrap(c[2], c[3]), dat)
-            else:
-                def simple(s):
-                    return c[1].sub(wrap(c[2], c[3]), s)
-                dat = c[0](simple, bk, dat)
-        except TypeError as e:
-            raise TypeError(str(e) + "\n at "+c[3])
-        except regex._regex_core.error as e:
-            if errorfn is not None:
-                errorfn(str(e) + "\n at " + c[3])
-    return dat
+                elif isinstance(c[0], str):
+                    if c[0] == bk:
+                        dat = c[1].sub(wrap(c[2], c[3]), dat)
+                else:
+                    def simple(s):
+                        return c[1].sub(wrap(c[2], c[3]), s)
+                    dat = c[0](simple, bk, dat)
+            except TypeError as e:
+                raise TypeError(str(e) + "\n at "+c[3])
+            except regex._regex_core.error as e:
+                if errorfn is not None:
+                    errorfn(str(e) + "\n at " + c[3])
+        return dat
+
+    def setvar(self, v, val):
+        self.vars[v] = val
+        return ""
 
 def make_contextsfn(bk, *changes):
     # functional programmers eat your hearts out
@@ -131,7 +142,7 @@ def _transreg(s, cats):
 def _mkfmtfn(s):
     # breakpoint()
     if regex.search(r"(?<!\\)\$[a-z]+\{", s):
-        return lambda m:complex_format(s, m)
+        return lambda self,m:complex_format(self, s, m)
     else:
         return s
 

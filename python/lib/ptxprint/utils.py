@@ -597,7 +597,8 @@ def ustr(x):
     return res
 
 def runChanges(changes, bk, dat, errorfn=None):
-    return crunChanges(changes, dat, bk=bk, errorfn=errorfn)
+    res = crunChanges(changes, dat, bk=bk, errorfn=errorfn)
+    return res.res
 
 _htmlentities = {
     '&': 'amp',

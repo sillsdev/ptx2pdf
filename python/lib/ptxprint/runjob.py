@@ -153,6 +153,7 @@ class RunJob:
         self.ispdfxa = "Screen"
         self.inArchive = inArchive
         self.noview = False
+        self.noaction = False
         self.nothreads = False
         # self.oldversions = 1
         self.docreatediff = False
@@ -168,10 +169,11 @@ class RunJob:
         self.busy = False
         unlockme()
 
-    def doit(self, noview=False):
+    def doit(self, noview=False, noaction=False):
         if not lockme(self):
             return False
         self.noview = noview
+        self.noaction = noaction
         self.texfiles = []
         if self.printer.ptsettings is None:
             self.fail(_("Illegal Project"))
@@ -278,7 +280,7 @@ class RunJob:
             b = j[0][0].first.book if j[1] else j[0]
             logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:
-                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], bkindex=i)
+                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], bkindex=i, noaction=self.noaction)
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None

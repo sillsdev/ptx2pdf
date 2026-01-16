@@ -357,7 +357,7 @@ def main(doitfn=None):
         macrosdir = os.path.join(scriptsdir, "..", "..", "..", "src")
 
     if doitfn is None:
-        def doit(printer, maxruns=0, noview=False, nothreads=False, forcedlooseness=None):
+        def doit(printer, maxruns=0, noview=False, noaction=False, nothreads=False, forcedlooseness=None):
             if not isLocked():
                 if maxruns > 0:
                     oldruns = args.runs
@@ -365,7 +365,7 @@ def main(doitfn=None):
                 runjob = RunJob(printer, scriptsdir, macrosdir, args)
                 runjob.nothreads = nothreads
                 runjob.forcedlooseness = forcedlooseness
-                runjob.doit(noview=noview)
+                runjob.doit(noview=noview, noaction=noaction)
                 if maxruns > 0:
                     args.runs = oldruns
                 return runjob

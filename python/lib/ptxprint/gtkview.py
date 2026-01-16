@@ -2057,7 +2057,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_find").set_placeholder_text(_("Processing..."))
         self.builder.get_object("t_find").set_text("")
         try:
-            self.callback(self)
+            self.callback(self, noaction=self.get("c_noupdate"))
         except Exception as e:
             if "SyntaxError" in str(type(e)):
             # if "SyntaxError" in type(e):

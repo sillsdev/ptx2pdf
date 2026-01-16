@@ -931,7 +931,7 @@ class TexModel:
         self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \\ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
         logger.warn(txt)
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0, reversify=None):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0, reversify=None, noaction=False):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
         except ValueError:
@@ -954,12 +954,6 @@ class TexModel:
         #    for k, v in chs.items():
         #        self.changes.setdefault(k, []).extend(v)
         draft = "-" + (printer.cfgid or "draft")
-        self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
-        customsty = os.path.join(prjdir, 'custom.sty')
-        if not os.path.exists(customsty):
-            self.dict["/nocustomsty"] = "%"
-        else:
-            self.dict["/nocustomsty"] = ""
         fname = printer.getBookFilename(bk)
         if fname is None:
             infpath = os.path.join(prjdir, bk)  # assume module
@@ -972,6 +966,15 @@ class TexModel:
                 return None
         else:
             infpath = os.path.join(prjdir, fname)
+        if noaction:
+            outfpath = os.path.join(outdir, os.path.basename(infpath))
+            return outfpath
+        self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
+        customsty = os.path.join(prjdir, 'custom.sty')
+        if not os.path.exists(customsty):
+            self.dict["/nocustomsty"] = "%"
+        else:
+            self.dict["/nocustomsty"] = ""
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir)
         outfname = os.path.basename(infpath)
