@@ -671,6 +671,7 @@ class TTFont:
         self.dict = {}
         if self.filename == "":
             return
+        print(f"Font = {self.filename}")
         with open(self.filename, "rb") as inf:
             dat = inf.read(12)
             (fid, numtables) = struct.unpack(">4sH", dat[:6])

@@ -140,9 +140,10 @@ def _transreg(s, cats):
     return s
 
 def _mkfmtfn(s):
-    # breakpoint()
-    if regex.search(r"(?<!\\)\$[a-z]+\{", s):
-        return lambda self,m:complex_format(self, s, m)
+    if not s:
+        return s
+    elif regex.search(r"(?<!\\)\$[a-z]+\{", s):
+        return lambda m:complex_format(s, m)
     else:
         return s
 
