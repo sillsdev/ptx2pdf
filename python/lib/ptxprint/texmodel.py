@@ -863,20 +863,24 @@ class TexModel:
         logger.debug(f"INT file {intfname} processed to {outfname}")
         return outfname
 
-    def flattenModule(self, infpath, outdir, text=None):
+    def flattenModule(self, infpath, outdir, text=None, noaction=False):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
         doti = outfpath.rfind(".")
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
-        usfms = self.printer.get_usfms()
-        mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-        mod.parse(self.printer.picinfos)
-        res = mod.doc
-        if res.xml.errors:
-            self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
+        if not self.noaction:
+            usfms = self.printer.get_usfms()
+            mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
+            mod.parse(self.printer.picinfos)
+            res = mod.doc
+            if res.xml.errors:
+                self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
+        else:
+            res = ""
         if text is not None:
             return res
-        mod.outUsfm(outfpath, version=[3, 1])
+        if not self.noaction:
+            mod.outUsfm(outfpath, version=[3, 1])
         return outfpath
 
     def runConversion(self, infpath, outdir, noaction=False):
@@ -974,9 +978,10 @@ class TexModel:
             self.dict["/nocustomsty"] = ""
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir, noaction=noaction)
+        outfname = os.path.basename(infpath)
+        outfpath = os.path.join(outdir, outfname)
         if not noaction:
             self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
-            outfname = os.path.basename(infpath)
             outindex = self.usedfiles.setdefault(outfname, 0)
             outextra = str(outindex) if outindex > 0 else ""
             self.usedfiles[outfname] = outindex + 1
@@ -985,7 +990,6 @@ class TexModel:
             if doti > 0:
                 outfname = outfname[:doti] + draft + outextra + outfname[doti:]
             os.makedirs(outdir, exist_ok=True)
-            outfpath = os.path.join(outdir, outfname)
             codepage = self.ptsettings.get('Encoding', 65001)
             with universalopen(infpath, cp=codepage) as inf:
                 dat = inf.read()
