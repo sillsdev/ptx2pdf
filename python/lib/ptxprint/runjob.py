@@ -287,24 +287,25 @@ class RunJob:
             if out is None:
                 continue
             outpath = os.path.join(self.tmpdir, out)
-            triggers = {}
-            if info["notes/ifxrexternalist"]:
-                triggers = info.createXrefTriggers(b, self.prjdir, triggers)
-            if info.dict.get("studynotes/txlinclquestions", False):
-                triggers = transcel(triggers, b, self.prjdir, info.dict.get("studynotes/txllangtag", "en-US"), 
-                                    rtl=info.dict.get("document/ifrtl", False),
-                                    overview=info.dict.get("studynotes/txloverview", False),
-                                    boldover=info.dict.get("studynotes/txlboldover", True),
-                                    numberedQs=info.dict.get("studynotes/txlnumbered", True),
-                                    showRefs=info.dict.get("studynotes/txlshowrefs", False),
-                                    usfm=self.printer.get_usfms().get(b))
-            if len(triggers):
-                outtriggers(triggers, b, outpath+".triggers")
-            else:
-                try:
-                    os.remove(outpath+".triggers")
-                except FileNotFoundError:
-                    pass
+            if not self.noaction:
+                triggers = {}
+                if info["notes/ifxrexternalist"]:
+                    triggers = info.createXrefTriggers(b, self.prjdir, triggers)
+                if info.dict.get("studynotes/txlinclquestions", False):
+                    triggers = transcel(triggers, b, self.prjdir, info.dict.get("studynotes/txllangtag", "en-US"), 
+                                        rtl=info.dict.get("document/ifrtl", False),
+                                        overview=info.dict.get("studynotes/txloverview", False),
+                                        boldover=info.dict.get("studynotes/txlboldover", True),
+                                        numberedQs=info.dict.get("studynotes/txlnumbered", True),
+                                        showRefs=info.dict.get("studynotes/txlshowrefs", False),
+                                        usfm=self.printer.get_usfms().get(b))
+                if len(triggers):
+                    outtriggers(triggers, b, outpath+".triggers")
+                else:
+                    try:
+                        os.remove(outpath+".triggers")
+                    except FileNotFoundError:
+                        pass
             donebooks.append(out)
         if not len(donebooks):
             unlockme()
@@ -383,11 +384,11 @@ class RunJob:
                 try:
                     out = None
                     if not len(inputfiles):
-                        out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
+                        out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], noaction=self.noaction)
                         left = os.path.join(self.tmpdir, out)
                         inputfiles.append(left)
                         texfiles.append(left)
-                    digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1], reversify=reversifyinfo)
+                    digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1], reversify=reversifyinfo, noaction=self.noaction)
                     right = os.path.join(self.tmpdir, digout)
                     inputfiles.append(right)
                     texfiles.append(right)
@@ -402,7 +403,7 @@ class RunJob:
                 else:
                     diginfo["project/books"].append(digout)
                     self.books.append(digout)
-            if left and b not in nonScriptureBooks:
+            if not self.noaction and left and b not in nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
                 if len(donebooks):
@@ -479,9 +480,10 @@ class RunJob:
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(info, jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        texfiledat = info.asTex(filedir=self.tmpdir, jobname=swapext(outfname, ext=".tex"), extra=extra, diglots=diglots)
-        with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
-            texf.write(texfiledat)
+        if not self.noaction:
+            texfiledat = info.asTex(filedir=self.tmpdir, jobname=swapext(outfname, ext=".tex"), extra=extra, diglots=diglots)
+            with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
+                texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=x)) for x in (".tex", ".xdv")]
         if self.inArchive:
             return genfiles
