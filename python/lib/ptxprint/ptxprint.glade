@@ -35302,31 +35302,7 @@ changed while doing final page layout.</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="c_noupdate">
-                                                        <property name="label" translatable="yes">Run Without Updating</property>
-                                                        <property name="name">No update (to skip USFM processing)</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">Enabling this option skips all
-the normal USFM processing.
-
-This is a temporary setting to 
-enable faster output when just
-making +1 or -1 adjustments,
-or changes to styles.
-
-(The setting is not saved and
-defaults to OFF when the
-program starts.)</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="valign">center</property>
-                                                        <property name="draw-indicator">True</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">2</property>
-                                                        <property name="top-attach">2</property>
-                                                      </packing>
+                                                      <placeholder/>
                                                     </child>
                                                   </object>
                                                 </child>
@@ -39074,13 +39050,30 @@ Diff Pages:</property>
                               </object>
                             </child>
                             <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">This tool allows you to compare 2 different
-PDFs to highlight what has changed between
-runs.</property>
+                              <object class="GtkCheckButton" id="c_createDiff">
                                 <property name="label" translatable="yes">Compare PDFs</property>
+                                <property name="name">Create 'diff' to Compare PDFs</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">Enable this option to generate a PDF showing the 
+differences between the current PDF and the 
+selected previous version (set on the Finishing
+tab under 'Compare PDFs').
+
+If any differences are found, it should open the 
+"Diff" PDF in the default PDF viewer.
+
+Shortcut: Ctrl-R</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-left">3</property>
+                                <property name="margin-right">3</property>
+                                <property name="margin-start">3</property>
+                                <property name="margin-end">3</property>
+                                <property name="draw-indicator">True</property>
+                                <signal name="toggled" handler="onCreateDiffClicked" swapped="no"/>
+                                <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
                           </object>
@@ -40871,28 +40864,26 @@ Shortcut: Ctrl-Q</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="c_createDiff">
-                        <property name="label" translatable="yes">Create Diff</property>
-                        <property name="name">Compare PDFs: Create 'diff' PDF</property>
+                      <object class="GtkCheckButton" id="c_noupdate">
+                        <property name="label" translatable="yes">Layout Only</property>
+                        <property name="name">Layout Only (skip USFM processing)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">Enable this option to generate a PDF showing the 
-differences between the current PDF and the 
-selected previous version (set on the Finishing
-tab under 'Compare PDFs').
+                        <property name="tooltip-text" translatable="yes">Re-runs page layout without 
+regenerating or processing 
+USFM scripture content.
 
-If any differences are found, it should open the 
-"Diff" PDF in the default PDF viewer.
+Useful for quick layout tweaks 
+(+1 / −1 spacing or style changes).
 
-Shortcut: Ctrl-R</property>
+This is a temporary setting and 
+resets when PTXprint restarts.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="margin-start">3</property>
                         <property name="margin-end">3</property>
                         <property name="draw-indicator">True</property>
-                        <signal name="toggled" handler="onCreateDiffClicked" swapped="no"/>
-                        <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
