@@ -4,6 +4,7 @@ import os, sys, re, pathlib, zipfile
 import xml.etree.ElementTree as et
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
+from ptxprint.changes import runChanges as crunChanges
 from shutil import copy2
 from inspect import currentframe
 from struct import unpack
@@ -596,33 +597,7 @@ def ustr(x):
     return res
 
 def runChanges(changes, bk, dat, errorfn=None):
-    if dat is None:
-        return dat
-    def wrap(t, l):
-        def proc(m):
-            res = m.expand(t) if isinstance(t, str) else t(m)
-            logger.log(5, "match({0},{1})={2}->{3} at {4}".format(m.start(), m.end(), m.string[m.start():m.end()], res, l))
-            return res
-        return proc
-    for c in changes:
-        if bk is not None:
-            logger.debug("at {} Change: {}".format(bk, c))
-        try:
-            if c[0] is None:
-                dat = c[1].sub(wrap(c[2], c[3]), dat)
-            elif isinstance(c[0], str):
-                if c[0] == bk:
-                    dat = c[1].sub(wrap(c[2], c[3]), dat)
-            else:
-                def simple(s):
-                    return c[1].sub(wrap(c[2], c[3]), s)
-                dat = c[0](simple, bk, dat)
-        except TypeError as e:
-            raise TypeError(str(e) + "\n at "+c[3])
-        except regex._regex_core.error as e:
-            if errorfn is not None:
-                errorfn(str(e) + "\n at " + c[3])
-    return dat
+    return crunChanges(changes, dat, bk=bk, errorfn=errorfn)
 
 _htmlentities = {
     '&': 'amp',

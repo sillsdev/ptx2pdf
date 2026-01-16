@@ -1,13 +1,64 @@
 
 import re, os
 import regex
-from ptxprint.utils import universalopen
 from usfmtc.reference import RefList
 from functools import reduce
 import logging
 
 logger = logging.getLogger(__name__)
 
+refmtfn = regex.compile(r"(?<!\\)\$([a-z]+)\{((?:(?R)|\\\}|[^}])*)\}|(?<!\\)\\(\d)")
+
+functions = {
+    "upper":    (1, lambda s:s.upper()),
+    "lower":    (1, lambda s:s.lower()),
+    "title":    (1, lambda s:s.title())
+}
+
+def _procfn(m, p):
+    if m.group(3):
+        return p.group(int(m.group(3)))
+    c = m.group(2)
+    pc = refmtfn.sub(lambda x:_procfn(x, p), c)
+    t = m.group(1)
+    n, f = functions.get(t, (1, lambda s:s))
+    if n > 1:
+        b = regex.split(r"\s*,\s*", pc, n-1)
+    else:
+        b = [pc]
+    return f(*b)
+
+def complex_format(t, m):
+    return refmtfn.sub(lambda x:_procfn(x, m), t)
+
+def runChanges(changes, dat, bk=None, errorfn=None):
+    if dat is None:
+        return dat
+    def wrap(t, l):
+        def proc(m):
+            res = m.expand(t) if isinstance(t, str) else t(m)
+            logger.log(5, "match({0},{1})={2}->{3} at {4}".format(m.start(), m.end(), m.string[m.start():m.end()], res, l))
+            return res
+        return proc
+    for c in changes:
+        if bk is not None:
+            logger.debug("at {} Change: {}".format(bk, c))
+        try:
+            if c[0] is None:
+                dat = c[1].sub(wrap(c[2], c[3]), dat)
+            elif isinstance(c[0], str):
+                if c[0] == bk:
+                    dat = c[1].sub(wrap(c[2], c[3]), dat)
+            else:
+                def simple(s):
+                    return c[1].sub(wrap(c[2], c[3]), s)
+                dat = c[0](simple, bk, dat)
+        except TypeError as e:
+            raise TypeError(str(e) + "\n at "+c[3])
+        except regex._regex_core.error as e:
+            if errorfn is not None:
+                errorfn(str(e) + "\n at " + c[3])
+    return dat
 
 def make_contextsfn(bk, *changes):
     # functional programmers eat your hearts out
@@ -77,6 +128,13 @@ def _transreg(s, cats):
     s = propreg.sub(_c, s)
     return s
 
+def _mkfmtfn(s):
+    # breakpoint()
+    if regex.search(r"(?<!\\)\$[a-z]+\{", s):
+        return lambda m:complex_format(s, m)
+    else:
+        return s
+
 def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, grammar=None):
     if grammar is not None:
         cats = _makecat_props(grammar)
@@ -97,7 +155,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
         if usfm is not None:
             usfm.addorncv()
     qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
-    with universalopen(fname) as inf:
+    with open(fname, encoding="utf-8", errors="replace") as inf:
         alllines = list(inf.readlines())
         i = 0
         while i < len(alllines):
@@ -189,7 +247,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
                         context = make_contextsfn(at[0], at[1], *contexts)
                     else:
                         context = at[0]
-                    ch = (context, r, m.group(3) or m.group(4) or "", f"{fname} line {i+1}")
+                    ch = (context, r, _mkfmtfn(m.group(3) or m.group(4)) or "", f"{fname} line {i+1}")
                     for p in passes:
                         changes.setdefault(p, []).append(ch)
                     logger.log(7, f"{context=} {r=} {m.groups()=}")

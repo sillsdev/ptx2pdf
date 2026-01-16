@@ -2486,7 +2486,7 @@
     \abortpage
   \else
     \def\tmpwrite##1{\ifhmode\beginL\fi\pdfsavepos \write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\ifhmode\endL\fi}%
-    \@@setppagecontents
+    \@@setppagecontents@simplecols
     \holdinginserts=1
     \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
     \global\adjustp@ge=0pt
