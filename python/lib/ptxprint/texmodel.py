@@ -979,16 +979,16 @@ class TexModel:
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir, noaction=noaction)
         outfname = os.path.basename(infpath)
+        outindex = self.usedfiles.setdefault(outfname, 0)
+        outextra = str(outindex) if outindex > 0 else ""
+        self.usedfiles[outfname] = outindex + 1
+        # outfname = fname
+        doti = outfname.rfind(".")
+        if doti > 0:
+            outfname = outfname[:doti] + draft + outextra + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
         if not noaction:
             self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
-            outindex = self.usedfiles.setdefault(outfname, 0)
-            outextra = str(outindex) if outindex > 0 else ""
-            self.usedfiles[outfname] = outindex + 1
-            # outfname = fname
-            doti = outfname.rfind(".")
-            if doti > 0:
-                outfname = outfname[:doti] + draft + outextra + outfname[doti:]
             os.makedirs(outdir, exist_ok=True)
             codepage = self.ptsettings.get('Encoding', 65001)
             with universalopen(infpath, cp=codepage) as inf:
