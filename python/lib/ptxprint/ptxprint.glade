@@ -35308,21 +35308,19 @@ changed while doing final page layout.</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">Enabling this option will give quicker 
-output, by skipping all the USFM
-processing.
+                                                        <property name="tooltip-text" translatable="yes">Enabling this option skips all
+the normal USFM processing.
 
-This is only a temporary setting
-to enable faster re-runs when
-only making +1 or -1 adjustments,
-or Stylesheet changes.</property>
+This is a temporary setting to 
+enable faster output when just
+making +1 or -1 adjustments,
+or changes to styles.
+
+(The setting is not saved and
+defaults to OFF when the
+program starts.)</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">center</property>
-                                                        <property name="margin-left">3</property>
-                                                        <property name="margin-right">3</property>
-                                                        <property name="margin-start">3</property>
-                                                        <property name="margin-end">3</property>
-                                                        <property name="active">True</property>
                                                         <property name="draw-indicator">True</property>
                                                       </object>
                                                       <packing>
