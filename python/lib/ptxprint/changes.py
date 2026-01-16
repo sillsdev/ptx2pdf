@@ -143,7 +143,7 @@ def _mkfmtfn(s):
     if not s:
         return s
     elif regex.search(r"(?<!\\)\$[a-z]+\{", s):
-        return lambda m:complex_format(s, m)
+        return lambda x,m:complex_format(x, s, m)
     else:
         return s
 

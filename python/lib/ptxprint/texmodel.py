@@ -1402,7 +1402,7 @@ class TexModel:
         # Remove any spaces before the \ior*
         self.localChanges.append(makeChange(r"\s+(?=\\ior\*)", r"", flags=regex.M)) 
         # Escape special codes % and $ that could be in the text itself
-        self.localChanges.append(makeChange(r"(?<!\\\S*|\\[fx][^\\]*)([{}])(\s?)".format("".join(self._specialchars)), lambda m:"\\"+self._specialchars[m.group(1)]+("\\space{}".format(m.group(2)) if m.group(2) else " "), flags=regex.M))
+        self.localChanges.append(makeChange(r"(?<!\\\S*|\\[fx][^\\]*)([{}])(\s?)".format("".join(self._specialchars)), lambda x,m:"\\"+self._specialchars[m.group(1)]+("\\space{}".format(m.group(2)) if m.group(2) else " "), flags=regex.M))
 
         #self.localChanges.append((None, regex.compile(r"(?<=\n\r?)\r+"), ""))
         self.localChanges.append(makeChange(r"^\s*(?=\\id)", ""))
