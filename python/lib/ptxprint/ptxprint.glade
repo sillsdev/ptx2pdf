@@ -26281,7 +26281,8 @@ you would need to enter:
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
-                                            <property name="can-focus">False</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
                                             <property name="width-chars">10</property>
                                           </object>
                                         </child>
@@ -26331,7 +26332,8 @@ you would need to enter:
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
-                                            <property name="can-focus">False</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
                                             <property name="width-chars">10</property>
                                           </object>
                                         </child>
@@ -26381,7 +26383,8 @@ you would need to enter:
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
-                                            <property name="can-focus">False</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
                                             <property name="width-chars">10</property>
                                           </object>
                                         </child>
