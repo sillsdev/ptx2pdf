@@ -7507,3 +7507,10 @@ Thank you,
                 os.remove(diffpath)
                 self.doStatus(_("Removed _diff file"))
             self.pdf_viewer.selectTab("content")
+
+    def onNoUpdateClicked(self, w):
+        if self.get("c_noupdate") and self.get("c_colophon"):
+            self.set("c_colophon", False)
+            self.doStatus(_("Colophon updates have also been disabled in 'Layout Only' mode"))
+            
+        

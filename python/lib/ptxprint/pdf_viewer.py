@@ -615,11 +615,45 @@ class PDFFileViewer:
             return True
 
     def on_button_release(self, widget, event):
-        if event.button == 2:   # middle click
+        # This handles the release of the middle-mouse button for panning
+        if event.button == 2: # middle click
             self.is_dragging = False
-        if event.button == 3:  # Right-click (for context menu)
+            return True
+
+        # Check if the Control key is being held down
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+
+        # If Ctrl is pressed and we're in the main content viewer, execute the shortcuts
+        if ctrl_pressed and isinstance(self, PDFContentViewer):
+            # Get the paragraph information at the click location
+            parref, _, _ = self.get_parloc(widget, event)
+            
+            # Proceed only if we clicked on a valid paragraph
+            if isinstance(parref, ParInfo):
+                parnum = getattr(parref, 'parnum', 0) or 0
+                parnum = f"[{parnum}]" if parnum > 1 else ""
+                ref = parref.ref
+                self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
+                
+                if self.adjlist:
+                    info = self.adjlist.getinfo(ref + parnum, insert=True)
+
+                    if event.button == 1:  # Ctrl + Left-click
+                        print("Calling on_shrink_paragraph")
+                        self.on_shrink_paragraph(widget, info, parref)
+                        return True # Signify that the event has been handled
+
+                    elif event.button == 3:  # Ctrl + Right-click
+                        print("Calling on_expand_paragraph")
+                        self.on_expand_paragraph(widget, info, parref)
+                        return True # Signify that the event has been handled
+
+        # If Ctrl wasn't pressed, fall back to the default right-click context menu
+        if event.button == 3:
             self.show_context_menu(widget, event)
-        return True
+            return True
+            
+        return False
 
     def show_context_menu(self, widget, event):
         pass
@@ -1842,7 +1876,13 @@ class PDFContentViewer(PDFFileViewer):
             treeview.scroll_to_cell(path, None, True, 0.5, 0.0)  # Ask MH: How to do this for the StyleEditor jumps?
             self.model.picListView.select_row(piciter)
 
+    def disableLayoutOnly(self):
+        if self.model.get("c_noupdate", False):
+            self.model.set("c_noupdate", False, mod=False)
+            self.model.doStatus(_("'Layout Only' mode disabled"))
+
     def speed_slice(self, widget, info, parref):
+        self.disableLayoutOnly()
         if parref.ref is not None and parref.ref != self.model.get("t_sliceRef", ""):
             self.model.set("t_sliceWord", "", mod=False)
         if parref.ref is not None:
@@ -1867,6 +1907,7 @@ class PDFContentViewer(PDFFileViewer):
         return offset
 
     def on_shrink_both(self, widget, info, parref):
+        self.disableLayoutOnly()
         if self.adjlist is not None:
             if info[1] > self.shrinkLimit:
                 self.adjlist.expand(info[2], self.shrinkBothAmt(info), mrk=parref.mrk)
@@ -1889,6 +1930,7 @@ class PDFContentViewer(PDFFileViewer):
         self.hitPrint()
 
     def on_reset_adjustments(self, widget, scope, pgindx, info, parref):
+        self.disableLayoutOnly()
         if self.adjlist is None:
             return
         refs2del = []
@@ -1921,6 +1963,7 @@ class PDFContentViewer(PDFFileViewer):
         self.hitPrint()
 
     def on_shrink_text(self, widget, info, parref):
+        self.disableLayoutOnly()
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:
                 self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
@@ -1930,6 +1973,7 @@ class PDFContentViewer(PDFFileViewer):
         self.hitPrint()
 
     def on_expand_text(self, widget, info, parref):
+        self.disableLayoutOnly()
         if self.adjlist is not None:
             if info[1] + self.expandStep > self.expandLimit:
                 self.adjlist.expand(info[2], self.expandLimit - info[1], mrk=parref.mrk)
