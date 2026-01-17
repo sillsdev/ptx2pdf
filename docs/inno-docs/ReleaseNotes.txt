@@ -1,10 +1,33 @@
-PTXprint 3.0.7 Release Notes
-6 Dec 2025
+PTXprint 3.0.8 Release Notes
+17 Jan 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
+
+Bug fixes and Improvements in 3.0.8 (17 Jan 2026)
+  * Add 'Layout Only' mode to skip re-processing of USFM data on every run (speeds things up)
+  * Automatically turn off 'Layout Only' if shrinking or expanding text (e.g. 97% / 102%)
+  * Add shortcuts for -1 and +1 adjustments (Ctrl+Left/Right-click) for rapid multiple adjustments
+  * Add abililty to call $functions in changes.txt (early 
+  * Add side aligned notes to the snippet.md
+  * 'Make Diff' moved back to the Finishing tab to make space for 'Layout Only'
+  * Better file handling of bad UTF8 data (replace with U+FFFD and capture error in report)
+  * Optimise tracing for faster XeTeX run-times
+  * Don't break between book and chapter in \ref
+  * Make mismatch warning both more truthful and informative
+  * Avoid impossible-to-debug crashes due to unexpected output during macro definitions
+  * Default to FastTracing, since slow tracing is buggy
+  * Fix truncated tables, which also affected Table of Contents across more than one page
+  * Fix bug where headers weren't editable (for typing a custom header, or code)
+  * Fix handling of empty string on RHS of changes
+  * Fix Variable Line Spacing toggle
+  * Fix setppagecontents typo
+  * Fix beginL problems for ifs
+  * Fix starting pagenumber bug
+  * Fix variable line spacer toggle not sliding
+  * Fix cutout when baselineskip isnt rigid
 
 Bug fixes and Improvements in 3.0.7 (6 Dec 2025)
   * solve IF problems from diglot headers
