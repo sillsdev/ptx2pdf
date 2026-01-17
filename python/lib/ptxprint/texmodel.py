@@ -879,7 +879,7 @@ class TexModel:
             res = ""
         if text is not None:
             return res
-        if not self.noaction:
+        if not noaction:
             mod.outUsfm(outfpath, version=[3, 1])
         return outfpath
 
