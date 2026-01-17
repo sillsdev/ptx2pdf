@@ -9,10 +9,10 @@ WARNING: The default settings for Poetry and Heading spacing have been changed i
 Bug fixes and Improvements in 3.0.8 (17 Jan 2026)
   * Add 'Layout Only' mode to skip re-processing of USFM data on every run (speeds things up)
   * Automatically turn off 'Layout Only' if shrinking or expanding text (e.g. 97% / 102%)
+  * 'Make Diff' checkbox moved to the Finishing tab to make space for 'Layout Only'
   * Add shortcuts for -1 and +1 adjustments (Ctrl+Left/Right-click) for rapid multiple adjustments
   * Add abililty to call $functions in changes.txt (early 
   * Add side aligned notes to the snippet.md
-  * 'Make Diff' moved back to the Finishing tab to make space for 'Layout Only'
   * Better file handling of bad UTF8 data (replace with U+FFFD and capture error in report)
   * Optimise tracing for faster XeTeX run-times
   * Don't break between book and chapter in \ref
@@ -26,6 +26,7 @@ Bug fixes and Improvements in 3.0.8 (17 Jan 2026)
   * Fix setppagecontents typo
   * Fix beginL problems for ifs
   * Fix starting pagenumber bug
+  * Fix unwanted space at start of some xt refs
   * Fix variable line spacer toggle not sliding
   * Fix cutout when baselineskip isnt rigid
 
