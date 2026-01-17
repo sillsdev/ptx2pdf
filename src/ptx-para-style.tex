@@ -1693,4 +1693,8 @@
 \def\t@gend#1{\t@gendfull{#1}{}}
 \def\t@gendfull#1#2{\iftaggedPDF\special{ptxp:tagend #1 #2}\fi}
 
+\def\zexp #1\*{%%Pseudo milestone, for use in trigger files
+    \xdef\f@ntextend{\p@rcent #1xx\E}%
+}
+
 \endinput
