@@ -1254,7 +1254,7 @@ class TexModel:
             if self.asBool("document/iffigexclwebapp"):
                 #self.localChanges.append(makeChange(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', '', flags=regex.M))  # USFM2
                 self.localChanges.append(makeChange(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', '', flags=regex.M))    # USFM3
-            def figtozfiga(m):
+            def figtozfiga(s, m):
                 a = self.printer.picinfos.getAnchor(m.group(1), bk + (self.printer.digSuffix or ""))
                 if a is None:
                     return ""
@@ -1351,7 +1351,7 @@ class TexModel:
             
 
         # Capture \tc2-3 type spans
-        def getspan(m):
+        def getspan(s, m):
             self.tablespans.add((m.group(1), m.group(2), m.group(3), m.group(4)))
             return m.group(0)
         self.localChanges.append(makeChange(r"\\(t[hc])([cr]?)(\d+)-(\d+)", getspan))
