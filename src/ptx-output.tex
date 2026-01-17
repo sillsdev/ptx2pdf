@@ -147,6 +147,7 @@
 
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \traceifset{onecoltrial}%
+  \trace{o}{onecoltrial: hIns=\the\holdinginserts\space partial=\the\ht\partial, lastptxfile\iflastptxfile true \else false \fi inendbook\ifinendbook true \else false \fi endbook\ifendbook true \else false \fi inptxfile\ifinptxfile true\else false \fi}%
   \vfuzz=\PaperHeight
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
@@ -174,6 +175,7 @@
     \setbox\colA=\vsplit255 to \dimexpr \availht + \lastdepth\relax
     \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
     \setbox\colA\vbox \ifNoGrid to \availht\fi {\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
+    \trace{o}{onecoltrial: colA=\the\ht\colA+\the\dp\colA, rem=\the\ht255}%
     \ifvoid255
       \ifinendbook
         \ifnum \outputpenalty=\book@ndpenalty\relax 
@@ -416,7 +418,7 @@
 
 \def\@@eject{\trace{o}{@@eject with op=\the\outputpenalty, @p=\@utputpenalty\space \csname d@code:\@utputpenalty\endcsname}\par
   \ifversion{5}{\def\t@mp{-9999 }}{\def\t@mp{-10000 }}%
-  \ifnum\@utputpenalty < \t@mp \trace{o}{<\t@mp, value kept}\penalty\@utputpenalty\else\penalty-11220\trace{o}{>=\t@mp value not kept}\fi}
+  \ifnum\@utputpenalty < \t@mp \trace{o}{\@utputpenalty <\t@mp, value kept}\penalty\@utputpenalty\else\penalty-11220\trace{o}{>=\t@mp value not kept}\fi}
 
 \def\reheightcolnotess#1{%
   \trace{i}{height=\the\dimen3, xr@fbox=\the\ht\xr@fbox, baselineskip=\the\baselineskip}%\tracingassigns=1\tracingmacros=1\tracingifs=1
@@ -493,6 +495,7 @@
   % split the result to the actual size available
   \setbox\colA=\vsplit255 to \availht
   \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\else\setbox\colA\vbox{\unvbox\colA}\fi
+  \trace{o}{savepartialpage: colA=\the\ht\colA+\the\dp\colA , from \the\ht\s@vedpage , at \the\availht, colNotes\ifColNotes true\else false\fi}%
   \edef\t@mp{\splitbotmark}%
   % Does this need readjusting?
   \iftextborder\ifx\t@mp\empty\else
@@ -560,14 +563,14 @@
     \fi
     \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
+    \ifdim\ht\colA>0.5 \baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}%
       \setbox0=\box255\deadcycles=0
     \fi % dump empty pages (typically at end)
     \tempfalse%
     \ifinendbook
       \ifdim\dimexpr \availht - \ht\partial \ifendbook -\ht\bookendbox - \dp\bookendbox \fi \relax<0pt \relax
-        \trace{o}{outputting full box, but it would have bene better to resize}%
+        \trace{o}{outputting full box, but it would have been better to resize}%
          \temptrue
       \fi
     \else

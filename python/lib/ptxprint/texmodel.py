@@ -868,7 +868,7 @@ class TexModel:
         doti = outfpath.rfind(".")
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
-        if not self.noaction:
+        if not noaction:
             usfms = self.printer.get_usfms()
             mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
             mod.parse(self.printer.picinfos)
@@ -1149,7 +1149,7 @@ class TexModel:
         if bk == "GLO":
             if self.dict['document/filterglossary']:
                 self.filterGlossary(printer)
-            def mkkid(m):
+            def mkkid(s, m):
                 if ' ' in m.group(1):
                     return r'\k {}|{}\k*'.format(m.group(1), m.group(1).replace(" ", ""))
                 else:
@@ -1403,7 +1403,6 @@ class TexModel:
         self.localChanges.append(makeChange(r"\s+(?=\\ior\*)", r"", flags=regex.M)) 
         # Escape special codes % and $ that could be in the text itself
         self.localChanges.append(makeChange(r"(?<!\\\S*|\\[fx][^\\]*)([{}])(\s?)".format("".join(self._specialchars)), lambda x,m:"\\"+self._specialchars[m.group(1)]+("\\space{}".format(m.group(2)) if m.group(2) else " "), flags=regex.M))
-
         #self.localChanges.append((None, regex.compile(r"(?<=\n\r?)\r+"), ""))
         self.localChanges.append(makeChange(r"^\s*(?=\\id)", ""))
 
