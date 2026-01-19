@@ -620,11 +620,12 @@ class PDFFileViewer:
             self.is_dragging = False
             return True
 
-        # Check if the Control key is being held down
+        # Check the state of the modifier keys
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+        shift_pressed = event.state & Gdk.ModifierType.SHIFT_MASK
 
-        # If Ctrl is pressed and we're in the main content viewer, execute the shortcuts
-        if ctrl_pressed and isinstance(self, PDFContentViewer):
+        # Check if we are in the main content viewer and if any modifier key was pressed
+        if (ctrl_pressed or shift_pressed) and isinstance(self, PDFContentViewer):
             # Get the paragraph information at the click location
             parref, _, _ = self.get_parloc(widget, event)
             
@@ -634,26 +635,50 @@ class PDFFileViewer:
                 parnum = f"[{parnum}]" if parnum > 1 else ""
                 ref = parref.ref
                 self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
-                
+
                 if self.adjlist:
                     info = self.adjlist.getinfo(ref + parnum, insert=True)
 
-                    if event.button == 1:  # Ctrl + Left-click
-                        print("Calling on_shrink_paragraph")
-                        self.on_shrink_paragraph(widget, info, parref)
-                        return True # Signify that the event has been handled
+                    # Case 1: Ctrl + Shift are both held down
+                    if ctrl_pressed and shift_pressed:
+                        if event.button == 1:  # Ctrl+Shift+Left-Click
+                            print("Calling on_shrink_both")
+                            self.on_shrink_both(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Ctrl+Shift+Right-Click
+                            print("Calling on_expand_both")
+                            self.on_expand_both(widget, info, parref)
+                            return True
 
-                    elif event.button == 3:  # Ctrl + Right-click
-                        print("Calling on_expand_paragraph")
-                        self.on_expand_paragraph(widget, info, parref)
-                        return True # Signify that the event has been handled
+                    # Case 2: Only Shift is held down
+                    elif shift_pressed:
+                        if event.button == 1:  # Shift+Left-Click
+                            print("Calling on_shrink_paragraph")
+                            self.on_shrink_paragraph(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Shift+Right-Click
+                            print("Calling on_expand_paragraph")
+                            self.on_expand_paragraph(widget, info, parref)
+                            return True
 
-        # If Ctrl wasn't pressed, fall back to the default right-click context menu
+                    # Case 3: Only Ctrl is held down
+                    elif ctrl_pressed:
+                        if event.button == 1:  # Ctrl+Left-Click
+                            print("Calling on_shrink_text")
+                            self.on_shrink_text(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Ctrl+Right-Click
+                            print("Calling on_expand_text")
+                            self.on_expand_text(widget, info, parref)
+                            return True
+
+        # Fallback to the default context menu if only the right-click is used
         if event.button == 3:
             self.show_context_menu(widget, event)
             return True
             
         return False
+
 
     def show_context_menu(self, widget, event):
         pass
@@ -1908,13 +1933,23 @@ class PDFContentViewer(PDFFileViewer):
         return offset
 
     def on_shrink_both(self, widget, info, parref):
-        self.disableLayoutOnly()
         if self.adjlist is not None:
             if info[1] > self.shrinkLimit:
                 self.adjlist.expand(info[2], self.shrinkBothAmt(info), mrk=parref.mrk)
             if int(info[0]) >= 0:
                 offset = -(int(info[0]) + 1)
                 self.adjlist.increment(info[2], offset)
+        self.show_pdf()
+        self.hitPrint()
+
+    def on_expand_both(self, widget, info, parref):
+        if self.adjlist is not None:
+            if info[1] + self.expandStep > self.expandLimit:
+                self.adjlist.expand(info[2], self.expandLimit - info[1], mrk=parref.mrk)
+            else:
+                self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
+            offset = 1 - int(info[0])
+            self.adjlist.increment(info[2], offset)
         self.show_pdf()
         self.hitPrint()
 
@@ -1964,7 +1999,6 @@ class PDFContentViewer(PDFFileViewer):
         self.hitPrint()
 
     def on_shrink_text(self, widget, info, parref):
-        self.disableLayoutOnly()
         if self.adjlist is not None:
             if info[1] - self.shrinkStep < self.shrinkLimit:
                 self.adjlist.expand(info[2], self.shrinkLimit - info[1], mrk=parref.mrk)
@@ -1974,7 +2008,6 @@ class PDFContentViewer(PDFFileViewer):
         self.hitPrint()
 
     def on_expand_text(self, widget, info, parref):
-        self.disableLayoutOnly()
         if self.adjlist is not None:
             if info[1] + self.expandStep > self.expandLimit:
                 self.adjlist.expand(info[2], self.expandLimit - info[1], mrk=parref.mrk)

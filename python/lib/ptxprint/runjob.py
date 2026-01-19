@@ -825,6 +825,7 @@ class RunJob:
                     threaded=True, copy2clip=True)
             if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                 self.printer.onIdle(self.printer.showLogFile)
+
         if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         self.printer.finished(self.res == 0)
@@ -840,9 +841,21 @@ class RunJob:
         r.generate_html(os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".html")), info.dict)
         logger.debug("done_job: Finishing thread")
         unlockme()
+        noupdt = self.printer.builder.get_object("c_noupdate")
+        if noupdt.get_inconsistent():
+            noupdt.set_inconsistent(False)
+            noupdt.set_active(True) 
         if not self.noview and not self.args.print:
             self.printer.builder.get_object("t_find").set_placeholder_text("Search for settings")
 
+    def update_checkbox_on_main_thread():
+        noupdt = self.printer.builder.get_object("c_noupdate")
+        if noupdt.get_inconsistent():
+            noupdt.set_sensitive(True)
+            self.printer.set("c_noupdate", True)
+        # Return False so the function only runs once
+        return False
+    
     def parselog(self, fname, rerunp=False, lines=20):
         loglines = []
         rerunres = False

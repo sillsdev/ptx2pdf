@@ -258,6 +258,8 @@ btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 _ui_experimental = """
 """.split()
 
+_processing_needed = """c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang""".split()
+
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
 c_bkView s_pdfZoomLevel t_pgNum b_reprint fcb_project ecb_savedConfig
@@ -1062,7 +1064,7 @@ class GtkViewModel(ViewModel):
         for w in self.allControls:
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
                 self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
-
+        self.connectSimpleClicked()
         logger.debug("Static controls initialized")
 
         self.resetProjectsList()
@@ -1082,6 +1084,46 @@ class GtkViewModel(ViewModel):
         logger.debug("Project list loaded")
 
         return True
+
+    def connectSimpleClicked(self):
+        def _connect(obj, signal_name, handler, wtype, wname):
+            # Store handler id per-signal so we don't double-connect
+            key = f"_simple_hid_{signal_name}"
+            hid = getattr(obj, key, None)
+
+            if hid is not None and obj.handler_is_connected(hid):
+                print(f"Signal '{signal_name}' is already connected to: {wtype} {widget_name} {wname}")
+                return
+
+            hid = obj.connect(signal_name, handler)
+            setattr(obj, key, hid)
+            print(f"Connected '{signal_name}' signal to: {wtype} {widget_name} {wname}")
+
+        for widget_name in _processing_needed:
+            widget = self.builder.get_object(widget_name)
+
+            if widget is None:
+                print(f"Failed to connect: <None> {widget_name} (builder.get_object returned None)")
+                continue
+
+            wtype = type(widget).__name__
+            wname = widget.get_name() if hasattr(widget, "get_name") else str(widget_name)
+
+            try:
+                if wtype in ("CheckButton", "GtkCheckButton", "ToggleButton", "GtkToggleButton",
+                             "RadioButton", "GtkRadioButton"):
+                    _connect(widget, "toggled", self.onSimpleClicked, wtype, wname)
+                elif wtype in ("ComboBox", "GtkComboBox", "ComboBoxText", "GtkComboBoxText"):
+                    _connect(widget, "changed", self.onSimpleClicked, wtype, wname)
+                elif wtype in ("Entry", "GtkEntry", "SearchEntry", "GtkSearchEntry"):
+                    _connect(widget, "changed", self.onSimpleClicked, wtype, wname)
+                elif wtype in ("SpinButton", "GtkSpinButton"):
+                    _connect(widget, "value-changed", self.onSimpleClicked, wtype, wname)
+                else:
+                    print(f">>> Skipping (unsupported type): {wtype} {widget_name} {wname}")
+
+            except Exception as e:
+                print(f"Failed to connect: {wtype} {widget_name} {wname} ({e.__class__.__name__})")
 
     def resetProjectsList(self):
         # 1. Get all projects and their last-modified times
@@ -2343,7 +2385,13 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", pdfre.sub(r"\1", x))
         else:
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        self.turnOffLayoutOnly()
         
+    def turnOffLayoutOnly(self):
+        noupdt = self.builder.get_object("c_noupdate")
+        noupdt.set_active(False)
+        noupdt.set_inconsistent(True)
+
     def colorTabs(self):
         col = "#0000CD"
         def stylize(text, is_active):
@@ -2452,6 +2500,8 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         if wid not in _ui_unchanged:
             self.changed()
+        if wid in _processing_needed:
+            self.pauseNoUpdate()
 
     def onLocalFRTclicked(self, w):
         if self.loadingConfig:
@@ -7534,5 +7584,3 @@ Thank you,
         if self.get("c_noupdate") and self.get("c_colophon"):
             self.set("c_colophon", False)
             self.doStatus(_("Colophon updates have also been disabled in 'Layout Only' mode"))
-            
-        
