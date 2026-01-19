@@ -844,14 +844,6 @@ class RunJob:
         if not self.noview and not self.args.print:
             self.printer.builder.get_object("t_find").set_placeholder_text("Search for settings")
 
-    def update_checkbox_on_main_thread():
-        noupdt = self.printer.builder.get_object("c_noupdate")
-        if noupdt.get_inconsistent():
-            noupdt.set_sensitive(True)
-            self.printer.set("c_noupdate", True)
-        # Return False so the function only runs once
-        return False
-    
     def parselog(self, fname, rerunp=False, lines=20):
         loglines = []
         rerunres = False
