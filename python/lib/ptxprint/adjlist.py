@@ -11,6 +11,8 @@ refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\
 restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(.*?)$")
 
 class Liststore(list):
+    """ structure: 
+    """
 
     def get_value(self, line, col):
         return self[line][col]
@@ -35,7 +37,7 @@ class Liststore(list):
 
 
 class AdjList:
-    def __init__(self, centre, lowdiff, highdiff, diglotorder=[], gtk=None, fname=None):
+    def __init__(self, centre, lowdiff, highdiff, diglotorder=[], gtk=None, fname=None, tname=None):
         self.lowdiff = lowdiff
         self.highdiff = highdiff
         self.centre = centre
@@ -47,6 +49,7 @@ class AdjList:
             self.liststore = gtk.ListStore(str, str, int, str, str, int, str)
         self.changed = False
         self.adjfile = fname
+        self.trigfile = tname
 
     def clear(self):
         self.liststore.clear()
@@ -138,6 +141,25 @@ class AdjList:
                     line += " % \\{4} {5} {6}".format(*r)
                 outf.write(line + "\n")
 
+    def createTriggerlist(self, fname=None):
+        if fname is None:
+            fname = self.trigfile
+        if fname is None:
+            return
+        if not len(self.liststore):
+            self.remove_file(fname)
+            return
+        os.makedirs(os.path.dirname(fname), exist_ok=True)
+        with open(fname, 'w', encoding='utf-8') as outf:
+            for r in self.liststore:
+                if r[5] == self.centre:
+                    continue
+                lines = [""]
+                lines.append(rf"\AddTrigger {r[0]}{r[1]}={r[2]}")
+                lines.append(rf"\zexp {r[5]}\*")
+                lines.append(r"\EndTrigger")
+                outf.write("\n".join(lines))
+
     def remove_file(self, fname):
         try:
             os.remove(fname)
@@ -150,6 +172,7 @@ class AdjList:
         if self.adjfile is None:
             return False
         self.createAdjlist()
+        self.createTriggerlist()
         # possibly loop through the poly-glot configs here and then call createChanges with 
         # the right diglot letter, L,R,A,B,C and appropriate chfile for the other config.
         chfile = self.adjfile.replace(".adj", "_changes.txt")

@@ -1091,12 +1091,12 @@ class TexModel:
                     logger.debug(f"Reversify [{srcvrsf}] {getattr(reversify[0], 'name', 'unknown')} -> {getattr(srcvrs, 'name', 'unknown') if srcvrs else 'unknown'}")
                     doc.reversify(srcvrs, *reversify)
 
-            adjlist = self.printer.get_adjlist(bk)
-            if adjlist is not None and len(adjlist):
-                (dat, doc) = self._getDoc(dat, doc, bk)
-                logger.debug("Apply adjlist")
-                if doc is not None:
-                    doc.apply_adjlist(bk, adjlist)
+            # adjlist = self.printer.get_adjlist(bk)
+            # if adjlist is not None and len(adjlist):
+            #     (dat, doc) = self._getDoc(dat, doc, bk)
+            #     logger.debug("Apply adjlist")
+            #     if doc is not None:
+            #         doc.apply_adjlist(bk, adjlist)
                 # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
             if self.localChanges is not None:

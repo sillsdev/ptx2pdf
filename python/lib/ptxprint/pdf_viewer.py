@@ -1877,6 +1877,7 @@ class PDFContentViewer(PDFFileViewer):
             self.model.picListView.select_row(piciter)
 
     def disableLayoutOnly(self):
+        return
         if self.model.get("c_noupdate", False):
             self.model.set("c_noupdate", False, mod=False)
             self.model.doStatus(_("'Layout Only' mode disabled"))

@@ -1591,6 +1591,10 @@ class ViewModel:
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
 
+    def getLocalTriggerFilename(self, bk, ext="-1.triggers"):
+        fname = self.getDraftFilename(bk, ext=ext)
+        return fname
+
     def get_adjlist(self, bk, save=True, gtk=None):
         if bk in self.adjlists:
             return self.adjlists[bk]
@@ -1598,9 +1602,11 @@ class ViewModel:
         if fname is None:
             return None
         fpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", fname)
+        tname = self.getLocalTriggerFilename(bk)
+        tpath = os.path.join(self.project.printPath(self.cfgid), tname)
         # get expansion of regular font
         centre = 100
-        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath)
+        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath, tname=tpath)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj
