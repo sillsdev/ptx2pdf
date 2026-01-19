@@ -6,7 +6,7 @@ from usfmtc.usfmparser import Grammar, Tag
 from usfmtc.usfmgenerate import Emitter
 from ptxprint.utils import universalopen, runChanges
 from usfmtc.xmlutils import ParentElement, hastext, isempty
-from usfmtc.usxmodel import iterusx, addesids
+from usfmtc.usxmodel import iterusx, addesids, iterusxref
 from ptxprint.changes import readChanges
 from ptxprint.ptsettings import PTEnvironment
 from ptxprint.unicode.ucd import get_ucd
@@ -847,4 +847,15 @@ class Usfm:
     def reversify(self, srcvrs, tgtvrs, vpvrse, vpchap):
         if tgtvrs is not None or srcvrs is not None:
             self.xml.reversify(srcvrs, tgtvrs, keep=vpvrse, chnums=vpchap)
+
+    def runchecks(self):
+        root = self.getroot()
+        errors = []
+        for eloc, isin, cref in iterusxref(root):
+            if isin:
+                if eloc.tag == "note":
+                    if not eloc.get('caller', ''):
+                        errors.append((cref, "Missing note caller"))
+        return errors
+
 

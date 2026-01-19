@@ -1048,6 +1048,12 @@ class TexModel:
             if self.dict['project/canonicalise']:
                 (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Canonicalising")
                 dat = None
+                errors = doc.runchecks()
+                if len(errors):
+                    dlgtitle = _("PTXprint [{}] - USFM Check Error!").format(self.VersionStr)
+                    secondary = "\n".join([f"{bk} {x[0]}: {x[1]}" for x in errors]) + "\n\n" \
+                            + _("These errors were triggered when running canonical checks")
+                    printer.doError(_("Checking errors: "), secondary=secondary, title=dlgtitle)   #, show=not self.printer.get("c_quickRun"))
 
             if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
                 (dat, doc) = self._getDoc(dat, doc, bk)
