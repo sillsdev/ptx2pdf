@@ -1092,12 +1092,12 @@ class GtkViewModel(ViewModel):
             hid = getattr(obj, key, None)
 
             if hid is not None and obj.handler_is_connected(hid):
-                print(f"Signal '{signal_name}' is already connected to: {wtype} {widget_name} {wname}")
+                # print(f"Signal '{signal_name}' is already connected to: {wtype} {widget_name} {wname}")
                 return
 
             hid = obj.connect(signal_name, handler)
             setattr(obj, key, hid)
-            print(f"Connected '{signal_name}' signal to: {wtype} {widget_name} {wname}")
+            # print(f"Connected '{signal_name}' signal to: {wtype} {widget_name} {wname}")
 
         for widget_name in _processing_needed:
             widget = self.builder.get_object(widget_name)
@@ -1469,7 +1469,6 @@ class GtkViewModel(ViewModel):
 
         if self.pdf_viewer is not None:
             self.pdf_viewer.hide_unused()
-        self.pauseNoUpdate()
 
     def emission_hook(self, w, *a):     # sigid, detail, self, *a):
         if self.testing is None or self.testing.paused:
@@ -2385,12 +2384,7 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", pdfre.sub(r"\1", x))
         else:
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
-        self.turnOffLayoutOnly()
-        
-    def turnOffLayoutOnly(self):
-        noupdt = self.builder.get_object("c_noupdate")
-        noupdt.set_active(False)
-        noupdt.set_inconsistent(True)
+        self.unpauseNoUpdate()
 
     def colorTabs(self):
         col = "#0000CD"

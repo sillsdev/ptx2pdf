@@ -642,35 +642,26 @@ class PDFFileViewer:
                     # Case 1: Ctrl + Shift are both held down
                     if ctrl_pressed and shift_pressed:
                         if event.button == 1:  # Ctrl+Shift+Left-Click
-                            print("Calling on_shrink_both")
                             self.on_shrink_both(widget, info, parref)
-                            return True
                         elif event.button == 3:  # Ctrl+Shift+Right-Click
-                            print("Calling on_expand_both")
                             self.on_expand_both(widget, info, parref)
-                            return True
+                        return True
 
                     # Case 2: Only Shift is held down
                     elif shift_pressed:
                         if event.button == 1:  # Shift+Left-Click
-                            print("Calling on_shrink_paragraph")
                             self.on_shrink_paragraph(widget, info, parref)
-                            return True
                         elif event.button == 3:  # Shift+Right-Click
-                            print("Calling on_expand_paragraph")
                             self.on_expand_paragraph(widget, info, parref)
-                            return True
+                        return True
 
                     # Case 3: Only Ctrl is held down
                     elif ctrl_pressed:
                         if event.button == 1:  # Ctrl+Left-Click
-                            print("Calling on_shrink_text")
                             self.on_shrink_text(widget, info, parref)
-                            return True
                         elif event.button == 3:  # Ctrl+Right-Click
-                            print("Calling on_expand_text")
                             self.on_expand_text(widget, info, parref)
-                            return True
+                        return True
 
         # Fallback to the default context menu if only the right-click is used
         if event.button == 3:
@@ -678,7 +669,6 @@ class PDFFileViewer:
             return True
             
         return False
-
 
     def show_context_menu(self, widget, event):
         pass
@@ -1569,6 +1559,7 @@ class PDFContentViewer(PDFFileViewer):
         return res
 
     def hitPrint(self):
+        self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         """ Delayed execution of print with a N-second debounce timer. """
         if self.model.get("c_updatePDF"):
             now = time.time()
