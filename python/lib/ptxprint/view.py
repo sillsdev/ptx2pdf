@@ -372,6 +372,23 @@ class ViewModel:
             res["MOD"] = self.moduleFile
         return res
 
+    def getNewBooks(self):
+        res = set()
+        for r in self.getBooks():
+            if "." not in r:
+                srcname = self.getBookFilename(r)
+                srcpath = os.path.join(self.project.path, srcname)
+                destname = self.getDraftFilename(r, ext="")
+            else:
+                srcpath = str(r)
+                destname = os.path.basename(r)
+            destpath = os.path.join(self.project.printPath(self.cfgid), destname)
+            srct = os.lstat(srcpath).st_mtime if os.path.exists(srcpath) else 0
+            destt = os.lstat(destpath).st_mtime if os.path.exists(destpath) else 0
+            if srct > destt:
+                res.add(r)
+        return res
+
     def _getPtSettings(self, prjid=None):
         if self.ptsettings is None and self.project.prjid is not None:
             self.ptsettings = ParatextSettings(self.project.path)

@@ -480,10 +480,9 @@ class RunJob:
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(info, jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        if not self.noaction:
-            texfiledat = info.asTex(filedir=self.tmpdir, jobname=swapext(outfname, ext=".tex"), extra=extra, diglots=diglots)
-            with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
-                texf.write(texfiledat)
+        texfiledat = info.asTex(filedir=self.tmpdir, jobname=swapext(outfname, ext=".tex"), extra=extra, diglots=diglots)
+        with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
+            texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=x)) for x in (".tex", ".xdv")]
         if self.inArchive:
             return genfiles

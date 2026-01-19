@@ -1427,6 +1427,7 @@ class GtkViewModel(ViewModel):
 
         if self.pdf_viewer is not None:
             self.pdf_viewer.hide_unused()
+        self.pauseNoUpdate()
 
     def emission_hook(self, w, *a):     # sigid, detail, self, *a):
         if self.testing is None or self.testing.paused:
@@ -2050,6 +2051,8 @@ class GtkViewModel(ViewModel):
                             self.finished()
                             return
                     fileLocked = False
+        if len(self.getNewBooks()):
+            self.pauseNoUpdate()
         self.onSaveConfig(None)
         self.checkUpdates()
 
@@ -2070,6 +2073,7 @@ class GtkViewModel(ViewModel):
             unlockme()
             self.builder.get_object("t_find").set_placeholder_text("Search for settings")
             self.builder.get_object("t_find").set_text("")
+        self.unpauseNoUpdate()
 
     def onMainAppWinDeleted(self, widget, event): # Main App dialog (X button)
         self.onDestroy(widget)
@@ -7508,7 +7512,25 @@ Thank you,
                 self.doStatus(_("Removed _diff file"))
             self.pdf_viewer.selectTab("content")
 
+    def pauseNoUpdate(self):
+        w = self.builder.get_object("c_noupdate")
+        if w.get_inconsistent():
+            return
+        self.noupdate_state = self.get("c_noupdate")
+        self.set("c_noupdate", False)
+        if self.noupdate_state:
+            w.set_inconsistent(True)
+
+    def unpauseNoUpdate(self):
+        w = self.builder.get_object("c_noupdate")
+        if not w.get_inconsistent():
+            return
+        w.set_inconsistent(False)
+        self.set("c_noupdate", self.noupdate_state)
+
     def onNoUpdateClicked(self, w):
+        if w.get_inconsistent():
+            w.set_inconsistent(False)
         if self.get("c_noupdate") and self.get("c_colophon"):
             self.set("c_colophon", False)
             self.doStatus(_("Colophon updates have also been disabled in 'Layout Only' mode"))
