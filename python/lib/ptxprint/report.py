@@ -260,9 +260,7 @@ class Report:
                 self.add("3. USFM/Checks", f"No USFM for {bk}", severity=logging.WARN)
                 continue
             
-            if doc.xml.errors is None or not len(doc.xml.errors):
-                passed.append(bk)
-            else:
+            if doc.xml.errors is not None and len(doc.xml.errors):
                 for e in doc.xml.errors:
                     if len(e) == 1:     # simple string
                         msg = e[0]
@@ -273,6 +271,14 @@ class Report:
                     if pos is not None:
                         msg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
                     failed.setdefault(bk, []).append(msg)
+            else:
+                errors = doc.runchecks()
+                if len(errors):
+                    for e in errors:
+                        msg = f"{bk} {e[0]} - {e[1]}"
+                        failed.setdefault(bk, []).append(msg)
+                else:
+                    passed.append(bk)
         if len(passed):
             self.add("3. USFM/Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
         if len(failed):

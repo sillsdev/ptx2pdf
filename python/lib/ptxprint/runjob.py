@@ -841,10 +841,6 @@ class RunJob:
         r.generate_html(os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".html")), info.dict)
         logger.debug("done_job: Finishing thread")
         unlockme()
-        noupdt = self.printer.builder.get_object("c_noupdate")
-        if noupdt.get_inconsistent():
-            noupdt.set_inconsistent(False)
-            noupdt.set_active(True) 
         if not self.noview and not self.args.print:
             self.printer.builder.get_object("t_find").set_placeholder_text("Search for settings")
 
