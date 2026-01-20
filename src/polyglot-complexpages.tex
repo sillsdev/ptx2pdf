@@ -76,6 +76,9 @@
   \fi
   \iftemp
     \trace{dmc}{Assigning \x@fch@r\space as the follow-on column to #2 (in the #1 chain)}%
+    \ifcsname \x@fch@r box\endcsname\else
+      \@newpolyglotboxes{\x@fch@r}%
+    \fi
     \x@\xdef\csname f@llowing\x@fch@r\endcsname{#1}\x@\global\x@\let\csname \x@fch@r isFolowOn\endcsname\tr@e
     \x@\xdef\csname f@llow@n#2\endcsname{\x@fch@r}%
     \x@\xdef\csname f@llow@n\x@fch@r\endcsname{}%
@@ -520,7 +523,7 @@
   \egroup
 }
   
-\def\complex@rsplit#1{%
+\def\complex@rsplit#1{%Recursive version (faster if notes/inserts are sparse)
   \vfuzz=\maxdimen
   \setbox0\copy\csname #1box\endcsname%
   \dimen1=\ht0
@@ -659,35 +662,39 @@
 \def\us@tmphtfn#1{\x@\let\x@\tmp\csname tmp#1htfn\endcsname\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
 }
 \def\add@tr@iling#1{%add tr@ling#1 to definintion of \tmp
+  \trace{dmc}{Adding trailing#1 to fntoks}%
   \x@\ifx\csname tr@iling#1\endcsname\relax\else
     \x@\ifx\csname tr@iling#1\endcsname\empty\else
       \x@\let\x@\tmpb\csname tr@iling#1\endcsname
       \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmpb}%
     \fi
   \fi
+  \trace{dmc}{currently: \the\fntoks}%
 }
 
 \def\g@nchunkhtfunctions#1#2\E{%generate an optimised chunk height macro (max(#1,...) for all cols in a row
   \let\gchd@\d@
   \relax\trace{dmc}{g@nchunkhtfunction #1#2}%
   \x@\let\x@\p@gehtcalcs\csname p@gehtcalcs-\the\p@lyp@geno\endcsname% Updating is easier without the csname mess
+  \ifx\p@gehtcalcs\relax \let\p@gehtcalcs\empty\fi
+  \trace{dmc}{resetting fntoks}%
   \fntoks{}%
   \let\col@do\us@tmphtfn \x@\each@col#1#2\E
   \x@\let\csname tmp#1ht\endcsname\relax
   \def\tmpb{#2}%
   \ifx\tmpb\empty
+    \edef\tmp{\csname \p@lyp@gestring @ht\endcsname=\tmpdim}%
+    \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
   \else %Extend the function
-    \edef\tmp{\tmpdim=\csname tmp#1ht\endcsname\relax}%
+    \edef\tmp{\csname \p@lyp@gestring @ht\endcsname=\csname tmp#1ht\endcsname\relax}%
     \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
     \trace{dmc}{fntoks(\p@lyp@gestring):\the\fntoks}%{
     \let\col@do\@genhtfunction
     \x@\each@col#2\E
   \fi
-  %\x@\def\csname p@gehtcalcs\x@\x@\x@\endcsname\x@\x@\x@{\x@\p@gehtcalcs\the\fntoks}%
-  \edef\tmp{\csname \p@lyp@gestring @ht\endcsname=\tmpdim}%
-  \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
   \trace{dmc}{htfunction-\p@lyp@gestring:\the\fntoks}%
-  \x@\def\csname htfunction-\the\p@lyp@geno-\the\p@lyr@wno\x@\endcsname\x@{\the\fntoks}%
+  \x@\def\csname htfunction-\p@lyp@gestring\x@\endcsname\x@{\the\fntoks}%
+  \x@\def\csname p@gehtcalcs\x@\x@\x@\endcsname\x@\x@\x@{\x@\p@gehtcalcs\csname htfunction-\p@lyp@gestring\endcsname}
   \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\p@gehtcalcs\relax % Save the possibly-updated version
   \relax
   \let\d@\gchd@
@@ -697,11 +704,12 @@
   \trace{dmc}{@genhtfunction #1}%
   \x@\let\csname tmp#1ht\endcsname\relax
   \edef\tmp{\dimen0=\csname tmp#1ht\endcsname\relax}%
-  \add@tr@iling{#1}%
-  \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp\relax \ifdim\dimen0>\tmpdim \tmpdim=\dimen0 \fi}%
-  \trace{dmc}{@ghf->\the\fntoks}%
+  \x@\expandfntoksgt\x@{\csname \p@lyp@gestring @ht\endcsname}%
+  %\trace{dmc}{@ghf->\the\fntoks}%
 }
-
+\def\expandfntoksgt#1{%
+  \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp \ifdim\dimen0>#1 #1=\dimen0 \fi}%
+}
 \newdimen\thisp@gehtloss
 
 \def\mk@chunktr@iling#1:#2\E{%Generate *optimised* height based on each insert actually used. Note that #1 might be a figure insert or some class of footnote. 
@@ -710,7 +718,7 @@
   \ifx\m@ltip@ge\tr@e
     \x@\let\x@\tmp\csname perpg@inserts\the\p@lyp@geno\endcsname
     \ifx\tmp\relax\let\tmp\empty\fi
-    \x@\edef\csname perpg@inserts\the\p@lyp@geno\endcsname{#1,\tmp}%Inserts shared between multiple pages.
+    \x@\edef\csname perpg@inserts\the\p@lyp@geno\endcsname{#1,\tmp}%These inserts are shared between multiple pages, and will need resetting between pages.
   \fi
   \let\tmp@r\false % Do we record this chunk?
   \ifx\typ@\relax \def\typ@{I}%Insert 
@@ -719,7 +727,7 @@
   \fi
   \trace{dmc}{mk@chunktr@iling #1:#2 (\typ@)}%
   \if p\typ@\relax 
-      \x@\def\x@\p@gehtcalcs\x@{\p@gehtcalcs\dimen0=\csname #1ht\endcsname \ifdim \dimen0>0pt \advance\thisp@gehtloss \dimexpr \dimen0+\dimen\csname #1\endcsname\relax\fi }% FIXME: Do we get duplicates?? If so, then the calc should probably be built separately, and elsewhere.
+      \x@\def\x@\p@gehtcalcs\x@{\p@gehtcalcs\dimen0=\csname #1ht\endcsname \ifdim \dimen0>0pt \advance\thisp@gehtloss \dimexpr \dimen0+\dimen\csname #1\endcsname\relax\fi }% FIXME:(?) Do we get duplicates?? If so, then the calc should probably be built separately, and elsewhere, or use t@rgetcols-type testing.
   \else
     \if n\typ@\relax
       \@@l@stcolonly{#1}%
@@ -742,7 +750,7 @@
         \x@\let\x@\tmpf\csname tr@iling\tgtc@l\endcsname
         \ifx\tmpf\relax\let\tmpf\empty\fi
         \edef\btmp{\dimen1=\csname #1ht\endcsname}%What's the insert height?
-        \x@\extendchunkc@lc\x@{\x@\dimen\csname #1\endcsname}% Save some cycles overall by expanding the extra csname once-for-many, here.
+        \x@\extendchunkc@lc\x@{\x@\dimen\csname #1\endcsname}% Save some cycles overall by expanding the extra csname once-for-many, here (extends tmpf)
         \x@\let\csname tr@iling\tgtc@l\endcsname\tmpf
       \fi
     \fi
@@ -767,7 +775,7 @@
       \let\m@ltip@ge\tr@e
     \fi
     \trace{dmc}{#1 (\tmpa) -> \csname pre@meas@\tmpa @dims\endcsname}%
-    \let\d@\mk@chunktr@iling
+    \let\d@\mk@chunktr@iling % May alter: tr@ling[any], p@gehtcalcs, perpg@inserts
     \x@\x@\x@\cstackdown\csname pre@meas@\tmpa @dims\endcsname,\E
     \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\x@\p@gehtcalcs
   \fi
@@ -792,8 +800,8 @@
       \csname p@gehtloss-\the\p@lyp@geno\endcsname=0pt
       \x@\let\csname perpg@inserts-\the\p@lyp@geno\endcsname\empty
       \advance\p@lyp@geno by 1 \ifnum\p@lyp@geno<\p@lyp@ges \repeat
-    % As some users will probably be confusewd if they can't figures into wherever column, triggered in whatever column they feel like
-    % there needs to to be a 3 step process: (a) allocate figure heights, etc, to whatever column.
+    % As some users will probably be confused if they can't put figures into wherever column, triggered in whatever column they feel like
+    % so there needs to to be a 3 step process: (a) allocate figure heights, etc, to whatever column.
     % (b) define tmpLht, etc as the sum of the column and inserts for a given chunk, also building a list of page-dependant inserts.
     % (c) build the column functions (calculating and referencing tstLht and friends)
     \let\col@do\g@ncolhtadditions 

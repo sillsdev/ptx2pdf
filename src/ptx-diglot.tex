@@ -3455,6 +3455,14 @@
     \@newPolyglotCol{#1}%
   \fi
 }
+\def\@newpolyglotboxes#1{% FIXME: tune this selection of boxes
+%    \x@\newb@x\csname #1discards\endcsname
+    \x@\newb@x\csname #1box\endcsname
+    \x@\newb@x\csname partial#1\endcsname
+    \x@\newb@x\csname whole#1\endcsname
+    \x@\newb@x\csname excess#1\endcsname
+    \x@\newb@x\csname picb@x#1\endcsname
+}
 \def\@newPolyglotCol#1{%
     \message{Defining #1 as an additional polyglot column.}%
     \newcolins@rt{\loc@T#1}% column top insert
@@ -3471,12 +3479,7 @@
     \x@\each@col\diglot@list\E% 
     {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
     \x@\let\csname #1isDiglotColumn\endcsname\empty
-%    \x@\newb@x\csname #1discards\endcsname
-    \x@\newb@x\csname #1box\endcsname
-    \x@\newb@x\csname partial#1\endcsname
-    \x@\newb@x\csname whole#1\endcsname
-    \x@\newb@x\csname excess#1\endcsname
-    \x@\newb@x\csname picb@x#1\endcsname
+    \@newpolyglotboxes{#1}%
     \x@\newt@ks\csname diglot#1ho@ks\endcsname
     \x@\newc@unt\csname saved#1penalty\endcsname
     \x@\newc@unt\csname partial#1penalty\endcsname
