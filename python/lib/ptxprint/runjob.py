@@ -403,7 +403,7 @@ class RunJob:
                 else:
                     diginfo["project/books"].append(digout)
                     self.books.append(digout)
-            if not self.noaction and left and b not in nonScriptureBooks:
+            if left and b not in nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
                 if len(donebooks):
@@ -419,7 +419,8 @@ class RunJob:
                 logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=} {mode=} {sync=}")
                 # Do we ask the merge process to write verification files? (use diff -Bws to confirm they are they same as the input)
                 debugmerge = logger.getEffectiveLevel() <= 5 
-                usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=info.changes.get("merged", []), book=b)
+                if not self.noaction:
+                    usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=info.changes.get("merged", []), book=b)
                 texfiles += [outFile, logFile]
 
         
