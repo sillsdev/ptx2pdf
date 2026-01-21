@@ -4536,6 +4536,7 @@ class GtkViewModel(ViewModel):
         label = self.builder.get_object("l"+_allpgids[pg][2:])
         txtcol = " color='crimson'" if not currentText == self.uneditedText[pg] else ""
         label.set_markup("<span{}>".format(txtcol)+label.get_text()+"</span>")
+        self.pauseNoUpdate()
 
     def _editProcFile(self, fname, loc, intro=""):
         fpath = self._locFile(fname, loc)
