@@ -32,7 +32,7 @@ _occurstypes = {
 _typetypes = {      # type: (type, StyleType, TextType, startswith)
     'footnote': ('char', 'note', 'NoteText', None),
     'introduction': ('header', 'paragraph', 'other', "i"),
-    'list': ('versepara', 'paragraph', 'other', "l"),
+    'list': ('versepara', 'paragraph', 'VerseText', "l"),
     'milestone': (None, 'milestone', None, None),
     'otherpara': ('versepara', 'paragraph', 'other', None),
     'sectionpara': ('versepara', 'paragraph', 'section', None),
@@ -185,7 +185,7 @@ def mrktype(sheet, mrk):
 
 def typesFromMrk(mtype):
     ''' returns StyleType and TextType '''
-    tinfo = _typetypes.get(mtype, None)
+    tinfo = _typetypes.get(mtype.lower(), None)
     if tinfo is not None:   # covers: footnote, introduction, list, milestone, otherpara, sectionpara, title
         return tinfo[1], tinfo[2]
     elif mtype in ('footnotechar', 'crossreferencechar'):
