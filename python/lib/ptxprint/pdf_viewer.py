@@ -595,14 +595,12 @@ class PDFFileViewer:
         seekNextBtn.set_sensitive(False)
 
     def on_button_press(self, widget, event):
-        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
-            self.on_update_pdf(None)
-            return
         if event.button == 2:
             self.is_dragging = True
             self.mouse_start_x = event.x_root
             self.mouse_start_y = event.y_root
             return True
+        return False
 
     def on_mouse_motion(self, widget, event):
         if self.is_dragging:
@@ -619,55 +617,6 @@ class PDFFileViewer:
         if event.button == 2: # middle click
             self.is_dragging = False
             return True
-
-        # Check the state of the modifier keys
-        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
-        shift_pressed = event.state & Gdk.ModifierType.SHIFT_MASK
-
-        # Check if we are in the main content viewer and if any modifier key was pressed
-        if (ctrl_pressed or shift_pressed) and isinstance(self, PDFContentViewer):
-            # Get the paragraph information at the click location
-            parref, _, _ = self.get_parloc(widget, event)
-            
-            # Proceed only if we clicked on a valid paragraph
-            if isinstance(parref, ParInfo):
-                parnum = getattr(parref, 'parnum', 0) or 0
-                parnum = f"[{parnum}]" if parnum > 1 else ""
-                ref = parref.ref
-                self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
-
-                if self.adjlist:
-                    info = self.adjlist.getinfo(ref + parnum, insert=True)
-
-                    # Case 1: Ctrl + Shift are both held down
-                    if ctrl_pressed and shift_pressed:
-                        if event.button == 1:  # Ctrl+Shift+Left-Click
-                            self.on_shrink_both(widget, info, parref)
-                        elif event.button == 3:  # Ctrl+Shift+Right-Click
-                            self.on_expand_both(widget, info, parref)
-                        return True
-
-                    # Case 2: Only Shift is held down
-                    elif shift_pressed:
-                        if event.button == 1:  # Shift+Left-Click
-                            self.on_shrink_paragraph(widget, info, parref)
-                        elif event.button == 3:  # Shift+Right-Click
-                            self.on_expand_paragraph(widget, info, parref)
-                        return True
-
-                    # Case 3: Only Ctrl is held down
-                    elif ctrl_pressed:
-                        if event.button == 1:  # Ctrl+Left-Click
-                            self.on_shrink_text(widget, info, parref)
-                        elif event.button == 3:  # Ctrl+Right-Click
-                            self.on_expand_text(widget, info, parref)
-                        return True
-
-        # Fallback to the default context menu if only the right-click is used
-        if event.button == 3:
-            self.show_context_menu(widget, event)
-            return True
-            
         return False
 
     def show_context_menu(self, widget, event):
@@ -1596,6 +1545,65 @@ class PDFContentViewer(PDFFileViewer):
     def menuFitToScreen(self, x):
         self.set_zoom_fit_to_screen(True)
         
+    def on_button_release(self, widget, event):
+        # This handles the release of the middle-mouse button for panning
+        if event.button == 2: # middle click
+            self.is_dragging = False
+            return True
+
+        # Check the state of the modifier keys
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+        shift_pressed = event.state & Gdk.ModifierType.SHIFT_MASK
+
+        # Check if we are in the main content viewer and if any modifier key was pressed
+        if (ctrl_pressed or shift_pressed):
+            # Get the paragraph information at the click location
+            parref, _, _ = self.get_parloc(widget, event)
+            
+            # Proceed only if we clicked on a valid paragraph
+            if isinstance(parref, ParInfo):
+                parnum = getattr(parref, 'parnum', 0) or 0
+                parnum = f"[{parnum}]" if parnum > 1 else ""
+                ref = parref.ref
+                self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
+
+                if self.adjlist:
+                    info = self.adjlist.getinfo(ref + parnum, insert=True)
+
+                    # Case 1: Ctrl + Shift are both held down
+                    if ctrl_pressed and shift_pressed:
+                        if event.button == 1:  # Ctrl+Shift+Left-Click
+                            self.on_shrink_both(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Ctrl+Shift+Right-Click
+                            self.on_expand_both(widget, info, parref)
+                            return True
+
+                    # Case 2: Only Shift is held down
+                    elif shift_pressed:
+                        if event.button == 1:  # Shift+Left-Click
+                            self.on_shrink_paragraph(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Shift+Right-Click
+                            self.on_expand_paragraph(widget, info, parref)
+                            return True
+
+                    # Case 3: Only Ctrl is held down
+                    elif ctrl_pressed:
+                        if event.button == 1:  # Ctrl+Left-Click
+                            self.on_shrink_text(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Ctrl+Right-Click
+                            self.on_expand_text(widget, info, parref)
+                            return True
+
+        # Fallback to the default context menu if only the right-click is used
+        if event.button == 3:
+            self.show_context_menu(widget, event)
+            return True
+            
+        return False
+
     def show_context_menu(self, widget, event):
         self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         self.last_click_time = time.time()
