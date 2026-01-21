@@ -237,7 +237,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
                 if not m:
                     break
                 try:
-                    contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M))
+                    contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M | regex.S))
                 except re.error as e:
                     doError("Regular expression error: {} in changes file at line {}: {}".format(str(e), i+1, l))
                     break
