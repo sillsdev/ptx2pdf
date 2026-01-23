@@ -1,4 +1,4 @@
-import os, sys, re, subprocess, time
+import os, sys, re, subprocess, time, traceback
 from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree, copy2, copystat

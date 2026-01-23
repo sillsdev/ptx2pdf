@@ -892,6 +892,7 @@ class TTFont:
         self.advances = metrics[0::2]
 
     def readglyf(self, inf):
+        """ Reads bounding box for each glyph """
         if hasattr(self, 'glyphs') or 'loca' not in self.dict:
             return
         self.readhead(inf)
@@ -928,6 +929,7 @@ class TTFont:
         from fontTools import ttLib
         if self.ttfont is None:
             self.ttfont = ttLib.TTFont(self.filename)
+        return self.ttfont
 
     def _getcmap(self):
         self.loadttfont()

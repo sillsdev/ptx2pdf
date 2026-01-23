@@ -1286,7 +1286,8 @@ class PDFContentViewer(PDFFileViewer):
         print(f"Reading {xdvname}")
         cthreshold = float(self.model.get("s_paddingwidth", 0.5))
         xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
-                                    fontsize=float(self.model.get("s_fontsize", 1)))
+                                    fontsize=float(self.model.get("s_fontsize", 1)),
+                                    outlines=self.model.get("c_collisionPrecise", False))
         for (opcode, data) in xdvreader.parse():
             pass
         if self.spacethreshold == 0:

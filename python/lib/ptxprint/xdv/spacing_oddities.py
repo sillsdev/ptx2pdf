@@ -1,33 +1,44 @@
 from ptxprint.xdv.xdv import XDViPositionedReader
+from ptxprint.xdv.collision import glyph_collision
 from ptxprint.font import TTFont
 from math import isclose
 import re
 
-def search_collisions(curr, prev, threshold):
+def search_collisions(curr, prev, threshold, outlines=False):
     i = 0
     j = 0
     while i < len(curr) and j < len(prev):
-        if overlap(curr[i], prev[j], threshold):
+        if overlap(curr[i], prev[j], threshold, outlines=outlines):
             yield i,j
         if curr[i][2] < prev[j][2]:
             i +=1
         else:
             j +=1
     while i < len(curr):
-        if overlap(curr[i], prev[j-1], threshold):        
+        if overlap(curr[i], prev[j-1], threshold, outlines=outlines):
             yield i,j-1
         i +=1
     while j < len(prev):
-        if overlap(curr[i-1], prev[j], threshold):
+        if overlap(curr[i-1], prev[j], threshold, outlines=outlines):
             yield i-1,j
         j +=1
 
-def overlap(curr, prev, t):
-    return (curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3]+t and curr[3] +t >= prev[1])
+def overlap(curr, prev, t, outlines=False):
+    return (curr[0] <= prev[2] and curr[2] >= prev[0] and curr[1] <= prev[3]+t and curr[3]+t >= prev[1])
+
+def glyph_overlap(curr, prev, t):
+    cfont = curr[5].ttfont.ttfont
+    if cfont is None:
+        cfont = curr[5].ttfont.loadttfont()
+    pfont = prev[5].ttfont.ttfont
+    if pfont is None:
+        pfont = prev[5].ttfont.loadttfont()
+    return glyph_collision(cfont, pfont, curr[4], prev[4], curr[6], prev[6],
+                curr[5].points / curr[5].ttfont.upem, prev[5].points / prev[5].ttfont.upem, t)
 
 
 class SpacingOddities(XDViPositionedReader):
-    def __init__(self, fname, parent = None, collision_threshold = 0.5, fontsize=10): 
+    def __init__(self, fname, parent = None, collision_threshold = 0.5, fontsize=10, outlines=False): 
         super().__init__(fname)
         self.ref = ''                 # reference of bible verse
         self.cursor = (self.h, self.v)  # location of last printed glyph
@@ -40,7 +51,7 @@ class SpacingOddities(XDViPositionedReader):
         self.fontsize = fontsize
         self.v_threshold = 0.7*self.fontsize
         self.collision_threshold = collision_threshold
-        
+        self.outlines = outlines
         
     def xglyphs(self, opcode, parm, data):
         start_pos = (self.h, self.v) 
@@ -91,10 +102,10 @@ class SpacingOddities(XDViPositionedReader):
     
     def update_lines(self, startpos, rect):
         if  self.line == None:
-            self.line = Line(startpos[1], self.ref, self.curr_font, rect)
+            self.line = Line(startpos[1], self.ref, self.curr_font, rect, outlines=self.outlines)
             return
         if self.line.is_empty():
-            self.line = Line(startpos[1], self.ref, self.curr_font, rect)
+            self.line = Line(startpos[1], self.ref, self.curr_font, rect, outlines=self.outlines)
             return
         if abs(self.cursor[1]-startpos[1]) < self.v_threshold and abs(self.cursor[1]-self.line.vstart) < self.v_threshold :
             # v might be right, but we need to check the h in case of a diglot, since it's printed horizontally
@@ -108,7 +119,7 @@ class SpacingOddities(XDViPositionedReader):
                 self.line.check_line_collisions(self.prev_line, self.collision_threshold)
         self.parent.addxdvline(self.line, self.page_index, self.line.inrect)
         self.prev_line = self.line
-        self.line = Line(startpos[1], self.ref, self.curr_font, rect)
+        self.line = Line(startpos[1], self.ref, self.curr_font, rect, outlines=self.outlines)
     
     def get_rect(self, pos):
         v_rects = self.parent.getyrects(self.page_index, pos[1])
@@ -119,7 +130,7 @@ class SpacingOddities(XDViPositionedReader):
                 return r
 
 class Line: 
-    def __init__(self, v, ref, font, rect):
+    def __init__(self, v, ref, font, rect, outlines=False):
         self.ref = ref
         self.vstart = v             # v of first glyph
         self.curr_font = font
@@ -128,6 +139,7 @@ class Line:
         self.glyph_clusters = []    # list of GlyphCluster objects
         self.collisions = set()        # [xmin, ymin, xmax, ymax] per collision if exists. ymin is top, ymax is bottom.
         self.inrect = rect
+        self.outlines = outlines
         
     def gcs_change(self, v):
         if self.is_empty():
@@ -171,8 +183,8 @@ class Line:
         if (self.vmin <= prev_line.vmax):
             curr_clusterpos = [c.get_boundary_box() for c in self.glyph_clusters]
             prev_clusterpos = [c.get_boundary_box() for c in prev_line.glyph_clusters]   
-            for i,j in search_collisions(curr_clusterpos, prev_clusterpos, threshold):
-                for g, p in self.glyph_clusters[i].collision(prev_line.glyph_clusters[j], threshold):
+            for i,j in search_collisions(curr_clusterpos, prev_clusterpos, threshold, outlines=self.outlines):
+                for g, p in self.glyph_clusters[i].collision(prev_line.glyph_clusters[j], threshold, outlines=self.outlines):
                     self.add_collision(g, p)        
             
     def has_badspace(self, threshold=4, char_threshold=0):
@@ -223,17 +235,18 @@ class GlyphCluster:
         vmax = pos[1] - self.glyph_topt(g,1)
         self.vmin = min(self.vmin, vmin)
         self.vmax = max(self.vmax, vmax)
-        self.glyphs.append([hmin, vmin, hmax, vmax])
+        self.glyphs.append([hmin, vmin, hmax, vmax, g, self.font, pos])
     
     def glyph_topt(self, no, i):
         if not hasattr(self.font.ttfont, 'glyphs') or no >= len(self.font.ttfont.glyphs):
             return 0
         return (self.font.ttfont.glyphs[no][i] / self.font.ttfont.upem * self.font.points) 
     
-    def collision(self, prev_gc, threshold):
+    def collision(self, prev_gc, threshold, outlines=False):
         for i,j in search_collisions(self.glyphs, prev_gc.glyphs, threshold):
-            yield self.glyphs[i], prev_gc.glyphs[j]
-    
+            if not outlines or glyph_overlap(self.glyphs[i], prev_gc.glyphs[j], threshold):
+                yield self.glyphs[i], prev_gc.glyphs[j]
+
     def get_boundary_box(self):
         if len(self.glyphs) ==0:
             return [0, self.vmin, 0, self.vmax]
