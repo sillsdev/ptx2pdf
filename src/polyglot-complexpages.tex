@@ -89,6 +89,9 @@
     \edef\x@fch@r{\@Alph{\count255}}%
     \let\n@xt\@new@followon
   \fi
+  \ifcsname \x@fch@r test\endcsname\else
+    \x@\mkn@wht\csname \x@fch@r test\endcsname\E
+  \fi
   \xdef\all@list{\all@list\x@fch@r}%
   \n@xt{#1}{#2}%
 }
@@ -235,6 +238,7 @@
   \advance\p@lyr@wno by 1 
 }
 \def\mkn@wht#1\E{\newdim@n#1}
+\newif\if@sc@rerow
 \def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing (#1 describes a user's view of a row)
   \trace{dmc}{@complexs@tpolyp@ges #1}%
   \edef\this@p@lyp@gestring{\p@lyp@gestring}% Expand once and cache
@@ -249,8 +253,15 @@
   \trace{dmc}{blank \ifBookOpenLeft rev\fi p@lyp@gecols\this@p@lyp@gestring}%
   \xdef@cseq{\ifBookOpenLeft rev\fi p@lyp@gecols\this@p@lyp@gestring}{}%
   \x@\xdef\csname cols@\this@p@lyp@gestring\endcsname{\the\count255}% active cols in row p@lyp@gestring
-  \ifcsname \this@p@lyp@gestring @ht\endcsname\else
-    \edef\tmp{\this@p@lyp@gestring @ht}%
+  \ifnum\count255>1 \@sc@rerowtrue 
+    \edef\tmp{+\the\count255\dimexpr}\x@\def\x@\tmpb{\csname\this@p@lyp@gestring @ht\endcsname\relax}% Build the scoring function : sum(N=1..X) { rowheight - col height} = N rowheight-sum(1..X){col ht}
+    \x@\x@\x@\def\x@\x@\x@\tmp\x@\x@\x@{\x@\tmp\tmpb}%
+    \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
+  \else
+    \@sc@rerowfalse
+  \fi
+  \edef\tmp{\this@p@lyp@gestring @ht}%
+  \ifcsname \tmp\endcsname\else
     \x@\mkn@wht\csname \tmp\endcsname\E % Height for this bit of page.
   \fi 
   \x@\x@\x@\def\x@\x@\x@\pg@hts\x@\x@\x@{\x@\pg@hts\x@+\x@\csname \this@p@lyp@gestring @ht\endcsname}%
@@ -269,7 +280,8 @@
     \trace{dmc}{p@lyp@gecols\this@p@lyp@gestring\space is \csname p@lyp@gecols\this@p@lyp@gestring\endcsname}%
   \fi
   \x@\def\csname cts@\this@p@lyp@gestring\endcsname{#1}% What columns are in this row?
-  \x@\xdef\x@\p@gestring\x@{\ifx\p@gestring\empty\else \p@gestring,\fi\this@p@lyp@gestring}% % What is the complete list of sections on this page?
+  \x@\xdef\x@\p@gestring\x@{\ifx\p@gestring\empty\else \p@gestring,\fi\this@p@lyp@gestring}% % What is the complete list of sections on this page?A
+  \x@\gdef\csname c@stPage-\this@p@lyp@gestring\x@\endcsname\x@{\x@\c@stUnBal\x@\dimexpr\the\fntoks\relax}%
   \global\advance\p@lyr@wno by 1
   \let\@cspptotcols\undefined
   \let\@csppactcols\undefined
@@ -317,6 +329,9 @@
       \x@\edef\csname @firstpage@#1\endcsname{\the\p@lyp@geno}%
       \x@\edef\csname @lastpage@#1\endcsname{\the\p@lyp@geno}%
       \else\x@\let\csname layout@#1\endcsname\gr@dnone \fi % No sync
+      \ifcsname #1test\endcsname\else
+        \x@\mkn@wht\csname #1test\endcsname\E
+      \fi
       \xdef\all@list{\all@list#1}%Extend the list of all real & virtual columns.
     \else
       \new@followon{#1}%
@@ -331,6 +346,10 @@
       \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{\x@fch@r\csname revp@lyp@gecols\p@lyp@gestring\endcsname}%
     \else
       \xdef@cseq{p@lyp@gecols\p@lyp@gestring}{\csname p@lyp@gecols\p@lyp@gestring\endcsname\x@fch@r}%
+    \fi
+    \if@sc@rerow
+      \edef\tmp{-\csname tmp#1@ht\endcsname}% increment up the scoring function
+      \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
     \fi
     \count255=\csname @tmpnum@#1\endcsname
     \x@\xdef\csname lastcell#1-\the\p@lyp@geno\endcsname{\p@lyp@gestring} % Where do notes for L/R go on this page?
@@ -652,16 +671,20 @@
   \ifx\ins@meas@trial@dims\empty\else\let\inserts@npage\tr@e\fi %Notice that there are inserts.
 }
 \newdimen\tmpdim
-\def\g@ncolhtfunctions#1{
-  \edef\tmp{\tmpdim=\dimexpr \ht\csname #1box\endcsname+\dp\csname #1box\endcsname \relax }%
-  \x@\fntoks\x@{\tmp}%
+\def\g@ncolhtfunctions#1{%Generate page and layout-test height functions for the given column
+  \fntoks{}%
   \add@tr@iling{#1}%
-  \x@\def\csname tmp#1htfn\x@\x@\x@\endcsname\x@\x@\x@{\x@\the\x@\fntoks\x@\edef\csname tmp#1ht\endcsname{\the\tmpdim}}%
-  \trace{dmc}{tmp#1htfn defined as \x@\meaning\csname tmp#1htfn\endcsname}%
+  \trace{dmc}{trailing for #1 done}%
+  \edef\tmp{\tmpdim=\dimexpr \ht\csname #1box\endcsname+\dp\csname #1box\endcsname \relax }%
+  \x@\def\csname pg#1htfn\x@\x@\x@\x@\x@\x@\x@\endcsname\x@\x@\x@\x@\x@\x@{\x@\x@\x@\tmp\x@\the\x@\fntoks\x@\edef\csname tmp#1ht\endcsname{\the\tmpdim}}% This one for the page
+  \trace{dmc}{pg#1htfn defined as \x@\meaning\csname tmp#1htfn\endcsname}%
+  \x@\def\x@\tmp\x@{\x@\tmpdim\x@=\csname #1test\endcsname}%
+  \x@\def\csname tst#1htfn\x@\x@\x@\x@\x@\x@\x@\endcsname\x@\x@\x@\x@\x@\x@\x@{\x@\x@\x@\tmp\x@\the\x@\fntoks\x@\edef\csname tmp#1ht\endcsname{\the\tmpdim}}% This one for layout testing.
+  \trace{dmc}{tst#1htfn defined as \x@\meaning\csname tst#1htfn\endcsname}%
 }
-\def\us@tmphtfn#1{\x@\let\x@\tmp\csname tmp#1htfn\endcsname\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
+\def\us@tmphtfn#1{\relax\x@\let\x@\tmp\csname \htfntyp #1htfn\endcsname\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
 }
-\def\add@tr@iling#1{%add tr@ling#1 to definintion of \tmp
+\def\add@tr@iling#1{%add tr@iling#1 to definintion of \tmp
   \trace{dmc}{Adding trailing#1 to fntoks}%
   \x@\ifx\csname tr@iling#1\endcsname\relax\else
     \x@\ifx\csname tr@iling#1\endcsname\empty\else
@@ -672,6 +695,12 @@
   \trace{dmc}{currently: \the\fntoks}%
 }
 
+% Determine the tallest box in a row
+\def\rowm@x#1{\x@\x@\x@\@rowm@x\x@{\csname \p@lyp@gestring @ht\x@\endcsname\x@}\x@{\csname tmp#1ht\endcsname}}% For col@do
+\def\@rowm@x#1#2{%
+  %\trace{dmc}{@rowm@x #1 #2}%
+  \x@\fntoks\x@{\the\fntoks \ifdim #2 > #1 #1=#2\relax\fi}}
+
 \def\g@nchunkhtfunctions#1#2\E{%generate an optimised chunk height macro (max(#1,...) for all cols in a row
   \let\gchd@\d@
   \relax\trace{dmc}{g@nchunkhtfunction #1#2}%
@@ -679,7 +708,12 @@
   \ifx\p@gehtcalcs\relax \let\p@gehtcalcs\empty\fi
   \trace{dmc}{resetting fntoks}%
   \fntoks{}%
+  \def\htfntyp{tst}% Mainly we need the test height functions, not the page-height functions
+  %\tracingmacros=1
+  %\tracingassigns=1 \relax
   \let\col@do\us@tmphtfn \x@\each@col#1#2\E
+  %\tracingmacros=0
+  %\tracingassigns=0
   \x@\let\csname tmp#1ht\endcsname\relax
   \def\tmpb{#2}%
   \ifx\tmpb\empty
@@ -689,13 +723,15 @@
     \edef\tmp{\csname \p@lyp@gestring @ht\endcsname=\csname tmp#1ht\endcsname\relax}%
     \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
     \trace{dmc}{fntoks(\p@lyp@gestring):\the\fntoks}%{
-    \let\col@do\@genhtfunction
+    \let\col@do\rowm@x %FIXME
     \x@\each@col#2\E
   \fi
   \trace{dmc}{htfunction-\p@lyp@gestring:\the\fntoks}%
   \x@\def\csname htfunction-\p@lyp@gestring\x@\endcsname\x@{\the\fntoks}%
-  \x@\def\csname p@gehtcalcs\x@\x@\x@\endcsname\x@\x@\x@{\x@\p@gehtcalcs\csname htfunction-\p@lyp@gestring\endcsname}
+  \edef\tmp{\x@\advance\csname p@gehtloss-\the\p@lyp@geno\endcsname by \csname \p@lyp@gestring @ht\endcsname}%
+  \x@\def\csname p@gehtcalcs\x@\x@\x@\endcsname\x@\x@\x@{\x@\p@gehtcalcs\csname htfunction-\p@lyp@gestring\x@\endcsname \tmp}%
   \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\p@gehtcalcs\relax % Save the possibly-updated version
+  %\fntoks{\textheight - \dimexpr }%
   \relax
   \let\d@\gchd@
 }
@@ -727,7 +763,11 @@
   \fi
   \trace{dmc}{mk@chunktr@iling #1:#2 (\typ@)}%
   \if p\typ@\relax 
-      \x@\def\x@\p@gehtcalcs\x@{\p@gehtcalcs\dimen0=\csname #1ht\endcsname \ifdim \dimen0>0pt \advance\thisp@gehtloss \dimexpr \dimen0+\dimen\csname #1\endcsname\relax\fi }% FIXME:(?) Do we get duplicates?? If so, then the calc should probably be built separately, and elsewhere, or use t@rgetcols-type testing.
+      \ifdim\dimen\csname #1\endcsname=\maxdimen
+        \x@\def\x@\p@gehtcalcs\x@{\p@gehtcalcs\dimen0=\csname #1ht\endcsname \ifdim \dimen0>0pt \advance\thisp@gehtloss \dimen0\fi }% 
+     \else
+        \x@\def\x@\p@gehtcalcs\x@{\p@gehtcalcs\dimen0=\csname #1ht\endcsname \ifdim \dimen0>0pt \advance\thisp@gehtloss \dimexpr \dimen0+\dimen\csname #1\endcsname\relax\fi }% FIXME:(?) Do we get duplicates?? If so, then the calc should probably be built separately, and elsewhere, or use t@rgetcols-type testing.
+      \fi
   \else
     \if n\typ@\relax
       \@@l@stcolonly{#1}%
@@ -749,7 +789,7 @@
         \x@\let\csname \tgtc@l-col-#1\endcsname\relax
         \x@\let\x@\tmpf\csname tr@iling\tgtc@l\endcsname
         \ifx\tmpf\relax\let\tmpf\empty\fi
-        \edef\btmp{\dimen1=\csname #1ht\endcsname}%What's the insert height?
+        \x@\def\x@\btmp\x@{\x@\dimen\x@1\x@=\csname #1ht\endcsname\relax}%What's the insert height?
         \x@\extendchunkc@lc\x@{\x@\dimen\csname #1\endcsname}% Save some cycles overall by expanding the extra csname once-for-many, here (extends tmpf)
         \x@\let\csname tr@iling\tgtc@l\endcsname\tmpf
       \fi
@@ -775,13 +815,13 @@
       \let\m@ltip@ge\tr@e
     \fi
     \trace{dmc}{#1 (\tmpa) -> \csname pre@meas@\tmpa @dims\endcsname}%
-    \let\d@\mk@chunktr@iling % May alter: tr@ling[any], p@gehtcalcs, perpg@inserts
+    \let\d@\mk@chunktr@iling % May alter: tr@iling[any], p@gehtcalcs, perpg@inserts
     \x@\x@\x@\cstackdown\csname pre@meas@\tmpa @dims\endcsname,\E
     \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\x@\p@gehtcalcs
   \fi
 }
-\x@\newdimen\csname p@geloss-0\endcsname
-\x@\newdimen\csname p@geloss-1\endcsname
+%\x@\newdimen\csname p@geloss-0\endcsname
+%\x@\newdimen\csname p@geloss-1\endcsname
 
 \def\diglot@run@trials@complexpages{% This receives control after all columns are gathered.
   %As columns are gathered via the output routine, by definition the currentpage must be empty
@@ -840,13 +880,20 @@
     \def\p@gestring{}%
     \x@\let\csname ins@rts-\the\p@lyp@geno\endcsname\relax
     \edef\pg@hts{\csname ins@rts-\the\p@lyp@geno\endcsname}%
+    \fntoks{}%
     \let\d@@\@complexs@tpolyp@ges
     \x@\sstackdown#1/\E
     \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
     \x@\xdef\csname p@lypgcts-\the\p@lyp@geno\endcsname{\p@gestring}% Contents of this page (in terms of page-row)
-    \x@\gdef\csname p@lypght-\the\p@lyp@geno\x@\endcsname{\x@\dimexpr\pg@hts\relax}%
+    \x@\gdef\csname p@lypght-\the\p@lyp@geno\x@\endcsname\x@{\x@\dimexpr\pg@hts\relax}%
+    \ifcsname p@gehtloss-\the\p@lyp@geno\endcsname\else
+      \x@\mkn@wht\csname p@gehtloss-\the\p@lyp@geno\endcsname\E % Height for this bit of page.
+    \fi
+    %\def\tmp{
+    %\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}
+    \x@\gdef\csname sc@re-\the\p@lyp@geno\x@\endcsname\x@{\x@\dimexpr \the\fntoks\relax}%
     \x@\xdef\x@\p@gestrings\x@{\ifx\p@gestrings\empty\else \p@gestrings,\fi\p@gestring}% % What is the complete list of sections (in terms of page-row)?
-  \trace{dmc}{page \the\p@lyp@geno \space height is \csname p@lypght-\the\p@lyp@geno\endcsname}%
+    \trace{dmc}{page \the\p@lyp@geno \space height is \x@\meaning\csname p@lypght-\the\p@lyp@geno\endcsname. Score is \csname sc@re-\the\p@lyp@geno\endcsname}%
     \global\advance\p@lyp@geno by 1\relax
     \xdef\p@lyp@ges{\p@lyp@geno}%
   }

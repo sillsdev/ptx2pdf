@@ -304,12 +304,24 @@ A:\Alist
 \message{dim: xL \l@gdims{\excessL}, xR \l@gdims{\excessR}, xA \l@gdims{\excessA}}%
 %\showbox\excessL
 %\FastTracing
-\diglot@run@trials@complexpages
+\Xtest=54pt
+\Ytest=58pt
+\Ztest=45pt
+\Atest=27pt
+\Ltest=50pt
+\Rtest=55pt
+\dimen\csname note-f\endcsname=10pt
+\x@\def\csname note-fht\endcsname{12pt}
 \tracingassigns=1
-%\tracingmacros=1
-\p@gehtcalcs
-\tracingassigns=0
+\diglot@run@trials@complexpages
+\tracingcommands=3
+\tracingmacros=3
+\message{p@gehtcalcs is: \x@\meaning\csname p@gehtcalcs-0\endcsname. htfunction is \x@\meaning\csname htfunction-0-0\endcsname}
+\csname p@gehtcalcs-0\endcsname
+\csname p@gehtcalcs-1\endcsname
 \tracingmacros=0
-
+\tracingassigns=0
+\tracingcommands=0
+\message{lengths: \the\csname p@gehtloss-0\endcsname, \the\csname p@gehtloss-1\endcsname}
 \relax
 \bye
