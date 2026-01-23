@@ -838,8 +838,16 @@ class RunJob:
             if self.printer.showPDFmode == "preview":
                 self.printer.builder.get_object("dlg_preview").present()
         r = Report()
-        r.run_view(self.printer)
-        r.generate_html(os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".html")), info.dict)
+        reportf = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".html"))
+        try:
+            r.run_view(self.printer)
+            r.generate_html(reportf, info.dict)
+        except Exception as e:         # I don't like this catch all here, but anything could happen
+            if os.path.exists(reportf):
+                os.remove(reportf)
+            s = traceback.format_exc()
+            s += "\n{}: {}".format(type(e), str(e))
+            logger.warn(f"During report generation this error occurred:\n{s}")
         logger.debug("done_job: Finishing thread")
         unlockme()
         if not self.noview and not self.args.print:

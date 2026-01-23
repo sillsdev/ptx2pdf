@@ -250,7 +250,7 @@ class TexModel:
                     copyfile(spath, modspath)
         self.dict["paper/pagegutter"] = "{:.2f}mm".format(Dimension(self.dict["paper/width"]).asunits("mm") \
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
-        if self.dict["project/interlinear"] != "%":
+        if self.dict["project/interlinear"] != "%" and self.dict["project/interlang"]:
             self.interlinear = Interlinear(self.dict["project/interlang"], self.dict["/ptxpath"])
         regfont = self.printer.get("bl_fontR")
         if regfont is not None:
