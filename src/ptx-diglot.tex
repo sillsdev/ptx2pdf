@@ -689,6 +689,7 @@
     \trace{D}{No space for trial}%
     \global\trialfailedtrue
     \let\after@run@a@trial=\after@after@a@trial
+    \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{\the\trialheight}% The trial already rejected the whole lot.
   \fi
   \after@run@a@trial
 }
