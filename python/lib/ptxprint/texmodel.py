@@ -1000,22 +1000,8 @@ class TexModel:
                 (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
                 dat = runChanges(self.changes['initial'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
-            if chaprange is None and self.dict["project/bookscope"] == "single":
-                chaprange = RefList((RefRange(Ref(book=bk, chapter=int(float(self.dict["document/chapfrom"])), verse=0),
-                                     Ref(book=bk, chapter=int(float(self.dict["document/chapto"])), verse=200)), ))
-
-            if chaprange is None or not isbk or not len(chaprange) or chaprange[0].first.chapter is None \
-                or chaprange[0].last.chapter is None or \
-                (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
-                    (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
-                doc = None
-            else:
-                (dat, doc) = self._getDoc(dat, doc, bk)
-                if doc is not None:
-                    doc = doc.getsubbook(chaprange)
-
             if self.interlinear is not None:
-                (dat, doc) = self._getText(dat, doc, bk)
+                # (dat, doc) = self._getText(dat, doc, bk)
                 linelengths = [len(x) for x in dat.splitlines(True)]
                 (dat, doc) = self._getDoc(dat, doc, bk)
                 if doc is not None:
@@ -1026,7 +1012,26 @@ class TexModel:
                         printer.doError("The following references need to be reapproved: " + str(refs),
                                         show=not printer.get("c_quickRun"))
                         self.interlinear.fails = []
-            elif bk.lower().startswith("xx"):
+                    dat = None
+
+            if chaprange is None and self.dict["project/bookscope"] == "single":
+                chaprange = RefList((RefRange(Ref(book=bk, chapter=int(float(self.dict["document/chapfrom"])), verse=0),
+                                     Ref(book=bk, chapter=int(float(self.dict["document/chapto"])), verse=200)), ))
+
+            if chaprange is None or not isbk or not len(chaprange) or chaprange[0].first.chapter is None \
+                or chaprange[0].last.chapter is None or \
+                (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
+                    (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
+                if dat is None:
+                    (dat, doc) = self._getText(dat, doc, bk, logmsg="read interlinear")
+                else:
+                    doc = None
+            else:
+                (dat, doc) = self._getDoc(dat, doc, bk)
+                if doc is not None:
+                    doc = doc.getsubbook(chaprange)
+
+            if bk.lower().startswith("xx"):
                 (dat, doc) = self._getText(dat, doc, bk, logmsg="flatten the module")
                 doc = self.flattenModule(infpath, outfpath, text=dat)
                 dat = None
@@ -1135,7 +1140,7 @@ class TexModel:
     def _makeUSFM(self, txt, bk, reason=""):
         syntaxErrors = []
         doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar, informat="usfm")
-        doc.xml.canonicalise(version="3.1")
+        # doc.xml.canonicalise(version="3.1")
         if doc.xml.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
             errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
