@@ -558,6 +558,8 @@ class Usfm:
                     t = el.parent.text
                     el.parent.text = el.parent.text.strip()
                     w = t[len(el.parent.text):]
+                elif pindex == 0 or el.parent[pindex-1].tail is None:
+                    w = None
                 else:
                     pel = el.parent[pindex-1]
                     t = pel.tail
