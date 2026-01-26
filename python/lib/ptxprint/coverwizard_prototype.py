@@ -747,8 +747,8 @@ class App:
 
 
 def main() -> None:
-    import sys
-    glade_path = "C:/ptx2pdf/python/lib/ptxprint/coverwizard_prototype.glade"
+    import sys, os
+    glade_path = os.path.join(os.path.dirname(__file__), "coverwizard_prototype.glade")
     if len(sys.argv) > 1:
         glade_path = sys.argv[1]
     App(glade_path)
