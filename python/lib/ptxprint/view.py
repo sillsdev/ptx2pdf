@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "3.0.8"
 GitVersionStr = "3.0.8"
-ConfigVersion = "2.25"
+ConfigVersion = "3.01"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1286,6 +1286,11 @@ class ViewModel:
         if v < 2.25:
             if not self._config_bool("project", "iffrontmatter", config, fallback=False):
                 self._configset(config, 'cover/makecoverpage', False)
+
+        if v < 3.01:
+            if self._config_bool("texpert", "vhyphen", config, fallback=False):
+                val = "top" if self._config_bool("texpert", "vhyphenup", config, fallback=False) else "bottom"
+                self._configset(config, "texpert/vhyphenmode", val)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":

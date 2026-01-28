@@ -5,6 +5,7 @@
 \input marginnotes.tex
 %+cmargin_verse
 \newdimen\VerseBoxWidth \VerseBoxWidth=0pt
+\def\vhyphenmode{bottom}
 \def\getverseboxwidth{\setbox2=\hbox{\cstyle{v}{\endash 000}}\global\VerseBoxWidth=\wd2}
 \newif\ifrsh@ft % Does AfterVerseSpaceFactor go right or left of the verse number -- too much happening after setting to use ift@mp
 \def\getnum#1#2{\setbox0=\hbox{\global #1=0#2}}
@@ -20,6 +21,13 @@
   \ifnum \ifx\colshiftmode\@nner\ift@mp 0\else 1\fi\else\ifx\colshiftmode\@uter\ift@mp 1\else 0\fi\else\ifx\colshiftmode\r@ght 1\else 0\fi\fi\fi =0
     \rsh@fttrue\else\rsh@ftfalse
   \fi
+  \ifx\vhyphenmode\gr@dnone\versehyphenfalse\versehyphenupfalse\else
+    \ifx\vhyphenmode\@top\versehyphenuptrue\else
+    \ifx\vhyphenmode\@bottom\versehyphenupfalse\else
+    \ifx\vhyphenmode\l@ft\ifrsh@ft\versehyphenuptrue\else\versehyphenupfalse\fi\else
+    \ifx\vhyphenmode\r@ght\ifrsh@ft\versehyphenupfalse\else\versehyphenuptrue\fi
+  \fi\fi\fi\fi\fi
+  \trace{v}{hyphenmode=\vhyphenmode, hyphen=\ifversehyphenup up\else down\fi}%
   \ifx\v@rsefrom\v@rseto \setbox2=\vtop{\everypar={}\hbox to \VerseBoxWidth{%
         \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\mysimpleprintv@rse
         \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
