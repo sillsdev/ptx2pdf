@@ -481,10 +481,10 @@
     \edef\mytmp{\c@tprefix leaders-tc\l@drsl\the\@col}%
     \ifcsname \mytmp\endcsname
       \trace{t}{Remove space for leaders}%
-      \parfillskip=-\rightskip% \hskip\rightskip \rightskip=0pt
       \nobreak\csname \mytmp\endcsname \hfil
       \trace{t}{Final... \mytmp}\def\f@nish{\unskip\unskip}%
     \else \def\f@nish{}\fi
+    \ifRTL\parfillskip=-\rightskip\fi% \hskip\rightskip \rightskip=0pt
     \ifRTL\endR\fi\par\f@nish}% remove parfillskip and rightskip
   \wd0=\c@rrentcolwidth
   \box0}
