@@ -4,6 +4,7 @@ from ptxprint.usxutils import Usfm, Sheets
 from ptxprint.utils import runChanges
 from usfmtc.usfmgenerate import usx2usfm
 from usfmtc.usfmparser import Grammar
+from usfmtc.reference import Ref
 import argparse, difflib, sys
 from enum import Enum,Flag
 from itertools import groupby
@@ -149,10 +150,11 @@ _canonical_order={
     
 
 class Chunk(list):
-    def __init__(self, *a, mode=None, doc=None, chap=0, verse=0, end=0, pnum=0,syncp='~'):
+    def __init__(self, *a, mode=None, doc=None, bk=None, chap=0, verse=0, end=0, pnum=0,syncp='~'):
         super(Chunk, self).__init__(a)
         self.type = mode
         self.otype = mode
+        self.book = bk
         self.chapter = chap
         self.verse = verse
         self.end = verse
@@ -203,6 +205,7 @@ class Chunk(list):
     def astext(self):
         with io.StringIO() as outf:
             lastel = None
+            cref = Ref(book=self.book, chapter=self.chapter, verse=self.verse)
             for e in self:
                 if e.tag == "para":
                     if lastel is not None and lastel.tail:
@@ -210,7 +213,7 @@ class Chunk(list):
                     outf.write(f"\n\\{e.get('style', '')} {e.text}")
                     lastel = e
                 else:
-                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else Grammar), lastel=lastel, version=[3, 1])
+                    lastel, cref = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else Grammar), lastel=lastel, version=[3, 1], cref=cref)
             if lastel is not None and lastel.tail:
                 outf.write(lastel.tail)
             res = outf.getvalue() + "\n"
@@ -256,6 +259,7 @@ class Collector:
         self.chapter = 0
         self.verse = 0
         self.end = 0
+        self.book = None
         self.waspar = False # Was the previous item an empty paragraph mark of some type?
         self.waschap = False # Was the previous item a chapter number?
         self.counts = {}
@@ -321,7 +325,7 @@ class Collector:
     def makeChunk(self, c=None):
         global _validatedhpi, _headingidx
         if c is None:
-            currChunk = Chunk(mode=self.mode, doc=doc)
+            currChunk = Chunk(mode=self.mode, doc=doc, bk=self.book)
             self.waspar = False
             self.waschap = False
         else:
@@ -340,6 +344,7 @@ class Collector:
                 logger.log(8, f'cl found for {self.chapter} mode:{mode}')
             elif c.tag == "book":
                 mode = ChunkType.ID
+                self.book = c.get("code", None)
             elif name == "nb":
                 mode = ChunkType.NB
             elif c.tag == "row":
@@ -381,7 +386,7 @@ class Collector:
                     logger.log(9, f"Conclusion: bodypar type is {mode}")
                         
             pn = self.pnum
-            currChunk = Chunk(mode=mode, chap=self.chapter, verse=self.verse, end=self.end, pnum=self.pnum(mode))
+            currChunk = Chunk(mode=mode, bk=self.book, chap=self.chapter, verse=self.verse, end=self.end, pnum=self.pnum(mode))
             if not _validatedhpi:
                 p = currChunk.position
                 assert p[_headingidx] == mode.name, "It looks like someone altered the position tuple, but didn't update _headingidx"
@@ -815,9 +820,11 @@ def alignSimple(primary, *others):
                 #logger.log(7,f"{debstr(runs)}")
     results = []
     for r in runs:
-        res = [Chunk(*sum(pchunks[r[0][0]:r[0][1]+1], []), mode=pchunks[r[0][1]].type)]
+        rchunk = pchunks[r[0][0]]
+        res = [Chunk(*sum(pchunks[r[0][0]:r[0][1]+1], []), mode=pchunks[r[0][1]].type, bk=rchunk.book, chapter=rchunk.chapter)]
         for i, (ochunks, okeys) in enumerate(others, 1):
-            res.append(Chunk(*sum(ochunks.acc[r[i][0]:r[i][1]+1], []), mode=ochunks.acc[r[i][1]].type))
+            achunk = ochunks.all[r[i][0]]
+            res.append(Chunk(*sum(ochunks.acc[r[i][0]:r[i][1]+1], []), mode=ochunks.acc[r[i][1]].type, bk=achunk.book, chapter=achunk.chapter))
         results.append(res)
     return results
 

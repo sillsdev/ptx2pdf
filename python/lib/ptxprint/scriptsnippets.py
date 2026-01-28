@@ -178,6 +178,12 @@ class arab(ScriptSnippet):
     def getrefseps(cls, view):
         return cls.refseparators[1 if view.get("c_scrarabrefs") else 0]
 
+    @classmethod
+    def tex(cls, view):
+        return r"""\sethook{start}{wg}{\beginL}
+\sethook{end}{wg}{\endL}
+"""
+
 class mlym(Indic):
     @classmethod
     def regexes(cls, view):
