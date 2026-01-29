@@ -973,8 +973,6 @@ _fontstylemap = {
     'Medium': ''
 }
 
-FontRef = None
-
 class FontRef:
     def __init__(self, name, style, isGraphite=False, isCtxtSpace=False, feats=None, lang=None):
         self.name = name
@@ -1204,7 +1202,7 @@ class FontRef:
         elif self.style is not None and len(self.style):
             s = _fontstylemap.get(self.style, None)
             # add style to name if not one of the standard ones
-            name = self.name + (" "+self.style if s is None else "")
+            name = self.name + (" "+self.style if not s else "")
         else:
             name = self.name
 
@@ -1224,6 +1222,7 @@ class FontRef:
                 feats.append((f.feats.get(k, k), f.featvals.get(k, {}).get(int(v), v)))
             else:
                 feats.append(("+"+k, v))
+        logger.debug(f"{self.name=}, {self.style=}[{_fontstylemap.get(self.style, 'None')}] -> {name=}, {sfeats=}, {feats=}")
         return (name, sfeats, feats)
 
     def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None, force=False, noStyles=False):
