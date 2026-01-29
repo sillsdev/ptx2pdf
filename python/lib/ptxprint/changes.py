@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-refmtfn = regex.compile(r"(?<!\\)\$([a-z]+)\{((?:(?R)|\\\}|[^}])*)\}|(?<!\\)\\(\d)")
+refmtfn = regex.compile(r"(?<!\\)\$([a-z]+)\{((?:(?R)|\\\}|[^}])*)\}|(?<!\\)\\(?:(\d)|([rtn\\\n'\"abfv])|(u[0-9a-fA-F]{4})|(U[0-9a-fA-F]{8}))")
 
 functions = {
     "upper":    (1, lambda self,s:s.upper()),
@@ -17,9 +17,18 @@ functions = {
     "set":      (2, lambda self,v,s:self.setvar(v, s))
 }
 
+_escapes = {"n": "\n", "r": "\r", "t": "\t", "\\": "\\", "\n": "", "'": "'",
+            '"': '"', "a": "\a", "b": "\b", "f": "\f", "v": "\v"}
+
 def _procfn(self, m, p):
     if m.group(3):
         return p.group(int(m.group(3)))
+    elif m.group(4):
+        return _escapes.get(m.group(4), m.group(4))
+    elif m.group(5):
+        return chr(int(m.group(5)[1:], 16))
+    elif m.group(6):
+        return chr(int(m.group(6)[1:], 16))
     c = m.group(2)
     pc = refmtfn.sub(lambda x:_procfn(self, x, p), c)
     t = m.group(1)
