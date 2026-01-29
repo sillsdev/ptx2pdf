@@ -182,6 +182,22 @@ file and replace BAK,XXA,XXE with whichever books you want the intro material st
 at BAK,XXA,XXE '\\i[so]\d?\s.+\r?\n' > ''
 ```
 
+## Add a toc2 for each chapter
+
+We want a TOC entry for each chapter rather than just the book. To make it even
+better, don't include an extra entry for chapter 1
+
+```
+'(\\h\s*)(.*?)(\r?\n)' > '\1\2\3$set{bk,\2}'
+'(\\c\s*(\d\d+|[2-9]))(\s+)' > '\1\3\\toc2 $v{bk} \2\3'
+```
+
+This uses two change functions, which are identified by \$ and then the function
+name. Parameters are a comma separated list within { }. The first line collects the \\h value which is
+the book name used in the header. This will be inserted before each chapter
+number as part of the TOC. The second line matches a chapter with number > 1 and
+outputs the same chapter and then a toc2 line involving the book and chapter.
+
 # TeX Snippets
 The snippets in this section go into the ptxprint-mods.tex file.
 
