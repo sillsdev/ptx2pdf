@@ -922,7 +922,8 @@ class GtkViewModel(ViewModel):
                 #Gtk.Application.do_activate(self)
                 pass
 
-            def on_window_destory(self, widget):
+            def on_window_destroy(self, widget):
+                self.win.destroy()
                 self.release()
 
         self.mainapp = MacApp(self)
@@ -1959,6 +1960,7 @@ class GtkViewModel(ViewModel):
     def onDestroy(self, btn, *a):
         if self.testing is not None:
             self.testing.finalise()
+        self.builder.get_object("mainapp_win").destroy()
         self.mainapp.quit()
 
     def onKeyPress(self, dlg, event):

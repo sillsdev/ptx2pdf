@@ -981,7 +981,9 @@ class StyleEditorView(StyleEditor):
             for k, v in dialogKeys.items():
                 if k == 'Marker':
                     continue
-                val = self.model.get(v).replace("\\","")
+                val = self.model.get(v)
+                if val is not None:
+                    val = val.replace("\\","")
                 # print(f"{k=} {v=} -> {val=}")
                 if k != "mrktype" or Grammar.marker_categories.get(key, '') == '':
                     self.setval(key, k, val)
