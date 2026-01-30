@@ -563,7 +563,7 @@ class Usfm:
                 else:
                     pel = el.parent[pindex-1]
                     t = pel.tail
-                    pel.tail = pel.tail.strip()
+                    pel.tail = pel.tail.rstrip()
                     w = t[len(pel.tail):]
                 newel.tail = w
                 el.parent.insert(el.parent.index(el)+1, newel)
