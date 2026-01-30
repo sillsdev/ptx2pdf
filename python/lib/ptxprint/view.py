@@ -1222,6 +1222,8 @@ class ViewModel:
                 self._configset(config, "fancy/pagebordertype", "pdf")
             if self._config_bool("fancy", "enableborders", config, fallback=False):
                 self._configset(config, "fancy/enableornaments", True)
+            if self._config_bool("fancy", "sectionheader", config, fallback=False):
+                self._configset(config, "fancy/sectionborder", "legacy")
 
         if v < 2.18: # transfer this value from body tab to texpert tab
             if self._config_bool("project", "ifstarthalfpage", config, fallback=False):
