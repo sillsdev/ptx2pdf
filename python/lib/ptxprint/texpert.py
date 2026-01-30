@@ -161,6 +161,8 @@ texpertOptions = {
     "FootnoteMulC":       O("footnotemulc", "NTS", (0, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
 
+    "diglotMergedNotesRTL":         O("mergednotesrtl", "DIG", False, None, _("Diglot/polyglot merged paragraphed notes are RTL"),
+                            _("When merged notes are not shown as individual paragraphs, the result must be arranged as though RTL or LTR (however the induvidual notes are structured). This defines the paragraph alignment.")),
     "ReVersify":          O("reversify", "DIG", True, "", _("Adjust Versification of Projects"),
                             _("If versification differs between projects, adjust diglot/polyglot projects to match the primary (L) project.")),
     "ShowVPvrse":         O("showvpvrse", "DIG", True, "", _("Keep existing verse numbers (as \\vp)"),

@@ -325,6 +325,8 @@
 \diglotSepNotestrue%
 \newif\ifdiglotBalNotes %If a left column footnote steals space from the right column also
 \diglotBalNotesfalse%
+\newif\ifdiglotMergedNotesRTL % If merged footnotes should be RTL or LTR
+\diglotMergedNotesRTLfalse
 \newif\iftrialfailed
 \global\def\n@xtc@mmand{}%
 
@@ -2469,10 +2471,9 @@
   \traceifset{@do@writep@ge@simplecols-c}%
   \ifdiglotSepNotes%
   \else%
-     % RTLness will have been asserted (or not) when the note was defined.
      \setbox\notechunk\vbox{%
-       \ifdiglot\RTLfalse\fi
        \def\c@rrdstat{L}%
+       \ifdiglot\ifdiglotMergedNotesRTL \RTLtrue\else\RTLfalse\fi\fi % How should notes get added to the 'end' of previous notes?
        \traceNum{d}{Inserting Notes}%
        \f@rstnotetrue%
        \m@kenotebox
