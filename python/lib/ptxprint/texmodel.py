@@ -886,6 +886,7 @@ class TexModel:
     def runConversion(self, infpath, outdir, noaction=False):
         outfpath = infpath
         script = self.dict['project/selectscript']
+        logger.debug(f"{script} {infpath} {outfpath}, ?={self.dict['project/processscript']}")
         if self.dict['project/processscript'] and script and os.path.exists(script):
             outfpath = os.path.join(outdir, os.path.basename(infpath))
             doti = outfpath.rfind(".")
@@ -912,7 +913,9 @@ class TexModel:
                             sys.argv = sys._argv
                             hasrun = True
                 if not hasrun:
+                    logger.debug(f"running: {cmd}")
                     checkoutput(cmd) # dont't pass cmd as list when shell=True
+        logger.debug(f"{outfpath=}")
         return outfpath
 
     def _getText(self, data, doc, bk, logmsg=""):
@@ -944,20 +947,10 @@ class TexModel:
         printer = self.printer
         if not len(self.changes):
             if self.asBool('project/usechangesfile'):
-                # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
-                #cpath = self.printer.configPath(self.printer.configName())
-                #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 def printError(msg, **kw):
                     self.printer.doError(msg, show=not self.printer.get("c_quickRun"))
                 self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
                                             bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
-        #adjlistfile = printer.getAdjListFilename(bk)
-        #if adjlistfile is not None:
-        #    adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
-        #                        adjlistfile.replace(".adj", "_changes.txt"))
-        #    chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
-        #    for k, v in chs.items():
-        #        self.changes.setdefault(k, []).extend(v)
         draft = "-" + (printer.cfgid or "draft")
         fname = printer.getBookFilename(bk)
         if fname is None:

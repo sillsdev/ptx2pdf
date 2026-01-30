@@ -2094,6 +2094,15 @@ class GtkViewModel(ViewModel):
                     fileLocked = False
         if len(self.getNewBooks()):
             self.pauseNoUpdate()
+        if self.get("c_processScript"):
+            pdffile = self.project.printPath(self.baseTeXPDFnames(diff=False)[0]+".pdf")
+            pauseme = True
+            if os.path.exists(pdffile):
+                pdftime = os.lstat(pdffile).st_mtime
+                scripttime = os.lstat(self.get("btn_selectScript")).st_mtime
+                pauseme = scripttime > pdftime
+            if pauseme:
+                self.pauseNoUpdate()
         self.onSaveConfig(None)
         self.checkUpdates()
 
