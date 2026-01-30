@@ -7074,6 +7074,25 @@ Thank you,
 
     def onMoveEndOfAyahClicked(self, wid):
         self.set('c_verseNumbers', not self.get("c_decorator_endayah"))
+        if not self.get("c_decorator_endayah") or self.loadingConfig:
+            return
+        fnstyle = None
+        for a in (("Footnotes", "f"), ("Xrefs", "x")):
+            if not self.get("c_include"+a[0]):
+                continue
+            s = self.styleEditor.asStyle(a[1])
+            if 'callerstyle' not in s or 'notecallerstyle' not in s:
+                if fnstyle is None:
+                    fnstyle = self.styleEditor.asStyle("fncaller")
+                    if not len(fnstyle):
+                        vstyle = self.styleEditor.asStyle("v")
+                        self.styleEditor.addMarker("fncaller", "fncaller")
+                        self.styleEditor.sheet["fncaller"].update(vstyle)
+                        self.styleEditor.setval("fncaller", "name", "fncaller")
+                        self.styleEditor.setval("fncaller", "TextProperties", "publishable")
+                for b in ("", "note"):
+                    if b+'callerstyle' not in s:
+                        self.styleEditor.setval(a[1], b+'callerstyle', 'fncaller')
         
     def onGridSettingChanged(self, wid, status):
         if self.loadingConfig:
