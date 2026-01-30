@@ -3624,25 +3624,25 @@ class GtkViewModel(ViewModel):
                 l.set_tooltip_markup(tips[k])
             featbox.attach(l, 0, i, 1, 1)
             l.show()
-            inival = int(setfeats.get(k, "0"))
+            inival = int(setfeats.get(k, -1))
             if k in vals:
                 if len(vals[k]) < 3:
                     obj = Gtk.CheckButton()
                     if k in vals and len(vals[k]) > 1:
                         obj.set_tooltip_text(vals[k][1])
-                    obj.set_active(inival)
+                    obj.set_active(max(inival, 0))
                 else:
                     obj = Gtk.ComboBoxText()
                     for j, n in sorted(vals[k].items()):
                         obj.append(str(j), n)
-                    obj.set_active(inival)
+                    obj.set_active(inival+1)
                     obj.set_entry_text_column(1)
             elif k == "aalt":
                 obj = makeSpinButton(0, 100, 0)
-                obj.set_value(inival)
+                obj.set_value(max(inival, 0))
             else:
                 obj = Gtk.CheckButton()
-                obj.set_active(inival)
+                obj.set_active(max(inival, 0))
             obj.set_halign(Gtk.Align.START)
             featbox.attach(obj, 1, i, 1, 1)
             obj.show()
@@ -3681,13 +3681,13 @@ class GtkViewModel(ViewModel):
             for i, (k, v) in enumerate(sorted(feats.items())):
                 obj = featbox.get_child_at(1, i)
                 if isinstance(obj, Gtk.CheckButton):
-                    val = 1 if obj.get_active() else 0
+                    val = 1 if obj.get_active() else None
                 elif isinstance(obj, Gtk.SpinButton):
-                    val = int(obj.get_value())
+                    val = int(obj.get_value()) or None
                 elif isinstance(obj, Gtk.ComboBoxText):
-                    val = obj.get_active_id()
-                if val is not None and ((self.currdefaults is not None and str(self.currdefaults.get(k, 0)) != str(val))\
-                                        or (self.currdefaults is None and str(val) != "0")):
+                    val = int(obj.get_active_id())
+                    val = val - 1 if val else None
+                if val is not None and str(self.currdefaults.get(k, None)) != str(val):
                     results.append("{}={}".format(k, val))
             self.set("t_fontFeatures", ", ".join(results), mod=False)
         for i in range(numrows-1, -1, -1):
