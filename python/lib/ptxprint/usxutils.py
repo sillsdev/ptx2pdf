@@ -84,7 +84,7 @@ def out_sty(base, outf, keyfield="Marker"):
 
 class PTXTag(Tag):
     def __new__(cls, s, **kw):
-        if (m := re.match(r"^(\S+)\^(\d+)$", s)):
+        if (m := re.match(r"^(\S+?)\^(\d+)$", s)):
             t = m.group(1)
             stretch = int(m.group(2))
         else:
