@@ -13,7 +13,7 @@ functions = {
     "upper":    (1, lambda self,s:s.upper()),
     "lower":    (1, lambda self,s:s.lower()),
     "title":    (1, lambda self,s:s.title()),
-    "v":        (1, lambda self,s:self.vars.get(s, "")),
+    "var":      (1, lambda self,s:self.vars.get(s, "")),
     "set":      (2, lambda self,v,s:self.setvar(v, s))
 }
 
