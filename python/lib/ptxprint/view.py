@@ -409,6 +409,8 @@ class ViewModel:
         self.dict[btn+"/style"] = style
 
     def onFontChanged(self, fbtn):
+        if self.loadingConfig:
+            return
         font_info = self.get("bl_fontR")
         if font_info is None:
             return
@@ -891,7 +893,7 @@ class ViewModel:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
             font = FontRef(fname, "")
             self.set("bl_fontR", font)
-        self.onFontChanged(None)
+            self.onFontChanged(None)
         # clear generated pictures # Not sure why we need to do this. Commented out 16-1-2025
         # for f in ("tmpPics", "tmpPicLists"):
             # path2del = os.path.join(self.project.printPath(cfgname), f)
