@@ -823,7 +823,7 @@ def alignSimple(primary, *others):
         rchunk = pchunks[r[0][0]]
         res = [Chunk(*sum(pchunks[r[0][0]:r[0][1]+1], []), mode=pchunks[r[0][1]].type, bk=rchunk.book, chap=rchunk.chapter)]
         for i, (ochunks, okeys) in enumerate(others, 1):
-            achunk = ochunks.all[r[i][0]]
+            achunk = ochunks.acc[r[i][0]]
             res.append(Chunk(*sum(ochunks.acc[r[i][0]:r[i][1]+1], []), mode=ochunks.acc[r[i][1]].type, bk=achunk.book, chap=achunk.chapter))
         results.append(res)
     return results
