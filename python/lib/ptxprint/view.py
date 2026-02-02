@@ -37,8 +37,8 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "3.0.8"
-GitVersionStr = "3.0.8"
+VersionStr = "3.0.9"
+GitVersionStr = "3.0.9"
 ConfigVersion = "3.01"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
