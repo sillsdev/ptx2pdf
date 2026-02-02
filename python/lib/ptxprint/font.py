@@ -686,7 +686,7 @@ class TTFont:
                         numtables = struct.unpack(">H", dat[4:6])[0]
                         thisdir = self._read_dir(inf, numtables)
                         thisnames = self.readNames(inf, dirdic=thisdir)
-                        if thisnames[1] == self.family:
+                        if thisnames.get(1, "") == self.family:     # Mac fonts don't obey standards?
                             self.dict = thisdir
                             ttcindex = i
                             break
