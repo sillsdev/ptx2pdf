@@ -1,10 +1,45 @@
-PTXprint 3.0.8 Release Notes
-17 Jan 2026
+PTXprint 3.0.9 Release Notes
+2 Feb 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
 WARNING: The default settings for Poetry and Heading spacing have been changed in v3.0
+
+Bug fixes and Improvements in 3.0.9 (2 Feb 2026)
+  * Enable noupdate by default
+  * Pause no update on edits to settings files
+  * Implement handling shrink/expand text with noupdate enabled
+  * Add precise glyph collisions
+  * Enhance changes.txt with ability to use functions (see snippets.md)
+  * Add dropdown to control marginal verse hyphens (Advanced, Other)
+  * Make 'in' changes match multiple lines for .
+  * Destroy old main window when switching languages
+  * Pause if script newer than pdf
+  * Increase blank white threshold for diglots
+  * Add check for content in scripture file to catch it before TeX gives an unhelpful error
+  * Add runchecks when canonicalising
+  * Avoid spurious \vid|* in diglots
+  * Allow interlinear with no language (assumes \rb is provided)
+  * Move interlinear processing earlier in process
+  * Address the regular overriding other font settings on project load (#1127)
+  * Add footnote magic when enabling shift ayahs
+  * Get TOCs working for RTL no leaders
+  * Set rejected height when rejecting a galley
+  * Add usfm checks to reports
+  * Add widgets to processing_needed list
+  * Change Lists to be VerseText, not Other (because this allows pagebreaks after)
+  * Tidy up button clicking in pdf_viewer
+  * Tidy up the noupdate logic and fix autoupdate timing bug
+  * Fix losing font styling, and harden the style editor
+  * Fix report generation
+  * Fix p^96, add full footnote test
+  * Fix mis-paragraphing in RTL merged notes (#1125)
+  * Fix cv feature values in font selector to give correct output
+  * Fix legacy config for section header borders
+  * Fix crash in moving ayahs
+  * Fix noaction on diglots
+  * Issue when enumerating font weights on macOS (#1093) - Needs testing
 
 Bug fixes and Improvements in 3.0.8 (17 Jan 2026)
   * Add 'Layout Only' mode to skip re-processing of USFM data on every run (speeds things up)
