@@ -851,11 +851,20 @@ class Usfm:
     def runchecks(self):
         root = self.getroot()
         errors = []
+        hascontent = False
         for eloc, isin, cref in iterusxref(root):
             if isin:
                 if eloc.tag == "note":
                     if not eloc.get('caller', ''):
                         errors.append((cref, "Missing note caller"))
+                if eloc.tag not in ("book", "para") and not isempty(eloc.text):
+                    hascontent = True
+                if not hascontent and eloc.tag == "para" and self.grammar.marker_categories.get(eloc.get("style"), "").lower() in ("versepara", "introduction", "section") and not isempty(eloc.text):
+                    hascontent = True
+            elif not hascontent and not isempty(eloc.tail):
+                hascontent = True
+        if not hascontent:
+            errors.append((Ref(), "Empty file"))
         return errors
 
 
