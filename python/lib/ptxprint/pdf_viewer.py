@@ -1978,6 +1978,7 @@ class PDFContentViewer(PDFFileViewer):
         dialog.hide()
         if response != Gtk.ResponseType.OK:
             self.model.set("t_sliceRef", "", mod=False)
+        self.model.pauseNoUpdate()
         self.hitPrint()
 
     def shrinkBothAmt(self, info):
