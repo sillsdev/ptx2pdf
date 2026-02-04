@@ -189,7 +189,7 @@ better, don't include an extra entry for chapter 1
 
 ```
 '(\\h\s*)(.*?)(\r?\n)' > '\1\2\3$set{bk,\2}'
-'(\\c\s*(\d\d+|[2-9]))(\s+)' > '\1\3\\toc2 $v{bk} \2\3'
+'(\\c\s*)(\d\d+|[2-9])(\s+)' > '\1\2\3\\toc2 $var{bk} \2\n'
 ```
 
 This uses two change functions, which are identified by \$ and then the function

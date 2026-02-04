@@ -325,8 +325,6 @@
 \diglotSepNotestrue%
 \newif\ifdiglotBalNotes %If a left column footnote steals space from the right column also
 \diglotBalNotesfalse%
-\newif\ifdiglotMergedNotesRTL % If merged footnotes should be RTL or LTR
-\diglotMergedNotesRTLfalse
 \newif\iftrialfailed
 \global\def\n@xtc@mmand{}%
 
@@ -1906,7 +1904,7 @@
       \ifdim \csname @fn#1ht\endcsname>0pt \advance\dimen1 by 2\dimen2 \fi % certainly needed when calculating by oldpartian+@curXht, not sure about other times.
       \trace{D}{Colour for #1(\bg@fillht - \ifloc@lht loc\else glo\fi) is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
       %\hbox to 0pt{\vrule height 1pt width 100pt\hss}%
-      \traceifcheck{ins@backgrounds-c}%
+      %\traceifcheck{ins@backgrounds-c}%
       \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\dimexpr\f@rstb@dy+\tbskip@jd+\csname textb@dr@top@pad#1\endcsname \relax}\else\let\pf@x\empty\fi
       \traceifset{ins@backgrounds-h}%
       \hbox to 0pt {%
@@ -2471,9 +2469,10 @@
   \traceifset{@do@writep@ge@simplecols-c}%
   \ifdiglotSepNotes%
   \else%
+     % RTLness will have been asserted (or not) when the note was defined.
      \setbox\notechunk\vbox{%
+       \ifdiglot\RTLfalse\fi
        \def\c@rrdstat{L}%
-       \ifdiglot\ifdiglotMergedNotesRTL \RTLtrue\else\RTLfalse\fi\fi % How should notes get added to the 'end' of previous notes?
        \traceNum{d}{Inserting Notes}%
        \f@rstnotetrue%
        \m@kenotebox
