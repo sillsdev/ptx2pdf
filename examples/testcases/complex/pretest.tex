@@ -3,7 +3,7 @@
 \input paratext2.tex
 \FastTracing
 \tracing{dmc}  
-%\tracing{dmc}  
+\tracing{dmp}  
 \tracing{tim}  
 \XeTeXuseglyphmetrics=0
 \FontSizeUnit=1pt
@@ -19,13 +19,15 @@
 \newPolyglotCol{L}
 \newPolyglotCol{R}
 \newPolyglotCol{A}
+\newPolyglotCol{C}
 \def\DiglotLFraction{0.5}
 \def\DiglotRFraction{0.5}
 \def\DiglotAFraction{1}
+\def\DiglotCFraction{0.5}
 
 \diglottrue
 \stylesheet{usfm_sb.sty}
-\polyglotpages{LL/A,RR/A}
+\polyglotpages{LL/A,RR/A,C}
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1}
 \everypar{}
@@ -34,21 +36,21 @@
 \makeatletter
 \count\topleftins=1000
 \floatingpenalty=10000
-\setbox\Lbox\vbox{\hsize=100pt
+\setbox\excessL\vbox{\hsize=100pt
 \mark{a:1:1}\penalty10000 Sapiente eum quasi qui\insert\csname note-f\endcsname{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\vbox{another line}} \mark{a:1:2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{a:1:3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{a:1:4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{a:1:5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
 \vbox to 3\baselineskip{\hbox{Hi}\vfill}\penalty10000
 \insert\toprightins{\vbox{another line}}\mark{a:1:6}Dolores nostrum nihil vel placeat. \mark{a:1:7}Expedita voluptatem iusto dolorem. \mark{a:1:8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{a:1:9}Eveniet quia sed voluptatem. \mark{a:1:10}Voluptatum eaque pariatur id eveniet ratione. \mark{a:1:11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{a:1:12}Delectus molestiae eveniet odit magnam magni. \mark{a:1:13}Itaque sed corporis aut autem dignissimos maxime.}
-\setbox\Rbox\vbox{\hsize=100pt . \mark{a:1:1}Repellat nihil autem quod doloremque adipisci illum officia laudantium. \mark{a:1:2}Voluptate dignissimos itaque odit. \mark{a:1:3}Et omnis veritatis magnam rem doloremque. \mark{a:1:4}Pariatur laudantium iusto illo. \mark{a:1:5}A eos corporis ab quae iure non.Porro et necessitatibus quam. \mark{a:1:6}Culpa dolor est porro error voluptatem enim non. \mark{a:1:7}Nulla tempore quia praesentium facere dolores omnis. \mark{a:1:8}Quam ut asperiores magni in expedita aut qui. \mark{a:1:9}Quos sit voluptas accusantium non doloremque fugiat placeat voluptas.Perspiciatis quis odio facere ad velit exercitationem deserunt. \mark{a:1:10}Temporibus fuga non omnis harum ut voluptates explicabo. \mark{a:1:11}Nulla rerum quia consequatur. \mark{a:1:12}Ut dolor aspernatur porro dicta quod. \mark{a:1:13}Quo eos qui mollitia. \mark{a:1:14}Aut ratione voluptate debitis et vero est.}
-\setbox\Abox\vbox{\hsize=200pt 
+\setbox\excessR\vbox{\hsize=100pt . \mark{a:1:1}Repellat nihil autem quod doloremque adipisci illum officia laudantium. \mark{a:1:2}Voluptate dignissimos itaque odit. \mark{a:1:3}Et omnis veritatis magnam rem doloremque. \mark{a:1:4}Pariatur laudantium iusto illo. \mark{a:1:5}A eos corporis ab quae iure non.Porro et necessitatibus quam. \mark{a:1:6}Culpa dolor est porro error voluptatem enim non. \mark{a:1:7}Nulla tempore quia praesentium facere dolores omnis. \mark{a:1:8}Quam ut asperiores magni in expedita aut qui. \mark{a:1:9}Quos sit voluptas accusantium non doloremque fugiat placeat voluptas.Perspiciatis quis odio facere ad velit exercitationem deserunt. \mark{a:1:10}Temporibus fuga non omnis harum ut voluptates explicabo. \mark{a:1:11}Nulla rerum quia consequatur. \mark{a:1:12}Ut dolor aspernatur porro dicta quod. \mark{a:1:13}Quo eos qui mollitia. \mark{a:1:14}Aut ratione voluptate debitis et vero est.}
+\setbox\excessA\vbox{\hsize=200pt 
 . \mark{a:1:1}Illum cupiditate velit repellendus aliquid impedit. \mark{a:1:2}Beatae et ut quod a doloribus. \mark{a:1:3}Sunt ut et eos aut sunt tempore. \mark{a:1:4}Sit quaerat quae tempore molestiae delectus ratione non. \mark{a:1:5}Est cum atque numquam minus non nesciunt et.Nisi modi eaque inventore architecto eveniet repudiandae. \mark{a:1:6}Amet ut quo impedit molestiae. \mark{a:1:7}Voluptatem dolorem reiciendis ut voluptas explicabo qui quo. \mark{a:1:8}Corrupti et dolore in et tenetur et cupiditate autem. \mark{a:1:9}Similique et et delectus.Ut quam mollitia voluptatem ipsa id. \mark{a:1:10}Velit quas maiores temporibus dolore. \mark{a:1:11}Sequi autem facere omnis et dicta totam est hic. \mark{a:1:12}Id sed unde similique mollitia sed aliquid.}
 \endgraf
 \def\ins@meas@trialpenalty{-10010}
 %\tracingmacros=1
 %\tracingassigns=1
 \ptxfile{}\everypar{}\let\par\endgraf
-\MSG{L: \l@gdims\Lbox}
-\MSG{A: \l@gdims\Rbox}
-%\MSG{\l@gdims\Abox}
+\MSG{L: \l@gdims\excessL}
+\MSG{A: \l@gdims\excessR}
+%\MSG{\l@gdims\excessA}
 \newcount\cols
 \newdimen\max
 \iflua
@@ -61,7 +63,7 @@
 \MSG{bls:\the\baselineskip}
 \def\try#1{\count255=1 \max=0pt
   \cols=\csname cols#1\endcsname
-  \setbox0\copy\csname#1box\endcsname
+  \setbox0\copy\csname excess#1\endcsname
   \let\dims\empty
   \let\ins@rtl@st\empty
   \def\ins@meas@trial@result{0pt}%
@@ -163,7 +165,7 @@
   \def\ubal{}
   \x@\@ption#1\E
 }
-%\l@gdims0 \l@gdims\Lbox
+%\l@gdims0 \l@gdims\excessL
 \newcount\trynum
 \def\presplit#1{%
   \trynum=#1
@@ -195,7 +197,7 @@
 \def\ssr@sult{}
 \tracetimset{ssplit}\relax
 \complex@ssplit L
-\trace{dmc}{\ssr@sult}
+\trace{dmc}{ssplit: \ssr@sult}
 \tracetimcheck{ssplit}{sequential L}
 
 \tracetimset{rsplit}\relax
@@ -204,18 +206,18 @@
 \def\ssr@sult{}
 \tracetimset{ssplit}\relax
 \complex@ssplit R
-\trace{dmc}{\ssr@sult}
+\trace{dmc}{ssplit: \ssr@sult}
 \tracetimcheck{ssplit}{sequential R}
-\newbox\Cbox
-\setbox\Cbox\vbox{\unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox}
-%\setbox\Cbox\vbox{\unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox \unvcopy \Lbox}
+\newbox\excessC
+\setbox\excessC\vbox{\unvcopy \excessL \unvcopy \excessL \unvcopy \excessL \unvcopy \excessL \unvcopy \excessL \unvcopy \excessL}
+%\setbox\Cbox\vbox{\unvcopy \excessL \unvcopy \excessL \unvcopy \excessL \unvcopy \excessL \unvcopy \excessL \unvcopy \excessL}
 \tracetimset{rsplit}\relax
 \complex@rsplit C
 \tracetimcheck{rsplit}{recursive C}
 \def\ssr@sult{}
 \tracetimset{ssplit}\relax
 \complex@ssplit C
-\trace{dmc}{\ssr@sult}
+\trace{dmc}{ssplit: \ssr@sult}
 \tracetimcheck{ssplit}{sequential C}
 
 \trace{dmc}{---------------------------------}
@@ -258,7 +260,7 @@
 \count255=0
 \edef\start{\the\elapsedtime}
 \def\colsL{2}\def\colsR{2}\def\colsA{1}
-\dimen1=\ht\Lbox \divide\dimen1 by \colsL
+\dimen1=\ht\excessL \divide\dimen1 by \colsL
 \def\splittask{\try{L}\try{R}\try{A}}
 %\loop\bgroup
   \let\Llist\relax\let\Rlist\relax
@@ -270,7 +272,7 @@
 \MSG{Splitting: \the\dimexpr \numexpr\stop-\start\relax pt / 65536\relax}
 
 %\bye \endinput
-\edef\tot{\the\dimexpr 0.9\ht\Lbox}%
+\edef\tot{\the\dimexpr 0.9\ht\excessL}%
 
 L:\Llist\par
 R:\Rlist\par
@@ -288,13 +290,13 @@ A:\Alist
 %BEST: \bestpath\par
 %\cplx@apply{\bestpath}
 
-%\showbox\Lbox
+%\showbox\excessL
 \par
 %\tracing{d}
 %\tracing{o}
 %%\SHOWSTUFF
 %\tracingall
-%\box\Lbox
+%\box\excessL
 \def\digl@tc@ntentlist{LRA}
 \tracing{imt}
 \ifdim\pagetotal>0pt \pagebreak \fi
@@ -312,13 +314,15 @@ A:\Alist
 \Rtest=55pt
 \dimen\csname note-f\endcsname=10pt
 \x@\def\csname note-fht\endcsname{12pt}
-\tracingassigns=1
+%\tracingassigns=1
 \diglot@run@trials@complexpages
-\tracingcommands=3
-\tracingmacros=3
+%\tracingcommands=3
+%\tracingmacros=3
 \message{p@gehtcalcs is: \x@\meaning\csname p@gehtcalcs-0\endcsname. htfunction is \x@\meaning\csname htfunction-0-0\endcsname}
 \csname p@gehtcalcs-0\endcsname
 \csname p@gehtcalcs-1\endcsname
+\p@lyp@geno=0
+\@me@surepages
 \tracingmacros=0
 \tracingassigns=0
 \tracingcommands=0

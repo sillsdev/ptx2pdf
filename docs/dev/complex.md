@@ -85,14 +85,14 @@ If the second chunks L<sub>2</sub> and A<sub>2</sub> were not present in the inp
 fit on the page, either due to space available or other factors, such as them
 being headings), then the principle of unused space being at the bottom of the
 page would say dividing L~1a~ and L~1b~ as in  the crossed-out middle
-figure above was correct *in that first chunk*.  If they *are* present, then
-L<sub>1</sub> must be merged and re-broken (combined notes) or the galley reprocessed (per-column footnotes).
+figure above was correct *in that first chunk*.  If they *are* present, however,  then
+L<sub>1</sub> must be merged and re-broken (combined notes) or even the galley reprocessed (per-column footnotes).
 
 ### Summary for repeated columns
 Thus it is necessary that if a column is repeated, then:
 
 1. There is *no* column synchronisation for columns that appear more than 
-once in a  page-set, except (possibly) the end-verse.
+once in a  npage-set, except (possibly) the end-verse.
 2. Consideration on positioning of footnotes may alter how the algorithm behaves. 
 3.  The full galley (or processed galley, see efficiency possibilities **E<sub>1</sub>**, and **E<sub>2</sub>** below) 
 for all split columns must be preserved between chunks, in case a following chunk is added. 

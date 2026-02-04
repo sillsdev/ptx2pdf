@@ -2697,6 +2697,7 @@
 % collection, etc. anyway??
 
 \def\me@sureins@trial#1#2{%DONT run this whith anything on the page!
+  % #1 column, #3 box
   % May be run in 3 modes: 
   % If ins@meas@trialnofulltrue, then it will not do the full check. Otherwise:
   % ins@meas@trialfulltrue will always do a full check,
@@ -2738,7 +2739,7 @@
 %The assumption is that each note class will either add at least a whole line
 %or move elsewhere, so they all need counting separately.
 \def\ins@meas@trial{%
-  \xdef\ins@meas@trial@result{\the\dimexpr \premtht-\the\pagegoal\relax}%
+  \xdef\ins@meas@trial@result{\the\dimexpr \premtht-\the\pagegoal\relax}% inserts subtract from the pagegoal.
   \setbox255\vbox{\unvbox255}
   \global\let\ins@meas@trial@dims\empty%
   \ifins@meas@trialfull
