@@ -2532,13 +2532,15 @@
 }
 \def\onecolwidth#1{%
   \dimen9=\textwidth
-  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
-  \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
+  %\ifb@dy\iftob@dy\else
+    \advance \dimen9 by -\columnshift
+  %\fi\fi
+  \ifx\XrefNotes\empty\relax\else\ifnum\BodyColumns=1%\ifx\ch@pter\empty\else
     \advance \dimen9 by -\XrefNotesWidth
     \advance \dimen9 by -\XrefNotesMargin
     \advance \dimen9 by -0.5\gutter
     \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
-  \fi\fi\fi
+  \fi\fi%\fi
   \global #1=\dimen9
   \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }

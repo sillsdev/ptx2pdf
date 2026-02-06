@@ -771,6 +771,12 @@
           "Label": "Set different background images for different pages",
           "Description": "This snippet is less a snippet as a technique. It shows two ways of setting style parameters from TeX.",
           "CodeSnippet": "% Set background image(s) Note: use / as path separator\n\\sethook{page}{20}{\\NewPageBorder{path/to/images/Background1.jpg}}\n\\sethook{page}{23}{\\NewPageBorder{path/to/images/Background2.jpg}}\n\\sethook{page}{26}{\\NewPageBorder{}}\n"
+        },
+        {
+          "Type": "insert",
+          "Label": "Side Aligned Notes",
+          "Description": "This snippet allows us to have cross-references in the side margins vertically aligned with the verse text.",
+          "CodeSnippet": "% Side Aligned Notes\n\\catcode`\\@=11\n\\marginaln@te{x}\n\\marginnotesgap = 6pt\n\\marginnoteswidth = \\dimexpr 60pt + \\marginnotesgap\n\\def\\MarginNoteSide{outer}"
         }
       ],
       "Tracing": [
