@@ -355,8 +355,8 @@
 \def\@checkzvar#1#2::#3::#4\E{%if the value saves is zvar::something, then return that zvar
   \trace{A}{@checkzvar '#1' '#2' '#3'}%
   \edef\tmp{#2}\ifx\tmp\zv@r
-    \edef#1{\csname ms:zvar=#3\endcsname}%
-    \trace{A}{attrib '#1' is '\attr@b'}%
+    \xdef#1{\csname ms:zvar=#3\endcsname}%
+    \trace{A}{checked attrib '#1' is '\attr@b'}%
   \fi
 }
 \newif\if@ttrexists

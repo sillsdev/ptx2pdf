@@ -840,6 +840,7 @@ class TexModel:
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
+                logger.log(7, "\n".join(fcontent))
 
     def addInt(self, outfname):
         intfname = self.printer.getBookFilename('INT')

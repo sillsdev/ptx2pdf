@@ -898,7 +898,7 @@
      \leftskip=\noteRag
   \fi\fi\fi\fi
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
-  \XeTeXuseglyphmetrics=3 
+  \ifColNotes\else\XeTeXuseglyphmetrics=3\fi 
   \edef\n@tetype{#2}%
   \ifnewparnotes
     \makevboxofhboxes
