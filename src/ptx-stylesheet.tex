@@ -1571,6 +1571,7 @@
 \def\cstackbottom#1,#2\E{\edef\cstack@tmp{#2}\ifx\cstack@tmp\empty\d@ #1\E\let\n@x=\cstackrelax\else\let\n@x=\cstackbottom\fi\n@x #2\E}                  %(1)
 \def\cstackdown#1,#2\E{\edef\cstack@tmp{#1}\ifx\cstack@tmp\empty\else\d@ #1\E\fi\edef\cstack@tmp{#2}\ifx\cstack@tmp\empty\let\n@x=\cstackrelax\else\let\n@x=\cstackdown\fi\n@x #2\E}
 \def\cstacktop#1,#2\E{\edef\temp{#1}\ifx\temp\empty\else\d@ #1\E\fi}
+\def\cstackcount#1,#2\E{\let\n@x\cstackcount\edef\cstack@tmp{#1}\ifx\cstack@tmp\empty \let\n@x\cstackrelax \else\advance\count255 by 1 \fi\n@x#2\E}
 \def\cstackrelax#1\E{}
 %-csty_stack
 

@@ -529,7 +529,7 @@
 \def\complex@ssplit#1{% Slow, but reliable.
   \bgroup % Keep redefinitions local
     \ins@meas@trialfullfalse
-    \ins@meas@trialnofulltrue
+    %\ins@meas@trialnofulltrue
     \vfuzz=\maxdimen
       \setbox0\copy\csname excess#1\endcsname%
     \dimen1=\ht0 % FIXME: This *could* be adjusted to limit it to the max number of lines that fit at maximum on the laid-out page(s).
@@ -551,7 +551,7 @@
       %\advance\dimen3 by \ht1
       %\advance\dimen2 by \ins@meas@trial@result
       \x@\global\csname split@insheights#1\endcsname{\count255}=\ins@meas@trial@result
-      %%\xdef\ssr@sult{\ssr@sult \space \the\count255: \the\csname split@insheights#1\endcsname{\count255}/\the\csname split@heights#1\endcsname{\count255}/\the\csname split@vrs#1\endcsname{\count255}}%
+     % \xdef\ssr@sult{\ssr@sult \space \the\count255: \the\csname split@insheights#1\endcsname{\count255}/\the\csname split@heights#1\endcsname{\count255}/\the\csname split@vrs#1\endcsname{\count255}}%
       \advance \count255 by 1
     \unless\ifnum\count255>\nsplit \repeat
     %\tracetimset{xp}%
@@ -577,8 +577,8 @@
   \local@split@defs{#1}{\nsplit}% Generate (if needed) and flag as unused values. Also sets \split@insheights etc.  
   \bgroup
     \ins@meas@trialfullfalse
-    \ins@meas@trialnofulltrue% No full measuring
-    \@complex@rsplit{#1}{\the\nsplit}{0}{0}{-1sp}%
+    %\ins@meas@trialnofulltrue% No full measuring
+    \@complex@rsplit{#1}{\the\nsplit}{0}{0}{0pt}{-1sp}%
   \egroup
   \count255=0
   % Assign the verse numbers and split-heights by a straight loop 
@@ -589,7 +589,7 @@
     \setbox1\vbox{\unvbox1}%
     \@complex@wrt@splitvrs{#1}{\count255}%
     \x@\global\csname split@heights#1\endcsname{\count255}=\ht1
-    %\message{#1{\the\count255,\the\dimexpr \count255\baselineskip\relax}=\the\csname split@insheights#1\endcsname{\count255}/\the\csname split@heights#1\endcsname{\count255}/\the\csname split@vrs#1\endcsname{\count255}}%%
+    \message{#1{\the\count255,\the\dimexpr \count255\baselineskip\relax}=\the\csname split@insheights#1\endcsname{\count255}/\the\csname split@heights#1\endcsname{\count255}/\the\csname split@vrs#1\endcsname{\count255}/\csname split@insdims-\the\count255\endcsname}%%
   \ifnum\count255<\nsplit \repeat
 }
 
@@ -601,96 +601,103 @@
     \setbox2\hbox{\x@\global\csname split@vrs#1\endcsname{#2}=\v@rsefrom }%Record the verse, but discard any trailing a,b,c
   \fi\fi\fi
 } 
-\def\@complex@rsplit#1#2#3#4#5{% col,endpoint,startoffset,boxID,inserts
-  \edef\ncv@lb{#5}%
+\def\@complex@rsplit#1#2#3#4#5#6{% 1:col,2:endpoint,3:startoffset,4:boxID,5:startinserts,6:endinserts
+  \edef\ncv@lb{#6}%
   \setbox\tmpb@x\copy#4
   \count255=#2\relax
   \advance\count255 by -#3%Remove offset to get delta, and half it (i.e. find midpoint of box, in absolute terms)
   \divide\count255 by 2
-  \ifnum \count255>0
+  \ifnum \count255>0 % I.e. there's something to do.
     \edef\@sp{\the\count255}% @sp=split point- half way through box
     %\tracingassigns=1
-    \edef\@npb{\the\numexpr #2 \relax}% #2 might be a calc
+    \edef\@npb{\the\numexpr #2 \relax}% abs position of test-range end-point  (might be a calc)
     \edef\@np{\the\numexpr #3+\count255 \relax}%absolute number for @sp
-    \trace{dmc}{rsplit #1 #2 #3 #4 #5(\@np, \@npb) (\the\ht#4)}%
+    \trace{dmc}{rsplit #1 #2 #3 #4 #5 #6 (\@np, \@npb) (box:\the\ht#4)}%
+    \ifnum\@npb >\nsplit %sanity check
+      \errmessage{Insane value #2 > \the\nsplit}%
+    \fi
     %\tracingassigns=0 \relax
     \setbox 0\box\tmpb@x
     %\ifx\@sp\@ne \showbox 0 \fi
-    \setbox1=\vsplit 0 to \@sp\baselineskip
-    \setbox1\vbox{\unvbox1}%
-    %\@complex@wrt@splitvrs{#1}{\@np}%
-    %\trace{dmc}{split into \@sp results in \number\dimexpr\ht1/\baselineskip\relax / \number\dimexpr \ht0/\baselineskip\relax}%
-    \edef\tmpa{\x@\the\split@insheights{\@np}}%
-    \ifdim\tmpa =-1sp
-      \me@sureins@trial{#1}{1}%
-      \let\tmpa\ins@meas@trial@result
-      \ifnum #3=0 
-        %\trace{dmc}{\@np -> \tmpa}%
-        \global\split@insheights{\@np}=\tmpa
-      \else
-        \edef\lval{\the\split@insheights{#3}}%
-        \ifdim\lval=-1sp\else
-          %\trace{dmc}{** \@np -> \tmpa+\lval}%
-          \x@\global\split@insheights{\@np}=\dimexpr\tmpa+\lval\relax
-        \fi
+    \setbox1=\vsplit 0 to \@sp\baselineskip %Box 1 now holds START, box0 END of range.
+    \setbox1\vbox{\unvbox1}% Ensure it is at its natural height.
+    \trace{dmcr}{split at #3+\@sp(\@np) results in \number\dimexpr\ht1/\baselineskip\relax /\number\dimexpr \ht0/\baselineskip\relax\space bls split}%
+    \dimen1=\split@insheights{\@np}
+    \edef\tmpa{\the\dimen1}% inserts in first chunk (box1)
+    \ifdim\tmpa =-1sp % Unknown value at np - what we expect!
+      \me@sureins@trial{#1}{1}% Measure the first half of the box
+      \ifins@meas@trialnofull\else
+        \trace{dmcr}{Details @\@np\space is \ins@meas@trial@dims}%
+        \global\x@\let\csname split@insdims-\@np\x@\endcsname=\ins@meas@trial@dims
       \fi
-      %\trace{dmc}{rsplit - \tmpa\space between #3 and \@np}%
+      \let\tmpa\ins@meas@trial@result
+      \dimen1=\dimexpr #5 + \tmpa \relax
+      \global\split@insheights{\@np}=\dimen1
+      \trace{dmcr}{rsplit - \tmpa\space between #3 and \@np}%
     \else
-      %\trace{dmc}{- No measuring needed for \@np ??}%
+      \trace{dmc}{rsplit ! No measuring needed (result already) for \@np ??, how did we get here?}%
     \fi
-    \ifnum\@npb <\nsplit 
-      %\edef\ncv@l{\the\csname split@insheights#1\endcsname{\@npb+1}}% set the no change value
-    \else
-      \edef\@npb{\the\nsplit}%
-      \edef\ncv@lb{\the\split@insheights{\nsplit}} %set the no change value
-    \fi
-    \dimen0=\split@insheights{\@npb}%
-    \ifdim \dimen0=-1sp
-      \me@sureins@trial{#1}{0}%
+    %\trace{dmc}{Looking up \@npb}%
+    \dimen0=\split@insheights{\@npb}\relax% Urm, why is this not #6??
+    \ifdim \dimen0=-1sp % unknown value at top end of split- shouldn't happen much!
+      \me@sureins@trial{#1}{0}% Measure the second hald
+      \ifins@meas@trialnofull\else
+        \trace{dmcr}{Details @\@npb\space is \ins@meas@trial@dims}%
+        \global\x@\let\csname split@insdims-\@npb\x@\endcsname=\ins@meas@trial@dims
+      \fi
       \let\tmpb\ins@meas@trial@result
-      %\trace{dmc}{rsplit + \tmpb\space between \@np and \@npb}%
+      \trace{dmcr}{rsplit + \tmpb\space between \@np and \@npb}%
       \ifdim\ncv@lb=-1sp
-        \edef\ncv@lb{\the\dimexpr \tmpa+\tmpb\relax}%
+        \dimen0=\the\dimexpr \tmpa+\tmpb\relax
+        \edef\ncv@lb{\the\dimen0}% end-point value is sum of the 2 parts.
         %\message{\@npb -> \tmpb+\tmpa =\ncv@lb}%
         \x@\global\split@insheights{\@npb}=\ncv@lb
       \fi
     \else
-      \edef\tmpb{\the\dimexpr#5-\dimen0 \relax}%
-      %\trace{dmc}{+ No measuring needed for \@np-\@npb: calculated \tmpb}%
+      \edef\tmpb{\the\dimexpr#6-\dimen0 \relax}%
+      \trace{dmcr}{rsplit * No measuring needed for \@np-\@npb(#2) (#6-\the\dimen0 ): calculated \tmpb}%
     \fi
     \let\ncv@l\ncv@lb
     % process the tail first.
     \ifdim\tmpb=0pt
-     % \ifdim #5=-1sp \def\ncv@lb{0pt}\fi% Only occurs at the 1st call, so if there's nothing, then there's nothing in the upper half.
+     % \ifdim #6=-1sp \def\ncv@lb{0pt}\fi% Only occurs at the 1st call, so if there's nothing, then there's nothing in the upper half.
       \count255=\@npb
-      %\trace{dmc}{rsplit + no change between \@np and \@npb: \ncv@lb}%
+      \trace{dmcr}{rsplit + no change between \@np and \@npb: \ncv@lb (\csname split@insdims-\@np\endcsname}%
       \loop 
         %\message{\the\count255 -> \ncv@lb}%
         \x@\global\split@insheights{\count255}=\ncv@lb
-        \
+        \ifins@meas@trialnofull\else
+          \global\x@\let\csname split@insdims-\the\count255\x@\endcsname\csname split@insdims-\@np\endcsname
+        \fi
         \advance\count255 -1
         \ifnum\count255>\@np 
       \repeat
     \else
       %\trace{dmc}{rsplit + \tmpb\space between \@np and \@npb}%
+      \ifins@meas@trialnofull\else
+        \x@\xdef\csname split@insdims-\@np\endcsname{\csname split@insdims-\@npb\endcsname,\ins@meas@trial@dims}
+      \fi
       \edef\ncv@l{\the\dimexpr \ncv@lb-\tmpb\relax}%
     \fi
     \ifdim \tmpa=0pt
-      %\trace{dmc}{rsplit - no change between #3 and \@np: \ncv@l }%
+      \trace{dmcr}{rsplit - no changes between #3 and \@np: \ncv@l (\csname split@insdims-\@np\endcsname)}%
       \count255=\@np
       \loop 
         \ifdim \split@insheights{\count255}=-1sp
           \x@\global\split@insheights{\count255}=\ncv@l
           %\message{\the\count255 -> \ncv@l}%
         \fi
+        \ifins@meas@trialnofull\else
+          \global\x@\let\csname split@insdims-\the\count255\x@\endcsname\csname split@insdims-\@np\endcsname
+        \fi
         \advance\count255 -1
       \ifnum \count255>#3 \repeat
     \else\bgroup
-      \edef\@rgs{{#1}{\@np}{#3}{1}{\ncv@l}}% col,lines,offset,box,inserts
+      \edef\@rgs{{#1}{\@np}{#3}{1}{#5}{\the\dimen1}}% col,lines,offset,box,insert start,stop
       \x@\@complex@rsplit\@rgs
     \egroup\fi
     \ifdim\tmpb=0pt\else\bgroup
-      \edef\@rgs{{#1}{\@npb}{\@np}{0}{\ncv@lb}}%% col,lines,offset,box,inserts
+      \edef\@rgs{{#1}{\@npb}{\@np}{0}{\ncv@l}{\ncv@lb}}%% col,lines,offset,box,insert start,stop
       \x@\@complex@rsplit\@rgs
     \egroup\fi
   \fi  
@@ -730,7 +737,14 @@
   \fi
   \x@\let\csname pre@meas@#1@result\endcsname\ins@meas@trial@result
   \x@\let\csname pre@meas@#1@dims\endcsname\ins@meas@trial@dims
-  \ifx\ins@meas@trial@dims\empty\else\let\inserts@npage\tr@e\fi %Notice that there are inserts.
+  \ifx\ins@meas@trial@dims\empty
+    \x@\edef\csname pre@meas@#1@inscount\endcsname{0}%
+  \else
+    \let\inserts@npage\tr@e %Notice that there are inserts.
+    \count255=0
+    \cstackcount\ins@meas@trial@dims,\E
+    \x@\edef\csname pre@meas@#1@inscount\endcsname{\the\count255}%
+  \fi 
 }
 \newdimen\tmpdim
 \def\g@ncolhtfunctions#1{%Generate page and layout-test height functions for the given column
@@ -841,6 +855,12 @@
     \else
       \if x\typ@\relax
         \@@l@stcolonly{#1}%
+        %FIXME: Currently the note box-height estimates an effective height for
+        %each note as it's added, based on the note width as a function of line
+        %length.  With actual multi-row content now available, we should be
+        %able to calculate a correcting factor. Current assumption is this is
+        %NOT urgent, so the correcting factor is 1.
+        \x@\edef\csname #1XrefColOfs\x@\endcsname\x@{\csname \p@lyr@wstring @ht\endcsname}%
       \fi %Other 
     \fi
     \if \tmp@r\tr@e\relax
@@ -856,7 +876,11 @@
         \x@\let\csname \tgtc@l-col-#1\endcsname\relax
         \x@\let\x@\tmpf\csname tr@iling\tgtc@l\endcsname
         \ifx\tmpf\relax\let\tmpf\empty\fi
-        \x@\def\x@\btmp\x@{\x@\dimen\x@1\x@=\csname #1ht\endcsname\relax}%What's the insert height?
+        \if x\typ@\relax
+          \x@\def\x@\btmp\x@{\x@\dimen\x@1\x@=\csname #1ht\x@\endcsname\x@\advance\x@\dimen\x@1 \x@-\csname #1XrefColOfs\relax}%What's the estimated insert height after accounting for the contents that vanishes into the XrefColumn?
+        \else
+          \x@\def\x@\btmp\x@{\x@\dimen\x@1\x@=\csname #1ht\endcsname\relax}%What's the insert height?
+        \fi
         \x@\extendchunkc@lc\x@{\x@\dimen\csname #1\endcsname}% Save some cycles overall by expanding the extra csname once-for-many, here (extends tmpf)
         \x@\let\csname tr@iling\tgtc@l\endcsname\tmpf
       \fi
@@ -919,6 +943,7 @@
     % so there needs to to be a 3 step process: (a) allocate figure heights, etc, to whatever column.
     % (b) define tmpLht, etc as the sum of the column and inserts for a given chunk, also building a list of page-dependant inserts.
     % (c) build the column functions (calculating and referencing tstLht and friends), generate page-deductions code. 
+    % If a given column only has one insert type, then there's no need to do the full scoring on it.
     \let\col@do\g@ncolhtadditions 
     \x@\each@col\all@list\E % step (a)
   \fi
@@ -968,10 +993,26 @@
   \fi
 }
 
-\def\g@noptions#1{%
+\def\g@noptions#1{%Generate the options-list for each table
+  \ifnum \csname pre@meas@#1@inscount\endcsname<2
+    \ins@meas@trialnofulltrue% No need for a full measure 
+    \x@\ifx\csname pre@meas@#1@dims\endcsname\empty
+      \let\res@parse\empty
+    \else
+      %\x@\x@\x@\s@tres@parsesimple\csname pre@meas@#1dims\endcsname\E%
+    \fi
+  \else
+    \let\res@parse\@res@parse
+    \ins@meas@trialnofullfalse % Allow full measure
+  \fi
+  \ins@meas@trialfullfalse
   \traceifset{g@noptions}%
-  \complex@split#1
+  \complex@split{#1}%
   \traceifcheck{g@noptions}%
+}
+
+\def\s@tres@parsesimple#1:#2\E{%
+  \x@\def\x@\res@parse\x@{\csname test#1\x@\endcsname\x@=\csname ins@meas@trial@result\endcsname}%
 }
 
 %%%%%%%%%%%%%%%%%%%%
