@@ -345,6 +345,12 @@
           "Label": "Insert book separator pages",
           "Description": "Insert book separator pages using heading information",
           "CodeSnippet": "'(?ms)(\\\\h )(.+?\\r?\\n)(.+?)(\\r?\\n)(\\\\mt)' > '\\1\\2\\3\\4\\\\zgap|2in\\\\*\\4\\\\mt \\2\\\\is The New Testament in Wakawaka\\4\\\\zrule\\\\*\\4\\\\pb\\4\\5'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Insert break in Columned References",
+          "Description": "Insert 'Chapter #' to separate verse references in chapter transitions (only for columned cross-references).",
+          "CodeSnippet": "'(?ms)(\\\\c (\\d+).*?)(\\\\v 1 )' > '\\1\\\\x + \\\\xt \\\\NBSP\\\\NBSP \\\\em Chapter \\2\\\\em*\\\\x*\\3'"
         }
       ],
       "Format": [
