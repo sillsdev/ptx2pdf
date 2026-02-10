@@ -33,10 +33,10 @@
               <object class="GtkLabel" id="l_header">
                 <property name="xalign">0</property>
                 <property name="wrap">True</property>
-                <property name="label" translatable="yes">A guided cover wizard for translators.</property>
+                <property name="label" translatable="yes">A guided cover wizard for translators</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
-                  <attribute name="scale" value="1.05"/>
+                  <attribute name="scale" value="1.10"/>
                 </attributes>
               </object>
             </child>
@@ -63,17 +63,22 @@
         </child>
 
         <!-- Main area: left wizard stack, right preview -->
+        <!-- NOTE: GtkPaned removed to eliminate unwanted separator line (per requirement #9). -->
         <child>
-          <object class="GtkPaned" id="pn_main">
+          <object class="GtkBox" id="bx_mainrow">
             <property name="orientation">horizontal</property>
-            <property name="position">600</property>
+            <property name="spacing">0</property>
 
             <!-- Left side -->
             <child>
               <object class="GtkBox" id="bx_left">
                 <property name="orientation">vertical</property>
                 <property name="spacing">8</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <!-- Requirement #2: add right margin gap -->
                 <property name="margin_end">12</property>
+
                 <child>
                   <object class="GtkStack" id="st_steps">
                     <property name="transition_type">slide-left-right</property>
@@ -213,6 +218,7 @@
                                   </object>
                                 </child>
 
+                                <!-- Requirement #7: this label is adjusted dynamically in Python based on spine on/off -->
                                 <child>
                                   <object class="GtkRadioButton" id="r_cov_wrap_all">
                                     <property name="label" translatable="yes">Wrap all (one image across front + spine + back)</property>
@@ -269,18 +275,7 @@
                                   </object>
                                 </child>
 
-                                <child>
-                                  <object class="GtkFrame" id="fr_cov_diagram">
-                                    <property name="label" translatable="yes">Coverage diagram</property>
-                                    <property name="shadow_type">in</property>
-                                    <child>
-                                      <object class="GtkDrawingArea" id="da_coverage_diagram">
-                                        <property name="height_request">120</property>
-                                        <signal name="draw" handler="on_da_coverage_diagram_draw" swapped="no"/>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
+                                <!-- Requirement #1: coverage diagram removed -->
 
                               </object>
                             </child>
@@ -580,6 +575,15 @@
                                   </object>
                                 </child>
 
+                                <!-- Requirement #6: subtitle option on spine -->
+                                <child>
+                                  <object class="GtkCheckButton" id="c_spine_subtitle">
+                                    <property name="label" translatable="yes">Use subtitle on spine</property>
+                                    <property name="active">False</property>
+                                    <signal name="toggled" handler="on_c_spine_subtitle_toggled" swapped="no"/>
+                                  </object>
+                                </child>
+
                                 <child>
                                   <object class="GtkCheckButton" id="c_spine_langname">
                                     <property name="label" translatable="yes">Use language/translation name on spine</property>
@@ -609,17 +613,26 @@
                                           </object>
                                         </child>
 
+                                        <!-- Requirement #4: two vertical options + one horizontal -->
                                         <child>
-                                          <object class="GtkRadioButton" id="r_spine_text_vertical">
-                                            <property name="label" translatable="yes">Vertical (default)</property>
+                                          <object class="GtkRadioButton" id="r_spine_text_v_ttb">
+                                            <property name="label" translatable="yes">Vertical (top to bottom)</property>
                                             <property name="active">True</property>
-                                            <signal name="toggled" handler="on_r_spine_text_vertical_toggled" swapped="no"/>
+                                            <signal name="toggled" handler="on_r_spine_text_v_ttb_toggled" swapped="no"/>
+                                          </object>
+                                        </child>
+
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_spine_text_v_btt">
+                                            <property name="group">r_spine_text_v_ttb</property>
+                                            <property name="label" translatable="yes">Vertical (bottom to top)</property>
+                                            <signal name="toggled" handler="on_r_spine_text_v_btt_toggled" swapped="no"/>
                                           </object>
                                         </child>
 
                                         <child>
                                           <object class="GtkRadioButton" id="r_spine_text_horizontal">
-                                            <property name="group">r_spine_text_vertical</property>
+                                            <property name="group">r_spine_text_v_ttb</property>
                                             <property name="label" translatable="yes">Horizontal</property>
                                             <signal name="toggled" handler="on_r_spine_text_horizontal_toggled" swapped="no"/>
                                           </object>
@@ -852,6 +865,8 @@
               <object class="GtkFrame" id="fr_preview">
                 <property name="label" translatable="yes">Live preview</property>
                 <property name="shadow_type">in</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
                 <child>
                   <object class="GtkBox" id="bx_preview">
                     <property name="orientation">vertical</property>

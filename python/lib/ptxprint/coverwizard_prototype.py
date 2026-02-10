@@ -2,14 +2,18 @@
 # -*- coding: utf-8 -*-
 
 """
-coverwizard_prototype.py
 Standalone GTK3 (PyGObject) prototype of a surface-based Cover Wizard.
 
-Key points:
-- No PTXprint integration yet.
-- Live Cairo preview (fast, no PDF).
-- Progressive disclosure: spine step(s) skipped if no spine; spine-related coverage options hidden when spine is off.
-- WorkingCoverState is temporary; Finish prints JSON and writes coverwizard_state.json.
+Changes in this revision (per user list):
+1) Removed Step-2 "Coverage diagram" widget entirely.
+2) Added right margin gap (12) to bx_left in Glade.
+3) Preview now draws panels with NO gap and SINGLE divider lines (no doubled lines).
+4) Spine orientation has 2 vertical directions + 1 horizontal.
+5) ISBN + barcode placeholder merged and positioned near the spine edge on the back panel.
+6) Added option to include Subtitle on spine (after title, before language).
+7) Step-2 first option label dynamically avoids mentioning spine when spine disabled.
+8) Header title changed to: "A guided cover wizard for translators"
+9) Removed unwanted divider line between left and preview by replacing GtkPaned with GtkBox.
 """
 
 from __future__ import annotations
@@ -17,7 +21,7 @@ from __future__ import annotations
 import json
 import os, sys
 from dataclasses import asdict, dataclass
-from typing import List, Optional
+from typing import List
 
 import gi
 
@@ -30,16 +34,12 @@ def _(s: str) -> str:
     return s
 
 
-# -----------------------------
-# Data model (temporary state)
-# -----------------------------
-
 @dataclass
 class WorkingCoverState:
     spine_enabled: bool = False
     pagecount: int = 0
 
-    coverage_pattern: str = "wrap_all"  # enum string
+    coverage_pattern: str = "wrap_all"  # wrap_all|front_only|front_spine|back_only|back_spine|front_back_separate|none
 
     bg_mode: str = "white"  # white|solid|gradient
     bg_color: str = "#f2f2f2"  # hex
@@ -53,8 +53,9 @@ class WorkingCoverState:
     title_placement: str = "center"  # top|center|bottom|box
 
     spine_title: bool = True
+    spine_subtitle: bool = False  # NEW
     spine_langname: bool = False
-    spine_orientation: str = "vertical"  # vertical|horizontal
+    spine_orientation: str = "v_ttb"  # v_ttb|v_btt|horizontal
 
     backtext_enabled: bool = False
     backtext: str = ""
@@ -62,10 +63,6 @@ class WorkingCoverState:
     isbn: str = ""
     logo_enabled: bool = False
 
-
-# -----------------------------------------
-# App controller
-# -----------------------------------------
 
 class CoverWizardApp:
     ALL_PAGES = [
@@ -99,7 +96,6 @@ class CoverWizardApp:
         self.btn_finish: Gtk.Button = self._get("btn_finish", Gtk.Button)
 
         self.da_preview: Gtk.DrawingArea = self._get("da_preview", Gtk.DrawingArea)
-        self.da_coverage_diagram: Gtk.DrawingArea = self._get("da_coverage_diagram", Gtk.DrawingArea)
 
         # Revealers
         self.rv_subtitle: Gtk.Revealer = self._get("rv_subtitle", Gtk.Revealer)
@@ -108,11 +104,12 @@ class CoverWizardApp:
         self.rv_isbn: Gtk.Revealer = self._get("rv_isbn", Gtk.Revealer)
         self.rv_logo: Gtk.Revealer = self._get("rv_logo", Gtk.Revealer)
 
-        # Widgets referenced programmatically
+        # Step 1
         self.t_pagecount: Gtk.Entry = self._get("t_pagecount", Gtk.Entry)
         self.r_spine_no: Gtk.RadioButton = self._get("r_spine_no", Gtk.RadioButton)
         self.r_spine_yes: Gtk.RadioButton = self._get("r_spine_yes", Gtk.RadioButton)
 
+        # Step 2
         self.r_cov_wrap_all: Gtk.RadioButton = self._get("r_cov_wrap_all", Gtk.RadioButton)
         self.r_cov_front_only: Gtk.RadioButton = self._get("r_cov_front_only", Gtk.RadioButton)
         self.r_cov_front_spine: Gtk.RadioButton = self._get("r_cov_front_spine", Gtk.RadioButton)
@@ -121,11 +118,13 @@ class CoverWizardApp:
         self.r_cov_front_back_separate: Gtk.RadioButton = self._get("r_cov_front_back_separate", Gtk.RadioButton)
         self.r_cov_none: Gtk.RadioButton = self._get("r_cov_none", Gtk.RadioButton)
 
+        # Step 3
         self.r_bg_white: Gtk.RadioButton = self._get("r_bg_white", Gtk.RadioButton)
         self.r_bg_solid: Gtk.RadioButton = self._get("r_bg_solid", Gtk.RadioButton)
         self.r_bg_gradient: Gtk.RadioButton = self._get("r_bg_gradient", Gtk.RadioButton)
         self.cb_bgcolor: Gtk.ColorButton = self._get("cb_bgcolor", Gtk.ColorButton)
 
+        # Step 4
         self.t_title: Gtk.Entry = self._get("t_title", Gtk.Entry)
         self.c_subtitle_enable: Gtk.CheckButton = self._get("c_subtitle_enable", Gtk.CheckButton)
         self.t_subtitle: Gtk.Entry = self._get("t_subtitle", Gtk.Entry)
@@ -137,34 +136,34 @@ class CoverWizardApp:
         self.r_title_bottom: Gtk.RadioButton = self._get("r_title_bottom", Gtk.RadioButton)
         self.r_title_box: Gtk.RadioButton = self._get("r_title_box", Gtk.RadioButton)
 
+        # Step 5
         self.c_spine_title: Gtk.CheckButton = self._get("c_spine_title", Gtk.CheckButton)
+        self.c_spine_subtitle: Gtk.CheckButton = self._get("c_spine_subtitle", Gtk.CheckButton)
         self.c_spine_langname: Gtk.CheckButton = self._get("c_spine_langname", Gtk.CheckButton)
-        self.r_spine_text_vertical: Gtk.RadioButton = self._get("r_spine_text_vertical", Gtk.RadioButton)
+        self.r_spine_text_v_ttb: Gtk.RadioButton = self._get("r_spine_text_v_ttb", Gtk.RadioButton)
+        self.r_spine_text_v_btt: Gtk.RadioButton = self._get("r_spine_text_v_btt", Gtk.RadioButton)
         self.r_spine_text_horizontal: Gtk.RadioButton = self._get("r_spine_text_horizontal", Gtk.RadioButton)
 
+        # Step 6
         self.c_backtext_enable: Gtk.CheckButton = self._get("c_backtext_enable", Gtk.CheckButton)
         self.t_backtext: Gtk.TextView = self._get("t_backtext", Gtk.TextView)
-        # GtkTextView doesn't emit "buffer-changed"; the GtkTextBuffer emits "changed".
-        self.t_backtext.get_buffer().connect("changed", self.on_backtext_buffer_changed)
         self.c_isbn_enable: Gtk.CheckButton = self._get("c_isbn_enable", Gtk.CheckButton)
         self.t_isbn: Gtk.Entry = self._get("t_isbn", Gtk.Entry)
         self.c_logo_enable: Gtk.CheckButton = self._get("c_logo_enable", Gtk.CheckButton)
-
         self.l_logo_status: Gtk.Label = self._get("l_logo_status", Gtk.Label)
 
-        # Working state + UI flow
+        # IMPORTANT: GtkTextView buffer change signal must be connected in Python.
+        self.t_backtext.get_buffer().connect("changed", self.on_backtext_buffer_changed)
+
         self.state = WorkingCoverState()
         self.enabled_pages: List[str] = []
         self.current_step_index: int = 0
 
-        # Highlight surface for preview
-        # Values: "spread", "front", "spine", "back"
+        # Values: spread|front|spine|back
         self.active_surface: str = "spread"
 
-        # Guard to prevent recursive signal loops when setting widgets programmatically
         self._ui_guard: bool = False
 
-        # Init UI defaults and dynamic rules
         self._init_defaults()
         self._rebuild_enabled_pages()
         self._go_to_index(0)
@@ -181,30 +180,21 @@ class CoverWizardApp:
             raise RuntimeError(f"Glade object {obj_id} expected {cls}, got {type(o)}")
         return o
 
-    # -------------------------
-    # Initialization
-    # -------------------------
-
     def _init_defaults(self) -> None:
-        # Reasonable color default (solid only used when selected)
         rgba = Gdk.RGBA()
         rgba.parse(self.state.bg_color)
         self.cb_bgcolor.set_rgba(rgba)
 
-        # Start on spine=no, coverage=wrap_all, bg=white
         self.r_spine_no.set_active(True)
         self.r_cov_wrap_all.set_active(True)
         self.r_bg_white.set_active(True)
-
-        # Title placement centered
         self.r_title_center.set_active(True)
 
-        # Spine content defaults
         self.c_spine_title.set_active(True)
+        self.c_spine_subtitle.set_active(False)
         self.c_spine_langname.set_active(False)
-        self.r_spine_text_vertical.set_active(True)
+        self.r_spine_text_v_ttb.set_active(True)
 
-        # Optional revealers start hidden
         self.rv_subtitle.set_reveal_child(False)
         self.rv_langname.set_reveal_child(False)
         self.rv_backtext.set_reveal_child(False)
@@ -220,7 +210,6 @@ class CoverWizardApp:
         if not self.state.spine_enabled and "pg_step5_spinecontent" in pages:
             pages.remove("pg_step5_spinecontent")
         self.enabled_pages = pages
-        # Clamp current index if needed
         self.current_step_index = max(0, min(self.current_step_index, len(self.enabled_pages) - 1))
 
     def _go_to_index(self, idx: int) -> None:
@@ -307,28 +296,28 @@ class CoverWizardApp:
     # -------------------------
 
     def _refresh_everything(self) -> None:
-        # Coverage options that depend on spine
         self._apply_spine_coverage_disclosure()
+        self._apply_spine_subtitle_disclosure()
 
-        # Update summary
         self._update_summary()
-
-        # Redraw previews
         self.da_preview.queue_draw()
-        self.da_coverage_diagram.queue_draw()
 
-        # Update nav + finish
         self._update_nav_buttons()
 
     def _apply_spine_coverage_disclosure(self) -> None:
         spine = self.state.spine_enabled
 
-        # Disable/hide spine-related patterns if no spine
+        # Requirement #7: adjust wrap_all label based on spine
+        if spine:
+            self.r_cov_wrap_all.set_label(_("Wrap all (one image across front + spine + back)"))
+        else:
+            self.r_cov_wrap_all.set_label(_("Wrap all (one image across front + back)"))
+
+        # Hide spine-related patterns if no spine
         self.r_cov_front_spine.set_visible(spine)
         self.r_cov_back_spine.set_visible(spine)
 
-        # wrap_all is still meaningful without spine (wrap front+back). Keep visible always.
-        # But if current selection is spine-only pattern while spine is off, coerce safely.
+        # If current selection is invalid while spine is off, coerce safely
         if not spine and self.state.coverage_pattern in ("front_spine", "back_spine"):
             self.state.coverage_pattern = "front_only"
             self._ui_guard = True
@@ -336,6 +325,21 @@ class CoverWizardApp:
                 self.r_cov_front_only.set_active(True)
             finally:
                 self._ui_guard = False
+
+    def _apply_spine_subtitle_disclosure(self) -> None:
+        """
+        Spine-subtitle checkbox should only be meaningful if subtitle exists/enabled.
+        Keep it calm: disable the checkbox if subtitle not enabled on front.
+        """
+        can_use = self.state.subtitle_enabled
+        self.c_spine_subtitle.set_sensitive(can_use)
+        if not can_use and self.state.spine_subtitle:
+            self._ui_guard = True
+            try:
+                self.c_spine_subtitle.set_active(False)
+            finally:
+                self._ui_guard = False
+            self.state.spine_subtitle = False
 
     def _update_summary(self) -> None:
         s = self.state
@@ -349,11 +353,13 @@ class CoverWizardApp:
             "none": _("None (plain)"),
         }.get(s.coverage_pattern, s.coverage_pattern)
 
-        bg_label = {
-            "white": _("White"),
-            "solid": _("Solid"),
-            "gradient": _("Gradient"),
-        }.get(s.bg_mode, s.bg_mode)
+        bg_label = {"white": _("White"), "solid": _("Solid"), "gradient": _("Gradient")}.get(s.bg_mode, s.bg_mode)
+
+        orient_label = {
+            "v_ttb": _("Vertical (top to bottom)"),
+            "v_btt": _("Vertical (bottom to top)"),
+            "horizontal": _("Horizontal"),
+        }.get(s.spine_orientation, s.spine_orientation)
 
         lines = []
         lines.append(_("Spine: {} (pagecount={})").format(_("Yes") if s.spine_enabled else _("No"), s.pagecount))
@@ -369,15 +375,16 @@ class CoverWizardApp:
 
         if s.spine_enabled:
             lines.append(_("Spine title: {}").format(_("on") if s.spine_title else _("off")))
+            lines.append(_("Spine subtitle: {}").format(_("on") if s.spine_subtitle else _("off")))
             lines.append(_("Spine language name: {}").format(_("on") if s.spine_langname else _("off")))
-            lines.append(_("Spine orientation: {}").format(s.spine_orientation))
+            lines.append(_("Spine orientation: {}").format(orient_label))
 
         if s.backtext_enabled:
-            lines.append(_("Back text: {}").format(_("enabled")))
+            lines.append(_("Back text: enabled"))
         if s.isbn_enabled:
             lines.append(_("ISBN: {}").format(s.isbn.strip() or _("(empty)")))
         if s.logo_enabled:
-            lines.append(_("Logo: {}").format(_("enabled (stub)")))
+            lines.append(_("Logo: enabled (stub)"))
 
         self.l_summary.set_text("\n".join(lines))
 
@@ -395,11 +402,19 @@ class CoverWizardApp:
             return default
 
     def _rgba_to_hex(self, rgba: Gdk.RGBA) -> str:
-        # 0..1 floats to #RRGGBB
         r = max(0, min(255, int(rgba.red * 255)))
         g = max(0, min(255, int(rgba.green * 255)))
         b = max(0, min(255, int(rgba.blue * 255)))
         return "#{:02x}{:02x}{:02x}".format(r, g, b)
+
+    def _hex_to_rgb01(self, hex_color: str):
+        hc = hex_color.strip().lstrip("#")
+        if len(hc) != 6:
+            return (0.95, 0.95, 0.95)
+        r = int(hc[0:2], 16) / 255.0
+        g = int(hc[2:4], 16) / 255.0
+        b = int(hc[4:6], 16) / 255.0
+        return (r, g, b)
 
     def _show_error(self, primary: str, secondary: str) -> None:
         md = Gtk.MessageDialog(
@@ -427,18 +442,15 @@ class CoverWizardApp:
 
     def on_btn_next_clicked(self, _btn: Gtk.Button) -> None:
         if self.current_step_index < len(self.enabled_pages) - 1:
-            # Ensure enabled_pages is current (spine toggle can change it)
             self._rebuild_enabled_pages()
             self._go_to_index(self.current_step_index + 1)
             self._refresh_everything()
 
     def on_btn_finish_clicked(self, _btn: Gtk.Button) -> None:
-        # Only allow finish on last step and valid title
         if self.current_step_index == len(self.enabled_pages) - 1 and self._is_title_valid():
             self._finish()
 
     def on_btn_advanced_clicked(self, _btn: Gtk.Button) -> None:
-        # Disabled in prototype; handler kept for completeness
         md = Gtk.MessageDialog(
             transient_for=self.w_coverwizard,
             modal=True,
@@ -459,21 +471,6 @@ class CoverWizardApp:
             return
         pc = self._parse_int(entry.get_text(), default=0)
         self.state.pagecount = max(0, pc)
-
-        # If < 80, default spine=no (but allow override)
-        if self.state.pagecount < 80 and self.r_spine_yes.get_active():
-            # do NOT force off if user explicitly chose yes; only default when not explicitly chosen.
-            # This handler is triggered on typing; we only auto-set when user hasn't chosen yet:
-            # In practice: if they currently have "yes" active, we leave it.
-            pass
-        elif self.state.pagecount < 80 and self.r_spine_no.get_active() is False:
-            # if neither active due to weirdness, default to no
-            self._ui_guard = True
-            try:
-                self.r_spine_no.set_active(True)
-            finally:
-                self._ui_guard = False
-
         self._refresh_everything()
 
     def on_r_spine_no_toggled(self, rb: Gtk.RadioButton) -> None:
@@ -481,7 +478,6 @@ class CoverWizardApp:
             return
         self.state.spine_enabled = False
         self._rebuild_enabled_pages()
-        # If we were on spinecontent page, move forward/back safely
         if self.enabled_pages[self.current_step_index] == "pg_step5_spinecontent":
             self._go_to_index(min(self.current_step_index, len(self.enabled_pages) - 1))
         self._refresh_everything()
@@ -635,16 +631,28 @@ class CoverWizardApp:
         self.state.spine_title = cb.get_active()
         self._refresh_everything()
 
+    def on_c_spine_subtitle_toggled(self, cb: Gtk.CheckButton) -> None:
+        if self._ui_guard:
+            return
+        self.state.spine_subtitle = cb.get_active()
+        self._refresh_everything()
+
     def on_c_spine_langname_toggled(self, cb: Gtk.CheckButton) -> None:
         if self._ui_guard:
             return
         self.state.spine_langname = cb.get_active()
         self._refresh_everything()
 
-    def on_r_spine_text_vertical_toggled(self, rb: Gtk.RadioButton) -> None:
+    def on_r_spine_text_v_ttb_toggled(self, rb: Gtk.RadioButton) -> None:
         if self._ui_guard or not rb.get_active():
             return
-        self.state.spine_orientation = "vertical"
+        self.state.spine_orientation = "v_ttb"
+        self._refresh_everything()
+
+    def on_r_spine_text_v_btt_toggled(self, rb: Gtk.RadioButton) -> None:
+        if self._ui_guard or not rb.get_active():
+            return
+        self.state.spine_orientation = "v_btt"
         self._refresh_everything()
 
     def on_r_spine_text_horizontal_toggled(self, rb: Gtk.RadioButton) -> None:
@@ -692,7 +700,6 @@ class CoverWizardApp:
         self._refresh_everything()
 
     def on_btn_logo_choose_clicked(self, _btn: Gtk.Button) -> None:
-        # Stub: show file chooser and store file path in label only (no state field required by spec)
         dlg = Gtk.FileChooserDialog(
             title=_("Choose logo file"),
             transient_for=self.w_coverwizard,
@@ -704,22 +711,6 @@ class CoverWizardApp:
             path = dlg.get_filename()
             self.l_logo_status.set_text(os.path.basename(path) if path else _("No file selected"))
         dlg.destroy()
-
-    # -------------------------
-    # Drawing: coverage diagram
-    # -------------------------
-
-    def on_da_coverage_diagram_draw(self, widget: Gtk.DrawingArea, cr) -> bool:
-        # Tiny diagram showing covered panels.
-        alloc = widget.get_allocation()
-        w, h = alloc.width, alloc.height
-
-        cr.set_source_rgb(1, 1, 1)
-        cr.rectangle(0, 0, w, h)
-        cr.fill()
-
-        self._draw_spread(cr, 10, 10, w - 20, h - 20, small=True, show_text=False)
-        return False
 
     # -------------------------
     # Drawing: main live preview
@@ -734,27 +725,20 @@ class CoverWizardApp:
         cr.fill()
 
         pad = 16
-        self._draw_spread(cr, pad, pad, w - 2 * pad, h - 2 * pad, small=False, show_text=True)
+        self._draw_spread(cr, pad, pad, w - 2 * pad, h - 2 * pad, show_text=True)
         return False
 
-    def _draw_spread(self, cr, x: int, y: int, w: int, h: int, small: bool, show_text: bool) -> None:
-        """
-        Draw:
-        - whole spread outline + active-surface highlight
-        - panels: back/spine/front or back/front
-        - background mode
-        - coverage pattern (tinted IMAGE rectangles)
-        - text blocks for title/subtitle/langname, spine text, back text/isbn/logo placeholders
-        """
+    def _draw_spread(self, cr, x: int, y: int, w: int, h: int, show_text: bool) -> None:
         s = self.state
 
-        # Background: white, solid, gradient
+        # Background
         self._fill_background(cr, x, y, w, h, s.bg_mode, s.bg_color)
 
-        # Determine panel geometry
         spine_enabled = s.spine_enabled
+
+        # Requirement #3: no gap between panels, and draw SINGLE divider lines ourselves
+        gap = 0
         spine_w = int(w * (0.10 if spine_enabled else 0.0))
-        gap = 6 if not small else 4
 
         if spine_enabled:
             panel_w = int((w - spine_w - 2 * gap) / 2)
@@ -767,35 +751,54 @@ class CoverWizardApp:
             spine = None
             front = (x + panel_w + gap, y, panel_w, h)
 
-        # Outer outline (whole spread)
+        # Whole outline (highlight spread steps)
         self._draw_outline(cr, x, y, w, h, highlight=(self.active_surface == "spread"))
 
-        # Panel outlines
-        self._draw_panel(cr, *back, label=_("BACK") if show_text else "", highlight=(self.active_surface == "back"))
+        # Divider lines (single line only)
+        cr.set_source_rgb(0, 0, 0)
+        cr.set_line_width(1.0)
         if spine_enabled and spine:
-            self._draw_panel(cr, *spine, label=_("SPINE") if show_text else "", highlight=(self.active_surface == "spine"))
-        self._draw_panel(cr, *front, label=_("FRONT") if show_text else "", highlight=(self.active_surface == "front"))
+            # back|spine divider
+            x1 = back[0] + back[2]
+            cr.move_to(x1, y)
+            cr.line_to(x1, y + h)
+            cr.stroke()
+            # spine|front divider
+            x2 = spine[0] + spine[2]
+            cr.move_to(x2, y)
+            cr.line_to(x2, y + h)
+            cr.stroke()
+        else:
+            # back|front divider
+            x1 = back[0] + back[2]
+            cr.move_to(x1, y)
+            cr.line_to(x1, y + h)
+            cr.stroke()
 
-        # Margin inside panels
-        margin = 14 if not small else 8
+        # Panel highlight rectangles (thicker line) — drawn last so it's clear, but does not create double separators normally.
+        self._draw_highlight_panel(cr, back, highlight=(self.active_surface == "back"))
+        if spine_enabled and spine:
+            self._draw_highlight_panel(cr, spine, highlight=(self.active_surface == "spine"))
+        self._draw_highlight_panel(cr, front, highlight=(self.active_surface == "front"))
 
-        # Coverage shading for images
+        margin = 14
+
+        # Coverage
         self._draw_coverage(cr, back, spine, front, margin)
 
         if not show_text:
             return
 
-        # FRONT content
+        # FRONT
         self._draw_front_text(cr, front, margin)
 
-        # SPINE content (optional)
+        # SPINE
         if spine_enabled and spine:
             self._draw_spine_text(cr, spine, margin)
 
-        # BACK content (optional)
-        self._draw_back_blocks(cr, back, margin)
+        # BACK
+        self._draw_back_blocks(cr, back, margin, spine_enabled=spine_enabled)
 
-        # Tiny legend (optional)
         self._draw_footer_hint(cr, x, y, w, h)
 
     def _fill_background(self, cr, x: int, y: int, w: int, h: int, mode: str, hex_color: str) -> None:
@@ -812,10 +815,8 @@ class CoverWizardApp:
             cr.fill()
             return
 
-        # gradient: simple top-to-bottom shade
-        # (Keep it very simple and fast)
-        r, g, b = self._hex_to_rgb01(hex_color if self.state.bg_mode == "solid" else "#f2f2f2")
-        # Create a faux gradient by drawing a few translucent bands
+        # gradient: simple bands (fast)
+        r, g, b = self._hex_to_rgb01("#f2f2f2")
         bands = 10
         for i in range(bands):
             t = i / max(1, bands - 1)
@@ -830,24 +831,16 @@ class CoverWizardApp:
         cr.rectangle(x, y, w, h)
         cr.stroke()
 
-    def _draw_panel(self, cr, x: int, y: int, w: int, h: int, label: str, highlight: bool) -> None:
-        cr.set_line_width(3.0 if highlight else 1.0)
+    def _draw_highlight_panel(self, cr, rect, highlight: bool) -> None:
+        if not highlight:
+            return
+        x, y, w, h = rect
         cr.set_source_rgb(0, 0, 0)
+        cr.set_line_width(3.0)
         cr.rectangle(x, y, w, h)
         cr.stroke()
 
-        if label:
-            cr.select_font_face("Sans", 0, 0)
-            cr.set_font_size(12)
-            cr.set_source_rgb(0, 0, 0)
-            cr.move_to(x + 8, y + 18)
-            cr.show_text(label)
-
     def _draw_coverage(self, cr, back, spine, front, margin: int) -> None:
-        """
-        Draw tinted rectangles labeled IMAGE according to coverage_pattern.
-        This simulates images without requiring files.
-        """
         s = self.state
         pat = s.coverage_pattern
 
@@ -858,7 +851,6 @@ class CoverWizardApp:
             w2 = max(10, w - 2 * margin)
             h2 = max(10, h - 2 * margin)
 
-            # light blue tint
             cr.set_source_rgba(0.2, 0.5, 0.9, 0.18)
             cr.rectangle(x2, y2, w2, h2)
             cr.fill()
@@ -874,12 +866,10 @@ class CoverWizardApp:
             cr.move_to(x2 + 6, y2 + 16)
             cr.show_text(label)
 
-        # Map pattern -> which panels get image tint
         if pat == "none":
             return
 
         if pat == "wrap_all":
-            # tint everything available
             tint_rect(front)
             tint_rect(back)
             if s.spine_enabled and spine:
@@ -915,7 +905,6 @@ class CoverWizardApp:
         s = self.state
         x, y, w, h = front
 
-        # Title placement regions
         if s.title_placement == "top":
             base_y = y + margin + 30
         elif s.title_placement == "bottom":
@@ -923,7 +912,6 @@ class CoverWizardApp:
         else:
             base_y = y + int(h * 0.45)
 
-        # Title box optional
         if s.title_placement == "box":
             box_w = int(w * 0.80)
             box_h = 70
@@ -937,20 +925,17 @@ class CoverWizardApp:
             cr.rectangle(bx, by, box_w, box_h)
             cr.stroke()
 
-        # Title text
         title = s.title.strip() if s.title.strip() else "TITLE"
         cr.set_source_rgb(0, 0, 0)
         cr.select_font_face("Sans", 0, 0)
         cr.set_font_size(18)
         self._draw_centered_text(cr, title, x + margin, base_y, w - 2 * margin)
 
-        # Subtitle
         if s.subtitle_enabled:
             subtitle = s.subtitle.strip() if s.subtitle.strip() else "Subtitle"
             cr.set_font_size(12)
             self._draw_centered_text(cr, subtitle, x + margin, base_y + 26, w - 2 * margin)
 
-        # Language/translation name
         if s.langname_enabled:
             lang = s.langname.strip() if s.langname.strip() else "Language / Translation"
             cr.set_font_size(11)
@@ -960,36 +945,48 @@ class CoverWizardApp:
         s = self.state
         x, y, w, h = spine
 
-        # Compose spine text
         parts = []
         if s.spine_title:
             parts.append(s.title.strip() if s.title.strip() else "TITLE")
+
+        # Requirement #6: subtitle between title and langname, only if subtitle enabled AND opted in
+        if s.spine_subtitle and s.subtitle_enabled:
+            parts.append(s.subtitle.strip() if s.subtitle.strip() else "Subtitle")
+
         if s.spine_langname and s.langname_enabled:
             parts.append(s.langname.strip() if s.langname.strip() else "Language")
+
         text = " • ".join(parts) if parts else "SPINE"
 
         cr.set_source_rgb(0, 0, 0)
         cr.select_font_face("Sans", 0, 0)
         cr.set_font_size(11)
 
-        if s.spine_orientation == "vertical":
-            # rotate text 90° and center
-            cr.save()
-            cx = x + int(w / 2)
-            cy = y + int(h / 2)
-            cr.translate(cx, cy)
-            cr.rotate(-1.57079632679)  # -pi/2
-            self._draw_centered_text(cr, text, -int(h / 2) + margin, 0, h - 2 * margin)
-            cr.restore()
-        else:
-            # horizontal centered
+        if s.spine_orientation == "horizontal":
             self._draw_centered_text(cr, text, x + margin, y + int(h / 2), w - 2 * margin)
+            return
 
-    def _draw_back_blocks(self, cr, back, margin: int) -> None:
+        # Vertical orientations
+        cr.save()
+        cx = x + int(w / 2)
+        cy = y + int(h / 2)
+        cr.translate(cx, cy)
+
+        if s.spine_orientation == "v_ttb":
+            # top-to-bottom reading direction (visual)
+            cr.rotate(-1.57079632679)  # -pi/2
+        else:
+            # bottom-to-top
+            cr.rotate(1.57079632679)   # +pi/2
+
+        # draw centered along rotated axis
+        self._draw_centered_text(cr, text, -int(h / 2) + margin, 0, h - 2 * margin)
+        cr.restore()
+
+    def _draw_back_blocks(self, cr, back, margin: int, spine_enabled: bool) -> None:
         s = self.state
         x, y, w, h = back
 
-        # Back text placeholder
         if s.backtext_enabled:
             bx = x + margin
             by = y + margin + 30
@@ -1006,49 +1003,53 @@ class CoverWizardApp:
             cr.set_source_rgb(0, 0, 0)
             cr.select_font_face("Sans", 0, 0)
             cr.set_font_size(10)
-            txt = "Back text here"
             cr.move_to(bx + 6, by + 16)
-            cr.show_text(txt)
+            cr.show_text("Back text here")
 
-        # ISBN placeholder
+        # Requirement #5: ISBN+barcode merged and positioned near spine edge of back panel
         if s.isbn_enabled:
-            ix = x + margin
-            iy = y + h - margin - 60
-            iw = int(w * 0.60)
-            ih = 46
+            block_w = int(w * 0.58)
+            block_h = 56
+            # place near spine (right side of back panel)
+            ix = x + w - margin - block_w
+            iy = y + h - margin - block_h
+
             cr.set_source_rgba(1, 1, 1, 0.85)
-            cr.rectangle(ix, iy, iw, ih)
+            cr.rectangle(ix, iy, block_w, block_h)
             cr.fill()
             cr.set_source_rgba(0, 0, 0, 0.25)
             cr.set_line_width(1.0)
-            cr.rectangle(ix, iy, iw, ih)
+            cr.rectangle(ix, iy, block_w, block_h)
             cr.stroke()
 
             cr.set_source_rgb(0, 0, 0)
+            cr.select_font_face("Sans", 0, 0)
             cr.set_font_size(10)
             cr.move_to(ix + 6, iy + 16)
-            cr.show_text("ISBN here")
-            if s.isbn.strip():
-                cr.set_font_size(9)
-                cr.move_to(ix + 6, iy + 32)
-                cr.show_text(s.isbn.strip())
+            cr.show_text("ISBN + BARCODE")
 
-            # barcode block
-            bx = ix + iw + 10
-            bw = w - margin - bx
-            if bw > 40:
-                cr.set_source_rgba(0, 0, 0, 0.12)
-                cr.rectangle(bx, iy, bw, ih)
-                cr.fill()
-                cr.set_source_rgba(0, 0, 0, 0.25)
-                cr.rectangle(bx, iy, bw, ih)
-                cr.stroke()
-                cr.set_source_rgb(0, 0, 0)
-                cr.set_font_size(9)
-                cr.move_to(bx + 6, iy + 16)
-                cr.show_text("BARCODE")
+            cr.set_font_size(9)
+            val = s.isbn.strip() if s.isbn.strip() else "978-..."
+            cr.move_to(ix + 6, iy + 32)
+            cr.show_text(val)
 
-        # Logo placeholder
+            # barcode stripes placeholder at right side of same box
+            bx = ix + int(block_w * 0.62)
+            bw = int(block_w * 0.35)
+            by = iy + 10
+            bh = block_h - 20
+            cr.set_source_rgba(0, 0, 0, 0.10)
+            cr.rectangle(bx, by, bw, bh)
+            cr.fill()
+            cr.set_source_rgba(0, 0, 0, 0.25)
+            cr.rectangle(bx, by, bw, bh)
+            cr.stroke()
+
+            cr.set_source_rgb(0, 0, 0)
+            cr.set_font_size(8)
+            cr.move_to(bx + 6, by + 14)
+            cr.show_text("BARCODE")
+
         if s.logo_enabled:
             lx = x + w - margin - 70
             ly = y + margin + 30
@@ -1075,21 +1076,11 @@ class CoverWizardApp:
         cr.show_text(text)
 
     def _draw_centered_text(self, cr, text: str, x: int, y: int, w: int) -> None:
-        # naive centering by text extents (fast enough for prototype)
         xbearing, ybearing, tw, th, xadv, yadv = cr.text_extents(text)
         tx = x + max(0, int((w - tw) / 2)) - xbearing
         ty = y
         cr.move_to(tx, ty)
         cr.show_text(text)
-
-    def _hex_to_rgb01(self, hex_color: str):
-        hc = hex_color.strip().lstrip("#")
-        if len(hc) != 6:
-            return (0.95, 0.95, 0.95)
-        r = int(hc[0:2], 16) / 255.0
-        g = int(hc[2:4], 16) / 255.0
-        b = int(hc[4:6], 16) / 255.0
-        return (r, g, b)
 
 
 def main() -> None:
