@@ -846,6 +846,68 @@ class CoverWizardApp:
 
         def tint_rect(rect, label="IMAGE"):
             x, y, w, h = rect
+
+            # Fill to the edge of the panel (no inset), per request
+            x2, y2, w2, h2 = x, y, w, h
+
+            cr.set_source_rgba(0.2, 0.5, 0.9, 0.18)
+            cr.rectangle(x2, y2, w2, h2)
+            cr.fill()
+
+            cr.set_source_rgba(0.2, 0.5, 0.9, 0.45)
+            cr.set_line_width(1.0)
+            cr.rectangle(x2, y2, w2, h2)
+            cr.stroke()
+
+            # Keep the label slightly inset so it doesn't sit on the border line
+            cr.set_source_rgb(0.1, 0.2, 0.4)
+            cr.select_font_face("Sans", 0, 0)
+            cr.set_font_size(11)
+            cr.move_to(x2 + 6, y2 + 16)
+            cr.show_text(label)
+
+        if pat == "none":
+            return
+
+        if pat == "wrap_all":
+            tint_rect(front)
+            tint_rect(back)
+            if s.spine_enabled and spine:
+                tint_rect(spine)
+            return
+
+        if pat == "front_only":
+            tint_rect(front)
+            return
+
+        if pat == "back_only":
+            tint_rect(back)
+            return
+
+        if pat == "front_spine":
+            tint_rect(front)
+            if s.spine_enabled and spine:
+                tint_rect(spine)
+            return
+
+        if pat == "back_spine":
+            tint_rect(back)
+            if s.spine_enabled and spine:
+                tint_rect(spine)
+            return
+
+        if pat == "front_back_separate":
+            tint_rect(front, label="IMAGE (front)")
+            tint_rect(back, label="IMAGE (back)")
+            return
+
+
+    def old_draw_coverage(self, cr, back, spine, front, margin: int) -> None:
+        s = self.state
+        pat = s.coverage_pattern
+
+        def tint_rect(rect, label="IMAGE"):
+            x, y, w, h = rect
             x2 = x + margin
             y2 = y + margin
             w2 = max(10, w - 2 * margin)
