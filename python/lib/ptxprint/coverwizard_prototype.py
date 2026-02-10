@@ -144,6 +144,8 @@ class CoverWizardApp:
 
         self.c_backtext_enable: Gtk.CheckButton = self._get("c_backtext_enable", Gtk.CheckButton)
         self.t_backtext: Gtk.TextView = self._get("t_backtext", Gtk.TextView)
+        # GtkTextView doesn't emit "buffer-changed"; the GtkTextBuffer emits "changed".
+        self.t_backtext.get_buffer().connect("changed", self.on_backtext_buffer_changed)
         self.c_isbn_enable: Gtk.CheckButton = self._get("c_isbn_enable", Gtk.CheckButton)
         self.t_isbn: Gtk.Entry = self._get("t_isbn", Gtk.Entry)
         self.c_logo_enable: Gtk.CheckButton = self._get("c_logo_enable", Gtk.CheckButton)
@@ -662,11 +664,9 @@ class CoverWizardApp:
         self.rv_backtext.set_reveal_child(self.state.backtext_enabled)
         self._refresh_everything()
 
-    def on_t_backtext_buffer_changed(self, _tv: Gtk.TextView) -> None:
-        # GtkTextView uses its buffer; we read it on any change.
+    def on_backtext_buffer_changed(self, buf: Gtk.TextBuffer) -> None:
         if self._ui_guard:
             return
-        buf = self.t_backtext.get_buffer()
         start, end = buf.get_bounds()
         self.state.backtext = buf.get_text(start, end, True)
         self._refresh_everything()

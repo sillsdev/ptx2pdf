@@ -33,7 +33,7 @@
               <object class="GtkLabel" id="l_header">
                 <property name="xalign">0</property>
                 <property name="wrap">True</property>
-                <property name="label" translatable="yes">A calm, guided cover wizard for translators. This prototype draws a fast preview (no PDF) and prints state to JSON on Finish.</property>
+                <property name="label" translatable="yes">A guided cover wizard for translators.</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                   <attribute name="scale" value="1.05"/>
@@ -73,7 +73,7 @@
               <object class="GtkBox" id="bx_left">
                 <property name="orientation">vertical</property>
                 <property name="spacing">8</property>
-
+                <property name="margin_end">12</property>
                 <child>
                   <object class="GtkStack" id="st_steps">
                     <property name="transition_type">slide-left-right</property>
