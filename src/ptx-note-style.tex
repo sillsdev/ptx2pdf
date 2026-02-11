@@ -1332,7 +1332,20 @@
 \def\n@test@rt#1{\n@tewidth=\dimexpr \marginnoteswidth - \marginnotesgap\relax
   \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup\usespacebeforefalse
     \global\p@ranotesfalse
-    \s@tsideskips{#1}{-1pt}\n@tewidth=\marginnoteswidth \advance\n@tewidth -\marginnotesgap \hsize=\n@tewidth
+    \s@tsideskips{#1}{-1pt}%
+    \ifXrefSideAlign\testXrefSideL\getp@ram{justification}{#1}{#1}%
+      \ifnum\tmp=1 % right align
+        \ifx\p@ram\c@nter\else
+          \ifx\p@ram\r@ght\else
+            \dimen1=\leftskip \leftskip=\rightskip \rightskip=\dimen1
+        \fi\fi
+      \else
+        \ifx\p@ram\c@nter\else
+          \ifx\p@ram\l@ft\else
+            \dimen1=\leftskip \leftskip=\rightskip \rightskip=\dimen1
+        \fi\fi
+    \fi
+    \n@tewidth=\marginnoteswidth \advance\n@tewidth -\marginnotesgap \hsize=\n@tewidth
     \ifdim\parfillskip>0pt\hfil\fi
 }
 \def\n@te@nd#1{%

@@ -104,6 +104,7 @@
     \includeifpresent{#1}
     \openout\m@rginnotes="#1"
     \m@rginnotesopentrue
+    \write\m@rginnotes{\\@marginnote\{ref\}\{marker\}\{side\}\{valign\}\{gap\}\{width\}\{height\}\{depth\}\{xshift\}\{yshift\}\{pageno\}\{xpos\}\{ypos\}}%
     \addtoendhooks{\finishm@rginnotes "#1"}
     \addtoeveryparhooks{\m@rginvadj}
   \fi
