@@ -358,7 +358,7 @@ class Paragraphs(list):
                         if p[1] == "heightlimit":
                             currpic.limit = True
                 
-            # "parnote":        # type, callerx, callery
+            # "parnote":        # type, caller, ref, index, callerx, callery
             # "notebox":        # type, width, height
             # "parlines":       # numlines in previous paragraph (occurs after @parlen)
             # "nontextstart":   # x, y

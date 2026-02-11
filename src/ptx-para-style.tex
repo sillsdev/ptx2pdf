@@ -1149,7 +1149,9 @@
   \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
   \immediate\openout\delayf@le="\j@bname.delayed"
   %\tracingassigns=1
+  \catcode`\#=12
   \input "\j@bname.parlocs"
+  \catcode`\#=6
   \immediate\closeout\delayf@le
   \trace{x}{Finished parlocs processing}%
 }
@@ -1226,7 +1228,7 @@
 \def\@parlen#1#2#3#4#5#6{}
 \def\@noteid#1#2#3#4#5#6{}
 \def\@parpageend#1#2#3{}
-\def\@parnote#1#2#3{}
+\def\@parnote#1#2#3#4#5#6{}
 \def\@notebox#1#2#3{}
 
 \def\@nontextstart#1#2{\xdef\n@ntextstart{#2}}%

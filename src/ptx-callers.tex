@@ -55,28 +55,29 @@
 %   #1 -> note number (sequential from 1)
 %   #2 -> note style, e.g., f or x
 %
+\def\getcallerres{}
 \def\getcaller#1#2{%
   \c@llernum=#1\relax
   \trace{n}{Caller requested for #2 (#1) \@notesavetype}%
-  \expandafter\ifx\csname page-caller #2\endcsname\relax \else % if this note class is using per-page callers...
-    \edef\m@sg{\string\noteonpage{\@notesavetype}{#1}}%
-    \x@\write\x@\n@tepages\x@{\m@sg{\the\pageno}}% record the page where this note occurred
-    \expandafter\let\expandafter\thisc@llerpage\csname notepage-\@notesavetype-#1\endcsname
+  \ifcsname page-caller #2\endcsname\expandafter\ifx\csname page-caller #2\endcsname\relax \else % if this note class is using per-page callers...
+    \ifcsname notepage-\@notesavetype-#1\endcsname
+      \expandafter\let\expandafter\thisc@llerpage\csname notepage-\@notesavetype-#1\endcsname
+    \else \let\thisc@llerpage\relax\fi
     \ifx\thisc@llerpage\relax \else % check where the note occurred last time
       \count255=\c@llernum \c@llernum=1 % reset c@llernum to 1
       \loop \advance\count255 by -1 % then increment it by the number of prev callers on same page
         \expandafter\let\expandafter\prevc@llerpage\csname notepage-\@notesavetype-\number\count255\endcsname
         \ifx\thisc@llerpage\prevc@llerpage \advance\c@llernum by 1 \repeat
     \fi
-  \fi
+  \fi\fi
   \expandafter\ifx\csname callers-#2\endcsname\relax % if caller list is empty
     \expandafter\ifx\csname numeric-callers #2\endcsname\relax % and numeric callers not specified
       \loop\ifnum\c@llernum>\AutoCallerNumChars
         \advance\c@llernum by -\AutoCallerNumChars \repeat
       \advance\c@llernum by -1 \advance\c@llernum by \AutoCallerStartChar
-      \char\c@llernum % generate an alphabetic auto-caller
+      \edef\getcalleres{\char\c@llernum}% generate an alphabetic auto-caller
     \else
-      \number\c@llernum % generate a numeric caller
+      \edef\getcallerres{\number\c@llernum}% generate a numeric caller
     \fi
   \else % caller list is not empty
     \edef\c@llers{\csname callers-#2\endcsname}%
@@ -87,7 +88,7 @@
     \loop \ifnum\c@llernum>1 % then strip \c@llernum-1 callers from the front of the list
       \advance\c@llernum by -1
       \expandafter\dropfirstc@ller\c@llers,\end \repeat
-    \expandafter\getfirstc@ller\c@llers,\end % and extract the one we want
+    \edef\getcallerres{\expandafter\getfirstc@ller\c@llers,\end} % and extract the one we want
     \fi
   \fi
 }
@@ -167,7 +168,6 @@
 %% override the autonumber macro from ptx-note-style.tex:
 \def\gen@utonum#1{\set@utonum{#1}\count255=0\csname \@utonum\endcsname
   \edef\n@mber{\the\count255}%
-  \expandafter\def\expandafter\them@rk
-    \expandafter{\expandafter\getcaller\expandafter{\n@mber}{#1}}}
+  \x@\getcaller\x@{\n@mber}{#1}\edef\them@rk{\getcallerres}}
 
 \endinput
