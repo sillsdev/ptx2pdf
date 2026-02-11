@@ -2730,8 +2730,11 @@
   \global\deadcycles=0 % Cycles were deliberately dead.
 }
 \def\me@sureinserts#1\E{%
-  \ifdim\ht\csname #1\endcsname>0pt
-    \xdef\ins@meas@trial@dims{\ifx\ins@meas@trial@dims\empty\else\ins@meas@trial@dims,\fi#1:\the\ht\csname #1\endcsname}%
+  \dimen0=\dimexpr \ht\csname#1\endcsname+\dp\csname#1\endcsname\relax
+  \ifdim\dimen0>0pt
+    \trace{imt}{#1: \the\dimen0\space x\the\wd\csname#1\endcsname}%
+    %\showbox\csname #1\endcsname
+    \xdef\ins@meas@trial@dims{\ifx\ins@meas@trial@dims\empty\else\ins@meas@trial@dims,\fi#1:\the\dimen0}%
   \fi
 }
 %The actual trial output routine. \ins@rts is a list of all (figure, etc)
@@ -2760,7 +2763,7 @@
   \else 
     \holdinginserts= 1 
   \fi
-  \trace{imt}{Running \ifins@meas@trialfull full \else quick \fi trial for #1 #2}%
+  \trace{imt}{Running \ifins@meas@trialfull full \else quick \fi trial for #1 #2 \l@gdims{#2}}%
   \unvcopy#2
   \penalty\ins@meas@trialpenalty
   \relax

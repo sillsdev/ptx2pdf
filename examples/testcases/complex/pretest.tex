@@ -3,7 +3,7 @@
 \input paratext2.tex
 \FastTracing
 \tracing{dmc}  
-\tracing{dmcr}  
+%\tracing{dmcr}  
 \tracing{dmp}  
 \tracing{tim}  
 \XeTeXuseglyphmetrics=0
@@ -38,10 +38,14 @@
 \count\topleftins=1000
 \floatingpenalty=10000
 \setbox\excessL\vbox{\hsize=100pt
-\mark{a:1:1}\penalty10000 Sapiente eum quasi qui\insert\csname note-f\endcsname{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\vbox{another line}} \mark{a:1:2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{a:1:3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{a:1:4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{a:1:5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
+\mark{a:1:1}\penalty10000 Sapiente eum quasi qui\insert\csname note-f\endcsname{\vbox{hello this is a test\par lets make it longer}\vbox{with another box}} eligendi quasi atque delectus in.\insert\topleftins{\hbox{another line}} \mark{a:1:2}Consequuntur blanditiis consequatur dolorem corporis similique qui voluptas. \mark{a:1:3}Tempora dolor quibusdam dolor quod provident illum rerum. \mark{a:1:4}Voluptatem tempora blanditiis expedita quibusdam sunt aut explicabo perferendis. \mark{a:1:5}Molestiae qui molestias nihil sed.Laudantium eius asperiores expedita consequuntur. \par
 \vbox to 3\baselineskip{\hbox{Hi}\vfill}\penalty10000
-\insert\toprightins{\vbox{another line}}\mark{a:1:6}Dolores\insert\csname note-f\endcsname{\vbox{hello this is another test.}} nostrum nihil vel placeat. \mark{a:1:7}Expedita voluptatem iusto dolorem. \mark{a:1:8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{a:1:9}Eveniet quia sed voluptatem. \mark{a:1:10}Voluptatum eaque pariatur id eveniet ratione. \mark{a:1:11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{a:1:12}Delectus molestiae eveniet odit magnam magni. \mark{a:1:13}Itaque sed corporis aut autem dignissimos maxime.}
+%\insert\toprightins{\vbox{another line}}\mark{a:1:6}Dolores\insert\csname note-f\endcsname{\vbox{hello this is another test.}} nostrum nihil vel placeat. \mark{a:1:7}Expedita voluptatem iusto dolorem. \mark{a:1:8}Sit eaque adipisci voluptate itaque tenetur consequuntur quam error.Pariatur praesentium recusandae qui harum. \mark{a:1:9}Eveniet quia sed voluptatem. \mark{a:1:10}Voluptatum eaque pariatur id eveniet ratione. \mark{a:1:11}Veritatis fugiat error doloribus laboriosam ipsum libero et dicta. \mark{a:1:12}Delectus molestiae eveniet odit magnam magni. \mark{a:1:13}Itaque sed corporis aut autem dignissimos maxime.
+}
 \setbox\excessR\vbox{\hsize=100pt . \mark{a:1:1}Repellat nihil autem quod doloremque adipisci illum officia laudantium. \mark{a:1:2}Voluptate dignissimos itaque odit. \mark{a:1:3}Et omnis veritatis magnam rem doloremque. \mark{a:1:4}Pariatur laudantium iusto illo. \mark{a:1:5}A eos corporis ab quae iure non.Porro et necessitatibus quam. \mark{a:1:6}Culpa dolor est porro error voluptatem enim non. \mark{a:1:7}Nulla tempore quia praesentium facere dolores omnis. \mark{a:1:8}Quam ut asperiores magni in expedita aut qui. \mark{a:1:9}Quos sit voluptas accusantium non doloremque fugiat placeat voluptas.Perspiciatis quis odio facere ad velit exercitationem deserunt. \mark{a:1:10}Temporibus fuga non omnis harum ut voluptates explicabo. \mark{a:1:11}Nulla rerum quia consequatur. \mark{a:1:12}Ut dolor aspernatur porro dicta quod. \mark{a:1:13}Quo eos qui mollitia. \mark{a:1:14}Aut ratione voluptate debitis et vero est.}
+
+%\showbox\excessL
+
 \setbox\excessA\vbox{\hsize=200pt 
 . \mark{a:1:1}Illum cupiditate velit repellendus aliquid impedit. \mark{a:1:2}Beatae et ut quod a doloribus. \mark{a:1:3}Sunt ut et eos aut sunt tempore. \mark{a:1:4}Sit quaerat quae tempore molestiae delectus ratione non. \mark{a:1:5}Est cum atque numquam minus non nesciunt et.Nisi modi eaque inventore architecto eveniet repudiandae. \mark{a:1:6}Amet ut quo impedit molestiae. \mark{a:1:7}Voluptatem dolorem reiciendis ut voluptas explicabo qui quo. \mark{a:1:8}Corrupti et dolore in et tenetur et cupiditate autem. \mark{a:1:9}Similique et et delectus.Ut quam mollitia voluptatem ipsa id. \mark{a:1:10}Velit quas maiores temporibus dolore. \mark{a:1:11}Sequi autem facere omnis et dicta totam est hic. \mark{a:1:12}Id sed unde similique mollitia sed aliquid.}
 \endgraf
@@ -59,6 +63,7 @@
   require("measurebox.lua")
 }
 \fi
+\x@\count\csname note-f\endcsname=500
 
 
 \MSG{bls:\the\baselineskip}
@@ -109,7 +114,11 @@
 
 
 
-
+\m@rgedims{a:1pt,b:3pt}+{c:1pt,b:1pt}
+\res@tm@reged
+\message{merged result \@mtmp}
+\edef\test{a:\the\dimexpr 1.0pt\relax,b:\the\dimexpr 4.0pt\relax,c:\the\dimexpr 1.0pt\relax}
+\ifx\@mtmp\test\else\errmessage{!!! Failed \meaning\test != \meaning\@mtmp}\fi
 
 
 \def\p@rsepathstr#1|#2\E{%remove logging info from a pathstring
@@ -192,16 +201,28 @@
 \ins@meas@trialnofullfalse
 \tracetimset{rsplit}\relax
 %\tracingassigns=1
+%22=+0
 \complex@rsplit L
 %\tracingassigns=0
 \tracetimcheck{rsplit}{recursive L}
 
+%\tracing{imt}
+\tracing{dmcr}
+\ins@meas@trialnofullfalse
 \def\ssr@sult{}
 \tracetimset{ssplit}\relax
 \complex@ssplit L
 \trace{dmc}{ssplit: \ssr@sult}
 \tracetimcheck{ssplit}{sequential L}
+\ins@meas@trialnofulltrue
+%\notracing{imt}
+\message{note-f: \the\count\csname note-f\endcsname}
+\dimen0=43.94527pt
+\divide\dimen0 by 1000
+\message{dimencalc: \x@\the\x@\dimexpr \count\csname note-f\endcsname\dimen0\relax}%
+%\showbox\excessL
 
+%\endinput
 \tracetimset{rsplit}\relax
 \complex@rsplit R
 \tracetimcheck{rsplit}{recursive R}
@@ -221,6 +242,8 @@
 \complex@ssplit C
 \trace{dmc}{ssplit: \ssr@sult}
 \tracetimcheck{ssplit}{sequential C}
+
+\tracing{imt}
 
 \trace{dmc}{---------------------------------}
 \def\@ption#1#2\E{\bgroup
@@ -302,7 +325,7 @@ A:\Alist
 %\tracingall
 %\box\excessL
 \def\digl@tc@ntentlist{LRA}
-\tracing{imt}
+
 \ifdim\pagetotal>0pt \pagebreak \fi
 \setbox\excessL\box\Lbox
 \setbox\excessA\box\Abox
@@ -325,6 +348,7 @@ A:\Alist
 \message{p@gehtcalcs is: \x@\meaning\csname p@gehtcalcs-0\endcsname. htfunction is \x@\meaning\csname htfunction-0-0\endcsname}
 \csname p@gehtcalcs-0\endcsname
 \csname p@gehtcalcs-1\endcsname
+
 \p@lyp@geno=0
 \@me@surepages
 \tracingmacros=0
