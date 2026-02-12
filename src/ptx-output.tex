@@ -1254,11 +1254,12 @@
   \trace{i}{s@tpage: Saving inserts}%
   \s@veinserts{chunk}%
   \global\partialfr@medfalse
-  \s@veallnotes{1}%
   \xdef\oldb@tmark{\botmark}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
   %\tracingassigns=1
   \nextshipout
+  \let\\=\clearn@teboxes \the\n@tecl@sses % Some circumstances leads to the note boxes being left as is (so they can be added to by extra text). That's irelevant now we've written the page.
+  \s@veallnotes{1}% Save blanked notes!
   %\tracingassigns=0
   \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
   \ifcsname page-\the\pageno\endcsname

@@ -77,6 +77,7 @@
 \def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }
 \def\incn@tecount#1{\global\advance\csname refn@te-#1\endcsname by 1 }
 \def\exp@ndn@tes#1{\x@\unvcopy\csname noteb@x-#1\endcsname}
+\def\clearn@teboxes#1{\global\x@\setbox\csname noteb@x-#1\endcsname\box\voidb@x \global\x@\setbox\csname note-#1\endcsname\box\voidb@x}
 
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
@@ -595,6 +596,7 @@
     \ifonlyst@dynotes\let\n@xt=\n@ffin\else
       \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \fi\fi
+  \trace{f}{note-#1: \l@gdims{\csname note-#1\endcsname} noteb@x-#1:\l@gdims{\csname noteb@x-#1\endcsname}}
   \ifversion{6}{%In v6, unwrapping happens per-notestyle. This isolates note styles from each other and allows per-notestyle shaving
     \x@\let\x@\tnoteb@x\csname noteb@x-#1\endcsname
     \global\setbox\tnoteb@x\vbox{%
