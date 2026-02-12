@@ -325,6 +325,8 @@
 \diglotSepNotestrue%
 \newif\ifdiglotBalNotes %If a left column footnote steals space from the right column also
 \diglotBalNotesfalse%
+\newif\ifdiglotMergedNotesRTL % Let user control if merged footnotes should be RTL or LTR
+\diglotMergedNotesRTLfalse
 \newif\iftrialfailed
 \global\def\n@xtc@mmand{}%
 
@@ -2471,7 +2473,10 @@
   \else%
      % RTLness will have been asserted (or not) when the note was defined.
      \setbox\notechunk\vbox{%
-       \ifdiglot\RTLfalse\fi
+       \ifdiglot%might be monoglot..
+         \ifdiglotMergedNotesRTL \RTLtrue\else\RTLfalse\fi % At the moment, we ask for user control here. Getting it wrong gives bad results, and it must match where the (paragraph-form) notes are coming from.
+         \RTLfalse
+       \fi
        \def\c@rrdstat{L}%
        \traceNum{d}{Inserting Notes}%
        \f@rstnotetrue%
