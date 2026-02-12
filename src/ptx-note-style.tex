@@ -185,7 +185,7 @@
     \else \trace{n}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\def\them@rk{#1}% otherwise the caller is the parameter
     \fi\fi
     \trace{n}{starn@testyle - create tmp}%
-    \edef\fnt@mp{\string\@parnote{\newn@testyle}{\ifdiglot\dc@rref\else\c@rref\fi}{\the\fmc@unt}{\them@rk}}
+    \edef\fnt@mp{\string\@parnote{\newn@testyle}{\ifdiglot\dc@rref\else\c@rref\fi}{\the\fmc@unt}{\them@rk}}%
     \begingroup
     \ifstructmarkerlistcorrect\else
       \implicitcl@setrue % Char styles in notes implicitly close other ones unless someone declares the list of structural markers is correct (see structm@rker in ptx-charstyle. FIXME: develop testcase for new structural markers.
@@ -210,7 +210,8 @@
         \fi
         \edef\m@sg{\string\noteonpage{\newn@testyle}{#1}}%
         \x@\write\x@\n@tepages\x@{\m@sg{\the\pageno}}% record the page where this note occurred
-        \pdfsavepos\x@\write\x@\p@rlocs\x@{\fnt@mp{\the\pdflastxpos}{\the\pdflastypos}}%
+        \pdfsavepos
+        \x@\write\x@\p@rlocs\x@{\fnt@mp{\the\pdflastxpos}{\the\pdflastypos}}%
         \getp@ram{callerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
         \ifnum\pagetracing>0
           \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%

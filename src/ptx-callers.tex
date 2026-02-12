@@ -88,7 +88,7 @@
     \loop \ifnum\c@llernum>1 % then strip \c@llernum-1 callers from the front of the list
       \advance\c@llernum by -1
       \expandafter\dropfirstc@ller\c@llers,\end \repeat
-    \edef\getcallerres{\expandafter\getfirstc@ller\c@llers,\end} % and extract the one we want
+    \edef\getcallerres{\expandafter\getfirstc@ller\c@llers,\end}% and extract the one we want
     \fi
   \fi
 }
