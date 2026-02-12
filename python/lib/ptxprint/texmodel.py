@@ -1477,7 +1477,7 @@ class TexModel:
         new_glosses = set()
         def capturek(e, state):
             if e.tag == "char" and e.get("style", "") == "k":
-                nkval=getk(e, attrib="key").lower() 
+                nkval = getk(e, attrib="key").lower()
                 state = (nkval in self.found_glosses and nkval not in self.processed_glosses)
                 if state:
                   self.processed_glosses.add(nkval)

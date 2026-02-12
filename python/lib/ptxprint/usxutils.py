@@ -823,6 +823,8 @@ class Usfm:
                         killme = kval.lower() not in glosses
                 if killme:
                     root.remove(e)
+            elif e.tag == "chapter":
+                killme = False
 
     def apply_adjlist(self, bk, adjlist):
         if adjlist is None:
