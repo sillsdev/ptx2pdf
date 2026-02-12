@@ -101,7 +101,7 @@ class Module:
 
     def parse(self, piclist=None):
         logger.log(5, self.doc.xml.outUsx(None))
-        self.doc.xml.book = "MOD"
+        # self.doc.xml.book = "MOD"
         count = 0
         self.removes = set((e for e in exclusionmap.values() if self.testexclude(e)))
         skipme = 0
