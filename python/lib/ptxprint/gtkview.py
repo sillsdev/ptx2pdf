@@ -3276,6 +3276,10 @@ class GtkViewModel(ViewModel):
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
+        sview = self.builder.get_object("tb_FinalSFM").get_child()
+        if isinstance(sview, Gtk.Viewport):
+            sview = sview.get_child()
+        sview.override_font(p)
         self.picListView.modify_font(p)
 
         w = self.builder.get_object("cr_zvar_value")
