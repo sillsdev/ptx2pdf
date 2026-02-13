@@ -773,7 +773,7 @@
   \ifdim\headingmidspace=0pt \else %\ifdiglot\else\vskip \ColAdjskip\fi\else
     \ifhe@dings\nobreak\fi
     \vskip\headingmidspace
-    \prevdepth=0pt
+    % \prevdepth=0pt % Allow line height to impact space before at top of columns. KEEP for next major revision.
   \fi
   \global\startparatrue
   \resetp@rstyle
