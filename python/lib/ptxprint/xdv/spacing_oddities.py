@@ -191,6 +191,8 @@ class Line:
         # threshold in ems
         bad_spaces = []
         bad_chars = []
+        nspaces = 0
+        tspaces = 0
         if len(self.glyph_clusters) > 1:
             fontsize = self.glyph_clusters[0].font.points
             maxspace = fontsize*threshold
@@ -202,6 +204,8 @@ class Line:
                 gc_box1 = self.glyph_clusters[i].get_boundary_box()
                 gc_box2 = self.glyph_clusters[i+1].get_boundary_box()
                 width = abs(gc_box2[0] - gc_box1[2])
+                nspaces += 1
+                tspaces += ((width - self.glyph_clusters[0].font.ttfont.space_width) / fontsize) ** 2
                 rect = [(gc_box1[2], self.vstart), width, width/fontsize]
                 if curr_charwidth is None:
                     curr_charwidth = width
@@ -212,7 +216,7 @@ class Line:
                     bad_chars = []
                 if width > maxspace:
                     bad_spaces.append(rect)
-        return bad_spaces + bad_chars
+        return (bad_spaces + bad_chars, nspaces, tspaces)
     
     def has_collisions(self):
         return self.collisions   

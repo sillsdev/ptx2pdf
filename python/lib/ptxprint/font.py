@@ -707,6 +707,7 @@ class TTFont:
             self.readhead(inf)
             if withglyphs:
                 self.readhmtx(inf)
+                self.space_width = self.advances[3] / self.upem    # this is a scarily effective hack
                 self.readglyf(inf)
         self.isGraphite = 'Silf' in self.dict
         return True
@@ -908,8 +909,11 @@ class TTFont:
         self.glyphs = []
         for i in range(self.numglyphs):
             inf.seek(self.dict['glyf'][0] + locas[i][0])
-            data = inf.read(10)
-            self.glyphs.append(struct.unpack(">4h", data[2:]))  # xMin, yMin, xMax, yMax
+            if locas[i][1] >= 10:
+                data = inf.read(10)
+                self.glyphs.append(struct.unpack(">4h", data[2:]))  # xMin, yMin, xMax, yMax
+            else:
+                self.glyphs.append([0, 0, 0, 0])
 
 
     # def style2str(self, style):
