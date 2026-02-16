@@ -440,6 +440,8 @@ class TexModel:
             swap = False # FixMe! self.dict['document/diglotswapside'] == 'true'
             # ratio = float(self.dict['document/diglotprifraction']) # FixMe!
             ratio = 0.5
+            if self.dict['document/diglotadjcenter']:
+                ratio = float(self.dict['poly/fraction'])
             # print(f"{ratio=}")
             if ratio > 0.5:
                 lhfil = "\\ifdiglot\\ifseriesdiglot\\else\\hskip 0pt plus {}fil\\fi\\fi".format(f2s(ratio/(1-ratio)-1))
