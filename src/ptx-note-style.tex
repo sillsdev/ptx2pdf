@@ -153,7 +153,7 @@
 \lowercase{\gdef\@@@startn@testyle#1{\startn@testyle~#1 }}%
 %-cnote_notestyle
 
-\newif\ifstructmarkerlistcorrect
+\newif\ifstructmarkerlistcorrect \structmarkerlistcorrecttrue
 \newcount\fmc@unt
 
 %+cnote_startnote_start
@@ -165,7 +165,7 @@
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
     \begingroup
-    \implicitcl@setrue % Char styles in notes may implicitly close other ones.  We don't care here.
+    %\implicitcl@setrue % Char styles in notes may implicitly close other ones.  We don't care here.
     \let\aftern@te\relax
     %\ifhe@dings\bgroup\fi
     \setbox0=\vbox\bgroup \skipn@testyletrue \inn@tetrue

@@ -74,15 +74,15 @@
 
 %+cchar_charstyle
 
-\def\ch@rstyle{\ifimplicitcl@se\let\n@xt\@ch@rstyle\else
-  \ifinn@te\let\n@xt\ch@rstyleinnote\else
-    \ifdoingt@ble\let\n@xt\ch@rstyleintbl\else
-  \let\n@xt\ch@rstylepls\fi\fi\fi\n@xt}
+\def\ch@rstyle{\ifinn@te\let\n@xt\ch@rstyleinnote\trace{sa}{In a note}\else
+  \ifimplicitcl@se\let\n@xt\@ch@rstyle \trace{sa}{Implicit closing}\else
+    \ifdoingt@ble\let\n@xt\ch@rstyleintbl\trace{sa}{In a table}\else
+  \let\n@xt\ch@rstylepls\trace{sa}{Plus marker}\fi\fi\fi\n@xt}
 
 \def\ch@rstyleinnote#1{%USFM3.1 handles note structure markers differently to character styles.
  \ifcsname STR@CT-#1\endcsname
-    \trace{sa}{Note structure marker}\let\n@xt\@ch@rstyle
- \else\let\n@xt\ch@rstylepls\fi
+    \trace{sa}{#1 Note structure marker}\let\n@xt\@ch@rstyle
+ \else\trace{sa}{#1 Not Note structure marker}\let\n@xt\ch@rstylepls\fi
  \n@xt{#1}%
 }
 \def\ch@rstyleintbl#1{%USFM3.1 handles table structure markers differently to character styles.
