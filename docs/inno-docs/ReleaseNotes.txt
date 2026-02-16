@@ -1,8 +1,16 @@
-PTXprint 3.0.10 Release Notes
-13 Feb 2026
+PTXprint 3.0.11 Release Notes
+17 Feb 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.11 (17 Feb 2026)
+  * First steps towards a paragraph badness figure. Currently just based on widths of spaces
+  * Override font for finalSFM
+  * Fix diglot triggers filename so that shrink/expand text works
+  * Fix diglot RH/RF center positioning
+  * Fix Layout Only (noUpdate) regression, and force processing when chapter range changes
+  * Fix non implicit closure inside notes (e.g. \it)
 
 Bug fixes and Improvements in 3.0.10 (13 Feb 2026)
   * Improve context menu with color-coded options and tooltips for keyboard-mouse shortcuts
