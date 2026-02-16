@@ -1619,10 +1619,8 @@ class ViewModel:
 
     def getLocalTriggerFilename(self, bk, ext="-1.triggers"):
         fname = self.getDraftFilename(bk, ext=ext)
-        print(f"==> {len(self.diglotViews)=} {self.isDiglot=}  {fname=}")
         if len(self.diglotViews):
             fname = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", fname)
-        print(f"Updated {fname=}")
         return fname
 
     def get_adjlist(self, bk, save=True, gtk=None):
