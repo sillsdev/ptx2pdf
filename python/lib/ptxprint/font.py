@@ -707,7 +707,10 @@ class TTFont:
             self.readhead(inf)
             if withglyphs:
                 self.readhmtx(inf)
-                self.space_width = self.advances[3] / self.upem    # this is a scarily effective hack
+                if hasattr(self, 'advances') and len(self.advances) >= 3:
+                    self.space_width = self.advances[3] / self.upem    # this is a scarily effective hack
+                else:
+                    self.space_width = None
                 self.readglyf(inf)
         self.isGraphite = 'Silf' in self.dict
         return True

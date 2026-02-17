@@ -205,7 +205,8 @@ class Line:
                 gc_box2 = self.glyph_clusters[i+1].get_boundary_box()
                 width = abs(gc_box2[0] - gc_box1[2])
                 nspaces += 1
-                tspaces += ((width - self.glyph_clusters[0].font.ttfont.space_width) / fontsize) ** 2
+                if self.glyph_clusters[0].font.ttfont.space_width is not None:
+                    tspaces += ((width - self.glyph_clusters[0].font.ttfont.space_width) / fontsize) ** 2
                 rect = [(gc_box1[2], self.vstart), width, width/fontsize]
                 if curr_charwidth is None:
                     curr_charwidth = width
