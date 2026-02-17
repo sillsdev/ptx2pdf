@@ -468,6 +468,9 @@ class Usfm:
                     currv = p.get("number", curr.last.verse)
                     currc = curr.first.chapter if curr is not None else 0
                     curr = get_ref(bk, currc, currv)
+                    if curr.first != curr.last and curr.last.verse is not None and curr.last.verse < 200 and curr.first not in self.bridges:
+                        for r in curr:
+                            self.bridges[r] = curr
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
