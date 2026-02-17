@@ -446,7 +446,7 @@
     \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
     \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax\else \dimen3=\p@ram \IndentUnit
-      \ifRTL \dimen2=\dimen3 \else\ifdim\dimen3=0pt\else\kern \dimen3\fi\fi
+      \ifdim\dimen3=0pt\else\kern \dimen3\fi
     \fi
     \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
@@ -458,18 +458,20 @@
     \ifx\the@lign\cell@r
       \parfillskip=0pt
       \edef\l@drsl{r}%
-      \ifRTL \let\n@xt=\rightskip \else
+      %\ifRTL \let\n@xt=\rightskip \else
         %\skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
-      \fi
+      %\fi
     \else\ifx\the@lign\cell@c
       %\parfillskip=0pt
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
       \edef\l@drsr{r}%
-      \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
-        \let\n@xt=\leftskip
-      \else\let\n@xt=\parfillskip\trace{t}{n@xt=rightskip}\fi
+      %\ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
+      %  \let\n@xt=\leftskip
+      %\else
+        \let\n@xt=\parfillskip\trace{t}{n@xt=rightskip}%
+      %\fi
     \fi\fi
     \trace{t}{r=\l@drsr, l=\l@drsl, \c@tprefix =\c@ttoc}%
     \advance\n@xt by 0pt plus 1fil
