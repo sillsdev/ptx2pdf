@@ -394,7 +394,7 @@ class Usfm:
     def asUsfm(self, grammar=None, file=None, **kw):
         if grammar is None:
             grammar = self.grammar
-        return self.xml.outUsfm(file=file, grammar=grammar, emitter=PTXEmitter, **kw)
+        return self.xml.outUsfm(file=file, grammar=grammar, emitter=PTXEmitter, notilde=True, **kw)
 
     def outUsx(self, fname):
         return self.xml.outUsx(fname)
