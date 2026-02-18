@@ -752,10 +752,9 @@ class Usfm:
         for x, isin in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
             if x.tag == "ms" and x.get('style', '') == "xts":
                 continue
-            if isin:
-                t = x.text
-            else:
-                t = x.tail
+            t = x.text if isin else x.tail
+            if isempty(t):
+                continue
             r = x.pos.ref if hasattr(x.pos, 'ref') else None
             if r is not None and r != currstate[0]:
                 currstate = [r, set(strongs.getstrongs(r))]
@@ -797,6 +796,7 @@ class Usfm:
                         else:
                             lastw.tail += b[a] + (b[a+1] if a < len(b) - 2 else "")
                     matched = True
+                t = x.text if isin else x.tail
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
 
     def getcvpara(self, c, v):

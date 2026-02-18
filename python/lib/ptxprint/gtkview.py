@@ -2116,7 +2116,7 @@ class GtkViewModel(ViewModel):
         except Exception as e:
             if "SyntaxError" in str(type(e)):
             # if "SyntaxError" in type(e):
-                s = _("Failed due to an error in the USFM file.") + "\n" + \
+                s = _("Failed due to an error in the generated USFM file.") + "\n" + \
                     _("Run the Basic Checks in Paratext and try again.") + "\n"
             else:
                 s = traceback.format_exc()
