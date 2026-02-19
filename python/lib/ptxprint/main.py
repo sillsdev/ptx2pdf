@@ -111,7 +111,7 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         server.terminate()
         server.wait()
 
-def main(doitfn=None):
+def main(doitfn=None, argsline=None, retview=False):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
 
@@ -178,10 +178,9 @@ def main(doitfn=None):
     config = configparser.ConfigParser(interpolation=None)
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None
-    argsline = None
-    if envopts is not None:
+    if argsline is None and envopts is not None:
         argsline = envopts
-    elif config.has_option('init', 'commandargs'):
+    elif argsline is None and config.has_option('init', 'commandargs'):
         argsline = config.get('init', 'commandargs')
         config.remove_option('init', 'commandargs')
     if argsline is not None:
@@ -404,7 +403,7 @@ def main(doitfn=None):
 
     if args.test is not None:
         runtest(prjTree, config, macrosdir, project, doit, args)
-    elif args.print or args.action is not None:
+    elif args.print or args.action is not None or retview:
         mainw = ViewModel(prjTree, config, macrosdir, args)
         mainw.setup_ini()
         if args.pid:
@@ -414,7 +413,7 @@ def main(doitfn=None):
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
-        if args.print:
+        if args.print or retview:
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)
@@ -433,6 +432,8 @@ def main(doitfn=None):
                 mainw.docreatediff = True
                 if args.difffile.lower() == 'last':
                     mainw.set("s_keepVersions", "1")
+            if retview:
+                return mainw
             mainw.savePics()
             mainw.saveStyles()
             job = doit(mainw, noview=True, nothreads=True)

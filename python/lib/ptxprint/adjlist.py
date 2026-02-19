@@ -94,32 +94,48 @@ class AdjList:
         res = k[:3] + (k[5], row[2], k[3], k[4], k[6])
         return res
 
+    def parseline(self, l):
+        c = ""
+        if '%' in l:
+            c = l[l.find("%")+1:].strip()
+            l = l[:l.find("%")]
+        m = adjre.match(l)
+        val = None
+        if m:
+            try:
+                val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1),
+                                m.group(4), None, self.centre, c]
+            except ValueError:
+                val = None
+            if val is not None:
+                n = restre.match(c)
+                if n:
+                    val[4] = n.group(1)
+                    val[5] = int(n.group(2))
+                    val[6] = n.group(3)
+        return val
+
     def readAdjlist(self, fname):
         self.adjfile = fname
         allvals = []
         self.liststore.clear()
         with open(fname, "r", encoding="utf-8") as inf:
             for l in inf.readlines():
-                c = ""
-                if '%' in l:
-                    c = l[l.find("%")+1:].strip()
-                    l = l[:l.find("%")]
-                m = adjre.match(l)
-                if m:
-                    try:
-                        val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1),
-                                        m.group(4), None, self.centre, c]
-                    except ValueError:
-                        val = None
-                    if val is not None:
-                        n = restre.match(c)
-                        if n:
-                            val[4] = n.group(1)
-                            val[5] = int(n.group(2))
-                            val[6] = n.group(3)
-                        allvals.append(val)
+                val = self.parseline(l)
+                if val is not None:
+                    allvals.append(val)
         for a in sorted(allvals, key=self.calckey):
             self.liststore.append(a)
+
+    def genline(self, r):
+        cv = r[1].replace(":", ".").replace(" ", "")
+        if r[2] > 1:
+            line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
+        else:
+            line = "{0[0]} {1} {0[3]}".format(r, cv)
+        if r[4]: # and r[5] != self.centre or r[6]:
+            line += " % \\{4} {5} {6}".format(*r)
+        return line
 
     def createAdjlist(self, fname=None):
         if fname is None:
@@ -132,13 +148,7 @@ class AdjList:
         os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
         with open(fname, "w", encoding="utf-8") as outf:
             for r in self.liststore:
-                cv = r[1].replace(":", ".").replace(" ", "")
-                if r[2] > 1:
-                    line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
-                else:
-                    line = "{0[0]} {1} {0[3]}".format(r, cv)
-                if r[4]: # and r[5] != self.centre or r[6]:
-                    line += " % \\{4} {5} {6}".format(*r)
+                line = self.genline(r)
                 outf.write(line + "\n")
 
     def createTriggerlist(self, fname=None):

@@ -377,22 +377,6 @@
     \let\styst@k\empty
     \ifp@ranotes\leftskip=0pt\rightskip=0pt\parfillskip=0pt\else
     \s@tsideskips{#1}{\noteRag}\fi
-%    \parfillskip=0pt plus 1fil
-%    \leftskip=0pt \rightskip=0pt
-%    \getp@ram{justification}{#1}{#1}%
-%    \ifx\p@ram\c@nter
-%     \leftskip=\noteRag \rightskip=\leftskip \parfillskip=0pt
-%    \else\ifx\p@ram\l@ftb@l
-%     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
-%    \else\ifx\p@ram\l@ft
-%     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
-%    \else\ifx\p@ram\r@ght
-%     \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
-%    \fi\fi\fi\fi
-%    \getp@ram{leftmargin}{#1}{#1}%
-%    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-%    \getp@ram{rightmargin}{#1}{#1}%
-%    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \trace{n}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
@@ -406,13 +390,6 @@
     \ifp@ranotes\else
       \ifvmode \prevdepth=0pt \fi % Ensure that we start with a baselineskip.
       \ifusespacebefore\getp@ram{spacebefore}{#1}{#1}\trace{n}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi\fi
-%      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
-%      \ifdim\dimen0<\baselineskip
-%        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
-%        \vskip\dimen1
-%		\trace{f}{\ch@pter:\v@rse : Footnote vskip=\the\dimen1, baselineskip=\the\baselineskip, strut height=\the\dimen0, prevdepth=\prevdepth}%
-%        \prevdepth=-1000pt
-%	  \fi
     \fi
     \leavevmode % begin paragraph
     \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 1 \fi 

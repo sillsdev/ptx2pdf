@@ -35,7 +35,7 @@
 \global\holdinginserts=1
 \def\underf@ll#1#2#3{%
   \ifdim#1<\dimexpr #2 - \baselineskip\relax\ifinendbook\else
-    \immediate\write-1{Underfill[#3]: [\the\pageno] \the #1 \the #2}%
+    \immediate\write-1{Underfill[#3]: [\the\pageno] \the #1, \the #2, \the\baselineskip}%
   \fi\fi
 }
 \newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial

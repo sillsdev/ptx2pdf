@@ -70,29 +70,23 @@
   \dimen9=\ht#1
   \trace{M}{\t@mpv, \t@mp \space kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6,
             text = \the#4, side = #2, valign = #3, ht=\the\dimen9+\the\dp#1*\the\wd#1, hsize=\the\hsize}%
-  \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
-  \dimen8=\lastdepth \dimen7=\dp#1
-  \x@\let\x@\do@djust\ifx\t@mpv\@inline\m@rgincollect\else\vadjust\fi
-  \setbox0=\vbox to 0pt{\let\par=\endgraf\everypar={}%
-    \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi
-    \trace{e}{Inside (\t@mpv) \the\ht#1+\the\dp#1*\the\wd#1}%
-    \ifx\t@mp\l@ft\llap{\box #1 \kern #5\kern #4}%
-    \else\noindent\hfill\rlap{\kern #5\kern #4 \box #1}%
-    \fi
-    \ifx\t@mpv\@top\else\vss\fi}%
-  % \ifx\t@mp\l@ft\showbox0
-  \dp0=0pt
-  %\showbox0
-  \do@djust{%\nointerlineskip\baselineskip=0pt
-    %\ifx\t@mpv\@inline\else\nobreak\fi
-    %\vskip\topskip\vskip-\dimen8
-    %\vbox to 0pt{\hbox to 10pt{}}%
-    %\kern -\topskip\kern\dimen8
-    \trace{e}{Inside (0) \the\ht0+\the\dp0*\the\wd0}%
-    %\showbox0
-    \kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9
-  }%\ifx\t@mpv\@inline\nobreak\fi%
-  \endgroup
+  \ifx\t@mp\size@SPAN\vadjust{\box #1}\else
+    \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
+    \dimen8=\lastdepth \dimen7=\dp#1
+    \x@\let\x@\do@djust\ifx\t@mpv\@inline\m@rgincollect\else\vadjust\fi
+    \setbox0=\vbox to 0pt{\let\par=\endgraf\everypar={}%
+      \ifx\t@mpv\@bottom\else\ifx\t@mpv\@inline\else\vss\fi\fi
+      \trace{e}{Inside (\t@mpv) \the\ht#1+\the\dp#1*\the\wd#1}%
+      \ifx\t@mp\l@ft\llap{\box #1 \kern #5\kern #4}%
+      \else\noindent\hfill\rlap{\kern #5\kern #4 \box #1}%
+      \fi
+      \ifx\t@mpv\@top\else\vss\fi}%
+    \dp0=0pt
+    \do@djust{\trace{e}{Inside (0) \the\ht0+\the\dp0*\the\wd0}%
+      \kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9
+    }%
+    \endgroup
+  \fi
 }
 
 \def\finishm@rginnotes "#1"{\immediate\closeout\m@rginnotes\m@rginnotesopenfalse}
