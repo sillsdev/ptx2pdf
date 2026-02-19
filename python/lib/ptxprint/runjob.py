@@ -330,7 +330,7 @@ class RunJob:
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
         sheets = {}
         keyarr = ["L"]
-        outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.dict.setdefault("diglots_", {})
         for k, diginfo in diginfos.items():
             texfiles = []
