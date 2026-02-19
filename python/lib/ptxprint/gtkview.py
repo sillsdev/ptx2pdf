@@ -1066,6 +1066,19 @@ class GtkViewModel(ViewModel):
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
                 self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
         self.connectSimpleClicked()
+        tv = self.builder.get_object("tv_zvarEdit")
+        tv.connect("key-press-event", self.on_variables_keypress)
+
+        value_col = tv.get_columns()[1]          # or find by title
+        renderer = value_col.get_cells()[0]      # usually the CellRendererText
+
+        self.var_value_renderer = renderer
+        self.var_value_renderer.connect("editing-started", self._on_var_editing_started)
+        self.var_value_renderer.connect("editing-canceled", self._on_var_editing_canceled)
+
+        self._var_editable = None
+        self._var_edit_path = None
+
         logger.debug("Static controls initialized")
 
         self.resetProjectsList()
@@ -1086,6 +1099,115 @@ class GtkViewModel(ViewModel):
 
         return True
 
+    def _on_var_editing_started(self, renderer, editable, path_str):
+        self._var_editable = editable
+        self._var_edit_path = Gtk.TreePath.new_from_string(path_str)
+        editable.connect("key-press-event", self.on_variables_keypress)
+
+    def _on_var_editing_canceled(self, renderer):
+        self._var_editable = None
+        self._var_edit_path = None
+
+    def on_variables_keypress(self, widget, event):
+        # Handle Tab and Shift-Tab (GTK sometimes sends ISO_Left_Tab for Shift-Tab)
+        if event.keyval not in (Gdk.KEY_Tab, Gdk.KEY_ISO_Left_Tab):
+            return False
+
+        is_shift = (event.keyval == Gdk.KEY_ISO_Left_Tab) or bool(event.state & Gdk.ModifierType.SHIFT_MASK)
+
+        # If we're called from the cell editor, widget is a Gtk.Entry, not the TreeView
+        if isinstance(widget, Gtk.Entry):
+            tv = self.builder.get_object("tv_zvarEdit")  # or self._vars_tv if you stored it
+        else:
+            tv = widget
+
+        model = tv.get_model()
+        if model is None:
+            return False
+
+        num_rows = len(model)
+        if num_rows == 0:
+            return True  # consume Tab so focus doesn't leave
+
+        # Prefer the path we are editing (more accurate), else fall back to cursor
+        path = getattr(self, "_var_edit_path", None)
+        col = None
+        if path is None:
+            path, col = tv.get_cursor()
+            if path is None:
+                return True
+        else:
+            # If we were editing, keep current cursor column (or fetch it)
+            cur_path, col = tv.get_cursor()
+
+        # 1) FORCE COMMIT before moving
+        # (stop_editing(False) = accept/commit; True = cancel)
+        # 1) FORCE COMMIT before moving
+        if isinstance(widget, Gtk.Entry):
+            # This is the critical part: mimic what Enter does (commit the edit)
+            try:
+                widget.editing_done()
+                widget.remove_widget()
+            except Exception:
+                pass
+        else:
+            # If somehow we got Tab on the TreeView while editing, still try this
+            try:
+                self.var_value_renderer.stop_editing(False)
+            except Exception:
+                pass
+
+        idx = path.get_indices()[0]
+        new_idx = (idx - 1) % num_rows if is_shift else (idx + 1) % num_rows
+        new_path = Gtk.TreePath.new_from_indices([new_idx])
+
+        # 2) Move AFTER GTK processes the edit (idle is better than an arbitrary timeout)
+        def _move():
+            # Keep the same column, and re-open editing
+            # If col is None for any reason, tv.set_cursor still works with the focus column.
+            tv.set_cursor(new_path, col, True)
+            return False
+
+        GLib.idle_add(_move)
+        return True
+
+    def old_on_variables_keypress(self, tv, event):
+        # 1. Only intercept the Tab key
+        if event.keyval != Gdk.keyval_from_name("Tab"):
+            return False
+
+        model = tv.get_model()
+        path, col = tv.get_cursor()
+        if path is None:
+            return False
+
+        # 2. FIX: Accept the current text before moving
+        # This tells the TreeView to stop editing and commit the value to the model.
+        tv.columns_autosize() # Forces a re-layout which often triggers commit
+        # Explicitly set cursor to None and back can force a commit, 
+        # but the timeout below is the most reliable way to let Gtk finish the 'edited' signal.
+
+        num_rows = len(model)
+        if num_rows == 0:
+            return False
+
+        # 3. FIX: Circular Logic (Cycling)
+        idx = path.get_indices()[0]
+        if event.state & Gdk.ModifierType.SHIFT_MASK:
+            # Shift-Tab: Go up, or wrap to bottom
+            new_idx = (idx - 1) if idx > 0 else (num_rows - 1)
+        else:
+            # Tab: Go down, or wrap to top
+            new_idx = (idx + 1) if (idx + 1) < num_rows else 0
+
+        new_path = Gtk.TreePath.new_from_indices([new_idx])
+        
+        # 4. FIX: Use a timeout to ensure the 'edited' signal fires 
+        # BEFORE we move the cursor to the next row.
+        GLib.timeout_add(50, lambda: tv.set_cursor(new_path, col, True))
+        
+        return True
+        
     def connectSimpleClicked(self):
         def _connect(obj, signal_name, handler, wtype, wname):
             # Store handler id per-signal so we don't double-connect

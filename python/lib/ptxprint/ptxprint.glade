@@ -14439,6 +14439,7 @@ project's Biblical Terms renderings.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">Show PDF</property>
+                <property name="xalign">0.20000000298023224</property>
               </object>
             </child>
           </object>
@@ -14464,7 +14465,6 @@ project's Biblical Terms renderings.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">View Level</property>
-                <property name="justify">center</property>
                 <property name="xalign">0.20000000298023224</property>
               </object>
             </child>
@@ -14491,7 +14491,7 @@ project's Biblical Terms renderings.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">Language</property>
-                <property name="justify">center</property>
+                <property name="xalign">0.20000000298023224</property>
               </object>
             </child>
           </object>
@@ -30395,6 +30395,8 @@ leave this option checked ON.</property>
                                             <property name="height-request">120</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Left-click to change values as needed.
+Right-click to show the context menu.</property>
                                             <property name="valign">start</property>
                                             <property name="hexpand">True</property>
                                             <property name="vexpand">True</property>
