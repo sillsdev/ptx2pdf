@@ -1206,6 +1206,11 @@
   \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
   \diglot@run@trials
   \global\allNeedEmptyingfalse
+  \csname aftereverychunkhook\endcsname% A potentially useful hook
+  \ifcsname afterthischunkhook\endcsname % One-shot hook.
+    \afterthischunkhook
+    \global\let\afterthischunkhook\undefined
+  \fi
 }
 
 \def\polyglotcolumn#1{%
@@ -2487,7 +2492,7 @@
 %
   \traceifcheck{@do@writep@ge@simplecols-c}%
   \traceifset{@do@writep@ge@simplecols-d}%
-  \tracing{I}%
+  %\tracing{I}%
   \ifunprintable 
     \abortpage
   \else
