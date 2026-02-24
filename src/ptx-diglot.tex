@@ -38,6 +38,8 @@
 %\def\TRshipout#1{\shipout#1}
 \def\TRshipout#1{}
 \def\b@xbotmark{}
+\newcount\r@a@trialdepth
+\r@a@trialdepth=0
 
 \xdef\f@rstb@dy{0pt}%
 \def\TextBorderColumns{} % If unset, then border all scripture. If set, only border the ones set. E.g. for when a 
@@ -682,9 +684,11 @@
     \global\output{\diglot@any@trial}
     \unvcopy\galley
     \unpenalty
-    \traceifset{run@a@trial}%
+    \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
+    \traceifset{run@a@trial\the\r@a@trialdepth}%
     \penalty\endtri@lpen@lty
-    \traceifcheck{run@a@trial}%
+    \traceifcheck{run@a@trial\the\r@a@trialdepth}%
+    \advance\r@a@trialdepth by -1
     \relax\relax
     \let\after@run@a@trial=\relax
   \else
