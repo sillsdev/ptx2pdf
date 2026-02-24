@@ -1001,7 +1001,7 @@
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
  \def\@v@ ##1 {\let\oldv@rse\v@rse\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
-  \ifdiglot\edef\dc@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\else\edef\c@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\fi
+  \ifdiglot\edef\dc@rref{\id@@@\c@rrdstat\ch@pter:\v@rse}\else\edef\c@rref{\id@@@\c@rrdstat\ch@pter:\v@rse}\fi
   \fmc@unt=0
   \leavevmode % ensure we are in horizontal mode to build paragraph. This may output a chapter number
   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number

@@ -121,7 +121,7 @@
 %LRspecificVarIf lists **internal boolean variables** that need to carry over from one paragraph to the next. 
 %For global config values, insert name in LRspecificDef, and add line(s) for newsideSpecificIf into initcolumndef@ults
 \def\LRspecificVarIf{dr@ppednumber,dr@ppedother}
-\def\LRspecificVarDef{ch@pterc@tnum} % \def based variables that need to carry over from one par to the next
+\def\LRspecificVarDef{ch@pterc@tnum,@@lastc@rref} % \def based variables that need to carry over from one par to the next
 
 %Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
 \def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts,dropped@ther@lines} 
@@ -176,7 +176,8 @@
      \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}%
     \fi
   \else
-   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected (\the\csname #1\endcsname)}%
+    \trace{S}{SpS: #1 (\the\csname #1\endcsname) <= \the\csname #1\sfx\endcsname}%
+    \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected (\the\csname #1\endcsname)}%
   \fi
 }
 
