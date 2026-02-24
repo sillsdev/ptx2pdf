@@ -159,7 +159,7 @@ class Chunk(list):
         self.verse = verse
         self.end = verse
         self.pnum = pnum
-        self.syncp = syncp
+        self.syncp = syncp #  Note that non-default syncp will reorder verse content on output.
         self.hasVerse = False
         if mode in (ChunkType.MIDVERSEPAR, ChunkType.VERSE, ChunkType.PARVERSE):
             self.verseText = True
@@ -319,7 +319,8 @@ class Collector:
     def pnum(self, c):
         if c is None:
             return 0
-        res = self.counts[c] = self.counts.get(c, 0) + 1
+        self.counts[c] = self.counts.get(c, 0) + 1 
+        res = self.counts['ALL'] = self.counts.get('ALL', 0) + 1 
         return res
 
     def makeChunk(self, c=None):
@@ -385,8 +386,9 @@ class Collector:
                                 mode = ChunkType.MIDVERSEPAR
                     logger.log(9, f"Conclusion: bodypar type is {mode}")
                         
-            pn = self.pnum
-            currChunk = Chunk(mode=mode, bk=self.book, chap=self.chapter, verse=self.verse, end=self.end, pnum=self.pnum(mode))
+            pn = self.pnum(mode)
+            
+            currChunk = Chunk(mode=mode, bk=self.book, chap=self.chapter, verse=self.verse, end=self.end, pnum=pn)
             if not _validatedhpi:
                 p = currChunk.position
                 assert p[_headingidx] == mode.name, "It looks like someone altered the position tuple, but didn't update _headingidx"
@@ -834,7 +836,7 @@ def alignScores(*columns):
     for ochunks, okeys in columns:
         merged=ochunks.score(merged)
     positions=[k for k,v in merged.items()]
-    positions.sort()
+    positions.sort() #  positions[] starts off mostly(?) in insertion-order, but some differences may potentially exist between input files.
     logger.debug("Potential sync positions:" + " ".join(map(str,positions)))
     # Ensure headings get split from preceding text if there's a coming break
     oldconfl=None
