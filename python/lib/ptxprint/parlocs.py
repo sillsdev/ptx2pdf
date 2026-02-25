@@ -376,8 +376,8 @@ class Paragraphs(list):
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
         
-    def isEmpty(self):
-        return not len(self.pindex)
+    def numPages(self):
+        return len(self.pindex)
         
     def _iterRectsPage(self, pnum):
         if pnum > len(self.pindex): # need some other test here 

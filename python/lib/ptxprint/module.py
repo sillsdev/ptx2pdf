@@ -222,4 +222,5 @@ class Module:
                             e.parent[i-1].tail = (e.parent[i-1].tail or "") + e.tail
                     e.parent.remove(e)
                     break
+        logger.debug(f"Getting {ref} resulting\n{res.outUsx(None)}")
         return res.getroot()

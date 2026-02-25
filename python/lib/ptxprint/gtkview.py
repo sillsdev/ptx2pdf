@@ -2175,7 +2175,8 @@ class GtkViewModel(ViewModel):
             self.pauseNoUpdate()
         if self.get("c_processScript"):
             pdffile = self.project.printPath(self.baseTeXPDFnames(diff=False)[0]+".pdf")
-            pauseme = True
+            xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
+            pauseme = not os.path.exists(xdvname) or os.lstat(xdvname).st_size == 0
             if os.path.exists(pdffile):
                 pdftime = os.lstat(pdffile).st_mtime
                 scripttime = os.lstat(self.get("btn_selectScript")).st_mtime

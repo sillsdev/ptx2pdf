@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
 refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
-restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(.*?)$")
+restre = re.compile(r"^\s*(?:mrk=|\\)(\S+)\s*(?:expand=)?(\d+)(.*?)$")
 
 class Liststore(list):
     """ structure: 
@@ -134,7 +134,7 @@ class AdjList:
         else:
             line = "{0[0]} {1} {0[3]}".format(r, cv)
         if r[4]: # and r[5] != self.centre or r[6]:
-            line += " % \\{4} {5} {6}".format(*r)
+            line += " % mrk={4} expand={5} {6}".format(*r)
         return line
 
     def createAdjlist(self, fname=None):
