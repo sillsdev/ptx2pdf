@@ -2,7 +2,7 @@ import gi, os, datetime, ctypes, math, gc
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
-import cairo, re, time, sys
+import cairo, re, time, sys, json
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
@@ -68,6 +68,7 @@ mstr = {
     'shrinkpic':  _("Shrink by 1 line"),
     'growpic':    _("Grow by 1 line"),
     'shwdtl':     _("Show Details..."),
+    'custom':     _("Custom"),
 }
 
 def mm_pts(n):
@@ -802,6 +803,11 @@ class PDFContentViewer(PDFFileViewer):
         self.collisionpages = []
         self.spacepages = []
         self.riverpages = []
+        # UI extensions loaded from <config>/UIExtensions.json
+        self.uiExtensions = []
+        self.uiExtensionsLoaded = False
+        self.uiExtensionsCfgDir = None
+        self.enabledTriggersByKey = {}
         
         # This may end up in page rendering code. Just collect data for now
         display = Gdk.Display.get_default()
@@ -840,8 +846,62 @@ class PDFContentViewer(PDFFileViewer):
         self.spacethreshold = float(self.model.get("s_spaceEms", 3.0))
         self.charthreshold = float(self.model.get("s_charSpaceEms", 0))
 
+    def loadUIExtensions(self, force=False):
+        cfgDir = self.model.project.srcPath(self.model.cfgid)
+        if not cfgDir:
+            return
+        if not force and self.uiExtensionsLoaded and self.uiExtensionsCfgDir == cfgDir:
+            return
+
+        self.uiExtensionsCfgDir, self.uiExtensionsLoaded, self.uiExtensions = cfgDir, True, []
+        extFile = os.path.join(cfgDir, "UIExtensions.json")
+        if not os.path.exists(extFile):
+            return
+        try:
+            data = json.load(open(extFile, "r", encoding="utf-8", errors="ignore"))
+            if not isinstance(data, list):
+                return
+            seen = set()
+            for e in data:
+                if not isinstance(e, dict):
+                    continue
+                entryId, entryType, menuEntry = e.get("id"), e.get("type"), e.get("menuEntry")
+                if not entryId or not entryType or not menuEntry or entryId in seen:
+                    continue
+                seen.add(entryId)
+                self.uiExtensions.append({
+                    "id": entryId,
+                    "type": entryType,
+                    "menuEntry": menuEntry,
+                    "tooltip": e.get("tooltip"),
+                    "payload": e.get("payload")
+                })
+        except Exception as ex:
+            logger.warning(f"UIExtensions.json read failed: {extFile}: {ex}")
+            self.uiExtensions = []
+
+    def getParInfoKey(self, info, parref, pgindx):
+        # Pick something stable enough for now; refine later when you write to AdjList.
+        # If parref has a unique id/path, prefer that. Fallback to ref + page.
+        return getattr(parref, "pid", None) or getattr(parref, "key", None) or f"{getattr(parref, 'ref', '')}@{pgindx}"
+
+    def getEnabledTriggers(self, info, parref, pgindx):
+        key = self.getParInfoKey(info, parref, pgindx)
+        return self.enabledTriggersByKey.setdefault(key, set())
+
+    def onUITriggerToggled(self, widget, triggerPayload, entryId, info, parref, pgindx):
+        enabled = self.getEnabledTriggers(info, parref, pgindx)
+        if widget.get_active():
+            enabled.add(triggerPayload)
+        else:
+            enabled.discard(triggerPayload)
+
+        # Next stage: persist enabled -> AdjList (and regenerate .triggers)
+        logger.debug(f"Toggled trigger {entryId}: {triggerPayload} -> {widget.get_active()} ; now={sorted(enabled)}")
+
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False, **kw):
         self.settingsChanged()
+        self.loadUIExtensions()
         
         self.isdiglot = isdiglot
         if pdf_path is None or not os.path.exists(pdf_path):
@@ -1706,6 +1766,38 @@ class PDFContentViewer(PDFFileViewer):
                 
                 self.addMenuItem(menu, None, None)
 
+                # Custom submenu (only show if UIExtensions.json has entries)
+                self.loadUIExtensions()
+                if self.uiExtensions:
+                    customMenu = Gtk.Menu()
+                    self.clear_menu(customMenu)
+
+                    enabled = self.getEnabledTriggers(info, parref, pgindx)
+
+                    for entry in self.uiExtensions:
+                        entryType = entry["type"]
+                        menuText = entry["menuEntry"]
+                        payload = entry.get("payload")
+                        entryId = entry["id"]
+                        tooltip = entry.get("tooltip")
+
+                        if entryType == "trigger" and payload:
+                            item = Gtk.CheckMenuItem.new_with_label(menuText)
+                            item.set_active(payload in enabled)
+                            item.connect("toggled", self.onUITriggerToggled, payload, entryId, info, parref, pgindx)
+                        else:
+                            item = Gtk.MenuItem.new_with_label(menuText)
+                            item.connect("activate", self.onUIExtensionSelected, entryType, payload, entryId, info, parref, pgindx)
+
+                        if tooltip:
+                            item.set_tooltip_text(tooltip)
+
+                        customMenu.append(item)
+                        item.show()
+
+                    self.addSubMenuItem(menu, mstr["custom"], customMenu)
+                    self.addMenuItem(menu, None, None)
+    
                 reset_menu = Gtk.Menu()
                 self.clear_menu(reset_menu)
                 for k, v in reset.items():
@@ -1722,9 +1814,9 @@ class PDFContentViewer(PDFFileViewer):
                                             or (k == "sprd" and self.spread_mode and len(self.get_spread(pgindx))))
                     menu_item.show()
                     reset_menu.append(menu_item)
-                self.addSubMenuItem(menu, mstr['rp'], reset_menu) 
+                self.addSubMenuItem(menu, mstr['rp'], reset_menu)
                 self.addMenuItem(menu, None, None)
-                
+
                 if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
                     self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
 
@@ -2079,6 +2171,14 @@ class PDFContentViewer(PDFFileViewer):
         self.show_pdf()
         self.hitPrint()
 
+    def onUIExtensionSelected(self, widget, entryType, payload, entryId, info, parref, pgindx):
+        # Next stage: send (entryType, payload) to the adjustment mechanism
+        logger.debug(
+            f"UI extension selected: id={entryId} type={entryType} payload={payload} "
+            f"ref={getattr(parref, 'ref', '?')} page={pgindx}"
+        )
+        self.model.doStatus(_("Custom action selected: {0}").format(entryId))
+        
     def edit_style(self, widget, a):
         (mkr, pref) = a
         if pref != self.currpref:

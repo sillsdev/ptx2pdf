@@ -258,7 +258,7 @@ btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 _ui_experimental = """
 """.split()
 
-_processing_needed = """c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after t_chapfrom t_chapto r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang""".split()
+_processing_needed = """c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after t_chapfrom t_chapto r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang btn_chooseBibleModule""".split()
 
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
@@ -1197,6 +1197,8 @@ class GtkViewModel(ViewModel):
                     _connect(widget, "changed", self.onSimpleClicked, wtype, wname)
                 elif wtype in ("SpinButton", "GtkSpinButton"):
                     _connect(widget, "value-changed", self.onSimpleClicked, wtype, wname)
+                elif wtype in ("Button", "GtkButton"):
+                    _connect(widget, "clicked", self.onSimpleClicked, wtype, wname)
                 else:
                     print(f">>> Skipping (unsupported type): {wtype} {widget_name} {wname}")
 
@@ -2054,6 +2056,7 @@ class GtkViewModel(ViewModel):
             self.pendingerror=(txt, kw)
         else:
             doError(txt, **kw)
+        self.pauseNoUpdate()
 
     def doStatus(self, txt=""): 
         btn = self.builder.get_object("btn_dismissStatusLine")
@@ -2190,7 +2193,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_find").set_placeholder_text(_("Processing..."))
         self.builder.get_object("t_find").set_text("")
         try:
-            self.callback(self, noaction=self.get("c_noupdate"))
+            job = self.callback(self, noaction=self.get("c_noupdate"))
         except Exception as e:
             if "SyntaxError" in str(type(e)):
             # if "SyntaxError" in type(e):
@@ -2203,7 +2206,13 @@ class GtkViewModel(ViewModel):
             unlockme()
             self.builder.get_object("t_find").set_placeholder_text("Search for settings")
             self.builder.get_object("t_find").set_text("")
-        self.unpauseNoUpdate()
+            self.pauseNoUpdate()
+        else:
+            if job is None or getattr(job, "res", 0) == 0:
+                self.unpauseNoUpdate()
+            else:
+                self.pauseNoUpdate()
+                
 
     def onMainAppWinDeleted(self, widget, event): # Main App dialog (X button)
         self.onDestroy(widget)
