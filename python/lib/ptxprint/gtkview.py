@@ -7281,15 +7281,6 @@ Thank you,
     def getPgNum(self):
         return self.pdf_viewer.getpnum(1, 1)
 
-    def onPgNumChanged(self, widget, x):
-        value = self.get("t_pgNum", "1").strip()
-        pg = int(value) if value.isdigit() else 1
-        pg = self.pdf_viewer.closestpnum(pg)
-        if value != str(pg):
-            self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
-        pnum = self.pdf_viewer.getpnum(pg, pg)
-        self.pdf_viewer.show_pdf(pnum, self.rtl, setpnum=False)
-
     def onPdfAdjOverlayChanged(self, widget):
         self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))
         
@@ -7326,13 +7317,50 @@ Thank you,
         x = n.split("_")[-1]
         self.pdf_viewer.set_page(x)
 
-    def onEditingPgNum(self, w, x):  # From 'key-release' event on t_pgNum
-        if self.loadingConfig:
-            return
-        if hasattr(self, "pgnum_timer") and self.pgnum_timer:
-            GLib.source_remove(self.pgnum_timer)
-        self.pgnum_timer = GLib.timeout_add(500, self.onPgNumChanged, None, None)
-        
+    def onPgNumChanged(self, widget, *args):
+        txt = widget.get_text().strip()
+        if not txt:
+            return False
+
+        try:
+            typedPg = int(txt)
+        except ValueError:
+            return False
+
+        # cancel previous delayed jump
+        if getattr(self, "_pgNumTimerId", None):
+            GLib.source_remove(self._pgNumTimerId)
+            self._pgNumTimerId = None
+
+        self._pgNumTimerId = GLib.timeout_add(300, self._jumpToTypedPgNum, typedPg)
+        return False
+
+    def onEditingPgNum(self, widget, *args):
+        txt = widget.get_text().strip()
+        if not txt:
+            return False
+        try:
+            typedPg = int(txt)
+        except ValueError:
+            return False
+        if getattr(self, "_pgNumTimerId", None):
+            GLib.source_remove(self._pgNumTimerId)
+            self._pgNumTimerId = None
+        return self._jumpToTypedPgNum(typedPg)
+
+    def _jumpToTypedPgNum(self, typedPg):
+        self._pgNumTimerId = None
+        if self.pdf_viewer is None or self.pdf_viewer.document is None:
+            return False
+        typedPg = self.pdf_viewer.closestpnum(typedPg)
+        if self.pdf_viewer.parlocs is not None:
+            cpage = self.pdf_viewer.parlocs.pnums.get(typedPg, typedPg)
+        else:
+            cpage = typedPg
+        cpage = max(1, min(int(cpage), int(self.pdf_viewer.numpages or 1)))
+        self.pdf_viewer.show_pdf(cpage)
+        return False
+
     def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",

@@ -14891,8 +14891,8 @@ Ctrl+Mouse Scroll Zooms in/out</property>
                     <property name="xalign">0.5</property>
                     <property name="progress-pulse-step">0</property>
                     <property name="placeholder-text" translatable="yes">77</property>
+                    <signal name="activate" handler="onEditingPgNum" swapped="no"/>
                     <signal name="focus-out-event" handler="onPgNumChanged" swapped="no"/>
-                    <signal name="key-release-event" handler="onEditingPgNum" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
