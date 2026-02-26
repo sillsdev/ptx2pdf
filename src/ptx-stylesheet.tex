@@ -275,7 +275,7 @@
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
-\def\sh@wstuff{SHOWSTUFF:[v:\csname ptxversion\endcsname] \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
+\def\sh@wstuff{SHOWSTUFF:[v:\csname ptxversion\endcsname] \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, iflvl:\the\currentiflevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
 \def\SHOWSTUFF{\message{\sh@wstuff}}%
 
 %returns \@@ut
@@ -1002,7 +1002,8 @@
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
  \def\@v@ ##1 {\let\oldv@rse\v@rse\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
-  \ifdiglot\edef\dc@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\else\edef\c@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\fi
+  \ifdiglot\edef\dc@rref{\id@@@\c@rrdstat\ch@pter:\v@rse}\else\edef\c@rref{\id@@@\c@rrdstat\ch@pter:\v@rse}\fi
+  \fmc@unt=0
   \leavevmode % ensure we are in horizontal mode to build paragraph. This may output a chapter number
   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
   % and the user has requested omission of the first verse number in a chapter
@@ -2123,6 +2124,7 @@
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \opentriglist "#1.triggers"
+ \multitriglists "#1"
  \edef\tmp{\the\TrigListPath}\ifx\tmp\empty % Avoid opening same file twice
  \else
    \opentriglist "\the\TrigListPath#1.triggers"
@@ -2406,6 +2408,7 @@
       \global\implicitcl@sefalse%
     \fi%
   \fi%
+  \global\implicitcl@sefalse
   \trace{s}{USFM version code \the\usfm@major.\the\usfm@minor}%
 }
 %-csty_usfm
@@ -2533,13 +2536,15 @@
 }
 \def\onecolwidth#1{%
   \dimen9=\textwidth
-  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
-  \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
+  %\ifb@dy\iftob@dy\else
+    \advance \dimen9 by -\columnshift
+  %\fi\fi
+  \ifx\XrefNotes\empty\relax\else\ifnum\BodyColumns=1%\ifx\ch@pter\empty\else
     \advance \dimen9 by -\XrefNotesWidth
     \advance \dimen9 by -\XrefNotesMargin
     \advance \dimen9 by -0.5\gutter
     \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
-  \fi\fi\fi
+  \fi\fi%\fi
   \global #1=\dimen9
   \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
@@ -2564,7 +2569,7 @@
  \trace{s}{s@tupsizes called from book: \id@@@}%
  \s@tb@dyb@seline{}%
  %\tracingifs=1
- \ifdim\lineskiplimit<0pt\else\lineskiplimit=-9\le@dingunit\fi
+ \ifdim\lineskiplimit<0pt\else\lineskiplimit=-9 \le@dingunit\fi
  \message{lineskiplimit=\the\lineskiplimit}%
  \lineskip=0pt
  \s@tbaseline{p}{p}%

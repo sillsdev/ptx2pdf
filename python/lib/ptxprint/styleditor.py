@@ -335,7 +335,7 @@ class StyleEditor:
                         f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
                         if f is not None:
                             curr['font'] = f
-                    curr = {}
+                    curr = res.get(v, {})
                     res[v] = curr
                     mrk = v
                     continue

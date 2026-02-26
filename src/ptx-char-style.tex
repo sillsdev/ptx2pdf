@@ -74,15 +74,15 @@
 
 %+cchar_charstyle
 
-\def\ch@rstyle{\ifimplicitcl@se\let\n@xt\@ch@rstyle\else
-  \ifinn@te\let\n@xt\ch@rstyleinnote\else
-    \ifdoingt@ble\let\n@xt\ch@rstyleintbl\else
-  \let\n@xt\ch@rstylepls\fi\fi\fi\n@xt}
+\def\ch@rstyle{\ifinn@te\let\n@xt\ch@rstyleinnote\trace{sa}{In a note}\else
+  \ifimplicitcl@se\let\n@xt\@ch@rstyle \trace{sa}{Implicit closing}\else
+    \ifdoingt@ble\let\n@xt\ch@rstyleintbl\trace{sa}{In a table}\else
+  \let\n@xt\ch@rstylepls\trace{sa}{Plus marker}\fi\fi\fi\n@xt}
 
 \def\ch@rstyleinnote#1{%USFM3.1 handles note structure markers differently to character styles.
  \ifcsname STR@CT-#1\endcsname
-    \trace{sa}{Note structure marker}\let\n@xt\@ch@rstyle
- \else\let\n@xt\ch@rstylepls\fi
+    \trace{sa}{#1 Note structure marker}\let\n@xt\@ch@rstyle
+ \else\trace{sa}{#1 Not Note structure marker}\let\n@xt\ch@rstylepls\fi
  \n@xt{#1}%
 }
 \def\ch@rstyleintbl#1{%USFM3.1 handles table structure markers differently to character styles.
@@ -112,7 +112,7 @@
 
 \def\@ch@rstyle#1{%
  \trace{sa}{CH@RSTYLE:#1 nesting:(\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
- \edef\newch@rstyle{\detokenize{#1}}% record the name of the style
+ \xdef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  \futurelet\n@xt\doch@rstyle % look at following character and call \doch@rstyle
@@ -572,9 +572,9 @@
    \fi
    \global\let\h@@kstyst@k\styst@k
    \ifx\thisch@rstyle\undefined
-     %\MSG{*** unmatched character style end-marker |\newch@rstyle*}%
+     \trace{s}{unmatched character style end-marker |\newch@rstyle*}%
    \else
-    \ifskipch@rstyle\egroup\else%
+    \ifskipch@rstyle\egroup\trace{s}{Closing skipped style}\else%
      \cl@singhooks{end}{\oldch@rstyle}{\h@@kstyst@k}% discover and execute any <end> hook
      \set@endb@xedstyle{\styst@kfirst}{\styst@k}%
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
@@ -647,7 +647,7 @@
     \mcpop
     \trace{sa}{end char style, stack now: \mcstack (\styst@kfirst)}%
     \ifp@pping\else\setwh@tvrstyle\fi
-  \fi
+   \fi
  }
 %}
 \def\setwh@tvrstyle{%

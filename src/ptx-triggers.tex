@@ -91,10 +91,12 @@
   \fi
 }
 
+\let\@@lastc@rref\empty
 \def\runtrigg@rscv{%after the verse number
   \ifversion{4}{%
     \global\p@rnum=\ifhmode 1\else 0\fi
   }{\global\p@rnum=1}%
+  \let\@@lastc@rref\c@rref
   {\let\\=\clearn@tecount \the\n@tecl@sses}%
   \settrig@refcv
   \ifMarkTriggerPoints\trigg@rmark{TV}\fi
@@ -103,6 +105,7 @@
 }
 \def\runtrigg@rsprecv{% before the verse number
   \global\p@rnum=0
+  \let\@@lastc@rref\c@rref
   \settrig@refprecv
   \trace{T}{running (precv) triggers \c@rref}%
   \the\trigg@rchecks
@@ -115,9 +118,10 @@
 
 
 \def\runtrigg@rspar{%Paragraph trigger
-  \trace{T}{runtrigg@rspar[\m@rker ]}%
-  \global\advance\p@rnum by 1
-  {\let\\=\clearn@tecount \the\n@tecl@sses}%
+  \ifdiglot\let\c@rftmp\dc@rref\else\let\c@rftmp\c@rref\fi
+  \trace{T}{runtrigg@rspar[\m@rker ] \c@rftmp=\@@lastc@rref?}%
+  \ifversion{7}{\ifx\c@rftmp\@@lastc@rref\else\global\p@rnum=0 \fi}{}%If we don't reset it here, then we might carry it over when we should reset
+  \global\advance\p@rnum by 1 {\let\\=\clearn@tecount \the\n@tecl@sses}%
   \ifx\v@rse\empty\else
     \settrig@refcv
   \fi

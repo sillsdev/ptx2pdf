@@ -103,7 +103,7 @@
 % Now modified so that multiple \tracing{} commands can be issued.
 \newcount\TRACEcount %Numbered tracing for is useful for diglot. May be for something else too.
 \def\y@s{y}
-\def\tracing#1{\x@\xdef\csname tr@cemode-#1\endcsname{\y@s}\let\trace=\@@tr@cer \x@\let\csname tr@ce-#1\endcsname\tr@ceout}%
+\def\tracing#1{\x@\xdef\csname tr@cemode-#1\endcsname{\y@s}\let\trace=\tr@cerfast \x@\let\csname tr@ce-#1\endcsname\tr@ceout}%
 \def\untracing#1{\x@\xdef\csname tr@cemode-#1\endcsname{}\x@\let\csname tr@ce-#1\endcsname\notr@cer}%
 \def\notr@cer#1#2{\relax}%
 \untracing{a} % Fallback is nothing happens
@@ -112,7 +112,8 @@
 \def\RegisterTrace#1{\def\tmpa{a}\def\tmp{#1}\ifx\tmp\tmpa\else\message{#1}\x@\def\csname tr@ce-#1\endcsname{\csname tr@ce-a\endcsname}\fi}
 \def\trdefaults#1,#2\E{\RegisterTrace{#1}\def\tmp{#2}\ifx\tmp\empty\else \trdefaults#2\E\fi}
 \message{Tracing routines registered for:}\x@\trdefaults\tracelist\E
-\def\FastTracing{\message{Using FastTracing}\global\let\trace\tr@cerfast\let\@@tr@cer\tr@cerfast}
+\def\FastTracing{\let\trace\tr@cerfast}
+\def\AllowAllTracing{\let\trace\tr@cer}
 
 \addtoendhooks{\ifx\trace\tr@cer\ifx\tracemoan\empty\message{No unregistered trace flags. \string\FastTracing\space can be used}\else\message{*** Unregistered trace flags: \tracemoan. Don't use \string\FastTracing}\fi\fi}
 
@@ -122,7 +123,7 @@
 %\def\tr@cer#1#2{%
     %\ifcsname tr@ce-#1\endcsname\csname tr@ce-#1\endcsname{#1}{#2}\else\edef\tracemoan{\tracemoan,#1}\csname tr@ce-a\endcsname{#1}{#2}\fi}
 \def\tr@cer#1{%
-    \ifcsname tr@ce-#1\endcsname\x@\let\x@\tr@cetmp\csname tr@ce-#1\endcsname\else\edef\tracemoan{\tracemoan,#1}\x@\let\x@\tr@cetmp\csname tr@ce-a\endcsname\x@\let\csname tr@ce-#1\endcsname\tr@cetmp\fi\tr@cetmp{#1}}
+    \ifcsname tr@ce-#1\endcsname \x@\let\x@\tr@cetmp\csname tr@ce-#1\endcsname \else \edef\tracemoan{\tracemoan,#1}\x@\let\x@\tr@cetmp\csname tr@ce-a\endcsname\x@\let\csname tr@ce-#1\endcsname\tr@cetmp\fi \tr@cetmp{#1}}
 \def\tr@cerfast#1{\csname tr@ce-#1\endcsname{#1}} % Faster, but no fallback
 
 \def\tr@ceout#1#2{%

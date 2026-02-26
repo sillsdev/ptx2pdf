@@ -44,7 +44,8 @@
 \EndTitle{imte} \EndTitle{imte1} \EndTitle{imte2} \EndTitle{imte3}
 
 %+cpar_init
-\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{p}\hsize=\textwidth}
+\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{p}%
+    \ifnum\BodyColumns=2 \hsize=\textwidth\else\onecolwidth{\hsize}\fi}
 %-cpar_init
 
 % test if a marker is an "introduction" style (name begins with "i") and we're allowed to enter intro mode.
@@ -772,6 +773,7 @@
   \ifdim\headingmidspace=0pt \else %\ifdiglot\else\vskip \ColAdjskip\fi\else
     \ifhe@dings\nobreak\fi
     \vskip\headingmidspace
+    % \prevdepth=0pt % Allow line height to impact space before at top of columns. KEEP for next major revision.
   \fi
   \global\startparatrue
   \resetp@rstyle
@@ -841,7 +843,7 @@
    \ifversion{5}{\ifallowp@rindent\else\ifdim \dimen3>0pt \dimen3=0pt \fi\fi}{}%
    \trace{C}{\m@rker\space at \c@rref\space allowp@rindent=\ifallowp@rindent true\else false\fi, dimen3=\the\dimen3\space \styst@kfirst/\styst@k}%
    %In the code below...
-   % dimen3 is first line indent
+   % dimen3 is first line indent (see above)
    % dimen2 is the par indent.
    % dimen0 is the target total indent (d2+d3)
    % dimen4 is the left-over cutout (not supplied by indent)
@@ -876,9 +878,9 @@
         \tempfalse
         \ifallowp@rindent \temptrue \else \ifversion{5}{\temptrue}{\ifdim\dimen3<0pt \temptrue\fi}\fi
         \iftemp
-          \x@\def\x@\tmp\x@{\tmp + \the\dimen3}%% Loging info. Happens later.
+          \x@\def\x@\tmp\x@{\tmp + \the\dimen3}%% Logging info. Happens later.
           \ifversion{5}{}{%
-            \ifdim\dimen3>0pt \advance \dimen3 by \ch@pterwd\relax\x@\def\x@\tmp\x@{\tmp  + \the\ch@pterwd}%% Loging info
+            \ifdim\dimen3>0pt \advance \dimen3 by \ch@pterwd\relax\x@\def\x@\tmp\x@{\tmp  + \the\ch@pterwd}%% Logging info
           \fi}%
           \advance\dimen0 by \dimen3
           \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
@@ -886,12 +888,12 @@
         \else
           \dimen4=\wd\ch@pterbox
           \advance\dimen0 by \dimen3
-          \x@\def\x@\tmp\x@{\tmp  +(FLI=\the\dimen3)}%% Loging info
+          \x@\def\x@\tmp\x@{\tmp  +(FLI=\the\dimen3)}%% Logging info
           \ifdim\dimen2>0pt 
-            \edef\tmpb{\the\dimen4  - \the\dimen2}%% %Loging info
+            \edef\tmpb{\the\dimen4  - \the\dimen2}%% % Logging info
             \advance\dimen4 -\dimen2
           \else
-           \edef\tmpb{\the\dimen4}%% %Loging info
+           \edef\tmpb{\the\dimen4}%% % Logging info
           \fi
         \fi
         \trace{C}{Dropchap cutout is naturally \the\wd\ch@pterbox. Indent on line 1 is \the\dimen0 (\tmp) cutout1 \the\dimen4}%
@@ -986,7 +988,15 @@
      \trace{Ds}{No par indent in \m@rker \space at \c@rref \space by \the\dimen3}%
     \fi
    \fi
-   \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
+   \getp@ram{justification}{#1}{\tmpstyst@k}%
+   \ifx\p@ram\@nner \ifnum\c@l=0 \let\p@ram\r@ght\else\let\p@ram\l@ft\fi
+   \else\ifx\p@ram\@uter \ifnum\c@l=0 \let\p@ram\l@ft\else\let\p@ram\r@ght\fi\fi\fi
+   \tempfalse
+   \ifRTL\ifx\p@ram\l@ft \temptrue\else\ifx\p@ram\c@nter \temptrue\fi\fi
+   \else\ifx\p@ram\r@ght \temptrue\else\ifx\p@ram\c@nter \temptrue\fi\fi\fi
+   \dimen5=\wd\ch@pterbox
+   \ifvoid\ch@pterbox\else \iftemp\vadjust{\vbox to 0pt{\kern -\ht\ch@pterbox \box\ch@pterbox}}\else\kern-\wd\ch@pterbox \box\ch@pterbox\fi \fi
+   \iftemp\@numcuts=0\fi
    \global\p@ranesting=1
    \let\tmpn@xtparstart\n@xtparstart\gdef\n@xtparstart{}% Allow n@xtparstart to re-trigger itself
    \tmpn@xtparstart
@@ -1139,7 +1149,9 @@
   \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
   \immediate\openout\delayf@le="\j@bname.delayed"
   %\tracingassigns=1
+  \catcode`\#=12
   \input "\j@bname.parlocs"
+  \catcode`\#=6
   \immediate\closeout\delayf@le
   \trace{x}{Finished parlocs processing}%
 }
@@ -1216,7 +1228,7 @@
 \def\@parlen#1#2#3#4#5#6{}
 \def\@noteid#1#2#3#4#5#6{}
 \def\@parpageend#1#2#3{}
-\def\@parnote#1#2#3{}
+\def\@parnote#1#2#3#4#5#6{}
 \def\@notebox#1#2#3{}
 
 \def\@nontextstart#1#2{\xdef\n@ntextstart{#2}}%
@@ -1511,6 +1523,7 @@
 % Create the drop-cap in \ch@pterbox
 %+cpar_makechapterbox
 \newdimen\ch@pterwd
+\newdimen\ch@pterdp
 \newbox\ch@pterbox
 \newbox\ch@pternote
 \def\beforechapternum#1#2#3{}
@@ -1573,6 +1586,7 @@
  \XeTeXuseglyphmetrics=\@seglyphmetrics
  \ch@pterwd=\wd\ch@pterbox
  \trace{sP}{box width=\the\ch@pterwd}%
+ \ch@pterdp=\dp\ch@pterbox
  \dp\ch@pterbox=0pt
 }
 %-cpar_makechapterbox
@@ -1692,5 +1706,9 @@
 }
 \def\t@gend#1{\t@gendfull{#1}{}}
 \def\t@gendfull#1#2{\iftaggedPDF\special{ptxp:tagend #1 #2}\fi}
+
+\def\zexp #1\*{%%Pseudo milestone, for use in trigger files
+    \xdef\f@ntextend{\p@rcent #1xx\E}%
+}
 
 \endinput

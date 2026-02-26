@@ -6,6 +6,7 @@ from ptxprint.parlocs import BadSpace
 from ptxprint.xdv.spacing_oddities import Rivers
 from ptxprint.utils import rtlScripts, dediglotref
 from usfmtc.reference import Ref, RefList
+from math import sqrt
 
 # DEBUG is informational
 # INFO is something that could fail, passed
@@ -260,15 +261,25 @@ class Report:
                 self.add("3. USFM/Checks", f"No USFM for {bk}", severity=logging.WARN)
                 continue
             
-            if doc.xml.errors is None or not len(doc.xml.errors):
-                passed.append(bk)
-            else:
+            if doc.xml.errors is not None and len(doc.xml.errors):
                 for e in doc.xml.errors:
-                    (msg, pos, ref) = e #pos.l, pos.c = char num
-                    if pos is None:
-                        continue
-                    emsg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
-                    failed.setdefault(bk, []).append(emsg)
+                    if len(e) == 1:     # simple string
+                        msg = e[0]
+                        pos = None
+                        ref = None
+                    else:
+                        (msg, pos, ref) = e #pos.l, pos.c = char num
+                    if pos is not None:
+                        msg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
+                    failed.setdefault(bk, []).append(msg)
+            else:
+                errors = doc.runchecks()
+                if len(errors):
+                    for e in errors:
+                        msg = f"{bk} {e[0]} - {e[1]}"
+                        failed.setdefault(bk, []).append(msg)
+                else:
+                    passed.append(bk)
         if len(passed):
             self.add("3. USFM/Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
         if len(failed):
@@ -403,12 +414,19 @@ class Report:
         currpnum = None
         currivers = []
         curriver = None
+        for p, r in plocs.getRects():
+            r.tspace = 0
+            r.nspace = 0
+            r.nlines = 0
         for l, p, r in plocs.allxdvlines():
             count += 1
             if threshold != 0:  
-                if (result := l.has_badspace(threshold)):
-                    for b in result:
-                        badlist.append(BadSpace(r.pagenum, l, *b)) 
+                result, nspaces, tspaces = l.has_badspace(threshold)
+                for b in result:
+                    badlist.append(BadSpace(r.pagenum, l, *b))
+                r.tspace += tspaces
+                r.nspace += nspaces
+                r.nlines += 1
             if (collisions := l.has_collisions()):
                 for c in collisions:
                         collisions_list.append(l.ref)
@@ -435,6 +453,16 @@ class Report:
                     elif val > rivers[0]:
                         heapq.heapreplace(rivers, val)
 
+        for p in plocs:
+            tspace = 0
+            nspace = 0
+            nlines = 0
+            for r in p.rects:
+                tspace += r.tspace
+                nspace += r.nspace
+            if nspace > 0:
+                tspace /= nspace
+            p.badness = tspace
         if threshold == 0:
             badlist = plocs.getnbadspaces()
             count = len(badlist)
@@ -450,6 +478,12 @@ class Report:
         if len(rivers):
             riverrefs = RefList([v[1] for v in rivers])
             self.add("2. Layout", f"Rivers ({rivers[0][0]:.2f}): {riverrefs.simplify()}", severity=logging.WARN, txttype="text")
+        badnesses = sorted([(sqrt(p.badness), p.ref) for p in plocs], reverse=True)[:10]
+        averagebad = sum((p.badness for p in plocs)) / len(plocs)
+        if averagebad > 0.0001:
+            self.add("2. Layout", f"Paragraph Badness (standard deviation around the width of a space): {sqrt(averagebad):.4f}")
+            self.add("2. Layout", f"Pargraphs that are bad: {', '.join('{1}={0:.4f}'.format(*x) for x in badnesses)}")
+        
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 

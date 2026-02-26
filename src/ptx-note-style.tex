@@ -79,6 +79,7 @@
 \def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }
 \def\incn@tecount#1{\global\advance\csname refn@te-#1\endcsname by 1 }
 \def\exp@ndn@tes#1{\x@\unvcopy\csname noteb@x-#1\endcsname}
+\def\clearn@teboxes#1{\global\x@\setbox\csname noteb@x-#1\endcsname\box\voidb@x \global\x@\setbox\csname note-#1\endcsname\box\voidb@x}
 
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
@@ -154,7 +155,8 @@
 \lowercase{\gdef\@@@startn@testyle#1{\startn@testyle~#1 }}%
 %-cnote_notestyle
 
-\newif\ifstructmarkerlistcorrect
+\newif\ifstructmarkerlistcorrect \structmarkerlistcorrecttrue
+\newcount\fmc@unt
 
 %+cnote_startnote_start
 \def\b@lance{BALANCE}
@@ -165,7 +167,7 @@
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
     \begingroup
-    \implicitcl@setrue % Char styles in notes may implicitly close other ones.  We don't care here.
+    %\implicitcl@setrue % Char styles in notes may implicitly close other ones.  We don't care here.
     \let\aftern@te\relax
     %\ifhe@dings\bgroup\fi
     \setbox0=\vbox\bgroup \skipn@testyletrue \inn@tetrue
@@ -175,6 +177,7 @@
 %+cnote_startnote
   \else
     \leavevmode
+    \advance\fmc@unt 1
     \getp@ram{notebase}{\newn@testyle}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
     \csname before-\newn@testyle\endcsname
     \def\t@st{#1}%
@@ -184,6 +187,8 @@
     \else\ifx\t@st\min@s \def\them@rk{}% if it is - then there is no caller
     \else \trace{n}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\def\them@rk{#1}% otherwise the caller is the parameter
     \fi\fi
+    \trace{n}{starn@testyle - create tmp}%
+    \edef\fnt@mp{\string\@parnote{\newn@testyle}{\ifdiglot\dc@rref\else\c@rref\fi}{\the\fmc@unt}{\them@rk}}%
     \begingroup
     \ifstructmarkerlistcorrect\else
       \implicitcl@setrue % Char styles in notes implicitly close other ones unless someone declares the list of structural markers is correct (see structm@rker in ptx-charstyle. FIXME: develop testcase for new structural markers.
@@ -206,7 +211,10 @@
           \setbox0=\hbox{\x@\cstyle\x@{\c@llerstyle}{\them@rk}}\ht0=0pt\dp0=0pt
           \trace{n}{note caller is \the\wd0 \space wide}%
         \fi
-        \pdfsavepos\x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parnote\x@{\newn@testyle}{\the\pdflastxpos}{\the\pdflastypos}}%
+        \edef\m@sg{\string\noteonpage{\newn@testyle}{#1}}%
+        \x@\write\x@\n@tepages\x@{\m@sg{\the\pageno}}% record the page where this note occurred
+        \pdfsavepos
+        \x@\write\x@\p@rlocs\x@{\fnt@mp{\the\pdflastxpos}{\the\pdflastypos}}%
         \getp@ram{callerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
         \ifnum\pagetracing>0
           \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%
@@ -371,22 +379,6 @@
     \let\styst@k\empty
     \ifp@ranotes\leftskip=0pt\rightskip=0pt\parfillskip=0pt\else
     \s@tsideskips{#1}{\noteRag}\fi
-%    \parfillskip=0pt plus 1fil
-%    \leftskip=0pt \rightskip=0pt
-%    \getp@ram{justification}{#1}{#1}%
-%    \ifx\p@ram\c@nter
-%     \leftskip=\noteRag \rightskip=\leftskip \parfillskip=0pt
-%    \else\ifx\p@ram\l@ftb@l
-%     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
-%    \else\ifx\p@ram\l@ft
-%     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
-%    \else\ifx\p@ram\r@ght
-%     \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
-%    \fi\fi\fi\fi
-%    \getp@ram{leftmargin}{#1}{#1}%
-%    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-%    \getp@ram{rightmargin}{#1}{#1}%
-%    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \trace{n}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
@@ -400,13 +392,6 @@
     \ifp@ranotes\else
       \ifvmode \prevdepth=0pt \fi % Ensure that we start with a baselineskip.
       \ifusespacebefore\getp@ram{spacebefore}{#1}{#1}\trace{n}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi\fi
-%      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
-%      \ifdim\dimen0<\baselineskip
-%        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
-%        \vskip\dimen1
-%		\trace{f}{\ch@pter:\v@rse : Footnote vskip=\the\dimen1, baselineskip=\the\baselineskip, strut height=\the\dimen0, prevdepth=\prevdepth}%
-%        \prevdepth=-1000pt
-%	  \fi
     \fi
     \leavevmode % begin paragraph
     \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 1 \fi 
@@ -590,6 +575,7 @@
     \ifonlyst@dynotes\let\n@xt=\n@ffin\else
       \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \fi\fi
+  \trace{f}{note-#1: \l@gdims{\csname note-#1\endcsname} noteb@x-#1:\l@gdims{\csname noteb@x-#1\endcsname}}
   \ifversion{6}{%In v6, unwrapping happens per-notestyle. This isolates note styles from each other and allows per-notestyle shaving
     \x@\let\x@\tnoteb@x\csname noteb@x-#1\endcsname
     \global\setbox\tnoteb@x\vbox{%
@@ -900,7 +886,7 @@
      \leftskip=\noteRag
   \fi\fi\fi\fi
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
-  \XeTeXuseglyphmetrics=3 
+  \ifColNotes\else\XeTeXuseglyphmetrics=3\fi 
   \edef\n@tetype{#2}%
   \ifnewparnotes
     \makevboxofhboxes
@@ -1334,7 +1320,20 @@
 \def\n@test@rt#1{\n@tewidth=\dimexpr \marginnoteswidth - \marginnotesgap\relax
   \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup\usespacebeforefalse
     \global\p@ranotesfalse
-    \s@tsideskips{#1}{-1pt}\n@tewidth=\marginnoteswidth \advance\n@tewidth -\marginnotesgap \hsize=\n@tewidth
+    \s@tsideskips{#1}{-1pt}%
+    \ifXrefSideAlign\testXrefSideL\getp@ram{justification}{#1}{#1}%
+      \ifnum\tmp=1 % right align
+        \ifx\p@ram\c@nter\else
+          \ifx\p@ram\r@ght\else
+            \dimen1=\leftskip \leftskip=\rightskip \rightskip=\dimen1
+        \fi\fi
+      \else
+        \ifx\p@ram\c@nter\else
+          \ifx\p@ram\l@ft\else
+            \dimen1=\leftskip \leftskip=\rightskip \rightskip=\dimen1
+        \fi\fi
+    \fi
+    \n@tewidth=\marginnoteswidth \advance\n@tewidth -\marginnotesgap \hsize=\n@tewidth
     \ifdim\parfillskip>0pt\hfil\fi
 }
 \def\n@te@nd#1{%

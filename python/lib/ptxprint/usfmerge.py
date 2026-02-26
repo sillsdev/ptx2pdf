@@ -4,6 +4,7 @@ from ptxprint.usxutils import Usfm, Sheets
 from ptxprint.utils import runChanges
 from usfmtc.usfmgenerate import usx2usfm
 from usfmtc.usfmparser import Grammar
+from usfmtc.reference import Ref
 import argparse, difflib, sys
 from enum import Enum,Flag
 from itertools import groupby
@@ -43,9 +44,10 @@ class ChunkType(Enum):
     NBCHAPTER = 16
     CHAPTERPAR = 17
     CHAPTERHEAD = 18
-    PREVERSEHEAD = 19
-    USERSYNC = 20
-    PARUSERSYNC =21 # User
+    CHAPTERDESC = 19
+    PREVERSEHEAD = 20
+    USERSYNC = 21
+    PARUSERSYNC =22 # User
 
 _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the config file.
     ChunkType.CHAPTER :"A normal chapter number",
@@ -89,6 +91,7 @@ ChunkType.NPARA:'BODY',
 ChunkType.NB:'BODY',
 ChunkType.NBCHAPTER:'CHAPTER',
 ChunkType.CHAPTERPAR:'BODY',
+ChunkType.CHAPTERDESC:'BODY',
 ChunkType.CHAPTERHEAD:'CHAPTER',
 ChunkType.PREVERSEHEAD:'HEADING',
 ChunkType.USERSYNC:'BODY',
@@ -124,6 +127,7 @@ _marker_modes = {
     'usfm': ChunkType.HEADER,
     'v': ChunkType.VERSE,
     'c': ChunkType.CHAPTER,
+    'd': ChunkType.CHAPTERDESC, # this gets overwritten.
     'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
     'nb': ChunkType.NB
 }
@@ -149,15 +153,16 @@ _canonical_order={
     
 
 class Chunk(list):
-    def __init__(self, *a, mode=None, doc=None, chap=0, verse=0, end=0, pnum=0,syncp='~'):
+    def __init__(self, *a, mode=None, doc=None, bk=None, chap=0, verse=0, end=0, pnum=0,syncp='~'):
         super(Chunk, self).__init__(a)
         self.type = mode
         self.otype = mode
+        self.book = bk
         self.chapter = chap
         self.verse = verse
         self.end = verse
         self.pnum = pnum
-        self.syncp = syncp
+        self.syncp = syncp #  Note that non-default syncp will reorder verse content on output.
         self.hasVerse = False
         if mode in (ChunkType.MIDVERSEPAR, ChunkType.VERSE, ChunkType.PARVERSE):
             self.verseText = True
@@ -203,6 +208,7 @@ class Chunk(list):
     def astext(self):
         with io.StringIO() as outf:
             lastel = None
+            cref = Ref(book=self.book, chapter=self.chapter, verse=self.verse)
             for e in self:
                 if e.tag == "para":
                     if lastel is not None and lastel.tail:
@@ -210,7 +216,7 @@ class Chunk(list):
                     outf.write(f"\n\\{e.get('style', '')} {e.text}")
                     lastel = e
                 else:
-                    lastel = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else Grammar), lastel=lastel, version=[3, 1])
+                    lastel, cref = usx2usfm(outf, e, grammar=(self.doc.grammar if self.doc is not None else Grammar), lastel=lastel, version=[3, 1], cref=cref, notilde=True)
             if lastel is not None and lastel.tail:
                 outf.write(lastel.tail)
             res = outf.getvalue() + "\n"
@@ -256,6 +262,7 @@ class Collector:
         self.chapter = 0
         self.verse = 0
         self.end = 0
+        self.book = None
         self.waspar = False # Was the previous item an empty paragraph mark of some type?
         self.waschap = False # Was the previous item a chapter number?
         self.counts = {}
@@ -315,13 +322,14 @@ class Collector:
     def pnum(self, c):
         if c is None:
             return 0
-        res = self.counts[c] = self.counts.get(c, 0) + 1
+        self.counts[c] = self.counts.get(c, 0) + 1 
+        res = self.counts['ALL'] = self.counts.get('ALL', 0) + 1 
         return res
 
     def makeChunk(self, c=None):
         global _validatedhpi, _headingidx
         if c is None:
-            currChunk = Chunk(mode=self.mode, doc=doc)
+            currChunk = Chunk(mode=self.mode, doc=doc, bk=self.book)
             self.waspar = False
             self.waschap = False
         else:
@@ -340,6 +348,7 @@ class Collector:
                 logger.log(8, f'cl found for {self.chapter} mode:{mode}')
             elif c.tag == "book":
                 mode = ChunkType.ID
+                self.book = c.get("code", None)
             elif name == "nb":
                 mode = ChunkType.NB
             elif c.tag == "row":
@@ -380,8 +389,10 @@ class Collector:
                                 mode = ChunkType.MIDVERSEPAR
                     logger.log(9, f"Conclusion: bodypar type is {mode}")
                         
-            pn = self.pnum
-            currChunk = Chunk(mode=mode, chap=self.chapter, verse=self.verse, end=self.end, pnum=self.pnum(mode))
+            pn = self.pnum(mode)
+            if mode in (ChunkType.CHAPTER,ChunkType.CHAPTERHEAD):
+                pn=0 
+            currChunk = Chunk(mode=mode, bk=self.book, chap=self.chapter, verse=self.verse, end=self.end, pnum=pn)
             if not _validatedhpi:
                 p = currChunk.position
                 assert p[_headingidx] == mode.name, "It looks like someone altered the position tuple, but didn't update _headingidx"
@@ -815,9 +826,11 @@ def alignSimple(primary, *others):
                 #logger.log(7,f"{debstr(runs)}")
     results = []
     for r in runs:
-        res = [Chunk(*sum(pchunks[r[0][0]:r[0][1]+1], []), mode=pchunks[r[0][1]].type)]
+        rchunk = pchunks[r[0][0]]
+        res = [Chunk(*sum(pchunks[r[0][0]:r[0][1]+1], []), mode=pchunks[r[0][1]].type, bk=rchunk.book, chap=rchunk.chapter)]
         for i, (ochunks, okeys) in enumerate(others, 1):
-            res.append(Chunk(*sum(ochunks.acc[r[i][0]:r[i][1]+1], []), mode=ochunks.acc[r[i][1]].type))
+            achunk = ochunks.acc[r[i][0]]
+            res.append(Chunk(*sum(ochunks.acc[r[i][0]:r[i][1]+1], []), mode=ochunks.acc[r[i][1]].type, bk=achunk.book, chap=achunk.chapter))
         results.append(res)
     return results
 
@@ -827,7 +840,7 @@ def alignScores(*columns):
     for ochunks, okeys in columns:
         merged=ochunks.score(merged)
     positions=[k for k,v in merged.items()]
-    positions.sort()
+    positions.sort() #  positions[] starts off mostly(?) in insertion-order, but some differences may potentially exist between input files.
     logger.debug("Potential sync positions:" + " ".join(map(str,positions)))
     # Ensure headings get split from preceding text if there's a coming break
     oldconfl=None

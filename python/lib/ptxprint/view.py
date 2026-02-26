@@ -37,9 +37,9 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "3.0.7"
-GitVersionStr = "3.0.7"
-ConfigVersion = "2.25"
+VersionStr = "3.0.11"
+GitVersionStr = "3.0.11"
+ConfigVersion = "3.01"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -372,6 +372,23 @@ class ViewModel:
             res["MOD"] = self.moduleFile
         return res
 
+    def getNewBooks(self):
+        res = set()
+        for r in self.getBooks():
+            if "." not in r:
+                srcname = self.getBookFilename(r)
+                srcpath = os.path.join(self.project.path, srcname)
+                destname = self.getDraftFilename(r, ext="")
+            else:
+                srcpath = str(r)
+                destname = os.path.basename(r)
+            destpath = os.path.join(self.project.printPath(self.cfgid), destname)
+            srct = os.lstat(srcpath).st_mtime if os.path.exists(srcpath) else 0
+            destt = os.lstat(destpath).st_mtime if os.path.exists(destpath) else 0
+            if srct > destt:
+                res.add(r)
+        return res
+
     def _getPtSettings(self, prjid=None):
         if self.ptsettings is None and self.project.prjid is not None:
             self.ptsettings = ParatextSettings(self.project.path)
@@ -409,6 +426,8 @@ class ViewModel:
         self.dict[btn+"/style"] = style
 
     def onFontChanged(self, fbtn):
+        if self.loadingConfig:
+            return
         font_info = self.get("bl_fontR")
         if font_info is None:
             return
@@ -891,7 +910,7 @@ class ViewModel:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
             font = FontRef(fname, "")
             self.set("bl_fontR", font)
-        self.onFontChanged(None)
+            self.onFontChanged(None)
         # clear generated pictures # Not sure why we need to do this. Commented out 16-1-2025
         # for f in ("tmpPics", "tmpPicLists"):
             # path2del = os.path.join(self.project.printPath(cfgname), f)
@@ -1010,19 +1029,28 @@ class ViewModel:
             return fallback
         return conv(v)
 
+    def _config_bool(self, section, option, config, fallback=_UNSET, **kw):
+        try:
+            v = config.getboolean(section, option, **kw)
+        except (NoOptionError, NoSectionError, ValueError):
+            if fallback is _UNSET:
+                raise
+            return fallback
+        return v
+
     def versionFwdConfig(self, config, cfgpath):
         version = self._config_get(config, "config", "version", conv=float, fallback=ConfigVersion)
         forcerewrite = False
         v = float(version)
         if v < 0.9:
             try:
-                self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum", fallback=False))
-                self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses", fallback=False))
-                self._configset(config, "document/bookintro", not config.getboolean("document", "supressbookintro", fallback=False))
-                self._configset(config, "document/introoutline", not config.getboolean("document", "supressintrooutline", fallback=False))
-                self._configset(config, "document/firstparaindent", not config.getboolean("document", "supressindent", fallback=False))
-                self._configset(config, "document/sectionheads", not config.getboolean("document", "supresssectheads", fallback=False))
-                self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels", fallback=False))
+                self._configset(config, "document/ifshowchapternums", not self._config_bool("document", "ifomitchapternum", config, fallback=False))
+                self._configset(config, "document/ifshowversenums", not self._config_bool("document", "ifomitallverses", config, fallback=False))
+                self._configset(config, "document/bookintro", not self._config_bool("document", "supressbookintro", config, fallback=False))
+                self._configset(config, "document/introoutline", not self._config_bool("document", "supressintrooutline", config, fallback=False))
+                self._configset(config, "document/firstparaindent", not self._config_bool("document", "supressindent", config, fallback=False))
+                self._configset(config, "document/sectionheads", not self._config_bool("document", "supresssectheads", config, fallback=False))
+                self._configset(config, "document/parallelrefs", not self._config_bool("document", "supressparallels", config, fallback=False))
             except:
                 pass
         if v < 1.2:
@@ -1049,7 +1077,7 @@ class ViewModel:
                         pass
         if v < 1.400:
             indent = config.getfloat("document", "indentunit", fallback="2.000")
-            if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
+            if indent == 2.0 and self._config_bool("paper", "columns", config, fallback=True):
                     self._configset(config, "document/indentunit", "1.000")
         if v < 1.403 and cfgpath is not None:   # no need to bump version for this and merge this with a later version test
             f = os.path.join(cfgpath, "NestedStyles.sty")
@@ -1071,8 +1099,8 @@ class ViewModel:
             self._configset(config, "paper/rulegap", f2s(config.getfloat("header", "ruleposition", fallback=0.)))
         if v < 1.504:
             try:
-                self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes", fallback=False))
-                self._configset(config, "notes/xreachnewline", not config.getboolean("notes", "xrparagraphednotes", fallback=False))
+                self._configset(config, "notes/fneachnewline", not self._config_bool("notes", "fnparagraphednotes", config, fallback=False))
+                self._configset(config, "notes/xreachnewline", not self._config_bool("notes", "xrparagraphednotes", config, fallback=False))
             except:
                 pass
         if v < 1.601:
@@ -1082,23 +1110,23 @@ class ViewModel:
             self._configset(config, "notes/belownoterulespace", "3.0")
             self._configset(config, "notes/abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
         if v < 1.7:
-            if config.getboolean("document", "pdfx1aoutput", fallback=False):
+            if self._config_bool("document", "pdfx1aoutput", config, fallback=False):
                 self._configset(config, "document/pdfoutput", "PDF/X-1A")
         if v < 1.9:
             val = self._config_get(config, "scrmymr", "syllables", fallback="")
-            self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False) if val else False)
+            self._configset(config, "scripts/mymr/syllables", self._config_bool("scrmymr", "syllables", config, fallback=False) if val else False)
         if v < 1.93:
             self._configset(config, "notes/xrcolside", "3")
         if v < 1.94:
-            self._configset(config, "document/ifshow1chbooknum", not config.getboolean("document", "ifomitsinglechnum", fallback=False))
-            self._configset(config, "header/ifshowchapter", not config.getboolean("header", "ifomitrhchapnum", fallback=False))
-            self._configset(config, "header/ifshowverse", config.getboolean("header", "ifverses", fallback=False))
+            self._configset(config, "document/ifshow1chbooknum", not self._config_bool("document", "ifomitsinglechnum", config, fallback=False))
+            self._configset(config, "header/ifshowchapter", not self._config_bool("header", "ifomitrhchapnum", config, fallback=False))
+            self._configset(config, "header/ifshowverse", self._config_bool("header", "ifverses", config, fallback=False))
             self._configset(config, "header/ifshowbook", True)
         if v < 1.95:
             self._configset(config, "texpert/bottomrag", "0")
         if v < 1.96:
             self._configset(config, "notes/r_fnpos", "normal")
-            self._configset(config, "project/uilevel", "4" if config.getboolean("project", "hideadvsettings", fallback=True) else "6")
+            self._configset(config, "project/uilevel", "4" if self._config_bool("project", "hideadvsettings", config, fallback=True) else "6")
             digmap = config.get("document", "digitmapping", fallback="Default")
             if digmap != "Default":
                 for a in ('regular', 'bold', 'bolditalic', 'italic'):
@@ -1118,10 +1146,10 @@ class ViewModel:
         if v < 1.97:
             ls = ''
             gm = ''
-            if config.getboolean("paragraph", "linespacebase", fallback=False):
+            if self._config_bool("paragraph", "linespacebase", config, fallback=False):
                 self._configset(config, "paragraph/linespacebase", False)
                 ls = "   * Legacy 1/14 LineSpacing\n"
-            if config.getboolean("paragraph", "useglyphmetrics", fallback=False):
+            if self._config_bool("paragraph", "useglyphmetrics", config, fallback=False):
                 self._configset(config, "paragraph/useglyphmetrics", False)
                 gm = "   * Use glyph metrics\n"
             if len(ls+gm) > 0:
@@ -1134,11 +1162,11 @@ class ViewModel:
                 forcerewrite = True
 
         if v < 2.06:
-            self._configset(config, "document/diffcolayout", not config.getboolean("document", "clsinglecol", fallback=False))
+            self._configset(config, "document/diffcolayout", not self._config_bool("document", "clsinglecol", config, fallback=False))
             diffcolbooks = config.get("document", "clsinglecolbooks", fallback="FRT INT PSA PRO BAK GLO")
             self._configset(config, "document/diffcolayoutbooks", diffcolbooks)
         if v < 2.07:
-            if cfgpath is not None and config.getboolean("project", "usechangesfile", fallback=False):
+            if cfgpath is not None and self._config_bool("project", "usechangesfile", config, fallback=False):
                 cfile = os.path.join(cfgpath, "changes.txt")
                 if not os.path.exists(cfile):
                     with open(cfile, "w", encoding="utf-8") as outf:
@@ -1151,7 +1179,7 @@ class ViewModel:
             if config.get("finish", "pgsperspread", fallback="None") == "None":
                 self._configset(config, "finishing/pgsperspread", "1")
             if config.get("paper", "cropmarks", fallback="None") == "None":
-                self._configset(config, "paper/cropmarks", config.getboolean("paper", "ifcropmarks", fallback=False))
+                self._configset(config, "paper/cropmarks", self._config_bool("paper", "ifcropmarks", config, fallback=False))
         if v < 2.10:
             fpos = config.getfloat("paper", "footerpos", fallback=10) * 72.27 / 25.4
             bmargin = config.getfloat("paper", "bottommargin", fallback=10) * 72.27 / 25.4
@@ -1159,7 +1187,7 @@ class ViewModel:
             self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos))))
             self._configset(config, "document/marginalposn", "left")
             try:
-                noinkinmargin = config.getboolean("footer", "noinkinmargin", fallback=False)
+                noinkinmargin = self._config_bool("footer", "noinkinmargin", config, fallback=False)
             except ValueError:
                 noinkinmargin = False  # Default value if the value is not a valid boolean
             self._configset(config, "footer/noinkinmargin", not noinkinmargin)            
@@ -1168,7 +1196,7 @@ class ViewModel:
                 self._configset(config, "document/odiffcolor", x)
                 y = coltoonemax(x)
                 self._configset(config, "document/ndiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
-        if v < 2.13 and cfgpath is not None and config.getboolean("project", "usechangesfile", fallback=False):
+        if v < 2.13 and cfgpath is not None and self._config_bool("project", "usechangesfile", config, fallback=False):
             path = os.path.join(cfgpath, "changes.txt")
             if os.path.exists(path):
                 with open(path, encoding="utf-8") as inf:
@@ -1191,14 +1219,16 @@ class ViewModel:
                 self._configset(config, "project/plugins", plg.replace("ornaments","").strip(" ,"))
 
         if v < 2.17: # tidying up ornaments and borders
-            if config.getboolean("fancy", "pageborder", fallback=False):
+            if self._config_bool("fancy", "pageborder", config, fallback=False):
                 self._configset(config, "fancy/pageborders", True)
                 self._configset(config, "fancy/pagebordertype", "pdf")
-            if config.getboolean("fancy", "enableborders", fallback=False):
+            if self._config_bool("fancy", "enableborders", config, fallback=False):
                 self._configset(config, "fancy/enableornaments", True)
+            if self._config_bool("fancy", "sectionheader", config, fallback=False):
+                self._configset(config, "fancy/sectionborder", "legacy")
 
         if v < 2.18: # transfer this value from body tab to texpert tab
-            if config.getboolean("project", "ifstarthalfpage", fallback=False):
+            if self._config_bool("project", "ifstarthalfpage", config, fallback=False):
                 self._configset(config, "texpert/bookstartpage", "multi")
 
         if v < 2.19: # transfer some settings to texpert
@@ -1219,17 +1249,17 @@ class ViewModel:
                 self.clean_adj_files(adjpath)
 
         if v < 2.22: # transfer Show/Hide settings to Advanced > texpert
-            self._configset(config, 'texpert/showadjpoints', config.getboolean('snippets', 'adjlabelling', fallback=False))
-            self._configset(config, 'texpert/showusfmcodes', config.getboolean('snippets', 'paralabelling', fallback=False))
-            self._configset(config, 'texpert/showhboxerrorbars', config.getboolean('document', 'ifhidehboxerrors', fallback=False))
+            self._configset(config, 'texpert/showadjpoints', self._config_bool('snippets', 'adjlabelling', config, fallback=False))
+            self._configset(config, 'texpert/showusfmcodes', self._config_bool('snippets', 'paralabelling', config, fallback=False))
+            self._configset(config, 'texpert/showhboxerrorbars', self._config_bool('document', 'ifhidehboxerrors', config, fallback=False))
 
         if v < 2.23:
-            if not config.getboolean('paper', 'ifgrid', fallback=False):
+            if not self._config_bool('paper', 'ifgrid', config, fallback=False):
                 self._configset(config, 'grid/gridgraph', False)
                 self._configset(config, 'grid/gridlines', False)
                 
         if v < 2.24: # change from simple pri/sec diglot to polyglot
-            if config.getboolean("snippets", "diglot"):
+            if self._config_bool("snippets", "diglot", config, fallback=False):
                 for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
                              "config": "secconfig", "color": "colour"}.items():
                     val = config.get("document", f"diglot{a}", fallback=None)
@@ -1258,8 +1288,13 @@ class ViewModel:
                 self._configset(config, f"diglot_L/baseline", lsp)
 
         if v < 2.25:
-            if not config.getboolean("project", "iffrontmatter", fallback=False):
+            if not self._config_bool("project", "iffrontmatter", config, fallback=False):
                 self._configset(config, 'cover/makecoverpage', False)
+
+        if v < 3.01:
+            if self._config_bool("texpert", "vhyphen", config, fallback=False):
+                val = "top" if self._config_bool("texpert", "vhyphenup", config, fallback=False) else "bottom"
+                self._configset(config, "texpert/vhyphenmode", val)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
@@ -1331,7 +1366,6 @@ class ViewModel:
             if clearvars:
                 self.clearvars()
         varcolour = "#FFDAB9" if not clearvars else None
-        # breakpoint()
         for sect in config.sections():
             for opt in config.options(sect):
                 editableOverride = len(opt) != len(opt.strip("*"))
@@ -1583,6 +1617,12 @@ class ViewModel:
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
 
+    def getLocalTriggerFilename(self, bk, ext="-1.triggers"):
+        fname = self.getDraftFilename(bk, ext=ext)
+        if len(self.diglotViews):
+            fname = re.sub(r"^([^.]*).(.*?)$", r"\1-diglot.\2", fname)
+        return fname
+
     def get_adjlist(self, bk, save=True, gtk=None):
         if bk in self.adjlists:
             return self.adjlists[bk]
@@ -1590,9 +1630,11 @@ class ViewModel:
         if fname is None:
             return None
         fpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", fname)
+        tname = self.getLocalTriggerFilename(bk)
+        tpath = os.path.join(self.project.printPath(self.cfgid), tname)
         # get expansion of regular font
         centre = 100
-        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath)
+        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath, tname=tpath)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj

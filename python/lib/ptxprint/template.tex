@@ -69,7 +69,7 @@
 {document/marginalverses}\input ptxplus-marginalverses.tex
 {document/marginalverses}\columnshift={document/columnshift}pt
 {document/marginalverses}\VerseBoxWidth={document/columnshift}pt
-{document/marginalverses}\def\colshiftmode{{{document/marginalposn}}}
+{document/marginalverses}\def\colshiftmode{{{document/marginalposn}}}\def\vhyphenmode{{{texpert/vhyphenmode}}}
 %{document/marginalverses}\def\AfterVerseSpaceFactor{{0}}
 \def\PageFullFactor{{{texpert/pagefullfactor}}}
 {paper/allowunbalanced}\def\BalanceThreshold{{{texpert/bottomrag}}}
@@ -353,7 +353,7 @@
 \ifdim \pagetotal>0pt \par\vfill\penalty-10000 \fi
 \catcode`\@=11 \need@oddpage{{\emptyoutput}}\catcode`\@=12
 \edef\oldpageno{{\the\pageno}}% Just in case the user wants it
-\ifnum\pageno<1 \pageno=1\fi
+\ifnum\pageno<1 \pageno={document/startpagenum}\fi
 {document/ifdiglot}\diglottrue
 \addtoendptxhooks{{\zautoBookEndDecoration}}
 % job files:

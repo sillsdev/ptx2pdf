@@ -24,6 +24,7 @@ def readpts(s):
 @dataclass
 class ParRect:
     pagenum:    int
+    col:        int
     xstart:     float
     ystart:     float       # top of paragraph, 0 is bottom of page. Usually > yend
     xend:       float = 0.
@@ -32,6 +33,9 @@ class ParRect:
     lastdest:   InitVar[None] = None
     firstdest:  InitVar[None] = None
     xdvlines:   InitVar[None] = None
+    tspace:     float = 0
+    nspace:     int = 0
+    nlines:     int = 0
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
@@ -193,6 +197,7 @@ class Paragraphs(list):
         lastyend = 0
         polycol = "L"
         currps = {polycol: None}
+        colcount = {polycol: -1}
         colinfos = {}
         innote = False
         pwidth = 0.
@@ -223,6 +228,8 @@ class Paragraphs(list):
                 #if len(cinfo) > 2:
                 #    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
                 lastyend = 0
+                for k in colcount.keys():
+                    colcount[k] = -1
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                 inpage = False
@@ -235,10 +242,11 @@ class Paragraphs(list):
                     lines.collectuntil("\\@colstop", [l])
                     continue
                 colinfos[polycol] = cinfo
+                colcount[polycol] = colcount.get(polycol, 0) + 1
                 if currps.get(polycol, None) is not None:
                     if currr is not None and currr.yend == 0:
                         currps[polycol].rects.pop()
-                    currr = ParRect(pnum, cinfo[3], cinfo[4])
+                    currr = ParRect(pnum, colcount[polycol], cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
                 lastyend = 0
             elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
@@ -250,7 +258,7 @@ class Paragraphs(list):
                 colinfos[polycol] = None
                 lines.startreplay()
                 lastyend = 0
-            elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
+            elif c == "parstart":       # ref, type, mrk, baselineskip, x, y
                 if len(p) == 5:
                     p.insert(0, "")
                 logger.log(5, f"Starting para {p[0]}")
@@ -263,7 +271,7 @@ class Paragraphs(list):
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                 currp.rects = []
                 ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
-                currr = ParRect(pnum, cinfo[3], ystart)
+                currr = ParRect(pnum, colcount[polycol], cinfo[3], ystart)
                 currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
@@ -306,10 +314,11 @@ class Paragraphs(list):
                 polycol = p[5]
                 colinfos[polycol] = [readpts(x) for x in p[:-1]]
                 cinfo = colinfos[polycol]
+                colcount[polycol] = colcount.get(polycol, 0) + 1
                 if polycol not in currps:
                     currps[polycol] = None
                 if currps[polycol] is not None:
-                    currr = ParRect(pnum, cinfo[3], cinfo[4])
+                    currr = ParRect(pnum, colcount[polycol], cinfo[3], cinfo[4])
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
                 cinfo = colinfos.get(polycol, None)
@@ -321,7 +330,7 @@ class Paragraphs(list):
                     currr.xend = xstart
                 currpic = FigInfo(p[0], p[1], (0, 0), False, False)
                 currpic.rects = []
-                currr = ParRect(pnum, xstart, readpts(p[3]))
+                currr = ParRect(pnum, colcount[polycol], xstart, readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
                 lastyend = 0
@@ -335,7 +344,7 @@ class Paragraphs(list):
                 if currp is not None:
                     currpr = currr
                     if not len(currp.rects) or currp.rects[-1].xend > 0:
-                        currr = ParRect(pnum, currpr.xstart, currpr.yend)
+                        currr = ParRect(pnum, colcount[polycol], currpr.xstart, currpr.yend)
                         currp.rects.append(currr)
                     else:
                         currr = currp.rects[-1]
@@ -358,7 +367,7 @@ class Paragraphs(list):
                         if p[1] == "heightlimit":
                             currpic.limit = True
                 
-            # "parnote":        # type, callerx, callery
+            # "parnote":        # type, caller, ref, index, callerx, callery
             # "notebox":        # type, width, height
             # "parlines":       # numlines in previous paragraph (occurs after @parlen)
             # "nontextstart":   # x, y
@@ -367,8 +376,8 @@ class Paragraphs(list):
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
         
-    def isEmpty(self):
-        return not len(self.pindex)
+    def numPages(self):
+        return len(self.pindex)
         
     def _iterRectsPage(self, pnum):
         if pnum > len(self.pindex): # need some other test here 
@@ -424,6 +433,11 @@ class Paragraphs(list):
             for r in p.rects:
                 if r.pagenum == pnum:
                     yield (p, r)
+
+    def getRects(self):
+        for p in self:
+            for r in p.rects:
+                yield (p, r)
 
     def getParasByColumnOrParref(self, pnum=None, parref=None, column=None):
         """Returns paragraphs from a specific column on a page OR all paragraphs 
@@ -517,7 +531,12 @@ class Paragraphs(list):
         res = []
         for l, p, r in self.allxdvlines():
             # [[pnum, pos(x,y), width]]
-            spaces = sorted([BadSpace(r.pagenum, l, *b) for b in l.has_badspace(curr)], key=lambda s:s.width, reverse=True)
+            spaces = []
+            for b, nspaces, tspaces in l.has_badspace(curr):
+                spaces.append(BadSpace(r.pagenum, l, *b))
+                r.tspace += tspaces
+                r.nspace += nspace
+            spaces.sort(key=lambda s:s.width, reverse=True)
             for s in spaces:
                 if not len(res):
                     res.append(s)
@@ -536,7 +555,7 @@ class Paragraphs(list):
 
     def getbadspaces(self, pnum, threshold, char_threshold):
         for l in self._getlines(pnum):
-            spaces = l.has_badspace(threshold, char_threshold)
+            spaces, tspaces, nspaces = l.has_badspace(threshold, char_threshold)
             for s in spaces:
                 yield BadSpace(pnum, l, *s)
             
@@ -562,7 +581,7 @@ class Paragraphs(list):
         for pnum in range(len(self.pindex)):
             for l in self._getlines(pnum):
                 if (wanted & 1) == 1 and pnum not in spaces:
-                    s = l.has_badspace(threshold, char_threshold)
+                    s, t, n = l.has_badspace(threshold, char_threshold)
                     if len(s):
                         spaces.add(pnum)
                 if (wanted & 2) == 2 and pnum not in collisions:

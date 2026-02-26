@@ -103,7 +103,7 @@ class Interlinear:
         if isin:
             t = eloc.text
             parent = eloc
-            laste = eloc[0] if len(eloc) else None
+            laste = eloc[0] if len(eloc) and not t else None
         else:
             t = eloc.tail
             parent = eloc.parent

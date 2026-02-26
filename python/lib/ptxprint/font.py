@@ -671,6 +671,7 @@ class TTFont:
         self.dict = {}
         if self.filename == "":
             return
+        # print(f"Font = {self.filename}")
         with open(self.filename, "rb") as inf:
             dat = inf.read(12)
             (fid, numtables) = struct.unpack(">4sH", dat[:6])
@@ -685,7 +686,7 @@ class TTFont:
                         numtables = struct.unpack(">H", dat[4:6])[0]
                         thisdir = self._read_dir(inf, numtables)
                         thisnames = self.readNames(inf, dirdic=thisdir)
-                        if thisnames[1] == self.family:
+                        if thisnames.get(1, "") == self.family:     # Mac fonts don't obey standards?
                             self.dict = thisdir
                             ttcindex = i
                             break
@@ -706,6 +707,10 @@ class TTFont:
             self.readhead(inf)
             if withglyphs:
                 self.readhmtx(inf)
+                if hasattr(self, 'advances') and len(self.advances) >= 3:
+                    self.space_width = self.advances[3] / self.upem    # this is a scarily effective hack
+                else:
+                    self.space_width = None
                 self.readglyf(inf)
         self.isGraphite = 'Silf' in self.dict
         return True
@@ -891,6 +896,7 @@ class TTFont:
         self.advances = metrics[0::2]
 
     def readglyf(self, inf):
+        """ Reads bounding box for each glyph """
         if hasattr(self, 'glyphs') or 'loca' not in self.dict:
             return
         self.readhead(inf)
@@ -906,8 +912,11 @@ class TTFont:
         self.glyphs = []
         for i in range(self.numglyphs):
             inf.seek(self.dict['glyf'][0] + locas[i][0])
-            data = inf.read(10)
-            self.glyphs.append(struct.unpack(">4h", data[2:]))  # xMin, yMin, xMax, yMax
+            if locas[i][1] >= 10:
+                data = inf.read(10)
+                self.glyphs.append(struct.unpack(">4h", data[2:]))  # xMin, yMin, xMax, yMax
+            else:
+                self.glyphs.append([0, 0, 0, 0])
 
 
     # def style2str(self, style):
@@ -927,6 +936,7 @@ class TTFont:
         from fontTools import ttLib
         if self.ttfont is None:
             self.ttfont = ttLib.TTFont(self.filename)
+        return self.ttfont
 
     def _getcmap(self):
         self.loadttfont()
@@ -969,8 +979,6 @@ _fontstylemap = {
     'Bold Oblique': '/BI',
     'Medium': ''
 }
-
-FontRef = None
 
 class FontRef:
     def __init__(self, name, style, isGraphite=False, isCtxtSpace=False, feats=None, lang=None):
@@ -1201,7 +1209,7 @@ class FontRef:
         elif self.style is not None and len(self.style):
             s = _fontstylemap.get(self.style, None)
             # add style to name if not one of the standard ones
-            name = self.name + (" "+self.style if s is None else "")
+            name = self.name + (" "+self.style if not s else "")
         else:
             name = self.name
 
@@ -1221,6 +1229,7 @@ class FontRef:
                 feats.append((f.feats.get(k, k), f.featvals.get(k, {}).get(int(v), v)))
             else:
                 feats.append(("+"+k, v))
+        logger.debug(f"{self.name=}, {self.style=}[{_fontstylemap.get(self.style, 'None')}] -> {name=}, {sfeats=}, {feats=}")
         return (name, sfeats, feats)
 
     def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None, force=False, noStyles=False):

@@ -101,7 +101,7 @@ class Module:
 
     def parse(self, piclist=None):
         logger.log(5, self.doc.xml.outUsx(None))
-        self.doc.xml.book = "MOD"
+        # self.doc.xml.book = "MOD"
         count = 0
         self.removes = set((e for e in exclusionmap.values() if self.testexclude(e)))
         skipme = 0
@@ -222,4 +222,5 @@ class Module:
                             e.parent[i-1].tail = (e.parent[i-1].tail or "") + e.tail
                     e.parent.remove(e)
                     break
+        logger.debug(f"Getting {ref} resulting\n{res.outUsx(None)}")
         return res.getroot()

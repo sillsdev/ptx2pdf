@@ -305,6 +305,7 @@
   \t@stpublishability{\thismil@stone}%
   \getp@ram{type}{\thismil@stone}{\thismil@stone}%
   \ifx\p@ram\relax\let\p@ram\empty\fi
+  \trace{m}{\thismil@stone \space type=\p@ram}%
   \ifx\p@ram\empty\else
     \leavevmode
     \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
@@ -610,15 +611,16 @@
     \fi
   \fi
   \get@ttribute{ref}\ifx\attr@b\relax\else
-  \x@\@p@rseref\x@{\attr@b}%
-  \ifx\p@rsedV\relax
-    \message{Could not parse reference '\attr@b'}%
-  \else
-    \global\let\ch@pter\p@rsedC
-    \global\let\v@rse\p@rsedV
-    \ifx\id@@@\p@rsedID\else
-      \global\let\id@@@\p@rsedID
-      {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+    \x@\@p@rseref\x@{\attr@b}%
+    \ifx\p@rsedV\relax
+      \message{Could not parse reference '\attr@b'}%
+    \else
+      \global\let\ch@pter\p@rsedC
+      \global\let\v@rse\p@rsedV
+      \ifx\id@@@\p@rsedID\else
+        \global\let\id@@@\p@rsedID
+        {\resetallcolsfalse\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}%
+      \fi
     \fi
   \fi
   \let\attr@b\relax

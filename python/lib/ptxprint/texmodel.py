@@ -84,7 +84,7 @@ _periphids = {
 
 
 class TexModel:
-    _ptxversion = 6
+    _ptxversion = 7
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
@@ -250,7 +250,7 @@ class TexModel:
                     copyfile(spath, modspath)
         self.dict["paper/pagegutter"] = "{:.2f}mm".format(Dimension(self.dict["paper/width"]).asunits("mm") \
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
-        if self.dict["project/interlinear"] != "%":
+        if self.dict["project/interlinear"] != "%" and self.dict["project/interlang"]:
             self.interlinear = Interlinear(self.dict["project/interlang"], self.dict["/ptxpath"])
         regfont = self.printer.get("bl_fontR")
         if regfont is not None:
@@ -440,6 +440,8 @@ class TexModel:
             swap = False # FixMe! self.dict['document/diglotswapside'] == 'true'
             # ratio = float(self.dict['document/diglotprifraction']) # FixMe!
             ratio = 0.5
+            if self.dict['document/diglotadjcenter']:
+                ratio = float(self.dict['poly/fraction'])
             # print(f"{ratio=}")
             if ratio > 0.5:
                 lhfil = "\\ifdiglot\\ifseriesdiglot\\else\\hskip 0pt plus {}fil\\fi\\fi".format(f2s(ratio/(1-ratio)-1))
@@ -840,6 +842,7 @@ class TexModel:
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
+                logger.log(7, "\n".join(fcontent))
 
     def addInt(self, outfname):
         intfname = self.printer.getBookFilename('INT')
@@ -863,51 +866,59 @@ class TexModel:
         logger.debug(f"INT file {intfname} processed to {outfname}")
         return outfname
 
-    def flattenModule(self, infpath, outdir, text=None):
+    def flattenModule(self, infpath, outdir, text=None, noaction=False):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
         doti = outfpath.rfind(".")
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
-        usfms = self.printer.get_usfms()
-        mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-        mod.parse(self.printer.picinfos)
-        res = mod.doc
-        if res.xml.errors:
-            self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
+        if not noaction:
+            usfms = self.printer.get_usfms()
+            mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
+            mod.parse(self.printer.picinfos)
+            res = mod.doc
+            if res.xml.errors:
+                self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
+        else:
+            res = ""
         if text is not None:
             return res
-        mod.outUsfm(outfpath, version=[3, 1])
+        if not noaction:
+            mod.outUsfm(outfpath, version=[3, 1])
         return outfpath
 
-    def runConversion(self, infpath, outdir):
+    def runConversion(self, infpath, outdir, noaction=False):
         outfpath = infpath
         script = self.dict['project/selectscript']
+        logger.debug(f"{script} {infpath} {outfpath}, ?={self.dict['project/processscript']}")
         if self.dict['project/processscript'] and script and os.path.exists(script):
             outfpath = os.path.join(outdir, os.path.basename(infpath))
             doti = outfpath.rfind(".")
             if doti > 0:
                 outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
-            cmd = [script, infpath, outfpath]
-            if script.lower().endswith(".bat") and sys.platform.startswith("win"):
-                cmd = [os.environ.get('COMSPEC', 'cmd.exe'), '/c'] + cmd
-            else:
-                hasrun = False
-                with open(script, encoding="utf-8") as scriptf:
-                    l = scriptf.readline().replace("\uFEFF", "")
-                    if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python3?", l):
-                        scriptf.seek(0)
-                        gs = globals().copy()
-                        gs["__name__"] = "__main__"
-                        sys._argv = sys.argv
-                        sys.argv = [script, infpath, outfpath]
-                        # "Remember that at the module level, globals and locals are the same dictionary.
-                        # If exec gets two separate objects as globals and locals, the code will be executed
-                        # as if it were embedded in a class definition."
-                        exec(scriptf.read(), gs)
-                        sys.argv = sys._argv
-                        hasrun = True
-            if not hasrun:
-                checkoutput(cmd) # dont't pass cmd as list when shell=True
+            if not noaction:
+                cmd = [script, infpath, outfpath]
+                if script.lower().endswith(".bat") and sys.platform.startswith("win"):
+                    cmd = [os.environ.get('COMSPEC', 'cmd.exe'), '/c'] + cmd
+                else:
+                    hasrun = False
+                    with open(script, encoding="utf-8") as scriptf:
+                        l = scriptf.readline().replace("\uFEFF", "")
+                        if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python3?", l):
+                            scriptf.seek(0)
+                            gs = globals().copy()
+                            gs["__name__"] = "__main__"
+                            sys._argv = sys.argv
+                            sys.argv = [script, infpath, outfpath]
+                            # "Remember that at the module level, globals and locals are the same dictionary.
+                            # If exec gets two separate objects as globals and locals, the code will be executed
+                            # as if it were embedded in a class definition."
+                            exec(scriptf.read(), gs)
+                            sys.argv = sys._argv
+                            hasrun = True
+                if not hasrun:
+                    logger.debug(f"running: {cmd}")
+                    checkoutput(cmd) # dont't pass cmd as list when shell=True
+        logger.debug(f"{outfpath=}")
         return outfpath
 
     def _getText(self, data, doc, bk, logmsg=""):
@@ -931,7 +942,7 @@ class TexModel:
         self.printer.doError(txt + "\n\n" +_("If this error just appeared after upgrading then check whether the USFM markers like \\p and \\v used in changes.txt rules have been 'escaped' with an additional \\ (e.g. \\\\p and \\\\v) as is required by the latest version."), title="Error in changes.txt")
         logger.warn(txt)
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0, reversify=None):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, bkindex=0, reversify=None, noaction=False):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
         except ValueError:
@@ -939,27 +950,11 @@ class TexModel:
         printer = self.printer
         if not len(self.changes):
             if self.asBool('project/usechangesfile'):
-                # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
-                #cpath = self.printer.configPath(self.printer.configName())
-                #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 def printError(msg, **kw):
                     self.printer.doError(msg, show=not self.printer.get("c_quickRun"))
                 self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
                                             bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
-        #adjlistfile = printer.getAdjListFilename(bk)
-        #if adjlistfile is not None:
-        #    adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
-        #                        adjlistfile.replace(".adj", "_changes.txt"))
-        #    chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
-        #    for k, v in chs.items():
-        #        self.changes.setdefault(k, []).extend(v)
         draft = "-" + (printer.cfgid or "draft")
-        self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
-        customsty = os.path.join(prjdir, 'custom.sty')
-        if not os.path.exists(customsty):
-            self.dict["/nocustomsty"] = "%"
-        else:
-            self.dict["/nocustomsty"] = ""
         fname = printer.getBookFilename(bk)
         if fname is None:
             infpath = os.path.join(prjdir, bk)  # assume module
@@ -972,8 +967,13 @@ class TexModel:
                 return None
         else:
             infpath = os.path.join(prjdir, fname)
+        customsty = os.path.join(prjdir, 'custom.sty')
+        if not os.path.exists(customsty):
+            self.dict["/nocustomsty"] = "%"
+        else:
+            self.dict["/nocustomsty"] = ""
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
-            infpath = self.runConversion(infpath, outdir)
+            infpath = self.runConversion(infpath, outdir, noaction=noaction)
         outfname = os.path.basename(infpath)
         outindex = self.usedfiles.setdefault(outfname, 0)
         outextra = str(outindex) if outindex > 0 else ""
@@ -982,139 +982,153 @@ class TexModel:
         doti = outfname.rfind(".")
         if doti > 0:
             outfname = outfname[:doti] + draft + outextra + outfname[doti:]
-        os.makedirs(outdir, exist_ok=True)
         outfpath = os.path.join(outdir, outfname)
-        codepage = self.ptsettings.get('Encoding', 65001)
-        with universalopen(infpath, cp=codepage) as inf:
-            dat = inf.read()
-        doc = None
-        logger.debug(f"Converting {bk} {chaprange=} sections{self.changes.keys()}")
-
-        if 'initial' in self.changes:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
-            dat = runChanges(self.changes['initial'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
-
-        if chaprange is None and self.dict["project/bookscope"] == "single":
-            chaprange = RefList((RefRange(Ref(book=bk, chapter=int(float(self.dict["document/chapfrom"])), verse=0),
-                                 Ref(book=bk, chapter=int(float(self.dict["document/chapto"])), verse=200)), ))
-
-        if chaprange is None or not isbk or not len(chaprange) or chaprange[0].first.chapter is None \
-            or chaprange[0].last.chapter is None or \
-            (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
-                (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
+        if not noaction:
+            self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
+            os.makedirs(outdir, exist_ok=True)
+            codepage = self.ptsettings.get('Encoding', 65001)
+            with universalopen(infpath, cp=codepage) as inf:
+                dat = inf.read()
             doc = None
-        else:
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            if doc is not None:
-                doc = doc.getsubbook(chaprange)
+            logger.debug(f"Converting {bk} {chaprange=} sections{self.changes.keys()}")
 
-        if self.interlinear is not None:
-            (dat, doc) = self._getText(dat, doc, bk)
-            linelengths = [len(x) for x in dat.splitlines(True)]
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            if doc is not None:
-                self.interlinear.convertBk(bk, doc, keep_punct = self.dict.get("project/interpunc", True))
-                if len(self.interlinear.fails):
-                    refs = RefList(self.interlinear.fails)
-                    refs.simplify()
-                    printer.doError("The following references need to be reapproved: " + str(refs),
-                                    show=not printer.get("c_quickRun"))
-                    self.interlinear.fails = []
-        elif bk.lower().startswith("xx"):
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="flatten the module")
-            doc = self.flattenModule(infpath, outfpath, text=dat)
-            dat = None
+            if 'initial' in self.changes:
+                (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+                dat = runChanges(self.changes['initial'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
-        if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
-                    and self.dict["notes/ifxrexternalist"] and isCanon:
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("Add strongs numbers to text")
-            script = (printer.get("fcb_script") or "").title()
-            try:
-                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
-            except SyntaxError as e:
-                self.printer.doError("Processing Strongs", secondary=str(e))
+            if self.interlinear is not None:
+                # (dat, doc) = self._getText(dat, doc, bk)
+                linelengths = [len(x) for x in dat.splitlines(True)]
+                (dat, doc) = self._getDoc(dat, doc, bk)
+                if doc is not None:
+                    self.interlinear.convertBk(bk, doc, keep_punct = self.dict.get("project/interpunc", True))
+                    if len(self.interlinear.fails):
+                        refs = RefList(self.interlinear.fails)
+                        refs.simplify()
+                        printer.doError("The following references need to be reapproved: " + str(refs),
+                                        show=not printer.get("c_quickRun"))
+                        self.interlinear.fails = []
+                    dat = None
 
-        if 'default' in self.changes:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
-            dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+            if chaprange is None and self.dict["project/bookscope"] == "single":
+                chaprange = RefList((RefRange(Ref(book=bk, chapter=int(float(self.dict["document/chapfrom"])), verse=0),
+                                     Ref(book=bk, chapter=int(float(self.dict["document/chapto"])), verse=200)), ))
 
-        if self.dict['project/canonicalise']:
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            dat = None
+            if chaprange is None or not isbk or not len(chaprange) or chaprange[0].first.chapter is None \
+                or chaprange[0].last.chapter is None or \
+                (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
+                    (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
+                if dat is None:
+                    (dat, doc) = self._getText(dat, doc, bk, logmsg="read interlinear")
+                else:
+                    doc = None
+            else:
+                (dat, doc) = self._getDoc(dat, doc, bk)
+                if doc is not None:
+                    doc = doc.getsubbook(chaprange)
 
-        if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("stripIntro")
-            if doc is not None:
-                doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
+            if bk.lower().startswith("xx"):
+                (dat, doc) = self._getText(dat, doc, bk, logmsg="flatten the module")
+                doc = self.flattenModule(infpath, outfpath, text=dat)
+                dat = None
 
-        if self.asBool("document/hidemptyverses"):
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("stripEmptyChVs")
-            if doc is not None:
-                doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
+            if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
+                        and self.dict["notes/ifxrexternalist"] and isCanon:
+                (dat, doc) = self._getDoc(dat, doc, bk)
+                logger.debug("Add strongs numbers to text")
+                script = (printer.get("fcb_script") or "").title()
+                try:
+                    doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"], script=script)
+                except SyntaxError as e:
+                    self.printer.doError("Processing Strongs", secondary=str(e))
 
-        if self.dict['fancy/endayah'] == "" and self.dict["fancy/versedecoratorisayah"] == "":
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("versesToEnd")
-            if doc is not None:
-                doc.versesToEnd()
+            if 'default' in self.changes:
+                (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
+                dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
-        if bk == "GLO" and self.found_glosses is not None:
-            (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Remove filtered gloss entries")
-            if doc is not None:
-                doc.removeGlosses(self.found_glosses)
+            if self.dict['project/canonicalise']:
+                (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Canonicalising")
+                dat = None
+                errors = doc.runchecks()
+                if len(errors):
+                    dlgtitle = _("PTXprint [{}] - USFM Check Error!").format(self.VersionStr)
+                    secondary = "\n".join([f"{bk} {x[0]}: {x[1]}" for x in errors]) + "\n\n" \
+                            + _("These errors were triggered when running canonical checks")
+                    printer.doError(_("Checking errors: "), secondary=secondary, title=dlgtitle)   #, show=not self.printer.get("c_quickRun"))
 
-        if self.asBool("paragraph/ifhyphenate") and self.asBool("document/ifletter") and printer.hyphenation:
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("Insert hyphens manually")
-            if doc is not None:
-                doc.hyphenate(printer.hyphenation, self.dict["paragraph/ifnbhyphens"])
+            if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                (dat, doc) = self._getDoc(dat, doc, bk)
+                logger.debug("stripIntro")
+                if doc is not None:
+                    doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
 
-        if reversify is not None:
-            (dat, doc) = self._getDoc(dat, doc, bk, "Prepare to reversify")
-            if doc is not None:
-                srcvrsf = None
-                srcvrs = None
-                if self.printer.ptsettings.versification is not None:
-                    srcvrsf = os.path.join(self.printer.project.path, self.printer.ptsettings.versification)
-                    logger.debug(f"{srcvrsf=}")
-                    if os.path.exists(srcvrsf):
-                        srcvrs = Versification(srcvrsf)
-                logger.debug(f"Reversify [{srcvrsf}] {getattr(reversify[0], 'name', 'unknown')} -> {getattr(srcvrs, 'name', 'unknown') if srcvrs else 'unknown'}")
-                doc.reversify(srcvrs, *reversify)
+            if self.asBool("document/hidemptyverses"):
+                (dat, doc) = self._getDoc(dat, doc, bk)
+                logger.debug("stripEmptyChVs")
+                if doc is not None:
+                    doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
 
-        adjlist = self.printer.get_adjlist(bk)
-        if adjlist is not None and len(adjlist):
-            (dat, doc) = self._getDoc(dat, doc, bk)
-            logger.debug("Apply adjlist")
-            if doc is not None:
-                doc.apply_adjlist(bk, adjlist)
-            # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+            if self.dict['fancy/endayah'] == "" and self.dict["fancy/versedecoratorisayah"] == "":
+                (dat, doc) = self._getDoc(dat, doc, bk)
+                logger.debug("versesToEnd")
+                if doc is not None:
+                    doc.versesToEnd()
 
-        if self.localChanges is not None:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
-            logger.log(5,self.localChanges)
-            dat = runChanges(self.localChanges, bk, dat)
+            if bk == "GLO" and self.found_glosses is not None:
+                (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Remove filtered gloss entries")
+                if doc is not None:
+                    doc.removeGlosses(self.found_glosses)
 
-        logger.debug("Applying final changes: ")
-        if 'final' in self.changes:
-            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes (final)\n")
-            dat = runChanges(self.changes['final'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+            if self.asBool("paragraph/ifhyphenate") and self.asBool("document/ifletter") and printer.hyphenation:
+                (dat, doc) = self._getDoc(dat, doc, bk)
+                logger.debug("Insert hyphens manually")
+                if doc is not None:
+                    doc.hyphenate(printer.hyphenation, self.dict["paragraph/ifnbhyphens"])
 
-        (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to output\n")
-        with open(outfpath, "w", encoding="utf-8") as outf:
-            outf.write(dat)
+            if reversify is not None:
+                (dat, doc) = self._getDoc(dat, doc, bk, "Prepare to reversify")
+                if doc is not None:
+                    srcvrsf = None
+                    srcvrs = None
+                    if self.printer.ptsettings.versification is not None:
+                        srcvrsf = os.path.join(self.printer.project.path, self.printer.ptsettings.versification)
+                        logger.debug(f"{srcvrsf=}")
+                        if os.path.exists(srcvrsf):
+                            srcvrs = Versification(srcvrsf)
+                    logger.debug(f"Reversify [{srcvrsf}] {getattr(reversify[0], 'name', 'unknown')} -> {getattr(srcvrs, 'name', 'unknown') if srcvrs else 'unknown'}")
+                    doc.reversify(srcvrs, *reversify)
+
+            # adjlist = self.printer.get_adjlist(bk)
+            # if adjlist is not None and len(adjlist):
+            #     (dat, doc) = self._getDoc(dat, doc, bk)
+            #     logger.debug("Apply adjlist")
+            #     if doc is not None:
+            #         doc.apply_adjlist(bk, adjlist)
+                # dat = runChanges(self.changes['adjust'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+
+            if self.localChanges is not None:
+                (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
+                logger.log(5,self.localChanges)
+                dat = runChanges(self.localChanges, bk, dat)
+
+            logger.debug("Applying final changes: ")
+            if 'final' in self.changes:
+                (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes (final)\n")
+                dat = runChanges(self.changes['final'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to output\n")
+            with open(outfpath, "w", encoding="utf-8") as outf:
+                outf.write(dat)
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "after":
-            bn = os.path.basename(self.runConversion(outfpath, outdir))
+            bn = os.path.basename(self.runConversion(outfpath, outdir, noaction=noaction))
         else:
             bn = os.path.basename(outfpath)
 
         if '-conv' in bn:
             newname = re.sub(r"(\{}\-conv|\-conv\{}|\-conv)".format(draft, draft), draft, bn)
-            copyfile(os.path.join(outdir, bn), os.path.join(outdir, newname))
-            os.remove(os.path.join(outdir, bn))
+            if not noaction:
+                copyfile(os.path.join(outdir, bn), os.path.join(outdir, newname))
+                os.remove(os.path.join(outdir, bn))
             return newname
         else:
             return bn
@@ -1142,7 +1156,7 @@ class TexModel:
         if bk == "GLO":
             if self.dict['document/filterglossary']:
                 self.filterGlossary(printer)
-            def mkkid(m):
+            def mkkid(s, m):
                 if ' ' in m.group(1):
                     return r'\k {}|{}\k*'.format(m.group(1), m.group(1).replace(" ", ""))
                 else:
@@ -1247,7 +1261,7 @@ class TexModel:
             if self.asBool("document/iffigexclwebapp"):
                 #self.localChanges.append(makeChange(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', '', flags=regex.M))  # USFM2
                 self.localChanges.append(makeChange(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', '', flags=regex.M))    # USFM3
-            def figtozfiga(m):
+            def figtozfiga(s, m):
                 a = self.printer.picinfos.getAnchor(m.group(1), bk + (self.printer.digSuffix or ""))
                 if a is None:
                     return ""
@@ -1301,7 +1315,7 @@ class TexModel:
         # in "\\r .+?[\r\n]+": "\s(\d)" > "~\1"  # Don't allow the line to break in the middle of a \r reference
         # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo # [\p{Nd}\p{L}])(\p{Nd})\s
         self.localChanges.append(makeChange(r"(?<![\p{Nd}\p{L}])(\p{Nd})\s(\p{L})", r"\1\u00A0\2", context=make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\]+)"))))
-        self.localChanges.append(makeChange(r"(\p{L})\s(\p{Nd}+[:.]\p{Nd}+)", r"\1\u00A0\2", context=make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\]+)"))))
+        self.localChanges.append(makeChange(r"(?<!\\\S*)(\p{L}+)\s(\p{Nd}+[:.]\p{Nd}+)", r"\1\u00A0\2", context=make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\|\\]+)"))))
                         
         # Temporary fix to stop blowing up when \fp is found in notes (need a longer term TeX solution from DG or MH)
         # Solved on the TeX side on 11-Aug-2023, so we no longer need this hack below:
@@ -1344,7 +1358,7 @@ class TexModel:
             
 
         # Capture \tc2-3 type spans
-        def getspan(m):
+        def getspan(s, m):
             self.tablespans.add((m.group(1), m.group(2), m.group(3), m.group(4)))
             return m.group(0)
         self.localChanges.append(makeChange(r"\\(t[hc])([cr]?)(\d+)-(\d+)", getspan))
@@ -1395,8 +1409,7 @@ class TexModel:
         # Remove any spaces before the \ior*
         self.localChanges.append(makeChange(r"\s+(?=\\ior\*)", r"", flags=regex.M)) 
         # Escape special codes % and $ that could be in the text itself
-        self.localChanges.append(makeChange(r"(?<!\\\S*|\\[fx][^\\]*)([{}])(\s?)".format("".join(self._specialchars)), lambda m:"\\"+self._specialchars[m.group(1)]+("\\space{}".format(m.group(2)) if m.group(2) else " "), flags=regex.M))
-
+        self.localChanges.append(makeChange(r"(?<!\\\S*|\\[fx][^\\]*)([{}])(\s?)".format("".join(self._specialchars)), lambda x,m:"\\"+self._specialchars[m.group(1)]+("\\space{}".format(m.group(2)) if m.group(2) else " "), flags=regex.M))
         #self.localChanges.append((None, regex.compile(r"(?<=\n\r?)\r+"), ""))
         self.localChanges.append(makeChange(r"^\s*(?=\\id)", ""))
 
@@ -1466,7 +1479,7 @@ class TexModel:
         new_glosses = set()
         def capturek(e, state):
             if e.tag == "char" and e.get("style", "") == "k":
-                nkval=getk(e, attrib="key").lower() 
+                nkval = getk(e, attrib="key").lower()
                 state = (nkval in self.found_glosses and nkval not in self.processed_glosses)
                 if state:
                   self.processed_glosses.add(nkval)

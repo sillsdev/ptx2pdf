@@ -857,6 +857,7 @@
 \def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody}}}%\makefootline}}}
 \def\emptyoutput{\pl@inoutput{\vbox{}}}
 \def\pl@inoutput#1{%
+  \traceifset{pl@inoutput}%
   \let\opS@ve@msprefix\mspr@fix\let\mspr@fix\empty%
   \let\opS@ve@catprefix\c@tprefix\let\c@tprefix\empty% Category and milestones have no place in determining page.
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
@@ -878,6 +879,7 @@
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
   \global\let\mspr@fix\opS@ve@msprefix
   \let\c@tprefix\opS@ve@catprefix % NOT global, as catprefix needs to stay grouped
+  \traceifcheck{pl@inoutput}%
   }
 %-c_plainoutput
 

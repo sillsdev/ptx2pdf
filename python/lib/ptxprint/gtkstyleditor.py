@@ -22,7 +22,7 @@ stylemap = {
     'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  False, None, None),
     'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    False, None, None),
     'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', False, None, None),
-    'Raise':        ('s_styRaise',          'l_styRaise',       0, None, None, None),
+    'Raise':        ('s_styRaise',          'l_styRaise',       0, None, None),
     'Underline':    ('c_styFaceUnderline',  None,               False, None, None),    
     'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),
     'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
@@ -396,6 +396,9 @@ class StyleEditorView(StyleEditor):
     def onSelected(self, selection):
         if selection.count_selected_rows() != 1:
             return
+        w = self.treeview.get_toplevel()
+        if isinstance(w, Gtk.Window):   # drop focus everywhere to trigger value update
+            w.set_focus(None)
         model, i = selection.get_selected()
         if not model[i][2]:
             return
@@ -624,6 +627,9 @@ class StyleEditorView(StyleEditor):
             if 'linespacing' not in data and 'baseline' not in data:
                 data['linespacing'] = "1"
         for k, v in stylemap.items():
+            w = self.builder.get_object(v[0])
+            if w is not None:
+                w.marker = self.marker
             if k == 'Marker':
                 val = "\\" + self.marker
                 urlcat = data.get(' url', '')
@@ -810,25 +816,26 @@ class StyleEditorView(StyleEditor):
         if self.isLoading:
             return
         key = a[-1]
-        data = self.asStyle(self.marker)
+        mkr = getattr(w, 'marker', self.marker) if w is not None else self.marker
+        data = self.asStyle(mkr)
         v = stylemap[key]
         val = self.get(v[0], v[2])
-        logger.debug(f"Style edit {key} in {self.marker} -> {val}")
+        logger.debug(f"Style edit {key} in {mkr} -> {val}")
         if key == '_publishable':
             if val:
                 add, rem = "", "non"
             else:
                 add, rem = "non", ""
-            props = set((self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', "") or "").split())
+            props = set((self.sheet.setdefault(mkr, {}).setdefault('TextProperties', "") or "").split())
             if props is None:
                 props = set()
-                # self.sheet[self.marker]['TextProperties'] = props
+                # self.sheet[mkr]['TextProperties'] = props
             try:
                 props.remove(rem+'publishable')
             except KeyError:
                 pass
             props.add(add+'publishable')
-            self.sheet[self.marker]['TextProperties'] = " ".join(sorted(props))
+            self.sheet[mkr]['TextProperties'] = " ".join(sorted(props))
             (model, selecti) = self.treeview.get_selection().get_selected()
             model.set_value(selecti, 3, not val)
             return
@@ -840,7 +847,7 @@ class StyleEditorView(StyleEditor):
             key = newv[3](isset)
             other = newv[3](not isset)
             if other in data:
-                super(self.__class__, self).setval(self.marker, key, None)
+                super(self.__class__, self).setval(mkr, key, None)
             value = val if isset or v[3] is None else v[3](val) # v[4 if isset else 3] is None else v[4 if isset else 3](val)
         elif v[0].startswith("col_"):
             value = coltotex(val)
@@ -849,17 +856,17 @@ class StyleEditorView(StyleEditor):
             otherkey = v[3](not val)
             controlk = v[3](False)
             newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
-            oldval = self.getval(self.marker, otherkey)
+            oldval = self.getval(mkr, otherkey)
             if oldval is not None:
                 newval = self._convertabs(newkey, oldval)
                 #newval = oldval
-                logger.debug(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
-                self.setval(self.marker, newkey, newval, mapin=False)
+                logger.debug(f"{newkey}: {oldval=} -> {newval=} | {self.getval(mkr, newkey)}")
+                self.setval(mkr, newkey, newval, mapin=False)
                 newlabel = self.stylediverts[controlk][2 if val else 1]
                 controlw = stylemap[controlk][1]
                 self.set(controlw, newlabel)
                 if otherkey in data:
-                    super(self.__class__, self).setval(self.marker, otherkey, None)
+                    super(self.__class__, self).setval(mkr, otherkey, None)
             value = val
             # value = val if newv[3] is None else newv[3](val)
         elif v[3] is not None:
@@ -868,9 +875,9 @@ class StyleEditorView(StyleEditor):
             value = val
 
         if not key.startswith("_"):
-            super(self.__class__, self).setval(self.marker, key, value, mapin=False)
+            super(self.__class__, self).setval(mkr, key, value, mapin=False)
             if key in ("font", "FontSize", "FontName", "Bold", "Italic"): # ask MH if OK to add 'font'
-                fref = self.getval(self.marker, 'font')
+                fref = self.getval(mkr, 'font')
                 if fref is None:
                     fref = self.model.get("bl_fontR")
                     if fref is not None:
@@ -878,18 +885,18 @@ class StyleEditorView(StyleEditor):
                 if fref is not None:
                     if key in ("Bold", "Italic"):
                         setattr(fref, "is"+key, val)
-                        self.setval(self.marker, 'font', fref, parm=True, mapin=False)
+                        self.setval(mkr, 'font', fref, parm=True, mapin=False)
                     # check that defaulting this doesn't cause problems
-                    fsize = float(self.getval(self.marker, "FontSize", "1."))
+                    fsize = float(self.getval(mkr, "FontSize", "1."))
                     msize = float(self.model.get("s_fontsize", "1."))
-                    logger.debug(f"{self.marker}: FontSize={fsize}, model font size={msize}")
+                    logger.debug(f"{mkr}: FontSize={fsize}, model font size={msize}")
                     self.setFontLabel(fref, fsize * msize)
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):
-                oldval = self.basesheet.get(self.marker, {}).get(" "+key, False)
+                oldval = self.basesheet.get(mkr, {}).get(" "+key, False)
             else:
-                oldval = self.getval(self.marker, key, v[2], baseonly=True)
+                oldval = self.getval(mkr, key, v[2], baseonly=True)
             if v[0].startswith("s_"):
                 diff = abs(float(oldval) - float(value)) > 0.001
             else:
@@ -974,7 +981,9 @@ class StyleEditorView(StyleEditor):
             for k, v in dialogKeys.items():
                 if k == 'Marker':
                     continue
-                val = self.model.get(v).replace("\\","")
+                val = self.model.get(v)
+                if val is not None:
+                    val = val.replace("\\","")
                 # print(f"{k=} {v=} -> {val=}")
                 if k != "mrktype" or Grammar.marker_categories.get(key, '') == '':
                     self.setval(key, k, val)

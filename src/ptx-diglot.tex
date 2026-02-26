@@ -38,6 +38,8 @@
 %\def\TRshipout#1{\shipout#1}
 \def\TRshipout#1{}
 \def\b@xbotmark{}
+\newcount\r@a@trialdepth
+\r@a@trialdepth=0
 
 \xdef\f@rstb@dy{0pt}%
 \def\TextBorderColumns{} % If unset, then border all scripture. If set, only border the ones set. E.g. for when a 
@@ -119,7 +121,7 @@
 %LRspecificVarIf lists **internal boolean variables** that need to carry over from one paragraph to the next. 
 %For global config values, insert name in LRspecificDef, and add line(s) for newsideSpecificIf into initcolumndef@ults
 \def\LRspecificVarIf{dr@ppednumber,dr@ppedother}
-\def\LRspecificVarDef{ch@pterc@tnum} % \def based variables that need to carry over from one par to the next
+\def\LRspecificVarDef{ch@pterc@tnum,@@lastc@rref,dc@rref} % \def based variables that need to carry over from one par to the next
 
 %Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
 \def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts,dropped@ther@lines} 
@@ -174,7 +176,8 @@
      \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}%
     \fi
   \else
-   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected (\the\csname #1\endcsname)}%
+    \trace{S}{SpS: #1 (\the\csname #1\endcsname) <= \the\csname #1\sfx\endcsname}%
+    \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected (\the\csname #1\endcsname)}%
   \fi
 }
 
@@ -325,6 +328,8 @@
 \diglotSepNotestrue%
 \newif\ifdiglotBalNotes %If a left column footnote steals space from the right column also
 \diglotBalNotesfalse%
+\newif\ifdiglotMergedNotesRTL % Let user control if merged footnotes should be RTL or LTR
+\diglotMergedNotesRTLfalse
 \newif\iftrialfailed
 \global\def\n@xtc@mmand{}%
 
@@ -671,20 +676,25 @@
       \fi
     \fi\fi
     \tracetimset{any@trial}%
-    \global\output{\diglot@any@trial}
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 4}%
       \showbox\galley
     \fi
+    \global\output{\diglot@any@trial}
     \unvcopy\galley
     \unpenalty
+    \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
+    \traceifset{run@a@trial\the\r@a@trialdepth}%
     \penalty\endtri@lpen@lty
+    \traceifcheck{run@a@trial\the\r@a@trialdepth}%
+    \advance\r@a@trialdepth by -1
     \relax\relax
     \let\after@run@a@trial=\relax
   \else
     \trace{D}{No space for trial}%
     \global\trialfailedtrue
     \let\after@run@a@trial=\after@after@a@trial
+    \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{\the\trialheight}% The trial already rejected the whole lot.
   \fi
   \after@run@a@trial
 }
@@ -891,6 +901,7 @@
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
   \tracetimcheck{any@trial}{output}%
+  \traceifset{diglot@any@trial}%
   \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
   \@bls=\csname b@selineskip\c@rrdstat\endcsname
   \ifnum\holdinginserts=0\relax\else
@@ -1049,6 +1060,7 @@
     \fi
   \fi
   \tracetimcheck{any@trial}{-}%
+  \traceifcheck{diglot@any@trial}%
   \after@this
 }
 
@@ -1197,6 +1209,11 @@
   \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
   \csname diglot@run@trials@\diglotlayout\endcsname
   \global\allNeedEmptyingfalse
+  \csname aftereverychunkhook\endcsname% A potentially useful hook
+  \ifcsname afterthischunkhook\endcsname % One-shot hook.
+    \afterthischunkhook
+    \global\let\afterthischunkhook\undefined
+  \fi
 }
 
 \def\polyglotcolumn#1{%
@@ -1428,7 +1445,7 @@
  \advance\tmpcount by \MaxPagesPerChunk\relax 
  %\message{\the\pageno + \MaxPagesPerChunk = \the\tmpcount}%
  \ifnum\tmpcount>\MaxPages \global\MaxPages=\tmpcount
-   %\message{Maxpages now : \the\MaxPages}%
+   %\message{Maxpages now : \MaxPages}%
  \fi
 }
 
@@ -1799,7 +1816,9 @@
   \fi
 } 
 \def\bg@calcns#1#2{%
+  \traceifset{bg@calcns}%
   \dimen1=\ht\partial\relax \advance\dimen1 by \dp\partial\relax 
+  \def\wh@t{}%
   \if \bg@fillht T\relax
     \trace{et}{Putting #2 #1 (\bg@fillht\space \the\dimen1\space (\the\ht\partial+\the\dp\partial) or \the\textheight\space or \oldp@rtial+\csname @nxtchunk#1ht\endcsname + \csname @nxtchunk#1dp\endcsname}%
     \def\wh@t{partial}%
@@ -1811,14 +1830,15 @@
       \advance\dimen1 -\AboveNoteSpace\relax
       \edef\wh@t{\wh@t - \the\AboveNoteSpace}%
     \else
+      \def\wh@t{0}%
       %\advance\dimen1 -\dimexpr \csname textb@dr@bot@pad#1\endcsname + \csname @fn#1ht\endcsname
     \fi
   \else
-    \if \bg@fillht P\relax
+    \if P\bg@fillht \relax
       \trace{et}{Putting #2 #1 (\bg@fillht\space\l@gdims{\partial} - \csname textb@dr@bot@pad#1\endcsname - \csname @fn#1ht\endcsname)}%
       \def\wh@t{partial}%
     \else
-      \if A\bg@fillht
+      \if A\bg@fillht\relax
         \ifloc@lht\else
           \dglt@calc@vailht@mods %(globally) alters availht, so that needs resetting
         \fi
@@ -1826,11 +1846,14 @@
           \advance\availht by -\dimexpr \csname textb@dr@top@pad#1\endcsname+\csname textb@dr@bot@pad#1\endcsname \relax
         \fi
         \dimen1=\availht
+        \def\wh@t{avail}%
       \else
         \dimen1=\textheight
+        \def\wh@t{textheight}%
       \fi
     \fi
   \fi
+  \traceifcheck{bg@calcns}%
   \x@\ifx\csname BelowBaseline#1\endcsname\empty
     \advance \dimen1 0.5\csname onel@neunit\m@x@at@col\endcsname
     \edef\wh@t{\wh@t + 0.5 lines}%
@@ -1845,6 +1868,7 @@
     \fi
   \fi
   \trace{et}{Basic border/bg calcs result \the\dimen1 \space according to \wh@t}%
+  \traceifcheck{bg@calcns}%
 }
 
 \def\ins@borders#1{% This inserts the borders, positioned relative to the top of the page.
@@ -1879,16 +1903,21 @@
 }
 
 \def\ins@backgrounds#1{%
+  \traceifset{ins@backgrounds}%
   \ifx\l@stcol\empty\else\hskip \gutter\fi
   \ifcsname bg@#1@col\endcsname
     {\edef\tmpav{\the\availht}%
+      \traceifset{ins@backgrounds-c}%
       \bg@calcns{#1}{bg for}%
       \trace{et}{background is \the\dimen1 according to \wh@t - \f@rstb@dy}%
       \dimen2=\DiglotColourPad
+      \traceifcheck{ins@backgrounds-c}%
       \ifdim \csname @fn#1ht\endcsname>0pt \advance\dimen1 by 2\dimen2 \fi % certainly needed when calculating by oldpartian+@curXht, not sure about other times.
       \trace{D}{Colour for #1(\bg@fillht - \ifloc@lht loc\else glo\fi) is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
       %\hbox to 0pt{\vrule height 1pt width 100pt\hss}%
+      %\traceifcheck{ins@backgrounds-c}%
       \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\dimexpr\f@rstb@dy+\tbskip@jd+\csname textb@dr@top@pad#1\endcsname \relax}\else\let\pf@x\empty\fi
+      \traceifset{ins@backgrounds-h}%
       \hbox to 0pt {%
         \iftextborder\ifx\TextBorderColumns\empty
           \ifnum\TextBorderMode>0 \ifdim \f@rstb@dy>0pt
@@ -1897,17 +1926,23 @@
         \else
           \hskip\csname textb@dr@left@pad#1\endcsname
         \fi\fi
-        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\pf@x\hbox{\vrule height 0pt depth \dimen1 width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}}\hss}%
+        \f@intthing{\ifcsname bg@#1@alpha\endcsname\csname bg@#1@alpha\endcsname\else 1\fi}{\csname bg@#1@col\endcsname}{\kern-\dimen2\pf@x\hbox{\vrule height 0pt depth \dimen1 width \dimexpr 2\dimen2+\csname column#1width\endcsname \relax}}\hss
+      }%
+      \traceifcheck{ins@backgrounds-h}%
       \global\availht=\tmpav
     }%
+    \traceifcheck{ins@backgrounds-c}%
   \else
     \trace{D}{No colour for #1}%
   \fi
+  \traceifset{ins@backgrounds-s}%
   \ifx\TextBorderColumns\empty
     \hskip \csname column#1width\endcsname
   \else
     \hskip\dimexpr \csname column#1width\endcsname + \csname @textborder@#1\endcsname\relax
   \fi
+  \traceifcheck{ins@backgrounds-s}%
+  \traceifcheck{ins@backgrounds}%
   \xdef\l@stcol{#1}%
 }
 
@@ -2058,6 +2093,7 @@
 
 \def\restore@trace@updatepartial{}
 \def\upd@tep@rtial{%routine called to add stuff to the partial page.
+  \traceifset{upd@tep@rtial}%
   \traceNum{d}{upd@tep@rtial \the\outputpenalty (\diglotDbgupdtPtl)}%
   \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty. pf:\ifpagefull true\else false\fi}%
   \ifnum\diglotDbgupdtPtl=\TRACEcount
@@ -2120,22 +2156,29 @@
     \global\vsize=\trialheight\relax%
   \fi
   \ifpagefull%
+    \traceifset{updp-full}%
+    \traceifset{updp-full-a}%
     \trace{D}{Page full}%
     \@add@n@xtpartial
     \@writep@ge%
       \let\col@do=\reset@n@xt
       \x@\each@col\diglot@list\E% 
     \global\deadcycles=0 %That counts as an action too.
+    \traceifcheck{updp-full-a}%
     \tempfalse
     \let\col@do\check@pen
     \x@\each@col\diglot@list\E% 
+    \traceifset{updp-fullb}%
     \iftemp
       \trace{d}{pagebreak: not (normally) resetting pagefull. lastpage\iflastpage true\else false\fi, endbook\ifendbook true\else false\fi}%
       \global\pagefulltrue
     \else \global\pagefullfalse\fi
+    \traceifcheck{updp-fullb}%
+    \traceifcheck{updp-full}%
   \else
     %\message{-}%
   \fi%
+  \traceifcheck{upd@tep@rtial}%
   \csname end@upd@tep@rtial@\diglotlayout\endcsname % any cleanup?
 }
 
@@ -2301,20 +2344,25 @@
 }%
 
 \def\@writep@ge{%
+  \traceifset{@writep@ge-a}%
   \trace{d}{@writep@ge \the\pageno (\the\MaxPages)}%
   \ifnum\pageno>\MaxPages
-    \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\the\MaxPagesPerChunk) for this job)}%
+    \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\MaxPagesPerChunk) for this job)}%
   \fi
   \csname @start@writep@ge@\diglotlayout\endcsname
   \setdiglotN@rmal
   \pickn@xtpartial
   \actually@writetrue
+  \traceifcheck{@writep@ge-a}%
+  \traceifset{@writep@ge-b}%
   \csname @prep@writep@ge@\diglotlayout\endcsname
   \csname @do@writep@ge@\diglotlayout\endcsname
   \csname @end@writep@ge@\diglotlayout\endcsname
+  \traceifcheck{@writep@ge-b}%
 }
 
-\def\@prep@writep@ge@simplecols{
+\def\@prep@writep@ge@simplecols{%
+  \traceifset{@prep@writep@ge@simplecols}%
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
     \LRf@@tnotesfalse%
@@ -2349,10 +2397,14 @@
   \else %SepNotes
     \trace{f}{Merged notes}%
   \fi%
+  \traceifcheck{@prep@writep@ge@simplecols}%
 }
 
 \newif\ifactually@write
+\newif\if@@bg
 \def\@do@writep@ge@simplecols{
+  \traceifset{@do@writep@ge@simplecols}%
+  \traceifset{@do@writep@ge@simplecols-a}%
   \trace{d}{do@writep@ge@simplecols \the\pageno (\the\MaxPages) actually@write\ifactually@write true\else false\fi}%
   \IfTr@ce{gI}{%
     \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
@@ -2394,6 +2446,8 @@
     \fi%
   }%
 %
+  \traceifcheck{@do@writep@ge@simplecols-a}%
+  \traceifset{@do@writep@ge@simplecols-b}%
   \ifdim\ht\bottomleftins>\ht\bottomrightins%
     \setbox\bottomrightins=\vbox to \ht\bottomleftins{\box\bottomrightins\vss}%
   \else%
@@ -2422,11 +2476,16 @@
   \else
     \setbox\botchunk\box\voidb@x
   \fi
+  \traceifcheck{@do@writep@ge@simplecols-b}%
+  \traceifset{@do@writep@ge@simplecols-c}%
   \ifdiglotSepNotes%
   \else%
      % RTLness will have been asserted (or not) when the note was defined.
      \setbox\notechunk\vbox{%
-       \ifdiglot\RTLfalse\fi
+       \ifdiglot%might be monoglot..
+         \ifdiglotMergedNotesRTL \RTLtrue\else\RTLfalse\fi % At the moment, we ask for user control here. Getting it wrong gives bad results, and it must match where the (paragraph-form) notes are coming from.
+         \RTLfalse
+       \fi
        \def\c@rrdstat{L}%
        \traceNum{d}{Inserting Notes}%
        \f@rstnotetrue%
@@ -2435,14 +2494,32 @@
      }%
   \fi%
 %
+  \traceifcheck{@do@writep@ge@simplecols-c}%
+  \traceifset{@do@writep@ge@simplecols-d}%
+  %\tracing{I}%
   \ifunprintable 
     \abortpage
   \else
-    \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
-    \def\pagecontents{%
+    \def\tmpwrite##1{\ifhmode\beginL\fi\pdfsavepos \write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\ifhmode\endL\fi}%
+    \@@setppagecontents@simplecols
+    \holdinginserts=1
+    \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
+    \global\adjustp@ge=0pt
+    \traceifset{@do@writep@ge@simplecols-e}%
+    \ifactually@write \plainoutput
+    \fi%
+    \traceifcheck{@do@writep@ge@simplecols-e}%
+  \fi
+  \traceifcheck{@do@writep@ge@simplecols-d}%
+  \traceifcheck{@do@writep@ge@simplecols}%
+}
+\def\@@setppagecontents@simplecols{%
+  \traceifset{@@setppagecontents}%
+  \def\pagecontents{%
      \setdiglotN@rmal
      \pickn@xtpartial
      \availht=\textheight
+     \traceifset{@@setppagecontents-a}%
      \ifvoid\topins\else
          \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
         \advance\availht-\ht\topins \advance\availht-\skip\topins
@@ -2463,10 +2540,12 @@
      \ifdim\dp\partial=0pt \ifdim\ht\partial=0pt
        \setbox\partial\box\voidb@x
      \fi\fi
+     \traceifcheck{@@setppagecontents-a}%
      \ifvoid\partial\else
+       \traceifset{@@setppagecontents-b}%
        \tempfalse\let\col@do\ck@backgrounds
        \x@\each@col\diglot@list\E%
-       \let\if@@bg\iftemp% Pseudoif
+       \iftemp\@@bgtrue\else\@@bgfalse\fi
        \lastd@pth=\dp\partial\relax%
        \iftextborder\ifx\TextBorderColumns\empty
        \else
@@ -2476,6 +2555,7 @@
        %\tracingcommands=3
        %\tracingifs=1
        \iftemp
+         \traceifset{@@setppagecontents-c}%
          \trace{d}{Applying colour backgrounds (\ifdiglotN@rmal normal:\layout@list \else reverse:\rev@layout@list\fi)}%
          \ifdim\m@xBelowBaseline>0pt
            \vskip\m@xBelowBaseline
@@ -2502,8 +2582,10 @@
            \box0
            \let\c@rrdstat\c@rrdstattmp
          \fi
+         \traceifcheck{@@setppagecontents-c}
          \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
          %\hrule
+         \traceifcheck{@@setppagecontents-c}%
          \if@@bg
            \let\col@do\ins@backgrounds
            \setbox\partial\vbox{\everypar{}\baselineskip=0pt \lineskip=0pt 
@@ -2514,10 +2596,12 @@
              \hbox{\x@\each@col\tmplist\E}%
              \vss}\unvbox\partial}%
          \fi
+         \traceifcheck{@@setppagecontents-c}%
          \ifdim\m@xBelowBaseline>0pt 
              \vskip-\m@xBelowBaseline
          \fi
-       \fi
+       \fi %tmp
+       \traceifcheck{@@setppagecontents-b}%
        \ifx\TextBorderColumns\empty
          \trace{et}{Apply border from writesimplecolumns. f@rstb@dy is \f@rstb@dy}%
          \ifnum\TextBorderMode=0
@@ -2542,6 +2626,7 @@
          \trace{et}{biggest applied bottom border is \the\dimen1}%
          \vskip\dimen1
        \fi
+       \traceifcheck{@@setppagecontents-b}%
      \fi % not void partial
      %\tracingifs=0
      %\tracingcommands=0
@@ -2568,12 +2653,9 @@
       \tmpwrite{pageend}%
       \makefootbox
      }%pagecontents
-   \holdinginserts=1
-   \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
-   \global\adjustp@ge=0pt
-   \ifactually@write \plainoutput\fi%
-  \fi
+  \traceifcheck{@@setppagecontents}%
 }
+
 \def\abortpage{
     \edef\b@xseq{topins,topchunk,partial,botchunk,bottomins,notechunk,verybottomins,}%
     \dimen0=0pt
@@ -3153,6 +3235,7 @@
 
 
 \def\check@and@update{%Checks each column to see if there is stuff to output
+  \traceifset{check@and@update}%
   %and calls upd@tep@rtial as appropriate
   %responds to \ifboxmoved and \pagefull, checking the last chunkpenalty
   \trace{d}{check@and@update \the\triall@@pcount \ifboxmoved boxmoved\fi \the\lastchunkpenalty}%
@@ -3209,6 +3292,7 @@
     \fi
     \upd@tep@rtial
   \fi
+  \traceifcheck{check@and@update}%
 }
 
 \newcount\triall@@pcount
@@ -3301,7 +3385,7 @@
   %\showlists
   \trace{D}{tri@llist: \tri@llist|\digl@tc@ntent@xcs, tlc=\the\triall@@pcount}%
   \ifx\tri@llist\empty
-    \advance\triall@@pcount by 1\relax
+    \advance\triall@@pcount by 1 \relax
     \check@and@update %May trigger a refilling of \tri@llist
     \trace{D}{after check@and@update, tri@llist: \tri@llist, refl@wlist:\refl@wlist, xs:\digl@tc@ntent@xcs, pagefull\ifpagefull true\else false\fi}%
     \ifx\refl@wlist\empty\else
