@@ -133,8 +133,17 @@ class AdjList:
             line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
         else:
             line = "{0[0]} {1} {0[3]}".format(r, cv)
-        if r[4]: # and r[5] != self.centre or r[6]:
-            line += " % mrk={4} expand={5} {6}".format(*r)
+
+        extras = []
+        if r[4]:
+            extras.append(f"mrk={r[4]}")
+        if r[5] != self.centre:
+            extras.append(f"expand={r[5]}")
+        if r[6]:
+            extras.append(r[6].strip())
+
+        if extras:
+            line += " % " + " ".join(extras)
         return line
 
     def createAdjlist(self, fname=None):
@@ -151,7 +160,45 @@ class AdjList:
                 line = self.genline(r)
                 outf.write(line + "\n")
 
+    def _createUIExtensionLines(self, r):
+        ref = rf"{r[0]}{r[1]}" + (f"={r[2]}" if r[2] > 1 else "")
+        res = []
+
+        if r[5] != self.centre:
+            res.extend([
+                "",
+                rf"\AddTrigger {ref}",
+                rf"\zexp {r[5]}\*",
+                r"\EndTrigger"
+            ])
+
+        for trig in self._parseTriggersFromComment(r[6]):
+            res.extend([
+                "",
+                rf"\AddTrigger {ref}",
+                rf"\{trig}",
+                r"\EndTrigger"
+            ])
+
+        return res
+
     def createTriggerlist(self, fname=None):
+        if fname is None:
+            fname = self.trigfile
+        if fname is None:
+            return
+        if not len(self.liststore):
+            self.remove_file(fname)
+            return
+
+        os.makedirs(os.path.dirname(fname), exist_ok=True)
+        with open(fname, 'w', encoding='utf-8') as outf:
+            for r in self.liststore:
+                lines = self._createUIExtensionLines(r)
+                if lines:
+                    outf.write("\n".join(lines))
+
+    def old_createTriggerlist(self, fname=None):
         if fname is None:
             fname = self.trigfile
         if fname is None:
