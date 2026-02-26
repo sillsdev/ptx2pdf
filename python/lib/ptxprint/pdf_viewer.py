@@ -807,7 +807,6 @@ class PDFContentViewer(PDFFileViewer):
         self.uiExtensions = []
         self.uiExtensionsLoaded = False
         self.uiExtensionsCfgDir = None
-        self.enabledTriggersByKey = {}
         
         # This may end up in page rendering code. Just collect data for now
         display = Gdk.Display.get_default()
@@ -880,29 +879,18 @@ class PDFContentViewer(PDFFileViewer):
             logger.warning(f"UIExtensions.json read failed: {extFile}: {ex}")
             self.uiExtensions = []
 
-    def getParInfoKey(self, info, parref, pgindx):
-        # Pick something stable enough for now; refine later when you write to AdjList.
-        # If parref has a unique id/path, prefer that. Fallback to ref + page.
-        return getattr(parref, "pid", None) or getattr(parref, "key", None) or f"{getattr(parref, 'ref', '')}@{pgindx}"
-
-    def getEnabledTriggers(self, info, parref, pgindx):
-        key = self.getParInfoKey(info, parref, pgindx)
-        return self.enabledTriggersByKey.setdefault(key, set())
-
     def onUITriggerToggled(self, widget, triggerPayload, entryId, info, parref, pgindx):
-        enabled = self.getEnabledTriggers(info, parref, pgindx)
-        if widget.get_active():
-            enabled.add(triggerPayload)
-        else:
-            enabled.discard(triggerPayload)
-
-        # Next stage: persist enabled -> AdjList (and regenerate .triggers)
-        logger.debug(f"Toggled trigger {entryId}: {triggerPayload} -> {widget.get_active()} ; now={sorted(enabled)}")
+        if self.adjlist is None:
+            return
+        adjRef = self.parInfoToAdjRef(parref)
+        self.adjlist.addTrigger(adjRef, triggerPayload, enabled=widget.get_active(), insert=True)
+        self.show_pdf()
+        self.hitPrint()
 
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False, **kw):
         self.settingsChanged()
         self.loadUIExtensions()
-        
+        self.adjlist = adjlist
         self.isdiglot = isdiglot
         if pdf_path is None or not os.path.exists(pdf_path):
             self.document = None
@@ -925,9 +913,6 @@ class PDFContentViewer(PDFFileViewer):
             font_desc = Pango.FontDescription(fontR + " 12")  # Font name and size
             self.cr.set_property("font-desc", font_desc)
         
-        self.adjlist = adjlist
-        # print(f"In load_pdf. No longer calling: updatePgCtrlButtons")
-        # self.model.updatePgCtrlButtons(None)
         return True
 
     def _add_toctree(self, tocts, toci, parent):
@@ -1059,6 +1044,11 @@ class PDFContentViewer(PDFFileViewer):
                 left += gutter
         return (left, right)
 
+    def parInfoToAdjRef(self, parInfo):
+        ref = getattr(parInfo, "ref", "") or ""
+        parnum = getattr(parInfo, "parnum", 1) or 1
+        return f"{ref}[{parnum}]" if parnum > 1 else ref
+    
     def _draw_guides(self, page, pindex, context, zoomlevel):
         def drawline(x, y, width, height, col):
             context.set_source_rgba(col[0], col[1], col[2], 1)
@@ -1771,9 +1761,8 @@ class PDFContentViewer(PDFFileViewer):
                 if self.uiExtensions:
                     customMenu = Gtk.Menu()
                     self.clear_menu(customMenu)
-
-                    enabled = self.getEnabledTriggers(info, parref, pgindx)
-
+                    adjRef = self.parInfoToAdjRef(parref)
+                    enabled = set(self.adjlist.getTriggers(adjRef)) if self.adjlist is not None else set()
                     for entry in self.uiExtensions:
                         entryType = entry["type"]
                         menuText = entry["menuEntry"]

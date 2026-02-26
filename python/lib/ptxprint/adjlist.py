@@ -260,3 +260,38 @@ class AdjList:
             res.append(r.iter)
         self.changeval(parref, mydoit, insert=insert)
         return res
+
+    def _parseTriggersFromComment(self, comment):
+        if not comment:
+            return []
+        return re.findall(r"(?:^|\s)trig=([^\s]+)", comment)
+
+    def _setTriggersInComment(self, comment, triggers):
+        # remove existing trig=... tokens, then append normalized list
+        base = re.sub(r"(?:^|\s)trig=[^\s]+", "", comment or "").strip()
+        trigPart = " ".join(f"trig={t}" for t in triggers)
+        if base and trigPart:
+            return base + " " + trigPart
+        return base or trigPart
+
+    def getTriggers(self, parref):
+        res = []
+        def mydoit(r, i):
+            res.extend(self._parseTriggersFromComment(r[6]))
+        self.changeval(parref, mydoit, insert=False)
+        return res
+
+    def addTrigger(self, parref, payload, enabled=True, insert=True):
+        def mydoit(r, i):
+            triggers = set(self._parseTriggersFromComment(r[6]))
+            if payload is None:
+                triggers.clear()
+            elif enabled:
+                triggers.add(payload)
+            else:
+                triggers.discard(payload)
+            newComment = self._setTriggersInComment(r[6], sorted(triggers))
+            if newComment != r[6]:
+                self.liststore.set_value(r.iter, 6, newComment)
+                self.changed = True
+        self.changeval(parref, mydoit, insert=insert)
