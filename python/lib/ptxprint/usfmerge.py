@@ -44,9 +44,10 @@ class ChunkType(Enum):
     NBCHAPTER = 16
     CHAPTERPAR = 17
     CHAPTERHEAD = 18
-    PREVERSEHEAD = 19
-    USERSYNC = 20
-    PARUSERSYNC =21 # User
+    CHAPTERDESC = 19
+    PREVERSEHEAD = 20
+    USERSYNC = 21
+    PARUSERSYNC =22 # User
 
 _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the config file.
     ChunkType.CHAPTER :"A normal chapter number",
@@ -90,6 +91,7 @@ ChunkType.NPARA:'BODY',
 ChunkType.NB:'BODY',
 ChunkType.NBCHAPTER:'CHAPTER',
 ChunkType.CHAPTERPAR:'BODY',
+ChunkType.CHAPTERDESC:'BODY',
 ChunkType.CHAPTERHEAD:'CHAPTER',
 ChunkType.PREVERSEHEAD:'HEADING',
 ChunkType.USERSYNC:'BODY',
@@ -125,6 +127,7 @@ _marker_modes = {
     'usfm': ChunkType.HEADER,
     'v': ChunkType.VERSE,
     'c': ChunkType.CHAPTER,
+    'd': ChunkType.CHAPTERDESC, # this gets overwritten.
     'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
     'nb': ChunkType.NB
 }
@@ -387,7 +390,8 @@ class Collector:
                     logger.log(9, f"Conclusion: bodypar type is {mode}")
                         
             pn = self.pnum(mode)
-            
+            if mode in (ChunkType.CHAPTER,ChunkType.CHAPTERHEAD):
+                pn=0 
             currChunk = Chunk(mode=mode, bk=self.book, chap=self.chapter, verse=self.verse, end=self.end, pnum=pn)
             if not _validatedhpi:
                 p = currChunk.position
