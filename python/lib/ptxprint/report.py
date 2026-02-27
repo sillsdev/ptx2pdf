@@ -240,15 +240,30 @@ class Report:
         self.add("3. USFM/Markers", "Markers used: "+" ".join(sorted(mrkrset)), txttype="text")
 
     def get_files(self, view):
+        def doadd(fname, recurse=True):
+            jobs = []
+            f = os.path.join(view.project.srcPath(view.cfgid), fname)
+            if not os.path.exists(f):
+                return jobs
+            with open(f, encoding="utf-8") as inf:
+                data = inf.read()
+            if recurse:
+                for m in re.findall(r"(?:^|\n)\s*include\s*(['\"])\s*(.*?)\s*\1", data):
+                    jobs.append(m[1])
+            self.add("9. Files/"+os.path.basename(fname), data, severity=logging.NOTSET, txttype="pretext")
+            return jobs
+
+        jobs = []
         for a in (("changes.txt", "c_usePrintDraftChanges"),
                   ("ptxprint-mods.tex", "c_useModsTex")):
             if view.get(a[1]):
-                f = os.path.join(view.project.srcPath(view.cfgid), a[0])
-                if not os.path.exists(f):
-                    continue
-                with open(f, encoding="utf-8") as inf:
-                    data = inf.read()
-                self.add("9. Files/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
+                jobs.extend(doadd(a[0], a[0] == "changes.txt"))
+        alljobs = jobs[:]
+        while len(alljobs):
+            jobs = []
+            for j in alljobs:
+                jobs.extend(doadd(j))
+            alljobs = jobs[:]
 
     def get_usfms(self, view):
         usfms = view.get_usfms()
