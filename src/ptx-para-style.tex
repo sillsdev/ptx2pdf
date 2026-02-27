@@ -247,9 +247,10 @@
         \trace{h}{gr@db@@x needed to end paragraph. Why?}%
       \fi % Not sure why, but sometiems we get here in hmode
       \edef\oldprevdepth{\the\prevdepth}%
-      \prevdepth=0pt
+      \prevdepth=0pt%\dp#1
       % \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
-      \setbox0=\vbox{\box#1}%
+      \setbox0=\box#1%
+      %\setbox0=\vbox{\box#1}%
       \trace{h}{after killingdescenders: ht=\the\ht0, dp=\the\dp0}
       \ifVisTraceExtra
         \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
@@ -270,7 +271,7 @@
       \t@mpfalse
       \ifnum\ifsquashgridbox 1\else\ifgridp@c 1\else 0\fi\fi =1%
         \ifdiglot\kern\else\vskip\fi\dimen2
-      \else\vbox\bgroup\topskip=0pt\t@mptrue\vskip\dimen2\fi
+      \else\t@mptrue\vbox\bgroup\topskip=0pt\vskip\dimen2\fi
         \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
       \ift@mp\egroup\fi
       \ifrotate\prevdepth=\baselineskip\fi
@@ -279,7 +280,7 @@
   \fi
 }
 
-\def\ungr@db@x#1{\vskip0pt \unvbox#1\nobreak}
+\def\ungr@db@x#1{\vskip0pt \box#1\nobreak}
 \newif\ifsquashgridbox\squashgridboxtrue                                        %(2)
 \let\gridb@x\gr@db@@x % overridden during \ptxfile setup, depending on \ifdiglot and \ifsquashgridbox 
 %-cpar_gridbox2

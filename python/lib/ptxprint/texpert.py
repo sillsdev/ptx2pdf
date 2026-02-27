@@ -39,6 +39,8 @@ texpertOptions = {
                             _("Where to start a new intro page"), _("Does an intro page start on a new page, the same page as the previous book, an odd page, or group all adjacent intro pages into an odd paged group")),
     "bottomRag":          O("bottomrag", "LAY", (3, 0, 10, 1, 1, 0), "", _("Unbalanced Lines (Max)"),
                             _("Maximum number of unbalanced lines allowed in 2-column layout. Recommended range 1-5.")),
+    "interlinestretch":   O("interlinestretch", "LAY", (2, 0, 10, 1, 1, 0), "", _("Variable line spacing maximum stretch per line in pts"),
+                            _("Maximum stretch to insert between lines in variable line spacing in pts")),
     "squashgridbox":      O("squashgrid", "LAY", True, None, _("No Top Space"), 
                             _("Don’t insert space above headings at the start of a column")),
     "lastbooknoeject":    O("lastnoeject", "LAY", False, None, _("Suppress pagebreak after bookend-final"), 

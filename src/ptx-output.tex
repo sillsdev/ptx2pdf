@@ -1588,6 +1588,7 @@
 \def\pr@pinserts{%
   \ifdim\ht\topins>0pt
     \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
+    \advance\baselineskip by \ColAdjskip
     \dimen1=\ht\topins\advance\dimen1\dp\topins \dimen0=\baselineskip
     \m@d \ifdim\dimen0<\baselineskip
       \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1 \dp\topins=0pt
@@ -1680,19 +1681,20 @@
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, boxA=\the\ht\colA, boxB=\the\ht\colB, colbox=\the\ht\xr@fbox}%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht%\advance\dimen2\bmg@p
+      %\dimen3=\ifdim\ht\colA > \ht\colB \relax\ht\colA \else\ht\colB\fi
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\box\partial}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
-      \trace{p}{Text depth = \the\dimen3}%
+      \trace{p}{Text depth = \the\dimen3, htA=\the\ht\colA+\the\dp\colA, htb=\the\ht\colB+\the\dp\colB, avail=\the\availht \space from \the\dimen3, baselineskip=\the\baselineskip}%
       \setbox\colA\hbox to \dimen1{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB\vfil}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\unvbox\colB}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \trace{et}{Apply border from twocoltrial (shipout)}%
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 
