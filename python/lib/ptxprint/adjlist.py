@@ -162,24 +162,23 @@ class AdjList:
 
     def _createUIExtensionLines(self, r):
         ref = rf"{r[0]}{r[1]}" + (f"={r[2]}" if r[2] > 1 else "")
-        res = []
+        triggerItems = []
 
         if r[5] != self.centre:
-            res.extend([
-                "",
-                rf"\AddTrigger {ref}",
-                rf"\zexp {r[5]}\*",
-                r"\EndTrigger"
-            ])
+            triggerItems.append(rf"\zexp {r[5]}\*")
 
         for trig in self._parseTriggersFromComment(r[6]):
-            res.extend([
-                "",
-                rf"\AddTrigger {ref}",
-                rf"\{trig}",
-                r"\EndTrigger"
-            ])
+            trig = trig.strip()
+            if trig and not trig.startswith("\\"):
+                trig = "\\" + trig
+            triggerItems.append(trig)
 
+        if not triggerItems:
+            return []
+
+        res = ["", rf"\AddTrigger {ref}"]
+        res.extend(triggerItems)
+        res.append(r"\EndTrigger")
         return res
 
     def createTriggerlist(self, fname=None):
@@ -197,25 +196,6 @@ class AdjList:
                 lines = self._createUIExtensionLines(r)
                 if lines:
                     outf.write("\n".join(lines))
-
-    def old_createTriggerlist(self, fname=None):
-        if fname is None:
-            fname = self.trigfile
-        if fname is None:
-            return
-        if not len(self.liststore):
-            self.remove_file(fname)
-            return
-        os.makedirs(os.path.dirname(fname), exist_ok=True)
-        with open(fname, 'w', encoding='utf-8') as outf:
-            for r in self.liststore:
-                if r[5] == self.centre:
-                    continue
-                lines = [""]
-                lines.append(rf"\AddTrigger {r[0]}{r[1]}={r[2]}")
-                lines.append(rf"\zexp {r[5]}\*")
-                lines.append(r"\EndTrigger")
-                outf.write("\n".join(lines))
 
     def remove_file(self, fname):
         try:
@@ -328,15 +308,15 @@ class AdjList:
         self.changeval(parref, mydoit, insert=False)
         return res
 
-    def addTrigger(self, parref, payload, enabled=True, insert=True):
+    def addTrigger(self, parref, content, enabled=True, insert=True):
         def mydoit(r, i):
             triggers = set(self._parseTriggersFromComment(r[6]))
-            if payload is None:
+            if content is None:
                 triggers.clear()
             elif enabled:
-                triggers.add(payload)
+                triggers.add(content)
             else:
-                triggers.discard(payload)
+                triggers.discard(content)
             newComment = self._setTriggersInComment(r[6], sorted(triggers))
             if newComment != r[6]:
                 self.liststore.set_value(r.iter, 6, newComment)

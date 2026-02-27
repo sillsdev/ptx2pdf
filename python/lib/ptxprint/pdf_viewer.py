@@ -871,17 +871,17 @@ class PDFContentViewer(PDFFileViewer):
                     "type": entryType,
                     "menuEntry": menuEntry,
                     "tooltip": e.get("tooltip"),
-                    "payload": e.get("payload")
+                    "content": e.get("content")
                 })
         except Exception as ex:
             logger.warning(f"UIExtensions.json read failed: {extFile}: {ex}")
             self.uiExtensions = []
 
-    def onUITriggerToggled(self, widget, triggerPayload, entryId, info, parref, pgindx):
+    def onUITriggerToggled(self, widget, triggerContent, entryId, info, parref, pgindx):
         if self.adjlist is None:
             return
         adjRef = self.parInfoToAdjRef(parref)
-        self.adjlist.addTrigger(adjRef, triggerPayload, enabled=widget.get_active(), insert=True)
+        self.adjlist.addTrigger(adjRef, triggerContent, enabled=widget.get_active(), insert=True)
         self.show_pdf()
         self.hitPrint()
 
@@ -1765,27 +1765,27 @@ class PDFContentViewer(PDFFileViewer):
                     self.clear_menu(customMenu)
                     adjRef = self.parInfoToAdjRef(parref)
                     enabled = set(self.adjlist.getTriggers(adjRef)) if self.adjlist is not None else set()
-                    activePayloads = {
-                        entry.get("payload")
+                    activeContents = {
+                        entry.get("content")
                         for entry in self.uiExtensions
-                        if entry.get("type") == "trigger" and entry.get("payload")
+                        if entry.get("type") == "trigger" and entry.get("content")
                     }
-                    hasActiveCustom = bool(enabled & activePayloads)
+                    hasActiveCustom = bool(enabled & activeContents)
 
                     for entry in self.uiExtensions:
                         entryType = entry["type"]
                         menuText = entry["menuEntry"]
-                        payload = entry.get("payload")
+                        content = entry.get("content")
                         entryId = entry["id"]
                         tooltip = entry.get("tooltip")
 
-                        if entryType == "trigger" and payload:
+                        if entryType == "trigger" and content:
                             item = Gtk.CheckMenuItem.new_with_label(menuText)
-                            item.set_active(payload in enabled)
-                            item.connect("toggled", self.onUITriggerToggled, payload, entryId, info, parref, pgindx)
+                            item.set_active(content in enabled)
+                            item.connect("toggled", self.onUITriggerToggled, content, entryId, info, parref, pgindx)
                         else:
                             item = Gtk.MenuItem.new_with_label(menuText)
-                            item.connect("activate", self.onUIExtensionSelected, entryType, payload, entryId, info, parref, pgindx)
+                            item.connect("activate", self.onUIExtensionSelected, entryType, content, entryId, info, parref, pgindx)
                         if tooltip:
                             item.set_tooltip_text(tooltip)
                         customMenu.append(item)
@@ -2175,10 +2175,10 @@ class PDFContentViewer(PDFFileViewer):
         self.show_pdf()
         self.hitPrint()
 
-    def onUIExtensionSelected(self, widget, entryType, payload, entryId, info, parref, pgindx):
-        # Next stage: send (entryType, payload) to the adjustment mechanism
+    def onUIExtensionSelected(self, widget, entryType, content, entryId, info, parref, pgindx):
+        # Next stage: send (entryType, content) to the adjustment mechanism
         logger.debug(
-            f"UI extension selected: id={entryId} type={entryType} payload={payload} "
+            f"UI extension selected: id={entryId} type={entryType} content={content} "
             f"ref={getattr(parref, 'ref', '?')} page={pgindx}"
         )
         self.model.doStatus(_("Custom action selected: {0}").format(entryId))
