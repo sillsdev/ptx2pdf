@@ -807,8 +807,6 @@ class PDFContentViewer(PDFFileViewer):
         self.uiExtensions = []
         self.uiExtensionsLoaded = False
         self.uiExtensionsCfgDir = None
-        
-        # This may end up in page rendering code. Just collect data for now
         display = Gdk.Display.get_default()
         screen = display.get_default_screen()
         window = screen.get_root_window()
@@ -1675,6 +1673,10 @@ class PDFContentViewer(PDFFileViewer):
             
         return False
 
+    def hasActiveUIExtensions(self, adjRef):
+        return
+        # to be implemented when there are OTHER kinds of UI Extensions (apart from Triggers)
+        
     def show_context_menu(self, widget, event):
         self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         self.last_click_time = time.time()
@@ -1763,6 +1765,14 @@ class PDFContentViewer(PDFFileViewer):
                     self.clear_menu(customMenu)
                     adjRef = self.parInfoToAdjRef(parref)
                     enabled = set(self.adjlist.getTriggers(adjRef)) if self.adjlist is not None else set()
+
+                    activePayloads = {
+                        entry.get("payload")
+                        for entry in self.uiExtensions
+                        if entry.get("type") == "trigger" and entry.get("payload")
+                    }
+                    hasActiveCustom = bool(enabled & activePayloads)
+
                     for entry in self.uiExtensions:
                         entryType = entry["type"]
                         menuText = entry["menuEntry"]
@@ -1784,7 +1794,21 @@ class PDFContentViewer(PDFFileViewer):
                         customMenu.append(item)
                         item.show()
 
-                    self.addSubMenuItem(menu, mstr["custom"], customMenu)
+                    customItem = Gtk.MenuItem()
+                    customLabel = Gtk.Label()
+                    customLabel.set_use_markup(True)
+                    customLabel.set_xalign(0)
+
+                    if hasActiveCustom:
+                        customLabel.set_markup(f"<b>{GLib.markup_escape_text(mstr['custom'])}</b>")
+                    else:
+                        customLabel.set_markup(GLib.markup_escape_text(mstr['custom']))
+
+                    customItem.add(customLabel)
+                    customItem.set_submenu(customMenu)
+                    menu.append(customItem)
+                    customItem.show_all()
+
                     self.addMenuItem(menu, None, None)
     
                 reset_menu = Gtk.Menu()
