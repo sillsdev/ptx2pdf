@@ -1765,7 +1765,6 @@ class PDFContentViewer(PDFFileViewer):
                     self.clear_menu(customMenu)
                     adjRef = self.parInfoToAdjRef(parref)
                     enabled = set(self.adjlist.getTriggers(adjRef)) if self.adjlist is not None else set()
-
                     activePayloads = {
                         entry.get("payload")
                         for entry in self.uiExtensions
@@ -1787,28 +1786,20 @@ class PDFContentViewer(PDFFileViewer):
                         else:
                             item = Gtk.MenuItem.new_with_label(menuText)
                             item.connect("activate", self.onUIExtensionSelected, entryType, payload, entryId, info, parref, pgindx)
-
                         if tooltip:
                             item.set_tooltip_text(tooltip)
-
                         customMenu.append(item)
                         item.show()
-
                     customItem = Gtk.MenuItem()
                     customLabel = Gtk.Label()
                     customLabel.set_use_markup(True)
                     customLabel.set_xalign(0)
-
-                    if hasActiveCustom:
-                        customLabel.set_markup(f"<b>{GLib.markup_escape_text(mstr['custom'])}</b>")
-                    else:
-                        customLabel.set_markup(GLib.markup_escape_text(mstr['custom']))
-
+                    labelText = GLib.markup_escape_text(mstr["custom"])
+                    customLabel.set_markup(f"<b>{labelText}</b>" if hasActiveCustom else labelText)
                     customItem.add(customLabel)
                     customItem.set_submenu(customMenu)
                     menu.append(customItem)
                     customItem.show_all()
-
                     self.addMenuItem(menu, None, None)
     
                 reset_menu = Gtk.Menu()
