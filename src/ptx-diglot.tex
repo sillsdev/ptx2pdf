@@ -524,8 +524,8 @@
   %\splittopskip=0pt
   \setbox1=\vsplit0 to \trialheight
   \setbox1=\vbox{\unvbox1}%
-  \ifnum 1=\ifdim \ht1=0pt \ifdim\dp1=0pt 1 \else 0\fi \else 0\fi
-    \trace{D}{Nothing wants to split from top of box: trial failed}%
+  \ifnum 1=\ifdim \ht1<1sp \ifdim\dp1<1sp 1 \else 0\fi \else 0\fi
+    \trace{D}{Nothing positive wants to split from top of box: trial failed}% Rejecting negative heights saves us from at least some EEKs! Yey!
     \ifdiglotDebugFollowContents\showbox\galleyexc@ss \fi
     \trialfailedtrue
     \global\trialheight=-\@bls
@@ -1069,6 +1069,14 @@
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \ifintrial
+    %\showlists
+    \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}% (expected penalty \the\endtri@lpen@lty)}%
+    %\endgraf\vfill\penalty\endtri@lpen@lty % Doesn't help 
+    \relax
+    %\setbox0\vbox{\pagediscards}%
+    %\showbox0
+  \fi
   \ifdiglotcolh@scontent %Only actually save lastpenalty if there is some real content before it. 
     \global\savedpenalty=\tmpcount
   \else
@@ -1077,10 +1085,6 @@
     \fi
   \fi
   \tmpcount=\lastnodetype
-  \ifintrial
-    %\showlists
-    \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}%
-  \fi
   \traceNum{D}{Initial savepenalty \the\savedpenalty, \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
   \IfTr@ce{C}{{%
     \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
@@ -2522,9 +2526,10 @@
      \availht=\textheight
      \traceifset{@@setppagecontents-a}%
      \ifvoid\topins\else
-         \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
-        \advance\availht-\ht\topins \advance\availht-\skip\topins
-         \unvbox\topins \vskip\skip\topins \fi%
+       \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
+       \advance\availht-\ht\topins \advance\availht-\skip\topins
+       \unvbox\topins \vskip\skip\topins
+     \fi%
     %
      \advance\availht-\ht\topchunk\advance\availht-\ht\botchunk
      \ifvoid\bottomins\else % \kern-\dimen0
