@@ -237,7 +237,7 @@ def main(doitfn=None, argsline=None, retview=False):
             args.projects.append(pdir)
         savetreedirs = True
 
-    if (args.extras & 4) == 0 and os.path.exists(conffile):
+    if (args.extras & 16) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:
             if config.has_option("init", "project"):
@@ -281,7 +281,7 @@ def main(doitfn=None, argsline=None, retview=False):
     if args.lang is None:
         args.lang = getnsetlang(config)
 
-    if (args.extras & 2) != 0 or not len(args.projects):
+    if (args.extras & 8) != 0 or not len(args.projects):
         # print("No Paratext Settings directory found - sys.exit(1)")
         if not args.print and args.test is None:
             from ptxprint.gtkview import getPTDir

@@ -14742,7 +14742,7 @@ Ctrl + Scrollwheel - change zoom level</property>
                     <property name="halign">center</property>
                     <property name="margin-start">12</property>
                     <property name="image">icon_zoom_fit</property>
-                    <property name="relief">none</property>
+                    <property name="relief">half</property>
                     <signal name="clicked" handler="onZoomFitClicked" swapped="no"/>
                   </object>
                   <packing>
@@ -14760,7 +14760,7 @@ Ctrl + Scrollwheel - change zoom level</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Reset Zoom to 100%</property>
                     <property name="halign">center</property>
-                    <property name="relief">none</property>
+                    <property name="margin-start">6</property>
                     <signal name="clicked" handler="onZoom100Clicked" swapped="no"/>
                   </object>
                   <packing>
