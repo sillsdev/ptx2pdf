@@ -1074,17 +1074,12 @@
     \fi
     \ifCaptionFirst\vskip 0.5\onel@neunit\else
       \setbox0\vbox{\ifdim\dimexpr \FigCaptionAdjust+ \sp@cebetween\onel@neunit\relax =0pt\else
-        \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
-      \fi
-      \d@caption}\trace{g}{caption box is \the\ht0 high}%
-      \dimen0=0pt
-      \ifdim\ht0<0pt
-        \dimen0=-\ht0
-      \fi
-      \unvbox0
-      \ifdim\dimen0=0pt\else
-        \kern\dimen0
-      \fi
+          \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
+        \fi
+        \d@caption}\trace{g}{caption box is \the\ht0 high}%
+      \dimen0=0pt\ifdim\ht0<0pt \dimen0=-\ht0\fi
+      \nointerlineskip\box0%\unvbox0
+      \ifdim\dimen0=0pt\else \kern\dimen0 \fi
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
