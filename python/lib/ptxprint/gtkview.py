@@ -2847,8 +2847,8 @@ class GtkViewModel(ViewModel):
             return
         bk = self.get("ecb_examineBook")
         if pgid == "tb_FrontMatter":
-            ptFRT = os.path.exists(os.path.join(self.project.path, self.getBookFilename("FRT", self.project.prjid)))
-            self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT)
+            ptFRT = self.getBookSrcPath("FRT", self.project.prjid)
+            self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT is not None)
             dialog = self.builder.get_object("dlg_generateFRT")
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
@@ -3040,8 +3040,7 @@ class GtkViewModel(ViewModel):
                 self.set("c_autoSave", False)
             return
         elif pgid == "tb_FinalSFM":
-            fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.project.printPath(self.cfgid), fndict[pgid][0], fname)
+            fpath = self.getBookSrcPath(bk, prjid)
             genBtn.set_sensitive(True)
             doti = fpath.rfind(".")
             if doti > 0:
@@ -4672,7 +4671,7 @@ class GtkViewModel(ViewModel):
         
     def onEditMaps(self, btn):
         mapbkid = self.get("fcb_ptxMapBook") 
-        mapfile = os.path.join(self.project.path, self.getBookFilename(mapbkid))
+        mapfile = self.getBookSrcPath(mapbkid)
         if len(mapfile):
             self._editProcFile(str(mapfile), "prj")
             self.onRefreshViewerTextClicked(None)
@@ -6154,7 +6153,7 @@ class GtkViewModel(ViewModel):
                 self.set('ecb_booklist', bls)
             self.doStatus(_("Strong's Index generated in: {}").format(bkid))
             if self.get("c_strongsOpenIndex"):
-                fpath = os.path.join(self.project.path, self.getBookFilename(bkid))
+                fpath = self.getBookSrcPath(bkid)
                 startfile(fpath)
         dialog.hide()
         
@@ -7565,7 +7564,7 @@ Thank you,
         if response == Gtk.ResponseType.OK and not self.builder.get_object("lb_mapFilename").get_label().startswith("<"):
             self.addAnotherMapClicked(None)
             mapbkid = self.get("fcb_ptxMapBook") 
-            outfile = os.path.join(self.project.path, self.getBookFilename(mapbkid))
+            outfile = self.getBookSrcPath(mapbkid)
             new_map_usfm = "\n".join(self.mapusfm)
             # 1. If the file already exists, open in append mode ("a") and just add the new content
             if os.path.exists(outfile):

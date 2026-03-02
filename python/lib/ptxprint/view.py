@@ -304,8 +304,8 @@ class ViewModel:
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
-                bname = self.getBookFilename(bk, self.project.prjid)
-                if bname is not None and os.path.exists(os.path.join(self.project.path, bname)):
+                bname = self.getBookSrcPath(bk, self.project.prjid)
+                if bname is not None and os.path.exists(bname):
                     fromchap = round(float(self.get("t_chapfrom") or "0"))
                     tochap = round(float(self.get("t_chapto") or "200"))
                     try:
@@ -321,10 +321,10 @@ class ViewModel:
             res = RefList()
             self.bookrefs = RefList()
             for b in bl:
-                bname = self.getBookFilename(b.first.book, self.project.prjid)
+                bname = self.getBookSrcPath(b.first.book, self.project.prjid)
                 if bname is None:
                     continue
-                if os.path.exists(os.path.join(self.project.path, bname)):
+                if os.path.exists(bname):
                     if b.first.book == "FRT":
                         self.switchFRTsettings()
                     elif b.first.book == "INT" and self.get("c_useSectIntros"):
@@ -364,9 +364,8 @@ class ViewModel:
             return {}
         res = {}
         for bk in allbooks:
-            f = self.getBookFilename(bk)
-            fp = os.path.join(self.project.path, f)
-            if os.path.exists(fp):
+            fp = self.getBookSrcPath(bk)
+            if fp is not None:
                 res[bk] = fp
         if self.moduleFile is not None:
             res["MOD"] = self.moduleFile
@@ -377,7 +376,7 @@ class ViewModel:
         for r in self.getBooks():
             if "." not in r:
                 srcname = self.getBookFilename(r)
-                srcpath = os.path.join(self.project.path, srcname)
+                srcpath = self.getBookSrcPath(r)
                 destname = self.getDraftFilename(r, ext="")
             else:
                 srcpath = str(r)
@@ -412,6 +411,20 @@ class ViewModel:
         if ptsettings is None:
             return None
         return ptsettings.getBookFilename(bk)
+
+    def getBookSrcPath(self, bk, prjid=None, project=None):
+        if project is None:
+            project = self.project
+        fname = self.getBookFilename(bk, prjid=prjid)
+        if fname is None:
+            return None
+        for a in (project.path, project.srcPath(cfgid=self.cfgid)):
+            if a is None:
+                continue
+            fpath = os.path.join(a, fname)
+            if os.path.exists(fpath):
+                return fpath
+        return None
 
     def getScriptSnippet(self):
         import ptxprint.scriptsnippets as scriptsnippets
@@ -752,7 +765,7 @@ class ViewModel:
     def get_usfms(self):
         if self.usfms is None:
             cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
-            self.usfms = UsfmCollection(self.getBookFilename, self.project.path,
+            self.usfms = UsfmCollection(self.getBookSrcPath, self.project.path,
                             Sheets(self.getStyleSheets()), changes=cfile)
         return self.usfms
 
@@ -1647,10 +1660,9 @@ class ViewModel:
         elif frtype == "advanced":
             srcp = os.path.join(pycodedir(), "FRTtemplateAdvanced.txt")
         elif frtype == "paratext":
-            fname = self.getBookFilename("FRT", self.project.prjid)
-            if fname is None:
+            srcp = self.getBookSrcPath("FRT", self.project.prjid)
+            if srcp is None:
                 return False
-            srcp = os.path.join(self.project.path, fname)
             
         copyfile(srcp, destp)
         return True
@@ -1706,9 +1718,8 @@ class ViewModel:
         prjid = self.get("fcb_project")
         bks = self.getBooks()
         for bk in bks:
-            fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.project.path, fname)
-            if os.path.exists(fpath):
+            fpath = self.getBookSrcPath(bk, prjid)
+            if fpath is not None:
                 with open(fpath, "r", encoding="utf-8") as inf:
                     # Strip out all markers themselves, and English content fields
                     sfmtxt = inf.read()
@@ -1907,9 +1918,9 @@ class ViewModel:
             mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
         for bk in books + ['INT']:
-            fname = self.getBookFilename(bk, baseprjid)
+            fname = self.getBookSrcPath(bk, baseprjid, project=baseprj)
             if fname is not None:
-                res[os.path.join(fpath, fname)] = baseprjid + "/" + os.path.basename(fname)
+                res[fname] = baseprjid + "/" + os.path.basename(fname)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
@@ -2437,7 +2448,7 @@ set stack_size=32768""".format(self.cfgid)
         self.strongs = None
         self.getStrongs()
         onlylocal = self.get("fcb_xRefExtListSource") == "strongs_proj"
-        outfile = os.path.join(self.project.path, self.getBookFilename(bkid))
+        outfile = self.getBookSrcPath(bkid)
         self.strongs.generateStrongsIndex(bkid, cols, outfile, onlylocal, self)
 
     def getStrongs(self):

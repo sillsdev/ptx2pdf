@@ -787,9 +787,9 @@ class TexModel:
         if self.frontperiphs is None or not len(self.frontperiphs):
             self.frontperiphs = {}
             for a in ('FRT', 'INT'):
-                frtfile = os.path.join(self.printer.project.path, self.printer.getBookFilename(a))
+                frtfile = self.printer.getBookSrcPath(a)
                 logger.debug(f"Trying periphs file {frtfile}")
-                if not os.path.exists(frtfile):
+                if frtfile is None:
                     continue
                 with open(frtfile, encoding="utf-8") as inf:
                     mode = 0        # default
@@ -845,10 +845,9 @@ class TexModel:
                 logger.log(7, "\n".join(fcontent))
 
     def addInt(self, outfname):
-        intfname = self.printer.getBookFilename('INT')
-        if intfname is None or not len(intfname):
+        intfile = self.printer.getBookSrcPath('INT')
+        if intfile is None:
             return
-        intfile = os.path.join(self.printer.project.path, intfname)
         def addperiphid(m):
             if m.group(2).lower() in _periphids:
                 return m.group(1) + f'|id="{_periphids[m.group(2).lower()]}"\n'
@@ -863,7 +862,7 @@ class TexModel:
             dat = regex.sub(r"(\\periph\s*([^\n|]+))\n", addperiphid, dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
-        logger.debug(f"INT file {intfname} processed to {outfname}")
+        logger.debug(f"INT file {intfile} processed to {outfname}")
         return outfname
 
     def flattenModule(self, infpath, outdir, text=None, noaction=False):
@@ -955,8 +954,8 @@ class TexModel:
                 self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
                                             bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
         draft = "-" + (printer.cfgid or "draft")
-        fname = printer.getBookFilename(bk)
-        if fname is None:
+        infpath = printer.getBookSrcPath(bk)
+        if infpath is None:
             infpath = os.path.join(prjdir, bk)  # assume module
             infpath = self.flattenModule(infpath, outdir)
             if isinstance(infpath, tuple) and infpath[0] is None:
@@ -965,8 +964,6 @@ class TexModel:
                         title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
                         show=not self.printer.get("c_quickRun"))
                 return None
-        else:
-            infpath = os.path.join(prjdir, fname)
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
@@ -1444,9 +1441,8 @@ class TexModel:
         # Glossary entries for the key terms appearing like footnotes
         prjid = printer.project.prjid
         prjdir = printer.project.path
-        fname = printer.getBookFilename("GLO", prjid)
-        infname = os.path.join(prjdir, fname)
-        if os.path.exists(infname):
+        infname = printer.getBookSrcPath("GLO", prjid)
+        if infname is not None:
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
                 # Note that this will only pick up the first para of glossary entries
