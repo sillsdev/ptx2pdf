@@ -1,6 +1,6 @@
 %:strip
 % polyglot-complexpages.tex: multi-page polyglot processing for xetex paratext2.tex
-% Copyright (c) 2025 by SIL International 
+% Copyright (c) 2025-2026 by SIL International 
 % written by David Gardner
 % 
 % This optional plugin (see ptx-plugins) extends the basic diglot engine to
@@ -31,11 +31,12 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\def\@newdim@n{\globdim@n}
+\def\@newc@unt{\globc@unt}
 
 \plugin@startif{polyglot-complexpages}
 \plugins@needed{polyglot-simplepages} % 
 \newcount\f@llow@n % Global register of 'invented' columns
-
 \def\new@followon#1{%
   \ifnum\f@llow@n=0
     \global\f@llow@n=`Z
@@ -77,7 +78,7 @@
     \trace{dmc}{Assigning \x@fch@r\space as the follow-on column to #2 (in the #1 chain)}%
     \ifcsname \x@fch@r box\endcsname\else
       \@newpolyglotboxes{\x@fch@r}%
-      \x@\newc@unt\csname f@llowOfs\x@fch@r\endcsname % where does the split start?
+      \x@\globc@unt\csname f@llowOfs\x@fch@r\endcsname % where does the split start?
     \fi
     \x@\xdef\csname f@llowing\x@fch@r\endcsname{#1}\x@\global\x@\let\csname \x@fch@r isFolowOn\endcsname\tr@e
     \x@\xdef\csname f@llow@n#2\endcsname{\x@fch@r}%
@@ -125,7 +126,7 @@
   \mktmpinsdim@n{#1}}
 \def\mktmpinsdim@n#1{%Normal version
   \ifcsname #1ht\endcsname\else\relax
-    \x@\newdim@n\csname #1ht\endcsname
+    \x@\globdim@n\csname #1ht\endcsname
   \fi
 }
 
@@ -235,7 +236,7 @@
   \fi
   \advance\p@lyr@wno by 1 
 }
-\def\mkn@wht#1\E{\newdim@n#1}
+\def\mkn@wht#1\E{\globdim@n#1}% Because direct use doesn't work - we need the \E parsing
 
 \newif\if@sc@rerow % Does the given row have multiple columns in it?
 \def\@complexs@tpolyp@ges#1\E{%Row-of-columns processing (#1 describes a user's view of a row)
@@ -286,11 +287,11 @@
   \let\@csppactcols\undefined
 }
 
-\newdimen\t@stone
-\newdimen\t@sttwo
-\newdimen\t@sttri
-\newdimen\t@stfou
-\newdimen\t@stfiv
+\globdimen\t@stone
+\globdimen\t@sttwo
+\globdimen\t@sttri
+\globdimen\t@stfou
+\globdimen\t@stfiv
 \def\m@xtwo#1#2#3{\t@stone=\dimexpr #2\relax \t@sttwo=\dimexpr #3\relax \ifdim \t@stone> \t@sttwo \t@stone=\t@sttwo \fi#1=\t@stone}
 \def\m@xthree#1#2#3#4{\t@stone=\dimexpr #2\relax \t@sttwo=\dimexpr #3\relax \t@sttri=\dimexpr #4\relax
   \ifdim \t@stone< \t@sttwo \t@stone=\t@sttwo\fi \ifdim \t@stone< \t@sttri \t@stone=\t@sttri\fi #1=\t@stone}
@@ -447,8 +448,6 @@
 
 \def\MaxComplexLines{1000} % Should be enough for any set of pages, surely?
 
-\newcount\@@m@one \@@m@one=-1
-\newcount\@@zero \@@zero=0
 %\def\seta#1#2{\def\tmp##1#1=(##2)##3\E{\edef\STOREa{##1#1=(#2)##3}}\x@\tmp\STOREa\E}
 \def\local@split@defs#1#2{% #1=L/R/A, etc. #2=lines. This allocates and clears
   % blocks of dims/counts ready for use. It also sets the shortcuts to the specified
@@ -486,15 +485,15 @@
   \x@\let\x@\split@insheights\csname split@insheights#1\endcsname
   \dimen1=-1sp
   \tracetimset{local@split@defs}%
-  \advance \count255 by \@@m@one
+  \advance \count255 by \m@ne
   \loop
     \split@insheights{\count255}=\dimen1
     \split@heights{\count255}=\dimen1
-    \split@vrs{\count255}=\@@m@one % minus one
+    \split@vrs{\count255}=\m@ne % minus one
     \ifcsname split@insdims#1-\the\count255\endcsname
       \x@\let\csname split@insdims#1-\the\count255\endcsname\undefined
     \fi
-    \advance\count255 by \@@m@one \ifnum\count255>\@@zero \repeat
+    \advance\count255 by \m@ne \ifnum\count255>\z@ \repeat
   \tracetimcheck{local@split@defs}{#1 \csname split@defs@#1\endcsname}%
 }
 \def\sub@splitdefs#1#2\relax{%If Z follows on from L, then split@vrsZ(N) should point to split@vrsL(N+offset)
@@ -834,7 +833,7 @@
     \x@\edef\csname pre@meas@#1@inscount\endcsname{\the\count255}%
   \fi 
 }
-\newdimen\tmpdim
+\globdimen\tmpdim
 \def\g@ncolhtfunctions#1{%Generate page and layout-test height functions for the given column
   \fntoks{}%
   \add@tr@iling{#1}%
@@ -911,7 +910,7 @@
 \def\expandfntoksgt#1{%
   \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp \ifdim\dimen0>#1 #1=\dimen0 \fi}%
 }
-\newdimen\thisp@gehtloss
+\globdimen\thisp@gehtloss
 
 \def\mk@chunktr@iling#1:#2\E{%Generate *optimised* height based on each insert actually used. Note that #1 might be a figure insert or some class of footnote. 
   \x@\let\x@\typ@\csname @n-#1@typ\endcsname
@@ -1097,7 +1096,7 @@
 }
 
 \let\res@parse\empty
-\def\s@tres@parsesimple#1:#2|#3\E{%
+\def\s@tres@parsesimple#1:#2|#3\E{% Assumes count255 is going to be current split position.
   \def\v@rnam{split@insdims#2-}%
   \ifnum\count\csname #1\endcsname=1000
     \x@\def\x@\res@parse\x@{\x@\csname \v@rnam-\the\count255\x@\endcsname\x@=\csname ins@meas@trial@result\endcsname}%
@@ -1176,6 +1175,7 @@
     \global\advance\p@lyp@geno by 1
   }
     
+\addtoendhooks{\wlog{Last insert: \the\et@xins, (reserved to \the\insc@unt).Limit: count:\the\count10,  dim: \the\count11, box: \the\count14 )}}%
 \catcode47=\active
 %%%%%%%%%%%%%%%%%%%%%%%%%
 

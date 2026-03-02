@@ -192,7 +192,7 @@
   \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
 \def\restoreLR@rig#1{\x@\let\csname #1\x@\endcsname\csname #1\@rig\endcsname}
 
-\def\n@wSpecificDim#1{\x@\newdim@n\csname #1\sfx\endcsname \x@\global\csname #1\sfx\endcsname=-1sp 
+\def\n@wSpecificDim#1{\x@\@newdim@n\csname #1\sfx\endcsname \x@\global\csname #1\sfx\endcsname=-1sp 
 }
 % Savr the current if value 
 \def\s@veSpecificSideIf#1{\ifcsname if#1\endcsname \x@\csname if#1\endcsname \x@\let\csname IF#1\sfx\endcsname\tr@e\else \x@\let\csname IF#1\sfx\endcsname\false\fi\else\message{*** Probable typo: if#1 does not exist in side-specific switching}\fi}
@@ -3547,8 +3547,14 @@
     \x@\newb@x\csname excess#1\endcsname
     \x@\newb@x\csname picb@x#1\endcsname
 }
+%For a normal polyglot, the normal mechanism is probably faster, but for
+% complexlayouts, it's better to prefer extended registers
+\def\@@s@tnewd@m@n{\wlog{Using standard newdimen}\let\@newdim@n\newdim@n}
+\def\@@s@tnewc@unt{\wlog{Using standard newcount}\let\@newc@unt\newc@unt}
 \def\@newPolyglotCol#1{%
     \message{Defining #1 as an additional polyglot column.}%
+    \ifcsname @newdim@n\endcsname\else\@@s@tnewd@m@n\fi
+    \ifcsname @newc@unt\endcsname\else\@@s@tnewc@unt\fi
     \newcolins@rt{\loc@T#1}% column top insert
     \newcolins@rt{\loc@B#1}% column bottom insert
     \let\old@cts\digl@tc@ntentlist
@@ -3565,15 +3571,15 @@
     \x@\let\csname #1isDiglotColumn\endcsname\empty
     \@newpolyglotboxes{#1}%
     \x@\newt@ks\csname diglot#1ho@ks\endcsname
-    \x@\newc@unt\csname saved#1penalty\endcsname
-    \x@\newc@unt\csname partial#1penalty\endcsname
-    \x@\newc@unt\csname #1boxpenalty\endcsname
-    \x@\newc@unt\csname cumulativeDelta#1\endcsname
+    \x@\@newc@unt\csname saved#1penalty\endcsname
+    \x@\@newc@unt\csname partial#1penalty\endcsname
+    \x@\@newc@unt\csname #1boxpenalty\endcsname
+    \x@\@newc@unt\csname cumulativeDelta#1\endcsname
     \newm@rknum{#1}%
-    \x@\newdim@n\csname column#1width\endcsname
-    \x@\newdim@n\csname baselineDelta#1\endcsname
-    \x@\newdim@n\csname availht#1\endcsname
-    \x@\newdim@n\csname #1ht\endcsname
+    \x@\@newdim@n\csname column#1width\endcsname
+    \x@\@newdim@n\csname baselineDelta#1\endcsname
+    \x@\@newdim@n\csname availht#1\endcsname
+    \x@\@newdim@n\csname #1ht\endcsname
     \x@\xdef\csname at@ndofthispar#1\endcsname{}%
     \x@\xdef\csname m@rker#1\endcsname{}%
     \x@\xdef\csname digl@txcs#1\endcsname{}%
@@ -3581,11 +3587,11 @@
     \newsp@cialpen{dgl@tPen#1trialEnd}%
     \header@defs{#1}% All the possible header contents
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
-    \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
-    \x@\newc@unt\csname @numcuts#1\endcsname % Used for parlocs analysis
-    \x@\newc@unt\csname curr@djpar#1\endcsname % Used for adjust-lists
-    \x@\newc@unt\csname p@rnum#1\endcsname % Used for adjust-lists
-    \x@\newc@unt\csname dropped@ther@lines#1\endcsname % Used for parlocs analysis
+    \x@\@newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
+    \x@\@newc@unt\csname @numcuts#1\endcsname % Used for parlocs analysis
+    \x@\@newc@unt\csname curr@djpar#1\endcsname % Used for adjust-lists
+    \x@\@newc@unt\csname p@rnum#1\endcsname % Used for adjust-lists
+    \x@\@newc@unt\csname dropped@ther@lines#1\endcsname % Used for parlocs analysis
     \x@\gdef\x@\digl@tc@ntent@xcs\x@{\digl@tc@ntent@xcs\csname digl@txcs#1\endcsname}%
     \def\v@lpfx{@fn}\forget@boxdim{#1}% @fn#1 ht/dp
     \initcolumndef@ults{#1}%

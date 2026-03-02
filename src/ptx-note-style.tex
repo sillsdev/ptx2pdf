@@ -68,12 +68,12 @@
     \n@wnoteins@rt{#1}%
   \fi%
 }
-\def\n@wnoteins@rt#1{%
+\def\n@wnoteins@rt#1{%use etex's globbox for boxes, to save insert space
     \trace{n}{Creating note class #1}%
     \x@\n@winsert\csname note-#1\endcsname
-    \x@\newb@x\csname noteb@x-#1\endcsname
-    \x@\newb@x\csname notesave1-#1\endcsname
-    \x@\newb@x\csname notesave2-#1\endcsname
+    \x@\globb@x\csname noteb@x-#1\endcsname
+    \x@\globb@x\csname notesave1-#1\endcsname
+    \x@\globb@x\csname notesave2-#1\endcsname
     \x@\newc@unt\csname refn@te-#1\endcsname
 }
 \def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }

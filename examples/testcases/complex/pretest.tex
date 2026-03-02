@@ -1,6 +1,7 @@
 \newif\iflua\luafalse
 \def\pluginlist{polyglot-complexpages}
 \input paratext2.tex
+%\reserveinserts{100}
 \FastTracing
 \tracing{dmc}  
 %\tracing{dmcr}  
@@ -344,7 +345,7 @@ A:\Alist
 %\tracingassigns=1
 \diglot@run@trials@complexpages
 %\tracingcommands=3
-\tracingmacros=3
+%\tracingmacros=3
 \message{p@gehtcalcs is: \x@\meaning\csname p@gehtcalcs-0\endcsname. htfunction is \x@\meaning\csname htfunction-0-0\endcsname}
 \csname p@gehtcalcs-0\endcsname
 \csname p@gehtcalcs-1\endcsname
@@ -356,4 +357,5 @@ A:\Alist
 \tracingcommands=0
 \message{lengths: \the\csname p@gehtloss-0\endcsname, \the\csname p@gehtloss-1\endcsname}
 \relax
+%\message{Last insert: \the\insc@unt/\the\et@xins, count:\the\count10,  dim: \the\count11, box: \the\count14}
 \bye

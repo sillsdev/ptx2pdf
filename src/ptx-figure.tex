@@ -56,7 +56,7 @@
 \def\s@veclasses{col,chunk,} % diglot needs to save two distinct states per box.
 \def\s@veins@class@name#1#2{save#1#2}
 \def\s@veclass@name#1{\s@veins@class@name{#1}{\s@veclass}}
-\def\m@kes@veb@x#1\E{\x@\newb@x\csname \s@veins@class@name{\ins@base}{#1}\endcsname}
+\def\m@kes@veb@x#1\E{\x@\globb@x\csname \s@veins@class@name{\ins@base}{#1}\endcsname}% Use etex's extended counts, to avoid clashing with actual inserts
 \def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname \s@veclass@name{#1}\endcsname\box3}
 \def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname \s@veclass@name{#1}\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
 \def\sh@winsertdim#1\E{\x@\let\x@\tmp\csname \v@lpfx#1\v@lsfx\endcsname\immediate\write-1{\v@lpfx#1\v@lsfx: \ifx\tmp\relax\else\the\ht\tmp\space x \the\wd\tmp\fi}}
@@ -123,7 +123,7 @@
 
 
 % Generate the insert save-boxes for each class at start-up
-\addtoinithooks{\message{Making insert boxes for \ins@rts}\let\d@=\m@keinsertsaveboxes\x@\cstackdown\ins@rts\E}
+\addtoinithooks{\message{Making save boxes for inserts: \ins@rts}\let\d@=\m@keinsertsaveboxes\x@\cstackdown\ins@rts\E}
 
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%%
 % called from \fig or from figure list

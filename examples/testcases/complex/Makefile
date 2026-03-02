@@ -15,6 +15,10 @@ subtest.log: subtest.tex $(DIR)/*.tex  Makefile
 bisect:
 	-mkdir ../bisect || rm -f ../bisect/*
 	cp *.tex *.usfm *.sty *.lua Makefile ../bisect
+pretest.pdf: pretest.tex  $(DIR)/*.tex *.sty $(DIR)/*.sty
+	TEXINPUTS="$(TPATH)"  xetex --no-pdf $<
+	TEXINPUTS="$(TPATH)"  xetex  $<
+	awk 'function o(n){print n, res[n];} match($$0,/\\[a-zA-Z0-9_@-]*=\\(box|count|dimen|insert)([0-9][0-9]*)/,ary){if (ary[2]<255) {res[ary[1]]=ary[2];}}END{o("insert");o("box");o("count");o("dimen")}' pretest.log
 
 auto:
 	echo Source code in $(DIR)

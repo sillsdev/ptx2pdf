@@ -76,6 +76,8 @@
   \let\npp@d@=\d@
   \let\d@=\m@kepolyb@x
   \x@\cstackdown\p@lyb@xes,\E
+  \let\d@=\m@kepolyins
+  \x@\cstackdown\p@lyins@rts,\E
   \let\d@=\npp@d@ \let\npp@d@=\undefined
 }
 
@@ -93,13 +95,15 @@
   \edef\@ut{\x@\e@tcomma\pageins@rts\E}%
   \let\d@\gen@p@lyins@rts %populates \@ut with insert save names
   \x@\cstackdown \s@veclasses\E
-  \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,\@ut,}% MUST end with comma
+  \xdef\p@lyins@rts{\@ut,}%
+  \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,}% MUST end with comma
   \trace{dmp}{poly@b@xes defined as: \p@lyb@xes}%
   % Now setup copies of boxes.
   \addtoinithooks{%
     \trace{dmp}{config polyboxes}%
     \let\d@=\poly@setup@boxaliases
-    \x@\cstackdown \p@lyb@xes\pageins@rts,\E
+    \edef\tmp{\p@lyins@rts\p@lyb@xes\pageins@rts,}%
+    \x@\cstackdown \tmp\E
     }%
   %\tracingmacros=0
   \let\@ut=\undefined
@@ -107,15 +111,16 @@
 } 
 \def\polyglot@eachtime@setup@simplepages{%
 }
-
-\def\poly@setup@boxaliases#1\E{\x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins} %Make each valid insert type / box have a page-number suffixed alias. We use the csname \tmp@ins as most are inserts.
+\lccode`\~=`\\
+\def\poly@setup@boxaliases#1\E{\ifcsname #1\endcsname \x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins\lowercase{\message{~#1@poly@0=~box\number\tmp@ins(alias)}}\else\message{Eh? #1 not defined}\fi} %Make each valid insert type / box have a page-number suffixed alias. We use the csname \tmp@ins as most are inserts.
 
 \def\poly@rename@inserts#1\E{%
   \x@\let\x@\tmp@ins\csname #1\p@lyp@gesuffx\endcsname
   \x@\global\x@\let\csname #1\endcsname\tmp@ins
 } %Point the normal insert name to the page-numbered version
 
-\def\m@kepolyb@x#1\E{\x@\newins@rt\csname #1\p@lyp@gesuffx\endcsname}% Not all are inserts, but most.
+\def\m@kepolyb@x#1\E{\x@\globb@x\csname #1\p@lyp@gesuffx\endcsname}% 
+\def\m@kepolyins#1\E{\x@\newins@rt\csname #1\p@lyp@gesuffx\endcsname}%
 \def\switch@polypage#1{%Switch to the relevant page for the column selected.
   \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
   \ifnum\p@lyp@geno=\sp@lynum\relax
@@ -138,7 +143,7 @@
     \let\spp@d@=\d@
     \let\d@=\poly@rename@inserts    
     %\tracingassigns=1
-    \x@\cstackdown \p@lyb@xes\pageins@rts,\E
+    \x@\cstackdown \p@lyins@rts\pageins@rts,\E
     \x@\let\x@\left@col\csname left@p@ly@col\p@lyp@gestring\endcsname
     \x@\let\x@\right@col\csname right@p@ly@col\p@lyp@gestring\endcsname
     \x@\global\x@\let\x@\topleftins\csname \colinsert@name{\loc@T\left@col}\endcsname

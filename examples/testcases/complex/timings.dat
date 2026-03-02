@@ -2780,3 +2780,35 @@ tim> [local@split@defs] C 249 50
 tim> [ssplit] sequential C 3764
 Splitting: 0.0059pt
 Scoring: 0.00609pt
+tim> [local@split@defs] L 21 11
+tim> [rsplit] recursive L 219
+tim> [local@split@defs] L 21 7
+tim> [ssplit] sequential L 411
+tim> [local@split@defs] R 38 11
+tim> [rsplit] recursive R 111
+tim> [local@split@defs] R 38 11
+tim> [ssplit] sequential R 152
+tim> [local@split@defs] C 123 30
+tim> [rsplit] recursive C 1055
+tim> [local@split@defs] C 123 33
+tim> [ssplit] sequential C 1006
+tim> [local@split@defs] L 21 6
+tim> [local@split@defs] R 38 10
+tim> [local@split@defs] A 1 0
+tim> [options]  34
+tim> [local@split@defs] L 21 6
+tim> [rsplit] recursive L 145
+tim> [local@split@defs] L 21 6
+tim> [ssplit] sequential L 372
+tim> [local@split@defs] R 38 11
+tim> [rsplit] recursive R 154
+tim> [local@split@defs] R 38 20
+tim> [ssplit] sequential R 286
+tim> [local@split@defs] C 123 62
+tim> [rsplit] recursive C 922
+tim> [local@split@defs] C 123 37
+tim> [ssplit] sequential C 1049
+tim> [local@split@defs] L 21 6
+tim> [local@split@defs] R 38 11
+tim> [local@split@defs] A 1 1
+tim> [options]  33
