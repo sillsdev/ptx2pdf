@@ -418,7 +418,7 @@ class ViewModel:
         fname = self.getBookFilename(bk, prjid=prjid)
         if fname is None:
             return None
-        for a in (project.path, project.srcPath(cfgid=self.cfgid)):
+        for a in (project.srcPath(cfgid=self.cfgid), project.path):
             if a is None:
                 continue
             fpath = os.path.join(a, fname)

@@ -7565,6 +7565,9 @@ Thank you,
             self.addAnotherMapClicked(None)
             mapbkid = self.get("fcb_ptxMapBook") 
             outfile = self.getBookSrcPath(mapbkid)
+            if outfile is None:
+                outfname = self.getBookFilename(mapbkid)
+                outfile = os.path.join(self.project.srcPath(self.cfgid), outfname)
             new_map_usfm = "\n".join(self.mapusfm)
             # 1. If the file already exists, open in append mode ("a") and just add the new content
             if os.path.exists(outfile):
