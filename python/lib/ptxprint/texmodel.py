@@ -958,15 +958,17 @@ class TexModel:
         draft = "-" + (printer.cfgid or "draft")
         infpath = printer.getBookSrcPath(bk)
         if infpath is None:
-            return None # FIX ME!
-            infpath = os.path.join(prjdir, bk)  # assume module
-            infpath = self.flattenModule(infpath, outdir)
-            if isinstance(infpath, tuple) and infpath[0] is None:
-                self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
-                        secondary=str(infpath[1]), 
-                        title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
-                        show=not self.printer.get("c_quickRun"))
-                return None
+            if re.match(".*?[/\\.]", bk):
+                infpath = os.path.join(prjdir, bk)  # assume module
+                infpath = self.flattenModule(infpath, outdir)
+                if isinstance(infpath, tuple) and infpath[0] is None:
+                    self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
+                            secondary=str(infpath[1]), 
+                            title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
+                            show=not self.printer.get("c_quickRun"))
+                    return None
+            else:
+                return None # FIX ME!
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
