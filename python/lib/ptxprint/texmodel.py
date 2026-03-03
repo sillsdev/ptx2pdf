@@ -598,9 +598,16 @@ class TexModel:
             res.append(r"\zglot|L\*")
         else:
             res.extend(beforelast)
-        res.append(template.format(fname))
+        d = os.path.dirname(fname)
+        if d:
+            res.append(rf"\PtxFilePath={{{d}}}")
+        res.append(template.format(os.path.basename(fname)))
+        if d:
+            res.append(r"\PtxFilePath={./}")
         if bkindex is None:
             return res
+        if bkindex >= len(self.dict['project/books']) or self.dict['project/books'][bkindex] is None:
+            return ""
         if diglots:
             for k, v in self.dict['diglots_'].items():
                 res.append(r"\zglot|{}\*".format(k))

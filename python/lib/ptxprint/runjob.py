@@ -253,11 +253,13 @@ class RunJob:
                     self.fail(", ".join(reasons) + " in diglot secondary")
                     return
                 digbooks = dv.getAllBooks()
+                serialbooks = {b for b in re.split(r"[\s,]+", self.info["document/diglotserialbooks"].strip()) if b}
                 badbooks = set()
                 for j in joblist:
                     allj = set(r[0][0].first.book for r in j if r[1])
-                    j[:] = [b for b in j if b[1] and b[0][0].first.book in digbooks]
-                    badbooks.update(allj - set(r[0][0].first.book for r in j if r[1]))
+                    temp = [b for b in j if b[1] and b[0][0].first.book in digbooks]
+                    keptbooks = set(r[0][0].first.book for r in temp if r[1])
+                    badbooks.update((allj - keptbooks) - serialbooks)
                 if len(badbooks):
                     self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
                                          show=not self.printer.get("c_quickRun"))
@@ -334,7 +336,7 @@ class RunJob:
         self.info.dict.setdefault("diglots_", {})
         for k, diginfo in diginfos.items():
             texfiles = []
-            digdonebooks = []
+            digdonebooks = [None] * len(jobs)
             diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
             diginfo["project/books"] = digdonebooks
             diginfo["document/ifdiglot"] = "%"
@@ -369,26 +371,24 @@ class RunJob:
         donebooks = []
         versification = None
         reversifyinfo = None
-        # breakpoint()
         if self.info.dict['texpert/reversify']:
             vf = self.info.printer.ptsettings.versification
             if vf is not None:
                 versification = Versification(os.path.join(self.info.printer.project.path, vf))
             reversifyinfo = (versification, self.info.dict['texpert/showvpvrse'], self.info.dict['texpert/showvpchap'])
-        for j in jobs:
+        for i, j in enumerate(jobs):
             b = j[0][0].first.book if j[1] else j[0]
             # logger.debug(f"Diglot[{k}]({b}): f{self.tmpdir} from f{self.prjdir}") # broken (missing k)
             inputfiles = []
             left = None
+            out = self.info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], noaction=self.noaction)
+            left = os.path.join(self.tmpdir, out)
+            inputfiles.append(left)
+            donebooks.append(out)
+            texfiles.append(left)
             for k, diginfo in diginfos.items():
                 digprjdir = diginfo.printer.project.path
                 try:
-                    out = None
-                    if not len(inputfiles):
-                        out = self.info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], noaction=self.noaction)
-                        left = os.path.join(self.tmpdir, out)
-                        inputfiles.append(left)
-                        texfiles.append(left)
                     digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1], reversify=reversifyinfo, noaction=self.noaction)
                     right = os.path.join(self.tmpdir, digout)
                     inputfiles.append(right)
@@ -397,14 +397,11 @@ class RunJob:
                     self.printer.doError(str(e))
                     out = None
                     digout = None
-                if out is not None:
-                    donebooks.append(out)
-                if digout is None:
-                    continue
                 else:
-                    diginfo["project/books"].append(digout)
+                    diginfo["project/books"][i] = digout
                     self.books.append(digout)
-            if left and b not in nonScriptureBooks:
+            serialbooks = {b for b in re.split(r"[\s,]+", self.info["document/diglotserialbooks"].strip()) if b}
+            if left and b not in serialbooks: # nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
                 if len(donebooks):
@@ -423,7 +420,6 @@ class RunJob:
                 if not self.noaction:
                     usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=self.info.changes.get("merged", []), book=b)
                 texfiles += [outFile, logFile]
-
         
         if not len(donebooks): # or not len(digdonebooks):
             unlockme()
@@ -482,6 +478,7 @@ class RunJob:
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
+        print(f"{self.info.dict['project/books']=}")
         texfiledat = self.info.asTex(filedir=self.tmpdir, jobname=swapext(self.outfname, ext=".tex"), extra=extra, diglots=diglots)
         with open(os.path.join(self.tmpdir, self.outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
