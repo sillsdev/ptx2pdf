@@ -1,8 +1,39 @@
 PTXprint 3.0.11 Release Notes
-17 Feb 2026
+3 Mar 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.12 (3 Mar 2026)
+  * Look for books first in shared config and then project dir
+  * Add UI Extention capability to right-click context menu in PDF Viewer Pane
+  * Get AdjList to save custom triggers and add to triggers file
+  * Allow tabbing between rows/values in the variables
+  * Refactor to add getBookSrcPath to view
+  * Recurse any 'include' files in report generation
+  * Get manual change of page number working again
+  * Handle fonts without hmtx for space_width
+  * Don't generate tildes for hard spaces
+  * Possible RTL TOC fix
+  * Fix bottom pictures for non grid (warning: this may adjust pictures)
+  * Fix bottom alignment for off grid setting
+  * Fix variable spacing
+  * Fix menu item alignment
+  * Fix reduplication bug while inserting strongs numbers
+  * Fix marginnote header
+  * Fix generating xrefs for verse ranges
+
+  Several diglot improvements:
+  * Get XXM maps to print even when in diglot mode
+  * Check for negative splits, to avoid some(?) EEK situations.
+  * Make \d merge as part of the body, rather than a part of the chapter-block
+  * Stop accidentally overriding a split point because of a \b. NEEDS TESTING.
+  * Solve ifcheck errors from  run@a@trial triggering itself
+  * Make diglot triggers count paragraphs better
+  * Remember dc@rref from one chunk to the next
+  * Refactor Underfill msg to be clearer
+  * Be resiliant against diglot oddities
+  * Add afterchunk hooks to diglot
 
 Bug fixes and Improvements in 3.0.11 (17 Feb 2026)
   * First steps towards a paragraph badness figure. Currently just based on widths of spaces
