@@ -253,7 +253,7 @@ class RunJob:
                     self.fail(", ".join(reasons) + " in diglot secondary")
                     return
                 digbooks = dv.getAllBooks()
-                serialbooks = {b for b in re.split(r"[\s,]+", self.info["document/diglotserialbooks"].strip()) if b}
+                serialbooks = {b for b in re.split(r"[\s,]+", (self.info["document/diglotserialbooks"] or "").strip()) if b}
                 badbooks = set()
                 for j in joblist:
                     allj = set(r[0][0].first.book for r in j if r[1])
@@ -400,7 +400,7 @@ class RunJob:
                         texfiles.append(right)
                         diginfo["project/books"][i] = digout
                         self.books.append(digout)
-            serialbooks = {b for b in re.split(r"[\s,]+", self.info["document/diglotserialbooks"].strip()) if b}
+            serialbooks = {b for b in re.split(r"[\s,]+", (self.info["document/diglotserialbooks"] or "").strip()) if b}
             if left and b not in serialbooks: # nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
