@@ -598,12 +598,7 @@ class TexModel:
             res.append(r"\zglot|L\*")
         else:
             res.extend(beforelast)
-        d = os.path.dirname(fname)
-        if d:
-            res.append(rf"\PtxFilePath={{{d}}}")
-        res.append(template.format(os.path.basename(fname)))
-        if d:
-            res.append(r"\PtxFilePath={./}")
+        res.append(template.format(fname))
         if bkindex is None:
             return res
         if bkindex >= len(self.dict['project/books']) or self.dict['project/books'][bkindex] is None:
@@ -963,6 +958,7 @@ class TexModel:
         draft = "-" + (printer.cfgid or "draft")
         infpath = printer.getBookSrcPath(bk)
         if infpath is None:
+            return None # FIX ME!
             infpath = os.path.join(prjdir, bk)  # assume module
             infpath = self.flattenModule(infpath, outdir)
             if isinstance(infpath, tuple) and infpath[0] is None:

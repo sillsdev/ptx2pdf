@@ -390,16 +390,16 @@ class RunJob:
                 digprjdir = diginfo.printer.project.path
                 try:
                     digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1], reversify=reversifyinfo, noaction=self.noaction)
-                    right = os.path.join(self.tmpdir, digout)
-                    inputfiles.append(right)
-                    texfiles.append(right)
                 except FileNotFoundError as e:
                     self.printer.doError(str(e))
-                    out = None
                     digout = None
                 else:
-                    diginfo["project/books"][i] = digout
-                    self.books.append(digout)
+                    if digout is not None:
+                        right = os.path.join(self.tmpdir, digout)
+                        inputfiles.append(right)
+                        texfiles.append(right)
+                        diginfo["project/books"][i] = digout
+                        self.books.append(digout)
             serialbooks = {b for b in re.split(r"[\s,]+", self.info["document/diglotserialbooks"].strip()) if b}
             if left and b not in serialbooks: # nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
