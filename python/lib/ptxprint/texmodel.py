@@ -964,7 +964,6 @@ class TexModel:
                                             bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
         draft = "-" + (printer.cfgid or "draft")
         infpath = printer.getBookSrcPath(bk)
-        print(f"{infpath=}")
         if infpath is None:
             if re.match(".*?[/\\.]", bk):
                 infpath = os.path.join(prjdir, bk)  # assume module

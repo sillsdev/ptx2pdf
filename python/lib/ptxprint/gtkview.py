@@ -3040,7 +3040,8 @@ class GtkViewModel(ViewModel):
                 self.set("c_autoSave", False)
             return
         elif pgid == "tb_FinalSFM":
-            fpath = self.getBookSrcPath(bk, prjid)
+            fname = self.getBookFilename(bk, prjid)
+            fpath = os.path.join(self.project.printPath(self.cfgid), fname)
             genBtn.set_sensitive(True)
             doti = fpath.rfind(".")
             if doti > 0:
