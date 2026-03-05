@@ -875,10 +875,15 @@ class TexModel:
         if not noaction:
             usfms = self.printer.get_usfms()
             mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-            mod.parse(self.printer.picinfos)
-            res = mod.doc
-            if res.xml.errors:
-                self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
+            try:
+                mod.parse(self.printer.picinfos)
+            except ValueError as e:
+                self.printer.doError(f"Module error: {e}")
+                res = ""
+            else:
+                res = mod.doc
+                if res.xml.errors:
+                    self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         else:
             res = ""
         if text is not None:
@@ -968,7 +973,7 @@ class TexModel:
                             show=not self.printer.get("c_quickRun"))
                     return None
             else:
-                return None # FIX ME!
+                raise FileNotFoundError(f"Can't find file for {bk}")
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
