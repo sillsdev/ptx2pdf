@@ -554,8 +554,8 @@ class ViewModel:
         self.project = None
         self.cfgid = None
 
-    def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True):
-        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=True)
+    def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True, startup=False):
+        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=not startup)
 
     def setConfigId(self, configid, saveCurrConfig=False, force=True, loadConfig=True):
         return self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)

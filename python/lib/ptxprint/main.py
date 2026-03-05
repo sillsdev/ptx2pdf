@@ -407,7 +407,7 @@ def main(doitfn=None, argsline=None, retview=False):
         mainw = ViewModel(prjTree, config, macrosdir, args)
         mainw.setup_ini()
         if args.pid:
-            mainw.setPrjid(args.pid, project.guid, loadConfig=False)
+            mainw.setPrjid(args.pid, project.guid, loadConfig=False, startup=True)
             mainw.setConfigId(args.config or "Default")
         res = 0
         log.debug(f"Created viewmodel for {project} in {args.projects}")

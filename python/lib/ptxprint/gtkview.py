@@ -1457,7 +1457,7 @@ class GtkViewModel(ViewModel):
         scroll.add(self.adjView.view)
         logger.debug("Setting project")
         if self.pendingPid is not None:
-            self.setPrjid(*self.pendingPid)
+            self.setPrjid(*self.pendingPid, startup=True)
             self.pendingPid = None
         logger.debug("Setting config")
         if self.pendingConfig is not None:
@@ -4222,7 +4222,7 @@ class GtkViewModel(ViewModel):
             self.updateConfigIdentity(cfg)
         dialog.hide()
 
-    def setPrjid(self, prjid, prjguid, saveCurrConfig=False):
+    def setPrjid(self, prjid, prjguid, saveCurrConfig=False, startup=False):
         if not self.initialised:
             self.pendingPid = (prjid, prjguid)
         else:
@@ -4231,6 +4231,7 @@ class GtkViewModel(ViewModel):
             i = m.get_iter_first()
             while i is not None:
                 if m.get_value(i,0) == prjid and m.get_value(i, 1) == prjguid:
+                    # shame startup doesn't propagate
                     w.set_active_iter(i)
                     break
                 i = m.iter_next(i)
@@ -4245,7 +4246,7 @@ class GtkViewModel(ViewModel):
             self.doConfigNameChange(None)
             
     def setPrjConfig(self, prjid, prjguid, configid):
-        self.setPrjid(prjid, prjguid)
+        self.setPrjid(prjid, prjguid, startup=True)
         # while (Gtk.events_pending()):
             # Gtk.main_iteration_do(False)        
         self.setConfigId(configid)
