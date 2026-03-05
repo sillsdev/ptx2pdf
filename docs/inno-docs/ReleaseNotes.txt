@@ -1,8 +1,16 @@
-PTXprint 3.0.12 Release Notes
-3 Mar 2026
+PTXprint 3.0.13 Release Notes
+5 Mar 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.13 (5 Mar 2026)
+  * Handle bad bookcodes more gracefully
+  * Get view & edit final sfm working again
+  * Invert y in outline collision tests
+  * Don't short circuit loading config in GUI on project change
+  * Fix bad style updates on config change
+  * Fix reporting bad books
 
 Bug fixes and Improvements in 3.0.12 (3 Mar 2026)
   * Look for books first in shared config and then project dir
