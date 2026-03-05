@@ -725,6 +725,9 @@ class ViewModel:
                 self.resetToInitValues(updatebklist=False)
             logger.debug(f"Reading config {configName} in the config context of {self.cfgid}")
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
+            if float(oldVersion) >= 0 or forceConfig:
+                logger.debug(f"Switching config from {self.cfgid} to {configName}")
+                self.cfgid = configName
             if float(oldVersion) < 0:
                 return False
             self.styleEditor.reset(os.path.join(self.scriptsdir, "usfm_sb.sty"))
@@ -732,9 +735,6 @@ class ViewModel:
             self.updateStyles(oldVersion)
             if newconfig:
                 self.set("t_invisiblePassword", "", mod=False)
-            if float(oldVersion) >= 0 or forceConfig:
-                logger.debug(f"Switching config from {self.cfgid} to {configName}")
-                self.cfgid = configName
             if quickload:
                 return
             if readConfig:  # project changed
