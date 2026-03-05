@@ -963,6 +963,11 @@ class TexModel:
                 self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
                                             bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
         draft = "-" + (printer.cfgid or "draft")
+        customsty = os.path.join(prjdir, 'custom.sty')
+        if not os.path.exists(customsty):
+            self.dict["/nocustomsty"] = "%"
+        else:
+            self.dict["/nocustomsty"] = ""
         infpath = printer.getBookSrcPath(bk)
         if infpath is None:
             if re.match(".*?[/\\.]", bk):
@@ -976,11 +981,6 @@ class TexModel:
                     return None
         if infpath is None:
             raise FileNotFoundError(f"Can't find file for {bk}")
-        customsty = os.path.join(prjdir, 'custom.sty')
-        if not os.path.exists(customsty):
-            self.dict["/nocustomsty"] = "%"
-        else:
-            self.dict["/nocustomsty"] = ""
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir, noaction=noaction)
         outfname = os.path.basename(infpath)
