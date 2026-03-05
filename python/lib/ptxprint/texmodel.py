@@ -972,8 +972,8 @@ class TexModel:
                             title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
                             show=not self.printer.get("c_quickRun"))
                     return None
-            else:
-                raise FileNotFoundError(f"Can't find file for {bk}")
+        if not os.path.exists(infpath):
+            raise FileNotFoundError(f"Can't find file {infpath} for {bk}")
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"

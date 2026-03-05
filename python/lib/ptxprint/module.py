@@ -206,7 +206,7 @@ class Module:
             raise ValueError(f"Missing book {ref.first.book.upper()} at {context.pos.l if context else ''}+{context.pos.c if context else ''}")
         res = book.xml.getrefs(ref, titles=False, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
                                     chapters= not any('chapter' in x[3] for x in removes))
-        if True:        # this should be a filter test
+        if len(res.getroot()):        # this should be a filter test
             firstp = res.getroot()[0]
             firstp.attrib.pop('vid', None)
         for e, isin in res.iterusx():
