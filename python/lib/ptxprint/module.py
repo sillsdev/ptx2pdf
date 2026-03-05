@@ -203,7 +203,8 @@ class Module:
         except SyntaxError:
             book = None
         if book is None:
-            raise ValueError(f"Missing book {ref.first.book.upper()} at {context.pos.l if context else ''}+{context.pos.c if context else ''}")
+            raise ValueError(f"Missing book {ref.first.book.upper()} at line {context.pos.l + 1 if context is not None else ''}"
+                             f" char {context.pos.c if context is not None else ''}")
         res = book.xml.getrefs(ref, titles=False, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
                                     chapters= not any('chapter' in x[3] for x in removes))
         if len(res.getroot()):        # this should be a filter test

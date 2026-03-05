@@ -322,15 +322,15 @@ class ViewModel:
             self.bookrefs = RefList()
             for b in bl:
                 bname = self.getBookSrcPath(b.first.book, self.project.prjid)
-                if bname is None:
-                    continue
-                if os.path.exists(bname):
-                    if b.first.book == "FRT":
-                        self.switchFRTsettings()
-                    elif b.first.book == "INT" and self.get("c_useSectIntros"):
-                        pass
-                    else:
-                        res.append(b)
+                # if bname is None:
+                    # continue
+                # if os.path.exists(bname):
+                if b.first.book == "FRT":
+                    self.switchFRTsettings()
+                elif b.first.book == "INT" and self.get("c_useSectIntros"):
+                    pass
+                else:
+                    res.append(b)
             res.simplify(sort=False)
             return self._bookrefsBooks(res, local)
         else:
@@ -381,6 +381,8 @@ class ViewModel:
             else:
                 srcpath = str(r)
                 destname = os.path.basename(r)
+            if srcpath is None or not os.path.exists(srcpath):
+                continue
             destpath = os.path.join(self.project.printPath(self.cfgid), destname)
             srct = os.lstat(srcpath).st_mtime if os.path.exists(srcpath) else 0
             destt = os.lstat(destpath).st_mtime if os.path.exists(destpath) else 0

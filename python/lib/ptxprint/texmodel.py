@@ -655,6 +655,8 @@ class TexModel:
                     res.append(r"\PtxFilePath={"+saferelpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        if fname is None:
+                            continue
                         dname = None
                         beforelast = []
                         if extra != "":
@@ -962,6 +964,7 @@ class TexModel:
                                             bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
         draft = "-" + (printer.cfgid or "draft")
         infpath = printer.getBookSrcPath(bk)
+        print(f"{infpath=}")
         if infpath is None:
             if re.match(".*?[/\\.]", bk):
                 infpath = os.path.join(prjdir, bk)  # assume module
@@ -972,8 +975,8 @@ class TexModel:
                             title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
                             show=not self.printer.get("c_quickRun"))
                     return None
-        if not os.path.exists(infpath):
-            raise FileNotFoundError(f"Can't find file {infpath} for {bk}")
+        if infpath is None:
+            raise FileNotFoundError(f"Can't find file for {bk}")
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"

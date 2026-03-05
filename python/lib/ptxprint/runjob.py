@@ -36,6 +36,8 @@ logger = logging.getLogger(__name__)
 _errmsghelp = {
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
+"! Dimension too large":                 _("Uh oh! You may have too many paragraphed footnotes on the page.\n" +\
+                                           "Try starting each footnote on a new line (Notes+Refs tab)."),
 "! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists."),
 "! Unable to load picture":              _("Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
                                            "specified folder. Also try the option 'Omit Missing Pictures'"),
@@ -287,6 +289,7 @@ class RunJob:
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
+            donebooks.append(out)
             if out is None:
                 continue
             outpath = os.path.join(self.tmpdir, out)
@@ -309,7 +312,6 @@ class RunJob:
                         os.remove(outpath+".triggers")
                     except FileNotFoundError:
                         pass
-            donebooks.append(out)
         if not len(donebooks):
             unlockme()
             return []
@@ -319,7 +321,7 @@ class RunJob:
         res = self.sharedjob(jobs, False)
         if self.info['notes/ifxrexternalist']:
             res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
-        return [os.path.join(self.tmpdir, out) for out in donebooks] + res
+        return [os.path.join(self.tmpdir, out) for out in donebooks if out is not None] + res
 
     def digdojob(self, jobs, diginfos):
         _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
