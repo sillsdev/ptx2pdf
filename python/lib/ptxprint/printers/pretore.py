@@ -1,5 +1,5 @@
 
-import os, json, threading #, requests
+import os, json, threading, urllib
 from shutil import copy
 from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
@@ -24,6 +24,13 @@ querytypes = {
     "307": [k for k in querymap.keys() if k != "data/31-194-widget-4"]
 }
 
+allcurrencies = {
+    "USD":  "$",
+    "EUR":  "\u20AC",
+    "GBP":  "\u20A4",
+    "THB":  "\u0E3F"
+}
+
 def labelWidget(txxt, widget, grid, x, y):
     label = Gtk.Label(label=txt)
     label.set_halign(Gtk.Align.END)
@@ -42,12 +49,31 @@ class Pretore:
     def __init__(self, view):
         self.view = view
         self.user = None
+        self.rates = {}
+        self.currency = "EUR"
 
     def get(self, wname, **kw):
         return self.view.get(wname, **kw)
 
     def set(self, wname, val, **kw):
         return self.view.set(wname, val, **kw)
+
+    def get_exchange_rates(self):
+        if len(self.rates):
+            return self.rates
+        headers = {'User-Agent': "Mozilla/5.0 (Windows NT 11.0; Win64; x64)"}
+        url = f"https://api.frankfurter.dev/v1/latest?base=EUR&symbols="+",".join(sorted(allcurrencies.keys()))
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req) as response:
+                if response.getcode() == 200:
+                    data = json.loads(response.read().decode("utf-8"))
+                    self.rates = data.get('rates', {})
+                else:
+                    print (f"Response code: {response.getcode()}")
+        except Exception as e:
+            print(f"Error: {e}")
+        return self.rates
 
     def setup(self):
         numpages = self.numpages()
@@ -59,6 +85,7 @@ class Pretore:
             w.remove_class("red-label")
         if self.user is not None:
             return
+        self.get_exchange_rates()
         self.configdir = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "printers", "pretore")
         os.makedirs(self.configdir, exist_ok=True)
 
@@ -160,10 +187,13 @@ class Pretore:
         thread.start()
 
     def updatequote(self, result):
-        amount = result['data']['summary']['amount']
+        if result is not None:
+            self.amount = result['data']['summary']['amount']
         copies = int(self.get("s_prnl_copies"))
-        self.set('l_prnl_total', "\u20AC{:.2f}".format(amount))
-        self.set('l_prnl_percopy', "\u20AC{:.2f}".format(amount/copies))
+        amount = self.rates.get(self.currency, 1.0) * self.amount
+        cs = allcurrencies.get(self.currency, "\u20AC")
+        self.set('l_prnl_total', "{}{:.2f}".format(cs, amount))
+        self.set('l_prnl_percopy', "{}{:.2f}".format(cs ,amount/copies))
 
     def showCreateResults(self, result):
         self.updatequote(result)
@@ -187,6 +217,7 @@ class Pretore:
     def quote(self, btn, *a):
         self.setup()
         self.do_quote("quote")
+        print(self.rates)
 
     def createOrder(self, btn, *a):
         if getattr(self.view, 'pdfFiles', None) is None or not len(self.view.pdfFiles):
@@ -212,8 +243,12 @@ class Pretore:
 
     def copy_zipfname(self, btn, *a):
         zname = os.path.abspath(self.zipname)
-        print(zname)
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(zname, -1)
         clipboard.store()
-        
+
+    def change_currency(self, w, *a):
+        curr = self.get("fcb_prnl_currency")
+        if curr in self.rates:
+            self.currency = curr
+            self.updatequote(None)

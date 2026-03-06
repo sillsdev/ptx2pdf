@@ -40378,27 +40378,24 @@ to the clipboard.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                                <object class="GtkButton" id="b_prn_cpzip">
+                                              <object class="GtkButton" id="b_prn_cpzip">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Copy Complete Filename with Path to Clipboard</property>
+                                                <property name="valign">center</property>
+                                                <property name="relief">none</property>
+                                                <property name="always-show-image">True</property>
+                                                <signal name="clicked" handler="printers/pretore/copy_zipfname" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
                                                     <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">True</property>
-                                                    <property name="tooltip-text" translatable="yes">Copy Complete Filename with Path to Clipboard</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="relief">none</property>
-                                                    <!-- Use this property to ensure the image shows even if text is added later -->
-                                                    <property name="always-show-image">True</property>
-                                                    
-                                                    <!-- Connect your signal here -->
-                                                    <signal name="clicked" handler="printers/pretore/copy_zipfname" swapped="no"/>
-                                                    <child>
-                                                      <object class="GtkImage">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">False</property>
-                                                        <property name="icon-name">edit-copy-symbolic</property>
-                                                        <signal name="button-press-event" handler="printers/pretore/copy_zipfname" swapped="no"/>
-                                                      </object>
-                                                    </child>
-                                                </object>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">edit-copy-symbolic</property>
+                                                    <signal name="button-press-event" handler="printers/pretore/copy_zipfname" swapped="no"/>
+                                                  </object>
+                                                </child>
+                                              </object>
                                               <packing>
                                                 <property name="expand">False</property>
                                                 <property name="fill">False</property>
@@ -40437,7 +40434,6 @@ not yet implemented.</property>
                                             <child>
                                               <object class="GtkComboBoxText" id="fcb_prnl_currency">
                                                 <property name="visible">True</property>
-                                                <property name="sensitive">False</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="tooltip-text" translatable="yes">Currency conversion
 not yet implemented.</property>
@@ -40450,6 +40446,7 @@ not yet implemented.</property>
                                                   <item id="GBP" translatable="yes">British Pounds</item>
                                                   <item id="THB" translatable="yes">Thai Baht</item>
                                                 </items>
+                                                <signal name="changed" handler="printers/pretore/change_currency" swapped="no"/>
                                                 <child internal-child="entry">
                                                   <object class="GtkEntry">
                                                     <property name="can-focus">False</property>
