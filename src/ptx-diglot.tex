@@ -419,7 +419,7 @@
      %  \global\advance\availht by +\baselineDelta\relax%
      %\fi
      \global\advance\availht by \dimexpr -\@minb@seline-\baselineDelta\relax% 
-     \trace{Dh}{Bld mod: -\@minb@seline - \the\baselineDelta -> \the\availht}%
+     \trace{Dh}{Bld mod: -\the\@minb@seline - \the\baselineDelta -> \the\availht}%
      \dglt@calc@vailht@mods
    \fi
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht

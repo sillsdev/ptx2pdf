@@ -1299,7 +1299,7 @@
   \trace{C}{parlines: \the\thispar@lines =\the\p@rlinesgone?}%
   \ifnum \thispar@lines=\p@rlinesgone\else
     \ifp@rlengthimportant\let\tmp\MSG\else\let\tmp\message\fi
-    \tmp{*** Mismatch between calculated (\the\p@rlinesgone) and reported (\the\thispar@lines) lines for paragraph starting \@@parlocsref, on page \this@pgno.  Cutouts may not have been calculated properly}%
+    \tmp{*** Mismatch between calculated (\the\p@rlinesgone) and reported (\the\thispar@lines) lines for paragraph starting \csname @@parlocsref\endcsname, on page \this@pgno.  Cutouts may not have been calculated properly}%
     \let\tmp\undefined
   \fi
   \ifx\pending@items\cstackempty\else

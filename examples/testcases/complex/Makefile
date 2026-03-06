@@ -11,7 +11,8 @@ TPATH=.:${DIR}//
 pretest.pdf: pretest.tex  $(DIR)/*.tex *.sty $(DIR)/*.sty
 test.pdf: test.tex  test.usfm $(DIR)/*.tex *.sty $(DIR)/*.sty
 subtest.log: subtest.tex $(DIR)/*.tex  Makefile
-
+	TEXINPUTS="$(TPATH)"  xetex --no-pdf $<
+	
 bisect:
 	-mkdir ../bisect || rm -f ../bisect/*
 	cp *.tex *.usfm *.sty *.lua Makefile ../bisect

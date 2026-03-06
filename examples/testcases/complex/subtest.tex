@@ -1,16 +1,21 @@
 \def\pluginlist{polyglot-complexpages}
 \input paratext2.tex
 \tracing{dmc}
+\tracing{dmcr}
 %\tracing{De}
 \newPolyglotCol{A}
 \newPolyglotCol{B}
 \polyglotpages{LLR/ALR}
-% Result shows p1, p2 as mirrored pair.
+% Result shows forward/reverse as mirrored pair.
 \checkpolypages{LZR/AYX}{RLZ/XYA}
 \polyglotpages{LR,AB}
 \checkpolypages{LR,AB}{BA,RL}
 \polyglotpages{LL/A,RR/B}
 \checkpolypages{LZ/A,RY/B}{RY/B,LZ/A}
+\BookOpenLefttrue
+\polyglotpages{LL/A,RR/B}
+\checkpolypages{YR/B,ZL/A}{ZL/A,YR/B}
+
 
 \showboxbreadth=100
 \showboxdepth=100

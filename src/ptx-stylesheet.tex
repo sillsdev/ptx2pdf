@@ -1989,6 +1989,7 @@
 \def\IntroPageAlign{page}
 \newif\ifin@ntro \in@ntrofalse
 \newif\ifNoGrid \NoGridfalse
+\newdimen\@minb@seline  % Note this is not a skip but a dimen.
 \def\preptxfile{
  \outputpenalty=0
  \filehasversesfalse\gdef\fileh@sverses{\global\filehasversestrue\global\let\fileh@sverses\relax}% Set filehasverses once then done, no need to repeat it every single verse.
@@ -2031,7 +2032,7 @@
    \global\splittopskip=0pt
    \message{Setting up column-specific values for columns: \diglot@list}%
    \global\baselineDelta=-\maxdimen
-   \xdef\@minb@seline{\the\baselineskip}%
+   \global\@minb@seline=\baselineskip%
    \global\diglotb@dyfalse
    \global\diglotfirstb@dyfalse
    \def\col@do##1{% Per-column setup
@@ -2044,9 +2045,9 @@
        \global\baselineDelta=\csname baselineDelta##1\endcsname
      \fi
      \ifdim\baselineskip<\@minb@seline
-       {\dimen1=\baselineskip \xdef\@minb@seline{\the\dimen1}}% Remove glue
+       \global\@minb@seline=\baselineskip
      \fi
-     \trace{d}{##1: bl:\the\baselineskip, mb:\@minb@seline, bld##1:\the\csname baselineDelta##1\endcsname}%
+     \trace{d}{##1: bl:\the\baselineskip, mb:\the\@minb@seline, bld##1:\the\csname baselineDelta##1\endcsname}%
      \saveLRspecificSide{##1}%
      \bgroup
        \let\mcstack\mcstack@mpty

@@ -93,11 +93,13 @@
 \def\polyglot@onetime@setup{%
   %\tracingmacros=1
   \edef\@ut{\x@\e@tcomma\pageins@rts\E}%
+  \trace{dmp}{Generating save classes}%
+  \xdef\p@lyins@rts{\@ut,}%
+  \let\@ut\empty
   \let\d@\gen@p@lyins@rts %populates \@ut with insert save names
   \x@\cstackdown \s@veclasses\E
-  \xdef\p@lyins@rts{\@ut,}%
-  \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,}% MUST end with comma
-  \trace{dmp}{poly@b@xes defined as: \p@lyb@xes}%
+  \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,\@ut}% MUST end with comma
+  \trace{dmp}{poly@b@xes defined as: \p@lyb@xes. p@lyins@rts as \p@lyins@rts}%
   % Now setup copies of boxes.
   \addtoinithooks{%
     \trace{dmp}{config polyboxes}%
@@ -154,7 +156,7 @@
     %\tracingassigns=0
     \let\d@=\spp@d@\let\spp@d@=\undefined
 }
-\def\gen@p@lyins@rts#1\E{%add names of inserts (saveclass #1) to \@ut
+\def\gen@p@lyins@rts#1\E{%generate savebox and add names of inserts (saveclass #1) to \@ut
   \edef\s@veclass{#1}\let\gpiD@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name 
   \x@\cstackdown\pageins@rts\E
   \let\d@=\gpiD@\let\gpiD@=\undefined
