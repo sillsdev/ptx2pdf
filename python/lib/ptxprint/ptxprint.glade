@@ -39870,7 +39870,7 @@ output with a previous PDF.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkComboBoxText" id="ecb_prnl_paperType">
+                                          <object class="GtkComboBoxText" id="fcb_prnl_paperType">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">center</property>
