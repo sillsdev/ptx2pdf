@@ -1,7 +1,7 @@
 
 import os, json, threading #, requests
 from shutil import copy
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
 from zipfile import ZipFile, ZIP_DEFLATED
 
@@ -152,10 +152,10 @@ class Pretore:
             c[b[-1]] = val
         return booktype, qinfo
 
-    def submit_quote(self, qinfo, endpoint, cb=None):
+    def submit_quote(self, qinfo, endpoint, cb=None, amt=100):
         if cb is None:
             cb = self.updatequote
-        thread = threading.Thread(target=self.url_query, args=(cb, endpoint, qinfo))
+        thread = threading.Thread(target=self.url_query, args=(cb, endpoint, amt, qinfo))
         thread.daemon = True
         thread.start()
 
@@ -165,36 +165,33 @@ class Pretore:
         self.set('l_prnl_total', "\u20AC{:.2f}".format(amount))
         self.set('l_prnl_percopy', "\u20AC{:.2f}".format(amount/copies))
 
-    def showCreateDialog(self, result):
-        return
-        amount = result['data']['summary']['amount']
+    def showCreateResults(self, result):
+        self.updatequote(result)
         quoteid = result.get("number", _("Unknown"))
-        dialog = Gtk.Dialog(title="Accounts", transient_for=self.view.mainapp.win)
-        dialog.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK) 
-        content = dialog.get_content_area()
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        vbox.set_border_width(10)
-        content.add(vbox)
+        self.set("l_prnl_orderRef", quoteid)
+        self.set("l_prnl_zipFilename", os.path.basename(self.zipname))
 
-    def url_query(self, callback, endpoint, *a):
-        message(endpoint+"\n"+str(a[0]))
-        result = {"data": {"summary": {"amount": 100}}}
+    def url_query(self, callback, endpoint, amt, *a):
+        message(endpoint+"\n"+"\n".join(str(x) for x in a))
+        result = {"data": {"summary": {"amount": amt}}}
         GLib.idle_add(callback, result)
 
-    def do_quote(self, command, cb=None):
+    def do_quote(self, command, cb=None, amt=100):
         if cb is None:
             cb = self.updatequote
         booktype, qinfo = self.prepare_quote()
         uuid = self.accounts[self.user]['UUID']
         endpoint = f"https://prxprint-pretore.com/wp-json/emily/v1/calculation/{uuid}/{booktype}/{command}"
-        self.submit_quote(qinfo, endpoint, cb=cb)
+        self.submit_quote(qinfo, endpoint, cb=cb, amt=amt)
 
     def quote(self, btn, *a):
         self.setup()
         self.do_quote("quote")
 
     def createOrder(self, btn, *a):
-        self.setup()
+        if getattr(self.view, 'pdfFiles', None) is None or not len(self.view.pdfFiles):
+            message("Print the job to create the files to upload")
+            return
         self.zipname = self.view.getPDFname(noext=True) + "_pretore.zip"
         z = ZipFile(self.zipname, "w", compression=ZIP_DEFLATED)
         for k, v in self.view.pdfFiles.items():
@@ -207,8 +204,16 @@ class Pretore:
         z.close
         
         # also make the zip, create a dialog to present the results
-        self.do_quote("create", cb=self.showCreateDialog)
+        self.do_quote("create", cb=self.showCreateResults, amt=150)
 
     def configure(self, btn, *a):
         # setup the view to conform to pretore requirements
         return
+
+    def copy_zipfname(self, btn, *a):
+        zname = os.path.abspath(self.zipname)
+        print(zname)
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(zname, -1)
+        clipboard.store()
+        
