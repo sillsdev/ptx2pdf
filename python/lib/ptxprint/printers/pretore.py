@@ -115,7 +115,10 @@ class Pretore:
         return self.view.getPageCount()
 
     def select_account(self, btn, *a):
-        self.setup()
+        olduser = self.user
+        self.user = None
+        self.setup()        # force a setup again
+        self.user = olduser
         dialog = Gtk.Dialog(title="Accounts", transient_for=self.view.mainapp.win)
         dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                            Gtk.STOCK_OK, Gtk.ResponseType.OK) 
