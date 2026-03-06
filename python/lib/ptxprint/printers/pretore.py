@@ -24,11 +24,19 @@ querytypes = {
     "307": [k for k in querymap.keys() if k != "data/31-194-widget-4"]
 }
 
-def labelWidget(txt, widget, grid, x, y):
+def labelWidget(txxt, widget, grid, x, y):
     label = Gtk.Label(label=txt)
     label.set_halign(Gtk.Align.END)
     grid.attach(label, x, y, 1, 1)
     grid.attach(widget, x+1, y, 1, 1)
+
+
+def message(text):
+    dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK, text=text)
+    dialog.run()
+    dialog.destroy()
+
 
 class Pretore:
     def __init__(self, view):
@@ -169,8 +177,7 @@ class Pretore:
         content.add(vbox)
 
     def url_query(self, callback, endpoint, *a):
-        print(endpoint)
-        print(a)
+        message(endpoint+"\n"+str(a[0]))
         result = {"data": {"summary": {"amount": 100}}}
         GLib.idle_add(callback, result)
 
@@ -205,11 +212,3 @@ class Pretore:
     def configure(self, btn, *a):
         # setup the view to conform to pretore requirements
         return
-
-
-        
-        
-
-        
-
-
