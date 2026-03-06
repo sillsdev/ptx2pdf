@@ -25,7 +25,7 @@ querytypes = {
     "307": [k for k in querymap.keys() if k != "data/31-194-widget-4"]
 }
 
-def labelWidget(txxt, widget, grid, x, y):
+def labelWidget(txt, widget, grid, x, y):
     label = Gtk.Label(label=txt)
     label.set_halign(Gtk.Align.END)
     grid.attach(label, x, y, 1, 1)
@@ -52,8 +52,8 @@ class Pretore:
     def set(self, wname, val, **kw):
         return self.view.set(wname, val, **kw)
 
-    def get_exchange_rates(self):
-        if len(self.rates):
+    def get_exchange_rates(self, force=False):
+        if not force and len(self.rates):
             return self.rates
         headers = {'User-Agent': "Mozilla/5.0 (Windows NT 11.0; Win64; x64)"}
         url = f"https://api.frankfurter.dev/v1/latest?base=EUR&symbols="+",".join(sorted(allcurrencies.keys()))
@@ -79,7 +79,7 @@ class Pretore:
             w.remove_class("red-label")
         if self.user is not None:
             return
-        self.get_exchange_rates()
+        self.get_exchange_rates(force=True)
         self.configdir = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "printers", "pretore")
         os.makedirs(self.configdir, exist_ok=True)
 
