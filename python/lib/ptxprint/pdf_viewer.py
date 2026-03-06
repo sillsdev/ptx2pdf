@@ -190,6 +190,8 @@ class PDFViewer:
                 else:
                     v.hide()
             for k, v in sorted(extras.items()):
+                if k == ' Original':
+                    continue
                 n = k.strip()
                 if n not in self.boxcodes:
                     i = len(self.boxcodes)

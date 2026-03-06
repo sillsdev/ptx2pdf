@@ -52,6 +52,7 @@ from ptxprint.tatweel import TatweelDialog
 from ptxprint.gtkpolyglot import PolyglotSetup
 from ptxprint.report import Report
 from ptxprint.gtktesting import GtkTester
+from ptxprint.printers import init_printers, printer_from_label
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -855,6 +856,7 @@ class GtkViewModel(ViewModel):
         self.finddata = {}
         self.widgetnames = {}
         self.setup_book_button_styles()
+        self.printers = init_printers(self)
         nid = None
         for node in tree.iter():
             if 'translatable' in node.attrib:
@@ -897,7 +899,7 @@ class GtkViewModel(ViewModel):
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder()
         self.builder.add_from_string(xml_text) # this is where the error/warning/critial msgs come from
-        self.builder.connect_signals(self)
+        self.builder.connect_signals_full(self.connect_signal, self)
         self.mw = self.builder.get_object("ptxprint")
         logger.debug("Glade loaded in gtkview")
 
@@ -1098,6 +1100,22 @@ class GtkViewModel(ViewModel):
         logger.debug("Project list loaded")
 
         return True
+
+    @staticmethod
+    def connect_signal(builder, obj, name, handler, connect_obj, flags, self):
+        p = None
+        if "/" in handler:
+            b = handler.split("/")
+            if b[0] == "printers":
+                p = self.printers[b[1]]
+                hname = b[2]
+        else:
+            p = self
+            hname = handler
+        fn = getattr(p, hname, None)
+        if fn is None:
+            raise NotImplementedError(f"No method {handler} found for signal {name}")
+        obj.connect(name, fn)
 
     def _on_var_editing_started(self, renderer, editable, path_str):
         self._var_editable = editable
@@ -2036,6 +2054,9 @@ class GtkViewModel(ViewModel):
         # elif dest == "sbcats":
             # self.sbcatlist.clear()
 
+    def getWidgetId(self, widget):
+        return Gtk.Buildable.get_name(widget)       # because I can never remember this incantation
+
     def onDestroy(self, btn, *a):
         if self.testing is not None:
             self.testing.finalise()
@@ -2964,6 +2985,14 @@ class GtkViewModel(ViewModel):
             self.onThumbColorChange()
         elif pgid == "tb_Pictures":
             self.onPLpageChanged(None, None, pgnum=-1)
+        elif pgid == "tb_Printers":
+            pnum = self.get("nbk_printers")
+            nbkw = self.builder.get_object("nbk_printers")
+            ppage = nbkw.get_nth_page(pnum)
+            lw = nbkw.get_tab_label(ppage)
+            lid = self.getWidgetId(lw)
+            k = printer_from_label(lid)
+            self.printers[k].prepare()
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")

@@ -531,7 +531,6 @@ THE SOFTWARE.
     <property name="value">3</property>
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
-    <property name="page-size">1</property>
   </object>
   <object class="GtkAdjustment" id="a_ruleThickness">
     <property name="lower">0.01</property>
@@ -39782,9 +39781,6 @@ output with a previous PDF.</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
                                             <property name="label" translatable="yes">448	</property>
-                                            <attributes>
-                                              <attribute name="foreground" value="#1a1a5f5fb4b4"/>
-                                            </attributes>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
@@ -39816,6 +39812,7 @@ output with a previous PDF.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <signal name="clicked" handler="printers/pretore/select_account" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
@@ -39829,6 +39826,7 @@ output with a previous PDF.</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
                                             <property name="valign">center</property>
+                                            <signal name="clicked" handler="printers/pretore/quote" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
@@ -39856,7 +39854,9 @@ output with a previous PDF.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">center</property>
+                                            <property name="active">0</property>
                                             <property name="has-entry">True</property>
+                                            <property name="active-id">307</property>
                                             <items>
                                               <item id="307" translatable="yes">Paperback</item>
                                               <item id="306" translatable="yes">Hardback</item>
@@ -39878,13 +39878,15 @@ output with a previous PDF.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">center</property>
+                                            <property name="active">0</property>
                                             <property name="has-entry">True</property>
+                                            <property name="active-id">755</property>
                                             <items>
-                                              <item translatable="yes">40 gsm ThinLeaf FSC</item>
-                                              <item translatable="yes">50 gsm Thinopaque white FSC</item>
-                                              <item translatable="yes">80 gsm woodfree offset FSC</item>
-                                              <item translatable="yes">90 gsm woodfree offset FSC</item>
-                                              <item translatable="yes">100 gsm woodfree offset FSC</item>
+                                              <item id="755" translatable="yes">40 gsm ThinLeaf FSC</item>
+                                              <item id="355" translatable="yes">50 gsm Thinopaque white FSC</item>
+                                              <item id="364" translatable="yes">80 gsm woodfree offset FSC</item>
+                                              <item id="366" translatable="yes">90 gsm woodfree offset FSC</item>
+                                              <item id="575" translatable="yes">100 gsm woodfree offset FSC</item>
                                             </items>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
@@ -39899,7 +39901,7 @@ output with a previous PDF.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel">
+                                          <object class="GtkLabel" id="l_prnl_userid">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
@@ -39924,6 +39926,7 @@ output with a previous PDF.</property>
 settings to meet the requirements of 
 this particular printing press are correct.</property>
                                             <property name="valign">center</property>
+                                            <signal name="clicked" handler="printers/pretore/configure" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
@@ -39937,6 +39940,7 @@ this particular printing press are correct.</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
                                             <property name="valign">center</property>
+                                            <signal name="clicked" handler="printers/pretore/createOrder" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
@@ -39999,11 +40003,13 @@ the content and cover of your book.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">center</property>
+                                            <property name="active">0</property>
                                             <property name="has-entry">True</property>
+                                            <property name="active-id">455</property>
                                             <items>
-                                              <item translatable="yes">Gloss</item>
-                                              <item translatable="yes">Scuff free matte</item>
-                                              <item translatable="yes">Linen</item>
+                                              <item id="455" translatable="yes">Gloss</item>
+                                              <item id="453" translatable="yes">Scuff free matte</item>
+                                              <item id="452" translatable="yes">Linen</item>
                                             </items>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
@@ -40093,8 +40099,8 @@ the content and cover of your book.</property>
                                             <property name="valign">center</property>
                                             <property name="has-entry">True</property>
                                             <items>
-                                              <item id="BE13" translatable="yes">Sealfoil (Strong BE13)</item>
-                                              <item id="BE19" translatable="yes">Sealfoil (Ultra Strong BE19)</item>
+                                              <item id="475" translatable="yes">Sealfoil (Strong BE13)</item>
+                                              <item id="779" translatable="yes">Sealfoil (Ultra Strong BE19)</item>
                                               <item translatable="yes">None</item>
                                             </items>
                                             <child internal-child="entry">
@@ -40209,7 +40215,7 @@ the content and cover of your book.</property>
                                   </object>
                                 </child>
                                 <child type="tab">
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_pr_pretore">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="label" translatable="yes">Pretore, NL</property>
@@ -40250,7 +40256,7 @@ the content and cover of your book.</property>
                                   </packing>
                                 </child>
                                 <child type="tab">
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_pr_snowfall">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="label" translatable="yes">Snowfall, US</property>
@@ -40292,7 +40298,7 @@ the content and cover of your book.</property>
                                   </packing>
                                 </child>
                                 <child type="tab">
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_pr_pothi">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="label" translatable="yes">Pothi, IN</property>

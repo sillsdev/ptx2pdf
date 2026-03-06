@@ -714,6 +714,9 @@ class RunJob:
                 if not self.procpdf(outfname, pdffile, burst=self.info['finishing/extractinserts'],
                                     cover=self.info['cover/makecoverpage'] != '%'):
                     self.res = 3
+                self.printer.pdfFiles = self.extrafiles.copy()
+                if ' Original' not in self.printer.pdfFiles:
+                    self.printer.pdfFiles[' Original'] = pdffile
         print("Done")
 
     def done_job(self, outfname, pdfname):
