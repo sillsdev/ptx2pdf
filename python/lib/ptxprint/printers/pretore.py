@@ -1,5 +1,5 @@
 
-import os, json, threading, requests
+import os, json, threading #, requests
 from shutil import copy
 from gi.repository import Gtk, GLib
 from ptxprint.utils import _, appdirs
@@ -197,13 +197,13 @@ class Pretore:
         self.setup()
         self.zipname = self.view.getPDFname(noext=True) + "_pretore.zip"
         z = ZipFile(self.zipname, "w", compression=ZIP_DEFLATED)
-        for k, v in self.pdfFiles.items():
+        for k, v in self.view.pdfFiles.items():
             outkey = k.strip()
-            if k == " Original" and ' Finished' not in self.pdfFiles:
+            if k == " Original" and ' Finished' not in self.view.pdfFiles:
                 outkey = "Final"
             elif outkey == "Finished":
                 outkey = "Final"
-            z.write(outkey+".pdf", v)
+            z.write(v, outkey+".pdf")
         z.close
         
         # also make the zip, create a dialog to present the results
