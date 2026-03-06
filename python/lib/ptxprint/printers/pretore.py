@@ -3,6 +3,7 @@ import os, json, threading, urllib
 from shutil import copy
 from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
+from ptxprint.printers import allcurrencies
 from zipfile import ZipFile, ZIP_DEFLATED
 
 querymap = {
@@ -22,13 +23,6 @@ querymap = {
 querytypes = {
     "306": list(querymap.keys()),
     "307": [k for k in querymap.keys() if k != "data/31-194-widget-4"]
-}
-
-allcurrencies = {
-    "USD":  "$",
-    "EUR":  "\u20AC",
-    "GBP":  "\u20A4",
-    "THB":  "\u0E3F"
 }
 
 def labelWidget(txxt, widget, grid, x, y):
