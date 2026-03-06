@@ -39580,7 +39580,11 @@ output with a previous PDF.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="label" translatable="yes">Select a Partnering Printing Press:</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="label" translatable="yes">Select a Printing Press:</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -39739,7 +39743,7 @@ output with a previous PDF.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
-                                            <property name="top-attach">2</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -39784,7 +39788,7 @@ output with a previous PDF.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
-                                            <property name="top-attach">2</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -39814,7 +39818,7 @@ output with a previous PDF.</property>
                                             <property name="receives-default">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">2</property>
+                                            <property name="left-attach">3</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -39860,7 +39864,7 @@ output with a previous PDF.</property>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
                                                 <property name="can-focus">True</property>
-                                                <property name="text" translatable="yes">Hardback</property>
+                                                <property name="text" translatable="yes">Paperback</property>
                                               </object>
                                             </child>
                                           </object>
@@ -39885,7 +39889,7 @@ output with a previous PDF.</property>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
                                                 <property name="can-focus">True</property>
-                                                <property name="text" translatable="yes">80 gsm woodfree offset FSC</property>
+                                                <property name="text" translatable="yes">40 gsm ThinLeaf FSC</property>
                                               </object>
                                             </child>
                                           </object>
@@ -39907,12 +39911,12 @@ output with a previous PDF.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
-                                            <property name="top-attach">1</property>
+                                            <property name="top-attach">2</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="btn_prnl_configureProject">
-                                            <property name="label" translatable="yes">Auto-Configure Settings</property>
+                                            <property name="label" translatable="yes">Configure Settings</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
@@ -39968,11 +39972,11 @@ the content and cover of your book.</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">end</property>
                                             <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Book Thickness:</property>
+                                            <property name="label" translatable="yes">Thickness:</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -39987,7 +39991,7 @@ the content and cover of your book.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -40004,7 +40008,7 @@ the content and cover of your book.</property>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
                                                 <property name="can-focus">True</property>
-                                                <property name="text" translatable="yes">Linen</property>
+                                                <property name="text" translatable="yes">Gloss</property>
                                               </object>
                                             </child>
                                           </object>
@@ -40096,7 +40100,7 @@ the content and cover of your book.</property>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
                                                 <property name="can-focus">True</property>
-                                                <property name="text" translatable="yes">Sealfoil (Ultra Strong BE19)</property>
+                                                <property name="text" translatable="yes">Sealfoil (Strong BE13)</property>
                                               </object>
                                             </child>
                                           </object>
@@ -40108,7 +40112,6 @@ the content and cover of your book.</property>
                                         <child>
                                           <object class="GtkComboBoxText" id="fcb_prnl_currency">
                                             <property name="visible">True</property>
-                                            <property name="sensitive">False</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">center</property>
                                             <property name="has-entry">True</property>
@@ -40143,10 +40146,16 @@ the content and cover of your book.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
+                                          <object class="GtkSeparator">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">center</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">1</property>
+                                            <property name="height">2</property>
+                                          </packing>
                                         </child>
                                         <child>
                                           <placeholder/>
@@ -40213,6 +40222,8 @@ the content and cover of your book.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <placeholder/>
@@ -40253,6 +40264,8 @@ the content and cover of your book.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <placeholder/>
