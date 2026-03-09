@@ -90,6 +90,9 @@ class ParInfo:
     def __repr__(self):
         return self.__str__()
 
+    def pid(self):
+        return f"{self.ref}[{getattr(self, 'parnum', '')}]"
+
     def sortKey(self):
         return (self.rects[-1].pagenum, refSort(self.ref), getattr(self, 'parnum', 0))
 

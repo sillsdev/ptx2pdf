@@ -158,6 +158,7 @@ class RunJob:
         self.noaction = False
         self.norun = False
         self.nothreads = False
+        self.forcedlooseness = None
         # self.oldversions = 1
         self.docreatediff = False
         # self.onlydiffs = True
