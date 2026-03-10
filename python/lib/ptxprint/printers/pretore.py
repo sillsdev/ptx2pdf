@@ -179,9 +179,10 @@ class Pretore:
     def submit_quote(self, qinfo, endpoint, cb=None, amt=100):
         if cb is None:
             cb = self.updatequote
-        thread = threading.Thread(target=self.url_query, args=(cb, endpoint, amt, qinfo))
-        thread.daemon = True
-        thread.start()
+        self.url_query(cb, endpoint, amt, qinfo)
+        # thread = threading.Thread(target=self.url_query, args=(cb, endpoint, amt, qinfo))
+        # thread.daemon = True
+        # thread.start()
 
     def updatequote(self, result):
         if result is not None:
