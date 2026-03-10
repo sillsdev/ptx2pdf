@@ -161,7 +161,7 @@ class AdjList:
                 outf.write(line + "\n")
 
     def _createUIExtensionLines(self, r):
-        ref = rf"{r[0]}{r[1]}" + (f"={r[2]}" if r[2] > 1 else "")
+        ref = rf"{r[0]}{r[1]}={r[2]}"
         triggerItems = []
 
         if r[5] != self.centre:
