@@ -1,8 +1,13 @@
-PTXprint 3.0.13 Release Notes
-5 Mar 2026
+PTXprint 3.0.14 Release Notes
+10 Mar 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.14 (10 Mar 2026)
+  * Fix HebrewDigit mapping
+  * Fix adjlist trigger files (get shrink/expand text working again)
+  * Add page_filler but expect radical changes
 
 Bug fixes and Improvements in 3.0.13 (5 Mar 2026)
   * Handle bad bookcodes more gracefully

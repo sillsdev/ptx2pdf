@@ -39564,6 +39564,7 @@ output with a previous PDF.</property>
                     <child>
                       <object class="GtkBox" id="tb_Printers">
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="orientation">vertical</property>
