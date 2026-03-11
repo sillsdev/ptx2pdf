@@ -257,7 +257,7 @@ icon_mappings = {
 "gtk-clear": "edit-clear",
 }
 
-icons = set("""applications-system-symbolic changes-allow changes-prevent document-print-symbolic document-revert document-save-as-symbolic edit-clear edit-clear-rtl edit-clear-symbolic-rtl emblem-documents view-list-bullet-symbolic folder-documents folder-download folder-music folder-new-symbolic folder-open folder-open-symbolic folder-pictures-symbolic folder-videos-symbolic format-justify-fill go-bottom go-first-symbolic go-previous-symbolic go-next-symbolic go-last-symbolic go-top help-about-symbolic list-add list-remove media-seek-backward-symbolic media-seek-forward-symbolic object-select open-menu pan-down pan-end pan-up preferences-system-sharing printer software-update-available system-run user-desktop user-home x-office-document-symbolic text-x-generic-symbolic view-refresh-symbolic view-dual view-grid view-fullscreen-symbolic media-seek-backward-symbolic-rtl.symbolic media-seek-forward-symbolic-rtl.symbolic process-working-symbolic.svg""".split())
+icons = set("""applications-system-symbolic changes-allow changes-prevent document-print-symbolic document-revert document-save-as-symbolic edit-clear edit-clear-rtl edit-clear-symbolic-rtl emblem-documents view-list-bullet-symbolic folder-documents folder-download folder-music folder-new-symbolic folder-open folder-open-symbolic folder-pictures-symbolic folder-videos-symbolic format-justify-fill go-bottom go-first-symbolic go-previous-symbolic go-next-symbolic go-last-symbolic go-top help-about-symbolic list-add list-remove media-seek-backward-symbolic media-seek-forward-symbolic object-select open-menu pan-down pan-end pan-up preferences-system-sharing printer software-update-available system-run user-desktop user-home x-office-document-symbolic text-x-generic-symbolic view-refresh-symbolic view-dual view-grid view-fullscreen-symbolic media-seek-backward-symbolic-rtl.symbolic media-seek-forward-symbolic-rtl.symbolic process-working-symbolic.svg edit-copy-symbolic""".split())
 
 icons.update([icon_mappings["gtk-"+i] for i in \
         ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
@@ -324,7 +324,7 @@ binaries = (binaries
 # data files are considered text and end up where specified by the tuple.
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
         ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
-      + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'pdfrw', 'pdfrw/objects')]
+      + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'printers', 'pdfrw', 'pdfrw/objects')]
       + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
               + [(f'src{d}/*.*', f'ptxprint/ptx2pdf{d}') for d in ('/', '/contrib', '/contrib/ornaments')]
