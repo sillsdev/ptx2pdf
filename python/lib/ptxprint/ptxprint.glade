@@ -39564,7 +39564,6 @@ output with a previous PDF.</property>
                     <child>
                       <object class="GtkBox" id="tb_Printers">
                         <property name="can-focus">False</property>
-                        <property name="no-show-all">True</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="orientation">vertical</property>
@@ -40066,6 +40065,7 @@ individually in plastic film?</property>
                                           <object class="GtkButton" id="btn_prnl_multiQuote">
                                             <property name="label" translatable="yes">Multi-Quote Comparison...</property>
                                             <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
                                             <property name="tooltip-text" translatable="yes">Show a price comparison curve for this
@@ -40472,6 +40472,7 @@ not yet implemented.</property>
                                         <child>
                                           <object class="GtkLabel" id="l_prnl_orderStatus">
                                             <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">Feature not yet implemented.</property>
                                             <property name="valign">end</property>
@@ -40699,7 +40700,6 @@ We supply high-quality hardcovers, flex covers and paperbacks. For missionary or
                     <child type="tab">
                       <object class="GtkLabel" id="lb_Printers">
                         <property name="can-focus">False</property>
-                        <property name="no-show-all">True</property>
                         <property name="tooltip-text" translatable="yes">Adjust expert-level settings.</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Printers</property>
