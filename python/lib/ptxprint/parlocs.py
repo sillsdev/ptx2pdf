@@ -278,7 +278,7 @@ class Paragraphs(list):
                 currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
-            elif c == "parend":         # badness, bottomx, bottomy
+            elif c == "parend":         # badness, bottomx, bottomy, lastdepth
                 cinfo = colinfos.get(polycol, None)
                 ps = currps.get(polycol, None)
                 if ps is None or not len(ps.rects):
@@ -289,7 +289,6 @@ class Paragraphs(list):
                     continue
                 currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
                 if len(p) > 2:
-                    ps.lines = int(p[0])
                     currr.yend = readpts(p[2])
                 else:
                     currr.yend = readpts(p[1])
@@ -421,6 +420,7 @@ class Paragraphs(list):
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
         start = max(self.pindex[pnum-1], 0)
+        logger.info(f"{pnum=}, {start=}, {e=}, max={len(self)}, {self.pindex=}")
         if inclast and pnum > 1:        # pnum is 1 based
             done = False
             for p in self[start:-1:-1]:

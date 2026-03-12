@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 from dataclasses import dataclass
-from typing import Dict, Tuple, List, Optional, Union, Any
-import heapq, re, os, logging, random
+from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable
+from collections import deque, defaultdict
+import heapq, re, os, logging, random, itertools
 from bisect import bisect
 from ptxprint.parlocs import Paragraphs
 from ptxprint.adjlist import AdjList
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 ParagraphRef = Any
 VerseRef = Any
 PageIndex = int
+ColMask = int
 Expansion = float
 Stretch = int
 ParamSig = Tuple[Expansion, Stretch]
@@ -37,11 +39,13 @@ class PageState:
     page_index: int
     column_free_lines: Tuple[int, ...]  # e.g. (0,) or (-1, 0)
 
+
 @dataclass
 class LayoutRunResult:
     pages: List[PageState]
     first_failing_page: Optional[PageIndex]
     paragraph_total_lines: Dict[ParagraphRef, int]  # p -> total lines in this run
+    paragraph_pages: Dict[ParagraphRef, List[Dict[PageIndex, ColMask]]]
 
     def _cmp(self, other):
         res = cmp(self.first_failing_page, other.first_failing_page)
@@ -57,6 +61,15 @@ class LayoutRunResult:
     def __eq__(self, other):
         return self._cmp(other) == 0
 
+    def get_pars(self, page, n=None):
+        if n is None:
+            return [k for k, v in self.paragraph_pages.items() if page in v]
+        else:
+            return [k for k, v in self.paragraph_pages.items() if (v.get(page, 0) & (n + 1)) != 0]
+
+    def par_col(self, pid):
+        return self.pages[self.paragraph_pages[pid]][1]
+
 # -----------------------------
 # ENGINE STATE
 # -----------------------------
@@ -66,6 +79,7 @@ class EngineState:
     paragraph_params: Dict[ParagraphRef, ParamSig]
     float_anchors: Dict[Any, VerseRef]
     layout: LayoutRunResult
+    parlocs: Paragraphs
 
     def _cmp(self, other):
         res = cmp(self.layout, other.layout)
@@ -99,8 +113,9 @@ class SolveResult:
 
 class Hooks:
 
-    def __init__(self, printer):
+    def __init__(self, printer, state):
         self.printer = printer
+        self.basestate = state
 
     def run_layout(self,
                    paragraph_params: Dict[ParagraphRef, ParamSig],
@@ -114,12 +129,24 @@ class Hooks:
                 firstbad = i
             pages.append(PageState(i, u))
         plines = self.printer.get_plines()
-        return LayoutRunResult(pages, firstbad, plines)
+        pmap = self.printer.get_pidmap()
+        logger.info(f"{firstbad=}")
+        return LayoutRunResult(pages, firstbad, plines, pmap)
 
-    def get_rect_paragraphs_for_pages(self,
+    def get_paragraphs_for_pages(self,
                                         first: PageIndex,
-                                        last: PageIndex) -> List[ParagraphRef]:
-        return self.printer.get_pids_on_pages(first, last)
+                                        last: PageIndex,
+                                        state = None) -> List[ParagraphRef]:
+        if state is None:
+            state = self.basestate
+        res = [p for p, v in state.layout.paragraph_pages.items()
+                    if any(k in range(first, last+1) for k in v.keys())]
+        return res
+
+    def get_paras_for_col(self, page, col, state=None):
+        if state is None:
+            state = self.basestate
+        return state.layout.get_pars(page, col)
 
     def is_header_at_column_start(self,
                                   paragraph: ParagraphRef,
@@ -134,237 +161,236 @@ class Hooks:
                        paragraph: ParagraphRef,
                        expansion: float,
                        stretch: int) -> float:
-        res = ((1 - expansion) * 100) ** 2 if expansion < 1 else (expansion - 1) * 100
-        res += stretch * stretch * 10
+        res = 75 * (stretch ** 4) / self.basestate.layout.paragraph_total_lines[paragraph]
+        res += ((1 - expansion) * 100) ** 2
+        res += 100 * self.printer.pid_isheader(paragraph)
         return res
+
+    def progress(self, pindex, itercount):
+        print(f"Starting page {pindex} after {itercount} iterations")
 
 # -----------------------------
 # SOLVER
 # -----------------------------
 
-class BeamTypesetterSolver:
-    def __init__(self,
-                 paragraphs: List[ParagraphRef],
-                 hooks: Hooks,
-                 init_layout: LayoutRunResult,
-                 max_backtrack_pages: int = 5,
-                 beam_width: int = 6,
-                 lookahead_sample: int = 6):
-        self.paragraphs = paragraphs
-        self.init_layout = init_layout
-        self.hooks = hooks
-        self.max_backtrack = max_backtrack_pages
-        self.beam = beam_width
-        self.lookahead = lookahead_sample
-        self.line_cache: Dict[LineKey, int] = {}
-        self.bad_cache: Dict[BadKey, float] = {}
+UNKNOWN = object()
+IMPOSSIBLE = object()
 
-    def solve_book(self) -> SolveResult:
-        base = {p: (1.0,0) for p in self.paragraphs}
-        for pid, lines in self.init_layout.paragraph_total_lines.items():
-            self.line_cache[(pid,1.0,0)] = lines
-        state = EngineState(base, {}, self.init_layout)
-        if self.init_layout.first_failing_page is None:
-            return SolveResult(state=state)
-        return self._search(state)
+ParamSig = Tuple[float, int]
+ParagraphRef = Any
+Combo = Tuple[Tuple[ParagraphRef, int], ...]
 
-    def _search(self, start:EngineState) -> SolveResult:
-        openq=[]
-        heapq.heappush(openq, (0, start))
-        visited = set()
-        count = 0
-        while openq:
-            _,state = heapq.heappop(openq)
-            fail = state.layout.first_failing_page
-            if fail is None:
-                return SolveResult(state=state)
-            for back in range(self.max_backtrack + 1):
-                paras = self.hooks.get_rect_paragraphs_for_pages(max(0, fail-back), fail+1)
-                moves = self._candidate_moves(state, paras, back)
-                for new_params in moves:
-                    merged = self._merge(state.paragraph_params, new_params)
-                    #speculative = self._speculate(merged, fail)
-                    speculative = merged
-                    count += 1
-                    logger.info(f"Running [{count}] for page {fail}: {speculative}")
-                    layout = self.hooks.run_layout(speculative, state.float_anchors)
-                    for pid, lines in layout.paragraph_total_lines.items():
-                        e, s = speculative.get(pid, (1.0,0))
-                        self.line_cache[(pid, e, s)] = lines
-                    new_state = EngineState(speculative, state.float_anchors, layout)
-                    #key=tuple(sorted(speculative.items()))
-                    key = self._normalize(speculative)
-                    if key in visited: continue
-                    visited.add(key)
-                    score = self._score(new_state)
-                    heapq.heappush(openq, (score, new_state))
-                if moves: break
-        return SolveResult(human_fix = HumanFixRequest(
-                    page = start.layout.first_failing_page,
-                    message = "Unable to solve automatically"
-        ))
+DELTA_ORDER = [-1, -2, 1, 2]
+BEAM_LIMIT = 1000
+EXPANSION_ORDER = [1.0, 0.98, 0.97, 1.03, 0.96, 0.94, 1.05]
 
-    def _candidate_moves(self, state, paras, back):
-        moves = []
-        for p in paras:
-            pid = p
-            e, s = state.paragraph_params.get(pid, (1.0,0))
-            current_lines = state.layout.paragraph_total_lines.get(pid)
-            candidates = [(round(e-0.01, 2), s), (round(e-0.02, 2), s)]
-            if self.hooks.is_header_at_column_start(p, state.layout):
-                if back >= 1 and s < 2:
-                    candidates.append((e, s+1))  # last-resort line sink
-                else:
-                    continue
-            if s > -1: candidates.append((e, s-1))
-            for ne, ns in candidates:
-                cached = self.line_cache.get((pid, ne, ns), None)
-                if cached is not None and cached == current_lines:
-                    continue
-                moves.append({pid: (ne, ns)})
-        random.shuffle(moves)
-        return moves[:self.beam]
 
-    def _speculate(self, params, fail):
-        out = dict(params)
-        paras = self.hooks.get_rect_paragraphs_for_pages(fail+1, fail+4)
-        count = 0
-        for p in paras:
-            if count >= self.lookahead: break
-            pid = p
-            if pid in out: continue
-            for e, s in [(0.98,-1), (0.96,-1), (1.0,1)]:
-                if (pid, e, s) not in self.line_cache:
-                    out[pid] = (e, s)
-                    count += 1
-                    break
-        return out
+class DeltaCache:
 
-    def _normalize(self, params):
-        out = {}
-        for p in self.paragraphs:
-            v = params.get(p, (1.0, 0))
-            if v != (1.0, 0):
-                out[p] = v
-        return tuple(sorted(out.items()))
+    def __init__(self) -> None:
+        self.data: Dict[Tuple[ParagraphRef, int], Any] = {}
 
-    def _merge(self,a,b):
-        c = dict(a); c.update(b); return c
+    def get(self, p: ParagraphRef, d: int) -> Any:
+        return self.data.get((p, d), UNKNOWN)
 
-    def _score(self,state):
-        fail = state.layout.first_failing_page
-        if fail is None: return -1e9
-        page = state.layout.pages[fail]
-        deficit = sum(abs(x) for x in page.column_free_lines if x<0)
-        bad = 0
-        for pid, (e, s) in state.paragraph_params.items():
-            if (pid, e, s) not in self.bad_cache:
-                p = next(x for x in self.paragraphs if x == pid)
-                self.bad_cache[(pid, e, s)] = self.hooks.design_badness(p, e, s)
-            bad += self.bad_cache[(pid, e, s)]
-        return fail*1000 + deficit*10 + bad
+    def set(self, p: ParagraphRef, d: int, val: Any) -> None:
+        self.data[(p, d)] = val
 
-#---------
+
+class ShapeCache:
+
+    def __init__(self) -> None:
+        self.data: Dict[Tuple[ParagraphRef, float, int], int] = {}
+
+    def tested(self, p: ParagraphRef, e: float, s: int) -> bool:
+        return (p, e, s) in self.data
+
+    def set(self, p: ParagraphRef, e: float, s: int, d: int) -> None:
+        self.data[(p, e, s)] = d
+
+    def get(self, p: ParagraphRef, e: float, s: int) -> Optional[int]:
+        return self.data.get((p, e, s))
+
 
 class TypesetterSolver:
-    def __init__(self,
-                 paragraphs: List[ParagraphRef],
-                 hooks: Hooks,
-                 init_layout: LayoutRunResult,
-                 max_backtrack_pages: int = 5,
-                 beam_width: int = 6,
-                 lookahead_sample: int = 6):
-        self.paragraphs = paragraphs
+
+    def __init__(self, hooks, pids):
         self.hooks = hooks
-        self.init_layout = init_layout
-        self.max_backtrack = max_backtrack_pages
-        self.beam = beam_width
-        self.line_cache: Dict[LineKey, int] = {}
-        self.bad_cache: Dict[BadKey, float] = {}
-        self.impact: Dict[ParagraphRef, int] = {}
-        self.para_map = {p:p for p in paragraphs}
-        self.runcount = 0
+        self.paragraph_order = pids
+        self.probe_cache: Dict[Tuple[Any, float, int], int] = {}
+        self.shape_cache: Dict[Tuple[Any, int], ParamSig] = {}
+        self.baseline_lines: Dict[Any, int] = {}
+        self.base_params = {p: (1.0, 0) for p in self.paragraph_order}
+        self.tried = set()
+        self.itercount = 0
+        self.frozen_paragraphs = set()
 
-    def solve_book(self) -> SolveResult:
-        params = {p:(1.0,0) for p in self.paragraphs}
-        for pid, lines in self.init_layout.paragraph_total_lines.items():
-            self.line_cache[(pid,1.0,0)] = lines
-        state = EngineState(params, {}, self.init_layout)
+    def solve(self, state, start_page: int = 0):
+        self.init_state = state
+        if not self.baseline_lines:
+            self.baseline_lines = dict(state.layout.paragraph_total_lines)
+        page = start_page
+        self.initial_probes(state, page)
         while True:
-            fail = state.layout.first_failing_page
-            if fail is None: return SolveResult(state=state)
-            fixed = self._repair_page(state, fail)
-            if fixed is None:
-                return SolveResult(human_fix=HumanFixRequest(page=fail, message="Unable to automatically fix page"))
-            state = fixed
+            layout = state.layout
+            if layout.first_failing_page is None:
+                logger.info("solve_complete pages=%s", len(layout.pages))
+                return state
+            if layout.first_failing_page < page:
+                return None
+            page = layout.first_failing_page
+            self.hooks.progress(page, self.itercount)
+            state = self.solve_page(state, page)
+            if state is None:
+                return None
+            solved = self.hooks.get_paragraphs_for_pages(page, page)
+            self.frozen_paragraphs.update(solved)
 
-    def _repair_page(self, state:EngineState, page:int):
-        best_state = None
-        best_score = float("inf")
-        current_deficit = self._page_deficit(state.layout, page)
-        for back in range(self.max_backtrack+1):
-            paras = self.hooks.get_rect_paragraphs_for_pages(max(0, page-back), page+1)
-            paras = sorted(paras, key=lambda p: -self.impact.get(p,0))
-            moves = self._candidate_moves(state, paras, back)
-            for change in moves:
-                pid = next(iter(change))
-                new_params = self._merge(state.paragraph_params, change)
-                self.runcount += 1
-                logger.info(f"Run {self.runcount}, Page {page}. {new_params}")
-                layout = self.hooks.run_layout(new_params, state.float_anchors)
-                new_deficit = self._page_deficit(layout, page)
-                if new_deficit >= current_deficit: continue
-                score = new_deficit + self._design_cost(new_params)
-                if score < best_score:
-                    best_score = score
-                    best_state = EngineState(new_params, state.float_anchors, layout)
-                    self.impact[pid] = self.impact.get(pid,0) + 1
-            if best_state: break
-        return best_state
+    def solve_page(self, state, page):
+        self.tried.clear()
+        paragraphs = self.get_candidate_paragraphs(page)
+        page_base_params = dict(self.base_params)
+        # logger.info(f"shape_cache={','.join('+'.join((str(k), str(v))) for k, v in self.shape_cache.items() if k[1] != 0)}")
+        logger.info(f"candidates={paragraphs}")
+        combos = self.generate_combos(paragraphs, state, page)
+        for combo in combos:
+            if not combo and self.itercount > 0:
+                continue
+            key = tuple(sorted(combo.items()))
+            if key in self.tried:
+                continue
+            if state.layout.pages[page].column_free_lines[0] == 0 \
+                    and any(state.layout.paragraph_pages[p].get(page, 0) == 1 for p in combo.keys()):
+                continue
+            self.tried.add(key)
+            new_state = self.run_layout(page_base_params, state, combo)
+            free = new_state.layout.pages[page].column_free_lines
+            if new_state.layout.first_failing_page is not None and new_state.layout.first_failing_page < page:
+                continue
+            if free is None or all(x == 0 for x in free):
+                logger.info("page_solved page=%s iterations=%s", page, self.itercount)
+                logger.info(f"Winning params {",".join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
+                self.base_params = dict(new_state.paragraph_params)
+                return new_state
+            state = new_state
+        logger.info("page_failed page=%s", page)
+        return None
 
-    def _candidate_moves(self, state, paras, back):
+    def initial_probes(self, state, page):
+        paragraphs = self.paragraph_order
+        probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1)]
+        for e, s in probes:
+            params = dict(state.paragraph_params)
+            for p in paragraphs:
+                if p not in self.frozen_paragraphs:
+                    params[p] = (e, s)
+            # logger.info(f"{params=}")
+            layout = self.hooks.run_layout(params, state.float_anchors)
+            self.itercount += 1
+            logger.info("probe_run iter=%s e=%s s=%s", self.itercount, e, s)
+            self.collect_probes(layout, paragraphs, e, s)
+
+    def run_layout(self, page_base_params, state, combo):
+        params = dict(page_base_params)
+        #params = dict(self.base_params)
+        for p, d in combo.items():
+            params[p] = self.shape_cache[(p, d)]
+        # logger.info("BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
+        layout = self.hooks.run_layout(params, state.float_anchors)
+        self.itercount += 1
+        logger.info("layout_run iter=%s combo=%s freelines=%s", self.itercount, combo, 
+                ",".join("{}+{}".format(i, str(p.column_free_lines)) for i,p in enumerate(layout.pages) if p.column_free_lines is not None))
+        self.collect_probes(layout, layout.paragraph_total_lines.keys(), None, None)
+        return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
+
+    def collect_probes(self, layout, paragraphs, e, s):
+        for p in paragraphs:
+            base = self.baseline_lines.get(p)
+            if base is None:
+                logger.info(f"{p} missing from base_lines")
+                continue
+            new = layout.paragraph_total_lines[p]
+            delta = new - base
+            #logger.info(f"{p} {base=}, {delta=}, ({e=}, {s=})")
+            if e is not None and s is not None:
+                self.probe_cache[(p, e, s)] = delta
+            key = (p, delta)
+            if key not in self.shape_cache and e is not None:
+                self.shape_cache[key] = (e, s)
+
+    def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
+        yield {}
         moves = []
-        for pid in paras:
-            if self.hooks.is_header(pid):
+        seen_col_sigs = set()
+        pset = set(paragraphs)
+        first_para = state.layout.get_pars(page)[0]
+        if page - 1 not in state.layout.paragraph_pages[first_para]:
+            first_para = None
+        for (p, d), (e, s) in self.shape_cache.items():
+            if p not in pset or d == 0:
                 continue
-            e, s = state.paragraph_params.get(pid, (1.0, 0))
-            if self.hooks.is_header_at_column_start(pid, state.layout):
-                if back >= 1 and s < 2 and self._changes_lines(pid, e, s+1):
-                    moves.append({pid:(e, s+1)})
-                continue
-            for ne in (round(e-0.01, 2), round(e-0.01, 2)):
-                if self._changes_lines(pid, ne, s):
-                    moves.append({pid: (ne, s)})
-            if s > -1 and self._changes_lines(pid, e, s-1):
-                moves.append({pid:(e, s-1)})
-        return moves[:self.beam]
+            score = self.hooks.design_badness(p, e, s)
+            moves.append((score, p, d))
+        moves.sort()
+        by_para = {}
+        for score, p, d in moves:
+            by_para.setdefault(p, []).append((score, d))
+        plist = list(by_para.keys())
+        max_r = min(5, len(plist))
+        all_combos = []
+        for r in range(1, max_r + 1):
+            for pars in itertools.combinations(plist, r):
+                delta_lists = [by_para[p] for p in pars]
+                for choice in itertools.product(*delta_lists):
+                    score = sum(s for s, _ in choice)
+                    combo = {p: d for p, (_, d) in zip(pars, choice)}
+                    # have we done the same net col line change before?
+                    col_deltas = [0, 0]
+                    for p, d in combo.items():
+                        mask = state.layout.paragraph_pages[p].get(page, 0)
+                        if mask == 3:
+                            break
+                        elif mask != 0:
+                            col_deltas[mask - 1] += d
+                    else:
+                        sig = tuple(col_deltas)
+                        if sig in seen_col_sigs:
+                            continue
+                        seen_col_sigs.add(sig)
+                        
+                    if any(state.layout.paragraph_pages[p].get(page, 0) == 3 \
+                            or page+1 in state.layout.paragraph_pages[p] for p in pars):
+                        score *= 0.4
+                    if first_para is not None and any(first_para == p for p in pars):
+                        score *= 1.5
+                    all_combos.append((score, combo))
+        all_combos.sort(key=lambda x: (x[0], len(x[1])))
+        for _, combo in all_combos:
+            yield combo
 
-    def _changes_lines(self, pid, e, s):
-        base = self.line_cache.get((pid,1.0,0))
-        new = self.line_cache.get((pid,e,s))
-        if new is None: return True
-        return new != base
+    def get_candidate_paragraphs(self, page):
+        start = max(0, page - 4)
+        pars = self.hooks.get_paragraphs_for_pages(page, page, state=self.init_state)
+        pars.sort(key=self.paragraph_order.index)
+        return pars
 
-    def _page_deficit(self, layout, page):
-        p = layout.pages[page]
-        return sum(abs(x) for x in p.column_free_lines if x < 0)
+    def get_probe_paragraphs(self, page):
+        return self.hooks.get_paragraphs_for_pages(page, page + 1)
 
-    def _design_cost(self, params):
-        bad = 0
-        for pid, (e, s) in params.items():
-            key = (pid, e, s)
-            if key not in self.bad_cache:
-                p = self.para_map[pid]
-                self.bad_cache[key] = self.hooks.design_badness(p, e, s)
-            bad += self.bad_cache[key]
-        return bad
+    def combo_badness(self, combo):
+        score = 0
+        boundary = False
+        for p, d in combo.items():
+            (e, s) = self.shape_cache.get((p, d), (None, None))
+            if e is None:
+                score += 1000
+            else:
+                score += self.hooks.design_badness(p, e, s)
+        return score
 
-    def _merge(self, a, b):
-        c = dict(a)
-        c.update(b)
-        return c
 
-#---------
+# -------------
+
 
 class GrowList(list):
     def __setitem__(self, index, value):
@@ -373,7 +399,7 @@ class GrowList(list):
     def __getitem__(self, index):
         if index >= len(self):
             return None
-        return super().__getitem__(index) or default
+        return super().__getitem__(index) or None
     def _ensure(self, index):
         if index >= len(self):
             self.extend([None] * (index - len(self) + 1))
@@ -387,26 +413,42 @@ class PTXprinter:
         self.rtl = False    # not always
         self.view = view
         self.bk = bk
+        self.view.set("c_allowUnbalanced", True)
 
     def solve(self):
         self.view.savePics()
         self.view.saveStyles()
-        self.hooks = Hooks(self)
+        self.hooks = Hooks(self, None)
         init_layout = self.hooks.run_layout({}, {})
-        pids = self.get_pids()
-        solver = TypesetterSolver(pids, self.hooks, init_layout)
-        res = solver.solve_book()
+        pids = list(init_layout.paragraph_pages.keys())
+        state = EngineState({p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
+        self.hooks.basestate = state
+        solver = TypesetterSolver(self.hooks, pids)
+        res = solver.solve(state, 0)
         if isinstance(res, HumanFixRequest):
             print(f"{res.message} at {res.page}")
+        else:
+            print(f"Complete afer {solver.itercount} runs")
         
-    def get_pids(self):
-        return [p.pid() for p in self.parlocs]
+    def get_pidmap(self):
+        res = {}
+        for p in self.parlocs:
+            for r in p.rects:
+                c = res.setdefault(p.pid(), {}).get(r.pagenum - 1, 0)
+                res[p.pid()][r.pagenum - 1] = c | (r.col + 1)
+        return res
 
-    def get_pids_on_pages(self, first, last):
+    def get_pids_on_pages(self, first, last, state=None):
+        if state is None:
+            plocs = self.parlocs
+        else:
+            plocs = state.parlocs
         res = set()
-        for i in range(first, last + 1):
-            for p, r in self.parlocs.getParas(i, inclast=True):
+        colmask = {}
+        for i in range(first + 1, last + 2):
+            for p, r in plocs.getParas(i, inclast=True):
                 res.add(p.pid())
+                colmask[p.pid()] = colmask.get(p.pid(), 0) | (r.col + 1)
         return sorted(res, key=self.pidkey)
 
     def pidkey(self, pid):
@@ -420,8 +462,18 @@ class PTXprinter:
         return plines
 
     def get_para_ind(self, pid):
-        x = self.pidkey(pid)
-        return bisect(self.parlocs, x, key=lambda p:p.sortKey()[1:])
+        return self.pidmap[pid]
+
+    def get_para(self, pid):
+        return self.parlocs[self.pidmap[pid]]
+
+    def get_paragraph_start_page(self, pid):
+        p = self.parlocs[self.pidmap[pid]]
+        return min([r.pagenum for r in p.rects]) - 1
+
+    def get_paragraph_end_page(self, pid):
+        p = self.parlocs[self.pidmap[pid]]
+        return max([r.pagenum for r in p.rects]) - 1
 
     def isheader_column_start(self, pid):
         pi = self.get_para_ind(pid)
@@ -437,7 +489,7 @@ class PTXprinter:
         return self.isheader(p.mrk)
 
     def isheader(self, mrk):
-        return Grammar.marker_categories.get(mrk, '') == "sectionpara"
+        return Grammar.marker_categories.get(mrk, '') in ("sectionpara", "title")
 
     def run(self, parparms, floats):
         tname = self.view.getLocalTriggerFilename(self.bk)
@@ -446,18 +498,25 @@ class PTXprinter:
         self.adjs = AdjList(100, 95, 105, fname=adjfname)
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
-            self.adjs.setval(r[0], f"{r[1]}.{r[2]}", para, p[1], None, expand=p[0], append=True)
+            self.adjs.setval(s[:3], f"{r[1]}.{r[2]}", para, p[1], None, expand=int(p[0]*100), append=True)
         self.adjs.createAdjlist()
+        tname = self.view.getLocalTriggerFilename(self.bk)
+        tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
+        self.adjs.createTriggerlist(fname=tpath)
 
         if self.job is None:
             self.job = RunJob(self.view, self.view.scriptsdir, self.view.scriptsdir, self.view.args)
             self.job.norun = True
+            self.job.nopdf = True
+            self.job.silent = True
             self.job.doit(noview=True)
+            self.job.maxRuns = 1
 
         self.job.run_xetex(self.job.outfname, self.job.pdffile)
         parlocsfile = self.job.outfname.replace(".tex", ".parlocs")
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(parlocsfile, self.rtl)
+        self.pidmap = {p.pid(): i for i, p in enumerate(self.parlocs)}
         logfile = self.job.outfname.replace(".tex", ".log")
         self.parselog(logfile)
 
@@ -481,7 +540,7 @@ class PTXprinter:
                     elif isinstance(v, list):
                             v[0] = lines
                     else:
-                            v = lines
+                            v = [lines]
                     self.underfills[pnum] = v
 
     def read_badnesses(self):

@@ -158,6 +158,8 @@ class RunJob:
         self.noaction = False
         self.norun = False
         self.nothreads = False
+        self.nopdf = False
+        self.silent = False
         self.forcedlooseness = None
         # self.oldversions = 1
         self.docreatediff = False
@@ -617,7 +619,10 @@ class RunJob:
             else:
                 action = r"\def\ForcedLooseness{{{}}}\input {}".format(self.forcedlooseness, outfname)
             logger.debug(f"Running: {cmd} {action}")
-            runner = call(cmd + [action], cwd=self.tmpdir)
+            callkw = {}
+            if self.silent:
+                callkw['stdout'] = subprocess.DEVNULL
+            runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
                     #runner.wait(self.args.timeout)
@@ -680,7 +685,7 @@ class RunJob:
             if not rererun:
                 break
 
-        if not self.res:
+        if not self.res or not self.nopdf:
             self.printer.incrementProgress(stage="xp")
             tmppdf = self.procpdfFile(outfname, pdffile)
             if self.info["finishing/extraxdvproc"]:

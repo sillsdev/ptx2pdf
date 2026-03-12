@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
 refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
-restre = re.compile(r"^\s*(?:mrk=|\\)(\S+)\s*(?:expand=)?(\d+)(.*?)$")
+restre = re.compile(r"^\s*(?:(?:mrk=|\\)(\S+)\s*)?(?:(?:expand=)?(\d+)(.*?))?$")
 
 class Liststore(list):
     """ structure: 
@@ -111,7 +111,8 @@ class AdjList:
                 n = restre.match(c)
                 if n:
                     val[4] = n.group(1)
-                    val[5] = int(n.group(2))
+                    if n.group(2):
+                        val[5] = int(n.group(2))
                     val[6] = n.group(3)
         return val
 
