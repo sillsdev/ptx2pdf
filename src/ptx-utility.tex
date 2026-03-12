@@ -1,7 +1,7 @@
 %:skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
-% copyright (c) 2022 by SIL International
+% copyright (c) 2022-2026 by SIL International
 % written by David Gardner
 %
 % Permission is hereby granted, free of charge, to any person obtaining  
@@ -229,5 +229,80 @@ T\or U\or V\or W\or X\or Y\or Z\else \error{Number too high}\fi\fi}
 \def\save@m@rk#1{\getm@rknum{#1}\x@\xdef\csname customtopmark-#1\endcsname{\firstmarks\m@rknum}\x@\xdef\csname custombotmark-#1\endcsname{\botmarks\m@rknum}\trace{ma}{top=\csname customtopmark-#1\endcsname, bot=\csname custombotmark-#1\endcsname}}
 \def\unsavem@rks{\trace{ma}{Unsaving marks: \the\usedm@rks}\let\\=\unsave@m@rk \the\usedm@rks}
 \def\unsave@m@rk#1{\getm@rknum{#1}\ifcsname customtopmark-#1\endcsname\marks\m@rknum{\csname customtopmark-#1\endcsname}\else\trace{ma}{-skipping customtopmark-#1 (undefined)-}\fi\ifcsname custombotmark-#1\endcsname\marks\m@rknum{\csname custombotmark-#1\endcsname}\fi}
+
+%%%%%% Merge lists of dimensions.
+% Complex layouts, maybe other things eventually, need to be able
+% to add or subtract 2 lists of key1:dim1,key2:dim2....
+% and end up with a single (per-column) list.
+
+\globdimenblk\m@rgedim{50}% hope this is overkilll.
+\def\ml@g{}\m@rgedno=0
+\let\m@rgepfx\empty
+\newcount\m@rgedno
+\def\res@tm@reged{%
+  \ifx\m@rgepfx\empty\else
+    \errmessage{Programming error: calling resetm@rged with column prefixes is invalid}%
+  \fi
+  \let\d@\undefm@dim
+  \x@\cstackdown\ml@g,\E
+  \def\ml@g{}%
+  \m@rgedno=0 % This is the bit that means it can't work per-column
+}
+
+\def\undefm@dim#1\E{\x@\let\csname @\m@rgepfx @@#1\endcsname\undefined}
+\def\m@rgedims#1#2#3{%Combine #1 and #3 using operator #2
+  \edef\@atmp{#1}\edef\@btmp{#3}\tempfalse
+  \ifx\@atmp\empty\temptrue\else\ifx\@btmp\empty\temptrue\fi\fi
+  \iftemp\edef\@mtmp{#1#3}\else
+    \def\@op{=}%
+    \x@\@m@rgedim#1,\E%
+    \def\@op{#2}%
+    \x@\@m@rgedim#3,\E%
+  \fi
+  \let\@mtmp\empty
+  \let\d@\r@pval
+  \x@\cstackup\ml@g,\E
+  \res@tm@reged
+}
+\def\@all@r@pval#1\E{% Report value (all)
+  \edef\@mtmp{\ifx\@mtmp\empty\else \@mtmp,\fi#1:\the\dimen\numexpr \m@rgedim+\csname @\m@rgepfx @@#1\endcsname\relax}}
+
+\def\@pos@r@pval#1\E{% Report value (Only non-zero positive values)
+  \ifdim\dimen\the\numexpr \m@rgedim+\csname @\m@rgepfx @@#1\endcsname\relax >0
+    \edef\@mtmp{\ifx\@mtmp\empty\else \@mtmp,\fi#1:\the\dimen\numexpr \m@rgedim+\csname @\m@rgepfx @@#1\endcsname\relax}%
+  \fi
+}
+\let\r@pval\@all@r@pval % So there's *a* r@pval defined
+
+\def\@m@rgedim#1,#2\E{%
+  \edef\tmp{#1}\ifx\tmp\empty\else
+    \@@m@rgedim #1::\E
+  \fi
+  \edef\tmp{#2}\ifx\tmp\empty
+    \let\n@x\cstackrelax
+  \else
+    \let\n@x\@m@rgedim
+  \fi
+  \n@x#2\E
+}
+
+\def\@@m@rgedim#1:#2:#3\E{%
+  \def\tmp{#2}\ifx\tmp\empty\trace{dmc}{! @@m@rgedim Error parsing #1. Ignored}\else
+    \edef\mn@m{@\m@rgepfx @@#1}\ifcsname \mn@m\endcsname
+      \edef\v@r{\dimen\the\numexpr \m@rgedim+\csname \mn@m\endcsname\relax}%
+      \if=\@op
+        \v@r=#2\relax
+      \else
+        \v@r=\dimexpr \v@r \@op #2\relax
+      \fi
+    \else
+      \x@\edef\csname \mn@m\endcsname{\the\m@rgedno}%
+      \edef\ml@g{#1,\ml@g}%
+      \advance\m@rgedno by 1
+      \edef\v@r{\dimen\the\numexpr \m@rgedim+\csname \mn@m\endcsname\relax}%
+      \v@r \@op#2
+    \fi
+  \fi
+}
 
 

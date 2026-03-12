@@ -2720,6 +2720,7 @@
   % ins@meas@trialfullfalse will run the check without the full analysis, and
   % re-run it if there's any inserts (the full check is several times slower,
   % so this is worthwhile, unless it's known to be an insert-heavy box.
+  % FIXME: Implement some kind of 'don't touch numbers below X', so we don't re-measure the same stuff multiple times when there's reflow happening.
   \ifdim\pagetotal>0pt \message{me@sureins@trial cannot be called with content on the page}\pagebreak\relax\fi
   \def\ins@meas@trial@result{0pt}%
   \def\ins@meas@trial@dims{}%

@@ -29,6 +29,8 @@
 
 \diglottrue
 \stylesheet{usfm_sb.sty}
+
+%\tracinggroups=1
 \polyglotpages{LL/A,RR/A,C}
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1}
@@ -227,6 +229,12 @@
 \tracetimset{rsplit}\relax
 \complex@rsplit R
 \tracetimcheck{rsplit}{recursive R}
+\tracingmacros=3 \tracingassigns=3
+\x@\let\csname this@c@cut\x@\endcsname\csname 1-0@cut\endcsname
+\this@c@cut=28\try@cut{R}
+\tracingmacros=0 \tracingassigns=0
+\bye
+
 \def\ssr@sult{}
 \tracetimset{ssplit}\relax
 \complex@ssplit R

@@ -50,23 +50,31 @@
   \fi
   \count255=\f@llow@n
   \edef\s@ffix{#1}%
-  \loop% Get to the last f@llow@n of the parent
-    \tempfalse\ifcsname f@llow@n\s@ffix\endcsname
-      \x@\let\x@\tmp\csname f@llow@n\s@ffix\endcsname\ifx\tmp\undefined\else\ifx\tmp\empty\else
-        \let\s@ffix\tmp
-        %\trace{dmc}{tmp is \tmp}%
-        \count255=\x@`\s@ffix
-        \advance\count255 -64
-        \temptrue
-      \fi\fi
-    \fi
-  \iftemp\repeat
+  \let\tmp\s@ffix\l@stf@llowon% Get to the last f@llow@n of the parent as \tmp
+  \ifx\s@ffix\tmp\else
+    \let\s@ffix\tmp
+    \count255=\x@`\s@ffix
+    \advance\count255 -64
+  \fi
   \trace{dmc}{Last in #1 chain is \s@ffix, \the\count255}%
-  \advance\count255 -1
+  \advance\count255 -1 %guess that the next follow-on might be free.
   \edef\x@fch@r{\@Alph{\count255}}%
-  \@new@followon{#1}{\s@ffix}% Sanity-check the suggestion. x@fch@r is passed implicitly 
+  \@new@followon{#1}{\s@ffix}% Sanity-check the suggestion. x@fch@r is the\currentgrouplevel)passed implicitly 
 } 
- 
+
+\def\l@stf@llowon{%
+  \let\nxt\relax
+  \ifcsname f@llow@n\tmp\endcsname
+    \x@\let\x@\l@ftmp\csname f@llow@n\tmp\endcsname
+    \ifx\l@ftmp\empty\else
+      \let\tmp\l@ftmp
+      \let\nxt\l@stf@llowon
+    \fi
+    \let\l@ftmp\undefined
+  \fi
+  \nxt
+}
+    
 \def\@new@followon#1#2{% source, following-on. x@fch@r provides the character. Sanity check the suggestion.
   \trace{dmc}{@new@followon #1 #2 \x@fch@r}%
   \temptrue
@@ -85,10 +93,12 @@
     \ifcsname \x@fch@r box\endcsname\else
       \@newpolyglotboxes{\x@fch@r}%
       \x@\mkn@wct\csname f@llowOfs\x@fch@r\endcsname\E % where does the split start?
+      \x@\mkn@wct\csname f@llowOfs\x@fch@r\endcsname\E % where does the split start?
     \fi
     \x@\xdef\csname f@llowing\x@fch@r\endcsname{#1}\x@\global\x@\let\csname \x@fch@r isFolowOn\endcsname\tr@e
-    \x@\xdef\csname f@llow@n#2\endcsname{\x@fch@r}%
-    \x@\xdef\csname f@llow@n\x@fch@r\endcsname{}%
+    %\x@\xdef\csname f@llows\x@fch@r\endcsname{#2}% f@llows is backwards in the chain - needed? 
+    \x@\xdef\csname f@llow@n#2\endcsname{\x@fch@r}%f@llow@n is next in the chain
+    \x@\xdef\csname f@llow@n\x@fch@r\endcsname{}% and the chain stops here.
     \global\f@llow@n=\count255
     \let\n@xt\sw@llowtwo
   \else
@@ -102,6 +112,7 @@
   \xdef\all@list{\all@list\x@fch@r}%
   \n@xt{#1}{#2}%
 }
+
 \def\cle@rf@llow@ns#1{%
   \trace{dmc}{cle@rf@llow@ns #1}%
   \x@\let\x@\tmp\csname f@llow@n#1\endcsname
@@ -371,6 +382,7 @@
       \x@\xdef\csname @max@cols@#1\endcsname{\@cspptotcols}%Used in determining the column width: Actual column widths get reduced by inter-column gaps, and so chunk that co-occurs in a tripple pane will be smaller than if it occured only in a double-pane. This is a pain.
     \fi
     %Needless? \x@\let\x@\@@cspptmp\csname @max@cols@#1\endcsname
+    % Columns by processing-order
     \xdef@cseq{cplx@proc\p@lyr@wstring}{\csname cplx@proc\p@lyr@wstring\endcsname\x@fch@r}%
     \ifBookOpenLeft
       \xdef@cseq{revp@lyp@gecols\p@lyr@wstring}{\x@fch@r\csname revp@lyp@gecols\p@lyr@wstring\endcsname}%
@@ -479,6 +491,7 @@
   % blocks of dims/counts ready for use. It also sets the shortcuts to the specified
   % column, saving a few CPU cycles. The  number parameter specifies how many rows actually 
   % need clearing, providing a speed-up.
+  \trace{dmc}{local@split@defs #1 \the\numexpr#2\relax (gd:\the\currentgrouplevel)}%
   \ifcsname split@defs@#1\endcsname
     \count255=\csname split@defs@#1\endcsname
     \ifnum\count255<#2 \count255=#2 \advance\count255 by 1 \fi
@@ -487,7 +500,7 @@
     \advance\count255 by 1 
   \fi
   \ifnum \count255 >\MaxComplexLines 
-    \def\MaxComplexLines{\the\count255}
+    \def\MaxComplexLines{\the\count255}%
     \message{#1 has \the\numexpr #2\relax lines. That's more than the code expected. Ideally, alter \MaxComplexLines.}%
     % FIXME if this is the only place they're used, we should deallocate/move the old blocks. Otherwise ensure they're only local definitions.
     % Current bodge is to just force reallocation, which will probably work, with code only getting called from within an output group.
@@ -523,12 +536,13 @@
   \tracetimcheck{local@split@defs}{#1 \csname split@defs@#1\endcsname}%
 }
 \def\sub@splitdefs#1#2\relax{%If Z follows on from L, then split@vrsZ(N) should point to split@vrsL(N+offset)
+  \trace{dmc}{Defining variables split@heights#1 and friends, following on #2 (gl:\the\currentgrouplevel, gt:\the\currentgrouptype)}%
   \edef\tmp{\csname @@@split@heights#2\endcsname+\csname f@llowOfs#1\endcsname}%
-  \x@\def\csname split@heights#1\endcsname##1{\x@\dimen\x@\numexpr \tmp+##1\relax}%
+  \x@\def\csname split@heights#1\x@\endcsname\x@##\x@1\x@{\x@\dimen\x@\numexpr \tmp+##1\relax}%
   \edef\tmp{\csname @@@split@insheights#2\endcsname+\csname f@llowOfs#1\endcsname}%
-  \x@\def\csname split@insheights#1\endcsname##1{\x@\dimen\numexpr \tmp+##1\relax}%
+  \x@\def\csname split@insheights#1\x@\endcsname\x@##\x@1\x@{\x@\dimen\x@\numexpr \tmp+##1\relax}%
   \edef\tmp{\csname @@@split@vrs#2\endcsname+\csname f@llowOfs#1\endcsname}%
-  \x@\def\csname split@vrs#1\endcsname##1{\x@\count\numexpr \tmp+##1\relax}%
+  \x@\def\csname split@vrs#1\x@\endcsname\x@##\x@1\x@{\x@\count\x@\numexpr \tmp+##1\relax}%
   \x@\ifx\csname f@llow@n#1\endcsname\empty \else % There are more follow-on (calculated) versions
     \x@\x@\x@\sub@splitdefs\csname f@llow@n#1\endcsname#2\relax
   \fi
@@ -551,18 +565,18 @@
 
 
 \def\complex@ssplit#1{% Slow, but reliable.
+  \ins@meas@trialfullfalse
+  %\ins@meas@trialnofulltrue
+  \vfuzz=\maxdimen
+  \setbox0\copy\csname excess#1\endcsname%
+  \dimen1=\ht0 % FIXME: This *could* be adjusted to limit it to the max number of lines that fit at maximum on the laid-out page(s).
+  \nsplit=\dimexpr \dimen1 / \@minb@seline\relax
+  \x@\edef\csname nsplit#1\endcsname{\the\nsplit}%
+  %\message{#1 has \the\nsplit\space lines}
+  \local@split@defs{#1}{\nsplit}%
   \bgroup % Keep redefinitions local
-    \ins@meas@trialfullfalse
-    %\ins@meas@trialnofulltrue
-    \vfuzz=\maxdimen
-      \setbox0\copy\csname excess#1\endcsname%
-    \dimen1=\ht0 % FIXME: This *could* be adjusted to limit it to the max number of lines that fit at maximum on the laid-out page(s).
     \dimen2=0pt
     \dimen3=0pt
-    \nsplit=\dimexpr \dimen1 / \@minb@seline\relax
-    \x@\edef\csname nsplit#1\endcsname{\the\nsplit}%
-    %\message{#1 has \the\nsplit\space lines}
-    \local@split@defs{#1}{\nsplit}%
     \count255=1
     \loop
       \setbox0\copy\csname excess#1\endcsname%
@@ -604,11 +618,18 @@
   \vfuzz=\maxdimen
   \x@\let\x@\eb@x\csname excess#1\endcsname
   \setbox0\copy\eb@x
-  \dimen1=\ht0 % FIXME?: This *could* be adjusted to limit it to the max number of lines that fit (at maximum) on the laid-out page(s). That would require some kind of accountancy steps, and things need measuring *eventually*.
-  \nsplit=\dimexpr \dimen1 / \@minb@seline\relax
+  % FIXME?: The code *could* be adjusted to only determine values
+  % for  the max number
+  % of lines that fit (at maximum) on the laid-out page(s). That
+  % would require some kind of accountancy steps, and things need
+  % measuring *eventually*. Unmeasured chunks would also make
+  % carrying over numbers to the next page chunk and reflow harder.
+  \nsplit=\dimexpr \ht0 / \@minb@seline\relax
   \x@\edef\csname nsplit#1\endcsname{\the\nsplit}%
   \trace{dmc}{complex@rsplit: #1 \the\ht0+\the\dp0: \the\nsplit}%
   \local@split@defs{#1}{\nsplit}% Generate (if needed) and flag as unused values. Also sets \split@insheights etc.  
+  \let\r@pval\@all@r@pval % All values reported by mergedim should be non-zero and positive, so there's no gain from skipping any
+  \let\m@rgepfx\empty
   \bgroup
     \ins@meas@trialfullfalse
     %\ins@meas@trialnofulltrue% No full measuring
@@ -631,64 +652,6 @@
   \ifnum\count255<\nsplit \repeat
 }
 
-\globdimenblk\m@rgedim{50}%This had *better* be overkilll
-\newcount\m@rgedno
-\def\res@tm@reged{%
-  \let\d@\undefm@dim
-  \x@\cstackdown\ml@g,\E
-  \def\ml@g{}%
-  \m@rgedno=0
-}
-\def\ml@g{}\m@rgedno=0
-
-\def\undefm@dim#1\E{\x@\let\csname @@@#1\endcsname\undefined}
-\def\m@rgedims#1#2#3{%Combine #1 and #3 using operator #2
-  \edef\@atmp{#1}\edef\@btmp{#3}\tempfalse
-  \ifx\@atmp\empty\temptrue\else\ifx\@btmp\empty\temptrue\fi\fi
-  \iftemp\edef\@mtmp{#1#3}\else
-    \def\@op{=}%
-    \x@\@m@rgedim#1,\E%
-    \def\@op{#2}%
-    \x@\@m@rgedim#3,\E%
-  \fi
-  \let\@mtmp\empty
-  \let\d@\r@pval
-  \x@\cstackup\ml@g,\E
-  \res@tm@reged
-}
-\def\r@pval#1\E{%
-  \edef\@mtmp{\ifx\@mtmp\empty\else \@mtmp,\fi#1:\the\dimen\numexpr \m@rgedim+\csname @@@#1\endcsname\relax}}
-
-\def\@m@rgedim#1,#2\E{%
-  \edef\tmp{#1}\ifx\tmp\empty\else
-    \@@m@rgedim #1::\E
-  \fi
-  \edef\tmp{#2}\ifx\tmp\empty
-    \let\n@x\cstackrelax
-  \else
-    \let\n@x\@m@rgedim
-  \fi
-  \n@x#2\E
-}
-
-\def\@@m@rgedim#1:#2:#3\E{%
-  \def\tmp{#2}\ifx\tmp\empty\trace{dmc}{! @@m@rgedim Error parsing #1. Ignored}\else
-    \edef\mn@m{@@@#1}\ifcsname \mn@m\endcsname
-      \edef\v@r{\dimen\numexpr \m@rgedim+\csname \mn@m\endcsname\relax}%
-      \if=\@op
-        \v@r=#2\relax
-      \else
-        \v@r=\dimexpr \v@r \@op #2\relax
-      \fi
-    \else
-      \x@\edef\csname \mn@m\endcsname{\the\m@rgedno}%
-      \edef\ml@g{#1,\ml@g}%
-      \advance\m@rgedno by 1
-      \edef\v@r{\dimen\numexpr \m@rgedim+\csname \mn@m\endcsname\relax}%
-      \v@r \@op#2
-    \fi
-  \fi
-}
 \newbox\tmpb@x
 \def\@complex@wrt@splitvrs#1#2{%
   \edef\t@st{\splitbotmark}%
@@ -841,6 +804,7 @@
     %\x@\let\x@\tmp\csname lastcell#1-\the\p@lyp@geno\endcsname
       %\ifdim\ht\csname excess#1\endcsname+\dp\csname excess#1\endcsname < 
   \else 
+    %TODO: Reflow 
     \me@suretrue % the layout cannot be laid up without splits, which means there must be measuring
     \ifnum\csname @columns@#1\endcsname>1 
       \ifdim \ht\csname partial#1\endcsname>0pt
@@ -1056,6 +1020,7 @@
     % (b) define tmpLht, etc as the sum of the column and inserts for a given chunk, also building a list of page-dependant inserts.
     % (c) build the column functions (calculating and referencing tstLht and friends), generate page-deductions code. 
     % If a given column only has one insert type, then there's no need to do the full scoring on it.
+    % As a new chunk cannot *remove* previously set content (except as a whole chunk when that's a title), there's no need to *remeasure* old columns, but extablished notes/inserts must occur in the height calcs
     \let\col@do\g@ncolhtadditions 
     \x@\each@col\all@list\E % step (a)
   \fi
@@ -1065,7 +1030,12 @@
   \let\pd@\g@nchunkhtfunctions
   \x@\cstackdown\r@wstrings,\E %step(c)
   \trace{dmc}{Page height calcs [me@sure\ifme@sure true\else false\fi] (last page):\meaning\p@gehtcalcs}%
-  % Need to know the p@gehtloss, and maybe if the page is full.
+  %TODO: Currently no column reflow at all at all!
+  %FIXME: Reflow columns intelegently.
+  % - Preserve historic measurements.
+  % - Save line counts from previous chunk as min@X@cut
+  %
+  % Need to know the p@gehtloss, and maybe the page won't be full.
   \pagefullfalse
   \p@lyp@geno=0 \relax
   \complex@me@surepages
@@ -1095,10 +1065,14 @@
     \tracetimcheck{costs}{}%
   \fi
 }
-\def\initspl@thts#1\E{%
+\def\initspl@thts#1\E{%Per-row
   \x@\p@rser@wstring #1\E
   \dimen0=\dimexpr \textheight-\csname p@gehtloss-\the\p@lyp@geno\endcsname\relax
-  \csname #1@cut\endcsname=\z@
+  \ifcsname min@#1@cut\endcsname % A reflowed chunk cannot end up *shorter* than it was.
+    \csname #1@cut\endcsname=\csname min@#1@cut\endcsname
+  \else
+    \csname #1@cut\endcsname=\z@
+  \fi
   \csname #1@cmax\endcsname=\numexpr \dimen0/\@minb@seline \relax
 }
 
@@ -1124,29 +1098,26 @@
     \else
       \x@\let\x@\this@c@cut\csname #1@cut\endcsname
       \x@\let\x@\this@c@cmax\csname #1@cmax\endcsname
-      \@cplx@trycosts
       %\ifx\empty\othr@p@lyr@wstrings\else
         %\cplx@trycosts#2,\E
       %\fi
       \x@\p@rser@wstring#1\E
-      \let\col@do\try@cut
-      \x@\each@col\csname p@lyp@gecols\this@p@lyr@wstring\endcsname\E
+      \let\col@do\try@cut %Cut columns
+      \x@\x@\x@\each@col\csname p@lyp@gecols\this@p@lyr@wstring\endcsname\E
+      \@cplx@trycosts % and see if we go deeper in
     \fi
   \egroup
 }
 
 \def\cplx@p@gecost{%
-  %TODO: Calculate the cost for the page = (spare page ht)
-  % \advance\cplx@trycost by ???
+  %Calculate the cost for the page = WScost * (spare page ht)
+  \advance\cplx@trycost by \WScost\dimexpr \textheight-\csname p@gehtloss-\the\p@lyp@geno\endcsname \relax
   \ifnum\p@lyp@geno=\p@lylastp@ge
     \cplx@final@costs
-    %TODO caclulate total cost = verse differences
-    %  save it 
   \fi
 }
 \let\cts@list\empty
 \def\cplx@final@costs{%
-  %TODO
   \let\col@do\cplx@minmaxv
   \x@\each@col\cts@list\E
   \ifnum\minv=999 \else
@@ -1163,18 +1134,31 @@
 \globdimen\o@cplx@trycost %Old try cost
 \globdimen\o@p@gehtloss %Old pageht 
 \globdimen\r@wminht % The minimum height in the just-calculated row. Only needed for short-term cost calcs, so no need to make it per-row
-\def\cplx@result#1\E{%TODO
+\def\cplx@result#1\E{%TODO... Urm, what's left to do??
 }
 
+\def\cplx@minmaxv#1{%This gets run by eachcol with *CONTENT* columns, not display columns. What's the last verse of the last display column from this column?
+  \def\tmp{#1}\l@stf@llowon
+  \count255=\csname split@vrs\tmp\endcsname{\csname \tmp @cut\endcsname}%
+  \ifnum\count255<\minv
+    \minv=\count255
+  \fi
+  \ifnum\count255>\maxv
+    \maxv=\count255
+  \fi
+}
+
+\globcount\incbl@cols % Incrementable column count - don't keep on increasing if there's nothing more to pull!
 \def\@cplx@trycosts{%
   % First, remember the entry conditions
   \o@cplx@trycost=\cplx@trycost
   \o@p@gehtloss=\csname p@gehtloss-\the\p@lyp@geno\endcsname
   %Do whatever maths comes with this rowstring and cut number, including setting the offsets of followons
   \let\col@do\try@cut
-  \x@\x@\x@\each@col\csname cplx@proc\p@lyr@wstring\endcsname\E
-  %TODO 
+  \x@\let\x@\tmp@proc\csname cplx@proc\p@lyr@wstring\endcsname
+  \x@\each@col\tmp@proc\E
   \r@wminht=\maxdimen
+  % Caclulate the impact of this try:
   \csname htfunction-\this@p@lyr@wstring\endcsname
   \ifdim \r@wminht=\maxdimen \else
     \dimen0=10\dimexpr \csname \this@p@lyr@wstring @ht\endcsname-\r@wminht\relax 
@@ -1189,13 +1173,21 @@
     \tempfalse
   \fi
   \iftemp
+    % Go for next row..
+    % Save insert dimensions
+    \let\col@do\gen@ins@dims@ofset
+    \x@\each@col\tmp@proc\E
     \x@\x@\x@\cplx@trycosts\othr@p@lyr@wstrings,\E
   \fi
-  \ifx\this@c@cut<\this@c@cmax \else
+  \ifnum\this@c@cut<\this@c@cmax 
+    \ifnum\incbl@cols=0
+      \tempfalse
+    \fi
+  \else
     \tempfalse
   \fi
   \let\c@nxt\relax
-  \iftemp % Do we abandon?
+  \iftemp % Do we continue or abandon?
     \let\c@nxt\@cplx@trycosts
     \advance\this@c@cut by 1
   \fi
@@ -1205,6 +1197,94 @@
 }
 
 \def\try@cut#1{%
+  %FIXME: This is really inefficient. It's executed something near O((N/M)^M) times and testing things that could easily be pre-tested -> make optimised try@cut@#1 instead.
+  %TODO Do whatever maths comes for col #1, on this rowstring and cut number, including setting the offsets of followons
+  \x@\edef\csname #1@cut\endcsname{\the\this@c@cut}%Remember where we cutting the column - needed for scoring
+  \x@\let\x@\@s@h\csname split@heights#1\endcsname% Will need this later
+  \ifcsname f@llow@n#1\endcsname
+    \x@\let\x@\l@ftmp\csname f@llow@n#1\endcsname
+    \x@\let\x@\f@llowing\csname f@llowing\l@ftmp\endcsname
+    \ifx\l@ftmp\empty\else
+      % There's something that follows this.
+      \trace{dmc}{try@cut: #1 is followed by \l@ftmp}%
+      \x@\let\x@\@@ofs\csname f@llowOfs\l@ftmp\endcsname
+      \@@ofs=\this@c@cut
+      \ifcsname f@llowOfs#1\endcsname
+        \advance \@@ofs by \csname f@llowOfs#1\endcsname
+      \fi
+      \tracingassigns=1
+      %Ensure that the cut-point is actually where the cut happens, or the next cut(s) will be pointless.
+      \x@\let\x@\@@s@h\csname split@heights\l@ftmp\endcsname
+      \dimen0=\@@s@h{0}%
+      \ifdim\dimen0=\z@\else
+        \tempfalse
+        \loop
+          \ifdim\@@s@h{1}=\dimen0
+            \advance\@@ofs by 1
+            \repeat
+      \fi
+      \count255=\csname split@defs@\f@llowing\endcsname 
+      \ifnum \count255<\@@ofs
+        \message{Somethings probably wrong. In cutting #1, there are only \tmp\space lines for \l@ftmp's parent, but the offset to start \l@ftmp\space is \the\@@ofs}%
+        \@@ofs=\count255
+      \fi
+      \tracingassigns=0
+    \fi
+  \else
+    \def\f@llowing{#1}%
+    \let\l@ftmp\empty
+  \fi
+  \ifnum\csname split@defs@\f@llowing\endcsname>\this@c@cut
+    \advance \incbl@cols by 1 % Increment the count of columns it's worth trying to increment. (if it stays 0, then that prunes the tree) 
+  \fi
+  %Cut length and follow-on now done. Now set column height and (if necessary) note dims.
+  \csname #1test\endcsname=\@s@h{\this@c@cut}% Set column height
+  \edef\tmp{#1}%
+  \ifx\f@llowing\tmp
+    \dimen0=\z@
+    \tmpfalse
+  \else
+    \tmptrue % The cut box is not the origin  
+    \dimen0\csname split@insheights#1\endcsname{-1}% TODO Check this is right and it shoudln't be {0}
+  \fi
+  \dimen1\csname split@insheights#1\endcsname{\this@c@cut}%
+  \ifdim \dimen1>\z@
+    % There are 2 things to do: 1. process current note heights if there are any (extra)
+    % 2. *save* the current values as an offset for future calcs, if this has a follow-on
+    \ifdim \dimen0=\dimen1 \else% There are inserts to decode.
+      \iftmp % This is a follow-on - subtract offset
+        \csname ins@dims@ofset#1\endcsname
+      \fi
+      \let\d@\inc@ins
+      \edef\tmp{\csname split@insdims#1\endcsname{\this@c@cut}}
+      \x@\cstackdown\tmp,\E
+    \fi
+    \ifx\l@ftmp\empty\else% Has follow-on, so save things. % FIXME: can't we do this elsewhere??
+      %TODO
+    \fi
+  \else
+    \ifx\l@ftmp\empty\else
+      %Set things up... there might still be notes / other  insets later
+    \fi
+  \fi
+}
+\def\gen@ins@dims@ofset#1\endcsname{%
+  \def\ido@name{ins@dims@ofset#1}%
+  \x@\ifx\csname f@llow@n#1\endcsname\empty 
+    \x@\let\csname \ido@name\endcsname\empty
+  \else% There are follow-ons displays
+    \tet\tmpa\empty
+    \edef\tmp{\csname split@insdims#1\endcsname{\this@c@cut}}%
+    \let\d@\@gen@ins@dims@ofset
+    \x@\cstackdown\tmp,\E
+    \x@\let\csname \ido@name\endcsname\tmpa
+  \fi
+}
+\def\@gen@ins@dims@ofset#1:#2{%
+  \edef\tmpa{\tmpa \advance \csname #1ht\endcsname by -#2}%
+}
+\def\inc@ins#1:#2\E{%
+  \advance \csname #1ht\endcsname by #2
 }
 \newtoks\fntoks
 \def\complex@me@surepages{%
