@@ -147,6 +147,7 @@ def showUnicodeValues(buffer, view, model, *a):
         selected_text = buffer.get_text(start_iter, end_iter, True)
         unicode_values = "".join(f"\\u{ord(c):04X}" for c in selected_text[:20])
         model.doStatus(unicode_values)
+        view.stop_emission_by_name("key-press-event")
 
 # Each dict within the list represents a different tab on the View+Edit page
 bindings = [
