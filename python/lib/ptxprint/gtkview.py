@@ -6551,15 +6551,17 @@ class GtkViewModel(ViewModel):
         self.styleEditor.editMarker()
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         self.i18nizeURIs()
-        
-    def onvarEdit(self, tv, path, text): #cr, path, text, tv):
+
+    def onvarEdit(self, renderer, path, text):
+        tv = self.builder.get_object("tv_zvarEdit")
         model = tv.get_model()
         it = model.get_iter_from_string(path)
-        if it:
-            model.set(it, 1, text.strip())
-            self.setvar(model.get(it, 0)[0], text.strip())
+        text = (text or "").strip()
+        if model.get(it, 1)[0] != text:
+            model.set(it, 1, text)
+            self.setvar(model.get(it, 0)[0], text)
             self.changed()
-
+        
     def onzvarAdd(self, btn):
         def responseToDialog(entry, dialog, response):
             dialog.response(response)
