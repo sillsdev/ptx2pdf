@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable
 from collections import deque, defaultdict
 import heapq, re, os, logging, random, itertools
-from math import sqrt
+from math import sqrt, log10
 from ptxprint.parlocs import Paragraphs
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob
@@ -80,6 +80,7 @@ class EngineState:
     float_anchors: Dict[Any, VerseRef]
     layout: LayoutRunResult
     parlocs: Paragraphs
+    passed: bool = False
 
     def _cmp(self, other):
         res = cmp(self.layout, other.layout)
@@ -125,12 +126,12 @@ class Hooks:
         firstbad = None
         for i in range(self.printer.parlocs.numPages()):
             u = self.printer.underfills[i+1]
-            if firstbad is None and (isinstance(u, list) or u is not None):
+            if firstbad is None and u is not None and u not in ([0], [0,0]):
                 firstbad = i
             pages.append(PageState(i, u))
         plines = self.printer.get_plines()
         pmap = self.printer.get_pidmap()
-        # logger.info(f"{firstbad=}")
+        logger.info(f"{firstbad=}")
         return LayoutRunResult(pages, firstbad, plines, pmap)
 
     def get_paragraphs_for_pages(self,
@@ -160,12 +161,17 @@ class Hooks:
     def design_badness(self,
                        paragraph: ParagraphRef,
                        expansion: float,
-                       stretch: int) -> float:
+                       stretch: int,
+                       result: bool = False) -> float:
+        # try to guess how bad a paragraph would be
         isshrink = stretch < 0 or expansion < 1
         pwidth = self.printer.get_para(paragraph).lastwidth
+        lines = self.basestate.layout.paragraph_total_lines[paragraph]
         res = 0 if isshrink else 20
-        res += 75 * (stretch ** 4) / self.basestate.layout.paragraph_total_lines[paragraph] \
-                    / ((1. - pwidth) if isshrink else pwidth)
+        res += 5 * ((2 * stretch) ** 4) / lines
+        res += min(0, 25*((1. - pwidth) if isshrink else pwidth) - lines)
+        if result:
+            res += 0 if (0.1 < pwidth < 0.9) else 50
         res += ((1 - expansion) * 100) ** 2
         res += 100 * self.printer.pid_isheader(paragraph)
         return res
@@ -228,6 +234,7 @@ class TypesetterSolver:
         self.tried = set()
         self.itercount = 0
         self.frozen_paragraphs = set()
+        self.noprobe = False
 
     def solve(self, state, start_page: int = 0):
         self.init_state = state
@@ -235,20 +242,48 @@ class TypesetterSolver:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
         page = start_page
         self.initial_probes(state, page)
+        wantprobe = False
+        testloop = 10000
         while True:
             layout = state.layout
             if layout.first_failing_page is None:
                 logger.info("solve_complete pages=%s", len(layout.pages))
                 return state
-            if layout.first_failing_page < page:
-                return None
+            # if layout.first_failing_page < page:
+            #     return None
+            if not self.noprobe and layout.first_failing_page != page + 1:
+                self.noprobe = True
+                logger.info(f"Intermediate processing of {page+1}, with no probes")
+                state = self.run_layout(self.base_params, state, {}, page + 1)
+                layout = state.layout
+                if layout.first_failing_page > page:
+                    self.noprobe = False
+                else:
+                    wantprobe = True
             page = layout.first_failing_page
             self.hooks.progress(page, self.itercount)
+            oldstate = state
             state = self.solve_page(state, page)
-            if state is None:
-                return None
+            if not state.passed:
+                if oldstate.layout.first_failing_page == page - 1:
+                    if page != testloop:
+                        logger.info(f"{testloop=} page {state.layout.first_failing_page}")
+                        testloop = min(page, testloop)
+                        wantprobe = not self.noprobe
+                        self.noprobe = True
+                        continue
+                if not self.noprobe:
+                    logger.info(f"Loop with no probe for page {state.layout.first_failing_page}")
+                    wantprobe = True
+                    self.noprobe = True
+                    continue
+                return HumanFixRequest(page, "Couldn't solve page")
             solved = self.hooks.get_paragraphs_for_pages(page, page)
             self.frozen_paragraphs.update(solved)
+            self.init_state = state
+            if wantprobe:
+                self.noprobe = False
+                wantprobe = False
 
     def solve_page(self, state, page):
         self.tried.clear()
@@ -263,22 +298,26 @@ class TypesetterSolver:
             key = tuple(sorted(combo.items()))
             if key in self.tried:
                 continue
-            if state.layout.pages[page].column_free_lines[0] == 0 \
+            if state.layout.pages[page].column_free_lines is not None \
+                    and state.layout.pages[page].column_free_lines[0] == 0 \
                     and any(state.layout.paragraph_pages[p].get(page, 0) == 1 for p in combo.keys()):
                 continue
             self.tried.add(key)
-            new_state = self.run_layout(page_base_params, state, combo)
+            new_state = self.run_layout(page_base_params, state, combo, page)
             free = new_state.layout.pages[page].column_free_lines
             if new_state.layout.first_failing_page is not None and new_state.layout.first_failing_page < page:
+                state.layout.first_failing_page = new_state.layout.first_failing_page
                 continue
             if free is None or all(x == 0 for x in free):
                 logger.info("page_solved page=%s iterations=%s", page, self.itercount)
                 logger.info(f"Winning params {",".join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
                 self.base_params = dict(new_state.paragraph_params)
+                new_state.passed = True
                 return new_state
             state = new_state
         logger.info("page_failed page=%s", page)
-        return None
+        state.passed = False
+        return state
 
     def initial_probes(self, state, page):
         paragraphs = self.paragraph_order
@@ -292,22 +331,47 @@ class TypesetterSolver:
             layout = self.hooks.run_layout(params, state.float_anchors)
             self.itercount += 1
             logger.info("probe_run iter=%s e=%s s=%s", self.itercount, e, s)
-            self.collect_probes(layout, paragraphs, e, s)
+            self.collect_probes(layout, paragraphs, params)
 
-    def run_layout(self, page_base_params, state, combo):
+    def run_layout(self, page_base_params, state, combo, page):
         params = dict(page_base_params)
         #params = dict(self.base_params)
         for p, d in combo.items():
             params[p] = self.shape_cache[(p, d)]
+        probe_params = dict(params)
+        last_para = state.layout.get_pars(page)[-1]
+        if not self.noprobe:
+            found_any = False
+            for p in self.paragraph_order[self.paragraph_order.index(last_para) + 2:]:
+                if probe_params.get(p, (10, 10)) != (1.0, 0):
+                    continue
+                found = False
+                for s in range(0, 3):
+                    if found:
+                        break
+                    for e in range(99, 94, -1):
+                        if (p, e/100, -s) not in self.probe_cache:
+                            probe_params[p] = (e/100, -s)
+                            found = True
+                            break
+                    if not found:
+                        for e in range(101, 105):
+                            if (p, e/100, s) not in self.probe_cache:
+                                probe_params[p] = (e/100, s)
+                                found = True
+                                break
+                found_any |= found
+            if not found_any:
+                self.noprobe = True
         # logger.info("BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
-        layout = self.hooks.run_layout(params, state.float_anchors)
+        layout = self.hooks.run_layout(probe_params, state.float_anchors)
         self.itercount += 1
-        logger.info("layout_run iter=%s combo=%s", self.itercount, combo)
+        logger.info("layout_run [%s] iter=%s  probe=%s combo=%s", page, self.itercount, not self.noprobe, str(combo))
 #                ",".join("{}+{}".format(i, str(p.column_free_lines)) for i,p in enumerate(layout.pages) if p.column_free_lines is not None))
-        self.collect_probes(layout, layout.paragraph_total_lines.keys(), None, None)
+        self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
         return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
 
-    def collect_probes(self, layout, paragraphs, e, s):
+    def collect_probes(self, layout, paragraphs, params):
         for p in paragraphs:
             base = self.baseline_lines.get(p)
             if base is None:
@@ -315,11 +379,15 @@ class TypesetterSolver:
                 continue
             new = layout.paragraph_total_lines[p]
             delta = new - base
+            if p not in params:
+                continue
+            e, s = params[p]
             #logger.info(f"{p} {base=}, {delta=}, ({e=}, {s=})")
-            if e is not None and s is not None:
-                self.probe_cache[(p, e, s)] = delta
+            self.probe_cache[(p, e, s)] = delta
             key = (p, delta)
-            if key not in self.shape_cache and e is not None:
+            bad = self.hooks.design_badness(p, e, s, result=True)
+            sc = self.shape_cache.get(key, None)
+            if sc is None or bad < self.hooks.design_badness(p, sc[0], sc[1], result=True):
                 self.shape_cache[key] = (e, s)
 
     def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
@@ -340,14 +408,16 @@ class TypesetterSolver:
         for score, p, d in moves:
             by_para.setdefault(p, []).append((score, d))
         plist = list(by_para.keys())
-        max_r = min(5, len(plist))
+        max_r = min(5, int(7 / log10(min(5, len(plist)))))
         all_combos = []
         seen_col_sigs = {}
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
+                if state.paragraph_params.get(pars, (1.0, 0)) != (1.0, 0):
+                    continue
                 delta_lists = [by_para[p] for p in pars]
                 for choice in itertools.product(*delta_lists):
-                    score = sum(s for s, _ in choice)
+                    score = sum(s for s, _ in choice) + 5 * len(choice)
                     combo = {p: d for p, (_, d) in zip(pars, choice)}
                     # have we done the same net col line change before?
                     col_deltas = [0, 0, 0, 0, 0]
@@ -368,11 +438,11 @@ class TypesetterSolver:
                         else:
                             continue
                         
-                    if any(state.layout.paragraph_pages[p].get(page, 0) == 3 \
-                            or page+1 in state.layout.paragraph_pages[p] for p in pars):
-                        score *= 0.4
-                    if first_para is not None and any(first_para == p for p in pars):
-                        score *= 1.5
+                   # if any(state.layout.paragraph_pages[p].get(page, 0) == 3 \
+                   #         or page+1 in state.layout.paragraph_pages[p] for p in pars):
+                   #     score *= 0.4
+                   # if first_para is not None and any(first_para == p for p in pars):
+                   #     score *= 1.5
                     all_combos.append((score, combo))
         all_combos.sort(key=lambda x: (x[0], len(x[1])))
         for _, combo in all_combos:
