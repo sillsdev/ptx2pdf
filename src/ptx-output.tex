@@ -1464,6 +1464,11 @@
       \ifvoid1 \ht\colB=\dimen3\if\XrefNotes\relax\else\ht\xr@fbox=\dimen3\fi\else \dimen3=\ht\colB\fi
     \fi
     %\und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+    \ifdim\ht\colA < \ht\colB
+      \underf@ll{\ht\colA}{\ht\colB}{A}%
+    \else
+      \underf@ll{\ht\colB}{\ht\colA}{B}%
+    \fi
     %\underf@ll{\ht\colA}{\availht}{A}%
     %\underf@ll{\ht\colB}{\availht}{B}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi

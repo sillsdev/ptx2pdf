@@ -33,7 +33,7 @@ class ParRect:
     lastdest:   InitVar[None] = None
     firstdest:  InitVar[None] = None
     xdvlines:   InitVar[None] = None
-    tspace:     float = 0
+    tspace:     float = 0.
     nspace:     int = 0
     nlines:     int = 0
     
@@ -83,6 +83,7 @@ class ParInfo:
     baseline:   float
     rects:      InitVar[None] = None
     lines:      int = 0
+    lastwidth:  float = 0.
 
     def __str__(self):
         return f"{self.ref}[{getattr(self, 'parnum', '')}] {self.lines} @ {self.baseline} {self.rects}"
@@ -113,6 +114,14 @@ class FigInfo:
 
     def sortKey(self):
         return (self.rects[-1].pagenum, refSort(self.ref), 0)       # must sort with ParInfo
+
+@dataclass
+class ColInfo:
+    height: float
+    depth:  float
+    width:  float
+    topx:   float
+    topy:   float
 
 @dataclass
 class BadSpace:
@@ -229,7 +238,7 @@ class Paragraphs(list):
                 inpage = True
                 #cinfo = [readpts(x) for x in p[1:4]]
                 #if len(cinfo) > 2:
-                #    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
+                #    colinfos[polycol] = [cinfo.height, 0, cinfo.depth, 0, cinfo.width]
                 lastyend = 0
                 for k in colcount.keys():
                     colcount[k] = -1
@@ -237,9 +246,9 @@ class Paragraphs(list):
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                 inpage = False
             elif c == "colstart":       # col height, col depth, col width, topx, topy
-                cinfo = [readpts(x) for x in p]
-                logger.log(5, f"Test replay: {lines.replay} {pwidth=} width={cinfo[2]} left={cinfo[3]}")
-                if rtl and not lines.replay and ((pwidth == 0. and cinfo[3] > cinfo[2]) or (cinfo[3] + cinfo[2]) * 2 < pwidth):
+                cinfo = ColInfo(*[readpts(x) for x in p])
+                logger.log(5, f"Test replay: {lines.replay} {pwidth=} width={cinfo.width} left={cinfo.topx}")
+                if rtl and not lines.replay and ((pwidth == 0. and cinfo.topx > cinfo.width) or (cinfo.topx + cinfo.width) * 2 < pwidth):
                     # right column. So swap it
                     logger.debug(f"Start column swap at {cinfo}")
                     lines.collectuntil("\\@colstop", [l])
@@ -249,13 +258,13 @@ class Paragraphs(list):
                 if currps.get(polycol, None) is not None:
                     if currr is not None and currr.yend == 0:
                         currps[polycol].rects.pop()
-                    currr = ParRect(pnum, colcount[polycol], cinfo[3], cinfo[4])
+                    currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
                 lastyend = 0
             elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
                 if currr is not None:
                     cinfo = colinfos.get(polycol, None)
-                    currr.xend = cinfo[3] + cinfo[2] if cinfo is not None else readpts(p[0])
+                    currr.xend = cinfo.topx + cinfo.width if cinfo is not None else readpts(p[0])
                     currr.yend = readpts(p[1])
                     currr = None
                 colinfos[polycol] = None
@@ -266,15 +275,13 @@ class Paragraphs(list):
                     p.insert(0, "")
                 logger.log(5, f"Starting para {p[0]}")
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or len(cinfo) < 4:
-                    continue
                 if currr is not None:
-                    currr.xend = cinfo[3]
+                    currr.xend = cinfo.topx
                     currr.yend = readpts(p[5])
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                 currp.rects = []
                 ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
-                currr = ParRect(pnum, colcount[polycol], cinfo[3], ystart)
+                currr = ParRect(pnum, colcount[polycol], cinfo.topx, ystart)
                 currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
@@ -287,11 +294,14 @@ class Paragraphs(list):
                     currr = ps.rects[-1]
                 if cinfo is None or currr is None:
                     continue
-                currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
+                currr.xend = cinfo.topx + cinfo.width    # p[1] is xpos of last char in par
                 if len(p) > 2:
                     currr.yend = readpts(p[2])
+                    endx = readpts(p[1])
                 else:
                     currr.yend = readpts(p[1])
+                    endx = readpts(p[0])
+                ps.lastwidth = (endx - cinfo.topx) / cinfo.width
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
@@ -320,13 +330,11 @@ class Paragraphs(list):
                 if polycol not in currps:
                     currps[polycol] = None
                 if currps[polycol] is not None:
-                    currr = ParRect(pnum, colcount[polycol], cinfo[3], cinfo[4])
+                    currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or len(cinfo) < 4:
-                    cinfo = None
-                xstart = readpts(p[2]) if cinfo is None else cinfo[3]
+                xstart = readpts(p[2]) if cinfo is None else cinfo.topx
                 if currr is not None:
                     currr.yend = readpts(p[3])
                     currr.xend = xstart

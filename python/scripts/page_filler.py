@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable
 from collections import deque, defaultdict
 import heapq, re, os, logging, random, itertools
-from bisect import bisect
+from math import sqrt
 from ptxprint.parlocs import Paragraphs
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob
@@ -130,7 +130,7 @@ class Hooks:
             pages.append(PageState(i, u))
         plines = self.printer.get_plines()
         pmap = self.printer.get_pidmap()
-        logger.info(f"{firstbad=}")
+        # logger.info(f"{firstbad=}")
         return LayoutRunResult(pages, firstbad, plines, pmap)
 
     def get_paragraphs_for_pages(self,
@@ -161,7 +161,11 @@ class Hooks:
                        paragraph: ParagraphRef,
                        expansion: float,
                        stretch: int) -> float:
-        res = 75 * (stretch ** 4) / self.basestate.layout.paragraph_total_lines[paragraph]
+        isshrink = stretch < 0 or expansion < 1
+        pwidth = self.printer.get_para(paragraph).lastwidth
+        res = 0 if isshrink else 20
+        res += 75 * (stretch ** 4) / self.basestate.layout.paragraph_total_lines[paragraph] \
+                    / ((1. - pwidth) if isshrink else pwidth)
         res += ((1 - expansion) * 100) ** 2
         res += 100 * self.printer.pid_isheader(paragraph)
         return res
@@ -251,7 +255,7 @@ class TypesetterSolver:
         paragraphs = self.get_candidate_paragraphs(page)
         page_base_params = dict(self.base_params)
         # logger.info(f"shape_cache={','.join('+'.join((str(k), str(v))) for k, v in self.shape_cache.items() if k[1] != 0)}")
-        logger.info(f"candidates={paragraphs}")
+        # logger.info(f"candidates={paragraphs}")
         combos = self.generate_combos(paragraphs, state, page)
         for combo in combos:
             if not combo and self.itercount > 0:
@@ -298,8 +302,8 @@ class TypesetterSolver:
         # logger.info("BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
         layout = self.hooks.run_layout(params, state.float_anchors)
         self.itercount += 1
-        logger.info("layout_run iter=%s combo=%s freelines=%s", self.itercount, combo, 
-                ",".join("{}+{}".format(i, str(p.column_free_lines)) for i,p in enumerate(layout.pages) if p.column_free_lines is not None))
+        logger.info("layout_run iter=%s combo=%s", self.itercount, combo)
+#                ",".join("{}+{}".format(i, str(p.column_free_lines)) for i,p in enumerate(layout.pages) if p.column_free_lines is not None))
         self.collect_probes(layout, layout.paragraph_total_lines.keys(), None, None)
         return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
 
@@ -321,11 +325,11 @@ class TypesetterSolver:
     def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
         yield {}
         moves = []
-        seen_col_sigs = set()
         pset = set(paragraphs)
         first_para = state.layout.get_pars(page)[0]
         if page - 1 not in state.layout.paragraph_pages[first_para]:
             first_para = None
+        last_para = state.layout.get_pars(page)[-1]
         for (p, d), (e, s) in self.shape_cache.items():
             if p not in pset or d == 0:
                 continue
@@ -338,6 +342,7 @@ class TypesetterSolver:
         plist = list(by_para.keys())
         max_r = min(5, len(plist))
         all_combos = []
+        seen_col_sigs = {}
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
                 delta_lists = [by_para[p] for p in pars]
@@ -345,18 +350,23 @@ class TypesetterSolver:
                     score = sum(s for s, _ in choice)
                     combo = {p: d for p, (_, d) in zip(pars, choice)}
                     # have we done the same net col line change before?
-                    col_deltas = [0, 0]
+                    col_deltas = [0, 0, 0, 0, 0]
                     for p, d in combo.items():
                         mask = state.layout.paragraph_pages[p].get(page, 0)
                         if mask == 3:
-                            break
+                            col_deltas[1] = d
+                        elif p == first_para:
+                            col_deltas[0] = d
+                        elif p == last_para and (d > 1 or page+1 in state.layout.paragraph_pages[p]):
+                            col_deltas[2] = d
                         elif mask != 0:
-                            col_deltas[mask - 1] += d
+                            col_deltas[mask + 2] += d
                     else:
                         sig = tuple(col_deltas)
-                        if sig in seen_col_sigs:
+                        if score < seen_col_sigs.get(sig, 10000):
+                            seen_col_sigs[sig] = score
+                        else:
                             continue
-                        seen_col_sigs.add(sig)
                         
                     if any(state.layout.paragraph_pages[p].get(page, 0) == 3 \
                             or page+1 in state.layout.paragraph_pages[p] for p in pars):
@@ -421,6 +431,7 @@ class PTXprinter:
         self.hooks = Hooks(self, None)
         init_layout = self.hooks.run_layout({}, {})
         pids = list(init_layout.paragraph_pages.keys())
+        logger.info(f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids)}")
         state = EngineState({p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
         self.hooks.basestate = state
         solver = TypesetterSolver(self.hooks, pids)

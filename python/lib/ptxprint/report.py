@@ -494,7 +494,7 @@ class Report:
             riverrefs = RefList([v[1] for v in rivers])
             self.add("2. Layout", f"Rivers ({rivers[0][0]:.2f}): {riverrefs.simplify()}", severity=logging.WARN, txttype="text")
         badnesses = sorted([(sqrt(p.badness), p.ref) for p in plocs], reverse=True)[:10]
-        averagebad = sum((p.badness for p in plocs)) / len(plocs)
+        averagebad = sum((p.badness for p in plocs)) / len(plocs) if len(plocs) else 0
         if averagebad > 0.0001:
             self.add("2. Layout", f"Paragraph Badness (standard deviation around the width of a space): {sqrt(averagebad):.4f}")
             self.add("2. Layout", f"Pargraphs that are bad: {', '.join('{1}={0:.4f}'.format(*x) for x in badnesses)}")

@@ -632,7 +632,8 @@ class RunJob:
                 self.res = runner.returncode
             elif isinstance(runner, subprocess.CompletedProcess):
                 self.res = runner.returncode
-                logger.debug(f"{runner.stdout.decode('UTF-8')}")
+                if runner.stdout != subprocess.DEVNULL:
+                    logger.debug(f"{runner.stdout.decode('UTF-8')}")
             else:
                 self.res = runner
             print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
