@@ -324,7 +324,7 @@ class Paragraphs(list):
                 currr = None
             elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
                 polycol = p[5]
-                colinfos[polycol] = [readpts(x) for x in p[:-1]]
+                colinfos[polycol] = ColInfo(*[readpts(x) for x in p[:-1]])
                 cinfo = colinfos[polycol]
                 colcount[polycol] = colcount.get(polycol, 0) + 1
                 if polycol not in currps:

@@ -408,7 +408,7 @@ class TypesetterSolver:
         for score, p, d in moves:
             by_para.setdefault(p, []).append((score, d))
         plist = list(by_para.keys())
-        max_r = min(5, int(7 / log10(min(5, len(plist)))))
+        max_r = min(5, int(6 / log10(min(5, len(plist)))))
         all_combos = []
         seen_col_sigs = {}
         for r in range(1, max_r + 1):
