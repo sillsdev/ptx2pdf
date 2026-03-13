@@ -2712,6 +2712,7 @@
 % But they're surely doomed/handled in \partial as a result of normal polyglot
 % collection, etc. anyway??
 
+\edef\premtht{10000pt}% 3.5 metres should be enough, since this is aiming for a single page...
 \def\me@sureins@trial#1#2{%DONT run this whith anything on the page!
   % #1 column, #3 box
   % May be run in 3 modes: 
@@ -2726,7 +2727,6 @@
   \def\ins@meas@trial@dims{}%
   \bgroup
     \output{\ins@meas@trial}% Not global, just here.
-    \edef\premtht{10000pt}% 3.5 metres should be enough, since this is aiming for a single page...
     \vsize=\premtht
     %{\nonstopmode\showbox#2}%
     %\tracingpages=1

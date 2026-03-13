@@ -1,0 +1,29 @@
+\def\pluginlist{polyglot-complexpages}
+\input paratext2.tex
+\tracing{dmc}  
+\tracing{dmp}  
+\tracing{imt}  
+\tracing{dmcr}  
+\tracing{tim}  
+\def\regular{"Gentium Plus"}
+\def\bold{"Gentium Plus/B"}
+\def\italic{"Gentium Plus/I"}
+\PaperHeight=148mm
+\PaperWidth=210mm
+\baselineskip=12pt
+\showboxbreadth=100
+\newPolyglotCol{L}
+\newPolyglotCol{R}
+\newPolyglotCol{A}
+\def\DiglotLFraction{0.3}
+\def\DiglotRFraction{0.5}
+\def\DiglotAFraction{1}
+\polyglotpages{LLL/A,RR/A}
+\diglottrue
+\stylesheet{usfm_sb.sty}
+\def\LineSpacingFactor{1.0}
+\def\VerticalSpaceFactor{1}
+\tracinggroups=1
+\tracingassigns=1
+\ptxfile{mergedGal.usfm}
+\bye

@@ -9,18 +9,24 @@ TPATH=.:${DIR}//
 	
 
 pretest.pdf: pretest.tex  $(DIR)/*.tex *.sty $(DIR)/*.sty
-test.pdf: test.tex  test.usfm $(DIR)/*.tex *.sty $(DIR)/*.sty
 subtest.log: subtest.tex $(DIR)/*.tex  Makefile
 	TEXINPUTS="$(TPATH)"  xetex --no-pdf $<
 	
 bisect:
 	-mkdir ../bisect || rm -f ../bisect/*
 	cp *.tex *.usfm *.sty *.lua Makefile ../bisect
+test.pdf: test.tex  mergedGal.usfm $(DIR)/*.tex *.sty $(DIR)/*.sty
+	TEXINPUTS="$(TPATH)"  xetex --no-pdf $<
+	TEXINPUTS="$(TPATH)"  xetex  $<
+
 pretest.pdf: pretest.tex  $(DIR)/*.tex *.sty $(DIR)/*.sty
 	TEXINPUTS="$(TPATH)"  xetex --no-pdf $<
 	TEXINPUTS="$(TPATH)"  xetex  $<
 	awk 'function o(n){print n, res[n];} match($$0,/\\[a-zA-Z0-9_@-]*=\\(box|count|dimen|insert)([0-9][0-9]*)/,ary){if (ary[2]<255) {res[ary[1]]=ary[2];}}END{o("insert");o("box");o("count");o("dimen")}' pretest.log
 
+autotest:
+	echo Source code in $(DIR)
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make test.pdf ; done < /dev/null
 auto:
 	echo Source code in $(DIR)
 	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make pretest.pdf ; done < /dev/null

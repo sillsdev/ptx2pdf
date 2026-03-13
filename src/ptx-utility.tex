@@ -235,10 +235,10 @@ T\or U\or V\or W\or X\or Y\or Z\else \error{Number too high}\fi\fi}
 % to add or subtract 2 lists of key1:dim1,key2:dim2....
 % and end up with a single (per-column) list.
 
+\newcount\m@rgedno
 \globdimenblk\m@rgedim{50}% hope this is overkilll.
 \def\ml@g{}\m@rgedno=0
 \let\m@rgepfx\empty
-\newcount\m@rgedno
 \def\res@tm@reged{%
   \ifx\m@rgepfx\empty\else
     \errmessage{Programming error: calling resetm@rged with column prefixes is invalid}%
