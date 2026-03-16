@@ -77,6 +77,8 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         server = run_broadway(broadway_display)
         os.environ['GDK_BACKEND'] = "broadway"
         os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
+    else:
+        setup_wm(args.nox11)
     from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
     from ptxprint.gtktesting import GtkTester
     from ptxprint.utils import setup_i18n
@@ -161,6 +163,7 @@ def main(doitfn=None, argsline=None, retview=False):
     # Miscellaneous & Experimental
     parser.add_argument('-N', '--nointernet', action="store_true", help="Disable all internet access")
     parser.add_argument('-n', '--port', type=int, help="Port to listen on")
+    parser.add_argument('--nox11', action='store_true', help="Don't switch to X11")
     parser.add_argument('-D', '--define', action=DictAction, help="Set UI component=value (repeatable)")
     parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir, no config)")
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
@@ -281,6 +284,8 @@ def main(doitfn=None, argsline=None, retview=False):
     if args.lang is None:
         args.lang = getnsetlang(config)
 
+    if sys.platform.startswith("linux") and not args.nox11:
+        os.environ['GDK_BACKEND'] = 'x11'
     if (args.extras & 8) != 0 or not len(args.projects):
         # print("No Paratext Settings directory found - sys.exit(1)")
         if not args.print and args.test is None:
@@ -500,6 +505,7 @@ def main(doitfn=None, argsline=None, retview=False):
         if loops >= 0:
             if savetreedirs:
                 mainw.prjTree.addToConfig(config)
+            log.debug(f"Writing user config to {conffile}")
             with open(conffile, "w", encoding="utf-8") as outf:
                 config.write(outf)
 

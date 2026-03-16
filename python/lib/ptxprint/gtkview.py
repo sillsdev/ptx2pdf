@@ -643,6 +643,7 @@ class WindowGeometry:
 
         x, y = dialog.get_position()
         width, height = dialog.get_size()
+        logger.debug(f"Size {width=} {height=}")
 
         screen = dialog.get_screen()
         monitor_num = screen.get_monitor_at_window(gdk_win)
@@ -694,9 +695,10 @@ class WindowGeometry:
 # --- Helper Class to Manage Asynchronous Window Restoration ---
 class WindowRestorer:
     """Manages the state and asynchronous process of restoring one window."""
-    def __init__(self, screen, dialog, savedGeom, onDoneCallback):
+    def __init__(self, screen, dialog, name, savedGeom, onDoneCallback):
         self.screen = screen
         self.dialog = dialog
+        self.name = name
         self.geom = savedGeom
         self.onDone = onDoneCallback
         
@@ -740,12 +742,17 @@ class WindowRestorer:
         try: self.dialog.unmaximize()
         except Exception as e: logging.debug(f"Failed to unmaximize: {e}")
         
+        self.dialog.set_size_request(-1, -1)
         self.dialog.resize(self.geom.width, self.geom.height)
+        #self.dialog.set_default_size(self.geom.width, self.geom.height)
         self.geom.width, self.geom.height = self.dialog.get_size()
         posx = max(self.geom.x, self.targetRect.x)
         posx = min(posx, self.targetRect.x + self.targetRect.width - self.geom.width)
         posy = max(self.geom.y, self.targetRect.y)
         posy = min(posy, self.targetRect.y + self.targetRect.height - self.geom.height)
+        logger.debug(f"Moving dialog to {posx}, {posy} within {self.targetRect.x}+{self.targetRect.width}, {self.targetRect.y}+{self.targetRect.height}")
+        display = Gdk.Display.get_default()
+        self.dialog.set_role(f"ptxprint-{self.name}")
         try: self.dialog.move(posx, posy)
         except Exception as e: logging.debug(f"Failed to move/resize: {e}")
         
@@ -913,6 +920,7 @@ class GtkViewModel(ViewModel):
 
             def do_startup(self):
                 Gtk.Application.do_startup(self)
+                GLib.set_prgname("org.sil.ptxprint")
                 self.win = self.view.builder.get_object("mainapp_win")
                 if not sys.platform.startswith("win"):
                     mb = self.view._add_mac_menu(self)
@@ -1552,7 +1560,7 @@ class GtkViewModel(ViewModel):
         window geometry.
         """
         self.doConfigNameChange(None)
-
+        logger.debug(f"Main width={self.mainapp.win.get_size().width}")
         # Hook the save-on-exit event BEFORE restoring. This ensures that
         # if the app is opened and closed quickly, the save is still hooked.
         # The flag prevents connecting the signal more than once.
@@ -1567,6 +1575,7 @@ class GtkViewModel(ViewModel):
 
         if self.pdf_viewer is not None:
             self.pdf_viewer.hide_unused()
+        logger.debug(f"Main width={self.mainapp.win.get_size().width}")
 
     def emission_hook(self, w, *a):     # sigid, detail, self, *a):
         if self.testing is None or self.testing.paused:
@@ -2060,6 +2069,7 @@ class GtkViewModel(ViewModel):
     def onDestroy(self, btn, *a):
         if self.testing is not None:
             self.testing.finalise()
+        logger.debug(f"Main width={self.mainapp.win.get_size().width}")
         self.builder.get_object("mainapp_win").destroy()
         self.mainapp.quit()
 
@@ -2234,12 +2244,12 @@ class GtkViewModel(ViewModel):
             else:
                 self.pauseNoUpdate()
                 
-
     def onMainAppWinDeleted(self, widget, event): # Main App dialog (X button)
+        self.saveWindowGeometry()
         self.onDestroy(widget)
 
-
     def onCancel(self, btn):
+        self.saveWindowGeometry()
         self.onDestroy(btn)
 
     def warnStrongsInText(self, btn):
@@ -7481,6 +7491,7 @@ Thank you,
             "dlg_preview": self.builder.get_object("dlg_preview")
         }
 
+        logger.debug(f"Saving Window Geometry for {len(dialogs)} dialogs. From {getcaller(1)}")
         for name, dialog in dialogs.items():
             geom = WindowGeometry.fromDialog(dialog)
             if geom:
@@ -7505,7 +7516,7 @@ Thank you,
                 name, dialog, view = next(iterator)
                 savedGeom = WindowGeometry.fromConfig(self.userconfig, name)
                 # Chain the next task in the callback
-                restorer = WindowRestorer(screen, dialog, savedGeom, onDoneCallback=lambda: windowCB(iterator, view))
+                restorer = WindowRestorer(screen, dialog, name, savedGeom, onDoneCallback=lambda: windowCB(iterator, view))
                 restorer.run()
             except StopIteration:
                 # All tasks are done, now ensure main window has focus

@@ -980,6 +980,7 @@ class RunJob:
             z.writestr("_runinfo.txt", report)
             z.close()
         self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, **kw)
+        return True
         if cover:
             self.coverfile = self.extrafiles.get('cover', None)
             return self.coverfile is not None
