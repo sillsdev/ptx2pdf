@@ -1,4 +1,5 @@
 \p
+
 \polyglotcolumn L
 \id GAL 48-GAL-web.sfm World English Bible (WEB) 
 \ide UTF-8
@@ -8,29 +9,6 @@
 \toc3 Gal 
 \mt1 Paul’s Letter to the Galatians  
 \p
-\polyglotcolumn R
-\id GAL - OpenGNT
-\h ΠΡΟΣ ΓΑΛΑΤΑΣ
-\toc2 ΓΑΛΑΤΑΣ
-\toc1 ΠΡΟΣ ΓΑΛΑΤΑΣ
-\mt ΠΡΟΣ ΓΑΛΑΤΑΣ
-
-\p
-\polyglotcolumn A
-\id GAL - Wycliffe’s Bible Modern Spelling Enhanced, Word Files Text Conversion and standardization, E. Boot 05 2019 
-\h GALATIANS 
-\toc1 GALATIANS 
-\toc2 Galatians 
-\toc3 GAL 
-\mt1 GALATIANS 
-\polyglotendcols
-\p
-\polyglotcolumn A
-\c 1  
-\cl CHAPTER 1 
-\polyglotendcols
-\p
-\polyglotcolumn L
 \p
 \c 1  
 \p
@@ -41,6 +19,11 @@
 \v 5 to whom be the glory forever and ever. Amen.   
 \p
 \polyglotcolumn R
+\id GAL - OpenGNT
+\h ΠΡΟΣ ΓΑΛΑΤΑΣ
+\toc2 ΓΑΛΑΤΑΣ
+\toc1 ΠΡΟΣ ΓΑΛΑΤΑΣ
+\mt ΠΡΟΣ ΓΑΛΑΤΑΣ
 \p
 \c 1
 \p
@@ -51,6 +34,16 @@
 \v 5 ᾧ ἡ δόξα εἰς τοὺς αἰῶνας τῶν αἰώνων, ἀμήν.
 \p
 \polyglotcolumn A
+\id GAL - Wycliffe’s Bible Modern Spelling Enhanced, Word Files Text Conversion and standardization, E. Boot 05 2019 
+\h GALATIANS 
+\toc1 GALATIANS 
+\toc2 Galatians 
+\toc3 GAL 
+\mt1 GALATIANS 
+\p
+\c 1  
+\cl CHAPTER 1 
+\p
 \p  
 \v 1 Paul the apostle, not of men, nor by man, but by Jesus Christ, and God the Father, that raised him from death \add [or that raised him from \+sls (the)\+sls* dead]\add*, 
 \p  

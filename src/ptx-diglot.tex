@@ -3013,7 +3013,13 @@
     \dimen1=\dimen0
   \fi
 }
-
+% Save and restore values / dimensions
+\def\s@veval#1{\edef\tmp{save\v@lpfx#1\v@lsfx}\x@\let\x@\t@mp\csname \v@lpfx#1\v@lsfx\endcsname
+  \x@\edef\csname\tmp\endcsname{\the\t@mp}%
+}
+\def\r@storeval#1{\edef\tmp{save\v@lpfx#1\v@lsfx}\x@\let\x@\t@mp\csname \v@lpfx#1\v@lsfx\endcsname
+  \t@mp=\csname\tmp\endcsname
+}
 
 
 % Set boxes to be dimen1 high
@@ -3052,7 +3058,7 @@
   \fi
 }
 
-\def\e@ch@col#1#2\E{% General purpose looper, if there is at least one item.
+\def\e@ch@col@debug#1#2\E{% General purpose looper, if there is at least one item.
   %\tracingmacros=1 \tracingassigns=1
   \trace{De}{each@col #1 #2}%
   \col@do{#1}%
@@ -3069,6 +3075,18 @@
   \trace{De}{continuing (\ect@st)}\relax
   \x@\n@xt@col \ect@st \E
 }
+\def\e@ch@col@fast#1#2\E{% No debug version of above
+  %\tracingmacros=1 \tracingassigns=1
+  \col@do{#1}%
+  \edef\ect@st{#2}%
+  \ifx\ect@st\empty %#2 is empty
+    \let\n@xt@col=\cstackrelax
+  \else
+    \let\n@xt@col=\e@ch@col
+  \fi
+  \x@\n@xt@col \ect@st \E
+}
+\let\e@ch@col\e@ch@col@debug
 
 \def\digl@tcle@rn@tecl@ss#1{% Diglot-loop friendly version of cle@rn@tecl@ss
   \cle@rn@t@cl@ss{\tmpnotecl@ss\if L#1\else #1\fi}%

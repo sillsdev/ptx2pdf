@@ -33,7 +33,7 @@
 
 \def\@newdim@n{\globdim@n}
 \def\@newc@unt{\globc@unt}
-
+\let\e@ch@col\e@ch@col@fast
 \plugin@startif{polyglot-complexpages}
 \plugins@needed{polyglot-simplepages} % 
 
@@ -411,6 +411,7 @@
     %Needless? \x@\let\x@\@@cspptmp\csname @max@cols@#1\endcsname
     % Columns by processing-order
     \xdef@cseq{cplx@proc\p@lyr@wstring}{\csname cplx@proc\p@lyr@wstring\endcsname\x@fch@r}%
+    \xdef\cplx@proc@all{\cplx@proc@all\x@fch@r}%
     \ifBookOpenLeft
       \xdef@cseq{revp@lyp@gecols\p@lyr@wstring}{\x@fch@r\csname revp@lyp@gecols\p@lyr@wstring\endcsname}%
     \else
@@ -470,6 +471,7 @@
   \ifx\tmp\empty\errmessage{polyglotpages called with empty argument. That's an error}\fi
   \E\E
   \def\r@wstrings{}%
+  \def\cplx@proc@all{}%
   \let\d@=\complexs@tpolyp@ges
   \cstackdown#1,\E
   \reset@colindexes
@@ -676,7 +678,7 @@
     \setbox0\copy\eb@x
     \setbox1\vsplit 0 to \count255\@minb@seline
     \setbox1\vbox{\unvbox1}%
-    \@Split verscomplex@wrt@splitvrs{#1}{\count255}%
+    \@complex@wrt@splitvrs{#1}{\count255}%
     \ifx\res@parse\empty\else
       \ins@meas@trial@result=\csname split@insheights#1\endcsname{\count255}\relax
       \res@parse
@@ -1113,8 +1115,24 @@
     \tracetimset{costs}%
     \cplx@trypage
     \tracetimcheck{costs}{Best path: \cplx@bestpath}%
-    \let\d@\spl@tcols
+    \let\col@do\apply@splits
+    \x@\each@col\cplx@proc@all\E
   \fi
+  %which actually need a galley trial?
+  \let\col@do\check@galley
+  \x@\each@col\cplx@proc@all
+  \trace{dmc}{Go for final layout}%
+  \global\late@stage@reflowfalse
+  \def\refl@wlist{}% List of columns needing to reflow.
+  \triall@@pcount=1
+  \diglot@run@nxt@trial
+  \def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}\def\v@lopfx{@}\def\v@losfx{egap}%
+  \dimen1=0pt
+  \let\col@do=\max@val
+  \dimen1=0pt
+  \x@\each@col\diglot@list\E
+  %\let\col@do=\delta@val
+  %\x@\each@col\diglot@list\E % Find 'skip' after each chunk
 }
 \def\initspl@thts#1\E{%Per-row
   \x@\p@rser@wstring #1\E
@@ -1136,6 +1154,13 @@
     \x@\cplx@trycosts\tmp,\E
   \fi
 }
+\def\apply@splits#1{%
+  \x@\let\x@\p@tl\csname partial#1\endcsname
+  \setbox\p@tl\vsplit \csname excess\csname f@llowing#1\endcsname\endcsname to \csname save#1cut\endcsname\@minb@seline\relax
+  \setbox\p@tl\vbox{\unvbox\p@tl}%
+  \trace{dmc}{partial#1 is \l@gdims{\p@tl}}%
+}  
+  
 \newif\ifcomplex@lastrow % What phase of the calc are we in? 
 \globcount\min@increment
 \globcount\this@increment
@@ -1194,20 +1219,29 @@
     \advance\cplx@trycost by \unbalVcost\dimexpr \numexpr (\cplx@maxv-\cplx@minv)*(\cplx@maxv-\cplx@minv)\relax pt\relax
   \fi
   \ifdim \cplx@trycost <\cplx@bestcost
-    \global\cplx@bestcost=\cplx@trycost
-    %\let\d@\cplx@result
-    %\x@\cstackdown\r@wstrings,\E
-    \global\let\cplx@bestpath\cplx@path
-    \trace{dmc}{best path \cplx@path: \the\cplx@trycost}%
+    \@cplx@b@stcost
   \fi
+}
+\def\@cplx@b@stcost{%
+  \global\cplx@bestcost=\cplx@trycost
+  %\let\d@\cplx@result
+  %\x@\cstackdown\r@wstrings,\E
+  \global\let\cplx@bestpath\cplx@path
+  \def\v@lpfx{}\def\v@lsfx{@cut}%
+  \let\col@do\s@vecuts
+  %\tracingassigns=1
+  \x@\each@col\cplx@proc@all\E
+  %\tracingassigns=0
+  \trace{dmc}{best path (\meaning\cplx@proc@all: \cplx@path: \the\cplx@trycost}%
 }
 \globdimen\o@cplx@trycost %Old try cost
 \globdimen\o@p@gehtloss %Old pageht 
 \globdimen\r@wminht % The minimum height in the just-calculated row. Only needed for short-term cost calcs, so no need to make it per-row
 \def\cplx@result#1\E{%TODO... Urm, what's left to do??
 }
+\def\s@vecuts#1{\x@\xdef\csname save#1cut\endcsname{\csname #1@cut\endcsname}}%
 
-\def\cplx@minmaxv#1{%This gets run by eachcol with *CONTENT* columns, not display columns. What's the last verse of the last display column from this column?
+\def\cplx@minmaxv#1{%This gets run by each@col with *CONTENT* columns, not display columns. What's the last verse of the last display column from this column?
   \def\tmp{#1}\l@stf@llowon
   \count255=\csname split@vrs\tmp\endcsname{\csname \tmp @cut\endcsname}%
   \ifnum\count255<\cplx@minv
