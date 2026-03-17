@@ -39567,6 +39567,7 @@ output with a previous PDF.</property>
                     <child>
                       <object class="GtkBox" id="tb_Printers">
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="orientation">vertical</property>
@@ -40703,6 +40704,7 @@ We supply high-quality hardcovers, flex covers and paperbacks. For missionary or
                     <child type="tab">
                       <object class="GtkLabel" id="lb_Printers">
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <property name="tooltip-text" translatable="yes">Adjust expert-level settings.</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Printers</property>

@@ -1,9 +1,18 @@
-PTXprint 3.0.15 Release Notes
-11 Mar 2026
+PTXprint 3.0.16 Release Notes
+17 Mar 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
+Bug fixes and Improvements in 3.0.16 (17 Mar 2026)
+  * Add generated values to the header drop down
+  * Fix window position memory on Linux by going to X11
+  * Fix Alt-x showUnicodeValues consuming the selected text
+  * Fix unable to update peripheral values in table
+  * Fix ColInfo for polyglots
+  * New badness function and work to reduce workload
+  * Get page_filler doing something useful (work in progress)
+  
 Bug fixes and Improvements in 3.0.15 (11 Mar 2026)
   * Fix missing printers folder (causing crash at startup)
   
