@@ -203,10 +203,3 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
         s = traceback.format_stack()
         logger.debug(s)
 
-def setup_wm(nox11):
-    display = Gdk.Display.get_default()
-    if display.get_name() == "wayland" or "WaylandDisplay" in str(type(display)):
-        if not nox11:
-            logger.debug("Setting GDK_BACKEND to x11")
-            os.environ['GDK_BACKEND'] = 'x11'
-

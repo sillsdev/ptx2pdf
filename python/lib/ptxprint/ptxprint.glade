@@ -26398,13 +26398,16 @@ you would need to enter:
                                         <property name="active">0</property>
                                         <property name="has-entry">True</property>
                                         <items>
-                                          <item translatable="yes">-empty-</item>
-                                          <item translatable="yes">Page Number</item>
-                                          <item translatable="yes">First Reference</item>
-                                          <item translatable="yes">Last Reference</item>
-                                          <item translatable="yes">Reference Range</item>
-                                          <item id="&lt;Enter ID&gt;" translatable="yes">Book (\h)</item>
-                                          <item translatable="yes">Book Alt (\h1)</item>
+                                          <item id="\empty" translatable="yes">-empty-</item>
+                                          <item id="\pagenumber" translatable="yes">Page Number</item>
+                                          <item id="\firstref" translatable="yes">First Reference</item>
+                                          <item id="\lastref" translatable="yes">Last Reference</item>
+                                          <item id="\rangeref" translatable="yes">Reference Range</item>
+                                          <item id="\book" translatable="yes">Book (\h)</item>
+                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                          <item id="\isodate" translatable="yes">Date (YYY-MM-DD)</item>
+                                          <item id="Printed on \isodate" translatable="yes">Printed on YYY-MM-DD</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
