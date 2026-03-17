@@ -280,9 +280,10 @@ class Paragraphs(list):
                     currr.yend = readpts(p[5])
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
                 currp.rects = []
-                ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
-                currr = ParRect(pnum, colcount[polycol], cinfo.topx, ystart)
-                currp.rects.append(currr)
+                if cinfo is not None:
+                    ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
+                    currr = ParRect(pnum, colcount[polycol], cinfo.topx, ystart)
+                    currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
             elif c == "parend":         # badness, bottomx, bottomy, lastdepth

@@ -1621,7 +1621,7 @@ class TexModel:
                         if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
                             pages = [x[0] for x in pgs[art]]
                         else:
-                            pages = [x[0] for x in pgs['']]
+                            pages = [x[0] for x in pgs.get('zz', pgs.get('', [[]]))]
                         plurals = pluralstr(plstr, pages)
                         artinfo = cinfo["copyrights"].get(
                             art.lower(), {'copyright': {'en': art}, 'sensitive': {'en': art}}
