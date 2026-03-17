@@ -2760,7 +2760,7 @@
 %or move elsewhere, so they all need counting separately.
 \def\ins@meas@trial{%
   \xdef\ins@meas@trial@result{\the\dimexpr \premtht-\the\pagegoal\relax}% inserts subtract from the pagegoal.
-  \setbox255\vbox{\unvbox255}
+  \setbox255\vbox{\unvbox255}%
   \global\let\ins@meas@trial@dims\empty%
   \ifins@meas@trialfull
     \ifdim\ins@meas@trial@result>0pt

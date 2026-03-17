@@ -2865,7 +2865,9 @@
   \x@\xdef\csname @nxtchunk#1ht\endcsname{\x@\the\csname #1ht\endcsname}%
   \x@\global\x@\csname #1ht\endcsname=0pt
 }
-
+\def\inc@boxht#1{%Increment the listed Xht by \tmp
+  \advance\csname #1ht\endcsname by \tmp\relax
+}
 \def\save@boxdim#1{%Save the height & depth of Xbox in \v@lpfx#1ht
   \x@\xdef\csname \v@lpfx#1ht\endcsname{\x@\the\x@\ht\csname #1box\endcsname}%
   \x@\xdef\csname \v@lpfx#1dp\endcsname{\x@\the\x@\dp\csname #1box\endcsname}%
