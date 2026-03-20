@@ -515,7 +515,6 @@ class Piclist:
         self.rmdups()
 
     def threadUsfms(self, parent, nosave=False):
-        breakpoint()
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
             if os.path.exists(bkp):
