@@ -367,7 +367,7 @@ class ViewModel:
             fp = self.getBookSrcPath(bk)
             if fp is not None:
                 res[bk] = fp
-        if self.moduleFile is not None:
+        if self.moduleFile is not None and os.path.isfile(self.moduleFile):
             res["MOD"] = self.moduleFile
         return res
 

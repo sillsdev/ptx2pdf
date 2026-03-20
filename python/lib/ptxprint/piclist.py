@@ -400,6 +400,9 @@ class Piclist:
         for p in self.pics.values():
             c = p.copy()
             res.pics[c.key] = c
+        res.keycounter = self.keycounter
+        res.mode = self.mode
+        res.suffix = self.suffix
         return res
         
     def clear(self, model=None):
@@ -417,6 +420,9 @@ class Piclist:
 
     def __setitem__(self, k, v):
         self.pics[k] = v
+
+    def pop(self, k, default=None):
+        return self.pics.pop(k, default)
 
     def remove(self, p):
         if p.key in self.pics:
@@ -509,6 +515,7 @@ class Piclist:
         self.rmdups()
 
     def threadUsfms(self, parent, nosave=False):
+        breakpoint()
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
             if os.path.exists(bkp):

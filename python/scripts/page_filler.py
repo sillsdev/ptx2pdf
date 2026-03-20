@@ -5,7 +5,7 @@ from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union
 from collections import deque, defaultdict
 import heapq, re, os, logging, random, itertools
 from math import sqrt, log10
-from ptxprint.parlocs import Paragraphs
+from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob
 from ptxprint.utils import refSort
@@ -41,11 +41,19 @@ class PageState:
 
 
 @dataclass
+class FigurePlacement:
+    fid:    str
+    pid:    str
+    col:    int
+    lines:  int
+
+@dataclass
 class LayoutRunResult:
     pages: List[PageState]
     first_failing_page: Optional[PageIndex]
     paragraph_total_lines: Dict[ParagraphRef, int]  # p -> total lines in this run
     paragraph_pages: Dict[ParagraphRef, List[Dict[PageIndex, ColMask]]]
+    page_figures: Dict[PageIndex, List[FigurePlacement]]
 
     def _cmp(self, other):
         res = cmp(self.first_failing_page, other.first_failing_page)
@@ -132,7 +140,7 @@ class Hooks:
         plines = self.printer.get_plines()
         pmap = self.printer.get_pidmap()
         logger.info(f"{firstbad=}")
-        return LayoutRunResult(pages, firstbad, plines, pmap)
+        return LayoutRunResult(pages, firstbad, plines, pmap, [])
 
     def get_paragraphs_for_pages(self,
                                         first: PageIndex,
@@ -167,13 +175,16 @@ class Hooks:
         isshrink = stretch < 0 or expansion < 1
         pwidth = self.printer.get_para(paragraph).lastwidth
         lines = self.basestate.layout.paragraph_total_lines[paragraph]
-        res = 0 if isshrink else 20
-        res += 5 * ((2 * stretch) ** 4) / lines
-        res += min(0, 25*((1. - pwidth) if isshrink else pwidth) - lines)
+        res = 0 if isshrink else 20                 # how preferential shrink is over stretch
+        res += ((2 * stretch) ** 4 * (10 + 5 * lines)) / lines    # how bad stretch/shrink=2 is
+        res += max(0, 50*(pwidth if isshrink else (1. - pwidth)) ** 2 - lines)      # final line fill
         if result:
-            res += 0 if (0.1 < pwidth < 0.9) else 50
-        res += ((1 - expansion) * 100) ** 2
-        res += 100 * self.printer.pid_isheader(paragraph)
+            if isshrink:
+                res += 50 if pwidth < 0.9 else 0
+            else:
+                res += 50 if pwidth > 0.1 else 0
+        res += ((1 - expansion) * 100) ** 4
+        res += 10 * self.printer.pid_isheader(paragraph) / pwidth ** 2  # headers are bad if not very full
         return res
 
     def progress(self, pindex, itercount):
@@ -408,14 +419,15 @@ class TypesetterSolver:
         for score, p, d in moves:
             by_para.setdefault(p, []).append((score, d))
         plist = list(by_para.keys())
-        max_r = min(5, int(6 / log10(min(5, len(plist)))))
+        max_r = min(5, int(8 / log10(max(5, len(plist)))))
         all_combos = []
         seen_col_sigs = {}
+        logger.info(f"{first_para=} {last_para=}, {max_r=}, {moves=}")
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
                 if state.paragraph_params.get(pars, (1.0, 0)) != (1.0, 0):
                     continue
-                delta_lists = [by_para[p] for p in pars]
+                delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, _ in choice) + 5 * len(choice)
                     combo = {p: d for p, (_, d) in zip(pars, choice)}
@@ -431,18 +443,11 @@ class TypesetterSolver:
                             col_deltas[2] = d
                         elif mask != 0:
                             col_deltas[mask + 2] += d
+                    sig = tuple(col_deltas)
+                    if score < seen_col_sigs.get(sig, 10000):
+                        seen_col_sigs[sig] = score
                     else:
-                        sig = tuple(col_deltas)
-                        if score < seen_col_sigs.get(sig, 10000):
-                            seen_col_sigs[sig] = score
-                        else:
-                            continue
-                        
-                   # if any(state.layout.paragraph_pages[p].get(page, 0) == 3 \
-                   #         or page+1 in state.layout.paragraph_pages[p] for p in pars):
-                   #     score *= 0.4
-                   # if first_para is not None and any(first_para == p for p in pars):
-                   #     score *= 1.5
+                        continue
                     all_combos.append((score, combo))
         all_combos.sort(key=lambda x: (x[0], len(x[1])))
         for _, combo in all_combos:
@@ -593,13 +598,35 @@ class PTXprinter:
             self.job.doit(noview=True)
             self.job.maxRuns = 1
 
+        if floats is not None and len(floats):
+            piclist = self.view.picinfos.copy()
+            for k, v in floats.items():
+                key = re.sub(r"-preverse$", "", k)
+                if v.ref is not None:
+                    p = piclist.pop(key)
+                    piclist[v.ref] = p
+                if v.col is not None:
+                    p = piclist.get(key, None)
+                    if p is None:
+                        continue
+                    pos = p['pgpos']
+                    if v.col == 2:
+                        pos = pos[0] + "r" if pos in ("tl", "bl") else pos
+                    elif v.col == 1:
+                        pos = pos[0] + "l" if pos in ("tr", "br") else pos
+                    p['pgpos'] = pos
+            self.job.piclist = piclist
+        else:
+            self.job.piclist = None
+
         self.job.run_xetex(self.job.outfname, self.job.pdffile)
         parlocsfile = self.job.outfname.replace(".tex", ".parlocs")
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(parlocsfile, self.rtl)
-        self.pidmap = {p.pid(): i for i, p in enumerate(self.parlocs)}
+        self.pidmap = {p.pid(): i for i, p in enumerate(self.parlocs) if isinstance(p, ParInfo)}
         logfile = self.job.outfname.replace(".tex", ".log")
         self.parselog(logfile)
+        print(".", flush=True, end="")
 
     def parselog(self, fname):
         self.underfills = GrowList()

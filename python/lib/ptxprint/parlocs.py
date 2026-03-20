@@ -3,7 +3,7 @@ import logging
 from dataclasses import dataclass, InitVar, field
 from ptxprint.utils import refSort
 from ptxprint.xdv.spacing_oddities import Line, Rivers
-from typing import Tuple
+from typing import Tuple, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class ParRect:
     xdvlines:   InitVar[None] = None
     tspace:     float = 0.
     nspace:     int = 0
-    nlines:     int = 0
+    lines:      int = 0
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
@@ -99,12 +99,14 @@ class ParInfo:
 
 @dataclass
 class FigInfo:
-    ref:    str
-    src:    str
-    size:   (int, int)
-    limit:  bool
-    wide:   bool
-    rects:  InitVar[None] = None
+    ref:        str
+    pagenum:    int
+    src:        str
+    size:       (int, int)
+    limit:      bool
+    wide:       bool
+    rects:      InitVar[None] = None
+    pid:        Optional[str] = None
 
     def __str__(self):
         return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
@@ -266,6 +268,9 @@ class Paragraphs(list):
                     cinfo = colinfos.get(polycol, None)
                     currr.xend = cinfo.topx + cinfo.width if cinfo is not None else readpts(p[0])
                     currr.yend = readpts(p[1])
+                    ps = currps.get(polycol, None)
+                    if ps is not None:
+                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
                     currr = None
                 colinfos[polycol] = None
                 lines.startreplay()
@@ -306,6 +311,7 @@ class Paragraphs(list):
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
+                currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
                 endpar = True
             elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
                 if not endpar or not inpage:
@@ -339,7 +345,7 @@ class Paragraphs(list):
                 if currr is not None:
                     currr.yend = readpts(p[3])
                     currr.xend = xstart
-                currpic = FigInfo(p[0], p[1], (0, 0), False, False)
+                currpic = FigInfo(p[0], pnum, p[1], (0, 0), False, False)
                 currpic.rects = []
                 currr = ParRect(pnum, colcount[polycol], xstart, readpts(p[3]))
                 currpic.rects.append(currr)
@@ -383,6 +389,7 @@ class Paragraphs(list):
             # "parlines":       # numlines in previous paragraph (occurs after @parlen)
             # "nontextstart":   # x, y
             # "nontextstop":    # x, y
+            # "parpicanchor":   # ref, picid, x, y
         self.sort(key=lambda x:x.sortKey())
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
@@ -429,10 +436,12 @@ class Paragraphs(list):
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
 
         start = max(self.pindex[pnum-1], 0)
-        logger.info(f"{pnum=}, {start=}, {e=}, max={len(self)}, {self.pindex=}")
+        #logger.info(f"{pnum=}, {start=}, {e=}, max={len(self)}, {self.pindex=}")
         if inclast and pnum > 1:        # pnum is 1 based
             done = False
             for p in self[start:-1:-1]:
+                if not isinstance(p, ParInfo):
+                    continue
                 for r in reversed(p.rects):
                     if r.pagenum == pnum - 1:
                         yield (p, r)
@@ -442,12 +451,15 @@ class Paragraphs(list):
                     break
         start = max(start - 2, 0)
         for p in self[start:e+2]:
+            if not isinstance(p, ParInfo):
+                continue
             for r in p.rects:
                 if r.pagenum == pnum:
                     yield (p, r)
 
     def getRects(self):
         for p in self:
+            if not isinstance(p, ParInfo): continue
             for r in p.rects:
                 yield (p, r)
 
@@ -480,6 +492,19 @@ class Paragraphs(list):
             return None
         else:
             return self.pnumorder[pindex - 1]
+
+    def setFigPids(self):
+        pindex = 0
+        for i, p in self:
+            while i >= self.pindex[pnum]:
+                pnum += 1
+            if isinstance(p, FigInfo):
+                lastpa = None
+                for pa in self.getParas(pnum, inclast=True):
+                    if pa.ref > p.ref:
+                        p.pid = lastpa.pid()
+                        break
+                    lastpa = pa
 
     def load_dests(self, doc):
         dests_tree = doc.create_dests_tree()

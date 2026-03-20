@@ -168,6 +168,7 @@ class RunJob:
         self.rerunReasons = []
         self.coverfile = None
         self.extrafiles = {}
+        self.piclist = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -408,7 +409,7 @@ class RunJob:
             serialbooks = {b for b in re.split(r"[\s,]+", (self.info["document/diglotserialbooks"] or "").strip()) if b}
             if left and b not in serialbooks: # nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
-                outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
+                outFile = re.sub(r"^(.*)\.(.*?)$", r"\1-diglot.\2", left)
                 if len(donebooks):
                     donebooks[-1] = os.path.basename(outFile)
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
@@ -636,7 +637,8 @@ class RunJob:
                     logger.debug(runner.stdout.decode('UTF-8'))
             else:
                 self.res = runner
-            print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
+            if not self.silent:
+                print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
             logfname = swapext(outfname, ext=".tex", withext=".log")
             (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
             self.info.printer.editFile_delayed(logfname, "wrk", "tb_XeTeXlog", False)
@@ -724,7 +726,8 @@ class RunJob:
                 self.printer.pdfFiles = self.extrafiles.copy()
                 if ' Original' not in self.printer.pdfFiles:
                     self.printer.pdfFiles[' Original'] = pdffile
-        print("Done")
+        if not self.silent:
+            print("Done")
 
     def done_job(self, outfname, pdfname):
         # Work out what the resulting PDF was called
@@ -1024,7 +1027,7 @@ class RunJob:
     def gatherIllustrations(self, jobs, ptfolder, diglots=False):
         self.printer.incrementProgress(stage="gp")
         logger.debug(f"Gathering illustrations: {self.printer.picinfos}")
-        picinfos = self.printer.picinfos
+        picinfos = self.piclist or self.printer.picinfos
         pageRatios = self.usablePageRatios()
         tmpPicpath = os.path.join(self.printer.project.printPath(self.printer.cfgid), "tmpPics")
         if not os.path.exists(tmpPicpath):
