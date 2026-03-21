@@ -122,9 +122,19 @@ class SolveResult:
 
 class Hooks:
 
+    badness_stretch_tolerance   = 80   # avoid ±2
+    badness_spacing_tolerance   = 50   # paragraph spacing distortion
+    badness_shrink_preference   = 20   # + = prefer shrink, - = prefer stretch
+    badness_header_aversion     = 60   # avoid headers
+    badness_line_density_factor = 1.0  # wide vs narrow text
+    badness_line_weight         = 20
+    badness_lastline_weight     = 2
+
     def __init__(self, printer, state):
         self.printer = printer
         self.basestate = state
+        vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
+        logger.info(f"Badness parameters = {vals}")
 
     def run_layout(self,
                    paragraph_params: Dict[ParagraphRef, ParamSig],
@@ -167,24 +177,46 @@ class Hooks:
         return self.printer.pid_isheader(paragraph)
 
     def design_badness(self,
-                       paragraph: ParagraphRef,
-                       expansion: float,
-                       stretch: int,
-                       result: bool = False) -> float:
-        # try to guess how bad a paragraph would be
+                         paragraph: ParagraphRef,
+                         expansion: float,
+                         stretch: int,
+                         result: bool = False) -> float:
+
         isshrink = stretch < 0 or expansion < 1
         pwidth = self.printer.get_para(paragraph).lastwidth
         lines = self.basestate.layout.paragraph_total_lines[paragraph]
-        res = 0 if isshrink else 20                 # how preferential shrink is over stretch
-        res += ((2 * stretch) ** 4 * (10 + 5 * lines)) / lines    # how bad stretch/shrink=2 is
-        res += max(0, 50*(pwidth if isshrink else (1. - pwidth)) ** 2 - lines)      # final line fill
-        if result:
-            if isshrink:
-                res += 50 if pwidth < 0.9 else 0
+        is_header = self.printer.pid_isheader(paragraph)
+        res = 0.0
+
+        stretch_term = (abs(stretch) / 2.0) ** 4
+        res += self.badness_stretch_tolerance * stretch_term
+
+        distortion = abs(expansion - 1.0)
+        density = self.badness_line_density_factor
+        res += self.badness_spacing_tolerance * (distortion * lines * density) ** 2
+        if not result:
+            error = pwidth if stretch < 0 else (1.0 - pwidth)
+            res += self.badness_lastline_weight * (error ** 4)
+
+        if stretch != 0:
+            res += max(0, self.badness_shrink_preference if stretch > 0 else -self.badness_shrink_preference)
+        line_penalty = self.badness_line_weight * (20 - min(lines, 20)) / 20
+        res += line_penalty
+
+        if stretch > 0:
+            wrongness = max(0.0, 0.5 - pwidth)
+        else:
+            wrongness = max(0.0, pwidth - 0.5)
+        res += 0.5 * self.badness_spacing_tolerance * wrongness ** 2
+
+        if is_header:
+            if pwidth >= 0.9:
+                res += self.badness_header_aversion * (1.0 - pwidth)
             else:
-                res += 50 if pwidth > 0.1 else 0
-        res += ((1 - expansion) * 100) ** 4
-        res += 10 * self.printer.pid_isheader(paragraph) / pwidth ** 2  # headers are bad if not very full
+                res += self.badness_header_aversion
+
+        if not result:
+            logger.info(f"{paragraph=}, {expansion=}, {stretch=}, {lines=}, {pwidth=}, {stretch_term=}, {wrongness=}, {is_header=} {res=}")
         return res
 
     def progress(self, pindex, itercount):
@@ -262,10 +294,10 @@ class TypesetterSolver:
                 return state
             # if layout.first_failing_page < page:
             #     return None
-            if not self.noprobe and layout.first_failing_page != page + 1:
+            if not self.noprobe and layout.first_failing_page >= page + 1:
                 self.noprobe = True
                 logger.info(f"Intermediate processing of {page+1}, with no probes")
-                state = self.run_layout(self.base_params, state, {}, page + 1)
+                state = self.run_layout(self.base_params, state, {}, layout.first_failing_page)
                 layout = state.layout
                 if layout.first_failing_page > page:
                     self.noprobe = False
@@ -298,7 +330,7 @@ class TypesetterSolver:
 
     def solve_page(self, state, page):
         self.tried.clear()
-        paragraphs = self.get_candidate_paragraphs(page)
+        paragraphs = self.get_candidate_paragraphs(state, page)
         page_base_params = dict(self.base_params)
         # logger.info(f"shape_cache={','.join('+'.join((str(k), str(v))) for k, v in self.shape_cache.items() if k[1] != 0)}")
         # logger.info(f"candidates={paragraphs}")
@@ -453,9 +485,9 @@ class TypesetterSolver:
         for _, combo in all_combos:
             yield combo
 
-    def get_candidate_paragraphs(self, page):
+    def get_candidate_paragraphs(self, state, page):
         start = max(0, page - 4)
-        pars = self.hooks.get_paragraphs_for_pages(page, page, state=self.init_state)
+        pars = self.hooks.get_paragraphs_for_pages(page, page, state=state)
         pars.sort(key=self.paragraph_order.index)
         return pars
 

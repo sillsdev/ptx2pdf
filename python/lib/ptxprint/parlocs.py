@@ -81,6 +81,7 @@ class ParInfo:
     partype:    str
     mrk:        str
     baseline:   float
+    glot:       Optional[str]
     rects:      InitVar[None] = None
     lines:      int = 0
     lastwidth:  float = 0.
@@ -283,7 +284,7 @@ class Paragraphs(list):
                 if currr is not None:
                     currr.xend = cinfo.topx
                     currr.yend = readpts(p[5])
-                currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
+                currp = ParInfo(p[0], p[1], p[2], readpts(p[3]), polycol)
                 currp.rects = []
                 if cinfo is not None:
                     ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
@@ -324,6 +325,12 @@ class Paragraphs(list):
                 if "k." in p[0]:
                     currp.ref = p[0]
                 currp.parnum = int(p[1])
+                i = self.index(currp)
+                for ps in reversed(self[:i]):
+                    if ps.glot == polycol:
+                        if ps.ref == currp.ref:
+                            currp.parnum = ps.parnum + 1
+                        break
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
                 logger.log(5, f"Stopping para {p[0]}")
