@@ -414,7 +414,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     if args.test is not None:
         runtest(prjTree, config, macrosdir, project, doit, args)
     elif args.print or args.action is not None or retview:
-        mainw = viewClass(prjTree, config, macrosdir, args)
+        mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()
         if args.pid:
             mainw.setPrjid(args.pid, project.guid, loadConfig=False, startup=True)

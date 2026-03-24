@@ -105,7 +105,7 @@ class ViewModel:
         "Copyright": ('copy', ),
     }
 
-    def __init__(self, prjtree, userconfig, scriptsdir, args=None):
+    def __init__(self, prjtree, userconfig, scriptsdir, args=None, odir=None):
         self.prjTree = prjtree
         self.project = None
         self.cfgid = None

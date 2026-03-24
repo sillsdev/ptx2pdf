@@ -21,27 +21,6 @@ logger = logging.getLogger(__name__)
 # BASIC TYPES
 # -----------------------------
 
-import pickle
-
-def debug_pickle(obj, path=""):
-    """Recursively finds which part of an object is unpicklable."""
-    try:
-        pickle.dumps(obj)
-    except (TypeError, pickle.PicklingError) as e:
-        if isinstance(obj, dict):
-            for k, v in obj.items():
-                debug_pickle(v, f"{path}['{k}']")
-        elif isinstance(obj, (list, tuple)):
-            for i, v in enumerate(obj):
-                debug_pickle(v, f"{path}[{i}]")
-        elif hasattr(obj, "__dict__"):
-            for k, v in vars(obj).items():
-                debug_pickle(v, f"{path}.{k}")
-        else:
-            print(f"!!! FOUND IT: {path} is a {type(obj)} and cannot be pickled. Error: {e}")
-
-# Usage:
-# debug_pickle(self.build_params, "build_params")
 ParagraphRef = Any
 VerseRef = Any
 PageIndex = int
@@ -771,10 +750,11 @@ class Worker(mp.Process):
 
 class MultiView:
     # look like a ViewModel
-    def __init__(self, prjtree, userconfig, scriptsdir, args=None):
+    def __init__(self, prjtree, userconfig, scriptsdir, args=None, odir=None):
         self.prjtree = prjtree
         self.config = {section: dict(userconfig[section]) for section in userconfig.sections()}
-        self.scriptsdir = scriptsdir
+        self.macrosdir = scriptsdir
+        self.scriptsdir = odir
         self.args = args
 
     def setup_ini(self):
@@ -802,14 +782,13 @@ class MultiView:
             numproc = mp.cpu_count() - 2    # we run each cpu pretty hard
         self.numproc = numproc
         self.task_list = self.books
-        self.build_params = [getattr(self, a) for a in 'prjtree config scriptsdir args pid guid cfgid'.split(' ')]
+        self.build_params = [getattr(self, a) for a in 'prjtree config macrosdir args pid guid cfgid scriptsdir'.split(' ')]
 
     def add_job(self, bk):
         self.task_list.append(bk)
 
     def run_all(self):
         mp.set_start_method('spawn', force=True)
-        debug_pickle(self.build_params, "build_params")
         self.task_list.sort(key=self.bklen, reverse=True)   # longest first
         input_q = mp.Queue()
         results_q = mp.Queue()
@@ -842,7 +821,7 @@ class MultiView:
         view.setConfigId(self.cfgid)
         view.set("ecb_booklist", self.args.books)
         view.set("r_book", "multiple")
-        runjob = RunJob(view, scriptsdir, macrosdir, args)
+        runjob = RunJob(view, self.scriptsdir, self.macrosdir, self.args)
         runjob.nothreads = True
         runjob.silent = True
         runjob.doit(noview=True, noaction=False)
@@ -857,8 +836,8 @@ def main():
     view.initScheduler(view.args.jobs)
     results = view.run_all()
     print("\n".join(str(r) for r in results))
-    if len(results) > 1:
-        view.runview()
+    #if len(results) > 1:
+    #    view.runview()
     
 
 if __name__ == "__main__":
