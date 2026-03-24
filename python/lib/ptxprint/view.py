@@ -278,7 +278,7 @@ class ViewModel:
         return res
         
     def _bookrefsBooks(self, bl, local):
-        res = RefList()
+        res = []
         if not local:
             self.bookrefs = bl
         for r in bl:
@@ -299,7 +299,8 @@ class ViewModel:
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
-        bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False)
+        bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
+        bl.simplify()
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")

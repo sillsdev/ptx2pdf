@@ -4,12 +4,16 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable
 from collections import deque, defaultdict
 import heapq, re, os, logging, random, itertools
+import multiprocessing as mp
 from math import sqrt, log10
+from time import time
 from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
-from ptxprint.runjob import RunJob
+from ptxprint.runjob import RunJob, unlockme
 from ptxprint.utils import refSort
+from ptxprint.view import ViewModel
 from usfmtc.usfmparser import Grammar
+from usfmtc.reference import chaps, RefList
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +131,7 @@ class Hooks:
     badness_shrink_preference   = 20   # + = prefer shrink, - = prefer stretch
     badness_header_aversion     = 60   # avoid headers
     badness_line_density_factor = 1.0  # wide vs narrow text
-    badness_line_weight         = 20
+    badness_line_weight         = 12
     badness_lastline_weight     = 2
 
     def __init__(self, printer, state):
@@ -139,7 +143,7 @@ class Hooks:
     def run_layout(self,
                    paragraph_params: Dict[ParagraphRef, ParamSig],
                    float_anchors: Dict[Any, VerseRef]) -> LayoutRunResult:
-        self.printer.run(paragraph_params, float_anchors)
+        self.printer.run_layout(paragraph_params, float_anchors)
         pages = []
         firstbad = None
         for i in range(self.printer.parlocs.numPages()):
@@ -183,24 +187,25 @@ class Hooks:
                          result: bool = False) -> float:
 
         isshrink = stretch < 0 or expansion < 1
+        bigstretch = abs(stretch) > 1
+        distortion = abs(expansion - 1.0)
         pwidth = self.printer.get_para(paragraph).lastwidth
         lines = self.basestate.layout.paragraph_total_lines[paragraph]
         is_header = self.printer.pid_isheader(paragraph)
         res = 0.0
 
-        stretch_term = (abs(stretch) / 2.0) ** 4
-        res += self.badness_stretch_tolerance * stretch_term
+        if bigstretch:
+            res += self.badness_stretch_tolerance * 8
 
-        distortion = abs(expansion - 1.0)
         density = self.badness_line_density_factor
         res += self.badness_spacing_tolerance * (distortion * lines * density) ** 2
         if not result:
-            error = pwidth if stretch < 0 else (1.0 - pwidth)
+            error = pwidth if stretch > 0 else (1.0 - pwidth)
             res += self.badness_lastline_weight * (error ** 4)
 
         if stretch != 0:
             res += max(0, self.badness_shrink_preference if stretch > 0 else -self.badness_shrink_preference)
-        line_penalty = self.badness_line_weight * (20 - min(lines, 20)) / 20
+        line_penalty = self.badness_line_weight * ((20 / min(lines, 20)) ** 0.5 - 1)
         res += line_penalty
 
         if stretch > 0:
@@ -208,6 +213,8 @@ class Hooks:
         else:
             wrongness = max(0.0, pwidth - 0.5)
         res += 0.5 * self.badness_spacing_tolerance * wrongness ** 2
+        wrongness2 = 0.4 if bigstretch else 0
+        res += 0.5 * self.badness_spacing_tolerance * wrongness2 ** 2
 
         if is_header:
             if pwidth >= 0.9:
@@ -216,11 +223,12 @@ class Hooks:
                 res += self.badness_header_aversion
 
         if not result:
-            logger.info(f"{paragraph=}, {expansion=}, {stretch=}, {lines=}, {pwidth=}, {stretch_term=}, {wrongness=}, {is_header=} {res=}")
+            logger.info(f"{paragraph=}, {expansion=}, {stretch=}, {lines=}, {pwidth=}, {wrongness=}, {is_header=} {res=}")
         return res
 
     def progress(self, pindex, itercount):
-        print(f"Starting page {pindex} after {itercount} iterations")
+        # print(f"Starting page {pindex} after {itercount} iterations")
+        pass
 
 # -----------------------------
 # SOLVER
@@ -299,6 +307,9 @@ class TypesetterSolver:
                 logger.info(f"Intermediate processing of {page+1}, with no probes")
                 state = self.run_layout(self.base_params, state, {}, layout.first_failing_page)
                 layout = state.layout
+                if layout.first_failing_page is None:
+                    logger.info("solve_complete pages=%s", len(layout.pages))
+                    return state
                 if layout.first_failing_page > page:
                     self.noprobe = False
                 else:
@@ -364,7 +375,7 @@ class TypesetterSolver:
 
     def initial_probes(self, state, page):
         paragraphs = self.paragraph_order
-        probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1)]
+        probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1), (1.0, 0)]
         for e, s in probes:
             params = dict(state.paragraph_params)
             for p in paragraphs:
@@ -409,8 +420,8 @@ class TypesetterSolver:
         # logger.info("BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
         layout = self.hooks.run_layout(probe_params, state.float_anchors)
         self.itercount += 1
-        logger.info("layout_run [%s] iter=%s  probe=%s combo=%s", page, self.itercount, not self.noprobe, str(combo))
-#                ",".join("{}+{}".format(i, str(p.column_free_lines)) for i,p in enumerate(layout.pages) if p.column_free_lines is not None))
+        logger.info("layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
+                page, self.itercount, not self.noprobe, str(layout.pages[page].column_free_lines), str(combo))
         self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
         return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
 
@@ -521,32 +532,62 @@ class GrowList(list):
         if index >= len(self):
             self.extend([None] * (index - len(self) + 1))
 
-class PTXprinter:
+class PTXprinter(mp.Process):
 
-    reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+)\]\s+ht=([\d.]+)pt,\s+space=(\S+)pt,\s+baseline=(\S+)pt")
+    reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+)\]\s+ht=([\d.]+)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
 
-    def __init__(self, view, bk):
-        self.job = None
-        self.rtl = False    # not always
-        self.view = view
-        self.bk = bk
+    def __init__(self, task_queue, results_queue, build_params, nid):
+        super().__init__()
+        self.task_queue = task_queue
+        self.results_queue = results_queue
+        self.nid = nid
+        self.view = ViewModel(*build_params[0:4])
+        self.view.setup_ini()
+        self.view.setPrjid(build_params[4], build_params[5], loadConfig=False, startup=True)
+        self.view.setConfigId(build_params[6])
+        if nid is not None:
+            self.view.project.ext = f"pbuild{nid}"
+            d = self.view.project.printPath(self.view.cfgid)
+            if os.path.exists(d):
+                for f in os.listdir(d):
+                    fp = os.path.join(d, f)
+                    if os.path.isfile(fp):
+                        os.unlink(fp)
+
+    def run(self):
+        while True:
+            bk = self.task_queue.get()
+            if bk is None:
+                break
+            res = self.solve(bk)
+            self.results_queue.put((self.nid, *res))
+
+    def solve(self, bk):
+        self.bk = bk        # needed by run()
         self.view.set("c_allowUnbalanced", True)
-
-    def solve(self):
+        self.view.set("r_book", "single")
+        self.view.set("ecb_book", bk)
         self.view.savePics()
         self.view.saveStyles()
+        self.rtl = False
         self.hooks = Hooks(self, None)
+        self.job = None
         init_layout = self.hooks.run_layout({}, {})
         pids = list(init_layout.paragraph_pages.keys())
         logger.info(f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids)}")
         state = EngineState({p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
         self.hooks.basestate = state
+        print(f"Solving {bk}")
+        starttime = time()
         solver = TypesetterSolver(self.hooks, pids)
         res = solver.solve(state, 0)
+        endtime = time()
+        unlockme()
         if isinstance(res, HumanFixRequest):
-            print(f"{res.message} at {res.page}")
+            retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
         else:
-            print(f"Complete afer {solver.itercount} runs")
+            retval = (True, f"Complete {bk} after {solver.itercount} runs after {endtime-starttime}s")
+        return retval
         
     def get_pidmap(self):
         res = {}
@@ -609,7 +650,7 @@ class PTXprinter:
     def isheader(self, mrk):
         return Grammar.marker_categories.get(mrk, '') in ("sectionpara", "title")
 
-    def run(self, parparms, floats):
+    def run_layout(self, parparms, floats):
         tname = self.view.getLocalTriggerFilename(self.bk)
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
@@ -669,6 +710,8 @@ class PTXprinter:
                     pnum = int(m.group(2))
                     side = 0 if m.group(1) == "A" else 1
                     lines = int((float(m.group(4)) - float(m.group(3))) / float(m.group(5)) + 0.1)
+                    if lines > 5:
+                        logger.info(f"{m.groups()=}, {lines=}")
                     v = self.underfills[pnum]
                     if side:
                         if isinstance(v, list) and len(v) == 1:
@@ -690,16 +733,97 @@ class PTXprinter:
         for (opcode, data) in xdvreader.parse():
             pass
         self.parlocs.getnbadspaces()
-        
+
+
+class MultiView:
+    # look like a ViewModel
+    def __init__(self, prjtree, userconfig, scriptsdir, args=None):
+        self.prjtree = prjtree
+        self.config = userconfig
+        self.scriptsdir = scriptsdir
+        self.args = args
+
+    def setup_ini(self):
+        pass
+
+    def set(self, key, value):
+        if key == "ecb_booklist":
+            allbooks = RefList(value, bookranges=True)
+            allbooks.simplify(bookranges=True)
+            self.books = [r.book for r in allbooks]
+
+    def setPrjid(self, pid, guid, **kw):
+        self.pid = pid
+        self.guid = guid
+
+    def setConfigId(self, cfgid, **kw):
+        self.cfgid = cfgid
+
+    # OpportunisticScheduler
+    def bklen(self, bk):
+        return chaps[bk]
+
+    def initScheduler(self, numproc=None):
+        if numproc is None:
+            numproc = mp.cpu_count()
+        self.numproc = numproc
+        self.task_list = self.books
+        self.build_params = [getattr(self, a) for a in 'prjtree config scriptsdir args pid guid cfgid'.split(' ')]
+
+    def add_job(self, bk):
+        self.task_list.append(bk)
+
+    def run_all(self):
+        self.task_list.sort(key=self.bklen, reverse=True)   # longest first
+        input_q = mp.Queue()
+        results_q = mp.Queue()
+        for t in self.task_list:
+            input_q.put(t)
+        for _ in range(self.numproc):
+            input_q.put(None)
+
+        if self.numproc == 1:
+            worker = PTXprinter(input_q, results_q, self.build_params, None)
+            worker.run()
+        else:
+            workers = [PTXprinter(input_q, results_q, self.build_params, i) for i in range(self.numproc)]
+            for w in workers:
+                w.start()
+
+        results = []
+        for _ in range(len(self.task_list)):
+            results.append(results_q.get())
+
+        if self.numproc != 1:
+            for w in workers:
+                w.join()
+        return results
+
+    def runview(self):
+        view = ViewModel(self.prjtree, self.config, self.scriptsdir, self.args)
+        view.setup_ini()
+        view.setPrjid(self.pid, self.guid, loadConfig=False, startup=True)
+        view.setConfigId(self.cfgid)
+        view.set("ecb_booklist", self.args.books)
+        view.set("r_book", "multiple")
+        runjob = RunJob(view, scriptsdir, macrosdir, args)
+        runjob.nothreads = True
+        runjob.silent = True
+        runjob.doit(noview=True, noaction=False)
+
+def add_cli_args(parser):
+    parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
+
 
 def main():
     from ptxprint.main import main as ptxmain
-    view = ptxmain(doitfn=None, argsline=None, retview=True)
-    bks = view.getBooks()
-    if len(bks):
-        bk = bks[0]
-        printer = PTXprinter(view, bk)
-        printer.solve()
+    view = ptxmain(doitfn=None, argsline=None, retview=True, argsfn=add_cli_args, viewClass=MultiView)
+    view.initScheduler(view.args.jobs)
+    results = view.run_all()
+    print("\n".join(str(r) for r in results))
+    if len(results) > 1:
+        view.runview()
+    
 
 if __name__ == "__main__":
     main()

@@ -992,7 +992,7 @@ class TexModel:
         if doti > 0:
             outfname = outfname[:doti] + draft + outextra + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
-        if not noaction:
+        if not noaction or not os.path.exists(outfpath):
             self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
             os.makedirs(outdir, exist_ok=True)
             codepage = self.ptsettings.get('Encoding', 65001)
@@ -1618,7 +1618,7 @@ class TexModel:
                         continue
 
                     if len(pgs):
-                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[kno][a-z]".split("|"):
                             pages = [x[0] for x in pgs[art]]
                         else:
                             pages = [x[0] for x in pgs.get('zz', pgs.get('', [[]]))]

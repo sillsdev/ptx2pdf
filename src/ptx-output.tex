@@ -34,9 +34,9 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\underf@ll#1#2#3{%
-  \ifdim#1<\dimexpr #2 - \baselineskip\relax\ifinendbook\else
+  \ifdim#1<\dimexpr #2 - \baselineskip\relax
     \immediate\write-1{Underfill[#3]: [\the\pageno] ht=\the #1, space=\the #2, baseline=\the\baselineskip}%
-  \fi\fi
+  \fi
 }
 \newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
 \def\onecol{%
@@ -200,7 +200,9 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \advance\und@rfill -\dimen3 % from c@lcboxheights
-    \underf@ll{\ht\colA}{\availht}{A}%
+    \ifinendbook\else
+      \underf@ll{\ht\colA}{\availht}{A}%
+    \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
     \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%
     \onecolp@gects % setup pagecontents
@@ -1464,6 +1466,7 @@
       \ifvoid1 \ht\colB=\dimen3\if\XrefNotes\relax\else\ht\xr@fbox=\dimen3\fi\else \dimen3=\ht\colB\fi
     \fi
     %\und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+    \trace{o}{A=\the\ht\colA+\the\dp\colA, B=\the\ht\colB+\the\dp\colB}%
     \ifdim\ht\colA < \ht\colB
       \underf@ll{\ht\colA}{\ht\colB}{A}%
     \else

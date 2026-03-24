@@ -113,7 +113,7 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         server.terminate()
         server.wait()
 
-def main(doitfn=None, argsline=None, retview=False):
+def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
 
@@ -168,6 +168,9 @@ def main(doitfn=None, argsline=None, retview=False):
     parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir, no config)")
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
     parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
+
+    if argsfn is not None:
+        argsfn(parser)
 
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         from ptxprint.gtkutils import HelpTextViewWindow
@@ -231,6 +234,8 @@ def main(doitfn=None, argsline=None, retview=False):
     from ptxprint.runjob import RunJob, isLocked
     from ptxprint.project import ProjectList
 
+    if viewClass is None:
+        viewClass = ViewModel
     savetreedirs = False
     ptxdir = None
     # necessary for the side effect of setting pt_bindir :(
@@ -409,7 +414,7 @@ def main(doitfn=None, argsline=None, retview=False):
     if args.test is not None:
         runtest(prjTree, config, macrosdir, project, doit, args)
     elif args.print or args.action is not None or retview:
-        mainw = ViewModel(prjTree, config, macrosdir, args)
+        mainw = viewClass(prjTree, config, macrosdir, args)
         mainw.setup_ini()
         if args.pid:
             mainw.setPrjid(args.pid, project.guid, loadConfig=False, startup=True)

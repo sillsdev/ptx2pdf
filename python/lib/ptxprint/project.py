@@ -165,10 +165,11 @@ class Project:
     localdir = "local/ptxprint"
     printdir = "local/ptxprint"
 
-    def __init__(self, prjdir):
+    def __init__(self, prjdir, ext=None):
         self.prjid = prjdir.prjid
         self.path = prjdir.path
         self.guid = prjdir.guid
+        self.ext = ext
         self.configs = {}
         logger.debug(f"Creating Project({self.prjid}) at {self.path} guid={self.guid}")
         self.findConfigs(self.path)
@@ -202,9 +203,13 @@ class Project:
                 return self.configs.get(cfgid, NullConfigDir).path
         return res
 
-    def printPath(self, cfgid):
+    def printPath(self, cfgid, ext=None, noext=False):
         if cfgid is None:
             return os.path.join(self.path, self.printdir)
+        if ext is None:
+            ext = self.ext
+        if not noext and ext is not None:
+            return os.path.join(self.path, self.printdir, cfgid, ext)
         return os.path.join(self.path, self.printdir, cfgid)
 
     def shareConfig(self, cfgid, toshared=True):

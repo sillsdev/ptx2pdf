@@ -399,9 +399,10 @@ def saferelpath(p, r="."):
     if p is None or not len(str(p)):
         return p
     try:
-        return os.path.relpath(p, r)
+        res = os.path.relpath(p, r)
     except ValueError:      # different drives on Windows
         return p
+    return res.rstrip("/")
 
 def pycodedir():
     return os.path.abspath(os.path.dirname(__file__))

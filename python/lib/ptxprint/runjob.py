@@ -484,7 +484,8 @@ class RunJob:
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        texfiledat = self.info.asTex(filedir=self.tmpdir, jobname=swapext(self.outfname, ext=".tex"), extra=extra, diglots=diglots)
+        filedir = self.printer.project.printPath(self.info.dict["config/name"], noext=True)
+        texfiledat = self.info.asTex(filedir=filedir, jobname=swapext(self.outfname, ext=".tex"), extra=extra, diglots=diglots)
         with open(os.path.join(self.tmpdir, self.outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=x)) for x in (".tex", ".xdv")]
@@ -499,7 +500,10 @@ class RunJob:
         ptxmacrospath = os.path.abspath(self.macrosdir)
         ptxmacrobase = os.path.join(pycodedir(), 'ptx2pdf')
         if not os.path.exists(ptxmacrobase):
-            ptxmacrobase = os.path.join(pycodedir(), "..", "..", "..", "src")
+            for i in range(3, 6):
+                ptxmacrobase = os.path.join(pycodedir(), *([".."] * i), "src")
+                if os.path.exists(ptxmacrobase):
+                    break
         if not os.path.exists(ptxmacrospath) or not os.path.exists(os.path.join(ptxmacrospath, "paratext2.tex")):
             ptxmacrospath = os.path.abspath(ptxmacrobase)
         if not os.path.exists(ptxmacrospath):
