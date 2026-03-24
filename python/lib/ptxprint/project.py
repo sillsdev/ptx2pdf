@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from ptxprint.ptsettings import ParatextSettings
 import logging
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 @dataclass
 class ProjectDir:
@@ -86,13 +86,13 @@ class ProjectList:
                 guid = pt.createGuid()
                 pt.saveAs(os.path.join(path, 'ptxSettings.xml'))
         p = ProjectDir(prjid, guid, path)
-        logger.debug(f"Adding project {p}")
+        #logger.debug(f"Adding project {p}")
         self.projects[guid] = p
         return p
 
     def getProject(self, guid, name=None):
         p = self.projects.get(guid, None)
-        logger.debug(f"Seeking project {guid} found {p}")
+        #logger.debug(f"Seeking project {guid} found {p}")
         if p is None:
             return self.findProject(name)
         return Project(p)
@@ -171,7 +171,7 @@ class Project:
         self.guid = prjdir.guid
         self.ext = ext
         self.configs = {}
-        logger.debug(f"Creating Project({self.prjid}) at {self.path} guid={self.guid}")
+        #logger.debug(f"Creating Project({self.prjid}) at {self.path} guid={self.guid}")
         self.findConfigs(self.path)
 
     def __repr__(self):

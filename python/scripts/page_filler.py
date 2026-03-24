@@ -21,6 +21,27 @@ logger = logging.getLogger(__name__)
 # BASIC TYPES
 # -----------------------------
 
+import pickle
+
+def debug_pickle(obj, path=""):
+    """Recursively finds which part of an object is unpicklable."""
+    try:
+        pickle.dumps(obj)
+    except (TypeError, pickle.PicklingError) as e:
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                debug_pickle(v, f"{path}['{k}']")
+        elif isinstance(obj, (list, tuple)):
+            for i, v in enumerate(obj):
+                debug_pickle(v, f"{path}[{i}]")
+        elif hasattr(obj, "__dict__"):
+            for k, v in vars(obj).items():
+                debug_pickle(v, f"{path}.{k}")
+        else:
+            print(f"!!! FOUND IT: {path} is a {type(obj)} and cannot be pickled. Error: {e}")
+
+# Usage:
+# debug_pickle(self.build_params, "build_params")
 ParagraphRef = Any
 VerseRef = Any
 PageIndex = int
@@ -346,12 +367,17 @@ class TypesetterSolver:
         # logger.info(f"shape_cache={','.join('+'.join((str(k), str(v))) for k, v in self.shape_cache.items() if k[1] != 0)}")
         # logger.info(f"candidates={paragraphs}")
         combos = self.generate_combos(paragraphs, state, page)
+        startcount = self.itercount
         for combo in combos:
             if not combo and self.itercount > 0:
                 continue
             key = tuple(sorted(combo.items()))
             if key in self.tried:
                 continue
+            if page < len(state.layout.pages) and state.layout.pages[page].column_free_lines is not None \
+                    and any(x > 5 for x in state.layout.pages[page].column_free_lines) \
+                    and self.itercount - startcount > 200:
+                break
             if state.layout.pages[page].column_free_lines is not None \
                     and state.layout.pages[page].column_free_lines[0] == 0 \
                     and any(state.layout.paragraph_pages[p].get(page, 0) == 1 for p in combo.keys()):
@@ -421,7 +447,8 @@ class TypesetterSolver:
         layout = self.hooks.run_layout(probe_params, state.float_anchors)
         self.itercount += 1
         logger.info("layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
-                page, self.itercount, not self.noprobe, str(layout.pages[page].column_free_lines), str(combo))
+                page, self.itercount, not self.noprobe,
+                str(layout.pages[page].column_free_lines if page < len(layout.pages) else ""), str(combo))
         self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
         return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
 
@@ -532,14 +559,12 @@ class GrowList(list):
         if index >= len(self):
             self.extend([None] * (index - len(self) + 1))
 
-class PTXprinter(mp.Process):
+class PTXprinter:
 
     reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+)\]\s+ht=([\d.]+)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
 
-    def __init__(self, task_queue, results_queue, build_params, nid):
+    def __init__(self, build_params, nid):
         super().__init__()
-        self.task_queue = task_queue
-        self.results_queue = results_queue
         self.nid = nid
         self.view = ViewModel(*build_params[0:4])
         self.view.setup_ini()
@@ -553,14 +578,6 @@ class PTXprinter(mp.Process):
                     fp = os.path.join(d, f)
                     if os.path.isfile(fp):
                         os.unlink(fp)
-
-    def run(self):
-        while True:
-            bk = self.task_queue.get()
-            if bk is None:
-                break
-            res = self.solve(bk)
-            self.results_queue.put((self.nid, *res))
 
     def solve(self, bk):
         self.bk = bk        # needed by run()
@@ -734,12 +751,29 @@ class PTXprinter(mp.Process):
             pass
         self.parlocs.getnbadspaces()
 
+class Worker(mp.Process):
+
+    def __init__(self, task_queue, results_queue, build_params, nid):
+        super().__init__()
+        self.task_queue = task_queue
+        self.results_queue = results_queue
+        self.build_params = build_params
+        self.nid = nid
+
+    def run(self):
+        printer = PTXprinter(self.build_params, self.nid)
+        while True:
+            bk = self.task_queue.get()
+            if bk is None:
+                break
+            res = printer.solve(bk)
+            self.results_queue.put((self.nid, *res))
 
 class MultiView:
     # look like a ViewModel
     def __init__(self, prjtree, userconfig, scriptsdir, args=None):
         self.prjtree = prjtree
-        self.config = userconfig
+        self.config = {section: dict(userconfig[section]) for section in userconfig.sections()}
         self.scriptsdir = scriptsdir
         self.args = args
 
@@ -765,7 +799,7 @@ class MultiView:
 
     def initScheduler(self, numproc=None):
         if numproc is None:
-            numproc = mp.cpu_count()
+            numproc = mp.cpu_count() - 2    # we run each cpu pretty hard
         self.numproc = numproc
         self.task_list = self.books
         self.build_params = [getattr(self, a) for a in 'prjtree config scriptsdir args pid guid cfgid'.split(' ')]
@@ -774,6 +808,8 @@ class MultiView:
         self.task_list.append(bk)
 
     def run_all(self):
+        mp.set_start_method('spawn', force=True)
+        debug_pickle(self.build_params, "build_params")
         self.task_list.sort(key=self.bklen, reverse=True)   # longest first
         input_q = mp.Queue()
         results_q = mp.Queue()
@@ -783,10 +819,10 @@ class MultiView:
             input_q.put(None)
 
         if self.numproc == 1:
-            worker = PTXprinter(input_q, results_q, self.build_params, None)
+            worker = Worker(input_q, results_q, self.build_params, None)
             worker.run()
         else:
-            workers = [PTXprinter(input_q, results_q, self.build_params, i) for i in range(self.numproc)]
+            workers = [Worker(input_q, results_q, self.build_params, i) for i in range(self.numproc)]
             for w in workers:
                 w.start()
 
