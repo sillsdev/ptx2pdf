@@ -677,11 +677,17 @@ def extraDataDir(base, dirname, create=False):
         return None
 
 def getResourcesDir():
+    trials = []
     if hasattr(sys, '_MEIPASS'):
-        res = os.path.join(getattr(sys, '_MEIPASS'), 'ptxprint', 'resources')
+        trials.append(os.path.join(getattr(sys, '_MEIPASS'), 'ptxprint', 'resources'))
     else:
-        res = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources')
-    return res
+        trials.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources'))
+    if sys.platform == "linux":
+        trials.append("/usr/share/ptx2pdf/resources")
+    for res in trials:
+        if os.path.exists(res):
+            return res
+    return None
 
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
