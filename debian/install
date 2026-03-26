@@ -2,3 +2,4 @@
 debian/*.svg	usr/share/icons/hicolor/scalable/apps
 src/*	usr/share/ptx2pdf/texmacros
 fonts/* usr/share/ptx2pdf/fonts
+resources/* usr/share/ptx2pdf/resources
