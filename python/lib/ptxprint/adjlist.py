@@ -6,10 +6,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
-refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
-restre = re.compile(r"^\s*(?:(?:mrk=|\\)(\S+)\s*)?(?:(?:expand=)?(\d+)(.*?))?$")
-
 class Liststore(list):
     """ structure: 
     """
@@ -34,6 +30,10 @@ class Liststore(list):
         super().append(rl)
         return rl.iter
         
+
+adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
+refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
+restre = re.compile(r"^\s*(?:(?:mrk=|\\)(\S+)\s*)?(?:(?:expand=)?(\d+)(.*?))?$")
 
 
 class AdjList:
@@ -94,7 +94,7 @@ class AdjList:
         res = k[:3] + (k[5], row[2], k[3], k[4], k[6])
         return res
 
-    def parseline(self, l):
+    def parseline(self, l, lineno=0):
         c = ""
         if '%' in l:
             c = l[l.find("%")+1:].strip()
@@ -114,6 +114,7 @@ class AdjList:
                     if n.group(2):
                         val[5] = int(n.group(2))
                     val[6] = n.group(3)
+            logger.log(7, f"{lineno}: {val}")
         return val
 
     def readAdjlist(self, fname):
@@ -121,8 +122,8 @@ class AdjList:
         allvals = []
         self.liststore.clear()
         with open(fname, "r", encoding="utf-8") as inf:
-            for l in inf.readlines():
-                val = self.parseline(l)
+            for i,l in enumerate(inf.readlines()):
+                val = self.parseline(l, lineno=i+1)
                 if val is not None:
                     allvals.append(val)
         for a in sorted(allvals, key=self.calckey):

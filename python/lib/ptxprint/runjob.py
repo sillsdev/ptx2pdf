@@ -627,20 +627,20 @@ class RunJob:
             callkw = {}
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
-            runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
-            if isinstance(runner, subprocess.Popen) and runner is not None:
+            self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
+            if isinstance(self.runner, subprocess.Popen) and runner is not None:
                 try:
                     #runner.wait(self.args.timeout)
-                    runner.wait()
+                    self.runner.wait()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
-                self.res = runner.returncode
-            elif isinstance(runner, subprocess.CompletedProcess):
-                self.res = runner.returncode
-                if runner.stdout not in (None, subprocess.DEVNULL):
-                    logger.debug(runner.stdout.decode('UTF-8'))
+                self.res = self.runner.returncode
+            elif isinstance(self.runner, subprocess.CompletedProcess):
+                self.res = self.runner.returncode
+                if self.runner.stdout not in (None, subprocess.DEVNULL):
+                    logger.debug(self.runner.stdout.decode('UTF-8'))
             else:
-                self.res = runner
+                self.res = self.runner
             if not self.silent:
                 print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
             logfname = swapext(outfname, ext=".tex", withext=".log")
@@ -694,44 +694,47 @@ class RunJob:
 
         if not self.res or not self.nopdf:
             self.printer.incrementProgress(stage="xp")
-            tmppdf = self.procpdfFile(outfname, pdffile)
-            if self.info["finishing/extraxdvproc"]:
-                self.processxdv(swapext(outfname, ext=".tex", withext=".xdv"), self.getxdvname(outfname))
-            cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
-            #if self.ispdfxa == "PDF/A-1":
-            #    cmd += ["-z", "0"]
-            if self.args.extras & 7:
-                cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
-            with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
-                runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
-            logger.debug(f"Running: {cmd} for {outfname}")
-            if self.args.extras & 1:
-                print(f"Subprocess return value: {runner}")
-            if isinstance(runner, subprocess.Popen) and runner is not None:
-                try:
-                    runner.wait()
-                    #runner.wait(self.args.timeout)
-                except subprocess.TimeoutExpired:
-                    print("Timed out!")
-                self.res = 4 if runner.returncode else 0
-                logger.debug(f"{runner.stdout.decode('UTF-8')}")
-            elif isinstance(runner, subprocess.CompletedProcess):
-                self.res = 4 if runner.returncode else 0
-                logger.debug(f"{runner.stdout}")
-            else:
-                self.res = 4 if runner else 0
-            self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
-            if self.res == 0:
-                if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
-                    self.printer.onIdle(self.printer.pdf_viewer.clear)
-                if not self.procpdf(outfname, pdffile, burst=self.info['finishing/extractinserts'],
-                                    cover=self.info['cover/makecoverpage'] != '%'):
-                    self.res = 3
-                self.printer.pdfFiles = self.extrafiles.copy()
-                if ' Original' not in self.printer.pdfFiles:
-                    self.printer.pdfFiles[' Original'] = pdffile
+            self.xdvtopdf(outfname, pdffile)
         if not self.silent:
             print("Done")
+
+    def xdvtopdf(self, outfname, pdffile):
+        tmppdf = self.procpdfFile(outfname, pdffile)
+        if self.info["finishing/extraxdvproc"]:
+            self.processxdv(swapext(outfname, ext=".tex", withext=".xdv"), self.getxdvname(outfname))
+        cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
+        #if self.ispdfxa == "PDF/A-1":
+        #    cmd += ["-z", "0"]
+        if self.args.extras & 7:
+            cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
+        with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
+            self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
+        logger.debug(f"Running: {cmd} for {outfname}")
+        if self.args.extras & 1:
+            print(f"Subprocess return value: {self.runner}")
+        if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+            try:
+                self.runner.wait()
+                #runner.wait(self.args.timeout)
+            except subprocess.TimeoutExpired:
+                print("Timed out!")
+            self.res = 4 if self.runner.returncode else 0
+            logger.debug(f"{runner.stdout.decode('UTF-8')}")
+        elif isinstance(self.runner, subprocess.CompletedProcess):
+            self.res = 4 if self.runner.returncode else 0
+            logger.debug(f"{self.runner.stdout}")
+        else:
+            self.res = 4 if self.runner else 0
+        self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
+        if self.res == 0:
+            if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+                self.printer.onIdle(self.printer.pdf_viewer.clear)
+            if not self.procpdf(outfname, pdffile, burst=self.info['finishing/extractinserts'],
+                                cover=self.info['cover/makecoverpage'] != '%'):
+                self.res = 3
+            self.printer.pdfFiles = self.extrafiles.copy()
+            if ' Original' not in self.printer.pdfFiles:
+                self.printer.pdfFiles[' Original'] = pdffile
 
     def done_job(self, outfname, pdfname):
         # Work out what the resulting PDF was called

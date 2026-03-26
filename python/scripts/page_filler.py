@@ -297,15 +297,12 @@ class TypesetterSolver:
         testloop = 10000
         while True:
             layout = state.layout
-            if layout.first_failing_page is None:
-                logger.info("solve_complete pages=%s", len(layout.pages))
-                return state
             # if layout.first_failing_page < page:
             #     return None
-            if not self.noprobe and layout.first_failing_page >= page + 1:
+            if not self.noprobe and (layout.first_failing_page is None or layout.first_failing_page >= page + 1):
                 self.noprobe = True
                 logger.info(f"Intermediate processing of {page+1}, with no probes")
-                state = self.run_layout(self.base_params, state, {}, layout.first_failing_page)
+                state = self.run_layout(self.base_params, state, {}, layout.first_failing_page or page + 1)
                 layout = state.layout
                 if layout.first_failing_page is None:
                     logger.info("solve_complete pages=%s", len(layout.pages))
@@ -314,6 +311,9 @@ class TypesetterSolver:
                     self.noprobe = False
                 else:
                     wantprobe = True
+            if layout.first_failing_page is None:
+                logger.info("solve_complete pages=%s", len(layout.pages))
+                return state
             page = layout.first_failing_page
             self.hooks.progress(page, self.itercount)
             oldstate = state
@@ -398,8 +398,9 @@ class TypesetterSolver:
         for p, d in combo.items():
             params[p] = self.shape_cache[(p, d)]
         probe_params = dict(params)
-        last_para = state.layout.get_pars(page)[-1]
-        if not self.noprobe:
+        ps = state.layout.get_pars(page)
+        last_para = ps[-1] if ps is not None and len(ps) else None
+        if not self.noprobe and last_para is not None:
             found_any = False
             for p in self.paragraph_order[self.paragraph_order.index(last_para) + 2:]:
                 if probe_params.get(p, (10, 10)) != (1.0, 0):
@@ -549,6 +550,8 @@ class PTXprinter:
         self.view.setup_ini()
         self.view.setPrjid(build_params[4], build_params[5], loadConfig=False, startup=True)
         self.view.setConfigId(build_params[6])
+        self.macrosdir = build_params[7]
+        self.view.project.ext = None
         if nid is not None:
             self.view.project.ext = f"pbuild{nid}"
             d = self.view.project.printPath(self.view.cfgid)
@@ -582,6 +585,9 @@ class PTXprinter:
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
         else:
+            self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
+                    os.path.basename(self.job.pdffile))
+            self.job.xdvtopdf(self.job.outfname, self.job.pdffile)
             retval = (True, f"Complete {bk} after {solver.itercount} runs after {endtime-starttime}s")
         return retval
         
@@ -651,6 +657,7 @@ class PTXprinter:
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
         self.adjs = AdjList(100, 95, 105, fname=adjfname)
+        logger.log(9, f"{parparms=}")
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
             self.adjs.setval(s[:3], f"{r[1]}.{r[2]}", para, p[1], None, expand=int(p[0]*100), append=True)
@@ -660,7 +667,7 @@ class PTXprinter:
         self.adjs.createTriggerlist(fname=tpath)
 
         if self.job is None:
-            self.job = RunJob(self.view, self.view.scriptsdir, self.view.scriptsdir, self.view.args)
+            self.job = RunJob(self.view, self.view.scriptsdir, self.macrosdir, self.view.args)
             self.job.norun = True
             self.job.nopdf = True
             self.job.silent = True

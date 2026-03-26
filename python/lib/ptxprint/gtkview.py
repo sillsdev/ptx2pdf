@@ -7496,8 +7496,8 @@ Thank you,
             geom = WindowGeometry.fromDialog(dialog)
             if geom:
                 geom.toConfig(self.userconfig, name)
-
-        self.saveConfig(force=True)
+        # don't do this since it writes out adjlists etc. which may mess with other apps
+        # self.saveConfig(force=True)
 
     def restoreWindowGeometry(self):
         """Restores window geometries using a sequential, state-managed approach."""
