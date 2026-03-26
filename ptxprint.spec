@@ -116,10 +116,6 @@ def create_dmg_staging(app_name):
     os.makedirs(dmg_staging)
     # Copy the .app bundle to dist/dmg
     shutil.copytree(os.path.join(DISTPATH, f"{app_name}.app"), os.path.join(dmg_staging, f"{app_name}.app"), symlinks=True)
-    # Create Applications symlink in dist/dmg
-    applications_link = os.path.join(dmg_staging, "Applications")
-    if not os.path.exists(applications_link):
-        os.symlink("/Applications", applications_link)
     return dmg_staging
 
 def code_sign(app_name, dmg_staging):
@@ -131,14 +127,53 @@ def code_sign(app_name, dmg_staging):
         raise Exception(f"Signing script not found: {sign_script}")
     run(["bash", sign_script, app_bundle_path], check=True)
 
-def create_dmg(app_name, version):
-    for old in glob('*.dmg', root_dir=DISTPATH): os.remove(os.path.join(DISTPATH, old))
+def create_dmg(app_name, version, dmg_staging):
+    # Clean up any old DMG files
+    for old in glob('*.dmg', root_dir=DISTPATH): 
+        os.remove(os.path.join(DISTPATH, old))
+    
     dmg_path = os.path.join(DISTPATH, f"{app_name}_{version}.dmg")
-    print(f"Creating {app_name}.dmg")
-    run([
-        "hdiutil", "create", "-volname", f"{app_name}",
-        "-srcfolder", dmg_staging, "-ov", "-format", "UDZO", dmg_path
-    ], check=True)
+    appdmg_config_file = os.path.join(DISTPATH, f"appdmg-{app_name}-{version}.json")
+    background_image = os.path.abspath("dmg-background.tiff")
+    
+    # DMG configuration settings
+    dmg_window_width = 540
+    dmg_window_height = 340
+    dmg_icon_size = 128
+    dmg_app_icon_x = 150
+    dmg_app_icon_y = 150
+    dmg_applications_icon_x = 390
+    dmg_applications_icon_y = 150
+    
+    # Create appdmg configuration
+    appdmg_config = {
+        "title": f"{app_name} {version}",
+        "format": "UDZO",
+        "window": {
+            "position": {"x": 100, "y": 100},
+            "size": {"width": dmg_window_width, "height": dmg_window_height}
+        },
+        "icon-size": dmg_icon_size,
+        "contents": [
+            {"x": dmg_app_icon_x, "y": dmg_app_icon_y, "type": "file", "path": os.path.join(dmg_staging, f"{app_name}.app")},
+            {"x": dmg_applications_icon_x, "y": dmg_applications_icon_y, "type": "link", "path": "/Applications"}
+        ]
+    }
+    
+    # Add background image if it exists
+    if os.path.exists(background_image):
+        appdmg_config["background"] = background_image
+    
+    # Write appdmg configuration file
+    with open(appdmg_config_file, 'w') as f:
+        json.dump(appdmg_config, f, indent=2)
+    
+    print(f"Creating {app_name}.dmg using appdmg")
+    run(["appdmg", appdmg_config_file, dmg_path], check=True)
+    
+    # Clean up config file
+    os.remove(appdmg_config_file)
+    
     return dmg_path
 
 def notarize(dmg_path):
@@ -445,7 +480,7 @@ elif sys.platform == "darwin":
 
     dmg_staging = create_dmg_staging(app_name)
     code_sign(app_name, dmg_staging)
-    dmg_path = create_dmg(app_name, version)
+    dmg_path = create_dmg(app_name, version, dmg_staging)
     if not os.environ.get("SKIP_NOTARIZE") == "1":
         notarize(dmg_path)
     shutil.rmtree(dmg_staging)
