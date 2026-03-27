@@ -1,8 +1,19 @@
-PTXprint 3.0.16 Release Notes
-17 Mar 2026
+PTXprint 3.0.17 Release Notes
+27 Mar 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.17 (27 Mar 2026)
+  * Merge pull request #1138 from sillsdev/feature/dmg-ux
+  * Look harder for resources
+  * Get page callers working again
+  * Use appdmg to create better dmg UX
+  * Don't run the whole thing at the end
+  * Use multiprocessing.spawn on everything in page_filler
+  * Add multiprocessing to page_filler
+  * Fix design_badness in page_filler
+  * Add more picture support to parlocs
 
 Bug fixes and Improvements in 3.0.16 (17 Mar 2026)
   * Add generated values to the header drop down
