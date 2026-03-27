@@ -692,7 +692,7 @@ class RunJob:
             if not rererun:
                 break
 
-        if not self.res or not self.nopdf:
+        if not self.res and not self.nopdf:
             self.printer.incrementProgress(stage="xp")
             self.xdvtopdf(outfname, pdffile)
         if not self.silent:

@@ -34,7 +34,7 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\underf@ll#1#2#3{%
-  \ifdim#1<\dimexpr #2 - \baselineskip\relax
+  \ifdim#1<\dimexpr #2 - .5 \baselineskip\relax
     \immediate\write-1{Underfill[#3]: [\the\pageno] ht=\the #1, space=\the #2, baseline=\the\baselineskip}%
   \fi
 }
@@ -200,7 +200,7 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \advance\und@rfill -\dimen3 % from c@lcboxheights
-    \ifinendbook\else
+    \ifinendbook\else   % end of a book has single column left overs. Ignore them
       \underf@ll{\ht\colA}{\availht}{A}%
     \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%

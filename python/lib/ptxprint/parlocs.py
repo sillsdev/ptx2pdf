@@ -85,6 +85,7 @@ class ParInfo:
     rects:      InitVar[None] = None
     lines:      int = 0
     lastwidth:  float = 0.
+    badness:    int = 0
 
     def __str__(self):
         return f"{self.ref}[{getattr(self, 'parnum', '')}] {self.lines} @ {self.baseline} {self.rects}"
@@ -305,6 +306,7 @@ class Paragraphs(list):
                 if len(p) > 2:
                     currr.yend = readpts(p[2])
                     endx = readpts(p[1])
+                    ps.badness = int(p[0])
                 else:
                     currr.yend = readpts(p[1])
                     endx = readpts(p[0])
