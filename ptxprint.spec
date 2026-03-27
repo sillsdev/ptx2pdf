@@ -17,7 +17,7 @@ print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
 
-version="3.0.16"
+version="3.0.17"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
