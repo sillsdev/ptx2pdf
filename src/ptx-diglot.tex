@@ -116,15 +116,21 @@
 \def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
-\def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitVerseNumberOne,MakeChapterLabel,ColAdjskip,intercharspace}
-\def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
+%...Trial.. versions are a reduced set that which don't include content-generating parameters not needed in running a trial
+\def\LRspecificTrialDef{VerticalSpaceFactor,LineSpacingFactor,ColAdjskip,}
+\def\LRspecificDef{\LRspecificTrialDef AdornVerseNumber,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitVerseNumberOne,MakeChapterLabel,intercharspace}
+\def\LRspecificTrialDim{le@dingunit,onel@neunit,verticalsp@ceunit,} 
+\def\LRspecificDim{\LRspecificTrialDim FontSizeUnit,IndentUnit} 
 %LRspecificVarIf lists **internal boolean variables** that need to carry over from one paragraph to the next. 
 %For global config values, insert name in LRspecificDef, and add line(s) for newsideSpecificIf into initcolumndef@ults
-\def\LRspecificVarIf{dr@ppednumber,dr@ppedother}
-\def\LRspecificVarDef{ch@pterc@tnum,@@lastc@rref,dc@rref} % \def based variables that need to carry over from one par to the next
+\def\LRspecificTrialVarIf{}% NB! Change pr@cessSpecific... definition below if this stops being empty!
+\def\LRspecificVarIf{\LRspecificTrialVarIf dr@ppednumber,dr@ppedother}
+\def\LRspecificTrialVarDef{} %  NB! Change pr@cessSpecific... definition below if this stops being empty!
+\def\LRspecificVarDef{\LRspecificTrialVarDef ch@pterc@tnum,@@lastc@rref,dc@rref} % \def based variables that need to carry over from one par to the next
 
 %Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
-\def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts,dropped@ther@lines} 
+\def\LRspecificTrialCount{} % NB! Change pr@cessSpecific... definition below if this stops being empty! 
+\def\LRspecificCountFixed{\LRspecificTrialCount curr@djpar,p@rnum,@numcuts,dropped@ther@lines} 
 \def\LRspecificCountBroken{@numcuts,dropped@ther@lines}
 \let\LRspecificCount\LRspecificCountFixed
 
@@ -142,7 +148,13 @@
 \def\pr@cessSpecificVarDef{\edef\LRs{\LRspecificVarDef}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificDim{\edef\LRs{\LRspecificDim}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificCount{\edef\LRs{\LRspecificCount}\x@\pr@cessSp@cific \LRs,\E}
-\def\pr@cessSpecificVarIf{\edef\LRs{\LRspecificVarIf}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificVarIf{}%\edef\LRs{\LRspecificVarIf}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificTrialDef{\edef\LRs{\LRspecificTrialDef \LRspecificTrialVarDef}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificTrialVarDef{}%\edef\LRs{\LRspecificTrialVarDef}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificTrialDim{\edef\LRs{\LRspecificTrialDim}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificTrialCount{}%\edef\LRs{\LRspecificTrialCount}\x@\pr@cessSp@cific \LRs,\E}
+%Nothing to do for this, currently
+\def\pr@cessSpecificTrialVarIf{}%\edef\LRs{\LRspecificTrialVarIf}\x@\pr@cessSp@cific \LRs,\E}
 
 \def\saveVarLRSpecific{%
   \let\wh@t\s@veSpecificSideIf\pr@cessSpecificVarIf
@@ -210,17 +222,31 @@
 % And these are the interface functions. They should all set \sfx  to L, R or \@rig
 %
 \def\l@stLRspecific{}
+
+% For use with style definitions, etc.:
 \def\setLRspecific{\ifx\l@stLRspecific\c@rrdstat\else
     \edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
     \trace{D}{setLRspecific:\l@stLRspecific -> \sfx}%
     \let\l@stLRspecific\c@rrdstat
+    \let\l@stLRspecifictr\c@rrdstat
     \let\wh@t\sp@cificSideDef\pr@cessSpecificDef
     \let\wh@t\sp@cificSideDim\pr@cessSpecificDim
     \let\wh@t\sp@cificSideCount\pr@cessSpecificCount
     \let\wh@t\sp@cificSideIf\pr@cessSpecificVarIf
   \fi
-}% For use with style definitions, etc.
+}
 
+\def\setLRspecifictrial{% This runs a cut-down version for processing trials, etc. (Don't need the full lists)
+  \ifx\l@stLRspecifictr\c@rrdstat\else
+    \edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
+    \trace{D}{setLRspecifictrial:\l@stLRspecific -> \sfx}%
+    \let\l@stLRspecific\c@rrdstat
+    \let\wh@t\sp@cificSideDef\pr@cessSpecificTrialDef
+    \let\wh@t\sp@cificSideDim\pr@cessSpecificTrialDim
+    \let\wh@t\sp@cificSideCount\pr@cessSpecificTrialCount
+    \let\wh@t\sp@cificSideIf\pr@cessSpecificTrialVarIf
+  \fi
+}% For use with style definitions, etc.
 \def\SSsetLRspecific{\ifx\ds@ffix\empty\def\sfx{\@orig}\else\edef\sfx{\ds@ffix}\fi
   \let\wh@t\sp@cificSideDef\pr@cessSpecific}% for use in stylesheet, no need to check dimensions, just existance
 
@@ -359,7 +385,7 @@
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\ht@adj@all{\ht\partial+\dp\partial+\ht\n@xtpartial+\dp\n@xtpartial}
-\def\dglt@calc@vailht{%
+\def\dglt@calc@vailht@simplecols{%
    \trace{D}{dglt@calc@vailht \ifloc@lht loc@lht \else page \fi \c@rrdstat (\number\partial), \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax \space th=\the\textheight, trh=\the\trialheight}%
    \global\availht=\textheight %
    \global\advance\availht by -\dimexpr \ht@adj@all\relax\relax %
@@ -424,6 +450,9 @@
    \fi
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
    \trace{D}{final:\the\availht}%
+}
+\def\dglt@calc@vailht{%
+  \csname dglt@calc@vailht@\diglotlayout\endcsname
 }
 
 \def\dglt@calc@vailht@mods{%
@@ -573,7 +602,7 @@
 \newif\ifextr@content
 \NoMergeReflowtrue % What to do when lastestagereflow is true and p@rtial is not empty. Changed on 16Dec2024. With false, an earlier column got repeated.
 
-\def\run@a@trial{%
+\def\run@a@trial@prep@simplecols{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
   \traceNum{d}{run@a@trial \show@dstat, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty}%
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %last galley
@@ -668,6 +697,14 @@
     \else
       \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{0pt}%
     \fi
+    \temptrue
+  \else
+    \tempfalse
+  \fi
+}
+\def\run@a@trial{%
+  \csname run@a@trial@prep@\diglotlayout\endcsname
+  \iftemp
     \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip, tsr:\csname tri@lsplitRej\c@rrdstat\endcsname}%
     \ifdim\ht\galley=0pt \ifdim\dp\galley=0pt
       \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
@@ -681,8 +718,8 @@
       \showbox\galley
     \fi
     \global\output{\diglot@any@trial}
-    \unvcopy\galley
-    \unpenalty
+    \setbox0\vbox{\unvcopy\galley\unpenalty}%
+    \unvbox0
     \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
     \traceifset{run@a@trial\the\r@a@trialdepth}%
     \penalty\endtri@lpen@lty
@@ -693,7 +730,7 @@
   \else
     \trace{D}{No space for trial}%
     \global\trialfailedtrue
-    \let\after@run@a@trial=\after@after@a@trial
+    \x@\let\x@\after@run@a@trial\csname after@after@a@trial@\diglotlayout\endcsname
     \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{\the\trialheight}% The trial already rejected the whole lot.
   \fi
   \after@run@a@trial
@@ -726,7 +763,7 @@
   %
   %Testing acceptability of result:
   \tempfalse
-  \let\after@this=\after@after@a@trial
+  \x@\let\x@\after@this\csname after@after@a@trial@\diglotlayout\endcsname
   \iftrialfailed\else
     \TempDim=\dimexpr \availht-\ht\trialbox\relax
     \ifdim \dp\trialbox > 0.5\baselineskip % Is the depth of the box significant?
@@ -2603,7 +2640,7 @@
        \fi %tmp
        \traceifcheck{@@setppagecontents-b}%
        \ifx\TextBorderColumns\empty
-         \trace{et}{Apply border from writesimplecolumns. f@rstb@dy is \f@rstb@dy}%
+         \trace{et}{Apply border from writesimplecols. f@rstb@dy is \f@rstb@dy}%
          \ifnum\TextBorderMode=0
            \doTextB@rder{\partial}% Dumb, border around everything
          \else
@@ -3200,7 +3237,7 @@
 \def\n@xttrial#1#2\E{%
   \xdef\tri@llist{#2}%
   \trace{D}{n@xttrial #1 (#2)}%
-  \setc@rdstat{#1}\setLRspecific
+  \setc@rdstat{#1}\setLRspecifictrial
 }
 
 \def\ch@ckcontents#1#2\E{%
@@ -3249,7 +3286,7 @@
 \edef\layout@list{LR}%
 \edef\rev@layout@list{RL}%
 \edef\digl@tc@ntentlist{}% columns that have *UNPROCESSED* content that has been gathered for the next chunk
-\def\digl@txcsL{}% Empty or column ID 
+\def\digl@txcsL{}% Empty or column ID  These are used for REPORTING ONLY
 \def\digl@txcsR{}
 \def\digl@tc@ntent@xcs{\digl@txcsL\digl@txcsR}% columns that have *SEMI-PROCESSED* content (overflow)
 
@@ -3358,7 +3395,7 @@
   \ifx\c@rrdstat\empty %End of the loop.
   \else
     \ifnum 1=\x@\ifvoid\csname excess\c@rrdstat\endcsname \x@\ifvoid\csname partial\c@rrdstat\endcsname 0\else 1\fi\else 1\fi
-      \loc@lhttrue\dglt@calc@vailht
+      \loc@lhttrue\csname dglt@calc@vailht@\diglotlayout\endcsname
       %\ifnum\triall@@pcount=1
         %\showbox\partialL\showbox\excessL
       %\fi
@@ -3377,8 +3414,8 @@
   \@writep@ge
   %\check@and@update
 }
-\def\after@after@a@trial{%
-  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  tlc=\the\triall@@pcount, pf:\ifpagefull true\else false\fi [\tri@llist|\digl@tc@ntent@xcs]}%
+\def\after@after@a@trial@simplecols{%
+  \trace{d}{after@after@a@trial@simplecols iftrialfailed\iftrialfailed true\else false\fi,  tlc=\the\triall@@pcount, pf:\ifpagefull true\else false\fi [\tri@llist|\digl@tc@ntent@xcs]}%
   % Check if the run failed (or didn't even run), and update page if that's 
   % appropriate.
   \iftrialfailed

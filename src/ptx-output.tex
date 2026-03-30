@@ -2706,6 +2706,7 @@
 % An output routine purely to measure what the insert situation is. Written for polyglot-complexpages, but applicable for other situations too.
 \newif\ifins@meas@trialfull % Should the trial do a full measure (holdinginserts=0) right from the start? (Or start with a quick measure).
 \newif\ifins@meas@trialnofull % If a quick measure shows inserts, is dropping through to a full measure suppressed?
+\globdimen\ins@meas@trial@result
 \newsp@cialpen{ins@meas@trialpenalty}
 
 % Do we need a 'save current page state?' May be needed e.g. for run-on inserts
@@ -2723,7 +2724,8 @@
   % so this is worthwhile, unless it's known to be an insert-heavy box.
   % FIXME: Implement some kind of 'don't touch numbers below X', so we don't re-measure the same stuff multiple times when there's reflow happening.
   \ifdim\pagetotal>0pt \message{me@sureins@trial cannot be called with content on the page}\pagebreak\relax\fi
-  \def\ins@meas@trial@result{0pt}%
+  \def\ins@meas@trial@result{\z@}%
+  \trace{imt}{\meaning\ins@meas@trial@result}%
   \def\ins@meas@trial@dims{}%
   \bgroup
     \output{\ins@meas@trial}% Not global, just here.
@@ -2743,7 +2745,7 @@
       \fi
     \fi
   \egroup
-  \trace{imt}{ins@meas@trial@result=\ins@meas@trial@result(\ins@meas@trial@dims)}%
+  \trace{imt}{ins@meas@trial@result=\meaning\ins@meas@trial@result(\ins@meas@trial@dims)}%
   \global\deadcycles=0 % Cycles were deliberately dead.
 }
 \def\me@sureinserts#1\E{%
