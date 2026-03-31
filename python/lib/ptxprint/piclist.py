@@ -28,7 +28,7 @@ _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 def newBase(fpath):
     doti = fpath.rfind(".")
     f = os.path.basename(fpath[:doti] if doti >= 0 else fpath)
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", f)
+    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[onk][a-z])..\d{5})[abcABC]?$", f)
     if cl:
         return cl[0].lower()
     else:
@@ -400,6 +400,9 @@ class Piclist:
         for p in self.pics.values():
             c = p.copy()
             res.pics[c.key] = c
+        res.keycounter = self.keycounter
+        res.mode = self.mode
+        res.suffix = self.suffix
         return res
         
     def clear(self, model=None):
@@ -417,6 +420,9 @@ class Piclist:
 
     def __setitem__(self, k, v):
         self.pics[k] = v
+
+    def pop(self, k, default=None):
+        return self.pics.pop(k, default)
 
     def remove(self, p):
         if p.key in self.pics:

@@ -141,7 +141,7 @@
   \bc@lsetup
   \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drwidth pt  * \b@drvsides\relax
   \dimen1=0pt
-  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width\bc@l
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \lineskiplimit=0pt \hsize=\b@rderbox@width\relax\bc@l
     \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top \b@rderbox@width}\hbox{\vrule height\b@drwidth pt  width \b@rderbox@width}\fi%
     \hbox to \b@rderbox@width{%
       \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left \the\dimen0+\the\dimen1}%
@@ -268,7 +268,7 @@
             \ifhasb@rder
               \dob@rder
               %\vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
-              \global\setbox#1\vbox to \ht#1{\baselineskip=0pt\kern\pretextb@rderskip\vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}\box#1\vskip\posttextb@rderskip}%
+              \global\setbox#1\vbox to \ht#1{\baselineskip=0pt \lineskiplimit=0pt \kern\pretextb@rderskip\vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}\box#1\vskip\posttextb@rderskip}%
             \fi
           \egroup
         \fi
@@ -548,7 +548,8 @@
     %\edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@tpadding +\dp\b@rderbox  +\b@drwidth pt *\b@drvsides + \border@tpadding + \border@bpadding \relax}%
     \edef\b@xextadj{\the\dimexpr 0pt - \ifdim\border@bpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@bpadding\relax\else 0pt \fi\else 0pt \fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@bpadding +\b@drwidth pt  \fi \relax}% 
-    %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%
+    \trace{eb}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x }%
+    \trace{e}{bbh=\b@rderbox@height, bbd=\b@rderbox@depth, b@xextadj=\b@xextadj, b@xintadj=\b@xintadj}%
     %\xdef\b@xintadj{10pt}%
   \else
     \setbox\b@rderbox\box\voidb@x

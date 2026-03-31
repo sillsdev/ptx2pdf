@@ -718,11 +718,19 @@
 \def\@parpicstart#1#2#3#4{}
 \def\@parpicstop#1#2#3#4#5#6{}
 \def\@parpicsize#1#2#3#4{}
+\def\@parpicanchor#1#2#3{}
 
 \def\write@parpicsize{%
   \edef\p@cinfo{\p@climit\string{\the\wd\newpicb@x\string}\string{\the\ht\newpicb@x\string}}%
   \write\x@\p@rlocs\x@{\p@cinfo}%
 }
+
+\def\write@picanchor{%
+  \pdfsavepos
+  \edef\tmp@nchor{\string\@parpicanchor{\ifdiglot\dc@rref\else\c@rref\fi}}%
+  \write\x@\p@rlocs\x@{\tmp@nchor{\the\pdflastxpos}{\the\pdflastypos}}%
+}
+
 \gdef\pr@penalty{10}\gdef\p@stpenalty{10}%
 \def\d@figure#1{%
  \trace{g}{d@figure entered IncludeFigures\ifIncludeFigures true\else false\fi}%
@@ -1074,17 +1082,12 @@
     \fi
     \ifCaptionFirst\vskip 0.5\onel@neunit\else
       \setbox0\vbox{\ifdim\dimexpr \FigCaptionAdjust+ \sp@cebetween\onel@neunit\relax =0pt\else
-        \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
-      \fi
-      \d@caption}\trace{g}{caption box is \the\ht0 high}%
-      \dimen0=0pt
-      \ifdim\ht0<0pt
-        \dimen0=-\ht0
-      \fi
-      \unvbox0
-      \ifdim\dimen0=0pt\else
-        \kern\dimen0
-      \fi
+          \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
+        \fi
+        \d@caption}\trace{g}{caption box is \the\ht0 high}%
+      \dimen0=0pt\ifdim\ht0<0pt \dimen0=-\ht0\fi
+      \nointerlineskip\box0%\unvbox0
+      \ifdim\dimen0=0pt\else \kern\dimen0 \fi
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
@@ -1130,6 +1133,7 @@
         \fi
       \fi
     \fi%
+    \write@picanchor
     \@wrap\insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero

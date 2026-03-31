@@ -1,8 +1,75 @@
-PTXprint 3.0.11 Release Notes
-17 Feb 2026
+PTXprint 3.0.17 Release Notes
+27 Mar 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.17 (27 Mar 2026)
+  * Merge pull request #1138 from sillsdev/feature/dmg-ux
+  * Look harder for resources
+  * Get page callers working again
+  * Use appdmg to create better dmg UX
+  * Don't run the whole thing at the end
+  * Use multiprocessing.spawn on everything in page_filler
+  * Add multiprocessing to page_filler
+  * Fix design_badness in page_filler
+  * Add more picture support to parlocs
+
+Bug fixes and Improvements in 3.0.16 (17 Mar 2026)
+  * Add generated values to the header drop down
+  * Fix window position memory on Linux by going to X11
+  * Fix Alt-x showUnicodeValues consuming the selected text
+  * Fix unable to update peripheral values in table
+  * Fix ColInfo for polyglots
+  * New badness function and work to reduce workload
+  * Get page_filler doing something useful (work in progress)
+  
+Bug fixes and Improvements in 3.0.15 (11 Mar 2026)
+  * Fix missing printers folder (causing crash at startup)
+  
+Bug fixes and Improvements in 3.0.14 (10 Mar 2026)
+  * Fix HebrewDigit mapping
+  * Fix adjlist trigger files (get shrink/expand text working again)
+  * Add page_filler but expect radical changes
+
+Bug fixes and Improvements in 3.0.13 (5 Mar 2026)
+  * Handle bad bookcodes more gracefully
+  * Get view & edit final sfm working again
+  * Invert y in outline collision tests
+  * Don't short circuit loading config in GUI on project change
+  * Fix bad style updates on config change
+  * Fix reporting bad books
+
+Bug fixes and Improvements in 3.0.12 (3 Mar 2026)
+  * Look for books first in shared config and then project dir
+  * Add UI Extention capability to right-click context menu in PDF Viewer Pane
+  * Get AdjList to save custom triggers and add to triggers file
+  * Allow tabbing between rows/values in the variables
+  * Refactor to add getBookSrcPath to view
+  * Recurse any 'include' files in report generation
+  * Get manual change of page number working again
+  * Handle fonts without hmtx for space_width
+  * Don't generate tildes for hard spaces
+  * Possible RTL TOC fix
+  * Fix bottom pictures for non grid (warning: this may adjust pictures)
+  * Fix bottom alignment for off grid setting
+  * Fix variable spacing
+  * Fix menu item alignment
+  * Fix reduplication bug while inserting strongs numbers
+  * Fix marginnote header
+  * Fix generating xrefs for verse ranges
+
+  Several diglot improvements:
+  * Get XXM maps to print even when in diglot mode
+  * Check for negative splits, to avoid some(?) EEK situations.
+  * Make \d merge as part of the body, rather than a part of the chapter-block
+  * Stop accidentally overriding a split point because of a \b. NEEDS TESTING.
+  * Solve ifcheck errors from  run@a@trial triggering itself
+  * Make diglot triggers count paragraphs better
+  * Remember dc@rref from one chunk to the next
+  * Refactor Underfill msg to be clearer
+  * Be resiliant against diglot oddities
+  * Add afterchunk hooks to diglot
 
 Bug fixes and Improvements in 3.0.11 (17 Feb 2026)
   * First steps towards a paragraph badness figure. Currently just based on widths of spaces

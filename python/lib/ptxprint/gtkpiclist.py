@@ -511,7 +511,7 @@ class PicList:
     def onResized(self):
         picframe = self.builder.get_object("fr_picPreview")
         self.picrect = picframe.get_allocation()
-        print(f"{self.picrect.width=} {self.picrect.height=}")
+        # print(f"{self.picrect.width=} {self.picrect.height=}")
         self.item_changed(None, "src")
 
     def get_row_from_items(self):

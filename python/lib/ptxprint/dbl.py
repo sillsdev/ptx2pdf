@@ -173,6 +173,9 @@ def UnpackBooks(inzip, prjid, prjdir, subdir=None):
             bk = fbk[:3]
         elif fbk[-3:].upper() in bookcodes:
             bk = fbk[-3:]
+        elif (m := re.match(".*?([a-z]{3}|\d[a-z]{2})", fbk)):
+            if m.group(1).upper() in bookcodes:
+                bk = m.group(1)
         indoc = unpackBook(inzip, f, bk, ftype, prjid, prjdir)
         inzip.collectBookNames(indoc)
     if not inzip.hasbooknames:

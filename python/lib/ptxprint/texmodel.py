@@ -601,6 +601,8 @@ class TexModel:
         res.append(template.format(fname))
         if bkindex is None:
             return res
+        if bkindex >= len(self.dict['project/books']) or self.dict['project/books'][bkindex] is None:
+            return ""
         if diglots:
             for k, v in self.dict['diglots_'].items():
                 res.append(r"\zglot|{}\*".format(k))
@@ -653,6 +655,8 @@ class TexModel:
                     res.append(r"\PtxFilePath={"+saferelpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        if fname is None:
+                            continue
                         dname = None
                         beforelast = []
                         if extra != "":
@@ -787,9 +791,9 @@ class TexModel:
         if self.frontperiphs is None or not len(self.frontperiphs):
             self.frontperiphs = {}
             for a in ('FRT', 'INT'):
-                frtfile = os.path.join(self.printer.project.path, self.printer.getBookFilename(a))
+                frtfile = self.printer.getBookSrcPath(a)
                 logger.debug(f"Trying periphs file {frtfile}")
-                if not os.path.exists(frtfile):
+                if frtfile is None:
                     continue
                 with open(frtfile, encoding="utf-8") as inf:
                     mode = 0        # default
@@ -845,10 +849,9 @@ class TexModel:
                 logger.log(7, "\n".join(fcontent))
 
     def addInt(self, outfname):
-        intfname = self.printer.getBookFilename('INT')
-        if intfname is None or not len(intfname):
+        intfile = self.printer.getBookSrcPath('INT')
+        if intfile is None:
             return
-        intfile = os.path.join(self.printer.project.path, intfname)
         def addperiphid(m):
             if m.group(2).lower() in _periphids:
                 return m.group(1) + f'|id="{_periphids[m.group(2).lower()]}"\n'
@@ -863,7 +866,7 @@ class TexModel:
             dat = regex.sub(r"(\\periph\s*([^\n|]+))\n", addperiphid, dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
-        logger.debug(f"INT file {intfname} processed to {outfname}")
+        logger.debug(f"INT file {intfile} processed to {outfname}")
         return outfname
 
     def flattenModule(self, infpath, outdir, text=None, noaction=False):
@@ -874,10 +877,15 @@ class TexModel:
         if not noaction:
             usfms = self.printer.get_usfms()
             mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-            mod.parse(self.printer.picinfos)
-            res = mod.doc
-            if res.xml.errors:
-                self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
+            try:
+                mod.parse(self.printer.picinfos)
+            except ValueError as e:
+                self.printer.doError(f"Module error: {e}")
+                res = ""
+            else:
+                res = mod.doc
+                if res.xml.errors:
+                    self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         else:
             res = ""
         if text is not None:
@@ -955,23 +963,24 @@ class TexModel:
                 self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
                                             bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
         draft = "-" + (printer.cfgid or "draft")
-        fname = printer.getBookFilename(bk)
-        if fname is None:
-            infpath = os.path.join(prjdir, bk)  # assume module
-            infpath = self.flattenModule(infpath, outdir)
-            if isinstance(infpath, tuple) and infpath[0] is None:
-                self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
-                        secondary=str(infpath[1]), 
-                        title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
-                        show=not self.printer.get("c_quickRun"))
-                return None
-        else:
-            infpath = os.path.join(prjdir, fname)
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
         else:
             self.dict["/nocustomsty"] = ""
+        infpath = printer.getBookSrcPath(bk)
+        if infpath is None:
+            if re.match(".*?[/\\.]", bk):
+                infpath = os.path.join(prjdir, bk)  # assume module
+                infpath = self.flattenModule(infpath, outdir)
+                if isinstance(infpath, tuple) and infpath[0] is None:
+                    self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
+                            secondary=str(infpath[1]), 
+                            title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
+                            show=not self.printer.get("c_quickRun"))
+                    return None
+        if infpath is None:
+            raise FileNotFoundError(f"Can't find file for {bk}")
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir, noaction=noaction)
         outfname = os.path.basename(infpath)
@@ -983,7 +992,7 @@ class TexModel:
         if doti > 0:
             outfname = outfname[:doti] + draft + outextra + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
-        if not noaction:
+        if not noaction or not os.path.exists(outfpath):
             self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
             os.makedirs(outdir, exist_ok=True)
             codepage = self.ptsettings.get('Encoding', 65001)
@@ -1444,9 +1453,8 @@ class TexModel:
         # Glossary entries for the key terms appearing like footnotes
         prjid = printer.project.prjid
         prjdir = printer.project.path
-        fname = printer.getBookFilename("GLO", prjid)
-        infname = os.path.join(prjdir, fname)
-        if os.path.exists(infname):
+        infname = printer.getBookSrcPath("GLO", prjid)
+        if infname is not None:
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
                 # Note that this will only pick up the first para of glossary entries
@@ -1610,10 +1618,10 @@ class TexModel:
                         continue
 
                     if len(pgs):
-                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[kno][a-z]".split("|"):
                             pages = [x[0] for x in pgs[art]]
                         else:
-                            pages = [x[0] for x in pgs['']]
+                            pages = [x[0] for x in pgs.get('zz', pgs.get('', [[]]))]
                         plurals = pluralstr(plstr, pages)
                         artinfo = cinfo["copyrights"].get(
                             art.lower(), {'copyright': {'en': art}, 'sensitive': {'en': art}}

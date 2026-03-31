@@ -310,9 +310,9 @@ if __name__ == "__main__":
     if not args.infile:
         sig = Signature([args.width, args.height], [args.outwidth, args.outheight],
                     args.num, args.sigsheets, args.fold)
-        print(f"{sig.margin=}, {sig.cell=}, num=({sig.numx}, {sig.numy})")
-        for i in range(2*args.num):
-            print(i, sig.pagenum(i, args.num), sig.cm(i), sig.crops, cutfirst=not args.foldfirst)
+        # print(f"{sig.margin=}, {sig.cell=}, num=({sig.numx}, {sig.numy})")
+        # for i in range(2*args.num):
+            # print(i, sig.pagenum(i, args.num), sig.cm(i), sig.crops, cutfirst=not args.foldfirst)
     elif not args.outfile:
         print("Must specify an output file if processing an input file")
     else:

@@ -249,6 +249,8 @@ class Diglot(Snippet):
 \makeatother
 """
 
+        if 'diglots_' not in model.dict:
+            return ""
         layout = model.dict["document/diglotlayout"]
         if not layout:
             layout = "L"+"".join(model.dict["diglots_"].keys())

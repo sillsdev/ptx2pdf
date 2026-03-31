@@ -249,9 +249,6 @@ class UsfmCollection:
         bkfile = self.bkmapper(bk)
         if bkfile is None:
             return None
-        bkfile = os.path.join(self.basedir, bkfile)
-        if not os.path.exists(bkfile):
-            return None
         mtime = os.stat(bkfile).st_mtime
         if mtime > self.times.get(bk, 0):
             if self.changes is not None:
@@ -280,9 +277,6 @@ class UsfmCollection:
                 tocs = [""] * 3
                 bkfile = self.bkmapper(bk)
                 if bkfile is None or not len(bkfile):
-                    continue
-                bkfile = os.path.join(self.basedir, bkfile)
-                if not os.path.exists(bkfile):
                     continue
                 nochap = True
                 with open(bkfile, encoding="utf-8") as inf:

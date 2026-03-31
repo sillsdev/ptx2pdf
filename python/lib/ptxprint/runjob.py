@@ -36,6 +36,8 @@ logger = logging.getLogger(__name__)
 _errmsghelp = {
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
+"! Dimension too large":                 _("Uh oh! You may have too many paragraphed footnotes on the page.\n" +\
+                                           "Try starting each footnote on a new line (Notes+Refs tab)."),
 "! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists."),
 "! Unable to load picture":              _("Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
                                            "specified folder. Also try the option 'Omit Missing Pictures'"),
@@ -156,6 +158,9 @@ class RunJob:
         self.noaction = False
         self.norun = False
         self.nothreads = False
+        self.nopdf = False
+        self.silent = False
+        self.forcedlooseness = None
         # self.oldversions = 1
         self.docreatediff = False
         # self.onlydiffs = True
@@ -163,6 +168,7 @@ class RunJob:
         self.rerunReasons = []
         self.coverfile = None
         self.extrafiles = {}
+        self.piclist = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -253,11 +259,13 @@ class RunJob:
                     self.fail(", ".join(reasons) + " in diglot secondary")
                     return
                 digbooks = dv.getAllBooks()
+                serialbooks = {b for b in re.split(r"[\s,]+", (self.info["document/diglotserialbooks"] or "").strip()) if b}
                 badbooks = set()
                 for j in joblist:
                     allj = set(r[0][0].first.book for r in j if r[1])
-                    j[:] = [b for b in j if b[1] and b[0][0].first.book in digbooks]
-                    badbooks.update(allj - set(r[0][0].first.book for r in j if r[1]))
+                    temp = [b for b in j if b[1] and b[0][0].first.book in digbooks]
+                    keptbooks = set(r[0][0].first.book for r in temp if r[1])
+                    badbooks.update((allj - keptbooks) - serialbooks)
                 if len(badbooks):
                     self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
                                          show=not self.printer.get("c_quickRun"))
@@ -285,6 +293,7 @@ class RunJob:
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
+            donebooks.append(out)
             if out is None:
                 continue
             outpath = os.path.join(self.tmpdir, out)
@@ -307,7 +316,6 @@ class RunJob:
                         os.remove(outpath+".triggers")
                     except FileNotFoundError:
                         pass
-            donebooks.append(out)
         if not len(donebooks):
             unlockme()
             return []
@@ -317,7 +325,7 @@ class RunJob:
         res = self.sharedjob(jobs, False)
         if self.info['notes/ifxrexternalist']:
             res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
-        return [os.path.join(self.tmpdir, out) for out in donebooks] + res
+        return [os.path.join(self.tmpdir, out) for out in donebooks if out is not None] + res
 
     def digdojob(self, jobs, diginfos):
         _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
@@ -334,7 +342,7 @@ class RunJob:
         self.info.dict.setdefault("diglots_", {})
         for k, diginfo in diginfos.items():
             texfiles = []
-            digdonebooks = []
+            digdonebooks = [None] * len(jobs)
             diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
             diginfo["project/books"] = digdonebooks
             diginfo["document/ifdiglot"] = "%"
@@ -369,44 +377,39 @@ class RunJob:
         donebooks = []
         versification = None
         reversifyinfo = None
-        # breakpoint()
         if self.info.dict['texpert/reversify']:
             vf = self.info.printer.ptsettings.versification
             if vf is not None:
                 versification = Versification(os.path.join(self.info.printer.project.path, vf))
             reversifyinfo = (versification, self.info.dict['texpert/showvpvrse'], self.info.dict['texpert/showvpchap'])
-        for j in jobs:
+        for i, j in enumerate(jobs):
             b = j[0][0].first.book if j[1] else j[0]
             # logger.debug(f"Diglot[{k}]({b}): f{self.tmpdir} from f{self.prjdir}") # broken (missing k)
             inputfiles = []
             left = None
+            out = self.info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], noaction=self.noaction)
+            left = os.path.join(self.tmpdir, out)
+            inputfiles.append(left)
+            donebooks.append(out)
+            texfiles.append(left)
             for k, diginfo in diginfos.items():
                 digprjdir = diginfo.printer.project.path
                 try:
-                    out = None
-                    if not len(inputfiles):
-                        out = self.info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], noaction=self.noaction)
-                        left = os.path.join(self.tmpdir, out)
-                        inputfiles.append(left)
-                        texfiles.append(left)
                     digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1], reversify=reversifyinfo, noaction=self.noaction)
-                    right = os.path.join(self.tmpdir, digout)
-                    inputfiles.append(right)
-                    texfiles.append(right)
                 except FileNotFoundError as e:
                     self.printer.doError(str(e))
-                    out = None
                     digout = None
-                if out is not None:
-                    donebooks.append(out)
-                if digout is None:
-                    continue
                 else:
-                    diginfo["project/books"].append(digout)
-                    self.books.append(digout)
-            if left and b not in nonScriptureBooks:
+                    if digout is not None:
+                        right = os.path.join(self.tmpdir, digout)
+                        inputfiles.append(right)
+                        texfiles.append(right)
+                        diginfo["project/books"][i] = digout
+                        self.books.append(digout)
+            serialbooks = {b for b in re.split(r"[\s,]+", (self.info["document/diglotserialbooks"] or "").strip()) if b}
+            if left and b not in serialbooks: # nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
-                outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
+                outFile = re.sub(r"^(.*)\.(.*?)$", r"\1-diglot.\2", left)
                 if len(donebooks):
                     donebooks[-1] = os.path.basename(outFile)
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
@@ -423,7 +426,6 @@ class RunJob:
                 if not self.noaction:
                     usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=self.info.changes.get("merged", []), book=b)
                 texfiles += [outFile, logFile]
-
         
         if not len(donebooks): # or not len(digdonebooks):
             unlockme()
@@ -482,7 +484,8 @@ class RunJob:
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        texfiledat = self.info.asTex(filedir=self.tmpdir, jobname=swapext(self.outfname, ext=".tex"), extra=extra, diglots=diglots)
+        filedir = self.printer.project.printPath(self.info.dict["config/name"], noext=True)
+        texfiledat = self.info.asTex(filedir=filedir, jobname=swapext(self.outfname, ext=".tex"), extra=extra, diglots=diglots)
         with open(os.path.join(self.tmpdir, self.outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=x)) for x in (".tex", ".xdv")]
@@ -497,7 +500,10 @@ class RunJob:
         ptxmacrospath = os.path.abspath(self.macrosdir)
         ptxmacrobase = os.path.join(pycodedir(), 'ptx2pdf')
         if not os.path.exists(ptxmacrobase):
-            ptxmacrobase = os.path.join(pycodedir(), "..", "..", "..", "src")
+            for i in range(3, 6):
+                ptxmacrobase = os.path.join(pycodedir(), *([".."] * i), "src")
+                if os.path.exists(ptxmacrobase):
+                    break
         if not os.path.exists(ptxmacrospath) or not os.path.exists(os.path.join(ptxmacrospath, "paratext2.tex")):
             ptxmacrospath = os.path.abspath(ptxmacrobase)
         if not os.path.exists(ptxmacrospath):
@@ -618,20 +624,25 @@ class RunJob:
             else:
                 action = r"\def\ForcedLooseness{{{}}}\input {}".format(self.forcedlooseness, outfname)
             logger.debug(f"Running: {cmd} {action}")
-            runner = call(cmd + [action], cwd=self.tmpdir)
-            if isinstance(runner, subprocess.Popen) and runner is not None:
+            callkw = {}
+            if self.silent:
+                callkw['stdout'] = subprocess.DEVNULL
+            self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
+            if isinstance(self.runner, subprocess.Popen) and runner is not None:
                 try:
                     #runner.wait(self.args.timeout)
-                    runner.wait()
+                    self.runner.wait()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
-                self.res = runner.returncode
-            elif isinstance(runner, subprocess.CompletedProcess):
-                self.res = runner.returncode
-                logger.debug(f"{runner.stdout.decode('UTF-8')}")
+                self.res = self.runner.returncode
+            elif isinstance(self.runner, subprocess.CompletedProcess):
+                self.res = self.runner.returncode
+                if self.runner.stdout not in (None, subprocess.DEVNULL):
+                    logger.debug(self.runner.stdout.decode('UTF-8'))
             else:
-                self.res = runner
-            print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
+                self.res = self.runner
+            if not self.silent:
+                print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
             logfname = swapext(outfname, ext=".tex", withext=".log")
             (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
             self.info.printer.editFile_delayed(logfname, "wrk", "tb_XeTeXlog", False)
@@ -681,42 +692,49 @@ class RunJob:
             if not rererun:
                 break
 
-        if not self.res:
+        if not self.res and not self.nopdf:
             self.printer.incrementProgress(stage="xp")
-            tmppdf = self.procpdfFile(outfname, pdffile)
-            if self.info["finishing/extraxdvproc"]:
-                self.processxdv(swapext(outfname, ext=".tex", withext=".xdv"), self.getxdvname(outfname))
-            cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
-            #if self.ispdfxa == "PDF/A-1":
-            #    cmd += ["-z", "0"]
-            if self.args.extras & 7:
-                cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
-            with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
-                runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
-            logger.debug(f"Running: {cmd} for {outfname}")
-            if self.args.extras & 1:
-                print(f"Subprocess return value: {runner}")
-            if isinstance(runner, subprocess.Popen) and runner is not None:
-                try:
-                    runner.wait()
-                    #runner.wait(self.args.timeout)
-                except subprocess.TimeoutExpired:
-                    print("Timed out!")
-                self.res = 4 if runner.returncode else 0
-                logger.debug(f"{runner.stdout.decode('UTF-8')}")
-            elif isinstance(runner, subprocess.CompletedProcess):
-                self.res = 4 if runner.returncode else 0
-                logger.debug(f"{runner.stdout}")
-            else:
-                self.res = 4 if runner else 0
-            self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
-            if self.res == 0:
-                if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
-                    self.printer.onIdle(self.printer.pdf_viewer.clear)
-                if not self.procpdf(outfname, pdffile, burst=self.info['finishing/extractinserts'],
-                                    cover=self.info['cover/makecoverpage'] != '%'):
-                    self.res = 3
-        print("Done")
+            self.xdvtopdf(outfname, pdffile)
+        if not self.silent:
+            print("Done")
+
+    def xdvtopdf(self, outfname, pdffile):
+        tmppdf = self.procpdfFile(outfname, pdffile)
+        if self.info["finishing/extraxdvproc"]:
+            self.processxdv(swapext(outfname, ext=".tex", withext=".xdv"), self.getxdvname(outfname))
+        cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
+        #if self.ispdfxa == "PDF/A-1":
+        #    cmd += ["-z", "0"]
+        if self.args.extras & 7:
+            cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
+        with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
+            self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
+        logger.debug(f"Running: {cmd} for {outfname}")
+        if self.args.extras & 1:
+            print(f"Subprocess return value: {self.runner}")
+        if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+            try:
+                self.runner.wait()
+                #runner.wait(self.args.timeout)
+            except subprocess.TimeoutExpired:
+                print("Timed out!")
+            self.res = 4 if self.runner.returncode else 0
+            logger.debug(f"{runner.stdout.decode('UTF-8')}")
+        elif isinstance(self.runner, subprocess.CompletedProcess):
+            self.res = 4 if self.runner.returncode else 0
+            logger.debug(f"{self.runner.stdout}")
+        else:
+            self.res = 4 if self.runner else 0
+        self.printer.incrementProgress(stage="fn") #Suspect that this was causing it to SegFault (but no idea why)
+        if self.res == 0:
+            if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
+                self.printer.onIdle(self.printer.pdf_viewer.clear)
+            if not self.procpdf(outfname, pdffile, burst=self.info['finishing/extractinserts'],
+                                cover=self.info['cover/makecoverpage'] != '%'):
+                self.res = 3
+            self.printer.pdfFiles = self.extrafiles.copy()
+            if ' Original' not in self.printer.pdfFiles:
+                self.printer.pdfFiles[' Original'] = pdffile
 
     def done_job(self, outfname, pdfname):
         # Work out what the resulting PDF was called
@@ -972,6 +990,7 @@ class RunJob:
             z.writestr("_runinfo.txt", report)
             z.close()
         self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, **kw)
+        return True
         if cover:
             self.coverfile = self.extrafiles.get('cover', None)
             return self.coverfile is not None
@@ -1015,7 +1034,7 @@ class RunJob:
     def gatherIllustrations(self, jobs, ptfolder, diglots=False):
         self.printer.incrementProgress(stage="gp")
         logger.debug(f"Gathering illustrations: {self.printer.picinfos}")
-        picinfos = self.printer.picinfos
+        picinfos = self.piclist or self.printer.picinfos
         pageRatios = self.usablePageRatios()
         tmpPicpath = os.path.join(self.printer.project.printPath(self.printer.cfgid), "tmpPics")
         if not os.path.exists(tmpPicpath):

@@ -497,8 +497,9 @@
   \getp@ram{raise}{#1}{#2}%
   \global\let\char@raise\p@ram
   \ifx\p@ram\relax\else
-     {\setbox0\hbox{\count255=\numexpr \p@ram}\ifdim\wd0>0pt \else \xdef\char@raise{\p@ram \FontSizeUnit}\fi}%
-     \ifdim\char@raise=0pt \else \b@xedstyletrue\fi\fi
+     %{\setbox0\hbox{\count255=\numexpr \p@ram}\ifdim\wd0>0pt \else \xdef\char@raise{\p@ram \FontSizeUnit}\fi}%
+     %\dimen9=\char@raise \ifdim\dimen9=0pt\relax \else \b@xedstyletrue\fi
+  \fi
      \ifb@ckgroundelsewhere\global\let\char@background\relax
       \b@ckgroundelsewherefalse
      \else

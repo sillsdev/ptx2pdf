@@ -51,6 +51,7 @@
 \edef\t@mp{\jobname}%
 \xdef\j@bname{\x@\x@\x@\stripqu@tes\x@\t@mp\x@"\t@mp"\relax}
 
+\showboxdepth=300\showboxbreadth=300
 %There is no equivalent definition to maxdimen for counts
 \def\m@xcount{2147483647}
 \def\m@ncount{-2147483647} % Technically ...8, but TeX moans about athat.
@@ -226,7 +227,7 @@
 \def\@s@tbaseline#1#2{%
   \getp@ram{baseline}{#1}{#2}\ifx\p@ram\relax
     \@@s@tb@seline{#1}{#1}%
-    \baselineskip=\dimen0
+    \baselineskip=\dimen0 \advance \baselineskip by \ColAdjskip
   \else
     \def\s@urce{store:\f@ntstyle}%
     \baselineskip=\p@ram\fi

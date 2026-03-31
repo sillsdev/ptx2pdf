@@ -37,8 +37,8 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "3.0.11"
-GitVersionStr = "3.0.11"
+VersionStr = "3.0.17"
+GitVersionStr = "3.0.17"
 ConfigVersion = "3.01"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -105,7 +105,7 @@ class ViewModel:
         "Copyright": ('copy', ),
     }
 
-    def __init__(self, prjtree, userconfig, scriptsdir, args=None):
+    def __init__(self, prjtree, userconfig, scriptsdir, args=None, odir=None):
         self.prjTree = prjtree
         self.project = None
         self.cfgid = None
@@ -213,8 +213,13 @@ class ViewModel:
             wid += "[" + str(sub) + "]"
         if wid.startswith("s_"):
             self.dict[wid] = f2s(float(value))
-        else:
-            self.dict[wid] = value
+            return
+        elif wid.startswith("r_"):
+            bits = wid.split("_")[1:]
+            if len(bits) > 1 and value:
+                value = bits[1]
+                wid = "r_"+bits[0]
+        self.dict[wid] = value
 
     def getvar(self, k, default="", dest=None):
         if dest is None:
@@ -278,7 +283,7 @@ class ViewModel:
         return res
         
     def _bookrefsBooks(self, bl, local):
-        res = RefList()
+        res = []
         if not local:
             self.bookrefs = bl
         for r in bl:
@@ -299,13 +304,14 @@ class ViewModel:
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
-        bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False)
+        bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
+        bl.simplify()
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
-                bname = self.getBookFilename(bk, self.project.prjid)
-                if bname is not None and os.path.exists(os.path.join(self.project.path, bname)):
+                bname = self.getBookSrcPath(bk, self.project.prjid)
+                if bname is not None and os.path.exists(bname):
                     fromchap = round(float(self.get("t_chapfrom") or "0"))
                     tochap = round(float(self.get("t_chapto") or "200"))
                     try:
@@ -321,16 +327,16 @@ class ViewModel:
             res = RefList()
             self.bookrefs = RefList()
             for b in bl:
-                bname = self.getBookFilename(b.first.book, self.project.prjid)
-                if bname is None:
-                    continue
-                if os.path.exists(os.path.join(self.project.path, bname)):
-                    if b.first.book == "FRT":
-                        self.switchFRTsettings()
-                    elif b.first.book == "INT" and self.get("c_useSectIntros"):
-                        pass
-                    else:
-                        res.append(b)
+                bname = self.getBookSrcPath(b.first.book, self.project.prjid)
+                # if bname is None:
+                    # continue
+                # if os.path.exists(bname):
+                if b.first.book == "FRT":
+                    self.switchFRTsettings()
+                elif b.first.book == "INT" and self.get("c_useSectIntros"):
+                    pass
+                else:
+                    res.append(b)
             res.simplify(sort=False)
             return self._bookrefsBooks(res, local)
         else:
@@ -364,11 +370,10 @@ class ViewModel:
             return {}
         res = {}
         for bk in allbooks:
-            f = self.getBookFilename(bk)
-            fp = os.path.join(self.project.path, f)
-            if os.path.exists(fp):
+            fp = self.getBookSrcPath(bk)
+            if fp is not None:
                 res[bk] = fp
-        if self.moduleFile is not None:
+        if self.moduleFile is not None and os.path.isfile(self.moduleFile):
             res["MOD"] = self.moduleFile
         return res
 
@@ -377,11 +382,13 @@ class ViewModel:
         for r in self.getBooks():
             if "." not in r:
                 srcname = self.getBookFilename(r)
-                srcpath = os.path.join(self.project.path, srcname)
+                srcpath = self.getBookSrcPath(r)
                 destname = self.getDraftFilename(r, ext="")
             else:
                 srcpath = str(r)
                 destname = os.path.basename(r)
+            if srcpath is None or not os.path.exists(srcpath):
+                continue
             destpath = os.path.join(self.project.printPath(self.cfgid), destname)
             srct = os.lstat(srcpath).st_mtime if os.path.exists(srcpath) else 0
             destt = os.lstat(destpath).st_mtime if os.path.exists(destpath) else 0
@@ -412,6 +419,20 @@ class ViewModel:
         if ptsettings is None:
             return None
         return ptsettings.getBookFilename(bk)
+
+    def getBookSrcPath(self, bk, prjid=None, project=None):
+        if project is None:
+            project = self.project
+        fname = self.getBookFilename(bk, prjid=prjid)
+        if fname is None:
+            return None
+        for a in (project.srcPath(cfgid=self.cfgid), project.path):
+            if a is None:
+                continue
+            fpath = os.path.join(a, fname)
+            if os.path.exists(fpath):
+                return fpath
+        return None
 
     def getScriptSnippet(self):
         import ptxprint.scriptsnippets as scriptsnippets
@@ -541,8 +562,8 @@ class ViewModel:
         self.project = None
         self.cfgid = None
 
-    def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True):
-        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=True)
+    def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True, startup=False):
+        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=not startup)
 
     def setConfigId(self, configid, saveCurrConfig=False, force=True, loadConfig=True):
         return self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
@@ -712,6 +733,9 @@ class ViewModel:
                 self.resetToInitValues(updatebklist=False)
             logger.debug(f"Reading config {configName} in the config context of {self.cfgid}")
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
+            if float(oldVersion) >= 0 or forceConfig:
+                logger.debug(f"Switching config from {self.cfgid} to {configName}")
+                self.cfgid = configName
             if float(oldVersion) < 0:
                 return False
             self.styleEditor.reset(os.path.join(self.scriptsdir, "usfm_sb.sty"))
@@ -719,9 +743,6 @@ class ViewModel:
             self.updateStyles(oldVersion)
             if newconfig:
                 self.set("t_invisiblePassword", "", mod=False)
-            if float(oldVersion) >= 0 or forceConfig:
-                logger.debug(f"Switching config from {self.cfgid} to {configName}")
-                self.cfgid = configName
             if quickload:
                 return
             if readConfig:  # project changed
@@ -752,7 +773,7 @@ class ViewModel:
     def get_usfms(self):
         if self.usfms is None:
             cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
-            self.usfms = UsfmCollection(self.getBookFilename, self.project.path,
+            self.usfms = UsfmCollection(self.getBookSrcPath, self.project.path,
                             Sheets(self.getStyleSheets()), changes=cfile)
         return self.usfms
 
@@ -1647,10 +1668,9 @@ class ViewModel:
         elif frtype == "advanced":
             srcp = os.path.join(pycodedir(), "FRTtemplateAdvanced.txt")
         elif frtype == "paratext":
-            fname = self.getBookFilename("FRT", self.project.prjid)
-            if fname is None:
+            srcp = self.getBookSrcPath("FRT", self.project.prjid)
+            if srcp is None:
                 return False
-            srcp = os.path.join(self.project.path, fname)
             
         copyfile(srcp, destp)
         return True
@@ -1706,9 +1726,8 @@ class ViewModel:
         prjid = self.get("fcb_project")
         bks = self.getBooks()
         for bk in bks:
-            fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.project.path, fname)
-            if os.path.exists(fpath):
+            fpath = self.getBookSrcPath(bk, prjid)
+            if fpath is not None:
                 with open(fpath, "r", encoding="utf-8") as inf:
                     # Strip out all markers themselves, and English content fields
                     sfmtxt = inf.read()
@@ -1907,9 +1926,9 @@ class ViewModel:
             mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
         for bk in books + ['INT']:
-            fname = self.getBookFilename(bk, baseprjid)
+            fname = self.getBookSrcPath(bk, baseprjid, project=baseprj)
             if fname is not None:
-                res[os.path.join(fpath, fname)] = baseprjid + "/" + os.path.basename(fname)
+                res[fname] = baseprjid + "/" + os.path.basename(fname)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
@@ -2437,7 +2456,7 @@ set stack_size=32768""".format(self.cfgid)
         self.strongs = None
         self.getStrongs()
         onlylocal = self.get("fcb_xRefExtListSource") == "strongs_proj"
-        outfile = os.path.join(self.project.path, self.getBookFilename(bkid))
+        outfile = self.getBookSrcPath(bkid)
         self.strongs.generateStrongsIndex(bkid, cols, outfile, onlylocal, self)
 
     def getStrongs(self):
