@@ -1484,9 +1484,10 @@
   \dimen7=\dimexpr\ht\orn@bdr@top+\dp\orn@bdr@top  \ifx\b@drtop\tr@e +\dimen2\fi \relax
   \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
   \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
-  \setbox\b@rderbox\vbox to \b@rderbox@height{\let\par\endgraf\everypar={}\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
-    \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right\kern-\b@drwidth\OrnamentUnit}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
-  %\showbox#1%
+  %\trace{eb}{bbh=\b@rderbox@height,t:\l@gdims{\orn@bdr@top}, l:\l@gdims{\orn@bdr@left}, r:\l@gdims{\orn@bdr@right}, b:\l@gdims{\orn@bdr@bot}}%
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\let\par\endgraf\everypar={}\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width \relax \lineskiplimit=0pt
+    \hbox{\box\orn@bdr@top}\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right\kern-\b@drwidth\OrnamentUnit}\baselineskip=\ht\orn@bdr@bot\relax
+    \box\orn@bdr@bot}%
   %\x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
 }
 
