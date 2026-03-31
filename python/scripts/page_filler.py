@@ -709,6 +709,12 @@ class PTXprinter:
         self.view.set("r_book", "single")
         self.view.set("ecb_book", bk)
         # suppress peripherals
+        for a in """c_inclFrontMatter c_autoToC c_useSectIntros c_frontmatter c_inclMaps
+                    c_colophon c_inclBackMatter c_extradvproc c_inclSettingsInPDF c_applyWatermark
+                    c_cropmarks c_extractInserts c_printArchive""".split():
+            self.view.set(a, False)
+        self.view.set("fcb_pagesPerSpread", 1)
+        self.view.set("fcb_outputFormat", "Screen")
         self.view.savePics()
         self.view.saveStyles()
         self.rtl = False

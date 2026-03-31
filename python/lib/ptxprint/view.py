@@ -213,8 +213,13 @@ class ViewModel:
             wid += "[" + str(sub) + "]"
         if wid.startswith("s_"):
             self.dict[wid] = f2s(float(value))
-        else:
-            self.dict[wid] = value
+            return
+        elif wid.startswith("r_"):
+            bits = wid.split("_")[1:]
+            if len(bits) > 1 and value:
+                value = bits[1]
+                wid = "r_"+bits[0]
+        self.dict[wid] = value
 
     def getvar(self, k, default="", dest=None):
         if dest is None:
