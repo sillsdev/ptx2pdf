@@ -7,17 +7,17 @@ from ptxprint.printers import allcurrencies
 from zipfile import ZipFile, ZIP_DEFLATED
 
 querymap = {
-    "settings/quantity": lambda s:[s.get("s_prnl_copies")],
-    "settings/description": "t_prnl_description",
-    "settings/height": lambda s:s.height(),
-    "settings/width": lambda s:s.width(),
-    "data/11-211-widget-1": "t_prnl_bookID",
-    "data/8-203-widget-0": "t_prnl_description",
-    "data/1-189-widget-4": "l_prnl_pages",
-    "data/1-189-widget-5": "fcb_prnl_paperType",
-    "data/6-200-widget-3": "fcb_prnl_coverLamination",
-    "data/31-194-widget-4": "s_prnl_ribbons",
-    "data/23-135-widget-5": "fcb_prnl_wrap"
+    "settings/quantity":    (lambda s:[int(s.get("s_prnl_copies"))], None),
+    "settings/description": ("t_prnl_description", str),
+    "settings/height":      (lambda s:s.height(), int),
+    "settings/width":       (lambda s:s.width(), int),
+    "data/11-211-widget-1": ("t_prnl_bookID", str),
+    "data/8-203-widget-0":  ("t_prnl_description", str),
+    "data/1-189-widget-4":  ("l_prnl_pages", int),
+    "data/1-189-widget-5":  ("fcb_prnl_paperType", int),
+    "data/6-200-widget-3":  ("fcb_prnl_coverLamination", int),
+    "data/31-194-widget-4": ("s_prnl_ribbons", int),
+    "data/23-135-widget-5": ("fcb_prnl_wrap", int)
 }
 
 querytypes = {
@@ -104,11 +104,11 @@ class Pretore:
         return k
 
     def height(self):
-        (height, width) = self.view.calcPageSize()
+        (width, height) = self.view.calcPageSize()
         return height
 
     def width(self):
-        (height, width) = self.view.calcPageSize()
+        (width, height) = self.view.calcPageSize()
         return width
 
     def numpages(self):
@@ -162,13 +162,15 @@ class Pretore:
         booktype = self.get("fcb_prnl_binding", default="307")
         qinfo = {}
         for k in querytypes[booktype]:
-            v = querymap[k]
+            v, t = querymap[k]
             if isinstance(v, str):
                 val = self.get(v)
             else:
                 val = v(self)
             if val is None:
                 continue
+            if t is not None:
+                val = t(val)
             b = k.split("/")
             c = qinfo
             for bk in b[:-1]:
@@ -185,8 +187,10 @@ class Pretore:
         # thread.start()
 
     def updatequote(self, result):
-        if result is not None:
-            self.amount = result['data']['summary']['amount']
+        if result is None:
+            print("Failed quote")
+            return
+        self.amount = result['data']['summary']['amount']
         copies = int(self.get("s_prnl_copies"))
         amount = self.rates.get(self.currency, 1.0) * self.amount
         cs = allcurrencies.get(self.currency, "\u20AC")
@@ -200,8 +204,24 @@ class Pretore:
         self.set("l_prnl_zipFilename", os.path.basename(self.zipname))
 
     def url_query(self, callback, endpoint, amt, *a):
-        message(endpoint+"\n"+"\n".join(str(x) for x in a))
-        result = {"data": {"summary": {"amount": amt}}}
+        auth = self.accounts[self.user]['api_key']
+        headers = {'User-Agent': "Mozilla/5.0 (Windows NT 11.0; Win64; x64)",
+                   'Authorization': f'Bearer {auth}'}
+        if len(a):
+            data = json.dumps(a[0], ensure_ascii=False).encode("utf-8")
+        else:
+            data = None
+        result = None
+        print(f"{headers=}, {endpoint=}, {data=}")
+        try:
+            req = urllib.request.Request(endpoint, data=data, headers=headers)
+            with urllib.request.urlopen(req) as response:
+                if response.getcode() == 200:
+                    result = json.loads(response.read().decode("utf-8"))
+                else:
+                    print (f"Response code: {response.getcode()}")
+        except urllib.error.HTTPError as e:
+            print(f"Error: {e}\nHeaders: {e.headers}\nBody: {e.read().decode('utf-8')}")
         GLib.idle_add(callback, result)
 
     def do_quote(self, command, cb=None, amt=100):
@@ -209,12 +229,12 @@ class Pretore:
             cb = self.updatequote
         booktype, qinfo = self.prepare_quote()
         uuid = self.accounts[self.user]['UUID']
-        endpoint = f"https://prxprint-pretore.com/wp-json/emily/v1/calculation/{uuid}/{booktype}/{command}"
+        endpoint = f"https://ptxprint.pretore.com/wp-json/emily/v1/calculation/{uuid}/{booktype}/{command}"
         self.submit_quote(qinfo, endpoint, cb=cb, amt=amt)
 
     def quote(self, btn, *a):
         self.setup()
-        self.do_quote("quote")
+        self.do_quote("calculate")
         print(self.rates)
 
     def createOrder(self, btn, *a):

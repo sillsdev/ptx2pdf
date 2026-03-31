@@ -197,9 +197,9 @@ class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
 
     def readParlocs(self, fname, rtl=False):
-        self.pindex = []
-        self.pnums = {}
-        self.pnumorder = []
+        self.pindex = []        # first paragraph on a page
+        self.pnums = {}         # from pagenumber to first page index
+        self.pnumorder = []     # from pageindex to pagenumber
         self.pheights = []
         self.dests = {}
         if fname is None:
@@ -329,9 +329,9 @@ class Paragraphs(list):
                 currp.parnum = int(p[1])
                 i = self.index(currp)
                 for ps in reversed(self[:i]):
-                    if ps.glot == polycol:
+                    if isinstance(ps, ParInfo) and ps.glot == polycol:
                         if ps.ref == currp.ref:
-                            currp.parnum = ps.parnum + 1
+                            currp.parnum = getattr(ps, 'parnum', 0) + 1
                         break
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)

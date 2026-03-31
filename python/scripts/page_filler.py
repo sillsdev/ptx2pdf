@@ -3,7 +3,8 @@
 from dataclasses import dataclass
 from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable
 from collections import deque, defaultdict
-import heapq, re, os, logging, random, itertools
+from configparser import ConfigParser
+import heapq, re, os, logging, random, itertools, argparse
 import multiprocessing as mp
 from math import sqrt, log10
 from time import time
@@ -12,6 +13,7 @@ from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob, unlockme
 from ptxprint.utils import refSort
 from ptxprint.view import ViewModel
+from ptxprint.project import ProjectList
 from usfmtc.usfmparser import Grammar
 from usfmtc.reference import chaps, RefList
 
@@ -37,6 +39,18 @@ def cmp(x, y):
 # -----------------------------
 # LAYOUT RESULTS
 # -----------------------------
+
+@dataclass
+class BuildParams:
+    prjtree: ProjectList
+    config: ConfigParser
+    macrosdir: str
+    args: argparse.Namespace
+    pid: str
+    guid: str
+    cfgid: str
+    scriptsdir: str
+    loglevel: int
 
 @dataclass
 class PageState:
@@ -257,16 +271,17 @@ class Hooks:
         bigdelta = abs(delta) > 1
         distortion = abs(expansion - 1.0)
 
-        pwidth = self.printer.get_para(paragraph).lastwidth
+        p = self.printer.get_para(paragraph)
+        pwidth = p.lastwidth if p is not None else 0.
         tex_badness = self.printer.badnesses.get(paragraph, 0)
-        lines = self.basestate.layout.paragraph_total_lines[paragraph]
+        lines = self.basestate.layout.paragraph_total_lines.get(paragraph, 0)
         is_header = self.printer.pid_isheader(paragraph)
 
         res = 0.0
 
         # --- 1. Base cost per line change (asymmetric) ---
         # Prefer removing lines slightly over adding, especially for short paragraphs
-        short_factor = (20 / min(lines, 20)) ** 0.5
+        short_factor = (20 / min(lines + 1, 20)) ** 0.5
 
         if delta > 0:
             res += 12 * delta * short_factor   # adding lines is more visible
@@ -302,7 +317,7 @@ class Hooks:
         res += 0.5 * self.badness_spacing_tolerance * (wrongness ** 2)
 
         # --- 6. Short paragraph sensitivity ---
-        line_penalty = self.badness_line_weight * ((20 / min(lines, 20)) ** 0.5 - 1)
+        line_penalty = self.badness_line_weight * ((20 / min(lines + 1, 20)) ** 0.5 - 1)
         res += line_penalty
 
         # --- 7. TeX paragraph badness (log-compressed) ---
@@ -399,7 +414,7 @@ class TypesetterSolver:
             layout = state.layout
             # if layout.first_failing_page < page:
             #     return None
-            if not self.noprobe and (layout.first_failing_page is None or layout.first_failing_page >= page + 1):
+            if not self.noprobe and (layout.first_failing_page is None or layout.first_failing_page > page):
                 self.noprobe = True
                 logger.log(15, f"Intermediate processing of {page+1}, with no probes")
                 state = self.run_layout(self.base_params, state, {}, layout.first_failing_page or page + 1, start_page)
@@ -446,7 +461,7 @@ class TypesetterSolver:
                     self.noprobe = not wantprobe
                     wantprobe = oldw
                     paras = self.get_candidate_paragraphs(state, page)
-                    logger.warn(f"Could not solve page {page+1} after {paras[0]}")
+                    logger.warning(f"Could not solve page {page+1} after {paras[0] if len(paras) else 'UNK'}")
                     continue
             solved = self.hooks.get_paragraphs_for_pages(page, page)
             self.frozen_paragraphs.update(solved)
@@ -475,7 +490,7 @@ class TypesetterSolver:
                 break
             if state.layout.pages[page].column_free_lines is not None \
                     and state.layout.pages[page].column_free_lines[0] == 0 \
-                    and any(state.layout.paragraph_pages[p].get(page, 0) == 1 for p in combo.keys()):
+                    and any(state.layout.paragraph_pages.get(p, {}).get(page, 0) == 1 for p in combo.keys()):
                 continue
             self.tried.add(key)
             new_state = self.run_layout(page_base_params, state, combo, page, start)
@@ -518,7 +533,7 @@ class TypesetterSolver:
         last_para = ps[-1] if ps is not None and len(ps) else None
         if not self.noprobe and last_para is not None:
             found_any = False
-            for p in self.paragraph_order[self.paragraph_order.index(last_para) + 2:]:
+            for p in self.paragraph_order[self._para_order(last_para) + 2:]:
                 if probe_params.get(p, (10, 10)) != (1.0, 0):
                     continue
                 found = False
@@ -544,7 +559,8 @@ class TypesetterSolver:
         self.itercount += 1
         logger.log(15, "layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
                 page, self.itercount, not self.noprobe,
-                str(layout.pages[page].column_free_lines if page < len(layout.pages) else ""), str(combo))
+                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and i <= page}),
+                combo)
         self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
         return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
 
@@ -554,10 +570,10 @@ class TypesetterSolver:
             if base is None:
                 logger.log(15, f"{p} missing from base_lines")
                 continue
-            new = layout.paragraph_total_lines[p]
-            delta = new - base
-            if p not in params:
+            new = layout.paragraph_total_lines.get(p, None)
+            if new is None or p not in params:
                 continue
+            delta = new - base
             e, s = params[p]
             #logger.log(15, f"{p} {base=}, {delta=}, ({e=}, {s=})")
             self.probe_cache[(p, e, s)] = delta
@@ -571,10 +587,11 @@ class TypesetterSolver:
         yield {}
         moves = []
         pset = set(paragraphs)
-        first_para = state.layout.get_pars(page)[0]
-        if page - 1 not in state.layout.paragraph_pages[first_para]:
+        lpars = state.layout.get_pars(page)
+        first_para = lpars[0] if len(lpars) else None
+        if first_para is not None and page - 1 not in state.layout.paragraph_pages[first_para]:
             first_para = None
-        last_para = state.layout.get_pars(page)[-1]
+        last_para = lpars[-1] if len(lpars) else None
         for (p, d), (e, s) in self.shape_cache.items():
             if p not in pset or d == 0:
                 continue
@@ -619,10 +636,17 @@ class TypesetterSolver:
         for _, combo in all_combos:
             yield combo
 
+    def _para_order(self, pid):
+        try:
+            i = self.paragraph_order.index(pid)
+        except ValueError:
+            i = len(self.paragraph_order)
+        return i
+
     def get_candidate_paragraphs(self, state, page):
         start = max(0, page - 4)
         pars = self.hooks.get_paragraphs_for_pages(page, page, state=state)
-        pars.sort(key=self.paragraph_order.index)
+        pars.sort(key=self._para_order)
         return pars
 
     def get_probe_paragraphs(self, page):
@@ -662,11 +686,11 @@ class PTXprinter:
     def __init__(self, build_params, nid):
         super().__init__()
         self.nid = nid
-        self.view = ViewModel(*build_params[0:4])
+        self.view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
         self.view.setup_ini()
-        self.view.setPrjid(build_params[4], build_params[5], loadConfig=False, startup=True)
-        self.view.setConfigId(build_params[6])
-        self.macrosdir = build_params[7]
+        self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
+        self.view.setConfigId(build_params.cfgid)
+        self.macrosdir = build_params.scriptsdir
         self.view.project.ext = None
         if nid is not None:
             self.view.project.ext = f"pbuild{nid}"
@@ -679,9 +703,12 @@ class PTXprinter:
 
     def solve(self, bk, stop=False):
         self.bk = bk        # needed by run()
+        if bk not in self.view.getAllBooks().keys():
+            return None
         self.view.set("c_allowUnbalanced", True)
         self.view.set("r_book", "single")
         self.view.set("ecb_book", bk)
+        # suppress peripherals
         self.view.savePics()
         self.view.saveStyles()
         self.rtl = False
@@ -689,7 +716,7 @@ class PTXprinter:
         self.job = None
         init_layout = self.hooks.run_layout({}, {}, -1)
         pids = list(init_layout.paragraph_pages.keys())
-        logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids)}")
+        logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
         state = EngineState({p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
         self.hooks.basestate = state
         print(f"Solving {bk}")
@@ -710,6 +737,8 @@ class PTXprinter:
     def get_pidmap(self):
         res = {}
         for p in self.parlocs:
+            if not isinstance(p, ParInfo):
+                continue
             for r in p.rects:
                 c = res.setdefault(p.pid(), {}).get(r.pagenum - 1, 0)
                 res[p.pid()][r.pagenum - 1] = c | (r.col + 1)
@@ -735,14 +764,19 @@ class PTXprinter:
     def get_plines(self):
         plines = {}
         for p in self.parlocs:
+            if not isinstance(p, ParInfo):
+                continue
             plines[p.pid()] = p.lines     # do we need to munge p.ref?
         return plines
 
     def get_para_ind(self, pid):
-        return self.pidmap[pid]
+        return self.pidmap.get(pid, len(self.parlocs))
 
     def get_para(self, pid):
-        return self.parlocs[self.pidmap[pid]]
+        pindex = self.pidmap.get(pid, None)
+        if pindex is not None and pindex < len(self.parlocs):
+            return self.parlocs[pindex]
+        return None
 
     def get_paragraph_start_page(self, pid):
         p = self.parlocs[self.pidmap[pid]]
@@ -754,16 +788,19 @@ class PTXprinter:
 
     def isheader_column_start(self, pid):
         pi = self.get_para_ind(pid)
-        p = self.parlocs[pi]
-        pnum = p.rects[0].pagenum
-        if self.parlocs[self.parlocs.pindex[pnum]].pid() == pid:
-            return self.isheader(p.mrk)
+        if pi < len(self.parlocs):
+            p = self.parlocs[pi]
+            pnum = p.rects[0].pagenum
+            if self.parlocs[self.parlocs.pindex[pnum]].pid() == pid:
+                return self.isheader(p.mrk)
         return False
 
     def pid_isheader(self, pid):
         pind = self.get_para_ind(pid)
-        p = self.parlocs[pind]
-        return self.isheader(p.mrk)
+        if pind < len(self.parlocs):
+            p = self.parlocs[pind]
+            return self.isheader(p.mrk)
+        return False
 
     def isheader(self, mrk):
         return Grammar.marker_categories.get(mrk, '') in ("sectionpara", "title")
@@ -773,7 +810,7 @@ class PTXprinter:
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
         self.adjs = AdjList(100, 95, 105, fname=adjfname)
-        logger.log(9, f"{parparms=}")
+        logger.log(12, f"{parparms=}")
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
             self.adjs.setval(s[:3], f"{r[1]}.{r[2]}", para, p[1], None, expand=int(p[0]*100), append=True)
@@ -828,6 +865,7 @@ class PTXprinter:
                 m = self.reunderfill.match(l)
                 if m:
                     pnum = int(m.group(2))
+                    pnum = self.parlocs.pnums.get(pnum, pnum) - 1
                     side = 0 if m.group(1) == "A" else 1
                     lines = int((float(m.group(4)) - float(m.group(3))) / float(m.group(5)) + 0.1)
                     if lines > 5:
@@ -864,14 +902,43 @@ class Worker(mp.Process):
         self.nid = nid
         self.stop = stop
 
+    def _setup_logger(self, bk):
+        if self.build_params.loglevel is None:
+            return
+        ext = f"pbuild{self.nid}" if self.nid is not None else None
+        project = self.build_params.prjtree.findProject(self.build_params.pid)
+        log_dir = project.printPath(self.build_params.cfgid, ext=ext)
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, f"ptxprint_{bk}.log")
+        
+        # Get the ROOT logger
+        root_logger = logging.getLogger()
+        root_logger.setLevel(self.build_params.loglevel)
+
+        # CRITICAL: Remove old handlers from previous books 
+        # so the "global" logger doesn't keep writing to old files
+        while root_logger.handlers:
+            root_logger.handlers[0].close()
+            root_logger.removeHandler(root_logger.handlers[0])
+
+        # Add the NEW file handler for the current book
+        fh = logging.FileHandler(log_file, mode='w', encoding='utf-8')
+        fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        root_logger.addHandler(fh)
+        logging.info("Opened log file")
+
     def run(self):
         printer = PTXprinter(self.build_params, self.nid)
         while True:
             bk = self.task_queue.get()
             if bk is None:
                 break
+            self._setup_logger(bk)
             res = printer.solve(bk, stop=self.stop)
-            self.results_queue.put((self.nid, *res))
+            if res is None:     # skip absent book
+                self.results_queue.put((self.nid, f"{bk} does not exist"))
+            else:
+                self.results_queue.put((self.nid, *res))
 
 class MultiView:
     # look like a ViewModel
@@ -881,6 +948,12 @@ class MultiView:
         self.macrosdir = scriptsdir
         self.scriptsdir = odir
         self.args = args
+        self.loglevel = None
+        if self.args.logging:
+            try:
+                self.loglevel = int(args.logging)
+            except ValueError:
+                self.loglevel = getattr(logging, args.logging.upper(), None)
 
     def setup_ini(self):
         pass
@@ -907,7 +980,7 @@ class MultiView:
             numproc = mp.cpu_count() - 2    # we run each cpu pretty hard
         self.numproc = numproc
         self.task_list = self.books
-        self.build_params = [getattr(self, a) for a in 'prjtree config macrosdir args pid guid cfgid scriptsdir'.split(' ')]
+        self.build_params = BuildParams(*[getattr(self, a) for a in 'prjtree config macrosdir args pid guid cfgid scriptsdir loglevel'.split(' ')])
 
     def add_job(self, bk):
         self.task_list.append(bk)

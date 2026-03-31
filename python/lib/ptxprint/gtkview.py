@@ -1105,6 +1105,9 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
+
+        if self.args.experimental & 1:
+            self.builder.get_object("tb_Printers").set_visible(True)
         logger.debug("Project list loaded")
 
         return True
