@@ -159,14 +159,18 @@
 }
 
 \def\@t@gcolinsertnames#1{%top and bottom column inserts...
-  \@@t@gcolinsertnames{t#1}{#1}%
-  \@@t@gcolinsertnames{b#1}{#1}%
+  \@@t@gcolinsertnames{t}{#1}%
+  \@@t@gcolinsertnames{b}{#1}%
 }
   
 \def\@@t@gcolinsertnames#1#2{%
-  \edef\ins@name{\colinsert@name{#1}}%
+  \edef\ins@name{\colinsert@name{#1#2}}%
   \trace{dmc}{defining \ins@name-col as #2}%
   \x@\xdef\csname \ins@name-col\endcsname{#2}%Map from column name to column, so we don't need to try to parse the name
+  \x@\def\x@\tmp\x@{}%
+  \tracingassigns=1
+  \x@\gdef\csname unp@ck-#1#2\x@\endcsname\x@{\csname unp@ck-#1#2\x@\endcsname\x@\box\csname \ins@name\endcsname}%
+  \tracingassigns=0
 }
 
 \def\@@clsfynotes#1{%
@@ -854,7 +858,15 @@
 \def\@prepare@layout@complexpages{%
   \trace{d}{@prepare@layout@complexpages \l@gdims{\partial} \ifdiglotb@dy body\else intro\fi}%
   \@prepare@layout@simplecols 
-}
+  \bgroup
+    \ifdiglotb@dy\else% Notice if the chunk is the fist body chunk
+      \trace{D}{Checking if there's bodytext here}%
+      \global\diglotfirstb@dyfalse
+      \def\col@do##1{\x@\ifx \csname isb@dy##1\endcsname\tr@e \global\diglotfirstb@dytrue\fi}%
+      \x@\each@col\cts@list\E
+    \fi
+  \egroup
+ }
 
 \def\cplx@pre@me@sureins@trial#1{%
   \me@sureins@trial{#1}{\csname excess#1\endcsname}%
@@ -1157,6 +1169,7 @@
     %\tracingmacros=1
    \diglot@run@nxt@trial
   \fi
+  \@prepare@layout@complexpages
   \ifpagefull
     \complex@layout
   \else 
@@ -1175,8 +1188,11 @@
   \@complex@layout
 }
 \def\@complex@layout{%
-  \p@lyr@wno=0
-  \@@complex@layout
+  \hbox to \textwidth\bgroup
+    \p@lyr@wno=0
+    \@@complex@layout
+  \egroup
+  \@@p@geout
   \advance\p@lyp@geno by 1
   \ifnum \p@lyp@geno<\p@lyp@ges
     \let\nxt\@complex@layout
@@ -1184,6 +1200,37 @@
     \let\nxt\relax
   \fi
   \nxt
+}
+
+\def\@@complex@layout{%
+  \edef\this@p@lyr@wstring{\p@lyr@wstring}%
+  \x@\let\x@\r@wstring\csname cts@\this@p@lyr@wstring\endcsname
+  \trace{dmc}{Layout \r@wstring}%
+  \let\l@stcol\empty
+  \let\col@do\@@complex@columnchunk
+  \x@\each@col\r@wstring\E
+  \advance\p@lyr@wno by 1
+  \ifnum\p@lyr@wno<\csname p@lyr@wcount-\the\p@lyp@geno\endcsname
+    \let\nxt\@@complex@layout
+  \else
+    \let\nxt\relax
+    \@@complex@box
+  \fi
+  \nxt
+}
+
+\def\@@complex@columnchunk#1{%
+  \edef\c@rrdstat{#1}%
+  \setbox\csname #1box\endcsname\vbox{%
+    \setLRspecific
+    \csname unp@ck-t#1\endcsname
+    \setbox\csname #1box\endcsname\vbox{\unvbox\csname #1box\endcsname\unvbox\csname partial#1\endcsname}%
+    \csname unp@ck-b#1\endcsname
+  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
+  \@@simplecols{#1}%
+}
+
+\def\complex@notfull{%TODO
 }
 
 \def\initspl@thts#1\E{%Per-row id
@@ -1295,7 +1342,7 @@
   %\tracingassigns=1
   \x@\each@col\cplx@proc@all\E
   %\tracingassigns=0
-  \trace{dmc}{best path (\meaning\cplx@proc@all: \cplx@path: \the\cplx@trycost}%
+  \trace{dmc}{best path (\meaning\cplx@proc@all/\all@list: \cplx@path: \the\cplx@trycost}%
 }
 \globdimen\o@cplx@trycost %Old try cost
 \globdimen\o@p@gehtloss %Old pageht 

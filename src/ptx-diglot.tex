@@ -1684,6 +1684,17 @@
 }
 
 \def\col@count#1{\advance\count255 by 1}% how many columns are there?
+\def\set@@colwid#1{%
+  \ifcsname  Diglot#1Fraction\endcsname
+    \csname column#1width\endcsname=\csname Diglot#1Fraction\endcsname\dimen0
+    \x@\ifdim \csname column#1width\endcsname<20pt \errmessage{Diglot#1Fraction (\csname Diglot#1Fraction\endcsname) gives \the\csname column#1width\endcsname, which is much too small}\fi
+  \else
+    \message{Diglot#1 fraction not supplied. assuming value of 1/\colc@unt}%
+    \csname column#1width\endcsname=\dimen0 \x@\divide \csname column#1width\endcsname by \colc@unt
+  \fi
+  \x@\xdef\csname column#1fullwidth\x@\endcsname\x@{\x@\the\csname column#1width\endcsname}%May be needed if there's a textborder
+  \traceNum{dP}{Setting column#1width to \the\csname column#1width\endcsname}}
+
 \def\set@col@widths@simplecols{%
   \trace{d}{set@col@widths@simplecols}%
   \dimen0=\textwidth
@@ -1692,16 +1703,7 @@
   \x@\each@col\layout@list\E
   \xdef\colc@unt{\the\count255}
   \advance\dimen0 by -\numexpr \colc@unt - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
-  \def\col@do##1{%
-    \ifcsname  Diglot##1Fraction\endcsname
-      \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
-      \x@\ifdim \csname column##1width\endcsname<20pt \errmessage{Diglot##1Fraction (\csname Diglot##1Fraction\endcsname) gives \the\csname column##1width\endcsname, which is much too small}\fi
-    \else
-      \message{Diglot##1 fraction not supplied. assuming value of 1/\colc@unt}%
-      \csname column##1width\endcsname=\dimen0 \x@\divide \csname column##1width\endcsname by \colc@unt
-    \fi
-    \x@\xdef\csname column##1fullwidth\x@\endcsname\x@{\x@\the\csname column##1width\endcsname}%May be needed if there's a textborder
-    \traceNum{dP}{Setting column##1width to \the\csname column##1width\endcsname}}%
+  \let\col@do\set@@colwid
   \x@\each@col\layout@list\E
   %\columnLwidth=\DiglotLeftFraction\dimen0
   %\columnRwidth=\DiglotRightFraction\dimen0
